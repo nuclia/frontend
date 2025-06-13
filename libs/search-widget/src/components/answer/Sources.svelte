@@ -29,6 +29,4 @@
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./Sources.scss"></style>
+<style src="./Sources.css"></style>

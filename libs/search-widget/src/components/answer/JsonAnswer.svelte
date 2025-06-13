@@ -91,6 +91,4 @@
   </ul>
 </div>
 
-<style
-  lang="scss"
-  src="./JsonAnswer.scss"></style>
+<style src="./JsonAnswer.css"></style>

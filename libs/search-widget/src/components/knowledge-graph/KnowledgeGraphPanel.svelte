@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { graphSelection, graphSelectionParagraphs, graphSelectionRelations } from '../../core';
-  import type { NerLinkHydrated } from '../../core';
   import type { Observable } from 'rxjs';
   import { BehaviorSubject, combineLatest, map } from 'rxjs';
+  import { createEventDispatcher } from 'svelte';
   import { Button } from '../../common';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
-  import { createEventDispatcher } from 'svelte';
+  import type { NerLinkHydrated } from '../../core';
+  import { graphSelection, graphSelectionParagraphs, graphSelectionRelations } from '../../core';
 
   const dispatch = createEventDispatcher();
   const showMoreRelations: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -67,6 +67,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./KnowledgeGraphPanel.scss"></style>
+<style src="./KnowledgeGraphPanel.css"></style>

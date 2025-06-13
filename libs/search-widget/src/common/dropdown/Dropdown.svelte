@@ -38,6 +38,4 @@
   {@render children?.()}
 </div>
 
-<style
-  lang="scss"
-  src="./Dropdown.scss"></style>
+<style src="./Dropdown.css"></style>

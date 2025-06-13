@@ -1,13 +1,13 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import Answer from './Answer.svelte';
-  import { _, chat, chatPlaceholder, hasChatEntries, isStreaming, resetChat } from '../../core';
-  import ChatInput from './ChatInput.svelte';
-  import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
   import Button from '../../common/button/Button.svelte';
+  import { _, chat, chatPlaceholder, hasChatEntries, isStreaming, resetChat } from '../../core';
+  import Answer from './Answer.svelte';
+  import ChatInput from './ChatInput.svelte';
 
   interface Props {
     fullscreen?: boolean;
@@ -123,6 +123,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Chat.scss"></style>
+<style src="./Chat.css"></style>

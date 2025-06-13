@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { run, preventDefault } from 'svelte/legacy';
+  import { preventDefault, run } from 'svelte/legacy';
 
+  import type { ResourceField, Search } from '@nuclia/core';
+  import { combineLatest, forkJoin, of, switchMap, take } from 'rxjs';
   import {
     AllResultsToggle,
     DocTypeIndicator,
@@ -11,33 +13,31 @@
     Thumbnail,
     ThumbnailPlayer,
   } from '../../common';
+  import Expander from '../../common/expander/Expander.svelte';
+  import type { TypedResult } from '../../core';
   import {
+    collapseTextBlocks,
     displayMetadata,
-    getThumbnailInfos,
+    feedbackOnResults,
+    getAttachedImageTemplate,
     getNavigationUrl,
+    getThumbnailInfos,
     goToUrl,
+    hideAnswer,
     hideThumbnails,
+    isAnswerEnabled,
     navigateToFile,
     navigateToLink,
+    navigateToOriginURL,
+    openNewTab,
+    permalink,
     trackingEngagement,
     viewerData,
-    openNewTab,
-    getAttachedImageTemplate,
-    feedbackOnResults,
-    isAnswerEnabled,
-    collapseTextBlocks,
-    hideAnswer,
-    navigateToOriginURL,
-    permalink,
   } from '../../core';
-  import type { TypedResult } from '../../core';
-  import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, forkJoin, of, switchMap, take } from 'rxjs';
-  import { FieldMetadata } from './';
   import { showAttachedImages } from '../../core/stores/search.store';
-  import Image from '../image/Image.svelte';
   import Feedback from '../answer/Feedback.svelte';
-  import Expander from '../../common/expander/Expander.svelte';
+  import Image from '../image/Image.svelte';
+  import { FieldMetadata } from './';
 
   interface Props {
     result: TypedResult;
@@ -275,6 +275,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./ResultRow.scss"></style>
+<style src="./ResultRow.css"></style>

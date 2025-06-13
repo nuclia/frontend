@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Textarea from '../../common/textarea/Textarea.svelte';
-  import { Icon, IconButton } from '../../common';
-  import { _, currentLanguage, translateInstant } from '../../core/i18n';
-  import { ask } from '../../core/stores/effects';
-  import { chatInput, hasSearchButton, isSpeechEnabled, isSpeechOn } from '../../core';
-  import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import { Subscription, filter } from 'rxjs';
   import { onMount } from 'svelte';
+  import { SpeechSettings, SpeechStore } from 'talk2svelte';
+  import { Icon, IconButton } from '../../common';
+  import Textarea from '../../common/textarea/Textarea.svelte';
+  import { chatInput, hasSearchButton, isSpeechEnabled, isSpeechOn } from '../../core';
+  import { _, currentLanguage, translateInstant } from '../../core/i18n';
+  import { ask } from '../../core/stores/effects';
 
   interface Props {
     placeholder?: string;
@@ -128,6 +128,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./ChatInput.scss"></style>
+<style src="./ChatInput.css"></style>

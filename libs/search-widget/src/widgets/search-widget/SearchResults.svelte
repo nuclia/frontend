@@ -1,21 +1,26 @@
 <svelte:options customElement="nuclia-search-results" />
 
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
   import { filter, take } from 'rxjs/operators';
-  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
+  import { onMount } from 'svelte';
+  import { Button, IconButton } from '../../common';
   import globalCss from '../../common/_global.scss?inline';
+  import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
+  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
+  import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import ResultsOrderButton from '../../components/results-order/ResultsOrderButton.svelte';
   import {
     _,
-    debug,
     collapseTextBlocks,
+    debug,
     downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
     hasSearchError,
+    hasSortButton,
     hideResults,
     isAnswerEnabled,
     isEmptySearchQuery,
@@ -26,6 +31,7 @@
     loadSvgSprite,
     logEvent,
     pendingResults,
+    rephrasedQuery,
     resultList,
     searchError,
     showResults,
@@ -33,14 +39,8 @@
     type WidgetAction,
     widgetActions,
     widgetJsonSchema,
-    rephrasedQuery,
-    hasSortButton,
   } from '../../core';
-  import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
-  import { Button, IconButton } from '../../common';
-  import ResultsOrderButton from '../../components/results-order/ResultsOrderButton.svelte';
 
   interface Props {
     csspath?: string;
@@ -209,6 +209,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./SearchResults.scss"></style>
+<style src="./SearchResults.css"></style>

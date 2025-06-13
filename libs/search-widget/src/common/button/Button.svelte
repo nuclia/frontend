@@ -41,6 +41,4 @@
   </span>
 </button>
 
-<style
-  lang="scss"
-  src="./Button.scss"></style>
+<style src="./Button.css"></style>

@@ -40,6 +40,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./Spinner.scss"></style>
+<style src="./Spinner.css"></style>

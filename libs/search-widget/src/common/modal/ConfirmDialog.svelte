@@ -60,6 +60,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./ConfirmDialog.scss"></style>
+<style src="./ConfirmDialog.css"></style>

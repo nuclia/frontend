@@ -444,6 +444,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./SearchBar.scss"></style>
+<style src="./SearchBar.css"></style>

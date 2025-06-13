@@ -1,11 +1,10 @@
 <script lang="ts">
-  import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
-  import PageIndicator from '../indicators/PageIndicator.svelte';
+  import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
   import type { RankedParagraph, ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
-  import { Search } from '@nuclia/core';
-  import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
+  import PageIndicator from '../indicators/PageIndicator.svelte';
+  import TimeIndicator from '../indicators/TimeIndicator.svelte';
 
   interface Props {
     paragraph: RankedParagraph;
@@ -108,6 +107,4 @@
   </div>
 </li>
 
-<style
-  lang="scss"
-  src="./ParagraphResult.scss"></style>
+<style src="./ParagraphResult.css"></style>

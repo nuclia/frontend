@@ -22,6 +22,4 @@
   </button>
 </li>
 
-<style
-  lang="scss"
-  src="./TabItem.scss"></style>
+<style src="./TabItem.css"></style>

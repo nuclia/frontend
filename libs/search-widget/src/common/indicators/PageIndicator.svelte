@@ -19,6 +19,4 @@
   </button>
 {/if}
 
-<style
-  lang="scss"
-  src="./PageIndicator.scss"></style>
+<style src="./PageIndicator.css"></style>

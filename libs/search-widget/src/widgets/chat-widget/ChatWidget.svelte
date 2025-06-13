@@ -3,10 +3,6 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
-  import { createEventDispatcher, onMount } from 'svelte';
-  import { loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
-  import { setLang } from '../../core/i18n';
   import {
     parseRAGImageStrategies,
     parseRAGStrategies,
@@ -17,7 +13,25 @@
     type RAGStrategy,
     type Widget,
   } from '@nuclia/core';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
+  import { createEventDispatcher, onMount } from 'svelte';
   import globalCss from '../../common/_global.scss?inline';
+  import { Viewer } from '../../components';
+  import Chat from '../../components/answer/Chat.svelte';
+  import {
+    askBackendConfig,
+    chatInput,
+    chatPlaceholder,
+    findBackendConfig,
+    preselectedFilters,
+    resetChat,
+    widgetFeatures,
+    widgetFeedback,
+    widgetImageRagStrategies,
+    widgetRagStrategies,
+  } from '../../core';
+  import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
+  import { setLang } from '../../core/i18n';
   import {
     askQuestion,
     initAnswer,
@@ -25,22 +39,7 @@
     initUsageTracking,
     initViewer,
   } from '../../core/stores/effects';
-  import Chat from '../../components/answer/Chat.svelte';
-  import { injectCustomCss } from '../../core/utils';
-  import {
-    askBackendConfig,
-    chatPlaceholder,
-    chatInput,
-    findBackendConfig,
-    preselectedFilters,
-    widgetFeatures,
-    widgetFeedback,
-    widgetImageRagStrategies,
-    widgetRagStrategies,
-    resetChat,
-  } from '../../core';
-  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
-  import { Viewer } from '../../components';
+  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
   class Props {
     backend = 'https://nuclia.cloud/api';
@@ -318,6 +317,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./ChatWidget.scss"></style>
+<style src="./ChatWidget.css"></style>
