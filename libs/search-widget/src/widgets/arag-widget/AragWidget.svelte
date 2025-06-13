@@ -1,6 +1,6 @@
 <svelte:options
   customElement={{
-    tag: 'nuclia-arag-bar',
+    tag: 'nuclia-arag-widget',
   }} />
 
 <script lang="ts">
