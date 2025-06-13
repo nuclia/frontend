@@ -14,6 +14,4 @@
   {@render children?.()}
 </ul>
 
-<style
-  lang="scss"
-  src="./TabsList.scss"></style>
+<style src="./TabsList.css"></style>

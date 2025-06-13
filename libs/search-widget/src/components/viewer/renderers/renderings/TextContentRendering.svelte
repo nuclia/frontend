@@ -1,12 +1,12 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
+  import type { FileField, Search, TextField } from '@nuclia/core';
   import { Observable, of, switchMap } from 'rxjs';
   import { fieldData, getTextFile } from '../../../../core';
-  import type { FileField, Search, TextField } from '@nuclia/core';
-  import MarkdownRenderer from './MarkdownRendering.svelte';
-  import HtmlRenderer from './HtmlRendering.svelte';
   import { getUnMarked } from '../../utils';
+  import HtmlRenderer from './HtmlRendering.svelte';
+  import MarkdownRenderer from './MarkdownRendering.svelte';
 
   interface Props {
     selectedParagraph: Search.FindParagraph | undefined;
@@ -72,4 +72,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in global.css -->

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { getYoutubeId } from '../../../../core/utils';
 
   interface Props {
@@ -97,6 +97,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./YoutubePlayer.scss"></style>
+<style src="./YoutubePlayer.css"></style>

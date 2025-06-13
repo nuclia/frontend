@@ -28,6 +28,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./MetadataSectionHeader.scss"></style>
+<style src="./MetadataSectionHeader.css"></style>

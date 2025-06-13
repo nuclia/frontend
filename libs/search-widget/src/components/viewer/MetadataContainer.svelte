@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IconButton } from '../../common';
   import { createEventDispatcher } from 'svelte';
+  import { IconButton } from '../../common';
   import { _ } from '../../core';
   import MetadataSectionHeader from './MetadataSectionHeader.svelte';
 
@@ -42,6 +42,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./MetadataContainer.scss"></style>
+<style src="./MetadataContainer.css"></style>

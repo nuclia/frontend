@@ -1,8 +1,8 @@
 <script>
-  import Thumbnail from './Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
   import Icon from '../icons/Icon.svelte';
   import Spinner from '../spinner/Spinner.svelte';
+  import Thumbnail from './Thumbnail.svelte';
 
   /**
    * @typedef {Object} Props
@@ -62,6 +62,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./ThumbnailPlayer.scss"></style>
+<style src="./ThumbnailPlayer.css"></style>

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import Feedback from './Feedback.svelte';
   import type { Ask } from '@nuclia/core';
   import { isMobileViewport } from '../../../../common/utils';
   import { MarkdownRendering } from '../../../../components/viewer/renderers/renderings';
+  import Feedback from './Feedback.svelte';
 
   interface Props {
     answer: Partial<Ask.Answer>;
@@ -32,6 +32,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./Answer.scss"></style>
+<style src="./Answer.css"></style>

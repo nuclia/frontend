@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import DOMPurify from 'dompurify';
+  import { createEventDispatcher } from 'svelte';
   import { isRightToLeft } from '../../../../common';
 
   const dispatch = createEventDispatcher();
@@ -35,6 +35,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./MarkdownRendering.scss"></style>
+<style src="./MarkdownRendering.css"></style>

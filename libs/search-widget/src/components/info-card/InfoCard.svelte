@@ -25,6 +25,4 @@
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./InfoCard.scss"></style>
+<style src="./InfoCard.css"></style>

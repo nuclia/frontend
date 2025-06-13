@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import IconButton from '../button/IconButton.svelte';
   import { getFontColor } from '../../core/utils';
+  import IconButton from '../button/IconButton.svelte';
 
   interface Props {
     clickable?: boolean;
@@ -56,6 +56,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./Chip.scss"></style>
+<style src="./Chip.css"></style>

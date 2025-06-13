@@ -3,9 +3,10 @@
 
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
-  import Label from '../../common/label/Label.svelte';
-  import Chip from '../../common/chip/Chip.svelte';
   import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
+  import { createEventDispatcher } from 'svelte';
+  import Chip from '../../common/chip/Chip.svelte';
+  import Label from '../../common/label/Label.svelte';
   import type { TypedResult } from '../../core';
   import {
     _,
@@ -29,7 +30,6 @@
     suggestionsHasError,
     viewerData,
   } from '../../core';
-  import { createEventDispatcher } from 'svelte';
 
   interface Props {
     paragraphs?: Search.Paragraph[];
@@ -166,6 +166,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./Suggestions.scss"></style>
+<style src="./Suggestions.css"></style>

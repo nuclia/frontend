@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { Search } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
   import type { ResultType } from '../../core';
-  import { Search } from '@nuclia/core';
 
   interface Props {
     paragraph: Search.FindParagraph;
@@ -60,6 +60,4 @@
   </div>
 </li>
 
-<style
-  lang="scss"
-  src="./ParagraphResult.scss"></style>
+<style src="./ParagraphResult.css"></style>

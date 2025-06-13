@@ -2,8 +2,8 @@
   import type { Observable } from 'rxjs';
   import { map, of, switchMap, take, tap } from 'rxjs';
   import { onDestroy } from 'svelte';
-  import { currentThumbnail, getFieldUrl, getFileUrls, getPlayableVideo, isLinkField, playFrom } from '../../../core';
   import { Thumbnail } from '../../../common';
+  import { currentThumbnail, getFieldUrl, getFileUrls, getPlayableVideo, isLinkField, playFrom } from '../../../core';
   import { VideoPlayer, YoutubePlayer } from './players';
 
   let mediaLoading = $state(true);
@@ -63,6 +63,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./VideoRenderer.scss"></style>
+<style src="./VideoRenderer.css"></style>

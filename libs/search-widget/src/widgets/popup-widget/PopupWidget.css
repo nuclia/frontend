@@ -1,11 +1,11 @@
-@import "../../common/common-style.scss";
+@import '../../common/common-style.css';
 
 .backdrop {
   --top-spacing: var(--rhythm-8);
   --side-spacing: var(--rhythm-2);
 
   align-items: start;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   bottom: 0;
   display: flex;
   justify-content: center;
@@ -18,11 +18,14 @@
 }
 
 .search-container {
-  --search-bar-height: var(--rhythm-6);
+  --search-bar-height: var(--rhythm-11);
   background: #fff;
-  max-height: calc(100vh - var(--top-spacing)*2);
-  overflow: hidden;
-  width: calc(100% - var(--side-spacing)*2);
+  max-height: calc(100vh - var(--top-spacing) * 2);
+  overflow: auto;
+  width: calc(100% - var(--side-spacing) * 2);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   &:not(.with-results) {
     height: var(--search-bar-height);
@@ -30,11 +33,12 @@
   &.with-results .search-bar-container {
     border-bottom: 1px solid var(--color-neutral-light);
   }
+  &.pending-results .search-results-container {
+    margin-bottom: var(--rhythm-4);
+  }
 
   .search-bar-container {
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    margin: var(--rhythm-2) auto;
   }
 
   .search-bar-container,
@@ -44,27 +48,16 @@
 
   .search-results-container {
     --vertical-spacing: var(--rhythm-1);
-
-    .results {
-      max-height: calc(100vh - var(--top-spacing)*2 - var(--search-bar-height));
-      overflow: auto;
-    }
-
-    .search-results {
-      padding: var(--vertical-spacing) 0;
-    }
-
-    :global(.sw-loading-dots:not(.small)) {
-      margin: var(--rhythm-12) auto;
-    }
+    width: calc(100% - var(--side-spacing) * 2);
   }
 }
 
-
 @media (max-width: 639px) {
   .backdrop {
-    // add extra spacing on mobile to prevent "Do you have a question" block to come over the search results
-    max-height: calc(100vh - var(--top-spacing)*2 - var(--rhythm-2));
+    max-height: calc(100vh - var(--top-spacing) * 2 - var(--rhythm-2));
+  }
+  .search-container .search-bar-container {
+    width: calc(100% - var(--rhythm-4));
   }
 }
 @media (min-width: 640px) {

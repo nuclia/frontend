@@ -65,6 +65,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./Thumbnail.scss"></style>
+<style src="./Thumbnail.css"></style>

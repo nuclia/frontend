@@ -30,6 +30,4 @@
   </div>
 </label>
 
-<style
-  lang="scss"
-  src="./Toggle.scss"></style>
+<style src="./Toggle.css"></style>

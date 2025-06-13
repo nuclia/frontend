@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { _ } from '../../core/i18n';
-  import { Expander, IconButton, Modal } from '../../common';
-  import { MarkdownRendering } from '../viewer';
   import type { Ask } from '@nuclia/core';
+  import { Expander, IconButton, Modal } from '../../common';
+  import { _ } from '../../core/i18n';
+  import { MarkdownRendering } from '../viewer';
 
   export let answer: Partial<Ask.Answer> | undefined = undefined;
   export let rephrasedQuery = '';
@@ -105,6 +105,4 @@
   </Modal>
 </div>
 
-<style
-  lang="scss"
-  src="./DebugInfo.scss"></style>
+<style src="./DebugInfo.css"></style>

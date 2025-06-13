@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { TypedResult } from '../../core';
   import { IconButton } from '../../common';
-  import { formatSize, formatDate } from '../../core';
+  import type { TypedResult } from '../../core';
+  import { formatDate, formatSize } from '../../core';
 
   interface Props {
     result: TypedResult;
@@ -78,6 +78,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./FieldMetadata.scss"></style>
+<style src="./FieldMetadata.css"></style>
