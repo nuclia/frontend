@@ -9,6 +9,10 @@ echo "Build global widget"
 vite build -c=libs/search-widget/vite.config.mjs -- global-widget nuclia-global-widget
 cp dist/libs/global-widget/* dist/libs/search-widget
 
+echo "Build arag widget (POC)"
+vite build -c=libs/search-widget/vite.config.mjs -- arag-widget nuclia-arag-widget
+cp dist/libs/arag-widget/* dist/libs/search-widget
+
 echo "Post build cleanup"
 rm -rf dist/libs/global-widget
 
