@@ -30,6 +30,7 @@
                   <stf-llm-configuration
                     [generativeModels]="generativeModels"
                     [createMode]="createMode"
+                    [vllmOnly]="true"
                     [config]="config?.vllm_config"
                     (valueChange)="vllmConfig = $event"></stf-llm-configuration>
                 </div>

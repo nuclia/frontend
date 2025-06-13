@@ -4,7 +4,7 @@ import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
-import { ButtonMiniComponent } from '@nuclia/sistema';
+import { ButtonMiniComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -16,6 +16,7 @@ import { startWith, Subject, takeUntil } from 'rxjs';
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
+    InfoCardComponent,
   ],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',
@@ -25,6 +26,7 @@ import { startWith, Subject, takeUntil } from 'rxjs';
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
   @Input() generativeModels: LearningConfigurationOption[] = [];
   @Input() createMode: boolean = true;
+  @Input() vllmOnly: boolean = false;
   @Input() isAiTable: boolean = false;
   @Input() config: ExtractVLLMConfig | undefined;
 
