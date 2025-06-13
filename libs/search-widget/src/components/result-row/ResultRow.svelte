@@ -136,30 +136,32 @@
 <div
   class="sw-result-row"
   data-nuclia-rid={result.id}>
-  <div
-    class="thumbnail-container"
-    hidden={$hideThumbnails || !expanded}>
-    {#if thumbnailInfo.isPlayable}
-      <ThumbnailPlayer
-        thumbnail={result.thumbnail}
-        fallback={thumbnailInfo.fallback}
-        hasBackground={!result.thumbnail}
-        aspectRatio="5/4"
-        on:loaded={() => (thumbnailLoaded = true)}
-        on:play={() => clickOnResult()} />
-    {:else}
-      <Thumbnail
-        src={result.thumbnail}
-        fallback={thumbnailInfo.fallback}
-        aspectRatio="5/4"
-        clickable
-        on:loaded={() => (thumbnailLoaded = true)}
-        on:click={() => clickOnResult()} />
-    {/if}
-    <div class="doc-type-container">
-      <DocTypeIndicator type={result.resultType} />
+  {#if !$hideThumbnails}
+    <div
+      class="thumbnail-container"
+      hidden={!expanded}>
+      {#if thumbnailInfo.isPlayable}
+        <ThumbnailPlayer
+          thumbnail={result.thumbnail}
+          fallback={thumbnailInfo.fallback}
+          hasBackground={!result.thumbnail}
+          aspectRatio="5/4"
+          on:loaded={() => (thumbnailLoaded = true)}
+          on:play={() => clickOnResult()} />
+      {:else}
+        <Thumbnail
+          src={result.thumbnail}
+          fallback={thumbnailInfo.fallback}
+          aspectRatio="5/4"
+          clickable
+          on:loaded={() => (thumbnailLoaded = true)}
+          on:click={() => clickOnResult()} />
+      {/if}
+      <div class="doc-type-container">
+        <DocTypeIndicator type={result.resultType} />
+      </div>
     </div>
-  </div>
+  {/if}
   <div
     class="result-container"
     class:no-citations={$hideAnswer}>
