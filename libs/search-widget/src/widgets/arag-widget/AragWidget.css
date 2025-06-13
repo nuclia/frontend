@@ -1,0 +1,29 @@
+@import '../../common/common-style.css';
+
+.nuclia-widget {
+  .search-box {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+  }
+  .loading-container {
+    align-items: center;
+    display: flex;
+    height: var(--rhythm-5);
+  }
+
+  .arag-results-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-1);
+    margin-top: var(--rhythm-5);
+
+    p,
+    ul {
+      margin: 0;
+    }
+    .step {
+      padding: var(--rhythm-1);
+    }
+  }
+}

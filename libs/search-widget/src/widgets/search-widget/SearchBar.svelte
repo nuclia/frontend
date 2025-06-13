@@ -20,23 +20,16 @@
     type RAGStrategy,
     type Widget,
   } from '@nuclia/core';
-  import { downloadDump, getApiErrors, initNuclia, resetNuclia, getSearchConfig } from '../../core/api';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
-  import { setLang } from '../../core/i18n';
-  import SearchInput from '../../components/search-input/SearchInput.svelte';
-  import { setupTriggerSearch } from '../../core/search-bar';
+  import { IconButton, Modal } from '../../common';
   import globalCss from '../../common/_global.scss?inline';
-  import {
-    chatPlaceholder,
-    widgetFeatures,
-    widgetFeedback,
-    widgetFilters,
-    widgetImageRagStrategies,
-    widgetJsonSchema,
-    widgetPlaceholder,
-    widgetRagStrategies,
-  } from '../../core/stores/widget.store';
+  import { InfoCard, onClosePreview } from '../../components';
+  import SearchInput from '../../components/search-input/SearchInput.svelte';
+  import { type WidgetFilters } from '../../core';
+  import { downloadDump, getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
+  import { setLang } from '../../core/i18n';
+  import { setupTriggerSearch } from '../../core/search-bar';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -57,12 +50,19 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { type WidgetFilters } from '../../core';
-  import { InfoCard, onClosePreview } from '../../components';
-  import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
+  import {
+    chatPlaceholder,
+    widgetFeatures,
+    widgetFeedback,
+    widgetFilters,
+    widgetImageRagStrategies,
+    widgetJsonSchema,
+    widgetPlaceholder,
+    widgetRagStrategies,
+  } from '../../core/stores/widget.store';
+  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
-  let _ready = new BehaviorSubject(false);
+  const _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
   export const onError = getApiErrors();
