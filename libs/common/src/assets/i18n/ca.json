@@ -183,7 +183,7 @@
 	"api-key-management.description": "Important! Copieu i deseu la clau de l’API. Desapareixerà un cop afegit.",
 	"api-key-management.expiration-date.invalid": "La data de caducitat no pot ser posterior a {{max}}",
 	"api-key-management.expiration-date.title": "Data de caducitat de la clau API",
-	"api-key-management.expiration-warning": "Algunes de les teves claus API caducaran en els propers 15 dies.<br>Si us plau, renova-les aviat per garantir un servei ininterromput.",
+	"api-key-management.expiration-warning": "Algunes de les vostres claus API caducaran en els propers 15 dies.<br>Renoveu-les aviat per garantir un servei ininterromput i suprimiu les claus antigues per evitar aquest avís.",
 	"api-key-management.key-roles.manager": "Administrador",
 	"api-key-management.key-roles.reader": "Lector",
 	"api-key-management.key-roles.writer": "Escriptor",

@@ -183,7 +183,7 @@
 	"api-key-management.description": "Important! Copiez et enregistrez la clé API. Il disparaîtra une fois ajouté.",
 	"api-key-management.expiration-date.invalid": "La date d'expiration ne peut pas être postérieure au {{max}}",
 	"api-key-management.expiration-date.title": "Date d'expiration de la clé API",
-	"api-key-management.expiration-warning": "Certaines de vos clés API expireront dans les 15 prochains jours.<br>Veuillez les renouveler rapidement pour garantir un service ininterrompu.",
+	"api-key-management.expiration-warning": "Certaines de vos clés API expireront dans les 15 prochains jours.<br>Veuillez les renouveler rapidement pour garantir un service ininterrompu et supprimez les anciennes clés pour éviter cet avertissement.",
 	"api-key-management.key-roles.manager": "Gestion",
 	"api-key-management.key-roles.reader": "Lecture",
 	"api-key-management.key-roles.writer": "Écriture",

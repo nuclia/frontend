@@ -183,7 +183,7 @@
 	"api-key-management.description": "Important! Copy and save the API key. It will disappear once added.",
 	"api-key-management.expiration-date.invalid": "The expiration date cannot be later than {{max}}",
 	"api-key-management.expiration-date.title": "API key expiration date",
-	"api-key-management.expiration-warning": "Some of your API keys will expire in the next 15 days.<br>Please renew them soon to ensure uninterrupted service.",
+	"api-key-management.expiration-warning": "Some of your API keys will expire in the next 15 days.<br>Please renew them soon to ensure uninterrupted service, and please delete the old keys to avoid this warning.",
 	"api-key-management.key-roles.manager": "Manager",
 	"api-key-management.key-roles.reader": "Reader",
 	"api-key-management.key-roles.writer": "Writer",
