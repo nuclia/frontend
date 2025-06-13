@@ -5,7 +5,7 @@
   import { filter, take } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { Button, IconButton } from '../../common';
-  import globalCss from '../../common/_global.scss?inline';
+  import globalCss from '../../common/global.css?inline';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';

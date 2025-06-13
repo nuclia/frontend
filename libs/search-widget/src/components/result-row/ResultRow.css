@@ -35,11 +35,11 @@
         margin-top: var(--rhythm-0_25);
       }
       .result-title.no-thumbnail {
-        // padding --rhythm-2 on each side, gap --rhythm-1 between icon and title
+        /* padding --rhythm-2 on each side, gap --rhythm-1 between icon and title */
         max-width: calc(100vw - var(--rhythm-4) - var(--title-icon-width) - var(--rhythm-1));
       }
       .result-title:not(.no-thumbnail) {
-        // padding --rhythm-2 on each side
+        /* padding --rhythm-2 on each side */
         max-width: calc(100vw - var(--rhythm-4));
       }
     }
@@ -122,7 +122,7 @@
       }
       .result-title-container {
         .result-title:not(.no-thumbnail) {
-          // padding --rhythm-2 on each side, thumbnail and gap between thumbnail and title
+          /* padding --rhythm-2 on each side, thumbnail and gap between thumbnail and title */
           max-width: calc(100vw - var(--rhythm-4) - var(--width-thumbnail) - var(--rhythm-2));
         }
       }

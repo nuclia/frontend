@@ -64,9 +64,9 @@
   <div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div> -->
 </main>
 
-<style lang="scss">
-  @use '../../../libs/search-widget/src/common/global.scss';
-  @use '../../../libs/search-widget/src/common/common-style.scss';
+<style>
+  @import '../../../libs/search-widget/src/common/global.css';
+  @import '../../../libs/search-widget/src/common/common-style.css';
 
   main {
     display: flex;
