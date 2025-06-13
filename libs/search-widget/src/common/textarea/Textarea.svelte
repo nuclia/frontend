@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { createBubbler } from 'svelte/legacy';
-
-  const bubble = createBubbler();
   import { createEventDispatcher } from 'svelte';
+  import { createBubbler } from 'svelte/legacy';
   import { isRightToLeft } from '../utils';
 
+  const bubble = createBubbler();
   interface Props {
     value?: string;
     name?: string;
@@ -57,6 +56,4 @@
   </textarea>
 </div>
 
-<style
-  lang="scss"
-  src="./Textarea.scss"></style>
+<style src="./Textarea.css"></style>

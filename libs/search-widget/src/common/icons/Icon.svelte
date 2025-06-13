@@ -17,6 +17,4 @@
   </svg>
 {/if}
 
-<style
-  lang="scss"
-  src="./Icon.scss"></style>
+<style src="./Icon.css"></style>

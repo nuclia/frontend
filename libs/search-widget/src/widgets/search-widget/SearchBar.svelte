@@ -23,7 +23,7 @@
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
   import { IconButton, Modal } from '../../common';
-  import globalCss from '../../common/_global.scss?inline';
+  import globalCss from '../../common/global.css?inline';
   import { InfoCard, onClosePreview } from '../../components';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { type WidgetFilters } from '../../core';
@@ -444,6 +444,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./SearchBar.scss"></style>
+<style src="./SearchBar.css"></style>

@@ -92,6 +92,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./Expander.scss"></style>
+<style src="./Expander.css"></style>

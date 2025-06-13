@@ -1,4 +1,4 @@
-@import 'indicator';
+@import 'indicator.css';
 
 .sw-page-indicator {
   min-width: var(--rhythm-3);

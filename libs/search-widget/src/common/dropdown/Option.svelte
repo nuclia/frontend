@@ -20,6 +20,4 @@
   <slot />
 </li>
 
-<style
-  lang="scss"
-  src="./Option.scss"></style>
+<style src="./Option.css"></style>

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { formatTime } from '../../core/utils';
   import { createEventDispatcher } from 'svelte';
+  import { formatTime } from '../../core/utils';
   import Icon from '../icons/Icon.svelte';
 
   interface Props {
@@ -41,6 +41,4 @@
   </button>
 {/if}
 
-<style
-  lang="scss"
-  src="./TimeIndicator.scss"></style>
+<style src="./TimeIndicator.css"></style>

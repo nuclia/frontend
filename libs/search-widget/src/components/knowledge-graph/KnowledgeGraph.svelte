@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
+  import { map, Subject, takeUntil } from 'rxjs';
+  import { filter } from 'rxjs/operators';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { Checkbox, Expander } from '../../common';
   import type {
     EntityPositionsWithRelevance,
     NerFamily,
@@ -8,12 +13,7 @@
     RelationWithRelevance,
   } from '../../core';
   import { fieldMetadata, generatedEntitiesColor, graphState, translateInstant } from '../../core';
-  import { Checkbox, Expander } from '../../common';
   import Graph from './Graph.svelte';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { map, Subject, takeUntil } from 'rxjs';
-  import { filter } from 'rxjs/operators';
-  import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
 
   interface Props {
     rightPanelOpen?: boolean;
@@ -266,6 +266,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./KnowledgeGraph.scss"></style>
+<style src="./KnowledgeGraph.css"></style>

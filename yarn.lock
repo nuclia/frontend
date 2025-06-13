@@ -11656,12 +11656,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esrap@npm:^1.4.6":
-  version: 1.4.6
-  resolution: "esrap@npm:1.4.6"
+"esrap@npm:^1.4.8":
+  version: 1.4.9
+  resolution: "esrap@npm:1.4.9"
   dependencies:
     "@jridgewell/sourcemap-codec": ^1.4.15
-  checksum: 79af2b8e4e3f57a5604e839aacfd005498f1b2f1ee8ce3b99ddb1cb728935510e54169eb22a06a6f1c6b412b36e1150e2a38bee07cfe8491cbda0997d33fb428
+  checksum: bd8c6dd99389f64b3addf564843c50e0f1cf713bbc8942a125a88fc1cf67aa19d040530be2761dc83c1b64aeef1f0b9f03a0648af57a423f673d24bbc696d68b
   languageName: node
   linkType: hard
 
@@ -16451,7 +16451,7 @@ __metadata:
     rxjs: 7.8.1
     sass: ^1.89.0
     spark-md5: ^3.0.1
-    svelte: ^5.0.0
+    svelte: ^5.34.1
     svelte-check: ^4.0.0
     svelte-preprocess: ^6.0.3
     talk2svelte: ^0.1.4
@@ -20281,9 +20281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^5.0.0":
-  version: 5.33.4
-  resolution: "svelte@npm:5.33.4"
+"svelte@npm:^5.34.1":
+  version: 5.34.1
+  resolution: "svelte@npm:5.34.1"
   dependencies:
     "@ampproject/remapping": ^2.3.0
     "@jridgewell/sourcemap-codec": ^1.5.0
@@ -20294,12 +20294,12 @@ __metadata:
     axobject-query: ^4.1.0
     clsx: ^2.1.1
     esm-env: ^1.2.1
-    esrap: ^1.4.6
+    esrap: ^1.4.8
     is-reference: ^3.0.3
     locate-character: ^3.0.0
     magic-string: ^0.30.11
     zimmerframe: ^1.1.2
-  checksum: 74fd804da0d4a2282b0778339c354f676c5da936cfccedbe6198f657896e9746cfa975ad284177429c49d0d22d202f536cad80515a39e6974c09a2e0a6cd8b03
+  checksum: 6aed4ec9bfb67cdea4fea04816e9a64089a4c430daf040a5f8ec865f1542c4ae8b7485e8fcc4b0dd425b922d5f381cd74aaae9532d94286e6ca6b4482a4fa266
   languageName: node
   linkType: hard
 

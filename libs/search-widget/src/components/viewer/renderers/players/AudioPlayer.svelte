@@ -1,7 +1,7 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { _, getCDN } from '../../../../core';
   import { PlayerControls } from './';
 
@@ -68,6 +68,4 @@
     on:pause={() => wavesAnimation.pause()} />
 </div>
 
-<style
-  lang="scss"
-  src="./AudioPlayer.scss"></style>
+<style src="./AudioPlayer.css"></style>

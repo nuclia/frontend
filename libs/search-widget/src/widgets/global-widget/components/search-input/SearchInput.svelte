@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { _ } from '../../../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
+  import IconButton from '../../../../common/button/IconButton.svelte';
   import Icon from '../../../../common/icons/Icon.svelte';
   import Modal from '../../../../common/modal/Modal.svelte';
-  import Suggestions from '../suggestions/Suggestions.svelte';
+  import Textarea from '../../../../common/textarea/Textarea.svelte';
+  import { _ } from '../../../../core/i18n';
+  import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
   import {
     hasSuggestions,
     suggestedParagraphs,
@@ -12,10 +14,8 @@
     triggerSuggestions,
     typeAhead,
   } from '../../../../core/stores/suggestions.store';
-  import IconButton from '../../../../common/button/IconButton.svelte';
   import { widgetPlaceholder } from '../../../../core/stores/widget.store';
-  import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
-  import Textarea from '../../../../common/textarea/Textarea.svelte';
+  import Suggestions from '../suggestions/Suggestions.svelte';
 
   let searchInputElement: HTMLInputElement = $state();
   const dispatch = createEventDispatcher();
@@ -100,6 +100,4 @@
   </div>
 </Modal>
 
-<style
-  lang="scss"
-  src="./SearchInput.scss"></style>
+<style src="./SearchInput.css"></style>

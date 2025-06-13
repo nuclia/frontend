@@ -1,8 +1,8 @@
 <script lang="ts">
-  import ParagraphResult from '../paragraph-result/ParagraphResult.svelte';
+  import type { Search } from '@nuclia/core';
   import type { TypedResult } from '../../../../core';
   import { goToUrl, trackingEngagement } from '../../../../core';
-  import type { Search } from '@nuclia/core';
+  import ParagraphResult from '../paragraph-result/ParagraphResult.svelte';
 
   interface Props {
     result: TypedResult;
@@ -53,6 +53,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./ResultRow.scss"></style>
+<style src="./ResultRow.css"></style>

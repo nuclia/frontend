@@ -1,16 +1,12 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { _ } from '../../core/i18n';
-  import Feedback from './Feedback.svelte';
-  import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
+  import type { Ask, Citations, FieldId } from '@nuclia/core';
   import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, sliceUnicode } from '@nuclia/core';
+  import { take } from 'rxjs';
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander, IconButton, Tooltip } from '../../common';
-  import { MarkdownRendering } from '../viewer';
-  import Sources from './Sources.svelte';
-  import DebugInfo from './DebugInfo.svelte';
-  import Image from '../image/Image.svelte';
+  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
   import {
     chat,
     debug,
@@ -22,8 +18,8 @@
     feedbackOnAnswer,
     getAttachedImageTemplate,
     getFieldDataFromResource,
-    getResultMetadata,
     getNonGenericField,
+    getResultMetadata,
     getResultType,
     hasNotEnoughData,
     hideAnswer,
@@ -32,8 +28,12 @@
     type RankedParagraph,
     type TypedResult,
   } from '../../core';
-  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
-  import { take } from 'rxjs';
+  import { _ } from '../../core/i18n';
+  import Image from '../image/Image.svelte';
+  import { MarkdownRendering } from '../viewer';
+  import DebugInfo from './DebugInfo.svelte';
+  import Feedback from './Feedback.svelte';
+  import Sources from './Sources.svelte';
 
   interface Props {
     answer: Partial<Ask.Answer>;
@@ -351,6 +351,4 @@
   </ConfirmDialog>
 </div>
 
-<style
-  lang="scss"
-  src="./Answer.scss"></style>
+<style src="./Answer.css"></style>

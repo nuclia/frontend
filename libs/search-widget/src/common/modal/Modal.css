@@ -1,4 +1,4 @@
-@import '_common-modal.scss';
+@import 'common-modal.css';
 
 .sw-modal-backdrop {
   --modal-width: 100vw;

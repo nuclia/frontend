@@ -1,8 +1,8 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import type { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
+  import type { NerLink, NerLinkHydrated, NerNode } from '../../core/knowledge-graph.models';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
   import { getFontColor } from '../../core/utils';
 
@@ -185,6 +185,4 @@
   </svg>
 </figure>
 
-<style
-  lang="scss"
-  src="./Graph.scss"></style>
+<style src="./Graph.css"></style>

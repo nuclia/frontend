@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { _, resultsOrder, type ResultsOrder } from '../../core';
   import { Button, Dropdown, Icon, Option } from '../../common';
+  import { _, resultsOrder, type ResultsOrder } from '../../core';
 
   let showDropdown = false;
   let position: { top?: number; right?: number; width: number } | undefined;
@@ -48,6 +48,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./ResultsOrderButton.scss"></style>
+<style src="./ResultsOrderButton.css"></style>

@@ -1,9 +1,9 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import { chatError, firstAnswer, hideAnswer, isServiceOverloaded, reinitChat } from '../../core/stores/answers.store';
+  import { trackingEngagement } from '../../core/stores/search.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
-  import { trackingEngagement } from '../../core/stores/search.store';
 
   let showChat = $state(false);
 
@@ -48,6 +48,4 @@
   show={showChat}
   on:close={onClose} />
 
-<style
-  lang="scss"
-  src="./InitialAnswer.scss"></style>
+<style src="./InitialAnswer.css"></style>

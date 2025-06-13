@@ -1,0 +1,49 @@
+:global(.markdown) {
+  text-align: start;
+}
+
+:global(.markdown > *:first-child),
+:global(.markdown > *:first-child > *:first-child),
+:global(.markdown > *:first-child > *:first-child > *:first-child) {
+  margin-top: 0;
+}
+:global(.markdown > *:last-child),
+:global(.markdown > *:last-child > *:last-child),
+:global(.markdown > *:last-child > *:last-child > *:last-child) {
+  margin-bottom: 0;
+}
+
+:global(.markdown h1) {
+  font-size: calc(var(--font-size-base) * 1.25);
+  font-weight: var(--font-weight-bold);
+}
+:global(.markdown h2) {
+  font-size: calc(var(--font-size-base) * 1.15);
+  font-weight: var(--font-weight-bold);
+}
+:global(.markdown h3) {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semi-bold);
+}
+
+:global(.markdown table) {
+  border: 1px solid var(--border-color);
+  border-radius: var(--rhythm-1);
+  border-spacing: 0;
+  border-collapse: separate;
+}
+
+:global(.markdown table tbody) {
+  background-color: var(--container-background-color);
+}
+:global(.markdown table tbody td),
+:global(.markdown table tbody th) {
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--rhythm-1);
+}
+:global(.markdown table tbody tr:last-child td) {
+  border-bottom: none;
+}
+:global(.markdown ul) {
+  list-style: '-  ';
+}

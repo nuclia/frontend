@@ -28,6 +28,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./AllResultsToggle.scss"></style>
+<style src="./AllResultsToggle.css"></style>

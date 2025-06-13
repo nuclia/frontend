@@ -1,6 +1,26 @@
 <script lang="ts">
+  import type { FieldFullId, FieldMetadata, SearchOptions, TextField } from '@nuclia/core';
+  import { FIELD_TYPE, Search } from '@nuclia/core';
+  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+  import { onDestroy, onMount } from 'svelte';
+  import {
+    DocTypeIndicator,
+    Dropdown,
+    Duration,
+    freezeBackground,
+    Icon,
+    IconButton,
+    isMobileViewport,
+    Option,
+    ParagraphResult,
+    unblockBackground,
+  } from '../../common';
+  import type { TypedResult, ViewerState, WidgetAction } from '../../core';
   import {
     _,
+    displayFieldList,
+    downloadFile,
+    fieldData,
     fieldFullId,
     fieldList,
     fieldMetadata,
@@ -10,10 +30,11 @@
     getFieldIdWithShortType,
     getFieldUrl,
     getFindParagraphs,
+    getFormatInfos,
     getResourceMetadata,
     getResultType,
     graphQuery,
-    displayFieldList,
+    hideDownload,
     isKnowledgeGraphEnabled,
     isMediaPlayer,
     isPreviewing,
@@ -27,35 +48,14 @@
     selectedParagraphIndex,
     selectNext,
     selectPrevious,
+    slugify,
     transcripts,
     viewerData,
     viewerState,
     widgetActions,
-    fieldData,
-    getFormatInfos,
-    slugify,
-    downloadFile,
-    hideDownload,
   } from '../../core';
-  import type { TypedResult, ViewerState, WidgetAction } from '../../core';
-  import {
-    DocTypeIndicator,
-    Dropdown,
-    Duration,
-    freezeBackground,
-    Icon,
-    IconButton,
-    isMobileViewport,
-    Option,
-    ParagraphResult,
-    unblockBackground,
-  } from '../../common';
-  import { onDestroy, onMount } from 'svelte';
-  import type { FieldFullId, FieldMetadata, SearchOptions, TextField } from '@nuclia/core';
-  import { FIELD_TYPE, Search } from '@nuclia/core';
-  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
-  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
   import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';
+  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
 
   // Browser window related variables
   const resizeEvent = new Subject();
@@ -596,6 +596,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Viewer.scss"></style>
+<style src="./Viewer.css"></style>
