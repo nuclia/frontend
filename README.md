@@ -11,6 +11,7 @@
 - [Widget](#widget)
 - [SDK](#sdk)
 - [Sistema](#sistema)
+- [NucliaDB admin](#nucliadb-admin)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 
@@ -147,6 +148,33 @@ To update the glyphs sprite:
 ./libs/sistema/scripts/update_icons.sh
 ```
 
+## NucliaDB admin
+
+To run locally it for dev purpose:
+
+```
+docker network create nucliadb-network
+docker run -it -d --name pg --network nucliadb-network \
+  -p 5432:5432 \
+  -e POSTGRES_USER=nucliadb \
+  -e POSTGRES_PASSWORD=nucliadb \
+  -e POSTGRES_DB=nucliadb \
+  postgres:latest
+docker pull nuclia/nucliadb:latest --platform linux/amd64
+docker build --platform linux/amd64 -t nucliadb-server -f ./tools/nucliadb-admin/Dockerfile .
+docker run --network nucliadb-network \
+    --name nucliadb-server \
+    --platform linux/amd64 \
+    -p 8080:8080 \
+    -v nucliadb-standalone:/data \
+    -e NUCLIA_PUBLIC_URL="https://europe-1.stashify.cloud" \
+    -e NUA_API_KEY=<NUA_KEY> \
+    -e LOG_LEVEL=DEBUG \
+    -e DRIVER=PG \
+    -e DRIVER_PG_URL="postgresql://nucliadb:nucliadb@pg:5432/nucliadb" \
+    nucliadb-server
+```
+
 ## CI/CD Deployment
 
 ### Scope
@@ -194,6 +222,6 @@ It is deployed manually to stage using the following command:
 gsutil cp -r ./maintenance gs://ncl-cdn-gcp-global-stage-1
 ```
 
-
 ## License
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_large)
