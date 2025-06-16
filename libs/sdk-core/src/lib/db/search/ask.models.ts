@@ -1,3 +1,4 @@
+import { RagStrategyName } from '../kb';
 import type { Search } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -25,6 +26,7 @@ export namespace Ask {
     inError?: boolean;
     metadata?: { tokens?: AskTokens; timings?: AskTimings };
     promptContext?: string[];
+    augmentedContext?: AugmentedContext;
   }
 
   export enum Author {
@@ -47,7 +49,8 @@ export namespace Ask {
       | StatusAskResponseItem
       | ErrorAskResponseItem
       | RelationsAskResponseItem
-      | DebugAskResponseItem;
+      | DebugAskResponseItem
+      | AugmentedContextAskResponseItem;
   }
 
   export interface RetrievalAskResponseItem {
@@ -103,6 +106,11 @@ export namespace Ask {
     metadata: { [key: string]: any };
   }
 
+  export interface AugmentedContextAskResponseItem {
+    type: 'augmented_context';
+    augmented: AugmentedContext;
+  }
+
   export interface AskTokens {
     input: number;
     output: number;
@@ -128,6 +136,7 @@ export namespace Ask {
     metadata: MetadataAskResponseItem;
     answer_json?: any;
     error_details?: string;
+    augmented_context?: AugmentedContext;
   }
 
   export interface PredictAnswerResponseItem {
@@ -147,6 +156,23 @@ export namespace Ask {
   export interface JsonPredictAnswerResponseItem {
     type: 'object';
     object: any;
+  }
+
+  export interface AugmentedContext {
+    fields: { [key: string]: AugmentedContextText };
+    paragraphs: { [key: string]: AugmentedContextText };
+  }
+
+  export interface AugmentedContextText {
+    id: string;
+    text: string;
+    parent?: string;
+    augmentation_type:
+      | RagStrategyName.FULL_RESOURCE
+      | RagStrategyName.HIERARCHY
+      | RagStrategyName.METADATAS
+      | RagStrategyName.NEIGHBOURING_PARAGRAPHS
+      | RagStrategyName.CONVERSATION;
   }
 }
 

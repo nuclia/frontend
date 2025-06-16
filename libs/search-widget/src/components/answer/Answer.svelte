@@ -18,6 +18,7 @@
     feedbackOnAnswer,
     getAttachedImageTemplate,
     getFieldDataFromResource,
+    getFindParagraphFromAugmentedParagraph,
     getNonGenericField,
     getResultMetadata,
     getResultType,
@@ -92,6 +93,7 @@
     const resources = answer.sources?.resources || {};
     const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
     const citations = answer.citations || {};
+    const augmentedContext = answer.augmentedContext;
     return Object.keys(citations).reduce((acc, citationId, index) => {
       // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
       // Note: the widget does not support extra_context, but a proxy could be injecting some
@@ -104,9 +106,15 @@
         const graphPrequeryResource = graphPrequeryResources[resourceId];
         if (resource && citationPath.length === 4) {
           // the citation is about a paragraph
-          const paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
+          let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
             citationId
           ] as RankedParagraph;
+          if (!paragraph) {
+            const augmentedParagraph = augmentedContext?.paragraphs[citationId];
+            if (augmentedParagraph) {
+              paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
+            }
+          }
           if (paragraph) {
             paragraph.rank = index + 1;
             let field: FieldId;

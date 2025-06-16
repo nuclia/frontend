@@ -57,6 +57,7 @@ export function ask(
             error_details,
             metadata,
             prompt_context,
+            augmented_context,
           }) => {
             if (status !== 'success') {
               return {
@@ -75,6 +76,7 @@ export function ask(
               jsonAnswer: answer_json,
               metadata,
               promptContext: prompt_context,
+              augmentedContext: augmented_context,
             } as Ask.Answer;
           },
         ),
@@ -144,6 +146,10 @@ export function ask(
           const promptContext = debugItem
             ? (debugItem.item as Ask.DebugAskResponseItem).metadata?.['prompt_context']
             : undefined;
+          const augmentedContextItem = items.find((item) => item.item.type === 'augmented_context');
+          const augmentedContext = augmentedContextItem
+            ? (augmentedContextItem.item as Ask.AugmentedContextAskResponseItem).augmented
+            : undefined;
 
           return {
             type: 'answer',
@@ -156,6 +162,7 @@ export function ask(
             jsonAnswer: jsonAnswer?.object,
             metadata,
             promptContext,
+            augmentedContext,
           } as Ask.Answer;
         }),
         catchError((error) =>

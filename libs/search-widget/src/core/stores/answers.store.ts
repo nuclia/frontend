@@ -1,4 +1,4 @@
-import type { Ask, IErrorResponse } from '@nuclia/core';
+import { Search, type Ask, type IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
 
@@ -157,3 +157,24 @@ export const hideAnswer = answerState.writer<boolean, boolean>(
   (state) => state.hideAnswer,
   (state, param) => ({ ...state, hideAnswer: param }),
 );
+
+export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedContextText) {
+  const position = paragraph.id.split('/').pop()?.split('-');
+  return {
+    order: 0,
+    score: 1,
+    score_type: Search.FindScoreType.BOTH,
+    text: paragraph.text,
+    id: paragraph.id,
+    labels: [],
+    position: {
+      index: 0,
+      start: parseInt(position?.[0] || ''),
+      end: parseInt(position?.[1] || ''),
+    },
+    fuzzy_result: false,
+    page_with_visual: false,
+    is_a_table: false,
+    reference: '',
+  };
+}
