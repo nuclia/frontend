@@ -176,6 +176,5 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
     page_with_visual: false,
     is_a_table: false,
     reference: '',
-    fromAugmentedContext: true,
   };
 }

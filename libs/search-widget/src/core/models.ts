@@ -5,7 +5,6 @@ export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | '
 type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 export interface RankedParagraph extends Search.FindParagraph {
   rank?: number;
-  fromAugmentedContext?: boolean;
 }
 export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }> & { ranks?: number[] };
 
