@@ -35,10 +35,13 @@ export class LabelDropdownComponent {
    *  (this is useful when using label dropdown for filtering the resource list for example).
    * when false, for the label sets configured with `multiple=false`, we make sure there is no more than one label from this label set in the selection
    *  (option by default, necessary when using the dropdown to add labels)
-   *
-   * when both single and multiple are false, we display a radio instead of a checkbox for selection of label from sets configured with `multiple=false`
    */
   @Input({ transform: booleanAttribute }) multiple = false;
+  /**
+   * display a radio instead of a checkbox for options of label sets configured with `multiple=false`.
+   * If single is set to true, it will take precedence over this option.
+   */
+  @Input({ transform: booleanAttribute }) displayRadioForNonMultiple = false;
   @Input({ transform: booleanAttribute }) fullWidth = false;
   @Input() size: Size = 'medium';
   @Input()
@@ -148,7 +151,7 @@ export class LabelDropdownComponent {
     if (this.single) {
       this.selection = [labelValue];
       this.selectionChange.emit(this.selection);
-    } else {
+    } else if ((event.target as HTMLElement).tagName !== 'INPUT') {
       event.preventDefault();
       event.stopPropagation();
       this.toggleLabel(labelValue);

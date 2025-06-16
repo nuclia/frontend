@@ -115,6 +115,7 @@
             [selection]="labelSelection"
             [disabled]="(hasLabelSet | async) === false"
             (selectionChange)="updateLabelSelection($event)"
+            displayRadioForNonMultiple
             aspect="basic"
             fullWidth>
             {{ 'sync.add-page.add-labels.select-labels' | translate }}

@@ -53,7 +53,7 @@
       </pa-option>
     }
 
-    @if (single || multiple || labelSetExpanded?.multiple) {
+    @if (single || labelSetExpanded?.multiple || !displayRadioForNonMultiple) {
       @for (labelValue of filteredLabels || labelValues | slice: 0 : maxLabels; track labelValue) {
         <pa-option
           class="level2-option"
@@ -63,13 +63,15 @@
           @if (single) {
             {{ labelValue.label }}
           } @else {
-            <pa-checkbox [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)">
+            <pa-checkbox
+              [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
+              (change)="toggleLabel(labelValue)">
               {{ labelValue.label }}
             </pa-checkbox>
           }
         </pa-option>
       }
-    } @else {
+    } @else if (displayRadioForNonMultiple) {
       <pa-radio-group
         name="label-group"
         [(ngModel)]="radioValue">
