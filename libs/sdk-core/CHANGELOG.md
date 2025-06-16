@@ -12,6 +12,7 @@
 
 - Add `rephrased_query` property to `FindResults` interface
 - Support streaming responses for `/predict/chat` endpoint
+- Support `augmented_context` property on `/ask` endpoint
 
 # 1.26.0 (2025-04-18)
 
