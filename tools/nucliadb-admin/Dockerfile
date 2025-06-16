@@ -1,0 +1,20 @@
+FROM nuclia/nucliadb:latest
+
+WORKDIR /usr/src/app
+
+ENV NUA_ZONE=europe-1
+ENV NUA_API_KEY=
+ENV NUCLIA_PUBLIC_URL=https://{zone}.nuclia.cloud
+ENV PYTHONUNBUFFERED=1
+ENV HTTP_PORT=8080
+ENV INGEST_GRPC_PORT=8060
+ENV TRAIN_GRPC_PORT=8040
+
+# HTTP
+EXPOSE 8080/tcp
+# GRPC
+EXPOSE 8060/tcp
+# GRPC - TRAIN
+EXPOSE 8040/tcp
+
+CMD ["nucliadb"]
