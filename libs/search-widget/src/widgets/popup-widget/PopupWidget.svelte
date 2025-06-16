@@ -8,18 +8,11 @@
   accessors />
 
 <script lang="ts">
+  import type { KBStates, Reranker, Widget } from '@nuclia/core';
   import { onMount } from 'svelte';
+  import { getApiErrors, hasPermalinkToRender, isEmptySearchQuery, pendingResults, showResults } from '../../core';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
-  import {
-    getApiErrors,
-    isEmptySearchQuery,
-    pendingResults,
-    previewKey,
-    showResults,
-    hasPermalinkToRender,
-  } from '../../core';
-  import type { KBStates, Reranker, Widget } from '@nuclia/core';
 
   interface Props {
     backend?: string;
@@ -168,6 +161,7 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if visible}
     <div
       class="backdrop"
@@ -231,6 +225,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./PopupWidget.scss"></style>
+<style src="./PopupWidget.css"></style>

@@ -48,6 +48,4 @@
   </label>
 </div>
 
-<style
-  lang="scss"
-  src="./Checkbox.scss"></style>
+<style src="./Checkbox.css"></style>

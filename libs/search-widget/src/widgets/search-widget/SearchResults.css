@@ -1,5 +1,3 @@
-@import '../../common/common-style';
-
 .error {
   width: var(--search-bar-max-width);
 }

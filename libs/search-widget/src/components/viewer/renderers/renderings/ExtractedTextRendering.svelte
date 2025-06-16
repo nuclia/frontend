@@ -1,10 +1,10 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
+  import type { Search } from '@nuclia/core';
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
   import { fieldData, getExtractedTexts } from '../../../../core';
-  import type { Search } from '@nuclia/core';
   import PlainTextRenderer from './PlainTextRendering.svelte';
   import RstRenderer from './RstRendering.svelte';
 
@@ -58,4 +58,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in global.css -->

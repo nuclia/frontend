@@ -24,6 +24,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./InputImages.scss"></style>
+<style src="./InputImages.css"></style>

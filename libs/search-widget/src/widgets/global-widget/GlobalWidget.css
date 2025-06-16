@@ -1,11 +1,9 @@
-@import "../../common/common-style.scss";
-
 .backdrop {
   --top-spacing: var(--rhythm-8);
   --side-spacing: var(--rhythm-2);
 
   align-items: start;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   bottom: 0;
   display: flex;
   justify-content: center;
@@ -20,9 +18,9 @@
 .search-container {
   --search-bar-height: var(--rhythm-6);
   background: #fff;
-  max-height: calc(100vh - var(--top-spacing)*2);
+  max-height: calc(100vh - var(--top-spacing) * 2);
   overflow: hidden;
-  width: calc(100% - var(--side-spacing)*2);
+  width: calc(100% - var(--side-spacing) * 2);
 
   &:not(.with-results) {
     height: var(--search-bar-height);
@@ -46,7 +44,7 @@
     --vertical-spacing: var(--rhythm-1);
 
     .results {
-      max-height: calc(100vh - var(--top-spacing)*2 - var(--search-bar-height));
+      max-height: calc(100vh - var(--top-spacing) * 2 - var(--search-bar-height));
       overflow: auto;
     }
 
@@ -60,11 +58,10 @@
   }
 }
 
-
 @media (max-width: 639px) {
   .backdrop {
-    // add extra spacing on mobile to prevent "Do you have a question" block to come over the search results
-    max-height: calc(100vh - var(--top-spacing)*2 - var(--rhythm-2));
+    /* add extra spacing on mobile to prevent "Do you have a question" block to come over the search results */
+    max-height: calc(100vh - var(--top-spacing) * 2 - var(--rhythm-2));
   }
 }
 @media (min-width: 640px) {

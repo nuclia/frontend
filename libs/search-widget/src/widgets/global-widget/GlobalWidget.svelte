@@ -9,13 +9,15 @@
 
 <script lang="ts">
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
-  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
+  import { debounceTime } from 'rxjs';
+  import { take } from 'rxjs/operators';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { InfiniteScroll, LoadingDots } from '../../common';
+  import globalCss from '../../common/global.css?inline';
+  import { logEvent } from '../../core';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { _, setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss?inline';
-  import { isAnswerEnabled, widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -39,11 +41,9 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { take } from 'rxjs/operators';
-  import { logEvent } from '../../core';
+  import { isAnswerEnabled, widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
+  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { InitialAnswer, ResultRow, SearchInput } from './components';
-  import { LoadingDots, InfiniteScroll } from '../../common';
-  import { debounceTime } from 'rxjs';
 
   interface Props {
     backend?: string;
@@ -230,6 +230,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if ready && !!svgSprite && visible}
     <div
       class="backdrop"
@@ -305,7 +306,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./GlobalWidget.scss">
-</style>
+<style src="./GlobalWidget.css"></style>

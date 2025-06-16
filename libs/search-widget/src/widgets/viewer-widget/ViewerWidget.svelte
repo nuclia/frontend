@@ -10,6 +10,13 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
+  import type { FieldFullId, KBStates, Widget } from '@nuclia/core';
+  import { ResourceProperties } from '@nuclia/core';
+  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import globalCss from '../../common/global.css?inline';
+  import { onClosePreview, Viewer } from '../../components';
+  import type { TypedResult } from '../../core';
   import {
     getFieldType,
     getResourceById,
@@ -28,13 +35,6 @@
     widgetActions,
     widgetFeatures,
   } from '../../core';
-  import type { TypedResult } from '../../core';
-  import { createEventDispatcher, onMount } from 'svelte';
-  import type { FieldFullId, KBStates, Widget } from '@nuclia/core';
-  import { ResourceProperties } from '@nuclia/core';
-  import globalCss from '../../common/_global.scss?inline';
-  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
-  import { onClosePreview, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
   interface Props {
@@ -184,6 +184,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
     <Viewer />
   {/if}
@@ -195,6 +196,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./ViewerWidget.scss"></style>
+

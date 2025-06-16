@@ -1,9 +1,9 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
+  import { createEventDispatcher } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import { _ } from '../../core/i18n';
-  import { createEventDispatcher } from 'svelte';
 
   interface Props {
     resultIndex: any;
@@ -59,6 +59,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./SearchResultNavigator.scss"></style>
+<style src="./SearchResultNavigator.css"></style>

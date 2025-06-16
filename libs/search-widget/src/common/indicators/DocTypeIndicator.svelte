@@ -35,6 +35,4 @@
   {typeIndicator}
 </div>
 
-<style
-  lang="scss"
-  src="./DocTypeIndicator.scss"></style>
+<style src="./DocTypeIndicator.css"></style>

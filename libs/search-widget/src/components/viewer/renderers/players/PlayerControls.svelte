@@ -1,9 +1,9 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { IconButton } from '../../../../common';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { IconButton } from '../../../../common';
 
   let { player = $bindable() } = $props();
 
@@ -147,6 +147,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./PlayerControls.scss"></style>
+<style src="./PlayerControls.css"></style>

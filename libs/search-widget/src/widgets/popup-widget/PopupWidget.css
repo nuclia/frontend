@@ -1,5 +1,3 @@
-@import '../../common/common-style.scss';
-
 .backdrop {
   --top-spacing: var(--rhythm-8);
   --side-spacing: var(--rhythm-2);

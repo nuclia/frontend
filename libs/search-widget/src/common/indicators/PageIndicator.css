@@ -1,5 +1,4 @@
-@import 'indicator';
-
+/* common indicator style is defined in common/common-style.css */
 .sw-page-indicator {
   min-width: var(--rhythm-3);
 

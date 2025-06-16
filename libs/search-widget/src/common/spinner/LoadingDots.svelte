@@ -15,6 +15,4 @@
   <div class="bounce3"></div>
 </div>
 
-<style
-  lang="scss"
-  src="./LoadingDots.scss"></style>
+<style src="./LoadingDots.css"></style>

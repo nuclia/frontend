@@ -1,10 +1,9 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import { createBubbler } from 'svelte/legacy';
+  import Icon from '../icons/Icon.svelte';
 
   const bubble = createBubbler();
-  import Icon from '../icons/Icon.svelte';
-  import { createEventDispatcher } from 'svelte';
-
   interface Props {
     icon?: string;
     ariaLabel?: string;
@@ -50,6 +49,4 @@
     size={iconSize} />
 </button>
 
-<style
-  lang="scss"
-  src="./Button.scss"></style>
+<style src="./Button.css"></style>

@@ -1,5 +1,4 @@
-@import '_common-modal.scss';
-
+/* common modal style is defined in common/common-style.css */
 .sw-modal-backdrop {
   .modal .modal-content {
     box-shadow: var(--shadow-modal);

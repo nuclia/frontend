@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import type { Label } from '@nuclia/core';
+  import { getFilterFromEntity, getFilterFromLabel } from '@nuclia/core';
   import { combineLatest, map, Observable, take } from 'rxjs';
-  import { type EntityGroup, filterByLabels, type LabelSetWithId, refreshFamily } from '../../core';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
+  import Checkbox from '../../common/checkbox/Checkbox.svelte';
   import {
     _,
     addEntityFilter,
@@ -11,22 +14,22 @@
     creationStart,
     entities,
     entityFilters,
+    type EntityGroup,
     filterByCreatedDate,
     filterByLabelFamilies,
+    filterByLabels,
     hasRangeCreation,
     labelFilters,
     labelSetFilters,
+    type LabelSetWithId,
     orderedLabelSetList,
     preselectedFilters,
+    refreshFamily,
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
     searchFilters,
   } from '../../core';
-  import IconButton from '../../common/button/IconButton.svelte';
-  import Checkbox from '../../common/checkbox/Checkbox.svelte';
-  import type { Label } from '@nuclia/core';
-  import { getFilterFromEntity, getFilterFromLabel } from '@nuclia/core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
   const preselection: Observable<string[]> = preselectedFilters;
@@ -231,6 +234,4 @@
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./SearchFilters.scss"></style>
+<style src="./SearchFilters.css"></style>

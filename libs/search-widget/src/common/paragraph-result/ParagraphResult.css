@@ -45,11 +45,11 @@
       &.ellipsis {
         height: var(--rhythm-3);
         :global(.markdown > *) {
-          // artificial ellipsis if the paragraph has several lines
+          /* artificial ellipsis if the paragraph has several lines */
           &::after {
             content: '…';
           }
-          // regular ellipsis for single line that is too long
+          /* regular ellipsis for single line that is too long */
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;

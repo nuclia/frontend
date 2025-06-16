@@ -1,7 +1,9 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { onDestroy } from 'svelte';
+  import type { ConversationFieldData, FieldFullId, Message, Paragraph, Search } from '@nuclia/core';
+  import { longToShortFieldType } from '@nuclia/core';
+  import { lightFormat } from 'date-fns';
   import {
     combineLatest,
     distinctUntilChanged,
@@ -14,12 +16,10 @@
     takeUntil,
     tap,
   } from 'rxjs';
-  import { _, fieldData, fieldFullId, loadMessagePage, selectedParagraph, totalMessagePages } from '../../../core';
-  import type { ConversationFieldData, FieldFullId, Message, Paragraph, Search } from '@nuclia/core';
-  import { longToShortFieldType } from '@nuclia/core';
-  import { lightFormat } from 'date-fns';
-  import { HtmlRendering, MarkdownRendering, PlainTextRendering, RstRendering } from './renderings';
+  import { onDestroy } from 'svelte';
   import { Button } from '../../../common';
+  import { _, fieldData, fieldFullId, loadMessagePage, selectedParagraph, totalMessagePages } from '../../../core';
+  import { HtmlRendering, MarkdownRendering, PlainTextRendering, RstRendering } from './renderings';
 
   let viewerElement: HTMLElement = $state();
   let stopHighlight: Subject<void> = new Subject<void>();
@@ -135,6 +135,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./ConversationRenderer.scss"></style>
+<style src="./ConversationRenderer.css"></style>

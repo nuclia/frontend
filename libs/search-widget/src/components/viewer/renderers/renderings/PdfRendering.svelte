@@ -1,13 +1,13 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
-  import { onDestroy, onMount } from 'svelte';
+  import type { Search } from '@nuclia/core';
   import type { Subscription } from 'rxjs';
   import { debounceTime, filter, Subject } from 'rxjs';
+  import { onDestroy, onMount } from 'svelte';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
+  import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
   import { getUnMarked } from '../../utils';
-  import type { Search } from '@nuclia/core';
 
   interface Props {
     src: string;
@@ -222,6 +222,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./PdfRendering.scss"></style>
+<style src="./PdfRendering.css"></style>

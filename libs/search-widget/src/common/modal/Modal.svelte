@@ -2,7 +2,7 @@
   import { run } from 'svelte/legacy';
 
   import { createEventDispatcher, onMount } from 'svelte';
-  import { freezeBackground, iOSDevice, getFixedRootParentIfAny, unblockBackground } from './modal.utils';
+  import { freezeBackground, getFixedRootParentIfAny, iOSDevice, unblockBackground } from './modal.utils';
 
   interface Props {
     show?: boolean;
@@ -130,6 +130,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Modal.scss"></style>
+<style src="./Modal.css"></style>

@@ -26,6 +26,4 @@
   <img src={path} />
 </div>
 
-<style
-  lang="scss"
-  src="./Image.scss"></style>
+<style src="./Image.css"></style>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { run } from 'svelte/legacy';
 
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onDestroy } from 'svelte';
   import { getTempToken, isPrivateKnowledgeBox } from '../../../../core';
   import { PlayerControls } from './index';
 
@@ -93,6 +93,4 @@
   <PlayerControls {player} />
 </div>
 
-<style
-  lang="scss"
-  src="./VideoPlayer.scss"></style>
+<style src="./VideoPlayer.css"></style>

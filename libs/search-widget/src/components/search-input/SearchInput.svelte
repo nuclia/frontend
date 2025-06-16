@@ -1,25 +1,32 @@
 <script lang="ts">
+  import type { Classification } from '@nuclia/core';
+  import type { Observable } from 'rxjs';
+  import { combineLatest, map, take } from 'rxjs';
+  import { tap } from 'rxjs/operators';
   import { createEventDispatcher } from 'svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
+  import Chip from '../../common/chip/Chip.svelte';
+  import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import Icon from '../../common/icons/Icon.svelte';
+  import Label from '../../common/label/Label.svelte';
   import Modal from '../../common/modal/Modal.svelte';
-  import Suggestions from '../suggestions/Suggestions.svelte';
+  import Textarea from '../../common/textarea/Textarea.svelte';
   import {
+    _,
     addEntityFilter,
     addImage,
-    type EntityFilter,
-    hasContextImages,
-    hasSearchButton,
-    searchOptions,
-    _,
     autocomplete,
     autofilters,
     creationEnd,
     creationStart,
     entities,
     entitiesDefaultColor,
+    type EntityFilter,
     entityFilters,
     getCDN,
+    hasContextImages,
     hasFilterButton,
+    hasSearchButton,
     hasSuggestions,
     hideLogo,
     labelFilters,
@@ -29,6 +36,7 @@
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
+    searchOptions,
     searchQuery,
     selectedEntity,
     selectNextEntity,
@@ -43,17 +51,9 @@
     typeAhead,
     widgetPlaceholder,
   } from '../../core';
-  import { tap } from 'rxjs/operators';
-  import Label from '../../common/label/Label.svelte';
-  import Chip from '../../common/chip/Chip.svelte';
-  import type { Observable } from 'rxjs';
-  import { combineLatest, map, take } from 'rxjs';
-  import IconButton from '../../common/button/IconButton.svelte';
-  import Dropdown from '../../common/dropdown/Dropdown.svelte';
-  import SearchFilters from '../search-filters/SearchFilters.svelte';
-  import type { Classification } from '@nuclia/core';
-  import Textarea from '../../common/textarea/Textarea.svelte';
   import InputImages from '../input-images/InputImages.svelte';
+  import SearchFilters from '../search-filters/SearchFilters.svelte';
+  import Suggestions from '../suggestions/Suggestions.svelte';
 
   let searchInputElement: Textarea = $state();
   const dispatch = createEventDispatcher();
@@ -380,6 +380,4 @@
   </div>
 </Modal>
 
-<style
-  lang="scss"
-  src="./SearchInput.scss"></style>
+<style src="./SearchInput.css"></style>

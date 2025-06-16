@@ -1,8 +1,8 @@
 <script lang="ts">
   import { switchMap, take } from 'rxjs';
+  import { Button, Checkbox, Dropdown, isMobileViewport } from '../../common';
   import IconButton from '../../common/button/IconButton.svelte';
   import { _, chat, sendFeedback, type RankedParagraph } from '../../core';
-  import { Button, Checkbox, Dropdown, isMobileViewport } from '../../common';
 
   interface Props {
     rank?: number;
@@ -119,6 +119,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Feedback.scss"></style>
+<style src="./Feedback.css"></style>

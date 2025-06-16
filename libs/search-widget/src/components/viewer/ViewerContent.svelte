@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
   import { filter } from 'rxjs';
-  import { currentResultType } from '../../core';
+  import { onDestroy } from 'svelte';
   import type { ResultType } from '../../core';
+  import { currentResultType } from '../../core';
   import {
     AudioRenderer,
     ConversationRenderer,
@@ -42,6 +42,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./ViewerContent.scss"></style>
+<style src="./ViewerContent.css"></style>
