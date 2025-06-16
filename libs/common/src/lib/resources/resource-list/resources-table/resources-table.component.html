@@ -41,6 +41,7 @@
               [labelSets]="labelSets | async"
               (selectionChange)="updateAddLabelList($event)"
               (close)="addLabelsToSelection()"
+              displayRadioForNonMultiple
               aspect="basic"
               size="small">
               {{ 'resource.labels.add' | translate }}
@@ -49,6 +50,7 @@
               [labelSets]="labelSets | async"
               (selectionChange)="updateRemoveLabelList($event)"
               (close)="removeLabelsToSelection()"
+              multiple
               aspect="basic"
               size="small">
               {{ 'resource.labels.remove' | translate }}
