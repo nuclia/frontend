@@ -1,4 +1,4 @@
-import type { ResultType, TypedResult } from '../models';
+import type { RankedParagraph, ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type {
   CloudLink,
@@ -8,6 +8,7 @@ import type {
   ConversationField,
   ConversationFieldPages,
   Paragraph,
+  Ask,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -246,6 +247,7 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
     const currentResult: TypedResult | null = state.currentResult
       ? {
           ...state.currentResult,
+          paragraphs: completeParagraphs(state.currentResult.paragraphs, fieldData),
           fieldData,
         }
       : null;
@@ -454,4 +456,27 @@ export function getFindParagraphFromParagraph(
     is_a_table: !!paragraph.representation?.is_a_table,
     reference: paragraph.representation?.reference_file || '',
   };
+}
+
+export function completeParagraphs(paragraphs: RankedParagraph[], fieldData?: IFieldData) {
+  // Augmented paragraphs need to be completed because page_number, start_seconds, end_seconds parameters are missing
+  return paragraphs.map((paragraph) => {
+    if (paragraph.fromAugmentedContext) {
+      const fullParagraph = fieldData?.extracted?.metadata?.metadata.paragraphs.find(
+        (item) => item.start == paragraph.position.start && item.end === paragraph.position.end,
+      );
+      return fullParagraph
+        ? {
+            ...paragraph,
+            position: {
+              ...paragraph.position,
+              start_seconds: fullParagraph.start_seconds,
+              end_seconds: fullParagraph.end_seconds,
+              page_number: fullParagraph.page?.page,
+            },
+          }
+        : paragraph;
+    }
+    return paragraph;
+  });
 }
