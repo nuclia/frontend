@@ -150,7 +150,7 @@ To update the glyphs sprite:
 
 ## NucliaDB admin
 
-To run locally it for dev purpose:
+To run it locally for dev purpose:
 
 ```
 docker network create nucliadb-network
