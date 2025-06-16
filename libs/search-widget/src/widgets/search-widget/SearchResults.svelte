@@ -106,6 +106,7 @@
   class="nuclia-widget sw-video-results"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasPartialResults}
       <div class="partial-results-warning">

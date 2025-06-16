@@ -123,6 +123,7 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
     <div class="search-box">
       <button onclick={() => fillState()}>Run demo</button>

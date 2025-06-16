@@ -161,6 +161,7 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if visible}
     <div
       class="backdrop"

@@ -410,6 +410,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
     <div class="search-box">
       <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')} />
@@ -443,5 +444,6 @@
     {@html svgSprite}
   </div>
 </div>
+
 
 <style src="./SearchBar.css"></style>
