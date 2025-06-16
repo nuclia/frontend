@@ -1,9 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { LabelListComponent } from './label-list/label-list.component';
-import { LabelFieldComponent } from './label-field/label-field.component';
+import { FormsModule } from '@angular/forms';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -15,6 +14,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { LabelDropdownComponent } from './label-dropdown/label-dropdown.component';
+import { LabelFieldComponent } from './label-field/label-field.component';
+import { LabelListComponent } from './label-list/label-list.component';
 
 const components = [LabelListComponent, LabelFieldComponent];
 
@@ -30,6 +31,7 @@ const components = [LabelListComponent, LabelFieldComponent];
     PaPopupModule,
     PaTogglesModule,
     DropdownButtonComponent,
+    FormsModule,
   ],
   declarations: [...components, LabelDropdownComponent],
   exports: [...components, LabelDropdownComponent],

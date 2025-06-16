@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
-import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { ControlModel, DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
+import { endOfDay } from 'date-fns';
+import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
-import { ResourceListService } from './resource-list.service';
 import {
   Filters,
   formatFiltersFromFacets,
@@ -16,8 +17,7 @@ import {
   MIME_FACETS,
   trimLabelSets,
 } from '../resource-filters.utils';
-import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
-import { endOfDay } from 'date-fns';
+import { ResourceListService } from './resource-list.service';
 
 @Component({
   templateUrl: './resource-list.component.html',
