@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { preventDefault, run } from 'svelte/legacy';
+  import { preventDefault } from 'svelte/legacy';
 
   import type { ResourceField, Search } from '@nuclia/core';
   import { combineLatest, forkJoin, of, switchMap, take } from 'rxjs';
@@ -51,7 +51,7 @@
   let thumbnailLoaded = $state(false);
   let showAllResults = $state($collapseTextBlocks);
 
-  let thumbnailInfo = $state({ fallback: '', isPlayable: false });
+  let thumbnailInfo = $derived(getThumbnailInfos(result));
   let innerWidth = $state(window.innerWidth);
   let toggledParagraphHeights: { [id: string]: number } = $state({});
   let nonToggledParagraphCount = $state(4);
@@ -60,10 +60,8 @@
   let expanded = $state(!$collapseTextBlocks);
   let isMobile = $derived(isMobileViewport(innerWidth));
   let paragraphs = $derived(result.paragraphs || []);
-  run(() => {
-    thumbnailInfo = getThumbnailInfos(result);
-  });
-  run(() => {
+
+  $effect(() => {
     if (showAllResults) {
       toggledParagraphTotalHeight = Object.values(toggledParagraphHeights).reduce((acc, height) => acc + height, 0);
       nonToggledParagraphCount = paragraphs.length - Object.keys(toggledParagraphHeights).length;

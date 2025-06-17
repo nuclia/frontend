@@ -1,8 +1,6 @@
 <svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import {
     parseRAGImageStrategies,
     parseRAGStrategies,
@@ -137,7 +135,7 @@
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
 
-  run(() => {
+  $effect(() => {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
   });
 
@@ -299,7 +297,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
     <Chat
       show={showChat}
@@ -317,4 +315,3 @@
     {@html svgSprite}
   </div>
 </div>
-

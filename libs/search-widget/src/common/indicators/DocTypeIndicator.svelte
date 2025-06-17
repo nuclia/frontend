@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   let { type } = $props();
 
   let typeIndicator = $state('');
-  run(() => {
+  $effect(() => {
     switch (type) {
       case 'audio':
         typeIndicator = 'audio';

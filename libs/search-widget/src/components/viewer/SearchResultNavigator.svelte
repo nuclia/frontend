@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import { _ } from '../../core/i18n';
@@ -17,7 +15,7 @@
   let containerElement: HTMLElement;
   const dispatch = createEventDispatcher();
 
-  run(() => {
+  $effect(() => {
     dispatch('offsetWidth', { offsetWidth });
   });
 

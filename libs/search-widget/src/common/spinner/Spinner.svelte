@@ -1,6 +1,4 @@
 <script>
-  import { run } from 'svelte/legacy';
-
   /**
    * @typedef {Object} Props
    * @property {string} [size]
@@ -10,7 +8,7 @@
   let { size = 'medium' } = $props();
 
   let sizeVar = $state();
-  run(() => {
+  $effect(() => {
     switch (size) {
       case 'small':
         sizeVar = `var(--rhythm-4)`;

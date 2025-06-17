@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { lightFormat } from 'date-fns';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { IconButton } from '../../../../common';
@@ -78,7 +76,7 @@
     playing = !player.paused;
   }
 
-  run(() => {
+  $effect(() => {
     if (player) {
       // don't override existing callbacks
       const onLoadedData = player.onloadeddata;

@@ -8,8 +8,6 @@
   accessors />
 
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { FieldFullId, KBStates, Widget } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
@@ -164,7 +162,7 @@
     return () => reset();
   });
   let fieldType = $derived(getFieldType(field_type));
-  run(() => {
+  $effect(() => {
     if (rid && field_id && fieldType) {
       const fullId = {
         resourceId: rid,
@@ -184,7 +182,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
     <Viewer />
   {/if}
@@ -195,5 +193,3 @@
     {@html svgSprite}
   </div>
 </div>
-
-

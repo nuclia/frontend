@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { delay, distinctUntilChanged, filter } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
@@ -18,14 +16,18 @@
 
   let { fullscreen = true, show = !fullscreen, height, standaloneChat = false }: Props = $props();
 
-  run(() => {
+  $effect(() => {
     if (fullscreen) {
-      show ? freezeBackground(true) : unblockBackground(true);
+      if (show) {
+        freezeBackground(true);
+      } else {
+        unblockBackground(true);
+      }
     }
   });
 
   const dispatch = createEventDispatcher();
-  let entriesContainerElement: HTMLDivElement = $state();
+  let entriesContainerElement: HTMLDivElement | undefined = $state();
 
   let isScrolling = $state(false);
 
@@ -37,10 +39,12 @@
         filter(() => show),
       )
       .subscribe(() => {
-        entriesContainerElement.scrollTo({
-          top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
-          behavior: 'smooth',
-        });
+        if (entriesContainerElement) {
+          entriesContainerElement.scrollTo({
+            top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
+            behavior: 'smooth',
+          });
+        }
       });
     return () => sub.unsubscribe();
   });

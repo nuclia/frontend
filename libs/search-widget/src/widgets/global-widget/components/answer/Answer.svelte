@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { Ask } from '@nuclia/core';
   import { isMobileViewport } from '../../../../common/utils';
   import { MarkdownRendering } from '../../../../components/viewer/renderers/renderings';
@@ -13,12 +11,8 @@
   }
 
   let { answer, rank = 0, hideFeedback = false }: Props = $props();
-  let text = $state('');
+  let text = $derived(answer.text || '');
   let innerWidth = $state(window.innerWidth);
-
-  run(() => {
-    text = answer.text || '';
-  });
   let isMobile = $derived(isMobileViewport(innerWidth));
 </script>
 

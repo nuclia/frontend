@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher } from 'svelte';
   import Button from '../button/Button.svelte';
   import { freezeBackground, unblockBackground } from './modal.utils';
@@ -22,8 +20,10 @@
     children,
   }: Props = $props();
 
-  run(() => {
-    show && freezeBackground();
+  $effect(() => {
+    if (show) {
+      freezeBackground();
+    }
   });
 
   const dispatch = createEventDispatcher();

@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
-  import { _, type JsonSchema, type JsonSchemaArray, type JsonSchemaObject } from '../../core';
+  import { _, type JsonSchema, type JsonSchemaArray, type JsonSchemaObject, type JsonSchemaType } from '../../core';
   import { JsonAnswer } from './index';
   import type { JsonAnswerItem } from './json-answer.model';
 
@@ -12,11 +10,8 @@
 
   let { jsonAnswer, jsonSchema }: Props = $props();
 
-  let items: JsonAnswerItem[] = $state([]);
-
-  run(() => {
-    const params = Object.entries(jsonSchema.parameters.properties);
-    items = params.reduce((list, [key, value]) => {
+  let items: JsonAnswerItem[] = $derived(
+    Object.entries(jsonSchema.parameters.properties).reduce((list, [key, value]) => {
       const label = value.description || key;
       if (jsonAnswer[key]) {
         if (value.type === 'object') {
@@ -45,7 +40,7 @@
               });
               break;
             default:
-              list.push({ label, value: (jsonAnswer[key] as Array<arrayValue.items.type>).join(', ') });
+              list.push({ label, value: (jsonAnswer[key] as Array<JsonSchemaType>).join(', ') });
               break;
           }
         } else {
@@ -53,8 +48,8 @@
         }
       }
       return list;
-    }, [] as JsonAnswerItem[]);
-  });
+    }, [] as JsonAnswerItem[]),
+  );
 </script>
 
 <div class="sw-json-answer">

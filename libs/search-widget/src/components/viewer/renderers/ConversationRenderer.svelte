@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { ConversationFieldData, FieldFullId, Message, Paragraph, Search } from '@nuclia/core';
   import { longToShortFieldType } from '@nuclia/core';
   import { lightFormat } from 'date-fns';
@@ -86,8 +84,10 @@
   onDestroy(() => {
     stopHighlight.next();
   });
-  run(() => {
-    !!viewerElement && highlightSelection();
+  $effect(() => {
+    if (!!viewerElement) {
+      highlightSelection();
+    }
   });
 </script>
 

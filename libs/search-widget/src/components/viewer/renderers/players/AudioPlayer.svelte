@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher, onMount } from 'svelte';
   import { _, getCDN } from '../../../../core';
   import { PlayerControls } from './';
@@ -44,7 +42,7 @@
       wavesAnimation.play();
     });
   }
-  run(() => {
+  $effect(() => {
     if (firstLoadDone && typeof time === 'number') {
       audio.currentTime = time;
       playAudioAndWaves();
