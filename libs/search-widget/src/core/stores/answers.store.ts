@@ -158,7 +158,7 @@ export const hideAnswer = answerState.writer<boolean, boolean>(
   (state, param) => ({ ...state, hideAnswer: param }),
 );
 
-export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedContextText) {
+export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedContextText): Search.FindParagraph {
   const position = paragraph.id.split('/').pop()?.split('-');
   return {
     order: 0,
@@ -168,9 +168,12 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
     id: paragraph.id,
     labels: [],
     position: {
-      index: 0,
+      index: paragraph.position?.index || 0,
       start: parseInt(position?.[0] || ''),
       end: parseInt(position?.[1] || ''),
+      page_number: paragraph.position?.page_number,
+      start_seconds: paragraph.position?.start_seconds,
+      end_seconds: paragraph.position?.end_seconds,
     },
     fuzzy_result: false,
     page_with_visual: false,
