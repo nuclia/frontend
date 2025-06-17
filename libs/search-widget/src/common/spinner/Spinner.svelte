@@ -7,17 +7,14 @@
   /** @type {Props} */
   let { size = 'medium' } = $props();
 
-  let sizeVar = $state();
-  $effect(() => {
+  let sizeVar = $derived.by(() => {
     switch (size) {
       case 'small':
-        sizeVar = `var(--rhythm-4)`;
-        break;
+        return `var(--rhythm-4)`;
       case 'large':
-        sizeVar = `var(--rhythm-12)`;
-        break;
+        return `var(--rhythm-12)`;
       default:
-        sizeVar = '';
+        return '';
     }
   });
 </script>
