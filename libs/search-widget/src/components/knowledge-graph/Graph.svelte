@@ -2,23 +2,23 @@
   import { run } from 'svelte/legacy';
 
   import { createEventDispatcher } from 'svelte';
-  import type { NerLink, NerLinkHydrated, NerNode } from '../../core/knowledge-graph.models';
+  import type { NerLinkHydrated, NerNode, NerNodeHydrated } from '../../core/knowledge-graph.models';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
   import { getFontColor } from '../../core/utils';
 
   // utility function for translating elements
-  const move = (x, y) => `transform: translate(${x}px, ${y}px)`;
+  const move = (x: number, y: number) => `transform: translate(${x}px, ${y}px)`;
 
   interface Props {
     // svg dimensions
-    height: any;
-    width: any;
+    height: number;
+    width: number;
     // an array of our particles
-    nodes?: any;
+    nodes?: NerNodeHydrated[];
     // an array of [name, force] pairs
-    forces?: any;
+    forces?: [string, any][];
     // an array NerLink to display as edges and apply as force.links
-    links?: any;
+    links?: NerLinkHydrated[];
     // array of visible family ids
     visibleFamilies: any;
   }
@@ -26,15 +26,15 @@
   let { height, width, nodes = [], forces = [], links = [], visibleFamilies }: Props = $props();
 
   const dispatch = createEventDispatcher();
-  let usedForceNames = $state([]);
-  let renderedDots = $state([]);
-  let renderedLinks: NerLink[] = $state([]);
+  let usedForceNames: string[] = $state([]);
+  let renderedDots: NerNodeHydrated[] = $state([]);
+  let renderedLinks: NerLinkHydrated[] = $state([]);
 
   let selectedNode: NerNode | null = $state(null);
   let selectedNodeRelationIds: string[] = $state([]);
 
-  let filteredNodes = $state();
-  let filteredLinks = $state();
+  let filteredNodes: NerNodeHydrated[] = $state([]);
+  let filteredLinks: NerLinkHydrated[] = $state([]);
   let simulation: any;
 
   run(() => {
@@ -49,27 +49,29 @@
   });
 
   run(() => {
-    // re-initialize forces when they change
-    forces.forEach(([name, force]) => {
-      simulation.force(name, force);
-    });
+    if (simulation) {
+      // re-initialize forces when they change
+      forces.forEach(([name, force]) => {
+        simulation.force(name, force);
+      });
 
-    // Update force link with our array of links
-    if (links.length > 0) {
-      simulation.force('link').links(links);
+      // Update force link with our array of links
+      if (links.length > 0) {
+        simulation.force('link').links(links);
+      }
+
+      // remove old forces
+      const newForceNames = forces.map(([name]) => name);
+      let oldForceNames = usedForceNames.filter((force) => !newForceNames.includes(force));
+      oldForceNames.forEach((name) => {
+        simulation.force(name, null);
+      });
+      usedForceNames = newForceNames;
+
+      // kick our simulation into high gear
+      simulation.alpha(1);
+      simulation.restart();
     }
-
-    // remove old forces
-    const newForceNames = forces.map(([name]) => name);
-    let oldForceNames = usedForceNames.filter((force) => !newForceNames.includes(force));
-    oldForceNames.forEach((name) => {
-      simulation.force(name, null);
-    });
-    usedForceNames = newForceNames;
-
-    // kick our simulation into high gear
-    simulation.alpha(1);
-    simulation.restart();
   });
 
   run(() => {
@@ -125,6 +127,8 @@
   }
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <figure
   class="sw-graph"
   onclick={() => selectNode(null)}>
@@ -148,6 +152,7 @@
     {/each}
 
     {#each renderedDots as dot, i (dot.id)}
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <g
         class="node"
         class:selected={selectedNode === filteredNodes[i]}

@@ -1,5 +1,7 @@
 <script lang="ts">
   import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
+  import { extent } from 'd3';
+  import { forceLink, forceManyBody, forceX, forceY, type SimulationLinkDatum } from 'd3-force';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -30,12 +32,12 @@
   const minRadius = 6;
 
   let families: NerFamily[] = $state([]);
-  let innerHeight: number = $state();
-  let innerWidth: number = $state();
-  let nodes: NerNode[] = $state();
-  let links: NerLink[] = $state();
+  let innerHeight: number = $state(0);
+  let innerWidth: number = $state(0);
+  let nodes: NerNode[] = $state([]);
+  let links: NerLink[] = $state([]);
 
-  let visibleFamilies: string[] = $state();
+  let visibleFamilies: string[] = $state([]);
 
   let graphWidth = $derived(
     rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth,
@@ -44,27 +46,24 @@
 
   let chargeStrength = $derived(!nodes || nodes.length > 100 ? -80 : -160);
   let centerPosition = $derived([graphWidth / 2, graphHeight / 2]);
-  let activeForceX = $derived(d3.forceX().x(centerPosition[0]));
-  let activeForceY = $derived(d3.forceY().y(centerPosition[1]));
-  let forces = $derived(
+  let activeForceX = $derived(forceX().x(centerPosition[0]));
+  let activeForceY = $derived(forceY().y(centerPosition[1]));
+  let forces: [string, any][] = $derived([
+    ['x', activeForceX],
+    ['y', activeForceY],
     [
-      ['x', activeForceX],
-      ['y', activeForceY],
-      [
-        'link',
-        d3
-          .forceLink()
-          .id((d) => (d as NerNode).id)
-          .distance((link: d3.SimulationLinkDatum<any>) => {
-            const source: NerNode = link.source;
-            const target: NerNode = link.target;
-            const radiusSum = source.radius + target.radius;
-            return radiusSum + radiusSum / 2;
-          }),
-      ],
-      ['charge', d3.forceManyBody().strength(chargeStrength)],
-    ].filter((d) => d),
-  );
+      'link',
+      forceLink()
+        .id((d) => (d as NerNode).id)
+        .distance((link: SimulationLinkDatum<any>) => {
+          const source: NerNode = link.source;
+          const target: NerNode = link.target;
+          const radiusSum = source.radius + target.radius;
+          return radiusSum + radiusSum / 2;
+        }),
+    ],
+    ['charge', forceManyBody().strength(chargeStrength)],
+  ]);
 
   onMount(() => {
     fieldMetadata
@@ -88,11 +87,11 @@
   });
 
   function getNodes(positions: EntityPositionsWithRelevance): NerNode[] {
-    const relevanceList = Object.values(positions)
+    const relevanceList: number[] = Object.values(positions)
       .map((position) => position.relevance)
-      .filter((value) => value);
-    const [, maxRelevance] = d3.extent(relevanceList);
-    const radiusRatio = Math.max(1, maxRadius / maxRelevance);
+      .filter((value) => typeof value === 'number');
+    const [, maxRelevance] = extent(relevanceList);
+    const radiusRatio = Math.max(1, maxRadius / (maxRelevance as number));
     return (
       Object.keys(positions)
         .reduce((list, id) => {
@@ -194,7 +193,7 @@
         families.push(node.family);
       }
       return families;
-    }, []);
+    }, [] as string[]);
     families = visibleFamilies
       .map((id) => {
         const generatedEntityColor = generatedEntitiesColor[id];
