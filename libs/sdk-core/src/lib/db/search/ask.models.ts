@@ -167,6 +167,14 @@ export namespace Ask {
     id: string;
     text: string;
     parent?: string;
+    position?: {
+      index: number;
+      start: number;
+      end: number;
+      start_seconds?: number[];
+      end_seconds?: number[];
+      page_number?: number;
+    };
     augmentation_type:
       | RagStrategyName.FULL_RESOURCE
       | RagStrategyName.HIERARCHY
