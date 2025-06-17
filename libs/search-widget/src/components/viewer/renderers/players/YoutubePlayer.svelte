@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { getYoutubeId } from '../../../../core/utils';
 
@@ -10,14 +8,14 @@
   }
 
   let { uri, time }: Props = $props();
-  let playerElement: HTMLElement = $state();
+  let playerElement: HTMLElement | undefined = $state();
   let player: any = $state();
   let apiReady = false;
   let videoReady = $state(false);
   let paused = false;
   const dispatch = createEventDispatcher();
 
-  run(() => {
+  $effect(() => {
     if (videoReady && typeof time === 'number') {
       player?.seekTo(time);
       player?.playVideo();

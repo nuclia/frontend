@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { Search } from '@nuclia/core';
   import type { Subscription } from 'rxjs';
   import { debounceTime, filter, Subject } from 'rxjs';
@@ -159,15 +157,17 @@
       pdfViewer.currentScaleValue = scale;
     }
   }
-  run(() => {
-    src && loadPdf();
+  $effect(() => {
+    if (pdfViewer && paragraph && paragraph.text) {
+      findSelectedText();
+    }
   });
-  run(() => {
-    pdfViewer && paragraph && paragraph.text && findSelectedText();
+  $effect(() => {
+    if (pdfViewer && !paragraph) {
+      unselectText();
+    }
   });
-  run(() => {
-    pdfViewer && !paragraph && unselectText();
-  });
+
   let isMobile = $derived(isMobileViewport(innerWidth));
   let scale = $derived(isMobile ? 'page-fit' : 'auto');
 </script>

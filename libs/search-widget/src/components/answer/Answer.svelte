@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { Ask, Citations, FieldId } from '@nuclia/core';
   import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, sliceUnicode } from '@nuclia/core';
   import { take } from 'rxjs';
@@ -43,7 +41,8 @@
   }
 
   let { answer, rank = 0, initialAnswer = false }: Props = $props();
-  let text = $state('');
+  let text = $derived(addReferences(answer.text || '', answer.citations || {}));
+  let sources = $derived(getSourcesResults(answer));
   let selectedCitation: number | undefined = $state();
   let element: HTMLElement | undefined = $state();
   let copied = $state(false);
@@ -56,7 +55,7 @@
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
   const TABLE_BORDER = new RegExp(/^[-|]+$/);
 
-  function addReferences(text: string, citations: Citations) {
+  function addReferences(rawText: string, citations: Citations) {
     Object.values(citations)
       .reduce(
         (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
@@ -65,8 +64,8 @@
       .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
       .reverse()
       .forEach((ref) => {
-        let before = sliceUnicode(text, 0, ref.end);
-        let after = sliceUnicode(text, ref.end);
+        let before = sliceUnicode(rawText, 0, ref.end);
+        let after = sliceUnicode(rawText, ref.end);
         const lines = before.split('\n');
         const lastLine = lines[lines.length - 1];
         const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
@@ -83,9 +82,9 @@
           before = before.slice(0, -1);
           after = `${lastChar}${after}`;
         }
-        text = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
+        rawText = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
       });
-    return text;
+    return rawText;
   }
 
   function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
@@ -215,16 +214,14 @@
       }, 2000);
     });
   }
-  run(() => {
-    text = addReferences(answer.text || '', answer.citations || {});
-  });
-  let sources = $derived(getSourcesResults(answer));
-  run(() => {
-    sources &&
+
+  $effect(() => {
+    if (sources) {
       (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
         ref.addEventListener('mouseenter', onMouseEnter);
         ref.addEventListener('mouseleave', onMouseLeave);
       });
+    }
   });
   let images = $derived(
     answer.citations && sources

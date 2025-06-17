@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { IconButton } from '../button';
 
@@ -52,7 +50,7 @@
       dispatch('toggleExpander', { expanded: false });
     }, duration);
   };
-  run(() => {
+  $effect(() => {
     if (expanded) {
       expand();
     } else {

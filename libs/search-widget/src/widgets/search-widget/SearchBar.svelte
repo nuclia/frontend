@@ -8,8 +8,6 @@
   accessors />
 
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import {
     parseRAGImageStrategies,
     parseRAGStrategies,
@@ -163,12 +161,12 @@
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let initHook = $derived(componentProps.initHook || config.initHook);
-
   let darkMode = $derived(mode === 'dark');
-  run(() => {
+
+  $effect(() => {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
   });
-  run(() => {
+  $effect(() => {
     widgetPlaceholder.set(placeholder || 'input.placeholder');
   });
 
@@ -410,7 +408,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
     <div class="search-box">
       <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')} />
@@ -444,6 +442,5 @@
     {@html svgSprite}
   </div>
 </div>
-
 
 <style src="./SearchBar.css"></style>

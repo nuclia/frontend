@@ -1,32 +1,24 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   let { type } = $props();
 
-  let typeIndicator = $state('');
-  run(() => {
+  let typeIndicator = $derived.by(() => {
     switch (type) {
       case 'audio':
-        typeIndicator = 'audio';
-        break;
+        return 'audio';
       case 'conversation':
-        typeIndicator = 'conv';
-        break;
+        return 'conv';
       case 'image':
-        typeIndicator = 'image';
-        break;
+        return 'image';
       case 'pdf':
-        typeIndicator = 'document';
-        break;
+        return 'document';
       case 'spreadsheet':
-        typeIndicator = 'spreadsheet';
-        break;
+        return 'spreadsheet';
       case 'text':
-        typeIndicator = 'text';
-        break;
+        return 'text';
       case 'video':
-        typeIndicator = 'video';
-        break;
+        return 'video';
+      default:
+        return '';
     }
   });
 </script>

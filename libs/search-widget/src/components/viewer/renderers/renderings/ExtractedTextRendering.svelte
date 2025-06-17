@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { Search } from '@nuclia/core';
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
@@ -35,8 +33,10 @@
       );
     }
   }
-  run(() => {
-    !!selectedParagraph && textViewerElement && highlightSelection();
+  $effect(() => {
+    if (!!selectedParagraph && textViewerElement) {
+      highlightSelection();
+    }
   });
 </script>
 

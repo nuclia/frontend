@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import type { FileField, Search, TextField } from '@nuclia/core';
   import { Observable, of, switchMap } from 'rxjs';
   import { fieldData, getTextFile } from '../../../../core';
@@ -55,8 +53,10 @@
       }
     }
   }
-  run(() => {
-    !!selectedParagraph && bodyElement && highlightSelection();
+  $effect(() => {
+    if (!!selectedParagraph && bodyElement) {
+      highlightSelection();
+    }
   });
 </script>
 

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher, onDestroy } from 'svelte';
   import { getTempToken, isPrivateKnowledgeBox } from '../../../../core';
   import { PlayerControls } from './index';
@@ -11,12 +9,12 @@
 
   const dispatch = createEventDispatcher();
 
-  let player: HTMLMediaElement = $state();
+  let player: HTMLMediaElement | undefined = $state();
   let dashPlayer: any;
   let loaded = $state(false);
   let paused = true;
 
-  run(() => {
+  $effect(() => {
     if (loaded && typeof time === 'number') {
       if (player) {
         player.currentTime = time;

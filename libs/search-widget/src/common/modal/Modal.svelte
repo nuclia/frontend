@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, getFixedRootParentIfAny, iOSDevice, unblockBackground } from './modal.utils';
 
@@ -29,13 +27,17 @@
 
   const isIOS = iOSDevice();
 
-  run(() => {
+  $effect(() => {
     if (!popup) {
       if (show) {
         freezeBackground();
       } else {
         unblockBackground();
       }
+    }
+
+    if (show) {
+      refreshPosition();
     }
   });
 
@@ -60,12 +62,6 @@
       }
     }
   }
-
-  run(() => {
-    if (show) {
-      refreshPosition();
-    }
-  });
 
   const dispatch = createEventDispatcher();
   let modalContentHeight: string = $state('100%');
