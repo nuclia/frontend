@@ -106,9 +106,7 @@ export class SearchPageComponent implements OnDestroy {
     this.document.addEventListener('mouseup', finishResize);
   }
 
-  onScroll(event: MouseEvent | KeyboardEvent) {
-    const scrollTop = (event.target as HTMLElement).scrollTop;
-    console.log(scrollTop, event.target);
-    this.panelTop.set(scrollTop);
+  onScroll(event: Event) {
+    this.panelTop.set((event.target as HTMLElement).scrollTop);
   }
 }
