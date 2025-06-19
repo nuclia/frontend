@@ -1,23 +1,25 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
-  ViewChild,
+  signal,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { filter, map, switchMap } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
 import { SearchWidgetService } from './search-widget.service';
 import { CreateWidgetDialogComponent } from './widgets';
-import { Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-search-page',
@@ -32,12 +34,18 @@ export class SearchPageComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
+  private document = inject(DOCUMENT);
 
-  @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
+  configurationContainerElement = viewChild<ElementRef>('configurationContainer');
+
   widgetPreview = this.searchWidgetService.widgetPreview;
   searchConfig?: Widget.AnySearchConfiguration;
 
   configPanelCollapsed = false;
+
+  minPanelWidth = 480;
+  panelWidth = signal(this.minPanelWidth);
+  configPanelWidth = computed(() => `${this.panelWidth()}px`);
 
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
@@ -76,5 +84,22 @@ export class SearchPageComponent implements OnDestroy {
       undefined,
       '.search-preview-container',
     );
+  }
+
+  startResizePanel(event: MouseEvent) {
+    event.preventDefault();
+    const mouseX = event.clientX;
+    const lastWidth = this.panelWidth();
+
+    const duringResize = (e: MouseEvent) => {
+      const width = lastWidth + (mouseX - e.clientX);
+      this.panelWidth.set(Math.max(width, this.minPanelWidth));
+    };
+    const finishResize = (e: MouseEvent) => {
+      this.document.removeEventListener('mousemove', duringResize);
+      this.document.removeEventListener('mouseup', finishResize);
+    };
+    this.document.addEventListener('mousemove', duringResize);
+    this.document.addEventListener('mouseup', finishResize);
   }
 }

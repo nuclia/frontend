@@ -1,5 +1,9 @@
-<div class="search-page">
-  <div class="search-preview-container page-spacing">
+<div
+  class="search-page"
+  [style]="'--panel-width:' + configPanelWidth()">
+  <div
+    class="search-preview-container page-spacing"
+    [class.panel-open]="!configPanelCollapsed">
     <header>
       <div class="page-title">
         {{ 'search.title' | translate }}
@@ -26,6 +30,11 @@
     #configurationContainer
     class="search-configuration-container"
     [class.collapsed]="configPanelCollapsed">
+    <div
+      class="resizer"
+      (mousedown)="startResizePanel($event)">
+      <div class="border"></div>
+    </div>
     <pa-button
       class="close-button"
       icon="cross"
@@ -37,7 +46,7 @@
     <stf-search-configuration
       displayWidgetButtonLine
       mainTitle="search.configuration.saved-config-title"
-      [configurationContainer]="configurationContainerElement"
+      [configurationContainer]="configurationContainerElement()"
       (configUpdate)="updateConfig($event)"
       (createWidget)="createWidget()"></stf-search-configuration>
   </div>
