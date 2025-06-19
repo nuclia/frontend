@@ -2,13 +2,11 @@
 
 .search-page {
   $spacing: rhythm(4);
-  $panel-width: rhythm(60);
 
   display: flex;
 
   .search-preview-container {
     display: flex;
-    // flex: 1;
     flex-direction: column;
     gap: $spacing;
     height: calc(100vh - var(--app-topbar-height));
@@ -23,7 +21,7 @@
     }
 
     &.panel-open {
-      width: calc(100% - #{$panel-width});
+      width: calc(100% - var(--panel-width));
     }
   }
 
@@ -45,17 +43,18 @@
   }
 
   .search-configuration-container {
-    border-left: 1px solid $color-neutral-light;
+    background-color: $color-light-stronger;
     height: calc(100vh - var(--app-topbar-height));
     overflow-y: auto;
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom);
     position: absolute;
     right: 0;
     transition: transform $transition-slide;
-    width: $panel-width;
+    /* Add 2px to the panel width for the resizer space */
+    width: calc(var(--panel-width) + #{rhythm(0.25)});
 
     &.collapsed {
-      transform: translateX(#{$panel-width});
+      transform: translateX(var(--panel-width));
     }
 
     .close-button {
@@ -63,6 +62,25 @@
       position: absolute;
       right: var(--app-layout-padding-right);
       top: rhythm(2);
+    }
+
+    /* Resizer area is 2px each side of the border to make it easily clickable */
+    .resizer {
+      cursor: col-resize;
+      height: 100%;
+      left: 0;
+      opacity: 0.5;
+      position: absolute;
+      top: 0;
+      width: calc(#{rhythm(0.5)} + 1px);
+
+      .border {
+        background: $color-neutral-light;
+        height: 100%;
+        left: rhythm(0.25);
+        position: relative;
+        width: 1px;
+      }
     }
   }
 }
