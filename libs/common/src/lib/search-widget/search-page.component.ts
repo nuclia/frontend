@@ -37,14 +37,15 @@ export class SearchPageComponent implements OnDestroy {
   private document = inject(DOCUMENT);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
+  searchConfigurationComponent = viewChild(SearchConfigurationComponent);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   searchConfig?: Widget.AnySearchConfiguration;
 
   configPanelCollapsed = false;
 
-  minPanelWidth = 480;
-  panelWidth = signal(this.minPanelWidth);
+  minPanelWidth = 320;
+  panelWidth = signal(480);
   configPanelWidth = computed(() => `${this.panelWidth()}px`);
 
   ngOnDestroy() {
@@ -98,6 +99,7 @@ export class SearchPageComponent implements OnDestroy {
     const finishResize = (e: MouseEvent) => {
       this.document.removeEventListener('mousemove', duringResize);
       this.document.removeEventListener('mouseup', finishResize);
+      this.searchConfigurationComponent()?.updateHeight();
     };
     this.document.addEventListener('mousemove', duringResize);
     this.document.addEventListener('mouseup', finishResize);

@@ -464,6 +464,12 @@ export class SearchConfigurationComponent {
     this.resultsItem?.updateContentHeight();
   }
 
+  updateHeight() {
+    this.updateSearchBoxHeight();
+    this.updateGenerativeAnswerHeight();
+    this.updateResultsHeight();
+  }
+
   scrollOnTop() {
     this.configurationContainer?.nativeElement.scrollTo(0, { scrollingBehaviour: 'smooth' });
   }

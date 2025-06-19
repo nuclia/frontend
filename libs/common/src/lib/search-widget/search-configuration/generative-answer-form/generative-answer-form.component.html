@@ -236,20 +236,34 @@
           <div
             class="extra-fields"
             [class.visible]="includeNeighbouringParagraphsEnabled">
-            <pa-input
-              formControlName="precedingParagraphs"
-              type="number">
-              {{
-                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding' | translate
-              }}
-            </pa-input>
-            <pa-input
-              formControlName="succeedingParagraphs"
-              type="number">
-              {{
-                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.succeeding' | translate
-              }}
-            </pa-input>
+            <div>
+              <label
+                for="before"
+                class="extra-label">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding' | translate
+                }}
+              </label>
+              <pa-input
+                id="before"
+                formControlName="precedingParagraphs"
+                type="number"
+                externalLabel></pa-input>
+            </div>
+            <div>
+              <label
+                for="after"
+                class="extra-label">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.succeeding' | translate
+                }}
+              </label>
+              <pa-input
+                id="after"
+                formControlName="succeedingParagraphs"
+                type="number"
+                externalLabel></pa-input>
+            </div>
           </div>
         </div>
         <div class="config-form-field">
