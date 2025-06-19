@@ -134,6 +134,11 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let initHook: (n: Nuclia) => void = () => {};
+
+  export function setInitHook(fn: (n: Nuclia) => void) {
+    initHook = fn;
+  }
 
   $effect(() => {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
@@ -181,6 +186,7 @@
   let container: HTMLElement = $state();
 
   ready.pipe(delay(200)).subscribe(() => {
+    initHook(nucliaAPI);
     // any feature that calls the Nuclia API immediately at init time must be done here
     if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
