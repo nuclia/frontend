@@ -67,13 +67,14 @@
                 </div>
               } @else {
                 @if (field.value['widget'] === 'textarea') {
-                  <pa-textarea
+                  <nsi-expandable-textarea
                     resizable
                     [formControlName]="field.key"
                     [rows]="2"
-                    [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                    [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')"
+                    [modalTitle]="field.value.title">
                     {{ field.value.title }}
-                  </pa-textarea>
+                  </nsi-expandable-textarea>
                 } @else if (field.value.values) {
                   <div>
                     <label [for]="field.key">{{ field.value.title }}</label>

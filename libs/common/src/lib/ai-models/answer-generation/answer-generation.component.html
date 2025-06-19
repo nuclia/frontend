@@ -57,13 +57,14 @@
                   }
                 </pa-select>
 
-                <pa-textarea
+                <nsi-expandable-textarea
                   formControlName="prompt"
                   resizable
                   acceptHtmlTags
+                  modalTitle="kb.ai-models.common.prompt.label"
                   [rows]="3">
                   {{ 'kb.ai-models.common.prompt.label' | translate }}
-                </pa-textarea>
+                </nsi-expandable-textarea>
 
                 <nsi-info-card
                   type="warning"
@@ -95,13 +96,14 @@
                   }
                 </pa-select>
 
-                <pa-textarea
+                <nsi-expandable-textarea
                   formControlName="system"
                   resizable
                   acceptHtmlTags
+                  modalTitle="kb.ai-models.answer-generation.behavior.label"
                   [rows]="3">
                   {{ 'kb.ai-models.answer-generation.behavior.label' | translate }}
-                </pa-textarea>
+                </nsi-expandable-textarea>
               </div>
             </nsi-two-columns-configuration-item>
           }

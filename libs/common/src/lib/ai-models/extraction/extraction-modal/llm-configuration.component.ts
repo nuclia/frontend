@@ -4,7 +4,7 @@ import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
-import { ButtonMiniComponent, InfoCardComponent } from '@nuclia/sistema';
+import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -17,6 +17,7 @@ import { startWith, Subject, takeUntil } from 'rxjs';
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
+    ExpandableTextareaComponent,
   ],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',

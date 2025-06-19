@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,19 +9,19 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, take, takeUntil } from 'rxjs';
 import {
   getLearningConfigPropType,
   getSubSchema,
   type LearningConfigurationOption,
-  type LearningConfigurations,
   type LearningConfigurationProperty,
+  type LearningConfigurations,
 } from '@nuclia/core';
-import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { Subject, take, takeUntil } from 'rxjs';
 import { keyProviders } from '../../ai-models.utils';
 
 export type UserKeysForm = FormGroup<{
@@ -43,6 +44,7 @@ interface UserKeysProperties {
     ReactiveFormsModule,
     TranslateModule,
     UnauthorizedFeatureDirective,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './user-keys.component.html',
   styleUrls: ['./user-keys.component.scss'],
