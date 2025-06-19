@@ -1,6 +1,6 @@
 <div
   class="search-page"
-  [style]="'--panel-width:' + configPanelWidth()">
+  [style]="cssVariables()">
   <div
     class="search-preview-container page-spacing"
     [class.panel-open]="!configPanelCollapsed">
@@ -29,7 +29,8 @@
   <div
     #configurationContainer
     class="search-configuration-container"
-    [class.collapsed]="configPanelCollapsed">
+    [class.collapsed]="configPanelCollapsed"
+    (scroll)="onScroll($event)">
     <div
       class="resizer"
       (mousedown)="startResizePanel($event)">

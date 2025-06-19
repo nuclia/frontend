@@ -45,8 +45,9 @@ export class SearchPageComponent implements OnDestroy {
   configPanelCollapsed = false;
 
   minPanelWidth = 320;
+  panelTop = signal(0);
   panelWidth = signal(480);
-  configPanelWidth = computed(() => `${this.panelWidth()}px`);
+  cssVariables = computed(() => `--panel-width:${this.panelWidth()}px; --panel-top:${this.panelTop()}px`);
 
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
@@ -103,5 +104,11 @@ export class SearchPageComponent implements OnDestroy {
     };
     this.document.addEventListener('mousemove', duringResize);
     this.document.addEventListener('mouseup', finishResize);
+  }
+
+  onScroll(event: MouseEvent | KeyboardEvent) {
+    const scrollTop = (event.target as HTMLElement).scrollTop;
+    console.log(scrollTop, event.target);
+    this.panelTop.set(scrollTop);
   }
 }
