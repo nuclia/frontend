@@ -2,14 +2,15 @@
   "name": "nucliadb-admin",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "sourceRoot": "apps/nucliadb-admin/src",
+  "prefix": "nad",
+  "tags": [],
   "generators": {
     "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }
   },
-  "sourceRoot": "apps/nucliadb-admin/src",
-  "prefix": "nad",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -182,7 +183,8 @@
           "buildTarget": "nucliadb-admin:build:local-stage"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -200,6 +202,5 @@
         "jestConfig": "apps/nucliadb-admin/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
