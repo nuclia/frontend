@@ -111,7 +111,6 @@
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
     security_groups?: string | undefined;
-    initHook: (n: Nuclia) => void = () => {};
   }
 
   let { ...componentProps } = $props();
@@ -160,7 +159,6 @@
   let widget_id = $derived(componentProps.widget_id || config.widget_id);
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
-  let initHook = $derived(componentProps.initHook || config.initHook);
   let darkMode = $derived(mode === 'dark');
 
   $effect(() => {
@@ -181,6 +179,11 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let initHook: (n: Nuclia) => void = () => {};
+
+  export function setInitHook(fn: (n: Nuclia) => void) {
+    initHook = fn;
+  }
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     searchQuery.set(query);
