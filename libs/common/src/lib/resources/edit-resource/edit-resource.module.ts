@@ -1,28 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
 import {
-  AddFieldComponent,
-  DropzoneComponent,
-  EditResourceComponent,
-  ParagraphAnnotationComponent,
-  ParagraphClassificationComponent,
-  PreviewComponent,
-  ResourceClassificationComponent,
-  ResourceFileComponent,
-  ResourceLinkComponent,
-  ResourceProfileComponent,
-  ResourceTextComponent,
-  SelectFirstFieldDirective,
-} from './';
-import {
-  BadgeComponent,
-  DropdownButtonComponent,
-  JsonViewerComponent,
-  LabelsExpanderComponent,
-  SisProgressModule,
-  InfoCardComponent,
-} from '@nuclia/sistema';
-import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
   PaButtonModule,
   PaChipsModule,
   PaDatePickerModule,
@@ -37,19 +21,36 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  AccordionBodyDirective,
-  AccordionComponent,
-  AccordionItemComponent,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
-import { RouterModule } from '@angular/router';
+import {
+  BadgeComponent,
+  DropdownButtonComponent,
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  JsonViewerComponent,
+  LabelsExpanderComponent,
+  SisProgressModule,
+} from '@nuclia/sistema';
 import { HintModule } from '../../hint/hint.module';
-import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 import { PipesModule } from '../../pipes';
-import { PreviewTableComponent } from './preview/preview-table.component';
+import {
+  AddFieldComponent,
+  DropzoneComponent,
+  EditResourceComponent,
+  ParagraphAnnotationComponent,
+  ParagraphClassificationComponent,
+  PreviewComponent,
+  ResourceClassificationComponent,
+  ResourceFileComponent,
+  ResourceLinkComponent,
+  ResourceProfileComponent,
+  ResourceTextComponent,
+  SelectFirstFieldDirective,
+} from './';
 import { RelationsComponent } from './annotation/relations/relations.component';
+import { PreviewTableComponent } from './preview/preview-table.component';
+import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 
 @NgModule({
   imports: [
@@ -93,6 +94,7 @@ import { RelationsComponent } from './annotation/relations/relations.component';
     PaTooltipModule,
     RelationsComponent,
     InfoCardComponent,
+    ExpandableTextareaComponent,
   ],
   declarations: [
     AddFieldComponent,

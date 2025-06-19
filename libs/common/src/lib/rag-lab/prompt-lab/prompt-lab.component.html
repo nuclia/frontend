@@ -36,15 +36,16 @@
         }
       </pa-select>
       <div class="field-and-button">
-        <pa-textarea
+        <nsi-expandable-textarea
           resizable
           acceptHtmlTags
           rows="3"
+          modalTitle="rag-lab.prompt-lab.configuration.prompt.label"
           [(value)]="currentPrompt"
           [help]="'rag-lab.prompt-lab.configuration.prompt.placeholder' | translate"
           (resizing)="updateFormContent()">
           {{ 'rag-lab.prompt-lab.configuration.prompt.label' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
       </div>
     </div>
     <div class="field-spacing">
@@ -60,15 +61,16 @@
         }
       </pa-select>
       <div class="field-and-button">
-        <pa-textarea
+        <nsi-expandable-textarea
           resizable
           acceptHtmlTags
           rows="3"
+          modalTitle="rag-lab.prompt-lab.configuration.system-prompt.label"
           [(value)]="currentSystemPrompt"
           [help]="'rag-lab.prompt-lab.configuration.system-prompt.placeholder' | translate"
           (resizing)="updateFormContent()">
           {{ 'rag-lab.prompt-lab.configuration.system-prompt.label' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
       </div>
     </div>
 

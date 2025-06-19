@@ -28,12 +28,14 @@
         </div>
 
         <div class="field-block">
-          <pa-textarea
+          <nsi-expandable-textarea
             id="text"
             formControlName="text"
+            modalTitle="resource.field-text-body-label"
+            resizable
             acceptHtmlTags>
             {{ 'resource.field-text-body-label' | translate }}
-          </pa-textarea>
+          </nsi-expandable-textarea>
         </div>
       </ng-container>
 

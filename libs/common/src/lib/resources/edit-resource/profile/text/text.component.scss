@@ -2,7 +2,7 @@
 @use '../../edit-resource.tokens' as tokens;
 
 :host {
-  pa-textarea ::ng-deep textarea {
+  nsi-expandable-textarea ::ng-deep textarea {
     height: calc(
       100vh - var(--app-topbar-height) - #{tokens.$height-header} - var(--app-layout-padding-top) - #{tokens.$footer-height} -
         #{tokens.$footer-margin}

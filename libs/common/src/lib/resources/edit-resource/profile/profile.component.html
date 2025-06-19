@@ -29,14 +29,15 @@
                 formControlName="title">
                 {{ 'resource.title' | translate }}
               </pa-input>
-              <pa-textarea
+              <nsi-expandable-textarea
                 id="summary"
                 formControlName="summary"
                 resizable
+                modalTitle="resource.summary"
                 (resizing)="onResizingTextarea(generalAccordionItem)"
                 [rows]="5">
                 {{ 'resource.summary' | translate }}
-              </pa-textarea>
+              </nsi-expandable-textarea>
 
               @if (hiddenResourcesEnabled | async) {
                 <pa-toggle
@@ -138,12 +139,13 @@
                 formControlName="url">
                 {{ 'resource.origin.url' | translate }}
               </pa-input>
-              <pa-textarea
+              <nsi-expandable-textarea
                 id="related"
                 formControlName="related"
+                modalTitle="resource.origin.related"
                 [rows]="3">
                 {{ 'resource.origin.related' | translate }}
-              </pa-textarea>
+              </nsi-expandable-textarea>
               <pa-input
                 id="path"
                 formControlName="path">
@@ -203,14 +205,15 @@
               </pa-toggle>
 
               @if (editExtraMetadata) {
-                <pa-textarea
+                <nsi-expandable-textarea
                   id="extra"
                   formControlName="extra"
                   resizable
+                  modalTitle="resource.extra-metadata.label"
                   (resizing)="onResizingTextarea(extraAccordionItem)"
                   [rows]="5">
                   {{ 'resource.extra-metadata.label' | translate }}
-                </pa-textarea>
+                </nsi-expandable-textarea>
               } @else {
                 <nsi-json-viewer [json]="extraMetadata"></nsi-json-viewer>
               }
@@ -225,14 +228,15 @@
             <section
               class="form-section"
               formGroupName="security">
-              <pa-textarea
+              <nsi-expandable-textarea
                 [rows]="3"
                 [help]="'resource.security.access-groups.help' | translate"
                 formControlName="access_groups"
                 resizable
+                modalTitle="resource.security.access-groups.label"
                 (resizing)="onResizingTextarea(securityAccordionItem)">
                 {{ 'resource.security.access-groups.label' | translate }}
-              </pa-textarea>
+              </nsi-expandable-textarea>
             </section>
           </pa-accordion-item-body>
         </pa-accordion-item>
