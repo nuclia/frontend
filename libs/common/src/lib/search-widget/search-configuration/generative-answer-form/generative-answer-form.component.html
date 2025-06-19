@@ -417,13 +417,14 @@
           <div
             class="extra-fields"
             [class.visible]="fieldsAsContextEnabled">
-            <pa-textarea
+            <nsi-expandable-textarea
               formControlName="fieldIds"
               resizable
               rows="4"
+              modalTitle="search.configuration.generative-answer.rag-strategies.specific-fields.textarea-label"
               (resizing)="heightChanged.emit()">
               {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.textarea-label' | translate }}
-            </pa-textarea>
+            </nsi-expandable-textarea>
             <nsi-info-card>
               {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.info-box' | translate }}
             </nsi-info-card>

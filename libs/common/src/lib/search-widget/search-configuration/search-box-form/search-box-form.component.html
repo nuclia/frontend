@@ -104,14 +104,15 @@
         <nsi-info-card>
           <span [innerHTML]="'search.configuration.search-box.preselected-filters.info-box' | translate"></span>
         </nsi-info-card>
-        <pa-textarea
+        <nsi-expandable-textarea
           formControlName="preselectedFilters"
           resizable
           rows="4"
           help="search.configuration.search-box.preselected-filters.textarea-help"
+          modalTitle="search.configuration.search-box.preselected-filters.textarea-label"
           (resizing)="heightChanged.emit()">
           {{ 'search.configuration.search-box.preselected-filters.textarea-label' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
         <pa-button
           class="align-on-right"
           (click)="openFiltersAssistant()">
@@ -359,14 +360,15 @@
         <nsi-info-card type="warning">
           {{ 'search.configuration.search-box.security-groups.info-box' | translate }}
         </nsi-info-card>
-        <pa-textarea
+        <nsi-expandable-textarea
           formControlName="securityGroups"
           resizable
           rows="4"
           help="search.configuration.search-box.security-groups.textarea-help"
+          modalTitle="search.configuration.search-box.security-groups.toggle-label"
           (resizing)="heightChanged.emit()">
           {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
       </div>
     </div>
   }

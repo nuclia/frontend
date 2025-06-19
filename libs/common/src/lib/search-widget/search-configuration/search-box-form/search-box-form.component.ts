@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,8 +9,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   ModalConfig,
   OptionModel,
@@ -20,12 +21,11 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { FilterAssistantModalComponent } from '../filter-assistant';
-import { Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -38,7 +38,6 @@ import { Widget } from '@nuclia/core';
     PaIconModule,
     PaPopupModule,
     InfoCardComponent,
-    UnauthorizedFeatureDirective,
     PaButtonModule,
     BadgeComponent,
     ExpandableTextareaComponent,

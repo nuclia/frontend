@@ -1,5 +1,5 @@
+import { CommonModule } from '@angular/common';
 import {
-  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -9,16 +9,15 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { Subject } from 'rxjs';
 import { FeaturesService } from '@flaps/core';
-import { takeUntil } from 'rxjs/operators';
-import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
-import { JsonValidator } from '../../../validators';
+import { PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { INITIAL_CITATION_THRESHOLD, Widget } from '@nuclia/core';
+import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { JsonValidator } from '../../../validators';
 
 // TODO remove when all LLMs support JSON output
 const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
@@ -47,6 +46,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
     InfoCardComponent,
     BadgeComponent,
     PaSliderModule,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './results-display-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

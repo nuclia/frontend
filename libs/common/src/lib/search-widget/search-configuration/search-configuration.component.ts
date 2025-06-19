@@ -31,10 +31,17 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurations, Widget, SearchConfig } from '@nuclia/core';
-import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { LearningConfigurations, SearchConfig, Widget } from '@nuclia/core';
+import {
+  ButtonMiniComponent,
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  SisModalService,
+  SisToastService,
+} from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PaTogglesModule } from '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { getChatOptions, getFindOptions, isSameConfigurations } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
@@ -43,7 +50,6 @@ import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
-import { PaTogglesModule } from '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
@@ -76,6 +82,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     PaTooltipModule,
     PaTogglesModule,
     IsTypedConfigPipe,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
