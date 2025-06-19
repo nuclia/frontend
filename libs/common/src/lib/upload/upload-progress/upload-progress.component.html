@@ -6,44 +6,48 @@
         <strong>{{ 'upload.takes_time' | translate }}</strong>
       </p>
       <p>{{ 'upload.once_uploaded' | translate }}</p>
-      <div
-        class="upload-list"
-        *ngIf="(files | async)?.length || 0 > 0">
+      @if ((files | async)?.length || 0 > 0) {
         <div
-          class="upload-row"
-          *ngFor="let file of files | async">
-          <div
-            class="file body-s"
-            [class.failed]="file.failed">
-            <span class="file-name">{{ file.file.name }}</span>
-            <span class="file-size body-xs">– {{ file.file.size | size }}</span>
-          </div>
-          <div class="status">
-            <pa-icon
-              *ngIf="file.uploaded"
-              name="check"></pa-icon>
-
-            @if (file.failed) {
-              <div class="error body-xs">
-                @if (file.conflicts) {
-                  <pa-icon name="info"></pa-icon>
-                  {{ 'upload.conflict' | translate }}
-                } @else if (file.limitExceeded) {
-                  <pa-icon name="warning"></pa-icon>
-                  {{ 'upload.limit-exceeded' | translate }}
-                } @else {
-                  <pa-icon name="warning"></pa-icon>
-                  {{ 'upload.error' | translate }}
+          class="upload-list"
+          >
+          @for (file of files | async; track file) {
+            <div
+              class="upload-row"
+              >
+              <div
+                class="file body-s"
+                [class.failed]="file.failed">
+                <span class="file-name">{{ file.file.name }}</span>
+                <span class="file-size body-xs">– {{ file.file.size | size }}</span>
+              </div>
+              <div class="status">
+                @if (file.uploaded) {
+                  <pa-icon
+                  name="check"></pa-icon>
+                }
+                @if (file.failed) {
+                  <div class="error body-xs">
+                    @if (file.conflicts) {
+                      <pa-icon name="info"></pa-icon>
+                      {{ 'upload.conflict' | translate }}
+                    } @else if (file.limitExceeded) {
+                      <pa-icon name="warning"></pa-icon>
+                      {{ 'upload.limit-exceeded' | translate }}
+                    } @else {
+                      <pa-icon name="warning"></pa-icon>
+                      {{ 'upload.error' | translate }}
+                    }
+                  </div>
+                }
+                @if (file.progress !== 100) {
+                  <nsi-progress-bar
+                  [progress]="file.progress"></nsi-progress-bar>
                 }
               </div>
-            }
-
-            <nsi-progress-bar
-              *ngIf="file.progress !== 100"
-              [progress]="file.progress"></nsi-progress-bar>
-          </div>
+            </div>
+          }
         </div>
-      </div>
+      }
     </div>
   </pa-modal-content>
   <pa-modal-footer>

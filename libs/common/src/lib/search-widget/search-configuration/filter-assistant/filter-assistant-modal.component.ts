@@ -7,7 +7,7 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -38,7 +38,6 @@ let id = 0;
 @Component({
   selector: 'stf-filter-assistant-modal',
   imports: [
-    CommonModule,
     PaModalModule,
     TranslateModule,
     PaButtonModule,
@@ -53,8 +52,8 @@ let id = 0;
     AccordionItemComponent,
     AccordionBodyDirective,
     FilterExpressionPipe,
-    AccordionExtraDescriptionDirective,
-  ],
+    AccordionExtraDescriptionDirective
+],
   providers: [FilterExpressionPipe],
   templateUrl: './filter-assistant-modal.component.html',
   styleUrl: './filter-assistant-modal.component.scss',

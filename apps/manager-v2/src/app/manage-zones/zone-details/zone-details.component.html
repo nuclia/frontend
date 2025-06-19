@@ -17,12 +17,13 @@
     <form
       [formGroup]="zoneForm"
       (submit)="save()">
-      <pa-input
-        *ngIf="!addZone"
-        readonly
-        formControlName="id">
-        Id
-      </pa-input>
+      @if (!addZone) {
+        <pa-input
+          readonly
+          formControlName="id">
+          Id
+        </pa-input>
+      }
       <pa-input formControlName="slug">Slug</pa-input>
       <pa-input formControlName="title">Title</pa-input>
       <pa-input formControlName="subdomain">Subdomain</pa-input>

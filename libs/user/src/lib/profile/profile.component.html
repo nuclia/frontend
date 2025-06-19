@@ -32,7 +32,7 @@
         </pa-input>
       </div>
 
-      <ng-container *ngIf="canModifyPassword">
+      @if (canModifyPassword) {
         <div class="field">
           <nsi-password-input
             formControlName="password"
@@ -40,7 +40,6 @@
             {{ 'profile.new_password' | translate }}
           </nsi-password-input>
         </div>
-
         <div class="field">
           <nsi-password-input
             formControlName="passwordConfirm"
@@ -48,18 +47,19 @@
             {{ 'profile.repeat_password' | translate }}
           </nsi-password-input>
         </div>
-      </ng-container>
+      }
 
       <div class="field">
         <label for="language">{{ 'generic.language' | translate }}</label>
         <pa-radio-group
           id="language"
           formControlName="language">
-          <pa-radio
-            *ngFor="let lang of languages"
-            [value]="lang.value">
-            {{ lang.label | translate }}
-          </pa-radio>
+          @for (lang of languages; track lang) {
+            <pa-radio
+              [value]="lang.value">
+              {{ lang.label | translate }}
+            </pa-radio>
+          }
         </pa-radio-group>
       </div>
 

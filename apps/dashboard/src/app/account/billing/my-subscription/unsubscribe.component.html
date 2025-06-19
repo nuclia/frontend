@@ -10,16 +10,18 @@
         <pa-datetime
           [datetime]="data?.endBillingPeriod || ''"
           format="human"
-          dateOnly></pa-datetime>
+        dateOnly></pa-datetime>
       </div>
     </div>
-    <div *ngIf="!!data && data.overCost > 0">
-      <div class="title-s">
-        {{ 'billing.current-over-cost' | translate }}:
-        <span class="price">{{ data.overCost | currency: data.currency }}</span>
+    @if (!!data && data.overCost > 0) {
+      <div>
+        <div class="title-s">
+          {{ 'billing.current-over-cost' | translate }}:
+          <span class="price">{{ data.overCost | currency: data.currency }}</span>
+        </div>
+        <div>{{ 'billing.current-over-cost-help' | translate }}</div>
       </div>
-      <div>{{ 'billing.current-over-cost-help' | translate }}</div>
-    </div>
+    }
     <div>
       <pa-button
         kind="destructive"

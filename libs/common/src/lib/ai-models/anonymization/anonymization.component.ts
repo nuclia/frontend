@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,7 +11,6 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 @Component({
   selector: 'stf-anonymization',
   imports: [
-    CommonModule,
     FormsModule,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
@@ -19,8 +18,8 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
     InfoCardComponent,
     PaTogglesModule,
     StickyFooterComponent,
-    PaButtonModule,
-  ],
+    PaButtonModule
+],
   templateUrl: './anonymization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

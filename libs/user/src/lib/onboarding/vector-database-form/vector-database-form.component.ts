@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,7 +35,7 @@ export function vectorDbToIndexProvider(vectorDatabase: VectorDbModel): External
 
 @Component({
   selector: 'nus-vector-database-form',
-  imports: [CommonModule, ReactiveFormsModule, InfoCardComponent, TranslateModule, PaTogglesModule, PaTextFieldModule],
+  imports: [ReactiveFormsModule, InfoCardComponent, TranslateModule, PaTogglesModule, PaTextFieldModule],
   templateUrl: './vector-database-form.component.html',
   styleUrl: './vector-database-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

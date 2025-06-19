@@ -15,12 +15,13 @@
     <p [innerHTML]="modal.config.data?.['modalDescription'] || 'account.token_description' | translate"></p>
     <div class="token-container">
       <div class="token-dialog-value">{{ modal.config.data?.['token'] | slice: 1 : 30 }}…</div>
-      <pa-button
-        *ngIf="clipboardSupported"
-        data-cy="copy-token"
-        (click)="copy()">
-        {{ (successMessage ? 'generic.copied' : 'generic.copy') | translate }}
-      </pa-button>
+      @if (clipboardSupported) {
+        <pa-button
+          data-cy="copy-token"
+          (click)="copy()">
+          {{ (successMessage ? 'generic.copied' : 'generic.copy') | translate }}
+        </pa-button>
+      }
     </div>
   </pa-modal-content>
 </pa-modal-dialog>

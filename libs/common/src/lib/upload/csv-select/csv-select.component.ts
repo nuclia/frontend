@@ -4,7 +4,7 @@ import { parseCsv } from '../csv-parser';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ConfirmationData, Kind, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { filter } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HintModule } from '../../hint';
 
@@ -13,7 +13,7 @@ import { HintModule } from '../../hint';
   templateUrl: './csv-select.component.html',
   styleUrls: ['./csv-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, HintModule, PaButtonModule, TranslateModule],
+  imports: [HintModule, PaButtonModule, TranslateModule],
 })
 export class CsvSelectComponent<T> {
   @Input()

@@ -36,12 +36,13 @@
     </pa-table>
 
     <div class="load-more">
-      <pa-button
-        *ngIf="(hasMore | async) === true"
-        kind="inverted"
-        (click)="loadMoreActivity()">
-        {{ 'activity.load-more' | translate }}
-      </pa-button>
+      @if ((hasMore | async) === true) {
+        <pa-button
+          kind="inverted"
+          (click)="loadMoreActivity()">
+          {{ 'activity.load-more' | translate }}
+        </pa-button>
+      }
     </div>
   </div>
 </div>

@@ -13,7 +13,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { InfoCardComponent, LABEL_COLORS, SisLabelModule, SisToastService } from '@nuclia/sistema';
@@ -36,7 +36,6 @@ const KINDS = [
 @Component({
   selector: 'stf-label-set-form',
   imports: [
-    CommonModule,
     PaButtonModule,
     PaIconModule,
     PaTextFieldModule,
@@ -45,8 +44,8 @@ const KINDS = [
     RouterLink,
     SisLabelModule,
     TranslateModule,
-    InfoCardComponent,
-  ],
+    InfoCardComponent
+],
   templateUrl: './label-set-form.component.html',
   styleUrl: './label-set-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

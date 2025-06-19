@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -9,15 +9,14 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
 @Component({
   selector: 'app-restart-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,
     PaTextFieldModule,
     ConfigurationFormComponent,
     RulesFieldComponent,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './restart-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

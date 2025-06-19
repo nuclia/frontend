@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { StickyFooterComponent } from '@nuclia/sistema';
@@ -6,7 +6,7 @@ import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/
 
 @Component({
   selector: 'nsd-sistema-sticky-footer',
-  imports: [CommonModule, PaDemoModule, StickyFooterComponent, PaButtonModule],
+  imports: [PaDemoModule, StickyFooterComponent, PaButtonModule],
   templateUrl: './sistema-sticky-footer.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,22 +1,23 @@
-<div
-  *ngIf="hasLabels$ | async"
-  class="label-field"
-  [class.small-button]="size === 'small'">
-  <app-label-dropdown
-    *ngIf="!disabled"
-    [size]="size"
-    [fullWidth]="true"
-    [displayRadioForNonMultiple]="true"
-    [labelSets]="labelSets$ | async"
-    [selection]="selection"
-    (selectionChange)="updateSelection($event)">
-    {{ 'generic.select_tags' | translate }}
-  </app-label-dropdown>
-
-  <div class="label-field-names">
-    <app-label-list
-      [labelSets]="labelSets$ | async"
-      [labelSelection]="selection"
+@if (hasLabels$ | async) {
+  <div
+    class="label-field"
+    [class.small-button]="size === 'small'">
+    @if (!disabled) {
+      <app-label-dropdown
+        [size]="size"
+        [fullWidth]="true"
+        [displayRadioForNonMultiple]="true"
+        [labelSets]="labelSets$ | async"
+        [selection]="selection"
+        (selectionChange)="updateSelection($event)">
+        {{ 'generic.select_tags' | translate }}
+      </app-label-dropdown>
+    }
+    <div class="label-field-names">
+      <app-label-list
+        [labelSets]="labelSets$ | async"
+        [labelSelection]="selection"
       (labelSelectionChange)="updateSelection($event)"></app-label-list>
+    </div>
   </div>
-</div>
+}

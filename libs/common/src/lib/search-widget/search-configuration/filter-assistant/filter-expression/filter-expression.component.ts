@@ -9,7 +9,7 @@ import {
   Output,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   OptionModel,
   PaButtonModule,
@@ -31,7 +31,6 @@ let id = 0;
 @Component({
   selector: 'stf-filter-expression',
   imports: [
-    CommonModule,
     FilterTypeAndValueComponent,
     FormsModule,
     InfoCardComponent,
@@ -43,8 +42,8 @@ let id = 0;
     PaPopupModule,
     PaDropdownModule,
     FilterValueComponent,
-    FilterTypePipe,
-  ],
+    FilterTypePipe
+],
   templateUrl: './filter-expression.component.html',
   styleUrl: './filter-expression.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

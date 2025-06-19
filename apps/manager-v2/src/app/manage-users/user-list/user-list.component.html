@@ -25,32 +25,33 @@
         <pa-table-cell header>Last login</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
-      <pa-table-row
-        *ngFor="let user of users$ | async | slice: 0 : lastIndex"
-        [routerLink]="user.id"
-        clickable>
-        <pa-table-cell>
-          <small>{{ user.id }}</small>
-        </pa-table-cell>
-        <pa-table-cell>{{ user.name }}</pa-table-cell>
-        <pa-table-cell>{{ user.email }}</pa-table-cell>
-        <pa-table-cell>
-          <pa-datetime
-            [datetime]="user.last_login"
-            format="numerical"
+      @for (user of users$ | async | slice: 0 : lastIndex; track user) {
+        <pa-table-row
+          [routerLink]="user.id"
+          clickable>
+          <pa-table-cell>
+            <small>{{ user.id }}</small>
+          </pa-table-cell>
+          <pa-table-cell>{{ user.name }}</pa-table-cell>
+          <pa-table-cell>{{ user.email }}</pa-table-cell>
+          <pa-table-cell>
+            <pa-datetime
+              [datetime]="user.last_login"
+              format="numerical"
             dateOnly></pa-datetime>
-        </pa-table-cell>
-        <pa-table-cell-menu>
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            size="small"
-            kind="destructive"
-            (click)="deleteUser($event, user)">
-            Delete account
-          </pa-button>
-        </pa-table-cell-menu>
-      </pa-table-row>
+          </pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              size="small"
+              kind="destructive"
+              (click)="deleteUser($event, user)">
+              Delete account
+            </pa-button>
+          </pa-table-cell-menu>
+        </pa-table-row>
+      }
     </pa-table>
   </pa-infinite-scroll>
 </div>

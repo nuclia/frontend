@@ -1,8 +1,7 @@
-<ng-container *ngIf="kb$ | async as kb">
+@if (kb$ | async; as kb) {
   <h3>
     {{ kb.slug }}
   </h3>
-
   <form
     [formGroup]="kbForm"
     (ngSubmit)="save()">
@@ -25,9 +24,8 @@
     <pa-input formControlName="title">Title</pa-input>
     <nma-form-footer
       [disabled]="kbForm.pristine || kbForm.invalid || isSaving"
-      (cancel)="reset()"></nma-form-footer>
+    (cancel)="reset()"></nma-form-footer>
   </form>
-
   <div class="add-member">
     <pa-input
       icon="search"
@@ -88,7 +86,6 @@
         </pa-table-cell-menu>
       </pa-table-row>
     }
-
     @for (contributor of kb.contributors; track contributor.id) {
       <pa-table-row>
         <pa-table-cell>
@@ -117,7 +114,6 @@
         </pa-table-cell-menu>
       </pa-table-row>
     }
-
     @for (member of kb.members; track member.id) {
       <pa-table-row>
         <pa-table-cell>
@@ -147,4 +143,4 @@
       </pa-table-row>
     }
   </pa-table>
-</ng-container>
+}

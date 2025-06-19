@@ -34,12 +34,13 @@
       (click)="modal.close('from primary')">
       Primary CTA
     </pa-button>
-    <pa-button
-      *ngIf="!modal.config.data?.['oneButton']"
-      kind="secondary"
-      aspect="basic"
-      (click)="modal.close('from secondary')">
-      Secondary CTA
-    </pa-button>
+    @if (!modal.config.data?.['oneButton']) {
+      <pa-button
+        kind="secondary"
+        aspect="basic"
+        (click)="modal.close('from secondary')">
+        Secondary CTA
+      </pa-button>
+    }
   </pa-modal-footer>
 </pa-modal-advanced>

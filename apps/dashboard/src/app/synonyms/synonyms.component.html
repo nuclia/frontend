@@ -54,17 +54,20 @@
             <pa-table-cell
               clickable
               (click)="editing = row.key">
-              <span
-                class="body-m"
-                *ngIf="editing !== row.key">
-                {{ row.value.join(', ') }}
-              </span>
-              <input
-                *ngIf="editing === row.key"
-                paFocusable
-                class="edit-synonym-input"
-                [value]="row.value.join(', ')"
-                (keyup.enter)="editSynonym(row.key, $event)" />
+              @if (editing !== row.key) {
+                <span
+                  class="body-m"
+                  >
+                  {{ row.value.join(', ') }}
+                </span>
+              }
+              @if (editing === row.key) {
+                <input
+                  paFocusable
+                  class="edit-synonym-input"
+                  [value]="row.value.join(', ')"
+                  (keyup.enter)="editSynonym(row.key, $event)" />
+              }
             </pa-table-cell>
             <pa-table-cell-menu>
               <div

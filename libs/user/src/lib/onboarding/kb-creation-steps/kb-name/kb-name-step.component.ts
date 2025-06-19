@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +8,6 @@ import { StickyFooterComponent } from '@nuclia/sistema';
 @Component({
   selector: 'nus-kb-name-step',
   imports: [
-    CommonModule,
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
@@ -16,8 +15,8 @@ import { StickyFooterComponent } from '@nuclia/sistema';
     TranslateModule,
     PaTextFieldModule,
     StickyFooterComponent,
-    PaButtonModule,
-  ],
+    PaButtonModule
+],
   templateUrl: './kb-name-step.component.html',
   styleUrls: ['../../_common-step.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

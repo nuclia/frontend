@@ -7,7 +7,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ISyncEntity, SyncItem } from '../../logic';
 import { FolderSelectionComponent } from '../../folder-selection';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -19,7 +19,6 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'nsy-folders-tab',
   imports: [
-    CommonModule,
     FolderSelectionComponent,
     PaTextFieldModule,
     PaButtonModule,
@@ -28,8 +27,8 @@ import { Subject } from 'rxjs';
     InfoCardComponent,
     FolderListComponent,
     StickyFooterComponent,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   templateUrl: './folders-tab.component.html',
   styleUrl: './folders-tab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

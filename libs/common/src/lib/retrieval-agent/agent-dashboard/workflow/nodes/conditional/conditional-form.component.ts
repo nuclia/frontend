@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -9,13 +9,12 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
 @Component({
   selector: 'app-conditional-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaTextFieldModule,
     ConfigurationFormComponent,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './conditional-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -7,7 +7,7 @@ import { DriverCreation, SqlDriver } from '@nuclia/core';
 
 @Component({
   selector: 'app-sql-driver',
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './sql-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

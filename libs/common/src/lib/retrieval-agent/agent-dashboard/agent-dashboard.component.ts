@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -32,7 +32,7 @@ import {
 } from './workflow';
 
 @Component({
-  imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink],
+  imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -16,7 +16,6 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-guardrails-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,
@@ -26,8 +25,8 @@ import { aragUrl } from '../../workflow.state';
     RulesFieldComponent,
     InfoCardComponent,
     RouterLink,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './guardrails-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,10 +1,10 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-button-mini',
-  imports: [CommonModule, PaIconModule, PaTooltipModule],
+  imports: [PaIconModule, PaTooltipModule],
   templateUrl: './button-mini.component.html',
   styleUrl: './button-mini.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

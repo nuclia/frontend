@@ -42,7 +42,7 @@
         id="feedback-comment"
         [(value)]="comment"
         [rows]="4"
-        externalLabel></pa-textarea>
+      externalLabel></pa-textarea>
       <div class="buttons">
         <pa-button
           kind="destructive"
@@ -50,7 +50,9 @@
           [disabled]="loading">
           {{ 'billing.end-subscription' | translate }}
         </pa-button>
-        <nsi-spinner *ngIf="loading"></nsi-spinner>
+        @if (loading) {
+          <nsi-spinner></nsi-spinner>
+        }
       </div>
     </div>
   </div>

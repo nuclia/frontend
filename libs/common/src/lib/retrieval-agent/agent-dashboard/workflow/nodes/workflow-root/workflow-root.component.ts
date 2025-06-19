@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, ChangeDetectionStrategy, Component, output, ViewChild } from '@angular/core';
 import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { ArrowDownComponent, ConnectableEntryComponent, NodeBoxComponent, NodeDirective } from '../../basic-elements';
@@ -6,7 +6,7 @@ import { WorkflowRoot } from '../../workflow.models';
 
 @Component({
   selector: 'app-workflow-root',
-  imports: [CommonModule, NodeBoxComponent, ConnectableEntryComponent, PaTranslateModule, ArrowDownComponent],
+  imports: [NodeBoxComponent, ConnectableEntryComponent, PaTranslateModule, ArrowDownComponent],
   templateUrl: './workflow-root.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

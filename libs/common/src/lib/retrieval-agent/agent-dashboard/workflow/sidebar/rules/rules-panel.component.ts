@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,14 +20,13 @@ import { ConfigurationFormComponent } from '../../basic-elements';
 @Component({
   selector: 'app-rules-panel',
   imports: [
-    CommonModule,
     ConfigurationFormComponent,
     PaButtonModule,
     PaTextFieldModule,
     ReactiveFormsModule,
     TranslateModule,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './rules-panel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

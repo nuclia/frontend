@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,7 +16,6 @@ import { LearningConfigurationDirective } from '../learning-configuration.direct
 @Component({
   selector: 'stf-summarization',
   imports: [
-    CommonModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
@@ -26,8 +25,8 @@ import { LearningConfigurationDirective } from '../learning-configuration.direct
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './summarization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

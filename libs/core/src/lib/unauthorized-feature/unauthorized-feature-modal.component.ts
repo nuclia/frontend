@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
@@ -10,15 +10,14 @@ import { map } from 'rxjs';
 
 @Component({
   imports: [
-    CommonModule,
     PaModalModule,
     TranslateModule,
     PaModalModule,
     PaButtonModule,
     BadgeComponent,
     PaIconModule,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './unauthorized-feature-modal.component.html',
   styleUrl: './unauthorized-feature-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

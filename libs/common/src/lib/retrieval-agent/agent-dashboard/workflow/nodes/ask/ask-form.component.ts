@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -16,7 +16,6 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-ask-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     TranslateModule,
@@ -26,8 +25,8 @@ import { aragUrl } from '../../workflow.state';
     PaTogglesModule,
     ConfigurationFormComponent,
     ExpandableTextareaComponent,
-    RulesFieldComponent,
-  ],
+    RulesFieldComponent
+],
   templateUrl: './ask-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

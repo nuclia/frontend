@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterOutlet } from '@angular/router';
 import { filter, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { SyncService } from './logic';
 
 @Component({
-  imports: [CommonModule, RouterOutlet],
+  imports: [RouterOutlet],
   template: `
     <router-outlet></router-outlet>
   `,

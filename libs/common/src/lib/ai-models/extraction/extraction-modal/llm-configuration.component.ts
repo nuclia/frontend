@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -10,15 +10,14 @@ import { startWith, Subject, takeUntil } from 'rxjs';
 @Component({
   imports: [
     ButtonMiniComponent,
-    CommonModule,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',
   styleUrls: ['./llm-configuration.component.scss'],

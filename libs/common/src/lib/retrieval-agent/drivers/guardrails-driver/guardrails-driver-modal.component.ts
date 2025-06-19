@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -7,7 +7,7 @@ import { AliniaDriver, DriverCreation } from '@nuclia/core';
 
 @Component({
   selector: 'app-guardrails-driver-modal',
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './guardrails-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

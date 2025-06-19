@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   booleanAttribute,
@@ -27,7 +27,7 @@ let boxIndex = 0;
 
 @Component({
   selector: 'app-node-box',
-  imports: [CommonModule, TranslateModule, PaButtonModule],
+  imports: [TranslateModule, PaButtonModule],
   templateUrl: './node-box.component.html',
   styleUrl: './node-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,113 +1,122 @@
 <div class="my-subscription">
   <h2>{{ 'billing.my-subscription' | translate }}</h2>
 
-  <ng-container *ngIf="!(cancelScheduled | async)">
-    <div
-      class="subscription-info"
-      *ngIf="prices$ | async as prices">
-      <div class="subscription-tier">
-        <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
-        @if (!doNotShowPrice.includes((type | async) || '')) {
-          @if (prices.recurring; as recurring) {
-            @if (currency$ | async; as currency) {
-              <div>
-                <span class="title-l price">
-                  {{ ((monthly | async) ? recurring.month?.price : recurring.year?.price) | currency: currency }}
-                </span>
-                <span class="unit">/{{ ((monthly | async) ? 'billing.month' : 'billing.year') | translate }}</span>
-              </div>
+  @if (!(cancelScheduled | async)) {
+    @if (prices$ | async; as prices) {
+      <div
+        class="subscription-info"
+        >
+        <div class="subscription-tier">
+          <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
+          @if (!doNotShowPrice.includes((type | async) || '')) {
+            @if (prices.recurring; as recurring) {
+              @if (currency$ | async; as currency) {
+                <div>
+                  <span class="title-l price">
+                    {{ ((monthly | async) ? recurring.month?.price : recurring.year?.price) | currency: currency }}
+                  </span>
+                  <span class="unit">/{{ ((monthly | async) ? 'billing.month' : 'billing.year') | translate }}</span>
+                </div>
+              }
             }
           }
+        </div>
+        @if (isDeprecatedAccount | async) {
+          @if (currency$ | async; as currency) {
+            <pa-table
+              columns="auto auto auto"
+              >
+              <pa-table-header>
+                <pa-table-cell header>{{ 'billing.quotas_label' | translate }}</pa-table-cell>
+                <pa-table-cell header></pa-table-cell>
+                <pa-table-cell header>{{ 'billing.cost_over_limits' | translate }}</pa-table-cell>
+              </pa-table-header>
+              <pa-table-row>
+                <pa-table-cell>
+                  <span class="body-m">{{ 'billing.quotas.kbs' | translate }}</span>
+                </pa-table-cell>
+                <pa-table-cell>
+                  @if ((defaults | async)?.max_kbs; as maxKbs) {
+                    <span
+                      class="body-m"
+                      >
+                      {{ maxKbs === -1 ? ('billing.unlimited' | translate) : maxKbs }}
+                    </span>
+                  }
+                </pa-table-cell>
+                <pa-table-cell>-</pa-table-cell>
+              </pa-table-row>
+              @for (param of params; track param) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <span class="body-m">{{ 'billing.quotas.' + param | translate }}</span>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <span class="body-m">
+                      {{ prices.usage[param]?.threshold | number }}
+                      {{ param === 'media' ? ('billing.hours' | translate) : '' }}
+                    </span>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <span>
+                      <span class="body-m">{{ prices.usage[param]?.price | currency: currency : 'symbol' : '1.2-6' }}</span>
+                      <span class="unit">
+                        /{{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
+                      </span>
+                    </span>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          }
+        }
+        @if (activeSubscription | async) {
+          <div
+            class="title-s"
+            >
+            {{ 'billing.next-payment' | translate }}:
+            <pa-datetime
+              [datetime]="(subscription | async)?.end_billing_period || ''"
+              format="human"
+            dateOnly></pa-datetime>
+          </div>
         }
       </div>
-      @if (isDeprecatedAccount | async) {
-        <pa-table
-          columns="auto auto auto"
-          *ngIf="currency$ | async as currency">
-          <pa-table-header>
-            <pa-table-cell header>{{ 'billing.quotas_label' | translate }}</pa-table-cell>
-            <pa-table-cell header></pa-table-cell>
-            <pa-table-cell header>{{ 'billing.cost_over_limits' | translate }}</pa-table-cell>
-          </pa-table-header>
-          <pa-table-row>
-            <pa-table-cell>
-              <span class="body-m">{{ 'billing.quotas.kbs' | translate }}</span>
-            </pa-table-cell>
-            <pa-table-cell>
-              <span
-                class="body-m"
-                *ngIf="(defaults | async)?.max_kbs as maxKbs">
-                {{ maxKbs === -1 ? ('billing.unlimited' | translate) : maxKbs }}
-              </span>
-            </pa-table-cell>
-            <pa-table-cell>-</pa-table-cell>
-          </pa-table-row>
-          <pa-table-row *ngFor="let param of params">
-            <pa-table-cell>
-              <span class="body-m">{{ 'billing.quotas.' + param | translate }}</span>
-            </pa-table-cell>
-            <pa-table-cell>
-              <span class="body-m">
-                {{ prices.usage[param]?.threshold | number }}
-                {{ param === 'media' ? ('billing.hours' | translate) : '' }}
-              </span>
-            </pa-table-cell>
-            <pa-table-cell>
-              <span>
-                <span class="body-m">{{ prices.usage[param]?.price | currency: currency : 'symbol' : '1.2-6' }}</span>
-                <span class="unit">
-                  /{{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
-                </span>
-              </span>
-            </pa-table-cell>
-          </pa-table-row>
-        </pa-table>
-      }
+    }
+    @if (activeSubscription | async) {
       <div
-        class="title-s"
-        *ngIf="activeSubscription | async">
-        {{ 'billing.next-payment' | translate }}:
-        <pa-datetime
-          [datetime]="(subscription | async)?.end_billing_period || ''"
-          format="human"
-          dateOnly></pa-datetime>
+        class="cancel-subscription"
+        >
+        <div>
+          <h3 class="title-s">{{ 'billing.end-service' | translate }}</h3>
+          <div>{{ 'billing.cancel-renewal' | translate }}</div>
+        </div>
+        <pa-button
+          (click)="delete()"
+          kind="destructive">
+          {{ 'billing.end-subscription' | translate }}
+        </pa-button>
       </div>
-    </div>
+    }
+  }
 
-    <div
-      class="cancel-subscription"
-      *ngIf="activeSubscription | async">
-      <div>
-        <h3 class="title-s">{{ 'billing.end-service' | translate }}</h3>
-        <div>{{ 'billing.cancel-renewal' | translate }}</div>
-      </div>
-      <pa-button
-        (click)="delete()"
-        kind="destructive">
-        {{ 'billing.end-subscription' | translate }}
-      </pa-button>
-    </div>
-  </ng-container>
-
-  <ng-container *ngIf="cancelScheduled | async">
+  @if (cancelScheduled | async) {
     <div class="title-m">
       {{ 'billing.subscription-end' | translate }}
       <pa-datetime
         [datetime]="(subscription | async)?.end_billing_period || ''"
         format="human"
-        dateOnly></pa-datetime>
+      dateOnly></pa-datetime>
     </div>
-
     <div class="renewal">
       <h3 class="title-s">{{ 'billing.renew-subscription' | translate }}</h3>
       <pa-button (click)="reactivate()">
         {{ 'billing.reactivate' | translate }}
       </pa-button>
     </div>
-
     <div class="warning">
       <pa-icon name="warning"></pa-icon>
       <div>{{ 'billing.delete-warning' | translate }}</div>
     </div>
-  </ng-container>
+  }
 </div>

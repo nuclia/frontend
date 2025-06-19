@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,7 +9,7 @@ import { CypherAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-cypher-node',
-  imports: [CommonModule, ConfigBlockComponent, NodeBoxComponent, TranslateModule],
+  imports: [ConfigBlockComponent, NodeBoxComponent, TranslateModule],
   templateUrl: './cypher-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

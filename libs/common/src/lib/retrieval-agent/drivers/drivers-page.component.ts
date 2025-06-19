@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { SDKService, STFUtils } from '@flaps/core';
 import {
@@ -23,15 +23,14 @@ import { SqlDriverModalComponent } from './sql-driver';
 @Component({
   selector: 'app-drivers-panel',
   imports: [
-    CommonModule,
     PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

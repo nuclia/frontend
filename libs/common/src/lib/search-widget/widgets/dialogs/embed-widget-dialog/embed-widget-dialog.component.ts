@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
@@ -7,7 +7,7 @@ import { StandaloneService } from 'libs/common/src/lib/services';
 
 @Component({
   selector: 'stf-embed-widget-dialog',
-  imports: [CommonModule, InfoCardComponent, PaButtonModule, PaModalModule, PaTogglesModule, TranslateModule],
+  imports: [InfoCardComponent, PaButtonModule, PaModalModule, PaTogglesModule, TranslateModule],
   templateUrl: './embed-widget-dialog.component.html',
   styleUrl: './embed-widget-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

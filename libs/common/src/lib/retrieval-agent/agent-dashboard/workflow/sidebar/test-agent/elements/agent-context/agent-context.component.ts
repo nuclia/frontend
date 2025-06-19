@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,7 +8,7 @@ import { BlockquoteComponent } from '../blockquote';
 
 @Component({
   selector: 'stf-agent-context',
-  imports: [CommonModule, LineBreakFormatterPipe, TranslateModule, BlockquoteComponent, PaExpanderModule],
+  imports: [LineBreakFormatterPipe, TranslateModule, BlockquoteComponent, PaExpanderModule],
   templateUrl: './agent-context.component.html',
   styleUrl: './agent-context.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

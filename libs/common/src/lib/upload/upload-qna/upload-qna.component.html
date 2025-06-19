@@ -4,16 +4,17 @@
   </pa-modal-title>
   <pa-modal-content>
     <div class="upload-qna-content">
-      <ng-container *ngIf="standalone">
-        <div
-          *ngIf="(hasValidKey | async) === false"
-          class="warning body-s"
+      @if (standalone) {
+        @if ((hasValidKey | async) === false) {
+          <div
+            class="warning body-s"
           [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-      </ng-container>
+        }
+      }
 
       <p
         class="body-m"
-        [innerHTML]="'upload.qna_csv_description' | translate"></p>
+      [innerHTML]="'upload.qna_csv_description' | translate"></p>
 
       <pa-input [formControl]="resourceTitle">Resource title</pa-input>
 
@@ -39,21 +40,24 @@
       <app-csv-select
         [buttonKind]="qna.length === 0 ? 'primary' : 'secondary'"
         [fields]="2"
-        (select)="displayCsv($event)"></app-csv-select>
+      (select)="displayCsv($event)"></app-csv-select>
 
-      <pa-table
-        *ngIf="qna.length > 0"
-        class="csv-preview"
-        columns="repeat(2,1fr)">
-        <pa-table-header>
-          <pa-table-cell header>{{ 'upload.qna_csv_preview.question' | translate }}</pa-table-cell>
-          <pa-table-cell header>{{ 'upload.qna_csv_preview.answer' | translate }}</pa-table-cell>
-        </pa-table-header>
-        <pa-table-row *ngFor="let row of qna">
-          <pa-table-cell>{{ row[0] }}</pa-table-cell>
-          <pa-table-cell>{{ row[1] }}</pa-table-cell>
-        </pa-table-row>
-      </pa-table>
+      @if (qna.length > 0) {
+        <pa-table
+          class="csv-preview"
+          columns="repeat(2,1fr)">
+          <pa-table-header>
+            <pa-table-cell header>{{ 'upload.qna_csv_preview.question' | translate }}</pa-table-cell>
+            <pa-table-cell header>{{ 'upload.qna_csv_preview.answer' | translate }}</pa-table-cell>
+          </pa-table-header>
+          @for (row of qna; track row) {
+            <pa-table-row>
+              <pa-table-cell>{{ row[0] }}</pa-table-cell>
+              <pa-table-cell>{{ row[1] }}</pa-table-cell>
+            </pa-table-row>
+          }
+        </pa-table>
+      }
     </div>
   </pa-modal-content>
   <pa-modal-footer>

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -30,7 +30,6 @@ const HUGGING_FACE_MODEL = 'hf_embedding';
 @Component({
   selector: 'stf-semantic-model',
   imports: [
-    CommonModule,
     InfoCardComponent,
     PaButtonModule,
     PaDropdownModule,
@@ -41,8 +40,8 @@ const HUGGING_FACE_MODEL = 'hf_embedding';
     ReactiveFormsModule,
     StickyFooterComponent,
     TranslateModule,
-    TwoColumnsConfigurationItemComponent,
-  ],
+    TwoColumnsConfigurationItemComponent
+],
   templateUrl: './semantic-model.component.html',
   styleUrl: './semantic-model.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

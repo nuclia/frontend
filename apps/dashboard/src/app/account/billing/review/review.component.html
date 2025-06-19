@@ -10,29 +10,33 @@
       @if (prices && currency) {
         <div class="body-m">
           {{
-            (budget ? 'billing.review.cost' : 'billing.review.cost-without-limit')
-              | translate
-                : {
-                    cost: monthly
-                      ? (prices.recurring?.month?.price || 0 | currency: currency) + '/' + ('billing.month' | translate)
-                      : (prices.recurring?.year?.price || 0 | currency: currency) + '/' + ('billing.year' | translate),
+          (budget ? 'billing.review.cost' : 'billing.review.cost-without-limit')
+          | translate
+          : {
+          cost: monthly
+          ? (prices.recurring?.month?.price || 0 | currency: currency) + '/' + ('billing.month' | translate)
+          : (prices.recurring?.year?.price || 0 | currency: currency) + '/' + ('billing.year' | translate),
 
-                    budget: budget | currency: currency
-                  }
-          }}
-        </div>
-      }
-    </div>
+          budget: budget | currency: currency
+        }
+        }}
+      </div>
+    }
+  </div>
+  @if (customer) {
     <div
-      *ngIf="customer"
       class="body-m">
       <h2 class="title-s">{{ 'billing.billing_details' | translate }}</h2>
-      <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
-        {{ customer.billing_details.company }}
-      </div>
-      <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
-        {{ customer.billing_details.vat }}
-      </div>
+      @if (customer.billing_details.is_company && customer.billing_details.company) {
+        <div>
+          {{ customer.billing_details.company }}
+        </div>
+      }
+      @if (customer.billing_details.is_company && customer.billing_details.vat) {
+        <div>
+          {{ customer.billing_details.vat }}
+        </div>
+      }
       <div>{{ customer.billing_details.name }}</div>
       <div>{{ customer.billing_details.email }}</div>
       <div>{{ customer.billing_details.phone }}</div>
@@ -40,24 +44,26 @@
       <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
       <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
     </div>
+  }
+  @if (token) {
     <div
-      *ngIf="token"
       class="body-m">
       <h2 class="title-s">{{ 'billing.payment_details' | translate }}</h2>
       <div>{{ token.card.brand }}</div>
       <div>**** **** **** {{ token.card.last4 }}</div>
     </div>
-    @if (customer?.billing_details?.country === 'ES') {
-      <div class="body-m">{{ 'billing.without_vat' | translate }}</div>
-    }
-  </pa-modal-content>
-  <pa-modal-footer>
-    <div class="button-container">
-      <pa-button
-        kind="primary"
-        (click)="confirm()">
-        {{ 'billing.review.confirm_subscription' | translate }}
-      </pa-button>
-    </div>
-  </pa-modal-footer>
+  }
+  @if (customer?.billing_details?.country === 'ES') {
+    <div class="body-m">{{ 'billing.without_vat' | translate }}</div>
+  }
+</pa-modal-content>
+<pa-modal-footer>
+  <div class="button-container">
+    <pa-button
+      kind="primary"
+      (click)="confirm()">
+      {{ 'billing.review.confirm_subscription' | translate }}
+    </pa-button>
+  </div>
+</pa-modal-footer>
 </pa-modal-advanced>

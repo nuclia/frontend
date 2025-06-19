@@ -19,49 +19,52 @@
   <form
     [formGroup]="limitsForm"
     (ngSubmit)="save()">
-    <ng-container *ngFor="let group of limitsForm.controls | keyvalue">
-      <section
-        [formGroupName]="group.key"
-        *ngIf="(group.value.controls | keyvalue).length > 0">
-        <h3 style="text-transform: capitalize">{{ group.key }} limits</h3>
-        <div
-          *ngFor="let limit of group.value.controls | keyvalue"
-          [formGroupName]="limit.key">
-          <label
-            class="title-xxs"
-            [for]="'limit-group-' + limit.key">
-            {{ limit.key }}
-          </label>
-
-          <div class="radio-limit-container">
-            <pa-radio-group
-              [id]="'limit-group-' + limit.key"
-              [formControlName]="limit.key + '-radio'">
-              <pa-radio value="unlimited">Unlimited</pa-radio>
-              <pa-radio value="limit">Limit</pa-radio>
-            </pa-radio-group>
+    @for (group of limitsForm.controls | keyvalue; track group) {
+      @if ((group.value.controls | keyvalue).length > 0) {
+        <section
+          [formGroupName]="group.key"
+          >
+          <h3 style="text-transform: capitalize">{{ group.key }} limits</h3>
+          @for (limit of group.value.controls | keyvalue; track limit) {
             <div
-              *ngIf="getRadioValue(group.key, limit.key) === 'limit'"
-              class="limit-container">
-              <pa-input
-                type="number"
-                externalLabel
-                formControlName="limit"></pa-input>
-              <pa-button
-                icon="reload"
-                paTooltip="Reset to default"
-                aspect="basic"
-                (click)="reset(group.key, limit.key)">
-                Reset to default
-              </pa-button>
+              [formGroupName]="limit.key">
+              <label
+                class="title-xxs"
+                [for]="'limit-group-' + limit.key">
+                {{ limit.key }}
+              </label>
+              <div class="radio-limit-container">
+                <pa-radio-group
+                  [id]="'limit-group-' + limit.key"
+                  [formControlName]="limit.key + '-radio'">
+                  <pa-radio value="unlimited">Unlimited</pa-radio>
+                  <pa-radio value="limit">Limit</pa-radio>
+                </pa-radio-group>
+                @if (getRadioValue(group.key, limit.key) === 'limit') {
+                  <div
+                    class="limit-container">
+                    <pa-input
+                      type="number"
+                      externalLabel
+                    formControlName="limit"></pa-input>
+                    <pa-button
+                      icon="reload"
+                      paTooltip="Reset to default"
+                      aspect="basic"
+                      (click)="reset(group.key, limit.key)">
+                      Reset to default
+                    </pa-button>
+                  </div>
+                }
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-    </ng-container>
+          }
+        </section>
+      }
+    }
 
     <nma-form-footer
       [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
-      (cancel)="cancel()"></nma-form-footer>
+    (cancel)="cancel()"></nma-form-footer>
   </form>
 </div>
