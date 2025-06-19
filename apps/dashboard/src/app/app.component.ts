@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef, DOCUMENT } from '@angular/core';
+
 import { TranslateService } from '@ngx-translate/core';
 import {
   BackendConfigurationService,

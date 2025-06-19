@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Inject, DOCUMENT } from '@angular/core';
+
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';

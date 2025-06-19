@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
+
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
