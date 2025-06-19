@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { SDKService } from '@flaps/core';
 import {
   PaButtonModule,
   PaCardModule,
@@ -8,15 +9,15 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LearningConfiguration, Prompts, Widget } from '@nuclia/core';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { combineLatest, Observable, tap } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LearningConfiguration, Prompts, Widget } from '@nuclia/core';
-import { RagLabService } from '../rag-lab.service';
+import { getChatOptions, SearchWidgetService } from '../../search-widget';
 import { LabLayoutComponent } from '../lab-layout/lab-layout.component';
 import { RequestConfigAndQueries } from '../rag-lab.models';
-import { SDKService } from '@flaps/core';
-import { getChatOptions, SearchWidgetService } from '../../search-widget';
+import { RagLabService } from '../rag-lab.service';
 
 @Component({
   selector: 'stf-prompt-lab',
@@ -30,6 +31,7 @@ import { getChatOptions, SearchWidgetService } from '../../search-widget';
     TranslateModule,
     PaCardModule,
     LabLayoutComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './prompt-lab.component.html',
   styleUrl: '../_common-lab.scss',
@@ -111,7 +113,9 @@ export class PromptLabComponent implements OnDestroy {
       .pipe(
         take(1),
         switchMap((configs) => {
-          const selectedConfig = configs.find((config) => config.id === this.currentConfig) as Widget.SearchConfiguration;
+          const selectedConfig = configs.find(
+            (config) => config.id === this.currentConfig,
+          ) as Widget.SearchConfiguration;
           const requestOptions = getChatOptions(selectedConfig);
           const rephrasePrompt =
             typeof requestOptions?.prompt === 'string' ? undefined : requestOptions?.prompt?.rephrase;

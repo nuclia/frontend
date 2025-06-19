@@ -63,7 +63,10 @@
           icon="file-code"
           [disabled]="isConfigUnsupported"
           (click)="switchToJsonMode()"
-          [help]="'search.configuration.action.switch-mode' | translate"></nsi-button-mini>
+          [paPopover]="switchHelp"></nsi-button-mini>
+        <pa-popover #switchHelp>
+          <span [innerHTML]="'search.configuration.action.switch-mode' | translate"></span>
+        </pa-popover>
         <nsi-button-mini
           icon="undo"
           [disabled]="!isConfigModified"
@@ -111,10 +114,11 @@
         (valueChange)="updateGenerativeAnswer($event)">
         {{ 'search.configuration.use-generative-answer' | translate }}
       </pa-toggle>
-      <pa-textarea
+      <nsi-expandable-textarea
+        modalTitle="search.configuration.json-config-modal-title"
         [rows]="12"
         [value]="currentJsonConfig"
-        (valueChange)="updateJsonConfig($event)"></pa-textarea>
+        (valueChange)="updateJsonConfig($event)"></nsi-expandable-textarea>
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
       <pa-accordion (toggleAccordion)="scrollOnTop()">
         <pa-accordion-item

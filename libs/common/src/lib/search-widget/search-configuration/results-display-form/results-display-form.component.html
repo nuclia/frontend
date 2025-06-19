@@ -75,16 +75,17 @@
           </pa-checkbox>
         }
       </div>
-      <pa-textarea
+      <nsi-expandable-textarea
         class="extra-fields"
         formControlName="metadatasOthers"
         [class.visible]="metadataEnabled"
         resizable
         help="search.configuration.result-display.display-metadata.others-help"
         rows="4"
+        modalTitle="search.configuration.result-display.display-metadata.others-label"
         (resizing)="heightChanged.emit()">
         {{ 'search.configuration.result-display.display-metadata.others-label' | translate }}
-      </pa-textarea>
+      </nsi-expandable-textarea>
     </div>
     <div class="config-form-field">
       <pa-toggle
@@ -182,13 +183,14 @@
       <nsi-info-card>
         {{ 'search.configuration.result-display.json-schema.info' | translate }}
       </nsi-info-card>
-      <pa-textarea
+      <nsi-expandable-textarea
         formControlName="jsonSchema"
         resizable
         rows="4"
+        modalTitle="search.configuration.result-display.json-schema.textarea-label"
         (resizing)="heightChanged.emit()">
         {{ 'search.configuration.result-display.json-schema.textarea-label' | translate }}
-      </pa-textarea>
+      </nsi-expandable-textarea>
     </div>
   </div>
   <div class="config-form-field">
@@ -204,7 +206,7 @@
       {{ 'search.configuration.result-display.hide-answer.toggle-description' | translate }}
     </div>
   </div>
-    <div class="config-form-field">
+  <div class="config-form-field">
     <pa-toggle
       formControlName="sortResults"
       withBackground

@@ -7,13 +7,14 @@
     </div>
     @for (rule of rules.controls; track rule) {
       <div class="rule">
-        <pa-textarea
+        <nsi-expandable-textarea
           [formControl]="rule"
           [rows]="2"
           resizable
+          modalTitle="kb.ai-models.extraction.config.processing.rules.rule"
           [placeholder]="'kb.ai-models.extraction.config.processing.rules.placeholder' | translate">
           {{ 'kb.ai-models.extraction.config.processing.rules.rule' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
         @if (createMode) {
           <pa-button
             size="small"
@@ -73,11 +74,12 @@
           }
         </pa-select>
         <!-- 
-        <pa-textarea
+        <nsi-expandable-textarea
           formControlName="generative_prompt_id"
+          modalTitle="kb.ai-models.extraction.config.custom-prompt"
           rows="3">
           {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
         -->
       </ng-container>
     }

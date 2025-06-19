@@ -1,12 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import {
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { filter, of } from 'rxjs';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
 
 @Component({
   selector: 'stf-summarization',
@@ -21,6 +26,7 @@ import { filter, of } from 'rxjs';
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './summarization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

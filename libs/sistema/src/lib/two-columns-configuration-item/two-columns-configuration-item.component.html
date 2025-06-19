@@ -1,26 +1,28 @@
 <div
   class="column"
   [class.unauthorized]="unauthorized">
-  <div class="title">
-    <span class="title-xs">
-      {{ itemTitle | translate }}
-    </span>
+  <div class="left-content">
+    <div class="title">
+      <span class="title-xs">
+        {{ itemTitle | translate }}
+      </span>
 
-    @if (unauthorized) {
-      <nsi-badge
-        kind="tertiary"
-        icon="lock-filled"
-        style="cursor: pointer"
-        (click)="clickOnUnauthorized.emit()">
-        Pro
-      </nsi-badge>
-    } @else if (badge) {
-      <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
-    }
+      @if (unauthorized) {
+        <nsi-badge
+          kind="tertiary"
+          icon="lock-filled"
+          style="cursor: pointer"
+          (click)="clickOnUnauthorized.emit()">
+          Pro
+        </nsi-badge>
+      } @else if (badge) {
+        <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
+      }
+    </div>
+    <div
+      class="body-m description"
+      [innerHTML]="description | translate"></div>
   </div>
-  <div
-    class="body-m description"
-    [innerHTML]="description | translate"></div>
 </div>
 <div
   class="column right-column"

@@ -27,6 +27,11 @@
     }
   }
 
+  .left-content {
+    position: sticky;
+    top: 0;
+  }
+
   .title {
     align-items: center;
     display: flex;

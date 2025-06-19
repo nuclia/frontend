@@ -6,21 +6,22 @@
   <ng-container [formGroup]="configForm">
     @for (rule of rules; track rule) {
       <div class="form-entry">
-        <label [for]="'rule' + $index">{{ 'Rule' | translate }}</label>
+        <label [for]="'rule' + $index">{{ 'retrieval-agents.workflow.sidebar.rules.rule-label' | translate }}</label>
         <div class="entry-with-button">
-          <pa-textarea
+          <nsi-expandable-textarea
             [id]="'rule' + $index"
             [formControl]="rule"
             rows="2"
             resizable=""
-            externalLabel=""></pa-textarea>
+            externalLabel=""
+            modalTitle="retrieval-agents.workflow.sidebar.rules.rule-label"></nsi-expandable-textarea>
           @if (rules.length > 1) {
             <pa-button
               icon="trash"
               size="small"
               aspect="basic"
               (click)="removeRule($index)">
-              {{ 'Delete rule' | translate }}
+              {{ 'retrieval-agents.workflow.sidebar.rules.delete-rule' | translate }}
             </pa-button>
           }
         </div>
@@ -30,7 +31,7 @@
       aspect="basic"
       size="small"
       (click)="addRule()">
-      {{ 'Add rule' | translate }}
+      {{ 'retrieval-agents.workflow.sidebar.rules.add-rule' | translate }}
     </pa-button>
   </ng-container>
 </app-configuration-form>

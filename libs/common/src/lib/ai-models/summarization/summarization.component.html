@@ -57,12 +57,13 @@
               }
             </pa-select>
 
-            <pa-textarea
+            <nsi-expandable-textarea
               formControlName="prompt"
               resizable
+              modalTitle="kb.ai-models.common.prompt.label"
               [rows]="3">
               {{ 'kb.ai-models.common.prompt.label' | translate }}
-            </pa-textarea>
+            </nsi-expandable-textarea>
 
             <nsi-info-card
               type="warning"

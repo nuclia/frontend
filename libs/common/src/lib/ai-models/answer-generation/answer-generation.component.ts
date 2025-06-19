@@ -1,15 +1,20 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import { filter, of, Subject, take } from 'rxjs';
 import { getSubSchema, LearningConfigurationOption } from '@nuclia/core';
-import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
+import {
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
+import { filter, of, Subject, take } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { keyProviders } from '../ai-models.utils';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
+import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 
 @Component({
   selector: 'stf-answer-generation',
@@ -26,6 +31,7 @@ import { keyProviders } from '../ai-models.utils';
     PaButtonModule,
     PaButtonModule,
     UserKeysComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './answer-generation.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
