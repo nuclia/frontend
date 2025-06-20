@@ -75,6 +75,7 @@ import {
   trackingEngagement,
   triggerSearch,
   askBackendConfig,
+  rangeCreationISO,
 } from './search.store';
 import {
   fieldData,
@@ -465,6 +466,7 @@ export function askQuestion(
         combinedFilters.pipe(take(1)),
         combinedFilterExpression.pipe(take(1)),
         filterExpression.pipe(take(1)),
+        rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
         askBackendConfig.pipe(take(1)),
@@ -476,6 +478,7 @@ export function askQuestion(
         filters,
         combinedFilterExpression,
         filterExpression,
+        rangeCreation,
         disableRAG,
         extra_context_images,
         backendConfig,
@@ -491,6 +494,8 @@ export function askQuestion(
                 ...options,
                 filters: filterExpression ? undefined : filters,
                 filter_expression: filterExpression ? combinedFilterExpression : undefined,
+                range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
+                range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                 extra_context_images,
               })
         ).pipe(

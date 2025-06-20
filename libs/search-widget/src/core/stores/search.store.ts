@@ -78,6 +78,10 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
+  creation?: {
+    range_creation_start?: string;
+    range_creation_end?: string;
+  };
   preselectedFilters: string[] | Filter[];
   filterExpression?: FilterExpression;
   options: SearchOptions;
@@ -319,6 +323,11 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
   },
 );
 
+export const rangeCreationISO = searchState.reader<{ start?: string; end?: string } | undefined>((state) => ({
+  start: state.creation?.range_creation_start,
+  end: state.creation?.range_creation_end,
+}));
+
 export const combinedFilters = combineLatest([searchFilters, preselectedFilters, orFilterLogic]).pipe(
   map(([searchFilters, preselectedFilters, orFilterLogic]) => {
     const filterOperator = orFilterLogic ? FilterOperator.any : FilterOperator.all;
@@ -337,18 +346,19 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
   orFilterLogic,
   filterExpression,
   labelSets,
+  rangeCreationISO,
 ]).pipe(
-  map(([filters, orFilterLogic, filterExpression, labelSets]) => {
+  map(([filters, orFilterLogic, filterExpression, labelSets, rangeCreation]) => {
     if (
       ((filterExpression?.operator === 'and' || !filterExpression?.operator) && orFilterLogic) ||
       (filterExpression?.operator === 'or' && !orFilterLogic)
     ) {
-      // Filters cannot be combined
+      // Filters cannot be combined if filters operator and filter expression operator are not the same
       return filterExpression || {};
     }
     const fieldFilters = {
       [orFilterLogic ? 'or' : 'and']: [
-        ...(filters.entities || [])?.map((entity) => ({
+        ...(filters.entities || []).map((entity) => ({
           prop: 'entity',
           subtype: entity.family,
           value: entity.entity,
@@ -363,6 +373,9 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
         ...(filters.labelSets || [])
           ?.filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
           .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+        ...(rangeCreation?.start || rangeCreation?.end
+          ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
+          : []),
       ],
     };
     const paragraphFilters = {
@@ -455,22 +468,23 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
 
 export const creationStart = searchState.writer<string | undefined>(
   (state) =>
-    state.options.range_creation_start && new Date(state.options.range_creation_start).toISOString().slice(0, 10),
+    state.creation?.range_creation_start && new Date(state.creation.range_creation_start).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_start: date && new Date(date).toISOString(),
     },
   }),
 );
 
 export const creationEnd = searchState.writer<string | undefined>(
-  (state) => state.options.range_creation_end && new Date(state.options.range_creation_end).toISOString().slice(0, 10),
+  (state) =>
+    state.creation?.range_creation_end && new Date(state.creation.range_creation_end).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_end: date && new Date(`${date}T23:59:59.000Z`).toISOString(),
     },
   }),
@@ -485,8 +499,8 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     (!state.filters.labels || state.filters.labels.length === 0) &&
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0) &&
-    !state.options.range_creation_start &&
-    !state.options.range_creation_end,
+    !state.creation?.range_creation_start &&
+    !state.creation?.range_creation_end,
 );
 
 export const hasMore = searchState.reader<boolean>((state) => state.options.top_k !== EXTENDED_RESULTS);
