@@ -26,6 +26,7 @@ import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModa
 import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { FilterAssistantModalComponent } from '../filter-assistant';
+import { FilterExpressionModalComponent } from '../filter-expression-modal';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -129,6 +130,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   get preselectedFiltersControl() {
     return this.form.controls.preselectedFilters;
   }
+  get preselectedFilterExpressionControl() {
+    return this.form.controls.preselectedFilterExpression;
+  }
   get suggestionsEnabled() {
     return this.form.controls.suggestions.value;
   }
@@ -167,5 +171,15 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       .openModal(FilterAssistantModalComponent, new ModalConfig({ data: this.preselectedFiltersControl.value }))
       .onClose.pipe(filter((filters) => !!filters))
       .subscribe((filters: string) => this.preselectedFiltersControl.patchValue(filters));
+  }
+
+  openFilterExpressionAssistant() {
+    this.modalService
+      .openModal(
+        FilterExpressionModalComponent,
+        new ModalConfig({ data: this.preselectedFilterExpressionControl.value }),
+      )
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => this.preselectedFilterExpressionControl.patchValue(filters));
   }
 }

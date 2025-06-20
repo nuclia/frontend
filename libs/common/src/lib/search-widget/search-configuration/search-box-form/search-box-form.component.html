@@ -128,6 +128,11 @@
             (resizing)="heightChanged.emit()">
             {{ 'search.configuration.search-box.preselected-filters.filter-expression.textarea-label' | translate }}
           </nsi-expandable-textarea>
+          <pa-button
+            class="align-on-right"
+            (click)="openFilterExpressionAssistant()">
+            {{ 'search.configuration.search-box.preselected-filters.assistant-button-label' | translate }}
+          </pa-button>
         }
       </div>
     </div>

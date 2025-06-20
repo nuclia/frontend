@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.filter-value {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1.5);
+}
+
+.secondary {
+  color: $color-neutral-regular;
+  font-size: $font-size-body-s;
+}

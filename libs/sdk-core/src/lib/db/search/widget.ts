@@ -618,7 +618,7 @@ function getPreselectedFilters(config: Widget.SearchBoxConfig): string {
 
 function getPreselectedFilterExpression(config: Widget.SearchBoxConfig) {
   const filterExpression = config.preselectedFilterExpression;
-  if (config.setPreselectedFilters && filterExpression.trim()) {
+  if (config.setPreselectedFilters && filterExpression?.trim()) {
     try {
       return JSON.stringify(JSON.parse(filterExpression));
     } catch (e) {
