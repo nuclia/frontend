@@ -16,6 +16,7 @@ import {
   pageNumber,
   pendingResults,
   preferMarkdown,
+  rangeCreationISO,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -65,6 +66,7 @@ export const setupTriggerSearch = (
                 combinedFilters.pipe(take(1)),
                 combinedFilterExpression.pipe(take(1)),
                 filterExpression.pipe(take(1)),
+                rangeCreationISO.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -84,6 +86,7 @@ export const setupTriggerSearch = (
                     combinedFilters,
                     combinedFilterExpression,
                     filterExpression,
+                    rangeCreation,
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
@@ -97,6 +100,8 @@ export const setupTriggerSearch = (
                       show,
                       filters: filterExpression ? undefined : combinedFilters,
                       filter_expression: filterExpression ? combinedFilterExpression : undefined,
+                      range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
+                      range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {
