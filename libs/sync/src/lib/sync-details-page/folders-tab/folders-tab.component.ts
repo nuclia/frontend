@@ -8,13 +8,13 @@ import {
   Output,
 } from '@angular/core';
 
-import { ISyncEntity, SyncItem } from '../../logic';
-import { FolderSelectionComponent } from '../../folder-selection';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { FolderListComponent, InfoCardComponent, StickyFooterComponent } from '@nuclia/sistema';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FolderListComponent, StickyFooterComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
+import { FolderSelectionComponent } from '../../folder-selection';
+import { ISyncEntity, SyncItem } from '../../logic';
 
 @Component({
   selector: 'nsy-folders-tab',
@@ -24,11 +24,10 @@ import { Subject } from 'rxjs';
     PaButtonModule,
     TranslateModule,
     PaIconModule,
-    InfoCardComponent,
     FolderListComponent,
     StickyFooterComponent,
-    ReactiveFormsModule
-],
+    ReactiveFormsModule,
+  ],
   templateUrl: './folders-tab.component.html',
   styleUrl: './folders-tab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

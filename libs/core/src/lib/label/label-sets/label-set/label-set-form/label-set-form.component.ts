@@ -15,18 +15,16 @@ import {
 } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { InfoCardComponent, LABEL_COLORS, SisLabelModule, SisToastService } from '@nuclia/sistema';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { LabelsService } from '../../../labels.service';
-import { FeaturesService } from '../../../../analytics';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
-import { LABEL_MAIN_COLORS, noDuplicateListItemsValidator } from '../../utils';
+import { InfoCardComponent, LABEL_COLORS, SisLabelModule, SisToastService } from '@nuclia/sistema';
 import { combineLatest, map, Subject, take, tap } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
-import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../../model';
 import { STFUtils } from '../../../../utils';
+import { LabelsService } from '../../../labels.service';
+import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../../model';
+import { LABEL_MAIN_COLORS, noDuplicateListItemsValidator } from '../../utils';
 
 const KINDS = [
   { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
@@ -41,11 +39,10 @@ const KINDS = [
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    RouterLink,
     SisLabelModule,
     TranslateModule,
-    InfoCardComponent
-],
+    InfoCardComponent,
+  ],
   templateUrl: './label-set-form.component.html',
   styleUrl: './label-set-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

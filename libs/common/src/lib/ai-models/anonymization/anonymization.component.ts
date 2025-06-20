@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { filter, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
 
 @Component({
   selector: 'stf-anonymization',
@@ -15,11 +15,10 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     ReactiveFormsModule,
-    InfoCardComponent,
     PaTogglesModule,
     StickyFooterComponent,
-    PaButtonModule
-],
+    PaButtonModule,
+  ],
   templateUrl: './anonymization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

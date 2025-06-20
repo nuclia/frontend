@@ -1,23 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { Router } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
-import { Router, RouterLink } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
-import { switchMap, take } from 'rxjs/operators';
 import { map } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 @Component({
-  imports: [
-    PaModalModule,
-    TranslateModule,
-    PaModalModule,
-    PaButtonModule,
-    BadgeComponent,
-    PaIconModule,
-    RouterLink
-],
+  imports: [PaModalModule, TranslateModule, PaModalModule, PaButtonModule, BadgeComponent, PaIconModule],
   templateUrl: './unauthorized-feature-modal.component.html',
   styleUrl: './unauthorized-feature-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

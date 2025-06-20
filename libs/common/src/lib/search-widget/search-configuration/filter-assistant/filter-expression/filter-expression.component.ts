@@ -10,6 +10,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   OptionModel,
   PaButtonModule,
@@ -17,23 +18,19 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FilterTypeAndValueComponent } from '../filter-type-and-value/filter-type-and-value.component';
-import { ButtonMiniComponent, InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FilterCombiner, FilterExpression, filterTypeList, SimpleFilter } from '../filter-assistant.models';
-import { FilterTypePipe, FilterValueComponent } from '../filter-type-and-value';
+import { ButtonMiniComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FilterCombiner, FilterExpression, filterTypeList, SimpleFilter } from '../filter-assistant.models';
+import { FilterTypePipe, FilterValueComponent } from '../filter-type-and-value';
 
 let id = 0;
 
 @Component({
   selector: 'stf-filter-expression',
   imports: [
-    FilterTypeAndValueComponent,
     FormsModule,
-    InfoCardComponent,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaButtonModule,
@@ -42,8 +39,8 @@ let id = 0;
     PaPopupModule,
     PaDropdownModule,
     FilterValueComponent,
-    FilterTypePipe
-],
+    FilterTypePipe,
+  ],
   templateUrl: './filter-expression.component.html',
   styleUrl: './filter-expression.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

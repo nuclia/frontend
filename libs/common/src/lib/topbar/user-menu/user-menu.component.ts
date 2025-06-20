@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,10 +8,8 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { Router, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 import { BackendConfigurationService, FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { Account, Welcome } from '@nuclia/core';
-import { Subject, takeUntil } from 'rxjs';
 import {
   AvatarModel,
   PaAvatarModule,
@@ -18,20 +17,13 @@ import {
   PaIconModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { Account, Welcome } from '@nuclia/core';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-menu',
-  imports: [
-    CommonModule,
-    TranslateModule,
-    PaIconModule,
-    PaAvatarModule,
-    PaDropdownModule,
-    PaPopupModule,
-    RouterLinkActive,
-  ],
+  imports: [CommonModule, TranslateModule, PaIconModule, PaAvatarModule, PaDropdownModule, PaPopupModule],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
