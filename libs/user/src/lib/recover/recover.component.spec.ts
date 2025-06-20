@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
-import { RecoverComponent } from './recover.component';
+import { RouterTestingModule } from '@angular/router/testing';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { MockModule } from 'ng-mocks';
 import { SisPasswordInputModule } from '@nuclia/sistema';
+import { MockModule } from 'ng-mocks';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { UserContainerModule } from '../user-container';
+import { RecoverComponent } from './recover.component';
 
 describe('RecoverComponent', () => {
   let component: RecoverComponent;

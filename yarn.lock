@@ -6816,6 +6816,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/grecaptcha@npm:^3.0.9":
+  version: 3.0.9
+  resolution: "@types/grecaptcha@npm:3.0.9"
+  checksum: 0931eaa060e5c5bdddc953e0510e16ad74791e50f62d4d6a65b519ed83b1ba6321099a88ed334e8a3c613d25b204634e0c849cee5ada9898788c7cb01443df15
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^3.0.0, @types/hast@npm:^3.0.4":
   version: 3.0.4
   resolution: "@types/hast@npm:3.0.4"
@@ -15698,15 +15705,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-mocks@npm:14.13.1":
-  version: 14.13.1
-  resolution: "ng-mocks@npm:14.13.1"
+"ng-mocks@npm:14.13.5":
+  version: 14.13.5
+  resolution: "ng-mocks@npm:14.13.5"
   peerDependencies:
-    "@angular/common": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
-    "@angular/core": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
-    "@angular/forms": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
-    "@angular/platform-browser": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
-  checksum: 80dfcc04a70575fa749fa42dbcacbf3b3052b98339b84f6e289154a86ffe55efc67b6e114717378079adbf28038d7cadf183304f0b36583e3659d11a77cee612
+    "@angular/common": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20
+    "@angular/core": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20
+    "@angular/forms": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20
+    "@angular/platform-browser": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20
+  checksum: b288727aed5d7b9ca19ece09b95a69c262eaa668bb0a8ce6a00f06b1d41886d7ca34507406e6ea559bd969848a5cc88e410c1f053927e320415b6144fdb62267
   languageName: node
   linkType: hard
 
@@ -15753,15 +15760,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-captcha@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "ngx-captcha@npm:13.0.0"
+"ng-recaptcha-2@npm:^16.0.1":
+  version: 16.0.1
+  resolution: "ng-recaptcha-2@npm:16.0.1"
   dependencies:
-    tslib: ^2.3.0
+    "@types/grecaptcha": ^3.0.9
+    tslib: ^2.2.0
   peerDependencies:
-    "@angular/common": ">= 15.0.0"
-    "@angular/core": ">= 15.0.0"
-  checksum: 71d1f0803e1c528318c8ba2adca88c1cf67633083605fafe26fe5f457152e2c264337170be1b1084804bfd277b016e37cfa8fad286fc7cc14c926733058049eb
+    "@angular/core": ^20.0.1
+  checksum: 5818126b6b4dc6ca0c1d12e4abb637fd41f0f957d0497eae6d17d087dca7917729839f4b2eb45fb190a61cbb14434383c19701666fe0a52fae458cd7d1b21efd
   languageName: node
   linkType: hard
 
@@ -16171,9 +16178,9 @@ __metadata:
     localstorage-polyfill: ^1.0.1
     mime: 3.0.0
     mrs-developer: ^1.7.1
-    ng-mocks: 14.13.1
+    ng-mocks: 14.13.5
     ng-packagr: 20.0.1
-    ngx-captcha: ^13.0.0
+    ng-recaptcha-2: ^16.0.1
     ngx-translate-multi-http-loader: ^18.2.0
     node-fetch: ^3.3.1
     nodemon: ^2.0.22

@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, Inject, DOCUMENT } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DOCUMENT, Inject } from '@angular/core';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ReCaptchaV3Service } from 'ngx-captcha';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { forkJoin, map } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'stf-recover',
+  selector: 'nus-recover',
   templateUrl: './recover.component.html',
   styleUrls: ['./recover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,14 +41,14 @@ export class RecoverComponent {
 
   submit() {
     if (!this.recoverForm.valid) return;
-    const recaptchaKey = this.config.getRecaptchaKey();
-    if (recaptchaKey) {
-      this.reCaptchaV3Service.execute(recaptchaKey, 'recover', (token) => {
+    this.reCaptchaV3Service.execute('recover').subscribe({
+      next: (token) => {
         this.recover(token);
-      });
-    } else {
-      throw new Error('Recaptcha key not found');
-    }
+      },
+      error: (error) => {
+        throw new Error('Recaptcha error', error);
+      },
+    });
   }
 
   recover(token: string) {

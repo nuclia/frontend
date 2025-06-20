@@ -1,19 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, FeaturesService, LoginService } from '@flaps/core';
-import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BackendConfigurationService, FeaturesService, LoginService } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
+import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'stf-signup',
+  selector: 'nus-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SignupComponent implements OnInit {
+  config = inject(BackendConfigurationService);
   signupForm = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -49,7 +50,6 @@ export class SignupComponent implements OnInit {
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     private loginService: LoginService,
-    public config: BackendConfigurationService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
   ) {}
@@ -67,15 +67,14 @@ export class SignupComponent implements OnInit {
 
   submitForm() {
     if (!this.signupForm.valid) return;
-
-    const recaptchaKey = this.config.getRecaptchaKey();
-    if (recaptchaKey) {
-      this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
+    this.reCaptchaV3Service.execute('login').subscribe({
+      next: (token) => {
         this.signupFromForm(token);
-      });
-    } else {
-      throw new Error('Recaptcha key not found');
-    }
+      },
+      error: (error) => {
+        throw new Error('ReCaptcha error', error);
+      },
+    });
   }
 
   private signupFromForm(token: string) {
