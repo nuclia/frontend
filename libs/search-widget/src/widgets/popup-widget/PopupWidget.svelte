@@ -8,7 +8,7 @@
   accessors />
 
 <script lang="ts">
-  import type { KBStates, Reranker, Widget } from '@nuclia/core';
+  import type { KBStates, Nuclia, Reranker, Widget } from '@nuclia/core';
   import { onMount } from 'svelte';
   import { getApiErrors, hasPermalinkToRender, isEmptySearchQuery, pendingResults, showResults } from '../../core';
   import SearchBar from '../search-widget/SearchBar.svelte';
@@ -106,10 +106,16 @@
 
   let searchBar: any = $state();
   let visible = $state(false);
+  let initHook: (n: Nuclia) => void = () => {};
+  let initialized = false;
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     visible = true;
     setTimeout(() => searchBar?.search(query, filters, doNotTriggerSearch), 0);
+  }
+
+  export function setInitHook(fn: (n: Nuclia) => void) {
+    initHook = fn;
   }
 
   export const onError = getApiErrors();
@@ -143,6 +149,12 @@
 
   function toggleSearchVisibility() {
     visible = !visible;
+    if (!initialized && initHook) {
+      setTimeout(() => {
+        searchBar?.setInitHook(initHook);
+        initialized = true;
+      }, 200);
+    }
   }
 
   function onBackdropKeyup(event: KeyboardEvent) {
@@ -161,7 +173,7 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if visible}
     <div
       class="backdrop"
