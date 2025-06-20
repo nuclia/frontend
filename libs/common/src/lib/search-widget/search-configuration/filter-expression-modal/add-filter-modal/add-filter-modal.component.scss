@@ -1,0 +1,18 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-top: rhythm(1);
+}
+
+.mime-type {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-select,
+  pa-input {
+    width: 50%;
+  }
+}

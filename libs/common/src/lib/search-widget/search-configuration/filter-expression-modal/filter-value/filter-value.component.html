@@ -1,0 +1,114 @@
+@if (filter(); as filter) {
+  <div class="filter-value body-m">
+    <span>{{ 'search.configuration.filter-expression-modal.filter-type.' + filter.prop | translate }}:</span>
+    @switch (filter.prop) {
+      @case ('label') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ filter.labelset + (filter.label ? '/' + filter.label : '') }}
+        </pa-chip>
+      }
+      @case ('entity') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ filter.subtype + (filter.value ? ': ' + filter.value : '') }}
+        </pa-chip>
+      }
+      @case ('language') {
+        <pa-chip [backgroundColor]="chipColor">{{ filter.language }}</pa-chip>
+        @if (filter.only_primary) {
+          <span class="secondary">
+            {{ '(' + ('search.configuration.filter-expression-modal.language-filter.only-primary' | translate) + ')' }}
+          </span>
+        }
+      }
+      @case ('field') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ filter.type }}
+          @if (filter.name) {
+            <span>: {{ filter.name }}</span>
+          }
+        </pa-chip>
+      }
+      @case ('resource') {
+        <pa-chip [backgroundColor]="chipColor">
+          @if (filter.id) {
+            {{ filter.id }}
+          }
+          @if (filter.slug) {
+            {{ filter.slug }}
+          }
+        </pa-chip>
+      }
+      @case ('keyword') {
+        <pa-chip [backgroundColor]="chipColor">{{ filter.word }}</pa-chip>
+      }
+      @case (filter.prop === 'resource_mimetype' || filter.prop === 'field_mimetype' ? filter.prop : '') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ filter.type }}
+          @if (filter.subtype) {
+            <span>/{{ filter.subtype }}</span>
+          }
+        </pa-chip>
+      }
+      @case (filter.prop === 'created' || filter.prop === 'modified' ? filter.prop : '') {
+        @if (filter.since) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ 'search.configuration.filter-expression-modal.date-filter.since' | translate }}:</span>
+            <pa-datetime
+              [datetime]="filter.since"
+              format="numerical"
+              dateOnly></pa-datetime>
+          </pa-chip>
+        }
+        @if (filter.until) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ 'search.configuration.filter-expression-modal.date-filter.until' | translate }}:</span>
+            <pa-datetime
+              [datetime]="filter.until"
+              format="numerical"
+              dateOnly></pa-datetime>
+          </pa-chip>
+        }
+      }
+      @case ('generated') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ 'search.configuration.filter-expression-modal.generated-filter.' + filter.by | translate }}
+          @if (filter.da_task) {
+            {{ ': ' + filter.da_task }}
+          }
+        </pa-chip>
+      }
+      @case ('kind') {
+        <pa-chip [backgroundColor]="chipColor">{{ filter.kind }}</pa-chip>
+      }
+      @case ('origin_tag') {
+        <pa-chip [backgroundColor]="chipColor">{{ filter.tag }}</pa-chip>
+      }
+      @case ('origin_path') {
+        @if (filter.prefix) {
+          <pa-chip [backgroundColor]="chipColor">
+            {{ ('search.configuration.filter-expression-modal.path-filter.prefix' | translate) + ': ' + filter.prefix }}
+          </pa-chip>
+        }
+      }
+      @case ('origin_source') {
+        @if (filter.id) {
+          <pa-chip [backgroundColor]="chipColor">{{ filter.id }}</pa-chip>
+        }
+      }
+      @case ('origin_collaborator') {
+        <pa-chip [backgroundColor]="chipColor">{{ filter.collaborator }}</pa-chip>
+      }
+      @case ('origin_metadata') {
+        <pa-chip [backgroundColor]="chipColor">
+          {{ filter.field }}
+          @if (filter.value) {
+            <span>: {{ filter.value }}</span>
+          }
+        </pa-chip>
+      }
+      @default {
+        {{ filter.prop }}
+      }
+    }
+  </div>
+}
