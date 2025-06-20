@@ -652,6 +652,7 @@
 	"kb.ai-models.toasts.failure": "Une erreur s’est produite lors de l’enregistrement des paramètres.",
 	"kb.ai-models.toasts.success": "Les nouveaux paramètres ont été enregistrés avec succès.",
 	"kb.create.error": "Une erreur s’est produite lors de la création de la Knowledge Box. Veuillez réessayer.",
+	"kb.create.error-loading-schema": "Une erreur s'est produite lors du chargement du schéma : {{error}}",
 	"kb.create.failure": "Quelque chose ne va pas en ce moment. Contactez votre administrateur.",
 	"kb.create.in_progress": "Création de la Knowledge Box en cours…",
 	"kb.create.invalid_name": "Nom de la Knowledge Box invalide",

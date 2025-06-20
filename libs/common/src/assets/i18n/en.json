@@ -652,6 +652,7 @@
 	"kb.ai-models.toasts.failure": "An error occurred when saving the settings.",
 	"kb.ai-models.toasts.success": "The new settings have been saved successfully.",
 	"kb.create.error": "Something went wrong when creating the Knowledge Box. Please try again.",
+	"kb.create.error-loading-schema": "An error occurred while loading schema: {{error}}",
 	"kb.create.failure": "Something is wrong at the moment. Contact your administrator.",
 	"kb.create.in_progress": "Knowledge Box creation in progress…",
 	"kb.create.invalid_name": "Invalid Knowledge Box name",
