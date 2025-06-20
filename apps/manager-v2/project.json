@@ -158,7 +158,7 @@
           "buildTarget": "manager-v2:build:local-stage"
         }
       },
-      "defaultConfiguration": "development",
+      "defaultConfiguration": "local-stage",
       "continuous": true
     },
     "extract-i18n": {
