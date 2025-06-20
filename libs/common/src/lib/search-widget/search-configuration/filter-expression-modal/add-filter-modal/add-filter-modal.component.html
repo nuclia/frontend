@@ -1,0 +1,229 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    <div class="title-l">
+      {{
+        (editMode
+          ? 'search.configuration.filter-expression-modal.edit-filter'
+          : 'search.configuration.filter-expression-modal.add-filter'
+        ) | translate
+      }}
+    </div>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <div class="form-container">
+      @if (!editMode) {
+        <pa-select
+          [formControl]="prop"
+          [label]="'search.configuration.filter-expression-modal.filter-type.title' | translate">
+          <pa-option-header>
+            {{ 'search.configuration.filter-expression-modal.filter-operators' | translate }}
+          </pa-option-header>
+          <pa-option value="and">
+            {{ 'search.configuration.filter-expression-modal.filter-type.and' | translate }}
+          </pa-option>
+          <pa-option value="or">
+            {{ 'search.configuration.filter-expression-modal.filter-type.or' | translate }}
+          </pa-option>
+          <pa-option value="not">
+            {{ 'search.configuration.filter-expression-modal.filter-type.not' | translate }}
+          </pa-option>
+          <pa-separator></pa-separator>
+          <pa-option-header>
+            {{ 'search.configuration.filter-expression-modal.filters' | translate }}
+          </pa-option-header>
+          @if ((target | async) === 'field') {
+            @for (filter of fieldFilters; track filter) {
+              <pa-option [value]="filter">
+                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+              </pa-option>
+            }
+          } @else {
+            @for (filter of paragraphFilters; track filter) {
+              <pa-option [value]="filter">
+                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+              </pa-option>
+            }
+          }
+        </pa-select>
+      }
+      @if (forms[prop.value]) {
+        <ng-container [formGroup]="forms[prop.value]">
+          @switch (prop.value) {
+            @case ('label') {
+              <pa-select
+                formControlName="labelset"
+                [label]="'search.configuration.filter-expression-modal.label-filter.labelset' | translate"
+                (valueChange)="resetLabel()">
+                @for (labelset of labelsets | async | keyvalue; track labelset.key) {
+                  <pa-option [value]="labelset.key">{{ labelset.value.title }}</pa-option>
+                }
+              </pa-select>
+              @if (selectedLabelset) {
+                <pa-select
+                  formControlName="label"
+                  [label]="'search.configuration.filter-expression-modal.label-filter.label' | translate"
+                  [help]="'generic.optional' | translate">
+                  @for (label of ((labelsets | async) || {})?.[selectedLabelset]?.labels || []; track label.title) {
+                    <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                  }
+                </pa-select>
+              }
+            }
+            @case ('entity') {
+              <pa-select
+                formControlName="subtype"
+                [label]="'search.configuration.filter-expression-modal.entity-filter.family' | translate"
+                (valueChange)="resetNer()"
+                [options]="(familyOptions | async) || []"></pa-select>
+              @if (selectedNerFamily) {
+                <pa-select
+                  formControlName="value"
+                  label="NER"
+                  [help]="'generic.optional' | translate"
+                  [options]="(nerOptions | async) || []"></pa-select>
+              }
+            }
+            @case ('language') {
+              <pa-input
+                formControlName="language"
+                minlength="2"
+                maxlength="2"
+                [help]="'search.configuration.filter-expression-modal.language-filter.help' | translate">
+                {{ 'search.configuration.filter-expression-modal.language-filter.language' | translate }}
+              </pa-input>
+              <pa-toggle
+                formControlName="only_primary"
+                labelOnRight>
+                {{ 'search.configuration.filter-expression-modal.language-filter.only-primary' | translate }}
+              </pa-toggle>
+            }
+            @case ('field') {
+              <pa-select
+                formControlName="type"
+                [label]="'search.configuration.filter-expression-modal.field-filter.type' | translate">
+                @for (type of fieldTypes; track type) {
+                  <pa-option [value]="type">{{ 'resource.field-' + type | translate }}</pa-option>
+                }
+              </pa-select>
+              <pa-input
+                formControlName="name"
+                [help]="'generic.optional' | translate">
+                {{ 'search.configuration.filter-expression-modal.field-filter.id' | translate }}
+              </pa-input>
+            }
+            @case ('resource') {
+              <pa-radio-group
+                [(value)]="resourceSelection"
+                (valueChange)="forms['resource'].reset()">
+                <pa-radio value="id">{{ 'generic.uid' | translate }}</pa-radio>
+                <pa-radio value="slug">{{ 'generic.slug' | translate }}</pa-radio>
+              </pa-radio-group>
+              @if (resourceSelection === 'id') {
+                <pa-input formControlName="id">{{ 'generic.uid' | translate }}</pa-input>
+              } @else {
+                <pa-input formControlName="slug">{{ 'generic.slug' | translate }}</pa-input>
+              }
+            }
+            @case ('keyword') {
+              <pa-input formControlName="word">
+                {{ 'search.configuration.filter-expression-modal.filter-type.keyword' | translate }}
+              </pa-input>
+            }
+            @case (prop.value === 'resource_mimetype' || prop.value === 'field_mimetype' ? prop.value : '') {
+              <div class="mime-type">
+                <pa-select
+                  formControlName="type"
+                  [label]="'search.configuration.filter-expression-modal.mime-filter.type' | translate">
+                  @for (type of mimeTypes; track type) {
+                    <pa-option [value]="type">{{ type }}</pa-option>
+                  }
+                </pa-select>
+                <span class="title-m">/</span>
+                <pa-input
+                  formControlName="subtype"
+                  [placeholder]="'search.configuration.filter-expression-modal.mime-filter.subtype-help' | translate">
+                  {{ 'search.configuration.filter-expression-modal.mime-filter.subtype' | translate }}
+                </pa-input>
+              </div>
+            }
+            @case (prop.value === 'created' || prop.value === 'modified' ? prop.value : '') {
+              <pa-date-picker
+                formControlName="since"
+                [label]="'search.configuration.filter-expression-modal.date-filter.since' | translate"
+                isInPopup></pa-date-picker>
+              <pa-date-picker
+                formControlName="until"
+                [label]="'search.configuration.filter-expression-modal.date-filter.until' | translate"
+                isInPopup></pa-date-picker>
+            }
+            @case ('generated') {
+              <pa-select
+                formControlName="by"
+                [label]="'search.configuration.filter-expression-modal.generated-filter.generator' | translate">
+                <pa-option value="data-augmentation">
+                  {{ 'search.configuration.filter-expression-modal.generated-filter.data-augmentation' | translate }}
+                </pa-option>
+              </pa-select>
+              <pa-input
+                formControlName="da_task"
+                [help]="'generic.optional' | translate">
+                {{ 'search.configuration.filter-expression-modal.generated-filter.field-prefix' | translate }}
+              </pa-input>
+            }
+            @case ('kind') {
+              <pa-select
+                formControlName="kind"
+                [label]="'search.configuration.filter-expression-modal.kind-filter.kind' | translate">
+                @for (kind of paragraphKinds; track kind) {
+                  <pa-option [value]="kind">{{ kind }}</pa-option>
+                }
+              </pa-select>
+            }
+            @case ('origin_tag') {
+              <pa-input formControlName="tag">Tag</pa-input>
+            }
+            @case ('origin_path') {
+              <pa-input
+                formControlName="prefix"
+                placeholder="Users/JohnDoe/Documents">
+                {{ 'search.configuration.filter-expression-modal.origin-filter.prefix' | translate }}
+              </pa-input>
+            }
+            @case ('origin_source') {
+              <pa-input formControlName="id">Id</pa-input>
+            }
+            @case ('origin_collaborator') {
+              <pa-input formControlName="collaborator">
+                {{ 'search.configuration.filter-expression-modal.origin-filter.collaborator' | translate }}
+              </pa-input>
+            }
+            @case ('origin_metadata') {
+              <pa-input formControlName="field">
+                {{ 'search.configuration.filter-expression-modal.origin-filter.field' | translate }}
+              </pa-input>
+              <pa-input
+                formControlName="value"
+                [help]="'generic.optional' | translate">
+                {{ 'search.configuration.filter-expression-modal.origin-filter.value' | translate }}
+              </pa-input>
+            }
+          }
+        </ng-container>
+      }
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="submit()"
+      [disabled]="invalid">
+      {{ (editMode ? 'generic.edit' : 'generic.add') | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
