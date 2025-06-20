@@ -4,7 +4,7 @@ import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { MockModule } from 'ng-mocks';
@@ -26,7 +26,7 @@ describe('RecoverComponent', () => {
         MockModule(PaTranslateModule),
         MockModule(SisPasswordInputModule),
         MockModule(UserContainerModule),
-        RouterTestingModule,
+        RouterModule.forRoot([]),
       ],
       providers: [
         {

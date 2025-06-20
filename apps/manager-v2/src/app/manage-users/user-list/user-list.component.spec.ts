@@ -1,10 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserListComponent } from './user-list.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { UserService } from '../user.service';
-import { of } from 'rxjs';
+import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaIconModule,
@@ -12,6 +7,11 @@ import {
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { UserService } from '../user.service';
+import { UserListComponent } from './user-list.component';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -20,7 +20,7 @@ describe('UserListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaScrollModule),

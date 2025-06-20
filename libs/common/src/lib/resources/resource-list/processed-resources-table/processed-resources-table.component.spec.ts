@@ -1,11 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProcessedResourcesTableComponent } from './processed-resources-table.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
-import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaScrollModule,
@@ -13,10 +9,14 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { RouterTestingModule } from '@angular/router/testing';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { UploadService } from '../../../upload';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
+import { ProcessedResourcesTableComponent } from './processed-resources-table.component';
 
 describe('ProcessedResourcesTableComponent', () => {
   let component: ProcessedResourcesTableComponent;
@@ -26,7 +26,7 @@ describe('ProcessedResourcesTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ProcessedResourcesTableComponent],
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),

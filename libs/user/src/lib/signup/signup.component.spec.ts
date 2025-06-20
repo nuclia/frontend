@@ -2,8 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router, RouterModule } from '@angular/router';
 import {
   BackendConfigurationService,
   FeaturesService,
@@ -42,7 +41,7 @@ describe('SignupComponent', () => {
         MockModule(PaTranslateModule),
         MockModule(ReactiveFormsModule),
         MockModule(SisPasswordInputModule),
-        RouterTestingModule.withRoutes([{ path: 'check-mail', component: MockCheckMailComponent }]),
+        RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }]),
       ],
       declarations: [SignupComponent, MockComponent(UserContainerComponent)],
       providers: [

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
 import { LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
+import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { MockModule } from 'ng-mocks';
@@ -26,7 +26,7 @@ describe('ResetComponent', () => {
         MockModule(PaTranslateModule),
         MockModule(SisPasswordInputModule),
         MockModule(UserContainerModule),
-        RouterTestingModule,
+        RouterModule.forRoot([]),
       ],
       providers: [
         {

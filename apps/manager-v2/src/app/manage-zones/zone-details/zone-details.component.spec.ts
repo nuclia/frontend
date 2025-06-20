@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ZoneDetailsComponent } from './zone-details.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { ZoneService } from '../zone.service';
-import { UserService } from '../../manage-users/user.service';
-import { SisToastService } from '@nuclia/sistema';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { SisToastService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { UserService } from '../../manage-users/user.service';
+import { ZoneService } from '../zone.service';
+import { ZoneDetailsComponent } from './zone-details.component';
 
 describe('ZoneDetailsComponent', () => {
   let component: ZoneDetailsComponent;
@@ -15,7 +15,7 @@ describe('ZoneDetailsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(ReactiveFormsModule),

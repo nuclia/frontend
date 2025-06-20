@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { UserDetailsComponent } from './user-details.component';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { SisToastService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { UserService } from '../user.service';
-import { SisToastService } from '@nuclia/sistema';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { ReactiveFormsModule } from '@angular/forms';
+import { UserDetailsComponent } from './user-details.component';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -14,7 +14,7 @@ describe('UserDetailsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(ReactiveFormsModule),
