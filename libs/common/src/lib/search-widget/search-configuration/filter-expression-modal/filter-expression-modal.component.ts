@@ -72,8 +72,13 @@ export class FilterExpressionModalComponent {
     }
   }
 
-  get empty() {
-    return !this.filterExpression.field && !this.filterExpression.paragraph;
+  get invalidExpession() {
+    return (
+      (!this.filterExpression.field && !this.filterExpression.paragraph) ||
+      (this.filterExpression.field && this.hasEmptyExpressions([this.filterExpression.field as AnyFilterExpression])) ||
+      (this.filterExpression.paragraph &&
+        this.hasEmptyExpressions([this.filterExpression.paragraph as AnyFilterExpression]))
+    );
   }
 
   add(target: FilterTarget, parent?: AnyFilterExpression) {
@@ -190,5 +195,19 @@ export class FilterExpressionModalComponent {
 
   private createOperator(operator: string, children: AnyFilterExpression[]) {
     return operator === 'and' ? { and: children } : operator === 'or' ? { or: children } : { not: children };
+  }
+
+  private hasEmptyExpressions(expressions: AnyFilterExpression[]): boolean {
+    return expressions.some((expression) => {
+      if ('and' in expression) {
+        return expression.and.length === 0 || this.hasEmptyExpressions(expression.and);
+      } else if ('or' in expression) {
+        return expression.or.length === 0 || this.hasEmptyExpressions(expression.or);
+      } else if ('not' in expression) {
+        return expression.not.length === 0 || this.hasEmptyExpressions(expression.not);
+      } else {
+        return false;
+      }
+    });
   }
 }

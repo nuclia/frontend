@@ -43,7 +43,7 @@
       }
       @case (filter.prop === 'resource_mimetype' || filter.prop === 'field_mimetype' ? filter.prop : '') {
         <pa-chip [backgroundColor]="chipColor">
-          {{ filter.type }}
+          <span>{{ filter.type }}</span>
           @if (filter.subtype) {
             <span>/{{ filter.subtype }}</span>
           }

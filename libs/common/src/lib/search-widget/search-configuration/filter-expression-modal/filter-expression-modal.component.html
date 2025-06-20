@@ -17,8 +17,7 @@
               <ng-container
                 [ngTemplateOutlet]="filterItem"
                 [ngTemplateOutletContext]="{ filter: filterExpression.field, target: 'field' }" />
-            }
-            @if (!filterExpression.field) {
+            } @else {
               <div>
                 <pa-button
                   aspect="basic"
@@ -84,7 +83,7 @@
       {{ 'generic.cancel' | translate }}
     </pa-button>
     <pa-button
-      [disabled]="empty"
+      [disabled]="invalidExpession"
       kind="primary"
       (click)="submit()">
       {{ 'generic.save' | translate }}

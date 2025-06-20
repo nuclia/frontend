@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, Input, Pipe, PipeTransform } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaChipsModule, PaDateTimeModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,5 +14,5 @@ import { NonOperatorFilterExpression } from '../filter-expression-modal.componen
 })
 export class FilterValueComponent {
   chipColor = LABEL_COLORS[0].mainColor;
-  filter =  input.required<NonOperatorFilterExpression>();
+  filter = input.required<NonOperatorFilterExpression>();
 }

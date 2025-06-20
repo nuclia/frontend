@@ -7,14 +7,11 @@ import {
   PaDatePickerModule,
   PaExpanderModule,
   PaModalModule,
-  PaTableModule,
-  PaTabsModule,
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { LabelsService } from '@flaps/core';
-import { InfoCardComponent } from '@nuclia/sistema';
 import { FIELD_TYPE, TypeParagraph } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NerService } from '../../../../entities';
@@ -24,16 +21,13 @@ import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.co
 @Component({
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    InfoCardComponent,
     PaButtonModule,
     PaDatePickerModule,
     PaExpanderModule,
     PaModalModule,
-    PaTableModule,
-    PaTabsModule,
     PaTextFieldModule,
     PaTogglesModule,
+    ReactiveFormsModule,
     TranslateModule,
   ],
   templateUrl: './add-filter-modal.component.html',
