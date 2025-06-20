@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -12,7 +12,6 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
 @Component({
   selector: 'nus-onboarding-step1',
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
@@ -20,8 +19,8 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
-    StickyFooterComponent,
-  ],
+    StickyFooterComponent
+],
   templateUrl: './step1.component.html',
   styleUrls: ['../_common-step.scss', './step1.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

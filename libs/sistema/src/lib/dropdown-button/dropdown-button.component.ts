@@ -1,5 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   Aspect,
   DropdownComponent,
@@ -13,7 +13,7 @@ import {
 @Component({
   selector: 'nsi-dropdown-button',
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaIconModule, PaPopupModule],
+  imports: [PaButtonModule, PaIconModule, PaPopupModule],
   templateUrl: './dropdown-button.component.html',
   styleUrls: ['./dropdown-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

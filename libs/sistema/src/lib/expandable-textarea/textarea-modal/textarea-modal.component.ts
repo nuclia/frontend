@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-textarea-modal-dialog',
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslateModule],
+  imports: [PaButtonModule, PaModalModule, PaTextFieldModule, TranslateModule],
   templateUrl: './textarea-modal.component.html',
   styleUrl: './textarea-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

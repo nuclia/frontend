@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
@@ -6,7 +6,7 @@ import { RestrictedAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-restricted-node',
-  imports: [CommonModule, ConfigBlockComponent, NodeBoxComponent, TranslateModule],
+  imports: [ConfigBlockComponent, NodeBoxComponent, TranslateModule],
   templateUrl: './restricted-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

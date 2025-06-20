@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,7 +16,6 @@ import { ExternalAgentUI, formatHeaders } from '../../workflow.models';
 @Component({
   selector: 'app-external-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     ConfigurationFormComponent,
@@ -24,8 +23,8 @@ import { ExternalAgentUI, formatHeaders } from '../../workflow.models';
     HeadersFieldComponent,
     PaTextFieldModule,
     PaTogglesModule,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './external-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

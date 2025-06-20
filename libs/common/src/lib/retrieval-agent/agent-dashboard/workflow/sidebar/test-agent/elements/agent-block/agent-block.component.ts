@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, effect, input, viewChildren } from '@angular/core';
 import { AccordionBodyDirective, AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,7 +14,6 @@ import { ChipComponent } from '../chip';
 @Component({
   selector: 'app-agent-block',
   imports: [
-    CommonModule,
     ChipComponent,
     BlockquoteComponent,
     AgentStepComponent,
@@ -23,8 +22,8 @@ import { ChipComponent } from '../chip';
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './agent-block.component.html',
   styleUrl: './agent-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

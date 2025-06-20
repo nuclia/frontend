@@ -1,11 +1,12 @@
 <div
   class="label"
   [class.no-handle]="noHandle">
-  <div
-    *ngIf="!noHandle"
-    class="label-handle">
-    <pa-icon name="draggable"></pa-icon>
-  </div>
+  @if (!noHandle) {
+    <div
+      class="label-handle">
+      <pa-icon name="draggable"></pa-icon>
+    </div>
+  }
   <div
     class="label-content"
     [class.unsaved-label]="!label">
@@ -19,19 +20,25 @@
       (keydown.tab)="save()"
       (blur)="save()" />
   </div>
-  <pa-button
-    *ngIf="!!label"
-    aspect="basic"
-    size="small"
-    icon="trash"
-    paTooltip="generic.delete"
-    (click)="delete()">
-    {{ 'generic.delete' | translate }}
-  </pa-button>
+  @if (!!label) {
+    <pa-button
+      aspect="basic"
+      size="small"
+      icon="trash"
+      paTooltip="generic.delete"
+      (click)="delete()">
+      {{ 'generic.delete' | translate }}
+    </pa-button>
+  }
 </div>
-<div
-  *ngIf="!!title.errors?.['pattern'] || errorMessage"
-  class="error-message">
-  <ng-container *ngIf="errorMessage">{{ errorMessage | translate }}</ng-container>
-  <ng-container *ngIf="!errorMessage">{{ 'label-set.form.labels.naming-constraint' | translate }}</ng-container>
-</div>
+@if (!!title.errors?.['pattern'] || errorMessage) {
+  <div
+    class="error-message">
+    @if (errorMessage) {
+      {{ errorMessage | translate }}
+    }
+    @if (!errorMessage) {
+      {{ 'label-set.form.labels.naming-constraint' | translate }}
+    }
+  </div>
+}

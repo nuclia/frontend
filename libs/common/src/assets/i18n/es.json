@@ -652,6 +652,7 @@
 	"kb.ai-models.toasts.failure": "Se produjo un error al guardar la configuración.",
 	"kb.ai-models.toasts.success": "La nueva configuración se ha guardado correctamente.",
 	"kb.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la Knowledge Box. Por favor vuelve a intentarlo.",
+	"kb.create.error-loading-schema": "Se produjo un error al cargar el esquema: {{error}}",
 	"kb.create.failure": "Lo siento, definitivamente algo anda mal en este momento. Por favor, póngase en contacto con su administrador.",
 	"kb.create.in_progress": "Creación de la Knowledge Box en curso...",
 	"kb.create.invalid_name": "El nombre de la Knowledge Box no es válido",

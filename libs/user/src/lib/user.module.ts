@@ -1,22 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 
-import { authGuard, LowerCaseInputDirective } from '@flaps/core';
+import { authGuard, BackendConfigurationService, LowerCaseInputDirective } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { NgxCaptchaModule } from 'ngx-captcha';
 
-import { LoginComponent } from './login/login.component';
-import { RecoverComponent } from './recover/recover.component';
-import { MagicComponent } from './magic/magic.component';
-import { LogoutComponent } from './logout/logout.component';
-import { ResetComponent } from './reset/reset.component';
-import { CallbackComponent } from './callback/callback.component';
-import { ProfileComponent } from './profile/profile.component';
-import { ConsentComponent } from './consent/consent.component';
-import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import {
   PaAvatarModule,
   PaButtonModule,
@@ -25,10 +15,13 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
-import { SignupComponent } from './signup/signup.component';
-import { SsoButtonComponent } from './sso/sso-button.component';
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha-2';
+import { CallbackComponent } from './callback/callback.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
-import { UserContainerModule } from './user-container';
+import { ConsentComponent } from './consent/consent.component';
+import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
+import { MagicComponent } from './magic/magic.component';
 import {
   EmbeddingModelStepComponent,
   KbNameStepComponent,
@@ -38,9 +31,16 @@ import {
   VectorDatabaseStepComponent,
   ZoneStepComponent,
 } from './onboarding';
+import { ProfileComponent } from './profile/profile.component';
+import { RecoverComponent } from './recover/recover.component';
+import { ResetComponent } from './reset/reset.component';
+import { SignupComponent } from './signup/signup.component';
+import { SsoButtonComponent } from './sso/sso-button.component';
+import { UserContainerModule } from './user-container';
+import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 
 export const userRoutes: Routes = [
-  { path: 'callback', component: CallbackComponent }, // Is this route used ?
+  { path: 'callback', component: CallbackComponent },
   {
     path: 'callbacks/saml',
     component: CallbackComponent,
@@ -104,7 +104,7 @@ export const userRoutes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxCaptchaModule,
+    RecaptchaV3Module,
     AngularSvgIconModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
@@ -126,5 +126,12 @@ export const userRoutes: Routes = [
     LowerCaseInputDirective,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
+  providers: [
+    {
+      provide: RECAPTCHA_V3_SITE_KEY,
+      useFactory: (config: BackendConfigurationService) => config.getRecaptchaKey(),
+      deps: [BackendConfigurationService],
+    },
+  ],
 })
 export class UserModule {}

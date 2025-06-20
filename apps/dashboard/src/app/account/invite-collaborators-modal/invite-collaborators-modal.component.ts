@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   ModalRef,
   PaButtonModule,
@@ -18,7 +18,6 @@ import { catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-invite-collaborators-modal',
   imports: [
-    CommonModule,
     PaModalModule,
     PaTextFieldModule,
     PaButtonModule,
@@ -26,8 +25,8 @@ import { catchError } from 'rxjs/operators';
     PaTogglesModule,
     TranslateModule,
     ReactiveFormsModule,
-    LowerCaseInputDirective,
-  ],
+    LowerCaseInputDirective
+],
   templateUrl: './invite-collaborators-modal.component.html',
   styleUrl: './invite-collaborators-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

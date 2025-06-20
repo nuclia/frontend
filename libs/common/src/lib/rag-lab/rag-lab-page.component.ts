@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { PromptLabComponent } from './prompt-lab';
@@ -7,7 +7,7 @@ import { RagLabComponent } from './rag-lab.component';
 import { RagLabService } from './rag-lab.service';
 
 @Component({
-  imports: [CommonModule, TranslateModule, PaTabsModule, PromptLabComponent, RagLabComponent],
+  imports: [TranslateModule, PaTabsModule, PromptLabComponent, RagLabComponent],
   templateUrl: './rag-lab-page.component.html',
   styleUrl: './rag-lab-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

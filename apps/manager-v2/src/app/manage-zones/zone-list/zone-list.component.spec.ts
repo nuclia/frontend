@@ -1,10 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ZoneListComponent } from './zone-list.component';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { ZoneService } from '../zone.service';
-import { of } from 'rxjs';
+import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaIconModule,
@@ -12,6 +7,11 @@ import {
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { ZoneService } from '../zone.service';
+import { ZoneListComponent } from './zone-list.component';
 
 describe('ZoneListComponent', () => {
   let component: ZoneListComponent;
@@ -20,7 +20,7 @@ describe('ZoneListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaScrollModule),
@@ -31,6 +31,7 @@ describe('ZoneListComponent', () => {
       providers: [
         MockProvider(ZoneService, {
           loadZones: jest.fn(() => of([])),
+          zones: of([]),
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),

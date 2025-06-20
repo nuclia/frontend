@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,7 +6,7 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
 
 @Component({
   selector: 'app-remi-form',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, ConfigurationFormComponent, RulesFieldComponent],
+  imports: [ReactiveFormsModule, TranslateModule, ConfigurationFormComponent, RulesFieldComponent],
   templateUrl: './remi-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

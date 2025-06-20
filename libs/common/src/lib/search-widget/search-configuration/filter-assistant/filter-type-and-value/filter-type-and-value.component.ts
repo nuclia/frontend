@@ -9,7 +9,7 @@ import {
   Output,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -20,7 +20,7 @@ import { FilterValueComponent } from './filter-value.component';
 
 @Component({
   selector: 'stf-filter-type-and-value',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, PaTextFieldModule, FilterValueComponent],
+  imports: [FormsModule, ReactiveFormsModule, TranslateModule, PaTextFieldModule, FilterValueComponent],
   templateUrl: './filter-type-and-value.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IntroComponent } from './intro/intro.component';
@@ -32,15 +32,14 @@ const POLLING_DELAY = 30000; // in milliseconds, so 30s
 @Component({
   selector: 'app-getting-started',
   imports: [
-    CommonModule,
     PaModalModule,
     TranslateModule,
     PaButtonModule,
     PaIconModule,
     IntroComponent,
     UploadComponent,
-    ProcessingComponent,
-  ],
+    ProcessingComponent
+],
   templateUrl: './getting-started.component.html',
   styleUrl: './getting-started.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

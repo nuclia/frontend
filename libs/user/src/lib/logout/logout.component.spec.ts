@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { SDKService } from '@flaps/core';
 
+import { RouterModule } from '@angular/router';
 import { LogoutComponent } from './logout.component';
 
 describe('LogoutComponent', () => {
@@ -11,7 +11,7 @@ describe('LogoutComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [LogoutComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       providers: [{ provide: SDKService, useValue: { nuclia: { auth: { logout: () => {} } } } }],
     }).compileComponents();
   }));

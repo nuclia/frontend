@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { LearningConfigurationProperty } from '@nuclia/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +41,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
     </form>
   `,
   styleUrl: './dynamic-fields.component.scss',
-  imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule],
+  imports: [PaTextFieldModule, ReactiveFormsModule],
 })
 export class DynamicFieldsComponent {
   @Input() form: FormGroup = new FormGroup({});

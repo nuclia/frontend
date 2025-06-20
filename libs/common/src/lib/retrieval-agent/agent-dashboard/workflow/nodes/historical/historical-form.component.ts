@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -8,14 +8,13 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
 @Component({
   selector: 'app-historical-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
-    RulesFieldComponent,
-  ],
+    RulesFieldComponent
+],
   templateUrl: './historical-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

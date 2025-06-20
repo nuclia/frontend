@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, input, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
@@ -8,7 +8,7 @@ import { NodeConfig } from '../../workflow.models';
 
 @Component({
   selector: 'app-rules-field',
-  imports: [CommonModule, ReactiveFormsModule, ExpandableTextareaComponent, PaButtonModule, TranslateModule],
+  imports: [ReactiveFormsModule, ExpandableTextareaComponent, PaButtonModule, TranslateModule],
   templateUrl: './rules-field.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

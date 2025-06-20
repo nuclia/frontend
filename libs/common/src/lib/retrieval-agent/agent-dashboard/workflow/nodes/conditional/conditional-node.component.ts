@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -12,7 +12,7 @@ import { BaseConditionalAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-conditional-node',
-  imports: [CommonModule, TranslateModule, NodeBoxComponent, ConnectableEntryComponent, ConfigBlockComponent],
+  imports: [TranslateModule, NodeBoxComponent, ConnectableEntryComponent, ConfigBlockComponent],
   templateUrl: './conditional-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

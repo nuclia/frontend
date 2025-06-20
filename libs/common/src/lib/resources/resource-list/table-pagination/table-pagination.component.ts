@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -20,7 +20,7 @@ import { ResourceListService } from '../resource-list.service';
 @Component({
   selector: 'stf-table-pagination',
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaIconModule, TranslateModule, DropdownButtonComponent, PaDropdownModule],
+  imports: [PaButtonModule, PaIconModule, TranslateModule, DropdownButtonComponent, PaDropdownModule],
   templateUrl: './table-pagination.component.html',
   styleUrl: './table-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

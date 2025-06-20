@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,7 +15,6 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-internet-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,
@@ -24,8 +23,8 @@ import { aragUrl } from '../../workflow.state';
     ConfigurationFormComponent,
     RulesFieldComponent,
     InfoCardComponent,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './internet-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

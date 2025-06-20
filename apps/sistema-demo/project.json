@@ -4,6 +4,39 @@
   "projectType": "application",
   "sourceRoot": "apps/sistema-demo/src",
   "prefix": "nsd",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "inlineStyle": true,
+      "style": "scss",
+      "skipTests": true,
+      "changeDetection": "OnPush"
+    },
+    "@nx/angular:class": {
+      "skipTests": true
+    },
+    "@nx/angular:directive": {
+      "skipTests": true
+    },
+    "@nx/angular:guard": {
+      "skipTests": true
+    },
+    "@nx/angular:interceptor": {
+      "skipTests": true
+    },
+    "@nx/angular:pipe": {
+      "skipTests": true
+    },
+    "@nx/angular:resolver": {
+      "skipTests": true
+    },
+    "@nx/angular:service": {
+      "skipTests": true
+    },
+    "@nx/angular:application": {
+      "strict": true
+    }
+  },
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -84,7 +117,8 @@
           "buildTarget": "sistema-demo:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -102,38 +136,5 @@
         "jestConfig": "apps/sistema-demo/jest.config.js"
       }
     }
-  },
-  "generators": {
-    "@nx/angular:component": {
-      "inlineStyle": true,
-      "style": "scss",
-      "skipTests": true,
-      "changeDetection": "OnPush"
-    },
-    "@nx/angular:class": {
-      "skipTests": true
-    },
-    "@nx/angular:directive": {
-      "skipTests": true
-    },
-    "@nx/angular:guard": {
-      "skipTests": true
-    },
-    "@nx/angular:interceptor": {
-      "skipTests": true
-    },
-    "@nx/angular:pipe": {
-      "skipTests": true
-    },
-    "@nx/angular:resolver": {
-      "skipTests": true
-    },
-    "@nx/angular:service": {
-      "skipTests": true
-    },
-    "@nx/angular:application": {
-      "strict": true
-    }
-  },
-  "tags": []
+  }
 }

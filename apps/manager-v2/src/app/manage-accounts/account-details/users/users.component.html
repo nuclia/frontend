@@ -9,13 +9,14 @@
     Search member to add
   </pa-input>
   <pa-dropdown #potentialMembersList>
-    <pa-option
-      *ngFor="let member of potentialMembers$ | async"
-      icon="circle-plus"
-      [description]="member.id"
-      (selectOption)="addMember(member)">
-      {{ member.name }} – {{ member.email }}
-    </pa-option>
+    @for (member of potentialMembers$ | async; track member) {
+      <pa-option
+        icon="circle-plus"
+        [description]="member.id"
+        (selectOption)="addMember(member)">
+        {{ member.name }} – {{ member.email }}
+      </pa-option>
+    }
   </pa-dropdown>
 </div>
 <pa-table
@@ -39,13 +40,14 @@
       <pa-table-cell>{{ user.email }}</pa-table-cell>
       <pa-table-cell>
         <div class="manager-container">
-          <pa-icon
-            *ngIf="user.isManager"
+          @if (user.isManager) {
+            <pa-icon
             name="shield-check"></pa-icon>
+          }
         </div>
       </pa-table-cell>
       <pa-table-cell-menu>
-        <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
+        @if (!user.isManager || (hasSeveralManagers | async) === true) {
           <pa-button
             icon="more-vertical"
             aspect="basic"
@@ -53,26 +55,28 @@
             Menu
           </pa-button>
           <pa-dropdown #menu>
-            <pa-option
-              *ngIf="user.isManager && (hasSeveralManagers | async) === true"
-              (selectOption)="removeFromManagers($event, user)">
-              Remove from managers
-            </pa-option>
-            <pa-option
-              *ngIf="!user.isManager"
-              (selectOption)="addToManagers($event, user)">
-              Add to managers
-            </pa-option>
-            <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
+            @if (user.isManager && (hasSeveralManagers | async) === true) {
+              <pa-option
+                (selectOption)="removeFromManagers($event, user)">
+                Remove from managers
+              </pa-option>
+            }
+            @if (!user.isManager) {
+              <pa-option
+                (selectOption)="addToManagers($event, user)">
+                Add to managers
+              </pa-option>
+            }
+            @if (!user.isManager || (hasSeveralManagers | async) === true) {
               <pa-separator></pa-separator>
               <pa-option
                 destructive
                 (selectOption)="removeUser($event, user)">
                 Remove
               </pa-option>
-            </ng-container>
+            }
           </pa-dropdown>
-        </ng-container>
+        }
       </pa-table-cell-menu>
     </pa-table-row>
   }

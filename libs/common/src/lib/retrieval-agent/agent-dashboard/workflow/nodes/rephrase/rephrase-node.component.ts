@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,7 +9,7 @@ import { RephraseAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-rephrase-node',
-  imports: [CommonModule, NodeBoxComponent, TranslateModule, ConfigBlockComponent],
+  imports: [NodeBoxComponent, TranslateModule, ConfigBlockComponent],
   templateUrl: './rephrase-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

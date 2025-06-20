@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
@@ -6,7 +6,7 @@ import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/
 
 @Component({
   selector: 'nsd-sistema-two-columns-configuration-item',
-  imports: [CommonModule, PaDemoModule, TwoColumnsConfigurationItemComponent, PaTogglesModule],
+  imports: [PaDemoModule, TwoColumnsConfigurationItemComponent, PaTogglesModule],
   templateUrl: './sistema-two-columns-configuration-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

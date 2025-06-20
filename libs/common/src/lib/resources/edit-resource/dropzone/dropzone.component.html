@@ -5,10 +5,13 @@
   (fileOver)="fileOverBase($event)"
   (atFileDrop)="uploadFile($event)"
   (click)="chooseFiles($event)">
-  <span *ngIf="!isUploading">{{ 'resource.field-file-dropzone' | translate }}</span>
-  <nsi-spinner
-    *ngIf="isUploading"
+  @if (!isUploading) {
+    <span>{{ 'resource.field-file-dropzone' | translate }}</span>
+  }
+  @if (isUploading) {
+    <nsi-spinner
     size="small"></nsi-spinner>
+  }
 </div>
 <input
   #fileInput

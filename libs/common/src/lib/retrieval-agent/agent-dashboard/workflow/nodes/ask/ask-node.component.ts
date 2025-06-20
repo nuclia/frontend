@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { AskAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-ask-node',
-  imports: [CommonModule, ConfigBlockComponent, NodeBoxComponent, TranslateModule, ConnectableEntryComponent],
+  imports: [ConfigBlockComponent, NodeBoxComponent, TranslateModule, ConnectableEntryComponent],
   templateUrl: './ask-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

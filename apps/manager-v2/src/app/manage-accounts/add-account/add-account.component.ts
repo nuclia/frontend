@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { SisToastService } from '@nuclia/sistema';
 @Component({
   templateUrl: 'add-account.component.html',
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
+  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class AddAccountComponent {
   isSaving = false;

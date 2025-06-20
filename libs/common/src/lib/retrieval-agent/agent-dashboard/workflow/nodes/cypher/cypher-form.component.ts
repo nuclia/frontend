@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,7 +14,6 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-cypher-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,
@@ -22,8 +21,8 @@ import { aragUrl } from '../../workflow.state';
     PaTogglesModule,
     InfoCardComponent,
     ConfigurationFormComponent,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './cypher-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

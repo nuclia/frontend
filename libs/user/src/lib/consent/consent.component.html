@@ -5,18 +5,19 @@
       [src]="assetsPath + '/logos/logo.svg'"
       [alt]="brandName" />
 
-    <div
-      *ngIf="error"
-      class="consent-error title-xxs">
-      {{ error | translate }}
-    </div>
+    @if (error) {
+      <div
+        class="consent-error title-xxs">
+        {{ error | translate }}
+      </div>
+    }
 
     <div class="consent-content">
       <div class="consent-subject">
         <pa-avatar
           [userName]="consentData?.user_name"
           [userId]="consentData?.user_email"
-          size="small"></pa-avatar>
+        size="small"></pa-avatar>
         <span>{{ consentData?.user_email }}</span>
       </div>
       <div class="consent-client">
@@ -24,16 +25,26 @@
         {{ 'login.access_request' | translate }}
       </div>
       <ul class="consent-scopes">
-        <li
-          class="consent-scopes-item"
-          *ngFor="let scope of visibleScopes()">
-          <pa-icon name="check"></pa-icon>
-          <span [ngSwitch]="scope">
-            <span *ngSwitchCase="'flaps.kbs:read'">{{ 'login.scope.kbs_read' | translate }}</span>
-            <span *ngSwitchCase="'flaps.kbs:write'">{{ 'login.scope.kbs_write' | translate }}</span>
-            <span *ngSwitchDefault>{{ scope }}</span>
-          </span>
-        </li>
+        @for (scope of visibleScopes(); track scope) {
+          <li
+            class="consent-scopes-item"
+            >
+            <pa-icon name="check"></pa-icon>
+            <span>
+              @switch (scope) {
+                @case ('flaps.kbs:read') {
+                  <span>{{ 'login.scope.kbs_read' | translate }}</span>
+                }
+                @case ('flaps.kbs:write') {
+                  <span>{{ 'login.scope.kbs_write' | translate }}</span>
+                }
+                @default {
+                  <span>{{ scope }}</span>
+                }
+              }
+            </span>
+          </li>
+        }
       </ul>
     </div>
     <div class="consent-buttons">

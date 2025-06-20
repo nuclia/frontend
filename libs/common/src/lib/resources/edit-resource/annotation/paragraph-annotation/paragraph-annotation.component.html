@@ -32,14 +32,16 @@
         <div class="scrollable-area with-right-panel">
           <div class="paragraphs-container">
             <pa-infinite-scroll (reachAnchor)="loadMore()">
-              <div
-                class="paragraph-container"
-                *ngFor="let paragraph of paragraphs | async">
-                <p
-                  [attr.paragraphId]="paragraph.paragraphId"
-                  [class.family-selected]="(selectedFamily | async) !== null"
+              @for (paragraph of paragraphs | async; track paragraph) {
+                <div
+                  class="paragraph-container"
+                  >
+                  <p
+                    [attr.paragraphId]="paragraph.paragraphId"
+                    [class.family-selected]="(selectedFamily | async) !== null"
                   [innerHTML]="paragraph.annotatedText | safeHtml"></p>
-              </div>
+                </div>
+              }
             </pa-infinite-scroll>
           </div>
         </div>
@@ -48,7 +50,7 @@
           <div class="help">
             <pa-icon
               name="info"
-              size="small"></pa-icon>
+            size="small"></pa-icon>
             <p>
               {{ 'resource.field-annotation.help' | translate }}
             </p>
@@ -62,7 +64,7 @@
                 <pa-expander-header>
                   <div
                     class="family-color"
-                    [style.background-color]="family.color"></div>
+                  [style.background-color]="family.color"></div>
                   <span class="family-title">{{ family.title }}</span>
                   ({{ family.entities.length }})
                 </pa-expander-header>
@@ -70,12 +72,15 @@
                   <ul
                     class="entity-list"
                     [style.border-left-color]="family.color">
-                    <li
-                      *ngFor="let entity of family.entities"
-                      paEllipsisTooltip>
-                      {{ entity }}
-                    </li>
-                    <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
+                    @for (entity of family.entities; track entity) {
+                      <li
+                        paEllipsisTooltip>
+                        {{ entity }}
+                      </li>
+                    }
+                    @if (family.entities.length === 0) {
+                      <li>{{ 'resource.entities.no-entity' | translate }}</li>
+                    }
                   </ul>
                 </pa-expander-body>
               </pa-expander>

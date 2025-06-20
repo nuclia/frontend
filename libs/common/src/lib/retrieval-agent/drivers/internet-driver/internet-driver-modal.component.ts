@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -25,14 +25,13 @@ import {
 @Component({
   selector: 'app-internet-driver-modal',
   imports: [
-    CommonModule,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './internet-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

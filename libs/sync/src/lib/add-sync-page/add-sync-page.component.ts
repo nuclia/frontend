@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
-import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BackButtonComponent,
   SisModalService,
@@ -12,9 +11,10 @@ import {
   SisToastService,
   StickyFooterComponent,
 } from '@nuclia/sistema';
+import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { FolderSelectionComponent } from '../folder-selection';
-import { SDKService } from '@flaps/core';
+import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 
 @Component({
   selector: 'nsy-add-sync-page',
@@ -27,7 +27,6 @@ import { SDKService } from '@flaps/core';
     TranslateModule,
     ConfigurationFormComponent,
     FolderSelectionComponent,
-    RouterLink,
     SisProgressModule,
   ],
   templateUrl: './add-sync-page.component.html',

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -12,7 +12,6 @@ import { TestPanelService } from './test-panel.service';
 @Component({
   selector: 'app-test-panel',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     PaButtonModule,
     PaTextFieldModule,
@@ -20,8 +19,8 @@ import { TestPanelService } from './test-panel.service';
     AgentBlockComponent,
     TranslateModule,
     ProgressBarComponent,
-    PaTogglesModule,
-  ],
+    PaTogglesModule
+],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

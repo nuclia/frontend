@@ -52,36 +52,39 @@
       #pageSizeMenu1
       (onClose)="dropdown1Open = false"
       (onOpen)="dropdown1Open = true">
-      <pa-option
-        *ngFor="let option of options"
-        [value]="option.key"
-        (selectOption)="setPageSize(option, 1)">
-        {{ option.value }}
-      </pa-option>
+      @for (option of options; track option) {
+        <pa-option
+          [value]="option.key"
+          (selectOption)="setPageSize(option, 1)">
+          {{ option.value }}
+        </pa-option>
+      }
     </pa-dropdown>
 
     <pa-dropdown
       #pageSizeMenu2
       (onClose)="dropdown2Open = false"
       (onOpen)="dropdown2Open = true">
-      <pa-option
-        *ngFor="let option of options"
-        [value]="option.key"
-        (selectOption)="setPageSize(option, 2)">
-        {{ option.value }}
-      </pa-option>
+      @for (option of options; track option) {
+        <pa-option
+          [value]="option.key"
+          (selectOption)="setPageSize(option, 2)">
+          {{ option.value }}
+        </pa-option>
+      }
     </pa-dropdown>
 
     <pa-dropdown
       #pageSizeMenu3
       (onClose)="dropdown3Open = false"
       (onOpen)="dropdown3Open = true">
-      <pa-option
-        *ngFor="let option of options"
-        [value]="option.key"
-        (selectOption)="setPageSize(option, 3)">
-        {{ option.value }}
-      </pa-option>
+      @for (option of options; track option) {
+        <pa-option
+          [value]="option.key"
+          (selectOption)="setPageSize(option, 3)">
+          {{ option.value }}
+        </pa-option>
+      }
     </pa-dropdown>
   </pa-demo-examples>
 

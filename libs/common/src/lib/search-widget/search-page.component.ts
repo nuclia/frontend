@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,6 +9,7 @@ import {
   signal,
   viewChild,
   ViewEncapsulation,
+  DOCUMENT
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';

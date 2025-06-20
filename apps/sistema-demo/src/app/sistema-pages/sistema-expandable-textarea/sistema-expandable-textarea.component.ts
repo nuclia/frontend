@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   selector: 'nsd-sistema-expandable-textarea',
-  imports: [CommonModule, PaDemoModule, ExpandableTextareaComponent],
+  imports: [PaDemoModule, ExpandableTextareaComponent],
   templateUrl: './sistema-expandable-textarea.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

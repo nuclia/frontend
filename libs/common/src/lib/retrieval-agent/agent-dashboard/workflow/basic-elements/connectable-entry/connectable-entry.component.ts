@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -13,7 +13,7 @@ import { NodeCategory } from '../../workflow.models';
 
 @Component({
   selector: 'app-connectable-entry',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './connectable-entry.component.html',
   styleUrl: './connectable-entry.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

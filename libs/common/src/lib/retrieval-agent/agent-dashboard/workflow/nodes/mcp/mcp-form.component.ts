@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,7 +15,6 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-mcp-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     PaButtonModule,
     PaTextFieldModule,
@@ -23,8 +22,8 @@ import { aragUrl } from '../../workflow.state';
     TranslateModule,
     ConfigurationFormComponent,
     RulesFieldComponent,
-    RouterLink,
-  ],
+    RouterLink
+],
   templateUrl: './mcp-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

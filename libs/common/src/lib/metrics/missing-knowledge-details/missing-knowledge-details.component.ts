@@ -1,5 +1,5 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { RemiQueryResponseContextDetails, RemiQueryResponseItem } from '@nuclia/core';
@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-missing-knowledge-details',
-  imports: [CommonModule, PaTableModule, InfoCardComponent, SisProgressModule, TranslateModule, PaButtonModule],
+  imports: [PaTableModule, InfoCardComponent, SisProgressModule, TranslateModule, PaButtonModule],
   templateUrl: './missing-knowledge-details.component.html',
   styleUrl: './missing-knowledge-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

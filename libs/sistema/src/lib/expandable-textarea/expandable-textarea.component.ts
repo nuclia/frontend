@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -33,7 +33,7 @@ import { TextareaModalComponent } from './textarea-modal/textarea-modal.componen
   templateUrl: './expandable-textarea.component.html',
   styleUrls: ['./expandable-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PaButtonModule, PaFormFieldModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaFormFieldModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
 export class ExpandableTextareaComponent
   extends TextareaComponent

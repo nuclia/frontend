@@ -4,29 +4,30 @@
       {{ 'resource.field.add' | translate }} {{ 'resource.field-' + fieldType.value | translate }}
     </nsi-dropdown-button>
     <pa-dropdown #fieldTypeDropdown>
-      <pa-option
-        *ngFor="let type of availableTypes"
-        [value]="type"
-        (selectOption)="changeFieldType(type)">
-        {{ 'resource.field-' + type | translate }}
-      </pa-option>
+      @for (type of availableTypes; track type) {
+        <pa-option
+          [value]="type"
+          (selectOption)="changeFieldType(type)">
+          {{ 'resource.field-' + type | translate }}
+        </pa-option>
+      }
     </pa-dropdown>
 
     <form [formGroup]="form">
-      <ng-container *ngIf="fieldType.value === 'text'">
+      @if (fieldType.value === 'text') {
         <div class="field-block">
           <pa-select
             id="format"
             formControlName="format"
             [label]="'resource.field-text-format-label' | translate">
-            <pa-option
-              *ngFor="let format of availableFormats"
-              [value]="format">
-              {{ format }}
-            </pa-option>
+            @for (format of availableFormats; track format) {
+              <pa-option
+                [value]="format">
+                {{ format }}
+              </pa-option>
+            }
           </pa-select>
         </div>
-
         <div class="field-block">
           <nsi-expandable-textarea
             id="text"
@@ -37,9 +38,9 @@
             {{ 'resource.field-text-body-label' | translate }}
           </nsi-expandable-textarea>
         </div>
-      </ng-container>
+      }
 
-      <ng-container *ngIf="fieldType.value === 'link'">
+      @if (fieldType.value === 'link') {
         <div class="field-block">
           <pa-input
             id="link"
@@ -48,17 +49,19 @@
             URL
           </pa-input>
         </div>
-      </ng-container>
+      }
 
-      <ng-container *ngIf="fieldType.value === 'file'">
+      @if (fieldType.value === 'file') {
         <stf-dropzone
           [isUploading]="isSaving"
-          (file)="onFileChange($event)"></stf-dropzone>
-        <p *ngIf="newFile">
-          <strong>{{ 'resource.field-file-new-file' | translate }}</strong>
-          {{ newFile.name }}
-        </p>
-      </ng-container>
+        (file)="onFileChange($event)"></stf-dropzone>
+        @if (newFile) {
+          <p>
+            <strong>{{ 'resource.field-file-new-file' | translate }}</strong>
+            {{ newFile.name }}
+          </p>
+        }
+      }
     </form>
   </div>
 </div>

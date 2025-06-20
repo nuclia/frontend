@@ -25,7 +25,7 @@ import {
   TextFieldUtilityService,
 } from '@guillotinaweb/pastanaga-angular';
 import { NgControl, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { BadgeComponent } from '../badge';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -36,15 +36,14 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule,
     PaFormFieldModule,
     ReactiveFormsModule,
     PaTextFieldModule,
     BadgeComponent,
     PaPopupModule,
     PaDropdownModule,
-    TranslateModule,
-  ],
+    TranslateModule
+],
 })
 export class SisSearchInputComponent
   extends NativeTextFieldDirective

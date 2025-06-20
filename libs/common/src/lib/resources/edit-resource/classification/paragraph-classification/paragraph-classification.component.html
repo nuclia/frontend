@@ -14,26 +14,27 @@
         </div>
         <div class="scrollable-area paragraphs-container">
           <pa-infinite-scroll (reachAnchor)="loadMore()">
-            <div
-              class="paragraph-container"
-              *ngFor="let paragraph of paragraphs | async">
-              <p>{{ paragraph.text }}</p>
-              <div class="labels-container">
-                <ng-container *ngFor="let label of paragraph.generatedClassifications">
-                  <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
-                    {{ label.label }}
-                  </pa-chip>
-                </ng-container>
-
-                <ng-container *ngFor="let label of paragraph.userClassifications">
-                  @if (!label.cancelled_by_user) {
+            @for (paragraph of paragraphs | async; track paragraph) {
+              <div
+                class="paragraph-container"
+                >
+                <p>{{ paragraph.text }}</p>
+                <div class="labels-container">
+                  @for (label of paragraph.generatedClassifications; track label) {
                     <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
                       {{ label.label }}
                     </pa-chip>
                   }
-                </ng-container>
+                  @for (label of paragraph.userClassifications; track label) {
+                    @if (!label.cancelled_by_user) {
+                      <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                        {{ label.label }}
+                      </pa-chip>
+                    }
+                  }
+                </div>
               </div>
-            </div>
+            }
           </pa-infinite-scroll>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
@@ -19,7 +19,6 @@ import { getListFromTextarea } from '../../arag.utils';
 @Component({
   selector: 'app-nuclia-driver-modal',
   imports: [
-    CommonModule,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
@@ -27,8 +26,8 @@ import { getListFromTextarea } from '../../arag.utils';
     InfoCardComponent,
     ReactiveFormsModule,
     TranslateModule,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './nuclia-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

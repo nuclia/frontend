@@ -4,31 +4,33 @@
     [src]="assetsPath + '/logos/logo-white.svg'"
     [alt]="brandName + ' Manager'" />
 
-  <nav
-    class="title-m"
-    *ngIf="isRoot">
-    <ul>
-      <li
-        routerLink="accounts"
-        routerLinkActive="active">
-        Accounts
-      </li>
-      <li
-        routerLink="users"
-        routerLinkActive="active">
-        Users
-      </li>
-      <li
-        routerLink="zones"
-        routerLinkActive="active">
-        Zones
-      </li>
-    </ul>
-  </nav>
+  @if (isRoot) {
+    <nav
+      class="title-m"
+      >
+      <ul>
+        <li
+          routerLink="accounts"
+          routerLinkActive="active">
+          Accounts
+        </li>
+        <li
+          routerLink="users"
+          routerLinkActive="active">
+          Users
+        </li>
+        <li
+          routerLink="zones"
+          routerLinkActive="active">
+          Zones
+        </li>
+      </ul>
+    </nav>
+  }
   <pa-avatar
     size="small"
     [avatar]="avatar | async"
-    [paPopup]="userMenu"></pa-avatar>
+  [paPopup]="userMenu"></pa-avatar>
 </header>
 
 <pa-dropdown #userMenu>
@@ -39,11 +41,14 @@
   </pa-option>
 </pa-dropdown>
 <div class="page-container">
-  <div
-    *ngIf="!isRoot"
-    class="forbidden-message">
-    You don't have enough permissions to use the manager.
-  </div>
+  @if (!isRoot) {
+    <div
+      class="forbidden-message">
+      You don't have enough permissions to use the manager.
+    </div>
+  }
 
-  <router-outlet *ngIf="isRoot"></router-outlet>
+  @if (isRoot) {
+    <router-outlet></router-outlet>
+  }
 </div>

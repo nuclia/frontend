@@ -27,34 +27,35 @@
         <pa-table-cell header>Creation</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
-      <pa-table-row
-        *ngFor="let account of accounts$ | async | slice: 0 : lastIndex"
-        [routerLink]="account.id"
-        clickable>
-        <pa-table-cell>
-          <small>{{ account.id }}</small>
-        </pa-table-cell>
-        <pa-table-cell>{{ account.email }}</pa-table-cell>
-        <pa-table-cell>{{ account.title }}</pa-table-cell>
-        <pa-table-cell>{{ account.slug }}</pa-table-cell>
-        <pa-table-cell>{{ account.type }}</pa-table-cell>
-        <pa-table-cell>
-          <pa-datetime
-            [datetime]="account.created + '+00:00'"
-            format="numerical"
+      @for (account of accounts$ | async | slice: 0 : lastIndex; track account) {
+        <pa-table-row
+          [routerLink]="account.id"
+          clickable>
+          <pa-table-cell>
+            <small>{{ account.id }}</small>
+          </pa-table-cell>
+          <pa-table-cell>{{ account.email }}</pa-table-cell>
+          <pa-table-cell>{{ account.title }}</pa-table-cell>
+          <pa-table-cell>{{ account.slug }}</pa-table-cell>
+          <pa-table-cell>{{ account.type }}</pa-table-cell>
+          <pa-table-cell>
+            <pa-datetime
+              [datetime]="account.created + '+00:00'"
+              format="numerical"
             dateOnly></pa-datetime>
-        </pa-table-cell>
-        <pa-table-cell-menu>
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            size="small"
-            kind="destructive"
-            (click)="deleteAccount($event, account)">
-            Delete account
-          </pa-button>
-        </pa-table-cell-menu>
-      </pa-table-row>
+          </pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              size="small"
+              kind="destructive"
+              (click)="deleteAccount($event, account)">
+              Delete account
+            </pa-button>
+          </pa-table-cell-menu>
+        </pa-table-row>
+      }
     </pa-table>
   </pa-infinite-scroll>
 </div>

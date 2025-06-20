@@ -652,6 +652,7 @@
 	"kb.ai-models.toasts.failure": "S’ha produït un error en desar la configuració.",
 	"kb.ai-models.toasts.success": "La nova configuració s’ha desat correctament.",
 	"kb.create.error": "Perdó, alguna cosa ha anat malament quan creavem la Knowledge Box. Torneu-ho a intenta, sius plau",
+	"kb.create.error-loading-schema": "S'ha produït un error en carregar l'esquema: {{error}}",
 	"kb.create.failure": "Ho sento, definitivament alguna cosa no funciona en aquest moment. Si us plau, poseu-vos en contacte amb el vostre administrador.",
 	"kb.create.in_progress": "Creació de la Knowledge Box en curs...",
 	"kb.create.invalid_name": "El nom de la Knowledge Box no és vàlid",

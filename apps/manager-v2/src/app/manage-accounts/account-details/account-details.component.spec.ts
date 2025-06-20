@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AccountDetailsComponent } from './account-details.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { AccountService } from '../account.service';
-import { AccountDetailsStore } from './account-details.store';
-import { ZoneService } from '../../manage-zones/zone.service';
-import { of } from 'rxjs';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { RouterModule } from '@angular/router';
 import { BackendConfigurationService } from '@flaps/core';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { ZoneService } from '../../manage-zones/zone.service';
+import { AccountService } from '../account.service';
+import { AccountDetailsComponent } from './account-details.component';
+import { AccountDetailsStore } from './account-details.store';
 
 describe('AccountDetailsComponent', () => {
   let component: AccountDetailsComponent;
@@ -15,7 +15,7 @@ describe('AccountDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, MockModule(PaButtonModule), MockModule(PaIconModule)],
+      imports: [RouterModule.forRoot([]), MockModule(PaButtonModule), MockModule(PaIconModule)],
       declarations: [AccountDetailsComponent],
       providers: [
         MockProvider(AccountService),

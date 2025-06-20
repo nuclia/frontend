@@ -11,7 +11,7 @@ import {
   ZoneService,
 } from '@flaps/core';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
@@ -60,6 +60,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
   private featureService = inject(FeaturesService);
+  private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -112,8 +113,15 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
-      this.sdk.nuclia.db.getLearningSchema().subscribe((schema) => {
-        this.learningSchema.next(schema);
+      this.sdk.nuclia.db.getLearningSchema().subscribe({
+        next: (schema) => {
+          this.learningSchema.next(schema);
+        },
+        error: (error) => {
+          this.toaster.error(
+            this.translate.instant('kb.create.error-loading-schema', { error: error.body.detail || 'Unknown error' }),
+          );
+        },
       });
     } else {
       // update learning schema when zone changes

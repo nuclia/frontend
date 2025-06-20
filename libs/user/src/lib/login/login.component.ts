@@ -1,15 +1,15 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReCaptchaV3Service } from 'ngx-captcha';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
 import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 
 @Component({
-  selector: 'stf-login',
+  selector: 'nus-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: false,
@@ -101,7 +101,7 @@ export class LoginComponent {
     const recaptchaKey = this.config.getRecaptchaKey();
     this.isLoggingIn = true;
     if (recaptchaKey) {
-      this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
+      this.reCaptchaV3Service.execute('login').subscribe((token) => {
         this.doLogin(token);
       });
     } else {

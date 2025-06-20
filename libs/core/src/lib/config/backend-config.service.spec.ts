@@ -20,7 +20,7 @@ describe('BackendConfigurationService', () => {
   );
 
   it('should be created', () => {
-    const service: BackendConfigurationService = TestBed.get(BackendConfigurationService);
+    const service: BackendConfigurationService = TestBed.inject(BackendConfigurationService);
     expect(service).toBeTruthy();
   });
 });

@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
+
 import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-chip',
-  imports: [CommonModule, PaChipsModule],
+  imports: [PaChipsModule],
   templateUrl: './chip.component.html',
   styleUrl: './chip.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,10 +1,10 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsy-connector',
-  imports: [CommonModule, PaCardModule, PaIconModule, PaIconModule],
+  imports: [PaCardModule, PaIconModule, PaIconModule],
   templateUrl: './connector.component.html',
   styleUrls: ['./connector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

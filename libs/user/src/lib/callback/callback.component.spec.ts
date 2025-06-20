@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, SAMLService, SsoService } from '@flaps/core';
 import { of } from 'rxjs';
 
+import { RouterModule } from '@angular/router';
 import { CallbackComponent } from './callback.component';
 
 describe('CallbackComponent', () => {
@@ -14,7 +14,7 @@ describe('CallbackComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CallbackComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       providers: [
         { provide: SAMLService, useValue: { getToken: () => of(token) } },
         { provide: SsoService, useValue: { login: () => of() } },

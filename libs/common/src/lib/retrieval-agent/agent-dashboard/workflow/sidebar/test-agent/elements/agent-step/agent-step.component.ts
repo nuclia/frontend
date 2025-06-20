@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { AragAnswerStep } from '@nuclia/core';
@@ -9,7 +9,7 @@ import { ChipComponent } from '../chip';
 
 @Component({
   selector: 'stf-agent-step',
-  imports: [CommonModule, ChipComponent, LineBreakFormatterPipe, BlockquoteComponent, PaExpanderModule],
+  imports: [ChipComponent, LineBreakFormatterPipe, BlockquoteComponent, PaExpanderModule],
   templateUrl: './agent-step.component.html',
   styleUrl: './agent-step.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
