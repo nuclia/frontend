@@ -69,9 +69,8 @@
       cursor: col-resize;
       height: 100%;
       left: 0;
-      opacity: 0.5;
       position: absolute;
-      top: 0;
+      top: var(--panel-top, 0);
       width: calc(#{rhythm(0.5)} + 1px);
 
       .border {
