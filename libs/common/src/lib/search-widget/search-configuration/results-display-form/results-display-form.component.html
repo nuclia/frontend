@@ -67,25 +67,23 @@
 
       <div
         class="extra-fields"
-        [class.visible]="metadataEnabled"
-        formGroupName="metadatas">
-        @for (metadata of DISPLAYED_METADATAS; track metadata.value) {
-          <pa-checkbox [formControlName]="metadata.value">
-            {{ metadata.label | translate }}
-          </pa-checkbox>
-        }
+        [class.visible]="metadataEnabled">
+        <pa-select
+          [options]="metadataExamples"
+          [label]="'search.configuration.result-display.display-metadata.example.select-label' | translate"
+          [formControl]="metadataExampleControl"
+          (valueChange)="addMetadataExample($event)"></pa-select>
+
+        <nsi-expandable-textarea
+          formControlName="metadatas"
+          resizable
+          help="search.configuration.result-display.display-metadata.metadata-help"
+          rows="4"
+          modalTitle="search.configuration.result-display.display-metadata.metadata-label"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.result-display.display-metadata.metadata-label' | translate }}
+        </nsi-expandable-textarea>
       </div>
-      <nsi-expandable-textarea
-        class="extra-fields"
-        formControlName="metadatasOthers"
-        [class.visible]="metadataEnabled"
-        resizable
-        help="search.configuration.result-display.display-metadata.others-help"
-        rows="4"
-        modalTitle="search.configuration.result-display.display-metadata.others-label"
-        (resizing)="heightChanged.emit()">
-        {{ 'search.configuration.result-display.display-metadata.others-label' | translate }}
-      </nsi-expandable-textarea>
     </div>
     <div class="config-form-field">
       <pa-toggle

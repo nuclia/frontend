@@ -1,6 +1,3 @@
-import { fromFetch } from 'rxjs/fetch';
-import { switchMap } from 'rxjs/operators';
-import { from, map, Observable, of } from 'rxjs';
 import {
   type BaseSearchOptions,
   FIELD_TYPE,
@@ -17,15 +14,17 @@ import {
   NUCLIA_STANDARD_SEARCH_CONFIG,
   NUCLIA_STANDARD_SEARCH_CONFIG_ID,
   type NucliaOptions,
-  type Paragraph,
   type ResourceField,
   Search,
   sliceUnicode,
   type TextFieldFormat,
   type Widget,
 } from '@nuclia/core';
+import { from, map, Observable, of } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { switchMap } from 'rxjs/operators';
 import { getFileUrls } from './api';
-import type { TypedResult, ResultMetadata, DisplayableMetadata } from './models';
+import type { DisplayableMetadata, ResultMetadata, ResultMetadataItem, TypedResult } from './models';
 
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -547,19 +546,16 @@ function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((acc, key) => acc && acc[key], obj);
 }
 
-function getMetadata(
-  metadata: { path: string; type: 'string' | 'list' | 'date' }[],
-  obj: any,
-): { label: string; value: string; type: 'string' | 'list' | 'date' }[] {
+function getMetadata(metadata: ResultMetadataItem[], obj: any): DisplayableMetadata[] {
   if (!obj) {
     return [];
   }
-  const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
-  metadata.forEach(({ path, type }) => {
+  const metadataValues: DisplayableMetadata[] = [];
+  metadata.forEach(({ path, type, title }) => {
     const value = getNestedValue(obj, path);
     const label = path.split('.').pop() || path;
     if (value) {
-      metadataValues.push({ label, value, type });
+      metadataValues.push({ label, value, type, title });
     }
   });
   return metadataValues;

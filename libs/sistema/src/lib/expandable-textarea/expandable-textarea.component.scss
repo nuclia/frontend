@@ -18,3 +18,10 @@
 .pa-field-textarea {
   padding-right: rhythm(4);
 }
+
+:host {
+  pa-form-field-hint ::ng-deep .pa-field-help ul {
+    margin: 0;
+    padding-left: rhythm(2);
+  }
+}

@@ -40,6 +40,7 @@
   <div
     class="sw-field-metadata"
     class:expanded>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       class="metadata-container"
       class:ellipsis={!expanded}
@@ -49,14 +50,14 @@
       }}>
       {#each result.resultMetadata as metadata, i}
         <div bind:this={metadataElements[i]}>
-          <span class="body-s">{metadata.label}:</span>
+          <span class="body-s">{metadata.title || metadata.label}:</span>
           <span class="title-xxs">
             {#if metadata.type === 'date'}
-              {formatDate(metadata.value)}
+              {formatDate(metadata.value as string)}
             {:else if metadata.label === 'size'}
-              {formatSize(metadata.value)}
+              {formatSize(metadata.value as number)}
             {:else if metadata.type === 'list'}
-              {metadata.value.map((item) => item.label).join(', ')}
+              {(metadata.value as string[]).join(', ')}
             {:else}
               {metadata.value}
             {/if}

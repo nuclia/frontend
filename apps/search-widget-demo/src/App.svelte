@@ -19,7 +19,7 @@
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
-  const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory,knowledgeGraph';
+  const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory,displayMetadata';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
@@ -53,7 +53,8 @@
     knowledgebox={kb}
     lang="en"
     no_tracking
-    features={askFeatures} />
+    features={askFeatures}
+    metadata="origin:created:date:Date de sortie,origin:collaborators:list,field:file.size:string:Taille du PDF" />
   <NucliaSearchResults no_tracking />
 
   <!-- <NucliaChat
