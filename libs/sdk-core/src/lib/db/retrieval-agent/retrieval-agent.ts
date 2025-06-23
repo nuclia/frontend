@@ -109,8 +109,10 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     }
   }
 
+  wsOpeningCount = 0;
   private _interactThroughWs(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
     const answerSubject = new Subject<AragResponse | IErrorResponse>();
+    this.wsOpeningCount = 0;
     this.openWebSocket(sessionId, question, answerSubject);
 
     return answerSubject.asObservable();
@@ -161,7 +163,17 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             const lastSeqId = lastMessage?.seqid || null;
             if (lastSeqId !== null) {
               this.openWebSocket(sessionId, question, answerSubject, lastSeqId + 1);
+            } else if (this.wsOpeningCount < 2) {
+              // if we got no message, we retry only 3 times
+              this.wsOpeningCount++;
+              this.openWebSocket(sessionId, question, answerSubject);
             } else {
+              answerSubject.next({
+                type: 'error',
+                status: -1,
+                detail: 'WebSocket was closed without returning any answer.',
+                body: event,
+              });
               answerSubject.complete();
             }
           }
