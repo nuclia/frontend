@@ -43,7 +43,7 @@ export class LinkComponent {
     switch (this.state()) {
       case 'processing':
       case 'processed':
-        return '#16a249';
+        return '#21c45d';
       default:
         return '#707070';
     }

@@ -1,7 +1,16 @@
 import { ComponentRef, computed, signal } from '@angular/core';
 import { AnswerOperation, AragAnswer, AragModule, getCategoryFromModule } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { AragAnswerUi, AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
+import {
+  AragAnswerUi,
+  AskAgentUI,
+  isCategory,
+  NodeCategory,
+  NodeConfig,
+  NodeState,
+  NodeType,
+  ParentNode,
+} from './workflow.models';
 
 /**
  * Global state
@@ -67,10 +76,12 @@ const testAgent = signal<{
   running: boolean;
   question: string;
   answers: AragAnswer[];
+  processingPath: string;
 }>({
   running: false,
   question: '',
   answers: [],
+  processingPath: '',
 });
 
 // prettier-ignore
@@ -79,6 +90,7 @@ export function resetTestAgent() {
     running: false,
     question: '',
     answers: [],
+    processingPath: ''
   });
 }
 function aragAnswerToUi(data: AragAnswerWithModule): AragAnswerUi {
@@ -199,16 +211,62 @@ function addAnswerToCategory(categories: RawAnswersByCategory, data: AragAnswer)
 }
 
 export function testAgentRun(question: string, keepAnswers = false) {
-  testAgent.update((state) => ({ ...state, question, running: true, answers: keepAnswers ? state.answers : [] }));
+  testAgent.update((state) => ({
+    ...state,
+    question,
+    running: true,
+    answers: keepAnswers ? state.answers : [],
+    processingPath: keepAnswers ? state.processingPath : '',
+  }));
+  if (!keepAnswers) {
+    resetAllNodeState();
+  }
 }
 export function testAgentStop() {
-  testAgent.update((state) => ({ ...state, running: false }));
+  testAgent.update((state) => {
+    if (state.processingPath) {
+      setNodeStateByPath(state.processingPath, 'processed');
+    }
+    return { ...state, running: false };
+  });
 }
 export function testAgentUpdateResults(answers: AragAnswer[]) {
   testAgent.update((state) => ({ ...state, answers }));
 }
 export function testAgentAddAnswer(answer: AragAnswer) {
-  testAgent.update((state) => ({ ...state, answers: state.answers.concat([answer]) }));
+  testAgent.update((state) => {
+    let nodePath = state.processingPath;
+    if (answer.step) {
+      nodePath = answer.step.agent_path;
+      if (nodePath !== state.processingPath) {
+        // Set answer step node as processing
+        setNodeStateByPath(nodePath, 'processing');
+
+        if (state.processingPath !== '') {
+          setNodeStateByPath(state.processingPath, 'processed');
+        }
+      }
+    }
+
+    return { ...state, answers: state.answers.concat([answer]), processingPath: nodePath };
+  });
+}
+
+function resetAllNodeState() {
+  getAllNodes(true).forEach((node) => setNodeState(node, 'default'));
+}
+function setNodeStateByPath(nodePath: string, state: NodeState) {
+  const [, category, agentId] = nodePath.split('/');
+  if (isCategory(category)) {
+    const node = getNodeByAgentId(agentId, category);
+    if (node) {
+      setNodeState(node, state);
+    }
+  }
+}
+function setNodeState(node: ParentNode, state: NodeState) {
+  node.nodeRef.setInput('state', state);
+  node.nodeRef.instance.boxComponent?.linkRef?.setInput('state', state);
 }
 
 /**
@@ -319,6 +377,28 @@ export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | un
   }
   if (!node) {
     node = childNodes()[id];
+  }
+  return node;
+}
+
+export function getNodeByAgentId(agentId: string, nodeCategory: NodeCategory): ParentNode | undefined {
+  let node;
+  switch (nodeCategory) {
+    case 'preprocess':
+      node = Object.values(preprocessNodes()).find((node) => node.agentId === agentId);
+      break;
+    case 'context':
+      node = Object.values(contextNodes()).find((node) => node.agentId === agentId);
+      break;
+    case 'generation':
+      node = Object.values(generationNodes()).find((node) => node.agentId === agentId);
+      break;
+    case 'postprocess':
+      node = Object.values(postprocessNodes()).find((node) => node.agentId === agentId);
+      break;
+  }
+  if (!node) {
+    node = Object.values(childNodes()).find((node) => node.agentId === agentId);
   }
   return node;
 }

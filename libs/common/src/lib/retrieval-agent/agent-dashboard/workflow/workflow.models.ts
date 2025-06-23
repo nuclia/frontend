@@ -77,8 +77,13 @@ export function isCondionalNode(x: any): x is CondionalNodeType {
   return CONDITIONAL_NODES.includes(x);
 }
 
-export type NodeState = 'default' | 'unsaved' | 'selected' | 'processing' | 'processed';
 export type NodeCategory = 'preprocess' | 'context' | 'generation' | 'postprocess';
+export type NodeState = 'default' | 'unsaved' | 'selected' | 'processing' | 'processed';
+
+const CATEGORY_LIST: NodeCategory[] = ['preprocess', 'context', 'generation', 'postprocess'];
+export function isCategory(x: any): x is NodeCategory {
+  return CATEGORY_LIST.includes(x);
+}
 
 export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;

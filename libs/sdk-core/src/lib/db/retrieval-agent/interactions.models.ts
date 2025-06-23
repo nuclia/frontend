@@ -32,6 +32,7 @@ export interface AragAnswerStep {
   original_question_uuid: string;
   actual_question_uuid: string;
   module: AragModule | 'router'; // FIXME: remove router once backend will be fixed
+  agent_path: string;
   title: string;
   value: string;
   reason: string;
