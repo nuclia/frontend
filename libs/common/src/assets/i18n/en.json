@@ -1547,7 +1547,7 @@
 	"search.configuration.result-display.display-field-list.toggle-label": "Display field list",
 	"search.configuration.result-display.display-metadata.example.field-custom-file-size": "File size with custom title",
 	"search.configuration.result-display.display-metadata.example.field-file-size": "File size",
-	"search.configuration.result-display.display-metadata.example.origin-contributors-list": "Collaborators",
+	"search.configuration.result-display.display-metadata.example.origin-collaborators-list": "Collaborators",
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Creation date",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Tags",
 	"search.configuration.result-display.display-metadata.example.select-label": "Expression example",

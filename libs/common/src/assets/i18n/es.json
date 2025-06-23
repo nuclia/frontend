@@ -1523,7 +1523,7 @@
 	"search.configuration.result-display.display-field-list.toggle-label": "Mostrar lista de campos",
 	"search.configuration.result-display.display-metadata.example.field-custom-file-size": "Tamaño de archivo con título personalizado",
 	"search.configuration.result-display.display-metadata.example.field-file-size": "Tamaño del archivo",
-	"search.configuration.result-display.display-metadata.example.origin-contributors-list": "Colaboradores",
+	"search.configuration.result-display.display-metadata.example.origin-collaborators-list": "Colaboradores",
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Fecha de creación",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Etiquetas",
 	"search.configuration.result-display.display-metadata.example.select-label": "Ejemplo de expresión",

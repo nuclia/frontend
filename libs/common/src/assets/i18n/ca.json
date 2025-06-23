@@ -1523,7 +1523,7 @@
 	"search.configuration.result-display.display-field-list.toggle-label": "Mostra la llista de camps",
 	"search.configuration.result-display.display-metadata.example.field-custom-file-size": "Mida del fitxer amb títol personalitzat",
 	"search.configuration.result-display.display-metadata.example.field-file-size": "Mida del fitxer",
-	"search.configuration.result-display.display-metadata.example.origin-contributors-list": "Col·laboradors",
+	"search.configuration.result-display.display-metadata.example.origin-collaborators-list": "Col·laboradors",
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Data de creació",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Etiquetes",
 	"search.configuration.result-display.display-metadata.example.select-label": "Exemple d'expressió",
