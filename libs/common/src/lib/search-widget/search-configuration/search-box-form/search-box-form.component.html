@@ -97,6 +97,9 @@
       </pa-toggle>
       <div class="config-form-help">
         {{ 'search.configuration.search-box.preselected-filters.toggle-description' | translate }}
+        @if (preselectedFiltersControl.value) {
+          {{ 'search.configuration.search-box.preselected-filters.backward-compatibility' | translate }}
+        }
       </div>
       <div
         class="extra-fields"

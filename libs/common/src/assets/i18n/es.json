@@ -1674,6 +1674,7 @@
 	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expression": "Una expresión de la entrada de los filtros preseleccionados está mal formada",
 	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expressions": "{{count}} expresiones de la entrada de los filtros preseleccionados están mal formadas",
 	"search.configuration.search-box.preselected-filters.assistant-button-label": "Utilizar asistente",
+	"search.configuration.search-box.preselected-filters.backward-compatibility": "(retrocompatibilidad)",
 	"search.configuration.search-box.preselected-filters.filter-expression.textarea-label": "Expresión de filtro",
 	"search.configuration.search-box.preselected-filters.info-box": "Formato de filtro <a href=\"https://docs.nuclia.dev/docs/rag/advanced/search-filters\" target=\"_blank\" rel=\"noopener noreferrer\">documentado aquí</a>. Estos filtros se aplicarán a cualquier consulta de búsqueda sin ser visibles para los usuarios finales. ",
 	"search.configuration.search-box.preselected-filters.textarea-help": "Una expresión de filtro por línea",
