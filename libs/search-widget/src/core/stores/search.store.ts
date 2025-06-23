@@ -1,5 +1,5 @@
-import { SvelteState } from '../state-lib';
 import type {
+  ChatOptions,
   Classification,
   FieldId,
   Filter,
@@ -11,7 +11,6 @@ import type {
   ResourceField,
   Search,
   SearchOptions,
-  ChatOptions,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -34,12 +33,13 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import type { FindResultsAsList, ResultType, TypedResult, ResultMetadata } from '../models';
-import { NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
-import { orFilterLogic } from './widget.store';
+import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from '../models';
+import { NO_RESULT_LIST } from '../models';
+import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
+import { orFilterLogic } from './widget.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -495,6 +495,13 @@ function getType(value: string): 'string' | 'list' | 'date' {
   return 'string';
 }
 
+function getTitle(value: string): string | undefined {
+  const parts = value.split(':');
+  if (parts.length === 4) {
+    return parts[3];
+  }
+  return;
+}
 export const displayedMetadata = searchState.writer<ResultMetadata, string>(
   (state) => state.metadata,
   (state, params) => {
@@ -502,13 +509,13 @@ export const displayedMetadata = searchState.writer<ResultMetadata, string>(
     const metadata: ResultMetadata = {
       origin: values
         .filter((value) => value.startsWith('origin'))
-        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
       field: values
         .filter((value) => value.startsWith('field'))
-        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
       extra: values
         .filter((value) => value.startsWith('extra'))
-        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
     };
     return {
       ...state,

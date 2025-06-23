@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, from } from 'rxjs';
-import { map } from 'rxjs/operators';
 import * as Sentry from '@sentry/angular';
 import { browserTracingIntegration } from '@sentry/angular';
+import { firstValueFrom, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export type EnvironmentConfiguration = {
   version: string;

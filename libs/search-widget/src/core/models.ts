@@ -10,14 +10,21 @@ export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: Rank
 
 export interface DisplayableMetadata {
   label: string;
-  value: string | string[];
+  value: string | string[] | number;
   type: 'string' | 'list' | 'date';
+  title?: string;
+}
+
+export interface ResultMetadataItem {
+  path: string;
+  type: 'string' | 'list' | 'date';
+  title?: string;
 }
 
 export interface ResultMetadata {
-  origin: { path: string; type: 'string' | 'list' | 'date' }[];
-  field: { path: string; type: 'string' | 'list' | 'date' }[];
-  extra: { path: string; type: 'string' | 'list' | 'date' }[];
+  origin: ResultMetadataItem[];
+  field: ResultMetadataItem[];
+  extra: ResultMetadataItem[];
 }
 
 export interface TypedResult extends RankedFieldResult {

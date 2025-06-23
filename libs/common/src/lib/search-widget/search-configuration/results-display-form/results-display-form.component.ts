@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
-import { PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { OptionModel, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { INITIAL_CITATION_THRESHOLD, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
@@ -54,21 +54,13 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
 export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
+  private translate = inject(TranslateService);
 
   @Input() set config(value: Widget.ResultDisplayConfig | undefined) {
     if (value) {
       const { metadatas, ...rest } = value;
-      const mainMetadatas = this.DISPLAYED_METADATAS.reduce(
-        (acc, metadata) => {
-          acc[metadata.value] = (metadatas || []).includes(metadata.value);
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      );
-      const otherMetadatas = (metadatas || [])
-        .filter((metadata) => !this.DISPLAYED_METADATAS.map((m) => m.value).includes(metadata))
-        .join('\n');
-      this.form.patchValue({ ...rest, metadatas: mainMetadatas, metadatasOthers: otherMetadatas });
+      const formattedMetadata = (metadatas || []).join('\n');
+      this.form.patchValue({ ...rest, metadatas: formattedMetadata });
     }
   }
   @Input() set useSynonymsEnabled(value: boolean) {
@@ -110,29 +102,43 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<Widget.ResultDisplayConfig>();
 
-  DISPLAYED_METADATAS = [
-    { value: 'origin:created:date', label: 'search.configuration.result-display.display-metadata.origin-created-date' },
-    {
-      value: 'origin:contributors:list',
-      label: 'search.configuration.result-display.display-metadata.origin-contributors-list',
-    },
-    { value: 'origin:tags:list', label: 'search.configuration.result-display.display-metadata.origin-tags-list' },
-    { value: 'field:file.size', label: 'search.configuration.result-display.display-metadata.field-file-size' },
+  readonly metadataExamples: OptionModel[] = [
+    new OptionModel({
+      id: 'date',
+      value: 'origin:created:date',
+      label: this.translate.instant('search.configuration.result-display.display-metadata.example.origin-created-date'),
+    }),
+    new OptionModel({
+      id: 'collaborators',
+      value: 'origin:collaborators:list',
+      label: this.translate.instant(
+        'search.configuration.result-display.display-metadata.example.origin-collaborators-list',
+      ),
+    }),
+    new OptionModel({
+      id: 'tags',
+      value: 'origin:tags:list',
+      label: this.translate.instant('search.configuration.result-display.display-metadata.example.origin-tags-list'),
+    }),
+    new OptionModel({
+      id: 'size',
+      value: 'field:file.size',
+      label: this.translate.instant('search.configuration.result-display.display-metadata.example.field-file-size'),
+    }),
+    new OptionModel({
+      id: 'custom-size',
+      value: 'field:file.size:string:Custom size title',
+      label: this.translate.instant(
+        'search.configuration.result-display.display-metadata.example.field-custom-file-size',
+      ),
+    }),
   ];
+  metadataExampleControl = new FormControl('');
   form = new FormGroup({
     displayResults: new FormControl<boolean>(false, { nonNullable: true }),
     showResultType: new FormControl<'citations' | 'all-resources'>('all-resources', { nonNullable: true }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
-    metadatas: new FormGroup(
-      this.DISPLAYED_METADATAS.reduce(
-        (controls, metadata) => {
-          controls[metadata.value] = new FormControl<boolean>(false, { nonNullable: true });
-          return controls;
-        },
-        {} as Record<string, FormControl<boolean>>,
-      ),
-    ),
-    metadatasOthers: new FormControl<string>('', { nonNullable: true }),
+    metadatas: new FormControl<string>('', { nonNullable: true }),
     displayThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
     showAttachedImages: new FormControl<boolean>(false, { nonNullable: true }),
     displayFieldList: new FormControl<boolean>(false, { nonNullable: true }),
@@ -158,6 +164,9 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   get jsonOutputControl() {
     return this.form.controls.jsonOutput;
   }
+  get metadataControl() {
+    return this.form.controls.metadatas;
+  }
   get jsonOutputEnabled() {
     return this.jsonOutputControl.value;
   }
@@ -173,15 +182,13 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      const { metadatas, metadatasOthers, ...rest } = this.form.getRawValue();
-      const mains = Object.entries(metadatas)
-        .filter(([, value]) => value)
-        .map(([key]) => key);
-      const others = metadatasOthers
+      const { metadatas, ...rest } = this.form.getRawValue();
+
+      const metadataList = metadatas
         .split('\n')
         .map((metadata) => metadata.trim())
         .filter((metadata) => !!metadata);
-      this.configChanged.emit({ ...rest, metadatas: [...mains, ...others] });
+      this.configChanged.emit({ ...rest, metadatas: metadataList });
     });
   }
 
@@ -199,6 +206,16 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       this.showResultTypeControl.disable();
     } else if (this.showResultTypeControl.disabled) {
       this.showResultTypeControl.enable();
+    }
+  }
+
+  addMetadataExample(expression: string) {
+    if (expression) {
+      this.metadataExampleControl.patchValue('');
+      const currentValue = this.metadataControl.getRawValue();
+      if (!currentValue.includes(expression)) {
+        this.metadataControl.patchValue(`${currentValue}\n${expression}`.trim());
+      }
     }
   }
 }
