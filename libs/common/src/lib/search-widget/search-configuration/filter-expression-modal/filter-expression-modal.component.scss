@@ -1,0 +1,36 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  width: rhythm(90);
+  padding-bottom: rhythm(4);
+  margin-top: rhythm(2);
+}
+
+.filter {
+  align-items: center;
+  border: 1px solid $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(1);
+  padding: rhythm(1) rhythm(2);
+}
+
+.actions {
+  display: flex;
+  gap: rhythm(1);
+}
+
+.children {
+  margin-left: rhythm(4);
+}
+
+.filter-logic {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  justify-content: center;
+  width: 100%;
+}

@@ -61,6 +61,7 @@ export interface RankFusion {
 export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
+  filter_expression?: FilterExpression;
   keyword_filters?: string[] | Filter[];
   min_score?: number | MinScore;
   range_creation_start?: string;
@@ -112,11 +113,6 @@ export interface ChatOptions extends BaseSearchOptions {
 
 export interface SearchOptions extends BaseSearchOptions {
   faceted?: string[];
-  filter_expression?: {
-    field?: FieldFilterExpression;
-    paragraph?: ParagraphFilterExpression;
-    operator: 'and' | 'or';
-  };
   sort?: SortOption;
   /**
    * @deprecated use top_k
@@ -233,6 +229,12 @@ export interface GeneratedFilter {
 export interface KindFilter {
   prop: 'kind';
   kind: TypeParagraph;
+}
+
+export interface FilterExpression {
+  field?: FieldFilterExpression;
+  paragraph?: ParagraphFilterExpression;
+  operator?: 'and' | 'or';
 }
 
 export type FieldFilterExpression =

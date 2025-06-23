@@ -58,11 +58,13 @@ import {
   updateQueryParams,
 } from '../utils';
 import {
+  combinedFilterExpression,
   combinedFilters,
   creationEnd,
   creationStart,
   getFieldDataFromResource,
   getResultType,
+  filterExpression,
   images,
   isEmptySearchQuery,
   pendingResults,
@@ -73,6 +75,7 @@ import {
   trackingEngagement,
   triggerSearch,
   askBackendConfig,
+  rangeCreationISO,
 } from './search.store';
 import {
   fieldData,
@@ -461,66 +464,87 @@ export function askQuestion(
           map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
         ),
         combinedFilters.pipe(take(1)),
+        combinedFilterExpression.pipe(take(1)),
+        filterExpression.pipe(take(1)),
+        rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
         askBackendConfig.pipe(take(1)),
       ]),
     ),
-    switchMap(([entries, filters, disableRAG, extra_context_images, backendConfig]) => {
-      if (backendConfig) {
-        // if backend config is et, it takes precedence over everything else
-        options = backendConfig;
-      }
-      return (
-        disableRAG
-          ? getAnswerWithoutRAG(question, entries, options)
-          : getAnswer(question, entries, { ...options, filters, extra_context_images })
-      ).pipe(
-        tap((result) => {
-          hasNotEnoughData.set(result.type === 'error' && result.status === -2);
-          if (result.type === 'error') {
-            if ([-3, -2, -1, 412, 529].includes(result.status)) {
-              const messages: { [key: string]: string } = {
-                '-3': 'answer.error.no_retrieval_data',
-                '-2': 'answer.error.llm_cannot_answer',
-                '-1': 'answer.error.llm_error',
-                '412': 'answer.error.rephrasing',
-                '529': 'answer.error.rephrasing',
-              };
-              if (!hasError) {
-                // error is set only once
-                hasError = true;
-                const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-                appendChatEntry.set({
-                  question,
-                  answer: {
-                    inError: true,
-                    text: translateInstant(text),
-                    type: 'answer',
-                    id: '',
-                  },
-                });
+    switchMap(
+      ([
+        entries,
+        filters,
+        combinedFilterExpression,
+        filterExpression,
+        rangeCreation,
+        disableRAG,
+        extra_context_images,
+        backendConfig,
+      ]) => {
+        if (backendConfig) {
+          // if backend config is et, it takes precedence over everything else
+          options = backendConfig;
+        }
+        return (
+          disableRAG
+            ? getAnswerWithoutRAG(question, entries, options)
+            : getAnswer(question, entries, {
+                ...options,
+                filters: filterExpression ? undefined : filters,
+                filter_expression: filterExpression ? combinedFilterExpression : undefined,
+                range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
+                range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
+                extra_context_images,
+              })
+        ).pipe(
+          tap((result) => {
+            hasNotEnoughData.set(result.type === 'error' && result.status === -2);
+            if (result.type === 'error') {
+              if ([-3, -2, -1, 412, 529].includes(result.status)) {
+                const messages: { [key: string]: string } = {
+                  '-3': 'answer.error.no_retrieval_data',
+                  '-2': 'answer.error.llm_cannot_answer',
+                  '-1': 'answer.error.llm_error',
+                  '412': 'answer.error.rephrasing',
+                  '529': 'answer.error.rephrasing',
+                };
+                if (!hasError) {
+                  // error is set only once
+                  hasError = true;
+                  const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+                  appendChatEntry.set({
+                    question,
+                    answer: {
+                      inError: true,
+                      text: translateInstant(text),
+                      type: 'answer',
+                      id: '',
+                    },
+                  });
+                }
+              } else {
+                chatError.set(result);
               }
-            } else {
-              chatError.set(result);
-            }
-            pendingResults.set(false);
-          } else {
-            if (result.incomplete) {
-              if (hasNoResultsWithAutofilter(result.sources, options)) {
-                // when no results with autofilter on, a secondary call is made with autofilter off,
-                // meanwhile, we do not want to display the 'Not enough data' message
-                result.text = '';
-              }
-              currentAnswer.set(result);
-            } else {
-              appendChatEntry.set({ question, answer: result });
               pendingResults.set(false);
+            } else {
+              if (result.incomplete) {
+                if (hasNoResultsWithAutofilter(result.sources, options)) {
+                  // when no results with autofilter on, a secondary call is made with autofilter off,
+                  // meanwhile, we do not want to display the 'Not enough data' message
+                  result.text = '';
+                }
+                currentAnswer.set(result);
+              } else {
+                appendChatEntry.set({ question, answer: result });
+                pendingResults.set(false);
+              }
             }
-          }
-        }),
-      );
-    }),
+          }),
+        );
+      },
+    ),
   );
 }
 

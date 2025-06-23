@@ -80,6 +80,10 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
     if (filters) {
       options.filters = parsePreselectedFilters(filters);
     }
+  } else if (searchConfig.searchBox.setPreselectedFilters && searchConfig.searchBox.preselectedFilterExpression) {
+    try {
+      options.filter_expression = JSON.parse(searchConfig.searchBox.preselectedFilterExpression);
+    } catch {}
   }
   if (searchConfig.searchBox.limitParagraphs && !!searchConfig.searchBox.paragraphsLimit) {
     options.top_k = searchConfig.searchBox.paragraphsLimit;

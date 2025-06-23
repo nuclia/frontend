@@ -28,6 +28,7 @@ export namespace Widget {
     suggestResults: boolean;
     autocompleteFromNERs: boolean;
     preselectedFilters: string;
+    preselectedFilterExpression: string;
     filters: FilterSelectionType;
     prependTheQuery: boolean;
     queryPrepend: string;
@@ -240,6 +241,7 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   autofilter: false,
   setPreselectedFilters: false,
   preselectedFilters: '',
+  preselectedFilterExpression: '',
   suggestions: false,
   suggestResults: false,
   autocompleteFromNERs: false,
@@ -474,6 +476,7 @@ export function getWidgetParameters(
     rephrase_prompt: getRephrasePrompt(searchConfig.searchBox),
     filters: getFilters(searchConfig.searchBox),
     preselected_filters: getPreselectedFilters(searchConfig.searchBox),
+    filter_expression: getPreselectedFilterExpression(searchConfig.searchBox),
     rag_strategies: ragProperties,
     rag_images_strategies: ragImagesProperties,
     ask_to_resource: getAskToResource(searchConfig.generativeAnswer),
@@ -611,6 +614,18 @@ export function getPreselectedFilterValue(config: Widget.SearchBoxConfig): strin
 function getPreselectedFilters(config: Widget.SearchBoxConfig): string {
   const value = getPreselectedFilterValue(config);
   return config.setPreselectedFilters && value ? value : '';
+}
+
+function getPreselectedFilterExpression(config: Widget.SearchBoxConfig) {
+  const filterExpression = config.preselectedFilterExpression;
+  if (config.setPreselectedFilters && filterExpression?.trim()) {
+    try {
+      return JSON.stringify(JSON.parse(filterExpression));
+    } catch (e) {
+      console.warn(`Malformed Filter expression`, filterExpression.trim());
+    }
+  }
+  return '';
 }
 
 export function getRagStrategies(ragStrategiesConfig: Widget.RagStrategiesConfig) {

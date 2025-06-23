@@ -3,6 +3,7 @@ import type {
   Classification,
   FieldId,
   Filter,
+  FilterExpression,
   IErrorResponse,
   IFieldData,
   IResource,
@@ -33,13 +34,14 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { combineLatest, filter, map, Subject } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
 import { orFilterLogic } from './widget.store';
+import { labelSets } from './labels.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -76,7 +78,12 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
+  creation?: {
+    range_creation_start?: string;
+    range_creation_end?: string;
+  };
   preselectedFilters: string[] | Filter[];
+  filterExpression?: FilterExpression;
   options: SearchOptions;
   backendConfig: {
     find?: SearchOptions;
@@ -107,6 +114,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
+  filterExpression: undefined,
   options: {},
   backendConfig: {},
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
@@ -249,6 +257,16 @@ export const preselectedFilters = searchState.writer<string[] | Filter[], string
   },
 );
 
+export const filterExpression = searchState.writer<FilterExpression | undefined>(
+  (state) => state.filterExpression,
+  (state, filterExpression) => {
+    return {
+      ...state,
+      filterExpression,
+    };
+  },
+);
+
 export const resultsOrder = searchState.writer<ResultsOrder>(
   (state) => state.resultsOrder,
   (state, resultsOrder) => ({
@@ -305,6 +323,11 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
   },
 );
 
+export const rangeCreationISO = searchState.reader<{ start?: string; end?: string } | undefined>((state) => ({
+  start: state.creation?.range_creation_start,
+  end: state.creation?.range_creation_end,
+}));
+
 export const combinedFilters = combineLatest([searchFilters, preselectedFilters, orFilterLogic]).pipe(
   map(([searchFilters, preselectedFilters, orFilterLogic]) => {
     const filterOperator = orFilterLogic ? FilterOperator.any : FilterOperator.all;
@@ -315,6 +338,81 @@ export const combinedFilters = combineLatest([searchFilters, preselectedFilters,
       const isAdvancedFilters = preselectedFilters.every((filter) => typeof filter === 'object');
       return isAdvancedFilters ? filters.concat(preselectedFilters) : filters.concat([{ all: preselectedFilters }]);
     }
+  }),
+);
+
+export const combinedFilterExpression: Observable<FilterExpression> = combineLatest([
+  searchState.reader<SearchFilters>((state) => state.filters),
+  orFilterLogic,
+  filterExpression,
+  labelSets,
+  rangeCreationISO,
+]).pipe(
+  map(([filters, orFilterLogic, filterExpression, labelSets, rangeCreation]) => {
+    if (
+      ((filterExpression?.operator === 'and' || !filterExpression?.operator) && orFilterLogic) ||
+      (filterExpression?.operator === 'or' && !orFilterLogic)
+    ) {
+      // Filters cannot be combined if filters operator and filter expression operator are not the same
+      return filterExpression || {};
+    }
+    const fieldFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.entities || []).map((entity) => ({
+          prop: 'entity',
+          subtype: entity.family,
+          value: entity.entity,
+        })),
+        ...(filters.labels || [])
+          ?.filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          ?.filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+        ...(rangeCreation?.start || rangeCreation?.end
+          ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
+          : []),
+      ],
+    };
+    const paragraphFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.labels || [])
+          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+      ],
+    };
+    const hasFieldFilters = Object.values(fieldFilters)[0].length > 0;
+    const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
+    return {
+      ...(filterExpression || {}),
+      field:
+        filterExpression?.field && hasFieldFilters
+          ? {
+              and: [filterExpression.field, fieldFilters],
+            }
+          : hasFieldFilters
+            ? fieldFilters
+            : filterExpression?.field,
+      paragraph:
+        filterExpression?.paragraph && hasParagraphFilters
+          ? {
+              and: [filterExpression.paragraph, paragraphFilters],
+            }
+          : hasParagraphFilters
+            ? paragraphFilters
+            : filterExpression?.paragraph,
+    };
   }),
 );
 
@@ -370,22 +468,23 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
 
 export const creationStart = searchState.writer<string | undefined>(
   (state) =>
-    state.options.range_creation_start && new Date(state.options.range_creation_start).toISOString().slice(0, 10),
+    state.creation?.range_creation_start && new Date(state.creation.range_creation_start).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_start: date && new Date(date).toISOString(),
     },
   }),
 );
 
 export const creationEnd = searchState.writer<string | undefined>(
-  (state) => state.options.range_creation_end && new Date(state.options.range_creation_end).toISOString().slice(0, 10),
+  (state) =>
+    state.creation?.range_creation_end && new Date(state.creation.range_creation_end).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_end: date && new Date(`${date}T23:59:59.000Z`).toISOString(),
     },
   }),
@@ -400,8 +499,8 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     (!state.filters.labels || state.filters.labels.length === 0) &&
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0) &&
-    !state.options.range_creation_start &&
-    !state.options.range_creation_end,
+    !state.creation?.range_creation_start &&
+    !state.creation?.range_creation_end,
 );
 
 export const hasMore = searchState.reader<boolean>((state) => state.options.top_k !== EXTENDED_RESULTS);

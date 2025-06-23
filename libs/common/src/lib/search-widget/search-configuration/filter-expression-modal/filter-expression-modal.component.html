@@ -1,0 +1,162 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>
+    <div class="title-l">{{ 'search.configuration.filter-expression-modal.title' | translate }}</div>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <div class="filters-container">
+      <pa-accordion>
+        <pa-accordion-item
+          id="field"
+          [itemTitle]="'search.configuration.filter-expression-modal.field-filters' | translate"
+          [expanded]="true">
+          <pa-accordion-item-body>
+            @if (filterExpression.field) {
+              <ng-container
+                [ngTemplateOutlet]="filterItem"
+                [ngTemplateOutletContext]="{ filter: filterExpression.field, target: 'field' }" />
+            } @else {
+              <div>
+                <pa-button
+                  aspect="basic"
+                  icon="circle-plus"
+                  iconAndText
+                  (click)="add('field')">
+                  {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                </pa-button>
+              </div>
+            }
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      </pa-accordion>
+
+      @if (filterExpression.field && filterExpression.paragraph) {
+        <div class="filter-logic">
+          <pa-select [(value)]="filterExpression.operator">
+            <pa-option value="and">AND</pa-option>
+            <pa-option value="or">OR</pa-option>
+          </pa-select>
+          <span>
+            <pa-icon
+              name="info"
+              size="small"
+              [paPopover]="labelsLogic"></pa-icon>
+            <pa-popover #labelsLogic>
+              {{ 'search.configuration.filter-expression-modal.operator' | translate }}
+            </pa-popover>
+          </span>
+        </div>
+      }
+      <pa-accordion>
+        <pa-accordion-item
+          id="paragraph"
+          [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
+          [expanded]="filterExpression.paragraph">
+          <pa-accordion-item-body>
+            @if (filterExpression.paragraph) {
+              <ng-container
+                [ngTemplateOutlet]="filterItem"
+                [ngTemplateOutletContext]="{ filter: filterExpression.paragraph, target: 'paragraph' }" />
+            }
+            @if (!filterExpression.paragraph) {
+              <div>
+                <pa-button
+                  aspect="basic"
+                  icon="circle-plus"
+                  iconAndText
+                  (click)="add('paragraph')">
+                  {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                </pa-button>
+              </div>
+            }
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      </pa-accordion>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      [disabled]="invalidExpession"
+      kind="primary"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
+
+<ng-template
+  #filterItem
+  let-parent="parent"
+  let-filter="filter"
+  let-index="index"
+  let-target="target">
+  @if (filter.prop) {
+    <div class="filter">
+      <stf-filter-value [filter]="filter"></stf-filter-value>
+      <div class="actions">
+        <pa-button
+          icon="edit"
+          aspect="basic"
+          size="small"
+          (click)="edit(target, filter, parent, index)">
+          {{ 'generic.edit' | translate }}
+        </pa-button>
+        <pa-button
+          icon="trash"
+          aspect="basic"
+          kind="destructive"
+          size="small"
+          (click)="delete(target, parent, index)">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
+      </div>
+    </div>
+  } @else {
+    @let key = filter.and ? 'and' : filter.or ? 'or' : 'not';
+    <div class="filter-expression">
+      <div class="filter">
+        <pa-select
+          [value]="key"
+          (valueChange)="editOperator($event, target, filter, parent, index)"
+          dim>
+          <pa-option value="and">AND</pa-option>
+          <pa-option value="or">OR</pa-option>
+          <pa-option value="not">NOT</pa-option>
+        </pa-select>
+        <div class="actions">
+          <pa-button
+            icon="plus"
+            aspect="basic"
+            size="small"
+            (click)="add(target, filter)">
+            {{ 'generic.add' | translate }}
+          </pa-button>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            size="small"
+            (click)="delete(target, parent, index)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+        </div>
+      </div>
+      @if (filter[key].length > 0) {
+        <div class="children">
+          @for (child of filter[key]; track child; let index = $index) {
+            <ng-container
+              [ngTemplateOutlet]="filterItem"
+              [ngTemplateOutletContext]="{ parent: filter, filter: child, index, target }" />
+          }
+        </div>
+      }
+    </div>
+  }
+</ng-template>
