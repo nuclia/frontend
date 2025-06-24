@@ -37,6 +37,9 @@
     opacity: 1;
     transition: all 0s ease;
   }
+  textarea:disabled {
+    color: var(--color-neutral-light);
+  }
 }
 @media (min-width: 448px) {
   .sw-textarea {

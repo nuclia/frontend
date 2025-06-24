@@ -29,6 +29,7 @@
     hasSearchButton,
     hasSuggestions,
     hideLogo,
+    isStreaming,
     labelFilters,
     labelSetFilters,
     rangeCreation,
@@ -240,6 +241,7 @@
   class="sw-search-input"
   class:has-filters={$filters.length > 0}
   class:has-logo={!$hideLogo}
+  class:disabled={$isStreaming}
   bind:this={inputContainerElement}
   style:--filters-height={filterHeight}>
   {#if !$hideLogo}
@@ -259,6 +261,7 @@
             icon="cross"
             ariaLabel={$_('input.clear')}
             size="small"
+            disabled={$isStreaming}
             on:click={clear}
             on:enter={clear} />
         {:else}
@@ -271,6 +274,7 @@
         name="nuclia-search-field"
         ariaLabel="Search input"
         placeholder={$_($widgetPlaceholder)}
+        disabled={$isStreaming}
         bind:this={searchInputElement}
         bind:value={$typeAhead}
         on:input={onInput}

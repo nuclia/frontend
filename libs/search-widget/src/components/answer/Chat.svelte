@@ -118,6 +118,7 @@
         class:scrolling-behind={isScrolling}>
         <ChatInput
           placeholder={$_($hasChatEntries ? $chatPlaceholderDiscussion : $chatPlaceholderInitial)}
+          disabled={$isStreaming}
           {fullscreen} />
         {#if standaloneChat}
           <div class="reset-button">

@@ -11,9 +11,10 @@
   interface Props {
     placeholder?: string;
     fullscreen: any;
+    disabled?: boolean;
   }
 
-  let { placeholder = '', fullscreen }: Props = $props();
+  let { placeholder = '', fullscreen, disabled = false }: Props = $props();
 
   let inputElement: Textarea | undefined = $state();
   let question = $state('');
@@ -101,6 +102,7 @@
     name="nuclia-chat-field"
     bind:this={inputElement}
     {placeholder}
+    {disabled}
     ariaLabel={$_('answer.input.label')}
     bind:value={question}
     on:keypress={onKeyPress} />

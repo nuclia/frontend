@@ -20,12 +20,14 @@
     position: relative;
   }
 
-  &:hover {
-    border: var(--search-bar-border-hover);
-  }
+  &:not(.disabled) {
+    &:hover {
+      border: var(--search-bar-border-hover);
+    }
 
-  &:focus-within {
-    border: var(--search-bar-border-focus);
+    &:focus-within {
+      border: var(--search-bar-border-focus);
+    }
   }
 
   &.has-logo {
@@ -58,21 +60,23 @@
       right: -1px;
     }
 
-    &:hover {
-      border-top: 1px solid transparent;
+    &:not(.disabled) {
+      &:hover {
+        border-top: 1px solid transparent;
 
-      &:before,
-      &:after {
-        background: var(--search-bar-border-hover-color);
+        &:before,
+        &:after {
+          background: var(--search-bar-border-hover-color);
+        }
       }
-    }
 
-    &:focus-within {
-      border-top: 1px solid transparent;
+      &:focus-within {
+        border-top: 1px solid transparent;
 
-      &:before,
-      &:after {
-        background: var(--search-bar-border-focus-color);
+        &:before,
+        &:after {
+          background: var(--search-bar-border-focus-color);
+        }
       }
     }
   }
