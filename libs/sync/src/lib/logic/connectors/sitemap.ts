@@ -90,6 +90,13 @@ class SitemapImpl implements IConnector {
             required: false,
           },
           {
+            id: 'keepQueryString',
+            label: 'sync.connectors.common.keep-querystring.label',
+            help: 'sync.connectors.common.keep-querystring.help',
+            type: 'boolean',
+            required: false,
+          },
+          {
             id: 'headers',
             label: 'sync.connectors.common.headers.label',
             help: 'sync.connectors.common.headers.help',

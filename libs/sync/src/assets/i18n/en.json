@@ -51,6 +51,8 @@
 	"sync.connectors.common.css.label": "CSS selector",
 	"sync.connectors.common.headers.help": "To allow Nuclia processing to by-pass paywalls, authentication, or any unwanted display that would block the access to the actual page content.",
 	"sync.connectors.common.headers.label": "HTTP headers",
+	"sync.connectors.common.keep-querystring.help": "By default, the connector will ignore what is passed after the ? character in the url. This option will preserve it.",
+	"sync.connectors.common.keep-querystring.label": "Keep querystring parameters",
 	"sync.connectors.common.local-extract.help": "Will load the web page locally and send the content to Nuclia. It requires to install @nuclia/extractor, see <a href=\"https://github.com/nuclia/sync-agent/blob/main/extractor/README.md\" target=\"_new\">the documentation</a>.",
 	"sync.connectors.common.local-extract.label": "Local extractor",
 	"sync.connectors.common.localstorage.help": "To allow Nuclia processing to by-pass paywalls, authentication, or any unwanted display that would block the access to the actual page content.",
