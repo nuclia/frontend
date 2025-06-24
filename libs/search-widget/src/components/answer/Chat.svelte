@@ -3,7 +3,15 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
   import Button from '../../common/button/Button.svelte';
-  import { _, chat, chatPlaceholder, hasChatEntries, isStreaming, resetChat } from '../../core';
+  import {
+    _,
+    chat,
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    hasChatEntries,
+    isStreaming,
+    resetChat,
+  } from '../../core';
   import Answer from './Answer.svelte';
   import ChatInput from './ChatInput.svelte';
 
@@ -109,7 +117,7 @@
         class="input-container"
         class:scrolling-behind={isScrolling}>
         <ChatInput
-          placeholder={$_($chatPlaceholder)}
+          placeholder={$_($hasChatEntries ? $chatPlaceholderDiscussion : $chatPlaceholderInitial)}
           {fullscreen} />
         {#if standaloneChat}
           <div class="reset-button">

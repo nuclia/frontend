@@ -15,7 +15,7 @@
 
   let { placeholder = '', fullscreen }: Props = $props();
 
-  let inputElement: Textarea = $state();
+  let inputElement: Textarea | undefined = $state();
   let question = $state('');
   let isListening = $state(false);
 
@@ -63,12 +63,12 @@
     question = '';
     if ((navigator as any).userAgentData?.mobile) {
       // Make sure the keyboard disappear when triggering search in Mobile
-      inputElement.blur();
+      inputElement?.blur();
     }
   };
 
   const onKeyPress = (event: { detail: KeyboardEvent }) => {
-    if (event.detail.key === 'Enter') {
+    if (event.detail.key === 'Enter' && !!question) {
       event.detail.preventDefault();
       askQuestion();
     }

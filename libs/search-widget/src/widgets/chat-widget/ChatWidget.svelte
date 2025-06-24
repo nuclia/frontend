@@ -20,7 +20,9 @@
   import {
     askBackendConfig,
     chatInput,
-    chatPlaceholder,
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    DEFAULT_CHAT_PLACEHOLDER,
     filterExpression,
     findBackendConfig,
     preselectedFilters,
@@ -117,7 +119,7 @@
   let max_paragraphs = $derived(componentProps.max_paragraphs || config.max_paragraphs);
   let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
   let vectorset = $derived(componentProps.vectorset || config.vectorset);
-  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder);
+  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder || '');
   let audit_metadata = $derived(componentProps.audit_metadata || config.audit_metadata);
   let reranker = $derived(componentProps.reranker || config.reranker);
   let citation_threshold = $derived(componentProps.citation_threshold || config.citation_threshold);
@@ -145,7 +147,9 @@
   }
 
   $effect(() => {
-    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
+    let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
+    chatPlaceholderInitial.set(initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+    chatPlaceholderDiscussion.set(discussionPlaceholder || initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
   });
 
   let showChat = $state(layout === 'inline');

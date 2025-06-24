@@ -51,7 +51,9 @@
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import {
-    chatPlaceholder,
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    DEFAULT_CHAT_PLACEHOLDER,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -152,7 +154,7 @@
   let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
   let json_schema = $derived(componentProps.json_schema || config.json_schema);
   let vectorset = $derived(componentProps.vectorset || config.vectorset);
-  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder);
+  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder || '');
   let audit_metadata = $derived(componentProps.audit_metadata || config.audit_metadata);
   let reranker = $derived(componentProps.reranker || config.reranker);
   let citation_threshold = $derived(componentProps.citation_threshold || config.citation_threshold);
@@ -166,7 +168,9 @@
   let darkMode = $derived(mode === 'dark');
 
   $effect(() => {
-    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
+    let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
+    chatPlaceholderInitial.set(initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+    chatPlaceholderDiscussion.set(discussionPlaceholder || initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
   });
   $effect(() => {
     widgetPlaceholder.set(placeholder || 'input.placeholder');

@@ -1,11 +1,13 @@
-import { writableSubject } from '../state-lib';
+import type { RAGImageStrategy, RAGStrategy, Widget } from '@nuclia/core';
 import { combineLatest, map, Observable } from 'rxjs';
 import type { WidgetAction, WidgetFilters } from '../models';
-import type { RAGImageStrategy, RAGStrategy, Widget } from '@nuclia/core';
+import { writableSubject } from '../state-lib';
 
+export const DEFAULT_CHAT_PLACEHOLDER = 'answer.placeholder';
 export const widgetFeatures = writableSubject<Widget.WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
-export const chatPlaceholder = writableSubject<string>('answer.placeholder');
+export const chatPlaceholderInitial = writableSubject<string>(DEFAULT_CHAT_PLACEHOLDER);
+export const chatPlaceholderDiscussion = writableSubject<string>(DEFAULT_CHAT_PLACEHOLDER);
 export const widgetFilters = writableSubject<WidgetFilters>({});
 export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);

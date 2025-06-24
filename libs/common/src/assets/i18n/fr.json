@@ -1757,6 +1757,7 @@
 	"search.widgets.form.description": "Le widget intégré reflétera la configuration de recherche et les options du widget définies ci-dessous.",
 	"search.widgets.form.preview-title": "Testez le widget",
 	"search.widgets.form.search-config-title": "Configuration de la recherche",
+	"search.widgets.form.widget-options.chat-placeholder.input-help": "Utilisez un <code>|</code> pour séparer le placeholder initial de celui affiché une fois la discussion engagée.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Modifier le texte que vous souhaitez voir apparaître dans la barre de discussion lorsqu'il n'est pas actif. Le texte par défaut est « Discutons ».",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personnaliser le placeholder de la barre de discussion",
 	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Les blocs de texte provenant de citations et de résultats seront initialement réduits.",
