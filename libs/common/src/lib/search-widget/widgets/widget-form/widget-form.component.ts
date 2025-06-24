@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -8,10 +9,9 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
@@ -22,14 +22,14 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SearchWidgetService } from '../../search-widget.service';
-import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil, tap } from 'rxjs/operators';
-import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
-import { SearchConfigurationComponent } from '../../search-configuration';
-import { EmbedWidgetDialogComponent } from '../dialogs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
+import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
+import { SearchConfigurationComponent } from '../../search-configuration';
+import { SearchWidgetService } from '../../search-widget.service';
+import { EmbedWidgetDialogComponent } from '../dialogs';
 
 @Component({
   imports: [
@@ -194,6 +194,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
           '.widget-preview-container',
         );
       });
+
+    this.updateSpeechSynthesis(this.speechOn);
   }
 
   ngOnDestroy() {
@@ -318,6 +320,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   updateSpeechSynthesis(speechOn: boolean) {
     if (!speechOn) {
       this.form.controls.speechSynthesis.setValue(false);
+      this.form.controls.speechSynthesis.disable();
+    } else {
+      this.form.controls.speechSynthesis.enable();
     }
   }
 }

@@ -503,25 +503,29 @@ export class SearchConfigurationComponent {
       })
       .onClose.pipe(filter((confirm) => !!confirm))
       .subscribe(() => {
-        this.isConfigUnsupported = true;
         if (this.currentConfig?.type === 'config') {
           const isAsk = !!this.currentConfig.generativeAnswer.generateAnswer;
-          const config: SearchConfig = isAsk
-            ? {
-                kind: 'ask',
-                config: getChatOptions(this.currentConfig),
-              }
-            : {
-                kind: 'find',
-                config: getFindOptions(this.currentConfig),
-              };
-          this.currentConfig = {
-            type: 'api',
-            id: this.currentConfig.id,
-            value: config,
-          };
-          this.currentJsonConfig = JSON.stringify(config.config, null, 2);
-          this.useGenerativeAnswer = isAsk;
+          try {
+            const config: SearchConfig = isAsk
+              ? {
+                  kind: 'ask',
+                  config: getChatOptions(this.currentConfig),
+                }
+              : {
+                  kind: 'find',
+                  config: getFindOptions(this.currentConfig),
+                };
+            this.currentConfig = {
+              type: 'api',
+              id: this.currentConfig.id,
+              value: config,
+            };
+            this.currentJsonConfig = JSON.stringify(config.config, null, 2);
+            this.useGenerativeAnswer = isAsk;
+            this.isConfigUnsupported = true;
+          } catch (e) {
+            this.toaster.error('search.configuration.action.switch-mode-error');
+          }
         }
         this.cdr.markForCheck();
       });

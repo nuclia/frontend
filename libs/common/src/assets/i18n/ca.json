@@ -1433,6 +1433,7 @@
 	"search.configuration.action.save-as-new": "Desar com a configuració nova",
 	"search.configuration.action.switch-mode": "<strong>Canvia al mode d'edició JSON directe.</strong> El mode d'edició JSON permet utilitzar funcions avançades de l'API però desactiva algunes opcions relacionades amb la interfície d'usuari del widget.",
 	"search.configuration.action.switch-mode-confirm": "Un cop canviat al mode JSON, no es pot tornar al mode normal.",
+	"search.configuration.action.switch-mode-error": "Aquesta configuració de widget utilitza paràmetres obsolets i no es pot editar en mode JSON.",
 	"search.configuration.current-config-title": "Configuració actual",
 	"search.configuration.delete-config-confirm.description": "Aquesta acció no es pot desfer. Si suprimiu la configuració, se suprimirà el seu registre al menú desplegable de configuració desada.",
 	"search.configuration.delete-config-confirm.title": "Vols suprimir {{configName}} ?",
