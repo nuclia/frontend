@@ -90,7 +90,9 @@
               <div
                 class="extra-fields"
                 [class.visible]="customizeChatPlaceholderEnabled">
-                <pa-input formControlName="chatPlaceholder">
+                <pa-input
+                  formControlName="chatPlaceholder"
+                  help="search.widgets.form.widget-options.chat-placeholder.input-help">
                   {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
                 </pa-input>
               </div>

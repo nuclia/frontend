@@ -1781,6 +1781,7 @@
 	"search.widgets.form.description": "The embedded widget will reflect the search configuration and widget options set below.",
 	"search.widgets.form.preview-title": "Test the widget",
 	"search.widgets.form.search-config-title": "Search configuration",
+	"search.widgets.form.widget-options.chat-placeholder.input-help": "Use a <code>|</code> to separate the initial placeholder from the one displayed once the discussion is engaged.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Change the text that you want to appear in the chat bar when not active. The default text is “Let's talk”.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Customize chat bar placeholder",
 	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Text blocks from citations and results will be initially collapsed.",

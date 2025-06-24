@@ -9,11 +9,12 @@
     name?: string;
     placeholder?: string;
     ariaLabel?: string;
+    disabled?: boolean;
   }
 
-  let { value = $bindable(''), name = '', placeholder = '', ariaLabel = '' }: Props = $props();
+  let { value = $bindable(''), name = '', placeholder = '', ariaLabel = '', disabled = false }: Props = $props();
 
-  let element: HTMLTextAreaElement = $state();
+  let element: HTMLTextAreaElement | undefined = $state();
   let isRTL = $derived(isRightToLeft(value));
 
   const dispatch = createEventDispatcher();
@@ -43,6 +44,7 @@
     bind:this={element}
     {name}
     {placeholder}
+    {disabled}
     tabindex="0"
     autocomplete="off"
     autocapitalize="off"

@@ -1757,6 +1757,7 @@
 	"search.widgets.form.description": "El widget integrado reflejará la configuración de búsqueda y las opciones del widget establecidas a continuación.",
 	"search.widgets.form.preview-title": "Prueba el widget",
 	"search.widgets.form.search-config-title": "Configuración de búsqueda",
+	"search.widgets.form.widget-options.chat-placeholder.input-help": "Utilice <code>|</code> para separar el placeholder inicial del que se muestra una vez que se inicia la discusión.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Cambia el texto que quieres que aparezca en la barra de chat cuando no esté activa. El texto predeterminado es “Charlemos”.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personalizar el placeholder de la barra de chat",
 	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Los bloques de texto de citas y resultados estarán  inicialmente contraídos.",
