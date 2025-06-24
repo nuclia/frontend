@@ -1,7 +1,5 @@
 <script lang="ts">
   import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
-  import { extent } from 'd3';
-  import { forceLink, forceManyBody, forceX, forceY, type SimulationLinkDatum } from 'd3-force';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -46,23 +44,24 @@
 
   let chargeStrength = $derived(!nodes || nodes.length > 100 ? -80 : -160);
   let centerPosition = $derived([graphWidth / 2, graphHeight / 2]);
-  let activeForceX = $derived(forceX().x(centerPosition[0]));
-  let activeForceY = $derived(forceY().y(centerPosition[1]));
+  let activeForceX = $derived(d3.forceX().x(centerPosition[0]));
+  let activeForceY = $derived(d3.forceY().y(centerPosition[1]));
   let forces: [string, any][] = $derived([
     ['x', activeForceX],
     ['y', activeForceY],
     [
       'link',
-      forceLink()
+      d3
+        .forceLink()
         .id((d) => (d as NerNode).id)
-        .distance((link: SimulationLinkDatum<any>) => {
+        .distance((link: d3.SimulationLinkDatum<any>) => {
           const source: NerNode = link.source;
           const target: NerNode = link.target;
           const radiusSum = source.radius + target.radius;
           return radiusSum + radiusSum / 2;
         }),
     ],
-    ['charge', forceManyBody().strength(chargeStrength)],
+    ['charge', d3.forceManyBody().strength(chargeStrength)],
   ]);
 
   onMount(() => {
@@ -90,7 +89,7 @@
     const relevanceList: number[] = Object.values(positions)
       .map((position) => position.relevance)
       .filter((value) => typeof value === 'number');
-    const [, maxRelevance] = extent(relevanceList);
+    const [, maxRelevance] = d3.extent(relevanceList);
     const radiusRatio = Math.max(1, maxRadius / (maxRelevance as number));
     return (
       Object.keys(positions)
