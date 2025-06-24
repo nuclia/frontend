@@ -51,6 +51,8 @@
 	"sync.connectors.common.css.label": "Selector CSS",
 	"sync.connectors.common.headers.help": "Para permitir que el procesamiento de Nuclia evite los muros de pago, la autenticación o cualquier visualización no deseada que bloquee el acceso al contenido real de la página.",
 	"sync.connectors.common.headers.label": "Encabezados HTTP",
+	"sync.connectors.common.keep-querystring.help": "De forma predeterminada, el conector ignorará lo que se pasa después del carácter ? en la URL. Esta opción lo conservará.",
+	"sync.connectors.common.keep-querystring.label": "Mantener los parámetros de la querystring",
 	"sync.connectors.common.local-extract.help": "Cargará la página web localmente y enviará el contenido a Nuclia. Requiere instalar @nuclia/extractor, consulte <a href=\"https://github.com/nuclia/sync-agent/blob/main/extractor/README.md\" target=\"_new\">la documentación</a>.",
 	"sync.connectors.common.local-extract.label": "Extractor local",
 	"sync.connectors.common.localstorage.help": "Para permitir que el procesamiento de Nuclia evite los muros de pago, la autenticación o cualquier visualización no deseada que bloquee el acceso al contenido real de la página.",
