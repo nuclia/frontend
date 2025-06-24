@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { forceSimulation, type ForceLink } from 'd3-force';
   import { createEventDispatcher } from 'svelte';
   import type { NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
@@ -72,8 +71,7 @@
   });
 
   function runSimultation() {
-    console.log(`runSimulation`);
-    const simulation = forceSimulation().nodes(nodes);
+    const simulation = d3.forceSimulation().nodes(nodes);
 
     if (simulation) {
       // re-initialize forces when they change
@@ -83,7 +81,7 @@
 
       // Update force link with our array of links
       if (links.length > 0) {
-        (simulation.force('link') as ForceLink<NerNode, NerLink>).links(links);
+        (simulation.force('link') as d3.ForceLink<NerNode, NerLink>).links(links);
       }
 
       // remove old forces
