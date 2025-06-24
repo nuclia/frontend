@@ -1433,6 +1433,7 @@
 	"search.configuration.action.save-as-new": "Guardar como nueva configuración",
 	"search.configuration.action.switch-mode": "<strong>Cambiar al modo de edición JSON directa.</strong> El modo de edición JSON permite usar funciones avanzadas de la API, pero deshabilita algunas de las opciones relacionadas con la interfaz de usuario del widget.",
 	"search.configuration.action.switch-mode-confirm": "Una vez cambiado al modo JSON, no podrás volver al modo normal.",
+	"search.configuration.action.switch-mode-error": "Esta configuración de widget utiliza parámetros obsoletos y no se puede editar en modo JSON.",
 	"search.configuration.current-config-title": "Configuración actual",
 	"search.configuration.delete-config-confirm.description": "Esta acción no se puede deshacer. Al eliminar la configuración se borrará su registro en el desplegable de configuraciones guardadas.",
 	"search.configuration.delete-config-confirm.title": "Borrar {{configName}} ?",
