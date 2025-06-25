@@ -43,6 +43,7 @@ export class ResourceProfileComponent implements OnInit {
       filename: new FormControl<string>('', { nonNullable: true }),
       created: new FormControl<string>('', { nonNullable: true }),
       modified: new FormControl<string>('', { nonNullable: true }),
+      tags: new FormControl<string>('', { nonNullable: true }),
       related: new FormControl<string>('', { nonNullable: true }),
       path: new FormControl<string>('', { nonNullable: true }),
       metadata: new FormArray<FormGroup<{ key: FormControl<string>; value: FormControl<string> }>>([]),
@@ -138,6 +139,7 @@ export class ResourceProfileComponent implements OnInit {
         filename: data.origin?.filename || '',
         created: data.origin?.created || '',
         modified: data.origin?.modified || '',
+        tags: (data.origin?.tags || []).join('\n'),
         related: (data.origin?.related || []).join('\n'),
         path: data.origin?.path || '',
         metadata,
@@ -219,6 +221,10 @@ export class ResourceProfileComponent implements OnInit {
         filename: value.origin.filename || undefined,
         created: value.origin.created || undefined,
         modified: value.origin.modified || undefined,
+        tags: this.getArrayAttribute(
+          value.origin.tags.split('\n').map((s) => s.trim()),
+          this.currentValue.origin?.tags,
+        ),
         related: this.getArrayAttribute(
           value.origin.related.split('\n').map((s) => s.trim()),
           this.currentValue.origin?.related,

@@ -246,6 +246,9 @@
             <div class="title-xxs">{{ 'resource.origin.url' | translate }}</div>
             <p>{{ origin.url || '–' }}</p>
 
+            <div class="title-xxs">{{ 'resource.origin.tags' | translate }}</div>
+            <p>{{ origin.tags?.join(', ') || '–' }}</p>
+
             <div class="title-xxs">{{ 'resource.origin.related' | translate }}</div>
             <p>{{ origin.related?.join(', ') || '–' }}</p>
 
