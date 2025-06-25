@@ -82,7 +82,7 @@
                         [url]="newThumbnail"
                         [selected]="newThumbnail === selectedThumbnail"
                         (select)="selectThumbnail(newThumbnail)"
-                      (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
+                        (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
                     }
                     @for (thumb of thumbnailsLoaded | async; track thumb.uri) {
                       <div>
@@ -92,7 +92,7 @@
                           [selected]="thumb.uri === selectedThumbnail"
                           [alt]="'Thumbnail ' + $index"
                           (select)="selectThumbnail(thumb.uri)"
-                        (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
+                          (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
                       </div>
                     }
                     @if (isSaving) {
@@ -122,11 +122,11 @@
                 <pa-date-picker
                   id="created"
                   [label]="'resource.origin.created' | translate"
-                formControlName="created"></pa-date-picker>
+                  formControlName="created"></pa-date-picker>
                 <pa-date-picker
                   id="modified"
                   [label]="'resource.origin.modified' | translate"
-                formControlName="modified"></pa-date-picker>
+                  formControlName="modified"></pa-date-picker>
                 <pa-input
                   id="filename"
                   formControlName="filename">
@@ -138,7 +138,16 @@
                   {{ 'resource.origin.url' | translate }}
                 </pa-input>
                 <nsi-expandable-textarea
+                  id="tags"
+                  formControlName="tags"
+                  [help]="'resource.origin.multi-values' | translate"
+                  modalTitle="resource.origin.tags"
+                  [rows]="3">
+                  {{ 'resource.origin.tags' | translate }}
+                </nsi-expandable-textarea>
+                <nsi-expandable-textarea
                   id="related"
+                  [help]="'resource.origin.multi-values' | translate"
                   formControlName="related"
                   modalTitle="resource.origin.related"
                   [rows]="3">
@@ -164,19 +173,19 @@
                         <pa-table-cell>
                           <pa-input
                             formControlName="key"
-                          [placeholder]="'resource.origin.metadata.key' | translate"></pa-input>
+                            [placeholder]="'resource.origin.metadata.key' | translate"></pa-input>
                         </pa-table-cell>
                         <pa-table-cell>
                           <pa-input
                             formControlName="value"
-                          [placeholder]="'resource.origin.metadata.value' | translate"></pa-input>
+                            [placeholder]="'resource.origin.metadata.value' | translate"></pa-input>
                         </pa-table-cell>
                         <pa-table-cell>
                           <pa-button
                             aspect="basic"
                             size="small"
                             icon="trash"
-                          (click)="removeMetadata(entryIndex)"></pa-button>
+                            (click)="removeMetadata(entryIndex)"></pa-button>
                         </pa-table-cell>
                       </pa-table-row>
                     }
@@ -268,7 +277,7 @@
           -H "authorization: Bearer $$AUTH_TOKEN$$" \
         --data-raw '$$DATA$$'</code>
       </pre>
-    </ncom-hint>
-  </div>
-}
+      </ncom-hint>
+    </div>
+  }
 </div>
