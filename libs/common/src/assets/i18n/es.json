@@ -169,6 +169,7 @@
 	"activity.email-sent": "La generación del registro puede tardar un tiempo, se enviará un enlace de descarga a {{email}} cuando finalice.",
 	"activity.filter": "Filtrar",
 	"activity.load-more": "Cargar más",
+	"activity.local-time": "Hora local",
 	"activity.migration-warning": "Las preguntas anteriores a septiembre de 2024 no se incluyen en el registro debido a la migración de datos.",
 	"activity.resource": "Recurso",
 	"activity.timestamp": "Sello de tiempo",

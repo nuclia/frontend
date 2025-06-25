@@ -169,6 +169,7 @@
 	"activity.email-sent": "The log generation may take time, a download link will be sent to {{email}} when finished.",
 	"activity.filter": "Filter",
 	"activity.load-more": "Load more",
+	"activity.local-time": "Local time",
 	"activity.migration-warning": "Questions before September 2024 are not included in the log due to data migration.",
 	"activity.resource": "Resource",
 	"activity.timestamp": "Time stamp",

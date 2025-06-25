@@ -50,14 +50,16 @@
       }
       @for (row of displayedRows; track row.id) {
         <pa-table-row>
-          @if (displayedHeaders.includes('Date')) {
+          @if (displayedHeaders.includes(dateColumn)) {
             <pa-table-cell>
-              <div class="body-s">
+              <div
+                class="body-s"
+                [paTooltip]="(row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'">
                 <pa-datetime [datetime]="row.date"></pa-datetime>
               </div>
             </pa-table-cell>
           }
-          @if (displayedHeaders.includes('ID')) {
+          @if (displayedHeaders.includes(idColumn)) {
             <pa-table-cell>
               <div class="body-s">
                 {{ row.id }}
