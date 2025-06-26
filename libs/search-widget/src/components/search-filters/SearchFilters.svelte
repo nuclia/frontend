@@ -10,6 +10,7 @@
     addEntityFilter,
     addLabelFilter,
     addLabelSetFilter,
+    addMimeFilter,
     creationEnd,
     creationStart,
     entities,
@@ -18,20 +19,26 @@
     filterByCreatedDate,
     filterByLabelFamilies,
     filterByLabels,
+    filterByMime,
     hasRangeCreation,
     labelFilters,
     labelSetFilters,
     type LabelSetWithId,
+    type MimeFacet,
+    mimeTypesfilters,
     orderedLabelSetList,
+    orderedMimeFacetsList,
     preselectedFilters,
     refreshFamily,
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
+    removeMimeFilter,
     searchFilters,
   } from '../../core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
+  const mimeFacets: Observable<MimeFacet[]> = orderedMimeFacetsList;
   const preselection: Observable<string[]> = preselectedFilters;
   const dispatch = createEventDispatcher();
 
@@ -46,6 +53,9 @@
   const selectedEntities: Observable<string[]> = combineLatest([entityFilters, preselection]).pipe(
     map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection)),
   );
+  const selectedMimeTypes: Observable<string[]> = combineLatest([mimeTypesfilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => filter.key).concat(preselection)),
+  );
   let expanders: { [id: string]: boolean } = $state({});
 
   function selectLabelSet(labelSet: LabelSetWithId, selected: boolean) {
@@ -54,6 +64,14 @@
       addLabelSetFilter(labelSet.id, labelSet.kind);
     } else {
       removeLabelSetFilter(labelSet.id);
+    }
+  }
+
+  function selectMimeTypes(mimeFacet: MimeFacet, selected: boolean) {
+    if (selected) {
+      addMimeFilter(mimeFacet);
+    } else {
+      removeMimeFilter(mimeFacet.facet.key);
     }
   }
 
@@ -111,6 +129,8 @@
     <div
       class="header"
       class:expanded={expanders['created']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="header-content"
         onclick={() => toggleExpander('created')}>
@@ -135,7 +155,7 @@
               id="range-creation-start"
               type="date"
               value={$creationStart}
-              onchange={(e) => creationStart.set(e.target.value || undefined)} />
+              onchange={(e) => creationStart.set((e.target as HTMLInputElement)?.value || undefined)} />
           </div>
         </div>
         <div>
@@ -145,9 +165,45 @@
               id="range-creation-end"
               type="date"
               value={$creationEnd}
-              onchange={(e) => creationEnd.set(e.target.value || undefined)} />
+              onchange={(e) => creationEnd.set((e.target as HTMLInputElement)?.value || undefined)} />
           </div>
         </div>
+      </div>
+    {/if}
+  {/if}
+  {#if $filterByMime}
+    <div
+      class="header"
+      class:expanded={expanders['mime']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="header-content"
+        onclick={() => toggleExpander('mime')}>
+        <span>
+          {$_('input.mime_types')}
+        </span>
+      </div>
+      <span class="header-button">
+        <IconButton
+          on:click={() => toggleExpander('mime')}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
+    </div>
+    {#if expanders['mime']}
+      <div class="expander-content">
+        {#each $mimeFacets as mimeFacet}
+          <div>
+            <Checkbox
+              checked={$selectedMimeTypes.includes(mimeFacet.facet.key)}
+              disabled={$preselection.includes(mimeFacet.facet.key)}
+              on:change={(event) => selectMimeTypes(mimeFacet, event.detail)}>
+              {mimeFacet.label} ({mimeFacet.facet.count})
+            </Checkbox>
+          </div>
+        {/each}
       </div>
     {/if}
   {/if}
@@ -155,6 +211,8 @@
     <div
       class="header"
       class:expanded={expanders[labelSet.id]}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="header-content"
         class:not-expandable={!$filterByLabels && $filterByLabelFamilies}
@@ -203,6 +261,8 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="header-content"
         onclick={() => toggleEntitiesExpander(family.id)}>

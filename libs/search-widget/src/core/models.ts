@@ -99,12 +99,13 @@ export interface EntityGroup {
   entities?: string[];
 }
 
-export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
+export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies' | 'mime';
 export interface WidgetFilters {
   labels?: boolean;
   entities?: boolean;
   created?: boolean;
   labelFamilies?: boolean;
+  mime?: boolean;
 }
 
 export interface JsonSchema {

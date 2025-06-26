@@ -4,6 +4,7 @@ export * from './effects';
 export * from './entities.store';
 export * from './graph.store';
 export * from './labels.store';
+export * from './mime.store';
 export * from './search.store';
 export * from './suggestions.store';
 export * from './viewer.store';

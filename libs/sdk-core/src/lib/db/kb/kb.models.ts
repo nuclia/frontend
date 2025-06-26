@@ -93,7 +93,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   getSynonyms(): Observable<Synonyms>;
 
-  getFacets(facets: string[]): Observable<object>;
+  getFacets(facets: string[]): Observable<Search.FacetsResult>;
 
   getLabels(): Observable<LabelSets>;
 

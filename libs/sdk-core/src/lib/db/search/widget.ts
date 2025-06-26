@@ -13,7 +13,7 @@ import { Filter, Reranker } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Widget {
-  export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
+  export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies' | 'mime';
   export type FilterSelectionType = { [key in FilterType]: boolean };
   export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';
 
@@ -236,6 +236,7 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
     entities: false,
     created: false,
     labelFamilies: false,
+    mime: false,
   },
   filterLogic: 'and',
   autofilter: false,

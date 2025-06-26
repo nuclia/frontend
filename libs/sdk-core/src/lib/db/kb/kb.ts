@@ -179,7 +179,12 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
-  getFacets(facets: string[]) {
+  /**
+   * Get the total amount of matches in the Knowledge Box for specific criteria (facets) passed in argument
+   * @param facets List of facets to request
+   * @returns An observable containing an object where each key is a string and maps to an object containing values and their corresponding counts.
+   */
+  getFacets(facets: string[]): Observable<Search.FacetsResult> {
     // catalog endpoint has a limit on the number of facets that can be retrieved per request
     const facetChunks = facets.reduce(
       (chunks, curr) => {

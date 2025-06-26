@@ -40,14 +40,16 @@ import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from 
 import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
-import { orFilterLogic } from './widget.store';
 import { labelSets } from './labels.store';
+import type { MimeFacet, MimeFilter } from './mime.store';
+import { orFilterLogic } from './widget.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
   labelSets?: LabelSetFilter[];
   entities?: EntityFilter[];
   autofilters?: EntityFilter[];
+  mimeTypes?: MimeFilter[];
 }
 
 export interface EntityFilter {
@@ -364,15 +366,19 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
           value: entity.entity,
         })),
         ...(filters.labels || [])
-          ?.filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
+          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
           .map((label) => ({
             prop: 'label',
             labelset: label.classification.labelset,
             label: label.classification.label,
           })),
         ...(filters.labelSets || [])
-          ?.filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
+          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
           .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+        ...(filters.mimeTypes || []).map((mimeType) => ({
+          prop: 'field_mimetype',
+          type: mimeType.key,
+        })),
         ...(rangeCreation?.start || rangeCreation?.end
           ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
           : []),
@@ -458,6 +464,17 @@ export const autofilters = searchState.writer<EntityFilter[]>(
   }),
 );
 
+export const mimeTypesfilters = searchState.writer<MimeFilter[]>(
+  (state) => state.filters.mimeTypes || [],
+  (state, mimeTypesfilters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      mimeTypes: mimeTypesfilters,
+    },
+  }),
+);
+
 export const autofilerDisabled = searchState.writer<boolean | undefined>(
   (state) => state.autofilerDisabled,
   (state, autofilerDisabled) => ({
@@ -491,7 +508,9 @@ export const creationEnd = searchState.writer<string | undefined>(
 );
 
 export const rangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => ({ start, end })));
-export const hasRangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => start || end));
+export const hasRangeCreation = combineLatest([creationStart, creationEnd]).pipe(
+  map(([start, end]) => !!start || !!end),
+);
 
 export const isEmptySearchQuery = searchState.reader<boolean>(
   (state) =>
@@ -499,6 +518,7 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     (!state.filters.labels || state.filters.labels.length === 0) &&
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0) &&
+    (!state.filters.mimeTypes || state.filters.mimeTypes.length === 0) &&
     !state.creation?.range_creation_start &&
     !state.creation?.range_creation_end,
 );
@@ -742,6 +762,18 @@ export const removeEntityFilter = (entity: EntityFilter) => {
   entityFilters.set(
     currentFilters.filter((filter) => filter.entity !== entity.entity || filter.family !== entity.family),
   );
+};
+
+export const addMimeFilter = (mimeFacet: MimeFacet) => {
+  const currentFilters = mimeTypesfilters.getValue();
+  if (!currentFilters.find((filter) => filter.key === mimeFacet.facet.key)) {
+    mimeTypesfilters.set(currentFilters.concat([{ key: mimeFacet.facet.key, label: mimeFacet.label }]));
+  }
+};
+
+export const removeMimeFilter = (mimeKey: string) => {
+  const currentFilters = mimeTypesfilters.getValue();
+  mimeTypesfilters.set(currentFilters.filter((filter) => filter.key !== mimeKey));
 };
 
 export const removeAutofilter = (entity: EntityFilter) => {

@@ -64,6 +64,7 @@
 	"input.date_created": "Data de creació",
 	"input.from": "Des del",
 	"input.image-preview": "Vista prèvia de la imatge",
+	"input.mime_types": "Tipus mímic",
 	"input.more_filters": "{{count}} filtres més",
 	"input.placeholder": "Escriviu la vostra pregunta aquí",
 	"input.to": "Fins al",

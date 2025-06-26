@@ -32,11 +32,13 @@
     isStreaming,
     labelFilters,
     labelSetFilters,
+    mimeTypesfilters,
     rangeCreation,
     removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
+    removeMimeFilter,
     searchOptions,
     searchQuery,
     selectedEntity,
@@ -73,7 +75,7 @@
   let fileInputElement: HTMLInputElement | undefined = $state();
 
   interface Filter {
-    type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
+    type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end' | 'mimetype';
     key: string;
     value: Classification | EntityFilter | string;
     autofilter?: boolean;
@@ -85,8 +87,9 @@
     labelSetFilters,
     entityFilters,
     autofilters,
+    mimeTypesfilters,
   ]).pipe(
-    map(([rangeCreation, labels, labelSets, entities, autofilters]) => [
+    map(([rangeCreation, labels, labelSets, entities, autofilters, mimeTypesfilters]) => [
       ...Object.entries(rangeCreation)
         .filter(([, value]) => !!value)
         .map(([key, value]) => ({
@@ -114,6 +117,11 @@
         key: value.family + value.entity,
         value,
         autofilter: true,
+      })),
+      ...mimeTypesfilters.map((value) => ({
+        type: 'mimetype',
+        key: value.key,
+        value: value.label,
       })),
     ]),
     tap((filters) => {
@@ -150,6 +158,8 @@
       filter.autofilter
         ? removeAutofilter(filter.value as EntityFilter)
         : removeEntityFilter(filter.value as EntityFilter);
+    } else if (filter.type === 'mimetype') {
+      removeMimeFilter(filter.key);
     }
   };
 
@@ -354,6 +364,14 @@
             color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
             on:remove={() => search(filter)}>
             {filter.value.entity}
+          </Chip>
+        {/if}
+        {#if filter.type === 'mimetype'}
+          <Chip
+            removable
+            color={entitiesDefaultColor}
+            on:remove={() => search(filter)}>
+            {filter.value}
           </Chip>
         {/if}
       {/each}

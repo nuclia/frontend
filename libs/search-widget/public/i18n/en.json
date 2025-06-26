@@ -65,6 +65,7 @@
 	"input.date_created": "Date created",
 	"input.from": "From",
 	"input.image-preview": "Image preview",
+	"input.mime_types": "Mime type",
 	"input.more_filters": "{{count}} more filters",
 	"input.placeholder": "Type your question here",
 	"input.to": "To",
