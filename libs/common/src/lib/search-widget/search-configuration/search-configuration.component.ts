@@ -103,6 +103,7 @@ export class SearchConfigurationComponent {
   @Input({ transform: booleanAttribute }) onlySupportedConfigs = false;
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
+  @Input() bottomSectionStyle = '';
 
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
