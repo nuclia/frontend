@@ -25,7 +25,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Session, SortField, SortOption } from '@nuclia/core';
+import { getFilterFromDate, getFilterFromVisibility, Session, SortField, SortOption } from '@nuclia/core';
 import {
   DropdownButtonComponent,
   InfoCardComponent,
@@ -41,8 +41,6 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
   Filters,
-  getFilterFromDate,
-  getFilterFromVisibility,
   PAGE_SIZES,
   ResourceListParams,
   ResourceNavigationService,

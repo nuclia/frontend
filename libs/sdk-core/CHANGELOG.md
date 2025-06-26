@@ -1,3 +1,9 @@
+# 1.27.1 (UNRELEASED)
+
+### Improvements
+
+- Add `getFacets` method to Knowledge Box
+
 # 1.27.0 (2025-06-16)
 
 ### Feature

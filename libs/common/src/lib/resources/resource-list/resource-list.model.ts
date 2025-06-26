@@ -1,8 +1,14 @@
+import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import {
   CatalogOptions,
   Classification,
+  CREATION_END_PREFIX,
+  CREATION_START_PREFIX,
   Filter,
   FilterOperator,
+  getDateFromFilter,
+  getVisibilityFromFilter,
+  HIDDEN_PREFIX,
   Resource,
   RESOURCE_STATUS,
   Search,
@@ -10,16 +16,8 @@ import {
   SortOption,
   WritableKnowledgeBox,
 } from '@nuclia/core';
-import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-  CREATION_END_PREFIX,
-  CREATION_START_PREFIX,
-  getDateFromFilter,
-  getVisibilityFromFilter,
-  HIDDEN_PREFIX,
-} from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
