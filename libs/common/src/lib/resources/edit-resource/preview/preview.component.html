@@ -31,6 +31,23 @@
       }
 
       @if (selectedTab === 'content') {
+        @if (extractConfigId | async; as configId) {
+          @if (extractConfig | async; as config) {
+            <nsi-info-card>
+              <span [innerHTML]="'resource.extract-strategy.info' | translate: { name: config.name }"></span>
+              <br />
+              <small>
+                <a [routerLink]="aiModelsUrl | async">{{ 'resource.extract-strategy.ai-models-link' | translate }}</a>
+              </small>
+            </nsi-info-card>
+          } @else {
+            <!-- prettier-ignore -->
+            <nsi-info-card type="warning">
+              <span [innerHTML]="'resource.extract-strategy.missing' | translate:{id: configId}"></span>
+            </nsi-info-card>
+          }
+        }
+
         @if (hasFilters | async) {
           <div class="filters-container">
             <div class="filters">

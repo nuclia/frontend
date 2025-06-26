@@ -29,6 +29,7 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   switchMap,
   take,
   tap,
@@ -89,6 +90,7 @@ export class EditResourceService {
   kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
+  extractStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getExtractStrategies().pipe(shareReplay(1))));
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isSession = false;
 
