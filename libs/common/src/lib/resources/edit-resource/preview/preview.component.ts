@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LabelsService, SDKService } from '@flaps/core';
+import { LabelsService, NavigationService, SDKService } from '@flaps/core';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import {
   Classification,
+  ExtractConfig,
   FIELD_TYPE,
   FieldId,
+  FileField,
   FileFieldData,
   IError,
   Message,
@@ -57,6 +59,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private router: Router = inject(Router);
   private labelsService = inject(LabelsService);
   private modalService = inject(SisModalService);
+  private navigationService = inject(NavigationService);
 
   unsubscribeAll = new Subject<void>();
   isArag = this.route.data.pipe(
@@ -71,6 +74,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
         : '',
     ),
   );
+  extractConfigId: Observable<string | undefined> = this.editResourceService.currentFieldData.pipe(
+    map((field) => (field?.value as FileField)?.extract_strategy),
+  );
+  extractConfig: Observable<ExtractConfig | undefined> = this.extractConfigId.pipe(
+    filter((configId) => typeof configId === 'string'),
+    switchMap((configId) => this.editResourceService.extractStrategies.pipe(map((strategies) => strategies[configId]))),
+  );
+  aiModelsUrl = this.navigationService.kbUrl.pipe(map((kbUrl) => `${kbUrl}/ai-models`));
 
   viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
