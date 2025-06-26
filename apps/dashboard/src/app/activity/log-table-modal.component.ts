@@ -1,12 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaModalModule, TranslateModule],
   template: `
-    <pa-modal-advanced [fitContentHeight]="!modal.config.data?.json">
+    <pa-modal-advanced
+      fitContentHeight
+      fitContent>
       <pa-modal-title>{{ modal.config.data?.title }}</pa-modal-title>
       <pa-modal-content>
         @if (modal.config.data?.json) {
