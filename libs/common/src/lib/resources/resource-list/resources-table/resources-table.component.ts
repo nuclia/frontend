@@ -31,7 +31,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
 
   get initialColumns(): ColumnHeader[] {
     return [
-      { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false, visible: true },
+      { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: true, visible: true },
       {
         id: 'classification',
         label: 'resource.classification-column',
@@ -41,12 +41,21 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       },
       {
         id: 'created',
-        label: 'generic.date',
+        label: 'resource.created',
         size: '128px',
         sortable: true,
         centered: true,
         optional: true,
         visible: this.userPreferences.columns.includes('created'),
+      },
+      {
+        id: 'modified',
+        label: 'resource.modified',
+        size: '128px',
+        sortable: true,
+        centered: true,
+        optional: true,
+        visible: this.userPreferences.columns.includes('modified'),
       },
       {
         id: 'language',
