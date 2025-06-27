@@ -169,6 +169,7 @@
 	"activity.email-sent": "La generació del registre pot trigar un temps, s'enviarà un enllaç de descàrrega a {{email}} quan hagi acabat.",
 	"activity.filter": "Filtrar",
 	"activity.load-more": "Carrega més",
+	"activity.local-time": "Hora local",
 	"activity.migration-warning": "Les preguntes anteriors al setembre de 2024 no s'inclouen al registre a causa de la migració de dades.",
 	"activity.original-link": "Fitxer JSON original",
 	"activity.resource": "Recurs",

@@ -8,6 +8,7 @@ import {
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { LogEntry, LogValueObject, LogValueString } from './log.models';
 import { CommonModule } from '@angular/common';
@@ -28,6 +29,7 @@ import { ActivityLogTableModalComponent } from './log-table-modal.component';
     DropdownButtonComponent,
     PaButtonModule,
     PaModalModule,
+    PaTooltipModule,
     TranslateModule,
   ],
   selector: 'app-log-table',
@@ -39,6 +41,9 @@ export class ActivityLogTableComponent {
   private cdr = inject(ChangeDetectorRef);
   private modalService = inject(SisModalService);
 
+  dateColumn = 'Date (UTC)';
+  idColumn = 'ID';
+
   @Input() month: string = '';
   @Input() event: string = '';
   @Input() url: string | undefined;
@@ -47,7 +52,7 @@ export class ActivityLogTableComponent {
     this._rows = v;
     this.displayedRows = v;
     if (this._rows.length > 0) {
-      this.headers = ['Date', 'ID'].concat(this._rows[0].data.map(([key, _]) => key));
+      this.headers = [this.dateColumn, this.idColumn].concat(this._rows[0].data.map(([key, _]) => key));
     }
   }
   get rows(): LogEntry[] {
@@ -100,8 +105,8 @@ export class ActivityLogTableComponent {
   downloadCSV() {
     const headers = this.displayedHeaders;
     const rows = this.rows.map((row) => [
-      ...(this.displayedHeaders.includes('Date') ? [row.date] : []),
-      ...(this.displayedHeaders.includes('ID') ? [row.id] : []),
+      ...(this.displayedHeaders.includes(this.dateColumn) ? [row.date] : []),
+      ...(this.displayedHeaders.includes(this.idColumn) ? [row.id] : []),
       ...row.data
         .filter((column) => this.displayedHeaders.includes(column[0]))
         .map((column) => (column[1].type === 'object' ? JSON.stringify(column[1].value, null, 2) : column[1].value)),
