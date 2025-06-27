@@ -1,21 +1,13 @@
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Classification, LabelSets, Search } from '@nuclia/core';
+import {
+  CREATION_END_PREFIX,
+  CREATION_START_PREFIX,
+  getDateFromFilter,
+  getVisibilityFromFilter,
+  HIDDEN_PREFIX,
+  Search,
+} from '@nuclia/core';
 import mime from 'mime';
-
-export const MIME_FACETS = [
-  '/icon/application',
-  '/icon/audio',
-  '/icon/image',
-  '/icon/text',
-  '/icon/video',
-  '/icon/message',
-];
-export const LANGUAGE_FACET = ['/metadata.language'];
-export const MAX_FACETS_PER_REQUEST = 50;
-
-export const CREATION_START_PREFIX = '/creation/start/';
-export const CREATION_END_PREFIX = '/creation/end/';
-export const HIDDEN_PREFIX = '/hidden/';
 
 export interface Filters {
   classification: OptionModel[];
@@ -118,40 +110,4 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   filters.hidden = hidden ? getVisibilityFromFilter(hidden) : undefined;
 
   return filters;
-}
-
-export function getDateFromFilter(dateFilter: string) {
-  return dateFilter.split('/').slice(-1)[0];
-}
-
-export function getFilterFromDate(date: string, type: 'start' | 'end') {
-  return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
-}
-
-export function getVisibilityFromFilter(filter: string) {
-  return filter.split('/').slice(-1)[0] === 'true';
-}
-
-export function getFilterFromVisibility(hidden: boolean) {
-  return `${HIDDEN_PREFIX}/${hidden ? 'true' : 'false'}`;
-}
-
-export function trimLabelSets(labelSets: LabelSets, classifications: Classification[]) {
-  return Object.entries(labelSets)
-    .map(([key, value]) => {
-      const labelSet = {
-        ...value,
-        labels: value.labels.filter((label) =>
-          classifications.some(
-            (classification) => classification.labelset === key && classification.label === label.title,
-          ),
-        ),
-      };
-      return { key, labelSet };
-    })
-    .filter(({ labelSet }) => labelSet.labels.length > 0)
-    .reduce((acc, { key, labelSet }) => {
-      acc[key] = labelSet;
-      return acc;
-    }, {} as LabelSets);
 }

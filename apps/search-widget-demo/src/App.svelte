@@ -7,7 +7,8 @@
   // WARNING: don't commit API key
   const apikey = '';
   // const kb = 'a6b359e3-66bd-46c2-bef3-afed7746496a'; // screen recordings
-  const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
+  // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
+  const kb = 'c20b1516-d47a-4b36-9e89-7e0604ef49bb'; // eric2
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '16f09da3-6637-4e8a-963a-0a5c18f3eb3f'; // movies / knowledge graph
   // const kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
@@ -19,8 +20,9 @@
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
-  const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory,displayMetadata';
-  const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs';
+  const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
+  const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
+  const filters = 'labels,created,mime,entities';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
   const jsonSchema = {
@@ -53,8 +55,9 @@
     knowledgebox={kb}
     lang="en"
     no_tracking
-    features={askFeatures}
-    metadata="origin:created:date:Date de sortie,origin:collaborators:list,field:file.size:string:Taille du PDF" />
+    features={findFeatures}
+    {filters}
+    metadata="origin:created:date:Date de sortie" />
   <NucliaSearchResults no_tracking />
 
   <!-- <NucliaChat

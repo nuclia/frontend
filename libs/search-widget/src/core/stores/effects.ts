@@ -1,17 +1,5 @@
-import {
-  getAnswer,
-  getAnswerWithoutRAG,
-  getEntities,
-  getLabelSets,
-  getNotEngoughDataMessage,
-  getResourceById,
-  getResourceField,
-  searchInResource,
-  suggest,
-} from '../api';
-import { labelSets, labelState } from './labels.store';
-import type { Suggestions } from './suggestions.store';
-import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
+import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
+import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
   debounceTime,
@@ -31,18 +19,25 @@ import {
   tap,
 } from 'rxjs';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
+import {
+  getAnswer,
+  getAnswerWithoutRAG,
+  getEntities,
+  getLabelSets,
+  getMimeFacets,
+  getNotEngoughDataMessage,
+  getResourceById,
+  getResourceField,
+  searchInResource,
+  suggest,
+} from '../api';
+import { currentLanguage, translateInstant } from '../i18n';
+import type { NerNode } from '../knowledge-graph.models';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import {
-  disableRAG,
-  isCitationsEnabled,
-  isSpeechEnabled,
-  isSpeechSynthesisEnabled,
-  widgetImageRagStrategies,
-  widgetRagStrategies,
-} from './widget.store';
-import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
-import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
+import { reset } from '../reset';
+import { unsubscribeTriggerSearch } from '../search-bar';
+import { logEvent } from '../tracking';
 import {
   creationEndKey,
   creationStartKey,
@@ -58,25 +53,42 @@ import {
   updateQueryParams,
 } from '../utils';
 import {
+  answerState,
+  appendChatEntry,
+  chat,
+  chatError,
+  currentAnswer,
+  currentQuestion,
+  hasNotEnoughData,
+  isSpeechOn,
+  lastSpeakableFullAnswer,
+} from './answers.store';
+import { entities, entitiesState } from './entities.store';
+import { graphSearchResults, graphSelection, graphState } from './graph.store';
+import { labelSets, labelState } from './labels.store';
+import { mimeFacets } from './mime.store';
+import {
+  askBackendConfig,
   combinedFilterExpression,
   combinedFilters,
   creationEnd,
   creationStart,
+  filterExpression,
   getFieldDataFromResource,
   getResultType,
-  filterExpression,
   images,
   isEmptySearchQuery,
   pendingResults,
+  rangeCreationISO,
   resultList,
   searchFilters,
   searchQuery,
   searchState,
   trackingEngagement,
   triggerSearch,
-  askBackendConfig,
-  rangeCreationISO,
 } from './search.store';
+import type { Suggestions } from './suggestions.store';
+import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   fieldData,
   fieldFullId,
@@ -89,23 +101,13 @@ import {
   viewerState,
 } from './viewer.store';
 import {
-  answerState,
-  appendChatEntry,
-  chat,
-  chatError,
-  currentAnswer,
-  currentQuestion,
-  hasNotEnoughData,
-  isSpeechOn,
-  lastSpeakableFullAnswer,
-} from './answers.store';
-import { graphSearchResults, graphSelection, graphState } from './graph.store';
-import type { NerNode } from '../knowledge-graph.models';
-import { entities, entitiesState } from './entities.store';
-import { unsubscribeTriggerSearch } from '../search-bar';
-import { logEvent } from '../tracking';
-import { currentLanguage, translateInstant } from '../i18n';
-import { reset } from '../reset';
+  disableRAG,
+  isCitationsEnabled,
+  isSpeechEnabled,
+  isSpeechSynthesisEnabled,
+  widgetImageRagStrategies,
+  widgetRagStrategies,
+} from './widget.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -135,7 +137,12 @@ export function initLabelStore() {
 export function initEntitiesStore() {
   getEntities().subscribe((entityMap) => entities.set(entityMap));
 }
-
+/**
+ * Initialise mime types in the store
+ */
+export function initMimeTypeStore() {
+  getMimeFacets().subscribe((mimeFacetsMap) => mimeFacets.set(mimeFacetsMap));
+}
 /**
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.
  */

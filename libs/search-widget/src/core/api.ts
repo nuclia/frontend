@@ -12,26 +12,34 @@ import type {
   Reranker,
   Resource,
   ResourceField,
-  SearchOptions,
   SearchConfig,
+  SearchOptions,
 } from '@nuclia/core';
-import { Ask, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
+import {
+  Ask,
+  ExtractedDataTypes,
+  MIME_FACETS,
+  Nuclia,
+  ResourceFieldProperties,
+  ResourceProperties,
+  Search,
+} from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
-import type { EntityGroup, WidgetOptions } from './models';
-import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
-import { suggestionError } from './stores/suggestions.store';
+import type { EntityGroup, WidgetOptions } from './models';
+import { reset } from './reset';
+import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
 import {
   displayedMetadata,
+  findBackendConfig,
   searchError,
   searchOptions,
   showAttachedImages,
-  findBackendConfig,
 } from './stores/search.store';
-import { initTracking, logEvent } from './tracking';
+import { suggestionError } from './stores/suggestions.store';
 import { hasViewerSearchError } from './stores/viewer.store';
-import { reset } from './reset';
-import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
+import { initTracking, logEvent } from './tracking';
+import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor } from './utils';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -473,6 +481,12 @@ export const getLabelSets = (): Observable<LabelSets> => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox.getLabels();
+};
+export const getMimeFacets = (): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getFacets(MIME_FACETS);
 };
 
 export const getFile = (path: string): Observable<string> => {

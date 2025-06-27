@@ -62,6 +62,7 @@
 	"input.date_created": "Date créée",
 	"input.from": "Du",
 	"input.image-preview": "Aperçu de l'image",
+	"input.mime_types": "Type MIME",
 	"input.more_filters": "{{count}}  autres filtres",
 	"input.placeholder": "Posez votre question ici",
 	"input.to": "Jusqu'au",

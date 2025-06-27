@@ -3,20 +3,22 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { ControlModel, DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
+import {
+  Classification,
+  getFilterFromDate,
+  getFilterFromLabel,
+  getFilterFromVisibility,
+  getLabelFromFilter,
+  LabelSets,
+  MIME_FACETS,
+  Search,
+  trimLabelSets,
+} from '@nuclia/core';
 import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
-import {
-  Filters,
-  formatFiltersFromFacets,
-  getFilterFromDate,
-  getFilterFromVisibility,
-  MAX_FACETS_PER_REQUEST,
-  MIME_FACETS,
-  trimLabelSets,
-} from '../resource-filters.utils';
+import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { ResourceListService } from './resource-list.service';
 
 @Component({
@@ -250,8 +252,13 @@ export class ResourceListComponent implements OnDestroy {
     ]).pipe(
       switchMap(([labelSets, queryParams, prevFilters, prevLabelsLogic]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return this.getFacets(faceted).pipe(
-          map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic })),
+        return this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) =>
+            kb
+              .getFacets(faceted)
+              .pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }))),
+          ),
         );
       }),
       map(({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }) => {
@@ -264,36 +271,6 @@ export class ResourceListComponent implements OnDestroy {
           this.onToggleFilter();
         }
       }),
-    );
-  }
-
-  private getFacets(facets: string[]) {
-    // catalog endpoint has a limit on the number of facets that can be retrieved per request
-    const facetChunks = facets.reduce(
-      (chunks, curr) => {
-        const lastChunk = chunks[chunks.length - 1];
-        lastChunk.length < MAX_FACETS_PER_REQUEST ? lastChunk.push(curr) : chunks.push([curr]);
-        return chunks;
-      },
-      [[]] as string[][],
-    );
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        forkJoin(
-          facetChunks.map((faceted) => {
-            return kb.catalog('', {
-              faceted,
-              page_size: 0, // Search results are excluded to improve performance
-            });
-          }),
-        ),
-      ),
-      map((results) =>
-        results
-          .filter((result) => result.type !== 'error')
-          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
-      ),
     );
   }
 

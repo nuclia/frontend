@@ -2,6 +2,7 @@
 import {
   catchError,
   defer,
+  forkJoin,
   map,
   Observable,
   of,
@@ -33,6 +34,7 @@ import {
   CatalogOptions,
   ChatOptions,
   find,
+  MAX_FACETS_PER_REQUEST,
   predictAnswer,
   search,
   Search,
@@ -174,6 +176,37 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`).pipe(
       map((res) => res?.labelsets || {}),
       catchError(() => of({})),
+    );
+  }
+
+  /**
+   * Get the total amount of matches in the Knowledge Box for specific criteria (facets) passed in argument
+   * @param facets List of facets to request
+   * @returns An observable containing an object where each key is a string and maps to an object containing values and their corresponding counts.
+   */
+  getFacets(facets: string[]): Observable<Search.FacetsResult> {
+    // catalog endpoint has a limit on the number of facets that can be retrieved per request
+    const facetChunks = facets.reduce(
+      (chunks, curr) => {
+        const lastChunk = chunks[chunks.length - 1];
+        lastChunk.length < MAX_FACETS_PER_REQUEST ? lastChunk.push(curr) : chunks.push([curr]);
+        return chunks;
+      },
+      [[]] as string[][],
+    );
+    return forkJoin(
+      facetChunks.map((faceted) => {
+        return this.catalog('', {
+          faceted,
+          page_size: 0, // Search results are excluded to improve performance
+        });
+      }),
+    ).pipe(
+      map((results) =>
+        results
+          .filter((result) => result.type !== 'error')
+          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
+      ),
     );
   }
 

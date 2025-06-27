@@ -15,6 +15,7 @@ import {
   MessageAttachment,
   Resource,
   TextField,
+  trimLabelSets,
   TypeParagraph,
 } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
@@ -31,7 +32,6 @@ import {
   take,
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { trimLabelSets } from '../../resource-filters.utils';
 import {
   DATA_AUGMENTATION_ERROR,
   getErrors,
