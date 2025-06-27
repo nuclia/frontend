@@ -72,6 +72,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     filterLogic: new FormControl<'and' | 'or'>('and', { nonNullable: true }),
+    labelSetsExcludedFromFilters: new FormControl<string>('', { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
     autofilter: new FormControl<boolean>(false, { nonNullable: true }),
@@ -122,6 +123,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   get createdFilterEnabled() {
     return this.form.controls.filters.controls.created.value;
   }
+  get labelsFilterEnabled() {
+    return this.form.controls.filters.controls.labels.value || this.form.controls.filters.controls.labelFamilies.value;
+  }
   get orLogicEnabled() {
     return this.form.controls.filterLogic.value === 'or';
   }
@@ -157,9 +161,15 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.form.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(() => this.configChanged.emit({ ...this.form.getRawValue() }));
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      const { labelSetsExcludedFromFilters: filterExcludedLabelSets, ...config } = this.form.getRawValue();
+      const filterExcludedLabelSetsFormatted = filterExcludedLabelSets
+        .split('\n')
+        .map((item) => item.trim())
+        .filter((item) => !!item)
+        .join(',');
+      this.configChanged.emit({ ...config, labelSetsExcludedFromFilters: filterExcludedLabelSetsFormatted });
+    });
   }
 
   ngOnDestroy() {

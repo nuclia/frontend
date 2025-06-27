@@ -6,8 +6,6 @@
   const session = 'da7bb69f67864275b8bd1e07f312957c';
   // WARNING: don't commit API key
   const apikey = '';
-  // const kb = 'a6b359e3-66bd-46c2-bef3-afed7746496a'; // screen recordings
-  // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
   const kb = 'c20b1516-d47a-4b36-9e89-7e0604ef49bb'; // eric2
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '16f09da3-6637-4e8a-963a-0a5c18f3eb3f'; // movies / knowledge graph
@@ -22,7 +20,7 @@
   // const backend = 'https://nuclia.cloud/api';
   const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
-  const filters = 'labels,created,mime,entities';
+  const filters = 'labels,created,mime';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
   const jsonSchema = {
@@ -57,6 +55,7 @@
     no_tracking
     features={findFeatures}
     {filters}
+    labelsets_excluded_from_filters="taste,kind"
     metadata="origin:created:date:Date de sortie" />
   <NucliaSearchResults no_tracking />
 
