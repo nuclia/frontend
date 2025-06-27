@@ -1655,6 +1655,7 @@
 	"search.configuration.search-box.filters.filter-by-entities": "Filter by entities",
 	"search.configuration.search-box.filters.filter-by-label-families": "Filter by label families",
 	"search.configuration.search-box.filters.filter-by-labels": "Filter by labels",
+	"search.configuration.search-box.filters.filter-by-mime": "Filter by MIME type",
 	"search.configuration.search-box.filters.toggle-description": "The user will be able to apply filters to the search.",
 	"search.configuration.search-box.filters.toggle-label": "Show button to filter",
 	"search.configuration.search-box.highlight.toggle-description": "Highlight matched keywords.",

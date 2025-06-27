@@ -1631,6 +1631,7 @@
 	"search.configuration.search-box.filters.filter-by-entities": "Filtrer par entités",
 	"search.configuration.search-box.filters.filter-by-label-families": "Filtrer par familles d’étiquettes",
 	"search.configuration.search-box.filters.filter-by-labels": "Filtrer par étiquettes",
+	"search.configuration.search-box.filters.filter-by-mime": "Filtrer par type MIME",
 	"search.configuration.search-box.filters.toggle-description": "L’utilisateur pourra appliquer des filtres à la recherche.",
 	"search.configuration.search-box.filters.toggle-label": "Afficher le bouton pour filtrer",
 	"search.configuration.search-box.highlight.toggle-description": "Mettre en évidence les mots-clés trouvés.",

@@ -64,7 +64,7 @@
 	"input.date_created": "Fecha de creacion",
 	"input.from": "Desde",
 	"input.image-preview": "Vista previa de la imagen",
-	"input.mime_types": "Tipo mimo",
+	"input.mime_types": "Tipo MIME",
 	"input.more_filters": "{{count}} filtros más",
 	"input.placeholder": "Escribe tu pregunta aqui",
 	"input.to": "Hasta el",

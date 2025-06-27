@@ -50,6 +50,9 @@
             <div [innerHtml]="'search.configuration.search-box.filters.filter-by-created.help' | translate"></div>
           </pa-popover>
         </div>
+        <pa-checkbox formControlName="mime">
+          {{ 'search.configuration.search-box.filters.filter-by-label-families' | translate }}
+        </pa-checkbox>
       </div>
     </div>
     @if (filterEnabled) {

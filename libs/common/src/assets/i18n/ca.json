@@ -1631,6 +1631,7 @@
 	"search.configuration.search-box.filters.filter-by-entities": "Filtar per entitats",
 	"search.configuration.search-box.filters.filter-by-label-families": "Filtrar per famílies d’etiquetes",
 	"search.configuration.search-box.filters.filter-by-labels": "Filtrar per etiquetes",
+	"search.configuration.search-box.filters.filter-by-mime": "Filtrar per tipus MIME",
 	"search.configuration.search-box.filters.toggle-description": "L’usuari podrà aplicar filtres a la cerca.",
 	"search.configuration.search-box.filters.toggle-label": "Mostra el botó per filtrar",
 	"search.configuration.search-box.highlight.toggle-description": "Ressaltar les paraules clau trobades.",
