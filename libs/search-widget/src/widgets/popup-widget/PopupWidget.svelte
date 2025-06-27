@@ -29,6 +29,7 @@
     standalone?: boolean;
     proxy?: boolean;
     filters?: string;
+    labelsets_excluded_from_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -75,6 +76,7 @@
     standalone = false,
     proxy = false,
     filters = '',
+    labelsets_excluded_from_filters = '',
     preselected_filters = '',
     filter_expression = '',
     csspath = '',
@@ -202,6 +204,7 @@
             {standalone}
             {proxy}
             {filters}
+            {labelsets_excluded_from_filters}
             {preselected_filters}
             {filter_expression}
             {csspath}
