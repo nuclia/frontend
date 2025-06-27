@@ -3,6 +3,7 @@ import type { Classification } from '../resource';
 
 export const LABEL_FILTER_PREFIX = 'classification.labels';
 export const NER_FILTER_PREFIX = 'entities';
+export const MIME_FILTER_PREFIX = 'icon';
 
 export const MIME_FACETS = [
   '/icon/application',
@@ -47,7 +48,6 @@ export function getEntityFromFilter(filter: string): { family: string; entity: s
 export function getDateFromFilter(dateFilter: string) {
   return dateFilter.split('/').slice(-1)[0];
 }
-
 export function getFilterFromDate(date: string, type: 'start' | 'end') {
   return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
 }

@@ -22,7 +22,7 @@
   // const backend = 'https://nuclia.cloud/api';
   const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
-  const filters = 'labels,created,mime';
+  const filters = 'labels,created,mime,entities';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
   const jsonSchema = {

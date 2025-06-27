@@ -34,15 +34,26 @@ export const orderedMimeFacetsList = mimeFacetsState.reader<MimeFacet[]>((state)
       Object.entries(facets)
         .filter(([, count]) => count > 0)
         .forEach(([key, count]) => {
-          // Mime type facets all starts with /icon/
-          const mimeType = key.substring(5);
-          let label = (mime as unknown as any).getExtension(mimeType) || (key.split('/').pop() as string);
-          if (label === 'stf-link') {
-            label = 'link';
-          }
-          list.push({ label, facet: { key, count } });
+          list.push({ label: getMimeLabelFromKey(key), facet: { key, count } });
         });
       return list;
     }, [] as MimeFacet[])
     .sort((mimeA, mimeB) => mimeA.label.localeCompare(mimeB.label)),
 );
+
+export function getMimeFromFilter(filter: string): MimeFilter {
+  return {
+    key: filter,
+    label: getMimeLabelFromKey(filter),
+  };
+}
+
+function getMimeLabelFromKey(key: string): string {
+  // Mime type facets all starts with /icon/
+  const mimeType = key.substring(5);
+  let label = (mime as unknown as any).getExtension(mimeType) || (key.split('/').pop() as string);
+  if (label === 'stf-link') {
+    label = 'link';
+  }
+  return label;
+}

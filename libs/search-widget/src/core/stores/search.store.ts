@@ -28,6 +28,7 @@ import {
   LABEL_FILTER_PREFIX,
   LabelSetKind,
   LinkFieldData,
+  MIME_FILTER_PREFIX,
   NER_FILTER_PREFIX,
   parsePreselectedFilters,
   ResourceProperties,
@@ -41,7 +42,7 @@ import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
 import { labelSets } from './labels.store';
-import type { MimeFacet, MimeFilter } from './mime.store';
+import { getMimeFromFilter, type MimeFacet, type MimeFilter } from './mime.store';
 import { orFilterLogic } from './widget.store';
 
 interface SearchFilters {
@@ -52,16 +53,14 @@ interface SearchFilters {
   mimeTypes?: MimeFilter[];
 }
 
-export interface EntityFilter {
-  family: string;
-  entity: string;
-}
-
 export interface LabelSetFilter {
   id: string;
   kind: LabelSetKind;
 }
-
+export interface EntityFilter {
+  family: string;
+  entity: string;
+}
 export type ResultsOrder = 'relevance' | 'date';
 
 type EngagementType = 'CHAT' | 'RESULT';
@@ -282,6 +281,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
     ...(state.filters.labelSets || []).map((filter) => getFilterFromLabelSet(filter.id)),
     ...(state.filters.entities || []).map((filter) => getFilterFromEntity(filter)),
+    ...(state.filters.mimeTypes || []).map((filter) => filter.key),
   ],
   (state, data) => {
     const filters: SearchFilters = {};
@@ -315,6 +315,13 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
           filters.entities = [entityFilter];
         } else {
           filters.entities.push(entityFilter);
+        }
+      } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
+        const mimeFilter = getMimeFromFilter(filter);
+        if (!filters.mimeTypes) {
+          filters.mimeTypes = [mimeFilter];
+        } else {
+          filters.mimeTypes.push(mimeFilter);
         }
       }
     });

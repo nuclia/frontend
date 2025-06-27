@@ -21,7 +21,6 @@
     creationStart,
     entities,
     entitiesDefaultColor,
-    type EntityFilter,
     entityFilters,
     getCDN,
     hasContextImages,
@@ -53,6 +52,7 @@
     triggerSuggestions,
     typeAhead,
     widgetPlaceholder,
+    type EntityFilter,
   } from '../../core';
   import InputImages from '../input-images/InputImages.svelte';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
