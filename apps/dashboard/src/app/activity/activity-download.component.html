@@ -82,6 +82,7 @@
                   <app-log-table
                     [month]="item.month"
                     [event]="selectedActivityTab"
+                    [url]="downloads[selectedActivityTab + '-' + item.month]?.url"
                     [rows]="
                       !!downloads[selectedActivityTab + '-' + item.month]
                         ? downloads[selectedActivityTab + '-' + item.month].rows || []

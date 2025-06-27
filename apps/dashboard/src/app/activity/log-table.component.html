@@ -25,9 +25,18 @@
     aspect="basic"
     icon="download"
     iconAndText
-    (click)="download()">
+    (click)="downloadCSV()">
     CSV
   </pa-button>
+  @if (url) {
+    <pa-button
+      aspect="basic"
+      icon="download"
+      iconAndText
+      (click)="downloadJSON()">
+      {{ 'activity.original-link' | translate }}
+    </pa-button>
+  }
 </div>
 
 <div class="container">

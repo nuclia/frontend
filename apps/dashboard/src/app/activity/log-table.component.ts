@@ -41,6 +41,7 @@ export class ActivityLogTableComponent {
 
   @Input() month: string = '';
   @Input() event: string = '';
+  @Input() url: string | undefined;
   @Input()
   set rows(v: LogEntry[]) {
     this._rows = v;
@@ -96,7 +97,7 @@ export class ActivityLogTableComponent {
       : this.hiddenHeaders.concat(header);
   }
 
-  download() {
+  downloadCSV() {
     const headers = this.displayedHeaders;
     const rows = this.rows.map((row) => [
       ...(this.displayedHeaders.includes('Date') ? [row.date] : []),
@@ -115,6 +116,15 @@ export class ActivityLogTableComponent {
       link.setAttribute('download', filename);
       link.click();
       URL.revokeObjectURL(url);
+    }
+  }
+
+  downloadJSON() {
+    if (this.url) {
+      const link = document.createElement('a');
+      link.setAttribute('href', this.url);
+      link.setAttribute('target', '_new');
+      link.click();
     }
   }
 

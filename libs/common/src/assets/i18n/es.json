@@ -170,6 +170,7 @@
 	"activity.filter": "Filtrar",
 	"activity.load-more": "Cargar más",
 	"activity.migration-warning": "Las preguntas anteriores a septiembre de 2024 no se incluyen en el registro debido a la migración de datos.",
+	"activity.original-link": "Archivo JSON original",
 	"activity.resource": "Recurso",
 	"activity.timestamp": "Sello de tiempo",
 	"activity.type.ask": "Preguntas y respuestas generativas",
