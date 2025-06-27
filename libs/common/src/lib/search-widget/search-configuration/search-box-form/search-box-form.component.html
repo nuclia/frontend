@@ -56,6 +56,23 @@
       </div>
     </div>
     @if (filterEnabled) {
+      @if (labelsFilterEnabled) {
+        <div class="config-form-field">
+          <div class="title-xs">{{ 'search.configuration.search-box.filters.exclude-labelset.title' | translate }}</div>
+          <div class="config-form-help">
+            {{ 'search.configuration.search-box.filters.exclude-labelset.description' | translate }}
+          </div>
+          <nsi-expandable-textarea
+            formControlName="labelSetsExcludedFromFilters"
+            rows="2"
+            resizable
+            help="search.configuration.search-box.filters.exclude-labelset.textarea-help"
+            modalTitle="search.configuration.search-box.filters.exclude-labelset.textarea-label">
+            {{ 'search.configuration.search-box.filters.exclude-labelset.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
+      }
+
       <div class="config-form-field">
         <div class="title-xs">{{ 'search.configuration.search-box.filter-logic.title' | translate }}</div>
         <pa-radio-group formControlName="filterLogic">
@@ -70,10 +87,10 @@
             OR
           </pa-radio>
         </pa-radio-group>
+        @if (createdFilterEnabled && orLogicEnabled) {
+          <nsi-info-card>{{ 'search.configuration.search-box.filter-logic.warning' | translate }}</nsi-info-card>
+        }
       </div>
-      @if (createdFilterEnabled && orLogicEnabled) {
-        <nsi-info-card>{{ 'search.configuration.search-box.filter-logic.warning' | translate }}</nsi-info-card>
-      }
     }
     <div class="config-form-field">
       <pa-toggle
