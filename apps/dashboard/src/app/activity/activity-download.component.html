@@ -22,7 +22,7 @@
       @for (tab of activityTabs[selectedTab]; track tab) {
         <pa-tab
           [active]="tab === selectedActivityTab"
-          (click)="selectedActivityTab = tab">
+          (click)="selectActivityTab(tab)">
           {{ 'activity.type.' + tab | translate }}
         </pa-tab>
       }

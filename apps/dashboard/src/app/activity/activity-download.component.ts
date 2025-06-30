@@ -192,6 +192,12 @@ export class ActivityDownloadComponent implements OnDestroy {
     this.cdr?.markForCheck();
   }
 
+  selectActivityTab(tab: ActivityTab) {
+    this.selectedActivityTab = tab;
+    this.visibleTables = {};
+    this.cdr?.markForCheck();
+  }
+
   parseDate(value: string) {
     const [year, month] = value.split('-');
     return new Date(parseInt(year), parseInt(month) - 1, 2);
