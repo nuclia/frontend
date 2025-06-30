@@ -88,6 +88,7 @@
     proxy = false;
     mode?: string;
     filters?: string;
+    labelsets_excluded_from_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -137,6 +138,9 @@
   let proxy = $derived(componentProps.proxy || config.proxy);
   let mode = $derived(componentProps.mode || config.mode);
   let filters = $derived(componentProps.filters || config.filters);
+  let labelsets_excluded_from_filters = $derived(
+    componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
+  );
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let csspath = $derived(componentProps.csspath || config.csspath);
@@ -364,7 +368,7 @@
 
       if (_features.filter) {
         if (_filters.labels || _filters.labelFamilies) {
-          initLabelStore();
+          initLabelStore(labelsets_excluded_from_filters);
         }
         if (_filters.entities) {
           initEntitiesStore();

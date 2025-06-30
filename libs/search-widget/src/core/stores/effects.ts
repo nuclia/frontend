@@ -1,4 +1,4 @@
-import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
+import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse, LabelSets } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
@@ -130,9 +130,18 @@ reset.subscribe(() => resetStatesAndEffects());
 /**
  * Initialise label sets in the store
  */
-export function initLabelStore() {
+export function initLabelStore(labelsetsExcludedFromFilters?: string) {
+  const excludedLabelSets = (labelsetsExcludedFromFilters || '').split(',');
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
-  getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
+  getLabelSets().subscribe((labelSetMap) => {
+    const filteredLabelSets = Object.entries(labelSetMap).reduce((filteredMap, [labelSetKey, labelSet]) => {
+      if (!excludedLabelSets.includes(labelSetKey)) {
+        filteredMap = { ...filteredMap, [labelSetKey]: labelSet };
+      }
+      return filteredMap;
+    }, {} as LabelSets);
+    labelSets.set(filteredLabelSets);
+  });
 }
 export function initEntitiesStore() {
   getEntities().subscribe((entityMap) => entities.set(entityMap));
