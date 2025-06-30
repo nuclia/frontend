@@ -230,6 +230,13 @@
                 <span class="body-s">{{ row.resource.created + 'Z' | date: 'mediumDate' }}</span>
               </pa-table-cell>
             }
+            @if (visibleColumns.includes('modified')) {
+              <pa-table-cell center>
+                <span class="body-s">
+                  {{ (row.resource.modified || row.resource.created) + 'Z' | date: 'mediumDate' }}
+                </span>
+              </pa-table-cell>
+            }
             @if (visibleColumns.includes('language')) {
               <pa-table-cell center>
                 <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
