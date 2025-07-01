@@ -35,12 +35,14 @@ export interface AutomatedTask extends BaseTask {
 export interface OneTimeTask extends BaseTask {
   status: 'completed' | 'progress' | 'stopped' | 'error';
   type: 'one-time';
+  task_config_id?: string;
 }
 
 export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTimeTask {
   return {
     type: 'one-time',
     status: task.completed ? 'completed' : task.failed ? 'error' : task.stopped ? 'stopped' : 'progress',
+    task_config_id: task.task_config_id,
     ...getBaseTask(task),
   };
 }
@@ -93,9 +95,9 @@ export function getOperationFromTaskName(name: TaskName): keyof Operation | null
     case 'llama-guard':
       return 'llama_guard';
     case 'prompt-guard':
-      return 'prompt_guard'
+      return 'prompt_guard';
     case 'ask':
-      return 'ask'
+      return 'ask';
     default:
       return null;
   }

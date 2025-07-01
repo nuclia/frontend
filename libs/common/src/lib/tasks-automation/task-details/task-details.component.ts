@@ -66,13 +66,13 @@ export class TaskDetailsComponent {
       .subscribe();
   }
 
-  cleanTask(taskId: string, name: string) {
-    this.taskAutomation.cleanOnGoingTask(taskId, name).subscribe();
+  cleanTask(taskId: string) {
+    this.taskAutomation.cleanOnGoingTask(taskId).subscribe();
   }
 
-  deleteTask(taskId: string, name: string, deleteData: boolean) {
+  deleteTask(taskId: string, deleteData: boolean) {
     this.taskAutomation
-      .deleteOnGoingTask(taskId, name, deleteData)
+      .deleteOnGoingTask(taskId, deleteData)
       .pipe(
         switchMap(() => this.tasksRoute),
         take(1),
