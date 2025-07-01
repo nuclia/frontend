@@ -32,19 +32,19 @@
           <pa-dropdown #menu>
             @if (task.task.can_cleanup) {
               <pa-option
-                (selectOption)="cleanTask(task.id, task.parameters.name)"
+                (selectOption)="cleanTask(task.id)"
                 destructive>
                 {{ 'tasks-automation.actions.delete-data.title' | translate }}
               </pa-option>
             }
             <pa-option
-              (selectOption)="deleteTask(task.id, task.parameters.name, false)"
+              (selectOption)="deleteTask(task.id, false)"
               destructive>
               {{ 'tasks-automation.actions.delete-agent.title' | translate }}
             </pa-option>
             @if (task.task.can_cleanup) {
               <pa-option
-                (selectOption)="deleteTask(task.id, task.parameters.name, true)"
+                (selectOption)="deleteTask(task.id, true)"
                 destructive>
                 {{ 'tasks-automation.actions.delete-all.title' | translate }}
               </pa-option>

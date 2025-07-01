@@ -69,12 +69,12 @@ export class TaskListComponent {
     this.isDescending.next(!this.isDescending.value);
   }
 
-  cleanTask(taskId: string, name: string) {
-    this.taskAutomation.cleanOnGoingTask(taskId, name).subscribe();
+  cleanTask(taskId: string) {
+    this.taskAutomation.cleanOnGoingTask(taskId).subscribe();
   }
 
-  deleteTask(taskId: string, name: string, deleteData: boolean) {
-    this.taskAutomation.deleteOnGoingTask(taskId, name, deleteData).subscribe();
+  deleteTask(taskId: string, deleteData: boolean) {
+    this.taskAutomation.deleteOnGoingTask(taskId, deleteData).subscribe();
   }
 
   editTask(taskId: string) {

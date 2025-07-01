@@ -83,19 +83,19 @@
                 </pa-option>
                 @if (task.canClean) {
                   <pa-option
-                    (selectOption)="cleanTask(task.id, task.title)"
+                    (selectOption)="cleanTask(task.id)"
                     destructive>
                     {{ 'tasks-automation.actions.delete-data.title' | translate }}
                   </pa-option>
                 }
                 <pa-option
-                  (selectOption)="deleteTask(task.id, task.title, false)"
+                  (selectOption)="deleteTask(task.id, false)"
                   destructive>
                   {{ 'tasks-automation.actions.delete-agent.title' | translate }}
                 </pa-option>
                 @if (task.canClean) {
                   <pa-option
-                    (selectOption)="deleteTask(task.id, task.title, true)"
+                    (selectOption)="deleteTask(task.id, true)"
                     destructive>
                     {{ 'tasks-automation.actions.delete-all.title' | translate }}
                   </pa-option>

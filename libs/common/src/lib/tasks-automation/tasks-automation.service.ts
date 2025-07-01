@@ -132,8 +132,8 @@ export class TasksAutomationService {
     );
   }
 
-  deleteBatchTasks(name: string) {
-    return combineLatest([this._currentKb, this.getBatchTasks(name)]).pipe(
+  deleteBatchTasks(configId: string) {
+    return combineLatest([this._currentKb, this.getBatchTasks(configId)]).pipe(
       take(1),
       switchMap(([kb, batchTasks]) =>
         batchTasks.length > 0 ? forkJoin(batchTasks.map((task) => kb.taskManager.deleteTask(task.id))) : of(undefined),
@@ -142,8 +142,8 @@ export class TasksAutomationService {
     );
   }
 
-  stopBatchTasks(name: string) {
-    return combineLatest([this._currentKb, this.getBatchTasks(name, 'progress')]).pipe(
+  stopBatchTasks(configId: string) {
+    return combineLatest([this._currentKb, this.getBatchTasks(configId, 'progress')]).pipe(
       take(1),
       switchMap(([kb, batchTasks]) =>
         batchTasks.length > 0 ? forkJoin(batchTasks.map((task) => kb.taskManager.stopTask(task.id))) : of(undefined),
@@ -152,19 +152,19 @@ export class TasksAutomationService {
     );
   }
 
-  getBatchTasks(name: string, status?: string) {
+  getBatchTasks(configId: string, status?: string) {
     return this.taskList.pipe(
       take(1),
       map((taskList) =>
         taskList
-          .filter((task) => task.type === 'one-time' && task.title === name)
+          .filter((task) => task.type === 'one-time' && task.task_config_id === configId)
           .map((task) => task as OneTimeTask)
           .filter((task) => (status ? task.status === status : true)),
       ),
     );
   }
 
-  deleteOnGoingTask(taskId: string, name: string, deleteData: boolean) {
+  deleteOnGoingTask(configId: string, deleteData: boolean) {
     return this.modalService
       .openConfirm({
         title: `tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.title`,
@@ -174,11 +174,10 @@ export class TasksAutomationService {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        // TODO: retrieve batch tasks by comparing task names is not reliable
-        switchMap(() => this.stopBatchTasks(name)),
-        switchMap(() => this.deleteBatchTasks(name)),
+        switchMap(() => this.stopBatchTasks(configId)),
+        switchMap(() => this.deleteBatchTasks(configId)),
         switchMap(() => this._currentKb.pipe(take(1))),
-        switchMap((kb) => kb.taskManager.deleteTask(taskId, deleteData)),
+        switchMap((kb) => kb.taskManager.deleteTask(configId, deleteData)),
         switchMap(() => this.updateTasks()),
         tap(() => {
           this.toaster.success(`tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.success`);
@@ -186,7 +185,7 @@ export class TasksAutomationService {
       );
   }
 
-  cleanOnGoingTask(taskId: string, name: string) {
+  cleanOnGoingTask(configId: string) {
     return this.modalService
       .openConfirm({
         title: 'tasks-automation.actions.delete-data.title',
@@ -196,8 +195,8 @@ export class TasksAutomationService {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.stopBatchTasks(name)),
-        switchMap(() => this.cleanTask(taskId)),
+        switchMap(() => this.stopBatchTasks(configId)),
+        switchMap(() => this.cleanTask(configId)),
         tap(() => {
           this.toaster.success('tasks-automation.actions.delete-data.success');
         }),
@@ -241,7 +240,7 @@ export class TasksAutomationService {
       map((configs) => configs.find((config) => config.id === taskId)),
       filter((task) => !!task),
       switchMap((task) =>
-        this.getBatchTasks(task?.parameters.name || '', 'progress').pipe(
+        this.getBatchTasks(task.id, 'progress').pipe(
           switchMap((activeTasks) =>
             (activeTasks.length > 0
               ? this.modalService
@@ -252,7 +251,7 @@ export class TasksAutomationService {
                   })
                   .onClose.pipe(
                     filter((confirm) => confirm),
-                    switchMap(() => this.stopBatchTasks(task?.parameters.name || '')),
+                    switchMap(() => this.stopBatchTasks(task.id)),
                   )
               : of(undefined)
             ).pipe(
