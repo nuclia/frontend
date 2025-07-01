@@ -185,6 +185,7 @@ export interface TaskOnBatch extends TaskStatus {
   scheduled_at: string;
   completed_at: string;
   cleanup_parent_task_id?: string;
+  task_config_id?: string;
 }
 
 /**
