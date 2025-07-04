@@ -158,8 +158,8 @@
     return new Observable((observer) => {
       if (visible && !initialized && initHook) {
         setTimeout(() => {
-          searchBar?.onReady().then(() => {
-            searchBar?.setInitHook(initHook);
+          searchBar?.setInitHook(initHook);
+          searchBar?.onReady().then((res) => {
             initialized = true;
             observer.next(true);
             observer.complete();
