@@ -65,6 +65,8 @@
   } from '../../core/stores/widget.store';
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
+  const _initialized = new BehaviorSubject(false);
+  const initialized = _initialized.asObservable().pipe(filter((r) => r));
   const _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
@@ -266,7 +268,7 @@
 
   let showRelations = $state(false);
 
-  ready.pipe(delay(200)).subscribe(() => {
+  initialized.pipe(delay(200)).subscribe(() => {
     initHook(nucliaAPI);
 
     // any feature that calls the Nuclia API immediately at init time must be done here
@@ -278,8 +280,8 @@
         dispatchCustomEvent('logs', data);
       });
     }
+    _ready.next(true);
   });
-  // const component = get_current_component();
 
   onMount(() => {
     const nucliaOptions = {
@@ -411,11 +413,11 @@
             } else if (config.kind === 'ask') {
               askBackendConfig.set(config.config);
             }
-            _ready.next(true);
+            _initialized.next(true);
           }
         });
       } else {
-        _ready.next(true);
+        _initialized.next(true);
       }
     });
     return () => resetNuclia();
@@ -437,7 +439,7 @@
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   <style src="../../common/common-style.css"></style>
-  {#if $ready && !!svgSprite}
+  {#if $initialized && !!svgSprite}
     <div class="search-box">
       <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')} />
 
