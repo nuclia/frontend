@@ -13,6 +13,7 @@
   import { getApiErrors, hasPermalinkToRender, isEmptySearchQuery, pendingResults, showResults } from '../../core';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
+  import { Observable } from 'rxjs';
 
   interface Props {
     backend?: string;
@@ -114,8 +115,9 @@
   let initialized = false;
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
-    visible = true;
-    setTimeout(() => searchBar?.search(query, filters, doNotTriggerSearch), 0);
+    toggleSearchVisibility(true).subscribe(() =>
+      searchBar?.onReady().then(() => searchBar?.search(query, filters, doNotTriggerSearch)),
+    );
   }
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -129,7 +131,7 @@
     if (searchButtons.length > 0) {
       searchButtons.forEach((button) => button.addEventListener('click', toggleSearchVisibility));
       if (hasPermalinkToRender()) {
-        visible = true;
+        toggleSearchVisibility(true);
       }
       return true;
     } else {
@@ -151,14 +153,23 @@
     }
   });
 
-  function toggleSearchVisibility() {
-    visible = !visible;
-    if (!initialized && initHook) {
-      setTimeout(() => {
-        searchBar?.setInitHook(initHook);
-        initialized = true;
-      }, 200);
-    }
+  function toggleSearchVisibility(force = false): Observable<boolean> {
+    visible = force || !visible;
+    return new Observable((observer) => {
+      if (visible && !initialized && initHook) {
+        setTimeout(() => {
+          searchBar?.onReady().then(() => {
+            searchBar?.setInitHook(initHook);
+            initialized = true;
+            observer.next(true);
+            observer.complete();
+          });
+        }, 200);
+      } else {
+        observer.next(true);
+        observer.complete();
+      }
+    });
   }
 
   function onBackdropKeyup(event: KeyboardEvent) {
