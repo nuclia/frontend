@@ -67,7 +67,9 @@ export function trimLabelSets(labelSets: LabelSets, classifications: Classificat
         ...value,
         labels: value.labels.filter((label) =>
           classifications.some(
-            (classification) => classification.labelset === key && classification.label === label.title,
+            (classification) =>
+              classification.labelset.toLocaleLowerCase() === key.toLocaleLowerCase() &&
+              classification.label === label.title,
           ),
         ),
       };
