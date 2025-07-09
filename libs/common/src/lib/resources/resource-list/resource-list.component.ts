@@ -143,9 +143,9 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   updateClassifications(selection: Classification[]) {
-    const filters = selection.map((label) => getFilterFromLabel(label));
+    const filters = selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase());
     this.filterOptions.classification.forEach((option) => {
-      option.selected = filters.includes(option.id);
+      option.selected = filters.includes(option.id.toLocaleLowerCase());
     });
     this.cdr.markForCheck();
     this.onToggleFilter();
@@ -280,6 +280,19 @@ export class ResourceListComponent implements OnDestroy {
     queryParamsFilters: string[] = [],
   ) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
+    // some old labelsets might be lowercase while the actual ones on resources are not
+    // this fix make them visible
+    const nonFacetedLabels = Object.values(labelSets).reduce((all, labelSet) => {
+      labelSet.labels.forEach((label) => {
+        const filter = getFilterFromLabel({ labelset: labelSet.title, label: label.title });
+        if (!filters.classification.some((v) => v.id === filter)) {
+          // we cannot give the counting because the value differs by its case
+          all.push(new OptionModel({ id: filter, label: `${labelSet.title}/${label.title} (?)`, value: filter }));
+        }
+      });
+      return all;
+    }, [] as OptionModel[]);
+    filters.classification = [...filters.classification, ...nonFacetedLabels];
     this.filterOptions = filters;
     this.dateForm.patchValue({
       start: filters.creation?.start?.date,
