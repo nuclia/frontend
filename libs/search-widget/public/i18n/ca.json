@@ -66,6 +66,7 @@
 	"input.image-preview": "Vista prèvia de la imatge",
 	"input.mime_types": "Tipus MIME",
 	"input.more_filters": "{{count}} filtres més",
+	"input.path": "Camí",
 	"input.placeholder": "Escriviu la vostra pregunta aquí",
 	"input.to": "Fins al",
 	"modal.back": "Tornar",

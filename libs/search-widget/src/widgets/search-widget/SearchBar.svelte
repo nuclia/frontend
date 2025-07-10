@@ -36,6 +36,7 @@
     initEntitiesStore,
     initLabelStore,
     initMimeTypeStore,
+    initPathsStore,
     initUsageTracking,
     initViewer,
     setupTriggerGraphNerSearch,
@@ -382,6 +383,9 @@
         }
         if (_filters.mime) {
           initMimeTypeStore();
+        }
+        if (_filters.path) {
+          initPathsStore();
         }
       }
       if (preselected_filters) {

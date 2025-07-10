@@ -4,6 +4,7 @@ import type { Classification } from '../resource';
 export const LABEL_FILTER_PREFIX = 'classification.labels';
 export const NER_FILTER_PREFIX = 'entities';
 export const MIME_FILTER_PREFIX = 'icon';
+export const PATH_FILTER_PREFIX = 'origin.path';
 
 export const MIME_FACETS = [
   '/icon/application',

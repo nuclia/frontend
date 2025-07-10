@@ -1,5 +1,5 @@
 import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse, LabelSets } from '@nuclia/core';
-import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
+import { getFieldTypeFromString, PATH_FILTER_PREFIX, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
   debounceTime,
@@ -108,6 +108,7 @@ import {
   widgetImageRagStrategies,
   widgetRagStrategies,
 } from './widget.store';
+import { loadPaths } from './paths.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -151,6 +152,12 @@ export function initEntitiesStore() {
  */
 export function initMimeTypeStore() {
   getMimeFacets().subscribe((mimeFacetsMap) => mimeFacets.set(mimeFacetsMap));
+}
+/**
+ * Initialise path facets in the store
+ */
+export function initPathsStore() {
+  loadPaths(['/origin.path'], true).subscribe();
 }
 /**
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.

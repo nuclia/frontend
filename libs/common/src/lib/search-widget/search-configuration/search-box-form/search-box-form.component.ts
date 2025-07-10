@@ -82,6 +82,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       entities: new FormControl<boolean>(false, { nonNullable: true }),
       created: new FormControl<boolean>(false, { nonNullable: true }),
       labelFamilies: new FormControl<boolean>(false, { nonNullable: true }),
+      path: new FormControl<boolean>(false, { nonNullable: true }),
     }),
     suggestResults: new FormControl<boolean>(false, { nonNullable: true }),
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),

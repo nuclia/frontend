@@ -31,6 +31,7 @@ import {
   MIME_FILTER_PREFIX,
   NER_FILTER_PREFIX,
   parsePreselectedFilters,
+  PATH_FILTER_PREFIX,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
@@ -51,6 +52,7 @@ interface SearchFilters {
   entities?: EntityFilter[];
   autofilters?: EntityFilter[];
   mimeTypes?: MimeFilter[];
+  path?: string;
 }
 
 export interface LabelSetFilter {
@@ -282,6 +284,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
     ...(state.filters.labelSets || []).map((filter) => getFilterFromLabelSet(filter.id)),
     ...(state.filters.entities || []).map((filter) => getFilterFromEntity(filter)),
     ...(state.filters.mimeTypes || []).map((filter) => filter.key),
+    ...(state.filters.path ? [state.filters.path] : []),
   ],
   (state, data) => {
     const filters: SearchFilters = {};
@@ -323,6 +326,8 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
         } else {
           filters.mimeTypes.push(mimeFilter);
         }
+      } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
+        filters.path = filter;
       }
     });
     return {
@@ -386,6 +391,10 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
           prop: 'field_mimetype',
           type: mimeType.key,
         })),
+        ...(filters.path ? [filters.path] : []).map((path) => ({
+          prop: 'origin_path',
+          prefix: path.split(PATH_FILTER_PREFIX)[1],
+        })),
         ...(rangeCreation?.start || rangeCreation?.end
           ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
           : []),
@@ -412,16 +421,16 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
       field:
         filterExpression?.field && hasFieldFilters
           ? {
-              and: [filterExpression.field, fieldFilters],
-            }
+            and: [filterExpression.field, fieldFilters],
+          }
           : hasFieldFilters
             ? fieldFilters
             : filterExpression?.field,
       paragraph:
         filterExpression?.paragraph && hasParagraphFilters
           ? {
-              and: [filterExpression.paragraph, paragraphFilters],
-            }
+            and: [filterExpression.paragraph, paragraphFilters],
+          }
           : hasParagraphFilters
             ? paragraphFilters
             : filterExpression?.paragraph,
@@ -482,6 +491,17 @@ export const mimeTypesfilters = searchState.writer<MimeFilter[]>(
   }),
 );
 
+export const pathFilter = searchState.writer<string | undefined>(
+  (state) => state.filters.path,
+  (state, pathFilter) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      path: pathFilter,
+    },
+  }),
+);
+
 export const autofilerDisabled = searchState.writer<boolean | undefined>(
   (state) => state.autofilerDisabled,
   (state, autofilerDisabled) => ({
@@ -526,6 +546,7 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0) &&
     (!state.filters.mimeTypes || state.filters.mimeTypes.length === 0) &&
+    !state.filters.path &&
     !state.creation?.range_creation_start &&
     !state.creation?.range_creation_end,
 );

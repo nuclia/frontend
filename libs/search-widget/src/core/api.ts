@@ -488,6 +488,12 @@ export const getMimeFacets = (): Observable<Search.FacetsResult> => {
   }
   return nucliaApi.knowledgeBox.getFacets(MIME_FACETS);
 };
+export const getFacets = (facets: string[]): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getFacets(facets);
+};
 
 export const getFile = (path: string): Observable<string> => {
   if (!nucliaApi) {

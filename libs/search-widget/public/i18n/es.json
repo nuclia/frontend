@@ -66,6 +66,7 @@
 	"input.image-preview": "Vista previa de la imagen",
 	"input.mime_types": "Tipo MIME",
 	"input.more_filters": "{{count}} filtros más",
+	"input.path": "Ruta",
 	"input.placeholder": "Escribe tu pregunta aqui",
 	"input.to": "Hasta el",
 	"modal.back": "Volver",

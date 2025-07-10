@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Classification } from '@nuclia/core';
+  import { PATH_FILTER_PREFIX, type Classification } from '@nuclia/core';
   import type { Observable } from 'rxjs';
   import { combineLatest, map, take } from 'rxjs';
   import { tap } from 'rxjs/operators';
@@ -32,6 +32,7 @@
     labelFilters,
     labelSetFilters,
     mimeTypesfilters,
+    pathFilter,
     rangeCreation,
     removeAutofilter,
     removeEntityFilter,
@@ -75,7 +76,7 @@
   let fileInputElement: HTMLInputElement | undefined = $state();
 
   interface Filter {
-    type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end' | 'mimetype';
+    type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end' | 'mimetype' | 'path';
     key: string;
     value: Classification | EntityFilter | string;
     autofilter?: boolean;
@@ -88,8 +89,9 @@
     entityFilters,
     autofilters,
     mimeTypesfilters,
+    pathFilter,
   ]).pipe(
-    map(([rangeCreation, labels, labelSets, entities, autofilters, mimeTypesfilters]) => [
+    map(([rangeCreation, labels, labelSets, entities, autofilters, mimeTypesfilters, pathFilter]) => [
       ...Object.entries(rangeCreation)
         .filter(([, value]) => !!value)
         .map(([key, value]) => ({
@@ -122,6 +124,11 @@
         type: 'mimetype',
         key: value.key,
         value: value.label,
+      })),
+      ...(pathFilter ? [pathFilter] : []).map((path) => ({
+        type: 'path',
+        key: path,
+        value: path.split(PATH_FILTER_PREFIX)[1],
       })),
     ]),
     tap((filters) => {
@@ -160,6 +167,8 @@
         : removeEntityFilter(filter.value as EntityFilter);
     } else if (filter.type === 'mimetype') {
       removeMimeFilter(filter.key);
+    } else if (filter.type === 'path') {
+      pathFilter.set(undefined);
     }
   };
 
@@ -366,14 +375,14 @@
             {filter.value.entity}
           </Chip>
         {/if}
-        {#if filter.type === 'mimetype'}
+        {#if filter.type === 'mimetype' || filter.type === 'path'}
           <Chip
             removable
             color={entitiesDefaultColor}
             on:remove={() => search(filter)}>
             {filter.value}
           </Chip>
-        {/if}
+        {/if}     
       {/each}
     </div>
   {/if}
