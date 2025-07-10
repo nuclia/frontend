@@ -10,10 +10,18 @@
 <script lang="ts">
   import type { KBStates, Nuclia, Reranker, Widget } from '@nuclia/core';
   import { onMount } from 'svelte';
-  import { getApiErrors, hasPermalinkToRender, isEmptySearchQuery, pendingResults, showResults } from '../../core';
+  import {
+    getApiErrors,
+    hasPermalinkToRender,
+    isEmptySearchQuery,
+    pendingResults,
+    searchQuery,
+    showResults,
+    typeAhead,
+  } from '../../core';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
-  import { Observable } from 'rxjs';
+  import { BehaviorSubject, filter } from 'rxjs';
 
   interface Props {
     backend?: string;
@@ -111,17 +119,17 @@
 
   let searchBar: any = $state();
   let visible = $state(false);
-  let initHook: (n: Nuclia) => void = () => {};
-  let initialized = false;
+  const isSearchBarReady = new BehaviorSubject(false);
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
-    toggleSearchVisibility(true).subscribe(() =>
-      searchBar?.onReady().then(() => searchBar?.search(query, filters, doNotTriggerSearch)),
-    );
+    isSearchBarReady.pipe(filter((yes) => yes)).subscribe(() => {
+      toggleSearchVisibility(true);
+      searchBar?.search(query, filters, doNotTriggerSearch);
+    });
   }
 
   export function setInitHook(fn: (n: Nuclia) => void) {
-    initHook = fn;
+    searchBar?.setInitHook(fn);
   }
 
   export const onError = getApiErrors();
@@ -151,25 +159,15 @@
         }
       }, 1000);
     }
+    setTimeout(() => searchBar?.onReady().then(() => isSearchBarReady.next(true)), 200);
   });
 
-  function toggleSearchVisibility(force = false): Observable<boolean> {
+  function toggleSearchVisibility(force = false) {
     visible = force || !visible;
-    return new Observable((observer) => {
-      if (visible && !initialized && initHook) {
-        setTimeout(() => {
-          searchBar?.setInitHook(initHook);
-          searchBar?.onReady().then((res) => {
-            initialized = true;
-            observer.next(true);
-            observer.complete();
-          });
-        }, 200);
-      } else {
-        observer.next(true);
-        observer.complete();
-      }
-    });
+    if (!visible) {
+      searchQuery.set('');
+      typeAhead.set('');
+    }
   }
 
   function onBackdropKeyup(event: KeyboardEvent) {
@@ -189,69 +187,68 @@
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   <style src="../../common/common-style.css"></style>
-  {#if visible}
+  <div
+    class="backdrop"
+    class:visible
+    onkeyup={onBackdropKeyup}
+    onclick={onBackdropClick}>
     <div
-      class="backdrop"
-      onkeyup={onBackdropKeyup}
-      onclick={onBackdropClick}>
-      <div
-        class="search-container"
-        class:with-results={$showResults && !$isEmptySearchQuery}
-        class:pending-results={$pendingResults}>
-        <div class="search-bar-container">
-          <SearchBar
-            bind:this={searchBar}
-            {backend}
-            {zone}
-            {knowledgebox}
-            {placeholder}
-            {lang}
-            {cdn}
-            {apikey}
-            {account}
-            {client}
-            {kbstate}
-            {features}
-            {standalone}
-            {proxy}
-            {filters}
-            {labelsets_excluded_from_filters}
-            {preselected_filters}
-            {filter_expression}
-            {csspath}
-            {prompt}
-            {system_prompt}
-            {rephrase_prompt}
-            {generativemodel}
-            {no_tracking}
-            {rag_strategies}
-            {rag_images_strategies}
-            {not_enough_data_message}
-            {ask_to_resource}
-            {max_tokens}
-            {max_output_tokens}
-            {max_paragraphs}
-            {query_prepend}
-            {json_schema}
-            {vectorset}
-            {chat_placeholder}
-            {audit_metadata}
-            {reranker}
-            {citation_threshold}
-            {rrf_boosting}
-            {feedback}
-            {copy_disclaimer}
-            {metadata}
-            {widget_id}
-            {search_config_id}
-            {security_groups} />
-        </div>
-        <div class="search-results-container">
-          <SearchResults />
-        </div>
+      class="search-container"
+      class:with-results={$showResults && !$isEmptySearchQuery}
+      class:pending-results={$pendingResults}>
+      <div class="search-bar-container">
+        <SearchBar
+          bind:this={searchBar}
+          {backend}
+          {zone}
+          {knowledgebox}
+          {placeholder}
+          {lang}
+          {cdn}
+          {apikey}
+          {account}
+          {client}
+          {kbstate}
+          {features}
+          {standalone}
+          {proxy}
+          {filters}
+          {labelsets_excluded_from_filters}
+          {preselected_filters}
+          {filter_expression}
+          {csspath}
+          {prompt}
+          {system_prompt}
+          {rephrase_prompt}
+          {generativemodel}
+          {no_tracking}
+          {rag_strategies}
+          {rag_images_strategies}
+          {not_enough_data_message}
+          {ask_to_resource}
+          {max_tokens}
+          {max_output_tokens}
+          {max_paragraphs}
+          {query_prepend}
+          {json_schema}
+          {vectorset}
+          {chat_placeholder}
+          {audit_metadata}
+          {reranker}
+          {citation_threshold}
+          {rrf_boosting}
+          {feedback}
+          {copy_disclaimer}
+          {metadata}
+          {widget_id}
+          {search_config_id}
+          {security_groups} />
+      </div>
+      <div class="search-results-container">
+        <SearchResults />
       </div>
     </div>
-  {/if}
+  </div>
 </div>
 
 <style src="./PopupWidget.css"></style>
