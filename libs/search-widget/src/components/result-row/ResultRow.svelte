@@ -31,6 +31,7 @@
     navigateToOriginURL,
     openNewTab,
     permalink,
+    previewBaseUrl,
     trackingEngagement,
     viewerData,
   } from '../../core';
@@ -99,13 +100,20 @@
   }
 
   function getUrl(paragraph?: Search.FindParagraph) {
-    return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink]).pipe(
+    return combineLatest([
+      navigateToFile,
+      navigateToLink,
+      navigateToOriginURL,
+      openNewTab,
+      permalink,
+      previewBaseUrl,
+    ]).pipe(
       take(1),
-      switchMap(([toFile, toLink, toOrigin, newTab, permalink]) => {
+      switchMap(([toFile, toLink, toOrigin, newTab, permalink, baseUrl]) => {
         if (result.field) {
           const resourceField: ResourceField = { ...result.field, ...result.fieldData };
           return toFile || toLink || toOrigin || newTab
-            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, result, resourceField, paragraph)
+            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, baseUrl, result, resourceField, paragraph)
             : of(undefined);
         }
         return of(undefined);

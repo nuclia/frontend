@@ -16,8 +16,9 @@
     isEmptySearchQuery,
     pendingResults,
     searchQuery,
-    showResults,
     typeAhead,
+    previewBaseUrl,
+    showResults,
   } from '../../core';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
@@ -130,6 +131,10 @@
 
   export function setInitHook(fn: (n: Nuclia) => void) {
     searchBar?.setInitHook(fn);
+  }
+
+  export function setPreviewBaseUrl(url: string) {
+    previewBaseUrl.set(url);
   }
 
   export const onError = getApiErrors();
