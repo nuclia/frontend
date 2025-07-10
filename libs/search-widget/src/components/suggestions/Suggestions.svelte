@@ -24,6 +24,7 @@
     NO_SUGGESTION_RESULTS,
     openNewTab,
     permalink,
+    previewBaseUrl,
     selectedEntity,
     suggestionError,
     suggestions,
@@ -46,9 +47,16 @@
       .pipe(
         switchMap((resource) => {
           const firstResourceField = getFirstResourceField(resource);
-          return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink]).pipe(
+          return combineLatest([
+            navigateToFile,
+            navigateToLink,
+            navigateToOriginURL,
+            openNewTab,
+            permalink,
+            previewBaseUrl,
+          ]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink]) =>
+            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink, baseUrl]) =>
               iif(
                 () => (navigateToFile || navigateToLink || openNewTab) && !!firstResourceField,
                 getNavigationUrl(
@@ -57,6 +65,7 @@
                   navigateToOriginURL,
                   openNewTab,
                   permalink,
+                  baseUrl,
                   resource,
                   firstResourceField as ResourceField,
                 ),

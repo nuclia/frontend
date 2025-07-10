@@ -16,6 +16,7 @@
   import { onClosePreview, Viewer } from '../../components';
   import type { TypedResult } from '../../core';
   import {
+    activatePermalinks,
     getFieldType,
     getResourceById,
     getResourceField,
@@ -158,6 +159,9 @@
     injectCustomCss(csspath, container);
 
     _ready.next(true);
+
+    // permalink support in viewer must be by default
+    activatePermalinks();
 
     return () => reset();
   });

@@ -296,6 +296,7 @@ export const getNavigationUrl = (
   navigateToOriginURL: boolean,
   openNewTab: boolean,
   permalink: boolean,
+  previewBaseUrl: string,
   resource: IResource,
   field: ResourceField,
   paragraph?: Search.FindParagraph,
@@ -321,8 +322,8 @@ export const getNavigationUrl = (
         const fileUrl = (field as FileFieldData)?.value?.file?.uri;
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
-    } else if (openNewTab && permalink) {
-      return of(getPreviewUrl(resource.id, field, paragraph));
+    } else if (openNewTab && (permalink || previewBaseUrl)) {
+      return of(getPreviewUrl(resource.id, field, paragraph, previewBaseUrl));
     } else {
       return of(undefined);
     }
@@ -345,7 +346,12 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
   }
 };
 
-export const getPreviewUrl = (resourceId: string, field: FieldId, paragraph?: Search.FindParagraph) => {
+export const getPreviewUrl = (
+  resourceId: string,
+  field: FieldId,
+  paragraph?: Search.FindParagraph,
+  previewBaseUrl?: string,
+) => {
   const previewParam = getPreviewParam(resourceId, field);
   const params = getUrlParams();
   params.delete(queryKey);
@@ -356,7 +362,7 @@ export const getPreviewUrl = (resourceId: string, field: FieldId, paragraph?: Se
   if (paragraph) {
     params.set(paragraphKey, paragraph?.id.split('/').pop() || '');
   }
-  const baseUrl = `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
+  const baseUrl = previewBaseUrl || `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
   return params ? `${baseUrl}?${params}` : baseUrl;
 };
 

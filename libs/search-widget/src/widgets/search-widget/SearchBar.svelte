@@ -55,6 +55,7 @@
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
     DEFAULT_CHAT_PLACEHOLDER,
+    previewBaseUrl,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -199,6 +200,10 @@
 
   export function setInitHook(fn: (n: Nuclia) => void) {
     initHook = fn;
+  }
+
+  export function setPreviewBaseUrl(url: string) {
+    previewBaseUrl.set(url);
   }
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
