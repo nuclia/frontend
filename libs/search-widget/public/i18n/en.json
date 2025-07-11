@@ -67,6 +67,7 @@
 	"input.image-preview": "Image preview",
 	"input.mime_types": "MIME type",
 	"input.more_filters": "{{count}} more filters",
+	"input.path": "Path",
 	"input.placeholder": "Type your question here",
 	"input.to": "To",
 	"modal.back": "Back",

@@ -64,6 +64,7 @@
 	"input.image-preview": "Aperçu de l'image",
 	"input.mime_types": "Type MIME",
 	"input.more_filters": "{{count}}  autres filtres",
+	"input.path": "Chemin",
 	"input.placeholder": "Posez votre question ici",
 	"input.to": "Jusqu'au",
 	"modal.back": "Retour",

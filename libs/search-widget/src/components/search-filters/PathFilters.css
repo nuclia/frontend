@@ -1,0 +1,18 @@
+.sw-path-filters {
+  --expander-width: var(--rhythm-4);
+
+  &.indent {
+    margin-left: var(--rhythm-1_5);
+  }
+
+  .node {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-0_5)
+  }
+
+  .checkbox {
+    display: inline-flex;
+    max-width: calc(100% - var(--expander-width));
+  }
+}

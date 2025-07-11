@@ -1639,6 +1639,7 @@
 	"search.configuration.search-box.filters.filter-by-label-families": "Filtrar por familias de etiquetas",
 	"search.configuration.search-box.filters.filter-by-labels": "Filtrar per etiquetas",
 	"search.configuration.search-box.filters.filter-by-mime": "Filtrar por tipo MIME",
+	"search.configuration.search-box.filters.filter-by-path": "Filtrar por ruta",
 	"search.configuration.search-box.filters.toggle-description": "El usuario podrá aplicar filtros a la búsqueda.",
 	"search.configuration.search-box.filters.toggle-label": "Mostrar botón para filtrar",
 	"search.configuration.search-box.highlight.toggle-description": "Resaltar las palabras clave encontradas.",

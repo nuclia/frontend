@@ -5,6 +5,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
+  import PathFilters from './PathFilters.svelte';
   import {
     _,
     addEntityFilter,
@@ -20,6 +21,7 @@
     filterByLabelFamilies,
     filterByLabels,
     filterByMime,
+    filterByPath,
     hasRangeCreation,
     labelFilters,
     labelSetFilters,
@@ -28,6 +30,7 @@
     mimeTypesfilters,
     orderedLabelSetList,
     orderedMimeFacetsList,
+    paths,
     preselectedFilters,
     refreshFamily,
     removeEntityFilter,
@@ -204,6 +207,33 @@
             </Checkbox>
           </div>
         {/each}
+      </div>
+    {/if}
+  {/if}
+  {#if $filterByPath}
+    <div
+      class="header"
+      class:expanded={expanders['path']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="header-content"
+        onclick={() => toggleExpander('path')}>
+        <span>{$_('input.path')}</span>
+      </div>
+      <span class="header-button">
+        <IconButton
+          on:click={() => toggleExpander('path')}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
+    </div>
+    {#if expanders['path']}
+      <div class="expander-content">
+        <PathFilters
+          paths={$paths}
+          root></PathFilters>
       </div>
     {/if}
   {/if}
