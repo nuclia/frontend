@@ -250,7 +250,7 @@
           {security_groups} />
       </div>
       <div class="search-results-container">
-        <SearchResults />
+        <SearchResults scrollableContainerSelector=".nuclia-widget .search-container"/>
       </div>
     </div>
   </div>
