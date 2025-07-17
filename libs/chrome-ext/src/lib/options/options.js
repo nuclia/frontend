@@ -78,9 +78,6 @@ function initUI() {
     document.getElementById('welcome').classList.remove('hidden');
   } else if (data.logged) {
     setAccountOptions();
-    getSettings().then((settings) => {
-      document.getElementById('youTubeKey').value = settings.YOUTUBE_KEY;
-    });
     document.getElementById('logged').classList.remove('hidden');
   } else {
     document.getElementById('auth').classList.remove('hidden');
@@ -127,10 +124,9 @@ function setKbOptions(account) {
 function saveForm() {
   const accountId = document.getElementById('account').value;
   const kbId = document.getElementById('kb').value;
-  const youTubeKey = document.getElementById('youTubeKey').value;
   const kb = (data.kbs[accountId] || []).find((item) => item.id === kbId);
   const zone = kb ? kb.zone : undefined;
-  chrome.storage.local.set({ NUCLIA_ACCOUNT: accountId, NUCLIA_KB: kbId, ZONE: zone, YOUTUBE_KEY: youTubeKey }, () => {
+  chrome.storage.local.set({ NUCLIA_ACCOUNT: accountId, NUCLIA_KB: kbId, ZONE: zone }, () => {
     const message = document.querySelector('.submit-message');
     message.textContent = 'Settings saved';
     chrome.runtime.sendMessage({ action: 'UPDATE_MENU' });
