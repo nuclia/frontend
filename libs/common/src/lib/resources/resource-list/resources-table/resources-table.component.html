@@ -210,17 +210,22 @@
               <pa-table-cell class="classification-cell">
                 <div class="row-container">
                   @for (label of row.labels; track label.labelset + label.label) {
-                    <nsi-label
-                      [color]="label.color"
-                      [disabled]="deletingLabel"
-                      (removeLabel)="onRemoveLabel(row.resource, label, $event)"
-                      [paTooltip]="!fullLabels && label.label.length > 7 ? label.label : undefined">
-                      @if (!fullLabels && label.label.length > 7) {
+                    @if (!fullLabels && label.label.length > 7) {
+                      <nsi-label
+                        [color]="label.color"
+                        [disabled]="deletingLabel"
+                        (removeLabel)="onRemoveLabel(row.resource, label, $event)"
+                        [paTooltip]="label.label">
                         {{ label.label.substring(0, 7) }}…
-                      } @else {
+                      </nsi-label>
+                    } @else {
+                      <nsi-label
+                        [color]="label.color"
+                        [disabled]="deletingLabel"
+                        (removeLabel)="onRemoveLabel(row.resource, label, $event)">
                         {{ label.label }}
-                      }
-                    </nsi-label>
+                      </nsi-label>
+                    }
                   }
                 </div>
               </pa-table-cell>

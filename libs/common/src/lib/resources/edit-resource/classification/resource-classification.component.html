@@ -7,22 +7,21 @@
           <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
         </p>
       }
+      @if (((currentLabels | async) || []).length > 0) {
+        <div class="labels-container">
+          <app-label-list
+            [labelSets]="resourceLabelSets | async"
+            [labelSelection]="(currentLabels | async) || []"
+            (labelSelectionChange)="updateLabels($event)"></app-label-list>
+        </div>
+      }
 
-      <div class="labels-container">
-        @if ((isAdminOrContrib | async) === true) {
-          <div class="label-selector-container">
-            <nsi-labels-expander
-              [labelSets]="resourceLabelSets | async"
-              [currentSelection]="currentSelection"
-              (updateSelection)="updateLabel($event)"></nsi-labels-expander>
-          </div>
-        }
-
-        <app-label-list
+      @if ((isAdminOrContrib | async) === true) {
+        <nsi-labels-expander
           [labelSets]="resourceLabelSets | async"
-          [labelSelection]="(currentLabels | async) || []"
-          (labelSelectionChange)="updateLabels($event)"></app-label-list>
-      </div>
+          [currentSelection]="currentSelection"
+          (updateSelection)="updateLabel($event)"></nsi-labels-expander>
+      }
     </div>
   }
 </div>
