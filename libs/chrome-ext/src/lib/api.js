@@ -1,7 +1,7 @@
 const API_URL = 'https://nuclia.cloud/api';
 const DASHBOARD_URL = 'https://nuclia.cloud';
 
-const SETTINGS = { NUCLIA_ACCOUNT: '', NUCLIA_KB: '', NUCLIA_TOKEN: '', ZONE: '', YOUTUBE_KEY: '' };
+const SETTINGS = { NUCLIA_ACCOUNT: '', NUCLIA_KB: '', NUCLIA_TOKEN: '', ZONE: '' };
 
 // Service workers doesn't support localStorage, so a custom one is created.
 localStorage = getStorage();
