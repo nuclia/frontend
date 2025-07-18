@@ -5,6 +5,8 @@ try {
 }
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
+const TITLE_REGEX = /<title>([^<>]+?)<\/title>/;
+const RETRIEVAL_ERROR = 'RETRIEVAL_ERROR';
 
 const MENU_TYPES = [
   {
@@ -110,19 +112,93 @@ function getLabels(settings) {
 }
 
 function uploadSingleLink(settings, url, labels) {
-  uploadLink(settings, url, labels).subscribe({
-    complete: () => {
-      url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
-      showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
-    },
-    error: () => openOptionsPage(),
-  });
+  getMIME(url)
+    .pipe(
+      rxjs.switchMap((mime) =>
+        mime === 'text/html' ? uploadHTML(settings, url, labels) : uploadCloudFile(settings, url, labels, mime),
+      ),
+    )
+    .subscribe({
+      complete: () => {
+        url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
+        showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
+      },
+      error: (error) => {
+        if (error === RETRIEVAL_ERROR) {
+          showNotification('Upload failed', `An error occurred while uploading ${url}`, true);
+        } else {
+          // Otherwise it's a autentication/settings problem
+          openOptionsPage();
+        }
+      },
+    });
 }
 
-function uploadLink(settings, url, labels) {
-  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
-    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
-    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
+function uploadHTML(settings, url, labels) {
+  return rxjs
+    .from(
+      fetch(url).then(
+        (response) => (response.ok ? response.text() : Promise.reject(RETRIEVAL_ERROR)),
+        () => Promise.reject(RETRIEVAL_ERROR),
+      ),
+    )
+    .pipe(
+      rxjs.switchMap((body) => {
+        const matches = body.match(TITLE_REGEX);
+        const title = matches ? matches[1] : url;
+        const resource = {
+          title,
+          texts: {
+            text: { body, format: 'HTML' },
+          },
+        };
+        if (labels.length > 0) {
+          resource['usermetadata'] = { classifications: labels };
+        }
+        return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
+          .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
+          .pipe(rxjs.switchMap((kb) => kb.createResource(resource)));
+      }),
+    );
+}
+
+function getMIME(url) {
+  return rxjs.from(
+    fetch(url, { method: 'HEAD' }).then(
+      (response) =>
+        response.ok ? (response.headers.get('Content-Type') || '').split(';')[0] : Promise.reject(RETRIEVAL_ERROR),
+      () => Promise.reject(RETRIEVAL_ERROR),
+    ),
+  );
+}
+
+function uploadCloudFile(settings, url, labels, mime) {
+  return rxjs
+    .from(
+      fetch(url).then(
+        (response) => (response.ok ? response.arrayBuffer() : Promise.reject(RETRIEVAL_ERROR)),
+        () => Promise.reject(RETRIEVAL_ERROR),
+      ),
+    )
+    .pipe(
+      rxjs.switchMap((arrayBuffer) => {
+        return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
+          .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
+          .pipe(
+            rxjs.switchMap((kb) =>
+              kb
+                .createResource({ title: url, usermetadata: { classifications: labels } }, true)
+                .pipe(rxjs.map((data) => kb.getResourceFromData({ id: data.uuid }))),
+            ),
+            rxjs.switchMap((resource) =>
+              resource.upload('file', arrayBuffer, false, {
+                contentType: mime,
+                filename: url,
+              }),
+            ),
+          );
+      }),
+    );
 }
 
 function openOptionsPage() {
