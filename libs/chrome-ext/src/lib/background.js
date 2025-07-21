@@ -6,6 +6,7 @@ try {
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
 const TITLE_REGEX = /<title>([^<>]+?)<\/title>/;
+const IMG_REGEX = /<img[^<>]+?src\=["|'](.+?)["|'][^<>]*?>/gi;
 const RETRIEVAL_ERROR = 'RETRIEVAL_ERROR';
 
 const MENU_TYPES = [
@@ -143,21 +144,11 @@ function uploadHTML(settings, url, labels) {
       ),
     )
     .pipe(
+      rxjs.switchMap((body) => replaceImages(body, url)),
       rxjs.switchMap((body) => {
         const matches = body.match(TITLE_REGEX);
         const title = matches ? matches[1] : url;
-        const resource = {
-          title,
-          texts: {
-            text: { body, format: 'HTML' },
-          },
-        };
-        if (labels.length > 0) {
-          resource['usermetadata'] = { classifications: labels };
-        }
-        return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
-          .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
-          .pipe(rxjs.switchMap((kb) => kb.createResource(resource)));
+        return createResource(settings, title, new Blob([body]), labels, 'text/html');
       }),
     );
 }
@@ -180,25 +171,74 @@ function uploadCloudFile(settings, url, labels, mime) {
         () => Promise.reject(RETRIEVAL_ERROR),
       ),
     )
+    .pipe(rxjs.switchMap((arrayBuffer) => createResource(settings, url, arrayBuffer, labels, mime)));
+}
+
+function createResource(settings, title, fileData, labels, mime) {
+  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
     .pipe(
-      rxjs.switchMap((arrayBuffer) => {
-        return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
-          .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
-          .pipe(
-            rxjs.switchMap((kb) =>
-              kb
-                .createResource({ title: url, usermetadata: { classifications: labels } }, true)
-                .pipe(rxjs.map((data) => kb.getResourceFromData({ id: data.uuid }))),
-            ),
-            rxjs.switchMap((resource) =>
-              resource.upload('file', arrayBuffer, false, {
-                contentType: mime,
-                filename: url,
-              }),
-            ),
-          );
-      }),
+      rxjs.switchMap((kb) =>
+        kb
+          .createResource({ title, usermetadata: { classifications: labels } }, true)
+          .pipe(rxjs.map((data) => kb.getResourceFromData({ id: data.uuid }))),
+      ),
+      rxjs.switchMap((resource) =>
+        resource.upload('file', fileData, false, {
+          contentType: mime,
+          filename: title,
+        }),
+      ),
     );
+}
+
+function replaceImages(html, pageUrl) {
+  const imageObservables = Array.from(html.matchAll(IMG_REGEX))
+    .map(([, url]) => {
+      try {
+        const baseUrl = new URL(pageUrl).origin;
+        const urlObject = new URL(url, baseUrl);
+        return urlObject.protocol.startsWith('http') ? [url, urlObject.toString()] : null;
+      } catch {
+        return null;
+      }
+    })
+    .filter((data) => !!data)
+    .map(([url, absoluteUrl]) =>
+      rxjs
+        .from(
+          fetch(absoluteUrl).then((res) => {
+            if (!res.ok || !(res.headers.get('Content-Type') || '').startsWith('image')) {
+              throw 'error';
+            }
+            return res.blob();
+          }),
+        )
+        .pipe(
+          rxjs.switchMap((blob) => {
+            return rxjs.from(
+              new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => reject();
+                reader.readAsDataURL(blob);
+              }),
+            );
+          }),
+          rxjs.map((base64) => [url, base64]),
+          rxjs.catchError(() => rxjs.of(null)),
+        ),
+    );
+  return (imageObservables.length > 0 ? rxjs.forkJoin(imageObservables) : of([])).pipe(
+    rxjs.map((images) => {
+      images
+        .filter((image) => !!image)
+        .forEach(([url, base64]) => {
+          html = html.replaceAll(url, base64);
+        });
+      return html;
+    }),
+  );
 }
 
 function openOptionsPage() {
