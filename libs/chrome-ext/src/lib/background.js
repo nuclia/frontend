@@ -1,10 +1,13 @@
 try {
-  importScripts('./utils.js', './api.js', './vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
+  importScripts('./api.js', './vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
 } catch (e) {
   console.error(e);
 }
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
+const TITLE_REGEX = /<title>([^<>]+?)<\/title>/;
+const IMG_REGEX = /<img[^<>]+?src\=["|'](.+?)["|'][^<>]*?>/gi;
+const RETRIEVAL_ERROR = 'RETRIEVAL_ERROR';
 
 const MENU_TYPES = [
   {
@@ -12,17 +15,6 @@ const MENU_TYPES = [
     options: {
       targetUrlPatterns: ['https://*/*'],
       contexts: ['link'],
-    },
-  },
-  {
-    name: 'YOUTUBE',
-    options: {
-      documentUrlPatterns: [
-        'https://www.youtube.com/channel/*',
-        'https://www.youtube.com/c/*',
-        'https://www.youtube.com/playlist?list=*',
-      ],
-      contexts: ['page'],
     },
   },
 ];
@@ -34,9 +26,6 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((request) => {
   if (request.action === 'UPDATE_MENU') {
     createMenu();
-  }
-  if (request.action === 'UPLOAD_LIST') {
-    uploadLinksList(request.selection, request.labels);
   }
 });
 
@@ -100,31 +89,8 @@ chrome.contextMenus.onClicked.addListener((info) => {
       }
       if (info.linkUrl) {
         const url = info.linkUrl;
-        if (isYoutubeUrl(url)) {
-          if (isYoutubeVideoUrl(url)) {
-            uploadSingleLink(settings, url, labels);
-          } else if (isYoutubeChannelUrl(url)) {
-            settings.YOUTUBE_KEY ? getChannelVideos(settings, url, labels) : openOptionsPage();
-          } else if (isYoutubePlaylistUrl(url)) {
-            settings.YOUTUBE_KEY ? getPlaylistVideos(settings, getPlaylistId(url), labels) : openOptionsPage();
-          } else {
-            showNotification('Link cannot be uploaded', 'The selected YouTube URL is not supported by Nuclia', true);
-          }
-        } else {
-          uploadSingleLink(settings, url, labels);
-        }
+        uploadSingleLink(settings, url, labels);
         createMenu(); // Keep menu in sync with actual labelsets each time a link is uploaded
-      } else if (info.pageUrl) {
-        const url = info.pageUrl;
-        if (isYoutubeUrl(url) && settings.YOUTUBE_KEY) {
-          if (isYoutubeChannelUrl(url)) {
-            getChannelVideos(settings, url, labels);
-          } else if (isYoutubePlaylistUrl(url)) {
-            getPlaylistVideos(settings, getPlaylistId(url), labels);
-          }
-        } else {
-          openOptionsPage();
-        }
       }
     } else {
       openOptionsPage();
@@ -147,93 +113,131 @@ function getLabels(settings) {
 }
 
 function uploadSingleLink(settings, url, labels) {
-  uploadLink(settings, url, labels).subscribe({
-    complete: () => {
-      url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
-      showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
-    },
-    error: () => openOptionsPage(),
-  });
-}
-
-function uploadLink(settings, url, labels) {
-  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
-    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
-    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
-}
-
-function getChannelVideos(settings, channelUrl, labels) {
-  getYoutubeChannelId(channelUrl)
-    .then((channelId) =>
-      loadPaginated(
-        `https://www.googleapis.com/youtube/v3/search?key=${settings.YOUTUBE_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50`,
+  getMIME(url)
+    .pipe(
+      rxjs.switchMap((mime) =>
+        mime === 'text/html' ? uploadHTML(settings, url, labels) : uploadCloudFile(settings, url, labels, mime),
       ),
     )
-    .then((items) =>
-      items
-        .filter((video) => video.id.kind === 'youtube#video')
-        .map((video) => ({
-          id: video.id.videoId,
-          title: video.snippet.title,
-          date: video.snippet.publishedAt,
-        }))
-        .sort((a, b) => b.date.localeCompare(a.date)),
-    )
-    .then((videos) => selectVideos(videos, labels))
-    .catch(() => openOptionsPage());
-}
-
-function getPlaylistVideos(settings, playlistId, labels) {
-  loadPaginated(
-    `https://www.googleapis.com/youtube/v3/playlistItems?key=${settings.YOUTUBE_KEY}&playlistId=${playlistId}&part=snippet,id&order=date&maxResults=50`,
-  )
-    .then((items) =>
-      items
-        .filter((video) => video.snippet.resourceId.kind === 'youtube#video')
-        .map((video) => ({
-          id: video.snippet.resourceId.videoId,
-          title: video.snippet.title,
-          date: video.snippet.publishedAt,
-        }))
-        .sort((a, b) => b.date.localeCompare(a.date)),
-    )
-    .then((videos) => selectVideos(videos, labels))
-    .catch(() => openOptionsPage());
-}
-
-function selectVideos(videos, labels) {
-  chrome.storage.local.set({ videos });
-  chrome.tabs.create({ url: `youtube/selection.html?labels=${JSON.stringify(labels)}` });
-}
-
-function uploadLinksList(list, labels) {
-  if (!list || !list.length || !list.length > 0) {
-    return;
-  }
-  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels).subscribe()));
-}
-
-function loadPaginated(url, items = [], pageToken = '') {
-  return new Promise((resolve, reject) =>
-    fetch(pageToken ? `${url}&pageToken=${pageToken}` : url)
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(`${response.status}: ${response.statusText}`);
+    .subscribe({
+      complete: () => {
+        url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
+        showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
+      },
+      error: (error) => {
+        if (error === RETRIEVAL_ERROR) {
+          showNotification('Upload failed', `An error occurred while uploading ${url}`, true);
+        } else {
+          // Otherwise it's a autentication/settings problem
+          openOptionsPage();
         }
-        response
-          .json()
-          .then((data) => {
-            items = items.concat(data.items);
+      },
+    });
+}
 
-            if (data.nextPageToken) {
-              loadPaginated(url, items, data.nextPageToken).then(resolve).catch(reject);
-            } else {
-              resolve(items);
+function uploadHTML(settings, url, labels) {
+  return rxjs
+    .from(
+      fetch(url).then(
+        (response) => (response.ok ? response.text() : Promise.reject(RETRIEVAL_ERROR)),
+        () => Promise.reject(RETRIEVAL_ERROR),
+      ),
+    )
+    .pipe(
+      rxjs.switchMap((body) => replaceImages(body, url)),
+      rxjs.switchMap((body) => {
+        const matches = body.match(TITLE_REGEX);
+        const title = matches ? matches[1] : url;
+        return createResource(settings, title, new Blob([body]), labels, 'text/html');
+      }),
+    );
+}
+
+function getMIME(url) {
+  return rxjs.from(
+    fetch(url, { method: 'HEAD' }).then(
+      (response) =>
+        response.ok ? (response.headers.get('Content-Type') || '').split(';')[0] : Promise.reject(RETRIEVAL_ERROR),
+      () => Promise.reject(RETRIEVAL_ERROR),
+    ),
+  );
+}
+
+function uploadCloudFile(settings, url, labels, mime) {
+  return rxjs
+    .from(
+      fetch(url).then(
+        (response) => (response.ok ? response.arrayBuffer() : Promise.reject(RETRIEVAL_ERROR)),
+        () => Promise.reject(RETRIEVAL_ERROR),
+      ),
+    )
+    .pipe(rxjs.switchMap((arrayBuffer) => createResource(settings, url, arrayBuffer, labels, mime)));
+}
+
+function createResource(settings, title, fileData, labels, mime) {
+  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
+    .pipe(
+      rxjs.switchMap((kb) =>
+        kb
+          .createResource({ title, usermetadata: { classifications: labels } }, true)
+          .pipe(rxjs.map((data) => kb.getResourceFromData({ id: data.uuid }))),
+      ),
+      rxjs.switchMap((resource) =>
+        resource.upload('file', fileData, false, {
+          contentType: mime,
+          filename: title,
+        }),
+      ),
+    );
+}
+
+function replaceImages(html, pageUrl) {
+  const imageObservables = Array.from(html.matchAll(IMG_REGEX))
+    .map(([, url]) => {
+      try {
+        const baseUrl = new URL(pageUrl).origin;
+        const urlObject = new URL(url, baseUrl);
+        return urlObject.protocol.startsWith('http') ? [url, urlObject.toString()] : null;
+      } catch {
+        return null;
+      }
+    })
+    .filter((data) => !!data)
+    .map(([url, absoluteUrl]) =>
+      rxjs
+        .from(
+          fetch(absoluteUrl).then((res) => {
+            if (!res.ok || !(res.headers.get('Content-Type') || '').startsWith('image')) {
+              throw 'error';
             }
-          })
-          .catch(reject);
-      })
-      .catch(reject),
+            return res.blob();
+          }),
+        )
+        .pipe(
+          rxjs.switchMap((blob) => {
+            return rxjs.from(
+              new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => reject();
+                reader.readAsDataURL(blob);
+              }),
+            );
+          }),
+          rxjs.map((base64) => [url, base64]),
+          rxjs.catchError(() => rxjs.of(null)),
+        ),
+    );
+  return (imageObservables.length > 0 ? rxjs.forkJoin(imageObservables) : of([])).pipe(
+    rxjs.map((images) => {
+      images
+        .filter((image) => !!image)
+        .forEach(([url, base64]) => {
+          html = html.replaceAll(url, base64);
+        });
+      return html;
+    }),
   );
 }
 
