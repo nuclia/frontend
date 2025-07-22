@@ -168,7 +168,7 @@ export class SearchWidgetService {
 
         let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
           /knowledgebox=/g,
-          `audit_metadata='{"config":"${currentConfig.id}"}'\n  knowledgebox=`,
+          `audit_metadata='{"config":"${currentConfig.id}","widget":"${widgetId}"}'\n  knowledgebox=`,
         );
         let synchSnippet: string | undefined;
         if (widgetId) {
