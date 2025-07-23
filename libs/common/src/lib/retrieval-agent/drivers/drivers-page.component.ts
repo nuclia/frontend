@@ -1,6 +1,5 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { SDKService, STFUtils } from '@flaps/core';
+import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
@@ -19,6 +18,7 @@ import { InternetDriverModalComponent } from './internet-driver';
 import { McpSseDriverModalComponent, McpStdioDriverModalComponent } from './mcp-driver';
 import { NucliaDriverModalComponent } from './nuclia-driver';
 import { SqlDriverModalComponent } from './sql-driver';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-drivers-panel',
@@ -29,8 +29,9 @@ import { SqlDriverModalComponent } from './sql-driver';
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    TranslateModule
-],
+    TranslateModule,
+    CommonModule,
+  ],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +41,12 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   private modal = inject(SisModalService);
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
+  private featureService = inject(FeaturesService);
+
+  hasSql = this.featureService.unstable.aragSql;
+  hasCypher = this.featureService.unstable.aragCypher;
+  hasAlinia = this.featureService.unstable.aragAlinia;
+  hasMcp = this.featureService.unstable.aragMcp;
 
   private _unsubscribeAll = new Subject<void>();
 
