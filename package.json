@@ -162,5 +162,8 @@
   "resolutions": {
     "stylus": "npm:empty-npm-package@1.0.0"
   },
+  "overrides": {
+    "stylus": "0.0.1-security"
+  },
   "packageManager": "yarn@3.3.1"
 }
