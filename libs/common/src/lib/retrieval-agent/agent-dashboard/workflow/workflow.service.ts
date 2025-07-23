@@ -72,6 +72,7 @@ import {
   NodeCategory,
   NodeConfig,
   NODES_BY_ENTRY_TYPE,
+  FF_NODE_TYPES,
   NodeType,
   WorkflowRoot,
 } from './workflow.models';
@@ -832,37 +833,47 @@ export class WorkflowService {
   }
 
   private getPossibleNodes(nodeCategory: NodeCategory): Observable<NodeType[]> {
-    if (nodeCategory !== 'context') {
-      return of(NODES_BY_ENTRY_TYPE[nodeCategory] || []);
-    } else {
-      return forkJoin([
-        this.featureService.unstable.aragSql.pipe(take(1)),
-        this.featureService.unstable.aragCypher.pipe(take(1)),
-        this.featureService.unstable.aragRestrictedPython.pipe(take(1)),
-        this.featureService.unstable.aragMcp.pipe(take(1)),
-      ]).pipe(
-        map(([aragSql, aragCypher, aragRestrictedPython, aragMcp]) => {
-          return (NODES_BY_ENTRY_TYPE['context'] || []).filter((nodeType) => {
-            if (!['sql', 'cypher', 'restricted', 'mcp'].includes(nodeType)) {
+    return forkJoin([
+      this.featureService.unstable.aragAlinia.pipe(take(1)),
+      this.featureService.unstable.aragCondition.pipe(take(1)),
+      this.featureService.unstable.aragSql.pipe(take(1)),
+      this.featureService.unstable.aragCypher.pipe(take(1)),
+      this.featureService.unstable.aragRestrictedPython.pipe(take(1)),
+      this.featureService.unstable.aragMcp.pipe(take(1)),
+    ]).pipe(
+      map(([aragAlinia, aragCondition, aragSql, aragCypher, aragRestrictedPython, aragMcp]) => {
+        console.log(NODES_BY_ENTRY_TYPE[nodeCategory]);
+        return (NODES_BY_ENTRY_TYPE[nodeCategory] || []).filter((nodeType) => {
+          if (!FF_NODE_TYPES.includes(nodeType)) {
+            return true;
+          } else {
+            if ((nodeType === 'preprocess_alinia' || nodeType === 'postprocess_alinia') && aragAlinia) {
               return true;
-            } else {
-              if (nodeType === 'sql' && aragSql) {
-                return true;
-              }
-              if (nodeType === 'cypher' && aragCypher) {
-                return true;
-              }
-              if (nodeType === 'restricted' && aragRestrictedPython) {
-                return true;
-              }
-              if (nodeType === 'mcp' && aragMcp) {
-                return true;
-              }
-              return false;
             }
-          });
-        }),
-      );
-    }
+            if (
+              (nodeType === 'pre_conditional' ||
+                nodeType === 'context_conditional' ||
+                nodeType === 'post_conditional') &&
+              aragCondition
+            ) {
+              return true;
+            }
+            if (nodeType === 'sql' && aragSql) {
+              return true;
+            }
+            if (nodeType === 'cypher' && aragCypher) {
+              return true;
+            }
+            if (nodeType === 'restricted' && aragRestrictedPython) {
+              return true;
+            }
+            if (nodeType === 'mcp' && aragMcp) {
+              return true;
+            }
+            return false;
+          }
+        });
+      }),
+    );
   }
 }
