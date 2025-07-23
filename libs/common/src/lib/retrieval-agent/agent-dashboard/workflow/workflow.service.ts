@@ -8,7 +8,7 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import { NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -24,7 +24,7 @@ import {
   PreprocessAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, combineLatest, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -114,6 +114,7 @@ export class WorkflowService {
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
+  private featureService = inject(FeaturesService);
 
   private columns: HTMLElement[] = [];
 
@@ -348,31 +349,32 @@ export class WorkflowService {
     origin: ConnectableEntryComponent,
     columnIndex: number,
   ) {
-    const possibleNodes = NODES_BY_ENTRY_TYPE[nodeCategory] || [];
-    possibleNodes.forEach((nodeType, index) => {
-      const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
-      const nodeTypeKey = this.getNodeTypeKey(nodeType);
-      selectorRef.setInput(
-        'nodeTitle',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
-      );
-      selectorRef.setInput(
-        'description',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
-      );
-      selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
-      this.applicationRef.attachView(selectorRef.hostView);
-      container.appendChild(selectorRef.location.nativeElement);
-      selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => {
-        const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
-        nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-        this.selectNode(nodeRef.instance.id, nodeCategory);
-      });
+    this.getPossibleNodes(nodeCategory).subscribe((possibleNodes) => {
+      possibleNodes.forEach((nodeType, index) => {
+        const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
+        const nodeTypeKey = this.getNodeTypeKey(nodeType);
+        selectorRef.setInput(
+          'nodeTitle',
+          this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
+        );
+        selectorRef.setInput(
+          'description',
+          this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
+        );
+        selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
+        this.applicationRef.attachView(selectorRef.hostView);
+        container.appendChild(selectorRef.location.nativeElement);
+        selectorRef.changeDetectorRef.detectChanges();
+        selectorRef.instance.select.subscribe(() => {
+          const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
+          nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+          this.selectNode(nodeRef.instance.id, nodeCategory);
+        });
 
-      if (index === possibleNodes.length - 1) {
-        selectorRef.location.nativeElement.classList.add('last-of-section');
-      }
+        if (index === possibleNodes.length - 1) {
+          selectorRef.location.nativeElement.classList.add('last-of-section');
+        }
+      });
     });
   }
 
@@ -826,6 +828,41 @@ export class WorkflowService {
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
+    }
+  }
+
+  private getPossibleNodes(nodeCategory: NodeCategory): Observable<NodeType[]> {
+    if (nodeCategory !== 'context') {
+      return of(NODES_BY_ENTRY_TYPE[nodeCategory] || []);
+    } else {
+      return forkJoin([
+        this.featureService.unstable.aragSql.pipe(take(1)),
+        this.featureService.unstable.aragCypher.pipe(take(1)),
+        this.featureService.unstable.aragRestrictedPython.pipe(take(1)),
+        this.featureService.unstable.aragMcp.pipe(take(1)),
+      ]).pipe(
+        map(([aragSql, aragCypher, aragRestrictedPython, aragMcp]) => {
+          return (NODES_BY_ENTRY_TYPE['context'] || []).filter((nodeType) => {
+            if (!['sql', 'cypher', 'restricted', 'mcp'].includes(nodeType)) {
+              return true;
+            } else {
+              if (nodeType === 'sql' && aragSql) {
+                return true;
+              }
+              if (nodeType === 'cypher' && aragCypher) {
+                return true;
+              }
+              if (nodeType === 'restricted' && aragRestrictedPython) {
+                return true;
+              }
+              if (nodeType === 'mcp' && aragMcp) {
+                return true;
+              }
+              return false;
+            }
+          });
+        }),
+      );
     }
   }
 }

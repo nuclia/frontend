@@ -71,6 +71,10 @@ export class FeaturesService {
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
     userSurvey: this.featureFlag.isFeatureEnabled('user-survey'),
     modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
+    aragSql: this.featureFlag.isFeatureEnabled('arag-sql'),
+    aragCypher: this.featureFlag.isFeatureEnabled('arag-cypher'),
+    aragRestrictedPython: this.featureFlag.isFeatureEnabled('arag-restricted-python'),
+    aragMcp: this.featureFlag.isFeatureEnabled('arag-mcp'),
   };
 
   /**
