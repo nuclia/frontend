@@ -159,9 +159,6 @@
     "vite-tsconfig-paths": "^4.0.2",
     "vitest": "^3.1.4"
   },
-  "resolutions": {
-    "stylus": "npm:empty-npm-package@1.0.0"
-  },
   "overrides": {
     "stylus": "0.0.1-security"
   },
