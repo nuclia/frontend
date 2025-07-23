@@ -159,5 +159,8 @@
     "vite-tsconfig-paths": "^4.0.2",
     "vitest": "^3.1.4"
   },
+  "overrides": {
+    "stylus": "0.0.1-security"
+  },
   "packageManager": "yarn@3.3.1"
 }
