@@ -5,13 +5,6 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@adobe/css-tools@npm:~4.3.3":
-  version: 4.3.3
-  resolution: "@adobe/css-tools@npm:4.3.3"
-  checksum: d21f3786b84911fee59c995a146644a85c98692979097b26484ffa9e442fb1a92ccd68ce984e3e7cf8d5933c3560fbc0ad3e3cd1de50b9a723d1c012e793bbcb
-  languageName: node
-  linkType: hard
-
 "@ampproject/remapping@npm:2.3.0, @ampproject/remapping@npm:^2.2.0, @ampproject/remapping@npm:^2.3.0":
   version: 2.3.0
   resolution: "@ampproject/remapping@npm:2.3.0"
@@ -12214,7 +12207,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.2.2, glob@npm:^10.4.5":
+"glob@npm:^10.2.2":
   version: 10.4.5
   resolution: "glob@npm:10.4.5"
   dependencies:
@@ -19242,7 +19235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sax@npm:^1.2.4, sax@npm:~1.4.1":
+"sax@npm:^1.2.4":
   version: 1.4.1
   resolution: "sax@npm:1.4.1"
   checksum: 3ad64df16b743f0f2eb7c38ced9692a6d924f1cd07bbe45c39576c2cf50de8290d9d04e7b2228f924c7d05fecc4ec5cf651423278e0c7b63d260c387ef3af84a
@@ -19785,7 +19778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.7.4, source-map@npm:^0.7.3, source-map@npm:^0.7.4":
+"source-map@npm:0.7.4, source-map@npm:^0.7.4":
   version: 0.7.4
   resolution: "source-map@npm:0.7.4"
   checksum: 01cc5a74b1f0e1d626a58d36ad6898ea820567e87f18dfc9d24a9843a351aaa2ec09b87422589906d6ff1deed29693e176194dc88bcae7c9a852dc74b311dbf5
@@ -20127,18 +20120,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylus@npm:^0.64.0":
-  version: 0.64.0
-  resolution: "stylus@npm:0.64.0"
-  dependencies:
-    "@adobe/css-tools": ~4.3.3
-    debug: ^4.3.2
-    glob: ^10.4.5
-    sax: ~1.4.1
-    source-map: ^0.7.3
-  bin:
-    stylus: bin/stylus
-  checksum: e059d3142b2a7f69205b565c6fa16f0f2cbd960027f4ea9ef8a652cc6546d7c94051db32117681ba6a6af01db35bb58c45dfafe808a257b723507b8df2cb6507
+"stylus@npm:0.0.1-security":
+  version: 0.0.1-security
+  resolution: "stylus@npm:0.0.1-security"
+  checksum: 656ba4e867ef6496145a6e3765bb1538d2dc60b877cd39a5d78e92f111c99fee23cd5523f3eec46bb78076bff5273e72135bdae74563b0de5cfd7af76236dbfd
   languageName: node
   linkType: hard
 
