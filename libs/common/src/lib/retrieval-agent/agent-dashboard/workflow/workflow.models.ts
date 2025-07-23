@@ -65,6 +65,18 @@ export type NodeType =
   | 'restart'
   | 'postprocess_alinia';
 
+export const FF_NODE_TYPES: NodeType[] = [
+  'pre_conditional',
+  'preprocess_alinia',
+  'context_conditional',
+  'sql',
+  'cypher',
+  'mcp',
+  'restricted',
+  'post_conditional',
+  'postprocess_alinia',
+];
+
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
