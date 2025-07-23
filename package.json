@@ -160,7 +160,7 @@
     "vitest": "^3.1.4"
   },
   "overrides": {
-    "stylus": "0.0.1-security"
+    "stylus": "npm:empty-npm-package@1.0.0"
   },
   "packageManager": "yarn@3.3.1"
 }
