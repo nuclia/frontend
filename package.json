@@ -160,7 +160,7 @@
     "vitest": "^3.1.4"
   },
   "resolutions": {
-    "stylus": "stylus@0.0.1-security"
+    "stylus": "0.0.1-security"
   },
   "overrides": {
     "stylus": "0.0.1-security"
