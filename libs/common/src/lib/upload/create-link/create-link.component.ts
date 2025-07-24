@@ -58,6 +58,7 @@ export class CreateLinkComponent {
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
   extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
+  splitStrategy?: string;
   updateOptionsExpander = 0;
 
   get invalid() {
@@ -99,6 +100,7 @@ export class CreateLinkComponent {
                 formValue.css_selector,
                 formValue.xpath,
                 this.extractStrategy,
+                this.splitStrategy,
                 this.langCode.value,
               ),
             ),
@@ -113,6 +115,7 @@ export class CreateLinkComponent {
               formValue.css_selector,
               formValue.xpath,
               this.extractStrategy,
+              this.splitStrategy,
               this.langCode.value,
             ),
           ]);
@@ -132,6 +135,7 @@ export class CreateLinkComponent {
                       row.css_selector,
                       row.xpath,
                       this.extractStrategy,
+                      this.splitStrategy,
                       this.langCode.value,
                     ),
                   ),
@@ -179,6 +183,7 @@ export class CreateLinkComponent {
     css_selector?: string | null,
     xpath?: string | null,
     extract_strategy?: string,
+    split_strategy?: string,
     language?: string,
   ): Observable<{ uuid: string }> {
     return isCloudFile
@@ -192,6 +197,7 @@ export class CreateLinkComponent {
           undefined,
           undefined,
           extract_strategy,
+          split_strategy,
           language,
         );
   }

@@ -62,6 +62,7 @@ export class UploadSitemapComponent {
   standalone = this.standaloneService.standalone;
   extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
+  splitStrategy?: string;
 
   constructor(
     public modal: ModalRef,
@@ -97,8 +98,9 @@ export class UploadSitemapComponent {
                     this.cleanParameters(this.cookies),
                     this.cleanParameters(this.localstorage),
                     this.extractStrategy,
+                    this.splitStrategy,
                   )
-                : this.uploadService.createCloudFileResource(link, this.selectedLabels, this.extractStrategy),
+                : this.uploadService.createCloudFileResource(link, this.selectedLabels, this.extractStrategy, this.splitStrategy),
             ),
           ),
         ),

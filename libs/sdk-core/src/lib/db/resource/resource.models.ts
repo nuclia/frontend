@@ -167,6 +167,7 @@ export interface FileField {
   password?: string;
   external?: boolean;
   extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export interface FileFieldExtractedData extends ExtractedData {
@@ -259,6 +260,7 @@ export interface LinkField {
   css_selector?: string | null;
   xpath?: string | null;
   extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export class TextFieldData implements IFieldData {
@@ -276,6 +278,7 @@ export interface TextField {
   body: string;
   format?: TextFieldFormat;
   extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export interface ExtractedData {

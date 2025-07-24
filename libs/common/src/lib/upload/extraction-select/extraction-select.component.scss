@@ -5,3 +5,12 @@
   flex-direction: column;
   gap: rhythm(2);
 }
+
+.select-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-select {
+    width: 100%;
+  }
+}

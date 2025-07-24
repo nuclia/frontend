@@ -85,8 +85,9 @@
       badge="generic.badge.advanced">
       <div class="form-container toggle-container">
         <app-extraction-select
-          [configId]="extractStrategy"
-          (configIdChange)="updateExtractStrategy($event)"></app-extraction-select>
+          [onlyExtract]="true"
+          [extractConfig]="extractStrategy"
+          (extractConfigChange)="updateExtractStrategy($event)"></app-extraction-select>
       </div>
     </nsi-two-columns-configuration-item>
 

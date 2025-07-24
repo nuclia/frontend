@@ -116,8 +116,8 @@
         </div>
         @if ((extractConfigEnabled | async) && !standalone) {
           <app-extraction-select
-            [(configId)]="extractStrategy"
-            (close)="cancel()"></app-extraction-select>
+            [(extractConfig)]="extractStrategy"
+            [onlyExtract]="true"></app-extraction-select>
         } @else {
           <div>
             <label
