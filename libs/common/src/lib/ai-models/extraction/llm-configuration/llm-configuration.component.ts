@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,8 +15,8 @@ import { startWith, Subject, takeUntil } from 'rxjs';
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',
   styleUrls: ['./llm-configuration.component.scss'],
@@ -29,6 +28,8 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   @Input() vllmOnly: boolean = false;
   @Input() isAiTable: boolean = false;
   @Input() config: ExtractVLLMConfig | undefined;
+  @Input() rulesDescription: string | undefined;
+  @Input() rulesPlaceholder: string | undefined;
 
   @Output() valueChange = new EventEmitter<ExtractVLLMConfig>();
   private unsubscribeAll = new Subject<void>();
@@ -83,7 +84,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
         const values = this.configForm.getRawValue();
         this.valueChange.emit({
           llm: values.customLLM ? this.getLLMConfig(values.llm.generative_model) : undefined,
-          merge_pages: values.merge_pages,
+          merge_pages: this.isAiTable ? values.merge_pages : undefined,
           max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
         });

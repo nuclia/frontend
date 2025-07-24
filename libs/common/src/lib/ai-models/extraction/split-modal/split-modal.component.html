@@ -1,0 +1,90 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    <h2>{{ createMode ? ('kb.ai-models.extraction.create' | translate) : config?.name || id }}</h2>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <form
+      class="form"
+      [formGroup]="configForm">
+      <pa-input
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
+        {{ 'kb.ai-models.extraction.name' | translate }}
+      </pa-input>
+
+      <div>
+        <h4>{{ 'kb.ai-models.extraction.split.strategies' | translate }}</h4>
+        <div class="types">
+          <pa-radio-group
+            formControlName="custom_split"
+            noBackground>
+            <div class="container-with-border">
+              <pa-radio value="default">
+                {{ 'kb.ai-models.extraction.split.default.label' | translate }}
+              </pa-radio>
+            </div>
+            <div class="container-with-border">
+              <pa-radio
+                value="manual"
+                [help]="'kb.ai-models.extraction.split.manual.help' | translate">
+                {{ 'kb.ai-models.extraction.split.manual.label' | translate }}
+              </pa-radio>
+              @if (type === 'manual') {
+                <div
+                  class="extra-fields"
+                  [formGroup]="configForm.controls.manual_split">
+                  <pa-input formControlName="splitter">
+                    {{ 'kb.ai-models.extraction.split.manual.delimiter' | translate }}
+                  </pa-input>
+                </div>
+              }
+            </div>
+            <div class="container-with-border">
+              <pa-radio
+                value="llm"
+                [help]="'kb.ai-models.extraction.split.llm.help' | translate">
+                {{ 'kb.ai-models.extraction.split.llm.label' | translate }}
+              </pa-radio>
+              @if (type === 'llm') {
+                <div class="extra-fields">
+                  <stf-llm-configuration
+                    [generativeModels]="generativeModels"
+                    [createMode]="createMode"
+                    rulesDescription="kb.ai-models.extraction.split.llm.rules-description"
+                    [config]="config?.llm_split"
+                    (valueChange)="llmSplit = $event"></stf-llm-configuration>
+                </div>
+              }
+            </div>
+          </pa-radio-group>
+        </div>
+      </div>
+      <div>
+        <h4>{{ 'kb.ai-models.extraction.split.limit-paragraphs' | translate }}</h4>
+        <pa-input
+          type="number"
+          formControlName="max_paragraph">
+          {{ 'kb.ai-models.extraction.split.max-paragraph' | translate }}
+        </pa-input>
+      </div>
+    </form>
+  </pa-modal-content>
+
+  @if (createMode) {
+    <pa-modal-footer>
+      <pa-button
+        aspect="basic"
+        (click)="close()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="configForm.invalid"
+        (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
+    </pa-modal-footer>
+  }
+</pa-modal-advanced>

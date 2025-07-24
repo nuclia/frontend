@@ -74,6 +74,8 @@ import {
   SentenceToken,
   ServiceAccount,
   ServiceAccountCreation,
+  SplitStrategies,
+  SplitStrategy,
   Synonyms,
   SynonymsPayload,
 } from './kb.models';
@@ -888,6 +890,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get(`${this.path}/processing-status?${queryParams}`);
   }
 
+  getExtractStrategies(): Observable<ExtractStrategies> {
+    return this.nuclia.rest.get<ExtractStrategies>(`${this.path}/extract_strategies`);
+  }
+
+  getSplitStrategies(): Observable<SplitStrategies> {
+    return this.nuclia.rest.get<SplitStrategies>(`${this.path}/split_strategies`);
+  }
+
   getSearchConfig(id: string): Observable<SearchConfig> {
     return this.nuclia.rest.get<SearchConfig>(`${this.path}/search_configurations/${id}`);
   }
@@ -1216,16 +1226,20 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`/kb/${this.id}/vectorsets/${model}`);
   }
 
-  getExtractStrategies(): Observable<ExtractStrategies> {
-    return this.nuclia.rest.get<ExtractStrategies>(`${this.path}/extract_strategies`);
-  }
-
   createExtractStrategy(config: ExtractConfig): Observable<void> {
     return this.nuclia.rest.post<void>(`${this.path}/extract_strategies`, config);
   }
 
   deleteExtractStrategy(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
+  }
+
+  createSplitStrategy(strategy: SplitStrategy): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/split_strategies`, strategy);
+  }
+
+  deleteSplitStrategy(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/split_strategies/strategy/${id}`);
   }
 
   createSearchConfig(id: string, config: SearchConfig): Observable<void> {

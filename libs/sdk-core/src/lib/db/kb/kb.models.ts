@@ -181,6 +181,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
   ): Observable<{ cursor: string; results: ProcessingStatus[] }>;
   getSearchConfig(id: string): Observable<SearchConfig>;
 
+  getExtractStrategies(): Observable<ExtractStrategies>;
+
+  getSplitStrategies(): Observable<SplitStrategies>;
+
   getSearchConfigs(): Observable<SearchConfigs>;
 }
 
@@ -251,11 +255,13 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   removeVectorset(model: string): Observable<void>;
 
-  getExtractStrategies(): Observable<ExtractStrategies>;
-
   createExtractStrategy(config: ExtractConfig): Observable<void>;
 
   deleteExtractStrategy(id: string): Observable<void>;
+
+  createSplitStrategy(strategy: SplitStrategy): Observable<void>;
+
+  deleteSplitStrategy(id: string): Observable<void>;
 
   createSearchConfig(id: string, config: SearchConfig): Observable<void>;
 
@@ -536,6 +542,29 @@ export interface ExtractVLLMConfig {
   rules?: string[];
   merge_pages?: boolean;
   max_pages_to_merge?: number;
+}
+
+export type SplitStrategies = {
+  [id: string]: SplitStrategy;
+};
+
+export interface SplitStrategy {
+  name?: string;
+  max_paragraph?: number;
+  custom_split?: CustomSplitStrategy;
+  llm_split?: SplitLLMConfig;
+  manual_split?: { splitter: string };
+}
+
+export interface SplitLLMConfig {
+  llm?: ExtractLLMConfig;
+  rules?: string[];
+}
+
+export enum CustomSplitStrategy {
+  NONE = 0,
+  MANUAL = 1,
+  LLM = 2,
 }
 
 export type SearchConfigs = { [key: string]: SearchConfig };

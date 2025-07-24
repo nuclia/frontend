@@ -1,41 +1,86 @@
 <form>
   <nsi-two-columns-configuration-item
     noTopBorder
-    itemTitle="kb.ai-models.extraction.title"
-    description="kb.ai-models.extraction.description">
-    @if (strategies | async | keyvalue; as strategies) {
-      @if (strategies.length > 0) {
-        <pa-table
-          columns="1fr 60px"
-          noHeader
-          border>
-          @for (strategy of strategies; track strategy.key) {
-            <pa-table-row
-              clickable
-              (click)="displayStrategy(strategy.key, strategy.value)">
-              <pa-table-cell class="body-m">{{ strategy.value.name || strategy.key }}</pa-table-cell>
-              <pa-table-cell>
-                <pa-button
-                  icon="trash"
-                  kind="destructive"
-                  aspect="basic"
-                  size="small"
-                  (click)="deleteStrategy(strategy.key, strategy.value, $event)">
-                  {{ 'generic.delete' | translate }}
-                </pa-button>
-              </pa-table-cell>
-            </pa-table-row>
-          }
-        </pa-table>
+    itemTitle="kb.ai-models.extraction.extract.title"
+    description="kb.ai-models.extraction.extract.description">
+    <div class="configurations">
+      @if (extractStrategies | async | keyvalue; as strategies) {
+        @if (strategies.length > 0) {
+          <pa-table
+            columns="1fr 60px"
+            noHeader
+            border>
+            @for (strategy of strategies; track strategy.key) {
+              <pa-table-row
+                clickable
+                (click)="displayExtractStrategy(strategy.key, strategy.value)">
+                <pa-table-cell class="body-m">{{ strategy.value.name || strategy.key }}</pa-table-cell>
+                <pa-table-cell>
+                  <pa-button
+                    icon="trash"
+                    kind="destructive"
+                    aspect="basic"
+                    size="small"
+                    (click)="deleteExtractStrategy(strategy.key, strategy.value, $event)">
+                    {{ 'generic.delete' | translate }}
+                  </pa-button>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        }
       }
-    }
+      <div class="create">
+        <pa-button
+          aspect="basic"
+          iconAndText
+          icon="circle-plus"
+          (click)="createExtractStrategy()">
+          {{ 'kb.ai-models.extraction.create' | translate }}
+        </pa-button>
+      </div>
+    </div>
   </nsi-two-columns-configuration-item>
-  <nsi-sticky-footer>
-    <pa-button
-      iconAndText
-      icon="circle-plus"
-      (click)="createStrategy()">
-      {{ 'kb.ai-models.extraction.config.create' | translate }}
-    </pa-button>
-  </nsi-sticky-footer>
+  <nsi-two-columns-configuration-item
+    noTopBorder
+    itemTitle="kb.ai-models.extraction.split.title"
+    description="kb.ai-models.extraction.split.description">
+    <div class="configurations">
+      @if (splitStrategies | async | keyvalue; as strategies) {
+        @if (strategies.length > 0) {
+          <pa-table
+            columns="1fr 60px"
+            noHeader
+            border>
+            @for (strategy of strategies; track strategy.key) {
+              <pa-table-row
+                clickable
+                (click)="displaySplitStrategy(strategy.key, strategy.value)">
+                <pa-table-cell class="body-m">{{ strategy.value.name || strategy.key }}</pa-table-cell>
+                <pa-table-cell>
+                  <pa-button
+                    icon="trash"
+                    kind="destructive"
+                    aspect="basic"
+                    size="small"
+                    (click)="deleteSplitStrategy(strategy.key, strategy.value, $event)">
+                    {{ 'generic.delete' | translate }}
+                  </pa-button>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        }
+      }
+      <div class="create">
+        <pa-button
+          aspect="basic"
+          iconAndText
+          icon="circle-plus"
+          (click)="createSplitStrategy()">
+          {{ 'kb.ai-models.extraction.create' | translate }}
+        </pa-button>
+      </div>
+    </div>
+  </nsi-two-columns-configuration-item>
 </form>
