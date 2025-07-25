@@ -601,7 +601,7 @@
 	"kb.ai-models.error.kb-not-supported": "Your Knowledge Box doesn’t support AI models. Please create a new Knowledge Box to use this feature. ",
 	"kb.ai-models.extraction.create": "Create configuration",
 	"kb.ai-models.extraction.delete": "Delete configuration",
-	"kb.ai-models.extraction.delete-confirm": "Are you sure you want to delete <strong>{{name}}</strong> ?",
+	"kb.ai-models.extraction.delete-confirm": "Are you sure you want to delete <strong>{{name}}</strong>?",
 	"kb.ai-models.extraction.extract.description": "Define how your data will be extracted.",
 	"kb.ai-models.extraction.extract.processing.ai_tables.help": "It converts table contents into MarkDown that can be used by a LLM.",
 	"kb.ai-models.extraction.extract.processing.ai_tables.label": "Interpret tables",
