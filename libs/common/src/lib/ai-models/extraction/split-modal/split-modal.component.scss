@@ -1,0 +1,32 @@
+@use 'apps/dashboard/src/variables' as *;
+
+h2 {
+  margin: 0;
+}
+
+h4 {
+  margin-bottom: rhythm(1.5);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  padding: rhythm(1) 0 rhythm(2) 0;
+  width: rhythm(80);
+}
+
+.types {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.extra-fields {
+  border-top: 1px solid $color-neutral-lighter;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding: rhythm(2) 0 0 rhythm(3);
+  margin-top: rhythm(2);
+}

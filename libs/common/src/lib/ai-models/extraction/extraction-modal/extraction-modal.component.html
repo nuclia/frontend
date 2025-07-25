@@ -1,6 +1,6 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>
-    <h2>{{ createMode ? ('kb.ai-models.extraction.config.create' | translate) : config?.name || id }}</h2>
+    <h2>{{ createMode ? ('kb.ai-models.extraction.create' | translate) : config?.name || id }}</h2>
   </pa-modal-title>
 
   <pa-modal-content>
@@ -10,26 +10,28 @@
       <pa-input
         formControlName="name"
         [errorMessages]="validationMessages.name">
-        {{ 'kb.ai-models.extraction.config.name' | translate }}
+        {{ 'kb.ai-models.extraction.name' | translate }}
       </pa-input>
       <div>
-        <h4>{{ 'kb.ai-models.extraction.config.processing.title' | translate }}</h4>
+        <h4>{{ 'kb.ai-models.extraction.extract.processing.title' | translate }}</h4>
         <div class="processings">
           @if (visualLLMEnabled | async) {
             <div class="container-with-border">
               <pa-checkbox
                 formControlName="vllm_config"
-                [help]="'kb.ai-models.extraction.config.processing.vllm_config.help' | translate">
-                {{ 'kb.ai-models.extraction.config.processing.vllm_config.label' | translate }}
+                [help]="'kb.ai-models.extraction.extract.processing.vllm_config.help' | translate">
+                {{ 'kb.ai-models.extraction.extract.processing.vllm_config.label' | translate }}
               </pa-checkbox>
               @if (vllm_config) {
                 <div class="extra-fields">
                   <nsi-info-card type="warning">
-                    {{ 'kb.ai-models.extraction.config.processing.vllm_config.warning' | translate }}
+                    {{ 'kb.ai-models.extraction.extract.processing.vllm_config.warning' | translate }}
                   </nsi-info-card>
                   <stf-llm-configuration
                     [generativeModels]="generativeModels"
                     [createMode]="createMode"
+                    rulesDescription="kb.ai-models.extraction.extract.rules-description"
+                    rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [vllmOnly]="true"
                     [config]="config?.vllm_config"
                     (valueChange)="vllmConfig = $event"></stf-llm-configuration>
@@ -41,18 +43,20 @@
             <div class="container-with-border">
               <pa-checkbox
                 formControlName="ai_tables"
-                [help]="'kb.ai-models.extraction.config.processing.ai_tables.help' | translate">
-                {{ 'kb.ai-models.extraction.config.processing.ai_tables.label' | translate }}
+                [help]="'kb.ai-models.extraction.extract.processing.ai_tables.help' | translate">
+                {{ 'kb.ai-models.extraction.extract.processing.ai_tables.label' | translate }}
               </pa-checkbox>
               @if (ai_tables) {
                 <div class="extra-fields">
                   <nsi-info-card type="warning">
                     <span
-                      [innerHTML]="'kb.ai-models.extraction.config.processing.ai_tables.warning' | translate"></span>
+                      [innerHTML]="'kb.ai-models.extraction.extract.processing.ai_tables.warning' | translate"></span>
                   </nsi-info-card>
                   <stf-llm-configuration
                     [generativeModels]="generativeModels"
                     [createMode]="createMode"
+                    rulesDescription="kb.ai-models.extraction.extract.rules-description"
+                    rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [config]="config?.ai_tables"
                     [isAiTable]="true"
                     (valueChange)="aiTables = $event"></stf-llm-configuration>
@@ -62,16 +66,6 @@
           }
         </div>
       </div>
-
-      <!-- Temporarily hidden, waiting for learning to finish the feature -->
-      <!-- <div formGroupName="split">
-        <h4>{{ 'kb.ai-models.extraction.config.text-splitting.title' | translate }}</h4>
-        <pa-input
-          type="number"
-          formControlName="max_paragraph">
-          {{ 'kb.ai-models.extraction.config.text-splitting.max-paragraph' | translate }}
-        </pa-input>
-      </div> -->
     </form>
   </pa-modal-content>
 

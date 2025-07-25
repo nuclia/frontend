@@ -236,6 +236,7 @@ export class UploadService {
     cookies?: { [id: string]: string },
     localstorage?: { [id: string]: string },
     extract_strategy?: string,
+    split_strategy?: string,
     language?: string,
   ) {
     return this.sdk.currentKb.pipe(
@@ -250,6 +251,7 @@ export class UploadService {
             cookies,
             localstorage,
             extract_strategy,
+            split_strategy,
             language,
           },
           { classifications },
@@ -264,6 +266,7 @@ export class UploadService {
     uri: string,
     classifications: Classification[],
     extract_strategy?: string,
+    split_strategy?: string,
     language?: string,
   ) {
     return this.sdk.currentKb.pipe(
@@ -276,6 +279,7 @@ export class UploadService {
             ['cloud-file']: {
               file: { uri },
               extract_strategy,
+              split_strategy,
               language,
             },
           },

@@ -12,7 +12,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractConfig, ExtractVLLMConfig, LearningConfigurations } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { LLMConfigurationComponent } from './llm-configuration.component';
+import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
 @Component({
   imports: [
@@ -48,9 +48,6 @@ export class ExtractionModalComponent implements OnInit {
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
     vllm_config: new FormControl<boolean>(false, { nonNullable: true }),
     ai_tables: new FormControl<boolean>(false, { nonNullable: true }),
-    split: new FormGroup({
-      max_paragraph: new FormControl<number | null>(null, { nonNullable: true }),
-    }),
   });
 
   validationMessages = {
@@ -78,7 +75,6 @@ export class ExtractionModalComponent implements OnInit {
         name: this.config.name,
         vllm_config: !!this.config.vllm_config,
         ai_tables: !!this.config.ai_tables,
-        split: this.config.split,
       });
       this.configForm.disable();
     }
@@ -97,11 +93,6 @@ export class ExtractionModalComponent implements OnInit {
     }
     if (values.ai_tables) {
       payload.ai_tables = this.aiTables;
-    }
-    if (values.split.max_paragraph) {
-      payload.split = {
-        max_paragraph: values.split.max_paragraph,
-      };
     }
     this.modal.close(payload);
   }

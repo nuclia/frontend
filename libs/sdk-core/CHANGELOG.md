@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add `getFacets` method to Knowledge Box
+- Add support for split strategies
 
 # 1.27.0 (2025-06-16)
 

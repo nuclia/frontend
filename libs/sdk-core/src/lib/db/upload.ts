@@ -59,6 +59,7 @@ export interface FileWithMetadata extends File {
   payload?: ICreateResource;
   contentType?: string;
   processing?: string;
+  split?: string;
 }
 
 export interface FileMetadata {
@@ -68,6 +69,7 @@ export interface FileMetadata {
   md5?: string;
   rslug?: string;
   processing?: string;
+  split?: string;
 }
 
 const uploadRetryConfig: RetryConfig = {
@@ -107,6 +109,9 @@ export const upload = (
     if (metadata.processing === 'vllm_extract') {
       TUS = false;
     }
+  }
+  if ((data as FileWithMetadata).split) {
+    metadata.split = (data as FileWithMetadata).split;
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>
@@ -194,6 +199,9 @@ export const TUSuploadFile = (
   }
   if (metadata?.processing) {
     headers['x-extract-strategy'] = metadata.processing;
+  }
+  if (metadata?.split) {
+    headers['x-split-strategy'] = metadata.split;
   }
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
@@ -362,6 +370,9 @@ export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: str
   }
   if (metadata?.processing) {
     headers['x-extract-strategy'] = metadata.processing;
+  }
+  if (metadata?.split) {
+    headers['x-split-strategy'] = metadata.split;
   }
   return headers;
 };

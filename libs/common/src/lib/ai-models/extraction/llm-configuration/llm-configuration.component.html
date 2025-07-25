@@ -2,18 +2,20 @@
   <div
     class="rules"
     formArrayName="rules">
-    <div class="body-m">
-      {{ 'kb.ai-models.extraction.config.processing.rules.rules-help' | translate }}
-    </div>
+    @if (rulesDescription) {
+      <div class="body-m">
+        {{ rulesDescription | translate }}
+      </div>
+    }
     @for (rule of rules.controls; track rule) {
       <div class="rule">
         <nsi-expandable-textarea
           [formControl]="rule"
           [rows]="2"
           resizable
-          modalTitle="kb.ai-models.extraction.config.processing.rules.rule"
-          [placeholder]="'kb.ai-models.extraction.config.processing.rules.placeholder' | translate">
-          {{ 'kb.ai-models.extraction.config.processing.rules.rule' | translate }}
+          modalTitle="kb.ai-models.extraction.llm-configuration.rules.rule"
+          [placeholder]="(rulesPlaceholder || '') | translate">
+          {{ 'kb.ai-models.extraction.llm-configuration.rules.rule' | translate }}
         </nsi-expandable-textarea>
         @if (createMode) {
           <pa-button
@@ -31,7 +33,7 @@
       <nsi-button-mini
         icon="plus"
         (click)="addRule()">
-        {{ 'kb.ai-models.extraction.config.processing.rules.add-rule' | translate }}
+        {{ 'kb.ai-models.extraction.llm-configuration.rules.add-rule' | translate }}
       </nsi-button-mini>
     }
   </div>
@@ -40,15 +42,15 @@
       <pa-toggle
         labelOnRight
         formControlName="merge_pages">
-        {{ 'kb.ai-models.extraction.config.processing.ai_tables.merge-pages' | translate }}
+        {{ 'kb.ai-models.extraction.extract.processing.ai_tables.merge-pages' | translate }}
       </pa-toggle>
     </div>
     @if (mergePages) {
       <pa-input
         type="number"
         formControlName="max_pages_to_merge"
-        [help]="'kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages-help' | translate">
-        {{ 'kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages' | translate }}
+        [help]="'kb.ai-models.extraction.extract.processing.ai_tables.max-merge-pages-help' | translate">
+        {{ 'kb.ai-models.extraction.extract.processing.ai_tables.max-merge-pages' | translate }}
       </pa-input>
     }
   }
@@ -56,19 +58,19 @@
     <pa-toggle
       labelOnRight
       formControlName="customLLM">
-      {{ 'kb.ai-models.extraction.config.customize-model' | translate }}
+      {{ 'kb.ai-models.extraction.llm-configuration.customize-model' | translate }}
     </pa-toggle>
     @if (useCustomModel) {
       <ng-container formGroupName="llm">
         @if (vllmOnly) {
           <!-- TODO: remove when backend will indicate which LLMs have visual capability -->
           <nsi-info-card type="warning">
-            {{ 'kb.ai-models.extraction.config.processing.vllm_config.custom-model-warning' | translate }}
+            {{ 'kb.ai-models.extraction.extract.processing.vllm_config.custom-model-warning' | translate }}
           </nsi-info-card>
         }
         <pa-select
           formControlName="generative_model"
-          [label]="'kb.ai-models.extraction.config.generative-model' | translate">
+          [label]="'kb.ai-models.extraction.llm-configuration.generative-model' | translate">
           @for (model of generativeModels; track model.value) {
             <pa-option [value]="model.value">{{ model.name }}</pa-option>
           }
@@ -76,9 +78,9 @@
         <!-- 
         <nsi-expandable-textarea
           formControlName="generative_prompt_id"
-          modalTitle="kb.ai-models.extraction.config.custom-prompt"
+          modalTitle="kb.ai-models.extraction.llm-configuration.custom-prompt"
           rows="3">
-          {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
+          {{ 'kb.ai-models.extraction.llm-configuration.custom-prompt' | translate }}
         </nsi-expandable-textarea>
         -->
       </ng-container>

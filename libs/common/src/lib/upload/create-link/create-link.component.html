@@ -116,9 +116,10 @@
                 }
               </div>
               <app-extraction-select
-                [(configId)]="extractStrategy"
-                (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"
-                (close)="close()"></app-extraction-select>
+                [(extractConfig)]="extractStrategy"
+                [(splitConfig)]="splitStrategy"
+                [onlyExtract]="!(splitConfigEnabled | async)"
+                (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"></app-extraction-select>
             </pa-expander-body>
           </pa-expander>
         }

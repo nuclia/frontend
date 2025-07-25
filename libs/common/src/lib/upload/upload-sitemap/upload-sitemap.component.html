@@ -57,8 +57,9 @@
           <div class="options">
             @if ((extractConfigEnabled | async) && !standalone) {
               <app-extraction-select
-                [(configId)]="extractStrategy"
-                (close)="close()"></app-extraction-select>
+                [(extractConfig)]="extractStrategy"
+                [(splitConfig)]="splitStrategy"
+                [onlyExtract]="!(splitConfigEnabled | async)"></app-extraction-select>
             }
             <div class="table-title title-xs">
               {{ 'upload.sitemap.headers' | translate }}
