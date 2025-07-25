@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -22,8 +21,8 @@ import { aragUrl } from '../../workflow.state';
     ConfigurationFormComponent,
     RulesFieldComponent,
     InfoCardComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,7 +31,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     rephrase: new FormGroup({
-      kb: new FormControl('', { validators: [Validators.required], nonNullable: true }),
+      kb: new FormControl('', { nonNullable: true }),
       extend: new FormControl(false),
       synonyms: new FormControl(false),
       history: new FormControl(false),
@@ -60,6 +59,16 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
           ),
         ),
       )
-      .subscribe((options) => this.sourceOptions.set(options));
+      .subscribe((options) =>
+        this.sourceOptions.set(
+          [
+            new OptionModel({
+              id: '',
+              label: '–',
+              value: '',
+            }),
+          ].concat(options),
+        ),
+      );
   }
 }
