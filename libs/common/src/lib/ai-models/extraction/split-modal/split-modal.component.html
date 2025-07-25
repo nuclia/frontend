@@ -14,7 +14,7 @@
       </pa-input>
 
       <div>
-        <h4>{{ 'kb.ai-models.extraction.split.strategies' | translate }}</h4>
+        <h4>{{ 'kb.ai-models.extraction.split.methods' | translate }}</h4>
         <div class="types">
           <pa-radio-group
             formControlName="custom_split"
@@ -34,7 +34,9 @@
                 <div
                   class="extra-fields"
                   [formGroup]="configForm.controls.manual_split">
-                  <pa-input formControlName="splitter">
+                  <pa-input
+                    formControlName="splitter"
+                    [help]="'kb.ai-models.extraction.split.manual.delimiter-help' | translate">
                     {{ 'kb.ai-models.extraction.split.manual.delimiter' | translate }}
                   </pa-input>
                 </div>
