@@ -117,7 +117,8 @@
         @if ((extractConfigEnabled | async) && !standalone) {
           <app-extraction-select
             [(extractConfig)]="extractStrategy"
-            [onlyExtract]="true"></app-extraction-select>
+            [(splitConfig)]="splitStrategy"
+            [onlyExtract]="!(spitConfigEnabled | async)"></app-extraction-select>
         } @else {
           <div>
             <label

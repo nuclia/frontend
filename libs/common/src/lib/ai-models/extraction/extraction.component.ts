@@ -5,7 +5,7 @@ import { ModalConfig, PaButtonModule, PaTableModule } from '@guillotinaweb/pasta
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, filter, switchMap, take, tap } from 'rxjs';
 import { ExtractConfig, ExtractStrategies, LearningConfigurations, SplitStrategies, SplitStrategy } from '@nuclia/core';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { ExtractionModalComponent } from './extraction-modal/extraction-modal.component';
 import { SplitModalComponent } from './split-modal/split-modal.component';
 
@@ -20,14 +20,21 @@ export class ExtractionComponent {
   sdk = inject(SDKService);
   modalService = inject(SisModalService);
   translate = inject(TranslateService);
+  features = inject(FeaturesService);
 
   @Input() learningConfigurations?: LearningConfigurations;
   extractStrategies = new BehaviorSubject<ExtractStrategies | null>({});
   splitStrategies = new BehaviorSubject<SplitStrategies>({});
+  splitStrategiesEnabled = this.features.unstable.splitConfig;
 
   constructor() {
     this.updateExtractStrategies().subscribe();
-    this.updateSplitStrategies().subscribe();
+    this.splitStrategiesEnabled
+      .pipe(
+        filter((enabled) => enabled),
+        switchMap(() => this.updateSplitStrategies()),
+      )
+      .subscribe();
   }
 
   createExtractStrategy() {

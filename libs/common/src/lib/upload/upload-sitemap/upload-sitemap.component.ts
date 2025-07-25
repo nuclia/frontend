@@ -61,6 +61,7 @@ export class UploadSitemapComponent {
   localstorage: { key: string; value: string }[] = [];
   standalone = this.standaloneService.standalone;
   extractConfigEnabled = this.features.unstable.extractConfig;
+  splitConfigEnabled = this.features.unstable.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
 

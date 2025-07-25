@@ -57,6 +57,7 @@ export class CreateLinkComponent {
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
   extractConfigEnabled = this.features.unstable.extractConfig;
+  splitConfigEnabled = this.features.unstable.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
   updateOptionsExpander = 0;

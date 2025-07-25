@@ -68,7 +68,9 @@ export class UploadFilesComponent {
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
   extractConfigEnabled = this.features.unstable.extractConfig;
+  spitConfigEnabled = this.features.unstable.splitConfig;
   extractStrategy?: string;
+  splitStrategy?: string;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -149,6 +151,11 @@ export class UploadFilesComponent {
           file.processing = this.extractStrategy;
         });
       }
+      if (this.splitStrategy) {
+        labelledFiles.forEach((file) => {
+          file.split = this.splitStrategy;
+        });
+      }      
       if (this.processing !== 'none') {
         labelledFiles.forEach((file) => {
           if ((this.processing !== 'blankline' || file.type === 'text/plain') && this.processing !== 'visual-llm') {
