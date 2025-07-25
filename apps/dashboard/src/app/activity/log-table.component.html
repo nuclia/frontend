@@ -43,7 +43,7 @@
   <div class="table">
     <pa-table
       border
-      [columns]="'repeat(' + (displayedHeaders.length || 1) + ', fit-content(400px))'">
+      [columns]="'fit-content(400px) repeat(' + (displayedHeaders.length || 1) + ', fit-content(400px))'">
       @if (displayedRows.length === 0) {
         <pa-table-row>
           <pa-table-cell>N/A</pa-table-cell>
@@ -51,19 +51,27 @@
       } @else {
         <pa-table-header>
           <pa-table-row>
+            <pa-table-cell
+              header
+              borderRight></pa-table-cell>
             @for (title of displayedHeaders; track title) {
               <pa-table-cell header>{{ title }}</pa-table-cell>
             }
           </pa-table-row>
         </pa-table-header>
       }
-      @for (row of displayedRows; track row.id) {
+      @for (row of displayedRows; track row.id; let index = $index) {
         <pa-table-row>
+          <pa-table-cell borderRight>
+            <div class="body-s">{{ index + 1 }}</div>
+          </pa-table-cell>
           @if (displayedHeaders.includes(dateColumn)) {
             <pa-table-cell>
               <div
                 class="body-s"
-                [paTooltip]="(row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'">
+                [paTooltip]="
+                  (row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'
+                ">
                 <pa-datetime [datetime]="row.date"></pa-datetime>
               </div>
             </pa-table-cell>
