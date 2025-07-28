@@ -38,6 +38,9 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
 
   ngOnInit(): void {
     this.editResource.setCurrentView('annotation');
+    this.noField.subscribe(() => {
+      this.selectedTab = 'relations';
+    });
 
     combineLatest([this.fieldId, this.resource, this.entityFamilies])
       .pipe(takeUntil(this.unsubscribeAll))

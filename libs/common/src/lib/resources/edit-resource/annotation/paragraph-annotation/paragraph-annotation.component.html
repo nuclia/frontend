@@ -1,20 +1,22 @@
-@if (hasParagraph | async) {
-  @if (paragraphLoaded | async) {
+@if ((hasParagraph | async) || (noField | async)) {
+  @if ((paragraphLoaded | async) || (noField | async)) {
     <div class="sticky-header">
-      <div>
-        <pa-tabs notFullWidth>
-          <pa-tab
-            (click)="selectedTab = 'ners'"
-            [active]="selectedTab === 'ners'">
-            NERs
-          </pa-tab>
-          <pa-tab
-            (click)="selectedTab = 'relations'"
-            [active]="selectedTab === 'relations'">
-            {{ 'resource.relations.title' | translate }}
-          </pa-tab>
-        </pa-tabs>
-      </div>
+      @if (paragraphLoaded | async) {
+        <div>
+          <pa-tabs notFullWidth>
+            <pa-tab
+              (click)="selectedTab = 'ners'"
+              [active]="selectedTab === 'ners'">
+              NERs
+            </pa-tab>
+            <pa-tab
+              (click)="selectedTab = 'relations'"
+              [active]="selectedTab === 'relations'">
+              {{ 'resource.relations.title' | translate }}
+            </pa-tab>
+          </pa-tabs>
+        </div>
+      }
       @if (selectedTab === 'ners') {
         <pa-input
           [icon]="searchQuery ? 'cross' : 'search'"
@@ -33,13 +35,11 @@
           <div class="paragraphs-container">
             <pa-infinite-scroll (reachAnchor)="loadMore()">
               @for (paragraph of paragraphs | async; track paragraph) {
-                <div
-                  class="paragraph-container"
-                  >
+                <div class="paragraph-container">
                   <p
                     [attr.paragraphId]="paragraph.paragraphId"
                     [class.family-selected]="(selectedFamily | async) !== null"
-                  [innerHTML]="paragraph.annotatedText | safeHtml"></p>
+                    [innerHTML]="paragraph.annotatedText | safeHtml"></p>
                 </div>
               }
             </pa-infinite-scroll>
@@ -50,7 +50,7 @@
           <div class="help">
             <pa-icon
               name="info"
-            size="small"></pa-icon>
+              size="small"></pa-icon>
             <p>
               {{ 'resource.field-annotation.help' | translate }}
             </p>
@@ -64,7 +64,7 @@
                 <pa-expander-header>
                   <div
                     class="family-color"
-                  [style.background-color]="family.color"></div>
+                    [style.background-color]="family.color"></div>
                   <span class="family-title">{{ family.title }}</span>
                   ({{ family.entities.length }})
                 </pa-expander-header>
@@ -73,8 +73,7 @@
                     class="entity-list"
                     [style.border-left-color]="family.color">
                     @for (entity of family.entities; track entity) {
-                      <li
-                        paEllipsisTooltip>
+                      <li paEllipsisTooltip>
                         {{ entity }}
                       </li>
                     }

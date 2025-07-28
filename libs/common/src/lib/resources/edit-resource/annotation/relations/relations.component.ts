@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityGroup } from '../../edit-resource.helpers';
 import { EntityComponent } from 'libs/common/src/lib/entities/entity/entity.component';
-import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, map, take, tap } from 'rxjs';
 import { TasksAutomationService } from 'libs/common/src/lib/tasks-automation';
 import { EditResourceService } from '../../edit-resource.service';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -31,9 +31,16 @@ export class RelationsComponent {
   colors: { [id: string]: string } = {};
 
   selectedFilters = new BehaviorSubject<string[]>([]);
-  relations = this.editResource.currentFieldData.pipe(
-    map((field) => field?.extracted?.metadata?.metadata.relations || []),
-  );
+  relations = forkJoin([
+    this.editResource.currentFieldData.pipe(
+      map((field) => field?.extracted?.metadata?.metadata.relations || []),
+      take(1),
+    ),
+    this.editResource.resource.pipe(
+      map((res) => res?.usermetadata?.relations),
+      take(1),
+    ),
+  ]).pipe(map(([fieldRelations, resourceRelations]) => [...fieldRelations, ...(resourceRelations || [])]));
   taskNames = this.tasksAutomation.configs.pipe(
     map((tasks) =>
       tasks.reduce(
