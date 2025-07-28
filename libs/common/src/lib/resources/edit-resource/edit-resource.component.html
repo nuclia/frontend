@@ -120,17 +120,15 @@
     <nav>
       <ul>
         @if (currentView !== 'add-field') {
-          @if (currentView !== 'annotation') {
-            <li
-              class="nav-item"
-              [class.active]="(currentField | async) === 'resource'"
-              (click)="navigateToField('resource')">
-              <pa-icon
-                name="file"
-                size="small"></pa-icon>
-              {{ (aragMode ? 'retrieval-agents.sessions.preview.session-info' : 'resource.profile') | translate }}
-            </li>
-          }
+          <li
+            class="nav-item"
+            [class.active]="(currentField | async) === 'resource'"
+            (click)="navigateToField('resource')">
+            <pa-icon
+              name="file"
+              size="small"></pa-icon>
+            {{ (aragMode ? 'retrieval-agents.sessions.preview.session-info' : 'resource.profile') | translate }}
+          </li>
           @for (field of originalFields | async; track field.field_id) {
             <li
               class="nav-item"
