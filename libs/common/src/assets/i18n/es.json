@@ -1618,6 +1618,8 @@
 	"search.configuration.result-display.json-schema.toggle-description": "Usted proporciona un esquema JSON que describe la estructura de la respuesta que obtendrá.",
 	"search.configuration.result-display.json-schema.toggle-label": "Salida JSON",
 	"search.configuration.result-display.json-schema.unsupported-model-warning": "La salida JSON no está disponible para el modelo generativo {{ model }}.",
+	"search.configuration.result-display.no-scroll.toggle-description": "La lista de resultados inicial cumplirá con la cantidad máxima de párrafos definida por el parámetro top_k y, al desplazarse hacia abajo, no se cargarán resultados adicionales.",
+	"search.configuration.result-display.no-scroll.toggle-label": "Limitar la visualización de recursos a los top_k",
 	"search.configuration.result-display.relations.toggle-description": "Muestra información sobre los NER en los resultados de la búsqueda. No puede utilizarse con la opción \"Coincidir sinónimos\".",
 	"search.configuration.result-display.relations.toggle-label": "Relaciones",
 	"search.configuration.result-display.relations-graph.toggle-description": "Muestra todas las relaciones entre entidades para un recurso dado en el visor.",

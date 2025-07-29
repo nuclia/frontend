@@ -140,6 +140,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     metadatas: new FormControl<string>('', { nonNullable: true }),
     displayThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
+    noScroll: new FormControl<boolean>(false, { nonNullable: true }),
     showAttachedImages: new FormControl<boolean>(false, { nonNullable: true }),
     displayFieldList: new FormControl<boolean>(false, { nonNullable: true }),
     relations: new FormControl<boolean>(false, { nonNullable: true }),
