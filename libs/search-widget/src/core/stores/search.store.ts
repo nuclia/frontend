@@ -111,6 +111,7 @@ interface SearchState {
     b64encoded: string;
   }[];
   resultsOrder: ResultsOrder;
+  noScroll: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -138,6 +139,7 @@ export const searchState = new SvelteState<SearchState>({
   },
   images: [],
   resultsOrder: 'relevance',
+  noScroll: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -421,16 +423,16 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
       field:
         filterExpression?.field && hasFieldFilters
           ? {
-            and: [filterExpression.field, fieldFilters],
-          }
+              and: [filterExpression.field, fieldFilters],
+            }
           : hasFieldFilters
             ? fieldFilters
             : filterExpression?.field,
       paragraph:
         filterExpression?.paragraph && hasParagraphFilters
           ? {
-            and: [filterExpression.paragraph, paragraphFilters],
-          }
+              and: [filterExpression.paragraph, paragraphFilters],
+            }
           : hasParagraphFilters
             ? paragraphFilters
             : filterExpression?.paragraph,
@@ -610,6 +612,14 @@ export const images = searchState.writer<
   (state, images) => ({
     ...state,
     images,
+  }),
+);
+
+export const noScroll = searchState.writer<boolean>(
+  (state) => state.noScroll,
+  (state, noScroll) => ({
+    ...state,
+    noScroll,
   }),
 );
 
