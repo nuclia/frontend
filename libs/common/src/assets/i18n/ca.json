@@ -1618,6 +1618,8 @@
 	"search.configuration.result-display.json-schema.toggle-description": "Proporcioneu un esquema JSON que descriu l’estructura de la resposta que obtindreu.",
 	"search.configuration.result-display.json-schema.toggle-label": "Sortida JSON",
 	"search.configuration.result-display.json-schema.unsupported-model-warning": "La sortida JSON no està disponible per al model generatiu {{ model }}.",
+	"search.configuration.result-display.no-scroll.toggle-description": "La llista de resultats inicial complirà amb la quantitat màxima de paràgrafs definida pel paràmetre top_k i, si es desplaça cap avall, no es carregaran resultats addicionals.",
+	"search.configuration.result-display.no-scroll.toggle-label": "Limita la visualització dels recursos al top_k",
 	"search.configuration.result-display.relations.toggle-description": "Mostra informació sobre NER als resultats de la cerca. No es pot utilitzar amb l’opció \"Relaciona sinònims\".",
 	"search.configuration.result-display.relations.toggle-label": "Relacions",
 	"search.configuration.result-display.relations-graph.toggle-description": "Mostra totes les relacions entre entitats per a un recurs determinat al visor.",

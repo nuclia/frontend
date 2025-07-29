@@ -113,6 +113,7 @@ export namespace Widget {
     hideAnswer: boolean;
     metadatas?: string[];
     displayThumbnails: boolean;
+    noScroll: boolean;
     showAttachedImages: boolean;
     displayFieldList: boolean;
     relations: boolean;
@@ -224,6 +225,7 @@ export namespace Widget {
     hideAnswer?: boolean;
     contextImages?: boolean;
     sortResults?: boolean;
+    noScroll?: boolean;
   }
 }
 
@@ -320,6 +322,7 @@ const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   hideAnswer: false,
   metadatas: [],
   displayThumbnails: true,
+  noScroll: false,
   showAttachedImages: false,
   displayFieldList: false,
   relations: false,
@@ -534,6 +537,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     displayFieldList: config.resultDisplay.displayFieldList,
     disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
     sortResults: config.resultDisplay.sortResults,
+    noScroll: config.resultDisplay.noScroll,
 
     // Widget options
     hideLogo: widgetOptions.hideLogo,
