@@ -31,6 +31,7 @@ import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
 import {
   displayedMetadata,
   searchConfigId,
+  noScroll,
   searchError,
   searchOptions,
   showAttachedImages,
@@ -188,6 +189,9 @@ export const initNuclia = (
   }
   SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
   showAttachedImages.set(SHOW_ATTACHED_IMAGES);
+  if (widgetOptions.features?.noScroll) {
+    noScroll.set(true);
+  }
 
   MAX_TOKENS = !widgetOptions.max_output_tokens
     ? widgetOptions.max_tokens

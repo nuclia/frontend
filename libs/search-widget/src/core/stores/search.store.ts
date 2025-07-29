@@ -108,6 +108,7 @@ interface SearchState {
     b64encoded: string;
   }[];
   resultsOrder: ResultsOrder;
+  noScroll: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -135,6 +136,7 @@ export const searchState = new SvelteState<SearchState>({
   },
   images: [],
   resultsOrder: 'relevance',
+  noScroll: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -607,6 +609,14 @@ export const images = searchState.writer<
   (state, images) => ({
     ...state,
     images,
+  }),
+);
+
+export const noScroll = searchState.writer<boolean>(
+  (state) => state.noScroll,
+  (state, noScroll) => ({
+    ...state,
+    noScroll,
   }),
 );
 

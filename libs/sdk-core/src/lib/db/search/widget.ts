@@ -224,6 +224,7 @@ export namespace Widget {
     hideAnswer?: boolean;
     contextImages?: boolean;
     sortResults?: boolean;
+    noScroll?: boolean;
   }
 }
 
