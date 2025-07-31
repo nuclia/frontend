@@ -12,27 +12,26 @@
     type RAGStrategy,
     type Widget,
   } from '@nuclia/core';
-  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
   import globalCss from '../../common/global.css?inline';
   import { Viewer } from '../../components';
   import Chat from '../../components/answer/Chat.svelte';
   import {
-    askBackendConfig,
     chatInput,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
     DEFAULT_CHAT_PLACEHOLDER,
     filterExpression,
-    findBackendConfig,
     preselectedFilters,
     resetChat,
+    searchConfigId,
     widgetFeatures,
     widgetFeedback,
     widgetImageRagStrategies,
     widgetRagStrategies,
   } from '../../core';
-  import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { setLang } from '../../core/i18n';
   import {
     askQuestion,
@@ -294,19 +293,9 @@
       injectCustomCss(csspath, container);
 
       if (search_config_id) {
-        getSearchConfig(search_config_id).subscribe((config) => {
-          if (config) {
-            if (config.kind === 'find') {
-              findBackendConfig.set(config.config);
-            } else if (config.kind === 'ask') {
-              askBackendConfig.set(config.config);
-            }
-            _ready.next(true);
-          }
-        });
-      } else {
-        _ready.next(true);
+        searchConfigId.set(search_config_id);
       }
+      _ready.next(true);
     });
 
     return () => reset();

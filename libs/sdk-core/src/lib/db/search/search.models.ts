@@ -84,6 +84,7 @@ export interface BaseSearchOptions {
   reranker?: Reranker;
   rank_fusion?: RankFusion;
   security?: { groups: string[] };
+  search_configuration?: string;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
