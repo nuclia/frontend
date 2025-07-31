@@ -222,6 +222,10 @@
     triggerSearch.next();
   }
 
+  export function setSearchConfiguration(id: string | undefined) {
+    searchConfigId.set(id);
+  }
+
   export function logState() {
     console.log(`Current widget configuration:`, {
       _features,

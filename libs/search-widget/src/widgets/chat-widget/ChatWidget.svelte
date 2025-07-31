@@ -172,6 +172,10 @@
     }
   }
 
+  export function setSearchConfiguration(id: string | undefined) {
+    searchConfigId.set(id);
+  }
+
   export const onError = getApiErrors();
 
   export const reset = () => resetNuclia();
