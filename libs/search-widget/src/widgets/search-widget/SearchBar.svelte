@@ -26,7 +26,7 @@
   import { InfoCard, onClosePreview } from '../../components';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { type WidgetFilters } from '../../core';
-  import { downloadDump, getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
+  import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
   import {
@@ -42,11 +42,10 @@
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import {
-    askBackendConfig,
     entityRelations,
     filterExpression,
-    findBackendConfig,
     preselectedFilters,
+    searchConfigId,
     searchFilters,
     searchQuery,
     triggerSearch,
@@ -221,6 +220,10 @@
   export function reloadSearch() {
     console.log(`Reload search`);
     triggerSearch.next();
+  }
+
+  export function setSearchConfiguration(id: string | undefined) {
+    searchConfigId.set(id);
   }
 
   export function logState() {
@@ -415,19 +418,9 @@
       injectCustomCss(csspath, container);
 
       if (search_config_id) {
-        getSearchConfig(search_config_id).subscribe((config) => {
-          if (config) {
-            if (config.kind === 'find') {
-              findBackendConfig.set(config.config);
-            } else if (config.kind === 'ask') {
-              askBackendConfig.set(config.config);
-            }
-            _initialized.next(true);
-          }
-        });
-      } else {
-        _initialized.next(true);
+        searchConfigId.set(search_config_id);
       }
+      _initialized.next(true);
     });
     return () => resetNuclia();
   });

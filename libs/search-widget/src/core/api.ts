@@ -12,7 +12,6 @@ import type {
   Reranker,
   Resource,
   ResourceField,
-  SearchConfig,
   SearchOptions,
 } from '@nuclia/core';
 import {
@@ -31,7 +30,7 @@ import { reset } from './reset';
 import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
 import {
   displayedMetadata,
-  findBackendConfig,
+  searchConfigId,
   searchError,
   searchOptions,
   showAttachedImages,
@@ -226,10 +225,11 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     query = QUERY_PREPEND + ' ' + query;
   }
 
-  return findBackendConfig.pipe(
+  return searchConfigId.pipe(
     take(1),
-    switchMap((backendConfig) =>
-      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, backendConfig || { ...SEARCH_OPTIONS, ...options }),
+    tap(console.log),
+    switchMap((search_configuration) =>
+      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options, search_configuration }),
     ),
     filter((res) => {
       if (res.type === 'error') {
@@ -594,11 +594,4 @@ export function getAttachedImageTemplate(placeholder: string): Observable<string
 
 export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
-}
-
-export function getSearchConfig(id: string): Observable<SearchConfig> {
-  if (!nucliaApi) {
-    throw new Error('Nuclia API not initialized');
-  }
-  return nucliaApi.knowledgeBox.getSearchConfig(id);
 }

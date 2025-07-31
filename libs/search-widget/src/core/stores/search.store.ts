@@ -88,10 +88,7 @@ interface SearchState {
   preselectedFilters: string[] | Filter[];
   filterExpression?: FilterExpression;
   options: SearchOptions;
-  backendConfig: {
-    find?: SearchOptions;
-    ask?: ChatOptions;
-  };
+  search_config_id?: string;
   show: ResourceProperties[];
   results: FindResultsAsList;
   error?: IErrorResponse;
@@ -119,7 +116,7 @@ export const searchState = new SvelteState<SearchState>({
   preselectedFilters: [],
   filterExpression: undefined,
   options: {},
-  backendConfig: {},
+  search_config_id: undefined,
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
@@ -421,16 +418,16 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
       field:
         filterExpression?.field && hasFieldFilters
           ? {
-            and: [filterExpression.field, fieldFilters],
-          }
+              and: [filterExpression.field, fieldFilters],
+            }
           : hasFieldFilters
             ? fieldFilters
             : filterExpression?.field,
       paragraph:
         filterExpression?.paragraph && hasParagraphFilters
           ? {
-            and: [filterExpression.paragraph, paragraphFilters],
-          }
+              and: [filterExpression.paragraph, paragraphFilters],
+            }
           : hasParagraphFilters
             ? paragraphFilters
             : filterExpression?.paragraph,
@@ -976,18 +973,10 @@ export function getNonGenericField(data: ResourceData) {
     })[0];
 }
 
-export const findBackendConfig = searchState.writer<SearchOptions | undefined>(
-  (state) => state.backendConfig.find,
+export const searchConfigId = searchState.writer<string | undefined>(
+  (state) => state.search_config_id,
   (state, config) => ({
     ...state,
-    backendConfig: { find: config },
-  }),
-);
-
-export const askBackendConfig = searchState.writer<ChatOptions | undefined>(
-  (state) => state.backendConfig.ask,
-  (state, config) => ({
-    ...state,
-    backendConfig: { ask: config },
+    search_config_id: config,
   }),
 );

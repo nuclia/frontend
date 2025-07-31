@@ -68,7 +68,6 @@ import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import { labelSets, labelState } from './labels.store';
 import { mimeFacets } from './mime.store';
 import {
-  askBackendConfig,
   combinedFilterExpression,
   combinedFilters,
   creationEnd,
@@ -81,6 +80,7 @@ import {
   pendingResults,
   rangeCreationISO,
   resultList,
+  searchConfigId,
   searchFilters,
   searchQuery,
   searchState,
@@ -492,7 +492,7 @@ export function askQuestion(
         rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
-        askBackendConfig.pipe(take(1)),
+        searchConfigId.pipe(take(1)),
       ]),
     ),
     switchMap(
@@ -504,12 +504,9 @@ export function askQuestion(
         rangeCreation,
         disableRAG,
         extra_context_images,
-        backendConfig,
+        search_configuration,
       ]) => {
-        if (backendConfig) {
-          // if backend config is et, it takes precedence over everything else
-          options = backendConfig;
-        }
+        options.search_configuration = search_configuration;
         return (
           disableRAG
             ? getAnswerWithoutRAG(question, entries, options)
