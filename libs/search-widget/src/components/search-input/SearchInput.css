@@ -37,7 +37,7 @@
       left: var(--rhythm-1_5);
       position: absolute;
       top: calc(var(--rhythm-1_5) * -1 + var(--rhythm-0_25));
-      width: var(--rhythm-7);
+      width: var(--rhythm-14);
       z-index: 0;
     }
 
@@ -56,7 +56,7 @@
       width: var(--rhythm-1);
     }
     &:after {
-      left: var(--rhythm-9);
+      left: var(--rhythm-16);
       right: -1px;
     }
 
