@@ -75,7 +75,7 @@ app-root {
   width: 100px;
   height: 100px;
   box-sizing: border-box;
-  border: 10px solid var(--custom-color-primary-regular, #f5316e);
+  border: 10px solid var(--custom-color-primary-regular, #2b2bb2);
   border-bottom-color: transparent;
   border-radius: 50%;
 }
