@@ -33,35 +33,6 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
-  betaProcessings = ['table', 'invoice', 'visual-llm'];
-  processings = forkJoin([
-    this.features.unstable.tableProcessing.pipe(take(1)),
-    this.features.unstable.aiTableProcessing.pipe(take(1)),
-    this.features.unstable.invoiceProcessing.pipe(take(1)),
-    this.features.unstable.blanklineSplitter.pipe(take(1)),
-    this.features.unstable.visualLLMProcessing.pipe(take(1)),
-  ]).pipe(
-    map(([table, aitable, invoice, blankline, visualLLM]) => {
-      const processings: string[] = [];
-      if (table) {
-        processings.push('table');
-      }
-      if (aitable) {
-        processings.push('aitable');
-      }
-      if (invoice) {
-        processings.push('invoice');
-      }
-      if (blankline) {
-        processings.push('blankline');
-      }
-      if (visualLLM) {
-        processings.push('visual-llm');
-      }
-      return processings;
-    }),
-  );
-  processing = 'none';
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
@@ -154,18 +125,6 @@ export class UploadFilesComponent {
       if (this.splitStrategy) {
         labelledFiles.forEach((file) => {
           file.split = this.splitStrategy;
-        });
-      }      
-      if (this.processing !== 'none') {
-        labelledFiles.forEach((file) => {
-          if ((this.processing !== 'blankline' || file.type === 'text/plain') && this.processing !== 'visual-llm') {
-            file.contentType = `${file.type}+${this.processing}`;
-          }
-          if (this.processing === 'visual-llm') {
-            // Temporary, at the moment the visual-llm processing is hard-coded in backend.
-            // Specific processings will be managed in nucliadb soon.
-            file.processing = 'vllm_extract';
-          }
         });
       }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);

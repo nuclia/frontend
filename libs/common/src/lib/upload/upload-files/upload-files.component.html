@@ -119,46 +119,6 @@
             [(extractConfig)]="extractStrategy"
             [(splitConfig)]="splitStrategy"
             [onlyExtract]="!(spitConfigEnabled | async)"></app-extraction-select>
-        } @else {
-          <div>
-            <label
-              class="title-s"
-              for="processing-radio-group">
-              {{ 'upload.advanced.processing.title' | translate }}
-            </label>
-            <p>{{ 'upload.advanced.processing.help' | translate }}</p>
-            <pa-radio-group
-              name="processing"
-              id="processing-radio-group"
-              [(value)]="processing"
-              noBackground>
-              <pa-radio value="none">
-                {{ 'upload.advanced.processing.none.label' | translate }}
-              </pa-radio>
-              @for (processingId of processings | async; track processingId) {
-                <div [class.beta-option]="betaProcessings.includes(processingId)">
-                  <pa-radio
-                    [value]="processingId"
-                    [help]="'upload.advanced.processing.' + processingId + '.help'">
-                    {{ 'upload.advanced.processing.' + processingId + '.label' | translate }}
-                  </pa-radio>
-                  @if (betaProcessings.includes(processingId)) {
-                    <nsi-badge kind="tertiary">BETA</nsi-badge>
-                  }
-                </div>
-                @if (
-                  (processingId === 'aitable' && processing === 'aitable') ||
-                  (processingId === 'visual-llm' && processing === 'visual-llm')
-                ) {
-                  <nsi-info-card
-                    type="warning"
-                    icon="warning">
-                    <div [innerHTML]="'upload.advanced.processing.' + processingId + '.warning' | translate"></div>
-                  </nsi-info-card>
-                }
-              }
-            </pa-radio-group>
-          </div>
         }
       </pa-expander-body>
     </pa-expander>
