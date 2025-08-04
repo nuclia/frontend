@@ -7,14 +7,13 @@ try {
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
 const TITLE_REGEX = /<title>([^<>]+?)<\/title>/;
 const IMG_REGEX = /<img[^<>]+?src\=["|'](.+?)["|'][^<>]*?>/gi;
-const RETRIEVAL_ERROR = 'RETRIEVAL_ERROR';
 
 const MENU_TYPES = [
   {
-    name: 'LINK',
+    name: 'PAGE',
     options: {
-      targetUrlPatterns: ['https://*/*'],
-      contexts: ['link'],
+      contexts: ['page'],
+      documentUrlPatterns: ['https://*/*', 'http://*/*'],
     },
   },
 ];
@@ -77,7 +76,7 @@ function createSubmenus(labelsets, type) {
   });
 }
 
-chrome.contextMenus.onClicked.addListener((info) => {
+chrome.contextMenus.onClicked.addListener((info, tab) => {
   getSettings().then((settings) => {
     if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.ZONE && settings.NUCLIA_TOKEN) {
       let labels = [];
@@ -87,16 +86,29 @@ chrome.contextMenus.onClicked.addListener((info) => {
           label: info.menuItemId.split(info.parentMenuItemId + '_')[1],
         });
       }
-      if (info.linkUrl) {
-        const url = info.linkUrl;
-        uploadSingleLink(settings, url, labels);
-        createMenu(); // Keep menu in sync with actual labelsets each time a link is uploaded
+      if (tab && tab.id !== chrome.tabs.TAB_ID_NONE) {
+        return getCurrentTabContent(tab.id).then((html) => {
+          const url = info.pageUrl;
+          uploadPage(settings, url, html, labels);
+          createMenu(); // Keep menu in sync with actual labelsets each time a page is uploaded
+        });
+      } else {
+        showNotification('Upload Failed', `The page could not be uploaded.`, true);
       }
     } else {
       openOptionsPage();
     }
   });
 });
+
+function getCurrentTabContent(tabId) {
+  return chrome.scripting
+    .executeScript({
+      target: { tabId },
+      func: () => document.documentElement.outerHTML,
+    })
+    .then((data) => data[0].result);
+}
 
 function getLabels(settings) {
   return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
@@ -112,66 +124,24 @@ function getLabels(settings) {
     );
 }
 
-function uploadSingleLink(settings, url, labels) {
-  getMIME(url)
+function uploadPage(settings, url, html, labels) {
+  replaceImages(html, url)
     .pipe(
-      rxjs.switchMap((mime) =>
-        mime === 'text/html' ? uploadHTML(settings, url, labels) : uploadCloudFile(settings, url, labels, mime),
-      ),
+      rxjs.switchMap((html) => {
+        const matches = html.match(TITLE_REGEX);
+        const title = matches ? matches[1] : url;
+        return createResource(settings, title, new Blob([html]), labels, 'text/html');
+      }),
     )
     .subscribe({
       complete: () => {
         url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
-        showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
+        showNotification('Page uploaded to Nuclia', `${url} has been uploaded`);
       },
-      error: (error) => {
-        if (error === RETRIEVAL_ERROR) {
-          showNotification('Upload failed', `An error occurred while uploading ${url}`, true);
-        } else {
-          // Otherwise it's a autentication/settings problem
-          openOptionsPage();
-        }
+      error: () => {
+        openOptionsPage();
       },
     });
-}
-
-function uploadHTML(settings, url, labels) {
-  return rxjs
-    .from(
-      fetch(url).then(
-        (response) => (response.ok ? response.text() : Promise.reject(RETRIEVAL_ERROR)),
-        () => Promise.reject(RETRIEVAL_ERROR),
-      ),
-    )
-    .pipe(
-      rxjs.switchMap((body) => replaceImages(body, url)),
-      rxjs.switchMap((body) => {
-        const matches = body.match(TITLE_REGEX);
-        const title = matches ? matches[1] : url;
-        return createResource(settings, title, new Blob([body]), labels, 'text/html');
-      }),
-    );
-}
-
-function getMIME(url) {
-  return rxjs.from(
-    fetch(url, { method: 'HEAD' }).then(
-      (response) =>
-        response.ok ? (response.headers.get('Content-Type') || '').split(';')[0] : Promise.reject(RETRIEVAL_ERROR),
-      () => Promise.reject(RETRIEVAL_ERROR),
-    ),
-  );
-}
-
-function uploadCloudFile(settings, url, labels, mime) {
-  return rxjs
-    .from(
-      fetch(url).then(
-        (response) => (response.ok ? response.arrayBuffer() : Promise.reject(RETRIEVAL_ERROR)),
-        () => Promise.reject(RETRIEVAL_ERROR),
-      ),
-    )
-    .pipe(rxjs.switchMap((arrayBuffer) => createResource(settings, url, arrayBuffer, labels, mime)));
 }
 
 function createResource(settings, title, fileData, labels, mime) {
