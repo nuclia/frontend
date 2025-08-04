@@ -11,7 +11,7 @@
   // z-index
   --app-zindex-topbar: 1000;
 
-  --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{variables.rhythm(12)} + #{variables.rhythm(1)}));
+  --app-topbar-logo-width: var(--custom-topbar-logo-width, #{variables.rhythm(12)});
 }
 
 html,
