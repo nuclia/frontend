@@ -104,11 +104,6 @@ export const upload = (
   }
   if ((data as FileWithMetadata).processing) {
     metadata.processing = (data as FileWithMetadata).processing;
-    // TO BE REMOVED WHEN EXTRACT STRATEGIES ARE ON PROD
-    // TUS is not supported for visual-llm processing
-    if (metadata.processing === 'vllm_extract') {
-      TUS = false;
-    }
   }
   if ((data as FileWithMetadata).split) {
     metadata.split = (data as FileWithMetadata).split;
