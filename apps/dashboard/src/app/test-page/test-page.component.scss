@@ -1,8 +1,10 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .topbar {
+  align-items: center;
   background-color: $color-light-stronger;
   border-bottom: 1px solid $color-neutral-light;
+  display: flex;
   height: var(--app-topbar-height);
   left: 0;
   padding-left: var(--app-layout-padding-left);
@@ -11,8 +13,7 @@
   width: 100%;
   z-index: 1;
   .logo {
-    margin-top: rhythm(2);
-    width: rhythm(14);
+    width: rhythm(12);
   }
 }
 
