@@ -5,4 +5,11 @@
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   <app-config-block [config]="mcpConfig()"></app-config-block>
+
+  <app-connectable-entry
+    id="fallback"
+    category="context"
+    [nodeId]="id">
+    {{ 'retrieval-agents.workflow.connectable-entry.fallback' | translate }}
+  </app-connectable-entry>
 </app-node-box>
