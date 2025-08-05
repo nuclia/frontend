@@ -35,6 +35,7 @@
 
     .logo {
       left: var(--rhythm-1_5);
+      max-height: var(--rhythm-2);
       position: absolute;
       top: calc(var(--rhythm-1_5) * -1 + var(--rhythm-0_25));
       width: var(--rhythm-14);
