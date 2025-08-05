@@ -22,6 +22,7 @@ import {
   GenerateAgent,
   PostprocessAgent,
   PreprocessAgent,
+  McpAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
@@ -236,7 +237,7 @@ export class WorkflowService {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
     const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true, childIndex);
-    if (agent.module === 'ask') {
+    if (agent.module === 'ask' ) {
       const askAgent = agent as AskAgent;
       if (askAgent.fallback) {
         const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
@@ -245,7 +246,18 @@ export class WorkflowService {
         }
         this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
       }
-    } else if (isCondionalNode(agent.module)) {
+    } 
+    else if (agent.module === 'mcp') {
+      const mcpAgent = agent as McpAgent;
+      if (mcpAgent.fallback) {
+        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
+        if (!entry) {
+          throw new Error(`No 'fallback' entry found on MCP node ${nodeRef.instance.id}`);
+        }
+        this.createNodeFromSavedWorkflow(entry, nodeCategory, mcpAgent.fallback, columnIndex + 1);
+      }
+    } 
+    else if (isCondionalNode(agent.module)) {
       const conditionalAgent = agent as unknown as BaseConditionalAgentCreation;
       this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
       this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);

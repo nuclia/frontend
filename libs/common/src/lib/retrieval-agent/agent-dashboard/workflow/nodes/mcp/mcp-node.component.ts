@@ -1,15 +1,20 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { switchMap, take } from 'rxjs';
-import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import {
+  ConfigBlockComponent,
+  ConfigBlockItem,
+  ConnectableEntryComponent,
+  NodeBoxComponent,
+  NodeDirective,
+} from '../../basic-elements';
 import { McpAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-mcp-node',
-  imports: [ConfigBlockComponent, NodeBoxComponent, TranslateModule],
+  imports: [ConfigBlockComponent, ConnectableEntryComponent, NodeBoxComponent, TranslateModule],
   templateUrl: './mcp-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
