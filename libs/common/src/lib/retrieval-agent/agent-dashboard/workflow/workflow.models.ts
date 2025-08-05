@@ -242,6 +242,7 @@ export interface AskAgentUI extends CommonAgentConfig {
 export interface McpAgentUI extends CommonAgentConfig {
   source: string;
   transport: 'SSE' | 'STDIO';
+  fallback?: BaseContextAgent | null;
 }
 
 export interface BaseConditionalAgentUI extends CommonAgentConfig {
