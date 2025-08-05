@@ -236,7 +236,7 @@ export class WorkflowService {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
     const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true, childIndex);
-    if (agent.module === 'ask') {
+    if (agent.module === 'ask' || agent.module === 'mcp') {
       const askAgent = agent as AskAgent;
       if (askAgent.fallback) {
         const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
