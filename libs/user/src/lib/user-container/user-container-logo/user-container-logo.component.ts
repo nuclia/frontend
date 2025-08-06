@@ -9,5 +9,5 @@ import { BackendConfigurationService } from '@flaps/core';
 })
 export class UserContainerLogoComponent {
   private backendConfig = inject(BackendConfigurationService);
-  assetsPath = this.backendConfig.getAssetsPath();
+  logoPath = this.backendConfig.getLogoPath();
 }

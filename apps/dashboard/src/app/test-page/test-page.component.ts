@@ -20,7 +20,7 @@ export class TestPageComponent {
   widgetPreview = this.searchWidgetService.widgetPreview;
   kb = this.sdk.currentKb;
   private backendConfig = inject(BackendConfigurationService);
-  assetsPath = this.backendConfig.getAssetsPath();
+  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
 
   selected?: string;

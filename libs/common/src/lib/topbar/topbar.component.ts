@@ -62,7 +62,7 @@ export class TopbarComponent {
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
-  assetsPath = this.backendConfig.getAssetsPath();
+  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
 
   constructor(

@@ -12,6 +12,6 @@ import { BackendConfigurationService } from '@flaps/core';
 export class PageNotFoundComponent {
   baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
   private backendConfig = inject(BackendConfigurationService);
-  assetsPath = this.backendConfig.getAssetsPath();
+  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
 }

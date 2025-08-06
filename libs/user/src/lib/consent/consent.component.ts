@@ -15,7 +15,7 @@ export class ConsentComponent implements OnInit {
   consentData: OAuthConsentData | undefined;
   error: string | null = null;
   private backendConfig = inject(BackendConfigurationService);
-  assetsPath = this.backendConfig.getAssetsPath();
+  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
 
   @ViewChild('form') form: ElementRef | undefined;
