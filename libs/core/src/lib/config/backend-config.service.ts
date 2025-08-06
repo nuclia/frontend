@@ -68,6 +68,10 @@ export class BackendConfigurationService {
     return this.config.backend.assetsPath || 'assets';
   }
 
+  getLogoPath(): string {
+    return `${this.getAssetsPath()}/logos/logo.svg?version=${this.getVersion()}`;
+  }
+
   getBrandName(): string {
     return this.config.backend.brand_name || 'Nuclia';
   }
