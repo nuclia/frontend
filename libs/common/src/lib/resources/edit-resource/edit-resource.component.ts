@@ -58,7 +58,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
                 : field.field_type,
           hasError:
             !!resource &&
-            getErrors(field, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR).length > 0,
+            getErrors(field, resource).length > 0,
         })),
     ),
   );

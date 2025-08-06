@@ -33,11 +33,11 @@ import {
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  DATA_AUGMENTATION_ERROR,
   getErrors,
   getMessages,
   getParagraphsWithImages,
   getTotalMessagePages,
+  getWarnings,
   ParagraphWithTextAndClassifications,
   ParagraphWithTextAndImage,
   Thumbnail,
@@ -88,7 +88,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   loaded = false;
   loadingPreview = false;
   errors: IError[] = [];
-  dataAugmentationErrors: IError[] = [];
+  warnings: IError[] = [];
 
   resource: Observable<Resource> = this.editResource.resource.pipe(
     filter((resource) => !!resource),
@@ -238,10 +238,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .subscribe(({ fieldId, resource, messages }) => {
         this.messages.next(messages);
         this.currentFieldId = fieldId;
-        this.errors = getErrors(fieldId, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR);
-        this.dataAugmentationErrors = getErrors(fieldId, resource).filter(
-          (error) => error.code_str === DATA_AUGMENTATION_ERROR,
-        );
+        this.errors = getErrors(fieldId, resource);
+        this.warnings = getWarnings(fieldId, resource);
         this.selectedTab = 'content';
         this.paragraphService.initParagraphs(fieldId, resource, messages || undefined);
         this.loaded = true;
@@ -350,7 +348,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   openWarnings() {
     return this.modalService.openModal(
       WarningModalComponent,
-      new ModalConfig({ data: { errors: this.dataAugmentationErrors } }),
+      new ModalConfig({ data: { errors: this.warnings } }),
     );
   }
 }

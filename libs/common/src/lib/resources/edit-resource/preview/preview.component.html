@@ -340,15 +340,13 @@
           {{ 'resource.preview.open-viewer' | translate }}
         </pa-button>
       }
-      @if (dataAugmentationErrors.length > 0) {
+      @if (warnings.length > 0) {
         <pa-button
           aspect="basic"
           kind="destructive"
           (click)="openWarnings()">
-          {{ dataAugmentationErrors.length }}
-          {{
-            (dataAugmentationErrors.length === 1 ? 'resource.warning.warning' : 'resource.warning.warnings') | translate
-          }}
+          {{ warnings.length }}
+          {{ (warnings.length === 1 ? 'resource.warning.warning' : 'resource.warning.warnings') | translate }}
         </pa-button>
       }
     </div>
