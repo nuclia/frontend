@@ -17,12 +17,12 @@
   --color-primary-lighter: var(--custom-color-primary-lighter, hsl(252, 100%, 90%));
   --color-primary-lightest: var(--custom-color-primary-lightest, hsl(252, 100%, 96%));
 
-  --color-secondary-stronger: hsl(315, 78%, 32%);
-  --color-secondary-strong: hsl(315, 100%, 41%);
-  --color-secondary-regular: hsl(315, 100%, 55%);
-  --color-secondary-light: hsl(315, 100%, 75%);
-  --color-secondary-lighter: hsl(315, 100%, 86%);
-  --color-secondary-lightest: hsl(315, 100%, 95%);
+  --color-secondary-stronger: hsl(49, 100%, 30%);
+  --color-secondary-strong: hsl(49, 100%, 40%);
+  --color-secondary-regular: hsl(49, 100%, 60%);
+  --color-secondary-light: hsl(49, 100%, 80%);
+  --color-secondary-lighter: hsl(49, 100%, 90%);
+  --color-secondary-lightest: hsl(49, 100%, 95%);
 
   --color-tertiary-stronger: hsl(2251, 100%, 24%);
   --color-tertiary-strong: hsl(2251, 100%, 40%);
