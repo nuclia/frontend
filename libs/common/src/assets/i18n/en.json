@@ -1269,6 +1269,7 @@
 	"retrieval-agents.workflow.errors.save-agent": "An error occurred while saving the node.",
 	"retrieval-agents.workflow.missing-configuration": "Missing configuration",
 	"retrieval-agents.workflow.node-types.ask.description": "Nuclia ask agent",
+	"retrieval-agents.workflow.node-types.ask.form.customize-parameters": "Customize parameters",
 	"retrieval-agents.workflow.node-types.ask.form.filters.help": "List of simple filters, one filter expression per line",
 	"retrieval-agents.workflow.node-types.ask.form.filters.info": "Filters format <a href=\"https://docs.stashify.cloud/docs/rag/advanced/search-filters#filters\" target=\"_blank\">documented here</a>",
 	"retrieval-agents.workflow.node-types.ask.form.filters.label": "Filters",

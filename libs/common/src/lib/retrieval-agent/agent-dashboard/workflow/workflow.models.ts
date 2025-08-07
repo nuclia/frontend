@@ -237,6 +237,7 @@ export interface AskAgentUI extends CommonAgentConfig {
   vllm: boolean;
   query_entities?: { name: string; type?: string; subtype?: string }[];
   retrieve_related?: string;
+  ai_parameter_search?: boolean;
 }
 
 export interface McpAgentUI extends CommonAgentConfig {
