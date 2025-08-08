@@ -37,6 +37,7 @@ import {
 } from '@flaps/common';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
 import { STFPipesModule } from '@flaps/core';
+import { NucliaTokensComponent } from '../account/nuclia-tokens';
 
 @NgModule({
   imports: [
@@ -76,6 +77,7 @@ import { STFPipesModule } from '@flaps/core';
     PaTableModule,
     STFPipesModule,
     RangeChartComponent,
+    NucliaTokensComponent,
   ],
   declarations: [
     KnowledgeBoxComponent,
