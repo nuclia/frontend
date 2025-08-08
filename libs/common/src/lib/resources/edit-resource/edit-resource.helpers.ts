@@ -19,6 +19,7 @@ import {
   ConversationFieldPages,
   longToShortFieldType,
   IFieldData,
+  SEVERITY,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { forkJoin, map, Observable, of } from 'rxjs';
@@ -86,6 +87,18 @@ export const getConversationParagraphs = (fieldId: FieldId, resource: Resource, 
 };
 
 export function getErrors(fieldId: FieldId, resource: Resource): IError[] {
+  return _getErrors(fieldId, resource).filter(
+    (error) => error.severity === SEVERITY.ERROR && error.code_str !== DATA_AUGMENTATION_ERROR,
+  );
+}
+
+export function getWarnings(fieldId: FieldId, resource: Resource): IError[] {
+  return _getErrors(fieldId, resource).filter(
+    (error) => error.severity === SEVERITY.WARNING || error.code_str === DATA_AUGMENTATION_ERROR,
+  );
+}
+
+function _getErrors(fieldId: FieldId, resource: Resource): IError[] {
   const dataKey = getDataKeyFromFieldType(fieldId.field_type);
   if (!dataKey || !resource.data[dataKey]) {
     return [];
@@ -448,10 +461,15 @@ export function getTotalMessagePages(fieldId: FieldId, resource: Resource): numb
   return (resource.data['conversations']?.[fieldId.field_id]?.value as ConversationFieldPages)?.pages || 0;
 }
 
-export function getMessages(fieldId: FieldId, resource: Resource, pageStart: number, pageEnd?: number): Observable<Message[] | null> {
-  let pages = [pageStart]
+export function getMessages(
+  fieldId: FieldId,
+  resource: Resource,
+  pageStart: number,
+  pageEnd?: number,
+): Observable<Message[] | null> {
+  let pages = [pageStart];
   if (pageEnd !== undefined && pageEnd > pageStart) {
-    for (let i = pageStart + 1; i<=pageEnd; i++) {
+    for (let i = pageStart + 1; i <= pageEnd; i++) {
       pages.push(i);
     }
   }
