@@ -1,8 +1,10 @@
 <div>
-  <div class="total title-m">
-    <span>{{ 'account.nuclia-tokens.tokens-consumed' | translate }}:&nbsp;</span>
-    <strong>{{ totalTokens | async | number: digitsInfo }}</strong>
-  </div>
+  @if ((usageSubject | async)?.['account']) {
+    <div class="total title-m">
+      <span>{{ 'account.nuclia-tokens.tokens-consumed' | translate }}:&nbsp;</span>
+      <strong>{{ totalTokens | async | number: digitsInfo }}</strong>
+    </div>
+  }
   <div class="header">
     <div class="title-m">
       <pa-icon name="chart"></pa-icon>
@@ -11,18 +13,15 @@
     <div class="selectors">
       @if (((periods | async) || []).length > 0 && selectedPeriod) {
         <div class="select">
-          <pa-select
-            [value]="selectedPeriod.start.toString()">
-            @for (period of ((periods | async) || []); track period.start.toString()) {
+          <pa-select [value]="selectedPeriod.start.toString()">
+            @for (period of (periods | async) || []; track period.start.toString()) {
               <pa-option
                 [value]="period.start.toString()"
-                (selectOption)="selectPeriod.emit(period); loading = true"
-                >
+                (selectOption)="selectPeriod.emit(period); loading = true">
                 @if (isSubscribedToStripe | async) {
                   {{ period.start | date: 'MMM d, y' }} - {{ period.end | date: 'MMM d, y' }}
-                }
-                @else {
-                  {{ period.start | date: 'MMMM y' }} 
+                } @else {
+                  {{ period.start | date: 'MMMM y' }}
                 }
               </pa-option>
             }
@@ -43,12 +42,13 @@
         </div>
       }
     </div>
-
   </div>
   @if (!loading) {
     @let groups = visibleGroups | async;
     @if ((groups || []).length > 0) {
-      <pa-accordion [allowMultipleExpanded]="true">
+      <pa-accordion
+        [allowMultipleExpanded]="true"
+        [small]="small">
         @for (group of groups; track group.title) {
           <pa-accordion-item
             [id]="group.title"

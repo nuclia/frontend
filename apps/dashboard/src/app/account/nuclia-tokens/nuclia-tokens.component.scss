@@ -8,10 +8,10 @@
 }
 
 .header {
-  align-items: flex-end;
+  align-items: flex-start;
   display: flex;
   justify-content: space-between;
-  margin-bottom: rhythm(3);
+  margin-bottom: rhythm(2);
   pa-icon {
     margin-right: rhythm(1);
   }

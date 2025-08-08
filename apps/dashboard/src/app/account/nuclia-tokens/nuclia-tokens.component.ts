@@ -84,18 +84,26 @@ export class NucliaTokensComponent implements OnDestroy {
       this.loading = false;
     }
   }
+  @Input() set kb(value: string | undefined) {
+    if (value) {
+      this.selectedKb.next(value);
+    }
+  }
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
+  @Input() small: boolean = false;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
   loading = true;
   digitsInfo = '1.0-0';
-  kbList = this.sdk.kbList;
   selectedKb = new BehaviorSubject<string>('account');
   usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
   isSubscribedToStripe = this.metrics.isSubscribedToStripe;
+  kbList = combineLatest([this.sdk.kbList, this.usageSubject]).pipe(
+    map(([kbs, usage]) => kbs.filter((kb) => Object.keys(usage).includes(kb.id))),
+  );
   periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
     map(([isSubscribed, period]) =>
       isSubscribed ? this.metrics.getLastStripePeriods(period, 6) : this.metrics.getLastMonths(6),

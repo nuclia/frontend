@@ -217,6 +217,16 @@
             </pa-table>
           </nsi-home-container>
         }
+        @if (isAccountManager | async) {
+          <nsi-home-container>
+            <app-nuclia-tokens
+              [usage]="(usage | async) || undefined"
+              [kb]="(currentKb | async)?.id"
+              [small]="true"
+              [selectedPeriod]="selectedPeriod | async"
+              (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
+          </nsi-home-container>
+        }
       </div>
 
       <div class="column-container">
