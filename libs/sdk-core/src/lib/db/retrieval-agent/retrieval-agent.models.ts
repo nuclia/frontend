@@ -259,6 +259,7 @@ export interface AskAgentCreation {
   retrieve_related?: string;
   configuration_model?: string;
   configuration_json_model?: string;
+  ai_parameter_search?: boolean;
 }
 
 export interface BaseConditionalAgentCreation {

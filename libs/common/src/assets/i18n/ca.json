@@ -1258,6 +1258,7 @@
 	"retrieval-agents.workflow.errors.save-agent": "S'ha produït un error en desar el node.",
 	"retrieval-agents.workflow.missing-configuration": "Falta la configuració",
 	"retrieval-agents.workflow.node-types.ask.description": "Nuclia pregunta a l'agent",
+	"retrieval-agents.workflow.node-types.ask.form.customize-parameters": "Personalitza els paràmetres",
 	"retrieval-agents.workflow.node-types.ask.form.filters.help": "Llista de filtres simples, una expressió de filtre per línia",
 	"retrieval-agents.workflow.node-types.ask.form.filters.info": "Format dels filtres <a href=\"https://docs.stashify.cloud/docs/rag/advanced/search-filters#filters\" target=\"_blank\">documentat aquí</a>",
 	"retrieval-agents.workflow.node-types.ask.form.filters.label": "Filtres",

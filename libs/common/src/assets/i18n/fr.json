@@ -1258,6 +1258,7 @@
 	"retrieval-agents.workflow.errors.save-agent": "Une erreur s'est produite lors de l'enregistrement du nœud.",
 	"retrieval-agents.workflow.missing-configuration": "Configuration manquante",
 	"retrieval-agents.workflow.node-types.ask.description": "Agent Nuclia ask",
+	"retrieval-agents.workflow.node-types.ask.form.customize-parameters": "Personnaliser les paramètres",
 	"retrieval-agents.workflow.node-types.ask.form.filters.help": "Liste de filtres simples, une expression de filtre par ligne",
 	"retrieval-agents.workflow.node-types.ask.form.filters.info": "Format des filtres <a href=\"https://docs.stashify.cloud/docs/rag/advanced/search-filters#filters\" target=\"_blank\">documenté ici</a>",
 	"retrieval-agents.workflow.node-types.ask.form.filters.label": "Filtres",
