@@ -424,7 +424,7 @@ export class Resource extends ReadableResource implements IResource {
    * Run tasks on the resource and return the results
    * (the results are not stored within the resource).
    */
-  runTasks(agents_ids?: string[]) {
-    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { agents_ids }, undefined, undefined, true);
+  runTasks(agent_ids?: string[]) {
+    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { agent_ids }, undefined, undefined, true);
   }
 }
