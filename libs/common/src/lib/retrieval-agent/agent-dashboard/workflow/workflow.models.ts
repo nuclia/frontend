@@ -182,6 +182,7 @@ export interface RephraseAgentUI extends CommonAgentConfig {
   synonyms: boolean;
   history: boolean;
   userInfo: boolean;
+  split_question: boolean;
 }
 
 export interface InternetAgentUI extends CommonAgentConfig {
@@ -323,6 +324,7 @@ export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
     extend: uiConfig.extend || false,
     synonyms: uiConfig.synonyms || false,
     history: uiConfig.history || false,
+    split_question: uiConfig.split_question || false,
   };
 }
 export function askUiToCreation(config: AskAgentUI): AskAgentCreation {

@@ -179,6 +179,7 @@ export interface RephraseAgentCreation {
   session_info?: boolean;
   history?: boolean;
   model?: string;
+  split_question?: boolean;
 }
 
 export interface SqlAgentCreation {

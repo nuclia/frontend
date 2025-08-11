@@ -36,6 +36,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),
+      split_question: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
       // TODO manage rids and labels
     }),

@@ -50,6 +50,12 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.user-info.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.user-info.label' | translate }}
     </pa-toggle>
+    <pa-toggle
+      formControlName="split_question"
+      withBackground
+      [help]="'retrieval-agents.workflow.node-types.rephrase.form.split-question.help' | translate">
+      {{ 'retrieval-agents.workflow.node-types.rephrase.form.split-question.label' | translate }}
+    </pa-toggle>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>

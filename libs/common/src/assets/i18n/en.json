@@ -1372,6 +1372,8 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "History",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.label": "Rephrasing prompt",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.placeholder": "Prompt",
+	"retrieval-agents.workflow.node-types.rephrase.form.split-question.help": "Split the question into sub-questions",
+	"retrieval-agents.workflow.node-types.rephrase.form.split-question.label": "Question split",
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.help": "Match synonyms",
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.label": "Synonyms",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.help": "Include information about the user",
