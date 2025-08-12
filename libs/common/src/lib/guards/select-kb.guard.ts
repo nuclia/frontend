@@ -25,14 +25,13 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   );
 
   const zoneList = selectService.standalone ? of([]) : zoneService.getZones();
+  const aragList = selectService.standalone ? of([]) : sdk.aragList;
 
   return accountSlug
     ? zoneList.pipe(
         switchMap((zones) =>
           isListReady.pipe(
-            switchMap(() =>
-              combineLatest([sdk.kbList, sdk.aragList]).pipe(map(([kbs, arags]) => ({ kbs, arags, zones }))),
-            ),
+            switchMap(() => combineLatest([sdk.kbList, aragList]).pipe(map(([kbs, arags]) => ({ kbs, arags, zones })))),
           ),
         ),
         switchMap(({ kbs, arags, zones }) => {
