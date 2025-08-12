@@ -49,7 +49,7 @@ import { UserKeysComponent, UserKeysForm } from '../../ai-models';
 import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../tasks-automation.models';
 import { RouterModule } from '@angular/router';
 
-const DEFAULT_CHEAP_LLM = 'gemini-1-5-flash';
+const DEFAULT_CHEAP_LLM = 'gemini-2.5-flash-lite';
 
 export interface TaskFormCommonConfig {
   name: string;
