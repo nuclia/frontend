@@ -328,6 +328,7 @@ export class SDKService {
   }
 
   private _refreshAragList(refreshCurrentRa = false) {
+    this._refreshingAragList.next(true);
     this.currentAccount
       .pipe(
         take(1),

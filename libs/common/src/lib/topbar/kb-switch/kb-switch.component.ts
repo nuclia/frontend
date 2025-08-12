@@ -24,7 +24,7 @@ export class KbSwitchComponent implements OnDestroy {
   arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
   showKbSelector: Observable<boolean> = this.standalone
     ? of(true)
-    : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length > 1 || arags.length > 1));
+    : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length + arags.length > 1));
 
   constructor(
     private sdk: SDKService,
