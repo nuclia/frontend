@@ -1358,6 +1358,8 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historique",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.label": "Prompt de reformulation",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.placeholder": "Prompt",
+	"retrieval-agents.workflow.node-types.rephrase.form.split-question.help": "Divisez la question en sous-questions",
+	"retrieval-agents.workflow.node-types.rephrase.form.split-question.label": "Question divisée",
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.help": "Associer des synonymes",
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.label": "Synonymes",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.help": "Inclure des informations sur l'utilisateur",
