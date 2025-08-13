@@ -155,17 +155,15 @@ export const testAgentAnswersByCategory = computed(() => {
   categories.forEach((category) => {
     let previousAnswer: AragAnswerUi | undefined;
     sortedAnswers[category].forEach((answer) => {
-      if (!previousAnswer || previousAnswer.context) {
+      if (!previousAnswer || previousAnswer.context || answer.module !== previousAnswer.module) {
         previousAnswer = aragAnswerToUi(answer);
         answersByCat[category].push(previousAnswer);
       } else {
         // grouping steps of a same module together
-        if (answer.module === previousAnswer.module) {
-          if (answer.step) {
-            previousAnswer.steps.push(answer.step);
-          } else if (answer.context) {
-            previousAnswer.context = answer.context;
-          }
+        if (answer.step) {
+          previousAnswer.steps.push(answer.step);
+        } else if (answer.context) {
+          previousAnswer.context = answer.context;
         }
       }
     });
