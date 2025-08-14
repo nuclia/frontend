@@ -25,14 +25,6 @@
       {{ 'generic.switch_account' | translate }}
     </pa-option>
   }
-  @if ((hasOwnAccount | async) === false) {
-    <pa-separator></pa-separator>
-    <pa-option
-      icon="account"
-      (click)="createAccount()">
-      {{ 'generic.create_account' | translate }}
-    </pa-option>
-  }
   @if (!standalone && (isAccountManager | async) === true) {
     <pa-option
       data-cy="go-to-manage-account"

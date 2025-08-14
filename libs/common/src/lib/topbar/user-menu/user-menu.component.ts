@@ -9,7 +9,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AvatarModel,
   PaAvatarModule,
@@ -49,7 +49,6 @@ export class UserMenuComponent implements OnDestroy {
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
-  hasOwnAccount = this.userService.hasOwnAccount;
   standalone = this.sdk.nuclia.options.standalone;
 
   private unsubscribeAll = new Subject<void>();
@@ -57,7 +56,6 @@ export class UserMenuComponent implements OnDestroy {
   constructor(
     private router: Router,
     private navigation: NavigationService,
-    private userService: UserService,
     private sdk: SDKService,
     private features: FeaturesService,
     private cdr: ChangeDetectorRef,
@@ -97,11 +95,6 @@ export class UserMenuComponent implements OnDestroy {
 
   goToSupport() {
     window.open('https://github.com/nuclia/support', '_blank', 'noopener,noreferrer');
-  }
-
-  createAccount() {
-    this.close.emit();
-    this.router.navigate(['/user/onboarding']);
   }
 
   goToManageAccount() {
