@@ -1,11 +1,11 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Driver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
+import { Driver, LearningConfigurationOption, McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -15,6 +15,7 @@ import { aragUrl } from '../../workflow.state';
 @Component({
   selector: 'app-mcp-form',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     PaButtonModule,
     PaTextFieldModule,
@@ -22,8 +23,8 @@ import { aragUrl } from '../../workflow.state';
     TranslateModule,
     ConfigurationFormComponent,
     RulesFieldComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './mcp-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +36,8 @@ export class McpFormComponent extends FormDirective implements OnInit {
     mcp: new FormGroup({
       transport: new FormControl<'SSE' | 'STDIO' | ''>('', { nonNullable: true, validators: [Validators.required] }),
       source: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      tool_choice_model: new FormControl<string>('', { nonNullable: true }),
+      summarize_model: new FormControl<string>('', { nonNullable: true }),
       rules: new FormArray<FormControl<string>>([]),
     }),
   });
@@ -62,6 +65,15 @@ export class McpFormComponent extends FormDirective implements OnInit {
   });
   noSseDriver = signal(false);
   noStdioDriver = signal(false);
+
+  unsupportedModels = ['generative-multilingual-2023'];
+  private models = signal<LearningConfigurationOption[]>([]);
+  toolModels = computed(() =>
+    this.models().map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+  );
+  summarizeModels = computed(() =>
+    this.models().map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+  );
 
   ngOnInit(): void {
     this.sdk.currentArag
@@ -91,8 +103,18 @@ export class McpFormComponent extends FormDirective implements OnInit {
         },
         error: () => this.toaster.error('retrieval-agents.workflow.errors.loading-drivers'),
       });
-  }
 
+    this.sdk.currentArag
+      .pipe(
+        take(1),
+        switchMap((arag) => arag.getLearningSchema()),
+      )
+      .subscribe((schema) => {
+        this.models.set(
+          (schema?.['generative_model'].options || []).filter((model) => !this.unsupportedModels.includes(model.value)),
+        );
+      });
+  }
   onTransportChange(transport: 'SSE' | 'STDIO' | '') {
     this.sourceControl.patchValue('');
     this.transport.set(transport);
