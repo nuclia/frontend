@@ -1343,6 +1343,8 @@
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Créer un pilote MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "Il n'y a pas de pilote MCP {{transport}} enregistré, vous devez en créer un avant d'ajouter ce type de nœud.",
 	"retrieval-agents.workflow.node-types.mcp.form.source": "Source",
+	"retrieval-agents.workflow.node-types.mcp.form.summarize-model": "Modèle de résumé",
+	"retrieval-agents.workflow.node-types.mcp.form.tool-choice-model": "Modèle de choix d'outils",
 	"retrieval-agents.workflow.node-types.mcp.form.transport": "Transport",
 	"retrieval-agents.workflow.node-types.mcp.title": "Protocole de contexte modèle (MCP)",
 	"retrieval-agents.workflow.node-types.postprocess_alinia.description": "Ajouter une protection de sortie LLM",

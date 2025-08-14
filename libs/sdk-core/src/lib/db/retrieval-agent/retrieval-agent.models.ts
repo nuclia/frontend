@@ -112,7 +112,6 @@ export interface BaseAgent {
   title?: string;
   model?: string;
   validate_model?: string;
-  summarize_model?: string;
 }
 // Base agents without ids (not stored yet or stored as a child)
 export interface BasePreprocessAgent extends BaseAgent {
@@ -225,6 +224,8 @@ export interface McpAgentCreation {
   source: string;
   transport: 'SSE' | 'STDIO';
   fallback?: BaseContextAgent | null;
+  summarize_model?: string;
+  tool_choice_model?: string;
 }
 
 export interface CypherAgentCreation {

@@ -1355,6 +1355,8 @@
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Create an MCP driver",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "There is no MCP {{transport}} driver registered, you need to create one before adding this kind of node.",
 	"retrieval-agents.workflow.node-types.mcp.form.source": "Source",
+	"retrieval-agents.workflow.node-types.mcp.form.summarize-model": "Summarize model",
+	"retrieval-agents.workflow.node-types.mcp.form.tool-choice-model": "Tool choice model",
 	"retrieval-agents.workflow.node-types.mcp.form.transport": "Transport",
 	"retrieval-agents.workflow.node-types.mcp.title": "Model Context Protocol (MCP)",
 	"retrieval-agents.workflow.node-types.postprocess_alinia.description": "Add LLM output guard",

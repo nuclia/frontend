@@ -1343,6 +1343,8 @@
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Crea un controlador MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "No hi ha cap controlador MCP {{transport}} registrat; cal crear-ne un abans d'afegir aquest tipus de node.",
 	"retrieval-agents.workflow.node-types.mcp.form.source": "Font",
+	"retrieval-agents.workflow.node-types.mcp.form.summarize-model": "Model de resum",
+	"retrieval-agents.workflow.node-types.mcp.form.tool-choice-model": "Model d'elecció d'eines",
 	"retrieval-agents.workflow.node-types.mcp.form.transport": "Transport",
 	"retrieval-agents.workflow.node-types.mcp.title": "Protocol de context de model (MCP)",
 	"retrieval-agents.workflow.node-types.postprocess_alinia.description": "Afegeix una protecció de sortida LLM",

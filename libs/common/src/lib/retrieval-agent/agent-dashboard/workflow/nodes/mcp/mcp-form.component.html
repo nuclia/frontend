@@ -53,6 +53,24 @@
         }
       </pa-select>
     </div>
+    <div class="form-entry">
+      <label for="tool-choice-model">
+        {{ 'retrieval-agents.workflow.node-types.mcp.form.tool-choice-model' | translate }}
+      </label>
+      <pa-select
+        id="tool-choice-model"
+        formControlName="tool_choice_model"
+        [options]="toolModels()"></pa-select>
+    </div>
+    <div class="form-entry">
+      <label for="summarize-model">
+        {{ 'retrieval-agents.workflow.node-types.mcp.form.summarize-model' | translate }}
+      </label>
+      <pa-select
+        id="summarize-model"
+        formControlName="summarize_model"
+        [options]="summarizeModels()"></pa-select>
+    </div>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>

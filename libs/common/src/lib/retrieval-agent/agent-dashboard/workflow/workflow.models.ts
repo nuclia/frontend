@@ -21,6 +21,7 @@ import {
   GoogleAgentCreation,
   GuardrailsProviderType,
   InternetProviderType,
+  McpAgentCreation,
   PerplexityAgent,
   PerplexityAgentCreation,
   PostprocessAliniaAgent as PostAliniaAgent,
@@ -245,6 +246,8 @@ export interface McpAgentUI extends CommonAgentConfig {
   source: string;
   transport: 'SSE' | 'STDIO';
   fallback?: BaseContextAgent | null;
+  summarize_model?: string;
+  tool_choice_model?: string;
 }
 
 export interface BaseConditionalAgentUI extends CommonAgentConfig {
@@ -332,6 +335,16 @@ export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
   return {
     module: 'ask',
     sources: sources.split(','),
+    ...agentConfig,
+  };
+}
+export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {
+  const { summarize_model, tool_choice_model, ...agentConfig } = config;
+  return {
+    module: 'mcp',
+    // null is not allowed on model params
+    tool_choice_model: tool_choice_model || undefined,
+    summarize_model: summarize_model || undefined,
     ...agentConfig,
   };
 }
@@ -487,6 +500,8 @@ export function getAgentFromConfig(
       return sqlUiToCreation(cleanConfig);
     case 'ask':
       return askUiToCreation(cleanConfig);
+    case 'mcp':
+      return mcpUiToCreation(cleanConfig);
     case 'external':
       return externalUiToCreation(cleanConfig);
     case 'preprocess_alinia':
