@@ -415,7 +415,7 @@ export enum ModelType {
 interface BaseCustomModel {
   model_id: string | null;
   account: string | null;
-  model_type: ModelType | null;
+  model_types?: ModelType[],
   trained_date: string | null;
   location: string | null;
   trained_kbid: string | null;

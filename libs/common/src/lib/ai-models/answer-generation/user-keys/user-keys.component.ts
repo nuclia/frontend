@@ -185,7 +185,8 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
             });
             this.userKeysGroup.addControl(key, subForm);
           } else {
-            this.userKeysGroup.addControl(key, new FormControl<string>(''));
+            const defaultValue = userKeysConfig?.properties?.[key]?.default?.toString() || '';
+            this.userKeysGroup.addControl(key, new FormControl<string>(defaultValue));
           }
         }
       });

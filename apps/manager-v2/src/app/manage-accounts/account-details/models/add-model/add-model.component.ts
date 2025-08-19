@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { SisToastService } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { combineLatest, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatest, forkJoin, map, of, shareReplay, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
 import { CommonModule } from '@angular/common';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -11,9 +11,10 @@ import { ModelType } from '@nuclia/core';
 import { Router } from '@angular/router';
 import { KbSummary } from '../../../account-ui.models';
 import { SDKService } from '@flaps/core';
+import { UserKeysComponent, UserKeysForm } from '@flaps/common';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule],
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, UserKeysComponent],
   templateUrl: './add-model.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -22,7 +23,7 @@ export class AddModelComponent implements OnDestroy {
 
   modelForm = new FormGroup({
     description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    model_type: new FormControl<ModelType>(ModelType.GENERATIVE, {
+    model_types: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -42,9 +43,19 @@ export class AddModelComponent implements OnDestroy {
       if (!this.zoneControl.value) this.zoneControl.patchValue(options[0].value);
     }),
   );
+  schema = this.zoneService.getZoneDict().pipe(
+    switchMap((zones) =>
+      this.sdk.nuclia.db.getLearningSchema(this.store.getAccountId() || '', Object.values(zones)[0].slug),
+    ),
+    shareReplay(1),
+  );
+  openaiCompat = this.schema.pipe(
+    map((schema) => schema['generative_model']?.options?.find((model) => model.value === 'openai-compatible')),
+  );
   isSaving = false;
   kbList: KbSummary[] = [];
   selectedKbs: { [id: string]: boolean } = {};
+  userKeysForm?: UserKeysForm;
 
   get zoneControl() {
     return this.modelForm.controls.zone;
@@ -76,10 +87,21 @@ export class AddModelComponent implements OnDestroy {
   create() {
     this.isSaving = true;
     this.cdr.markForCheck();
-    const { zone, ...formValues } = this.modelForm.getRawValue();
+    const { zone, model_types, ...formValues } = this.modelForm.getRawValue();
+    const userKeys = this.userKeysForm?.getRawValue();
+    const openai_compat = userKeys?.enabled ? userKeys.user_keys : undefined;
     const accountId = this.store.getAccountId();
     if (accountId) {
-      this.regionalService.createModel(formValues, accountId, zone)
+      this.regionalService
+        .createModel(
+          {
+            ...formValues,
+            model_types: model_types.split(',') as ModelType[],
+            openai_compat,
+          },
+          accountId,
+          zone,
+        )
         .pipe(
           switchMap(({ id }) => {
             const requests = Object.entries(this.selectedKbs)

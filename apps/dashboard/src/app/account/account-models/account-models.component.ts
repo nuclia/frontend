@@ -59,7 +59,12 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
       forkJoin(
         zones.map((zone) =>
           this.sdk.nuclia.db.getModels(account.id, zone.slug).pipe(
-            map((models) => models.filter((model) => model.model_type === ModelType.GENERATIVE)),
+            map((models) =>
+              models.filter(
+                (model) =>
+                  model.model_types?.includes(ModelType.GENERATIVE),
+              ),
+            ),
             switchMap((modelItems) =>
               modelItems.length === 0
                 ? of([])

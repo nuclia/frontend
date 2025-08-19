@@ -57,9 +57,10 @@ export interface Kb {
 }
 
 export interface AccountModelPayload {
-  model_type: ModelType;
+  model_types: ModelType[];
   location: string;
   description?: string;
+  openai_compat?: any;
 }
 
 export interface ZoneModels {
