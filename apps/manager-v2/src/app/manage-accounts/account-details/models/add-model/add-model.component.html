@@ -1,33 +1,38 @@
-<h3>Add model</h3>
+<h3>{{ addModel ? 'Add model' : name }}</h3>
 <form
   [formGroup]="modelForm"
-  (ngSubmit)="create()">
+  (ngSubmit)="save()">
   <pa-input formControlName="description">Name</pa-input>
   <pa-input
     formControlName="location"
+    [readonly]="!addModel"
     help='Use format: "provider:model"'>
     Model
   </pa-input>
   <pa-select
-    formControlName="model_type"
+    formControlName="model_types"
     [options]="modelTypes"
-    label="Model type"></pa-select>
+    multiple
+    label="Model types"></pa-select>
   <pa-select
     formControlName="zone"
     [options]="zones | async"
+    [readonly]="!addModel"
     label="Zone"></pa-select>
 
-  <section>
-    <label class="title-s">Enable on Knowledge Boxes:</label>
-    @for (kb of kbList; track kb.id) {
-      <pa-checkbox [(value)]="selectedKbs[kb.id]">{{ kb.title }}</pa-checkbox>
+  @if (schema | async; as schema) {
+    @if (openaiCompat | async; as openaiCompat) {
+      <stf-user-keys
+        [generativeModel]="openaiCompat"
+        [learningConfigurations]="schema"
+        (formReady)="userKeysForm = $event"></stf-user-keys>
     }
-  </section>
+  }
 
   <footer>
     <pa-button
       type="submit"
-      [disabled]="modelForm.pristine || modelForm.invalid || isSaving">
+      [disabled]="pristine || invalid || isSaving">
       Save
     </pa-button>
   </footer>

@@ -263,6 +263,17 @@ export class RegionalAccountService {
     );
   }
 
+  updateModel(data: AccountModelPayload, modelId: string, accountId: string, zoneSlug: string) {
+    return this.sdk.nuclia.rest.patch<{ id: string }>(
+      `/account/${accountId}/model/${modelId}`,
+      data,
+      undefined,
+      undefined,
+      true,
+      zoneSlug,
+    );
+  }
+
   deleteModel(modelId: string, accountId: string, zoneSlug: string) {
     return this.sdk.nuclia.rest.delete(`/account/${accountId}/model/${modelId}`, undefined, true, zoneSlug);
   }

@@ -16,7 +16,7 @@
       <pa-table-header>
         <pa-table-cell header>Name</pa-table-cell>
         <pa-table-cell header>Model</pa-table-cell>
-        <pa-table-cell header>Type</pa-table-cell>
+        <pa-table-cell header>Types</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
       @for (model of zone.models; track model.model_id) {
@@ -25,7 +25,7 @@
           [routerLink]="'../models/' + zone.zone.slug + '/model/' + model.model_id">
           <pa-table-cell>{{ model.title }}</pa-table-cell>
           <pa-table-cell>{{ model.location }}</pa-table-cell>
-          <pa-table-cell>{{ model.model_type }}</pa-table-cell>
+          <pa-table-cell>{{ model.model_types?.join(', ') }}</pa-table-cell>
           <pa-table-cell-menu>
             <pa-button
               icon="more-vertical"
@@ -35,6 +35,9 @@
               Menu
             </pa-button>
             <pa-dropdown #menu>
+              <pa-option (selectOption)="goToDetails($event, model, zone.zone.slug)">
+                Assign to Knowledge Boxes
+              </pa-option>
               <pa-option
                 destructive
                 (selectOption)="delete($event, model, zone.zone.slug)">

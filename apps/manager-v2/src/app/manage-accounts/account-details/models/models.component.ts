@@ -7,7 +7,7 @@ import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTableModule } from '
 import { RegionalAccountService } from '../../regional-account.service';
 import { CustomModelItem } from '@nuclia/core';
 import { AccountService } from '../../account.service';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaDropdownModule, PaPopupModule, PaTableModule, RouterModule],
@@ -23,6 +23,8 @@ export class ModelsComponent {
     private accountService: AccountService,
     private regionalService: RegionalAccountService,
     private modalService: SisModalService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
     this.store.accountDetails
       .pipe(
@@ -52,5 +54,11 @@ export class ModelsComponent {
         switchMap(() => this.accountService.loadAccountModels(this.store.getAccountId() || '')),
       )
       .subscribe();
+  }
+
+  goToDetails(event: Event, model: CustomModelItem, zone: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.router.navigate([`../models/${zone}/model/${model.model_id}/kbs`], { relativeTo: this.route });
   }
 }
