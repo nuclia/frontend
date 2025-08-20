@@ -96,8 +96,12 @@ const ROUTES: Routes = [
           },
           {
             path: 'models/:zoneSlug/model/:modelId',
-            component: ModelDetailsComponent,
+            component: AddModelComponent,
           },
+          {
+            path: 'models/:zoneSlug/model/:modelId/kbs',
+            component: ModelDetailsComponent,
+          }
         ],
       },
     ],

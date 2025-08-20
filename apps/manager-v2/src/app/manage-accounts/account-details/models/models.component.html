@@ -35,6 +35,9 @@
               Menu
             </pa-button>
             <pa-dropdown #menu>
+              <pa-option (selectOption)="goToDetails($event, model, zone.zone.slug)">
+                Assign to Knowledge Boxes
+              </pa-option>
               <pa-option
                 destructive
                 (selectOption)="delete($event, model, zone.zone.slug)">

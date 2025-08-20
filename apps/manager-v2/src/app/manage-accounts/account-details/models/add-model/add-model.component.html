@@ -1,10 +1,11 @@
 <h3>Add model</h3>
 <form
   [formGroup]="modelForm"
-  (ngSubmit)="create()">
+  (ngSubmit)="save()">
   <pa-input formControlName="description">Name</pa-input>
   <pa-input
     formControlName="location"
+    [readonly]="!addModel"
     help='Use format: "provider:model"'>
     Model
   </pa-input>
@@ -16,6 +17,7 @@
   <pa-select
     formControlName="zone"
     [options]="zones | async"
+    [readonly]="!addModel"
     label="Zone"></pa-select>
 
   @if (schema | async; as schema) {
@@ -27,17 +29,10 @@
     }
   }
 
-  <section>
-    <label class="title-s">Enable on Knowledge Boxes:</label>
-    @for (kb of kbList; track kb.id) {
-      <pa-checkbox [(value)]="selectedKbs[kb.id]">{{ kb.title }}</pa-checkbox>
-    }
-  </section>
-
   <footer>
     <pa-button
       type="submit"
-      [disabled]="modelForm.pristine || modelForm.invalid || userKeysForm?.invalid || isSaving">
+      [disabled]="pristine || invalid || isSaving">
       Save
     </pa-button>
   </footer>
