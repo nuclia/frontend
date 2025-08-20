@@ -888,4 +888,15 @@ export class WorkflowService {
       }),
     );
   }
+
+  getModels() {
+    const unsupportedModels = ['generative-multilingual-2023'];
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) => arag.getLearningSchema()),
+      map((schema) =>
+        (schema?.['generative_model'].options || []).filter((model) => !unsupportedModels.includes(model.value)),
+      ),
+    );
+  }
 }

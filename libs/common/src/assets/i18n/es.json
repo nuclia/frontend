@@ -1357,6 +1357,7 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Extender",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Incluir el historial de la sesión",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historial",
+	"retrieval-agents.workflow.node-types.rephrase.form.model": "Modelo",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.label": "Prompt de reformulación",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.placeholder": "Prompt",
 	"retrieval-agents.workflow.node-types.rephrase.form.split-question.help": "Divida la pregunta en subpreguntas",
