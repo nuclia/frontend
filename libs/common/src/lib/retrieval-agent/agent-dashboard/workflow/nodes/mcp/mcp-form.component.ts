@@ -11,6 +11,7 @@ import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { McpAgentUI } from '../../workflow.models';
 import { aragUrl } from '../../workflow.state';
+import { WorkflowService } from '../../workflow.service';
 
 @Component({
   selector: 'app-mcp-form',
@@ -31,6 +32,7 @@ import { aragUrl } from '../../workflow.state';
 export class McpFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
+  private workflowService = inject(WorkflowService);
 
   override form = new FormGroup({
     mcp: new FormGroup({
@@ -66,7 +68,6 @@ export class McpFormComponent extends FormDirective implements OnInit {
   noSseDriver = signal(false);
   noStdioDriver = signal(false);
 
-  unsupportedModels = ['generative-multilingual-2023'];
   private models = signal<LearningConfigurationOption[]>([]);
   toolModels = computed(() =>
     this.models().map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
@@ -104,16 +105,9 @@ export class McpFormComponent extends FormDirective implements OnInit {
         error: () => this.toaster.error('retrieval-agents.workflow.errors.loading-drivers'),
       });
 
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => arag.getLearningSchema()),
-      )
-      .subscribe((schema) => {
-        this.models.set(
-          (schema?.['generative_model'].options || []).filter((model) => !this.unsupportedModels.includes(model.value)),
-        );
-      });
+    this.workflowService.getModels().subscribe((models) => {
+      this.models.set(models);
+    });
   }
   onTransportChange(transport: 'SSE' | 'STDIO' | '') {
     this.sourceControl.patchValue('');

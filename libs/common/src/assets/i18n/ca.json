@@ -1357,6 +1357,7 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Ampliar",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Incloeu l'historial de la sessió",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historial",
+	"retrieval-agents.workflow.node-types.rephrase.form.model": "Model",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.label": "Prompt del reformulació",
 	"retrieval-agents.workflow.node-types.rephrase.form.prompt.placeholder": "Prompt",
 	"retrieval-agents.workflow.node-types.rephrase.form.split-question.help": "Divideix la pregunta en subpreguntes",

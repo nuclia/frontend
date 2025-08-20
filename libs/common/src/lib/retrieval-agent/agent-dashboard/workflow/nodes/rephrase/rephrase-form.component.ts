@@ -9,6 +9,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { aragUrl } from '../../workflow.state';
+import { WorkflowService } from '../../workflow.service';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -28,6 +29,7 @@ import { aragUrl } from '../../workflow.state';
 })
 export class RephraseFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
+  private workflowService = inject(WorkflowService);
 
   override form = new FormGroup({
     rephrase: new FormGroup({
@@ -38,6 +40,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       userInfo: new FormControl(false),
       split_question: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
+      model: new FormControl<string>('', { nonNullable: true }),
       // TODO manage rids and labels
     }),
   });
@@ -48,6 +51,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
   driversPath = computed(() => `${aragUrl()}/drivers`);
   sourceOptions = signal<OptionModel[] | null>(null);
+  modelOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
     this.sdk.currentArag
@@ -71,5 +75,11 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
           ].concat(options),
         ),
       );
+
+    this.workflowService.getModels().subscribe((models) => {
+      this.modelOptions.set(
+        models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+      );
+    });
   }
 }

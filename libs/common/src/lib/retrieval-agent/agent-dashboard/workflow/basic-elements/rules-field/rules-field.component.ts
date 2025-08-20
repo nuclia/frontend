@@ -30,7 +30,7 @@ export class RulesFieldComponent implements OnInit {
   ngOnInit() {
     const config = this.config();
     if (config?.rules) {
-      if (config.rules.length > 1) {
+      if (config.rules.length > 0) {
         // Add rules control to the form to display all the rules already stored
         // some forms have a field displayed by default, others don't
         const numberOfRulesToCreate = config.rules.length - this.rules.length;

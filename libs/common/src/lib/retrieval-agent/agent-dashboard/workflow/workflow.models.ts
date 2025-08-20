@@ -184,6 +184,7 @@ export interface RephraseAgentUI extends CommonAgentConfig {
   history: boolean;
   userInfo: boolean;
   split_question: boolean;
+  model?: string;
 }
 
 export interface InternetAgentUI extends CommonAgentConfig {
@@ -310,13 +311,14 @@ export function getNodeTypeFromAgent(
   return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
-  const { userInfo, ...agentConfig } = config;
+  const { userInfo, model, ...agentConfig } = config;
   return {
     module: 'rephrase',
     ...agentConfig,
     session_info: userInfo,
     rids: [],
     labels: [],
+    model: model || undefined, // null is not allowed on model params
   };
 }
 export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
