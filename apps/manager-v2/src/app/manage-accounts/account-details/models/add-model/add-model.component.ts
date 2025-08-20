@@ -60,6 +60,10 @@ export class AddModelComponent implements OnDestroy {
     return this.modelForm.controls.zone;
   }
 
+  get name() {
+    return this.modelForm.controls.description.value;
+  }
+
   get pristine() {
     return this.modelForm.pristine && this.userKeysForm?.pristine;
   }
