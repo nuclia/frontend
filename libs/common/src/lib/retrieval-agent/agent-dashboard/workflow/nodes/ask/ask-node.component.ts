@@ -11,7 +11,7 @@ import {
   NodeBoxComponent,
   NodeDirective,
 } from '../../basic-elements';
-import { AskAgentUI } from '../../workflow.models';
+import { AskAgentUI, BasicAskAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-ask-node',
@@ -26,7 +26,7 @@ export class AskNodeComponent extends NodeDirective implements OnInit {
 
   askConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      const config = this.config() as AskAgentUI;
+      const config = this.config() as AskAgentUI | BasicAskAgentUI;
       const items: ConfigBlockItem[] = [
         {
           title: this.translate.instant('retrieval-agents.workflow.node-types.ask.form.sources'),

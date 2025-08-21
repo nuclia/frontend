@@ -15,6 +15,7 @@ export type AragModule =
   | 'pre_conditional'
   | 'preprocess_alinia'
   | 'context_conditional'
+  | 'basic_ask'
   | 'ask'
   | 'brave'
   | 'perplexity'
@@ -64,6 +65,7 @@ const CONTEXT_MODULE: AragModule[] = [
   'sql',
   'mcp',
   'cypher',
+  'basic_ask',
   'ask',
   'context_conditional',
   'restricted',

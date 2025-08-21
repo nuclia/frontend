@@ -1,6 +1,6 @@
 <app-node-box
   [state]="state()"
-  [nodeTitle]="'retrieval-agents.workflow.node-types.ask.title' | translate"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.' + type() + '.title' | translate"
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
