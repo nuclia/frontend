@@ -1,11 +1,10 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { NucliaDBDriver } from '@nuclia/core';
+import { BaseContextAgent, NucliaDBDriver } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { getListFromTextarea } from '../../../../arag.utils';
@@ -25,8 +24,8 @@ import { aragUrl } from '../../workflow.state';
     PaTogglesModule,
     ConfigurationFormComponent,
     ExpandableTextareaComponent,
-    RulesFieldComponent
-],
+    RulesFieldComponent,
+  ],
   templateUrl: './ask-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,7 +35,8 @@ export class AskFormComponent extends FormDirective implements OnInit {
   override form = new FormGroup({
     ask: new FormGroup({
       sources: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      ai_parameter_search:  new FormControl<boolean>(false, { nonNullable: true }),
+      fallback: new FormControl<BaseContextAgent | null>(null),
+      ai_parameter_search: new FormControl<boolean>(false, { nonNullable: true }),
       rephrase_semantic_custom_prompt: new FormControl<string>('', { nonNullable: true }),
       rephrase_lexical_custom_prompt: new FormControl<string>('', { nonNullable: true }),
       keywords_custom_prompt: new FormControl<string>('', { nonNullable: true }),
