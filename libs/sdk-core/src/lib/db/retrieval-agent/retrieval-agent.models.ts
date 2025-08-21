@@ -154,6 +154,7 @@ export type ContextAgentCreation =
   | McpAgentCreation
   | CypherAgentCreation
   | AskAgentCreation
+  | BasicAskAgentCreation
   | ContextConditionalAgentCreation
   | RestrictedAgentCreation
   | SparqlAgentCreation;
@@ -236,6 +237,14 @@ export interface CypherAgentCreation {
   allow_dangerous_requests?: boolean;
   top_k?: number;
   model?: string;
+}
+
+export interface BasicAskAgentCreation {
+  module: 'basic_ask';
+  sources: string[];
+  fallback?: BaseContextAgent | null;
+  summarize_model?: string;
+  generative_model?: string;
 }
 
 export interface AskAgentCreation {
@@ -380,6 +389,9 @@ export interface BraveAgent extends ContextAgent, BraveAgentCreation {
 }
 export interface CypherAgent extends ContextAgent, CypherAgentCreation {
   module: 'cypher';
+}
+export interface BasicAskAgent extends ContextAgent, BasicAskAgentCreation {
+  module: 'basic_ask';
 }
 export interface AskAgent extends ContextAgent, AskAgentCreation {
   module: 'ask';

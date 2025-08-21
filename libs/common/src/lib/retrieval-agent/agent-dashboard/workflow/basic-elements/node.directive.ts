@@ -1,5 +1,5 @@
 import { Directive, HostListener, input, output, ViewChild } from '@angular/core';
-import { NodeCategory, NodeConfig, NodeState } from '../workflow.models';
+import { NodeCategory, NodeConfig, NodeState, NodeType } from '../workflow.models';
 import { ConnectableEntryComponent } from './connectable-entry/connectable-entry.component';
 import { NodeBoxComponent } from './node-box/node-box.component';
 
@@ -13,6 +13,7 @@ export class NodeDirective {
   origin = input<ConnectableEntryComponent>();
   state = input<NodeState>('default');
   config = input<NodeConfig>();
+  type = input<NodeType>();
   category = input.required<NodeCategory>();
 
   addNode = output<{ entry: ConnectableEntryComponent; targetColumn: number }>();

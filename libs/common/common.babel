@@ -30219,6 +30219,29 @@
 													</concept_node>
 												</children>
 											</folder_node>
+											<concept_node>
+												<name>summarize-model</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
 										</children>
 									</folder_node>
 									<folder_node>
@@ -30952,6 +30975,85 @@
 															</concept_node>
 															<concept_node>
 																<name>vllm</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+														</children>
+													</folder_node>
+													<concept_node>
+														<name>title</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+												</children>
+											</folder_node>
+											<folder_node>
+												<name>basic_ask</name>
+												<children>
+													<concept_node>
+														<name>description</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<folder_node>
+														<name>form</name>
+														<children>
+															<concept_node>
+																<name>generative-model</name>
 																<description/>
 																<comment/>
 																<translations>
@@ -32803,29 +32905,6 @@
 																</translations>
 															</concept_node>
 															<concept_node>
-																<name>summarize-model</name>
-																<description/>
-																<comment/>
-																<translations>
-																	<translation>
-																		<language>ca-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>en-US</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>es-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>fr-FR</language>
-																		<approved>false</approved>
-																	</translation>
-																</translations>
-															</concept_node>
-															<concept_node>
 																<name>tool-choice-model</name>
 																<description/>
 																<comment/>
@@ -33205,29 +33284,6 @@
 																	</concept_node>
 																</children>
 															</folder_node>
-															<concept_node>
-																<name>model</name>
-																<description/>
-																<comment/>
-																<translations>
-																	<translation>
-																		<language>ca-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>en-US</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>es-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>fr-FR</language>
-																		<approved>false</approved>
-																	</translation>
-																</translations>
-															</concept_node>
 															<folder_node>
 																<name>prompt</name>
 																<children>
@@ -34730,6 +34786,29 @@
 														<children>
 															<concept_node>
 																<name>ask</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+															<concept_node>
+																<name>basic_ask</name>
 																<description/>
 																<comment/>
 																<translations>

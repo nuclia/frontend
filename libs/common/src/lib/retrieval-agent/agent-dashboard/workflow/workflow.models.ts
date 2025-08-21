@@ -11,6 +11,8 @@ import {
   BaseGenerationAgent,
   BasePostprocessAgent,
   BasePreprocessAgent,
+  BasicAskAgent,
+  BasicAskAgentCreation,
   BraveAgent,
   BraveAgentCreation,
   ContextAgentCreation,
@@ -52,6 +54,7 @@ export type NodeType =
   | 'pre_conditional'
   | 'preprocess_alinia'
   | 'context_conditional'
+  | 'basic_ask'
   | 'ask'
   | 'internet'
   | 'sql'
@@ -116,13 +119,14 @@ export interface ParentNode {
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['historical', 'rephrase', 'pre_conditional', 'preprocess_alinia'],
-  context: ['context_conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
+  context: ['context_conditional', 'basic_ask', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
   generation: ['summarize', 'generate'],
   postprocess: ['restart', 'post_conditional', 'remi', 'external', 'postprocess_alinia'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   ask: 'database',
+  basic_ask: 'database',
   pre_conditional: 'dataflow',
   context_conditional: 'dataflow',
   post_conditional: 'dataflow',
@@ -167,6 +171,7 @@ export type NodeConfig =
   | RestrictedAgentUI
   | McpAgentUI
   | AskAgentUI
+  | BasicAskAgentUI
   | SummarizeAgentUI
   | PostConditionalAgentUI
   | RestartAgentUI
@@ -221,6 +226,13 @@ export interface CypherAgentUI extends CommonAgentConfig {
   include_types: string[];
   allow_dangerous_requests: boolean;
   top_k: number;
+}
+
+export interface BasicAskAgentUI extends CommonAgentConfig {
+  sources: string;
+  fallback?: BaseContextAgent | null;
+  summarize_model?: string;
+  generative_model?: string;
 }
 
 export interface AskAgentUI extends CommonAgentConfig {
@@ -340,6 +352,31 @@ export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
     ...agentConfig,
   };
 }
+export function askAgentToUi(agent: AskAgent): AskAgentUI {
+  return {
+    ...agent,
+    sources: agent.sources.join(','),
+    rules: agent.rules || null,
+  };
+}
+export function basicAskUiToCreation(config: BasicAskAgentUI): BasicAskAgentCreation {
+  const { sources, generative_model, summarize_model, ...agentConfig } = config;
+  return {
+    module: 'basic_ask',
+    sources: sources.split(','),
+    // null is not allowed on model params
+    generative_model: generative_model || undefined,
+    summarize_model: summarize_model || undefined,
+    ...agentConfig,
+  };
+}
+export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
+  return {
+    ...agent,
+    sources: agent.sources.join(','),
+    rules: agent.rules || null,
+  };
+}
 export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {
   const { summarize_model, tool_choice_model, ...agentConfig } = config;
   return {
@@ -348,13 +385,6 @@ export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {
     tool_choice_model: tool_choice_model || undefined,
     summarize_model: summarize_model || undefined,
     ...agentConfig,
-  };
-}
-export function askAgentToUi(agent: AskAgent): AskAgentUI {
-  return {
-    ...agent,
-    sources: agent.sources.join(','),
-    rules: agent.rules || null,
   };
 }
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
@@ -502,6 +532,8 @@ export function getAgentFromConfig(
       return sqlUiToCreation(cleanConfig);
     case 'ask':
       return askUiToCreation(cleanConfig);
+    case 'basic_ask':
+      return basicAskUiToCreation(cleanConfig);
     case 'mcp':
       return mcpUiToCreation(cleanConfig);
     case 'external':
@@ -557,6 +589,8 @@ export function getConfigFromAgent(
       return sqlAgentToUi(agent as SqlAgent);
     case 'ask':
       return askAgentToUi(agent as AskAgent);
+    case 'basic_ask':
+      return basicAskAgentToUi(agent as BasicAskAgent);
     case 'external':
       return externalAgentToUi(agent as ExternalAgent);
     case 'preprocess_alinia':

@@ -1,0 +1,51 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="sources">{{ 'retrieval-agents.workflow.node-types.ask.form.sources' | translate }}</label>
+        <pa-select
+          id="sources"
+          formControlName="sources"
+          externalLabel=""
+          multiple=""
+          [options]="sourceOptions()"></pa-select>
+      </div>
+      @if (sourceOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
+    </div>
+    <div class="form-entry">
+      <label for="generative-model">
+        {{ 'retrieval-agents.workflow.node-types.basic_ask.form.generative-model' | translate }}
+      </label>
+      <pa-select
+        id="generative-model"
+        formControlName="generative_model"
+        [options]="generativeModelOptions()"></pa-select>
+    </div>
+    <div class="form-entry">
+      <label for="summarize-model">
+        {{ 'retrieval-agents.workflow.common-forms.summarize-model' | translate }}
+      </label>
+      <pa-select
+        id="summarize-model"
+        formControlName="summarize_model"
+        [options]="summarizeModelOptions()"></pa-select>
+    </div>
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>
