@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LearningConfigurationOption, NucliaDBDriver } from '@nuclia/core';
+import { BaseContextAgent, LearningConfigurationOption, NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -34,6 +34,7 @@ export class BasicAskFormComponent extends FormDirective implements OnInit {
   override form = new FormGroup({
     ask: new FormGroup({
       sources: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      fallback: new FormControl<BaseContextAgent | null>(null),
       generative_model: new FormControl<string>('', { nonNullable: true }),
       summarize_model: new FormControl<string>('', { nonNullable: true }),
       rules: new FormArray<FormControl<string>>([]),

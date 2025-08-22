@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Driver, LearningConfigurationOption, McpSseDriver, McpStdioDriver } from '@nuclia/core';
+import { BaseContextAgent, Driver, LearningConfigurationOption, McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -38,6 +38,7 @@ export class McpFormComponent extends FormDirective implements OnInit {
     mcp: new FormGroup({
       transport: new FormControl<'SSE' | 'STDIO' | ''>('', { nonNullable: true, validators: [Validators.required] }),
       source: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      fallback: new FormControl<BaseContextAgent | null>(null),
       tool_choice_model: new FormControl<string>('', { nonNullable: true }),
       summarize_model: new FormControl<string>('', { nonNullable: true }),
       rules: new FormArray<FormControl<string>>([]),

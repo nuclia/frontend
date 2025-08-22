@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { renderMarkdown } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TextField } from '@nuclia/core';
@@ -15,13 +15,17 @@ import { EditResourceService } from '../../../resources';
   styleUrl: './session-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SessionInfoComponent {
+export class SessionInfoComponent implements OnInit {
   private editResource = inject(EditResourceService);
 
   sessionInfo: Observable<TextField> = this.editResource.resource.pipe(
     map((session) => session?.data.texts?.['info']?.value),
     filter((info) => !!info),
   );
+
+  ngOnInit(): void {
+    this.editResource.setCurrentView('preview');
+  }
 
   getFormattedMarkdown(value: string): Observable<string> {
     return renderMarkdown(value);
