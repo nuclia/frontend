@@ -11,6 +11,10 @@ env:
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
+  S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
+  S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
+  S3_WHITELABEL_STORAGE: ${{ secrets.S3_WHITELABEL_STORAGE }}
+  S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE_IAM_ROLE_ARN || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
@@ -54,6 +58,17 @@ jobs:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
+          aws-region: eu-central-1
+
+      - name: Configure AWS client
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          arch: amd64
 
       - uses: nrwl/nx-set-shas@v3
 
@@ -99,14 +114,20 @@ jobs:
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
-      - name: Publish widget
+      - name: Publish widget to GCS
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/libs/search-widget/*.umd.js gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
-      - name: Build & publish white-labelled widget
+      - name: Publish widget to S3
+        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/libs/search-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+          aws s3 cp libs/search-widget/public/ s3://$S3_CDN_STORAGE/ --recursive
+
+      - name: Build & publish white-labelled widget to GCS
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
           echo "VITE_BRAND_NAME=WHITE_LABEL_BRAND_NAME_PLACEHOLDER" > .env
@@ -118,6 +139,12 @@ jobs:
           gsutil copy dist/libs/search-widget/*.umd.js gs://ncl-white-label-frontend-gcp-global-stage-1
           gsutil copy -r libs/search-widget/public/* gs://ncl-white-label-frontend-gcp-global-stage-1
 
+      - name: Build & publish white-labelled widget to S3
+        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/libs/search-widget/ s3://$S3_WHITELABEL_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+          aws s3 cp libs/search-widget/public/ s3://$S3_WHITELABEL_STORAGE/ --recursive
+
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         uses: JS-DevTools/npm-publish@v1
@@ -125,10 +152,15 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./dist/sdk-core/package.json
 
-      - name: Push SDK to CDN
+      - name: Push SDK to GCP CDN
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           gsutil copy dist/sdk-core/umd/index.js gs://$CDN_STORAGE/nuclia-sdk.umd.js
+
+      - name: Push SDK to S3 CDN
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/sdk-core/umd/index.js s3://$S3_CDN_STORAGE/nuclia-sdk.umd.js
 
       - name: Invalidate CDN cache stage
         if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
@@ -137,11 +169,16 @@ jobs:
         run: |
           gcloud compute url-maps invalidate-cdn-cache ${CDN_STORAGE} --path "/*" --global --project ${GCP_PROJECT}
 
-      - name: Generate and push SDK docs
+      - name: Generate and push SDK docs to GCS
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
+
+      - name: Generate and push SDK docs to S3
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp ./libs/sdk-core/docs s3://$S3_DOCS_STORAGE/js-sdk --recursive
 
       - name: Generate a token
         id: app-token
