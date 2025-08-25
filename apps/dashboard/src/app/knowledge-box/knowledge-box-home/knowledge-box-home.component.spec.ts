@@ -87,7 +87,9 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockProvider(UploadService, {
             getResourceStatusCount: () => of({ type: 'searchResults' }),
           }),
-          MockProvider(MetricsService),
+          MockProvider(MetricsService, {
+            period: of({ start: new Date(), end: new Date() }),
+          }),
           MockProvider(SisModalService),
           MockProvider(ZoneService),
           MockProvider(RemiMetricsService),
