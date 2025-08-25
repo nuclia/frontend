@@ -86,12 +86,23 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.route.queryParams.pipe(map((params) => params['type'])),
   ]).pipe(
     map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
-    shareReplay(),
+    shareReplay(1),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
 
-  prices$ = this.billingService.getPrices().pipe(shareReplay());
+  updateCurrency = new Subject<string>();
+  currency$ = merge(
+    this.subscription.initialCurrency.pipe(take(1)),
+    this.updateCurrency.pipe(
+      distinctUntilChanged(),
+      switchMap((country) => this.billingService.getCurrency(country)),
+    ),
+  ).pipe(shareReplay(1));
+  prices$ = this.currency$.pipe(
+    switchMap((currency) => this.billingService.getPrices(currency)),
+    shareReplay(1),
+  );
   monthly = combineLatest([
     this.prices$,
     this.accountType.pipe(
@@ -99,14 +110,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       map((accountType) => accountType as AccountTypes),
     ),
   ]).pipe(map(([prices, accountType]) => !!prices[accountType]?.recurring?.month));
-  updateCurrency = new Subject<string>();
-  currency$ = merge(
-    this.subscription.initialCurrency,
-    this.updateCurrency.pipe(
-      distinctUntilChanged(),
-      switchMap((country) => this.billingService.getCurrency(country)),
-    ),
-  ).pipe(shareReplay(1));
 
   billingDetailsEnabled = true;
   editCustomer = true;
