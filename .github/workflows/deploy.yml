@@ -14,7 +14,7 @@ env:
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
   S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
   S3_WHITELABEL_STORAGE: ${{ secrets.S3_WHITELABEL_STORAGE }}
-  S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE_IAM_ROLE_ARN || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
+  S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_DOCS_SYNC_ROLE || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
