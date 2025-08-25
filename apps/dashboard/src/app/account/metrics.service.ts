@@ -61,7 +61,6 @@ export class MetricsService {
     }),
     map((period) => period || this.getCurrentMonth()),
   );
-  prices: Observable<{ [key in AccountTypes]: Prices }> = this.billingService.getPrices().pipe(shareReplay());
 
   mappers: Partial<{ [key in UsageType]: (value: number) => number }> = {
     [UsageType.MEDIA_SECONDS_PROCESSED]: (value) => value / 3600,

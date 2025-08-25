@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import {
   AccountService,
   BillingService,
@@ -22,17 +22,19 @@ import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.compon
 })
 export class MySubscriptionComponent {
   type = this.billingService.type;
-  prices$ = combineLatest([this.billingService.getPrices(), this.type]).pipe(
+  usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
+  currency$ = this.usage.pipe(map((usage) => usage.currency));
+  prices$ = this.currency$.pipe(
+    take(1),
+    switchMap((currency) => forkJoin([this.billingService.getPrices(currency), this.type.pipe(take(1))])),
     map(([prices, type]) => prices[type]),
-    shareReplay(),
+    shareReplay(1),
   );
   defaults = combineLatest([this.accountService.getAccountTypes(), this.type]).pipe(
     map(([defaults, type]) => defaults[type]),
-    shareReplay(),
+    shareReplay(1),
   );
-  usage = this.billingService.getAccountUsage().pipe(shareReplay());
-  currency$ = this.usage.pipe(map((usage) => usage.currency));
-  subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
+  subscription = this.billingService.getStripeSubscription().pipe(shareReplay(1));
   activeSubscription = this.subscription.pipe(
     map((subscription) => subscription?.status === SubscriptionStatus.ACTIVE),
   );
