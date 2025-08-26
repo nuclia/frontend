@@ -126,8 +126,8 @@
   let { ...componentProps } = $props();
   let config = $state(new Props());
 
-  let backend = $derived(componentProps.backend || config.backend);
   let zone = $derived(componentProps.zone || config.zone);
+  let backend = $derived(componentProps.backend || config.backend);
   let knowledgebox = $derived(componentProps.knowledgebox || config.knowledgebox);
   let placeholder = $derived(componentProps.placeholder || config.placeholder);
   let lang = $derived(componentProps.lang || config.lang || window.navigator.language.split('-')[0] || 'en');
