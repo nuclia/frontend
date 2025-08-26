@@ -51,7 +51,9 @@ export class BillingService {
 
   isSubscribedToStripe = this.subscriptionProvider.pipe(map((provider) => provider === 'STRIPE'));
   isSubscribedToAws = this.subscriptionProvider.pipe(map((provider) => provider === 'AWS_MARKETPLACE'));
-  isManuallySubscribed = this.subscriptionProvider.pipe(map((provider) => provider === 'NO_SUBSCRIPTION' || provider === 'MANUAL'));
+  isManuallySubscribed = this.subscriptionProvider.pipe(
+    map((provider) => provider === 'NO_SUBSCRIPTION' || provider === 'MANUAL'),
+  );
 
   constructor(private sdk: SDKService) {}
 
@@ -204,41 +206,43 @@ export class BillingService {
       .pipe(map((res) => res.currency.toUpperCase() as Currency));
   }
 
-  getPrices(): Observable<{ [key in AccountTypes]: Prices }> {
-    return this.sdk.nuclia.rest.get<{ [key in AccountTypes]: Prices }>(`/billing/tiers`).pipe(
-      map((res) => {
-        return Object.keys(res).reduce(
-          (acc, key) => {
-            const usage = res[key as AccountTypes].usage;
-            if (usage.paragraphs && usage.media && usage.training) {
-              acc[key as AccountTypes] = {
-                ...res[key as AccountTypes],
-                usage: {
-                  ...usage,
-                  files: {
-                    price: usage.paragraphs.price * 140,
-                    threshold: Math.floor(usage.paragraphs.threshold / 140),
+  getPrices(currency: Currency): Observable<{ [key in AccountTypes]: Prices }> {
+    return this.sdk.nuclia.rest
+      .get<{ [key in AccountTypes]: Prices }>(`/billing/tiers?currency=${currency.toLowerCase()}`)
+      .pipe(
+        map((res) => {
+          return Object.keys(res).reduce(
+            (acc, key) => {
+              const usage = res[key as AccountTypes].usage;
+              if (usage.paragraphs && usage.media && usage.training) {
+                acc[key as AccountTypes] = {
+                  ...res[key as AccountTypes],
+                  usage: {
+                    ...usage,
+                    files: {
+                      price: usage.paragraphs.price * 140,
+                      threshold: Math.floor(usage.paragraphs.threshold / 140),
+                    },
+                    media: {
+                      price: usage.media.price * 60,
+                      threshold: Math.floor(usage.media.threshold / 60),
+                    },
+                    training: {
+                      price: usage.training.price * 60,
+                      threshold: Math.floor(usage.training.threshold / 60),
+                    },
                   },
-                  media: {
-                    price: usage.media.price * 60,
-                    threshold: Math.floor(usage.media.threshold / 60),
-                  },
-                  training: {
-                    price: usage.training.price * 60,
-                    threshold: Math.floor(usage.training.threshold / 60),
-                  },
-                },
-              };
-            } else {
-              acc[key as AccountTypes] = res[key as AccountTypes];
-            }
+                };
+              } else {
+                acc[key as AccountTypes] = res[key as AccountTypes];
+              }
 
-            return acc;
-          },
-          {} as { [key in AccountTypes]: Prices },
-        );
-      }),
-    );
+              return acc;
+            },
+            {} as { [key in AccountTypes]: Prices },
+          );
+        }),
+      );
   }
 
   getAccountUsage(): Observable<AccountUsage> {

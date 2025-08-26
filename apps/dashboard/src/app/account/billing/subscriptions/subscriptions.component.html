@@ -10,13 +10,13 @@
       <div>
         <button
           class="currency title-xs"
-          [class.selected]="currency === 'USD'"
+          [class.selected]="(currency | async) === 'USD'"
           (click)="setCurrency('USD')">
           USD
         </button>
         <button
           class="currency title-xs"
-          [class.selected]="currency === 'EUR'"
+          [class.selected]="(currency | async) === 'EUR'"
           (click)="setCurrency('EUR')">
           EUR
         </button>
@@ -24,7 +24,7 @@
     }
   </div>
 
-  @if (currency) {
+  @if (currency | async; as currency) {
     @if (accountTypesDefaults | async; as defaults) {
       <table
         class="subscriptions"
