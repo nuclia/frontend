@@ -54,6 +54,7 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
     const parameters = {
       name: commonConfig.name,
       filter: commonConfig.filter,
+      filter_expression_json: commonConfig.filter_expression_json,
       llm: commonConfig.llm,
       on: TaskApplyTo.FULL_FIELD,
       operations: [{ qa: operation }],

@@ -102,3 +102,14 @@ export function getOperationFromTaskName(name: TaskName): keyof Operation | null
       return null;
   }
 }
+
+export function hasFilters(parameters: DataAugmentationParameters) {
+  const filter = parameters.filter;
+  return !!(
+    filter &&
+    (filter.contains?.length ||
+      filter.field_types?.length ||
+      filter.labels?.length ||
+      filter.apply_to_agent_generated_fields)
+  );
+}

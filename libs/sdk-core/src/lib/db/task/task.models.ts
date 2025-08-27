@@ -151,6 +151,7 @@ export interface DataAugmentationParameters {
   llm: LLMConfig;
   on?: TaskApplyTo;
   operations?: Operation[];
+  filter_expression_json?: string;
 }
 
 export interface SemanticModelMigration {

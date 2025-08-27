@@ -165,6 +165,7 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     const parameters = {
       name: commonConfig.name,
       filter: commonConfig.filter,
+      filter_expression_json: commonConfig.filter_expression_json,
       llm: commonConfig.llm,
       operations: [{ graph: graphOperation }],
       on: TaskApplyTo.FULL_FIELD,
