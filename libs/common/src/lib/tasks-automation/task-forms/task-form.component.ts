@@ -13,11 +13,14 @@ import {
 import { CommonModule } from '@angular/common';
 import {
   DropdownButtonComponent,
+  ExpandableTextareaComponent,
   InfoCardComponent,
+  SisModalService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import {
+  ModalConfig,
   OptionModel,
   PaButtonModule,
   PaDropdownModule,
@@ -46,8 +49,9 @@ import { delay, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { UserKeysComponent, UserKeysForm } from '../../ai-models';
-import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../tasks-automation.models';
+import { DataAugmentationTaskOnGoing, getOperationFromTaskName, hasFilters } from '../tasks-automation.models';
 import { RouterModule } from '@angular/router';
+import { FilterExpressionModalComponent } from '../../search-widget/search-configuration/filter-expression-modal';
 
 const DEFAULT_CHEAP_LLM = 'gemini-2.5-flash-lite';
 
@@ -61,6 +65,7 @@ export interface TaskFormCommonConfig {
     labels_operator?: 0 | 1;
     apply_to_agent_generated_fields?: boolean;
   };
+  filter_expression_json?: string;
   llm: LLMConfig;
   webhook?: TaskTrigger;
 }
@@ -70,6 +75,7 @@ export interface TaskFormCommonConfig {
   imports: [
     CommonModule,
     DropdownButtonComponent,
+    ExpandableTextareaComponent,
     InfoCardComponent,
     LabelModule,
     PaDropdownModule,
@@ -97,6 +103,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
   private tasksAutomation = inject(TasksAutomationService);
+  private modalService = inject(SisModalService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -142,6 +149,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       labels_operator: new FormControl<boolean>(false),
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
+    filter_expression_json: new FormControl<string>('', { nonNullable: true }),
     llm: new FormGroup({
       model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     }),
@@ -155,11 +163,15 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   tasksRoute = this.tasksAutomation.tasksRoute;
   formInitialized = new BehaviorSubject(false);
   selectedFilters = new BehaviorSubject<string[]>([]);
+  hasFilters = false;
 
   get generativeModel() {
     return this.learningConfigurations?.['generative_model'].options?.find(
       (option) => option.value === this.form.controls.llm.controls.model.value,
     );
+  }
+  get filterExpression() {
+    return this.form.controls.filter_expression_json.value;
   }
 
   resourceCount?: number;
@@ -276,6 +288,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       },
       webhook: { url: triggers?.url || '' },
     });
+    this.hasFilters = hasFilters(task.parameters);
     this.fieldTypeFilters.forEach((option) => {
       option.selected = (task.parameters.filter.field_types || []).includes(option.id);
     });
@@ -375,5 +388,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
             : {},
       },
     });
+  }
+
+  openFilterExpression() {
+    this.modalService
+      .openModal(
+        FilterExpressionModalComponent,
+        new ModalConfig({
+          data: { filterExpression: this.filterExpression, dataAugmentation: true },
+        }),
+      )
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => this.form.controls.filter_expression_json.patchValue(filters));
   }
 }

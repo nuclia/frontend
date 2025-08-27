@@ -7,6 +7,7 @@
 - Add `getFacets` method to Knowledge Box
 - Add support for split strategies
 - Allow to modify the account slug
+- Add support for filter expressions on tasks
 
 # 1.27.0 (2025-06-16)
 

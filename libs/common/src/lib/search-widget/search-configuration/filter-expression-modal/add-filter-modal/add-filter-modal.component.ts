@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ModalRef,
@@ -36,6 +36,7 @@ import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.co
 })
 export class AddFilterModalComponent {
   editMode = false;
+  dataAugmentation = !!this.modal.config.data?.dataAugmentation;
   target = new BehaviorSubject<FilterTarget>('field');
   labelsets = this.target.pipe(
     switchMap((target) =>
@@ -47,7 +48,7 @@ export class AddFilterModalComponent {
   mimeTypes = ['text', 'application', 'image', 'audio', 'video', 'message'];
   paragraphKinds: TypeParagraph[] = ['TEXT', 'OCR', 'INCEPTION', 'DESCRIPTION', 'TRANSCRIPT', 'TITLE', 'TABLE'];
 
-  fieldFilters = [
+  allFieldFilters = [
     'label',
     'entity',
     'language',
@@ -65,6 +66,9 @@ export class AddFilterModalComponent {
     'origin_collaborator',
     'origin_metadata',
   ];
+  dataAugmentationFieldFilters = ['label', 'field', 'resource', 'keyword', 'field_mimetype', 'generated'];
+  fieldFilters = this.dataAugmentation ? this.dataAugmentationFieldFilters : this.allFieldFilters;
+
   paragraphFilters = ['label', 'kind'];
 
   prop = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
@@ -165,10 +169,12 @@ export class AddFilterModalComponent {
   }
 
   constructor(
-    public modal: ModalRef<{ expression: AnyFilterExpression; target: FilterTarget }, AnyFilterExpression>,
+    public modal: ModalRef<
+      { expression: AnyFilterExpression; target: FilterTarget; dataAugmentation?: boolean },
+      AnyFilterExpression
+    >,
     private labelsService: LabelsService,
     private nerService: NerService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.target.next(this.modal.config.data?.target || 'field');
     const expression = this.modal.config.data?.expression;

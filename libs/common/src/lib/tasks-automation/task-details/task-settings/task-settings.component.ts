@@ -16,8 +16,8 @@ import {
   TaskApplyTo,
   TaskTrigger,
 } from '@nuclia/core';
-import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
+import { PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { DataAugmentationTaskOnGoing, hasFilters } from '../../tasks-automation.models';
 
 interface Trigger {
   url: string;
@@ -37,6 +37,7 @@ interface Trigger {
     ParametersTableComponent,
     InfoCardComponent,
     PaTableModule,
+    PaTextFieldModule,
   ],
   templateUrl: './task-settings.component.html',
   styleUrl: './task-settings.component.scss',
@@ -60,6 +61,7 @@ export class TaskSettingsComponent {
   labels: string[] = [];
   triggers: Trigger[] = [];
   apply_to_agent_generated_fields = false;
+  hasFilters = false;
   TaskApplyTo = TaskApplyTo;
 
   askOperation?: AskOperation;
@@ -82,6 +84,7 @@ export class TaskSettingsComponent {
     this.apply_to_agent_generated_fields = value?.parameters.filter.apply_to_agent_generated_fields || false;
     if (value) {
       this.triggers = this.mapTriggers(value);
+      this.hasFilters = hasFilters(value.parameters);
     }
     this.askOperation = this.task?.parameters?.operations?.find((operation) => operation.ask)?.ask;
     this.labelOperation = this.task?.parameters?.operations?.find((operation) => operation.label)?.label;

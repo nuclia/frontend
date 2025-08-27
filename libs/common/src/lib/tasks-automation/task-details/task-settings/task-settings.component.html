@@ -22,62 +22,78 @@
       }
     </div>
   </nsi-two-columns-configuration-item>
-  @if (task.parameters.filter; as filter) {
+  @if (task.parameters.filter || task.parameters.filter_expression_json) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.settings.filter.title"
       description="tasks-automation.settings.filter.description">
       <div class="settings-container">
-        <div class="setting">
-          <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
-          <div>{{ filter.contains?.join(', ') || '-' }}</div>
-          @if (filter.contains_operator === 1) {
-            <div>
-              <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
-            </div>
-          }
-        </div>
-        @if (fieldTypes.length > 0) {
-          <div class="separator-line"></div>
-          <div class="setting">
-            <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
-            <div class="filters">
-              @for (type of fieldTypes; track type) {
-                <nsi-badge>{{ type }}</nsi-badge>
+        @if (hasFilters && !task.parameters.filter_expression_json) {
+          @if (task.parameters.filter; as filter) {
+            <div class="setting">
+              <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
+              <div>{{ filter.contains?.join(', ') || '-' }}</div>
+              @if (filter.contains_operator === 1) {
+                <div>
+                  <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
+                </div>
               }
             </div>
-          </div>
-        }
-        @if (notFieldTypes.length > 0) {
-          <div class="separator-line"></div>
-          <div class="setting">
-            <label>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</label>
-            <div class="filters">
-              @for (type of notFieldTypes; track type) {
-                <nsi-badge>{{ type }}</nsi-badge>
-              }
-            </div>
-          </div>
-        }
-        @if (labels.length > 0) {
-          <div class="separator-line"></div>
-          <div class="setting">
-            <label>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</label>
-            <div class="filters">
-              @for (label of labels; track label) {
-                <div>{{ label }}</div>
-              }
-            </div>
-            @if (filter.labels_operator === 1) {
-              <div>
-                <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
+            @if (fieldTypes.length > 0) {
+              <div class="separator-line"></div>
+              <div class="setting">
+                <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
+                <div class="filters">
+                  @for (type of fieldTypes; track type) {
+                    <nsi-badge>{{ type }}</nsi-badge>
+                  }
+                </div>
               </div>
             }
-          </div>
-        }
-        @if (apply_to_agent_generated_fields) {
-          <div class="separator-line"></div>
+            @if (notFieldTypes.length > 0) {
+              <div class="separator-line"></div>
+              <div class="setting">
+                <label>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</label>
+                <div class="filters">
+                  @for (type of notFieldTypes; track type) {
+                    <nsi-badge>{{ type }}</nsi-badge>
+                  }
+                </div>
+              </div>
+            }
+            @if (labels.length > 0) {
+              <div class="separator-line"></div>
+              <div class="setting">
+                <label>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</label>
+                <div class="filters">
+                  @for (label of labels; track label) {
+                    <div>{{ label }}</div>
+                  }
+                </div>
+                @if (filter.labels_operator === 1) {
+                  <div>
+                    <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
+                  </div>
+                }
+              </div>
+            }
+            @if (apply_to_agent_generated_fields) {
+              <div class="separator-line"></div>
+              <div class="setting">
+                <label>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</label>
+              </div>
+            }
+          }
+        } @else {
           <div class="setting">
-            <label>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</label>
+            <label>{{ 'tasks-automation.form.filter.filter-expression.title' | translate }}</label>
+            @if (task.parameters.filter_expression_json) {
+              <pa-textarea
+                rows="4"
+                readonly
+                [value]="task.parameters.filter_expression_json"></pa-textarea>
+            } @else {
+              <div>-</div>
+            }
           </div>
         }
       </div>
