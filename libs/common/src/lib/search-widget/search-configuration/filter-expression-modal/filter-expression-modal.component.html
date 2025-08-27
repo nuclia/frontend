@@ -31,49 +31,50 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
       </pa-accordion>
-
-      @if (filterExpression.field && filterExpression.paragraph) {
-        <div class="filter-logic">
-          <pa-select [(value)]="filterExpression.operator">
-            <pa-option value="and">AND</pa-option>
-            <pa-option value="or">OR</pa-option>
-          </pa-select>
-          <span>
-            <pa-icon
-              name="info"
-              size="small"
-              [paPopover]="labelsLogic"></pa-icon>
-            <pa-popover #labelsLogic>
-              {{ 'search.configuration.filter-expression-modal.operator' | translate }}
-            </pa-popover>
-          </span>
-        </div>
+      @if (!dataAugmentation) {
+        @if (filterExpression.field && filterExpression.paragraph) {
+          <div class="filter-logic">
+            <pa-select [(value)]="filterExpression.operator">
+              <pa-option value="and">AND</pa-option>
+              <pa-option value="or">OR</pa-option>
+            </pa-select>
+            <span>
+              <pa-icon
+                name="info"
+                size="small"
+                [paPopover]="labelsLogic"></pa-icon>
+              <pa-popover #labelsLogic>
+                {{ 'search.configuration.filter-expression-modal.operator' | translate }}
+              </pa-popover>
+            </span>
+          </div>
+        }
+        <pa-accordion>
+          <pa-accordion-item
+            id="paragraph"
+            [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
+            [expanded]="filterExpression.paragraph">
+            <pa-accordion-item-body>
+              @if (filterExpression.paragraph) {
+                <ng-container
+                  [ngTemplateOutlet]="filterItem"
+                  [ngTemplateOutletContext]="{ filter: filterExpression.paragraph, target: 'paragraph' }" />
+              }
+              @if (!filterExpression.paragraph) {
+                <div>
+                  <pa-button
+                    aspect="basic"
+                    icon="circle-plus"
+                    iconAndText
+                    (click)="add('paragraph')">
+                    {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                  </pa-button>
+                </div>
+              }
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
       }
-      <pa-accordion>
-        <pa-accordion-item
-          id="paragraph"
-          [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
-          [expanded]="filterExpression.paragraph">
-          <pa-accordion-item-body>
-            @if (filterExpression.paragraph) {
-              <ng-container
-                [ngTemplateOutlet]="filterItem"
-                [ngTemplateOutletContext]="{ filter: filterExpression.paragraph, target: 'paragraph' }" />
-            }
-            @if (!filterExpression.paragraph) {
-              <div>
-                <pa-button
-                  aspect="basic"
-                  icon="circle-plus"
-                  iconAndText
-                  (click)="add('paragraph')">
-                  {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
-                </pa-button>
-              </div>
-            }
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-      </pa-accordion>
     </div>
   </pa-modal-content>
   <pa-modal-footer>

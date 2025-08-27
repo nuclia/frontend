@@ -57,16 +57,18 @@ export type FilterTarget = 'field' | 'paragraph';
 })
 export class FilterExpressionModalComponent {
   filterExpression: FilterExpression = {};
+  dataAugmentation = false;
 
   @ViewChildren(AccordionItemComponent) accordionItems: AccordionItemComponent[] = [];
 
   constructor(
-    public modal: ModalRef<string, string>,
+    public modal: ModalRef<{ filterExpression: string; dataAugmentation?: boolean }, string>,
     private modalService: SisModalService,
     private cdr: ChangeDetectorRef,
   ) {
     try {
-      this.filterExpression = JSON.parse(this.modal.config.data || '{}');
+      this.filterExpression = JSON.parse(this.modal.config.data?.filterExpression || '{}');
+      this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
     } catch {
       // Invalid filter expression
     }
@@ -83,7 +85,10 @@ export class FilterExpressionModalComponent {
 
   add(target: FilterTarget, parent?: AnyFilterExpression) {
     this.modalService
-      .openModal(AddFilterModalComponent, new ModalConfig({ data: { target } }))
+      .openModal(
+        AddFilterModalComponent,
+        new ModalConfig({ data: { target, dataAugmentation: this.dataAugmentation } }),
+      )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {
         if (parent) {
@@ -109,7 +114,10 @@ export class FilterExpressionModalComponent {
 
   edit(target: FilterTarget, expression: AnyFilterExpression, parent?: AnyFilterExpression, index?: number) {
     this.modalService
-      .openModal(AddFilterModalComponent, new ModalConfig({ data: { expression, target } }))
+      .openModal(
+        AddFilterModalComponent,
+        new ModalConfig({ data: { expression, target, dataAugmentation: this.dataAugmentation } }),
+      )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {
         this.replaceExpression(target, result, parent, index);

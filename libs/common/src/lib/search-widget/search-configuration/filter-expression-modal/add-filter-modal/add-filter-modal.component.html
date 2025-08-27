@@ -113,13 +113,15 @@
               </pa-input>
             }
             @case ('resource') {
-              <pa-radio-group
-                [(value)]="resourceSelection"
-                (valueChange)="forms['resource'].reset()">
-                <pa-radio value="id">{{ 'generic.uid' | translate }}</pa-radio>
-                <pa-radio value="slug">{{ 'generic.slug' | translate }}</pa-radio>
-              </pa-radio-group>
-              @if (resourceSelection === 'id') {
+              @if (!dataAugmentation) {
+                <pa-radio-group
+                  [(value)]="resourceSelection"
+                  (valueChange)="forms['resource'].reset()">
+                  <pa-radio value="id">{{ 'generic.uid' | translate }}</pa-radio>
+                  <pa-radio value="slug">{{ 'generic.slug' | translate }}</pa-radio>
+                </pa-radio-group>
+              }
+              @if (resourceSelection === 'id' || dataAugmentation) {
                 <pa-input formControlName="id">{{ 'generic.uid' | translate }}</pa-input>
               } @else {
                 <pa-input formControlName="slug">{{ 'generic.slug' | translate }}</pa-input>
@@ -165,11 +167,13 @@
                   {{ 'search.configuration.filter-expression-modal.generated-filter.data-augmentation' | translate }}
                 </pa-option>
               </pa-select>
-              <pa-input
-                formControlName="da_task"
-                [help]="'generic.optional' | translate">
-                {{ 'search.configuration.filter-expression-modal.generated-filter.field-prefix' | translate }}
-              </pa-input>
+              @if (!dataAugmentation) {
+                <pa-input
+                  formControlName="da_task"
+                  [help]="'generic.optional' | translate">
+                  {{ 'search.configuration.filter-expression-modal.generated-filter.field-prefix' | translate }}
+                </pa-input>
+              }
             }
             @case ('kind') {
               <pa-select
