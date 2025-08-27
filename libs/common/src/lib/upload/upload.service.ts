@@ -38,8 +38,8 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { PENDING_RESOURCES_LIMIT } from './upload.utils';
+import SparkMD5 from 'spark-md5';
 
-const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 export const SPREADSHEET_MIMES = [
   'text/csv',
   'application/json',
@@ -130,10 +130,21 @@ export class UploadService {
           this.uploadFiles(files, (progress) => {
             if (progress.completed) {
               if (progress.failed === 0 || progress.failed === progress.conflicts) {
-                this.onUploadComplete(true, false, false, (progress.conflicts || 0) < progress.files.length);
+                this.onUploadComplete(
+                  true,
+                  false,
+                  false,
+                  (progress.conflicts || 0) > 0,
+                  (progress.conflicts || 0) < progress.files.length,
+                );
               } else if (!hasNotifiedError) {
                 hasNotifiedError = true;
-                this.onUploadComplete(false, (progress.limitExceeded || 0) > 0, (progress.blocked || 0) > 0);
+                this.onUploadComplete(
+                  false,
+                  (progress.limitExceeded || 0) > 0,
+                  (progress.blocked || 0) > 0,
+                  (progress.conflicts || 0) > 0,
+                );
               }
             }
           }),
@@ -256,7 +267,8 @@ export class UploadService {
           },
           { classifications },
           true,
-          REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
+          { url: uri },
+          SparkMD5.hash(uri),
         ),
       ),
     );
@@ -274,6 +286,7 @@ export class UploadService {
       switchMap((kb) =>
         kb.createResource({
           title: uri,
+          slug: SparkMD5.hash(uri),
           usermetadata: { classifications },
           files: {
             ['cloud-file']: {
@@ -360,6 +373,7 @@ export class UploadService {
     let errors = 0;
     let errors429 = 0;
     let blocked = false;
+    let conflicts = false;
     uploads = uploads.map((upload) =>
       upload.pipe(
         catchError((error) => {
@@ -370,6 +384,9 @@ export class UploadService {
           if (error?.status === 402) {
             blocked = true;
           }
+          if (error?.status === 409) {
+            conflicts = true;
+          }
           return of(null);
         }),
       ),
@@ -378,7 +395,7 @@ export class UploadService {
       mergeMap((obs) => obs, 6),
       toArray(),
       tap(() => {
-        this.onUploadComplete(errors === 0, errors429 > 0, blocked);
+        this.onUploadComplete(errors === 0, errors429 > 0, blocked, conflicts);
       }),
       map(() => ({ errors })),
     );
@@ -416,7 +433,13 @@ export class UploadService {
     );
   }
 
-  onUploadComplete(success: boolean, limitExceeded = false, blocked = false, showNotification = true) {
+  onUploadComplete(
+    success: boolean,
+    limitExceeded = false,
+    blocked = false,
+    conflicts = false,
+    showNotification = true,
+  ) {
     if (showNotification) {
       success ? this.toaster.success('upload.toast.successful') : this.toaster.warning('upload.toast.failed');
     }
@@ -425,6 +448,9 @@ export class UploadService {
     }
     if (limitExceeded) {
       this.toaster.error('upload.toast.limit');
+    }
+    if (conflicts) {
+      this.toaster.error('upload.toast.conflicts');
     }
     if (success) {
       localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');

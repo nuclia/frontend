@@ -1064,12 +1064,14 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     metadata?: UserMetadata,
     synchronous = true,
     origin?: Origin,
+    slug?: string,
   ): Observable<{ uuid: string }> {
     return this.createResource(
       {
         links: { link },
         usermetadata: metadata,
         title: link.uri,
+        slug,
         icon: 'application/stf-link',
         ...(origin ? { origin } : {}),
       },

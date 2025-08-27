@@ -2195,6 +2195,7 @@
 	"upload.takes_time": "Nous avons besoin d’un certain temps pour traiter les fichiers. N’hésitez pas à fermer cette boîte de dialogue et à poursuivre votre travail.",
 	"upload.texts": "Ajouter des ressources textuelles",
 	"upload.toast.blocked": "Votre quota de téléchargement a été atteint, vous devez mettre à niveau votre compte.",
+	"upload.toast.conflicts": "Certaines ressources n’ont pas été téléchargées car elles existent déjà dans la Knowledge Box.",
 	"upload.toast.failed": "Erreurs lors du téléchargement",
 	"upload.toast.limit": "Votre compte a envoyé trop de requêtes en peu de temps. Merci de réessayer dans quelques instants.",
 	"upload.toast.successful": "Téléchargement réussi",
