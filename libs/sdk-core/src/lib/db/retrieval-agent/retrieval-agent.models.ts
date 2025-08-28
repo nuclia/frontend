@@ -314,6 +314,7 @@ export interface SummarizeAgentCreation {
   prompt?: string;
   model?: string;
   images?: boolean;
+  conversational?: boolean;
 }
 export interface GenerateAgentCreation {
   module: 'generate';

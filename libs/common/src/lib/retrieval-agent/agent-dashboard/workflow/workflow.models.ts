@@ -287,6 +287,7 @@ export interface PostConditionalAgentUI extends CommonAgentConfig {
 export interface SummarizeAgentUI extends CommonAgentConfig {
   prompt: string;
   images?: boolean;
+  conversational?: boolean;
 }
 export interface GenerateAgentUI extends CommonAgentConfig {
   prompt: string;
