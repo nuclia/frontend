@@ -953,6 +953,7 @@
 	"redirect.marketplace.error": "Amazon Marketplace configuration failed",
 	"redirect.marketplace.success": "Amazon Marketplace successfully configured ",
 	"redirect.marketplace.title": "Select the account you want to connect to Amazon Marketplace",
+	"reset.invalid-token": "Something went wrong, the link you have received by email might be expired or corrupted.",
 	"reset.password": "New password",
 	"reset.password_reset": "Your password has been reset",
 	"reset.title": "Reset password",

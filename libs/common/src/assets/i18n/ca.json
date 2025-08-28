@@ -953,6 +953,7 @@
 	"redirect.marketplace.error": "La configuració d’Amazon Marketplace ha fallat",
 	"redirect.marketplace.success": "Amazon Marketplace s’ha configurat correctament",
 	"redirect.marketplace.title": "Seleccioneu el compte que voleu connectar a Amazon Marketplace",
+	"reset.invalid-token": "Alguna cosa ha anat malament, l'enllaç que has rebut per correu electrònic podria estar caducat o malmès.",
 	"reset.password": "Nova contrasenya",
 	"reset.password_reset": "S’ha restaurat la contrasenya",
 	"reset.title": "Restablir la contrasenya",
