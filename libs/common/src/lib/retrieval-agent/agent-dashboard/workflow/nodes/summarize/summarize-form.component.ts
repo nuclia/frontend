@@ -25,6 +25,7 @@ export class SummarizeFormComponent extends FormDirective {
     summarize: new FormGroup({
       prompt: new FormControl('', { nonNullable: true }),
       images: new FormControl(false),
+      conversational: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
     }),
   });

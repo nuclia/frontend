@@ -1417,6 +1417,8 @@
 	"retrieval-agents.workflow.node-types.sql.form.view_support": "View support",
 	"retrieval-agents.workflow.node-types.sql.title": "SQL query",
 	"retrieval-agents.workflow.node-types.summarize.config.default-prompt": "Summarize the output using the default prompt",
+	"retrieval-agents.workflow.node-types.summarize.conversational.help": "Respond in a conversational style",
+	"retrieval-agents.workflow.node-types.summarize.conversational.label": "Conversational",
 	"retrieval-agents.workflow.node-types.summarize.description": "Summarize the output",
 	"retrieval-agents.workflow.node-types.summarize.images": "Images",
 	"retrieval-agents.workflow.node-types.summarize.prompt-placeholder": "Prompt for the summary format",

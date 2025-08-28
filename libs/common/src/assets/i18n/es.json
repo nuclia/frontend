@@ -1401,6 +1401,8 @@
 	"retrieval-agents.workflow.node-types.sql.form.sqlschema": "Esquema SQL",
 	"retrieval-agents.workflow.node-types.sql.title": "Consulta SQL",
 	"retrieval-agents.workflow.node-types.summarize.config.default-prompt": "Resumir la salida mediante el prompt predeterminada",
+	"retrieval-agents.workflow.node-types.summarize.conversational.help": "Responda en un estilo conversacional",
+	"retrieval-agents.workflow.node-types.summarize.conversational.label": "Conversacional",
 	"retrieval-agents.workflow.node-types.summarize.description": "Resumir la salida",
 	"retrieval-agents.workflow.node-types.summarize.images": "Imagenes",
 	"retrieval-agents.workflow.node-types.summarize.prompt-placeholder": "Prompt para el format de resum",

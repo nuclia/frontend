@@ -20,6 +20,12 @@
       withBackground="">
       {{ 'retrieval-agents.workflow.node-types.summarize.images' | translate }}
     </pa-toggle>
+    <pa-toggle
+      formControlName="conversational"
+      [help]="'retrieval-agents.workflow.node-types.summarize.conversational.help' | translate"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.summarize.conversational.label' | translate }}
+    </pa-toggle>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>
