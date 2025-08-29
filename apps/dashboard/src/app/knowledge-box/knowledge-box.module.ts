@@ -11,7 +11,6 @@ import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-u
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
 import { AccountStatusComponent } from '../account/account-status/account-status.component';
-import { SurveyComponent } from './knowledge-box-home/survey/survey.component';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -83,7 +82,6 @@ import { STFPipesModule } from '@flaps/core';
     KnowledgeBoxUsersComponent,
     KnowledgeBoxKeysComponent,
     ServiceAccessComponent,
-    SurveyComponent,
   ],
   exports: [
     KnowledgeBoxComponent,

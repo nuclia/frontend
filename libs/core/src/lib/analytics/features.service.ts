@@ -70,7 +70,6 @@ export class FeaturesService {
     extractConfig: this.featureFlag.isFeatureEnabled('extract-config'),
     splitConfig: this.featureFlag.isFeatureEnabled('split-config'),
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
-    userSurvey: this.featureFlag.isFeatureEnabled('user-survey'),
     modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
     aragAlinia: this.featureFlag.isFeatureEnabled('arag-alinia'),
     aragCondition: this.featureFlag.isFeatureEnabled('arag-condition'),
