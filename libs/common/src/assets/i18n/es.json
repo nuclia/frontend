@@ -2197,6 +2197,7 @@
 	"upload.takes_time": "Nuclia necesita un rato para procesar los archivos.",
 	"upload.texts": "Añadir recursos de texto",
 	"upload.toast.blocked": "Se ha alcanzado la cuota de subida, necesita actualizar tu cuenta.",
+	"upload.toast.conflicts": "Algunos recursos no se cargaron porque ya existen en la Knowledge Box.",
 	"upload.toast.failed": "Errores durante la carga",
 	"upload.toast.limit": "Tu cuenta ha estado enviando demasiadas peticiones en un período corto de tiempo. Inténtalo de nuevo dentro de unos instantes.",
 	"upload.toast.successful": "Subida exitosa",
