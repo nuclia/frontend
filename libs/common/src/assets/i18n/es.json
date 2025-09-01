@@ -1082,6 +1082,7 @@
 	"resource.preview.general": "General",
 	"resource.preview.hide-warning": "Este recurso está oculto, no se recuperará con una consulta de búsqueda normal.",
 	"resource.preview.labels": "Etiquetas",
+	"resource.preview.more-errors": "Hay {{num}} errores más",
 	"resource.preview.open-viewer": "Visor abierto",
 	"resource.preview.origin": "Origen",
 	"resource.preview.question": "Pregunta",

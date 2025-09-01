@@ -1082,6 +1082,7 @@
 	"resource.preview.general": "General",
 	"resource.preview.hide-warning": "This resource is hidden, it will not be retrieved with a regular search query.",
 	"resource.preview.labels": "Labels",
+	"resource.preview.more-errors": "There are {{num}} more errors",
 	"resource.preview.open-viewer": "Open viewer",
 	"resource.preview.origin": "Origin",
 	"resource.preview.question": "Question",

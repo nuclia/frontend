@@ -133,6 +133,12 @@ export interface IError {
   code: number;
   code_str?: string;
   created?: string;
+  severity: SEVERITY;
+}
+
+export enum SEVERITY {
+  ERROR = 'ERROR',
+  WARNING = 'WARNING',
 }
 
 export interface IFieldData {
