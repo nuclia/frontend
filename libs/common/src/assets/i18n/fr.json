@@ -1082,6 +1082,7 @@
 	"resource.preview.general": "Général",
 	"resource.preview.hide-warning": "Cette ressource est masquée, elle ne sera pas récupérée avec une requête de recherche classique.",
 	"resource.preview.labels": "Étiquettes",
+	"resource.preview.more-errors": "Il y a {{num}} autres erreurs",
 	"resource.preview.open-viewer": "Ouvrir la visionneuse",
 	"resource.preview.origin": "Origine",
 	"resource.preview.question": "Question",

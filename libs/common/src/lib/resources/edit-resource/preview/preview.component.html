@@ -3,13 +3,23 @@
 }
 <div class="main-container">
   <div class="scrollable-area">
-    @for (error of errors; track error.body) {
+    @for (error of errors | slice: 0 : 5; track error.body) {
       <div class="error-container">
         <p>
           <pa-icon
             name="warning"
             size="small"></pa-icon>
           {{ error.body }}
+        </p>
+      </div>
+    }
+    @if (errors.length > 5) {
+      <div class="error-container">
+        <p>
+          <pa-icon
+            name="warning"
+            size="small"></pa-icon>
+          {{ 'resource.preview.more-errors' | translate: { num: errors.length } }}
         </p>
       </div>
     }
