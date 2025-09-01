@@ -1,10 +1,9 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
-import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
+import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
 
 @Component({
   selector: 'app-summarize-form',
@@ -14,9 +13,8 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
-    RulesFieldComponent,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   templateUrl: './summarize-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -26,7 +24,6 @@ export class SummarizeFormComponent extends FormDirective {
       prompt: new FormControl('', { nonNullable: true }),
       images: new FormControl(false),
       conversational: new FormControl(false),
-      rules: new FormArray<FormControl<string>>([]),
     }),
   });
   override get configForm() {
