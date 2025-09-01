@@ -10,7 +10,7 @@
         <nsi-info-card
           type="warning"
           icon="warning">
-          {{ 'upload.limit-warning' | translate: { limit: pendingResourcesLimit | number } }}
+          {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
         </nsi-info-card>
       }
       <app-sitemap-select (select)="setSitemapLinks($event)"></app-sitemap-select>

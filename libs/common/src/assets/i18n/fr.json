@@ -2195,6 +2195,7 @@
 	"upload.sitemap.localstorage": "Entrées de LocalStorage",
 	"upload.sitemap.parameters-help": "Nuclia enverra ces paramètres lors de la récupération du contenu des URL. Vous pouvez les utiliser pour fournir une authentification.",
 	"upload.sitemap.title": "Télécharger sitemap",
+	"upload.slow-upload": "Veuillez noter que le téléchargement de plus de {{limit}} ressources peut prendre plus de temps.",
 	"upload.takes_time": "Nous avons besoin d’un certain temps pour traiter les fichiers. N’hésitez pas à fermer cette boîte de dialogue et à poursuivre votre travail.",
 	"upload.texts": "Ajouter des ressources textuelles",
 	"upload.toast.blocked": "Votre quota de téléchargement a été atteint, vous devez mettre à niveau votre compte.",

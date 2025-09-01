@@ -33,7 +33,7 @@ import {
   timer,
   toArray,
 } from 'rxjs';
-import { debounceTime, tap } from 'rxjs/operators';
+import { debounceTime, delay, tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -374,8 +374,12 @@ export class UploadService {
     let errors429 = 0;
     let blocked = false;
     let conflicts = false;
+    const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', avoidTabClosing);
     uploads = uploads.map((upload) =>
       upload.pipe(
+        // When there are many uploads, a delay is added to avoid overflowing the process queue
+        delay(uploads.length > PENDING_RESOURCES_LIMIT ? 10000 : 0),
         catchError((error) => {
           errors += 1;
           if (error?.status === 429) {
@@ -395,6 +399,7 @@ export class UploadService {
       mergeMap((obs) => obs, 6),
       toArray(),
       tap(() => {
+        window.removeEventListener('beforeunload', avoidTabClosing);
         this.onUploadComplete(errors === 0, errors429 > 0, blocked, conflicts);
       }),
       map(() => ({ errors })),

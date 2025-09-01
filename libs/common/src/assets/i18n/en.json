@@ -2220,6 +2220,7 @@
 	"upload.sitemap.localstorage": "LocalStorage entries",
 	"upload.sitemap.parameters-help": "Nuclia will send these parameters when retrieving the content of the URLs. You can use them to provide authentication.",
 	"upload.sitemap.title": "Upload sitemap",
+	"upload.slow-upload": "Note that uploading more than {{limit}} resources may take additional time.",
 	"upload.takes_time": "We need some time to process the files. Feel free to close this dialog box and keep working.",
 	"upload.texts": "Add text resources",
 	"upload.toast.blocked": "Your upload quota has been reached, you need to upgrade your account.",
