@@ -12,6 +12,7 @@ import {
   TextFieldFormat,
   TextFormat,
   UploadStatus,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -239,6 +240,7 @@ export class UploadService {
   }
 
   createLinkResource(
+    kb: WritableKnowledgeBox,
     uri: string,
     classifications: Classification[],
     css_selector?: string | null,
@@ -250,58 +252,55 @@ export class UploadService {
     split_strategy?: string,
     language?: string,
   ) {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.createLinkResource(
-          {
-            uri,
-            css_selector: css_selector || null,
-            xpath: xpath || null,
-            headers,
-            cookies,
-            localstorage,
-            extract_strategy,
-            split_strategy,
-            language,
-          },
-          { classifications },
-          true,
-          { url: uri },
-          SparkMD5.hash(uri),
-        ),
-      ),
+    return kb.createLinkResource(
+      {
+        uri,
+        css_selector: css_selector || null,
+        xpath: xpath || null,
+        headers,
+        cookies,
+        localstorage,
+        extract_strategy,
+        split_strategy,
+        language,
+      },
+      { classifications },
+      true,
+      { url: uri },
+      SparkMD5.hash(uri),
     );
   }
 
   createCloudFileResource(
+    kb: WritableKnowledgeBox,
     uri: string,
     classifications: Classification[],
     extract_strategy?: string,
     split_strategy?: string,
     language?: string,
   ) {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.createResource({
-          title: uri,
-          slug: SparkMD5.hash(uri),
-          usermetadata: { classifications },
-          files: {
-            ['cloud-file']: {
-              file: { uri },
-              extract_strategy,
-              split_strategy,
-              language,
-            },
-          },
-        }),
-      ),
-    );
+    return kb.createResource({
+      title: uri,
+      slug: SparkMD5.hash(uri),
+      usermetadata: { classifications },
+      files: {
+        ['cloud-file']: {
+          file: { uri },
+          extract_strategy,
+          split_strategy,
+          language,
+        },
+      },
+    });
   }
 
-  uploadTextResource(title: string, body: string, format: TextFieldFormat, classifications?: Classification[]) {
+  uploadTextResource(
+    kb: WritableKnowledgeBox,
+    title: string,
+    body: string,
+    format: TextFieldFormat,
+    classifications?: Classification[],
+  ) {
     const resource: ICreateResource = {
       title: title,
       texts: {
@@ -313,11 +312,8 @@ export class UploadService {
         classifications: classifications,
       };
     }
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => kb.createResource(resource)),
-      // onUploadSuccess is called only once for all by the parent
-    );
+    return kb.createResource(resource);
+    // onUploadSuccess is called only once for all by the parent
   }
 
   uploadQnaResource(

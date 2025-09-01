@@ -17,7 +17,7 @@ import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SitemapSelectComponent } from './sitemap-select/sitemap-select.component';
-import { catchError, defer, from, map, of, switchMap } from 'rxjs';
+import { catchError, defer, from, map, of, switchMap, take } from 'rxjs';
 import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
 import { StandaloneService } from '../../services';
 
@@ -82,26 +82,38 @@ export class UploadSitemapComponent {
     this.isUploading = true;
     this.cdr.markForCheck();
     const values = this.sitemapForm.getRawValue();
-    this.uploadService
-      .bulkUpload(
-        this.filteredSitemapLinks.map((link) =>
-          defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
-            map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
-            catchError(() => of('text/html')),
-            switchMap((mime) =>
-              mime.startsWith('text/html')
-                ? this.uploadService.createLinkResource(
-                    link,
-                    this.selectedLabels,
-                    values.css_selector,
-                    values.xpath,
-                    this.cleanParameters(this.headers),
-                    this.cleanParameters(this.cookies),
-                    this.cleanParameters(this.localstorage),
-                    this.extractStrategy,
-                    this.splitStrategy,
-                  )
-                : this.uploadService.createCloudFileResource(link, this.selectedLabels, this.extractStrategy, this.splitStrategy),
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          this.uploadService.bulkUpload(
+            this.filteredSitemapLinks.map((link) =>
+              defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
+                map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
+                catchError(() => of('text/html')),
+                switchMap((mime) =>
+                  mime.startsWith('text/html')
+                    ? this.uploadService.createLinkResource(
+                        kb,
+                        link,
+                        this.selectedLabels,
+                        values.css_selector,
+                        values.xpath,
+                        this.cleanParameters(this.headers),
+                        this.cleanParameters(this.cookies),
+                        this.cleanParameters(this.localstorage),
+                        this.extractStrategy,
+                        this.splitStrategy,
+                      )
+                    : this.uploadService.createCloudFileResource(
+                        kb,
+                        link,
+                        this.selectedLabels,
+                        this.extractStrategy,
+                        this.splitStrategy,
+                      ),
+                ),
+              ),
             ),
           ),
         ),

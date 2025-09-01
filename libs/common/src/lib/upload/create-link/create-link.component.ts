@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { Classification } from '@nuclia/core';
-import { Observable, switchMap } from 'rxjs';
+import { Classification, WritableKnowledgeBox } from '@nuclia/core';
+import { Observable, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -92,57 +92,69 @@ export class CreateLinkComponent {
             .split('\n')
             .map((link: string) => link.trim())
             .filter((link: string) => !!link);
-          obs = this.uploadService.bulkUpload(
-            links.map((link) =>
-              this.getResourceCreationObs(
-                isCloudFile,
-                link,
-                this.selectedLabels,
-                formValue.css_selector,
-                formValue.xpath,
-                this.extractStrategy,
-                this.splitStrategy,
-                this.langCode.value,
+          obs = this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload(
+                links.map((link) =>
+                  this.getResourceCreationObs(
+                    kb,
+                    isCloudFile,
+                    link,
+                    this.selectedLabels,
+                    formValue.css_selector,
+                    formValue.xpath,
+                    this.extractStrategy,
+                    this.splitStrategy,
+                    this.langCode.value,
+                  ),
+                ),
               ),
             ),
           );
           break;
         case 'one':
-          obs = this.uploadService.bulkUpload([
-            this.getResourceCreationObs(
-              isCloudFile,
-              formValue.link,
-              this.selectedLabels,
-              formValue.css_selector,
-              formValue.xpath,
-              this.extractStrategy,
-              this.splitStrategy,
-              this.langCode.value,
+          obs = this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload([
+                this.getResourceCreationObs(
+                  kb,
+                  isCloudFile,
+                  formValue.link,
+                  this.selectedLabels,
+                  formValue.css_selector,
+                  formValue.xpath,
+                  this.extractStrategy,
+                  this.splitStrategy,
+                  this.langCode.value,
+                ),
+              ]),
             ),
-          ]);
+          );
           break;
         case 'csv':
           const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
-          obs = this.uploadService
-            .createMissingLabels(allLabels)
-            .pipe(
-              switchMap(() =>
-                this.uploadService.bulkUpload(
-                  this.csv.map((row) =>
-                    this.getResourceCreationObs(
-                      isCloudFile,
-                      row.link,
-                      row.labels,
-                      row.css_selector,
-                      row.xpath,
-                      this.extractStrategy,
-                      this.splitStrategy,
-                      this.langCode.value,
-                    ),
+          obs = this.uploadService.createMissingLabels(allLabels).pipe(
+            switchMap(() => this.sdk.currentKb.pipe(take(1))),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload(
+                this.csv.map((row) =>
+                  this.getResourceCreationObs(
+                    kb,
+                    isCloudFile,
+                    row.link,
+                    row.labels,
+                    row.css_selector,
+                    row.xpath,
+                    this.extractStrategy,
+                    this.splitStrategy,
+                    this.langCode.value,
                   ),
                 ),
               ),
-            );
+            ),
+          );
           break;
       }
 
@@ -178,6 +190,7 @@ export class CreateLinkComponent {
   }
 
   private getResourceCreationObs(
+    kb: WritableKnowledgeBox,
     isCloudFile: boolean,
     link: string,
     labels: Classification[],
@@ -188,8 +201,9 @@ export class CreateLinkComponent {
     language?: string,
   ): Observable<{ uuid: string }> {
     return isCloudFile
-      ? this.uploadService.createCloudFileResource(link, labels, extract_strategy, language)
+      ? this.uploadService.createCloudFileResource(kb, link, labels, extract_strategy, language)
       : this.uploadService.createLinkResource(
+          kb,
           link,
           labels,
           css_selector,

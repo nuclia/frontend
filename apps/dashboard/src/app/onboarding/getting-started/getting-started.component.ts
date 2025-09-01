@@ -38,8 +38,8 @@ const POLLING_DELAY = 30000; // in milliseconds, so 30s
     PaIconModule,
     IntroComponent,
     UploadComponent,
-    ProcessingComponent
-],
+    ProcessingComponent,
+  ],
   templateUrl: './getting-started.component.html',
   styleUrl: './getting-started.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -241,14 +241,19 @@ export class GettingStartedComponent implements OnDestroy {
   }
 
   private createLinkResources(linkList: ItemToUpload[]): Observable<ItemToUpload[]> {
-    return forkJoin(
-      linkList.map((item) =>
-        this.uploadService.createLinkResource(item.link as string, []).pipe(
-          map((response) => {
-            item.uploaded = true;
-            item.uuid = response.uuid;
-            return item;
-          }),
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        forkJoin(
+          linkList.map((item) =>
+            this.uploadService.createLinkResource(kb, item.link as string, []).pipe(
+              map((response) => {
+                item.uploaded = true;
+                item.uuid = response.uuid;
+                return item;
+              }),
+            ),
+          ),
         ),
       ),
     );
