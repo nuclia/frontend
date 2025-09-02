@@ -2195,6 +2195,7 @@
 	"upload.sitemap.localstorage": "Entrades de LocalStorage",
 	"upload.sitemap.parameters-help": "Nuclia enviarà aquests paràmetres quan recuperi el contingut de les URL. Podeu utilitzar-los per proporcionar autenticació.",
 	"upload.sitemap.title": "Carregueu sitemap",
+	"upload.slow-upload": "Tingueu en compte que pujar més de {{limit}} recursos pot trigar més temps.",
 	"upload.takes_time": "Nuclia necessita una estona per a processar els fitxers.",
 	"upload.texts": "Afegir recursos de text",
 	"upload.toast.blocked": "S'ha esgotat la quota de pujada, necessites actualitzar el teu compte.",

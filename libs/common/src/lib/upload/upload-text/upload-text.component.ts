@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { switchMap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
+import { SDKService } from '@flaps/core';
 
 const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST'];
 
@@ -38,6 +39,7 @@ export class UploadTextComponent {
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
+    private sdk: SDKService,
   ) {}
 
   close(): void {
@@ -66,9 +68,12 @@ export class UploadTextComponent {
     this.uploadService
       .createMissingLabels(allLabels)
       .pipe(
-        switchMap(() =>
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        switchMap((kb) =>
           this.uploadService.bulkUpload(
-            this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
+            this.csv.map((row) =>
+              this.uploadService.uploadTextResource(kb, row.title, row.body, row.format, row.labels),
+            ),
           ),
         ),
       )

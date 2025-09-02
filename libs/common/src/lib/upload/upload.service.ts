@@ -12,6 +12,7 @@ import {
   TextFieldFormat,
   TextFormat,
   UploadStatus,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -33,7 +34,7 @@ import {
   timer,
   toArray,
 } from 'rxjs';
-import { debounceTime, tap } from 'rxjs/operators';
+import { debounceTime, delay, tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -239,6 +240,7 @@ export class UploadService {
   }
 
   createLinkResource(
+    kb: WritableKnowledgeBox,
     uri: string,
     classifications: Classification[],
     css_selector?: string | null,
@@ -250,58 +252,55 @@ export class UploadService {
     split_strategy?: string,
     language?: string,
   ) {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.createLinkResource(
-          {
-            uri,
-            css_selector: css_selector || null,
-            xpath: xpath || null,
-            headers,
-            cookies,
-            localstorage,
-            extract_strategy,
-            split_strategy,
-            language,
-          },
-          { classifications },
-          true,
-          { url: uri },
-          SparkMD5.hash(uri),
-        ),
-      ),
+    return kb.createLinkResource(
+      {
+        uri,
+        css_selector: css_selector || null,
+        xpath: xpath || null,
+        headers,
+        cookies,
+        localstorage,
+        extract_strategy,
+        split_strategy,
+        language,
+      },
+      { classifications },
+      true,
+      { url: uri },
+      SparkMD5.hash(uri),
     );
   }
 
   createCloudFileResource(
+    kb: WritableKnowledgeBox,
     uri: string,
     classifications: Classification[],
     extract_strategy?: string,
     split_strategy?: string,
     language?: string,
   ) {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.createResource({
-          title: uri,
-          slug: SparkMD5.hash(uri),
-          usermetadata: { classifications },
-          files: {
-            ['cloud-file']: {
-              file: { uri },
-              extract_strategy,
-              split_strategy,
-              language,
-            },
-          },
-        }),
-      ),
-    );
+    return kb.createResource({
+      title: uri,
+      slug: SparkMD5.hash(uri),
+      usermetadata: { classifications },
+      files: {
+        ['cloud-file']: {
+          file: { uri },
+          extract_strategy,
+          split_strategy,
+          language,
+        },
+      },
+    });
   }
 
-  uploadTextResource(title: string, body: string, format: TextFieldFormat, classifications?: Classification[]) {
+  uploadTextResource(
+    kb: WritableKnowledgeBox,
+    title: string,
+    body: string,
+    format: TextFieldFormat,
+    classifications?: Classification[],
+  ) {
     const resource: ICreateResource = {
       title: title,
       texts: {
@@ -313,11 +312,8 @@ export class UploadService {
         classifications: classifications,
       };
     }
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => kb.createResource(resource)),
-      // onUploadSuccess is called only once for all by the parent
-    );
+    return kb.createResource(resource);
+    // onUploadSuccess is called only once for all by the parent
   }
 
   uploadQnaResource(
@@ -374,8 +370,12 @@ export class UploadService {
     let errors429 = 0;
     let blocked = false;
     let conflicts = false;
+    const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener('beforeunload', avoidTabClosing);
     uploads = uploads.map((upload) =>
       upload.pipe(
+        // When there are many uploads, a delay is added to avoid overflowing the process queue
+        delay(uploads.length > PENDING_RESOURCES_LIMIT ? 10000 : 0),
         catchError((error) => {
           errors += 1;
           if (error?.status === 429) {
@@ -395,6 +395,7 @@ export class UploadService {
       mergeMap((obs) => obs, 6),
       toArray(),
       tap(() => {
+        window.removeEventListener('beforeunload', avoidTabClosing);
         this.onUploadComplete(errors === 0, errors429 > 0, blocked, conflicts);
       }),
       map(() => ({ errors })),

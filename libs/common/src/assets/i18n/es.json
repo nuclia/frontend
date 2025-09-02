@@ -2195,6 +2195,7 @@
 	"upload.sitemap.localstorage": "Entradas de LocalStorage",
 	"upload.sitemap.parameters-help": "Nuclia enviará estos parámetros al recuperar el contenido de las URL. Puedes usarlos para proporcionar autenticación.",
 	"upload.sitemap.title": "Subir sitemap",
+	"upload.slow-upload": "Tenga en cuenta que subir más de {{limit}} recursos puede llevar tiempo adicional.",
 	"upload.takes_time": "Nuclia necesita un rato para procesar los archivos.",
 	"upload.texts": "Añadir recursos de texto",
 	"upload.toast.blocked": "Se ha alcanzado la cuota de subida, necesita actualizar tu cuenta.",
