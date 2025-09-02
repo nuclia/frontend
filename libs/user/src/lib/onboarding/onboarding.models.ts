@@ -7,6 +7,12 @@ export interface OnboardingPayload {
   organization_size?: string;
 }
 
+export interface AwsOnboardingPayload extends OnboardingPayload {
+  first_name: string;
+  last_name: string;
+  owner_email_address: string;
+}
+
 export interface OnboardingStatus {
   creating: boolean;
   accountCreated: boolean;

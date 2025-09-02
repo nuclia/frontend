@@ -10,12 +10,13 @@ import {
 } from '@nuclia/user';
 import { BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { filter, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { filter, forkJoin, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { Account, ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
 
 @Component({
   imports: [
@@ -29,6 +30,7 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
     TranslateModule,
     VectorDatabaseStepComponent,
     SisProgressModule,
+    AwsSetupAccountComponent,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -36,7 +38,7 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
   encapsulation: ViewEncapsulation.None,
 })
 export class AwsOnboardingComponent {
-  step = 1;
+  step = -1;
 
   account = this.sdk.currentAccount;
 
@@ -66,6 +68,22 @@ export class AwsOnboardingComponent {
     if (this.step > 1) {
       this.step = this.step - 1;
     }
+  }
+
+  checkAccount(account: Account) {
+    forkJoin([
+      this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id),
+      this.sdk.nuclia.db.getAccountInvitations(account.id),
+      this.sdk.nuclia.db.getAccountUsers(account.slug),
+    ]).subscribe(([kbs, invitations, users]) => {
+      const accountAlreadySet = kbs.length > 0 || invitations.length > 0 || users.length > 1;
+      if (accountAlreadySet) {
+        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)]);
+      } else {
+        this.step = 1;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   setupBudget(data: { budget: number | null }) {

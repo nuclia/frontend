@@ -2,6 +2,47 @@
   [formGroup]="onboardingForm"
   (ngSubmit)="submitForm()">
   <div class="onboarding-form">
+    @if (isAws) {
+      <div class="field">
+        <label
+          class="title-s"
+          for="first_name">
+          {{ 'onboarding.step1.first_name' | translate }}
+        </label>
+        <pa-input
+          formControlName="first_name"
+          id="first_name"
+          externalLabel
+          help="validation.required"
+          [errorMessages]="validationMessages.first_name"></pa-input>
+      </div>
+      <div class="field">
+        <label
+          class="title-s"
+          for="last_name">
+          {{ 'onboarding.step1.last_name' | translate }}
+        </label>
+        <pa-input
+          formControlName="last_name"
+          id="last_name"
+          externalLabel
+          help="validation.required"
+          [errorMessages]="validationMessages.last_name"></pa-input>
+      </div>
+      <div class="field">
+        <label
+          class="title-s"
+          for="owner_email_address">
+          {{ 'generic.email' | translate }}
+        </label>
+        <pa-input
+          formControlName="owner_email_address"
+          id="owner_email_address"
+          externalLabel
+          help="validation.required"
+          [errorMessages]="validationMessages.owner_email_address"></pa-input>
+      </div>
+    }
     <div class="field">
       <label
         class="title-s"
