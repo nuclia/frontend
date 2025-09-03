@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { AwsOnboardingPayload, OnboardingService, Step1Component } from '@nuclia/user';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
@@ -16,18 +17,23 @@ interface SetupAccountPayload {
 
 @Component({
   selector: 'app-aws-setup-account',
-  imports: [TranslateModule, PaTextFieldModule, PaButtonModule, SisProgressModule, Step1Component],
+  imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule, SisProgressModule, Step1Component],
   templateUrl: './aws-setup-account.component.html',
+  styleUrl: './aws-setup-account.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AwsSetupAccountComponent {
   sdk = inject(SDKService);
   onboardingService = inject(OnboardingService);
   toaster = inject(SisToastService);
+  translate = inject(TranslateService);
   route = inject(ActivatedRoute);
   cdr = inject(ChangeDetectorRef);
 
   creatingAccount = false;
+
+  // pa-select should be rendered once translations are ready, otherwise the selected value is hidden
+  translationsReady = this.translate.get('any');
 
   @Output() next = new EventEmitter<Account>();
 

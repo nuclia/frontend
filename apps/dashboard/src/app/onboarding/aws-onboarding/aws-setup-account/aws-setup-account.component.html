@@ -1,10 +1,13 @@
-<form class="main-container">
+<form class="account-setup">
   <h1>{{ 'onboarding.step1.title' | translate }}</h1>
+  <p>{{ 'onboarding.step1.subtitle' | translate }}</p>
   @if (creatingAccount) {
     <nsi-spinner></nsi-spinner>
   } @else {
-    <nus-onboarding-step1
-      [isAws]="true"
-      (submitStep1Aws)="submit($event)"></nus-onboarding-step1>
+    @if (translationsReady | async) {
+      <nus-onboarding-step1
+        [isAws]="true"
+        (submitStep1Aws)="submit($event)"></nus-onboarding-step1>
+    }
   }
 </form>
