@@ -15,7 +15,7 @@ export class ReviewComponent {
   prices = this.modal.config.data?.prices;
   monthly = !!this.prices?.recurring?.month;
   currency = this.modal.config.data?.currency || '';
-  budget = this.modal.config.data?.budget || '';
+  budget = this.modal.config.data?.budget ?? 500;
   customer = this.modal.config.data?.customer;
   token = this.modal.config.data?.token;
   countries = COUNTRIES;

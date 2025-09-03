@@ -40,7 +40,7 @@ export class AwsOnboardingComponent {
 
   account = this.sdk.currentAccount;
 
-  budget: number | null = null;
+  budget: number | null = 500; // Set default budget to 500
   choice: 'createKB' | 'inviteOwner' | null = null;
 
   kbName = '';
