@@ -17,7 +17,7 @@ export class AwsSubscriptionComponent {
     .pipe(
       map((subscription) => {
         const productId = subscription?.aws_product_id || subscription?.aws_product_code;
-        return `https://console.aws.amazon.com/marketplace/home#/subscriptions/${productId}`;
+        return `https://console.aws.amazon.com/marketplace/home#/subscriptions/${productId || ''}`;
       }),
     );
 
