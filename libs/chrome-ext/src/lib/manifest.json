@@ -21,7 +21,12 @@
   "web_accessible_resources": [
     {
       "resources": ["options/options.html"],
-      "matches": ["http://localhost:4200/*", "https://stashify.cloud/*", "https://nuclia.cloud/*"]
+      "matches": [
+        "http://localhost:4200/*",
+        "https://stashify.cloud/*",
+        "https://nuclia.cloud/*",
+        "https://rag.progress.cloud/*"
+      ]
     }
   ]
 }
