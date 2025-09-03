@@ -12,18 +12,17 @@ import { BillingService, FeaturesService, NavigationService, SDKService, STFUtil
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
 import { filter, forkJoin, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
-import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Account, ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
+import { PasswordFormComponent } from '../invite/password-form.component';
 
 @Component({
   imports: [
     CommonModule,
     Step1BudgetComponent,
     UserContainerModule,
-    Step2Component,
     KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
@@ -31,6 +30,7 @@ import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.
     VectorDatabaseStepComponent,
     SisProgressModule,
     AwsSetupAccountComponent,
+    PasswordFormComponent,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -43,7 +43,6 @@ export class AwsOnboardingComponent {
   account = this.sdk.currentAccount;
 
   budget: number | null = 500; // Set default budget to 500
-  choice: 'createKB' | 'inviteOwner' | null = null;
 
   kbName = '';
   zone = '';
@@ -68,6 +67,13 @@ export class AwsOnboardingComponent {
     if (this.step > 1) {
       this.step = this.step - 1;
     }
+  }
+
+  setPassword(password: string) {
+    this.sdk.nuclia.auth.setPassword(password).subscribe(() => {
+      this.step = 3;
+      this.cdr.markForCheck();
+    });
   }
 
   checkAccount(account: Account) {
@@ -101,19 +107,6 @@ export class AwsOnboardingComponent {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  goFrom2ToNext($event: { choice: 'createKB' | 'inviteOwner' }) {
-    this.choice = $event.choice;
-    if (this.choice === 'createKB') {
-      this.step = 3;
-    } else {
-      this.account.subscribe((account) =>
-        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
-          queryParams: { setup: 'invite-collaborators' },
-        }),
-      );
-    }
   }
 
   storeKbNameAndGoNext($event: string) {
