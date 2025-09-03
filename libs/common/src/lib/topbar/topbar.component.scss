@@ -18,7 +18,7 @@
     position: absolute;
     height: rhythm(4);
     width: rhythm(4);
-    left: rhythm(16);
+    left: calc(rhythm(16) + rhythm(2));
     top: rhythm(1.5);
   }
   .topbar-logo {
