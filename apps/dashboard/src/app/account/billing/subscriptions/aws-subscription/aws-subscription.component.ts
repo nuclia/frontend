@@ -15,10 +15,10 @@ export class AwsSubscriptionComponent {
   awsUrl = this.billing
     .getAwsSubscription()
     .pipe(
-      map(
-        (subscription) =>
-          `https://console.aws.amazon.com/marketplace/home#/subscriptions/${subscription?.aws_product_code || ''}`,
-      ),
+      map((subscription) => {
+        const productId = subscription?.aws_product_id || subscription?.aws_product_code;
+        return `https://console.aws.amazon.com/marketplace/home#/subscriptions/${productId}`;
+      }),
     );
 
   constructor(

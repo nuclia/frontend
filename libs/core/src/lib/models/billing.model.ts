@@ -104,6 +104,7 @@ export interface StripeAccountSubscription extends AccountBudget {
 export interface AwsAccountSubscription extends AccountBudget {
   status: SubscriptionStatus;
   aws_product_code: string;
+  aws_product_id?: string;
 }
 
 export interface StripeSubscriptionCreation {
