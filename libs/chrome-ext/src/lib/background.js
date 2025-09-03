@@ -33,7 +33,7 @@ function createMenu() {
     MENU_TYPES.forEach((type) => {
       chrome.contextMenus.create({
         id: `${type.name}_NUCLIA_UPLOAD`,
-        title: 'Upload to Nuclia',
+        title: 'Upload to Agentic RAG',
         ...type.options,
       });
     });
@@ -54,7 +54,7 @@ function createMenu() {
 function createSubmenus(labelsets, type) {
   chrome.contextMenus.create({
     id: `${type.name}_NUCLIA_UPLOAD_WITH_LABEL`,
-    title: 'Upload to Nuclia with label…',
+    title: 'Upload to Agentic RAG with label…',
     ...type.options,
   });
   labelsets.forEach(([key, labelset]) => {
@@ -136,7 +136,7 @@ function uploadPage(settings, url, html, labels) {
     .subscribe({
       complete: () => {
         url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
-        showNotification('Page uploaded to Nuclia', `${url} has been uploaded`);
+        showNotification('Page uploaded to Agentic RAG', `${url} has been uploaded`);
       },
       error: () => {
         openOptionsPage();

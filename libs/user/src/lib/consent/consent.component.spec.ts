@@ -28,7 +28,7 @@ describe('ConsentComponent', () => {
             getRecaptchaKey: () => 'key',
             getSocialLogin: () => {},
             getLogoPath: () => 'logo.svg',
-            getBrandName: () => 'Nuclia',
+            getBrandName: () => 'Agentic RAG',
           },
         },
       ],

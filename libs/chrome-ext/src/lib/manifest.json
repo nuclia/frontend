@@ -1,6 +1,6 @@
 {
-  "name": "Nuclia tools",
-  "description": "Upload web content to Nuclia",
+  "name": "Agentic RAG tools",
+  "description": "Upload web content to Agentic RAG",
   "version": "0.0.6",
   "manifest_version": 3,
   "icons": {
