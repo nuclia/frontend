@@ -128,6 +128,20 @@
     <div class="field">
       <label
         class="title-s"
+        for="country">
+        {{ 'onboarding.step1.country' | translate }}
+      </label>
+      <pa-select
+        formControlName="country"
+        id="country"
+        externalLabel
+        help="validation.required"
+        [options]="countries"
+        [errorMessages]="validationMessages.country"></pa-select>
+    </div>
+    <div class="field">
+      <label
+        class="title-s"
         for="phoneNumber">
         {{ 'onboarding.step1.phone' | translate }}
       </label>

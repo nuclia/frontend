@@ -50,6 +50,7 @@
   "onboarding.setting-up.subtitle": "Carregueu les vostres dades al següent pas i, un cop processades, estaràs preparat per a la teva primera cerca.",
   "onboarding.setting-up.title": "Preparem-nos per importar les vostres dades",
   "onboarding.step1.company": "Nom de la companyia",
+  "onboarding.step1.country": "País",
   "onboarding.step1.first_name": "Nom",
   "onboarding.step1.invalid_phone_code": "Codi invàlid",
   "onboarding.step1.invalid_phone_number": "Número de telèfon no vàlid",

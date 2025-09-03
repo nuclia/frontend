@@ -50,6 +50,7 @@
   "onboarding.setting-up.subtitle": "Téléchargez vos données à l'étape suivante et une fois traitées, vous serez prêt pour votre première recherche.",
   "onboarding.setting-up.title": "Nous nous préparons à importer vos données",
   "onboarding.step1.company": "Nom de l'entreprise",
+  "onboarding.step1.country": "Pays",
   "onboarding.step1.first_name": "Prénom",
   "onboarding.step1.invalid_phone_code": "Code invalide",
   "onboarding.step1.invalid_phone_number": "Numéro de téléphone invalide",
