@@ -1,7 +1,7 @@
 @use 'variables' as variables;
 
 :root {
-  --app-background-color: variables.$color-light-stronger;
+  --app-background-color: #{variables.$color-light-stronger};
   --app-topbar-height: #{variables.$height-top-bar};
   --app-layout-padding-bottom: #{variables.$padding-bottom-page};
   --app-layout-padding-left: #{variables.$padding-left-page};

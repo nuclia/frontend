@@ -1,13 +1,10 @@
 <nus-user-container>
   <div class="main-container">
     <header>
-      <h1>{{ 'login.title' | translate }}</h1>
-      <p>{{ 'login.subtitle' | translate }}</p>
+      <p class="body-m">{{ 'login.subtitle' | translate }}</p>
     </header>
     @if (message || error) {
-      <div
-        class="login_alert title-xxs"
-        >
+      <div class="login_alert title-xxs">
         {{ message || error || '' | translate }}
       </div>
     }
@@ -47,7 +44,7 @@
               {{ 'login.use-sso' | translate }}
               <pa-icon
                 name="arrow-right"
-              size="small"></pa-icon>
+                size="small"></pa-icon>
             </a>
           </div>
         }
@@ -66,7 +63,7 @@
             data-cy="login-error">
             <pa-icon
               name="warning"
-            size="small"></pa-icon>
+              size="small"></pa-icon>
             <div>
               <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
               <span>{{ (formError ? 'login.try_again' : 'login.error.login_error') | translate }}</span>
@@ -93,9 +90,7 @@
       </a>
     </div>
     @if (config.getSocialLogin() || !oauth) {
-      <div
-        class="login_social"
-        >
+      <div class="login_social">
         <div class="login_separator body-s">
           <span>{{ 'generic.or' | translate }}</span>
         </div>
