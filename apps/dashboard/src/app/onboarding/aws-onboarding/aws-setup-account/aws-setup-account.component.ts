@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, in
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { AwsOnboardingPayload, Step1Component } from '@nuclia/user';
+import { AwsOnboardingPayload, OnboardingService, Step1Component } from '@nuclia/user';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap, take, tap } from 'rxjs';
+import { forkJoin, switchMap, take, tap } from 'rxjs';
 import { SDKService, STFUtils } from '@flaps/core';
 import { Account, AuthTokens } from '@nuclia/core';
 
@@ -24,6 +24,7 @@ interface SetupAccountPayload {
 })
 export class AwsSetupAccountComponent {
   sdk = inject(SDKService);
+  onboardingService = inject(OnboardingService);
   toaster = inject(SisToastService);
   translate = inject(TranslateService);
   route = inject(ActivatedRoute);
@@ -36,18 +37,16 @@ export class AwsSetupAccountComponent {
 
   @Output() next = new EventEmitter<Account>();
 
-  submit(data: AwsOnboardingPayload, firstAttempt = true) {
+  submit(data: AwsOnboardingPayload) {
     this.creatingAccount = true;
     this.cdr.markForCheck();
-    let accountSlug = STFUtils.generateSlug(data.company);
-    if (!firstAttempt) {
-      accountSlug = `${accountSlug}-${STFUtils.generateRandomSlugSuffix()}`;
-    }
-    this.route.queryParams
-      .pipe(take(1))
+    forkJoin([
+      this.route.queryParams.pipe(take(1)),
+      this.onboardingService.getAvailableAccountSlug(STFUtils.generateSlug(data.company)),
+    ])
       .pipe(
         take(1),
-        switchMap((queryParams) => {
+        switchMap(([queryParams, accountSlug]) => {
           const payload = {
             customer_token: queryParams['customer_token'],
             account_slug: accountSlug,
@@ -61,13 +60,9 @@ export class AwsSetupAccountComponent {
           this.next.emit(account);
         },
         error: (error) => {
-          if (firstAttempt) {
-            this.submit(data, false);
-          } else {
-            this.creatingAccount = false;
-            this.cdr.markForCheck();
-            this.toaster.error(error?.body?.detail || 'login.error.oops');
-          }
+          this.creatingAccount = false;
+          this.cdr.markForCheck();
+          this.toaster.error(error?.body?.detail || 'login.error.oops');
         },
       });
   }

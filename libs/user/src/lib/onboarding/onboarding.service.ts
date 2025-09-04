@@ -162,7 +162,7 @@ export class OnboardingService {
     this.router.navigate([path]);
   }
 
-  private getAvailableAccountSlug(slug: string): Observable<string> {
+  getAvailableAccountSlug(slug: string): Observable<string> {
     return this.sdk.nuclia.db.getAccountStatus(slug).pipe(
       switchMap((status) => {
         if (status.available) {
