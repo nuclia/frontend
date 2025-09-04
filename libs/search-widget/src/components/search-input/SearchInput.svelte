@@ -61,7 +61,7 @@
 
   let searchInputElement: Textarea = $state();
   const dispatch = createEventDispatcher();
-  const brandName = import.meta.env.VITE_BRAND_NAME || 'Nuclia';
+  const brandName = import.meta.env.VITE_BRAND_NAME || 'Agentic RAG';
   const overrides = import.meta.env.VITE_OVERRIDES || '';
 
   let inputContainerElement: HTMLElement | undefined = $state();
@@ -382,7 +382,7 @@
             on:remove={() => search(filter)}>
             {filter.value}
           </Chip>
-        {/if}     
+        {/if}
       {/each}
     </div>
   {/if}
