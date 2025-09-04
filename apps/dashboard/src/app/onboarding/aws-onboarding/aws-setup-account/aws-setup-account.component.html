@@ -1,0 +1,20 @@
+<form class="main-container account-setup">
+  <h1>{{ 'onboarding.step1.title' | translate }}</h1>
+  <p>
+    {{ 'onboarding.step1.subtitle' | translate }}
+    <br />
+    <span
+      class="contact"
+      [innerHTML]="'onboarding.aws.contact' | translate: { email: 'marketplaces@progress.com' }"></span>
+  </p>
+
+  @if (creatingAccount) {
+    <nsi-spinner></nsi-spinner>
+  } @else {
+    @if (translationsReady | async) {
+      <nus-onboarding-step1
+        [isAws]="true"
+        (submitStep1Aws)="submit($event)"></nus-onboarding-step1>
+    }
+  }
+</form>

@@ -870,6 +870,7 @@
 	"notification.type.modification-completed": "Edició del recurs completada",
 	"notification.type.modification-failed": "Edició del recurs fallida",
 	"notification.type.sync-server-down": "El servidor de sincronització està inactiu",
+	"onboarding.aws.contact": "Si teniu algun problema, poseu-vos en contacte amb nosaltres a <a href=\"mailto:{{email}}\">{{email}}</a>",
 	"onboarding.aws.create-kb.title": "Crear una Knowledge Box",
 	"onboarding.aws.get-started.create-kb": "Crear el meu propi Knowledge Box",
 	"onboarding.aws.get-started.create-kb-or-invite": "Voleu crear el vostre propi Knowledge Box o convidar altres usuaris a configurar-lo?",

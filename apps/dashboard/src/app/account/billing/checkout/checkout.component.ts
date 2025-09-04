@@ -27,6 +27,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import {
   AccountBudget,
   BillingService,
+  COUNTRIES,
   injectScript,
   NavigationService,
   RecurrentPriceInterval,
@@ -35,7 +36,6 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';

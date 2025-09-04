@@ -870,6 +870,7 @@
 	"notification.type.modification-completed": "Resource edition completed",
 	"notification.type.modification-failed": "Resource edition failed",
 	"notification.type.sync-server-down": "Sync server is down",
+	"onboarding.aws.contact": "If you experience any issues, contact us at <a href=\"mailto:{{email}}\">{{email}}</a>",
 	"onboarding.aws.create-kb.title": "Create a Knowledge Box",
 	"onboarding.aws.get-started.create-kb": "Create my own Knowledge Box",
 	"onboarding.aws.get-started.create-kb-or-invite": "Would you like to create your own Knowledge Box or invite other users to set it up?",

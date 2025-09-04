@@ -1,15 +1,21 @@
 <nus-user-container>
   @switch (step) {
+    @case (-1) {
+      <app-aws-setup-account (next)="checkAccount($event)"></app-aws-setup-account>
+    }
     @case (1) {
       <app-step1-budget
         [data]="budget"
         (next)="setupBudget($event)"></app-step1-budget>
     }
     @case (2) {
-      <app-step2
-        [data]="choice"
-        (back)="goBack()"
-        (next)="goFrom2ToNext($event)"></app-step2>
+      <div class="main-container">
+        <h1>{{ 'setup.set_password' | translate }}</h1>
+        <app-password-form
+          [showUsername]="false"
+          submitText="generic.next_step"
+          (submitData)="setPassword($event.password)"></app-password-form>
+      </div>
     }
     @case (3) {
       <div class="main-container">

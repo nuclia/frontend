@@ -10,25 +10,27 @@ import {
 } from '@nuclia/user';
 import { BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { filter, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { filter, forkJoin, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
-import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { Account, ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
+import { PasswordFormComponent } from '../invite/password-form.component';
 
 @Component({
   imports: [
     CommonModule,
     Step1BudgetComponent,
     UserContainerModule,
-    Step2Component,
     KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     TranslateModule,
     VectorDatabaseStepComponent,
     SisProgressModule,
+    AwsSetupAccountComponent,
+    PasswordFormComponent,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -36,12 +38,11 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
   encapsulation: ViewEncapsulation.None,
 })
 export class AwsOnboardingComponent {
-  step = 1;
+  step = -1;
 
   account = this.sdk.currentAccount;
 
   budget: number | null = 500; // Set default budget to 500
-  choice: 'createKB' | 'inviteOwner' | null = null;
 
   kbName = '';
   zone = '';
@@ -68,6 +69,29 @@ export class AwsOnboardingComponent {
     }
   }
 
+  setPassword(password: string) {
+    this.sdk.nuclia.auth.setPassword(password).subscribe(() => {
+      this.step = 3;
+      this.cdr.markForCheck();
+    });
+  }
+
+  checkAccount(account: Account) {
+    forkJoin([
+      this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id),
+      this.sdk.nuclia.db.getAccountInvitations(account.id),
+      this.sdk.nuclia.db.getAccountUsers(account.slug),
+    ]).subscribe(([kbs, invitations, users]) => {
+      const accountAlreadySet = kbs.length > 0 || invitations.length > 0 || users.length > 1;
+      if (accountAlreadySet) {
+        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)]);
+      } else {
+        this.step = 1;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
   setupBudget(data: { budget: number | null }) {
     this.budget = data.budget;
     const request: Observable<void | boolean> =
@@ -83,19 +107,6 @@ export class AwsOnboardingComponent {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  goFrom2ToNext($event: { choice: 'createKB' | 'inviteOwner' }) {
-    this.choice = $event.choice;
-    if (this.choice === 'createKB') {
-      this.step = 3;
-    } else {
-      this.account.subscribe((account) =>
-        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
-          queryParams: { setup: 'invite-collaborators' },
-        }),
-      );
-    }
   }
 
   storeKbNameAndGoNext($event: string) {
