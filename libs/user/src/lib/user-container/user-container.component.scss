@@ -4,16 +4,6 @@
   height: 100%;
   position: relative;
 
-  .logo {
-    left: rhythm(3);
-    position: absolute;
-    top: rhythm(2);
-
-    img {
-      width: rhythm(13);
-    }
-  }
-
   .user-container {
     background: $color-light-stronger;
     display: flex;
@@ -22,6 +12,17 @@
     overflow-y: auto;
     padding: rhythm(16) rhythm(4) 0;
     width: 50%;
+    .logo {
+      img {
+        width: rhythm(13);
+        margin-left: calc(-#{rhythm(2.5)});
+      }
+      padding-bottom: rhythm(2);
+    }
+    .inner-container {
+      display: flex;
+      flex-direction: column;
+    }
 
     &:not(.left-aligned) {
       justify-content: center;
@@ -37,6 +38,6 @@
 
 @media (max-height: $height-viewport-medium-max) {
   .user-background .user-container {
-    padding-top: rhythm(12);
+    padding-top: rhythm(8);
   }
 }

@@ -17,7 +17,7 @@
 }
 
 .navbar-scroll-container {
-  background: $color-neutral-lighter;
+  background: $color-primary-lighter;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -65,7 +65,7 @@
           background-color: $color-light-stronger;
         }
         &:not(.active).sub-item {
-          background-color: $color-neutral-light;
+          background-color: $color-primary-lightest;
 
           &:not(.disabled):not(.unauthorized):hover {
             background-color: $color-neutral-lightest;

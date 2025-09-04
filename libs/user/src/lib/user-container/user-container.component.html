@@ -1,12 +1,14 @@
 <div class="user-background">
-  <div class="logo">
-    <img
-      [src]="logoPath"
-      [alt]="brandName" />
-  </div>
   <div
     class="user-container"
     [class.left-aligned]="alignLeft">
-    <ng-content></ng-content>
+    <div class="inner-container">
+      <div class="logo">
+        <img
+          [src]="logoPath"
+          [alt]="brandName" />
+      </div>
+      <ng-content></ng-content>
+    </div>
   </div>
 </div>
