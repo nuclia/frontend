@@ -1,6 +1,13 @@
-<form class="account-setup">
+<form class="main-container account-setup">
   <h1>{{ 'onboarding.step1.title' | translate }}</h1>
-  <p>{{ 'onboarding.step1.subtitle' | translate }}</p>
+  <p>
+    {{ 'onboarding.step1.subtitle' | translate }}
+    <br />
+    <span
+      class="contact"
+      [innerHTML]="'onboarding.aws.contact' | translate: { email: 'marketplaces@progress.com' }"></span>
+  </p>
+
   @if (creatingAccount) {
     <nsi-spinner></nsi-spinner>
   } @else {

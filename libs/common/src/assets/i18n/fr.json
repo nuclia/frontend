@@ -870,6 +870,7 @@
 	"notification.type.modification-completed": "Édition de la ressource terminée",
 	"notification.type.modification-failed": "Échec de l’édition de la ressource",
 	"notification.type.sync-server-down": "Le serveur de synchronisation est en panne",
+	"onboarding.aws.contact": "Si vous rencontrez des problèmes, contactez-nous au <a href=\"mailto:{{email}}\">{{email}}</a>",
 	"onboarding.aws.create-kb.title": "Créer une Knowledge Box",
 	"onboarding.aws.get-started.create-kb": "Créer ma propre Knowledge Box",
 	"onboarding.aws.get-started.create-kb-or-invite": "Souhaitez-vous créer votre propre Knowledge Box ou inviter d’autres utilisateurs pour la configurer ?",
