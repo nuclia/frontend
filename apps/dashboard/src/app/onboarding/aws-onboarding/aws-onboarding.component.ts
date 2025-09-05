@@ -8,13 +8,13 @@ import {
   VectorDatabaseStepComponent,
   ZoneStepComponent,
 } from '@nuclia/user';
-import { BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { AccountBudget, BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { filter, forkJoin, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { filter, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { Account, ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
 import { PasswordFormComponent } from '../invite/password-form.component';
 
@@ -41,9 +41,6 @@ export class AwsOnboardingComponent {
   step = -1;
 
   account = this.sdk.currentAccount;
-
-  budget: number | null = 500; // Set default budget to 500
-
   kbName = '';
   zone = '';
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
@@ -76,27 +73,13 @@ export class AwsOnboardingComponent {
     });
   }
 
-  checkAccount(account: Account) {
-    forkJoin([
-      this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id),
-      this.sdk.nuclia.db.getAccountInvitations(account.id),
-      this.sdk.nuclia.db.getAccountUsers(account.slug),
-    ]).subscribe(([kbs, invitations, users]) => {
-      const accountAlreadySet = kbs.length > 0 || invitations.length > 0 || users.length > 1;
-      if (accountAlreadySet) {
-        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)]);
-      } else {
+  goToBudget() {
         this.step = 1;
         this.cdr.markForCheck();
       }
-    });
-  }
 
-  setupBudget(data: { budget: number | null }) {
-    this.budget = data.budget;
-    const request: Observable<void | boolean> =
-      data.budget !== null ? this.billing.modifySubscription({ on_demand_budget: data.budget }, true) : of(true);
-    request.subscribe({
+  setupBudget(data: Partial<AccountBudget>) {
+    this.billing.modifySubscription(data, true).subscribe({
       next: () => {
         this.step = 2;
         this.cdr.markForCheck();

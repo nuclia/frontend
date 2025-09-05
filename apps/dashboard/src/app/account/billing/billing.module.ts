@@ -46,6 +46,7 @@ import { BudgetComponent } from './usage/budget.component';
     PaTogglesModule,
     SisProgressModule,
     STFPipesModule,
+    BudgetComponent,
   ],
   declarations: [
     BillingComponent,
@@ -61,7 +62,6 @@ import { BudgetComponent } from './usage/budget.component';
     UnsubscribeComponent,
     AwsSubscriptionComponent,
     ManualSubscriptionComponent,
-    BudgetComponent,
   ],
   exports: [UsageTableComponent],
 })

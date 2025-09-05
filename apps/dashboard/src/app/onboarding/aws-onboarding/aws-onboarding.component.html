@@ -1,11 +1,10 @@
 <nus-user-container>
   @switch (step) {
     @case (-1) {
-      <app-aws-setup-account (next)="checkAccount($event)"></app-aws-setup-account>
+      <app-aws-setup-account (next)="goToBudget()"></app-aws-setup-account>
     }
     @case (1) {
       <app-step1-budget
-        [data]="budget"
         (next)="setupBudget($event)"></app-step1-budget>
     }
     @case (2) {

@@ -1,19 +1,24 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AccountBudget, BillingService, Currency } from '@flaps/core';
 import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+
+const DEFAULT_BUDGET = 500;
 
 @Component({
   selector: 'app-budget',
+  imports: [CommonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './budget.component.html',
   styleUrls: ['./budget.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
 })
-export class BudgetComponent implements OnDestroy {
+export class BudgetComponent implements OnDestroy, OnInit {
   form = new FormGroup({
     budget: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] }),
-    action: new FormControl<'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER'>('BLOCK_ACCOUNT', {
+    action: new FormControl<'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER'>('WARN_ACCOUNT_OWNER', {
       validators: [Validators.required],
     }),
   });
@@ -21,19 +26,26 @@ export class BudgetComponent implements OnDestroy {
 
   @Input() currency: Currency | undefined;
   @Input() showActions: boolean = true;
+  @Input() defaultBudget = false;
   @Output() budgetChange = new EventEmitter<Partial<AccountBudget> | undefined>();
 
-  constructor(private billing: BillingService) {
-    this.billing
-      .getSubscription()
-      .pipe(filter((subscription) => !!subscription))
-      .subscribe((subscription) => {
-        const budget = subscription?.subscription?.on_demand_budget;
-        this.form.patchValue({
-          budget: typeof budget === 'number' ? budget : null,
-          action: subscription?.subscription?.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+  constructor(private billing: BillingService) {}
+
+  ngOnInit() {
+    if (this.defaultBudget) {
+      this.form.controls.budget.patchValue(DEFAULT_BUDGET);
+    } else {
+      this.billing
+        .getSubscription()
+        .pipe(filter((subscription) => !!subscription))
+        .subscribe((subscription) => {
+          const budget = subscription?.subscription?.on_demand_budget;
+          this.form.patchValue({
+            budget: typeof budget === 'number' ? budget : null,
+            action: subscription?.subscription?.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+          });
         });
-      });
+    }
 
     this.form.valueChanges
       .pipe(
