@@ -1,7 +1,4 @@
-<form
-  class="main-container"
-  [formGroup]="form"
-  (ngSubmit)="submitBudget()">
+<div class="main-container">
   <h1>{{ 'onboarding.aws.title' | translate }}</h1>
   <div>
     <div class="title-s">{{ 'onboarding.aws.monthly-budget.question' | translate }}</div>
@@ -9,17 +6,13 @@
       {{ 'onboarding.aws.monthly-budget.help' | translate }}
     </nsi-info-card>
   </div>
-  <pa-input
-    formControlName="budget"
-    class="budget-input"
-    type="number">
-    $
-  </pa-input>
+  <app-budget
+    currency="USD"
+    [defaultBudget]="true"
+    (budgetChange)="budget = $event"></app-budget>
   <pa-button
-    class="budget-button"
     kind="primary"
-    type="submit"
-    [disabled]="form.invalid">
+    (click)="submit()">
     {{ 'onboarding.aws.monthly-budget.set-up-account-button' | translate }}
   </pa-button>
-</form>
+</div>

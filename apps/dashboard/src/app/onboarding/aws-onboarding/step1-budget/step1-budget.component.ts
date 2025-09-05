@@ -3,28 +3,21 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BudgetComponent } from '../../../account/billing/usage/budget.component';
+import { AccountBudget } from '@flaps/core';
 
 @Component({
   selector: 'app-step1-budget',
-  imports: [InfoCardComponent, TranslateModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule],
+  imports: [BudgetComponent, InfoCardComponent, TranslateModule, PaTextFieldModule, PaButtonModule],
   templateUrl: './step1-budget.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step1BudgetComponent {
-  @Input() set data(value: number | null) {
-    if (typeof value === 'number') {
-      this.form.patchValue({ budget: value });
-    }
-  }
+  @Output() next = new EventEmitter<Partial<AccountBudget>>();
 
-  @Output() next = new EventEmitter<{ budget: number | null }>();
+  budget?: Partial<AccountBudget>;
 
-  form = new FormGroup({
-    budget: new FormControl<number | ''>('', { validators: [Validators.min(1)] }),
-  });
-
-  submitBudget() {
-    this.next.emit({ budget: this.form.value.budget || null });
+  submit() {
+    this.next.emit(this.budget);
   }
 }
