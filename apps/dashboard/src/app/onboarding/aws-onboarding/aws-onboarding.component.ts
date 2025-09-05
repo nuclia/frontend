@@ -74,9 +74,9 @@ export class AwsOnboardingComponent {
   }
 
   goToBudget() {
-        this.step = 1;
-        this.cdr.markForCheck();
-      }
+    this.step = 1;
+    this.cdr.markForCheck();
+  }
 
   setupBudget(data: Partial<AccountBudget>) {
     this.billing.modifySubscription(data, true).subscribe({
@@ -153,11 +153,12 @@ export class AwsOnboardingComponent {
             kbConfig.external_index_provider = this.externalIndexProvider;
           }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
-            tap(() =>
+            tap(() => {
+              this.sdk.refreshKbList();
               this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
                 queryParams: { setup: 'invite-collaborators' },
-              }),
-            ),
+              });
+            }),
           );
         }),
       )
