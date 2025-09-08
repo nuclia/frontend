@@ -125,14 +125,21 @@
               {{ 'generic.delete' | translate }}
             </pa-button>
           </div>
-        }
-        @if ((cannotDeleteAccount | async) === true) {
+        } @else if ((cannotDeleteAccount | async) === true) {
           <div>
-            <p>{{ 'account.delete.subscription_detected' | translate }}</p>
-            <p>
-              {{ 'account.delete.go_to' | translate }}
-              <a [routerLink]="cancelSubscriptionUrl | async">{{ 'billing.my-subscription' | translate }}</a>
-            </p>
+            <p>{{ 'account.delete.active-subscription' | translate }}</p>
+            @if (isSubscribedToStripe | async) {
+              <p>
+                {{ 'account.delete.subscription-details' | translate }}
+                <a [routerLink]="stripeSubscriptionUrl | async">{{ 'billing.my-subscription' | translate }}</a>
+              </p>
+            }
+            @if (isSubscribedToAws | async) {
+              <p>
+                {{ 'account.delete.subscription-details' | translate }}
+                <a [routerLink]="awsSubscriptionUrl | async">{{ 'navbar.subscription' | translate }}</a>
+              </p>
+            }
           </div>
         }
       </div>

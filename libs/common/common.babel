@@ -284,7 +284,7 @@
 								<name>delete</name>
 								<children>
 									<concept_node>
-										<name>error</name>
+										<name>active-subscription</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -307,7 +307,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>go_to</name>
+										<name>error</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -353,7 +353,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>subscription_detected</name>
+										<name>subscription-details</name>
 										<description/>
 										<comment/>
 										<translations>
