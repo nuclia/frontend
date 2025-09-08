@@ -113,8 +113,8 @@ export interface SamlConfig {
 export interface AccountModification {
   title?: string;
   description?: string;
-  g_speech_to_text?: boolean;
   saml_config?: SamlConfig | null;
+  slug?: string;
 }
 
 export interface AccountStatus {

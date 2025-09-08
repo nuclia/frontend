@@ -143,6 +143,7 @@
 	"account.saml.sso-url": "URL de inicio de sesión único",
 	"account.saml.title": "Configuración de inicio de sesión único",
 	"account.saml.x509-cert": "Certificado X.509",
+	"account.slug-unavailable": "El slug elegido no está disponible",
 	"account.title": "Nombre",
 	"account.toast.delete-invite-failure": "Se produjo un error al eliminar la invitación {{email}} .",
 	"account.toast.delete-invite-success": "Invitación de {{email}} eliminada.",
