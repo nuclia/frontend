@@ -4,7 +4,7 @@
   import { debounceTime, filter, Subject } from 'rxjs';
   import { onDestroy, onMount } from 'svelte';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
-  import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
+  import { getVendorsCDN, getPdfSrc } from '../../../../core';
   import { getUnMarked } from '../../utils';
 
   interface Props {
@@ -17,7 +17,7 @@
 
   const pdfJsLib = window['pdfjs-dist/build/pdf'];
   const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer'];
-  pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
+  pdfJsLib.GlobalWorkerOptions.workerSrc = `${getVendorsCDN()}/pdf.worker.js`;
 
   let innerWidth = $state(window.innerWidth);
   let pdfContainerElement: HTMLElement = $state();

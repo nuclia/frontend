@@ -2,6 +2,7 @@
   import DOMPurify from 'dompurify';
   import { createEventDispatcher } from 'svelte';
   import { isRightToLeft } from '../../../../common';
+  import { getVendorsCDN } from '../../../../core/utils';
 
   const dispatch = createEventDispatcher();
   interface Props {
@@ -22,7 +23,7 @@
 
 <svelte:head>
   <script
-    src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
+    src={`${getVendorsCDN()}/marked.min.js`}
     onload={onMarkedLoaded}></script>
 </svelte:head>
 

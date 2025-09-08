@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { getTempToken, isPrivateKnowledgeBox } from '../../../../core';
+  import { getTempToken, getVendorsCDN, isPrivateKnowledgeBox } from '../../../../core';
   import { PlayerControls } from './index';
 
   let { src, time, contentType } = $props();
@@ -73,7 +73,7 @@
 <svelte:head>
   {#if isDashVideo}
     <script
-      src="https://cdn.dashjs.org/v4.7.1/dash.all.min.js"
+      src={`${getVendorsCDN()}/dash.all.min.js`}
       onload={onLoadDash}></script>
   {/if}
 </svelte:head>

@@ -26,9 +26,11 @@ import { switchMap } from 'rxjs/operators';
 import { getFileUrls } from './api';
 import type { DisplayableMetadata, ResultMetadata, ResultMetadataItem, TypedResult } from './models';
 
-let CDN = import.meta.env.VITE_CDN || 'https://cdn.nuclia.cloud/';
+let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
+// the vendor CDN does not need to be customized
+export const getVendorsCDN = () => 'https://cdn.rag.progress.cloud/vendors';
 
 export const loadFonts = () => {
   const fontLinkId = 'nuclia-fonts-link';
@@ -47,13 +49,9 @@ export const loadSvgSprite = () => {
   return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
 };
 
-export const getPdfJsBaseUrl = () => {
-  return `https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105`;
-};
-
 export const getPdfJsStyle = () => {
   return from(
-    fetch(`${getPdfJsBaseUrl()}/web/pdf_viewer.css`).then(function (response) {
+    fetch(`${getVendorsCDN()}/pdf_viewer.css`).then(function (response) {
       return response.text();
     }),
   );
