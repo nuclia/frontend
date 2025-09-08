@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
-import { BillingService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
+import { catchError, concatMap, map, takeUntil, tap } from 'rxjs/operators';
+import { BillingService, NavigationService, SDKService, STFUtils, SubscriptionStatus } from '@flaps/core';
 import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
+import { Sluggable } from '@flaps/common';
 
 @Component({
   selector: 'app-account-manage',
@@ -21,7 +23,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
 
   accountForm = this.formBuilder.group({
     id: [''],
-    slug: [''],
+    slug: ['', [Sluggable()]],
     title: ['', [Validators.required]],
     description: [''],
   });
@@ -60,6 +62,8 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     private navigation: NavigationService,
     private modalService: SisModalService,
     private billingService: BillingService,
+    private toaster: SisToastService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -97,17 +101,30 @@ export class AccountManageComponent implements OnInit, OnDestroy {
 
   saveAccount() {
     if (this.accountForm.invalid) return;
+    const oldSlug = this.account?.slug || '';
+    const newSlug = STFUtils.generateSlug(this.accountForm.value.slug);
+    const isSlugUpdated = oldSlug !== newSlug;
     this.sdk.nuclia.db
       .modifyAccount(this.account!.slug, {
         title: this.accountForm.value.title,
         description: this.accountForm.value.description,
+        slug: isSlugUpdated ? newSlug : undefined,
       })
       .pipe(
-        concatMap(() => this.sdk.nuclia.db.getAccount(this.account!.slug)),
+        catchError((error) => {
+          if (error.status === 409) {
+            this.toaster.error('account.slug-unavailable');
+          }
+          throw error;
+        }),
+        concatMap(() => this.sdk.nuclia.db.getAccount(newSlug)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((account) => {
         this.sdk.account = account;
+        if (isSlugUpdated) {
+          this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
+        }
         this.initAccountForm();
       });
   }

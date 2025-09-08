@@ -143,6 +143,7 @@
 	"account.saml.sso-url": "Single Sign-On URL",
 	"account.saml.title": "Single Sign-On configuration",
 	"account.saml.x509-cert": "X.509 certificate",
+	"account.slug-unavailable": "The chosen slug is unavailable",
 	"account.title": "Name",
 	"account.toast.delete-invite-failure": "An error occurred while deleting {{email}} invitation.",
 	"account.toast.delete-invite-success": "Invitation of {{email}} deleted.",
