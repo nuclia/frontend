@@ -1,8 +1,9 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.user-background {
+.container {
   height: 100%;
   position: relative;
+  display: flex;
 
   .user-container {
     background: $color-light-stronger;
@@ -27,6 +28,11 @@
     &:not(.left-aligned) {
       justify-content: center;
     }
+  }
+  .hero-img {
+    width: 50%;
+    height: 100%;
+    max-height: 100vh;
   }
 }
 
