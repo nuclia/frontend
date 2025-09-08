@@ -73,7 +73,7 @@ export class AppInitService {
               : config.backend.apiOrigin;
           config.backend.apiOrigin = apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
-          config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : config.backend.cdn;
+          config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(config.backend.cdn);
           }

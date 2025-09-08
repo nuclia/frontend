@@ -337,7 +337,7 @@ export class STFUtils {
 }
 
 export function renderMarkdown(text: string): Observable<string> {
-  return injectScript('//cdn.jsdelivr.net/npm/marked/marked.min.js').pipe(
+  return injectScript('//cdn.rag.progress.cloud/vendors/marked.min.js').pipe(
     take(1),
     map(() => DOMPurify.sanitize((window as any)['marked'].parse(text, { mangle: false, headerIds: false }))),
   );
