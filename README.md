@@ -222,6 +222,18 @@ It is deployed manually to stage using the following command:
 gsutil cp -r ./maintenance gs://ncl-cdn-gcp-global-stage-1
 ```
 
+## External dependencies
+
+We used to load some external libs from cdn.jsdelivr.net or cd./dashjs.net, but it was sometimes conflicting with some customers security policy.
+
+So the following files have been manually uploaded in the Nuclia CDN:
+
+https://cdn.jsdelivr.net/npm/marked/marked.min.js
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.worker.js\n
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/web/pdf_viewer.css
+https://cdn.dashjs.org/v4.7.1/dash.all.min.js
+
 ## License
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_large)
