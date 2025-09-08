@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { catchError, concatMap, map, takeUntil, tap } from 'rxjs/operators';
+import { catchError, concatMap, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
 import { BillingService, NavigationService, SDKService, STFUtils, SubscriptionStatus } from '@flaps/core';
 import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -41,17 +41,20 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     } as IErrorMessages,
   };
 
-  cannotDeleteAccount = this.billingService
-    .getStripeSubscription()
-    .pipe(
-      map(
-        (subscription) =>
-          subscription?.status === SubscriptionStatus.ACTIVE ||
-          subscription?.status === SubscriptionStatus.PENDING ||
-          subscription?.status === SubscriptionStatus.PAYMENT_ISSUES,
-      ),
-    );
-  cancelSubscriptionUrl = this.sdk.currentAccount.pipe(
+  cannotDeleteAccount = this.billingService.getSubscription().pipe(
+    map((subscription) => {
+      const hasSubscription =
+        subscription &&
+        'status' in subscription.subscription &&
+        ![SubscriptionStatus.NO_SUBSCRIPTION || SubscriptionStatus.CANCELED].includes(subscription.subscription.status);
+      return !!(subscription?.provider === 'MANUAL' || hasSubscription);
+    }),
+    shareReplay(1),
+  );
+  isSubscribedToStripe = this.billingService.isSubscribedToStripe;
+  isSubscribedToAws = this.billingService.isSubscribedToAws;
+  awsSubscriptionUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getBillingUrl(account.slug)));
+  stripeSubscriptionUrl = this.sdk.currentAccount.pipe(
     map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),
   );
 
