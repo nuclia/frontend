@@ -40,7 +40,7 @@ export class ZoneService {
                   take(1),
                   map((subscription) =>
                     subscription && subscription.provider === 'AWS_MARKETPLACE' && !this.featureFlagService.isStageOrDev
-                      ? zones.filter((zone) => zone.cloud_provider === 'AWS')
+                      ? zones.filter((zone) => zone.cloud_provider === 'AWS' && zone.slug !== 'aws-il-central-1-1')
                       : zones,
                   ),
                   catchError(() => of(zones)),
