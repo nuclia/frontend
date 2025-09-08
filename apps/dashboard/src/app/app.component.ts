@@ -18,9 +18,9 @@ import {
   STFUtils,
   UserService,
 } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subject } from 'rxjs';
-import { TranslateService as PaTranslateService, ToastService } from '@guillotinaweb/pastanaga-angular';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent } from '@flaps/common';
@@ -48,7 +48,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private labelService: LabelsService,
     private modalService: SisModalService,
     private paTranslate: PaTranslateService,
-    private paToaster: ToastService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
@@ -74,12 +73,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.preventDragAndDropOnWindow();
     this.listenFeatureFlagCode();
-    // TEMPORARY
-    // TODO: remove after 2025-09-10
-    this.paToaster.openWarning(
-      'A rebranding is currently underway, some elements of the interface may appear in different styles.',
-      { title: 'Warning', icon: 'warning', autoClose: true },
-    );
   }
 
   ngOnDestroy(): void {
