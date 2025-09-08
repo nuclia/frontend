@@ -1083,6 +1083,7 @@
 	"resource.preview.general": "General",
 	"resource.preview.hide-warning": "Aquest recurs està ocult, no es recuperarà amb una consulta de cerca normal.",
 	"resource.preview.labels": "Etiquetes",
+	"resource.preview.more-errors": "Hi ha {{num}} errors més",
 	"resource.preview.open-viewer": "Visor obert",
 	"resource.preview.origin": "Origen",
 	"resource.preview.question": "Pregunta",
