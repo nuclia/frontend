@@ -83,6 +83,7 @@
 	"onboarding.step4.title": "Choose the embeddings model for your Knowledge Box",
 	"onboarding.step5.subtitle": "Nuclia utilizes <a href=\"https://github.com/nuclia/nucliadb\">NucliaDB</a>, an open-source data framework specifically designed for RAG applications. NucliaDB includes its own vector database implementation to efficiently manage your data.\n<br>\nWhile you have the option to use an external vector database, please note that this may result in certain feature limitations.",
 	"onboarding.step5.title": "Third party vector database ",
+	"onboarding.privacy-policy": "By submitting this form, you understand and agree that your personal data will be processed by Progress Software or its <a href=\"https://www.progress.com/partners/partner-locator\">Partners</a> as described in our <a href=\"https://www.progress.com/legal/privacy-policy\">Privacy Policy</a>. You may opt out from marketing communication at any time <a href=\"https://forms.progress.com/SubscriptionMgt-English\">here</a> or through the opt out option placed in the e-mail communication sent by us or our <a href=\"https://www.progress.com/partners/partner-locator\">Partners</a>.",
 	"recover.description": "Lost your password? Let’s fix that. Just enter the email address you registered with, and we’ll start the recovery procedure.",
 	"recover.gologin": "Go to the login page",
 	"recover.gologin_help": "Do you remember your password?",

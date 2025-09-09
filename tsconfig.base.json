@@ -1,72 +1,72 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2022",
-    "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2020",
-      "dom",
-      "esnext.asynciterable",
-      "esnext.bigint"
-    ],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "@flaps/common": [
-        "libs/common/src/index.ts"
-      ],
-      "@flaps/core": [
-        "libs/core/src/index.ts"
-      ],
-      "@guillotinaweb/pastanaga-angular": [
-        "src/../libs/pastanaga-angular/projects/pastanaga-angular/src"
-      ],
-      "@nuclia/core": [
-        "libs/sdk-core/src/index.ts"
-      ],
-      "@nuclia/prediction": [
-        "libs/prediction/src/index.ts"
-      ],
-      "@nuclia/sistema": [
-        "libs/sistema/src/index.ts"
-      ],
-      "@nuclia/sync": [
-        "libs/sync/src/index.ts"
-      ],
-      "@nuclia/user": [
-        "libs/user/src/index.ts"
-      ],
-      "@nuclia/widget": [
-        "libs/search-widget/src/index.ts"
-      ]
-    }
-  },
-  "angularCompilerOptions": {
-    "strictTemplates": false,
-    "strictInjectionParameters": true
-  },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "importHelpers": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "es2022",
+        "module": "esnext",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2020",
+            "dom",
+            "esnext.asynciterable",
+            "esnext.bigint"
+        ],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": ".",
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true,
+        "resolveJsonModule": true,
+        "paths": {
+            "@flaps/common": [
+                "libs/common/src/index.ts"
+            ],
+            "@flaps/core": [
+                "libs/core/src/index.ts"
+            ],
+            "@guillotinaweb/pastanaga-angular": [
+                "src/../libs/pastanaga-angular/projects/pastanaga-angular/src"
+            ],
+            "@nuclia/core": [
+                "libs/sdk-core/src/index.ts"
+            ],
+            "@nuclia/prediction": [
+                "libs/prediction/src/index.ts"
+            ],
+            "@nuclia/sistema": [
+                "libs/sistema/src/index.ts"
+            ],
+            "@nuclia/sync": [
+                "libs/sync/src/index.ts"
+            ],
+            "@nuclia/user": [
+                "libs/user/src/index.ts"
+            ],
+            "@nuclia/widget": [
+                "libs/search-widget/src/index.ts"
+            ]
+        }
+    },
+    "angularCompilerOptions": {
+        "strictTemplates": false,
+        "strictInjectionParameters": true
+    },
+    "exclude": [
+        "node_modules",
+        "tmp"
+    ]
 }

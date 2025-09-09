@@ -83,6 +83,7 @@
 	"onboarding.step4.title": "Trieu el model d'incrustacions per al vostre Knowledge Box",
 	"onboarding.step5.subtitle": "Nuclia utilitza <a href=\"https://github.com/nuclia/nucliadb\">NucliaDB</a>, un marc de dades de codi obert dissenyat específicament per a aplicacions RAG. NucliaDB inclou la seva pròpia implementació de base de dades vectorials per gestionar de manera eficient les vostres dades.\n<br>\nTot i que teniu l'opció d'utilitzar una base de dades vectorial externa, tingueu en compte que això pot comportar certes limitacions de funcions.",
 	"onboarding.step5.title": "Base de dades vectorials de tercers ",
+	"onboarding.privacy-policy": "En enviar aquest formulari, vostè entén i accepta que les seves dades personals seran tractades per Progress Software o els seus <a href=\"https://www.progress.com/partners/partner-locator\">Socis</a>, segons el que s’indica a la nostra <a href=\"https://www.progress.com/legal/privacy-policy\">Política de Privacitat</a>. Pot donar-se de baixa de les comunicacions de màrqueting en qualsevol moment <a href=\"https://forms.progress.com/SubscriptionMgt-English\">aquí</a> o mitjançant l’opció de baixa inclosa als correus electrònics enviats per nosaltres o pels nostres <a href=\"https://www.progress.com/partners/partner-locator\">Socis</a>.",
 	"recover.description": "Escriu la teva direcció electrònica i segueix les indicacions per a recuperar la contrasenya ",
 	"recover.gologin": "Vés a la pàgina de login",
 	"recover.gologin_help": "Has recordat la teva contrasenya?",

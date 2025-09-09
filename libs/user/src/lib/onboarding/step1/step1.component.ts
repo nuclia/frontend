@@ -52,6 +52,7 @@ export class Step1Component {
       validators: [Validators.required, Validators.pattern(PHONE_NUMBER)],
     }),
     getUpdates: new FormControl<boolean>(true, { nonNullable: true }),
+    acceptPrivacyPolicy: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   validationMessages = {
@@ -77,6 +78,7 @@ export class Step1Component {
       organization_size: formValue.organization_size,
       phone: `${formValue.phoneInternationalCode} ${formValue.phoneNumber}`,
       receive_updates: formValue.getUpdates,
+      accept_privacy_policy: formValue.acceptPrivacyPolicy,
     };
     this.submitStep1.emit(data);
   }

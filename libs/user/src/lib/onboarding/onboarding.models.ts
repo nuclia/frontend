@@ -5,6 +5,7 @@ export interface OnboardingPayload {
   use_case?: string;
   role?: string;
   organization_size?: string;
+  accept_privacy_policy: boolean;
 }
 
 export interface OnboardingStatus {
