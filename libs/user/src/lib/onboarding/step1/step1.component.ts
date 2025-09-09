@@ -37,7 +37,6 @@ export class Step1Component {
     if (value) {
       const [phoneInternationalCode, phoneNumber] = value.phone.split(' ');
       this.onboardingForm.patchValue({ ...value, phoneInternationalCode, phoneNumber });
-      this.consent.patchValue(true);
     }
   }
   @Input() set isAws(value: boolean | undefined) {
@@ -73,7 +72,7 @@ export class Step1Component {
       validators: [Validators.required, Validators.pattern(PHONE_NUMBER)],
     }),
     getUpdates: new FormControl<boolean>(true, { nonNullable: true }),
-    acceptPrivacyPolicy: new FormControl<boolean>(false, { nonNullable: true }),
+    acceptPrivacyPolicy: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
   });
 
   validationMessages = {
@@ -89,7 +88,6 @@ export class Step1Component {
     phoneNumber: { required: 'validation.required', pattern: 'onboarding.step1.invalid_phone_number' },
   };
 
-  consent = new FormControl<boolean>(false, [Validators.required]);
   countries = Object.values(COUNTRIES).map(
     (country) => new OptionModel({ id: country, label: country, value: country }),
   );
