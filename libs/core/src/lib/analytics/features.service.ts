@@ -30,7 +30,7 @@ export class FeaturesService {
       return account.can_manage_account;
     }),
   );
-  isTrial: Observable<boolean> = this._account.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial: Observable<boolean> = this._account.pipe(map((account) => !!account.trial_expiration_date));
   isEnterpriseOrGrowth: Observable<boolean> = this._account.pipe(
     map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
   );

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { BackendConfigurationService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -23,6 +23,9 @@ describe('AccountDetailsComponent', () => {
           loadZones: jest.fn(() => of([])),
         }),
         MockProvider(AccountDetailsStore),
+        MockProvider(FeaturesService, {
+          isTrial: of(false),
+        }),
         MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();

@@ -44,10 +44,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   isSaving = false;
 
   defaultLimits?: AccountTypeDefaults;
-
-  get isTrial() {
-    return this.configForm.controls.type.value === 'stash-trial';
-  }
+  isTrial = false;
 
   get canModifyTrialExpiration() {
     return this.isTrial && this.accountBackup?.type !== 'stash-enterprise';
@@ -66,13 +63,17 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         filter((details) => !!details),
         map((accountDetails) => accountDetails as AccountDetails),
         tap((accountDetails) => {
+          this.isTrial = !!accountDetails.trialExpirationDate;
           this.accountBackup = { ...accountDetails };
           this.patchConfigForm(accountDetails);
         }),
         switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((defaultLimits) => (this.defaultLimits = defaultLimits));
+      .subscribe((defaultLimits) => {
+        this.defaultLimits = defaultLimits;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy() {

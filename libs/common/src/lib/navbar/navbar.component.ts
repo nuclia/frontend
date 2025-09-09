@@ -85,7 +85,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isKbAdmin = this.features.isKbAdmin;
   isAragAdmin = this.features.isAragAdmin;
-  isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();

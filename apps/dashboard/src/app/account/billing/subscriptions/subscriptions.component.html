@@ -40,7 +40,7 @@
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }
-              @if ((accountType | async) === 'stash-trial') {
+              @if (!!(isTrial | async)) {
                 <pa-button
                   kind="primary"
                   routerLink="../checkout"
@@ -62,7 +62,7 @@
                 <span class="unit">/{{ 'billing.month' | translate }}</span>
               </div>
             }
-            @if ((accountType | async) === 'stash-trial') {
+            @if (!!(isTrial | async)) {
               <pa-button
                 kind="primary"
                 routerLink="../checkout"

@@ -28,7 +28,7 @@
           Type:
           <strong>{{ account.type }}</strong>
         </div>
-        @if (account.type === 'stash-trial') {
+        @if (!!(isTrial | async)) {
           @if (account.trialExpirationDate; as trialExpirationDate) {
             <div>
               Trial expiration date:
