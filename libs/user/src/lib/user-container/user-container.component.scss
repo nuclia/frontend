@@ -36,14 +36,19 @@
   }
 }
 
-@media (max-width: $size-viewport-medium-max) {
-  .user-background .user-container {
-    width: auto;
+@media (max-width: $size-viewport-large-max) {
+  .container {
+    .user-container {
+      width: 100%;
+    }
+    .hero-img {
+      display: none;
+    }
   }
 }
 
 @media (max-height: $height-viewport-medium-max) {
-  .user-background .user-container {
+  .container .user-container {
     padding-top: rhythm(8);
   }
 }
