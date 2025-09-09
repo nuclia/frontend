@@ -1618,7 +1618,7 @@
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Fecha de creación",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Etiquetas",
 	"search.configuration.result-display.display-metadata.example.select-label": "Ejemplo de expresión",
-	"search.configuration.result-display.display-metadata.metadata-help": "Una expresión por línea, utilizando la sintaxis <code>kind:path:type:title</code>, con:\n<ul><li><code>types</code>: 'origin', 'field', o 'extra'</li>\n<li><code>path</code>: ruta.al.atributo\n<li><code>type</code>: 'string', 'date', o 'list' (opcional. 'string' por defecto)</li>\n<li><code>title</code>: título de los metadatos a mostrar (opcional. Cuando se configura, el tipo también debe configurarse)\n</ul>",
+	"search.configuration.result-display.display-metadata.metadata-help": "Una expresión por línea, usando la sintaxis <code>kind:path:type:title</code>, con:\n<ul><li><code>types</code>: 'origin', 'field', or 'extra'</li>\n<li><code>path</code>: path.to.attribute\n<li><code>type</code>: 'string', 'date', or 'list' (opcional, 'string' por defecto)</li>\n<li><code>title</code>: título de metadato para mostrar (opcional, cuando se configura, type también debe configurarse. Si no se configura, el título será el nombre del atributo. Ingrese 'NO_TITLE' para no mostrar ningún título)\n</ul>",
 	"search.configuration.result-display.display-metadata.metadata-label": "Metadatos para mostrar",
 	"search.configuration.result-display.display-metadata.toggle-description": "Los metadatos se muestran debajo del título de cada recurso.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Mostrar metadatos",
