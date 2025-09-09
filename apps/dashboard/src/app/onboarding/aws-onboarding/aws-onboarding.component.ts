@@ -66,13 +66,6 @@ export class AwsOnboardingComponent {
     }
   }
 
-  setPassword(password: string) {
-    this.sdk.nuclia.auth.setPassword(password).subscribe(() => {
-      this.step = 3;
-      this.cdr.markForCheck();
-    });
-  }
-
   goToBudget() {
     this.step = 1;
     this.cdr.markForCheck();
@@ -81,12 +74,12 @@ export class AwsOnboardingComponent {
   setupBudget(data: Partial<AccountBudget>) {
     this.billing.modifySubscription(data, true).subscribe({
       next: () => {
-        this.step = 2;
+        this.step = 3;
         this.cdr.markForCheck();
       },
       error: () => {
         this.toast.warning('onboarding.aws.monthly-budget.set-up-error');
-        this.step = 2;
+        this.step = 3;
         this.cdr.markForCheck();
       },
     });

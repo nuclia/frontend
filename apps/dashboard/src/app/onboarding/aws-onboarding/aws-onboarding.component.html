@@ -7,15 +7,6 @@
       <app-step1-budget
         (next)="setupBudget($event)"></app-step1-budget>
     }
-    @case (2) {
-      <div class="main-container">
-        <h1>{{ 'setup.set_password' | translate }}</h1>
-        <app-password-form
-          [showUsername]="false"
-          submitText="generic.next_step"
-          (submitData)="setPassword($event.password)"></app-password-form>
-      </div>
-    }
     @case (3) {
       <div class="main-container">
         <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>

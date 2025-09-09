@@ -8,16 +8,18 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { Router, RouterLink } from '@angular/router';
-import { LowerCaseInputDirective, NavigationService, SDKService } from '@flaps/core';
+import { LowerCaseInputDirective, NavigationService, SDKService, UserService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, map, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-invite-collaborators-modal',
   imports: [
+    CommonModule,
     PaModalModule,
     PaTextFieldModule,
     PaButtonModule,
@@ -25,14 +27,14 @@ import { catchError } from 'rxjs/operators';
     PaTogglesModule,
     TranslateModule,
     ReactiveFormsModule,
-    LowerCaseInputDirective
-],
+    LowerCaseInputDirective,
+  ],
   templateUrl: './invite-collaborators-modal.component.html',
   styleUrl: './invite-collaborators-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteCollaboratorsModalComponent {
-  selectedRadio: 'sso' | 'invite' = 'sso';
+  selectedRadio: 'kb' | 'sso' | 'invite' = 'kb';
   accountSettingsUrl = '';
 
   toBeInvited: string[] = [];
@@ -47,12 +49,15 @@ export class InviteCollaboratorsModalComponent {
     private sdk: SDKService,
     private translate: TranslateService,
     private router: Router,
+    private userService: UserService,
   ) {
     if (this.modal?.config?.data?.accountSlug) {
       this.accountSlug = this.modal.config.data.accountSlug;
       this.accountSettingsUrl = `${this.navigation.getAccountManageUrl(this.accountSlug)}/settings`;
     }
   }
+
+  accountEmail = this.userService.userInfo.pipe(map((info) => info?.preferences.email));
 
   addUser() {
     this.toBeInvited = this.toBeInvited.concat([this.email.getRawValue()]);
@@ -65,7 +70,12 @@ export class InviteCollaboratorsModalComponent {
   }
 
   onDone() {
-    if (this.selectedRadio === 'sso') {
+    if (this.selectedRadio === 'kb') {
+      this.sdk.kbList.pipe(take(1)).subscribe((kbs) => {
+        this.router.navigateByUrl(this.navigation.getKbUrl(this.accountSlug, kbs[0]?.slug || ''));
+        this.modal.close();
+      });
+    } else if (this.selectedRadio === 'sso') {
       this.modal.close();
     } else {
       forkJoin(

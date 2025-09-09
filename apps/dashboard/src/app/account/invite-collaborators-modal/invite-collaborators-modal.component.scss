@@ -1,5 +1,15 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.password {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+  img {
+    width: rhythm(12);
+  }
+}
+
 .radio-content {
   margin-left: rhythm(2);
   padding-left: rhythm(1.5);
