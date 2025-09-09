@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
@@ -13,9 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PasswordFormComponent implements OnInit {
-  @Input() showUsername = true;
-  @Input() submitText = 'generic.save';
+export class PasswordFormComponent {
   @Output() submitData = new EventEmitter<{ username?: string; password: string }>();
 
   passwordForm = new FormGroup({
@@ -46,13 +44,6 @@ export class PasswordFormComponent implements OnInit {
       passwordMismatch: 'validation.password_mismatch',
     } as IErrorMessages,
   };
-
-  ngOnInit(): void {
-    if (!this.showUsername) {
-      this.passwordForm.controls.username.clearValidators();
-      this.passwordForm.controls.username.updateValueAndValidity();
-    }
-  }
 
   submit() {
     if (!this.passwordForm.valid) return;

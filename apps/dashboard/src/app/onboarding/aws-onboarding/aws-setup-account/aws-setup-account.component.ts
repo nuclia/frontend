@@ -62,7 +62,7 @@ export class AwsSetupAccountComponent {
         error: (error) => {
           this.creatingAccount = false;
           this.cdr.markForCheck();
-          this.toaster.error(error?.body?.detail || 'login.error.oops');
+          this.toaster.error(error?.status === 409 ? 'onboarding.aws.email-error' : 'login.error.oops');
         },
       });
   }
