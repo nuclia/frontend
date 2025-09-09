@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../manager.store';
-import { BackendConfigurationService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService } from '@flaps/core';
 
 @Component({
   templateUrl: './account-details.component.html',
@@ -19,12 +19,14 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   kbList = this.store.kbList;
   currentState = this.store.currentState;
   noStripe = this.backendConfig.noStripe();
+  isTrial = this.features.isTrial;
 
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
     private store: ManagerStore,
     private backendConfig: BackendConfigurationService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit() {
