@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, in
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { AwsOnboardingPayload, OnboardingService, Step1Component } from '@nuclia/user';
+import { AwsOnboardingPayload, Step1Component } from '@nuclia/user';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin, switchMap, take, tap } from 'rxjs';
+import { switchMap, take, tap } from 'rxjs';
 import { SDKService, STFUtils } from '@flaps/core';
 import { Account, AuthTokens } from '@nuclia/core';
 
@@ -24,7 +24,6 @@ interface SetupAccountPayload {
 })
 export class AwsSetupAccountComponent {
   sdk = inject(SDKService);
-  onboardingService = inject(OnboardingService);
   toaster = inject(SisToastService);
   translate = inject(TranslateService);
   route = inject(ActivatedRoute);
@@ -37,16 +36,17 @@ export class AwsSetupAccountComponent {
 
   @Output() next = new EventEmitter<Account>();
 
-  submit(data: AwsOnboardingPayload) {
+  submit(data: AwsOnboardingPayload, firstAttempt = true) {
     this.creatingAccount = true;
     this.cdr.markForCheck();
-    forkJoin([
-      this.route.queryParams.pipe(take(1)),
-      this.onboardingService.getAvailableAccountSlug(STFUtils.generateSlug(data.company)),
-    ])
+    let accountSlug = STFUtils.generateSlug(data.company);
+    if (!firstAttempt) {
+      accountSlug = `${accountSlug}-${STFUtils.generateRandomSlugSuffix()}`;
+    }
+    this.route.queryParams
       .pipe(
         take(1),
-        switchMap(([queryParams, accountSlug]) => {
+        switchMap((queryParams) => {
           const payload = {
             customer_token: queryParams['customer_token'],
             account_slug: accountSlug,
@@ -60,9 +60,13 @@ export class AwsSetupAccountComponent {
           this.next.emit(account);
         },
         error: (error) => {
-          this.creatingAccount = false;
-          this.cdr.markForCheck();
-          this.toaster.error(error?.status === 409 ? 'onboarding.aws.email-error' : 'login.error.oops');
+          if (firstAttempt && error?.body?.error_code === 'AWS_MP_ACCOUNT_SLUG_ALREADY_EXISTS') {
+            this.submit(data, false);
+          } else {
+            this.creatingAccount = false;
+            this.cdr.markForCheck();
+            this.toaster.error(error?.status === 409 ? 'onboarding.aws.email-error' : 'login.error.oops');
+          }
         },
       });
   }
