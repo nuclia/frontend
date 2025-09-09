@@ -1,0 +1,33 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.container {
+  display:flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.run {
+  align-self: flex-start;
+}
+
+.resources {
+  display:flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.resource-results {
+  .title-s {
+    margin-bottom: rhythm(1);
+    text-decoration: underline;
+  }
+}
+
+.separator-line {
+  margin: rhythm(3) 0;
+}
+
+.header {
+  color: $color-neutral-regular;
+  padding: rhythm(1) 0;
+}

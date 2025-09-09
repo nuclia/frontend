@@ -1,18 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AccountTypeDefaults } from '@flaps/core';
+import { AccountTypes } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountService } from '../../account.service';
-import { SisToastService } from '@nuclia/sistema';
-import { AccountTypeDefaults } from '@flaps/core';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
 
 @Component({
   templateUrl: './configuration.component.html',
   styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -29,6 +30,13 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         validators: [Validators.required],
       }),
       maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    }),
+    arags: new FormGroup({
+      arags_radio: new FormControl<'limit' | 'unlimited'>('limit', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      maxArags: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
@@ -75,10 +83,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   save() {
     if (this.configForm.valid && this.accountBackup) {
       this.isSaving = true;
-      const { trialExpirationDate, kbs, ...rawValue } = this.configForm.getRawValue();
+      const { trialExpirationDate, kbs, arags, ...rawValue } = this.configForm.getRawValue();
       const payload: AccountConfigurationPayload = {
         ...rawValue,
         maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
+        maxArags: arags.arags_radio === 'limit' ? arags.maxArags : -1,
       };
       if (this.canModifyTrialExpiration) {
         payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
@@ -115,6 +124,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.configForm.controls.kbs.markAsDirty();
     this.cdr.markForCheck();
   }
+  resetMaxAragsToDefault() {
+    if (!this.defaultLimits) {
+      return;
+    }
+    this.configForm.controls.arags.controls.maxArags.patchValue(this.defaultLimits.max_arags);
+    this.configForm.controls.arags.markAsDirty();
+    this.cdr.markForCheck();
+  }
 
   toggleAccountType(type: AccountTypes) {
     this.configForm.controls.type.patchValue(type);
@@ -126,6 +143,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.configForm.patchValue(accountDetails);
     this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');
     this.configForm.controls.kbs.controls.maxKbs.patchValue(accountDetails.maxKbs);
+    this.configForm.controls.arags.controls.arags_radio.patchValue(
+      accountDetails.maxArags === -1 ? 'unlimited' : 'limit',
+    );
+    this.configForm.controls.arags.controls.maxArags.patchValue(accountDetails.maxArags);
     this.cdr.markForCheck();
   }
 }

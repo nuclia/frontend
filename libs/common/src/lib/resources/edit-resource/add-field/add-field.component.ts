@@ -11,9 +11,10 @@ import { ResourceNavigationService } from '../resource-navigation.service';
   templateUrl: './add-field.component.html',
   styleUrls: ['../common-page-layout.scss', './add-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
-  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON'];
+  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];
   availableTypes: FIELD_TYPE[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
 
   unsubscribeAll = new Subject<void>();

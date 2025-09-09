@@ -2,6 +2,7 @@
 
 /private_keys
 .env
+libs/search-widget/public/overrides
 
 # compiled output
 /dist
@@ -38,6 +39,7 @@ node_modules
 # config
 environment.dev.ts
 apps/**/local-stage/*.json
+apps/**/local-dev/*.json
 
 # IDE - VSCode
 .vscode
@@ -73,3 +75,5 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

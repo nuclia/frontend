@@ -1,11 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { NavigationStart, Router, Scroll } from '@angular/router';
 import { filter, Observable, of, Subject } from 'rxjs';
-import { standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import { BackendConfigurationService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-select-account',
@@ -13,11 +21,17 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
-  accounts: Observable<Account[] | null> = this.selectService.accounts;
+  accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(
+    map((accounts) => (accounts || []).sort((a, b) => a.title.localeCompare(b.title))),
+  );
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
+  private backendConfig = inject(BackendConfigurationService);
+  logoPath = this.backendConfig.getLogoPath();
+  brandName = this.backendConfig.getBrandName();
 
   standalone = this.environment.standalone;
 

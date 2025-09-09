@@ -12,6 +12,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { LowerCaseInputDirective } from '@flaps/core';
 import { UsersManageComponent } from './users-manage.component';
 
 @NgModule({
@@ -28,6 +29,7 @@ import { UsersManageComponent } from './users-manage.component';
     PaTableModule,
     PaTextFieldModule,
     PaTooltipModule,
+    LowerCaseInputDirective,
   ],
   declarations: [UsersManageComponent],
   exports: [UsersManageComponent],

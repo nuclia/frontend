@@ -1,6 +1,22 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FeaturesService, NavigationService, NotificationService, SDKService, UserService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  FeatureFlagService,
+  FeaturesService,
+  NavigationService,
+  NotificationService,
+  SDKService,
+  UserService,
+} from '@flaps/core';
 import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
@@ -9,6 +25,7 @@ import { StandaloneService } from '../services/standalone.service';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class TopbarComponent {
   @Input({ transform: booleanAttribute }) isNotificationPanelOpen = false;
@@ -16,8 +33,7 @@ export class TopbarComponent {
 
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
-  kb = this.sdk.currentKb;
-  isStage = location.hostname === 'stashify.cloud';
+  isStageOrDev = this.featureFlagService.isStageOrDev;
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));
   isAccountManager = this.features.isAccountManager;
@@ -42,7 +58,12 @@ export class TopbarComponent {
   errorMessage = this.standaloneService.errorMessage;
 
   showDemo = !this.standalone;
+  hasDemoButton = this.features.authorized.showDemoButton;
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
+
+  private backendConfig = inject(BackendConfigurationService);
+  logoPath = this.backendConfig.getLogoPath();
+  brandName = this.backendConfig.getBrandName();
 
   constructor(
     private router: Router,
@@ -53,6 +74,7 @@ export class TopbarComponent {
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
     private features: FeaturesService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   goToHome(): void {

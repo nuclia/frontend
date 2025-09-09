@@ -1,7 +1,6 @@
-@import 'libs/sistema/theme/fonts';
-@import 'libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
-@import 'libs/sistema/styles/apps-common';
-@import 'variables';
+@use '../../../libs/sistema/styles/apps-common';
+@use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
+@use 'apps/manager-v2/src/variables' as *;
 
 :root {
   --app-background-color: $color-light-stronger;

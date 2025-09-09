@@ -1,7 +1,7 @@
 import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
-import type { INuclia, IRest } from '../models';
-import { KBRoles } from '../db/kb/kb.models';
 import { NucliaDBRole } from '../auth/auth.models';
+import { KBRoles } from '../db/kb/kb.models';
+import type { INuclia, IRest } from '../models';
 
 export const ABORT_STREAMING_REASON = 'Stop listening to streaming';
 const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fetch resource.';
@@ -28,6 +28,7 @@ export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
   private streamErrorAt?: number;
+  private webSockets: { [path: string]: WebSocket } = {};
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
@@ -188,6 +189,7 @@ export class Rest implements IRest {
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
       path.startsWith('/manage') ||
+      path.startsWith('/vectorsets') ||
       path.startsWith('/marketplace');
 
     let backend: string;
@@ -269,12 +271,13 @@ export class Rest implements IRest {
   getStreamedResponse(
     path: string,
     body: unknown,
+    extraHeaders?: { [key: string]: string },
   ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
     path = this.getFullUrl(path);
     return new Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>((observer) => {
       fetch(path, {
         method: 'POST',
-        headers: this.getHeaders('POST', path),
+        headers: this.getHeaders('POST', path, extraHeaders),
         body: JSON.stringify(body),
       }).then(
         (res) => {
@@ -408,5 +411,9 @@ export class Rest implements IRest {
     result.set(arr1);
     result.set(arr2, arr1.length);
     return result;
+  }
+
+  getWsUrl(path: string, ephemeralToken: string): string {
+    return `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
   }
 }

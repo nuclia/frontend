@@ -5,7 +5,6 @@ import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-unauthorized-feature',
-  standalone: true,
   imports: [BadgeComponent],
   template: `
     <nsi-badge

@@ -1,12 +1,12 @@
-@import 'apps/dashboard/src/variables';
-@import '../select-account.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../select-account.tokens' as tokens;
 
 .select {
   background-color: $color-light-stronger;
   border-radius: rhythm(1);
   margin: 0 auto;
-  max-height: $height-page-container;
-  padding: $vertical-padding rhythm(12);
+  max-height: tokens.$height-page-container;
+  padding: tokens.$vertical-padding rhythm(12);
   position: relative;
   top: 10vh;
   width: 600px;
@@ -17,7 +17,7 @@
   }
 
   .logo {
-    margin-bottom: $vertical-padding;
+    margin-bottom: tokens.$vertical-padding;
     text-align: center;
 
     img {
@@ -46,7 +46,7 @@
   transition: height $transition-hint;
 
   .select-account-list {
-    max-height: calc(#{$height-page-container} - #{$vertical-padding} * 4 - #{rhythm(5)});
+    max-height: calc(#{tokens.$height-page-container} - #{tokens.$vertical-padding} * 4 - #{rhythm(5)});
     overflow-y: auto;
     overflow-x: hidden;
     // Move scrollbar to the edge

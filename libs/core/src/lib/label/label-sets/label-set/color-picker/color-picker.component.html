@@ -1,18 +1,20 @@
 <div class="color-picker">
-  <button
-    *ngIf="selectedCustomColor"
-    class="selected custom"
-    [attr.aria-pressed]="true"
-    [style.background-color]="'transparent'">
-    {{ value }}
-  </button>
-  <button
-    *ngFor="let color of hexColors"
-    (click)="setColor(color)"
-    [class.selected]="isSameHexColor(color, value)"
-    [attr.aria-pressed]="isSameHexColor(color, value)"
-    [style.background-color]="color"
-    [style.color]="getTextColor(color)">
-    <span>a</span>
-  </button>
+  @if (selectedCustomColor) {
+    <button
+      class="selected custom"
+      [attr.aria-pressed]="true"
+      [style.background-color]="'transparent'">
+      {{ value }}
+    </button>
+  }
+  @for (color of hexColors; track color) {
+    <button
+      (click)="setColor(color)"
+      [class.selected]="isSameHexColor(color, value)"
+      [attr.aria-pressed]="isSameHexColor(color, value)"
+      [style.background-color]="color"
+      [style.color]="getTextColor(color)">
+      <span>a</span>
+    </button>
+  }
 </div>

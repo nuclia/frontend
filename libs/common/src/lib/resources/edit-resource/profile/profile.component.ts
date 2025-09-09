@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
+import { AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
-import { delay, shareReplay, takeUntil } from 'rxjs/operators';
-import { EditResourceService } from '../edit-resource.service';
+import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
 import { JsonValidator } from '../../../validators';
-import { ActivatedRoute } from '@angular/router';
-import { ResourceNavigationService } from '../resource-navigation.service';
 import { Thumbnail } from '../edit-resource.helpers';
+import { EditResourceService } from '../edit-resource.service';
+import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Component({
   templateUrl: 'profile.component.html',
   styleUrls: ['../common-page-layout.scss', 'profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceProfileComponent implements OnInit {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
@@ -34,14 +36,17 @@ export class ResourceProfileComponent implements OnInit {
     slug: new FormControl<string>('', { nonNullable: true }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     summary: new FormControl<string>('', { nonNullable: true }),
+    hidden: new FormControl<boolean>(false, { nonNullable: true }),
     origin: new FormGroup({
       collaborators: new FormControl<string>('', { nonNullable: true }),
       url: new FormControl<string>('', { nonNullable: true }),
       filename: new FormControl<string>('', { nonNullable: true }),
       created: new FormControl<string>('', { nonNullable: true }),
       modified: new FormControl<string>('', { nonNullable: true }),
+      tags: new FormControl<string>('', { nonNullable: true }),
       related: new FormControl<string>('', { nonNullable: true }),
       path: new FormControl<string>('', { nonNullable: true }),
+      metadata: new FormArray<FormGroup<{ key: FormControl<string>; value: FormControl<string> }>>([]),
     }),
     extra: new FormControl<string>('', {
       nonNullable: true,
@@ -52,18 +57,21 @@ export class ResourceProfileComponent implements OnInit {
     }),
   });
 
+  get metadataControls() {
+    return this.form.controls.origin.controls.metadata.controls;
+  }
+
   thumbnailsToBeDeleted = new BehaviorSubject<string[]>([]);
-  thumbnails: Observable<Thumbnail[]> = combineLatest([
+  thumbnailsLoaded: Observable<Thumbnail[]> = combineLatest([
     this.thumbnailsToBeDeleted,
     this.resource.pipe(
       switchMap((res) => this.editResource.getThumbnails(this.editResource.getThumbnailsAndImages(res))),
     ),
   ]).pipe(map(([toBeDeleted, thumbnails]) => thumbnails.filter((thumbnail) => !toBeDeleted.includes(thumbnail.uri))));
-  thumbnailsLoaded = this.thumbnails.pipe(
-    delay(300),
-    tap((thumbnails) => this.updateGeneralExpanderSize.next(thumbnails)),
-  );
-  updateGeneralExpanderSize = new Subject();
+  @ViewChild('generalAccordionItem', { read: AccordionItemComponent }) generalAccordionItem?: AccordionItemComponent;
+  @ViewChild('originAccordionItem', { read: AccordionItemComponent }) originAccordionItem?: AccordionItemComponent;
+  @ViewChild('extraAccordionItem', { read: AccordionItemComponent }) extraAccordionItem?: AccordionItemComponent;
+  @ViewChild('securityAccordionItem', { read: AccordionItemComponent }) securityAccordionItem?: AccordionItemComponent;
 
   hintValues = this.resource.pipe(
     map((res) => ({
@@ -73,6 +81,7 @@ export class ResourceProfileComponent implements OnInit {
   );
   isTrial = this.features.isTrial;
   hasBaseDropZoneOver = false;
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   isFormReady = false;
   isSaving = false;
@@ -96,12 +105,6 @@ export class ResourceProfileComponent implements OnInit {
     this.editResource.setCurrentView('resource');
     this.editResource.setCurrentField('resource');
     this.thumbnailsLoaded.pipe(takeUntil(this.unsubscribeAll)).subscribe();
-    this.updateGeneralExpanderSize
-      .pipe(
-        tap(() => this.cdr.detectChanges()),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe();
   }
 
   ngOnDestroy(): void {
@@ -110,18 +113,36 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   updateForm(data: Resource): void {
+    if (!data.origin?.metadata || Object.keys(data.origin?.metadata).length === 0) {
+      this.addMetadata();
+    }
+    const metadata = Object.entries(data.origin?.metadata || {}).reduce(
+      (acc, entry) => {
+        acc.push({ key: entry[0], value: entry[1] });
+        return acc;
+      },
+      [] as { key: string; value: string }[],
+    );
+    if (metadata.length > this.metadataControls.length) {
+      for (let i = 0; i < metadata.length - this.metadataControls.length + 1; i++) {
+        this.addMetadata();
+      }
+    }
     this.form.patchValue({
       slug: data.slug,
       title: data.title,
       summary: data.summary,
+      hidden: data.hidden,
       origin: {
         collaborators: (data.origin?.collaborators || []).join(', '),
         url: data.origin?.url || '',
         filename: data.origin?.filename || '',
         created: data.origin?.created || '',
         modified: data.origin?.modified || '',
+        tags: (data.origin?.tags || []).join('\n'),
         related: (data.origin?.related || []).join('\n'),
         path: data.origin?.path || '',
+        metadata,
       },
       extra: JSON.stringify(data.extra?.metadata, null, 2) || '',
       security: {
@@ -136,24 +157,34 @@ export class ResourceProfileComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    const data: Partial<Resource> = this.getValue();
-    if (!this.newThumbnail) {
-      data.thumbnail = this.selectedThumbnail;
-    }
+    this.hiddenResourcesEnabled
+      .pipe(
+        take(1),
+        switchMap((enabled) => {
+          const data: Partial<Resource> = this.getValue(enabled);
+          if (!this.newThumbnail) {
+            data.thumbnail = this.selectedThumbnail;
+          }
 
-    const request: Observable<void | null> = this.newThumbnail
-      ? this.saveNewThumbnailAndPartialResource(data)
-      : this.editResource.savePartialResource(data);
+          const request: Observable<void | null> = this.newThumbnail
+            ? this.saveNewThumbnailAndPartialResource(data)
+            : this.editResource.savePartialResource(data);
 
-    request.pipe(switchMap(() => this.deleteOldThumbnails())).subscribe(() => {
-      this.form.markAsPristine();
-      this.thumbnailsToBeDeleted.next([]);
-      this.newThumbnail = undefined;
-      this.extraMetadata = data.extra?.metadata;
-      this.editExtraMetadata = false;
-      this.isSaving = false;
-      this.cdr.markForCheck();
-    });
+          return request.pipe(
+            switchMap(() => this.deleteOldThumbnails()),
+            tap(() => {
+              this.form.markAsPristine();
+              this.thumbnailsToBeDeleted.next([]);
+              this.newThumbnail = undefined;
+              this.extraMetadata = data.extra?.metadata;
+              this.editExtraMetadata = false;
+              this.isSaving = false;
+              this.cdr.markForCheck();
+            }),
+          );
+        }),
+      )
+      .subscribe();
   }
 
   cancel() {
@@ -166,27 +197,62 @@ export class ResourceProfileComponent implements OnInit {
     }
   }
 
-  getValue(): Partial<Resource> {
+  getValue(hiddenResources = false): Partial<Resource> {
+    if (!this.currentValue) {
+      return {};
+    }
     const value = this.form.getRawValue();
-    return this.currentValue
-      ? {
-          slug: value.slug,
-          title: value.title,
-          summary: value.summary,
-          origin: {
-            ...this.currentValue.origin,
-            collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
-            url: value.origin.url,
-            filename: value.origin.filename,
-            created: value.origin.created || undefined,
-            modified: value.origin.modified || undefined,
-            related: value.origin.related.split('\n').map((s) => s.trim()),
-            path: value.origin.path || undefined,
+    const security = this.getArrayAttribute(
+      value.security.access_groups.split('\n'),
+      this.currentValue.security?.access_groups,
+    );
+    return {
+      slug: value.slug || undefined,
+      title: value.title || undefined,
+      summary: value.summary || undefined,
+      hidden: hiddenResources ? value.hidden : undefined,
+      origin: {
+        ...this.currentValue.origin,
+        collaborators: this.getArrayAttribute(
+          value.origin.collaborators.split(',').map((s) => s.trim()),
+          this.currentValue.origin?.collaborators,
+        ),
+        url: value.origin.url || undefined,
+        filename: value.origin.filename || undefined,
+        created: value.origin.created || undefined,
+        modified: value.origin.modified || undefined,
+        tags: this.getArrayAttribute(
+          value.origin.tags.split('\n').map((s) => s.trim()),
+          this.currentValue.origin?.tags,
+        ),
+        related: this.getArrayAttribute(
+          value.origin.related.split('\n').map((s) => s.trim()),
+          this.currentValue.origin?.related,
+        ),
+        path: value.origin.path || undefined,
+        metadata: value.origin.metadata.reduce(
+          (acc, entry) => {
+            if (entry.key.trim() === '') {
+              return acc;
+            }
+            acc[entry.key] = entry.value;
+            return acc;
           },
-          extra: value.extra ? { metadata: JSON.parse(value.extra) } : undefined,
-          security: value.security ? { access_groups: value.security.access_groups.split('\n') } : undefined,
-        }
-      : {};
+          {} as { [key: string]: string },
+        ),
+      },
+      extra: value.extra
+        ? { metadata: JSON.parse(value.extra) }
+        : !!this.currentValue.extra
+          ? { metadata: {} }
+          : undefined,
+      security: security ? { access_groups: security } : undefined,
+    };
+  }
+
+  private getArrayAttribute(newValue: string[] | undefined, oldValue: string[] | undefined): string[] | undefined {
+    const newValues = (newValue || []).map((s) => s.trim()).filter((s) => s.length > 0);
+    return newValues.length === 0 ? undefined : newValue;
   }
 
   chooseFiles($event: MouseEvent) {
@@ -283,7 +349,22 @@ export class ResourceProfileComponent implements OnInit {
     );
   }
 
-  onResizingTextarea($event: DOMRect) {
-    this.updateGeneralExpanderSize.next($event);
+  onResizingTextarea(item: AccordionItemComponent) {
+    item.updateContentHeight();
+  }
+
+  addMetadata() {
+    this.form.controls.origin.controls.metadata.push(
+      new FormGroup({
+        key: new FormControl<string>('', { nonNullable: true }),
+        value: new FormControl<string>('', { nonNullable: true }),
+      }),
+    );
+    this.originAccordionItem?.updateContentHeight();
+  }
+
+  removeMetadata(index: number) {
+    this.form.controls.origin.controls.metadata.removeAt(index);
+    this.originAccordionItem?.updateContentHeight();
   }
 }

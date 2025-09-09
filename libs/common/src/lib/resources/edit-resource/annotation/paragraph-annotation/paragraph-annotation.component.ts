@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { Search } from '@nuclia/core';
 import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
-import { takeUntil } from 'rxjs/operators';
+import { shareReplay, takeUntil } from 'rxjs/operators';
 import { ParagraphAnnotationService } from './paragraph-annotation.service';
 import { SelectFirstFieldDirective } from '../../select-first-field/select-first-field.directive';
 
@@ -10,21 +10,24 @@ import { SelectFirstFieldDirective } from '../../select-first-field/select-first
   templateUrl: './paragraph-annotation.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-annotation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ParagraphAnnotationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this.annotationService.paragraphs;
   hasParagraph: Observable<boolean> = this.annotationService.hasParagraph;
   paragraphLoaded: Observable<boolean> = this.annotationService.paragraphLoaded;
 
-  entityFamilies: Observable<EntityGroup[]> = this.editResource
-    .loadResourceEntities()
-    .pipe(map((families) => families.filter((family) => family.entities.length > 0)));
+  entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities().pipe(
+    map((families) => families.filter((family) => family.entities.length > 0)),
+    shareReplay(1),
+  );
   selectedFamily: Observable<EntityGroup | null> = this.annotationService.selectedFamily;
 
   previousQuery?: string;
   searchQuery = '';
   hasMoreResults = false;
-  nextPageNumber = 0;
+  extendedResults = false;
+  selectedTab: 'ners' | 'relations' = 'ners';
 
   constructor(
     private annotationService: ParagraphAnnotationService,
@@ -35,10 +38,15 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
 
   ngOnInit(): void {
     this.editResource.setCurrentView('annotation');
+    this.noField.subscribe(() => {
+      this.selectedTab = 'relations';
+    });
 
     combineLatest([this.fieldId, this.resource, this.entityFamilies])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource, families]) => this.annotationService.initParagraphs(fieldId, resource, families));
+      .subscribe(([fieldId, resource, families]) =>
+        this.annotationService.initParagraphsWithAnnotations(fieldId, resource, families),
+      );
   }
 
   override ngOnDestroy() {
@@ -50,7 +58,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
     // Reset pagination on new query
     if (this.previousQuery !== this.searchQuery) {
       this.previousQuery = this.searchQuery;
-      this.nextPageNumber = 0;
+      this.extendedResults = false;
     }
     this._triggerSearch(this.searchQuery).subscribe((results) => {
       this.annotationService.setSearchResults(results);
@@ -67,16 +75,17 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       this.searchQuery = '';
       this.annotationService.setSearchResults(null);
       this.hasMoreResults = false;
-      this.nextPageNumber = 0;
+      this.extendedResults = false;
       this.cdr.markForCheck();
     }
   }
 
   loadMore() {
-    if (this.hasMoreResults && this.searchQuery) {
-      this._triggerSearch(this.searchQuery).subscribe((results) => {
-        this.annotationService.appendSearchResults(results);
+    if (this.hasMoreResults && !this.extendedResults && this.searchQuery) {
+      this._triggerSearch(this.searchQuery, true).subscribe((results) => {
+        this.annotationService.setSearchResults(results);
         this.updatePagination(results);
+        this.extendedResults = true;
       });
     }
   }
@@ -87,16 +96,13 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
 
   private updatePagination(results: Search.Results) {
     if (results.paragraphs) {
-      this.hasMoreResults = results.paragraphs.next_page;
-      this.nextPageNumber = results.paragraphs.page_number + 1;
+      this.hasMoreResults = results.paragraphs.results.length < results.paragraphs.total;
     }
   }
 
-  private _triggerSearch(query: string) {
+  private _triggerSearch(query: string, extendedResults: boolean = false) {
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
-      switchMap(([field, resource]) =>
-        this.annotationService.searchInField(query, resource, field, this.nextPageNumber),
-      ),
+      switchMap(([field, resource]) => this.annotationService.searchInField(query, resource, field, extendedResults)),
     );
   }
 }

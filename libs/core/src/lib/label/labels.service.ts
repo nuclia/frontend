@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, switchMap, take, tap } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
+import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { LabelSetCounts } from './label-sets/model';
 
 @Injectable({
@@ -39,13 +39,15 @@ export class LabelsService {
       );
     }),
   );
+  sdk = inject(SDKService);
 
-  constructor(private sdk: SDKService) {
+  initLabelSets() {
     this.sdk.currentKb
       .pipe(
         filter((kb) => !!kb),
         distinctUntilKeyChanged('id'),
-        switchMap(() => this.refreshLabelsSets()),
+        switchMap(() => this.sdk.isArag || of(false)),
+        switchMap((isArag) => (isArag ? of(undefined) : this.refreshLabelsSets())),
       )
       .subscribe();
   }

@@ -1,36 +1,43 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
+import { User } from '../user.models';
+import { UserType } from '@flaps/core';
 
 @Component({
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
+  private router = inject(Router);
+  private toaster = inject(SisToastService);
 
   userEmail = '';
+  userId = '';
   userForm = new FormGroup({
-    email: new FormControl(''),
-    id: new FormControl(''),
-    language: new FormControl(''),
-    last_login: new FormControl(''),
-    name: new FormControl(''),
-    providers: new FormControl(''),
-    type: new FormControl(''),
+    email: new FormControl('', { nonNullable: true }),
+    id: new FormControl('', { nonNullable: true }),
+    language: new FormControl('', { nonNullable: true }),
+    last_login: new FormControl('', { nonNullable: true }),
+    name: new FormControl('', { nonNullable: true }),
+    providers: new FormControl('', { nonNullable: true }),
+    type: new FormControl<UserType>('USER', { nonNullable: true }),
   });
+  isEdit = this.router.url.endsWith('edit');
+  isSaving = false;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
-    private location: Location,
   ) {}
 
   ngOnInit() {
@@ -43,7 +50,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (user) => {
           this.userEmail = user.email;
-          this.userForm.patchValue({ ...user, providers: user.providers.join(', ') });
+          this.userId = user.id;
+          this.userForm.patchValue({
+            ...user,
+            providers: user.providers.join(', '),
+            last_login: user.last_login || '',
+          });
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -60,6 +72,39 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate(['/users']);
+  }
+
+  edit() {
+    this.router.navigate(['./edit'], { relativeTo: this.route });
+  }
+
+  cancel() {
+    this.router.navigate(['..'], { relativeTo: this.route });
+  }
+
+  save() {
+    this.isSaving = true;
+    this.cdr.detectChanges();
+    const data = this.userForm.getRawValue();
+    const payload: Partial<User> = {
+      email: data.email,
+      name: data.name,
+    };
+    if (data.type) {
+      payload.type = data.type;
+    }
+    this.userService.modifyUser(this.userId, payload).subscribe({
+      next: (user) => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+        this.router.navigate([`/users/${user.id}`]);
+      },
+      error: (error) => {
+        this.isSaving = false;
+        this.cdr.detectChanges();
+        this.toaster.error(JSON.stringify(error));
+      },
+    });
   }
 }

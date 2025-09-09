@@ -1,0 +1,18 @@
+@if (nodeTitle()) {
+  <div
+    class="input"
+    #inputElement></div>
+  <div class="title-s">
+    {{ nodeTitle() }}
+    @if (state() === 'selected') {
+      <pa-button
+        aspect="basic"
+        size="small"
+        icon="trash"
+        (click)="removeNode($event)">
+        {{ 'retrieval-agents.workflow.delete-node' | translate }}
+      </pa-button>
+    }
+  </div>
+}
+<ng-content></ng-content>

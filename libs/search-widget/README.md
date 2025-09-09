@@ -7,7 +7,7 @@ The Nuclia widget allows to embed a ready-to-use search box in your website or w
 Copy/paste the following snippet in your HTML code:
 
 ```html
-<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
+<script src="https://cdn.rag.progress.cloud/nuclia-widget.umd.js"></script>
 <nuclia-search-bar
   knowledgebox="<YOUR-KB-ID>"
   zone="europe-1"
@@ -21,7 +21,7 @@ Copy/paste the following snippet in your HTML code:
 You need to install the following dependencies:
 
 ```bash
-npm install @nuclia/widget @nuclia/core @nuclia/prediction rxjs@^7.5.2 date-fns sass
+npm install @nuclia/widget @nuclia/core rxjs@^7.5.2 date-fns sass
 ```
 
 Then, you can use the components in your Svelte code:

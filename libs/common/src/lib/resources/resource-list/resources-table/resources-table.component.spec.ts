@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResourcesTableComponent } from './resources-table.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -11,14 +10,15 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
-import { RouterTestingModule } from '@angular/router/testing';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { UploadService } from '../../../upload';
-import { ResourceListService } from './../resource-list.service';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
+import { ResourceListService } from './../resource-list.service';
+import { ResourcesTableComponent } from './resources-table.component';
 
 describe('ResourceTableComponent', () => {
   let component: ResourcesTableComponent;
@@ -28,7 +28,7 @@ describe('ResourceTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ResourcesTableComponent],
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
@@ -65,7 +65,6 @@ describe('ResourceTableComponent', () => {
         MockProvider(ResourceListService, {
           filters: of([]),
           loadResources: jest.fn(() => of()),
-          isShardReady: new BehaviorSubject(false),
         }),
       ],
     }).compileComponents();

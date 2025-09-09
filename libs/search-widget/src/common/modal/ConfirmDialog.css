@@ -1,0 +1,23 @@
+/* common modal style is defined in common/common-style.css */
+.sw-modal-backdrop {
+  .modal .modal-content {
+    box-shadow: var(--shadow-modal);
+    padding: var(--rhythm-2);
+  }
+
+  .confirm-footer {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+    justify-content: center;
+    margin-top: var(--rhythm-2);
+  }
+}
+
+@media (min-width: 599px) {
+  .sw-modal-backdrop {
+    .modal {
+      max-width: var(--rhythm-48);
+    }
+  }
+}

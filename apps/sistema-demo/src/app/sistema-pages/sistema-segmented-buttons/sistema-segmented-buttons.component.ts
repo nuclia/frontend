@@ -1,14 +1,12 @@
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 import { SegmentedButtonsComponent } from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   selector: 'nsd-sistema-segmented-buttons',
-  standalone: true,
-  imports: [CommonModule, PaDemoModule, SegmentedButtonsComponent],
+  imports: [PaDemoModule, SegmentedButtonsComponent],
   templateUrl: './sistema-segmented-buttons.component.html',
-  styleUrl: './sistema-segmented-buttons.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaSegmentedButtonsComponent {

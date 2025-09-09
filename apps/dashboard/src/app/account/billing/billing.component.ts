@@ -7,6 +7,7 @@ import { WINDOW } from '@ng-web-apis/common';
   templateUrl: './billing.component.html',
   styleUrls: ['./billing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BillingComponent implements OnInit, OnDestroy {
   constructor(@Inject(WINDOW) private window: Window) {}

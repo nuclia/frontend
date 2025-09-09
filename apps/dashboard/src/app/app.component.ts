@@ -1,17 +1,26 @@
-import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+  DOCUMENT,
+} from '@angular/core';
+
 import { TranslateService } from '@ngx-translate/core';
 import {
   BackendConfigurationService,
+  LabelsService,
   SDKService,
   STFSplashScreenService,
-  STFTrackingService,
   STFUtils,
   UserService,
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService as PaTranslateService, ToastService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent } from '@flaps/common';
@@ -20,6 +29,7 @@ import { FeaturesModalComponent } from '@flaps/common';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
@@ -33,25 +43,21 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
     private ngxTranslate: TranslateService,
-    private tracking: STFTrackingService,
     private config: BackendConfigurationService,
     private sdk: SDKService,
-    private paTranslate: PaTranslateService,
+    private labelService: LabelsService,
     private modalService: SisModalService,
+    private paTranslate: PaTranslateService,
+    private paToaster: ToastService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
-
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => this.tracking.navigation(event as NavigationEnd));
 
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
     this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
-      this.tracking.logout();
       this.router.navigate(['/user/login']);
       this.sdk.cleanAccount();
     });
@@ -59,6 +65,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
+    this.labelService.initLabelSets();
   }
 
   ngOnInit() {
@@ -67,6 +74,12 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.preventDragAndDropOnWindow();
     this.listenFeatureFlagCode();
+    // TEMPORARY
+    // TODO: remove after 2025-09-10
+    this.paToaster.openWarning(
+      'A rebranding is currently underway, some elements of the interface may appear in different styles.',
+      { title: 'Warning', icon: 'warning', autoClose: true },
+    );
   }
 
   ngOnDestroy(): void {
@@ -131,8 +144,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       'ArrowDown',
       'ArrowDown',
       'ArrowLeft',
-      'ArrowLeft',
       'ArrowRight',
+      'ArrowLeft',
       'ArrowRight',
       'KeyB',
       'KeyA',

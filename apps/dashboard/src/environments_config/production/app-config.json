@@ -4,11 +4,13 @@
   "backend": {
     "app": "STF_DOCKER_CONFIG_APP_NAME",
     "apiPath": "/api",
+    "cdn": "STF_DOCKER_CONFIG_CDN",
+    "brand_name": "STF_DOCKER_CONFIG_BRAND_NAME",
+    "assetsPath": "STF_DOCKER_CONFIG_ASSETS_PATH",
+    "noStripe": STF_DOCKER_CONFIG_NO_STRIPE,
     "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
     "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
     "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
-    "sentry_backend": "https://nuclia.cloud/api",
-    "posthog_host": "STF_DOCKER_CONFIG_POSTHOG_HOST",
-    "posthog_key": "STF_DOCKER_CONFIG_POSTHOG_KEY"
+    "sentry_backend": "https://nuclia.cloud/api"
   }
 }

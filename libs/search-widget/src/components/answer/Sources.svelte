@@ -2,8 +2,13 @@
   import { type TypedResult, hideThumbnails } from '../../core';
   import { ResultRow } from '../result-row';
 
-  export let sources: TypedResult[] = [];
-  export let selected: number | undefined;
+  interface Props {
+    sources?: TypedResult[];
+    selected: number | undefined;
+    answerRank: number | undefined;
+  }
+
+  let { sources = [], selected, answerRank }: Props = $props();
 </script>
 
 <div class="sw-sources">
@@ -16,13 +21,12 @@
           <ResultRow
             result={source}
             selected={selected !== undefined ? selected + 1 : undefined}
-            isSource={true} />
+            isSource={true}
+            {answerRank} />
         {/if}
       </div>
     </div>
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./Sources.scss"></style>
+<style src="./Sources.css"></style>

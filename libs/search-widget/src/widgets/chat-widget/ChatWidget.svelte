@@ -1,47 +1,157 @@
 <svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import {
+    parseRAGImageStrategies,
+    parseRAGStrategies,
+    Reranker,
+    type FilterExpression,
+    type KBStates,
+    type Nuclia,
+    type RAGImageStrategy,
+    type RAGStrategy,
+    type Widget,
+  } from '@nuclia/core';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { getRAGImageStrategies, getRAGStrategies, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
-  import { setLang } from '../../core/i18n';
-  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
-  import globalCss from '../../common/_global.scss?inline';
-  import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
-  import Chat from '../../components/answer/Chat.svelte';
-  import { injectCustomCss } from '../../core/utils';
-  import { preselectedFilters, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from '../../core';
-  import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
+  import globalCss from '../../common/global.css?inline';
   import { Viewer } from '../../components';
+  import Chat from '../../components/answer/Chat.svelte';
+  import {
+    chatInput,
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    DEFAULT_CHAT_PLACEHOLDER,
+    filterExpression,
+    preselectedFilters,
+    resetChat,
+    searchConfigId,
+    widgetFeatures,
+    widgetFeedback,
+    widgetImageRagStrategies,
+    widgetRagStrategies,
+  } from '../../core';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
+  import { setLang } from '../../core/i18n';
+  import {
+    askQuestion,
+    initAnswer,
+    initChatHistoryPersistence,
+    initUsageTracking,
+    initViewer,
+  } from '../../core/stores/effects';
+  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox;
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let cssPath = '';
-  export let prompt = '';
-  export let preselected_filters = '';
-  export let no_tracking = false;
-  export let rag_strategies = '';
-  export let rag_image_strategies = '';
-  export let max_tokens: number | undefined = undefined;
-  export let query_prepend = '';
-  export let vectorset = '';
+  class Props {
+    backend = 'https://nuclia.cloud/api';
+    zone = 'europe-1';
+    knowledgebox: any;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client = 'widget';
+    kbstate: KBStates = 'PUBLISHED';
+    features?: string;
+    standalone = false;
+    proxy = false;
+    csspath?: string;
+    id?: string;
+    prompt?: string;
+    system_prompt?: string;
+    rephrase_prompt?: string;
+    generativemodel?: string;
+    preselected_filters?: string;
+    filter_expression?: string;
+    no_tracking = false;
+    rag_strategies?: string;
+    rag_images_strategies?: string;
+    not_enough_data_message?: string;
+    max_tokens?: number | string | undefined;
+    max_output_tokens?: number | string | undefined;
+    max_paragraphs?: number | string | undefined;
+    query_prepend?: string;
+    vectorset?: string;
+    chat_placeholder?: string;
+    audit_metadata?: string;
+    reranker?: Reranker | undefined;
+    citation_threshold?: number | string | undefined;
+    rrf_boosting?: number | string | undefined;
+    feedback: Widget.WidgetFeedback = 'answer';
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+    widget_id?: string | undefined;
+    search_config_id?: string | undefined;
+    security_groups?: string | undefined;
+    layout?: 'inline' | 'fullscreen' = 'inline';
+    height?: string;
+  }
+  let { ...componentProps } = $props();
+  let config = $state(new Props());
 
-  export let layout: 'inline' | 'fullscreen' = 'inline';
-  export let height = '';
+  let backend = $derived(componentProps.backend || config.backend);
+  let zone = $derived(componentProps.zone || config.zone);
+  let knowledgebox = $derived(componentProps.knowledgebox || config.knowledgebox);
+  let lang = $derived(componentProps.lang || config.lang || window.navigator.language.split('-')[0] || 'en');
+  let cdn = $derived(componentProps.cdn || config.cdn);
+  let apikey = $derived(componentProps.apikey || config.apikey);
+  let account = $derived(componentProps.account || config.account);
+  let client = $derived(componentProps.client || config.client);
+  let kbstate = $derived(componentProps.kbstate || config.kbstate);
+  let features = $derived(componentProps.features || config.features);
+  let standalone = $derived(componentProps.standalone || config.standalone);
+  let proxy = $derived(componentProps.proxy || config.proxy);
+  let csspath = $derived(componentProps.csspath || config.csspath);
+  let id = $derived(componentProps.id || config.id);
+  let prompt = $derived(componentProps.prompt || config.prompt);
+  let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
+  let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
+  let generativemodel = $derived(componentProps.generativemodel || config.generativemodel);
+  let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
+  let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
+  let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
+  let rag_strategies = $derived(componentProps.rag_strategies || config.rag_strategies);
+  let rag_images_strategies = $derived(componentProps.rag_images_strategies || config.rag_images_strategies);
+  let not_enough_data_message = $derived(componentProps.not_enough_data_message || config.not_enough_data_message);
+  let max_tokens = $derived(componentProps.max_tokens || config.max_tokens);
+  let max_output_tokens = $derived(componentProps.max_output_tokens || config.max_output_tokens);
+  let max_paragraphs = $derived(componentProps.max_paragraphs || config.max_paragraphs);
+  let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
+  let vectorset = $derived(componentProps.vectorset || config.vectorset);
+  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder || '');
+  let audit_metadata = $derived(componentProps.audit_metadata || config.audit_metadata);
+  let reranker = $derived(componentProps.reranker || config.reranker);
+  let citation_threshold = $derived(componentProps.citation_threshold || config.citation_threshold);
+  let rrf_boosting = $derived(componentProps.rrf_boosting || config.rrf_boosting);
+  let feedback = $derived(componentProps.feedback || config.feedback);
+  let copy_disclaimer = $derived(componentProps.copy_disclaimer || config.copy_disclaimer);
+  let metadata = $derived(componentProps.metadata || config.metadata);
+  let widget_id = $derived(componentProps.widget_id || config.widget_id);
+  let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let security_groups = $derived(componentProps.security_groups || config.security_groups);
+  let layout = $derived(componentProps.layout || config.layout);
+  let height = $derived(componentProps.height || config.height);
+
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
+  let _max_tokens: number | undefined;
+  let _max_output_tokens: number | undefined;
+  let _citation_threshold: number | undefined;
+  let _rrf_boosting: number | undefined;
+  let _max_paragraphs: number | undefined;
+  let initHook: (n: Nuclia) => void = () => {};
 
-  let showChat = layout === 'inline';
+  export function setInitHook(fn: (n: Nuclia) => void) {
+    initHook = fn;
+  }
+
+  $effect(() => {
+    let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
+    chatPlaceholderInitial.set(initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+    chatPlaceholderDiscussion.set(discussionPlaceholder || initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+  });
+
+  let showChat = $state(layout === 'inline');
 
   export function openChat() {
     showChat = true;
@@ -51,9 +161,22 @@
     showChat = false;
   }
 
-  export function ask(question: string, reset = true) {
-    askQuestion(question, reset).subscribe();
+  export function ask(question: string, reset = true, doNotTriggerSearch = false) {
+    if (doNotTriggerSearch) {
+      if (reset) {
+        resetChat.set();
+      }
+      chatInput.set(question);
+    } else {
+      askQuestion(question, reset).subscribe();
+    }
   }
+
+  export function setSearchConfiguration(id: string | undefined) {
+    searchConfigId.set(id);
+  }
+
+  export const onError = getApiErrors();
 
   export const reset = () => resetNuclia();
 
@@ -62,19 +185,22 @@
   export const onReady = () => firstValueFrom(ready);
   let nucliaAPI: Nuclia;
 
-  let _features: WidgetFeatures = {};
+  let _features: Widget.WidgetFeatures = {};
+  let _securityGroups: string[] | undefined;
+  let _filter_expression: FilterExpression | undefined;
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
     dispatch(name, detail);
   };
 
-  let svgSprite: string;
-  let container: HTMLElement;
+  let svgSprite: string = $state();
+  let container: HTMLElement = $state();
 
   ready.pipe(delay(200)).subscribe(() => {
+    initHook(nucliaAPI);
     // any feature that calls the Nuclia API immediately at init time must be done here
-    if (_features.dumpLog) {
+    if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
       });
@@ -82,69 +208,115 @@
   });
 
   onMount(() => {
-    if (cdn) {
-      setCDN(cdn);
-    }
-    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
-      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
-      {},
-    );
+    const nucliaOptions = {
+      backend,
+      zone,
+      knowledgeBox: knowledgebox,
+      client,
+      apiKey: apikey,
+      standalone,
+      proxy,
+      account,
+      accountId: account,
+    };
+    (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
+      config = { ...config, ...loadedProperties };
 
-    _ragStrategies = getRAGStrategies(rag_strategies);
-    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+      if (cdn) {
+        setCDN(cdn);
+      }
+      _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+        (acc, current) => ({ ...acc, [current as keyof Widget.WidgetFeatures]: true }),
+        {},
+      );
+      _securityGroups = security_groups?.split(',').filter((group) => !!group);
+      _ragStrategies = parseRAGStrategies(rag_strategies);
+      _ragImageStrategies = parseRAGImageStrategies(rag_images_strategies);
+      _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
+      _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
+      _citation_threshold =
+        typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
+      _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
+      _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      try {
+        _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
+      } catch (e) {
+        console.log(`Invalid filter_expression`);
+      }
 
-    nucliaAPI = initNuclia(
-      {
-        backend,
-        zone,
-        knowledgeBox: knowledgebox,
-        client,
-        apiKey: apikey,
-        account,
-        accountId: account,
-        standalone,
-        proxy,
-      },
-      state,
-      { prompt, max_tokens, query_prepend, vectorset, },
-      no_tracking,
-    );
+      nucliaAPI = initNuclia(
+        nucliaOptions,
+        kbstate,
+        {
+          features: _features,
+          prompt,
+          system_prompt,
+          rephrase_prompt,
+          generative_model: generativemodel,
+          max_tokens: _max_tokens,
+          max_output_tokens: _max_output_tokens,
+          max_paragraphs: _max_paragraphs,
+          query_prepend,
+          vectorset,
+          audit_metadata,
+          reranker,
+          citation_threshold: _citation_threshold,
+          rrf_boosting: _rrf_boosting,
+          feedback,
+          copy_disclaimer,
+          not_enough_data_message,
+          metadata,
+          security_groups: _securityGroups,
+        },
+        no_tracking,
+      );
 
-    // Setup widget in the store
-    widgetFeatures.set(_features);
-    widgetRagStrategies.set(_ragStrategies);
-    widgetImageRagStrategies.set(_ragImageStrategies);
+      // Setup widget in the store
+      widgetFeatures.set(_features);
+      widgetRagStrategies.set(_ragStrategies);
+      widgetImageRagStrategies.set(_ragImageStrategies);
+      widgetFeedback.set(feedback);
 
-    if (preselected_filters) {
-      preselectedFilters.set(preselected_filters);
-    }
+      if (preselected_filters) {
+        preselectedFilters.set(preselected_filters);
+      } else if (_filter_expression) {
+        filterExpression.set(_filter_expression);
+      }
 
-    initAnswer();
-    initViewer();
-    initUsageTracking(no_tracking);
+      initAnswer();
+      initViewer();
+      initUsageTracking(no_tracking);
+      if (_features.persistChatHistory) {
+        initChatHistoryPersistence(id);
+      }
 
-    lang = lang || window.navigator.language.split('-')[0] || 'en';
-    setLang(lang);
+      setLang(lang);
 
-    loadFonts();
-    loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    injectCustomCss(cssPath, container);
+      loadFonts();
+      loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+      injectCustomCss(csspath, container);
 
-    _ready.next(true);
+      if (search_config_id) {
+        searchConfigId.set(search_config_id);
+      }
+      _ready.next(true);
+    });
 
     return () => reset();
   });
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
     <Chat
       show={showChat}
+      standaloneChat={true}
       fullscreen={layout === 'fullscreen'}
       height={height || undefined}
       on:close={closeChat} />
@@ -158,7 +330,3 @@
     {@html svgSprite}
   </div>
 </div>
-
-<style
-  lang="scss"
-  src="./ChatWidget.scss"></style>

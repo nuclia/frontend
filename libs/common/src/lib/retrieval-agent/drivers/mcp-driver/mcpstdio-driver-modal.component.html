@@ -1,0 +1,130 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>
+    {{
+      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.mcpstdio')
+        | translate: { name: config?.name }
+    }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="command">{{ 'retrieval-agents.drivers.form.mcpstdio.command' | translate }}</label>
+        <pa-input
+          id="command"
+          externalLabel
+          formControlName="command"></pa-input>
+      </div>
+      <div class="form-entry field-list">
+        <label for="args">
+          {{ 'retrieval-agents.drivers.form.mcpstdio.args.label' | translate }}
+        </label>
+        @for (arg of args.controls; track arg) {
+          <div class="entry-with-button">
+            <pa-input
+              id="exclude-type"
+              [formControl]="arg"
+              externalLabel=""></pa-input>
+            @if ($index > 0) {
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="trash"
+                (click)="removeArg($index)">
+                {{ 'retrieval-agents.drivers.form.mcpstdio.args.remove' | translate }}
+              </pa-button>
+            }
+          </div>
+        }
+        <pa-button
+          aspect="basic"
+          size="small"
+          (click)="addArg()">
+          {{ 'retrieval-agents.drivers.form.mcpstdio.args.add' | translate }}
+        </pa-button>
+      </div>
+      <ng-container formGroupName="env">
+        <div class="form-entry">
+          <div class="label-and-button">
+            <label>{{ 'retrieval-agents.drivers.form.mcpstdio.env.label' | translate }}</label>
+            <pa-button
+              size="small"
+              aspect="basic"
+              (click)="addEnv()">
+              {{ 'retrieval-agents.drivers.form.mcpstdio.env.add' | translate }}
+            </pa-button>
+          </div>
+          @for (group of envGroup.controls | keyvalue; track group.key) {
+            <div
+              class="config-property-form"
+              [formGroup]="group.value">
+              <pa-input formControlName="property">
+                {{ 'retrieval-agents.drivers.form.mcpstdio.env.property-name' | translate }}
+              </pa-input>
+              <pa-input formControlName="value">
+                {{ 'retrieval-agents.drivers.form.mcpstdio.env.property-value' | translate }}
+              </pa-input>
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                (click)="removeEnv(group.key)">
+                {{ 'retrieval-agents.drivers.form.mcpstdio.env.remove' | translate }}
+              </pa-button>
+            </div>
+          }
+        </div>
+      </ng-container>
+      <div class="form-entry">
+        <label for="cwd">{{ 'retrieval-agents.drivers.form.mcpstdio.cwd' | translate }}</label>
+        <pa-input
+          id="cwd"
+          externalLabel
+          formControlName="cwd"></pa-input>
+      </div>
+
+      <div class="form-entry">
+        <label for="encoding">{{ 'retrieval-agents.drivers.form.mcpstdio.encoding' | translate }}</label>
+        <pa-input
+          id="encoding"
+          externalLabel
+          formControlName="encoding"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="encoding_error_handler">
+          {{ 'retrieval-agents.drivers.form.mcpstdio.encoding_error_handler' | translate }}
+        </label>
+        <pa-radio-group formControlName="encoding_error_handler">
+          <pa-radio value="strict">
+            {{ 'retrieval-agents.drivers.form.mcpstdio.encoding-error.strict' | translate }}
+          </pa-radio>
+          <pa-radio value="replace">
+            {{ 'retrieval-agents.drivers.form.mcpstdio.encoding-error.replace' | translate }}
+          </pa-radio>
+          <pa-radio value="ignore">
+            {{ 'retrieval-agents.drivers.form.mcpstdio.encoding-error.ignore' | translate }}
+          </pa-radio>
+        </pa-radio-group>
+      </div>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

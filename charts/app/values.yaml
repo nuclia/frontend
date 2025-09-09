@@ -18,21 +18,59 @@ service:
   internalPort: 80
   externalPort: 80
 
-site_key: XXX
 app_name: app
+no_stripe: false
+cdn: XXX
+brand_name: XXX
+brand_domain: XXX
+assets_path: XXX
 sentry_environment: stage
-sentry_url: XXX
 editor_url: XXX
 email_domain: XXX
-posthog_host: XXX
-posthog_key: XXX
 saml_enabled: XXX
 
 virtualService:
   enabled: false
   gateway: XXX
   host: XXX
+  http:
+    match:
+      - uri:
+          regex: ^/.{0,2}
+      - uri:
+          # Match everything except "/api"
+          regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
+    retries:
+      attempts: 3
+      retryOn: connect-failure
+  # Additional match rules can be added here
+  # Uncomment and modify the following section to add extra match rules
+  # extraMatch:
+  #   - match:
+  #     - uri:
+  #         regex: ^/path
+  #     - uri:
+  #         regex: ^/path/to/other
+  #     retries:
+  #       attempts: 3
+  #       retryOn: connect-failure
+  #     route:
+  #     - destination:
+  #         host: "name.svc"
+  #         port:
+  #           number: 8080
+
+podDisruptionBudget:
+  enabled: false
 
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
+envFrom:
+  - configMapRef:
+      name: app-config
+
+## Intended to be used with secret
+# env:
+#   SITE_KEY: XXX
+#   SENTRY_URL: XXX

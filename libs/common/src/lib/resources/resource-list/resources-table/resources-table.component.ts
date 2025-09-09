@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
-import { map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { BehaviorSubject, catchError, combineLatest, from, Observable, of, skip, Subject, take, toArray } from 'rxjs';
+import { delay, filter, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, catchError, combineLatest, defer, from, Observable, of, skip, take, toArray } from 'rxjs';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Classification, deDuplicateList, LabelSets, Resource, UserClassification } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
@@ -15,6 +15,7 @@ import { getClassificationsPayload } from '../../edit-resource';
   templateUrl: './resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourcesTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
   protected uploadService = inject(UploadService);
@@ -26,10 +27,11 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
     map(([filters, query]) => filters.length > 0 || query !== ''),
   );
+  hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   get initialColumns(): ColumnHeader[] {
     return [
-      { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false, visible: true },
+      { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: true, visible: true },
       {
         id: 'classification',
         label: 'resource.classification-column',
@@ -39,12 +41,21 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       },
       {
         id: 'created',
-        label: 'generic.date',
+        label: 'resource.created',
         size: '128px',
         sortable: true,
         centered: true,
         optional: true,
         visible: this.userPreferences.columns.includes('created'),
+      },
+      {
+        id: 'modified',
+        label: 'resource.modified',
+        size: '128px',
+        sortable: true,
+        centered: true,
+        optional: true,
+        visible: this.userPreferences.columns.includes('modified'),
       },
       {
         id: 'language',
@@ -64,18 +75,26 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   hasLabelSets = inject(LabelsService).hasResourceLabelSets;
-  currentLabelList: Classification[] = [];
+  currentAddLabelList: Classification[] = [];
+  currentRemoveLabelList: Classification[] = [];
   deletingLabel = false;
+  fullLabels = false;
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,
+    this.hiddenResourcesEnabled,
     this.columnVisibilityUpdate,
   ]).pipe(
-    map(([canEdit]) => {
+    map(([canEdit, hiddenResourcesEnabled]) => {
       const visibleColumns = this.defaultColumns.map(this.getApplySortingMapper()).filter((column) => column.visible);
-      return canEdit
-        ? [...visibleColumns, { id: 'menu', label: 'generic.actions', size: '96px' }]
-        : [...visibleColumns];
+      const extraColumns: ColumnHeader[] = [];
+      if (hiddenResourcesEnabled) {
+        extraColumns.push({ id: 'visibility', label: 'resource.visibility', size: '96px', visible: true });
+      }
+      if (canEdit) {
+        extraColumns.push({ id: 'menu', label: 'generic.actions', size: '96px' });
+      }
+      return [...visibleColumns, ...extraColumns];
     }),
   );
   override headerCells: Observable<HeaderCell[]> = this._visibleColumnDef.pipe(
@@ -88,8 +107,6 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       return canEdit ? `40px ${layout}` : layout;
     }),
   );
-
-  unsubscribeAll = new Subject<void>();
 
   private localStorage = inject(LOCAL_STORAGE);
 
@@ -175,75 +192,86 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       });
   }
 
-  updateLabelList(list: Classification[]) {
-    this.currentLabelList = list;
+  updateAddLabelList(list: Classification[]) {
+    this.currentAddLabelList = list;
+  }
+
+  updateRemoveLabelList(list: Classification[]) {
+    this.currentRemoveLabelList = list;
   }
 
   addLabelsToSelection() {
-    if (this.currentLabelList.length > 0) {
-      this.getSelectedResources()
-        .pipe(
-          switchMap((resources) => {
-            this.bulkAction = {
-              inProgress: true,
-              done: 0,
-              errors: 0,
-              total: resources.length,
-              label: 'resource.adding_labels',
-            };
-            const requests = resources.map((resource) => {
-              return this.resourceListService.labelSets.pipe(
-                take(1),
-                map((labelSets) => ({
-                  usermetadata: {
-                    ...resource.usermetadata,
-                    classifications: this.mergeExistingAndSelectedLabels(resource, labelSets, this.currentLabelList),
-                  },
-                })),
-                switchMap((updatedResource) =>
-                  resource.modify(updatedResource).pipe(
-                    map(() => ({ isError: false })),
-                    catchError((error) => of({ isError: true, error })),
-                  ),
-                ),
-              );
-            });
-
-            return from(requests).pipe(
-              mergeMap((obs) => obs, 6),
-              toArray(),
-              tap((results) => {
-                const errorCount = results.filter((res) => res.isError).length;
-                const successCount = results.length - errorCount;
-                this.bulkAction = {
-                  inProgress: true,
-                  done: successCount,
-                  errors: errorCount,
-                  total: resources.length,
-                  label: 'resource.adding_labels',
-                };
-                if (successCount > 0) {
-                  this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
-                }
-                if (errorCount > 0) {
-                  this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
-                }
-              }),
-              switchMap(() => this.resourceListService.loadResources(true, false)),
-            );
-          }),
-        )
-        .subscribe(() => {
-          this.bulkAction = {
-            inProgress: false,
-            done: 0,
-            total: 0,
-            errors: 0,
-            label: '',
-          };
-          this.cdr.markForCheck();
-        });
+    if (this.currentAddLabelList.length > 0) {
+      this.updateLabelsToSelection(this.currentAddLabelList);
     }
+  }
+
+  removeLabelsToSelection() {
+    if (this.currentRemoveLabelList.length > 0) {
+      this.updateLabelsToSelection(this.currentRemoveLabelList, true);
+    }
+  }
+
+  private updateLabelsToSelection(labels: Classification[], remove = false) {
+    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+    const confirm = this.allResourcesSelected
+      ? this.modalService.openConfirm({
+          title: 'resource.labels.confirm',
+        }).onClose
+      : of(true);
+    confirm
+      .pipe(
+        filter((yes) => !!yes),
+        switchMap(() =>
+          this.resourceListService.labelSets.pipe(
+            take(1),
+            switchMap((labelSets) =>
+              resourcesObs.pipe(
+                tap((resources) => {
+                  this.isLoading = true;
+                  if (resources.length > 1) {
+                    this.bulkAction = {
+                      inProgress: true,
+                      done: 0,
+                      errors: 0,
+                      total: resources.length,
+                      label: 'resource.labels.updating',
+                    };
+                    this.cdr.markForCheck();
+                  }
+                }),
+                switchMap((resources) => {
+                  const bulkActionItems = resources.map((resource) =>
+                    this.updateBulkAction(
+                      defer(() =>
+                        resource
+                          .modify({
+                            usermetadata: {
+                              ...resource.usermetadata,
+                              classifications: remove
+                                ? this.removeLabels(resource, labels)
+                                : this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
+                            },
+                          })
+                          .pipe(delay(1000)),
+                      ),
+                    ),
+                  );
+                  return from(bulkActionItems);
+                }),
+                mergeMap((obs) => obs, 5),
+                toArray(),
+                switchMap(() => this.resourceListService.loadResources()),
+                tap(() => {
+                  this.manageBulkActionResults('labelling');
+                  this.cdr.markForCheck();
+                }),
+              ),
+            ),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   selectColumn(column: ColumnHeader, event: MouseEvent | KeyboardEvent) {
@@ -270,6 +298,17 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     return getClassificationsPayload(
       resource,
       deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
+    );
+  }
+
+  private removeLabels(resource: Resource, labels: Classification[]): Classification[] {
+    const resourceLabels = resource
+      .getClassifications()
+      .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label));
+
+    return getClassificationsPayload(
+      resource,
+      resourceLabels.map((label) => ({ ...label, cancelled_by_user: false })),
     );
   }
 }

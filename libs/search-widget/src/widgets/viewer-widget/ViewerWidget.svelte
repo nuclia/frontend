@@ -1,7 +1,22 @@
-<svelte:options customElement="nuclia-viewer" />
+<svelte:options
+  customElement={{
+    tag: 'nuclia-viewer',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
+  accessors />
 
 <script lang="ts">
+  import type { FieldFullId, KBStates, Widget } from '@nuclia/core';
+  import { ResourceProperties } from '@nuclia/core';
+  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import globalCss from '../../common/global.css?inline';
+  import { onClosePreview, Viewer } from '../../components';
+  import type { TypedResult } from '../../core';
   import {
+    activatePermalinks,
     getFieldType,
     getResourceById,
     getResourceField,
@@ -19,45 +34,47 @@
     widgetActions,
     widgetFeatures,
   } from '../../core';
-  import type { TypedResult } from '../../core';
-  import { onMount } from 'svelte';
-  import type { FieldFullId, KBStates, WidgetFeatures } from '@nuclia/core';
-  import { ResourceProperties } from '@nuclia/core';
-  import globalCss from '../../common/_global.scss?inline';
-  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
-  import { onClosePreview, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = '';
-  export let knowledgebox = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let cssPath = '';
-  export let no_tracking = false;
-
-  export let rid = '';
-  export let field_id = '';
-  export let field_type = '';
-
-  $: fieldType = getFieldType(field_type);
-  $: if (rid && field_id && fieldType) {
-    const fullId = {
-      resourceId: rid,
-      field_id,
-      field_type: fieldType,
-    };
-    openPreview(fullId);
-  } else {
-    closePreview();
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    proxy?: boolean;
+    csspath?: string;
+    no_tracking?: boolean;
+    rid?: string;
+    field_id?: string;
+    field_type?: string;
   }
+
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = '',
+    knowledgebox = '',
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    proxy = false,
+    csspath = '',
+    no_tracking = false,
+    rid = '',
+    field_id = '',
+    field_type = '',
+  }: Props = $props();
 
   widgetActions.set([]);
   export function setViewerMenu(actions: WidgetAction[]) {
@@ -96,9 +113,14 @@
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
 
-  let svgSprite;
-  let container: HTMLElement;
-  let _features: WidgetFeatures = {};
+  let svgSprite = $state();
+  let container: HTMLElement = $state();
+  let _features: Widget.WidgetFeatures = {};
+
+  const dispatch = createEventDispatcher();
+  const dispatchCustomEvent = (name: string, detail: any) => {
+    dispatch(name, detail);
+  };
 
   onMount(() => {
     if (cdn) {
@@ -106,7 +128,7 @@
     }
 
     _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
-      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+      (acc, current) => ({ ...acc, [current as keyof Widget.WidgetFeatures]: true }),
       {},
     );
     widgetFeatures.set(_features);
@@ -123,7 +145,7 @@
         standalone,
         proxy,
       },
-      state,
+      kbstate,
       {},
       no_tracking,
     );
@@ -133,21 +155,38 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    initViewer();
-    injectCustomCss(cssPath, container);
+    initViewer(dispatchCustomEvent);
+    injectCustomCss(csspath, container);
 
     _ready.next(true);
 
+    // permalink support in viewer must be by default
+    activatePermalinks();
+
     return () => reset();
+  });
+  let fieldType = $derived(getFieldType(field_type));
+  $effect(() => {
+    if (rid && field_id && fieldType) {
+      const fullId = {
+        resourceId: rid,
+        field_id,
+        field_type: fieldType,
+      };
+      openPreview(fullId).subscribe();
+    } else {
+      closePreview();
+    }
   });
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
     <Viewer />
   {/if}
@@ -158,7 +197,3 @@
     {@html svgSprite}
   </div>
 </div>
-
-<style
-  lang="scss"
-  src="./ViewerWidget.scss"></style>

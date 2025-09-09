@@ -1,0 +1,127 @@
+<pa-demo-page>
+  <pa-demo-title>Search input</pa-demo-title>
+  <pa-demo-description>
+    <p>Sistema provides a search input field displaying a text input and a button allowing changing the search mode.</p>
+    <p>
+      <code>nsi-search-input</code>
+      is extending
+      <code>NativeTextFieldDirective</code>
+      meaning it's working well with both Angular
+      <code>FormModule</code>
+      and
+      <code>ReactiveFormModule</code>
+      .
+    </p>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <div style="width: 400px">
+      <nsi-search-input
+        [readonly]="readonly"
+        [disabled]="disabled"
+        [modes]="modes"
+        (modeSelected)="onModeChange($event)">
+        Search
+      </nsi-search-input>
+    </div>
+    Selected mode: {{ mode }}
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h3>
+      Inherited from
+      <code>PaFormControlDirective</code>
+    </h3>
+    <pa-demo-pa-form-control-usage></pa-demo-pa-form-control-usage>
+
+    <h3>
+      Inherited from
+      <code>NativeTextFieldDirective</code>
+    </h3>
+
+    <p>
+      <code>nsi-search-input</code>
+      is extending
+      <code>NativeTextFieldDirective</code>
+      but some of the Inputs inherited from it doesn't make sense in the context of a password field. Here's the list of
+      Inputs which have an effect on
+      <code>nsi-password-input</code>
+      :
+    </p>
+
+    <h4>Inputs</h4>
+    <dl>
+      <dt>errorMessages</dt>
+      <dd>
+        Provides default messages to display for the possible error keys when none is present in the errors object. If a
+        message (string) is provided for a given key, it will be displayed rather than the message provided in
+        errorMessages.
+      </dd>
+
+      <dt>hasFocus</dt>
+      <dd>
+        triggers the focus on the input field
+        <small>(optional)</small>
+      </dd>
+
+      <dt>help</dt>
+      <dd>
+        A hint to display, helping the user when filling a form field
+        <small>(optional)</small>
+      </dd>
+
+      <dt>placeholder</dt>
+      <dd>
+        Field's placeholder
+        <small>(optional)</small>
+      </dd>
+
+      <dt>showAllErrors</dt>
+      <dd>
+        Display all errors or only the first error encountered (errors being sorted by key)
+        <small>(default: true)</small>
+      </dd>
+    </dl>
+
+    <h4>Outputs</h4>
+    <dl>
+      <dt>keyUp</dt>
+      <dd>
+        Emits
+        <code>string</code>
+        value on key up event
+      </dd>
+
+      <dt>enter</dt>
+      <dd>
+        Emits
+        <code>KeyboardEvent</code>
+        and
+        <code>string</code>
+        value when pressing enter
+      </dd>
+
+      <dt>focusing</dt>
+      <dd>
+        Emits
+        <code>FocusEvent</code>
+        on focus
+      </dd>
+
+      <dt>blurring</dt>
+      <dd>Emits current value on blur</dd>
+    </dl>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <p>Password input is working well with both Angular FormModule and ReactiveFormModule.</p>
+    <p>ngModel example:</p>
+    <pre><code>{{ngModelCode}}</code></pre>
+
+    <p>FormControl example:</p>
+    <pre><code>{{formControlCode}}</code></pre>
+
+    <p>FormGroup example:</p>
+    <pre><code>{{formGroupCode}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

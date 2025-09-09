@@ -5,7 +5,10 @@ import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
   autofilerDisabled,
+  combinedFilterExpression,
+  combinedFilters,
   disableAnswers,
+  filterExpression,
   hideResults,
   isAnswerEnabled,
   isEmptySearchQuery,
@@ -13,7 +16,7 @@ import {
   pageNumber,
   pendingResults,
   preferMarkdown,
-  preselectedFilters,
+  rangeCreationISO,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -60,7 +63,10 @@ export const setupTriggerSearch = (
                 searchOptions.pipe(take(1)),
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
-                preselectedFilters.pipe(take(1)),
+                combinedFilters.pipe(take(1)),
+                combinedFilterExpression.pipe(take(1)),
+                filterExpression.pipe(take(1)),
+                rangeCreationISO.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -77,7 +83,10 @@ export const setupTriggerSearch = (
                     options,
                     show,
                     filters,
-                    preselectedFilters,
+                    combinedFilters,
+                    combinedFilterExpression,
+                    filterExpression,
+                    rangeCreation,
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
@@ -89,7 +98,10 @@ export const setupTriggerSearch = (
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
-                      filters: filters.concat(preselectedFilters),
+                      filters: filterExpression ? undefined : combinedFilters,
+                      filter_expression: filterExpression ? combinedFilterExpression : undefined,
+                      range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
+                      range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {
@@ -178,8 +190,8 @@ export const setupTriggerSearch = (
   subscriptions.push(
     loadMore
       .pipe(
-        filter((page) => !!page),
         distinctUntilChanged(),
+        filter((page) => page > 0),
       )
       .subscribe(() => {
         triggerSearch.next({ more: true });

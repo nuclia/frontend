@@ -14,6 +14,7 @@ import { MissingLabelsDialogComponent } from './missing-labels';
   templateUrl: './label-sets.component.html',
   styleUrl: './label-sets.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelSetsComponent {
   private _labelSets: Observable<LabelSetDisplay[]> = this.labelsService.labelSets.pipe(

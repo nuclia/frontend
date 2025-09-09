@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../select-account.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../select-account.tokens' as tokens;
 
 :host {
   height: 100%;
@@ -47,7 +47,7 @@
     // Move scrollbar to the edge
     padding: 0 rhythm(2);
     margin: 0 -#{rhythm(2)};
-    max-height: calc(#{$height-page-container} - #{$vertical-padding} * 4 - #{rhythm(9)});
+    max-height: calc(#{tokens.$height-page-container} - #{tokens.$vertical-padding} * 4 - #{rhythm(9)});
     @include scrollbar-black();
   }
 
@@ -65,7 +65,7 @@
     cursor: pointer;
     display: flex;
     height: rhythm(5);
-    justify-content: center;
+    justify-content: space-between;
     position: relative;
     text-decoration: none;
     transition: background-color $transition-hint;
@@ -92,11 +92,13 @@
       }
     }
 
+    .kb-title {
+      flex: 1;
+      text-align: center;
+    }
+
     pa-icon {
-      position: absolute;
-      top: 50%;
-      right: rhythm(1.5);
-      transform: translateY(-50%);
+      padding: 0 rhythm(1);
     }
   }
 

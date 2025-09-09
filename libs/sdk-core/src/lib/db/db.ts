@@ -27,6 +27,8 @@ import {
   AccountCreation,
   AccountModification,
   AccountStatus,
+  CustomModel,
+  CustomModelItem,
   KbIndex,
   LearningConfigurations,
   normalizeSchemaProperty,
@@ -41,8 +43,15 @@ import {
   UsagePoint,
   Welcome,
 } from './db.models';
-import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
+import type {
+  EventList,
+  IKnowledgeBoxBase,
+  IKnowledgeBoxItem,
+  IKnowledgeBoxStandalone,
+  KnowledgeBoxCreation,
+} from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
+import { IRetrievalAgentBase, IRetrievalAgentItem, RetrievalAgent, RetrievalAgentCreation } from './retrieval-agent';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
@@ -143,18 +152,19 @@ export class Db implements IDb {
     return this.nuclia.rest.get<{ kbs: IStandaloneKb[] }>('/kbs').pipe(map((result) => result.kbs));
   }
 
-  /**
-   * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
-   */
-  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+  private _getKnowledgeBoxes(
+    accountSlug?: string,
+    accountId?: string,
+    mode: 'kb' | 'agent' = 'kb',
+  ): Observable<IKnowledgeBoxItem[]> {
     const slug = accountSlug || this.nuclia.options.account;
     const id = accountId || this.nuclia.options.accountId;
     if (!slug || !id) {
       return throwError(
         () =>
-          'Account slug and ID must be provided in order to load KBs. You can provide them as parameter or in Nuclia options.',
+          `Account slug and ID must be provided in order to load ${
+            mode === 'kb' ? 'KBs' : 'retrieval agents'
+          }. You can provide them as parameter or in Nuclia options.`,
       );
     }
     return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(slug)]).pipe(
@@ -166,7 +176,9 @@ export class Db implements IDb {
           }
           return zoneIds;
         }, [] as string[]);
-        return zones.length > 0 ? forkJoin(zones.map((zone) => this.getKnowledgeBoxesForZone(id, zone))) : of([]);
+        return zones.length > 0
+          ? forkJoin(zones.map((zone) => this._getKnowledgeBoxesForZone(id, zone, mode)))
+          : of([]);
       }),
       map((kbByZone) =>
         kbByZone.reduce((kbList, list) => {
@@ -176,13 +188,54 @@ export class Db implements IDb {
     );
   }
 
+  private _getKnowledgeBoxesForZone(
+    accountId: string,
+    zone: string,
+    mode: 'kb' | 'agent' = 'kb',
+  ): Observable<IKnowledgeBoxItem[]> {
+    const modeParam = mode === 'agent' ? `?mode=agent` : '';
+    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
+      `/account/${accountId}/kbs${modeParam}`,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
+   */
+  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId);
+  }
+
   /**
    * Returns the list of Knowledge Boxes for the given account id and zone.
    * @param accountId
    * @param zone
    */
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]> {
-    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${accountId}/kbs`, undefined, undefined, zone);
+    return this._getKnowledgeBoxesForZone(accountId, zone);
+  }
+
+  /**
+   * Returns a list of all the Retrieval Agents for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
+   */
+  getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId, 'agent');
+  }
+
+  /**
+   * Returns the list of Retrieval Agents for the given account id and zone.
+   * @param accountId
+   * @param zone
+   */
+  getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]> {
+    return this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
   }
 
   /**
@@ -202,16 +255,16 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
-      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbId}` : `/account/${accountID}/kb/${kbId}`;
+      const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
+        ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
+        : this.nuclia.rest.get<IKnowledgeBoxBase>(
+            `/account/${accountID}/kb/${kbId}`,
+            undefined,
+            undefined,
+            this.nuclia.options.proxy ? undefined : zoneSlug,
+          );
 
-      return this.nuclia.rest
-        .get<IKnowledgeBox>(
-          kbEndpoint,
-          undefined,
-          undefined,
-          this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : zoneSlug,
-        )
-        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
+      return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
     } else {
       if ((!this.nuclia.options.knowledgeBox && !kbId) || (!this.nuclia.options.zone && !zone)) {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
@@ -219,6 +272,40 @@ export class Db implements IDb {
       return of(
         new WritableKnowledgeBox(this.nuclia, '', {
           id: kbId as string,
+          zone: zone || (this.nuclia.options.zone as string),
+          slug: '',
+          title: '',
+        }),
+      );
+    }
+  }
+
+  getRetrievalAgent(): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId?: string, retrievalAgentId?: string, zone?: string): Observable<RetrievalAgent> {
+    const accountID = accountId || this.nuclia.options.accountId;
+    const raId = retrievalAgentId || this.nuclia.options.knowledgeBox;
+    const zoneSlug = zone || this.nuclia.options.zone;
+
+    if (accountID) {
+      if (!this.nuclia.options.proxy && (!raId || !zoneSlug)) {
+        throw new Error('Retrieval Agent id and zone must be provided as parameters or in the Nuclia options');
+      }
+      const request = this.nuclia.rest.get<IKnowledgeBoxBase>(
+        `/account/${accountID}/kb/${raId}`,
+        undefined,
+        undefined,
+        this.nuclia.options.proxy ? undefined : zoneSlug,
+      );
+
+      return request.pipe(map((kb) => new RetrievalAgent(this.nuclia, accountID as string, kb)));
+    } else {
+      if ((!this.nuclia.options.knowledgeBox && !raId) || (!this.nuclia.options.zone && !zone)) {
+        throw new Error('Retrieval Agent id and zone must be provided as parameters or in the Nuclia options');
+      }
+      return of(
+        new RetrievalAgent(this.nuclia, '', {
+          id: raId as string,
           zone: zone || (this.nuclia.options.zone as string),
           slug: '',
           title: '',
@@ -246,28 +333,52 @@ export class Db implements IDb {
     knowledgeBox: KnowledgeBoxCreation,
     zone?: string,
   ): Observable<WritableKnowledgeBox> {
-    let creation: Observable<IKnowledgeBox>;
+    let creation: Observable<string>;
     if (this.nuclia.options.standalone) {
-      creation = this.nuclia.rest.post<IKnowledgeBox>('/kbs', knowledgeBox);
+      creation = this.nuclia.rest.post<IKnowledgeBoxStandalone>('/kbs', knowledgeBox).pipe(map((res) => res.uuid));
     } else {
-      creation = this.nuclia.rest.post<IKnowledgeBox>(
-        `/account/${accountId}/kbs`,
-        knowledgeBox,
-        undefined,
-        undefined,
-        undefined,
-        zone,
-      );
+      creation = this.nuclia.rest
+        .post<IKnowledgeBoxBase>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
+        .pipe(map((res) => res.id));
     }
     return creation.pipe(
-      switchMap((res) => {
-        const id = res.id || res.uuid;
+      switchMap((id) => {
         if (!id) {
           throw 'Knowledge Box creation failed';
         }
         return this.getKnowledgeBox(accountId, id, zone);
       }),
     );
+  }
+
+  /**
+   * Creates a new Retrieval Agent.
+    ```ts
+    const retrievalAgent = {
+      slug: 'my-arag',
+      title: 'My retrieval agent',
+      mode: 'agent'
+    };
+    nuclia.db.createRetrievalAgent('my-account-id', 'europe-1', retrievalAgent).subscribe((retrievalAgent) => {
+      console.log('retrieval agent', retrievalAgent);
+    });
+   */
+  createRetrievalAgent(
+    accountId: string,
+    retrievalAgent: RetrievalAgentCreation,
+    zone: string,
+  ): Observable<RetrievalAgent> {
+    return this.nuclia.rest
+      .post<IRetrievalAgentBase>(`/account/${accountId}/kbs`, retrievalAgent, undefined, undefined, undefined, zone)
+      .pipe(
+        map((res) => res.id),
+        switchMap((id) => {
+          if (!id) {
+            throw 'Retrieval Agent creation failed';
+          }
+          return this.getRetrievalAgent(accountId, id, zone);
+        }),
+      );
   }
 
   /**
@@ -283,6 +394,7 @@ export class Db implements IDb {
    * - "month"
    * - "quarter"
    * - "year"
+   * - "millennium" (used by default)
    */
   getUsage(
     accountId: string,
@@ -550,13 +662,16 @@ export class Db implements IDb {
   /**
    * Analyse a sentence, returning the language, the entities intent and the embeddings.
    */
-  predictQuery(text: string, rephrase?: boolean, model?: string): Observable<QueryInfo> {
+  predictQuery(text: string, rephrase?: boolean, model?: string, rephrase_prompt?: string): Observable<QueryInfo> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /predict');
     }
     let queryParams = `?text=${encodeURIComponent(text)}`;
     if (rephrase) {
       queryParams += `&rephrase=true`;
+      if (rephrase_prompt) {
+        queryParams += `&rephrase_prompt=${encodeURIComponent(rephrase_prompt)}`;
+      }
     }
     if (model) {
       queryParams += `&generative_model=${encodeURIComponent(model)}`;
@@ -574,7 +689,7 @@ export class Db implements IDb {
   predictSummarize(
     text: string,
     user_prompt?: string,
-    model = 'chatgpt-azure-3',
+    model = 'chatgpt-azure-4o',
     summary_kind: 'simple' | 'extended' = 'simple',
   ): Observable<string> {
     if (!this.hasNUAClient()) {
@@ -660,5 +775,40 @@ export class Db implements IDb {
    */
   deleteAccountInvitation(accountId: string, email: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${accountId}/invite/${email}`);
+  }
+
+  /**
+   * Get the list of custom models of an account
+   */
+  getModels(accountId: string, zone: string) {
+    return this.nuclia.rest.get<CustomModelItem[]>(`/account/${accountId}/models`, undefined, undefined, zone);
+  }
+
+  /**
+   * Get a custom models
+   */
+  getModel(modelId: string, accountId: string, zone: string) {
+    return this.nuclia.rest.get<CustomModel>(`/account/${accountId}/model/${modelId}`, undefined, undefined, zone);
+  }
+
+  /**
+   * Add a custom model to a Knowledge Box
+   */
+  addModelToKb(modelId: string, accountId: string, kbId: string, zone: string) {
+    return this.nuclia.rest.post<void>(
+      `/account/${accountId}/models/${kbId}`,
+      { id: modelId },
+      undefined,
+      undefined,
+      true,
+      zone,
+    );
+  }
+
+  /**
+   * Add a custom model to a Knowledge Box
+   */
+  deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string) {
+    return this.nuclia.rest.delete(`/account/${accountId}/models/${kbId}/${modelId}`, undefined, true, zone);
   }
 }

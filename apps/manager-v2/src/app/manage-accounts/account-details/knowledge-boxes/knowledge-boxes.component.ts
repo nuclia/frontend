@@ -8,6 +8,7 @@ import { AccountService } from '../../account.service';
   templateUrl: './knowledge-boxes.component.html',
   styleUrls: ['./knowledge-boxes.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KnowledgeBoxesComponent {
   kbList: Observable<KbSummary[]> = this.store.kbList;

@@ -4,7 +4,6 @@ import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-json-viewer',
-  standalone: true,
   imports: [CommonModule, PaTableModule],
   templateUrl: './json-viewer.component.html',
   styleUrls: ['./json-viewer.component.scss'],

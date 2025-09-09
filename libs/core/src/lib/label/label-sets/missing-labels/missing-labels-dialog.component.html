@@ -24,11 +24,13 @@
     <pa-modal-footer class="actions">
       <pa-button
         aspect="basic"
+        [disabled]="saving"
         (click)="modal.close()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
       <pa-button
         kind="primary"
+        [disabled]="saving"
         (click)="declare()">
         {{ 'label-set.missing.declare' | translate }}
       </pa-button>

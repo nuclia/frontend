@@ -1,12 +1,13 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens';
+@use './palette.tokens' as palette;
+@use './spacing.tokens' as spacing;
+@use './typography.tokens' as typography;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/chips.tokens'
+  with(
+    $color-background-chip-default-selected: palette.$color-neutral-lightest,
+    $border-chip-selected: 1px solid palette.$color-dark-stronger,
 
-$color-background-chip-default-selected: $color-neutral-lightest;
-$border-chip-selected: 1px solid $color-dark-stronger;
+    $border-radius-chip: spacing.$border-radius-default,
 
-$border-radius-chip: $border-radius-default;
-
-$font-size-chip: font-size(xs);
-
-$padding-chip: rhythm(0.5) rhythm(1);
+    $font-size-chip: typography.font-size(xs),
+    $padding-chip: spacing.rhythm(0.5) spacing.rhythm(1)
+  );

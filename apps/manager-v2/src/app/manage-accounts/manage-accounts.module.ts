@@ -4,6 +4,7 @@ import { ManageAccountsComponent } from './manage-accounts.component';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaDatePickerModule,
   PaDropdownModule,
   PaIconModule,
@@ -30,6 +31,10 @@ import { PaymentLinksComponent } from './account-details/payment-links/payment-l
 import { STFPipesModule } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { AddAccountComponent } from './add-account/add-account.component';
+import { ModelsComponent } from './account-details/models/models.component';
+import { ModelDetailsComponent } from './account-details/models/model-details/model-details.component';
+import { AddModelComponent } from './account-details/models/add-model/add-model.component';
 
 const ROUTES: Routes = [
   {
@@ -39,6 +44,10 @@ const ROUTES: Routes = [
       {
         path: '',
         component: AccountListComponent,
+      },
+      {
+        path: 'add',
+        component: AddAccountComponent,
       },
       {
         path: ':accountId',
@@ -77,6 +86,22 @@ const ROUTES: Routes = [
             path: 'payment-links',
             component: PaymentLinksComponent,
           },
+          {
+            path: 'models',
+            component: ModelsComponent,
+          },
+          {
+            path: 'models/add',
+            component: AddModelComponent,
+          },
+          {
+            path: 'models/:zoneSlug/model/:modelId',
+            component: AddModelComponent,
+          },
+          {
+            path: 'models/:zoneSlug/model/:modelId/kbs',
+            component: ModelDetailsComponent,
+          }
         ],
       },
     ],
@@ -99,10 +124,12 @@ const ROUTES: Routes = [
     PaScrollModule,
     PaTooltipModule,
     PaIconModule,
+    PaDateTimeModule,
     PaDatePickerModule,
     STFPipesModule,
     TranslateModule,
     InfoCardComponent,
+    PaTogglesModule,
   ],
   declarations: [
     ManageAccountsComponent,

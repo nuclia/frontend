@@ -1,8 +1,5 @@
 <script>
-  export let title;
-  export let x;
-  export let y;
-  export let visible;
+  let { title, x, y, visible } = $props();
 </script>
 
 <div
@@ -13,6 +10,4 @@
   {title}
 </div>
 
-<style
-  lang="scss"
-  src="./Tooltip.scss"></style>
+<style src="./Tooltip.css"></style>

@@ -1,0 +1,67 @@
+<div class="extraction-select">
+  @if ((extractStrategies | async) && (onlyExtract || (splitStrategies | async))) {
+    <pa-toggle
+      labelOnRight
+      [value]="enabled"
+      (valueChange)="toggle()">
+      {{ 'upload.advanced.extraction.title' | translate }}
+    </pa-toggle>
+    @if (enabled) {
+      @if (extractStrategies | async; as strategies) {
+        @if (!!strategies[extractConfig || '']?.ai_tables || !!strategies[extractConfig || '']?.vllm_config) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'upload.advanced.extraction.warning' | translate }}
+          </nsi-info-card>
+        }
+        <div class="select-container">
+          <pa-select
+            [value]="extractConfig"
+            (valueChange)="selectExtractConfig($event)"
+            [readonly]="(strategies | keyvalue).length === 0"
+            [label]="'upload.advanced.extraction.extract' | translate">
+            @for (strategy of strategies | keyvalue; track strategy) {
+              <pa-option [value]="strategy.key">{{ strategy.value.name || strategy.key }}</pa-option>
+            }
+          </pa-select>
+          @if ((strategies | keyvalue).length === 0) {
+            <div>
+              <pa-icon
+                name="info"
+                [paPopover]="extractEmpty"></pa-icon>
+              <pa-popover #extractEmpty>
+                <span [innerHTML]="'upload.advanced.extraction.empty' | translate"></span>
+              </pa-popover>
+            </div>
+          }
+        </div>
+      }
+      @if (!onlyExtract) {
+        @if (splitStrategies | async; as strategies) {
+          <div class="select-container">
+            <pa-select
+              [value]="splitConfig"
+              (valueChange)="selectSplitConfig($event)"
+              [readonly]="(strategies | keyvalue).length === 0"
+              [label]="'upload.advanced.extraction.split' | translate">
+              @for (strategy of strategies | keyvalue; track strategy) {
+                <pa-option [value]="strategy.key">{{ strategy.value.name || strategy.key }}</pa-option>
+              }
+            </pa-select>
+            @if ((strategies | keyvalue).length === 0) {
+              <div>
+                <pa-icon
+                  name="info"
+                  [paPopover]="splitEmpty"></pa-icon>
+                <pa-popover #splitEmpty>
+                  <span [innerHTML]="'upload.advanced.extraction.empty' | translate"></span>
+                </pa-popover>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+  }
+</div>

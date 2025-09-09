@@ -19,6 +19,7 @@ import type {
   ResourceData,
   ResourceField,
   Sentence,
+  TaskResults,
   TextField,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
@@ -244,8 +245,12 @@ export class Resource extends ReadableResource implements IResource {
       ExtractedDataTypes.LINK,
       ExtractedDataTypes.FILE,
     ],
+    page: number | 'last' | undefined = undefined,
   ): Observable<ResourceField> {
     const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
+    if (page !== undefined) {
+      params.push(`page=${page}`);
+    }
     return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}?${params.join('&')}`);
   }
 
@@ -413,5 +418,13 @@ export class Resource extends ReadableResource implements IResource {
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
     const fieldmetadata = setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []);
     return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
+  }
+
+  /**
+   * Run tasks on the resource and return the results
+   * (the results are not stored within the resource).
+   */
+  runTasks(agent_ids?: string[]) {
+    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { agent_ids }, undefined, undefined, true);
   }
 }

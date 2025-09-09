@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin, switchMap, take, tap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
+import { SDKService } from '@flaps/core';
 
 const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST'];
 
@@ -23,6 +23,7 @@ interface Row {
   templateUrl: './upload-text.component.html',
   styleUrls: ['./upload-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadTextComponent {
   isUploading = false;
@@ -34,12 +35,11 @@ export class UploadTextComponent {
 
   constructor(
     public modal: ModalRef,
-    private sdk: SDKService,
     private uploadService: UploadService,
-    private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
+    private sdk: SDKService,
   ) {}
 
   close(): void {
@@ -57,21 +57,23 @@ export class UploadTextComponent {
       this.csv = csv as Row[];
       markForCheck(this.cdr);
     } else {
-      this.toaster.error('upload.invalid_csv');
+      this.toaster.error('upload.invalid-csv-labels');
     }
   }
 
   upload() {
-    this.tracking.logEvent('upload_text_from_csv');
     this.isUploading = true;
     markForCheck(this.cdr);
     const allLabels = this.csv.reduce((acc, current) => acc.concat(current.labels), [] as Classification[]);
     this.uploadService
       .createMissingLabels(allLabels)
       .pipe(
-        switchMap(() =>
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        switchMap((kb) =>
           this.uploadService.bulkUpload(
-            this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
+            this.csv.map((row) =>
+              this.uploadService.uploadTextResource(kb, row.title, row.body, row.format, row.labels),
+            ),
           ),
         ),
       )

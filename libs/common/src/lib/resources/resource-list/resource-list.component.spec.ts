@@ -1,27 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResourceListComponent } from './resource-list.component';
-import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ResourceListService } from '@flaps/common';
 import {
   BackendConfigurationService,
   FeaturesService,
+  LabelDropdownComponent,
   LabelsService,
   NavigationService,
   SDKService,
-  STFTrackingService,
 } from '@flaps/core';
-import { RouterTestingModule } from '@angular/router/testing';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
 import { PaDropdownModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DropdownButtonComponent, SisProgressModule, SisSearchInputComponent } from '@nuclia/sistema';
+import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { UploadService } from '../../upload/upload.service';
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
-import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ResourcesTableComponent } from './resources-table/resources-table.component';
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
-import { UploadService } from '../../upload/upload.service';
-import { ResourceListService } from '@flaps/common';
+import { ResourceListComponent } from './resource-list.component';
+import { ResourcesTableComponent } from './resources-table/resources-table.component';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -36,9 +36,11 @@ describe('ResourceListComponent', () => {
         MockComponent(ErrorResourcesTableComponent),
         MockComponent(PendingResourcesTableComponent),
         MockComponent(ResourcesTableComponent),
+        MockComponent(LabelDropdownComponent),
+        MockComponent(SisSearchInputComponent),
       ],
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaDropdownModule),
         MockModule(PaIconModule),
         MockModule(PaTogglesModule),
@@ -89,11 +91,9 @@ describe('ResourceListComponent', () => {
         }),
         MockProvider(NavigationService),
         MockProvider(FeaturesService),
-        MockProvider(STFTrackingService),
         MockProvider(ResourceListService, {
           filters: of([]),
           ready: of(true),
-          isShardReady: new BehaviorSubject(false),
           totalKbResources: of(1),
         }),
       ],

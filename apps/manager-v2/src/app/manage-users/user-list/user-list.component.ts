@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   templateUrl: './user-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UserListComponent {
   private _allUsers: BehaviorSubject<UserSummary[]> = new BehaviorSubject<UserSummary[]>([]);

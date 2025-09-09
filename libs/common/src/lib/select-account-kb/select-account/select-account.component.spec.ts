@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterTestingModule } from '@angular/router/testing';
 import { SelectAccountKbService } from '../select-account-kb.service';
 
-import { SelectAccountComponent } from './select-account.component';
-import { TranslatePipeMock } from '@flaps/core';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { RouterModule } from '@angular/router';
+import { BackendConfigurationService, TranslatePipeMock } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { SelectAccountComponent } from './select-account.component';
 
 describe('SelectComponent', () => {
   let component: SelectAccountComponent;
@@ -14,7 +15,7 @@ describe('SelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, RouterTestingModule, MockModule(PaButtonModule)],
+      imports: [NoopAnimationsModule, RouterModule.forRoot([]), MockModule(PaButtonModule)],
       declarations: [SelectAccountComponent, TranslatePipeMock],
       providers: [
         {
@@ -22,9 +23,11 @@ describe('SelectComponent', () => {
           useValue: {
             getAccounts: () => [],
             getKbs: () => ({}),
+            accounts: of([]),
           },
         },
         MockProvider('staticEnvironmentConfiguration', { standalone: false }),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
   }));

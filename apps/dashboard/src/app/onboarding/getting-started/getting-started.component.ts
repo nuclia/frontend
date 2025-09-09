@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IntroComponent } from './intro/intro.component';
@@ -22,7 +22,7 @@ import {
   timer,
 } from 'rxjs';
 import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
-import { NavigationService, PostHogService, SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -31,9 +31,7 @@ const POLLING_DELAY = 30000; // in milliseconds, so 30s
 
 @Component({
   selector: 'app-getting-started',
-  standalone: true,
   imports: [
-    CommonModule,
     PaModalModule,
     TranslateModule,
     PaButtonModule,
@@ -68,7 +66,6 @@ export class GettingStartedComponent implements OnDestroy {
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,
-    private postHog: PostHogService,
   ) {}
 
   ngOnDestroy() {
@@ -88,11 +85,9 @@ export class GettingStartedComponent implements OnDestroy {
         this.uploadAndProcess();
         break;
       case 'processing':
-        this.postHog.logEvent('getting_started_processing_done');
         this.step = 'search';
         break;
       case 'search':
-        this.postHog.logEvent('getting_started_fully_done');
         forkJoin([this.kbUrl.pipe(take(1)), this.generateExampleQuestion().pipe(take(1))]).subscribe(
           ([url, question]) => {
             this.router.navigate([`${url}/search`], { queryParams: { __nuclia_query__: question } });
@@ -115,12 +110,7 @@ export class GettingStartedComponent implements OnDestroy {
     this.uploadService
       .checkFileTypesAndConfirm(files)
       .pipe(
-        filter((confirmed) => {
-          if (!confirmed) {
-            this.postHog.logEvent('getting_started_closed');
-          }
-          return confirmed;
-        }),
+        filter((confirmed) => confirmed),
         tap(() => {
           this.step = 'processing';
           this.nextDisabled = true;
@@ -137,10 +127,6 @@ export class GettingStartedComponent implements OnDestroy {
             },
             { fileCount: 0, linkCount: 0 },
           );
-          this.postHog.logEvent('getting_started_upload', {
-            fileCount: `${counts.fileCount}`,
-            linkCount: `${counts.linkCount}`,
-          });
         }),
         switchMap((): Observable<ItemToUpload[]> => {
           const linkList: ItemToUpload[] = this.itemsToUpload.filter((item) => !!item.link);
@@ -176,7 +162,7 @@ export class GettingStartedComponent implements OnDestroy {
           return this.sdk.currentKb.pipe(
             take(1),
             switchMap((kb) =>
-              this.uploadService.getResourceStatusCount().pipe(
+              this.uploadService.getResourceStatusCount(true).pipe(
                 // repeat until allProcessed but with a step-back increasing by 3s at every step but maxing out at POLLING_DELAY
                 repeat({ delay: (count) => timer(Math.min(POLLING_DELAY, count * 3000)) }),
                 takeUntil(this.allProcessed),
@@ -255,14 +241,19 @@ export class GettingStartedComponent implements OnDestroy {
   }
 
   private createLinkResources(linkList: ItemToUpload[]): Observable<ItemToUpload[]> {
-    return forkJoin(
-      linkList.map((item) =>
-        this.uploadService.createLinkResource(item.link as string, []).pipe(
-          map((response) => {
-            item.uploaded = true;
-            item.uuid = response.uuid;
-            return item;
-          }),
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        forkJoin(
+          linkList.map((item) =>
+            this.uploadService.createLinkResource(kb, item.link as string, []).pipe(
+              map((response) => {
+                item.uploaded = true;
+                item.uuid = response.uuid;
+                return item;
+              }),
+            ),
+          ),
         ),
       ),
     );

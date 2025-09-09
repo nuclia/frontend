@@ -1,0 +1,25 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.manual-subscription {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(6);
+}
+
+h2 {
+  margin: 0 0 rhythm(1);
+}
+
+.usage {
+  max-width: calc(rhythm(90) + rhythm(6));
+}
+
+header {
+  margin-bottom: rhythm(3);
+}
+
+.budget {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}

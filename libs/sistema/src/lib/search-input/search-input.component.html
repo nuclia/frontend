@@ -1,0 +1,57 @@
+<div class="nsi-search-input">
+  <div
+    class="pa-field"
+    [style.--label-width]="labelWidth">
+    <div
+      class="pa-field-container"
+      [class.pa-focus]="hasFocus"
+      [class.pa-disabled]="disabled || readonly"
+      [class.pa-readonly]="readonly"
+      [class.pa-field-error]="control.dirty && control.invalid">
+      <input
+        #htmlInput
+        class="pa-field-control"
+        [class.pa-field-control-filled]="isFilled"
+        [formControl]="control"
+        [id]="id"
+        [attr.name]="name"
+        type="text"
+        [attr.aria-describedby]="describedById"
+        [attr.placeholder]="placeholder"
+        [readonly]="readonly"
+        autocomplete="off"
+        (blur)="onBlur()"
+        (keyup)="onKeyUp($event)"
+        (focus)="onFocus($event)" />
+      <label
+        class="pa-field-label"
+        [for]="id">
+        <ng-content></ng-content>
+      </label>
+      <nsi-badge
+        class="nsi-search-input-button"
+        role="button"
+        [paPopup]="contextualMenu"
+        [popupDisabled]="disabled">
+        {{ displayMode | translate }}
+      </nsi-badge>
+    </div>
+    <pa-dropdown #contextualMenu>
+      @for (mode of modes; track mode.id) {
+        <pa-option
+          [value]="mode.value"
+          (selectOption)="onSelect(mode)">
+          {{ mode.label | translate }}
+        </pa-option>
+      }
+    </pa-dropdown>
+
+    <pa-form-field-hint
+      [id]="describedById"
+      [help]="help"
+      [errors]="control.errors"
+      [showErrors]="control.dirty"
+      [showAllErrors]="showAllErrors"
+      [errorMessages]="errorMessages"></pa-form-field-hint>
+  </div>
+</div>

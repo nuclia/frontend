@@ -1,0 +1,41 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.fields-labels {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  .title-xxs {
+    color: $color-neutral-regular;
+  }
+
+  .labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+  }
+}
+
+.paragraphs-labels {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  .paragraph-text {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .labels {
+    display: flex;
+    gap: rhythm(1);
+    margin-left: rhythm(5);
+  }
+}

@@ -1,0 +1,105 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="provider">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.provider.label' | translate }}
+        </label>
+        <pa-select
+          id="provider"
+          formControlName="source"
+          externalLabel
+          [placeholder]="'retrieval-agents.workflow.node-types.internet.form.provider.placeholder' | translate"
+          [options]="providerOptions()"
+          (valueChange)="updateCurrentDriver($event)"></pa-select>
+      </div>
+      @if (providerOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
+    </div>
+    @if (currentProvider() === 'brave') {
+      <ng-container formGroupName="brave">
+        <div class="form-entry">
+          <label for="domain">
+            {{ 'retrieval-agents.workflow.node-types.internet.form.domain.label' | translate }}
+          </label>
+          <pa-input
+            id="domain"
+            formControlName="domain"
+            externalLabel=""></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="country">{{ 'retrieval-agents.workflow.node-types.internet.form.country' | translate }}</label>
+          <pa-input
+            id="country"
+            formControlName="country"
+            externalLabel=""></pa-input>
+        </div>
+      </ng-container>
+    } @else if (currentProvider() === 'perplexity') {
+      <ng-container formGroupName="perplexity">
+        <div class="form-entry field-list">
+          <label for="domain">
+            {{ 'retrieval-agents.workflow.node-types.internet.form.domain.label' | translate }}
+          </label>
+          @for (domain of perplexityDomains.controls; track domain) {
+            <div class="entry-with-button">
+              <pa-input
+                id="domain"
+                [formControl]="domain"
+                externalLabel=""></pa-input>
+              @if ($index > 0) {
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="trash"
+                  (click)="removePerplexityDomain($index)">
+                  {{ 'retrieval-agents.workflow.node-types.internet.form.domain.remove' | translate }}
+                </pa-button>
+              }
+            </div>
+          }
+          <pa-button
+            aspect="basic"
+            size="small"
+            (click)="addPerplexityDomain()">
+            {{ 'retrieval-agents.workflow.node-types.internet.form.domain.add' | translate }}
+          </pa-button>
+        </div>
+        <div class="form-entry">
+          <label for="top_k">{{ 'retrieval-agents.workflow.node-types.internet.form.top-k' | translate }}</label>
+          <pa-input
+            id="top_k"
+            formControlName="top_k"
+            type="number"
+            externalLabel=""></pa-input>
+        </div>
+        <pa-toggle
+          formControlName="related_questions"
+          withBackground="">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.related-questions' | translate }}
+        </pa-toggle>
+        <pa-toggle
+          formControlName="images"
+          withBackground="">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.images' | translate }}
+        </pa-toggle>
+      </ng-container>
+    }
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

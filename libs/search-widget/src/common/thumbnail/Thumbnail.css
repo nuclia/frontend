@@ -1,0 +1,48 @@
+.sw-thumbnail {
+  display: flex;
+
+  &.thumbnail-background {
+    background-color: var(--thumbnail-background-color);
+  }
+
+  img {
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+  }
+
+  &.thumbnail-fallback {
+    align-items: center;
+    color: var(--color-neutral-regular);
+    height: var(--rhythm-22);
+    justify-content: center;
+  }
+
+  &.clickable {
+    cursor: pointer;
+  }
+
+  .thumbnail-placeholder {
+    height: var(--rhythm-32);
+    width: 100%;
+  }
+
+  @media (min-width: 600px) {
+    .thumbnail-placeholder {
+      height: var(--rhythm-20);
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn var(--duration--superfast);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

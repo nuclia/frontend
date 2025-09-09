@@ -1,19 +1,8 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
-import { fromEvent, Subject } from 'rxjs';
-import { auditTime, takeUntil } from 'rxjs/operators';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy, ViewEncapsulation } from '@angular/core';
 import * as d3 from 'd3';
 import { createYAxis, drawThreshold } from '../chart-utils';
 import { getDate } from 'date-fns';
+import { BaseChartDirective } from '../base-chart.directive';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 3;
@@ -24,11 +13,10 @@ const NUM_TICKS = 3;
   styleUrls: ['./bar-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
-export class BarChartComponent implements AfterViewInit, OnDestroy {
+export class BarChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {
   id = `bar-chart-${nextUniqueId++}`;
-  @ViewChild('container') private container: ElementRef | undefined;
-  unsubscribeAll = new Subject<void>();
 
   private _data: [string, number][] = [];
   @Input() set data(values: [string, number][]) {
@@ -45,27 +33,6 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
   tooltipContent?: number;
   tooltipLeft = 0;
   tooltipBottom = 0;
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngAfterViewInit(): void {
-    setTimeout(() => this.draw(), 0);
-
-    // Make the chart responsive
-    fromEvent(window, 'resize')
-      .pipe(auditTime(200), takeUntil(this.unsubscribeAll))
-      .subscribe(() => {
-        this.removeExistingChartFromParent();
-        this.draw();
-      });
-  }
-
-  ngOnDestroy() {
-    if (this.unsubscribeAll) {
-      this.unsubscribeAll.next();
-      this.unsubscribeAll.complete();
-    }
-  }
 
   draw() {
     const minValue = Math.min(...this._data.map((item) => item[1]));
@@ -158,9 +125,5 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
       .call((g) => g.selectAll('.tick line').remove());
 
     return x;
-  }
-
-  private removeExistingChartFromParent(): void {
-    d3.select(this.container?.nativeElement).select('svg').remove();
   }
 }

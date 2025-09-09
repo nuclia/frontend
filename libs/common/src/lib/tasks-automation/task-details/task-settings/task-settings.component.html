@@ -1,0 +1,308 @@
+@if (task) {
+  <nsi-two-columns-configuration-item
+    itemTitle="tasks-automation.settings.title"
+    description="tasks-automation.settings.description"
+    noTopBorder>
+    <div class="settings-container">
+      <div class="setting">
+        <label>{{ 'tasks-automation.form.task-name.input-label' | translate }}</label>
+        <div>{{ task.parameters.name }}</div>
+      </div>
+      @if (task.parameters.llm.model; as model) {
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>LLM</label>
+          @if ((modelsInfo | async)?.[model]; as modelInfo) {
+            <div>{{ modelInfo.name }}</div>
+            @if (task.parameters.llm.keys?.[modelInfo.userKey]) {
+              <div>({{ 'tasks-automation.settings.own-key' | translate }})</div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </nsi-two-columns-configuration-item>
+  @if (task.parameters.filter; as filter) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.settings.filter.title"
+      description="tasks-automation.settings.filter.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
+          <div>{{ filter.contains?.join(', ') || '-' }}</div>
+          @if (filter.contains_operator === 1) {
+            <div>
+              <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
+            </div>
+          }
+        </div>
+        @if (fieldTypes.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
+            <div class="filters">
+              @for (type of fieldTypes; track type) {
+                <nsi-badge>{{ type }}</nsi-badge>
+              }
+            </div>
+          </div>
+        }
+        @if (notFieldTypes.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</label>
+            <div class="filters">
+              @for (type of notFieldTypes; track type) {
+                <nsi-badge>{{ type }}</nsi-badge>
+              }
+            </div>
+          </div>
+        }
+        @if (labels.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</label>
+            <div class="filters">
+              @for (label of labels; track label) {
+                <div>{{ label }}</div>
+              }
+            </div>
+            @if (filter.labels_operator === 1) {
+              <div>
+                <i>{{ 'tasks-automation.form.filter.operator' | translate }}</i>
+              </div>
+            }
+          </div>
+        }
+        @if (apply_to_agent_generated_fields) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</label>
+          </div>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (askOperation) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.generator.your-question.title"
+      description="tasks-automation.generator.your-question.description">
+      <div class="settings-container">
+        <div class="setting">
+          @if (askOperation.json) {
+            <label>{{ 'tasks-automation.generator.your-question.json-schema' | translate }}</label>
+            <nsi-info-card>
+              <code class="body-s">{{ askOperation.question }}</code>
+            </nsi-info-card>
+          } @else {
+            <label>{{ 'tasks-automation.generator.your-question.question-label' | translate }}</label>
+            <div>{{ askOperation.user_prompt || askOperation.question }}</div>
+          }
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
+          <div>{{ askOperation.destination }}</div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (labelOperation) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="tasks-automation.form.labels-selection.title"
+      description="tasks-automation.form.labels-selection.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
+          <div>{{ labelOperation?.ident }}</div>
+        </div>
+        @if (labelOperation?.multiple) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</label>
+          </div>
+        }
+        @if (labelOperation?.description) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
+            <div>{{ labelOperation.description }}</div>
+          </div>
+        }
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
+          <pa-table
+            border
+            columns="1fr 2fr">
+            <pa-table-header>
+              <pa-table-cell header>
+                {{ 'tasks-automation.form.labels-selection.label-list.label' | translate }}
+              </pa-table-cell>
+              <pa-table-cell header>
+                {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
+              </pa-table-cell>
+            </pa-table-header>
+            @for (label of labelOperation.labels; track label) {
+              <pa-table-row>
+                <pa-table-cell>
+                  <span class="body-s">{{ label.label }}</span>
+                </pa-table-cell>
+                <pa-table-cell>
+                  <span class="body-s">{{ label.description || '-' }}</span>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        </div>
+        <nsi-info-card>
+          @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
+            {{ 'tasks-automation.form.on.resources' | translate }}
+          } @else {
+            {{ 'tasks-automation.form.on.text-blocks' | translate }}
+          }
+        </nsi-info-card>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (graphOperation) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="tasks-automation.graph-extraction.ner-types.title"
+      description="tasks-automation.graph-extraction.ner-types.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.graph-extraction.ner-types.title' | translate }}</label>
+          <pa-table
+            border
+            columns="1fr 2fr">
+            <pa-table-header>
+              <pa-table-cell header>
+                {{ 'tasks-automation.graph-extraction.ner-types.ner-type' | translate }}
+              </pa-table-cell>
+              <pa-table-cell header>
+                {{ 'generic.description' | translate }}
+              </pa-table-cell>
+            </pa-table-header>
+            @for (entity of graphOperation.entity_defs; track entity) {
+              <pa-table-row>
+                <pa-table-cell>
+                  <span class="body-s">{{ entity.label }}</span>
+                </pa-table-cell>
+                <pa-table-cell>
+                  <span class="body-s">{{ entity.description || '-' }}</span>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        </div>
+        @if ((graphOperation.examples || []).length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</label>
+            <pa-table
+              border
+              columns="1fr 1fr">
+              <pa-table-header>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}
+                </pa-table-cell>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.graph-extraction.example-text' | translate }}
+                </pa-table-cell>
+              </pa-table-header>
+              @for (example of graphOperation.examples; track example) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <div>
+                      <h4>{{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}</h4>
+                      <ul class="body-s">
+                        @for (entity of example.entities; track entity) {
+                          <li>{{ entity.name }} ({{ entity.label }})</li>
+                        }
+                      </ul>
+                      <h4>{{ 'tasks-automation.graph-extraction.ner-examples.relations' | translate }}</h4>
+                      <ul class="body-s">
+                        @for (relation of example.relations; track relation) {
+                          <li>{{ relation.source }} &mdash; {{ relation.target }} ({{ relation.label }})</li>
+                        }
+                      </ul>
+                    </div>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <span class="body-s">{{ example?.text || 'Some stuff' }}</span>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          </div>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (qaOperation) {
+    <nsi-two-columns-configuration-item itemTitle="tasks-automation.question-answer.prompts.title">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.prompts.question-prompt' | translate }}</label>
+          <div>{{ qaOperation.question_generator_prompt || '-' }}</div>
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.prompts.answer-prompt' | translate }}</label>
+          <div>{{ qaOperation.generate_answers_prompt || '-' }}</div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (task.task.name === 'prompt-guard' || task.task.name === 'llama-guard') {
+    <nsi-two-columns-configuration-item itemTitle="tasks-automation.llm-security.labeling.title">
+      <nsi-info-card>
+        @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
+          {{ 'tasks-automation.form.on.resources' | translate }}
+        } @else {
+          {{ 'tasks-automation.form.on.text-blocks' | translate }}
+        }
+      </nsi-info-card>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @for (trigger of triggers; track trigger) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.form.webhook.title"
+      description="tasks-automation.form.webhook.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>URL</label>
+          <div>{{ trigger.url }}</div>
+        </div>
+        @if (trigger.headers.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+            <app-parameters-table
+              readonly
+              secretDisabled
+              [values]="trigger.headers"></app-parameters-table>
+          </div>
+        }
+        @if (trigger.params.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+            <app-parameters-table
+              readonly
+              secretDisabled
+              [values]="trigger.params"></app-parameters-table>
+          </div>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+}

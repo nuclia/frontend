@@ -4,11 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../manager.store';
+import { BackendConfigurationService } from '@flaps/core';
 
 @Component({
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -16,11 +18,13 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   account = this.store.accountDetails;
   kbList = this.store.kbList;
   currentState = this.store.currentState;
+  noStripe = this.backendConfig.noStripe();
 
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
     private store: ManagerStore,
+    private backendConfig: BackendConfigurationService,
   ) {}
 
   ngOnInit() {

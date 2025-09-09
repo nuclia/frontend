@@ -37,11 +37,7 @@
         <ncom-hint
           noMaxWidth
           label="Learn more about webhooks">
-          <p>
-            If webhook is defined, anytime a new result is available, Nuclia will make a
-            <code>POST</code>
-            call to this URL, sending the result as payload.
-          </p>
+          <p [innerHTML]="'account.nua_webhook_hint' | translate"></p>
         </ncom-hint>
       </div>
 

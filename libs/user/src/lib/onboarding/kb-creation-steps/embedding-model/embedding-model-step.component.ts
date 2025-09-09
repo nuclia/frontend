@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -9,9 +9,7 @@ import { LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'nus-embedding-model-step',
-  standalone: true,
   imports: [
-    CommonModule,
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
@@ -20,8 +18,8 @@ import { LearningConfigurations } from '@nuclia/core';
     EmbeddingsModelFormComponent,
     PaTextFieldModule,
     StickyFooterComponent,
-    PaButtonModule,
-  ],
+    PaButtonModule
+],
   templateUrl: './embedding-model-step.component.html',
   styleUrls: ['../../_common-step.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

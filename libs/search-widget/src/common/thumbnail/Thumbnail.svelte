@@ -3,16 +3,21 @@
   import { getFile } from '../../core';
   import { Icon } from '../icons';
 
-  export let src: string | undefined;
-  export let fallback = '';
-  export let aspectRatio: '5/4' | '16/9' = '5/4';
-  export let noBackground = false;
+  interface Props {
+    src: string | undefined;
+    fallback?: string;
+    aspectRatio?: '5/4' | '16/9';
+    noBackground?: boolean;
+    clickable?: boolean;
+  }
 
-  let loaded = false;
+  let { src, fallback = '', aspectRatio = '5/4', noBackground = false, clickable = false }: Props = $props();
+
+  let loaded = $state(false);
 
   const dispatch = createEventDispatcher();
 
-  let thumbnail: string;
+  let thumbnail: string = $state();
 
   onMount(() => {
     if (src) {
@@ -36,10 +41,14 @@
 <div
   class="sw-thumbnail"
   class:thumbnail-background={!noBackground}
-  class:thumbnail-fallback={!src && !!fallback}>
+  class:thumbnail-fallback={!src && !!fallback}
+  class:clickable
+  onclick={() => clickable && dispatch('click')}>
   {#if loaded}
     {#if !src}
-      <Icon name={fallback} size="large" />
+      <Icon
+        name={fallback}
+        size="large" />
     {:else}
       <img
         src={thumbnail}
@@ -51,10 +60,9 @@
   {#if !loaded}
     <div
       class:thumbnail-background={!noBackground}
-      class="thumbnail-placeholder fade-in" />
+      class="thumbnail-placeholder fade-in">
+    </div>
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./Thumbnail.scss"></style>
+<style src="./Thumbnail.css"></style>

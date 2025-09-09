@@ -1,176 +1,416 @@
 <form [formGroup]="form">
   <div class="config-form-field">
     <pa-toggle
-      formControlName="filter"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">{{ 'search.configuration.search-box.filters.toggle-label' | translate }}</span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.filters.toggle-description' | translate }}
-    </div>
-
-    <div
-      formGroupName="filters"
-      class="extra-fields"
-      [class.visible]="filterEnabled">
-      <pa-checkbox formControlName="labels">
-        {{ 'search.configuration.search-box.filters.filter-by-labels' | translate }}
-      </pa-checkbox>
-      <pa-checkbox formControlName="entities">
-        {{ 'search.configuration.search-box.filters.filter-by-entities' | translate }}
-      </pa-checkbox>
-      <pa-checkbox formControlName="labelFamilies">
-        {{ 'search.configuration.search-box.filters.filter-by-label-families' | translate }}
-      </pa-checkbox>
-      <div class="toggle-and-help">
-        <pa-checkbox formControlName="created">
-          {{ 'search.configuration.search-box.filters.filter-by-created.label' | translate }}
-        </pa-checkbox>
-        <pa-icon
-          name="info"
-          [paPopover]="filterCreatedHelp" />
-        <pa-popover #filterCreatedHelp>
-          <div [innerHtml]="'search.configuration.search-box.filters.filter-by-created.help' | translate"></div>
-        </pa-popover>
-      </div>
-    </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="autofilter"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.search-box.automatic-filtering.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.automatic-filtering.toggle-description' | translate }}
-    </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="setPreselectedFilters"
+      formControlName="useSearchResults"
       withBackground
       spaceBetweenLabelAndToggle
       (valueChange)="heightChanged.emit()">
       <span class="toggle-label">
-        {{ 'search.configuration.search-box.preselected-filters.toggle-label' | translate }}
+        {{ 'search.configuration.search-box.use-search-results.toggle-label' | translate }}
       </span>
     </pa-toggle>
     <div class="config-form-help">
-      {{ 'search.configuration.search-box.preselected-filters.toggle-description' | translate }}
-    </div>
-    <div
-      class="extra-fields"
-      [class.visible]="preselectedFiltersEnabled">
-      <nsi-info-card>
-        <span [innerHTML]="'search.configuration.search-box.preselected-filters.info-box' | translate"></span>
-      </nsi-info-card>
-      <pa-textarea
-        formControlName="preselectedFilters"
-        resizable
-        rows="4"
-        help="search.configuration.search-box.preselected-filters.textarea-help"
-        (resizing)="heightChanged.emit()">
-        {{ 'search.configuration.search-box.preselected-filters.textarea-label' | translate }}
-      </pa-textarea>
+      {{ 'search.configuration.search-box.use-search-results.toggle-description' | translate }}
     </div>
   </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="rephraseQuery"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.search-box.rephrase.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.rephrase.toggle-description' | translate }}
-    </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="prependTheQuery"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">{{ 'search.configuration.search-box.queryprepend.toggle-label' | translate }}</span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.queryprepend.toggle-description' | translate }}
-    </div>
-    <div
-      class="extra-fields"
-      [class.visible]="prependTheQuery">
-      <pa-input formControlName="queryPrepend">
-        {{ 'search.configuration.search-box.queryprepend.input-label' | translate }}
-      </pa-input>
-    </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="suggestions"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">{{ 'search.configuration.search-box.suggestions.toggle-label' | translate }}</span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.suggestions.toggle-description' | translate }}
-    </div>
-    <div
-      class="extra-fields"
-      [class.visible]="suggestionsEnabled">
-      <pa-checkbox
-        noEllipsis
-        formControlName="suggestResults">
-        {{ 'search.configuration.search-box.suggestions.suggest-results' | translate }}
-      </pa-checkbox>
-      @if (autocompleteFromNerEnabled | async) {
-        <pa-checkbox
-          noEllipsis
-          formControlName="autocompleteFromNERs">
-          {{ 'search.configuration.search-box.suggestions.suggest-ners' | translate }}
-        </pa-checkbox>
-      }
-      @if (isTrainingEnabled | async) {
-        <pa-checkbox
-          noEllipsis
-          formControlName="suggestLabels">
-          {{ 'search.configuration.search-box.suggestions.suggest-labels' | translate }}
-        </pa-checkbox>
-      }
-    </div>
-  </div>
-  <div class="config-form-field">
-    <div class="title-xs">{{ 'search.configuration.search-box.select-results-used.title' | translate }}</div>
-    <pa-radio-group formControlName="generateAnswerWith">
-      <pa-radio value="semantic-and-full-text">
-        {{ 'search.configuration.search-box.select-results-used.semantic-and-full-text' | translate }}
-      </pa-radio>
-      <pa-radio value="only-semantic">
-        {{ 'search.configuration.search-box.select-results-used.semantic-only' | translate }}
-      </pa-radio>
-    </pa-radio-group>
-  </div>
-  @if (synonymsEnabled | async) {
+  @if (useSearchResults) {
     <div class="config-form-field">
       <pa-toggle
-        formControlName="useSynonyms"
+        formControlName="filter"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">{{ 'search.configuration.search-box.filters.toggle-label' | translate }}</span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.filters.toggle-description' | translate }}
+      </div>
+
+      <div
+        formGroupName="filters"
+        class="extra-fields"
+        [class.visible]="filterEnabled">
+        <pa-checkbox formControlName="labels">
+          {{ 'search.configuration.search-box.filters.filter-by-labels' | translate }}
+        </pa-checkbox>
+        <pa-checkbox formControlName="entities">
+          {{ 'search.configuration.search-box.filters.filter-by-entities' | translate }}
+        </pa-checkbox>
+        <pa-checkbox formControlName="labelFamilies">
+          {{ 'search.configuration.search-box.filters.filter-by-label-families' | translate }}
+        </pa-checkbox>
+        <div class="toggle-and-help">
+          <pa-checkbox formControlName="created">
+            {{ 'search.configuration.search-box.filters.filter-by-created.label' | translate }}
+          </pa-checkbox>
+          <pa-icon
+            name="info"
+            [paPopover]="filterCreatedHelp" />
+          <pa-popover #filterCreatedHelp>
+            <div [innerHtml]="'search.configuration.search-box.filters.filter-by-created.help' | translate"></div>
+          </pa-popover>
+        </div>
+        <pa-checkbox formControlName="mime">
+          {{ 'search.configuration.search-box.filters.filter-by-mime' | translate }}
+        </pa-checkbox>
+        <pa-checkbox formControlName="path">
+          {{ 'search.configuration.search-box.filters.filter-by-path' | translate }}
+        </pa-checkbox>        
+      </div>
+    </div>
+    @if (filterEnabled) {
+      @if (labelsFilterEnabled) {
+        <div class="config-form-field">
+          <div class="title-xs">{{ 'search.configuration.search-box.filters.exclude-labelset.title' | translate }}</div>
+          <div class="config-form-help">
+            {{ 'search.configuration.search-box.filters.exclude-labelset.description' | translate }}
+          </div>
+          <nsi-expandable-textarea
+            formControlName="labelSetsExcludedFromFilters"
+            rows="2"
+            resizable
+            help="search.configuration.search-box.filters.exclude-labelset.textarea-help"
+            modalTitle="search.configuration.search-box.filters.exclude-labelset.textarea-label">
+            {{ 'search.configuration.search-box.filters.exclude-labelset.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
+      }
+
+      <div class="config-form-field">
+        <div class="title-xs">{{ 'search.configuration.search-box.filter-logic.title' | translate }}</div>
+        <pa-radio-group formControlName="filterLogic">
+          <pa-radio
+            value="and"
+            help="search.configuration.search-box.filter-logic.and-logic">
+            AND
+          </pa-radio>
+          <pa-radio
+            value="or"
+            help="search.configuration.search-box.filter-logic.or-logic">
+            OR
+          </pa-radio>
+        </pa-radio-group>
+        @if (createdFilterEnabled && orLogicEnabled) {
+          <nsi-info-card>{{ 'search.configuration.search-box.filter-logic.warning' | translate }}</nsi-info-card>
+        }
+      </div>
+    }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="autofilter"
         withBackground
         spaceBetweenLabelAndToggle>
-        <span
-          class="toggle-label"
-          fullProBadge>
-          {{ 'search.configuration.search-box.synonyms.toggle-label' | translate }}
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.automatic-filtering.toggle-label' | translate }}
         </span>
       </pa-toggle>
       <div class="config-form-help">
-        {{ 'search.configuration.search-box.synonyms.toggle-description' | translate }}
+        {{ 'search.configuration.search-box.automatic-filtering.toggle-description' | translate }}
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="setPreselectedFilters"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.preselected-filters.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.preselected-filters.toggle-description' | translate }}
+        @if (preselectedFiltersControl.value) {
+          {{ 'search.configuration.search-box.preselected-filters.backward-compatibility' | translate }}
+        }
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="preselectedFiltersEnabled">
+        <nsi-info-card>
+          <span [innerHTML]="'search.configuration.search-box.preselected-filters.info-box' | translate"></span>
+        </nsi-info-card>
+        @if (preselectedFiltersControl.value) {
+          <nsi-expandable-textarea
+            formControlName="preselectedFilters"
+            resizable
+            rows="4"
+            help="search.configuration.search-box.preselected-filters.textarea-help"
+            modalTitle="search.configuration.search-box.preselected-filters.textarea-label"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.search-box.preselected-filters.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+          <pa-button
+            class="align-on-right"
+            (click)="openFiltersAssistant()">
+            {{ 'search.configuration.search-box.preselected-filters.assistant-button-label' | translate }}
+          </pa-button>
+        } @else {
+          <nsi-expandable-textarea
+            formControlName="preselectedFilterExpression"
+            resizable
+            rows="4"
+            modalTitle="search.configuration.search-box.preselected-filters.filter-expression.textarea-label"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.search-box.preselected-filters.filter-expression.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+          <pa-button
+            class="align-on-right"
+            (click)="openFilterExpressionAssistant()">
+            {{ 'search.configuration.search-box.preselected-filters.assistant-button-label' | translate }}
+          </pa-button>
+        }
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="rephraseQuery"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.rephrase.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.rephrase.toggle-description' | translate }}
+      </div>
+    </div>
+    @if (rephraseQueryEnabled) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="useRephrasePrompt"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span
+            class="toggle-label"
+            fullProBadge>
+            {{ 'search.configuration.search-box.rephrase-prompt.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.search-box.rephrase-prompt.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="useRephrasePromptEnabled">
+          <nsi-expandable-textarea
+            formControlName="rephrasePrompt"
+            resizable
+            rows="4"
+            modalTitle="search.configuration.search-box.rephrase-prompt.textarea-label"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.search-box.rephrase-prompt.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
+      </div>
+    }
+    @if (semanticModels.length > 1) {
+      <div class="config-form-field">
+        <div class="title-xs title-with-badge">
+          {{ 'search.configuration.search-box.semantic-model.title' | translate }}
+          <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+        </div>
+        <div class="config-form-help">
+          {{ 'search.configuration.search-box.semantic-model.description' | translate }}
+        </div>
+        <div class="extra-fields visible">
+          <pa-select
+            formControlName="vectorset"
+            [label]="'search.configuration.search-box.semantic-model.select-label' | translate"
+            [options]="semanticModels"></pa-select>
+        </div>
+      </div>
+    }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="semanticReranking"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.semantic-reranking.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.semantic-reranking.toggle-description' | translate }}
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="rrfBoosting"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.rrf-boosting.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.rrf-boosting.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="rrfBoostingEnabled">
+        <pa-input
+          formControlName="rrfSemanticBoosting"
+          type="number"
+          [help]="'search.configuration.search-box.rrf-boosting.help' | translate"
+          step="0.1"></pa-input>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="limitParagraphs"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.limit-paragraphs.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.limit-paragraphs.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="limitParagraphsEnabled">
+        <pa-input
+          externalLabel
+          formControlName="paragraphsLimit"
+          type="number"></pa-input>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="prependTheQuery"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">{{ 'search.configuration.search-box.queryprepend.toggle-label' | translate }}</span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.queryprepend.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="prependTheQuery">
+        <pa-input formControlName="queryPrepend">
+          {{ 'search.configuration.search-box.queryprepend.input-label' | translate }}
+        </pa-input>
+      </div>
+    </div>
+    @if (hiddenResourcesEnabled | async) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="showHiddenResources"
+          withBackground
+          spaceBetweenLabelAndToggle>
+          <span class="toggle-label">
+            {{ 'search.configuration.search-box.show-hidden-resources.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.search-box.show-hidden-resources.toggle-description' | translate }}
+        </div>
+      </div>
+    }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="suggestions"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">{{ 'search.configuration.search-box.suggestions.toggle-label' | translate }}</span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.suggestions.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="suggestionsEnabled">
+        <pa-checkbox
+          noEllipsis
+          formControlName="suggestResults">
+          {{ 'search.configuration.search-box.suggestions.suggest-results' | translate }}
+        </pa-checkbox>
+        @if (autocompleteFromNerEnabled | async) {
+          <pa-checkbox
+            noEllipsis
+            formControlName="autocompleteFromNERs">
+            {{ 'search.configuration.search-box.suggestions.suggest-ners' | translate }}
+          </pa-checkbox>
+        }
+      </div>
+    </div>
+    <div class="config-form-field">
+      <div class="title-xs">{{ 'search.configuration.search-box.select-results-used.title' | translate }}</div>
+      <pa-radio-group formControlName="generateAnswerWith">
+        <pa-radio value="semantic-and-full-text">
+          {{ 'search.configuration.search-box.select-results-used.semantic-and-full-text' | translate }}
+        </pa-radio>
+        <pa-radio value="only-semantic">
+          {{ 'search.configuration.search-box.select-results-used.semantic-only' | translate }}
+        </pa-radio>
+      </pa-radio-group>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="highlight"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.highlight.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.highlight.toggle-description' | translate }}
+      </div>
+    </div>
+    @if (synonymsEnabled | async) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="useSynonyms"
+          withBackground
+          spaceBetweenLabelAndToggle>
+          <span
+            class="toggle-label"
+            fullProBadge>
+            {{ 'search.configuration.search-box.synonyms.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.search-box.synonyms.toggle-description' | translate }}
+        </div>
+      </div>
+    }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="useSecurityGroups"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.security-groups.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="securityGroupsEnabled">
+        <nsi-info-card type="warning">
+          {{ 'search.configuration.search-box.security-groups.info-box' | translate }}
+        </nsi-info-card>
+        <nsi-expandable-textarea
+          formControlName="securityGroups"
+          resizable
+          rows="4"
+          help="search.configuration.search-box.security-groups.textarea-help"
+          modalTitle="search.configuration.search-box.security-groups.toggle-label"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+        </nsi-expandable-textarea>
       </div>
     </div>
   }

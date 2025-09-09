@@ -14,7 +14,6 @@ import { FolderSelectionComponent } from '../folder-selection';
 
 @Component({
   selector: 'nsy-sync-details-page',
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

@@ -4,22 +4,30 @@ on:
   push:
     branches:
       - main
+      - dev
 
 env:
   APP_IMAGE_NAME: app
   MANAGER_IMAGE_NAME: manager
-  CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
-  DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
+  CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
+  DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
+  S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
+  S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
+  S3_WHITELABEL_STORAGE: ${{ secrets.S3_WHITELABEL_STORAGE }}
+  S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_DOCS_SYNC_ROLE || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
+  DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
+  PROMO_PRODUCTION: false
 
 permissions:
   id-token: write
   contents: write
+  actions: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: nuclia-base
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
@@ -51,11 +59,22 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
+          aws-region: eu-central-1
+
+      - name: Configure AWS client
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          arch: amd64
+
       - uses: nrwl/nx-set-shas@v3
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'yarn'
 
       - name: Calculate short sha
@@ -77,6 +96,7 @@ jobs:
 
       - name: Tag if new version
         uses: pkgdeps/git-tag-action@v2.0.5
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
@@ -94,39 +114,107 @@ jobs:
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
-      - name: Publish widget
+      - name: Publish widget to GCS
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/libs/search-widget/*.umd.js gs://$CDN_STORAGE
-          gsutil copy dist/libs/search-widget/*.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
+      - name: Publish widget to S3
+        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/libs/search-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+          aws s3 cp libs/search-widget/public/ s3://$S3_CDN_STORAGE/ --recursive
+
+      - name: Build & publish white-labelled widget to GCS
+        if: steps.check-deploy.outputs.deploy-widget == 'yes'
+        run: |-
+          echo "VITE_BRAND_NAME=WHITE_LABEL_BRAND_NAME_PLACEHOLDER" > .env
+          echo "VITE_OVERRIDES=WHITE_LABEL_OVERRIDES_PLACEHOLDER" >> .env
+          # yes, the final / is in purpose
+          echo "VITE_CDN=WHITE_CDN_PLACEHOLDER/" >> .env
+          npx nx build search-widget
+          find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
+          gsutil copy dist/libs/search-widget/*.umd.js gs://ncl-white-label-frontend-gcp-global-stage-1
+          gsutil copy -r libs/search-widget/public/* gs://ncl-white-label-frontend-gcp-global-stage-1
+
+      - name: Build & publish white-labelled widget to S3
+        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/libs/search-widget/ s3://$S3_WHITELABEL_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+          aws s3 cp libs/search-widget/public/ s3://$S3_WHITELABEL_STORAGE/ --recursive
+
       - name: Publish SDK
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./dist/sdk-core/package.json
 
-      - name: Generate and push SDK docs
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+      - name: Push SDK to GCP CDN
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          gsutil copy dist/sdk-core/umd/index.js gs://$CDN_STORAGE/nuclia-sdk.umd.js
+
+      - name: Push SDK to S3 CDN
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/sdk-core/umd/index.js s3://$S3_CDN_STORAGE/nuclia-sdk.umd.js
+
+      - name: Invalidate CDN cache stage
+        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_STAGE_PROJECT_ID }}
+        run: |
+          gcloud compute url-maps invalidate-cdn-cache ${CDN_STORAGE} --path "/*" --global --project ${GCP_PROJECT}
+
+      - name: Generate and push SDK docs to GCS
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
 
-      - name: Build dashboard image for Artifact Repository
-        if: steps.check-deploy.outputs.deploy-app == 'yes'
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
+      - name: Generate and push SDK docs to S3
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
-          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
-          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
-          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
+          aws s3 cp ./libs/sdk-core/docs s3://$S3_DOCS_STORAGE/js-sdk --recursive
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
+        if: steps.check-deploy.outputs.deploy-app == 'yes'
+        with:
+          build-arg: |
+            appId=app 
+            appFolder=dashboard 
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.APP_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
+          push: true
+          tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
 
       - name: Publish NucliaDB admin app
-        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes'
+        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/nucliadb-admin/assets/deployment/app-config.json
           cp -r dist/apps/nucliadb-admin/* tools/python-nucliadb-admin-dist/nucliadb_admin_assets/
@@ -135,29 +223,38 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
-      - name: Build manager image for Artifact Repository
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
-        run: |-
-          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 .
-          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
-          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
+        with:
+          build-arg: |
+            appId=manager 
+            appFolder=manager-v2 
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.MANAGER_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' && steps.check-deploy.outputs.deploy-app == 'yes' }}
+          push: true
+          tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
 
       - name: Create 404 page for gh-pages
-        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           cp dist/apps/sistema-demo/index.html dist/apps/sistema-demo/404.html
 
       - name: Deploy sistema-demo to GH pages
-        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
         uses: getsentry/action-release@v1.0.0
+        if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: nuclia
@@ -168,8 +265,40 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-app == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "app",
+              "chart-version": "${{ steps.chart-version-app.outputs.chart-version }}",
+              "component-type": "global"
+            }
+          ]
+        }
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          token_format: access_token
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Calculate short sha
+        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
+
       - name: Generate a token
         id: app-token
         uses: actions/create-github-app-token@v1
@@ -178,54 +307,114 @@ jobs:
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Calculate short sha
-        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
-
-      - name: Set helm package image
-        id: version_step
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
-        run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${SHORT_SHA}#" ./charts/app/values.yaml
-          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
-          VERSION=`cat apps/dashboard/VERSION`
-          VERSION_SHA=$VERSION+${SHORT_SHA}
-          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
-          echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
         with:
-          version: v3.4.0
-
-      - name: Push helm package
-        run: |-
-          helm lint charts/app
-          helm package charts/app
-          curl --data-binary "@app-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
-
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
-        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
           token: ${{ steps.app-token.outputs.token }}
-          repository: nuclia/frontend_deploy
-          event-type: promote
-          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
+
+      - name: Get chart version
+        id: chart-version-app
+        run: |
+          VERSION=`cat apps/dashboard/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.APP_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-app.outputs.chart-version }}
+          image-name: ${{ env.APP_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: './charts/${{ env.APP_IMAGE_NAME }}'
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
 
   deploy-manager:
     name: Deploy manager
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-manager == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "manager",
+              "chart-version": "${{ steps.chart-version-manager.outputs.chart-version }}",
+              "component-type": "global"
+            }
+          ]
+        }
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          token_format: access_token
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Calculate short sha
+        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get chart version
+        id: chart-version-manager
+        run: |
+          VERSION=`cat apps/manager-v2/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.MANAGER_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-manager.outputs.chart-version }}
+          image-name: ${{ env.MANAGER_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: './charts/${{ env.MANAGER_IMAGE_NAME }}'
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
+
+  send-to-promotion:
+    runs-on: ubuntu-latest
+    needs: [deploy-manager, deploy-app]
+    if: |
+      !failure() && !cancelled() && github.event_name == 'push' &&
+      ( needs.deploy-manager.result != 'skipped' ||
+        needs.deploy-app.result != 'skipped' )
     steps:
       - name: Generate a token
         id: app-token
@@ -235,44 +424,56 @@ jobs:
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Calculate short sha
-        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
-
-      - name: Set helm package image
-        id: version_step
+      - name: Create components promotion summary. Trigger1
         env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
-        run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${SHORT_SHA}#" ./charts/manager/values.yaml
-          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
-          VERSION=`cat apps/manager-v2/VERSION`
-          VERSION_SHA=$VERSION+$SHORT_SHA
-          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
-          echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
-
-      - name: Configure Git
+          SKIP_QUEUE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-promo-queue') }}
+          SKIP_ARGO_HEALTH: false
+          ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
+          PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
+          TEAM: ${{ secrets.TEAM_NAME }}
+          SLACK_TEAM: ${{ secrets.SLACK_TEAM }}
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          MERGED_JSON=$(jq -cs \
+            --arg environment "$ENVIRONMENT" \
+            --arg skip_queue "$SKIP_QUEUE" \
+            --arg promo_production "$PROMO_PRODUCTION" \
+            --arg team "$TEAM" \
+            --arg slack_team "$SLACK_TEAM" \
+            --arg skip_argo_health "$SKIP_ARGO_HEALTH" \
+            --arg commit_sha "${{ github.sha }}" \
+            '{
+              components: map(.components) | add
+            } + {
+              skip_promo_queue: ($skip_queue == "true")
+            } + {
+              skip_argo_health: ($skip_argo_health == "true")
+            } + {
+              environment: $environment
+            } + {
+              promo_production: ($promo_production == "true")
+            } + {
+              team: $team
+            } + {
+              slack_team: $slack_team
+            } + {
+              tests: {
+                "run-e2e": true,
+                "run-nuclia-e2e": false
+              }
+            } + {
+              "commit-sha": $commit_sha
+            }' \
+            <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
+            <(echo '${{ needs.deploy-app.outputs.json-summary }}')
+          )
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.4.0
+          echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV
 
-      - name: Push helm package
-        run: |-
-          helm lint charts/manager
-          helm package charts/manager
-          curl --data-binary "@manager-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
-
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
+      - name: Send to promotion queue
+        id: send-to-promo
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ steps.app-token.outputs.token }}
-          repository: nuclia/frontend_deploy
-          event-type: promote
-          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
+          repository: nuclia/core-apps
+          event-type: promotions
+          client-payload: '${{ env.JSON_PROMO_SUMMARY }}'

@@ -1,0 +1,131 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.remi-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .period-container {
+    align-items: baseline;
+    display: flex;
+    gap: rhythm(0.5);
+  }
+
+  label {
+    @include font-size(m);
+    @include line-height(l);
+    font-weight: $font-weight-regular;
+  }
+
+  .chart-container {
+    display: inline-block;
+    text-align: center;
+    width: calc((100% - #{rhythm(2)}* 2) / 3);
+    max-width: rhythm(60);
+
+    &:not(:last-child) {
+      margin-right: rhythm(2);
+    }
+  }
+
+  .evolution-chart-legend {
+    align-items: center;
+    display: flex;
+    gap: rhythm(3);
+
+    .legend-item {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
+
+    .average-line {
+      background: $color-primary-regular;
+      height: rhythm(0.25);
+      width: rhythm(2);
+    }
+    .range-area {
+      background: $color-primary-lightest;
+      height: rhythm(2);
+      width: rhythm(2);
+    }
+  }
+
+  section:not(.period-container):not(.missing-knowledge),
+  .criteria-container form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  .criteria-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: rhythm(0.5) 0;
+  }
+
+  .pagination {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    line-height: $line-height-body;
+    padding-right: rhythm(2);
+  }
+
+  .criteria-container {
+    padding: rhythm(2) 0;
+    max-width: rhythm(64);
+
+    form .field-container {
+      align-items: baseline;
+      display: flex;
+      gap: rhythm(1);
+
+      label {
+        flex: 1 0 auto;
+        text-align: right;
+      }
+      pa-select,
+      pa-input {
+        width: rhythm(14);
+      }
+    }
+  }
+
+  pa-expander ::ng-deep .pa-expander:not(.pa-expander-card).pa-collapsed .pa-expander-header {
+    box-shadow: none;
+  }
+
+  .context-list {
+    margin: 0;
+
+    .score {
+      color: $color-neutral-regular;
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  .sticky-section {
+    background: $color-light-stronger;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    &.sub-section {
+      padding-top: rhythm(2);
+      margin-bottom: rhythm(2);
+      top: var(--header-height);
+    }
+  }
+
+  .chart-and-definitions {
+    display: flex;
+    gap: rhythm(4);
+  }
+  .definitions {
+    dt {
+      @include title-xxs();
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
+import { AccountTypes } from '@nuclia/core';
 import { combineLatest, map, Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
-import { AccountTypes } from '@nuclia/core';
 
 const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
 
@@ -15,6 +15,7 @@ export class FeaturesService {
 
   private _account = this.sdk.currentAccount;
   private _kb = this.sdk.currentKb;
+  private _arag = this.sdk.currentArag;
 
   /**
    * PERMISSIONS and ACCOUNT TYPES
@@ -22,6 +23,8 @@ export class FeaturesService {
   isKbAdminOrContrib = this.sdk.isAdminOrContrib;
   isKbAdmin = this._kb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
   isKBContrib = this._kb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAragAdmin = this._arag.pipe(map((arag) => !!arag.admin || arag.accountId === 'local'));
+  isAragContrib = this._arag.pipe(map((arag) => !!arag.admin || !!arag.contrib));
   isAccountManager = this._account.pipe(
     map((account) => {
       return account.can_manage_account;
@@ -47,23 +50,34 @@ export class FeaturesService {
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
-    vectorset: this.featureFlag.isFeatureEnabled('vectorset'),
     huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
+    blanklineSplitter: this.featureFlag.isFeatureEnabled('blankline-splitter'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
+    visualLLMProcessing: this.featureFlag.isFeatureEnabled('visual-llm-processing'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
     externalIndex: this.featureFlag.isFeatureEnabled('external-index-provider'),
-
-    // FEATURES meant to go to authorized features once stable
-    taskAutomation: combineLatest([
-      this.featureFlag.isFeatureEnabled('tasks-automation'),
-      this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
-      ),
-    ]).pipe(map(([isFeatureEnabled, isAccountTypeAllowed]) => isFeatureEnabled && isAccountTypeAllowed)),
+    remiMetrics: this.featureFlag.isFeatureEnabled('remi-metrics'),
+    speech: this.featureFlag.isFeatureEnabled('speech'),
+    graphTask: this.featureFlag.isFeatureEnabled('graph-task'),
+    questionsTask: this.featureFlag.isFeatureEnabled('questions-task'),
+    promptSafetyTask: this.featureFlag.isFeatureEnabled('prompt-safety-task'),
+    contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
+    graphSearch: this.featureFlag.isFeatureEnabled('graph-search'),
+    extractConfig: this.featureFlag.isFeatureEnabled('extract-config'),
+    splitConfig: this.featureFlag.isFeatureEnabled('split-config'),
+    retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
+    modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
+    aragAlinia: this.featureFlag.isFeatureEnabled('arag-alinia'),
+    aragCondition: this.featureFlag.isFeatureEnabled('arag-condition'),
+    aragGuardRails: this.featureFlag.isFeatureEnabled('arag-guardrails'),
+    aragSql: this.featureFlag.isFeatureEnabled('arag-sql'),
+    aragCypher: this.featureFlag.isFeatureEnabled('arag-cypher'),
+    aragRestrictedPython: this.featureFlag.isFeatureEnabled('arag-restricted-python'),
+    aragMcp: this.featureFlag.isFeatureEnabled('arag-mcp'),
   };
 
   /**
@@ -98,5 +112,27 @@ export class FeaturesService {
         ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
       ),
     ),
+    vectorset: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('vectorset')]).pipe(
+      map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
+    ),
+    taskAutomation: combineLatest([
+      this.featureFlag.isFeatureAuthorized('tasks-automation'),
+      this._account.pipe(
+        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+      ),
+    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    labelerTask: combineLatest([
+      this.featureFlag.isFeatureAuthorized('labeller-task'),
+      this._account.pipe(
+        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+      ),
+    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    askTask: combineLatest([
+      this.featureFlag.isFeatureAuthorized('ask-task'),
+      this._account.pipe(
+        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+      ),
+    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    showDemoButton: this.featureFlag.isFeatureEnabled('demo-button'),
   };
 }

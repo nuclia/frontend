@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as *;
 
 pa-chip-closeable ::ng-deep .body-s {
   font-weight: $font-weight-semi-bold;

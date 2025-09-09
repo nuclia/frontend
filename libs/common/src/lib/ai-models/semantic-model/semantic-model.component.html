@@ -3,19 +3,111 @@
   (ngSubmit)="save()">
   <nsi-two-columns-configuration-item
     noTopBorder
-    itemTitle="kb.ai-models.semantic-model.available-models.title"
-    description="kb.ai-models.semantic-model.available-models.description">
+    itemTitle="kb.ai-models.semantic-model.default-model.title"
+    description="kb.ai-models.semantic-model.default-model.description"
+    [badge]="semanticModels.length > 1 ? 'generic.badge.beta' : ''">
     <div
       class="form-container"
       [formGroup]="configForm">
-      <pa-radio-group formControlName="semanticModel">
+      <pa-radio-group formControlName="default_semantic_model">
         @for (model of semanticModels; track model) {
           <pa-radio [value]="model">
-            {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
-            <small>({{ model }})</small>
+            <div class="radio-container">
+              <div>
+                @if (semanticModelsName[model]) {
+                  {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
+                  <small>({{ model }})</small>
+                } @else {
+                  {{ model }}
+                }
+              </div>
+              @if (!standalone) {
+                <div>
+                  <pa-button
+                    icon="more-vertical"
+                    size="small"
+                    aspect="basic"
+                    [paPopup]="actions"
+                    [disabled]="model === defaultModelBackup"></pa-button>
+                  <pa-dropdown #actions>
+                    <pa-option
+                      destructive
+                      (selectOption)="delete(model)">
+                      {{ 'kb.ai-models.semantic-model.default-model.delete.title' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              }
+            </div>
           </pa-radio>
         }
       </pa-radio-group>
     </div>
   </nsi-two-columns-configuration-item>
+
+  @if (!standalone) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="kb.ai-models.semantic-model.other-models.title"
+      description="kb.ai-models.semantic-model.other-models.description"
+      badge="generic.badge.beta">
+      <div class="other-models">
+        @for (model of otherModels; track model.value) {
+          <div class="semantic-model">
+            <div>
+              @if (semanticModelsName[model.value]) {
+                <div class="body-m">
+                  {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model.value] | translate }}
+                </div>
+                <div class="help">({{ model.value }})</div>
+              } @else {
+                <div class="body-m">{{ model.value }}</div>
+              }
+            </div>
+            @if (activeMigration && model.value === activeMigration.parameters.semantic_model_id) {
+              <div class="progress">
+                <nsi-progress-bar
+                  [progress]="null"
+                  greyTrack></nsi-progress-bar>
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  (click)="cancel(model.value, activeMigration.id)">
+                  {{ 'generic.cancel' | translate }}
+                </pa-button>
+              </div>
+            } @else {
+              <pa-button
+                size="small"
+                aspect="basic"
+                [disabled]="!!activeMigration"
+                (click)="enable(model.value)">
+                {{ 'kb.ai-models.semantic-model.other-models.enable' | translate }}
+              </pa-button>
+            }
+          </div>
+        }
+        <nsi-info-card
+          icon="warning"
+          type="warning">
+          {{ 'kb.ai-models.semantic-model.other-models.cost' | translate }}
+        </nsi-info-card>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      [disabled]="defaultModelBackup === defaultModel || saving"
+      (click)="resetForm()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="defaultModelBackup === defaultModel || saving">
+      {{ 'kb.ai-models.common.save' | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
 </form>

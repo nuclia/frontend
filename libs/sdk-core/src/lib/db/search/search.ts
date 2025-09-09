@@ -1,6 +1,6 @@
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import type { SearchOptions } from './search.models';
+import type { CatalogOptions, SearchOptions } from './search.models';
 import { Search } from './search.models';
 
 export const find = (
@@ -15,16 +15,11 @@ export const find = (
   options = options || {};
   if (
     options?.with_synonyms &&
-    (features.includes(Search.Features.VECTOR) ||
-      features.includes(Search.Features.SEMANTIC) ||
-      features.includes(Search.Features.RELATIONS))
+    (features.includes(Search.Features.SEMANTIC) || features.includes(Search.Features.RELATIONS))
   ) {
     console.warn(`with_synonyms option cannot work with SEMANTIC and RELATIONS features`);
     features = features.filter(
-      (feature) =>
-        feature !== Search.Features.VECTOR &&
-        feature !== Search.Features.SEMANTIC &&
-        feature !== Search.Features.RELATIONS,
+      (feature) => feature !== Search.Features.SEMANTIC && feature !== Search.Features.RELATIONS,
     );
   }
   const params: { [key: string]: string | string[] } = {
@@ -32,7 +27,6 @@ export const find = (
     features,
   };
 
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/find`;
   nuclia.events?.log('lastQuery', {
     endpoint,
@@ -79,9 +73,6 @@ export const find = (
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'findResults' } as Search.FindResults))),
     tap((res) => {
       nuclia.events?.log('lastResults', res);
-      if (res.type === 'findResults' && res.shards) {
-        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
-      }
     }),
   );
 };
@@ -100,7 +91,6 @@ export const search = (
     query: query || '',
     features,
   };
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/search`;
   nuclia.events?.log('lastQuery', {
     endpoint,
@@ -114,10 +104,9 @@ export const search = (
   return manageSearchRequest(nuclia, kbid, searchMethod).pipe(tap((res) => nuclia.events?.log('lastResults', res)));
 };
 
-export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions, useGet?: boolean) => {
+export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: CatalogOptions, useGet?: boolean) => {
   const params: { [key: string]: string | string[] } = {};
   params['query'] = query || '';
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const path = `/kb/${kbid}`;
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${options ? serialize(params, options) : ''}`)
@@ -154,15 +143,10 @@ function manageSearchRequest(
   return searchMethod.pipe(
     catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'searchResults' } as Search.Results))),
-    tap((res) => {
-      if (res.type === 'searchResults' && res.shards) {
-        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
-      }
-    }),
   );
 }
 
-const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions): string => {
+const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions | CatalogOptions): string => {
   Object.entries(others || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {

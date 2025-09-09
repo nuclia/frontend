@@ -1,15 +1,13 @@
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
-import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   selector: 'nsd-sistema-two-columns-configuration-item',
-  standalone: true,
-  imports: [CommonModule, PaDemoModule, TwoColumnsConfigurationItemComponent, PaTogglesModule],
+  imports: [PaDemoModule, TwoColumnsConfigurationItemComponent, PaTogglesModule],
   templateUrl: './sistema-two-columns-configuration-item.component.html',
-  styleUrl: './sistema-two-columns-configuration-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaTwoColumnsConfigurationItemComponent {

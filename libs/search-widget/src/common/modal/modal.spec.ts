@@ -1,38 +1,50 @@
 import { Modal } from './';
-import { fireEvent, render } from '@testing-library/svelte';
-
+import { mount, unmount } from 'svelte';
+import { vi, it } from 'vitest';
 describe('Modal', () => {
   it('should not render unless show is true', async () => {
-    const { queryAllByRole, getByRole, component } = render(Modal);
-    expect(queryAllByRole('dialog').length).toEqual(0);
+    const component = mount(Modal, {
+      target: document.body,
+    });
+    expect(document.body.querySelectorAll('dialog').length).toEqual(0);
+    unmount(component);
   });
 
-  it('should close on ESC', async () => {
-    const { component } = render(Modal, { show: true });
+  it('should close on ESC', () => {
     const mock = vi.fn();
-    component.$on('close', mock);
-    fireEvent(
-      global.window,
-      new KeyboardEvent('keydown', {
-        key: 'Escape',
-      }),
-    );
+    const component = mount(Modal, {
+      target: document.body,
+      props: { show: true },
+      events: { close: mock },
+    });
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     expect(mock).toHaveBeenCalled();
+    unmount(component);
   });
 
   it('should close on outside click', () => {
-    const { component, container } = render(Modal, { show: true });
     const mock = vi.fn();
-    component.$on('close', mock);
-    fireEvent.click(container.getElementsByClassName('sw-modal-backdrop')[0]);
+    const component = mount(Modal, {
+      target: document.body,
+      props: { show: true },
+      events: { close: mock },
+    });
+    const elem = document.getElementsByClassName('sw-modal-backdrop')[0];
+    elem.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(mock).toHaveBeenCalled();
+    unmount(component);
   });
 
   it('should not close on inside click', () => {
-    const { component, container } = render(Modal, { show: true });
     const mock = vi.fn();
-    component.$on('close', mock);
-    fireEvent.click(container.getElementsByClassName('modal-content')[0]);
+    const component = mount(Modal, {
+      target: document.body,
+      props: { show: true },
+      events: { close: mock },
+    });
+    const elem = document.getElementsByClassName('modal-content')[0];
+    elem.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(mock).not.toHaveBeenCalled();
+    unmount(component);
   });
 });

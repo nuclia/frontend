@@ -6,14 +6,15 @@ export interface AccountSummary {
   slug: string;
   title: string;
   type: AccountTypes;
+  created: string;
+  email: string;
 }
 
 export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
-  created: string;
-  email: string;
   limits: AccountLimits;
   maxKbs: number;
+  maxArags: number;
   trialExpirationDate?: string;
   users: AccountUser[];
 }
@@ -67,6 +68,7 @@ export type BlockedFeatureFormValues = Record<BlockedFeature, boolean>;
 export interface AccountConfigurationPayload {
   email: string;
   maxKbs: number;
+  maxArags: number;
   slug: string;
   trialExpirationDate?: string | null;
   type: AccountTypes;

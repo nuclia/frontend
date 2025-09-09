@@ -1,40 +1,57 @@
 <div class="wide-table-container">
-  <div class="filter-container">
-    <pa-input
-      [value]="filter$ | async"
-      (valueChange)="filter$.next($event)">
-      Filter
-    </pa-input>
+  <div class="table-actions">
+    <div class="filter-container">
+      <pa-input
+        [value]="filter$ | async"
+        (valueChange)="filter$.next($event)">
+        Filter
+      </pa-input>
+    </div>
+    <pa-button
+      routerLink="./add"
+      kind="primary"
+      icon="plus"
+      iconAndText>
+      Add user
+    </pa-button>
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(3, 1fr) 96px">
+    <pa-table columns="repeat(4, 1fr) 96px">
       <pa-table-header noBackground>
         <pa-table-cell header>Id</pa-table-cell>
         <pa-table-cell header>Name</pa-table-cell>
         <pa-table-cell header>Email</pa-table-cell>
+        <pa-table-cell header>Last login</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
-      <pa-table-row
-        *ngFor="let user of users$ | async | slice: 0 : lastIndex"
-        [routerLink]="user.id"
-        clickable>
-        <pa-table-cell>
-          <small>{{ user.id }}</small>
-        </pa-table-cell>
-        <pa-table-cell>{{ user.name }}</pa-table-cell>
-        <pa-table-cell>{{ user.email }}</pa-table-cell>
-        <pa-table-cell-menu>
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            size="small"
-            kind="destructive"
-            (click)="deleteUser($event, user)">
-            Delete account
-          </pa-button>
-        </pa-table-cell-menu>
-      </pa-table-row>
+      @for (user of users$ | async | slice: 0 : lastIndex; track user) {
+        <pa-table-row
+          [routerLink]="user.id"
+          clickable>
+          <pa-table-cell>
+            <small>{{ user.id }}</small>
+          </pa-table-cell>
+          <pa-table-cell>{{ user.name }}</pa-table-cell>
+          <pa-table-cell>{{ user.email }}</pa-table-cell>
+          <pa-table-cell>
+            <pa-datetime
+              [datetime]="user.last_login"
+              format="numerical"
+            dateOnly></pa-datetime>
+          </pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              size="small"
+              kind="destructive"
+              (click)="deleteUser($event, user)">
+              Delete account
+            </pa-button>
+          </pa-table-cell-menu>
+        </pa-table-row>
+      }
     </pa-table>
   </pa-infinite-scroll>
 </div>

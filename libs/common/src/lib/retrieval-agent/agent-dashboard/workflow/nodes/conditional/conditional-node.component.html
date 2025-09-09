@@ -1,0 +1,28 @@
+<app-node-box
+  [state]="state()"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.conditional.title' | translate"
+  [origin]="origin()"
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
+  <app-connectable-entry
+    id="if"
+    [category]="category()"
+    [nodeId]="id"
+    noOutput>
+    {{ 'retrieval-agents.workflow.connectable-entry.if' | translate }}
+  </app-connectable-entry>
+  <app-config-block [config]="conditionalConfig()"></app-config-block>
+  <app-connectable-entry
+    id="then"
+    [category]="category()"
+    [nodeId]="id"
+    required>
+    {{ 'retrieval-agents.workflow.connectable-entry.then' | translate }}
+  </app-connectable-entry>
+  <app-connectable-entry
+    id="else"
+    [category]="category()"
+    [nodeId]="id">
+    {{ 'retrieval-agents.workflow.connectable-entry.else' | translate }}
+  </app-connectable-entry>
+</app-node-box>

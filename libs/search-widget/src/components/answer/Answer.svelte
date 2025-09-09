@@ -1,49 +1,61 @@
 <script lang="ts">
-  import { _ } from '../../core/i18n';
-  import Feedback from './Feedback.svelte';
-  import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
-  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
+  import type { Ask, Citations, FieldId } from '@nuclia/core';
+  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, sliceUnicode } from '@nuclia/core';
+  import { take } from 'rxjs';
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander, IconButton, Tooltip } from '../../common';
-  import { MarkdownRendering } from '../viewer';
-  import Sources from './Sources.svelte';
+  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
   import {
     chat,
+    debug,
+    disableRAG,
+    disclaimer,
+    displayedMetadata,
     downloadDump,
+    expandedCitations,
+    feedbackOnAnswer,
+    getAttachedImageTemplate,
     getFieldDataFromResource,
+    getFindParagraphFromAugmentedParagraph,
     getNonGenericField,
+    getResultMetadata,
     getResultType,
-    hasDumpLogButton,
     hasNotEnoughData,
+    hideAnswer,
     isCitationsEnabled,
-    notEnoughDataMessage,
+    showAttachedImages,
     type RankedParagraph,
     type TypedResult,
   } from '../../core';
+  import { _ } from '../../core/i18n';
+  import Image from '../image/Image.svelte';
+  import { MarkdownRendering } from '../viewer';
+  import DebugInfo from './DebugInfo.svelte';
+  import Feedback from './Feedback.svelte';
+  import Sources from './Sources.svelte';
 
-  export let answer: Partial<Ask.Answer>;
-  export let rank = 0;
-  export let initialAnswer = false;
-  let text = '';
-  let selectedCitation: number | undefined;
-  let element: HTMLElement | undefined;
-  let copied = false;
+  interface Props {
+    answer: Partial<Ask.Answer>;
+    rank?: number;
+    initialAnswer?: boolean;
+  }
+
+  let { answer, rank = 0, initialAnswer = false }: Props = $props();
+  let text = $derived(addReferences(answer.text || '', answer.citations || {}));
+  let sources = $derived(getSourcesResults(answer));
+  let selectedCitation: number | undefined = $state();
+  let element: HTMLElement | undefined = $state();
+  let copied = $state(false);
+  let showMetadata = $state(false);
+  let showDisclaimer = $state(false);
 
   const dispatch = createEventDispatcher();
 
-  $: text = addReferences(answer.text || '', answer.citations || {});
-  $: notEnoughData = hasNotEnoughData(answer.text || '');
+  const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
+  const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
+  const TABLE_BORDER = new RegExp(/^[-|]+$/);
 
-  $: sources =
-    answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
-
-  $: sources &&
-    (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
-      ref.addEventListener('mouseenter', onMouseEnter);
-      ref.addEventListener('mouseleave', onMouseLeave);
-    });
-
-  function addReferences(text: string, citations: Citations) {
+  function addReferences(rawText: string, citations: Citations) {
     Object.values(citations)
       .reduce(
         (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
@@ -52,12 +64,35 @@
       .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
       .reverse()
       .forEach((ref) => {
-        text = `${text.slice(0, ref.end)}<span class="ref">${ref.index + 1}</span>${text.slice(ref.end)}`;
+        let before = sliceUnicode(rawText, 0, ref.end);
+        let after = sliceUnicode(rawText, ref.end);
+        const lines = before.split('\n');
+        const lastLine = lines[lines.length - 1];
+        const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
+        // if the citation marker has been positioned on a table border, we need to move it to the previous line
+        // so it does not break the table
+        if (lastLineIsTableBorder) {
+          before = lines.slice(0, -1).join('\n');
+          after = `\n${lastLine}${after}`;
+        }
+        const lastChar = before.slice(-1);
+        // if the citation marker has been positioned after a cell, we need to move it into the cell
+        // so it does not break the table
+        if (lastChar === '|' || lastChar === '<') {
+          before = before.slice(0, -1);
+          after = `${lastChar}${after}`;
+        }
+        rawText = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
       });
-    return text;
+    return rawText;
   }
 
-  function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
+  function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
+    const metadata = displayedMetadata.getValue();
+    const resources = answer.sources?.resources || {};
+    const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
+    const citations = answer.citations || {};
+    const augmentedContext = answer.augmentedContext;
     return Object.keys(citations).reduce((acc, citationId, index) => {
       // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
       // Note: the widget does not support extra_context, but a proxy could be injecting some
@@ -67,47 +102,72 @@
         const citationPath = citationId.split('/');
         const [resourceId, shortFieldType, fieldId] = citationPath;
         const resource = resources[resourceId];
-        if (resource) {
-          if (citationPath.length === 4) {
-            // the citation is about a paragraph
-            const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
-              citationId
-            ] as RankedParagraph;
-            paragraph.rank = index + 1;
-            if (paragraph) {
-              let field: FieldId;
-              if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-                // we take the first other field that is not generic
-                field = getNonGenericField(resource.data || {});
-              } else {
-                field = {
-                  field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-                  field_id: fieldId,
-                };
-              }
-              const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-              if (!existing) {
-                const fieldData = getFieldDataFromResource(resource, field);
-                const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-                acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
-              } else {
-                existing.paragraphs!.push(paragraph);
-              }
+        const graphPrequeryResource = graphPrequeryResources[resourceId];
+        if (resource && citationPath.length === 4) {
+          // the citation is about a paragraph
+          let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
+            citationId
+          ] as RankedParagraph;
+          if (!paragraph) {
+            const augmentedParagraph = augmentedContext?.paragraphs[citationId];
+            if (augmentedParagraph) {
+              paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
             }
-          } else if (citationPath.length === 3) {
-            // the citation is about a resource
-            const existing = acc.find((r) => r.id === resource.id);
-            if (!existing) {
-              const field = {
+          }
+          if (paragraph) {
+            paragraph.rank = index + 1;
+            let field: FieldId;
+            if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+              // we take the first other field that is not generic
+              field = getNonGenericField(resource.data || {});
+            } else {
+              field = {
                 field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
                 field_id: fieldId,
               };
+            }
+            const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+            if (!existing) {
               const fieldData = getFieldDataFromResource(resource, field);
               const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-              acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [], ranks: [index + 1] });
+              const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+              acc.push({
+                ...resource,
+                resultType,
+                resultIcon,
+                field,
+                fieldData,
+                paragraphs: [paragraph],
+                resultMetadata,
+              });
             } else {
-              existing.ranks!.push(index + 1);
+              existing.paragraphs!.push(paragraph);
             }
+          }
+        } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+          // the citation is about a resource or a relation
+          const res = resources[resourceId] || graphPrequeryResource;
+          const existing = acc.find((r) => r.id === res.id);
+          if (!existing) {
+            const field = {
+              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+              field_id: fieldId,
+            };
+            const fieldData = getFieldDataFromResource(res, field);
+            const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
+            const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+            acc.push({
+              ...res,
+              resultType,
+              resultIcon,
+              field,
+              fieldData,
+              paragraphs: [],
+              resultMetadata,
+              ranks: [index + 1],
+            });
+          } else {
+            existing.ranks!.push(index + 1);
           }
         }
       }
@@ -124,6 +184,21 @@
   }
 
   function copyAnswer() {
+    disclaimer.pipe(take(1)).subscribe((message) => {
+      if (message) {
+        showDisclaimer = true;
+      } else {
+        _copyAnswer();
+      }
+    });
+  }
+
+  function copyAfterConfirm() {
+    _copyAnswer();
+    showDisclaimer = false;
+  }
+
+  function _copyAnswer() {
     let copy = answer.text || '';
     const paragraphs = sources.reduce(
       (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
@@ -139,79 +214,128 @@
       }, 2000);
     });
   }
+
+  $effect(() => {
+    if (sources) {
+      (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
+        ref.addEventListener('mouseenter', onMouseEnter);
+        ref.addEventListener('mouseleave', onMouseLeave);
+      });
+    }
+  });
+  let images = $derived(
+    answer.citations && sources
+      ? sources.reduce(
+          (all, source) =>
+            all.concat(
+              source.paragraphs
+                .filter((paragraph) => paragraph.reference)
+                .map(
+                  (paragraph) =>
+                    `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+                ),
+            ),
+          [] as string[],
+        )
+      : [],
+  );
 </script>
 
 <div
   class="sw-answer"
   bind:this={element}>
-  <div
-    class="answer-text"
-    class:error={answer.inError}>
-    {#if notEnoughData && $notEnoughDataMessage}
-      {@html $notEnoughDataMessage}
-    {:else}
+  {#if !$hideAnswer || answer.inError}
+    <div
+      class="answer-text"
+      class:error={answer.inError}>
       <MarkdownRendering {text} />
-    {/if}
-  </div>
-  {#if answer.sources && !notEnoughData}
-    <div class="actions">
-      {#if !$chat[rank]?.answer.incomplete}
-        <div class="copy">
-          <IconButton
-            aspect="basic"
-            icon={copied ? 'check' : 'copy'}
-            size="small"
-            kind="secondary"
-            on:click={() => copyAnswer()} />
-          <Tooltip
-            visible={copied}
-            title={$_('answer.copied')}
-            x="0"
-            y="34" />
-        </div>
-      {/if}
-      <div>
-        <Feedback {rank} />
-      </div>
-      {#if !$chat[rank]?.answer.incomplete}
-        {#if initialAnswer}
-          <Button
-            aspect="basic"
-            size="small"
-            on:click={() => dispatch('openChat')}>
-            <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
-          </Button>
-        {/if}
-        {#if $hasDumpLogButton}
-          <Button
-            aspect="basic"
-            size="small"
-            on:click={() => downloadDump()}>
-            <span class="title-s">{$_('answer.download-log')}</span>
-          </Button>
-        {/if}
-      {/if}
     </div>
-    {#if $isCitationsEnabled}
+    {#if $showAttachedImages && images.length > 0}
+      <div class="images">
+        {#each images as image}
+          <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
+        {/each}
+      </div>
+    {/if}
+  {/if}
+  {#if !answer.inError}
+    {#if !$hideAnswer}
+      <div class="actions">
+        {#if !$chat[rank]?.answer.incomplete}
+          {#if !$hasNotEnoughData}
+            <div class="copy smaller">
+              <IconButton
+                aspect="basic"
+                icon={copied ? 'check' : 'copy'}
+                size="small"
+                kind="secondary"
+                on:click={() => copyAnswer()} />
+              <Tooltip
+                visible={copied}
+                title={$_('answer.copied')}
+                x="0"
+                y="34" />
+            </div>
+            {#if $feedbackOnAnswer}
+              <div>
+                <Feedback {rank} />
+              </div>
+            {/if}
+            {#if $debug}
+              <div class="smaller">
+                <IconButton
+                  aspect="basic"
+                  icon="info"
+                  size="small"
+                  kind="secondary"
+                  on:click={() => (showMetadata = true)} />
+                <DebugInfo
+                  {answer}
+                  rephrasedQuery={answer.sources?.rephrased_query}
+                  bind:show={showMetadata} />
+              </div>
+            {/if}
+            {#if initialAnswer}
+              <Button
+                aspect="basic"
+                size="small"
+                on:click={() => dispatch('openChat')}>
+                <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+              </Button>
+            {/if}
+          {/if}
+          {#if $debug}
+            <Button
+              aspect="basic"
+              size="small"
+              on:click={() => downloadDump()}>
+              <span class="title-s">{$_('answer.download-log')}</span>
+            </Button>
+          {/if}
+        {/if}
+      </div>
+    {/if}
+    {#if $isCitationsEnabled && !$hasNotEnoughData && !$disableRAG}
       <div class="sources-container">
         {#if sources.length > 0}
-          {#if initialAnswer}
-            <div class="title-s">{$_('answer.sources')}</div>
+          {#if $hideAnswer}
             <div class="sources-list">
               <Sources
                 {sources}
+                answerRank={rank}
                 selected={selectedCitation} />
             </div>
           {:else}
-            <Expander>
-              <div
-                class="title-s"
-                slot="header">
-                {$_('answer.sources')}
-              </div>
+            <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
+              {#snippet header()}
+                <div class="title-s">
+                  {$_('answer.sources')}
+                </div>
+              {/snippet}
               <div class="sources-list">
                 <Sources
                   {sources}
+                  answerRank={rank}
                   selected={selectedCitation} />
               </div>
             </Expander>
@@ -223,8 +347,13 @@
       </div>
     {/if}
   {/if}
+  <ConfirmDialog
+    show={showDisclaimer}
+    closeable={true}
+    on:cancel={() => (showDisclaimer = false)}
+    on:confirm={copyAfterConfirm}>
+    {$disclaimer}
+  </ConfirmDialog>
 </div>
 
-<style
-  lang="scss"
-  src="./Answer.scss"></style>
+<style src="./Answer.css"></style>

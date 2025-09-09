@@ -7,13 +7,13 @@ import { map, take } from 'rxjs';
 
 @Component({
   templateUrl: './features-modal.component.html',
-  standalone: true,
   imports: [PaModalModule, TranslateModule, CommonModule, PaButtonModule, PaTogglesModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesModalComponent {
   hasCustomFeatures = Object.keys(this.featureFlag.getCustomFeatures()).length > 0;
   features?: Features;
+  showBlockedZones = this.featureFlag.showBlockedZones();
 
   constructor(
     public modal: ModalRef,
@@ -30,6 +30,7 @@ export class FeaturesModalComponent {
   }
 
   save() {
+    this.featureFlag.changeBlockedZones(this.showBlockedZones);
     this.featureFlag
       .getDefaultFeatures()
       .pipe(

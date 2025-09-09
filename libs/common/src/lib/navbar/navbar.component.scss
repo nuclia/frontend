@@ -1,7 +1,4 @@
-@import 'apps/dashboard/src/variables';
-
-// Height from which the menu get smaller (prevents scrollbar to appear)
-$height-breakpoint: 856px;
+@use 'apps/dashboard/src/variables' as *;
 
 :host,
 .app-navbar {
@@ -20,7 +17,7 @@ $height-breakpoint: 856px;
 }
 
 .navbar-scroll-container {
-  background: $color-neutral-lighter;
+  background: $color-primary-lighter;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -47,7 +44,7 @@ $height-breakpoint: 856px;
         cursor: pointer;
         display: flex;
         overflow: hidden;
-        padding: rhythm(2);
+        padding: rhythm(1.5);
         position: relative;
         text-decoration: none;
         user-select: none;
@@ -68,7 +65,7 @@ $height-breakpoint: 856px;
           background-color: $color-light-stronger;
         }
         &:not(.active).sub-item {
-          background-color: $color-neutral-light;
+          background-color: $color-primary-lightest;
 
           &:not(.disabled):not(.unauthorized):hover {
             background-color: $color-neutral-lightest;
@@ -77,6 +74,9 @@ $height-breakpoint: 856px;
         &.sub-item.sync {
           .nav-link-title {
             font-weight: $font-weight-thin;
+            padding: rhythm(1.5);
+            font-size: font-size(s);
+            display: flex;
           }
           img {
             margin: 0 rhythm(0.5);
@@ -102,15 +102,6 @@ $height-breakpoint: 856px;
           font-weight: $font-weight-semi-bold;
           padding-left: rhythm(2);
           white-space: nowrap;
-        }
-
-        @media (max-height: $height-breakpoint) {
-          padding: rhythm(1.5);
-
-          .nav-link-title {
-            display: flex;
-            font-size: font-size(s);
-          }
         }
       }
     }

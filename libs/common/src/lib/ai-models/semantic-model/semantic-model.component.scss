@@ -1,0 +1,36 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.radio-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  justify-content: space-between;
+}
+
+.other-models {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.semantic-model {
+  align-items: center;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-button;
+  display: flex;
+  justify-content: space-between;
+  padding: rhythm(1) rhythm(1.5);
+}
+
+.help {
+  color: $color-neutral-regular;
+}
+
+.progress {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  nsi-progress-bar {
+    width: rhythm(12);
+  }
+}

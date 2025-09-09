@@ -1,4 +1,5 @@
 import type { EntityPosition, Relation } from '@nuclia/core';
+import type { SimulationLinkDatum, SimulationNodeDatum } from 'd3-force';
 
 export interface NerFamily {
   id: string;
@@ -6,6 +7,9 @@ export interface NerFamily {
   label: string;
 }
 
+export interface EntityPositionsWithRelevance {
+  [entityId: string]: PositionWithRelevance;
+}
 export interface PositionWithRelevance extends EntityPosition {
   relevance?: number;
 }
@@ -13,7 +17,7 @@ export interface RelationWithRelevance extends Relation {
   relevance?: number;
 }
 
-export interface NerNode {
+export interface NerNode extends SimulationNodeDatum {
   id: string;
   ner: string;
   family: string;
@@ -22,19 +26,9 @@ export interface NerNode {
   color: string;
 }
 
-interface BaseLink {
+export interface NerLink extends SimulationLinkDatum<NerNode> {
   fromGroup?: string;
   toGroup?: string;
   relevance: number;
   label?: string;
-}
-
-export interface NerLink extends BaseLink {
-  source?: string;
-  target?: string;
-}
-
-export interface NerLinkHydrated extends BaseLink {
-  source: NerNode;
-  target: NerNode;
 }

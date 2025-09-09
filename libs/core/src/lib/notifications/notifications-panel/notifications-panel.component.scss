@@ -1,4 +1,4 @@
-@import '../../../../../../apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $notification-panel-width: rhythm(56);
 

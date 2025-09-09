@@ -10,6 +10,8 @@
   [iconAndText]="!!icon"
   [sameWidth]="!freeWidth"
   alignPopupOnLeft>
-  <ng-content></ng-content>
+  <span>
+    <ng-content></ng-content>
+  </span>
   <pa-icon name="chevron-down"></pa-icon>
 </pa-button>

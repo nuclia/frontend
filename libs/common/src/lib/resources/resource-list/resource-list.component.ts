@@ -1,19 +1,31 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { FeaturesService, SDKService } from '@flaps/core';
+import { ControlModel, DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import {
+  Classification,
+  getFilterFromDate,
+  getFilterFromLabel,
+  getFilterFromVisibility,
+  getLabelFromFilter,
+  LabelSets,
+  MIME_FACETS,
+  Search,
+  trimLabelSets,
+} from '@nuclia/core';
+import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
-import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
+import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { ResourceListService } from './resource-list.service';
-import { Filters, formatFiltersFromFacets, getFilterFromDate, MIME_FACETS } from '../resource-filters.utils';
-import { Search } from '@nuclia/core';
 
 @Component({
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
@@ -28,12 +40,20 @@ export class ResourceListComponent implements OnDestroy {
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
   ready = this.resourceListService.ready;
-  isShardReady = this.resourceListService.isShardReady;
+  hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
-  filterOptions: Filters = { classification: [], mainTypes: [], creation: {} };
+  filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  andLogicForLabels: boolean = false;
+  displayedLabelSets: LabelSets = {};
+  searchModes = [
+    new ControlModel({ id: 'title', value: 'title', label: 'stash.search-modes.title' }),
+    new ControlModel({ id: 'uid', value: 'uid', label: 'stash.search-modes.uid' }),
+    new ControlModel({ id: 'slug', value: 'slug', label: 'stash.search-modes.slug' }),
+  ];
+  searchMode: 'title' | 'uid' | 'slug' = 'title';
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -57,20 +77,15 @@ export class ResourceListComponent implements OnDestroy {
     private sdk: SDKService,
     private uploadService: UploadService,
     private resourceListService: ResourceListService,
-    private tracking: STFTrackingService,
     private features: FeaturesService,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {
-    this.uploadService.updateStatusCount().subscribe(() => {
-      // updateStatusCount is launching the first `/catalog` request which will set the shard.
-      // we need to wait for it to be done before launching other request to prevent using different shards for different requests
-      this.isShardReady.next(true);
-    });
+    this.uploadService.updateStatusCount().subscribe();
     this.uploadService.refreshNeeded
       .pipe(
-        switchMap(() => this.resourceListService.loadResources()),
+        switchMap(() => this.resourceListService.loadResources(true, false)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
@@ -83,7 +98,7 @@ export class ResourceListComponent implements OnDestroy {
           if (this.isMainView || this.isProcessedView) {
             return this.loadFilters();
           } else {
-            this.filterOptions = { classification: [], mainTypes: [], creation: {} };
+            this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
             this.cdr.markForCheck();
             return of(null);
           }
@@ -100,7 +115,6 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.isShardReady.next(false);
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
@@ -118,7 +132,6 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   search() {
-    this.tracking.logEvent('search-in-resource-list', { searchIn: 'titles' });
     this.resourceListService.search();
   }
 
@@ -129,10 +142,19 @@ export class ResourceListComponent implements OnDestroy {
     }
   }
 
+  updateClassifications(selection: Classification[]) {
+    const filters = selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase());
+    this.filterOptions.classification.forEach((option) => {
+      option.selected = filters.includes(option.id.toLocaleLowerCase());
+    });
+    this.cdr.markForCheck();
+    this.onToggleFilter();
+  }
+
   applyDates() {
     this.dateDropdown?.close();
     const start = this.dateForm.value.start;
-    const end = this.dateForm.value.end ? `${this.dateForm.value.end.slice(0, 10)}T23:59:59.000Z` : undefined;
+    const end = this.dateForm.value.end ? endOfDay(new Date(this.dateForm.value.end)).toISOString() : undefined;
     this.filterOptions.creation = {
       start: start ? { filter: getFilterFromDate(start, 'start'), date: start } : undefined,
       end: end ? { filter: getFilterFromDate(end, 'end'), date: end } : undefined,
@@ -146,6 +168,21 @@ export class ResourceListComponent implements OnDestroy {
     this.onToggleFilter();
   }
 
+  onHiddenChange(hidden: boolean) {
+    this.filterOptions.hidden = this.filterOptions.hidden === hidden ? undefined : hidden;
+    this.onToggleFilter();
+  }
+
+  clearHidden() {
+    this.filterOptions.hidden = undefined;
+    this.onToggleFilter();
+  }
+
+  updateLabelsLogic(value: boolean) {
+    this.andLogicForLabels = value;
+    this.onToggleFilter();
+  }
+
   clearFilter(option: OptionModel) {
     option.selected = !option.selected;
     this.onToggleFilter();
@@ -154,8 +191,12 @@ export class ResourceListComponent implements OnDestroy {
   onToggleFilter() {
     const filters = this.selectedFilters;
     if (filters.length > 0) {
-      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { filters } });
-      this.resourceListService.filter(filters);
+      const queryParams: Params = { filters };
+      if (this.andLogicForLabels) {
+        queryParams['labelsLogic'] = 'AND';
+      }
+      this.router.navigate(['./'], { relativeTo: this.route, queryParams });
+      this.resourceListService.filter(filters, this.andLogicForLabels ? 'AND' : 'OR');
     } else {
       this.clearFilters();
     }
@@ -166,14 +207,23 @@ export class ResourceListComponent implements OnDestroy {
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
+    this.filterOptions.hidden = undefined;
   }
 
-  get selectedMainTypes() {
+  get selectedMainTypeOptions() {
     return this.filterOptions.mainTypes.filter((option) => option.selected);
   }
 
-  get selectedClassifications() {
+  get selectedClassificationOptions() {
     return this.filterOptions.classification.filter((option) => option.selected);
+  }
+
+  get selectedClassifications() {
+    return this.selectedClassificationOptions.map((option) => getLabelFromFilter(option.id));
+  }
+
+  get selectedVisibility() {
+    return this.filterOptions.hidden !== undefined ? getFilterFromVisibility(this.filterOptions.hidden) : [];
   }
 
   get selectedDates() {
@@ -183,7 +233,10 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   get selectedFilters(): string[] {
-    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes')).concat(this.selectedDates);
+    return this.getSelectionFor('classification')
+      .concat(this.getSelectionFor('mainTypes'))
+      .concat(this.selectedDates)
+      .concat(this.selectedVisibility);
   }
 
   private getSelectionFor(type: 'classification' | 'mainTypes') {
@@ -192,34 +245,67 @@ export class ResourceListComponent implements OnDestroy {
 
   private loadFilters(): Observable<void> {
     return forkJoin([
-      this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
       this.route.queryParamMap.pipe(take(1)),
       this.resourceListService.prevFilters.pipe(take(1)),
+      this.resourceListService.prevLabelsLogic.pipe(take(1)),
     ]).pipe(
-      switchMap(([kb, labelSets, queryParams, prevFilters]) => {
+      switchMap(([labelSets, queryParams, prevFilters, prevLabelsLogic]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, prevFilters })));
+        return this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) =>
+            kb
+              .getFacets(faceted)
+              .pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }))),
+          ),
+        );
       }),
-      map(({ results, queryParams, prevFilters }) => {
-        if (results.type !== 'error') {
-          const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
-          this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
-          if (previousFilters.length > 0) {
-            this.onToggleFilter();
-          }
+      map(({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }) => {
+        const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
+        this.andLogicForLabels = queryParams.get('preserveFilters')
+          ? prevLabelsLogic === 'AND'
+          : queryParams.get('labelsLogic') === 'AND';
+        this.formatFiltersFromFacets(facets, labelSets, previousFilters);
+        if (previousFilters.length > 0) {
+          this.onToggleFilter();
         }
       }),
     );
   }
 
-  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
+  private formatFiltersFromFacets(
+    allFacets: Search.FacetsResult,
+    labelSets: LabelSets,
+    queryParamsFilters: string[] = [],
+  ) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
+    // some old labelsets might be lowercase while the actual ones on resources are not
+    // this fix make them visible
+    const nonFacetedLabels = Object.values(labelSets).reduce((all, labelSet) => {
+      labelSet.labels.forEach((label) => {
+        const filter = getFilterFromLabel({ labelset: labelSet.title, label: label.title });
+        if (!filters.classification.some((v) => v.id === filter)) {
+          // we cannot give the counting because the value differs by its case
+          all.push(new OptionModel({ id: filter, label: `${labelSet.title}/${label.title} (?)`, value: filter }));
+        }
+      });
+      return all;
+    }, [] as OptionModel[]);
+    filters.classification = [...filters.classification, ...nonFacetedLabels];
     this.filterOptions = filters;
     this.dateForm.patchValue({
       start: filters.creation?.start?.date,
       end: filters.creation?.end?.date,
     });
+    const labels = filters.classification.map((option) => getLabelFromFilter(option.id));
+    this.displayedLabelSets = trimLabelSets(labelSets, labels);
     this.cdr.markForCheck();
+  }
+
+  onModeChange(mode: string) {
+    this.searchMode = mode as 'title' | 'uid' | 'slug';
+    this.resourceListService.setSearchMode(this.searchMode);
+    this.search();
   }
 }

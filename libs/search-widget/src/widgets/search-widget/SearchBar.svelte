@@ -1,115 +1,229 @@
 <svelte:options
-  customElement="nuclia-search-bar"
+  customElement={{
+    tag: 'nuclia-search-bar',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">
-  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
-  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
+  import {
+    parseRAGImageStrategies,
+    parseRAGStrategies,
+    Reranker,
+    type FilterExpression,
+    type KBStates,
+    type Nuclia,
+    type RAGImageStrategy,
+    type RAGStrategy,
+    type Widget,
+  } from '@nuclia/core';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import {
-    getRAGImageStrategies,
-    getRAGStrategies,
-    injectCustomCss,
-    loadFonts,
-    loadSvgSprite,
-    setCDN,
-  } from '../../core/utils';
-  import { setLang } from '../../core/i18n';
+  import { IconButton, Modal } from '../../common';
+  import globalCss from '../../common/global.css?inline';
+  import { InfoCard, onClosePreview } from '../../components';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
+  import { type WidgetFilters } from '../../core';
+  import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
+  import { setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss?inline';
-  import {
-    notEnoughDataMessage,
-    widgetFeatures,
-    widgetFilters,
-    widgetImageRagStrategies, widgetJsonSchema,
-    widgetPlaceholder,
-    widgetRagStrategies
-  } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
     initAnswer,
     initEntitiesStore,
     initLabelStore,
+    initMimeTypeStore,
+    initPathsStore,
     initUsageTracking,
     initViewer,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import {
     entityRelations,
+    filterExpression,
     preselectedFilters,
+    searchConfigId,
     searchFilters,
     searchQuery,
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import type { WidgetFilters } from '../../core';
-  import { InfoCard } from '../../components';
-  import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, map, take } from 'rxjs';
+  import {
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    DEFAULT_CHAT_PLACEHOLDER,
+    previewBaseUrl,
+    widgetFeatures,
+    widgetFeedback,
+    widgetFilters,
+    widgetImageRagStrategies,
+    widgetJsonSchema,
+    widgetPlaceholder,
+    widgetRagStrategies,
+  } from '../../core/stores/widget.store';
+  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox: string;
-  export let placeholder = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let mode = '';
-  export let filters = '';
-  export let preselected_filters = '';
-  export let cssPath = '';
-  export let prompt = '';
-  export let generativemodel = '';
-  export let no_tracking = false;
-  export let rag_strategies = '';
-  export let rag_image_strategies = '';
-  export let not_enough_data_message = '';
-  export let ask_to_resource = '';
-  export let max_tokens: number | undefined = undefined;
-  export let query_prepend = '';
-  export let json_schema = '';
-  export let vectorset = '';
-
-  let _ready = new BehaviorSubject(false);
+  const _initialized = new BehaviorSubject(false);
+  const initialized = _initialized.asObservable().pipe(filter((r) => r));
+  const _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
+  export const onError = getApiErrors();
+  export const reset = () => resetNuclia();
+
   let nucliaAPI: Nuclia;
-  export let initHook: (n: Nuclia) => void = () => {};
+  class Props {
+    backend = 'https://nuclia.cloud/api';
+    zone = 'europe-1';
+    knowledgebox: string;
+    placeholder?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client = 'widget';
+    kbstate: KBStates = 'PUBLISHED';
+    features?: string;
+    standalone = false;
+    proxy = false;
+    mode?: string;
+    filters?: string;
+    labelsets_excluded_from_filters?: string;
+    preselected_filters?: string;
+    filter_expression?: string;
+    csspath?: string;
+    prompt?: string;
+    system_prompt?: string;
+    rephrase_prompt?: string;
+    generativemodel?: string;
+    no_tracking = false;
+    rag_strategies?: string;
+    rag_images_strategies?: string;
+    not_enough_data_message?: string;
+    ask_to_resource?: string;
+    max_tokens?: number | string | undefined;
+    max_output_tokens?: number | string | undefined;
+    max_paragraphs?: number | string | undefined;
+    query_prepend?: string;
+    json_schema?: string;
+    vectorset?: string;
+    chat_placeholder?: string;
+    audit_metadata?: string;
+    reranker?: Reranker | undefined;
+    citation_threshold?: number | string | undefined;
+    rrf_boosting?: number | string | undefined;
+    feedback: Widget.WidgetFeedback = 'answer';
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+    widget_id?: string | undefined;
+    search_config_id?: string | undefined;
+    security_groups?: string | undefined;
+  }
 
-  $: darkMode = mode === 'dark';
-  $: {
+  let { ...componentProps } = $props();
+  let config = $state(new Props());
+
+  let zone = $derived(componentProps.zone || config.zone);
+  let backend = $derived(componentProps.backend || config.backend);
+  let knowledgebox = $derived(componentProps.knowledgebox || config.knowledgebox);
+  let placeholder = $derived(componentProps.placeholder || config.placeholder);
+  let lang = $derived(componentProps.lang || config.lang || window.navigator.language.split('-')[0] || 'en');
+  let cdn = $derived(componentProps.cdn || config.cdn);
+  let apikey = $derived(componentProps.apikey || config.apikey);
+  let account = $derived(componentProps.account || config.account);
+  let client = $derived(componentProps.client || config.client);
+  let kbstate = $derived(componentProps.kbstate || config.kbstate);
+  let features = $derived(componentProps.features || config.features);
+  let standalone = $derived(componentProps.standalone || config.standalone);
+  let proxy = $derived(componentProps.proxy || config.proxy);
+  let mode = $derived(componentProps.mode || config.mode);
+  let filters = $derived(componentProps.filters || config.filters);
+  let labelsets_excluded_from_filters = $derived(
+    componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
+  );
+  let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
+  let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
+  let csspath = $derived(componentProps.csspath || config.csspath);
+  let prompt = $derived(componentProps.prompt || config.prompt);
+  let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
+  let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
+  let generativemodel = $derived(componentProps.generativemodel || config.generativemodel);
+  let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
+  let rag_strategies = $derived(componentProps.rag_strategies || config.rag_strategies);
+  let rag_images_strategies = $derived(componentProps.rag_images_strategies || config.rag_images_strategies);
+  let not_enough_data_message = $derived(componentProps.not_enough_data_message || config.not_enough_data_message);
+  let ask_to_resource = $derived(componentProps.ask_to_resource || config.ask_to_resource);
+  let max_tokens = $derived(componentProps.max_tokens || config.max_tokens);
+  let max_output_tokens = $derived(componentProps.max_output_tokens || config.max_output_tokens);
+  let max_paragraphs = $derived(componentProps.max_paragraphs || config.max_paragraphs);
+  let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
+  let json_schema = $derived(componentProps.json_schema || config.json_schema);
+  let vectorset = $derived(componentProps.vectorset || config.vectorset);
+  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder || '');
+  let audit_metadata = $derived(componentProps.audit_metadata || config.audit_metadata);
+  let reranker = $derived(componentProps.reranker || config.reranker);
+  let citation_threshold = $derived(componentProps.citation_threshold || config.citation_threshold);
+  let rrf_boosting = $derived(componentProps.rrf_boosting || config.rrf_boosting);
+  let feedback = $derived(componentProps.feedback || config.feedback);
+  let copy_disclaimer = $derived(componentProps.copy_disclaimer || config.copy_disclaimer);
+  let metadata = $derived(componentProps.metadata || config.metadata);
+  let widget_id = $derived(componentProps.widget_id || config.widget_id);
+  let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let security_groups = $derived(componentProps.security_groups || config.security_groups);
+  let darkMode = $derived(mode === 'dark');
+
+  $effect(() => {
+    let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
+    chatPlaceholderInitial.set(initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+    chatPlaceholderDiscussion.set(discussionPlaceholder || initialPlaceholder || DEFAULT_CHAT_PLACEHOLDER);
+  });
+  $effect(() => {
     widgetPlaceholder.set(placeholder || 'input.placeholder');
-  }
-  $: {
-    notEnoughDataMessage.set(not_enough_data_message);
-  }
+  });
 
-  let _features: WidgetFeatures = {};
   let _filters: WidgetFilters = {};
+  let _features: Widget.WidgetFeatures = {};
+  let _securityGroups: string[] | undefined;
   let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
-  let _ragImageStrategies: RAGImageStrategy[] = [];
+  let _ragImagesStrategies: RAGImageStrategy[] = [];
+  let _max_tokens: number | undefined;
+  let _max_output_tokens: number | undefined;
+  let _citation_threshold: number | undefined;
+  let _rrf_boosting: number | undefined;
+  let _max_paragraphs: number | undefined;
+  let _filter_expression: FilterExpression | undefined;
+  let initHook: (n: Nuclia) => void = () => {};
 
-  export function search(query: string, filters?: string[]) {
+  export function setInitHook(fn: (n: Nuclia) => void) {
+    initHook = fn;
+  }
+
+  export function setPreviewBaseUrl(url: string) {
+    previewBaseUrl.set(url);
+  }
+
+  export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     searchQuery.set(query);
     if (filters) {
-      searchFilters.set({filters});
+      searchFilters.set({ filters });
     }
     typeAhead.set(query || '');
-    triggerSearch.next();
+    if (!doNotTriggerSearch) {
+      triggerSearch.next();
+    }
   }
 
   export function reloadSearch() {
     console.log(`Reload search`);
     triggerSearch.next();
+  }
+
+  export function setSearchConfiguration(id: string | undefined) {
+    searchConfigId.set(id);
   }
 
   export function logState() {
@@ -118,8 +232,11 @@
       _filters,
       _ragStrategies,
       prompt,
+      system_prompt,
+      rephrase_prompt,
       generativemodel,
       preselected_filters,
+      _filter_expression,
       mode,
       proxy,
       standalone,
@@ -133,6 +250,12 @@
       account,
       not_enough_data_message,
       vectorset,
+      reranker,
+      citation_threshold,
+      rrf_boosting,
+      feedback,
+      widget_id,
+      search_config_id,
     });
   }
 
@@ -140,122 +263,165 @@
     downloadDump();
   }
 
+  export function closePreview() {
+    onClosePreview();
+  }
+
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
     dispatch(name, detail);
   };
 
-  let svgSprite: string;
-  let container: HTMLElement;
+  let svgSprite: string = $state();
+  let container: HTMLElement = $state();
 
-  let showRelations = false;
+  let showRelations = $state(false);
 
-  ready.pipe(delay(200)).subscribe(() => {
+  initialized.pipe(delay(200)).subscribe(() => {
     initHook(nucliaAPI);
 
     // any feature that calls the Nuclia API immediately at init time must be done here
     if (_features.permalink) {
       activatePermalinks();
     }
-    if (_features.dumpLog) {
+    if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
       });
     }
+    _ready.next(true);
   });
 
   onMount(() => {
-    if (cdn) {
-      setCDN(cdn);
-    }
-    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
-      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
-      {},
-    );
-    _filters = (filters ? filters.split(',').filter((filter) => !!filter) : []).reduce(
-      (acc, current) => ({ ...acc, [current]: true }),
-      {},
-    );
-    if (Object.keys(_filters).length === 0) {
-      _filters.labels = true;
-      _filters.entities = true;
-    }
-    _ragStrategies = getRAGStrategies(rag_strategies);
-    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
-    try {
-      _jsonSchema = json_schema ? JSON.parse(json_schema) : null;
-    } catch (e) {
-      _jsonSchema = null;
-    }
+    const nucliaOptions = {
+      backend,
+      zone,
+      knowledgeBox: knowledgebox,
+      client,
+      apiKey: apikey,
+      standalone,
+      proxy,
+      account,
+      accountId: account,
+    };
+    (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
+      config = { ...config, ...loadedProperties };
 
-    nucliaAPI = initNuclia(
-      {
-        backend,
-        zone,
-        knowledgeBox: knowledgebox,
-        client,
-        apiKey: apikey,
-        standalone,
-        proxy,
-        account,
-        accountId: account,
-      },
-      state,
-      {
-        highlight: true,
-        features: _features,
-        prompt,
-        generative_model: generativemodel,
-        ask_to_resource,
-        max_tokens,
-        query_prepend,
-        vectorset,
-      },
-      no_tracking,
-    );
-
-    // Setup widget in the store
-    widgetFeatures.set(_features);
-    widgetFilters.set(_filters);
-    widgetRagStrategies.set(_ragStrategies);
-    widgetImageRagStrategies.set(_ragImageStrategies);
-    widgetJsonSchema.set(_jsonSchema);
-
-    if (_features.filter) {
-      if (_filters.labels || _filters.labelFamilies) {
-        initLabelStore();
+      if (cdn) {
+        setCDN(cdn);
       }
-      if (_filters.entities) {
-        initEntitiesStore();
+      _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+        (acc, current) => ({ ...acc, [current as keyof Widget.WidgetFeatures]: true }),
+        {},
+      );
+      _filters = (filters ? filters.split(',').filter((filter) => !!filter) : []).reduce(
+        (acc, current) => ({ ...acc, [current]: true }),
+        {},
+      );
+      if (Object.keys(_filters).length === 0) {
+        _filters.labels = true;
       }
-    }
-    if (preselected_filters) {
-      preselectedFilters.set(preselected_filters);
-    }
-    if (_features.answers) {
-      initAnswer();
-    }
-    loadFonts();
-    loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+      _securityGroups = security_groups?.split(',').filter((group) => !!group);
+      _ragStrategies = parseRAGStrategies(rag_strategies);
+      _ragImagesStrategies = parseRAGImageStrategies(rag_images_strategies);
+      try {
+        _jsonSchema = json_schema ? JSON.parse(json_schema) : null;
+      } catch (e) {
+        _jsonSchema = null;
+      }
+      _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
+      _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
+      _citation_threshold =
+        typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
+      _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
+      _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      try {
+        _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
+      } catch (e) {
+        console.log(`Invalid filter_expression`);
+      }
 
-    if (_features.suggestions || _features.autocompleteFromNERs) {
-      activateTypeAheadSuggestions();
-    }
+      nucliaAPI = initNuclia(
+        nucliaOptions,
+        kbstate,
+        {
+          features: _features,
+          prompt,
+          system_prompt,
+          rephrase_prompt,
+          generative_model: generativemodel,
+          ask_to_resource,
+          max_tokens: _max_tokens,
+          max_output_tokens: _max_output_tokens,
+          max_paragraphs: _max_paragraphs,
+          query_prepend,
+          vectorset,
+          audit_metadata,
+          reranker,
+          citation_threshold: _citation_threshold,
+          rrf_boosting: _rrf_boosting,
+          feedback,
+          copy_disclaimer,
+          not_enough_data_message,
+          metadata,
+          security_groups: _securityGroups,
+        },
+        no_tracking,
+      );
 
-    lang = lang || window.navigator.language.split('-')[0] || 'en';
-    setLang(lang);
+      // Setup widget in the store
+      widgetFeatures.set(_features);
+      widgetFilters.set(_filters);
+      widgetRagStrategies.set(_ragStrategies);
+      widgetImageRagStrategies.set(_ragImagesStrategies);
+      widgetJsonSchema.set(_jsonSchema);
+      widgetFeedback.set(feedback);
 
-    setupTriggerSearch(dispatchCustomEvent);
-    initViewer();
+      if (_features.filter) {
+        if (_filters.labels || _filters.labelFamilies) {
+          initLabelStore(labelsets_excluded_from_filters);
+        }
+        if (_filters.entities) {
+          initEntitiesStore();
+        }
+        if (_filters.mime) {
+          initMimeTypeStore();
+        }
+        if (_filters.path) {
+          initPathsStore();
+        }
+      }
+      if (preselected_filters) {
+        preselectedFilters.set(preselected_filters);
+      } else if (_filter_expression) {
+        filterExpression.set(_filter_expression);
+      }
+      if (_features.answers) {
+        initAnswer();
+      }
+      loadFonts();
+      loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
-    if (_features.knowledgeGraph) {
-      setupTriggerGraphNerSearch();
-    }
-    initUsageTracking(no_tracking);
-    injectCustomCss(cssPath, container);
+      if (_features.suggestions || _features.autocompleteFromNERs) {
+        activateTypeAheadSuggestions();
+      }
 
-    _ready.next(true);
+      setLang(lang);
 
+      setupTriggerSearch(dispatchCustomEvent);
+      initViewer(dispatchCustomEvent);
+
+      if (_features.knowledgeGraph) {
+        setupTriggerGraphNerSearch();
+      }
+      initUsageTracking(no_tracking);
+      injectCustomCss(csspath, container);
+
+      if (search_config_id) {
+        searchConfigId.set(search_config_id);
+      }
+      _initialized.next(true);
+    });
     return () => resetNuclia();
   });
 
@@ -267,14 +433,15 @@
   }
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if $ready && !!svgSprite}
+  <style src="../../common/common-style.css"></style>
+  {#if $initialized && !!svgSprite}
     <div class="search-box">
       <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')} />
 
@@ -308,6 +475,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./SearchBar.scss"></style>
+<style src="./SearchBar.css"></style>

@@ -1,4 +1,5 @@
 ![CI](https://github.com/nuclia/frontend/actions/workflows/deploy.yml/badge.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_shield)
 
 # Nuclia frontend apps and libraries
 
@@ -10,6 +11,7 @@
 - [Widget](#widget)
 - [SDK](#sdk)
 - [Sistema](#sistema)
+- [NucliaDB admin](#nucliadb-admin)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 
@@ -146,6 +148,33 @@ To update the glyphs sprite:
 ./libs/sistema/scripts/update_icons.sh
 ```
 
+## NucliaDB admin
+
+To run it locally for dev purpose:
+
+```
+docker network create nucliadb-network
+docker run -it -d --name pg --network nucliadb-network \
+  -p 5432:5432 \
+  -e POSTGRES_USER=nucliadb \
+  -e POSTGRES_PASSWORD=nucliadb \
+  -e POSTGRES_DB=nucliadb \
+  postgres:latest
+docker pull nuclia/nucliadb:latest --platform linux/amd64
+docker build --platform linux/amd64 -t nucliadb-server -f ./tools/nucliadb-admin/Dockerfile .
+docker run --network nucliadb-network \
+    --name nucliadb-server \
+    --platform linux/amd64 \
+    -p 8080:8080 \
+    -v nucliadb-standalone:/data \
+    -e NUCLIA_PUBLIC_URL="https://europe-1.stashify.cloud" \
+    -e NUA_API_KEY=<NUA_KEY> \
+    -e LOG_LEVEL=DEBUG \
+    -e DRIVER=PG \
+    -e DRIVER_PG_URL="postgresql://nucliadb:nucliadb@pg:5432/nucliadb" \
+    nucliadb-server
+```
+
 ## CI/CD Deployment
 
 ### Scope
@@ -190,5 +219,21 @@ The maintenance page is in `./maintenance`.
 It is deployed manually to stage using the following command:
 
 ```sh
-gsutil cp -r ./maintenance gs://stashify-cdn
+gsutil cp -r ./maintenance gs://ncl-cdn-gcp-global-stage-1
 ```
+
+## External dependencies
+
+We used to load some external libs from cdn.jsdelivr.net or cd./dashjs.net, but it was sometimes conflicting with some customers security policy.
+
+So the following files have been manually uploaded in the Nuclia CDN:
+
+https://cdn.jsdelivr.net/npm/marked/marked.min.js
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.worker.js\n
+https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/web/pdf_viewer.css
+https://cdn.dashjs.org/v4.7.1/dash.all.min.js
+
+## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_large)

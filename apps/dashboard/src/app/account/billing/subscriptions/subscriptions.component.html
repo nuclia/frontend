@@ -1,5 +1,7 @@
 @if ((isSubscribedToAws | async) === true) {
   <app-aws-subscription></app-aws-subscription>
+} @else if ((isManuallySubscribed | async) === true) {
+  <app-manual-subscription></app-manual-subscription>
 } @else {
   <div class="header">
     <h2>{{ 'billing.subscription.title' | translate }}</h2>
@@ -8,13 +10,13 @@
       <div>
         <button
           class="currency title-xs"
-          [class.selected]="currency === 'USD'"
+          [class.selected]="(currency | async) === 'USD'"
           (click)="setCurrency('USD')">
           USD
         </button>
         <button
           class="currency title-xs"
-          [class.selected]="currency === 'EUR'"
+          [class.selected]="(currency | async) === 'EUR'"
           (click)="setCurrency('EUR')">
           EUR
         </button>
@@ -22,7 +24,7 @@
     }
   </div>
 
-  @if (currency) {
+  @if (currency | async; as currency) {
     @if (accountTypesDefaults | async; as defaults) {
       <table
         class="subscriptions"
@@ -123,14 +125,15 @@
             } @else if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price) {
               <td>
                 {{
-                  (prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price || 0 | currency: currency : 'symbol' : '1.2-6'
+                  (prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price || 0
+                    | currency: currency : 'symbol' : '1.2-6'
                 }}
               </td>
             }
           }
         </tr>
         <tr>
-          <td>NucliaDB</td>
+          <td>{{ 'billing.nucliadb' | translate }}</td>
           @if (!disableStarterPlan) {
             <td>Cloud / On-Prem</td>
           }
@@ -139,7 +142,7 @@
           <td>Cloud / On-Prem</td>
         </tr>
         <tr>
-          <td>Nuclia preprocessing</td>
+          <td>{{ 'billing.preprocessing' | translate }}</td>
           @if (!disableStarterPlan) {
             <td>Cloud</td>
           }
@@ -220,7 +223,8 @@
           * {{ 'billing.token-help' | translate }}
           <a
             href="https://nuclia.com/nuclia-token"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             {{ 'billing.learn-more' | translate }}
           </a>
         </div>

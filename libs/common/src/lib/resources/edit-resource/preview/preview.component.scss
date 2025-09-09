@@ -1,28 +1,56 @@
-@import 'apps/dashboard/src/variables';
-@import '../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../edit-resource.tokens' as tokens;
 
 .main-container {
   display: flex;
   gap: rhythm(5);
 
-  .filters-container {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: rhythm(1.5);
+  pa-tabs {
+    display: block;
     margin-bottom: rhythm(3);
   }
 
-  .paragraph-container {
+  .filters-container {
+    margin-bottom: rhythm(4);
+    .selected-filters,
+    .filters {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: rhythm(1.5);
+    }
+    .selected-filters {
+      margin-top: rhythm(1.5);
+    }
+  }
+
+  nsi-info-card {
+    margin-bottom: rhythm(2);
+    padding: rhythm(1);
+  }
+
+  .resource-container {
     .title-m,
     .thumbnails-container {
       margin-bottom: rhythm(2);
     }
+  }
+
+  .paragraph-container {
+    margin-bottom: rhythm(2.5);
     .image {
       border: 1px solid $color-neutral-light;
       border-radius: $border-radius-default;
       max-width: rhythm(28);
       max-height: rhythm(24);
+    }
+    p {
+      margin: 0;
+    }
+    p.with-attachments {
+      display: flex;
+      gap: rhythm(2);
+      justify-content: space-between;
     }
     p.with-type {
       display: flex;
@@ -35,15 +63,29 @@
         margin: rhythm(0.5);
       }
     }
+    .labels-container {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      margin-top: rhythm(1);
+    }
+  }
+
+  .question-answer {
+    padding-bottom: rhythm(1);
+    border-bottom: 1px solid $color-neutral-light;
+    margin-bottom: rhythm(1.5);
   }
 }
 
-.viewer-button-container {
+.buttons-container {
   position: relative;
-
-  pa-button {
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
     position: sticky;
-    top: calc(#{$height-header} + var(--app-layout-padding-top));
+    top: calc(#{tokens.$height-header} + var(--app-layout-padding-top));
   }
 }
 
@@ -111,4 +153,8 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+pa-table ::ng-deep .pa-table-grid--row {
+  font-size: font-size(s);
 }

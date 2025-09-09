@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 header {
   display: flex;
@@ -19,12 +19,12 @@ header {
 
 .loader-backdrop {
   align-items: center;
-  background-color: rgba($color-dark-stronger, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   bottom: 0;
   display: flex;
   justify-content: center;
   left: 0;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   z-index: 1000;

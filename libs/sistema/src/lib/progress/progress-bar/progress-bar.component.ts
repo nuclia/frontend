@@ -1,10 +1,9 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'nsi-progress-bar',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './progress-bar.component.html',
   styleUrl: './progress-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,7 +1,7 @@
 <pa-modal-dialog>
   <pa-modal-title>
     <div class="dialog-title-with-button">
-      {{ 'upload.upload_from_csv' | translate }}
+      {{ 'upload.texts' | translate }}
       <pa-button
         icon="cross"
         aspect="basic"
@@ -15,31 +15,35 @@
       <nsi-info-card
         type="warning"
         icon="warning">
-        {{ 'upload.limit-warning' | translate: { limit: pendingResourcesLimit | number } }}
+        {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
       </nsi-info-card>
     }
     @if (standalone && (hasValidKey | async) === false) {
       <div
         class="warning-key body-s"
-        [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
+      [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
     }
     <app-csv-select
       [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
       [fields]="4"
-      (select)="checkCsv($event)"></app-csv-select>
-    <div
-      class="uploads"
-      *ngIf="csv.length > 0">
+    (select)="checkCsv($event)"></app-csv-select>
+    @if (csv.length > 0) {
       <div
-        *ngFor="let row of csv"
-        class="upload">
-        <span paEllipsisTooltip>{{ row.title }}</span>
-        <code>{{ row.format }}</code>
+        class="uploads"
+        >
+        @for (row of csv; track row) {
+          <div
+            class="upload">
+            <span paEllipsisTooltip>{{ row.title }}</span>
+            <code>{{ row.format }}</code>
+          </div>
+        }
       </div>
-    </div>
-    <nsi-spinner
-      *ngIf="isUploading"
+    }
+    @if (isUploading) {
+      <nsi-spinner
       size="small"></nsi-spinner>
+    }
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button

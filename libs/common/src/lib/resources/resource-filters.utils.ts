@@ -1,12 +1,13 @@
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Search } from '@nuclia/core';
+import {
+  CREATION_END_PREFIX,
+  CREATION_START_PREFIX,
+  getDateFromFilter,
+  getVisibilityFromFilter,
+  HIDDEN_PREFIX,
+  Search,
+} from '@nuclia/core';
 import mime from 'mime';
-
-export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
-export const LANGUAGE_FACET = ['/metadata.language'];
-
-export const CREATION_START_PREFIX = '/creation/start/';
-export const CREATION_END_PREFIX = '/creation/end/';
 
 export interface Filters {
   classification: OptionModel[];
@@ -16,6 +17,7 @@ export interface Filters {
     start?: { filter: string; date: string };
     end?: { filter: string; date: string };
   };
+  hidden?: boolean;
 }
 
 export function getOptionFromFacet(
@@ -80,7 +82,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   if (facetGroups.mainTypes.length > 0) {
     facetGroups.mainTypes.forEach((facet) => {
       let help: string | undefined = facet.key.substring(5);
-      let label = mime.getExtension(help) || (facet.key.split('/').pop() as string);
+      let label = (mime as unknown as any).getExtension(help) || (facet.key.split('/').pop() as string);
       if (label === 'stf-link') {
         label = 'link';
       }
@@ -104,14 +106,8 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     start: start ? { filter: start, date: getDateFromFilter(start) } : undefined,
     end: end ? { filter: end, date: getDateFromFilter(end) } : undefined,
   };
+  const hidden = queryParamsFilters.find((param) => param.startsWith(HIDDEN_PREFIX));
+  filters.hidden = hidden ? getVisibilityFromFilter(hidden) : undefined;
 
   return filters;
-}
-
-export function getDateFromFilter(dateFilter: string) {
-  return dateFilter.split('/').slice(-1)[0];
-}
-
-export function getFilterFromDate(date: string, type: 'start' | 'end') {
-  return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
 }

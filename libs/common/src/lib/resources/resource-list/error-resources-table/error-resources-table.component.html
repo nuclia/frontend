@@ -10,7 +10,7 @@
   class="resource-table-header"
   [style.--filters-header-height]="(headerHeight | async) + 'px'">
   <div class="header-container">
-    @if ((isAdminOrContrib | async) && selection.length > 0) {
+    @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
       <div class="resource-bulk-actions">
         <span class="selected-count title-xxs">
           {{ 'resource.selected_count' | translate: { num: selection.length } }}
@@ -39,6 +39,37 @@
       </div>
     }
   </div>
+  @if (
+    allResourcesSelected ||
+    ((allSelected | async) === true && !bulkAction.inProgress && ((totalCount | async) || 0) > selection.length)
+  ) {
+    <div class="selection-bar">
+      <div class="title-xxs">
+        @if (allResourcesSelected) {
+          {{ 'resource.select.kb-resources-selected' | translate: { num: totalCount | async } }}
+        } @else {
+          {{ 'resource.select.page-resources-selected' | translate: { num: selection.length } }}
+        }
+      </div>
+      @if (allResourcesSelected) {
+        <pa-button
+          aspect="basic"
+          size="small"
+          (click)="clearSelection()"
+          [disabled]="bulkAction.inProgress">
+          {{ 'generic.clear-selection' | translate }}
+        </pa-button>
+      } @else {
+        <pa-button
+          aspect="basic"
+          size="small"
+          (click)="selectAllResources()"
+          [disabled]="bulkAction.inProgress">
+          {{ 'resource.select.select-kb-resources' | translate: { num: totalCount | async } }}
+        </pa-button>
+      }
+    </div>
+  }
 </div>
 
 <div
@@ -79,6 +110,20 @@
         <pa-table-cell center>
           <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
         </pa-table-cell>
+        <pa-table-cell>
+          <div class="body-s errors-cell">
+            @if (row.errors) {
+              @if (row.errors.length > 120) {
+                <div [paPopover]="error">{{ row.errors.substring(0, 120) }}…</div>
+                <pa-popover #error>
+                  {{ row.errors }}
+                </pa-popover>
+              } @else {
+                {{ row.errors }}
+              }
+            }
+          </div>
+        </pa-table-cell>
         @if (isAdminOrContrib | async) {
           <pa-table-cell-menu>
             <pa-button
@@ -112,7 +157,6 @@
 </div>
 <nsi-sticky-footer>
   <stf-table-pagination
-    [items]="(data | async)?.length || 0"
     [totalItems]="totalItems | async"
     [totalKbResources]="totalKbResources | async"
     [page]="page | async"

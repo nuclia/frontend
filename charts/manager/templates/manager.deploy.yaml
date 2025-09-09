@@ -48,9 +48,10 @@ spec:
         env:
 {{ toYaml . | indent 8 }}
 {{ end }}
+{{- with .Values.envFrom }}
         envFrom:
-        - configMapRef:
-            name: "{{ .Release.Name }}-config"
+{{- toYaml . | nindent 10 }}
+{{- end }}
         imagePullPolicy: Always
         readinessProbe:
           httpGet:

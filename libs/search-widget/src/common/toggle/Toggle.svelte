@@ -1,10 +1,14 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { slugify } from '../../core/utils';
-  export let label = '';
-  export let checked = false;
+  interface Props {
+    label?: string;
+    checked?: boolean;
+  }
 
-  $: id = slugify(label);
+  let { label = '', checked = $bindable(false) }: Props = $props();
+
+  let id = $derived(slugify(label));
   const dispatch = createEventDispatcher();
 
   const onChange = () => {
@@ -21,11 +25,9 @@
       {id}
       type="checkbox"
       bind:checked
-      on:change={onChange} />
-    <span class="slider" />
+      onchange={onChange} />
+    <span class="slider"></span>
   </div>
 </label>
 
-<style
-  lang="scss"
-  src="./Toggle.scss"></style>
+<style src="./Toggle.css"></style>

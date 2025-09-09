@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 import { BadgeComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-badge',
-  standalone: true,
-  imports: [CommonModule, PaDemoModule, BadgeComponent],
+  imports: [PaDemoModule, BadgeComponent],
   templateUrl: './sistema-badge.component.html',
   styleUrl: './sistema-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { KnowledgeBoxComponent } from './knowledge-box.component';
-import { MockProvider } from 'ng-mocks';
-import { SisModalService } from '@nuclia/sistema';
+import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SearchWidgetStorageService } from '@flaps/common';
+import { WritableKnowledgeBox } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { MockProvider } from 'ng-mocks';
+import { KnowledgeBoxComponent } from './knowledge-box.component';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -14,13 +14,15 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       declarations: [KnowledgeBoxComponent],
       providers: [
-        MockProvider(SDKService, { counters: of({ resources: 0 }), currentKb: of({}) } as SDKService),
+        MockProvider(SDKService, {
+          counters: of({ resources: 0 }),
+          currentKb: of({ id: 'kb', getServiceAccounts: () => of([]) } as unknown as WritableKnowledgeBox),
+        } as SDKService),
         MockProvider(SisModalService),
         MockProvider(FeaturesService, { isKbAdmin: of(true) }),
-        MockProvider(SearchWidgetStorageService, { migrateConfigsAndWidgets: () => of() }),
       ],
     }).compileComponents();
   });

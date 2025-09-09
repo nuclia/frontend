@@ -4,8 +4,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterModule } from '@angular/router';
 
-import { PaButtonModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTabsModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { ActivityDownloadComponent } from './activity-download.component';
+import { ActivityLogTableComponent } from './log-table.component';
+import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 
 const ROUTES = [
   {
@@ -22,6 +31,13 @@ const ROUTES = [
     RouterModule.forChild(ROUTES),
     PaButtonModule,
     PaTabsModule,
+    PaIconModule,
+    PaPopupModule,
+    PaExpanderModule,
+    PaTooltipModule,
+    ActivityLogTableComponent,
+    InfoCardComponent,
+    SisProgressModule,
   ],
   declarations: [ActivityDownloadComponent],
   exports: [],

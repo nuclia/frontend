@@ -1,0 +1,21 @@
+<app-node-box
+  [state]="state()"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.remi.title' | translate"
+  [origin]="origin()"
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
+  <app-config-block [config]="remiConfig()"></app-config-block>
+  <app-connectable-entry
+    id="then"
+    category="postprocess"
+    [nodeId]="id"
+    required>
+    {{ 'retrieval-agents.workflow.connectable-entry.then' | translate }}
+  </app-connectable-entry>
+  <app-connectable-entry
+    id="else"
+    category="postprocess"
+    [nodeId]="id">
+    {{ 'retrieval-agents.workflow.connectable-entry.else' | translate }}
+  </app-connectable-entry>
+</app-node-box>

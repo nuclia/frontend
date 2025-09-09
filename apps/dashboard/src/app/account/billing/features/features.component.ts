@@ -6,6 +6,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './features.component.html',
   styleUrls: ['./features.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FeaturesComponent {
   features = [

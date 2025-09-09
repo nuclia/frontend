@@ -1,0 +1,52 @@
+<div class="header">
+  <h3>Account models</h3>
+  <pa-button
+    kind="primary"
+    [routerLink]="'./add'">
+    Add model
+  </pa-button>
+</div>
+
+@for (zone of models | async; track zone.zone.id) {
+  <div class="zone">
+    <div class="title-s">{{ zone.zone.title }}</div>
+    <pa-table
+      border
+      columns="repeat(3, 1fr) 70px">
+      <pa-table-header>
+        <pa-table-cell header>Name</pa-table-cell>
+        <pa-table-cell header>Model</pa-table-cell>
+        <pa-table-cell header>Types</pa-table-cell>
+        <pa-table-cell-menu header></pa-table-cell-menu>
+      </pa-table-header>
+      @for (model of zone.models; track model.model_id) {
+        <pa-table-row
+          clickable
+          [routerLink]="'../models/' + zone.zone.slug + '/model/' + model.model_id">
+          <pa-table-cell>{{ model.title }}</pa-table-cell>
+          <pa-table-cell>{{ model.location }}</pa-table-cell>
+          <pa-table-cell>{{ model.model_types?.join(', ') }}</pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              size="small"
+              [paPopup]="menu">
+              Menu
+            </pa-button>
+            <pa-dropdown #menu>
+              <pa-option (selectOption)="goToDetails($event, model, zone.zone.slug)">
+                Assign to Knowledge Boxes
+              </pa-option>
+              <pa-option
+                destructive
+                (selectOption)="delete($event, model, zone.zone.slug)">
+                Delete
+              </pa-option>
+            </pa-dropdown>
+          </pa-table-cell-menu>
+        </pa-table-row>
+      }
+    </pa-table>
+  </div>
+}

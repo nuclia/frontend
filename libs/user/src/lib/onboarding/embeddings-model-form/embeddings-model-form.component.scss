@@ -1,9 +1,14 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 form.embeddings-model-form {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
+
+  .models-limit {
+    display: flex;
+    gap: rhythm(1);
+  }
 
   .semantic-model-choice > .body-m {
     color: $color-neutral-regular;
@@ -42,6 +47,6 @@ form.embeddings-model-form {
   row-gap: rhythm(1);
 }
 
-.models-container {
+.checkbox-container {
   margin-top: rhythm(1);
 }

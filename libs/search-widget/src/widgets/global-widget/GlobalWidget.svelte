@@ -1,16 +1,23 @@
 <svelte:options
-  customElement="nuclia-global-search"
+  customElement={{
+    tag: 'nuclia-global-search',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import { debounceTime } from 'rxjs';
+  import { take } from 'rxjs/operators';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { InfiniteScroll, LoadingDots } from '../../common';
+  import globalCss from '../../common/global.css?inline';
+  import { logEvent } from '../../core';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { _, setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss?inline';
-  import { isAnswerEnabled, widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -34,35 +41,60 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { take } from 'rxjs/operators';
-  import { logEvent } from '../../core';
+  import { isAnswerEnabled, widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
+  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { InitialAnswer, ResultRow, SearchInput } from './components';
-  import { LoadingDots, InfiniteScroll } from '../../common';
-  import { debounceTime } from 'rxjs';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox: string;
-  export let placeholder = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let mode = '';
-  export let vectorset = '';
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox: string;
+    placeholder?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    mode?: string;
+    vectorset?: string;
+    audit_metadata?: string;
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+  }
 
-  $: darkMode = mode === 'dark';
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = 'europe-1',
+    knowledgebox,
+    placeholder = '',
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    mode = '',
+    vectorset = '',
+    audit_metadata = '',
+    copy_disclaimer = undefined,
+    metadata = undefined,
+  }: Props = $props();
+
+  let darkMode = $derived(mode === 'dark');
 
   let _features: WidgetFeatures = {};
 
-  export function search(query: string) {
+  export function search(query: string, doNotTriggerSearch = false) {
     searchQuery.set(query);
     typeAhead.set(query || '');
-    triggerSearch.next();
+    if (!doNotTriggerSearch) {
+      triggerSearch.next();
+    }
   }
 
   export function reloadSearch() {
@@ -70,16 +102,18 @@
     triggerSearch.next();
   }
 
+  export const onError = getApiErrors();
+
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
     dispatch(name, detail);
   };
 
-  const showLoading = pendingResults.pipe(debounceTime(1500));
-  let svgSprite: string;
-  let ready = false;
-  let visible = false;
-  let answerHeight: number;
+  const showLoading = pendingResults.pipe(debounceTime(500));
+  let svgSprite: string = $state();
+  let ready = $state(false);
+  let visible = $state(false);
+  let answerHeight: number = $state();
 
   onMount(() => {
     if (cdn) {
@@ -100,11 +134,13 @@
         standalone,
         account,
       },
-      state,
+      kbstate,
       {
-        highlight: true,
         features: _features,
         vectorset,
+        audit_metadata,
+        copy_disclaimer,
+        metadata,
       },
     );
 
@@ -189,16 +225,17 @@
   }
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 <div
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
+  <style src="../../common/common-style.css"></style> 
   {#if ready && !!svgSprite && visible}
     <div
       class="backdrop"
-      on:keyup={onBackdropKeyup}
-      on:click={onBackdropClick}>
+      onkeyup={onBackdropKeyup}
+      onclick={onBackdropClick}>
       <div
         class="search-container"
         class:with-results={$showResults && !$isEmptySearchQuery}>
@@ -208,39 +245,41 @@
 
         <div class="search-results-container">
           {#if $showResults && !$isEmptySearchQuery}
-            {#if $hasSearchError && !$hasPartialResults}
-              <div class="error">
-                {#if $searchError?.status === 402}
-                  <strong>{$_('error.feature-blocked')}</strong>
-                {:else}
-                  <strong>{$_('error.search')}</strong>
-                {/if}
+            {#if $hasPartialResults}
+              <div class="partial-results-warning">
+                <strong>{$_('error.partial-results')}</strong>
               </div>
-            {:else if !$pendingResults && $resultList.length === 0}
-              <strong>{$_('results.empty')}</strong>
-              <div
-                class="results-end"
-                use:renderingDone />
-            {:else}
-              {#if $hasPartialResults}
-                <div class="partial-results-warning">
-                  <strong>{$_('error.partial-results')}</strong>
-                </div>
-              {/if}
-              <div class="results-container">
-                <div class="results">
-                  {#if $isAnswerEnabled}
-                    <div bind:offsetHeight={answerHeight}>
-                      <InitialAnswer />
-                    </div>
-                  {/if}
+            {/if}
+            <div class="results-container">
+              <div class="results">
+                {#if $isAnswerEnabled}
+                  <div bind:offsetHeight={answerHeight}>
+                    <InitialAnswer />
+                  </div>
+                {/if}
+                {#if $hasSearchError && !$hasPartialResults}
+                  <div class="error">
+                    {#if $searchError?.status === 402}
+                      <strong>{$_('error.feature-blocked')}</strong>
+                    {:else}
+                      <strong>{$_('error.search')}</strong>
+                    {/if}
+                  </div>
+                {:else if !$pendingResults && $resultList.length === 0 && !$isAnswerEnabled}
+                  <strong>{$_('results.empty')}</strong>
+                  <div
+                    class="results-end"
+                    use:renderingDone>
+                  </div>
+                {:else if $resultList.length > 0}
                   <div class="search-results">
                     {#each $resultList as result, i (getResultUniqueKey(result))}
                       <ResultRow {result} />
                       {#if i === $resultList.length - 1}
                         <div
                           class="results-end"
-                          use:renderingDone />
+                          use:renderingDone>
+                        </div>
                       {/if}
                     {/each}
                     {#if $hasMore}
@@ -249,11 +288,11 @@
                         on:loadMore={onLoadMore} />
                     {/if}
                   </div>
-                </div>
+                {/if}
               </div>
-              {#if $showLoading}
-                <LoadingDots />
-              {/if}
+            </div>
+            {#if $showLoading}
+              <LoadingDots />
             {/if}
           {/if}
         </div>
@@ -267,7 +306,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./GlobalWidget.scss">
-</style>
+<style src="./GlobalWidget.css"></style>

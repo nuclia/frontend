@@ -1,0 +1,96 @@
+@if (isLoading) {
+  <div class="loading-shade">
+    <nsi-spinner></nsi-spinner>
+  </div>
+}
+
+@if (account && retrievalAgents) {
+  <div class="account-arag page-spacing">
+    <div class="account-arag-header">
+      <div>
+        <h1 class="page-title">
+          {{ 'account.retrieval-agents.title' | translate }}
+          <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+        </h1>
+
+        <p class="page-description">{{ 'account.retrieval-agents.description' | translate }}</p>
+      </div>
+
+      @if (canAddArag | async) {
+        <pa-button
+          data-cy="add-arag"
+          [disabled]="retrievalAgents.length >= maxRetrievalAgents && maxRetrievalAgents !== -1"
+          (click)="createArag()">
+          {{ 'account.retrieval-agents.create' | translate }}
+        </pa-button>
+      }
+    </div>
+
+    <div class="account-arag-content">
+      @if (!retrievalAgents || retrievalAgents.length === 0) {
+        <nsi-info-card icon="info">{{ 'account.retrieval-agents.empty-list' | translate }}</nsi-info-card>
+      } @else {
+        <pa-table
+          border
+          columns="1fr 96px">
+          <pa-table-header>
+            <pa-table-cell header>{{ 'account.retrieval-agents.table.name' | translate }}</pa-table-cell>
+            <pa-table-cell-menu header>{{ 'account.retrieval-agents.table.actions' | translate }}</pa-table-cell-menu>
+          </pa-table-header>
+          @for (arag of retrievalAgents; track arag.id) {
+            <pa-table-row [disabled]="!arag.role_on_kb">
+              <pa-table-cell>
+                <a
+                  class="go-to-arag"
+                  (click)="goToArag(arag)">
+                  {{ arag.title }}
+                </a>
+              </pa-table-cell>
+              <pa-table-cell-menu>
+                <div>
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="menu"
+                    paTooltip="generic.actions">
+                    {{ 'generic.actions' | translate }}
+                  </pa-button>
+                  <!-- Router links to edit configuration and session list -->
+                  <pa-dropdown #menu>
+                    <pa-option
+                      icon="settings"
+                      (click)="goToSettings(arag)">
+                      {{ 'account.retrieval-agents.menu.edit' | translate }}
+                    </pa-option>
+                    <pa-option
+                      icon="list"
+                      (click)="goToSessions(arag)">
+                      {{ 'account.retrieval-agents.menu.sessions-list' | translate }}
+                    </pa-option>
+                    <pa-option
+                      icon="trash"
+                      destructive
+                      (click)="deleteArag(arag)">
+                      {{ 'account.retrieval-agents.menu.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              </pa-table-cell-menu>
+            </pa-table-row>
+          }
+        </pa-table>
+
+        <nsi-sticky-footer>
+          @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
+            <div
+              footerNote
+              class="account-kbs-counter">
+              {{ 'account.kb.count' | translate: { count: retrievalAgents.length, max: maxRetrievalAgents } }}
+            </div>
+          }
+        </nsi-sticky-footer>
+      }
+    </div>
+  </div>
+}

@@ -4,18 +4,22 @@
   import { sendFeedback } from '../../../../core/api';
   import { chat } from '../../../../core/stores/answers.store';
 
-  export let rank = 0;
+  interface Props {
+    rank?: number;
+  }
 
-  let approved: 'good' | 'bad' | '' = '';
+  let { rank = 0 }: Props = $props();
 
-  $: isGood = approved === 'good';
-  $: isBad = approved === 'bad';
+  let approved: 'good' | 'bad' | '' = $state('');
+
+  let isGood = $derived(approved === 'good');
+  let isBad = $derived(approved === 'bad');
 
   function send(good: boolean) {
     chat
       .pipe(
         take(1),
-        switchMap((chat) => sendFeedback(chat[rank].answer, good)),
+        switchMap((chat) => sendFeedback(chat[rank].answer.id, good)),
       )
       .subscribe(() => (approved = good ? 'good' : 'bad'));
   }
@@ -29,7 +33,7 @@
     size="small"
     kind={isGood ? 'primary' : 'secondary'}
     on:click={() => send(true)} />
-  
+
   <IconButton
     aspect="basic"
     icon="smiley-sad"

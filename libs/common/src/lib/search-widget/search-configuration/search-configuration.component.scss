@@ -1,9 +1,10 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 :host {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
+  container-type: size;
 
   &.bigger-gap {
     gap: rhythm(4);
@@ -29,26 +30,48 @@
 
   .config-selection-container {
     position: relative;
+  }
 
-    .config-status-indicator {
-      background-color: $color-success-regular;
-      border-radius: 50%;
-      height: rhythm(1);
-      position: absolute;
-      right: rhythm(6);
-      top: 50%;
-      transform: translateY(-50%);
-      width: rhythm(1);
+  .config-status-indicator {
+    background-color: $color-success-regular;
+    border-radius: 50%;
+    height: rhythm(1);
+    position: absolute;
+    right: rhythm(6);
+    top: 50%;
+    transform: translateY(-50%);
+    transition:
+      top $transition-hint,
+      right $transition-hint;
+    width: rhythm(1);
 
-      &.modified {
-        background-color: $color-secondary-regular;
-      }
+    &.modified {
+      background-color: $color-secondary-regular;
     }
   }
 
   .config-actions {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: rhythm(1);
+  }
+
+  @container (max-width: 400px) {
+    .current-config-title {
+      align-items: flex-start;
+      flex-direction: column;
+      height: rhythm(6);
+
+      .config-actions {
+        align-self: flex-end;
+      }
+    }
+  }
+  @container (max-width: 336px) {
+    .config-status-indicator {
+      right: calc(#{rhythm(2)} + 1px);
+      top: rhythm(2);
+    }
   }
 }

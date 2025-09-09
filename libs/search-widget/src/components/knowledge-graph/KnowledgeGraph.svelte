@@ -1,14 +1,25 @@
 <script lang="ts">
-  import type { NerFamily, NerLink, NerNode, PositionWithRelevance, RelationWithRelevance } from '../../core';
-  import { fieldMetadata, generatedEntitiesColor, graphState, translateInstant } from '../../core';
-  import { Checkbox, Expander } from '../../common';
-  import Graph from './Graph.svelte';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
-  import type { FieldMetadata } from '@nuclia/core';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { Checkbox, Expander } from '../../common';
+  import type {
+    EntityPositionsWithRelevance,
+    NerFamily,
+    NerLink,
+    NerNode,
+    PositionWithRelevance,
+    RelationWithRelevance,
+  } from '../../core';
+  import { fieldMetadata, generatedEntitiesColor, graphState, translateInstant } from '../../core';
+  import Graph from './Graph.svelte';
 
-  export let rightPanelOpen = false;
+  interface Props {
+    rightPanelOpen?: boolean;
+  }
+
+  let { rightPanelOpen = false }: Props = $props();
 
   const dispatch = createEventDispatcher();
   const unsubscribeAll: Subject<void> = new Subject();
@@ -18,22 +29,24 @@
   const maxRadius = 64;
   const minRadius = 6;
 
-  let families: NerFamily[] = [];
-  let innerHeight: number;
-  let innerWidth: number;
-  let nodes: NerNode[];
-  let links: NerLink[];
+  let families: NerFamily[] = $state([]);
+  let innerHeight: number = $state(0);
+  let innerWidth: number = $state(0);
+  let nodes: NerNode[] = $state([]);
+  let links: NerLink[] = $state([]);
 
-  let visibleFamilies: string[];
+  let visibleFamilies: string[] = $state([]);
 
-  $: graphWidth = rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth;
-  $: graphHeight = innerHeight - 80;
+  let graphWidth = $derived(
+    rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth,
+  );
+  let graphHeight = $derived(innerHeight - 80);
 
-  $: chargeStrength = !nodes || nodes.length > 100 ? -80 : -160;
-  $: centerPosition = [graphWidth / 2, graphHeight / 2];
-  $: activeForceX = d3.forceX().x(centerPosition[0]);
-  $: activeForceY = d3.forceY().y(centerPosition[1]);
-  $: forces = [
+  let chargeStrength = $derived(!nodes || nodes.length > 100 ? -80 : -160);
+  let centerPosition = $derived([graphWidth / 2, graphHeight / 2]);
+  let activeForceX = $derived(d3.forceX().x(centerPosition[0]));
+  let activeForceY = $derived(d3.forceY().y(centerPosition[1]));
+  let forces: [string, any][] = $derived([
     ['x', activeForceX],
     ['y', activeForceY],
     [
@@ -46,17 +59,17 @@
           const target: NerNode = link.target;
           const radiusSum = source.radius + target.radius;
           return radiusSum + radiusSum / 2;
-        })
+        }),
     ],
-    ['charge', d3.forceManyBody().strength(chargeStrength)]
-  ].filter((d) => d);
+    ['charge', d3.forceManyBody().strength(chargeStrength)],
+  ]);
 
   onMount(() => {
     fieldMetadata
       .pipe(
         filter((metadata) => !!metadata),
         map((metadata) => metadata as FieldMetadata),
-        takeUntil(unsubscribeAll)
+        takeUntil(unsubscribeAll),
       )
       .subscribe((metadata) => {
         const { relations, positions } = getRelevanceLists(metadata);
@@ -72,16 +85,17 @@
     graphState.reset();
   });
 
-  function getNodes(positions: PositionWithRelevance): NerNode[] {
-    const relevanceList = Object.values(positions)
+  function getNodes(positions: EntityPositionsWithRelevance): NerNode[] {
+    const relevanceList: number[] = Object.values(positions)
       .map((position) => position.relevance)
-      .filter((value) => value);
+      .filter((value) => typeof value === 'number');
     const [, maxRelevance] = d3.extent(relevanceList);
-    const radiusRatio = Math.max(1, maxRadius / maxRelevance);
+    const radiusRatio = Math.max(1, maxRadius / (maxRelevance as number));
     return (
       Object.keys(positions)
         .reduce((list, id) => {
-          const [family, ner] = id.split('/');
+          const family = id.split('/')[0];
+          const ner = id.substring(family.length + 1);
           const relevance = positions[id].relevance || 0;
           list.push({
             id,
@@ -89,25 +103,25 @@
             family,
             relevance,
             color: generatedEntitiesColor[family] || defaultFamilyColor,
-            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius)
+            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius),
           });
           return list;
         }, [] as NerNode[])
         // keep only relevant nodes which are in a link
         .filter(
-          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id)
+          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id),
         )
     );
   }
 
-  function getLinks(relations: RelationWithRelevance[], positions: PositionWithRelevance): NerLink[] {
+  function getLinks(relations: RelationWithRelevance[], positions: EntityPositionsWithRelevance): NerLink[] {
     return relations
       .filter(
         (relation) =>
           !!relation.from &&
           positions[`${relation.from.group}/${relation.from.value}`] &&
           !!relation.to &&
-          positions[`${relation.to.group}/${relation.to.value}`]
+          positions[`${relation.to.group}/${relation.to.value}`],
       )
       .map((relation) => ({
         source: `${relation.from?.group}/${relation.from?.value}`,
@@ -115,7 +129,7 @@
         fromGroup: relation.from?.group,
         toGroup: relation.to.group,
         relevance: relation.relevance || 0,
-        label: relation.label
+        label: relation.label,
       }));
   }
 
@@ -128,10 +142,22 @@
    */
   function getRelevanceLists(metadata: FieldMetadata): {
     relations: RelationWithRelevance[];
-    positions: PositionWithRelevance;
+    positions: EntityPositionsWithRelevance;
   } {
+    const customNerPositions = Object.entries(metadata.entities)
+      .filter(([key]) => key !== DEFAULT_NER_KEY)
+      .reduce((acc, [key, value]) => {
+        value.entities.forEach((entity) => {
+          acc[`${entity.label}/${entity.text}`] = { position: entity.positions, entity: entity.text };
+        });
+        return acc;
+      }, {} as EntityPositions);
     const relations = metadata.relations || [];
-    const positions = JSON.parse(JSON.stringify(metadata.positions || {}));
+    const positions = {
+      ...JSON.parse(JSON.stringify(metadata.positions || {})),
+      ...customNerPositions,
+    };
+
     relations.forEach((relation) => {
       if (relation.from) {
         const from: PositionWithRelevance = positions[`${relation.from.group}/${relation.from.value}`];
@@ -153,10 +179,10 @@
         const relevance = Math.min(from?.relevance || 0, to?.relevance || 0);
         return {
           ...relation,
-          relevance
+          relevance,
         };
       }),
-      positions
+      positions,
     };
   }
 
@@ -166,7 +192,7 @@
         families.push(node.family);
       }
       return families;
-    }, []);
+    }, [] as string[]);
     families = visibleFamilies
       .map((id) => {
         const generatedEntityColor = generatedEntitiesColor[id];
@@ -174,7 +200,7 @@
         return {
           id,
           color,
-          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase()
+          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase(),
         };
       })
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -205,17 +231,16 @@
   <div class="left-panel">
     <div class="ner-families-container">
       <Expander on:toggleExpander>
-        <div
-          class="title-s"
-          slot="header">
-          Entity families
-        </div>
+        {#snippet header()}
+          <div class="title-s">Entity families</div>
+        {/snippet}
         <ul class="ner-families">
           {#each families as family}
             <li>
               <div
                 class="family-color"
-                style:background={family.color} />
+                style:background={family.color}>
+              </div>
               <Checkbox
                 checked={visibleFamilies.includes(family.id)}
                 on:change={(event) => toggleFamily(family, event.detail)}>
@@ -239,6 +264,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./KnowledgeGraph.scss"></style>
+<style src="./KnowledgeGraph.css"></style>

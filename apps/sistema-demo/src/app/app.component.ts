@@ -43,17 +43,12 @@ import {
   TranslatePageComponent,
   TypographyPageComponent,
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
-import {
-  SistemaConfirmationDialogComponent,
-  SistemaIconsComponent,
-  SistemaModalComponent,
-  SistemaScrollbarComponent,
-  SistemaToastComponent,
-} from './sistema-pages/pastanaga-pages-override';
+import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import {
   SistemaActionCardComponent,
   SistemaBackButtonComponent,
   SistemaDropdownButtonComponent,
+  SistemaExpandableTextareaComponent,
   SistemaFolderTreeComponent,
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
@@ -62,11 +57,18 @@ import {
   SistemaStickyFooterComponent,
   SistemaTwoColumnsConfigurationItemComponent,
 } from './sistema-pages';
-import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
-import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
-import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
+import {
+  SistemaConfirmationDialogComponent,
+  SistemaIconsComponent,
+  SistemaModalComponent,
+  SistemaScrollbarComponent,
+  SistemaToastComponent,
+} from './sistema-pages/pastanaga-pages-override';
 import { SistemaPalettePageComponent } from './sistema-pages/pastanaga-pages-override/sistema-palette/sistema-palette.component';
+import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 import { SistemaButtonMiniComponent } from './sistema-pages/sistema-button-mini/sistema-button-mini.component';
+import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
+import { SistemaSearchInputComponent } from './sistema-pages/sistema-search-input/sistema-search-input.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -94,9 +96,11 @@ export const menu: IDemoMenuSection[] = [
       { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
       { view: 'mini-button', title: 'Button mini', type: SistemaButtonMiniComponent },
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
+      { view: 'expandable-textarea', title: 'Expandable textarea', type: SistemaExpandableTextareaComponent },
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'search-input', title: 'Search input', type: SistemaSearchInputComponent },
       { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
       { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },
@@ -177,8 +181,9 @@ export const menu: IDemoMenuSection[] = [
       [logo]="logo"></pa-demo>
   `,
   styles: [],
+  standalone: false,
 })
 export class AppComponent {
-  menu: IDemoMenuSection[] = menu;
   logo = './assets/logos/logo.svg';
+  menu: IDemoMenuSection[] = menu;
 }

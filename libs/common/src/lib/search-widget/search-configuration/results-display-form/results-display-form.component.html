@@ -1,90 +1,177 @@
 <form [formGroup]="form">
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="displayResults"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">
-        {{ 'search.configuration.result-display.display-results.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.result-display.display-results.toggle-description' | translate }}
+  @if (useSearchResults) {
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="displayResults"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.display-results.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.display-results.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="displayResultsEnabled">
+        <pa-radio-group formControlName="showResultType">
+          <pa-radio value="all-resources">
+            {{ 'search.configuration.result-display.display-results.all-results-radio' | translate }}
+          </pa-radio>
+          <pa-radio
+            value="citations"
+            help="search.configuration.result-display.display-results.citations-only-radio-help">
+            {{ 'search.configuration.result-display.display-results.citations-only-radio' | translate }}
+          </pa-radio>
+        </pa-radio-group>
+      </div>
     </div>
-    <div
-      class="extra-fields"
-      [class.visible]="displayResultsEnabled">
-      <pa-radio-group formControlName="showResultType">
-        <pa-radio value="all-resources">
-          {{ 'search.configuration.result-display.display-results.all-results-radio' | translate }}
-        </pa-radio>
-        <pa-radio
-          value="citations"
-          help="search.configuration.result-display.display-results.citations-only-radio-help">
-          {{ 'search.configuration.result-display.display-results.citations-only-radio' | translate }}
-        </pa-radio>
-      </pa-radio-group>
+    @if (citationsEnabled) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="customizeThreshold"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.result-display.citation-threshold.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.result-display.citation-threshold.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="customizeThresholdEnabled">
+          <pa-slider
+            formControlName="citationThreshold"
+            step="0.01"
+            max="1"></pa-slider>
+        </div>
+      </div>
+    }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="displayMetadata"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.display-metadata.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.display-metadata.toggle-description' | translate }}
+      </div>
+
+      <div
+        class="extra-fields"
+        [class.visible]="metadataEnabled">
+        <pa-select
+          [options]="metadataExamples"
+          [label]="'search.configuration.result-display.display-metadata.example.select-label' | translate"
+          [formControl]="metadataExampleControl"
+          (valueChange)="addMetadataExample($event)"></pa-select>
+
+        <nsi-expandable-textarea
+          formControlName="metadatas"
+          resizable
+          help="search.configuration.result-display.display-metadata.metadata-help"
+          rows="4"
+          modalTitle="search.configuration.result-display.display-metadata.metadata-label"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.result-display.display-metadata.metadata-label' | translate }}
+        </nsi-expandable-textarea>
+      </div>
     </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="displayMetadata"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.result-display.display-metadata.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.result-display.display-metadata.toggle-description' | translate }}
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="displayThumbnails"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.display-thumbnails.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.display-thumbnails.toggle-description' | translate }}
+      </div>
     </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="displayThumbnails"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.result-display.display-thumbnails.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.result-display.display-thumbnails.toggle-description' | translate }}
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="noScroll"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.no-scroll.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.no-scroll.toggle-description' | translate }}
+      </div>
     </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="displayFieldList"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.result-display.display-field-list.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.result-display.display-field-list.toggle-description' | translate }}
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="showAttachedImages"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.show-attached-images.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.show-attached-images.toggle-description' | translate }}
+      </div>
     </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="relations"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span class="toggle-label">
-        {{ 'search.configuration.result-display.relations.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.result-display.relations.toggle-description' | translate }}
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="displayFieldList"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.display-field-list.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.display-field-list.toggle-description' | translate }}
+      </div>
     </div>
-  </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="relations"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.relations.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.relations.toggle-description' | translate }}
+      </div>
+    </div>
+    @if (isKnowledgeGraphEnabled | async) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="relationGraph"
+          withBackground
+          spaceBetweenLabelAndToggle>
+          <span class="toggle-label">
+            {{ 'search.configuration.result-display.relations-graph.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.result-display.relations-graph.toggle-description' | translate }}
+        </div>
+      </div>
+    }
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="jsonOutput"
       withBackground
       spaceBetweenLabelAndToggle
-      (valueChange)="disableCitations($event)">
+      (valueChange)="disableCitations($event, generateAnswer)">
       <span class="toggle-label">
         {{ 'search.configuration.result-display.json-schema.toggle-label' | translate }}
         <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
@@ -107,29 +194,40 @@
       <nsi-info-card>
         {{ 'search.configuration.result-display.json-schema.info' | translate }}
       </nsi-info-card>
-      <pa-textarea
+      <nsi-expandable-textarea
         formControlName="jsonSchema"
         resizable
         rows="4"
+        modalTitle="search.configuration.result-display.json-schema.textarea-label"
         (resizing)="heightChanged.emit()">
         {{ 'search.configuration.result-display.json-schema.textarea-label' | translate }}
-      </pa-textarea>
+      </nsi-expandable-textarea>
     </div>
   </div>
-
-  @if (isKnowledgeGraphEnabled | async) {
-    <div class="config-form-field">
-      <pa-toggle
-        formControlName="relationGraph"
-        withBackground
-        spaceBetweenLabelAndToggle>
-        <span class="toggle-label">
-          {{ 'search.configuration.result-display.relations-graph.toggle-label' | translate }}
-        </span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.result-display.relations-graph.toggle-description' | translate }}
-      </div>
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="hideAnswer"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.hide-answer.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.hide-answer.toggle-description' | translate }}
     </div>
-  }
+  </div>
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="sortResults"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.sort-results.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.sort-results.toggle-description' | translate }}
+    </div>
+  </div>
 </form>

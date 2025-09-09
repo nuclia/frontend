@@ -1,59 +1,65 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import type { Label } from '@nuclia/core';
+  import { getFilterFromEntity, getFilterFromLabel } from '@nuclia/core';
   import { combineLatest, map, Observable, take } from 'rxjs';
-  import { type EntityGroup, filterByLabels, type LabelSetWithId, refreshFamily } from '../../core';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
+  import Checkbox from '../../common/checkbox/Checkbox.svelte';
+  import PathFilters from './PathFilters.svelte';
   import {
     _,
     addEntityFilter,
     addLabelFilter,
     addLabelSetFilter,
+    addMimeFilter,
     creationEnd,
     creationStart,
     entities,
     entityFilters,
+    type EntityGroup,
     filterByCreatedDate,
     filterByLabelFamilies,
+    filterByLabels,
+    filterByMime,
+    filterByPath,
     hasRangeCreation,
     labelFilters,
     labelSetFilters,
+    type LabelSetWithId,
+    type MimeFacet,
+    mimeTypesfilters,
     orderedLabelSetList,
+    orderedMimeFacetsList,
+    paths,
     preselectedFilters,
+    refreshFamily,
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
+    removeMimeFilter,
     searchFilters,
   } from '../../core';
-  import IconButton from '../../common/button/IconButton.svelte';
-  import Checkbox from '../../common/checkbox/Checkbox.svelte';
-  import type { Label } from '@nuclia/core';
-  import { getFilterFromEntity, getFilterFromLabel } from '@nuclia/core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
+  const mimeFacets: Observable<MimeFacet[]> = orderedMimeFacetsList;
   const preselection: Observable<string[]> = preselectedFilters;
   const dispatch = createEventDispatcher();
 
-  const selectedLabelSets: Observable<string[]> = combineLatest([
-    labelSetFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => filter.id).concat(preselection))
-    );
-  const selectedLabels: Observable<string[]> = combineLatest([
-    labelFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => getFilterFromLabel(filter.classification)).concat(preselection))
-    );
-  const selectedEntities: Observable<string[]> = combineLatest([
-    entityFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection))
-    );
-  let expanders: { [id: string]: boolean } = {};
+  const selectedLabelSets: Observable<string[]> = combineLatest([labelSetFilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => filter.id).concat(preselection)),
+  );
+  const selectedLabels: Observable<string[]> = combineLatest([labelFilters, preselection]).pipe(
+    map(([filters, preselection]) =>
+      filters.map((filter) => getFilterFromLabel(filter.classification)).concat(preselection),
+    ),
+  );
+  const selectedEntities: Observable<string[]> = combineLatest([entityFilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection)),
+  );
+  const selectedMimeTypes: Observable<string[]> = combineLatest([mimeTypesfilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => filter.key).concat(preselection)),
+  );
+  let expanders: { [id: string]: boolean } = $state({});
 
   function selectLabelSet(labelSet: LabelSetWithId, selected: boolean) {
     if (selected) {
@@ -61,6 +67,14 @@
       addLabelSetFilter(labelSet.id, labelSet.kind);
     } else {
       removeLabelSetFilter(labelSet.id);
+    }
+  }
+
+  function selectMimeTypes(mimeFacet: MimeFacet, selected: boolean) {
+    if (selected) {
+      addMimeFilter(mimeFacet);
+    } else {
+      removeMimeFilter(mimeFacet.facet.key);
     }
   }
 
@@ -92,14 +106,15 @@
   }
 
   onMount(() => {
-    combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
-      expanders = filters.map((filter) => filter.classification.labelset).reduce(
-        (acc, curr) => ({ ...acc, [curr]: true }),
-        {}
-      );
-      expanders['created'] = hasRangeCreation;
-    });
-    const initialFilters =  searchFilters.getValue();
+    combineLatest([labelFilters, hasRangeCreation])
+      .pipe(take(1))
+      .subscribe(([filters, hasRangeCreation]) => {
+        expanders = filters
+          .map((filter) => filter.classification.labelset)
+          .reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+        expanders['created'] = hasRangeCreation;
+      });
+    const initialFilters = searchFilters.getValue();
     const initialCreation = `${creationStart.getValue()}${creationEnd.getValue()}`;
     return () => {
       if (
@@ -110,7 +125,6 @@
       }
     };
   });
-
 </script>
 
 <div class="sw-search-filters">
@@ -118,9 +132,11 @@
     <div
       class="header"
       class:expanded={expanders['created']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="header-content"
-        on:click={() => toggleExpander('created')}>
+        onclick={() => toggleExpander('created')}>
         <span>
           {$_('input.date_created')}
         </span>
@@ -142,7 +158,7 @@
               id="range-creation-start"
               type="date"
               value={$creationStart}
-              on:change={(e) => creationStart.set(e.target.value || undefined)} />
+              onchange={(e) => creationStart.set((e.target as HTMLInputElement)?.value || undefined)} />
           </div>
         </div>
         <div>
@@ -152,10 +168,72 @@
               id="range-creation-end"
               type="date"
               value={$creationEnd}
-              on:change={(e) => creationEnd.set(e.target.value || undefined)}
-            />
+              onchange={(e) => creationEnd.set((e.target as HTMLInputElement)?.value || undefined)} />
           </div>
         </div>
+      </div>
+    {/if}
+  {/if}
+  {#if $filterByMime}
+    <div
+      class="header"
+      class:expanded={expanders['mime']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="header-content"
+        onclick={() => toggleExpander('mime')}>
+        <span>
+          {$_('input.mime_types')}
+        </span>
+      </div>
+      <span class="header-button">
+        <IconButton
+          on:click={() => toggleExpander('mime')}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
+    </div>
+    {#if expanders['mime']}
+      <div class="expander-content">
+        {#each $mimeFacets as mimeFacet}
+          <div>
+            <Checkbox
+              checked={$selectedMimeTypes.includes(mimeFacet.facet.key)}
+              disabled={$preselection.includes(mimeFacet.facet.key)}
+              on:change={(event) => selectMimeTypes(mimeFacet, event.detail)}>
+              {mimeFacet.label} ({mimeFacet.facet.count})
+            </Checkbox>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  {/if}
+  {#if $filterByPath}
+    <div
+      class="header"
+      class:expanded={expanders['path']}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="header-content"
+        onclick={() => toggleExpander('path')}>
+        <span>{$_('input.path')}</span>
+      </div>
+      <span class="header-button">
+        <IconButton
+          on:click={() => toggleExpander('path')}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
+    </div>
+    {#if expanders['path']}
+      <div class="expander-content">
+        <PathFilters
+          paths={$paths}
+          root></PathFilters>
       </div>
     {/if}
   {/if}
@@ -163,10 +241,12 @@
     <div
       class="header"
       class:expanded={expanders[labelSet.id]}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div
         class="header-content"
         class:not-expandable={!$filterByLabels && $filterByLabelFamilies}
-        on:click={(event) => ($filterByLabels ? onClickLabelExpander(labelSet.id, event) : undefined)}>
+        onclick={(event) => ($filterByLabels ? onClickLabelExpander(labelSet.id, event) : undefined)}>
         {#if $filterByLabelFamilies}
           <Checkbox
             checked={$selectedLabelSets.includes(labelSet.id)}
@@ -175,7 +255,7 @@
             {labelSet.title}
           </Checkbox>
         {:else}
-          <div title="{labelSet.title}">{labelSet.title}</div>
+          <div title={labelSet.title}>{labelSet.title}</div>
         {/if}
       </div>
       {#if $filterByLabels}
@@ -195,8 +275,10 @@
         {#each labelSet.labels as label}
           <div>
             <Checkbox
-              checked={$selectedLabels.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title })) || $selectedLabelSets.includes(labelSet.id)}
-              disabled={$selectedLabelSets.includes(labelSet.id) || $preselection.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
+              checked={$selectedLabels.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title })) ||
+                $selectedLabelSets.includes(labelSet.id)}
+              disabled={$selectedLabelSets.includes(labelSet.id) ||
+                $preselection.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title }))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
             </Checkbox>
@@ -209,8 +291,12 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
-      <div class="header-content" on:click={() => toggleEntitiesExpander(family.id)}>
-        <span title="{family.title}">
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="header-content"
+        onclick={() => toggleEntitiesExpander(family.id)}>
+        <span title={family.title}>
           {family.title}
         </span>
       </div>
@@ -227,7 +313,7 @@
         {#each family.entities || [] as entity}
           <div>
             <Checkbox
-              checked={$selectedEntities.includes(getFilterFromEntity({family: family.id, entity: entity}))}
+              checked={$selectedEntities.includes(getFilterFromEntity({ family: family.id, entity: entity }))}
               on:change={(event) => selectEntity(family, entity, event.detail)}>
               {entity}
             </Checkbox>
@@ -238,6 +324,4 @@
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./SearchFilters.scss"></style>
+<style src="./SearchFilters.css"></style>

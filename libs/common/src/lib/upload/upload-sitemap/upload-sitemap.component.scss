@@ -1,0 +1,37 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.sitemap-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-top: rhythm(1);
+  width: rhythm(64);
+}
+
+pa-expander-body pa-input {
+  display: block;
+  margin: rhythm(2) 0;
+}
+
+nsi-info-card {
+  margin-bottom: rhythm(2);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin: rhythm(2) 0;
+
+  .table-title {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  app-extraction-select,
+  app-parameters-table {
+    display: block;
+    margin-bottom: rhythm(2);
+  }
+}

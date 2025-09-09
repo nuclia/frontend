@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,10 +8,8 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { Router, RouterLinkActive } from '@angular/router';
-import { FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
-import { Account, Welcome } from '@nuclia/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Router } from '@angular/router';
+import { BackendConfigurationService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AvatarModel,
   PaAvatarModule,
@@ -18,21 +17,13 @@ import {
   PaIconModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { Account, Welcome } from '@nuclia/core';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-menu',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TranslateModule,
-    PaIconModule,
-    PaAvatarModule,
-    PaDropdownModule,
-    PaPopupModule,
-    RouterLinkActive,
-  ],
+  imports: [CommonModule, TranslateModule, PaIconModule, PaAvatarModule, PaDropdownModule, PaPopupModule],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +48,7 @@ export class UserMenuComponent implements OnDestroy {
   account: Account | null = null;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
-  hasOwnAccount = this.userService.hasOwnAccount;
+  noStripe = this.backendConfig.noStripe();
   standalone = this.sdk.nuclia.options.standalone;
 
   private unsubscribeAll = new Subject<void>();
@@ -65,10 +56,10 @@ export class UserMenuComponent implements OnDestroy {
   constructor(
     private router: Router,
     private navigation: NavigationService,
-    private userService: UserService,
     private sdk: SDKService,
     private features: FeaturesService,
     private cdr: ChangeDetectorRef,
+    private backendConfig: BackendConfigurationService,
   ) {
     this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
       this.account = account;
@@ -104,11 +95,6 @@ export class UserMenuComponent implements OnDestroy {
 
   goToSupport() {
     window.open('https://github.com/nuclia/support', '_blank', 'noopener,noreferrer');
-  }
-
-  createAccount() {
-    this.close.emit();
-    this.router.navigate(['/user/onboarding']);
   }
 
   goToManageAccount() {

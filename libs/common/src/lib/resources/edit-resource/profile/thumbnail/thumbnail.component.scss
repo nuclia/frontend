@@ -1,18 +1,18 @@
-@import 'apps/dashboard/src/variables';
-@import '../../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../../edit-resource.tokens' as tokens;
 
 .resource-thumbnail-container {
   align-items: center;
   background: $color-neutral-lightest;
   display: flex;
-  height: $thumbnail-height;
+  height: tokens.$thumbnail-height;
   justify-content: center;
   position: relative;
-  width: $thumbnail-width;
+  width: tokens.$thumbnail-width;
 
   img {
-    max-height: calc(#{$thumbnail-height} - #{rhythm(0.25)});
-    max-width: calc(#{$thumbnail-width} - #{rhythm(0.25)});
+    max-height: calc(#{tokens.$thumbnail-height} - #{rhythm(0.25)});
+    max-width: calc(#{tokens.$thumbnail-width} - #{rhythm(0.25)});
   }
 
   &.selected {

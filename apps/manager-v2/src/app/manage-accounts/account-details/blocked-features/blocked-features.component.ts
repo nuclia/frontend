@@ -13,6 +13,7 @@ type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
   templateUrl: './blocked-features.component.html',
   styleUrls: ['./blocked-features.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

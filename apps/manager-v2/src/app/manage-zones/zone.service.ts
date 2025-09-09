@@ -52,8 +52,8 @@ export class ZoneService {
     return this.sdk.nuclia.rest.get(`${ZONE_ENDPOINT}/${zoneId}`);
   }
 
-  addZone(zone: ZoneAddPayload): Observable<void> {
-    return this.sdk.nuclia.rest.post(ZONES_ENDPOINT, zone);
+  addZone(zone: ZoneAddPayload): Observable<string> {
+    return this.sdk.nuclia.rest.post<Zone & { token: string }>(ZONES_ENDPOINT, zone).pipe(map((zone) => zone.token));
   }
 
   updateZone(zoneId: string, zone: ZonePatchPayload): Observable<void> {

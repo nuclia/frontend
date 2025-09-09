@@ -1,6 +1,26 @@
 <script lang="ts">
+  import type { FieldFullId, FieldMetadata, SearchOptions, TextField } from '@nuclia/core';
+  import { FIELD_TYPE, Search } from '@nuclia/core';
+  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+  import { onDestroy, onMount } from 'svelte';
+  import {
+    DocTypeIndicator,
+    Dropdown,
+    Duration,
+    freezeBackground,
+    Icon,
+    IconButton,
+    isMobileViewport,
+    Option,
+    ParagraphResult,
+    unblockBackground,
+  } from '../../common';
+  import type { TypedResult, ViewerState, WidgetAction } from '../../core';
   import {
     _,
+    displayFieldList,
+    downloadFile,
+    fieldData,
     fieldFullId,
     fieldList,
     fieldMetadata,
@@ -10,10 +30,11 @@
     getFieldIdWithShortType,
     getFieldUrl,
     getFindParagraphs,
+    getFormatInfos,
     getResourceMetadata,
     getResultType,
     graphQuery,
-    displayFieldList,
+    hideDownload,
     isKnowledgeGraphEnabled,
     isMediaPlayer,
     isPreviewing,
@@ -27,68 +48,50 @@
     selectedParagraphIndex,
     selectNext,
     selectPrevious,
+    slugify,
     transcripts,
     viewerData,
     viewerState,
     widgetActions,
   } from '../../core';
-    import type {TypedResult,
-      ViewerState,
-      WidgetAction,
-  } from '../../core';
-  import {
-    DocTypeIndicator,
-    Dropdown,
-    Duration,
-    freezeBackground,
-    Icon,
-    IconButton,
-    isMobileViewport,
-    ParagraphResult,
-    unblockBackground,
-  } from '../../common';
-  import { onDestroy, onMount } from 'svelte';
-  import type { FieldFullId, FieldMetadata, SearchOptions } from '@nuclia/core';
-  import { FIELD_TYPE,  Search, } from '@nuclia/core';
-  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
-  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
   import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';
+  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
 
   // Browser window related variables
   const resizeEvent = new Subject();
-  let innerWidth = window.innerWidth;
-  $: isMobile = isMobileViewport(innerWidth);
+  let innerWidth = $state(window.innerWidth);
+  let isMobile = $derived(isMobileViewport(innerWidth));
 
   // Header and menu
-  let menuButton: HTMLElement | undefined;
-  let menuPosition: { left: number; top: number } | undefined;
-  let displayMenu = false;
-  let resultNavigatorDisabled = false;
-  let resultNavigatorHidden = false;
-  let resultNavigatorWidth = 0;
-  let headerActionsWidth = 0;
+  let menuButton: HTMLElement | undefined = $state();
+  let menuPosition: { left: number; top: number } | undefined = $state();
+  let displayMenu = $state(false);
+  let resultNavigatorDisabled = $state(false);
+  let resultNavigatorHidden = $state(false);
+  let resultNavigatorWidth = $state(0);
+  let headerActionsWidth = $state(0);
   const buttonWidth = 40;
   const separatorWidth = 30;
-  let hasMenu = false;
-  $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 + separatorWidth : buttonWidth);
+  let hasMenu = $state(false);
+  let actionsWidth = $derived(headerActionsWidth + (hasMenu ? buttonWidth * 2 + separatorWidth : buttonWidth));
 
   // Side panel
   const isSearchingInResource = new BehaviorSubject(false);
-  let sidePanelExpanded = false;
-  let showKnowledgeGraph = false;
+  let sidePanelExpanded = $state(false);
+  let showKnowledgeGraph = $state(false);
   let transcriptsInitialized = false;
-  let findInputElement: HTMLElement;
+  let findInputElement: HTMLElement = $state();
   type sidePanelSection = 'search' | 'transcripts' | 'summary' | 'items';
-  let sidePanelSectionOpen: sidePanelSection = 'search';
+  let sidePanelSectionOpen: sidePanelSection = $state('search');
   const findInPlaceholderPrefix = 'viewer.find-in-';
-  let findInPlaceholder = '';
+  let findInPlaceholder = $state('');
 
   // Load data from the state
-  let state: ViewerState;
-  let result: TypedResult | null;
+  let _state: ViewerState = $state();
+  let result: TypedResult | null = $state();
   const stateSubscription = viewerData.pipe(filter((data) => data.isPreviewing)).subscribe((value) => {
     freezeBackground(true);
-    state = value;
+    _state = value;
     result = value.currentResult;
     resultNavigatorHidden = (result?.paragraphs?.length || 0) <= 1;
     switch (result?.resultType) {
@@ -109,7 +112,7 @@
   const unsubscribeOnClose: Subject<void> = new Subject();
   onMount(() => {
     const resize = resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
-    const menu = widgetActions.subscribe((actions) => hasMenu = actions.length > 0 );
+    const menu = widgetActions.subscribe((actions) => (hasMenu = actions.length > 0));
     return () => {
       resize.unsubscribe();
       menu.unsubscribe();
@@ -147,6 +150,15 @@
       .subscribe((url) => window.open(url, 'blank', 'noreferrer'));
   }
 
+  function downloadTextField() {
+    fieldData.pipe(take(1)).subscribe((fieldData) => {
+      const { mime, ext } = getFormatInfos((fieldData?.value as TextField)?.format || 'PLAIN');
+      const filename = `${slugify(result?.title || result?.id || '')}.${ext}`;
+      const content = (fieldData?.value as TextField)?.body || '';
+      downloadFile(filename, mime, content);
+    });
+  }
+
   function openMenu(event) {
     event.stopPropagation();
     if (menuButton) {
@@ -163,7 +175,7 @@
   }
 
   function clickOnMenu(item: WidgetAction) {
-    const fullId = state.fieldFullId;
+    const fullId = _state.fieldFullId;
     if (fullId) {
       item.action(fullId);
     }
@@ -264,14 +276,14 @@
   }
 
   function navigateToField(item: FieldFullId) {
-    if (!state?.currentResult) {
+    if (!_state?.currentResult) {
       return;
     }
     const field = { field_id: item.field_id, field_type: item.field_type };
     const fieldResult = {
-      ...state.currentResult,
+      ..._state.currentResult,
       field,
-      fieldData: getFieldDataFromResource(state.currentResult, field),
+      fieldData: getFieldDataFromResource(_state.currentResult, field),
     };
     const { resultType, resultIcon } = getResultType(fieldResult);
     const result: TypedResult = {
@@ -292,8 +304,8 @@
 
 <svelte:window
   bind:innerWidth
-  on:keydown={onEscape}
-  on:resize={(event) => resizeEvent.next(event)} />
+  onkeydown={onEscape}
+  onresize={(event) => resizeEvent.next(event)} />
 
 {#if $isPreviewing}
   <div
@@ -306,19 +318,27 @@
         <h3 class="ellipsis title-m">
           {result?.title}
         </h3>
-        {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
-          <IconButton
-            icon={state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
-            ariaLabel={$_('resource.source')}
-            aspect="basic"
-            on:click={openOrigin} />
+        {#if _state.fieldFullId?.field_type === FIELD_TYPE.link || !$hideDownload}
+          {#if _state.fieldFullId?.field_type === FIELD_TYPE.file || _state.fieldFullId?.field_type === FIELD_TYPE.link}
+            <IconButton
+              icon={_state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
+              ariaLabel={$_('resource.source')}
+              aspect="basic"
+              on:click={openOrigin} />
+          {:else if _state.fieldFullId?.field_type === FIELD_TYPE.text}
+            <IconButton
+              icon="download"
+              ariaLabel={$_('resource.source')}
+              aspect="basic"
+              on:click={downloadTextField} />
+          {/if}
         {/if}
       </div>
 
       <div class="header-actions">
         {#if !isMobile && !resultNavigatorHidden && !resultNavigatorDisabled}
           <SearchResultNavigator
-            resultIndex={state.playFromTranscript ? -1 : state.selectedParagraphIndex}
+            resultIndex={_state.playFromTranscript ? -1 : _state.selectedParagraphIndex}
             total={result?.paragraphs.length}
             on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
             on:openPrevious={openPrevious}
@@ -326,7 +346,7 @@
         {/if}
 
         {#if hasMenu && result?.paragraphs.length > 1}
-          <div class="separator" />
+          <div class="separator"></div>
         {/if}
         {#if hasMenu}
           <div bind:this={menuButton}>
@@ -340,9 +360,9 @@
             <Dropdown
               position={menuPosition}
               on:close={() => (displayMenu = false)}>
-              <ul class="viewer-menu">
+              <ul>
                 {#each $widgetActions as item}
-                  <li on:click={() => clickOnMenu(item)}>{item.label}</li>
+                  <Option on:select={() => clickOnMenu(item)}>{item.label}</Option>
                 {/each}
               </ul>
             </Dropdown>
@@ -361,7 +381,7 @@
       class:side-panel-expanded={sidePanelExpanded}>
       {#if isMobile && !resultNavigatorHidden}
         <SearchResultNavigator
-          resultIndex={state.selectedParagraphIndex}
+          resultIndex={_state.selectedParagraphIndex}
           total={result?.paragraphs.length}
           disabled={resultNavigatorDisabled}
           on:openPrevious={openPrevious}
@@ -384,13 +404,13 @@
             {#if !showKnowledgeGraph}
               <div
                 class="side-panel-button"
-                on:click={toggleSidePanel}>
+                onclick={toggleSidePanel}>
                 <Icon name={sidePanelExpanded ? 'chevrons-right' : 'chevrons-left'} />
               </div>
             {:else}
               <div
                 class="side-panel-button"
-                on:click={toggleSidePanel}>
+                onclick={toggleSidePanel}>
                 <Icon name={sidePanelExpanded ? 'chevrons-right' : 'info'} />
               </div>
             {/if}
@@ -398,7 +418,7 @@
             {#if $isKnowledgeGraphEnabled}
               <div
                 class="side-panel-button"
-                on:click={toggleKnowledgeGraph}>
+                onclick={toggleKnowledgeGraph}>
                 <Icon name={showKnowledgeGraph ? 'cross' : 'submenu'} />
               </div>
             {/if}
@@ -418,7 +438,7 @@
                   autocomplete="off"
                   tabindex="-1"
                   bind:value={$graphQuery}
-                  on:change={findInGraph} />
+                  onchange={findInGraph} />
               </div>
             {/if}
             <KnowledgeGraphPanel />
@@ -439,8 +459,8 @@
                   tabindex="-1"
                   bind:this={findInputElement}
                   bind:value={$searchInFieldQuery}
-                  on:keyup={(e) => findInField(e)} />
-                {#if state.query?.length > 0}
+                  onkeyup={(e) => findInField(e)} />
+                {#if _state.query?.length > 0}
                   <IconButton
                     icon="cross"
                     aspect="basic"
@@ -449,46 +469,48 @@
                 {/if}
               </div>
 
-              {#if result?.paragraphs.length > 0 || state.searchInFieldResults !== null}
+              {#if result?.paragraphs.length > 0 || _state.searchInFieldResults !== null}
                 <MetadataContainer
                   sectionId="search"
                   expanded={sidePanelSectionOpen === 'search'}
                   on:toggle={(event) => toggleSection(event.detail)}>
-                  <span slot="sectionTitle">
-                    {$_('viewer.search-results', {
-                      count:
-                        state.searchInFieldResults !== null
-                          ? state.searchInFieldResults.length
-                          : result?.paragraphs.length,
-                    })}
-                  </span>
-                  <ul
-                    class="sw-paragraphs-container"
-                    slot="sectionContent">
-                    {#if state.searchInFieldResults !== null}
-                      {#each state.searchInFieldResults as paragraph, index}
-                        <ParagraphResult
-                          {paragraph}
-                          stack={true}
-                          minimized={isMobile}
-                          resultType={result?.resultType}
-                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                          on:open={() => selectParagraph(index)} />
-                      {/each}
-                    {:else}
-                      {#each result?.paragraphs as paragraph, index}
-                        <ParagraphResult
-                          {paragraph}
-                          stack={true}
-                          minimized={isMobile}
-                          resultType={result?.resultType}
-                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                          on:open={() => selectParagraph(index)} />
-                      {/each}
-                    {/if}
-                  </ul>
+                  {#snippet sectionTitle()}
+                    <span>
+                      {$_('viewer.search-results', {
+                        count:
+                          _state.searchInFieldResults !== null
+                            ? _state.searchInFieldResults.length
+                            : result?.paragraphs.length,
+                      })}
+                    </span>
+                  {/snippet}
+                  {#snippet sectionContent()}
+                    <ul class="sw-paragraphs-container">
+                      {#if _state.searchInFieldResults !== null}
+                        {#each _state.searchInFieldResults as paragraph, index}
+                          <ParagraphResult
+                            {paragraph}
+                            stack={true}
+                            minimized={isMobile}
+                            resultType={result?.resultType}
+                            noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                            selected={!_state.playFromTranscript && index === _state.selectedParagraphIndex}
+                            on:open={() => selectParagraph(index)} />
+                        {/each}
+                      {:else}
+                        {#each result?.paragraphs as paragraph, index}
+                          <ParagraphResult
+                            {paragraph}
+                            stack={true}
+                            minimized={isMobile}
+                            resultType={result?.resultType}
+                            noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                            selected={!_state.playFromTranscript && index === _state.selectedParagraphIndex}
+                            on:open={() => selectParagraph(index)} />
+                        {/each}
+                      {/if}
+                    </ul>
+                  {/snippet}
                 </MetadataContainer>
               {/if}
             {/if}
@@ -498,19 +520,21 @@
                 sectionId="transcripts"
                 expanded={sidePanelSectionOpen === 'transcripts'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.full-transcripts')}</span>
-                <ul
-                  class="sw-paragraphs-container"
-                  slot="sectionContent">
-                  {#each $transcripts as paragraph, index}
-                    <ParagraphResult
-                      {paragraph}
-                      selected={state.playFromTranscript && index === state.selectedParagraphIndex}
-                      resultType={result?.resultType}
-                      stack
-                      on:open={() => selectTranscript(paragraph, index)} />
-                  {/each}
-                </ul>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.full-transcripts')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <ul class="sw-paragraphs-container">
+                    {#each $transcripts as paragraph, index}
+                      <ParagraphResult
+                        {paragraph}
+                        selected={_state.playFromTranscript && index === _state.selectedParagraphIndex}
+                        resultType={result?.resultType}
+                        stack
+                        on:open={() => selectTranscript(paragraph, index)} />
+                    {/each}
+                  </ul>
+                {/snippet}
               </MetadataContainer>
             {/if}
 
@@ -519,12 +543,14 @@
                 sectionId="summary"
                 expanded={sidePanelSectionOpen === 'summary'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.summary')}</span>
-                <div
-                  class="summary-container"
-                  slot="sectionContent">
-                  {$fieldSummary}
-                </div>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.summary')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <div class="summary-container">
+                    {$fieldSummary}
+                  </div>
+                {/snippet}
               </MetadataContainer>
             {/if}
 
@@ -533,32 +559,34 @@
                 sectionId="items"
                 expanded={sidePanelSectionOpen === 'items'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.items')}</span>
-                <ul
-                  class="field-list"
-                  slot="sectionContent">
-                  {#each $fieldList as item}
-                    <li
-                      class:current={item.field_id === $fieldFullId.field_id}
-                      on:click={() => navigateToField(item)}>
-                      <div class="field-icon">
-                        <Icon
-                          size="small"
-                          name={item.field_type === 'conversation'
-                            ? 'chat'
-                            : item.field_type === 'text'
-                            ? 'file'
-                            : item.field_type} />
-                      </div>
-                      <div class="field-item">
-                        <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
-                          {item.field_type}
-                        </span>
-                        <small class="body-xs">{item.field_id}</small>
-                      </div>
-                    </li>
-                  {/each}
-                </ul>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.items')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <ul class="field-list">
+                    {#each $fieldList as item}
+                      <li
+                        class:current={item.field_id === $fieldFullId.field_id}
+                        onclick={() => navigateToField(item)}>
+                        <div class="field-icon">
+                          <Icon
+                            size="small"
+                            name={item.field_type === 'conversation'
+                              ? 'chat'
+                              : item.field_type === 'text'
+                                ? 'file'
+                                : item.field_type} />
+                        </div>
+                        <div class="field-item">
+                          <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
+                            {item.field_type}
+                          </span>
+                          <small class="body-xs">{item.field_id}</small>
+                        </div>
+                      </li>
+                    {/each}
+                  </ul>
+                {/snippet}
               </MetadataContainer>
             {/if}
           {/if}
@@ -568,6 +596,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Viewer.scss"></style>
+<style src="./Viewer.css"></style>

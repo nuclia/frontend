@@ -2,14 +2,15 @@
   "name": "dashboard",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "sourceRoot": "apps/dashboard/src",
+  "prefix": "app",
+  "tags": [],
   "generators": {
     "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }
   },
-  "sourceRoot": "apps/dashboard/src",
-  "prefix": "app",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -164,6 +165,50 @@
             }
           ]
         },
+        "local-dev": {
+          "aot": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/dashboard/src/favicon.ico",
+            "apps/dashboard/src/assets",
+            "apps/dashboard/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/dashboard/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
         "local-prod": {
           "aot": false,
           "buildOptimizer": false,
@@ -224,11 +269,15 @@
         "local-stage": {
           "buildTarget": "dashboard:build:local-stage"
         },
+        "local-dev": {
+          "buildTarget": "dashboard:build:local-dev"
+        },
         "local-prod": {
           "buildTarget": "dashboard:build:local-prod"
         }
       },
-      "defaultConfiguration": "local-stage"
+      "defaultConfiguration": "local-stage",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -243,6 +292,5 @@
         "jestConfig": "apps/dashboard/jest.config.js"
       }
     }
-  },
-  "tags": []
+  }
 }

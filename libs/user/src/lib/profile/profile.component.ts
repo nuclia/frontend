@@ -21,6 +21,7 @@ import { SamePassword } from '../password.validator';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;

@@ -1,0 +1,28 @@
+<div class="rag-lab-page page-spacing">
+  <div class="page-header">
+    <h1 class="page-title">{{ 'rag-lab.page-title' | translate }}</h1>
+    <p class="page-description">{{ 'rag-lab.page-description' | translate }}</p>
+  </div>
+
+  <pa-tabs>
+    <pa-tab
+      (click)="selectedTab = 'prompt'"
+      [active]="selectedTab === 'prompt'">
+      {{ 'rag-lab.prompt-lab.page-title' | translate }}
+    </pa-tab>
+    <pa-tab
+      (click)="selectedTab = 'rag'"
+      [active]="selectedTab === 'rag'">
+      {{ 'rag-lab.page-title' | translate }}
+    </pa-tab>
+  </pa-tabs>
+
+  @switch (selectedTab) {
+    @case ('prompt') {
+      <stf-prompt-lab></stf-prompt-lab>
+    }
+    @case ('rag') {
+      <stf-rag-lab></stf-rag-lab>
+    }
+  }
+</div>

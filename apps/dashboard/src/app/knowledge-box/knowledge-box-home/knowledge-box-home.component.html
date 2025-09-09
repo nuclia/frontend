@@ -11,8 +11,7 @@
             @if (isKbAdmin | async) {
               <a
                 class="title-xxs accent-link"
-                [routerLink]="kbUrl + '/manage'"
-                (click)="trackNavigationFromHome('KB settings')">
+                [routerLink]="kbUrl + '/manage'">
                 {{ 'dashboard-home.go-to.kb-settings' | translate }}
               </a>
             }
@@ -78,7 +77,7 @@
                     </div>
                   </div>
                 }
-                @if (config['semantic_model']; as semanticModel) {
+                @if (config['default_semantic_model']; as semanticModel) {
                   <div>
                     <div class="title-xxs">{{ 'kb.ai-models.semantic-model.label' | translate }}</div>
                     <div class="body-s">
@@ -89,6 +88,16 @@
               </div>
             </div>
           }
+          <div>
+            <pa-button
+              size="small"
+              aspect="basic"
+              icon="square-arrow"
+              iconAndText
+              (click)="navigateToTestPage()">
+              {{ 'test-page.title' | translate }}
+            </pa-button>
+          </div>
         </nsi-home-container>
 
         @if (
@@ -107,8 +116,7 @@
 
               <a
                 class="title-xxs accent-link"
-                [routerLink]="kbUrl + '/resources'"
-                (click)="trackNavigationFromHome('resource list')">
+                [routerLink]="kbUrl + '/resources'">
                 {{ 'dashboard-home.go-to.resource-list' | translate }}
               </a>
             </div>
@@ -212,6 +220,25 @@
       </div>
 
       <div class="column-container">
+        @if (isAccountManager | async) {
+          @if ((uploadBlocked | async) || (generativeBlocked | async)) {
+            <nsi-info-card type="warning">
+              <div class="blocked-features">
+                <div class="title-m title-with-icon">
+                  <pa-icon name="warning"></pa-icon>
+                  {{ 'dashboard-home.blocked.title' | translate }}
+                </div>
+                @if (uploadBlocked | async) {
+                  <div class="body-s">{{ 'dashboard-home.blocked.upload' | translate }}</div>
+                }
+                @if (generativeBlocked | async) {
+                  <div class="body-s">{{ 'dashboard-home.blocked.generative' | translate }}</div>
+                }
+              </div>
+            </nsi-info-card>
+          }
+        }
+
         @if (canUpgrade | async) {
           <nsi-home-container>
             <app-account-status></app-account-status>
@@ -269,7 +296,7 @@
           </nsi-home-container>
         }
 
-        @if ((isKbContrib | async) && (isAccountManager | async)) {
+        @if (isAccountManager | async) {
           <nsi-home-container class="usage-charts">
             <div class="title-m title-with-action">
               <div class="title-with-icon">
@@ -286,7 +313,7 @@
 
             <pa-table
               border
-              columns="repeat(3, 1fr)">
+              columns="1.2fr repeat(2, 1fr)">
               <pa-table-header>
                 <pa-table-cell header></pa-table-cell>
                 <pa-table-cell header>
@@ -304,12 +331,31 @@
                   @if (locale | async; as locale) {
                     <pa-table-cell>
                       <span class="title-xxs">
-                        {{ queriesCount.month | number: '1.0-0' : locale }}
+                        {{ queriesCount.month.search | number: '1.0-0' : locale }}
                       </span>
                     </pa-table-cell>
                     <pa-table-cell>
                       <span class="title-xxs">
-                        {{ queriesCount.year | number: '1.0-0' : locale }}
+                        {{ queriesCount.year.search | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                  }
+                </pa-table-row>
+              }
+              @if (searchQueriesCounts | async; as queriesCount) {
+                <pa-table-row last>
+                  <pa-table-cell>
+                    <span class="body-s">{{ 'metrics.ask.title' | translate }}</span>
+                  </pa-table-cell>
+                  @if (locale | async; as locale) {
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.month.chat | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.year.chat | number: '1.0-0' : locale }}
                       </span>
                     </pa-table-cell>
                   }
@@ -342,7 +388,16 @@
                 aspect="basic"
                 [popupRef]="chartDropdown"
                 [open]="isChartDropdownOpen">
-                {{ currentChart.label | translate }}
+                <span class="title-with-icon">
+                  {{ currentChart.label | translate }}
+                  <span class="body-s period">
+                    @if (isSubscribed | async) {
+                      ({{ 'kb.metrics.period.current-billing-period' | translate }})
+                    } @else {
+                      ({{ 'kb.metrics.period.current-month' | translate }})
+                    }
+                  </span>
+                </span>
               </nsi-dropdown-button>
 
               <pa-dropdown
@@ -365,14 +420,31 @@
               [currentChart]="currentChart"
               [processingChart]="processingChart | async"
               [tokenChart]="nucliaTokenChart | async"
-              [searchChart]="searchChart | async"></app-kb-usage-charts>
+              [searchChart]="searchChart | async"
+              [askChart]="askChart | async"></app-kb-usage-charts>
           </nsi-home-container>
+        }
+
+        @if (isKbContrib | async) {
+          @if (isRemiMetricsEnabled | async) {
+            <nsi-home-container>
+              <div class="title-with-action">
+                <div class="title-with-icon title-m">
+                  <pa-icon name="heart"></pa-icon>
+                  {{ 'dashboard-home.health-status.title' | translate }}
+                  <small class="body-s period">({{ 'kb.metrics.period.last-7d' | translate }})</small>
+                </div>
+                <a
+                  class="accent-link"
+                  [routerLink]="kbUrl + '/metrics'">
+                  {{ 'dashboard-home.health-status.more-metrics' | translate }}
+                </a>
+              </div>
+              <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
+            </nsi-home-container>
+          }
         }
       </div>
     }
   }
 </div>
-
-@if ((searchQueriesCounts | async)?.year; as yearCount) {
-  <app-knowledge-box-survey [totalSearch]="yearCount"></app-knowledge-box-survey>
-}

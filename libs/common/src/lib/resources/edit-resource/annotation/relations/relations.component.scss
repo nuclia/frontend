@@ -1,0 +1,18 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.title-s {
+  margin-bottom: rhythm(0.5);
+}
+
+.relations {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+  margin-bottom: rhythm(3);
+}
+
+.relation {
+  display: flex;
+  gap: rhythm(0.5);
+  flex-wrap: wrap;
+}

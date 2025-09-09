@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $chart-line-color: $color-neutral-light;
 $chart-font-size: font-size(xs);
@@ -28,7 +28,10 @@ $chart-font-size: font-size(xs);
   }
 
   .tooltip {
-    background-color: $color-dark-stronger;
+    $tooltip-background: rgba(0, 0, 0, 0.1);
+
+    background-color: $tooltip-background;
+    border-radius: rhythm(1);
     color: $color-light-stronger;
     padding: rhythm(1);
     position: absolute;
@@ -37,14 +40,25 @@ $chart-font-size: font-size(xs);
     pointer-events: none;
 
     &::after {
-      border-top: rhythm(0.5) solid $color-dark-stronger;
-      border-left: rhythm(0.5) solid transparent;
-      border-right: rhythm(0.5) solid transparent;
-      bottom: calc(#{rhythm(0.5)} * -1);
+      border-top: rhythm(1) solid $tooltip-background;
+      border-left: rhythm(1) solid transparent;
+      border-right: rhythm(1) solid transparent;
+      bottom: calc(#{rhythm(1)} * -1);
       content: '';
       height: 0;
       position: absolute;
       left: calc(50% - #{rhythm(0.5)});
     }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      min-width: rhythm(12);
+    }
+  }
+
+  .legend {
+    @include body-s();
   }
 }

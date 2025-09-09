@@ -1,10 +1,13 @@
-<div
-  class="label-list"
-  *ngIf="labelSelection && labelSelection.length > 0">
-  <pa-chip-closeable
-    *ngFor="let label of labelSelection"
-    [backgroundColor]="labelSets[label.labelset].color"
-    (closed)="removeLabel(label)">
-    {{ label.label }}
-  </pa-chip-closeable>
-</div>
+@if (labelSelection && labelSelection.length > 0) {
+  <div
+    class="label-list"
+    >
+    @for (label of labelSelection; track label) {
+      <pa-chip-closeable
+        [backgroundColor]="labelSets[label.labelset].color"
+        (closed)="removeLabel(label)">
+        {{ label.label }}
+      </pa-chip-closeable>
+    }
+  </div>
+}

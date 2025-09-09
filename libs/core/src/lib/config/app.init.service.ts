@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import * as Sentry from '@sentry/angular';
+import { browserTracingIntegration } from '@sentry/angular';
 import { firstValueFrom, from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as Sentry from '@sentry/angular';
 
 export type EnvironmentConfiguration = {
   version: string;
@@ -15,9 +16,10 @@ export type EnvironmentConfiguration = {
     sentry_environment?: string;
     sentry_url?: string;
     sentry_backend?: string;
-    posthog_key?: string;
-    posthog_host?: string;
-    cdn?: string;
+    cdn: string;
+    brand_name?: string;
+    noStripe: boolean;
+    assetsPath?: string;
     allowed_hosts_redirect?: string[];
   };
 };
@@ -31,7 +33,6 @@ export type StaticEnvironmentConfiguration = {
     new_api?: boolean;
     oauth?: string;
   };
-  base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app
   standalone?: boolean;
 };
@@ -52,15 +53,10 @@ export class AppInitService {
           if (config.production) {
             Sentry.init({
               dsn: config.backend.sentry_url,
-              integrations: [
-                new Sentry.BrowserTracing({
-                  tracingOrigins: [config.backend.sentry_backend],
-                  routingInstrumentation: Sentry.routingInstrumentation,
-                }),
-              ],
+              integrations: [browserTracingIntegration()],
               tracesSampleRate: 5.0,
             });
-            Sentry.configureScope((scope) => {
+            Sentry.withScope((scope) => {
               scope.addEventProcessor((event) => {
                 event.environment = config.backend.sentry_environment;
                 event.release = config.version;
@@ -77,7 +73,7 @@ export class AppInitService {
               : config.backend.apiOrigin;
           config.backend.apiOrigin = apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
-          config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : apiOrigin.replace('//', '//cdn.');
+          config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(config.backend.cdn);
           }
@@ -98,28 +94,7 @@ function injectWidget(cdnUrl: string) {
   searchWidget.type = 'text/javascript';
   searchWidget.async = true;
   searchWidget.defer = true;
-  searchWidget.src = `${cdnUrl}/nuclia-video-widget.umd.js`;
+  searchWidget.src = `${cdnUrl}/nuclia-widget.umd.js`;
   searchWidget.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(searchWidget);
-
-  const viewer = window.document.createElement('script');
-  viewer.type = 'text/javascript';
-  viewer.async = true;
-  viewer.defer = true;
-  viewer.src = `${cdnUrl}/nuclia-viewer-widget.umd.js`;
-  window.document.body.appendChild(viewer);
-
-  const popup = window.document.createElement('script');
-  popup.type = 'text/javascript';
-  popup.async = true;
-  popup.defer = true;
-  popup.src = `${cdnUrl}/nuclia-popup-widget.umd.js`;
-  window.document.body.appendChild(popup);
-
-  const chat = window.document.createElement('script');
-  chat.type = 'text/javascript';
-  chat.async = true;
-  chat.defer = true;
-  chat.src = `${cdnUrl}/nuclia-chat-widget.umd.js`;
-  window.document.body.appendChild(chat);
 }

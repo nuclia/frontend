@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
-import { SDKService } from '../api';
-import { StaticEnvironmentConfiguration } from '../config';
+import { BackendConfigurationService, StaticEnvironmentConfiguration } from '../config';
+import { SDKService } from '../api/sdk.service';
 
 export interface Features {
   [key: string]: boolean | undefined;
@@ -20,6 +20,7 @@ interface FeaturesData {
 }
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
+const ENABLE_BLOCKED_ZONES = 'NUCLIA_ENABLE_BLOCKED_ZONES';
 const FEATURE_PREFIX = 'application_';
 const BACKEND_PREFIXES = ['nucliadb_', 'nua_'];
 
@@ -27,6 +28,7 @@ const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
+  private backendConfig = inject(BackendConfigurationService);
   private accountMd5 = this.sdk.hasAccount.pipe(
     switchMap((hasAccount) =>
       hasAccount
@@ -39,7 +41,7 @@ export class FeatureFlagService {
   );
   // features-v2.json stored in the GitHub /status repo is automatically pushed to the Nuclia CDN
   // to avoid strict security policy issues in the customer side
-  private featuresData = fromFetch('https://cdn.nuclia.cloud/features/features-v2.json').pipe(
+  private featuresData = fromFetch(`${this.backendConfig.getCDN()}/features/features-v2.json`).pipe(
     switchMap((res) => res.json()),
     map((res) => res as FeaturesData),
     shareReplay(1),
@@ -97,7 +99,10 @@ export class FeatureFlagService {
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
-  isStageOrDev = location.hostname === 'stashify.cloud' || !this.environment.production;
+  isStageOrDev =
+    location.hostname === 'stashify.cloud' ||
+    location.hostname === 'gcp-global-dev-1.nuclia.io' ||
+    !this.environment.production;
 
   constructor(
     private sdk: SDKService,
@@ -172,5 +177,13 @@ export class FeatureFlagService {
         return featureData?.variants?.blocklist || [];
       }),
     );
+  }
+
+  showBlockedZones(): boolean {
+    return JSON.parse(localStorage.getItem(ENABLE_BLOCKED_ZONES) || 'false');
+  }
+
+  changeBlockedZones(show: boolean) {
+    localStorage.setItem(ENABLE_BLOCKED_ZONES, JSON.stringify(show));
   }
 }

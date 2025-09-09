@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { combineLatest, forkJoin, map, Observable, take } from 'rxjs';
 
+const IN_ARAG = new RegExp('at/[^/]+/[^/]+/arag');
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
 
@@ -17,10 +18,12 @@ export class NavigationService {
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
-    map(([account, kb]) => {
+  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.arag]).pipe(
+    map(([account, kb, arag]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
+      } else if (account && arag) {
+        return this.getRetrievalAgentUrl(account.slug, arag.slug);
       } else if (account && kb) {
         const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
         return this.getKbUrl(account.slug, kbSlug);
@@ -42,9 +45,12 @@ export class NavigationService {
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }
+  inAragSpace(path: string): boolean {
+    return path.match(IN_ARAG) !== null;
+  }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard
-    const commonPages = ['ai-models', 'entities', 'label-sets', 'manage'];
+    const commonPages = ['ai-models', 'entities', 'label-sets', 'manage', 'metrics'];
 
     if (path.startsWith('#')) {
       const pattern = `/(${commonPages.join('|')})$`;
@@ -56,12 +62,17 @@ export class NavigationService {
         'training',
         'users',
         'keys',
-        'prompt-lab',
+        'rag-lab',
         'tasks',
       ]);
       const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
       return path.match(new RegExp(pattern)) !== null;
     }
+  }
+  inAragSettings(path: string, aragUrl: string): boolean {
+    const settingsPages = ['ai-models', 'manage', 'activity', 'users', 'keys', 'rag-lab'];
+    const pattern = `${aragUrl}/(${settingsPages.join('|')})`;
+    return path.match(new RegExp(pattern)) !== null;
   }
   inKbUpload(path: string, kbUrl: string): boolean {
     const pattern = `${kbUrl}/upload`;
@@ -73,6 +84,18 @@ export class NavigationService {
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;
+  }
+
+  getRetrievalAgentUrl(accountSlug: string, agentSlug: string): string {
+    return `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/arag/${agentSlug}`;
+  }
+
+  getAragSessionsUrl(accountSlug: string, agentSlug: string): string {
+    return `${this.getRetrievalAgentUrl(accountSlug, agentSlug)}/sessions`;
+  }
+
+  getAragSettingsUrl(accountSlug: string, agentSlug: string): string {
+    return `${this.getRetrievalAgentUrl(accountSlug, agentSlug)}/manage`;
   }
 
   getKbUrl(accountSlug: string, kbSlug: string): string {
@@ -110,6 +133,9 @@ export class NavigationService {
   getKbCreationUrl(accountSlug: string): string {
     return `${this.getAccountUrl(accountSlug)}/manage/kbs/create`;
   }
+  getAragCreationUrl(accountSlug: string): string {
+    return `${this.getAccountUrl(accountSlug)}/manage/arag`;
+  }
 
   getKbUsersUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/users`;
@@ -125,6 +151,9 @@ export class NavigationService {
 
   getSearchUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/search`;
+  }
+  getTestPageUrl(accountSlug: string, kbSlug: string): string {
+    return `/test/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
   }
   // Redirect authenticated users to the landing page.
   goToLandingPage(): void {

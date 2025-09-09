@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { GlobalAccountService } from './global-account.service';
+import { AccountTypeDefaults, AccountService as CoreAccountService, SDKService } from '@flaps/core';
 import { AccountLimitsPatchPayload, AccountTypes, NucliaTokensMetric } from '@nuclia/core';
 import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
-import { AccountService as CoreAccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
-import { AccountUserType, KbRoles } from './global-account.models';
+import { ManagerStore } from '../manager.store';
 import {
   AccountConfigurationPayload,
   AccountDetails,
@@ -14,7 +13,8 @@ import {
   KbDetails,
   KbSummary,
 } from './account-ui.models';
-import { ManagerStore } from '../manager.store';
+import { AccountUserType, KbRoles } from './global-account.models';
+import { GlobalAccountService } from './global-account.service';
 import { RegionalAccountService } from './regional-account.service';
 
 @Injectable({
@@ -45,6 +45,9 @@ export class AccountService {
    * Get account details and set `AccountDetails` and `KbList` in store.
    */
   loadAccountDetails(accountId: string): Observable<AccountDetails> {
+    this.store.setKbList([]);
+    this.store.setAccountDetails(null);
+    this.store.setBlockedFeatures([]);
     return this.regionalService.getAccount(accountId).pipe(
       switchMap((account) => {
         const accountDetails = this.regionalService.mapAccountToDetails(account);
@@ -100,6 +103,7 @@ export class AccountService {
    */
   loadKb(kbSummary: KbSummary): Observable<KbDetails> {
     return this.store.accountDetails.pipe(
+      take(1),
       switchMap((accountDetails) =>
         accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId),
       ),
@@ -225,6 +229,18 @@ export class AccountService {
           throwError(() => 'No nuclia_tokens found in the response');
         }
         return nucliaTokensPoint as NucliaTokensMetric;
+      }),
+    );
+  }
+
+  /**
+   * Load account models and add them to the store
+   */
+  loadAccountModels(accountId: string) {
+    return this.regionalService.getModelsPerZone(accountId).pipe(
+      map((models) => {
+        this.store.setAccountModels(models);
+        return models;
       }),
     );
   }

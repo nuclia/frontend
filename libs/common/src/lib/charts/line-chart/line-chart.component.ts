@@ -1,19 +1,15 @@
 import {
   AfterViewInit,
   booleanAttribute,
-  ChangeDetectorRef,
   Component,
-  ElementRef,
   Input,
   numberAttribute,
   OnDestroy,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { fromEvent, Subject } from 'rxjs';
-import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
 import { createYAxis, drawThreshold, TickOptions } from '../chart-utils';
+import { BaseChartDirective } from '../base-chart.directive';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 7;
@@ -23,13 +19,10 @@ const NUM_TICKS = 7;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
-export class LineChartComponent implements AfterViewInit, OnDestroy {
+export class LineChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {
   id = `line-chart-${nextUniqueId++}`;
-  unsubscribeAll = new Subject<void>();
-  defaultHeight = 336;
-
-  @ViewChild('container') private container: ElementRef | undefined;
 
   @Input() xAxisTickOptions?: TickOptions | null;
   @Input({ transform: booleanAttribute }) tooltipsEnabled = false;
@@ -51,27 +44,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   tooltipContent?: [string, number];
   tooltipLeft = 0;
   tooltipBottom = 0;
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngAfterViewInit(): void {
-    setTimeout(() => this.draw(), 0);
-
-    // Make the chart responsive
-    fromEvent(window, 'resize')
-      .pipe(auditTime(200), takeUntil(this.unsubscribeAll))
-      .subscribe(() => {
-        this.removeExistingChartFromParent();
-        this.draw();
-      });
-  }
-
-  ngOnDestroy() {
-    if (this.unsubscribeAll) {
-      this.unsubscribeAll.next();
-      this.unsubscribeAll.complete();
-    }
-  }
 
   draw() {
     const minValue =
@@ -180,11 +152,5 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
     }
 
     return scale;
-  }
-
-  private removeExistingChartFromParent(): void {
-    d3.select(this.container?.nativeElement)
-      .select('svg')
-      .remove();
   }
 }

@@ -2,7 +2,11 @@
   import { createEventDispatcher } from 'svelte';
   import Icon from '../icons/Icon.svelte';
 
-  export let showAllResults = false;
+  interface Props {
+    showAllResults?: boolean;
+  }
+
+  let { showAllResults = false }: Props = $props();
 
   const dispatch = createEventDispatcher();
   const toggle = (event: MouseEvent) => {
@@ -14,7 +18,7 @@
 <div
   class="all-result-toggle"
   class:expanded={showAllResults}
-  on:click={toggle}>
+  onclick={toggle}>
   Display {showAllResults ? 'less' : 'all'} results
 
   <div class="icon">
@@ -24,6 +28,4 @@
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./AllResultsToggle.scss"></style>
+<style src="./AllResultsToggle.css"></style>

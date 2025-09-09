@@ -1,0 +1,25 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+  > div {
+    font-size: $font-size-body-m;
+  }
+}
+
+pa-table {
+  margin-top: rhythm(1);
+}
+
+.filters {
+  display: flex;
+  gap: rhythm(1);
+}

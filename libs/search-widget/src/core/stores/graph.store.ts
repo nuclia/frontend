@@ -1,11 +1,11 @@
-import { SvelteState } from '../state-lib';
-import type { NerLinkHydrated, NerNode } from '../knowledge-graph.models';
 import type { Search } from '@nuclia/core';
+import type { NerLink, NerNode } from '../knowledge-graph.models';
+import { SvelteState } from '../state-lib';
 
 interface GraphState {
   query: string;
-  selectedNode?: NerNode;
-  selectedNodeEdges?: NerLinkHydrated[];
+  selectedNode?: NerNode | null;
+  selectedNodeEdges?: NerLink[];
   selectedNodeResults?: Search.FindParagraph[];
 }
 
@@ -21,7 +21,7 @@ export const graphQuery = graphState.writer<string>(
   }),
 );
 
-export const graphSelection = graphState.writer<NerNode | undefined>(
+export const graphSelection = graphState.writer<NerNode | undefined | null>(
   (state) => state.selectedNode,
   (state, selectedNode) => ({
     ...state,
@@ -30,7 +30,7 @@ export const graphSelection = graphState.writer<NerNode | undefined>(
   }),
 );
 
-export const graphSelectionRelations = graphState.writer<NerLinkHydrated[] | undefined>(
+export const graphSelectionRelations = graphState.writer<NerLink[] | undefined>(
   (state) =>
     (state.selectedNodeEdges || []).sort((a, b) => {
       if (a.relevance < b.relevance) {

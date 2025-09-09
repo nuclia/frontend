@@ -3,14 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ZoneService } from '../zone.service';
 import { Zone } from '../zone.models';
 import { UserService } from '../../manage-users/user.service';
-import { SisToastService } from '@nuclia/sistema';
-import { filter, map, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
+import { TokenDialogComponent, ValidSlug } from '@flaps/common';
 
 @Component({
   templateUrl: './zone-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ZoneDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -18,7 +20,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
 
   zoneForm = new FormGroup({
     id: new FormControl('', { nonNullable: true }),
-    slug: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    slug: new FormControl('', { nonNullable: true, validators: [Validators.required, ValidSlug()] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     subdomain: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     cloud_provider: new FormControl<'AWS' | 'GCP'>('GCP', { nonNullable: true, validators: [Validators.required] }),
@@ -38,6 +40,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
     private location: Location,
+    private modalService: SisModalService,
   ) {}
 
   ngOnInit() {
@@ -68,6 +71,16 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
         .getAuthenticatedUser()
         .pipe(
           switchMap((user) => this.zoneService.addZone({ slug, title, creator: user.id, subdomain, cloud_provider })),
+          tap((token) => {
+            this.modalService.openModal(TokenDialogComponent, {
+              dismissable: true,
+              data: {
+                token: token,
+                modalTitle: 'Zone token',
+                modalDescription: '<strong>Important!</strong> Copy and save the token.',
+              },
+            });
+          }),
           switchMap(() => this.zoneService.loadZones()),
         )
         .subscribe({

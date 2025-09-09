@@ -33,6 +33,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./InitialAnswer.scss"></style>
+<style src="./InitialAnswer.css"></style>

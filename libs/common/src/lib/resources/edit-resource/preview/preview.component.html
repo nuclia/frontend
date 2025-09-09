@@ -3,91 +3,228 @@
 }
 <div class="main-container">
   <div class="scrollable-area">
-    @if (errors) {
+    @for (error of errors | slice: 0 : 5; track error.body) {
       <div class="error-container">
         <p>
           <pa-icon
             name="warning"
             size="small"></pa-icon>
-          {{ errors.body }}
+          {{ error.body }}
+        </p>
+      </div>
+    }
+    @if (errors.length > 5) {
+      <div class="error-container">
+        <p>
+          <pa-icon
+            name="warning"
+            size="small"></pa-icon>
+          {{ 'resource.preview.more-errors' | translate: { num: errors.length } }}
         </p>
       </div>
     }
 
     @if (loaded) {
-      @if (((paragraphTypes | async) || []).length > 1) {
-        <div class="filters-container">
-          <div>
-            <nsi-dropdown-button
-              aspect="basic"
-              freeWidth
-              [popupRef]="paragraphTypeDropdown">
-              {{ 'Paragraph type' | translate }}
-            </nsi-dropdown-button>
-            <pa-dropdown #paragraphTypeDropdown>
-              @for (type of paragraphTypes | async; track type) {
-                <pa-option
-                  [value]="type"
-                  (selectOption)="onClickOption(type, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [value]="((selectedTypes | async) || []).includes(type)"
-                    (change)="toggleType(type)">
-                    {{ type }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            </pa-dropdown>
-          </div>
-          @if (((selectedTypes | async)?.length || 0) > 0) {
-            <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
-          }
-          @for (type of selectedTypes | async; track type) {
-            <pa-chip-closeable (closed)="toggleType(type)">{{ type }}</pa-chip-closeable>
-          }
-        </div>
+      @if (((questionsAnswers | async) || []).length > 0) {
+        <pa-tabs notFullWidth>
+          <pa-tab
+            (click)="selectedTab = 'content'"
+            [active]="selectedTab === 'content'">
+            <span class="body-m">{{ 'resource.preview.content' | translate }}</span>
+          </pa-tab>
+          <pa-tab
+            (click)="selectedTab = 'questions-answers'"
+            [active]="selectedTab === 'questions-answers'">
+            <span class="body-m">{{ 'resource.preview.questions-answers' | translate }}</span>
+          </pa-tab>
+        </pa-tabs>
       }
 
-      @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId) {
-        <div class="paragraph-container">
-          @if (paragraph.url) {
-            <p>
-              <img
-                class="image"
-                [src]="paragraph.url | async" />
-            </p>
-          } @else if (paragraph.kind === 'TEXT') {
-            <p>{{ paragraph.text }}</p>
+      @if (selectedTab === 'content') {
+        @if (extractConfigId | async; as configId) {
+          @if (extractConfig | async; as config) {
+            <nsi-info-card>
+              <span [innerHTML]="'resource.extract-strategy.info' | translate: { name: config.name }"></span>
+              <br />
+              <small>
+                <a [routerLink]="aiModelsUrl | async">{{ 'resource.extract-strategy.ai-models-link' | translate }}</a>
+              </small>
+            </nsi-info-card>
           } @else {
-            <p class="with-type">
-              <span>{{ paragraph.text }}</span>
-              <span
-                [paTooltip]="
-                  paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
-                    ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
-                    : undefined
-                ">
-                <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
-              </span>
-            </p>
+            <!-- prettier-ignore -->
+            <nsi-info-card type="warning">
+              <span [innerHTML]="'resource.extract-strategy.missing' | translate:{id: configId}"></span>
+            </nsi-info-card>
           }
-        </div>
-      }
+        }
 
-      @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
-        <div class="paragraph-container">
-          <p>{{ 'resource.field-no-paragraph' | translate }}</p>
-        </div>
-      }
+        @if (hasFilters | async) {
+          <div class="filters-container">
+            <div class="filters">
+              @if (((paragraphTypes | async) || []).length > 1) {
+                <div>
+                  <nsi-dropdown-button
+                    aspect="basic"
+                    freeWidth
+                    [popupRef]="paragraphTypeDropdown">
+                    {{ 'Paragraph type' | translate }}
+                  </nsi-dropdown-button>
+                  <pa-dropdown #paragraphTypeDropdown>
+                    @for (type of paragraphTypes | async; track type) {
+                      <pa-option
+                        [value]="type"
+                        (selectOption)="onClickOption(type, $event)"
+                        dontCloseOnSelect>
+                        <pa-checkbox
+                          [value]="((selectedTypes | async) || []).includes(type)"
+                          (change)="toggleType(type)">
+                          {{ type }}
+                        </pa-checkbox>
+                      </pa-option>
+                    }
+                  </pa-dropdown>
+                </div>
+              }
+              @if (((labelSets | async | keyvalue) || []).length > 0) {
+                <div>
+                  <app-label-dropdown
+                    [labelSets]="labelSets | async"
+                    [selection]="(selectedLabels | async) || []"
+                    (selectionChange)="updateSelectedLabels($event)"
+                    [fullWidth]="true"
+                    [multiple]="true"
+                    aspect="basic">
+                    {{ 'resource.classification-column' | translate }}
+                  </app-label-dropdown>
+                </div>
+              }
+            </div>
+            @if (hasSelectedFilters | async) {
+              <div class="selected-filters">
+                <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+                @for (type of selectedTypes | async; track type) {
+                  <pa-chip-closeable (closed)="toggleType(type)">
+                    {{ type }}
+                  </pa-chip-closeable>
+                }
+                @for (label of selectedLabels | async; track label.labelset + label.label) {
+                  <pa-chip-closeable (closed)="removeLabel(label)">
+                    {{ label.labelset + '/' + label.label }}
+                  </pa-chip-closeable>
+                }
+              </div>
+            }
+          </div>
+        }
 
-      @if (jsonTextField | async) {
-        <div class="paragraph-container">
-          <pre><code>{{ jsonTextField | async }}</code></pre>
-        </div>
+        @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
+          <div class="paragraph-container">
+            @if (paragraph.url) {
+              <p>
+                <img
+                  class="image"
+                  [src]="paragraph.url | async" />
+              </p>
+            } @else if (paragraph.kind === 'TEXT') {
+              @if (((attachments | async) || {})[paragraph.key || '']; as attachments) {
+                <p class="with-attachments">
+                  <span>{{ paragraph.text }}</span>
+                  <span>
+                    <nsi-dropdown-button
+                      aspect="basic"
+                      size="small"
+                      freeWidth
+                      [popupRef]="attachmentsDropdown">
+                      {{ 'resource.attachments' | translate }}
+                    </nsi-dropdown-button>
+                    <pa-dropdown #attachmentsDropdown>
+                      @for (attachment of attachments; track attachment) {
+                        <pa-option
+                          (selectOption)="navigateToField(attachment)"
+                          [description]="attachment.field_id">
+                          {{ 'resource.field-' + attachment.field_type | translate }}
+                        </pa-option>
+                      }
+                    </pa-dropdown>
+                  </span>
+                </p>
+              } @else {
+                <p>{{ paragraph.text }}</p>
+              }
+            } @else {
+              <p class="with-type">
+                @if (paragraph.kind === 'TABLE') {
+                  <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
+                } @else {
+                  <span>{{ paragraph.text }}</span>
+                }
+                <span
+                  [paTooltip]="
+                    paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
+                      ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
+                      : undefined
+                  ">
+                  <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
+                </span>
+              </p>
+            }
+            @if (paragraph.activeClassifications.length > 0) {
+              <div class="labels-container">
+                <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
+                @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
+                  <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
+                    {{ label.label }}
+                  </pa-chip>
+                }
+              </div>
+            }
+          </div>
+        }
+        @if (hasMoreMessages | async) {
+          <div>
+            <pa-button
+              aspect="basic"
+              (click)="loadMoreMessages()">
+              {{ 'generic.show_more' | translate }}
+            </pa-button>
+          </div>
+        }
+
+        @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
+          <div class="paragraph-container">
+            <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+          </div>
+        }
+
+        @if (jsonTextField | async) {
+          <div class="paragraph-container">
+            <pre><code>{{ jsonTextField | async }}</code></pre>
+          </div>
+        }
+      } @else {
+        @if (questionsAnswers | async; as questionsAnswers) {
+          @for (item of questionsAnswers; track item.question.text) {
+            <div class="question-answer">
+              <div class="title-xxs">{{ 'resource.preview.question' | translate }}</div>
+              <p>{{ item.question.text }}</p>
+              <div class="title-xxs">{{ 'resource.preview.answers' | translate }}</div>
+              @for (answer of item.answers; track answer.text) {
+                <p>{{ answer.text }}</p>
+              }
+            </div>
+          }
+        }
       }
     } @else {
       @if (resource | async; as resource) {
-        <div class="paragraph-container">
+        <div class="resource-container">
+          @if (resource.hidden) {
+            <nsi-info-card
+              icon="warning"
+              type="warning">
+              {{ 'resource.preview.hide-warning' | translate }}
+            </nsi-info-card>
+          }
           <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
 
           <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
@@ -136,11 +273,28 @@
             <div class="title-xxs">{{ 'resource.origin.url' | translate }}</div>
             <p>{{ origin.url || '–' }}</p>
 
+            <div class="title-xxs">{{ 'resource.origin.tags' | translate }}</div>
+            <p>{{ origin.tags?.join(', ') || '–' }}</p>
+
             <div class="title-xxs">{{ 'resource.origin.related' | translate }}</div>
             <p>{{ origin.related?.join(', ') || '–' }}</p>
 
             <div class="title-xxs">{{ 'resource.origin.path' | translate }}</div>
             <p>{{ origin.path || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.metadata.title' | translate }}</div>
+            @if (origin.metadata; as originMetadata) {
+              <pa-table columns="50% 50%">
+                @for (item of originMetadata | keyvalue; track item.key) {
+                  <pa-table-row>
+                    <pa-table-cell>{{ item.key }}</pa-table-cell>
+                    <pa-table-cell>{{ item.value }}</pa-table-cell>
+                  </pa-table-row>
+                }
+              </pa-table>
+            } @else {
+              <p>–</p>
+            }
           }
           @if (extraMetadata | async; as extraMetadata) {
             <div class="title-m title-with-button">
@@ -175,11 +329,11 @@
           @if (resource.security) {
             <div class="title-m">{{ 'resource.security.label' | translate }}</div>
             <div class="title-xxs">{{ 'resource.security.access-groups.label' | translate }}</div>
-            <p [innerHTML]="resource.security.access_groups?.join('<br>') || '–'"></p>
+            <p [innerHTML]="resource.security.access_groups.join('<br>') || '–'"></p>
           }
         </div>
       } @else if (noField | async) {
-        <div class="paragraph-container">
+        <div class="resource-container">
           <p>{{ 'resource.error.no-field' | translate }}</p>
         </div>
       } @else {
@@ -187,14 +341,27 @@
       }
     }
   </div>
-  <div class="viewer-button-container">
-    @if (currentFieldId) {
-      <pa-button
-        [disabled]="loadingPreview"
-        (click)="openViewer()">
-        {{ 'resource.preview.open-viewer' | translate }}
-      </pa-button>
-    }
+  <div class="buttons-container">
+    <div class="buttons">
+      @if (currentFieldId && !(isArag | async)) {
+        <pa-button
+          [disabled]="loadingPreview"
+          (click)="openViewer()">
+          {{ 'resource.preview.open-viewer' | translate }}
+        </pa-button>
+      }
+      @if (dataAugmentationErrors.length > 0) {
+        <pa-button
+          aspect="basic"
+          kind="destructive"
+          (click)="openWarnings()">
+          {{ dataAugmentationErrors.length }}
+          {{
+            (dataAugmentationErrors.length === 1 ? 'resource.warning.warning' : 'resource.warning.warnings') | translate
+          }}
+        </pa-button>
+      }
+    </div>
   </div>
 </div>
 

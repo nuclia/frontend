@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .link-form {
   margin-top: rhythm(1);
@@ -44,4 +44,12 @@ nsi-info-card {
 pa-expander-body pa-input {
   margin: rhythm(2) 0;
   display: block;
+}
+
+app-extraction-select {
+  display: block;
+  padding: rhythm(2) 0;
+}
+.language-detection {
+  margin-top: rhythm(2);
 }

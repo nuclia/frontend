@@ -1,19 +1,22 @@
 <script>
-  export let size = 'medium';
+  /**
+   * @typedef {Object} Props
+   * @property {string} [size]
+   */
 
-  let sizeVar;
-  $: {
+  /** @type {Props} */
+  let { size = 'medium' } = $props();
+
+  let sizeVar = $derived.by(() => {
     switch (size) {
       case 'small':
-        sizeVar = `var(--rhythm-4)`;
-        break;
+        return `var(--rhythm-4)`;
       case 'large':
-        sizeVar = `var(--rhythm-12)`;
-        break;
+        return `var(--rhythm-12)`;
       default:
-        sizeVar = '';
+        return '';
     }
-  }
+  });
 </script>
 
 <div
@@ -21,17 +24,15 @@
   style:--inner-size={sizeVar}>
   <div class="spinner">
     <div class="inner">
-      <div class="gap" />
+      <div class="gap"></div>
       <div class="left">
-        <div class="half-circle" />
+        <div class="half-circle"></div>
       </div>
       <div class="right">
-        <div class="half-circle" />
+        <div class="half-circle"></div>
       </div>
     </div>
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./Spinner.scss"></style>
+<style src="./Spinner.css"></style>

@@ -9,7 +9,7 @@
     (click)="goProfile()">
     {{ 'generic.user_preferences' | translate }}
   </pa-option>
-  @if ((isBillingEnabled | async) && (isAccountManager | async)) {
+  @if ((isBillingEnabled | async) && (isAccountManager | async) && !noStripe) {
     <pa-separator></pa-separator>
     <pa-option
       icon="payment"
@@ -23,14 +23,6 @@
       icon="reload"
       (click)="switchAccount()">
       {{ 'generic.switch_account' | translate }}
-    </pa-option>
-  }
-  @if ((hasOwnAccount | async) === false) {
-    <pa-separator></pa-separator>
-    <pa-option
-      icon="account"
-      (click)="createAccount()">
-      {{ 'generic.create_account' | translate }}
     </pa-option>
   }
   @if (!standalone && (isAccountManager | async) === true) {

@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, Observable, of, Subject } from 'rxjs';
-import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { SDKService, STFUtils } from '@flaps/core';
-import { WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { filter, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { StandaloneService } from '../services';
 import { Sluggable } from '../validators';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
   styleUrls: ['./knowledge-box-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
@@ -21,11 +23,13 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   kb?: WritableKnowledgeBox;
   kbForm = new FormGroup({
     uid: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    zone: new FormControl<string>('', { nonNullable: true }),
     slug: new FormControl<string>('', { nonNullable: true, validators: [Sluggable(true)] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
     allowed_origins: new FormControl<string | null>(null),
+    hidden_resources_enabled: new FormControl<boolean>(false, { nonNullable: true }),
+    hidden_resources_hide_on_creation: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -38,8 +42,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   get zoneValue() {
     return this.kbForm.controls.zone.value;
   }
+  get hiddenResourcesEnabled() {
+    return this.kbForm.controls.hidden_resources_enabled.value;
+  }
 
   saving = false;
+  standalone = this.standaloneService.standalone;
 
   constructor(
     private sdk: SDKService,
@@ -48,13 +56,16 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private modal: SisModalService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit(): void {
-    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      this.kb = kb;
-      this.resetKbForm();
-    });
+    merge(this.sdk.currentKb, this.sdk.currentArag)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((kb) => {
+        this.kb = kb;
+        this.resetKbForm();
+      });
   }
 
   ngOnDestroy() {
@@ -71,6 +82,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         title: this.kb.title,
         description: this.kb.description || '',
         allowed_origins: (this.kb.allowed_origins || []).join('\n'),
+        hidden_resources_enabled: this.kb.hidden_resources_enabled || false,
+        hidden_resources_hide_on_creation: this.kb.hidden_resources_hide_on_creation || false,
       });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
@@ -100,6 +113,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         description: kbDetails.description,
         slug: newSlug,
         allowed_origins: !!origins && origins.length > 0 ? origins : null,
+        hidden_resources_enabled: kbDetails.hidden_resources_enabled,
+        hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
+          ? kbDetails.hidden_resources_hide_on_creation
+          : false,
       })
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),

@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .knowledge-box-home {
   --width-small-column: #{rhythm(48)};
@@ -33,7 +33,10 @@
     align-items: center;
     display: flex;
     gap: rhythm(1);
+    overflow-wrap: anywhere;
+  }
 
+  .title-with-icon {
     pa-icon {
       display: flex;
     }
@@ -46,6 +49,16 @@
 
     pa-button {
       margin-right: calc(-1 * #{rhythm(1)});
+    }
+  }
+
+  .select-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-select {
+      min-width: 50%;
     }
   }
 
@@ -123,5 +136,15 @@
     .title-xxs.header {
       color: $color-neutral-regular;
     }
+  }
+
+  .blocked-features {
+    .title-with-icon {
+      margin-bottom: rhythm(1);
+    }
+  }
+
+  .period {
+    color: $color-neutral-regular;
   }
 }

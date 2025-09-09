@@ -7,14 +7,13 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { BadgeComponent } from '../badge';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-two-columns-configuration-item',
-  standalone: true,
-  imports: [CommonModule, BadgeComponent, TranslateModule],
+  imports: [BadgeComponent, TranslateModule],
   templateUrl: './two-columns-configuration-item.component.html',
   styleUrl: './two-columns-configuration-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

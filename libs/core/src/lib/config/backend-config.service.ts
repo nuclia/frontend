@@ -2,7 +2,6 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 import { isPlatformBrowser, PlatformLocation } from '@angular/common';
 import { AppInitService, EnvironmentConfiguration, StaticEnvironmentConfiguration } from './app.init.service';
-import posthog from 'posthog-js';
 
 @Injectable({ providedIn: 'root' })
 export class BackendConfigurationService {
@@ -19,14 +18,6 @@ export class BackendConfigurationService {
     this.config = this.apiConfig.getConfig();
     this.staticConf = this.environmentConfiguration;
     this.isBrowser = isPlatformBrowser(platformId);
-
-    if (this.isBrowser && this.config.backend.posthog_key && this.config.backend.posthog_host) {
-      posthog.init(this.config.backend.posthog_key, {
-        api_host: this.config.backend.posthog_host,
-        autocapture: false,
-        capture_pageview: true,
-      });
-    }
   }
 
   getAPIURL(): string {
@@ -53,20 +44,12 @@ export class BackendConfigurationService {
     return this.staticConf.backend.social_login;
   }
 
-  getBaseAssetUrl(): string | undefined {
-    return this.staticConf.base_asset_url;
-  }
-
   getAllowedHostsRedirect(): string[] {
     return this.config.backend.allowed_hosts_redirect || [];
   }
 
   getNewApi(): boolean {
     return !!this.staticConf.backend.new_api;
-  }
-
-  getOAuthLogin(): boolean {
-    return !!this.staticConf.backend.oauth_login;
   }
 
   getLocales(): string[] {
@@ -77,15 +60,27 @@ export class BackendConfigurationService {
     return this.config.version;
   }
 
-  getCDN(): string | undefined {
-    return this.config.backend?.cdn;
+  getCDN(): string {
+    return this.config.backend.cdn;
+  }
+
+  getAssetsPath(): string {
+    return this.config.backend.assetsPath || 'assets';
+  }
+
+  getLogoPath(): string {
+    return `${this.getAssetsPath()}/logos/logo.svg?version=${this.getVersion()}`;
+  }
+
+  getBrandName(): string {
+    return this.config.backend.brand_name || 'Agentic RAG';
   }
 
   useRemoteLogin(): boolean {
     return this.config.remoteLogin || false;
   }
 
-  hasPosthog(): boolean {
-    return this.isBrowser && !!this.config.backend.posthog_key && !!this.config.backend.posthog_host;
+  noStripe(): boolean {
+    return this.config.backend.noStripe;
   }
 }

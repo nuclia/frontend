@@ -1,0 +1,15 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.task-card {
+  height: rhythm(12);
+}
+
+.card-title {
+  align-items: center;
+  display: flex;
+  gap: rhythm(0.5);
+}
+
+.description {
+  color: $color-neutral-regular;
+}

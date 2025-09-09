@@ -19,10 +19,12 @@ import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { removeDeprecatedModels } from './ai-models.utils';
+import { StandaloneService } from '../services';
+import { ExtractionComponent } from './extraction/extraction.component';
 
 @Component({
   selector: 'stf-ai-models',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,
@@ -37,6 +39,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
     SummarizationComponent,
     SemanticModelComponent,
     AnonymizationComponent,
+    ExtractionComponent,
     InfoCardComponent,
     UnauthorizedFeatureDirective,
   ],
@@ -47,7 +50,8 @@ import { InfoCardComponent } from '@nuclia/sistema';
 export class AiModelsComponent implements OnInit {
   private unsubscribeAll = new Subject<void>();
 
-  selectedTab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' = 'answer-generation';
+  selectedTab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' | 'extraction' =
+    'answer-generation';
 
   kb?: WritableKnowledgeBox;
   learningConfigurations?: LearningConfigurations;
@@ -55,12 +59,16 @@ export class AiModelsComponent implements OnInit {
   noKbConfig = false;
 
   isSummarizationAuthorized = this.features.authorized.summarization;
+  isVectorsetAuthorized = this.features.authorized.vectorset;
   isAnonymizationAuthorized = this.features.authorized.anonymization;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  standalone = this.standaloneService.standalone;
 
   constructor(
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit() {
@@ -85,12 +93,12 @@ export class AiModelsComponent implements OnInit {
       )
       .subscribe(({ kbConfig, learningSchema }) => {
         this.kbConfigBackup = kbConfig;
-        this.learningConfigurations = learningSchema;
+        this.learningConfigurations = removeDeprecatedModels(learningSchema);
         this.cdr.markForCheck();
       });
   }
 
-  selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization'): void {
+  selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' | 'extraction'): void {
     if (tab === 'summarization') {
       this.isSummarizationAuthorized
         .pipe(
@@ -103,6 +111,13 @@ export class AiModelsComponent implements OnInit {
         .pipe(
           take(1),
           filter((authorized) => authorized),
+        )
+        .subscribe(() => (this.selectedTab = tab));
+    } else if (tab === 'semantic-model') {
+      this.isVectorsetAuthorized
+        .pipe(
+          take(1),
+          filter((authorized) => this.standalone || authorized),
         )
         .subscribe(() => (this.selectedTab = tab));
     } else {

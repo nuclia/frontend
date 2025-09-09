@@ -16,7 +16,7 @@
           <span class="selected-count title-xxs">
             {{
               'resource.selected_count'
-                | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
+                | translate: { num: allResourcesSelected ? (totalItems | async) : selection.length }
             }}
           </span>
 
@@ -39,24 +39,63 @@
           @if (hasLabelSets | async) {
             <app-label-dropdown
               [labelSets]="labelSets | async"
-              (selectionChange)="updateLabelList($event)"
+              (selectionChange)="updateAddLabelList($event)"
               (close)="addLabelsToSelection()"
-              [disabled]="allResourcesSelected"
+              displayRadioForNonMultiple
               aspect="basic"
               size="small">
-              {{ 'resource.add_labels' | translate }}
+              {{ 'resource.labels.add' | translate }}
+            </app-label-dropdown>
+            <app-label-dropdown
+              [labelSets]="labelSets | async"
+              (selectionChange)="updateRemoveLabelList($event)"
+              (close)="removeLabelsToSelection()"
+              multiple
+              aspect="basic"
+              size="small">
+              {{ 'resource.labels.remove' | translate }}
             </app-label-dropdown>
           }
-          @if (bulkAction.inProgress) {
-            <div class="body-m">
-              {{ bulkAction.label | translate }}
-              {{ bulkAction.done }} / {{ bulkAction.total }}
+          @if (isSummarizationAuthorized | async) {
+            <pa-button
+              aspect="basic"
+              size="small"
+              [disabled]="allResourcesSelected"
+              (click)="bulkSummarize()">
+              {{ 'resource.menu.summarize' | translate }}
+            </pa-button>
+          }
+          @if (hiddenResourcesEnabled | async) {
+            <div>
+              <nsi-dropdown-button
+                size="small"
+                aspect="basic"
+                [popupRef]="visibilityActions"
+                freeWidth>
+                {{ 'resource.change-visibility' | translate }}
+              </nsi-dropdown-button>
+              <pa-dropdown #visibilityActions>
+                <pa-option (selectOption)="bulkChangeVisibility(true)">{{ 'resource.hide' | translate }}</pa-option>
+                <pa-option (selectOption)="bulkChangeVisibility(false)">{{ 'resource.unhide' | translate }}</pa-option>
+              </pa-dropdown>
             </div>
           }
         </div>
       }
 
       <div class="table-options">
+        @if (visibleColumnsId | async; as visibleColumns) {
+          @if (visibleColumns.includes('classification')) {
+            <pa-button
+              size="small"
+              aspect="basic"
+              iconAndText
+              [icon]="fullLabels ? 'collapse' : 'expand'"
+              (click)="fullLabels = !fullLabels">
+              {{ (fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
+            </pa-button>
+          }
+        }
         <nsi-dropdown-button
           size="small"
           aspect="basic"
@@ -80,18 +119,27 @@
         </pa-dropdown>
       </div>
     </div>
+    @if (bulkAction.inProgress) {
+      <div class="body-m">
+        {{ bulkAction.label | translate }}
+        {{ bulkAction.done }} / {{ bulkAction.total }}
+      </div>
+    }
     @if (
       allResourcesSelected ||
       ((allSelected | async) === true &&
         !bulkAction.inProgress &&
-        (isFiltering | async) === false &&
         !status &&
-        ((totalCount | async) || 0) > selection.length)
+        ((totalItems | async) || 0) > selection.length)
     ) {
       <div class="selection-bar">
         <div class="title-xxs">
           @if (allResourcesSelected) {
-            {{ 'resource.select.kb-resources-selected' | translate: { num: totalCount | async } }}
+            @if (isFiltering | async) {
+              {{ 'resource.select.filtered-resources-selected' | translate: { num: totalItems | async } }}
+            } @else {
+              {{ 'resource.select.kb-resources-selected' | translate: { num: totalItems | async } }}
+            }
           } @else {
             {{ 'resource.select.page-resources-selected' | translate: { num: selection.length } }}
           }
@@ -110,7 +158,11 @@
             size="small"
             (click)="selectAllResources()"
             [disabled]="bulkAction.inProgress">
-            {{ 'resource.select.select-kb-resources' | translate: { num: totalCount | async } }}
+            @if (isFiltering | async) {
+              {{ 'resource.select.select-filtered-resources' | translate: { num: totalItems | async } }}
+            } @else {
+              {{ 'resource.select.select-kb-resources' | translate: { num: totalItems | async } }}
+            }
           </pa-button>
         }
       </div>
@@ -138,7 +190,7 @@
       </pa-table-sortable-header>
 
       @for (row of data | async; track row.resource.id) {
-        <pa-table-row>
+        <pa-table-row [class.hidden-resource]="row.resource.hidden">
           @if (isAdminOrContrib | async) {
             <pa-table-cell>
               <pa-checkbox
@@ -158,24 +210,52 @@
               <pa-table-cell class="classification-cell">
                 <div class="row-container">
                   @for (label of row.labels; track label.labelset + label.label) {
-                    <nsi-label
-                      [color]="label.color"
-                      [disabled]="deletingLabel"
-                      (removeLabel)="onRemoveLabel(row.resource, label, $event)">
-                      {{ label.label }}
-                    </nsi-label>
+                    @if (!fullLabels && label.label.length > 7) {
+                      <nsi-label
+                        [color]="label.color"
+                        [disabled]="deletingLabel"
+                        (removeLabel)="onRemoveLabel(row.resource, label, $event)"
+                        [paTooltip]="label.label">
+                        {{ label.label.substring(0, 7) }}…
+                      </nsi-label>
+                    } @else {
+                      <nsi-label
+                        [color]="label.color"
+                        [disabled]="deletingLabel"
+                        (removeLabel)="onRemoveLabel(row.resource, label, $event)">
+                        {{ label.label }}
+                      </nsi-label>
+                    }
                   }
                 </div>
               </pa-table-cell>
             }
             @if (visibleColumns.includes('created')) {
               <pa-table-cell center>
-                <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
+                <span class="body-s">{{ row.resource.created + 'Z' | date: 'mediumDate' }}</span>
+              </pa-table-cell>
+            }
+            @if (visibleColumns.includes('modified')) {
+              <pa-table-cell center>
+                <span class="body-s">
+                  {{ (row.resource.modified || row.resource.created) + 'Z' | date: 'mediumDate' }}
+                </span>
               </pa-table-cell>
             }
             @if (visibleColumns.includes('language')) {
               <pa-table-cell center>
                 <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
+              </pa-table-cell>
+            }
+            @if (visibleColumns.includes('visibility')) {
+              <pa-table-cell center>
+                @if (row.resource.hidden) {
+                  <pa-icon
+                    class="hidden"
+                    name="eye-closed"
+                    size="small"
+                    paTooltip="resource.hidden"></pa-icon>
+                }
               </pa-table-cell>
             }
           }
@@ -208,6 +288,11 @@
                 <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
                   {{ 'resource.reprocess' | translate }}
                 </pa-option>
+                @if (hiddenResourcesEnabled | async) {
+                  <pa-option (selectOption)="triggerAction(row.resource, row.resource.hidden ? 'unhide' : 'hide')">
+                    {{ (row.resource.hidden ? 'resource.unhide' : 'resource.hide') | translate }}
+                  </pa-option>
+                }
                 <pa-separator></pa-separator>
                 <pa-option
                   destructive
@@ -226,7 +311,6 @@
   </div>
   <nsi-sticky-footer>
     <stf-table-pagination
-      [items]="(data | async)?.length || 0"
       [totalItems]="totalItems | async"
       [totalKbResources]="totalKbResources | async"
       [page]="page | async"

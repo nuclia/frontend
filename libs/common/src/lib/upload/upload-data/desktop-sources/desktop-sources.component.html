@@ -1,12 +1,15 @@
 <div
   class="desktop-sources"
   [class.show-details]="showDetails">
-  <div
-    *ngFor="let source of Desktop.availableSources"
-    class="source">
-    <img
-      [src]="source.logo"
-      [alt]="source.text" />
-    <span *ngIf="showDetails">{{ source.text }}</span>
-  </div>
+  @for (source of Desktop.availableSources; track source) {
+    <div
+      class="source">
+      <img
+        [src]="source.logo"
+        [alt]="source.text" />
+      @if (showDetails) {
+        <span>{{ source.text }}</span>
+      }
+    </div>
+  }
 </div>

@@ -1,6 +1,7 @@
 import latinize from 'latinize';
-import { of, Subject } from 'rxjs';
+import { map, Observable, of, Subject, take } from 'rxjs';
 import { LearningConfigurations } from '@nuclia/core';
+import DOMPurify from 'dompurify';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -333,4 +334,11 @@ export class STFUtils {
       'nl',
     ];
   }
+}
+
+export function renderMarkdown(text: string): Observable<string> {
+  return injectScript('//cdn.rag.progress.cloud/vendors/marked.min.js').pipe(
+    take(1),
+    map(() => DOMPurify.sanitize((window as any)['marked'].parse(text, { mangle: false, headerIds: false }))),
+  );
 }

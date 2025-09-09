@@ -1,4 +1,6 @@
 <div class="edit-resource">
+  @let aragMode = isArag | async;
+
   <header>
     <div class="header-left-block">
       <div class="navigation-buttons">
@@ -41,43 +43,46 @@
       </div>
     </div>
     <div class="actions">
-      <pa-button
-        icon="eye"
-        routerLink="preview"
-        [active]="currentView === 'preview'"
-        paTooltip="resource.tooltip.preview"
-        aspect="basic"
-        (click)="onViewChange()">
-        {{ 'resource.tooltip.preview' | translate }}
-      </pa-button>
-      <pa-button
-        icon="edit"
-        routerLink="resource"
-        [active]="currentView === 'resource'"
-        [disabled]="(isAdminOrContrib | async) === false"
-        paTooltip="resource.tooltip.edition"
-        aspect="basic"
-        (click)="onViewChange()">
-        {{ 'resource.tooltip.edition' | translate }}
-      </pa-button>
-      <pa-button
-        icon="label"
-        routerLink="classification"
-        [active]="currentView === 'classification'"
-        paTooltip="resource.tooltip.classification"
-        aspect="basic"
-        (click)="onViewChange()">
-        {{ 'resource.tooltip.classification' | translate }}
-      </pa-button>
-      <pa-button
-        icon="form"
-        routerLink="annotation"
-        [active]="currentView === 'annotation'"
-        paTooltip="resource.tooltip.annotation"
-        aspect="basic"
-        (click)="onViewChange()">
-        {{ 'resource.tooltip.annotation' | translate }}
-      </pa-button>
+      @if (!aragMode) {
+        <pa-button
+          icon="eye"
+          routerLink="preview"
+          [active]="currentView === 'preview'"
+          paTooltip="resource.tooltip.preview"
+          aspect="basic"
+          (click)="onViewChange()">
+          {{ 'resource.tooltip.preview' | translate }}
+        </pa-button>
+        <pa-button
+          icon="edit"
+          routerLink="resource"
+          [active]="currentView === 'resource'"
+          [disabled]="(isAdminOrContrib | async) === false"
+          paTooltip="resource.tooltip.edition"
+          aspect="basic"
+          (click)="onViewChange()">
+          {{ 'resource.tooltip.edition' | translate }}
+        </pa-button>
+        <pa-button
+          icon="label"
+          routerLink="classification"
+          [active]="currentView === 'classification'"
+          paTooltip="resource.tooltip.classification"
+          aspect="basic"
+          (click)="onViewChange()">
+          {{ 'resource.tooltip.classification' | translate }}
+        </pa-button>
+        <pa-button
+          icon="form"
+          routerLink="annotation"
+          [active]="currentView === 'annotation'"
+          paTooltip="resource.tooltip.annotation"
+          aspect="basic"
+          (click)="onViewChange()">
+          {{ 'resource.tooltip.annotation' | translate }}
+        </pa-button>
+      }
+
       <pa-button
         icon="more-vertical"
         aspect="basic"
@@ -87,18 +92,20 @@
       </pa-button>
 
       <pa-dropdown #resourceMenu>
-        <pa-option
-          [disabled]="(isAdminOrContrib | async) === false || (summarizationAuthorized | async) === false"
-          [icon]="(summarizationAuthorized | async) === false ? unauthorizedIcon : null"
-          iconOnRight
-          (selectOption)="summarizeResource()">
-          {{ 'resource.menu.summarize' | translate }}
-        </pa-option>
-        <pa-option
-          [disabled]="(isAdminOrContrib | async) === false"
-          (selectOption)="reprocessResource()">
-          {{ 'resource.tooltip.reprocess' | translate }}
-        </pa-option>
+        @if (!aragMode) {
+          <pa-option
+            [disabled]="(isAdminOrContrib | async) === false || (summarizationAuthorized | async) === false"
+            [icon]="(summarizationAuthorized | async) === false ? unauthorizedIcon : null"
+            iconOnRight
+            (selectOption)="summarizeResource()">
+            {{ 'resource.menu.summarize' | translate }}
+          </pa-option>
+          <pa-option
+            [disabled]="(isAdminOrContrib | async) === false"
+            (selectOption)="reprocessResource()">
+            {{ 'resource.tooltip.reprocess' | translate }}
+          </pa-option>
+        }
         <pa-option
           destructive
           [disabled]="(isAdminOrContrib | async) === false"
@@ -113,18 +120,18 @@
     <nav>
       <ul>
         @if (currentView !== 'add-field') {
-          @if (currentView !== 'annotation') {
+          <li
+            class="nav-item"
+            [class.active]="(currentField | async) === 'resource'"
+            (click)="navigateToField('resource')">
+            <pa-icon
+              name="file"
+              size="small"></pa-icon>
+            {{ (aragMode ? 'retrieval-agents.sessions.preview.session-info' : 'resource.profile') | translate }}
+          </li>
+          @for (field of originalFields | async; track field.field_id) {
             <li
-              [class.active]="(currentField | async) === 'resource'"
-              (click)="navigateToField('resource')">
-              <pa-icon
-                name="file"
-                size="small"></pa-icon>
-              {{ 'resource.profile' | translate }}
-            </li>
-          }
-          @for (field of fields | async; track field.field_id) {
-            <li
+              class="nav-item"
               [class.active]="
                 activeField !== 'resource' &&
                 activeField?.field_id === field.field_id &&
@@ -136,19 +143,43 @@
                 size="small"></pa-icon>
               {{ 'resource.field-' + field.field_type | translate }}
 
-              <span
-                class="error-marker"
-                *ngIf="field.hasError">
-                <pa-icon
-                  name="warning"
-                  size="small"></pa-icon>
-              </span>
+              @if (field.hasError) {
+                <span class="error-marker">
+                  <pa-icon
+                    name="warning"
+                    size="small"></pa-icon>
+                </span>
+              }
+              @if (
+                (isAdminOrContrib | async) === true &&
+                activeField !== 'resource' &&
+                activeField?.field_id === field.field_id &&
+                activeField?.field_type === field.field_type
+              ) {
+                <div class="field-menu">
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="fieldMenu">
+                    {{ 'resource.menu.label' | translate }}
+                  </pa-button>
+                  <pa-dropdown #fieldMenu>
+                    <pa-option
+                      destructive
+                      (selectOption)="deleteField(field)">
+                      {{ 'resource.tooltip.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              }
             </li>
           }
         }
 
-        @if ((isAdminOrContrib | async) === true) {
+        @if (!aragMode && (isAdminOrContrib | async) === true) {
           <li
+            class="nav-item"
             routerLink="add-field"
             routerLinkActive="active"
             (click)="onViewChange()">
@@ -156,6 +187,58 @@
               name="plus"
               size="small"></pa-icon>
             {{ 'resource.tooltip.add-field' | translate }}
+          </li>
+        }
+        @if (((generatedFields | async) || []).length > 0) {
+          <li class="generated-fields">
+            <h4>{{ 'resource.generated-fields' | translate }}</h4>
+            <ul>
+              @for (field of generatedFields | async; track field.field_id) {
+                <li
+                  class="nav-item"
+                  [class.active]="
+                    activeField !== 'resource' &&
+                    activeField?.field_id === field.field_id &&
+                    activeField?.field_type === field.field_type
+                  "
+                  (click)="navigateToField(field)">
+                  <pa-icon
+                    [name]="field.icon"
+                    size="small"></pa-icon>
+                  {{ field.title }}
+                  @if (field.hasError) {
+                    <span class="error-marker">
+                      <pa-icon
+                        name="warning"
+                        size="small"></pa-icon>
+                    </span>
+                  }
+                  @if (
+                    (isAdminOrContrib | async) === true &&
+                    activeField !== 'resource' &&
+                    activeField?.field_id === field.field_id &&
+                    activeField?.field_type === field.field_type
+                  ) {
+                    <div class="field-menu">
+                      <pa-button
+                        icon="more-vertical"
+                        aspect="basic"
+                        size="small"
+                        [paPopup]="fieldMenu">
+                        {{ 'resource.menu.label' | translate }}
+                      </pa-button>
+                      <pa-dropdown #fieldMenu>
+                        <pa-option
+                          destructive
+                          (selectOption)="deleteField(field)">
+                          {{ 'resource.tooltip.delete' | translate }}
+                        </pa-option>
+                      </pa-dropdown>
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
           </li>
         }
       </ul>

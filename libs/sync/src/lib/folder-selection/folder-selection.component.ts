@@ -8,7 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FolderListComponent,
   FolderTree,
@@ -25,9 +25,7 @@ import { FileStatus, ISyncEntity, SyncItem, SyncService } from '../logic';
 
 @Component({
   selector: 'nsy-folder-selection',
-  standalone: true,
   imports: [
-    CommonModule,
     FolderListComponent,
     FolderTreeComponent,
     PaButtonModule,
@@ -35,8 +33,8 @@ import { FileStatus, ISyncEntity, SyncItem, SyncService } from '../logic';
     ReactiveFormsModule,
     SegmentedButtonsComponent,
     SisProgressModule,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './folder-selection.component.html',
   styleUrl: './folder-selection.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

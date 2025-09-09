@@ -1,26 +1,36 @@
-import { fromFetch } from 'rxjs/fetch';
-import { switchMap } from 'rxjs/operators';
-import { from, map, Observable, of } from 'rxjs';
 import {
-  RagStrategyName,
+  type BaseSearchOptions,
+  FIELD_TYPE,
   type FieldFullId,
+  type FieldId,
   type FileField,
+  FileFieldData,
+  getWidgetParameters,
   type IFieldData,
   type IResource,
   type LinkField,
-  type RAGStrategy,
+  longToShortFieldType,
+  Nuclia,
+  NUCLIA_STANDARD_SEARCH_CONFIG,
+  NUCLIA_STANDARD_SEARCH_CONFIG_ID,
+  type NucliaOptions,
   type ResourceField,
-  type RAGImageStrategy,
-  RagImageStrategyName,
-  type BaseSearchOptions,
+  Search,
+  sliceUnicode,
+  type TextFieldFormat,
+  type Widget,
 } from '@nuclia/core';
-import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
+import { from, map, Observable, of } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { switchMap } from 'rxjs/operators';
 import { getFileUrls } from './api';
-import type { TypedResult } from './models';
+import type { DisplayableMetadata, ResultMetadata, ResultMetadataItem, TypedResult } from './models';
 
-let CDN = 'https://cdn.nuclia.cloud/';
+let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
+// the vendor CDN does not need to be customized
+export const getVendorsCDN = () => 'https://cdn.rag.progress.cloud/vendors';
 
 export const loadFonts = () => {
   const fontLinkId = 'nuclia-fonts-link';
@@ -39,13 +49,9 @@ export const loadSvgSprite = () => {
   return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
 };
 
-export const getPdfJsBaseUrl = () => {
-  return `https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105`;
-};
-
 export const getPdfJsStyle = () => {
   return from(
-    fetch(`${getPdfJsBaseUrl()}/web/pdf_viewer.css`).then(function (response) {
+    fetch(`${getVendorsCDN()}/pdf_viewer.css`).then(function (response) {
       return response.text();
     }),
   );
@@ -89,6 +95,13 @@ export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
 };
 
+export const queryKey = formatQueryKey('query');
+export const filterKey = formatQueryKey('filter');
+export const previewKey = formatQueryKey('preview');
+export const paragraphKey = formatQueryKey('paragraph');
+export const creationStartKey = formatQueryKey('creationStart');
+export const creationEndKey = formatQueryKey('creationEnd');
+
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
   const baseUrl = `${location.pathname}${location.hash.split('?')[0]}`;
@@ -103,6 +116,15 @@ export function getUrlParams(): URLSearchParams {
       : window.location.search;
   return new URLSearchParams(params);
 }
+
+export function hasPermalinkToRender(): boolean {
+  const urlParams = getUrlParams();
+  return !!urlParams.get(previewKey) || !!urlParams.get(queryKey);
+}
+
+export const getPreviewParam = (resourceId: string, field: FieldId) => {
+  return `${resourceId}|${field.field_type}|${field.field_id}`;
+};
 
 /**
  * Coerces a value (usually a string coming from a prop) to a boolean.
@@ -206,17 +228,9 @@ export function slugify(text: string): string {
   );
 }
 
-export function goToUrl(url: string, paragraphText?: string, newTab = false) {
+export function goToUrl(url: string, newTab = false) {
   const urlObject = new URL(url);
   if (urlObject.protocol.startsWith('http')) {
-    let textFragment = '';
-    const supportsTextFragments = 'fragmentDirective' in document;
-    if (paragraphText && supportsTextFragments && !urlObject.hash) {
-      textFragment = getTextFragment(paragraphText);
-      if (textFragment) {
-        url = url + textFragment;
-      }
-    }
     window.open(url, newTab ? '_blank' : '_self');
   } else {
     console.info(`Invalid URL: ${url}`);
@@ -277,35 +291,77 @@ export const NEWLINE_REGEX = /\n/g;
 export const getNavigationUrl = (
   navigateToFile: boolean,
   navigateToLink: boolean,
+  navigateToOriginURL: boolean,
+  openNewTab: boolean,
+  permalink: boolean,
+  previewBaseUrl: string,
   resource: IResource,
   field: ResourceField,
+  paragraph?: Search.FindParagraph,
 ): Observable<string | undefined> => {
-  const url = getExternalUrl(resource, field);
-  const isFile = field.field_type === FIELD_TYPE.file;
-  if (url && navigateToLink && !isYoutubeUrl(url)) {
+  const url = getExternalUrl(resource, navigateToOriginURL, field);
+  if (url && navigateToOriginURL) {
     return of(url);
-  } else if (isFile && navigateToFile) {
-    if (url) {
-      return of(url);
-    } else {
-      const fileUrl = (field as FileFieldData)?.value?.file?.uri;
-      return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
-    }
   } else {
-    return of(undefined);
+    const isFile = field.field_type === FIELD_TYPE.file;
+    if (url && navigateToLink && !isYoutubeUrl(url)) {
+      const supportsTextFragments = 'fragmentDirective' in document;
+      if (paragraph?.text && supportsTextFragments && !new URL(url).hash) {
+        const textFragment = getTextFragment(paragraph.text);
+        if (textFragment) {
+          return of(url + textFragment);
+        }
+      }
+      return of(url);
+    } else if (isFile && navigateToFile) {
+      if (url) {
+        return of(url);
+      } else {
+        const fileUrl = (field as FileFieldData)?.value?.file?.uri;
+        return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
+      }
+    } else if (openNewTab && (permalink || previewBaseUrl)) {
+      return of(getPreviewUrl(resource.id, field, paragraph, previewBaseUrl));
+    } else {
+      return of(undefined);
+    }
   }
 };
 
-export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
-  if (field?.field_type === FIELD_TYPE.link) {
-    return (field.value as LinkField).uri;
-  } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
-    return (field.value as FileField).file?.uri;
-  } else if (resource.origin?.url) {
+export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field: ResourceField) => {
+  if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
   } else {
-    return undefined;
+    if (field?.field_type === FIELD_TYPE.link) {
+      return (field.value as LinkField).uri;
+    } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
+      return (field.value as FileField).file?.uri;
+    } else if (resource.origin?.url) {
+      return resource.origin.url;
+    } else {
+      return undefined;
+    }
   }
+};
+
+export const getPreviewUrl = (
+  resourceId: string,
+  field: FieldId,
+  paragraph?: Search.FindParagraph,
+  previewBaseUrl?: string,
+) => {
+  const previewParam = getPreviewParam(resourceId, field);
+  const params = getUrlParams();
+  params.delete(queryKey);
+  params.delete(filterKey);
+  params.delete(creationStartKey);
+  params.delete(creationEndKey);
+  params.set(previewKey, previewParam);
+  if (paragraph) {
+    params.set(paragraphKey, paragraph?.id.split('/').pop() || '');
+  }
+  const baseUrl = previewBaseUrl || `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
+  return params ? `${baseUrl}?${params}` : baseUrl;
 };
 
 export function getFieldIdWithShortType(fullId: FieldFullId): string {
@@ -330,64 +386,6 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
   }
 }
 
-export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
-  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2'
-  if (!ragStrategies) {
-    return [];
-  }
-  const strategies: RAGStrategy[] = ragStrategies
-    .split(',')
-    .map((strategy) => {
-      const [name, ...rest] = strategy.split('|');
-      if (name === RagStrategyName.FULL_RESOURCE || name === RagStrategyName.HIERARCHY) {
-        return { name, count: parseInt(rest[0], 10) };
-      } else if (name === RagStrategyName.FIELD_EXTENSION) {
-        return { name, fields: rest };
-      } else {
-        console.error(`Unknown RAG strategy: ${name}`);
-        return undefined;
-      }
-    })
-    .filter((s) => s) as RAGStrategy[];
-  const strategiesNames = strategies.map((s) => s.name);
-  if (
-    (strategiesNames.includes(RagStrategyName.FIELD_EXTENSION) ||
-      strategiesNames.includes(RagStrategyName.HIERARCHY)) &&
-    strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
-  ) {
-    console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
-    return [];
-  }
-  return strategies;
-}
-
-export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrategy[] {
-  // ragImageStrategies format example: 'page_image|3,paragraph_image'
-  if (!ragImageStrategies) {
-    return [];
-  }
-  const strategies: RAGImageStrategy[] = ragImageStrategies
-    .split(',')
-    .map((strategy) => {
-      const [name, ...rest] = strategy.split('|');
-      if (name === RagImageStrategyName.PAGE_IMAGE) {
-        return { name, count: parseInt(rest[0], 10) };
-      } else if (name === RagImageStrategyName.PARAGRAPH_IMAGE) {
-        return { name };
-      } else {
-        console.error(`Unknown RAG image strategy: ${name}`);
-        return undefined;
-      }
-    })
-    .filter((s) => s) as RAGImageStrategy[];
-  return strategies as RAGImageStrategy[];
-}
-
-export function hasNotEnoughData(text: string): boolean {
-  text = text.replace(/<br>/g, '').replace(/\n/g, '');
-  return text === 'Not enough data to answer this.';
-}
-
 export function hasNoResultsWithAutofilter(
   results: Search.FindResults | undefined,
   options: BaseSearchOptions,
@@ -396,11 +394,43 @@ export function hasNoResultsWithAutofilter(
 }
 
 export function downloadAsJSON(data: any) {
+  downloadFile(`dump-${new Date().toISOString()}.json`, 'application/json', JSON.stringify(data));
+}
+
+export function downloadFile(filename: string, mime: string, data: string) {
   const element = document.createElement('a');
-  element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)));
-  element.setAttribute('download', `dump-${new Date().toISOString()}.json`);
+  element.setAttribute('href', `data:${mime};charset=utf-8,` + encodeURIComponent(data));
+  element.setAttribute('download', filename);
   element.style.display = 'none';
   element.click();
+}
+
+export function getFormatInfos(format: TextFieldFormat) {
+  let mime;
+  let ext;
+  switch (format) {
+    case 'MARKDOWN':
+    case 'KEEP_MARKDOWN':
+      mime = 'text/markdown';
+      ext = 'md';
+      break;
+    case 'HTML':
+      mime = 'text/html';
+      ext = 'html';
+      break;
+    case 'RST':
+      mime = 'text/x-rst';
+      ext = 'rst';
+      break;
+    case 'JSON':
+      mime = '	application/json';
+      ext = 'json';
+      break;
+    default:
+      mime = 'text/plain';
+      ext = 'txt';
+  }
+  return { mime, ext };
 }
 
 export function getThumbnailInfos(result: TypedResult) {
@@ -432,4 +462,119 @@ export function getThumbnailInfos(result: TypedResult) {
       break;
   }
   return { fallback, isPlayable };
+}
+
+const block = (text: { text: string }) => {
+  return text.text + '\n\n';
+};
+const line = (text: { text: string }) => {
+  return text.text + '\n';
+};
+const inline = (text: { text: string }) => {
+  return text.text;
+};
+const newline = () => '\n';
+const empty = () => '';
+
+const TxtRenderer = {
+  // Block elements
+  space: empty,
+  code: block,
+  blockquote: block,
+  html: empty,
+  heading: block,
+  hr: newline,
+  list: (data: { items: { text: string }[] }) => data.items.map((item) => line(item)).join('\n'),
+  listitem: line,
+  checkbox: empty,
+  paragraph: block,
+  table: (data: { header: { text: string }[]; rows: { text: string }[][] }) =>
+    data.header
+      .map((header) => header)
+      .concat(data.rows.reduce((acc, row) => acc.concat(row), []))
+      .map(inline)
+      .join('\n'),
+  tablerow: line,
+  tablecell: line,
+  // Inline elements
+  strong: inline,
+  em: inline,
+  codespan: inline,
+  br: newline,
+  del: inline,
+  link: inline,
+  image: inline,
+  text: inline,
+  // etc.
+  options: {},
+};
+
+export function markdownToTxt(markdown: string): string {
+  if (!marked) {
+    return markdown;
+  }
+  return marked.marked(markdown, { renderer: TxtRenderer });
+}
+
+export function loadWidgetConfig(id: string, options: NucliaOptions) {
+  if (!options.account || !options.knowledgeBox || !options.zone) {
+    console.error('Account id, Knowledge Box id and zone must be provided to load the widget configuration');
+    return of({});
+  }
+  return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
+    map((kb) => {
+      const widget = (kb.search_configs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
+      if (!widget) {
+        console.error(`Widget not found: "${id}"`);
+        return of({});
+      }
+      let searchConfig;
+      if (widget.searchConfigId === NUCLIA_STANDARD_SEARCH_CONFIG_ID) {
+        searchConfig = NUCLIA_STANDARD_SEARCH_CONFIG;
+      } else {
+        searchConfig = (kb.search_configs?.['searchConfigurations'] || []).find(
+          (config: Widget.SearchConfiguration) => config.id === widget.searchConfigId,
+        );
+      }
+      if (!searchConfig) {
+        console.error(`Search configuration not found: "${widget.searchConfigId}"`);
+        return of({});
+      }
+      const params = getWidgetParameters(searchConfig, widget.widgetConfig);
+      return Object.fromEntries(Object.entries(params).filter(([_, value]) => value !== null && value !== ''));
+    }),
+  );
+}
+
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
+}
+
+function getMetadata(metadata: ResultMetadataItem[], obj: any): DisplayableMetadata[] {
+  if (!obj) {
+    return [];
+  }
+  const metadataValues: DisplayableMetadata[] = [];
+  metadata.forEach(({ path, type, title }) => {
+    const value = getNestedValue(obj, path);
+    const label = path.split('.').pop() || path;
+    if (value) {
+      metadataValues.push({ label, value, type, title });
+    }
+  });
+  return metadataValues;
+}
+
+export function getResultMetadata(metadata: ResultMetadata, resource: IResource, field: IFieldData | undefined) {
+  const metadataValues: DisplayableMetadata[] = [];
+  if (metadata.origin.length > 0) {
+    metadataValues.push(...getMetadata(metadata.origin, resource.origin));
+  }
+  if (metadata.field.length > 0) {
+    metadataValues.push(...getMetadata(metadata.field, field?.value));
+  }
+  if (metadata.extra.length > 0) {
+    metadataValues.push(...getMetadata(metadata.extra, resource.extra?.metadata));
+  }
+  return metadataValues;
 }

@@ -1,13 +1,21 @@
-<pa-table
-  [columns]="isJsonArray ? '1fr' : 'repeat(2, 1fr)'"
-  *ngIf="json">
-  <pa-table-row *ngFor="let row of json | keyvalue">
-    <pa-table-cell *ngIf="!isJsonArray">{{ row.key }}</pa-table-cell>
-    <pa-table-cell>
-      <nsi-json-viewer
-        *ngIf="isStructured(row.value); else native"
-        [json]="row.value"></nsi-json-viewer>
-      <ng-template #native>{{ row.value }}</ng-template>
-    </pa-table-cell>
-  </pa-table-row>
-</pa-table>
+@if (json) {
+  <pa-table
+    [columns]="isJsonArray ? '1fr' : 'repeat(2, 1fr)'"
+    >
+    @for (row of json | keyvalue; track row) {
+      <pa-table-row>
+        @if (!isJsonArray) {
+          <pa-table-cell>{{ row.key }}</pa-table-cell>
+        }
+        <pa-table-cell>
+          @if (isStructured(row.value)) {
+            <nsi-json-viewer
+            [json]="row.value"></nsi-json-viewer>
+          } @else {
+            {{ row.value }}
+          }
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  </pa-table>
+}

@@ -1,12 +1,11 @@
-import { NgModule } from '@angular/core';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { OverlayModule } from '@angular/cdk/overlay';
 import {
   accountOwnerGuard,
+  agentFeatureEnabledGuard,
   ChartsModule,
   HintModule,
   KbCreationComponent,
@@ -15,16 +14,10 @@ import {
   PipesModule,
   TokenDialogModule,
 } from '@flaps/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { AccountHomeComponent } from './account-home/account-home.component';
-import { AccountManageComponent } from './account-manage/account-manage.component';
-import { AccountKbsComponent } from './account-kbs/account-kbs.component';
-import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
-import { AccountNUAComponent } from './account-nua/account-nua.component';
-import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
-import { AccountUsersComponent } from './account-users/account-users.component';
-import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
-import { UsersManageModule } from '../knowledge-box';
+import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -38,20 +31,31 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
-import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
-import { AccountStatusComponent } from './account-status/account-status.component';
-import { BillingModule } from './billing/billing.module';
-import { UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
+import { UsersManageModule } from '../knowledge-box';
+import { AccountAragComponent } from './account-arag/account-arag.component';
+import { AragListComponent } from './account-arag/arag-list/arag-list.component';
+import { AccountHomeComponent } from './account-home/account-home.component';
+import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
+import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
+import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
+import { AccountManageComponent } from './account-manage/account-manage.component';
+import { AccountNUAComponent } from './account-nua/account-nua.component';
+import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
+import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
+import { AccountStatusComponent } from './account-status/account-status.component';
+import { AccountUsersComponent } from './account-users/account-users.component';
 import { BillingComponent } from './billing/billing.component';
+import { BillingModule } from './billing/billing.module';
+import { CheckoutComponent } from './billing/checkout/checkout.component';
+import { HistoryComponent } from './billing/history/history.component';
+import { MySubscriptionComponent } from './billing/my-subscription/my-subscription.component';
 import { RedirectComponent } from './billing/redirect.component';
 import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
-import { CheckoutComponent } from './billing/checkout/checkout.component';
-import { MySubscriptionComponent } from './billing/my-subscription/my-subscription.component';
 import { UsageComponent } from './billing/usage/usage.component';
-import { HistoryComponent } from './billing/history/history.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
- 
+import { AccountModelsComponent } from './account-models/account-models.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -92,6 +96,17 @@ const routes: Routes = [
         component: KbCreationComponent,
       },
     ],
+  },
+  {
+    path: 'arag',
+    component: AccountAragComponent,
+    canActivate: [accountOwnerGuard, agentFeatureEnabledGuard],
+    children: [{ path: '', component: AragListComponent }],
+  },
+  {
+    path: 'models',
+    component: AccountModelsComponent,
+    canActivate: [accountOwnerGuard],
   },
   {
     path: 'users',
@@ -165,11 +180,13 @@ const routes: Routes = [
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,
     NucliaTokensComponent,
+    LowerCaseInputDirective,
   ],
   declarations: [
     AccountHomeComponent,
     AccountManageComponent,
     AccountKbsComponent,
+    AccountAragComponent,
     UsersDialogComponent,
     AccountNUAComponent,
     ClientDialogComponent,

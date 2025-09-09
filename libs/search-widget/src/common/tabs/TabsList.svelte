@@ -1,9 +1,17 @@
+<script>
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children]
+   */
+
+  /** @type {Props} */
+  let { children } = $props();
+</script>
+
 <ul
   class="sw-tabs-list"
   role="tablist">
-  <slot />
+  {@render children?.()}
 </ul>
 
-<style
-  lang="scss"
-  src="./TabsList.scss"></style>
+<style src="./TabsList.css"></style>

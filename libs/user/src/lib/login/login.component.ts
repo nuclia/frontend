@@ -1,17 +1,18 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReCaptchaV3Service } from 'ngx-captcha';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
 import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 
 @Component({
-  selector: 'stf-login',
+  selector: 'nus-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  standalone: false,
 })
 export class LoginComponent {
   @ViewChild('email', { static: false }) email: InputComponent | undefined;
@@ -22,6 +23,7 @@ export class LoginComponent {
   loginChallenge: string | undefined;
 
   message: string | null = null;
+  loginError: boolean = false;
   formError: boolean = false;
   error: string | null = null;
 
@@ -43,6 +45,12 @@ export class LoginComponent {
     }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  get emailControl() {
+    return this.loginForm.controls.email;
+  }
+  get passwordControl() {
+    return this.loginForm.controls.password;
+  }
   isLoggingIn = false;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
@@ -72,7 +80,8 @@ export class LoginComponent {
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
-      this.oauth = this.config.getOAuthLogin();
+      this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
+
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
@@ -81,7 +90,6 @@ export class LoginComponent {
       }
     });
   }
-
   onEnterPressed(formField: string) {
     if (formField === 'email') {
       this.password!.hasFocus = true;
@@ -93,7 +101,7 @@ export class LoginComponent {
     const recaptchaKey = this.config.getRecaptchaKey();
     this.isLoggingIn = true;
     if (recaptchaKey) {
-      this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
+      this.reCaptchaV3Service.execute('login').subscribe((token) => {
         this.doLogin(token);
       });
     } else {
@@ -115,8 +123,9 @@ export class LoginComponent {
       next: () => {
         this.router.navigate(['/']);
       },
-      error: () => {
-        this.formError = true;
+      error: (error) => {
+        this.loginError = true;
+        this.formError = error.status === 401;
         this.isLoggingIn = false;
       },
     });

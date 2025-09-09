@@ -1,0 +1,31 @@
+<app-node-box
+  root
+  (outputClick)="onOutputClick($event)">
+  <app-connectable-entry
+    #preprocess
+    id="preprocess"
+    category="preprocess">
+    {{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}
+  </app-connectable-entry>
+  <app-arrow-down></app-arrow-down>
+  <app-connectable-entry
+    #context
+    id="context"
+    category="context">
+    {{ 'retrieval-agents.workflow.node-types.root.context' | translate }}
+  </app-connectable-entry>
+  <app-arrow-down></app-arrow-down>
+  <app-connectable-entry
+    #generation
+    id="generation"
+    category="generation">
+    {{ 'retrieval-agents.workflow.node-types.root.generation' | translate }}
+  </app-connectable-entry>
+  <app-arrow-down></app-arrow-down>
+  <app-connectable-entry
+    #postprocess
+    id="postprocess"
+    category="postprocess">
+    {{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}
+  </app-connectable-entry>
+</app-node-box>

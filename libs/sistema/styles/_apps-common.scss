@@ -1,16 +1,18 @@
-@import 'variables';
+@use 'variables' as variables;
 
 :root {
-  --app-min-width: 1024px;
-  --app-background-color: $color-light-stronger;
-  --app-topbar-height: #{$height-top-bar};
-  --app-layout-padding-bottom: #{$padding-bottom-page};
-  --app-layout-padding-left: #{$padding-left-page};
-  --app-layout-padding-right: #{$padding-right-page};
-  --app-layout-padding-top: #{$padding-top-page};
+  --app-background-color: #{variables.$color-light-stronger};
+  --app-topbar-height: #{variables.$height-top-bar};
+  --app-layout-padding-bottom: #{variables.$padding-bottom-page};
+  --app-layout-padding-left: #{variables.$padding-left-page};
+  --app-layout-padding-right: #{variables.$padding-right-page};
+  --app-layout-padding-top: #{variables.$padding-top-page};
 
   // z-index
   --app-zindex-topbar: 1000;
+
+  --app-topbar-logo-width: var(--custom-topbar-logo-width, #{variables.rhythm(12)});
+  // --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{variables.rhythm(16)})); // width for the new logo
 }
 
 html,
@@ -19,8 +21,6 @@ body {
 }
 
 body {
-  min-width: var(--app-min-width);
-  overflow-x: auto;
   background-color: var(--app-background-color);
 }
 
@@ -31,10 +31,10 @@ body {
 }
 
 code {
-  font-weight: $font-weight-semi-bold;
+  font-weight: variables.$font-weight-semi-bold;
 }
 pre > code {
-  font-weight: $font-weight-regular;
+  font-weight: variables.$font-weight-regular;
 }
 
 code.endpoint {
@@ -43,12 +43,8 @@ code.endpoint {
   word-break: break-all;
 }
 
-.pa-toast-container {
-  z-index: 10000;
-}
-
 .pa-popup {
-  min-width: rhythm(16);
+  min-width: variables.rhythm(16);
 }
 
 pa-button.full-width {
@@ -66,12 +62,15 @@ pa-button.full-width {
   position: relative;
 
   .page-title {
-    @include display-s();
-    margin-bottom: rhythm(1);
+    @include variables.display-s();
+    align-items: center;
+    display: flex;
+    gap: variables.rhythm(1);
+    margin-bottom: variables.rhythm(1);
   }
   .page-description {
-    @include body-m();
-    color: $color-neutral-regular;
+    @include variables.body-m();
+    color: variables.$color-neutral-regular;
   }
 }
 
@@ -81,38 +80,38 @@ ul.nsi-list {
   padding: 0;
 
   li {
-    background: $color-neutral-lightest;
+    background: variables.$color-neutral-lightest;
     cursor: pointer;
     display: flex;
-    gap: rhythm(1);
+    gap: variables.rhythm(1);
     justify-content: space-between;
-    line-height: rhythm(5);
-    padding-right: rhythm(1);
+    line-height: variables.rhythm(5);
+    padding-right: variables.rhythm(1);
     text-transform: capitalize;
-    transition: background $transition-hint;
+    transition: background variables.$transition-hint;
 
     .action-buttons-container {
       display: flex;
       align-items: center;
 
       pa-button {
-        height: rhythm(4);
+        height: variables.rhythm(4);
         opacity: 0;
-        transition: opacity $transition-hint;
+        transition: opacity variables.$transition-hint;
       }
     }
 
     &:not(:last-of-type) {
-      box-shadow: inset 0 -1px 0px $color-neutral-light;
+      box-shadow: inset 0 -1px 0px variables.$color-neutral-light;
     }
 
     &:hover {
-      background: $color-neutral-lighter;
+      background: variables.$color-neutral-lighter;
     }
 
     &.selected {
-      background: $color-dark-stronger;
-      color: $color-light-stronger;
+      background: variables.$color-dark-stronger;
+      color: variables.$color-light-stronger;
     }
 
     &.selected,
@@ -129,38 +128,38 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
 }
 
 .separator-line {
-  background-color: $color-neutral-lighter;
+  background-color: variables.$color-neutral-lighter;
   height: 1px;
   width: 100%;
 }
 .separator-word {
-  color: $color-neutral-regular;
+  color: variables.$color-neutral-regular;
   text-transform: lowercase;
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: rhythm(2);
+  gap: variables.rhythm(2);
 
   &.small-gap {
-    gap: rhythm(1.5);
+    gap: variables.rhythm(1.5);
   }
 
   .label-field-container {
     display: flex;
     flex-direction: column;
-    gap: rhythm(1);
+    gap: variables.rhythm(1);
   }
 }
 
 .inline-form {
   align-items: center;
   display: flex;
-  gap: rhythm(2);
+  gap: variables.rhythm(2);
 
   &.small-gap {
-    gap: rhythm(1);
+    gap: variables.rhythm(1);
   }
   &.full-width > *:not(span) {
     flex: 1 0 auto;
@@ -172,16 +171,16 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
 }
 
 .container-with-border {
-  border: 1px solid $color-neutral-lighter;
-  border-radius: rhythm(1);
-  padding: rhythm(2);
+  border: 1px solid variables.$color-neutral-lighter;
+  border-radius: variables.rhythm(1);
+  padding: variables.rhythm(2);
 }
 
 a.accent-link {
-  color: $color-text-link-accent;
+  color: variables.$color-text-link-accent;
 
   &:hover {
-    color: $color-text-link-accent-hover;
+    color: variables.$color-text-link-accent-hover;
   }
 }
 
@@ -200,7 +199,7 @@ pa-checkbox.unauthorized,
 pa-toggle.unauthorized {
   align-items: center;
   display: flex;
-  gap: rhythm(1);
+  gap: variables.rhythm(1);
   justify-content: space-between;
 
   .pa-toggle {
@@ -208,15 +207,15 @@ pa-toggle.unauthorized {
   }
 }
 pa-toggle.unauthorized {
-  padding-right: rhythm(1);
+  padding-right: variables.rhythm(1);
 }
 .beta-option {
   align-items: center;
   display: flex;
-  gap: rhythm(1);
+  gap: variables.rhythm(1);
   pa-radio {
     flex: 1 0 auto;
-    max-width: calc(100% - #{rhythm(5)} - #{rhythm(0.5)});
+    max-width: calc(100% - #{variables.rhythm(5)} - #{variables.rhythm(0.5)});
   }
 }
 pa-option pa-icon {
@@ -227,7 +226,7 @@ pa-option pa-icon {
   justify-content: center;
 
   pa-button {
-    min-width: rhythm(16);
+    min-width: variables.rhythm(16);
     width: unset;
   }
 }

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Release.Name }}-config"
+  name: app-config
   labels:
     app: app
     version: "{{ .Values.hash }}"
@@ -9,13 +9,14 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 data:
-  SITE_KEY: "{{ .Values.site_key }}"
   APP_NAME: {{ .Values.app_name }}
+  CDN: "{{ .Values.cdn }}"
+  BRAND_NAME: "{{ .Values.brand_name }}"
+  BRAND_DOMAIN: "{{ .Values.brand_domain }}"
+  ASSETS_PATH: "{{ .Values.assets_path }}"
+  NO_STRIPE: "{{ .Values.no_stripe }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
-  SENTRY_URL: "{{ .Values.sentry_url }}"
   EDITOR_URL: "{{ .Values.editor_url }}"
   STF_VERSION: "{{ .Chart.Version }}"
   EMAIL_DOMAIN: "{{ .Values.email_domain }}"
-  POSTHOG_HOST: "{{ .Values.posthog_host }}"
-  POSTHOG_KEY: "{{ .Values.posthog_key }}"
   SAML_ENABLED: "{{ .Values.saml_enabled }}"

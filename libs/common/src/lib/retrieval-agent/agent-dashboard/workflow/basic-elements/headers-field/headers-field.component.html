@@ -1,0 +1,34 @@
+<ng-container [formGroup]="form()">
+  <ng-container formGroupName="headers">
+    <div class="form-entry">
+      <div class="label-and-button">
+        <label>{{ 'retrieval-agents.workflow.common-forms.headers.label' | translate }}</label>
+        <pa-button
+          size="small"
+          aspect="basic"
+          (click)="addHeader()">
+          {{ 'retrieval-agents.workflow.common-forms.headers.add' | translate }}
+        </pa-button>
+      </div>
+      @for (group of headersGroup.controls | keyvalue; track group.key) {
+        <div
+          class="config-property-form"
+          [formGroup]="group.value">
+          <pa-input formControlName="property">
+            {{ 'retrieval-agents.workflow.common-forms.property.name' | translate }}
+          </pa-input>
+          <pa-input formControlName="value">
+            {{ 'retrieval-agents.workflow.common-forms.property.value' | translate }}
+          </pa-input>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            size="small"
+            (click)="removeHeader(group.key)">
+            {{ 'retrieval-agents.workflow.common-forms.headers.remove' | translate }}
+          </pa-button>
+        </div>
+      }
+    </div>
+  </ng-container>
+</ng-container>

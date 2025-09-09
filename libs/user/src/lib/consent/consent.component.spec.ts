@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { BackendConfigurationService, OAuthService } from '@flaps/core';
-import { ConsentComponent } from './consent.component';
-import { MockModule } from 'ng-mocks';
 import { PaAvatarModule, PaButtonModule, PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule } from 'ng-mocks';
+import { ConsentComponent } from './consent.component';
 
 describe('ConsentComponent', () => {
   let component: ConsentComponent;
@@ -13,7 +13,7 @@ describe('ConsentComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ConsentComponent],
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(PaAvatarModule),
         MockModule(PaIconModule),
         MockModule(PaButtonModule),
@@ -27,7 +27,8 @@ describe('ConsentComponent', () => {
             getAPIURL: () => 'key',
             getRecaptchaKey: () => 'key',
             getSocialLogin: () => {},
-            getOAuthLogin: () => {},
+            getLogoPath: () => 'logo.svg',
+            getBrandName: () => 'Agentic RAG',
           },
         },
       ],

@@ -1,0 +1,43 @@
+<div class="manual-subscription">
+  <div class="usage">
+    <header>
+      <div>
+        <h2>{{ 'billing.usage.title' | translate }}</h2>
+        <div>
+          {{ 'billing.usage.interval' | translate: { to: (usage | async)?.end_billing_date | date: 'YYYY-MM-dd' } }}
+        </div>
+      </div>
+    </header>
+    <pa-table
+      border
+      columns="auto auto auto">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'billing.tokens' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'billing.usage.cost' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'billing.usage.total' | translate }}</pa-table-cell>
+      </pa-table-header>
+      <pa-table-row last>
+        @if (usage | async; as usage) {
+          <pa-table-cell>{{ usage.nuclia_tokens | number: '1.0-0' }}</pa-table-cell>
+          <pa-table-cell>{{ usage.nuclia_tokens_price | number: '1.2-6' }}/ token</pa-table-cell>
+          <pa-table-cell>{{ usage.nuclia_tokens * usage.nuclia_tokens_price | number: '1.2-2' }}</pa-table-cell>
+        }
+      </pa-table-row>
+    </pa-table>
+  </div>
+  <div class="budget">
+    <div>
+      <h2>{{ 'billing.budget' | translate }}</h2>
+      <div
+        class="body-m"
+        [innerHTML]="'billing.budget_description' | translate"></div>
+    </div>
+    <app-budget (budgetChange)="budget = $event"></app-budget>
+    <pa-button
+      kind="primary"
+      [disabled]="!budget"
+      (click)="modifyBudget()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </div>
+</div>

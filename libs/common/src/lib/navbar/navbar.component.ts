@@ -1,14 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import {
+  BackendConfigurationService,
+  BillingService,
+  FeaturesService,
+  NavigationService,
+  SDKService,
+} from '@flaps/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
-import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
@@ -16,6 +23,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     map(([account, kb]) => {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
+  );
+  inArag: Observable<boolean> = merge(
+    of(this.navigationService.inAragSpace(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
+      takeUntil(this.unsubscribeAll),
+    ),
   );
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
@@ -25,13 +40,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
-  inSettings: Observable<boolean> = this.properKbId.pipe(
+  inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
         of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
+    ),
+  );
+  inAragSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+    map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+    switchMap((aragUrl) =>
+      merge(
+        of(this.navigationService.inAragSettings(location.pathname, aragUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inAragSettings((event as NavigationEnd).url, aragUrl)),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -48,18 +76,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   kbUrl: string = '';
+  aragUrl: string = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-  isAdmin = this.features.isKbAdmin;
+  isKbAdmin = this.features.isKbAdmin;
+  isAragAdmin = this.features.isAragAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
-  isTasksAutomationEnabled = this.features.unstable.taskAutomation;
+  noStripe = this.backendConfig.noStripe();
+  isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
+  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
+  isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
+  isModelManagementEnabled = this.features.unstable.modelManagement;
 
   isActivityAuthorized = this.features.authorized.activityLog;
   isPromptLabAuthorized = this.features.authorized.promptLab;
@@ -76,6 +110,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private billing: BillingService,
+    private backendConfig: BackendConfigurationService,
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +121,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
         this.cdr.markForCheck();
       });
-    this.inSettings
+
+    combineLatest([this.sdk.currentAccount, this.sdk.currentArag])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
+        ([account, arag]) => (this.aragUrl = this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug)),
+      );
+    this.inKbSettings
+      .pipe(
+        filter((inSettings) => inSettings),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((inSettings) => {
+        this.showSettings = inSettings;
+        this.cdr.markForCheck();
+      });
+    this.inAragSettings
       .pipe(
         filter((inSettings) => inSettings),
         takeUntil(this.unsubscribeAll),

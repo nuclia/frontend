@@ -1,12 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { SignupComponent } from './signup.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserContainerComponent } from '../user-container';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ReCaptchaV3Service } from 'ngx-captcha';
+import { Router, RouterModule } from '@angular/router';
 import {
   BackendConfigurationService,
   FeaturesService,
@@ -14,10 +10,13 @@ import {
   SignupResponse,
   StaticEnvironmentConfiguration,
 } from '@flaps/core';
-import { BehaviorSubject, of } from 'rxjs';
-import { Router } from '@angular/router';
+import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
-import { Component } from '@angular/core';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { ReCaptchaV3Service } from 'ng-recaptcha-2';
+import { BehaviorSubject, of } from 'rxjs';
+import { UserContainerComponent } from '../user-container';
+import { SignupComponent } from './signup.component';
 
 @Component({
   template: '',
@@ -42,12 +41,12 @@ describe('SignupComponent', () => {
         MockModule(PaTranslateModule),
         MockModule(ReactiveFormsModule),
         MockModule(SisPasswordInputModule),
-        RouterTestingModule.withRoutes([{ path: 'check-mail', component: MockCheckMailComponent }]),
+        RouterModule.forRoot([{ path: 'check-mail', component: MockCheckMailComponent }]),
       ],
       declarations: [SignupComponent, MockComponent(UserContainerComponent)],
       providers: [
         MockProvider(ReCaptchaV3Service, {
-          execute: jest.fn((key, action, callback) => callback('some_token')),
+          execute: jest.fn(() => of('some_token')),
         }),
         MockProvider(LoginService, {
           signup: jest.fn(() => signupResponse.asObservable()),

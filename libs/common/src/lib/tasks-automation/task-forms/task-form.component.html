@@ -1,201 +1,225 @@
-<form
-  [formGroup]="form"
-  (ngSubmit)="activateTask()">
-  <nsi-two-columns-configuration-item
-    itemTitle="tasks-automation.form.apply-task-to.title"
-    description="tasks-automation.form.apply-task-to.description">
-    <pa-radio-group formControlName="applyTaskTo">
-      <pa-radio value="automation">
-        <span [innerHTML]="'tasks-automation.form.apply-task-to.automation' | translate"></span>
-      </pa-radio>
-      <pa-radio value="once">
-        <span [innerHTML]="'tasks-automation.form.apply-task-to.one-time' | translate"></span>
-      </pa-radio>
-    </pa-radio-group>
-  </nsi-two-columns-configuration-item>
-
-  <nsi-two-columns-configuration-item
-    itemTitle="tasks-automation.form.filter.title"
-    description="tasks-automation.form.filter.description"
-    badge="generic.badge.optional">
-    <div
-      class="form-container filter-form-container"
-      formGroupName="filters">
-      <div class="filter-row">
-        <pa-select formControlName="searchIn">
-          <pa-option value="titleOrContent">
-            {{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}
-          </pa-option>
-          <pa-option value="title">{{ 'tasks-automation.form.filter.search-in.title' | translate }}</pa-option>
-          <pa-option value="content">{{ 'tasks-automation.form.filter.search-in.content' | translate }}</pa-option>
-        </pa-select>
-
-        <pa-input formControlName="searchQuery">
-          {{ 'tasks-automation.form.filter.search-input-label' | translate }}
-        </pa-input>
+<div class="page-spacing">
+  <header>
+    @if (task) {
+      <div class="breadcrumbs">
+        <a [routerLink]="tasksRoute | async">{{ 'tasks-automation.page-title' | translate }}</a>
+        <pa-icon
+          name="chevron-right"
+          size="small"></pa-icon>
+        <a [routerLink]="(tasksRoute | async) + '/' + task.id">{{ task.parameters?.name }}</a>
+        <pa-icon
+          name="chevron-right"
+          size="small"></pa-icon>
+        <span>{{ 'tasks-automation.form.edit-agent' | translate }}</span>
       </div>
-
-      <div>
-        <nsi-dropdown-button
-          fullWidth
-          aspect="basic"
-          [popupRef]="resourceTypesDropdown">
-          {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
-
-          @if (resourceTypeSelectionCount > 0) {
-            ({{
-              resourceTypeSelectionCount === resourceTypeTotalCount
-                ? ('tasks-automation.form.filter.all' | translate)
-                : resourceTypeSelectionCount
-            }})
-          }
-        </nsi-dropdown-button>
-
-        <pa-dropdown #resourceTypesDropdown>
-          <pa-option
-            dontCloseOnSelect
-            (selectOption)="toggleAll('types', $event)">
-            <pa-checkbox [value]="allResourceTypesSelected">
-              {{ 'tasks-automation.form.filter.resource-type.all-types' | translate }}
-            </pa-checkbox>
-          </pa-option>
-          <pa-separator></pa-separator>
-          @for (option of resourceTypeFilters; track option.id) {
-            <pa-option
-              [paTooltip]="option.help"
-              (selectOption)="onSelectFilter(option, $event)"
-              dontCloseOnSelect>
-              <pa-checkbox
-                [(value)]="option.selected"
-                (valueChange)="onToggleFilter()">
-                {{ option.label }}
-              </pa-checkbox>
-            </pa-option>
-          }
-        </pa-dropdown>
+    } @else {
+      <div class="breadcrumbs">
+        <a [routerLink]="tasksRoute | async">{{ 'tasks-automation.page-title' | translate }}</a>
+        <pa-icon
+          name="chevron-right"
+          size="small"></pa-icon>
+        <span>{{ 'tasks-automation.form.new-agent' | translate }}</span>
       </div>
-
-      <div>
-        <nsi-dropdown-button
-          fullWidth
-          aspect="basic"
-          [popupRef]="languagesDropdown">
-          {{ 'tasks-automation.form.filter.languages.button-label' | translate }}
-
-          @if (languageSelectionCount > 0) {
-            ({{
-              languageSelectionCount === languageTotalCount
-                ? ('tasks-automation.form.filter.all' | translate)
-                : languageSelectionCount
-            }})
-          }
-        </nsi-dropdown-button>
-        <pa-dropdown #languagesDropdown>
-          <pa-option
-            dontCloseOnSelect
-            (selectOption)="toggleAll('languages', $event)">
-            <pa-checkbox [value]="allLanguagesSelected">
-              {{ 'tasks-automation.form.filter.languages.all-languages' | translate }}
-            </pa-checkbox>
-          </pa-option>
-          <pa-separator></pa-separator>
-          @for (option of languageFilters; track option.id) {
-            <pa-option
-              [paTooltip]="option.help"
-              (selectOption)="onSelectFilter(option, $event)"
-              dontCloseOnSelect>
-              <pa-checkbox
-                [(value)]="option.selected"
-                (valueChange)="onToggleFilter()">
-                {{ option.label }}
-              </pa-checkbox>
-            </pa-option>
-          }
-        </pa-dropdown>
-      </div>
-
-      @if (hasLabelSets | async) {
-        <app-label-dropdown
-          fullWidth
-          [selection]="labelSelection"
-          [labelSets]="resourceLabelSets | async"
-          (selectionChange)="updateFiltersWithLabels($event)"
-          aspect="basic">
-          {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
-          @if (labelSelectionCount > 0) {
-            ({{ labelSelectionCount }})
-          }
-        </app-label-dropdown>
+    }
+    <div>
+      @if (task) {
+        <h1 class="page-title">{{ task.parameters?.name }}</h1>
+      } @else {
+        <h1 class="page-title">{{ 'tasks-automation.type.' + type + '.title' | translate }}</h1>
+        <p class="page-description">{{ 'tasks-automation.type.' + type + '.description' | translate }}</p>
       }
     </div>
-  </nsi-two-columns-configuration-item>
-  <nsi-two-columns-configuration-item
-    itemTitle="tasks-automation.form.llm-selection.title"
-    description="tasks-automation.form.llm-selection.description">
-    <div class="form-container">
-      <pa-radio-group formControlName="llm">
-        @for (model of availableLLMs; track model) {
-          <pa-radio [value]="model">{{ model | generativeModel }}</pa-radio>
+  </header>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSave()">
+    <nsi-two-columns-configuration-item itemTitle="tasks-automation.form.task-name.title">
+      <pa-input formControlName="name">{{ 'tasks-automation.form.task-name.input-label' | translate }}</pa-input>
+    </nsi-two-columns-configuration-item>
+    @if (filterProperties; as filters) {
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.form.filter.title"
+        description="tasks-automation.form.filter.description"
+        badge="generic.badge.optional">
+        <div
+          class="form-container filter-form-container"
+          formGroupName="filter">
+          @if (filters?.['contains']) {
+            <div>
+              <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
+              <pa-input formControlName="contains">
+                {{ 'tasks-automation.form.filter.search-input-label' | translate }}
+              </pa-input>
+              <pa-toggle formControlName="contains_operator">
+                {{ 'tasks-automation.form.filter.operator' | translate }}
+              </pa-toggle>
+            </div>
+          }
+          <div>
+            <div class="title-s">{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</div>
+            <nsi-dropdown-button
+              fullWidth
+              aspect="basic"
+              [popupRef]="fieldTypesDropdown">
+              {{ 'tasks-automation.form.filter.fields.button-label' | translate }}
+
+              @if (fieldTypeSelectionCount > 0) {
+                ({{
+                  fieldTypeSelectionCount === fieldTypesTotalCount
+                    ? ('tasks-automation.form.filter.all' | translate)
+                    : fieldTypeSelectionCount
+                }})
+              }
+            </nsi-dropdown-button>
+            <pa-dropdown #fieldTypesDropdown>
+              <pa-option
+                dontCloseOnSelect
+                (selectOption)="toggleAll('fieldTypes', $event)">
+                <pa-checkbox [value]="allFieldTypesSelected">
+                  {{ 'tasks-automation.form.filter.fields.all-types' | translate }}
+                </pa-checkbox>
+              </pa-option>
+              <pa-separator></pa-separator>
+              @for (option of fieldTypeFilters; track option.id) {
+                <pa-option
+                  [paTooltip]="option.help"
+                  (selectOption)="onSelectFilter(option, $event)"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
+
+          @if (hasLabelSets | async) {
+            <div>
+              <div class="title-s">{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</div>
+
+              <app-label-dropdown
+                fullWidth
+                [multiple]="true"
+                [(selection)]="labelSelection"
+                [labelSets]="resourceLabelSets | async"
+                (selectionChange)="updateFiltersWithLabels()"
+                aspect="basic">
+                {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
+                @if (labelSelectionCount > 0) {
+                  ({{ labelSelectionCount }})
+                }
+              </app-label-dropdown>
+              <pa-toggle formControlName="labels_operator">
+                {{ 'tasks-automation.form.filter.operator' | translate }}
+              </pa-toggle>
+            </div>
+          }
+          @if (can_apply_to_agent_generated_fields) {
+            <div class="title-s apply-to-da-fields">
+              {{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}
+              <pa-toggle formControlName="apply_to_agent_generated_fields"></pa-toggle>
+            </div>
+          }
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
+    <ng-content></ng-content>
+    @if (!modelsHidden) {
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.form.llm-selection.title"
+        description="tasks-automation.form.llm-selection.description">
+        <div
+          class="form-container"
+          formGroupName="llm">
+          <pa-select
+            formControlName="model"
+            [options]="availableLLMs"></pa-select>
+          <stf-user-keys
+            [learningConfigurations]="learningConfigurations"
+            [generativeModel]="generativeModel"
+            (formReady)="initUserKeysForm($event)"></stf-user-keys>
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'tasks-automation.form.llm-selection.warning' | translate }}
+          </nsi-info-card>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
+
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.form.webhook.title"
+      description="tasks-automation.form.webhook.description"
+      badge="generic.badge.optional">
+      <div
+        class="form-container"
+        formGroupName="webhook">
+        <div>
+          <label for="trigger_description">{{ 'tasks-automation.form.webhook.trigger-label' | translate }}</label>
+          <nsi-info-card id="trigger_description">{{ triggerDescription | translate }}</nsi-info-card>
+        </div>
+        <div>
+          <pa-input
+            externalLabel
+            formControlName="url">
+            URL
+          </pa-input>
+        </div>
+        <pa-expander
+          [expanded]="false"
+          [contentLoaded]="headers">
+          <pa-expander-header>
+            <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+          </pa-expander-header>
+          <pa-expander-body>
+            <div>
+              <app-parameters-table
+                secretDisabled
+                [(values)]="headers"></app-parameters-table>
+            </div>
+          </pa-expander-body>
+        </pa-expander>
+        <pa-expander
+          [expanded]="false"
+          [contentLoaded]="parameters">
+          <pa-expander-header>
+            <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+          </pa-expander-header>
+          <pa-expander-body>
+            <div>
+              <app-parameters-table
+                secretDisabled
+                [(values)]="parameters"></app-parameters-table>
+            </div>
+          </pa-expander-body>
+        </pa-expander>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-sticky-footer>
+      <!--
+      <span footerNote>
+        @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
+          {{ footerNoteAutomation | translate }}
+        } @else if (resourceCount !== undefined) {
+          {{ footerNoteOneTime | translate: { count: resourceCount } }}
         }
-      </pa-radio-group>
-
-      @if (llmValue) {
-        <!-- FIXME: update translation X param depending on the model -->
-        <nsi-info-card
-          type="warning"
-          icon="warning">
-          {{ 'tasks-automation.form.llm-selection.warning' | translate }}
-        </nsi-info-card>
-      }
-    </div>
-  </nsi-two-columns-configuration-item>
-
-  <ng-content></ng-content>
-
-  <nsi-two-columns-configuration-item
-    itemTitle="tasks-automation.form.webhook.title"
-    description="tasks-automation.form.webhook.description">
-    <div
-      class="form-container"
-      formGroupName="webhook">
-      <div>
-        <label for="trigger_description">{{ 'tasks-automation.form.webhook.trigger-label' | translate }}</label>
-        <nsi-info-card id="trigger_description">{{ triggerDescription | translate }}</nsi-info-card>
-      </div>
-      <div>
-        <label for="url">URL</label>
-        <pa-input
-          id="url"
-          externalLabel
-          formControlName="url"></pa-input>
-      </div>
-      <div>
-        <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
-        <app-parameters-table
-          [values]="headers"
-          (valuesChanges)="setHeaders($event)"></app-parameters-table>
-      </div>
-    </div>
-  </nsi-two-columns-configuration-item>
-
-  <nsi-sticky-footer>
-    <span footerNote>
-      @if (applyTaskValue === 'automation') {
-        {{ footerNoteAutomation | translate }}
-      } @else if (resourceCount !== undefined) {
-        {{ footerNoteOneTime | translate: { count: resourceCount } }}
-      }
-    </span>
-    <pa-button
-      aspect="basic"
-      (click)="cancel.emit()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      kind="primary"
-      type="submit"
-      [disabled]="form.invalid || !validFormInside">
-      {{ activateButtonLabel | translate }}
-    </pa-button>
-  </nsi-sticky-footer>
-</form>
+      </span>
+      -->
+      <pa-button
+        aspect="basic"
+        (click)="cancel.emit()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="form.invalid || userKeysForm?.invalid || !validFormInside">
+        {{ (task ? 'tasks-automation.form.save' : 'tasks-automation.form.create') | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  </form>
+</div>

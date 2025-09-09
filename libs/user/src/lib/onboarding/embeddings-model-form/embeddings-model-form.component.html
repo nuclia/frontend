@@ -3,14 +3,12 @@
   [formGroup]="form">
   <div class="title-xs">{{ 'user.kb.creation-form.models.form-title' | translate }}</div>
 
-  <nsi-info-card
-    type="warning"
-    icon="warning">
-    {{ 'user.kb.creation-form.models.warning.no-change-after-creation' | translate }}
-  </nsi-info-card>
-
   <nsi-info-card>
-    <div [innerHTML]="'user.kb.creation-form.models.warning.limit' | translate: { limit: MODEL_SELECTION_LIMIT }"></div>
+    <div class="models-limit">
+      <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+      <div
+        [innerHTML]="'user.kb.creation-form.models.warning.limit' | translate: { limit: MODEL_SELECTION_LIMIT }"></div>
+    </div>
   </nsi-info-card>
 
   <pa-accordion allowMultipleExpanded>

@@ -1,3 +1,4 @@
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
-
-$width-confirm-dialog: rhythm(56);
+@use './spacing.tokens' as spacing;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/modal.tokens' with (
+  $width-confirm-dialog: spacing.rhythm(56)
+);

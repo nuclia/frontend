@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .account-home {
   max-width: calc(#{rhythm(90)} * 2);
@@ -45,6 +45,11 @@
 
       pa-icon {
         display: flex;
+      }
+
+      .tokens {
+        flex: 0 0 auto;
+        color: $color-neutral-regular;
       }
     }
 

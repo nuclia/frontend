@@ -1,16 +1,22 @@
 <script>
-  import Thumbnail from './Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
   import Icon from '../icons/Icon.svelte';
   import Spinner from '../spinner/Spinner.svelte';
+  import Thumbnail from './Thumbnail.svelte';
 
-  export let thumbnail = '';
-  export let fallback = '';
-  export let aspectRatio;
-  export let spinner = false;
-  export let hasBackground = false;
+  /**
+   * @typedef {Object} Props
+   * @property {string} [thumbnail]
+   * @property {string} [fallback]
+   * @property {any} aspectRatio
+   * @property {boolean} [spinner]
+   * @property {boolean} [hasBackground]
+   */
 
-  let loaded = false;
+  /** @type {Props} */
+  let { thumbnail = '', fallback = '', aspectRatio, spinner = false, hasBackground = false } = $props();
+
+  let loaded = $state(false);
 
   const dispatch = createEventDispatcher();
 
@@ -28,7 +34,7 @@
   <div
     class="sw-thumbnail-player"
     tabindex="-1"
-    on:click={play}>
+    onclick={play}>
     <Thumbnail
       src={thumbnail}
       {fallback}
@@ -41,7 +47,7 @@
         class="action-container"
         class:play-icon={!spinner}
         tabindex="0"
-        on:keyup={(e) => {
+        onkeyup={(e) => {
           if (e.key === 'Enter') play();
         }}>
         {#if !spinner}
@@ -56,6 +62,4 @@
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./ThumbnailPlayer.scss"></style>
+<style src="./ThumbnailPlayer.css"></style>

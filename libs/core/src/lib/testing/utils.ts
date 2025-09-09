@@ -25,6 +25,7 @@ export const subscriptionPipeToFn = (dataReturn = {}) => {
 
 @Pipe({
   name: 'translate',
+  standalone: false,
 })
 export class TranslatePipeMock implements PipeTransform {
   public name: string = 'translate';

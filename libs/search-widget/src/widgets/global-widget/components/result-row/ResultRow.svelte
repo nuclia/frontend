@@ -1,19 +1,22 @@
 <script lang="ts">
-  import ParagraphResult from '../paragraph-result/ParagraphResult.svelte';
+  import type { Search } from '@nuclia/core';
   import type { TypedResult } from '../../../../core';
   import { goToUrl, trackingEngagement } from '../../../../core';
-  import type { Search } from '@nuclia/core';
+  import ParagraphResult from '../paragraph-result/ParagraphResult.svelte';
 
-  export let result: TypedResult;
+  interface Props {
+    result: TypedResult;
+  }
 
-  let innerWidth = window.innerWidth;
-  $: paragraphs = result.paragraphs || [];
+  let { result }: Props = $props();
 
+  let innerWidth = $state(window.innerWidth);
+  let paragraphs = $derived(result.paragraphs || []);
 
   function clickOnResult(paragraph?: Search.FindParagraph) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.origin?.url) {
-      goToUrl(result.origin.url, paragraph?.text);
+      goToUrl(result.origin.url);
     }
   }
 </script>
@@ -21,13 +24,13 @@
 <svelte:window bind:innerWidth />
 
 <div class="sw-result-row">
-
   <div class="result-container">
     <h3
       class="ellipsis title-xs"
-      on:click={() => clickOnResult()}
-      on:keyup={(e) => {if (e.key === 'Enter') clickOnResult();}}
-    >
+      onclick={() => clickOnResult()}
+      onkeyup={(e) => {
+        if (e.key === 'Enter') clickOnResult();
+      }}>
       {result?.title}
     </h3>
 
@@ -37,17 +40,17 @@
           paragraph={paragraphs[0]}
           resultType={result.resultType}
           noIndicator={true}
-          on:open={() => clickOnResult(paragraphs[0])}
-        />
+          on:open={() => clickOnResult(paragraphs[0])} />
       {/if}
       {#if result.origin?.url}
-        <a href={result.origin.url}
-           class="body-m link-origin">{result.origin.url}</a>
+        <a
+          href={result.origin.url}
+          class="body-m link-origin">
+          {result.origin.url}
+        </a>
       {/if}
     </div>
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./ResultRow.scss"></style>
+<style src="./ResultRow.css"></style>

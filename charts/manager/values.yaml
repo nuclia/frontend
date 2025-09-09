@@ -19,16 +19,29 @@ service:
   externalPort: 80
 
 api_path: XXX
-site_key: XXX
 app_name: app
+no_stripe: false
+brand_name: XXX
+brand_domain: XXX
+assets_path: XXX
 sentry_environment: stage
-sentry_url: XXX
 
 virtualService:
   enabled: false
   gateway: XXX
   host: XXX
 
+podDisruptionBudget:
+  enabled: false
+
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
+envFrom:
+  - configMapRef:
+      name: manager-config
+
+## Intended to be used with secret
+# env:
+#   SITE_KEY: XXX
+#   SENTRY_URL: XXX

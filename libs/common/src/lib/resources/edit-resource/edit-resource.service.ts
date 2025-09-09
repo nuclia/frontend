@@ -1,18 +1,7 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  switchMap,
-  take,
-  tap,
-  throwError,
-} from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Classification,
   CloudLink,
@@ -22,27 +11,40 @@ import {
   getDataKeyFromFieldType,
   IFieldData,
   LinkField,
-  longToShortFieldType,
   Paragraph,
   Resource,
   ResourceData,
   ResourceField,
+  Session,
   TextField,
   UserClassification,
 } from '@nuclia/core';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
+import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
 import {
   addEntitiesToGroups,
   EditResourceView,
   EntityGroup,
   getClassificationsPayload,
+  getCustomEntities,
+  getParagraphId,
   Thumbnail,
 } from './edit-resource.helpers';
-import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -69,12 +71,18 @@ export class EditResourceService {
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
       Object.entries(resource?.data || {}).reduce((list, [type, dict]) => {
+        if (!dict) {
+          return list;
+        }
         return list.concat(
-          Object.entries(dict).map(([fieldId, field]) => ({
-            ...field,
-            field_id: fieldId,
-            field_type: type.slice(0, -1), // remove the `s` from resource.data property
-          })),
+          Object.entries(dict)
+            // Filter out session info field when the resource is a session (as this field is directly managed by the session preview)
+            .filter(([fieldId]) => !this.isSession || fieldId !== 'info')
+            .map(([fieldId, field]) => ({
+              ...field,
+              field_id: fieldId,
+              field_type: type.slice(0, -1), // remove the `s` from resource.data property
+            })),
         );
       }, [] as ResourceField[]),
     ),
@@ -82,11 +90,12 @@ export class EditResourceService {
   kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
+  extractStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getExtractStrategies().pipe(shareReplay(1))));
   isAdminOrContrib = this.features.isKbAdminOrContrib;
+  isSession = false;
 
   constructor(
     private sdk: SDKService,
-    private router: Router,
     private toaster: SisToastService,
     private modalService: SisModalService,
     private translate: TranslateService,
@@ -95,7 +104,19 @@ export class EditResourceService {
     private features: FeaturesService,
   ) {}
 
+  loadSession(sessionId: string): Observable<Session> {
+    this.isSession = true;
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) =>
+        arag.getSession(sessionId).pipe(map((session) => new Session(this.sdk.nuclia, arag.id, session))),
+      ),
+      tap((session) => this._resource.next(session)),
+    );
+  }
+
   loadResource(resourceId: string): Observable<Resource> {
+    this.isSession = false;
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.getFullResource(resourceId)),
@@ -118,7 +139,7 @@ export class EditResourceService {
             return {
               id: groupId,
               title: getNerFamilyTitle(groupId, group, this.translate),
-              color: group.color || generatedColor,
+              color: group.color || generatedColor || '#c4c4c4',
               entities: [],
               custom: group.custom,
             };
@@ -126,6 +147,7 @@ export class EditResourceService {
           .sort((a, b) => a.title.localeCompare(b.title));
 
         addEntitiesToGroups(allGroups, resource.getNamedEntities());
+        addEntitiesToGroups(allGroups, getCustomEntities(resource));
         allGroups.forEach((group) => group.entities.sort((a, b) => a.localeCompare(b)));
         return allGroups;
       }),
@@ -319,7 +341,7 @@ export class EditResourceService {
     );
   }
 
-  confirmAndDelete(fieldType: FIELD_TYPE, fieldId: string, route: ActivatedRoute): Observable<void | null> {
+  confirmAndDelete(fieldType: FIELD_TYPE, fieldId: string): Observable<boolean> {
     return this.modalService
       .openConfirm({
         title: this.translate.instant('resource.field.delete-confirm-title', {
@@ -334,18 +356,13 @@ export class EditResourceService {
       .onClose.pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.deleteField(fieldType, fieldId)),
-        tap((done) => {
-          if (done !== null) {
-            this.router.navigate(['../../resource'], { relativeTo: route });
-          }
-        }),
+        map((done) => done !== null),
       );
   }
 
   getParagraphId(field: FieldId, paragraph: Paragraph): string {
     const resource = this._resource.getValue();
-    const typeAbbreviation = longToShortFieldType(field.field_type);
-    return resource ? `${resource.id}/${typeAbbreviation}/${field.field_id}/${paragraph.start}-${paragraph.end}` : '';
+    return resource ? getParagraphId(resource.id, field, paragraph) : '';
   }
 
   private deleteField(fieldType: FIELD_TYPE, fieldId: string): Observable<void | null> {

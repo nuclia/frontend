@@ -1,0 +1,11 @@
+<ng-container [formGroup]="simpleForm">
+  <pa-select
+    formControlName="type"
+    [label]="'search.configuration.search-box.preselected-filters.assistant.filter-on' | translate"
+    [options]="filterTypeList"
+    (valueChange)="resetSimpleValue()"></pa-select>
+
+  <stf-filter-value
+    [filterType]="simpleTypeValue"
+    [valueControl]="simpleValueControl"></stf-filter-value>
+</ng-container>

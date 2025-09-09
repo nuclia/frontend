@@ -22,21 +22,78 @@
       @for (tab of activityTabs[selectedTab]; track tab) {
         <pa-tab
           [active]="tab === selectedActivityTab"
-          (click)="selectedActivityTab = tab">
-          {{ 'activity.type.' + tab.toLowerCase() | translate }}
+          (click)="selectActivityTab(tab)">
+          {{ 'activity.type.' + tab | translate }}
         </pa-tab>
       }
     </pa-tabs>
-    <div class="download-list">
-      @for (item of activity[selectedActivityTab] | async; track item.month) {
-        <div class="download-item">
-          <div class="body-m">{{ item.formatted }}</div>
-          <pa-button
-            icon="download"
-            aspect="basic"
-            (click)="download(item.month)"></pa-button>
+    @for (tab of activityTabs[selectedTab]; track tab) {
+      @if (tab === selectedActivityTab) {
+        <div class="download-list">
+          @for (item of activity[selectedActivityTab] | async; track selectedActivityTab + item.month) {
+            <pa-expander
+              [disabled]="
+                !downloads[selectedActivityTab + '-' + item.month] ||
+                !downloads[selectedActivityTab + '-' + item.month].rows
+              "
+              card
+              buttonOnlyToggle
+              (toggleExpander)="
+                visibleTables[selectedActivityTab + '-' + item.month] =
+                  !visibleTables[selectedActivityTab + '-' + item.month]
+              ">
+              <pa-expander-header>
+                <div class="download-item">
+                  <div class="body-m">{{ item.date | date: 'MMMM y' }}</div>
+                  @if (!!downloads[selectedActivityTab + '-' + item.month]) {
+                    @if (downloads[selectedActivityTab + '-' + item.month].status === 'pending') {
+                      <div class="email-sent">
+                        <pa-icon name="clock-dash"></pa-icon>
+                      </div>
+                    } @else if (downloads[selectedActivityTab + '-' + item.month].fromCache) {
+                      <pa-button
+                        icon="reload"
+                        aspect="basic"
+                        paTooltip="generic.refresh"
+                        (click)="download(selectedActivityTab, item.month)"></pa-button>
+                    }
+                  } @else {
+                    <pa-button
+                      icon="download"
+                      aspect="basic"
+                      (click)="download(selectedActivityTab, item.month)"></pa-button>
+                  }
+                </div>
+              </pa-expander-header>
+              <pa-expander-body>
+                @if (downloads[selectedActivityTab + '-' + item.month]?.status === 'pending') {
+                  <nsi-spinner></nsi-spinner>
+                } @else if (visibleTables[selectedActivityTab + '-' + item.month]) {
+                  @if (
+                    item.date < migrationgDate &&
+                    (selectedActivityTab === askActivityTab || selectedActivityTab === searchActivityTab)
+                  ) {
+                    <nsi-info-card
+                      type="warning"
+                      icon="warning">
+                      {{ 'activity.migration-warning' | translate }}
+                    </nsi-info-card>
+                  }
+                  <app-log-table
+                    [month]="item.month"
+                    [event]="selectedActivityTab"
+                    [url]="downloads[selectedActivityTab + '-' + item.month]?.url"
+                    [rows]="
+                      !!downloads[selectedActivityTab + '-' + item.month]
+                        ? downloads[selectedActivityTab + '-' + item.month].rows || []
+                        : []
+                    "></app-log-table>
+                }
+              </pa-expander-body>
+            </pa-expander>
+          }
         </div>
       }
-    </div>
+    }
   </div>
 </div>

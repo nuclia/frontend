@@ -1,0 +1,48 @@
+@use 'apps/dashboard/src/variables' as *;
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding-bottom: rhythm(2);
+
+  .form-entry label {
+    color: $color-neutral-regular;
+    font-size: font-size(s);
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(0.5);
+  }
+  .form-entry.field-list {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+  .entry-with-button {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    :first-child {
+      flex: 1 0 auto;
+    }
+  }
+
+  .label-and-button {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .config-property-form {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .config-property-form {
+    margin-top: rhythm(2);
+  }
+
+  pa-toggle .title-xs {
+    color: $color-neutral-regular;
+  }
+}

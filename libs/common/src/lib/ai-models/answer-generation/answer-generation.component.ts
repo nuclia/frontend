@@ -1,18 +1,23 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { getSubSchema, LearningConfigurationOption } from '@nuclia/core';
+import {
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { filter, of, Subject, take } from 'rxjs';
-import { UnauthorizedFeatureDirective } from '@flaps/core';
-import { LearningConfigurationOption } from '@nuclia/core';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+import { keyProviders } from '../ai-models.utils';
+import { LearningConfigurationDirective } from '../learning-configuration.directive';
+import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 
 @Component({
   selector: 'stf-answer-generation',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -25,62 +30,49 @@ import { LearningConfigurationOption } from '@nuclia/core';
     StickyFooterComponent,
     PaButtonModule,
     PaButtonModule,
-    UnauthorizedFeatureDirective,
+    UserKeysComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './answer-generation.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerGenerationComponent extends LearningConfigurationDirective implements OnDestroy {
-  keyProviders: { [key: string]: string } = {
-    azure_openai: 'Azure OpenAI',
-    openai: 'OpenAI',
-    anthropic: 'Anthropic',
-    claude3: 'Anthropic',
-    palm: 'Google',
-    mistral: 'Mistral',
-    azure_mistral: 'Azure Mistral',
-    'chatgpt-vision': 'ChatGPT Vision',
-    chatgpt4: 'ChatGPT 4',
-    hf_llm: 'Hugging Face',
-  };
+  keyProviders = keyProviders;
   popoverHelp: { [key: string]: string } = {
     'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
   };
-  modelsRequiringUserKey = ['huggingface'];
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    user_keys: new FormGroup({}),
-    user_prompts: new FormGroup({
-      prompt: new FormControl<string>(''),
-      prompt_examples: new FormControl<string>(''),
-      system: new FormControl<string>(''),
-      system_examples: new FormControl<string>(''),
-    }),
+    user_prompts: new FormGroup({}),
   });
+  userKeysForm?: UserKeysForm;
   currentGenerativeModel?: LearningConfigurationOption;
-  userKeyToggle = new FormControl<boolean>(false);
-  required = this.translate.instant('kb.ai-models.common.required');
   unsubscribeAll = new Subject<void>();
 
-  get hasOwnKey() {
-    return !!this.userKeyToggle.value;
-  }
   get generativeModelValue() {
     return this.configForm.controls.generative_model.value;
   }
   get userKeysGroup() {
-    return this.configForm.controls.user_keys;
+    return this.userKeysForm?.controls?.user_keys;
+  }
+  get userKeyToggle() {
+    return this.userKeysForm?.controls?.enabled;
+  }
+  get hasOwnKey() {
+    return !!this.userKeyToggle?.value;
   }
   get userPromptForm() {
     return this.configForm.controls.user_prompts;
   }
-
-  constructor() {
-    super();
-    this.userKeyToggle.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.updateValidators();
-    })
+  get userPromptSchemas() {
+    return this.learningConfigurations?.['user_prompts']?.schemas;
+  }
+  get invalid() {
+    return this.configForm.invalid || this.userKeysForm?.invalid;
+  }
+  get pristine() {
+    return this.configForm.pristine && this.userKeysForm?.pristine;
   }
 
   ngOnDestroy() {
@@ -100,29 +92,52 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
         filter((authorized) => !authorized),
       )
       .subscribe(() => {
-        this.userKeyToggle.disable();
+        this.userKeysForm?.disable();
         this.userPromptForm.disable();
       });
 
+    if (this.learningConfigurations && Object.keys(this.userPromptForm.controls).length === 0) {
+      Object.keys(this.userPromptSchemas || {}).forEach((key) => {
+        this.userPromptForm.addControl(
+          key,
+          new FormGroup({
+            prompt: new FormControl<string>(''),
+            prompt_examples: new FormControl<string>(''),
+            system: new FormControl<string>(''),
+            system_examples: new FormControl<string>(''),
+          }),
+        );
+      });
+    }
+
     if (kbConfig) {
       this.configForm.patchValue(kbConfig);
-
       this.updateCurrentGenerativeModel();
-      if (this.currentGenerativeModel?.user_prompt) {
-        if (kbConfig['user_prompts']) {
-          this.userPromptForm.patchValue(kbConfig['user_prompts'][this.currentGenerativeModel?.user_prompt]);
-        }
-      }
-      if (this.currentGenerativeModel?.user_key) {
-        if (kbConfig['user_keys']) {
-          const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModel?.user_key];
-          this.userKeyToggle.patchValue(ownKey);
-          this.userKeysGroup.patchValue(kbConfig['user_keys'][this.currentGenerativeModel?.user_key]);
-        }
-      }
-
+      // Wait for the user key form to update before setting their values
       setTimeout(() => {
+        const userKeyId = this.currentGenerativeModel?.user_key;
+        if (userKeyId) {
+          if (kbConfig['user_keys']) {
+            const ownKey = !!kbConfig['user_keys'][userKeyId];
+            let userKeys = kbConfig['user_keys'][userKeyId];
+            const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
+            if (userKeys && schema) {
+              userKeys = Object.entries(userKeys).reduce((acc, [key, prop]) => {
+                const subSchema = getSubSchema(schema, schema.properties?.[key]);
+                if (subSchema && subSchema.enum) {
+                  // enum are integers, but pastanaga radio groups only accept strings
+                  prop = `${prop}`;
+                }
+                acc[key] = prop;
+                return acc;
+              }, {} as any);
+            }
+            this.userKeyToggle?.patchValue(ownKey);
+            this.userKeysGroup?.patchValue(userKeys);
+          }
+        }
         this.configForm.markAsPristine();
+        this.userKeysForm?.markAsPristine();
         this.cdr.markForCheck();
       });
     }
@@ -138,17 +153,20 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
     kbConfig['user_keys'] =
       this.currentGenerativeModel?.user_key && this.hasOwnKey
-        ? { [this.currentGenerativeModel?.user_key]: kbConfig['user_keys'] }
+        ? { [this.currentGenerativeModel?.user_key]: this.userKeysGroup?.value }
         : {};
-    kbConfig['user_prompts'] = this.currentGenerativeModel?.user_prompt
-      ? {
-          [this.currentGenerativeModel?.user_prompt]: {
-            ...kbConfig['user_prompts'],
-            prompt: kbConfig['user_prompts'].prompt?.trim(),
-            system: kbConfig['user_prompts'].system?.trim(),
-          },
-        }
-      : {};
+
+    kbConfig['user_prompts'] = Object.entries(kbConfig['user_prompts']).reduce(
+      (acc, curr: [string, any]) => {
+        const prompts = {
+          prompt: curr[1].prompt?.trim(),
+          system: curr[1].system?.trim(),
+        };
+        acc[curr[0]] = prompts.prompt || prompts.system ? prompts : undefined;
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
 
     this.kb
       .setConfiguration(kbConfig)
@@ -183,51 +201,12 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     );
     if (generativeOption) {
       this.currentGenerativeModel = generativeOption;
-      this.userPromptForm.patchValue({
-        prompt: '',
-        system: '',
-      });
     }
-    if (this.currentGenerativeModel?.user_key) {
-      // add user_keys controls corresponding to generative model if any
-      const newUserKeys = Object.keys(
-        this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModel?.user_key]?.properties || {},
-      );
-      Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
-        if (newUserKeys.includes(oldKey)) {
-          // clean up value from previous fields
-          this.userKeysGroup.get(oldKey)?.patchValue('');
-        } else {
-          // remove unused control
-          this.userKeysGroup.removeControl(oldKey);
-        }
-      });
-      newUserKeys.forEach((key) => {
-        if (!this.userKeysGroup.get(key)) {
-          this.userKeysGroup.addControl(key, new FormControl<string>(''));
-        }
-      });
-      this.updateValidators();
-    }
-    this.userKeyToggle.patchValue(this.modelsRequiringUserKey.includes(this.currentGenerativeModel?.value || ''));
   }
 
-  updateValidators() {
-    if (!this.learningConfigurations || !this.currentGenerativeModel?.user_key) {
-      return;
-    }
-    const required =
-      this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModel?.user_key]?.required || [];
-    Object.keys(this.userKeysGroup.controls).forEach((key) => {
-      this.userKeysGroup.get(key)?.setValidators(this.hasOwnKey && required.includes(key) ? [Validators.required] : []);
-      this.userKeysGroup.get(key)?.markAsPristine();
-      this.userKeysGroup.get(key)?.updateValueAndValidity();
-    });
-  }
-
-  setPrompt(field: string, value: string) {
+  setPrompt(key: string, promptType: string, value: string) {
     if (value) {
-      const formValue = { [field]: value, [`${field}_examples`]: '' };
+      const formValue = { [key]: { [promptType]: value, [`${promptType}_examples`]: '' } };
       this.userPromptForm.patchValue(formValue);
       this.cdr.markForCheck();
     }

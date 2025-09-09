@@ -1,0 +1,43 @@
+@if (task) {
+  <div class="title-xxs">NERs</div>
+  @for (family of extractedNERs | async | keyvalue; track family.key) {
+    <div class="family">
+      <div>
+        @if ((familyColors | async)?.[family.key]; as color) {
+          <app-entity
+            [backgroundColor]="color.mainColor"
+            [textColor]="color.textColor">
+            {{ family.key }}
+          </app-entity>
+        }
+      </div>
+      <div class="ners">
+        @for (ner of family.value; track ner) {
+          <app-entity [border]="true">{{ ner }}</app-entity>
+        }
+      </div>
+    </div>
+  } @empty {
+    <nsi-info-card>{{ 'tasks-automation.testing.results.no-graph' | translate }}</nsi-info-card>
+  }
+  @if (((relations | async) || []).length > 0) {
+    <div class="title-xxs">{{ 'tasks-automation.testing.results.relations' | translate }}</div>
+    <div class="relations">
+      @for (relation of relations | async; track relation.from?.value + relation.to.value) {
+        <div class="relation">
+          <app-entity
+            [backgroundColor]="relation.fromColor.mainColor"
+            [textColor]="relation.fromColor.textColor">
+            {{ relation.from?.value }}
+          </app-entity>
+          <app-entity [border]="true">{{ relation.label }}</app-entity>
+          <app-entity
+            [backgroundColor]="relation.toColor.mainColor"
+            [textColor]="relation.toColor.textColor">
+            {{ relation.to.value }}
+          </app-entity>
+        </div>
+      }
+    </div>
+  }
+}

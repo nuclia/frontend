@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $height-table-header: rhythm(8);
 $height-pagination: rhythm(9);
@@ -12,6 +12,7 @@ $height-pagination: rhythm(9);
   .header-container {
     align-items: center;
     display: flex;
+    gap: rhythm(1);
     height: $height-table-header;
   }
 
@@ -28,6 +29,8 @@ $height-pagination: rhythm(9);
   }
 
   .table-options {
+    display: flex;
+    gap: rhythm(1);
     margin-left: auto;
   }
 
@@ -46,7 +49,13 @@ $height-pagination: rhythm(9);
 .table-container {
   position: relative;
   // Always display pagination at the bottom, even when there are few results
-  min-height: calc(100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} - #{$height-pagination} + rhythm(3));
+  min-height: calc(
+    100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} -
+      #{$height-pagination} + rhythm(3)
+  );
+  .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
+    color: $color-neutral-regular;
+  }
 }
 
 table {

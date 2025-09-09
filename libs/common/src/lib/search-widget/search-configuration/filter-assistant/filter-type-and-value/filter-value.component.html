@@ -1,0 +1,133 @@
+@switch (filterType) {
+  @case ('icon') {
+    <pa-input
+      [formControl]="valueControl"
+      [errorMessages]="mimeTypePatternError"
+      pattern="(application|audio|image|text|video)\/[-+.\w]+"
+      placeholder="application/pdf">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+    </pa-input>
+  }
+  @case ('classification.labels') {
+    <div class="fields-container">
+      <pa-radio-group
+        [(value)]="labelSelectionMode"
+        (change)="clearLabels()">
+        <pa-radio value="label">{{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-label' | translate }}</pa-radio>
+        <pa-radio value="labelset">{{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-labelset' | translate }}</pa-radio>
+      </pa-radio-group>
+      <div class="labels-container">
+        @if (labelSelectionMode === 'label') {
+          <app-label-dropdown
+            aspect="basic"
+            single
+            [fullWidth]="true"
+            [labelSets]="labelSets | async"
+            (selectionChange)="updateValueWithLabels($event)">
+            {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+          </app-label-dropdown>
+          @if (labelSelection) {
+            <nsi-info-card type="highlight">
+              {{ selectedLabelSetTitle || labelSelection?.labelset }}: {{ labelSelection?.label }}
+            </nsi-info-card>
+          }
+        } @else {
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [popupRef]="menu">
+              {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #menu>
+              @for (labelSet of (labelSets | async) || {} | keyvalue; track labelSet.key) {
+                <pa-option (selectOption)="updateValueWithLabelSet(labelSet.key)">
+                  {{ labelSet.value.title }}
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
+          @if (labelSetSelection) {
+            <nsi-info-card type="highlight">{{ selectedLabelSetTitle }}</nsi-info-card>
+          }
+        }
+      </div>
+    </div>
+  }
+  @case ('entities') {
+    <div
+      class="fields-container"
+      [formGroup]="nerForm">
+      <pa-select
+        formControlName="family"
+        [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value.ner.family' | translate">
+        @for (family of nerFamilies; track family.key) {
+          <pa-option
+            [value]="family.key"
+            (selectOption)="familyChange(family)">
+            {{ family.title }}
+          </pa-option>
+        }
+      </pa-select>
+      @if (nerFamilyValue) {
+        <pa-select
+          formControlName="entity"
+          [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value.ner.value' | translate">
+          @for (entity of nerList[nerFamilyValue]; track entity) {
+            <pa-option [value]="entity">{{ entity }}</pa-option>
+          }
+        </pa-select>
+      }
+    </div>
+  }
+  @case ('metadata.status') {
+    <pa-select
+      [formControl]="valueControl"
+      [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate">
+      <pa-option value="PROCESSED">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.status.processed' | translate }}
+      </pa-option>
+      <pa-option value="PENDING">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.status.pending' | translate }}
+      </pa-option>
+      <pa-option value="ERROR">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.status.error' | translate }}
+      </pa-option>
+    </pa-select>
+  }
+  @case ('metadata.language') {
+    <pa-input
+      [formControl]="valueControl"
+      minlength="2"
+      maxlength="2"
+      help="search.configuration.search-box.preselected-filters.assistant.filter-value.help.language">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+    </pa-input>
+  }
+  @case ('origin.metadata') {
+    <pa-input
+      [formControl]="valueControl"
+      placeholder="fieldname/value"
+      help="search.configuration.search-box.preselected-filters.assistant.filter-value.help.metadata">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+    </pa-input>
+  }
+  @case ('origin.path') {
+    <pa-input
+      [formControl]="valueControl"
+      placeholder="Users/JohnDoe/Documents"
+      help="search.configuration.search-box.preselected-filters.assistant.filter-value.help.path">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+    </pa-input>
+  }
+  @case ('origin.tags') {
+    <pa-input
+      [formControl]="valueControl"
+      [placeholder]="
+        'search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags-placeholder' | translate
+      "
+      help="search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+    </pa-input>
+  }
+}

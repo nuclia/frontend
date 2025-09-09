@@ -1,0 +1,116 @@
+<form
+  class="test-panel"
+  [formGroup]="form"
+  (ngSubmit)="triggerRun()">
+  <div class="form-entry">
+    <label for="question">{{ 'retrieval-agents.workflow.sidebar.test.form.input-label' | translate }}</label>
+    <pa-textarea
+      id="question"
+      rows="2"
+      resizable
+      externalLabel=""
+      [placeholder]="'retrieval-agents.workflow.sidebar.test.form.input-placeholder' | translate"
+      formControlName="question"></pa-textarea>
+  </div>
+  @if (runningTest() === false) {
+    @if (sessions().length > 0) {
+      <div class="form-entry">
+        <label for="session">
+          {{ 'retrieval-agents.workflow.sidebar.test.form.session-select.label' | translate }}
+        </label>
+        <pa-select
+          id="session"
+          formControlName="session">
+          <pa-option value="new">
+            {{ 'retrieval-agents.workflow.sidebar.test.form.session-select.new' | translate }}
+          </pa-option>
+          @for (session of sessions(); track session.id) {
+            <pa-option [value]="session.id">
+              {{ session.title }}
+            </pa-option>
+          }
+        </pa-select>
+      </div>
+    }
+    <div class="form-entry">
+      <pa-checkbox formControlName="useWs">Use WebSocket (uncheck to use POST interaction instead)</pa-checkbox>
+    </div>
+    <pa-button
+      size="small"
+      type="submit"
+      [disabled]="form.invalid || form.disabled">
+      {{ 'retrieval-agents.workflow.sidebar.test.form.run-button' | translate }}
+    </pa-button>
+  }
+
+  @if (runningQuestion()) {
+    <div class="block-separator"></div>
+    <div class="interactions">
+      <section class="category-section">
+        <stf-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.user-input' | translate }}</stf-chip>
+        <blockquote class="user-input">
+          {{ runningQuestion() }}
+        </blockquote>
+      </section>
+      @if (rawAnswers().preprocess.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}</stf-chip>
+          @for (item of rawAnswers().preprocess; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().context.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.context' | translate }}</stf-chip>
+          @for (item of rawAnswers().context; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().generation.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.generation' | translate }}</stf-chip>
+          @for (item of rawAnswers().generation; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().postprocess.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}</stf-chip>
+          @for (item of rawAnswers().postprocess; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().results.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>
+            {{ 'retrieval-agents.workflow.sidebar.test.interactions.results.title' | translate }}
+          </stf-chip>
+          @for (item of rawAnswers().results; track item.seqid) {
+            <app-agent-block [result]="item"></app-agent-block>
+          }
+        </section>
+      }
+    </div>
+
+    <footer>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [disabled]="stopDisabled()"
+        (click)="triggerStop()">
+        {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
+      </pa-button>
+      @if (runningTest()) {
+        <div class="running-loader">
+          <nsi-progress-bar
+            greyTrack
+            [progress]="null"></nsi-progress-bar>
+        </div>
+      }
+    </footer>
+  }
+</form>

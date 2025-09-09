@@ -1,12 +1,15 @@
-<div class="user-background">
-  <div class="logo">
-    <img
-      src="assets/logos/logo.svg"
-      alt="Nuclia" />
-  </div>
+<div class="container">
   <div
     class="user-container"
     [class.left-aligned]="alignLeft">
-    <ng-content></ng-content>
+    <div class="inner-container">
+      <div class="logo">
+        <img
+          [src]="logoPath"
+          [alt]="brandName" />
+      </div>
+      <ng-content></ng-content>
+    </div>
   </div>
+  <div class="hero-img user-background"></div>
 </div>

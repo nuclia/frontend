@@ -9,7 +9,6 @@ import { tap } from 'rxjs';
 
 @Component({
   selector: 'nus-zone-step',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,
@@ -35,9 +34,8 @@ export class ZoneStepComponent {
 
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {
-      const validZones = zones.filter((zone) => !zone.notAvailableYet);
-      if (validZones.length === 1) {
-        this.form.controls.region.patchValue(validZones[0].slug);
+      if (zones.length === 1) {
+        this.form.controls.region.patchValue(zones[0].slug);
       }
     }),
   );

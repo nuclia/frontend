@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
+
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
@@ -9,6 +9,7 @@ import { take } from 'rxjs';
 @Component({
   selector: 'stf-user-callback',
   template: '<div class="user-background" style="height: 100%"></div>',
+  standalone: false,
 })
 export class CallbackComponent implements OnInit {
   constructor(
@@ -38,7 +39,9 @@ export class CallbackComponent implements OnInit {
       this.redirect();
     } else if (
       !this.route.snapshot.queryParamMap.get('token') &&
-      (this.route.snapshot.data['google'] || this.route.snapshot.data['github'])
+      (this.route.snapshot.data['google'] ||
+        this.route.snapshot.data['github'] ||
+        this.route.snapshot.data['microsoft'])
     ) {
       this.ssoLogin();
     } else {
@@ -87,7 +90,7 @@ export class CallbackComponent implements OnInit {
           this.router.navigate(['../signup'], {
             relativeTo: this.route,
             queryParams: {
-              error: error.status === 412 ? 'google_workspace' : 'oops',
+              error: error.status === 412 ? 'no_personal_email' : 'oops',
             },
           }),
       });

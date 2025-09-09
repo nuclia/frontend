@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { _ } from '../../../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
+  import IconButton from '../../../../common/button/IconButton.svelte';
   import Icon from '../../../../common/icons/Icon.svelte';
   import Modal from '../../../../common/modal/Modal.svelte';
-  import Suggestions from '../suggestions/Suggestions.svelte';
+  import Textarea from '../../../../common/textarea/Textarea.svelte';
+  import { _ } from '../../../../core/i18n';
+  import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
   import {
     hasSuggestions,
     suggestedParagraphs,
@@ -12,41 +14,25 @@
     triggerSuggestions,
     typeAhead,
   } from '../../../../core/stores/suggestions.store';
-  import IconButton from '../../../../common/button/IconButton.svelte';
   import { widgetPlaceholder } from '../../../../core/stores/widget.store';
-  import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
-  import Textarea from '../../../../common/textarea/Textarea.svelte';
+  import Suggestions from '../suggestions/Suggestions.svelte';
 
-  let searchInputElement: HTMLInputElement;
+  let searchInputElement: HTMLInputElement = $state();
   const dispatch = createEventDispatcher();
 
-  let inputContainerElement: HTMLElement | undefined;
-  let position: DOMRect | undefined;
-  let showSuggestions = false;
-
-  let suggestionModalWidth: string;
-  $: {
-    if (inputContainerElement) {
-      suggestionModalWidth = `${inputContainerElement.offsetWidth}px`;
-    }
-  }
+  let inputContainerElement: HTMLElement | undefined = $state();
+  let showSuggestions = $state(false);
 
   onMount(() => {
     searchInputElement?.focus();
   });
-
-  const setInputPosition = () => {
-    if (inputContainerElement) {
-      position = inputContainerElement.getBoundingClientRect();
-    }
-  };
 
   const search = () => {
     searchQuery.set(typeAhead.getValue());
     triggerSearch.next();
     dispatch('search');
     // Make sure the keyboard disappear when triggering search in Mobile
-    searchInputElement.blur();
+    searchInputElement?.blur();
   };
 
   const onKeyPress = (event: { detail: KeyboardEvent }) => {
@@ -56,7 +42,6 @@
       showSuggestions = false;
     } else {
       showSuggestions = true;
-      setInputPosition();
     }
   };
 
@@ -70,7 +55,6 @@
   }
 </script>
 
-<svelte:window on:resize={setInputPosition} />
 <form
   role="search"
   autocomplete="off"
@@ -107,8 +91,7 @@
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
-  parentPosition={position}
-  modalWidth={suggestionModalWidth}
+  parentElement={inputContainerElement}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
@@ -117,6 +100,4 @@
   </div>
 </Modal>
 
-<style
-  lang="scss"
-  src="./SearchInput.scss"></style>
+<style src="./SearchInput.css"></style>

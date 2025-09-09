@@ -1,4 +1,4 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as *;
 
 :host {
   $gap-columns: rhythm(5);
@@ -25,6 +25,11 @@
     ::ng-deep nsi-info-card {
       opacity: 0.5;
     }
+  }
+
+  .left-content {
+    position: sticky;
+    top: 0;
   }
 
   .title {

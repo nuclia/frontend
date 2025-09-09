@@ -5,6 +5,7 @@ import { SisModalService } from '@nuclia/sistema';
   selector: 'nsd-sistema-confirmation-dialog',
   templateUrl: './sistema-confirmation-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaConfirmationDialogComponent {
   openConfirmCode = `

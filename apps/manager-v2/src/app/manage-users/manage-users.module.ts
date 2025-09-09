@@ -6,12 +6,14 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaIconModule,
   PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AddUserComponent } from './add-user/add-user.component';
 
 const ROUTES: Routes = [
   {
@@ -23,7 +25,15 @@ const ROUTES: Routes = [
         component: UserListComponent,
       },
       {
+        path: 'add',
+        component: AddUserComponent,
+      },
+      {
         path: ':userId',
+        component: UserDetailsComponent,
+      },
+      {
+        path: ':userId/edit',
         component: UserDetailsComponent,
       },
     ],
@@ -35,6 +45,7 @@ const ROUTES: Routes = [
     CommonModule,
     RouterModule.forChild(ROUTES),
     PaButtonModule,
+    PaDateTimeModule,
     PaTableModule,
     PaTextFieldModule,
     PaIconModule,

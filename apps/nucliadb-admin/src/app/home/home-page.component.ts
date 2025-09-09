@@ -6,6 +6,7 @@ import { StandaloneService } from '@flaps/common';
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class HomePageComponent implements OnInit {
   hasValidKey = this.standaloneService.hasValidKey;

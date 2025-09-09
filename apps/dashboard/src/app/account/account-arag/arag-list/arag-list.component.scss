@@ -1,0 +1,33 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.account-arag {
+  .account-arag-header {
+    display: flex;
+    justify-content: space-between;
+    gap: rhythm(4);
+    margin-bottom: rhythm(4);
+  }
+
+  .go-to-arag {
+    @include body-s();
+    cursor: pointer;
+    font-weight: $font-weight-semi-bold;
+    text-decoration: underline;
+  }
+  .account-arag-content {
+    max-width: $width-large-screen;
+  }
+}
+
+.loading-shade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}

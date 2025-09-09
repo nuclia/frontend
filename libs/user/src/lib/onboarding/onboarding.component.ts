@@ -11,6 +11,7 @@ import { LearningConfigurationForm } from './embeddings-model-form';
   templateUrl: './onboarding.component.html',
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class OnboardingComponent {
   isExternalIndexEnabled = this.featureService.unstable.externalIndex;

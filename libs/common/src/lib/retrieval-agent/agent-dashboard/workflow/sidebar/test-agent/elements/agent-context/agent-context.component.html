@@ -1,0 +1,37 @@
+<stf-blockquote>
+  @if (context().summary; as summary) {
+    <div class="config">
+      <span class="config-title">Summary:</span>
+      <span [innerHTML]="summary | lineBreakFormatter"></span>
+    </div>
+  }
+  @if (context().answer; as answer) {
+    <div class="config">
+      <span class="config-title">Answer:</span>
+      <span [innerHTML]="answer | lineBreakFormatter"></span>
+    </div>
+  }
+
+  @if (context().chunks.length > 0) {
+    <pa-expander
+      [expanded]="false"
+      (toggleExpander)="heightUpdated.emit()">
+      <pa-expander-header>Based on {{ context().chunks.length }} chunks.</pa-expander-header>
+      <pa-expander-body>
+        <ol>
+          @for (chunk of context().chunks; track chunk) {
+            <li>
+              <div class="config">
+                <div class="config-title">
+                  Chunk id:
+                  <small>{{ chunk.chunk_id }}</small>
+                </div>
+                <span [innerHTML]="chunk.text.trim() | lineBreakFormatter"></span>
+              </div>
+            </li>
+          }
+        </ol>
+      </pa-expander-body>
+    </pa-expander>
+  }
+</stf-blockquote>

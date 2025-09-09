@@ -1,8 +1,9 @@
-import { SvelteState } from '../state-lib';
 import type {
+  ChatOptions,
   Classification,
   FieldId,
   Filter,
+  FilterExpression,
   IErrorResponse,
   IFieldData,
   IResource,
@@ -15,6 +16,7 @@ import type {
 import {
   FIELD_TYPE,
   FileFieldData,
+  FilterOperator,
   getDataKeyFromFieldType,
   getEntityFromFilter,
   getFieldTypeFromString,
@@ -26,34 +28,46 @@ import {
   LABEL_FILTER_PREFIX,
   LabelSetKind,
   LinkFieldData,
+  MIME_FILTER_PREFIX,
   NER_FILTER_PREFIX,
+  parsePreselectedFilters,
+  PATH_FILTER_PREFIX,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import type { FindResultsAsList, ResultType, TypedResult } from '../models';
-import { NO_RESULT_LIST } from '../models';
-import { combineLatest, filter, map, Subject } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
+import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from '../models';
+import { NO_RESULT_LIST } from '../models';
+import { SvelteState } from '../state-lib';
+import { getResultMetadata } from '../utils';
+import { labelSets } from './labels.store';
+import { getMimeFromFilter, type MimeFacet, type MimeFilter } from './mime.store';
+import { orFilterLogic } from './widget.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
   labelSets?: LabelSetFilter[];
   entities?: EntityFilter[];
   autofilters?: EntityFilter[];
-}
-
-export interface EntityFilter {
-  family: string;
-  entity: string;
+  mimeTypes?: MimeFilter[];
+  path?: string;
 }
 
 export interface LabelSetFilter {
   id: string;
   kind: LabelSetKind;
 }
+export interface EntityFilter {
+  family: string;
+  entity: string;
+}
+export type ResultsOrder = 'relevance' | 'date';
 
 type EngagementType = 'CHAT' | 'RESULT';
+
+const EXTENDED_RESULTS = 100;
 
 interface Engagement {
   type?: EngagementType;
@@ -67,37 +81,62 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
+  creation?: {
+    range_creation_start?: string;
+    range_creation_end?: string;
+  };
   preselectedFilters: string[] | Filter[];
+  filterExpression?: FilterExpression;
   options: SearchOptions;
+  search_config_id?: string;
   show: ResourceProperties[];
   results: FindResultsAsList;
   error?: IErrorResponse;
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
+  showAttachedImages: boolean;
   tracking: {
     startTime: number;
     resultsReceived: boolean;
     searchId: string | undefined;
     engagement: Engagement;
   };
+  metadata: ResultMetadata;
+  images: {
+    content_type: string;
+    b64encoded: string;
+  }[];
+  resultsOrder: ResultsOrder;
+  noScroll: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
-  options: { highlight: true, page_number: 0 },
+  filterExpression: undefined,
+  options: {},
+  search_config_id: undefined,
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
   showResults: false,
+  showAttachedImages: false,
   tracking: {
     startTime: 0,
     resultsReceived: false,
     searchId: undefined,
     engagement: {},
   },
+  metadata: {
+    origin: [],
+    field: [],
+    extra: [],
+  },
+  images: [],
+  resultsOrder: 'relevance',
+  noScroll: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -131,10 +170,13 @@ export const searchResults = searchState.writer<
       ...state,
       results: {
         ...results,
-        resultList: params.append ? state.results.resultList.concat(sortedResults) : sortedResults,
+        resultList: params.append
+          ? state.results.resultList.concat(excludeResults(sortedResults, state.results.resultList))
+          : sortedResults,
       },
       pending: false,
       showResults: true,
+      resultsOrder: params.append ? state.resultsOrder : 'relevance',
       filters: {
         ...state.filters,
         autofilters: params.append
@@ -146,7 +188,21 @@ export const searchResults = searchState.writer<
 );
 
 export const resultList = searchState.reader<TypedResult[]>((state) => {
-  return state.results.resultList;
+  const list = state.results.resultList.map((result) => {
+    const metadataValues = getResultMetadata(state.metadata, result, result.fieldData);
+    if (metadataValues.length > 0) {
+      result.resultMetadata = metadataValues;
+    }
+    return result;
+  });
+  if (state.resultsOrder === 'date') {
+    list.sort((a, b) => {
+      const createdA = a.origin?.created || a.created || '';
+      const createdB = b.origin?.created || b.created || '';
+      return createdA === createdB ? 0 : createdA < createdB ? 1 : -1;
+    });
+  }
+  return list;
 });
 
 export const showResults = searchState.writer<boolean>(
@@ -185,26 +241,40 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
   }),
 );
 
-const advancedFilterRE = /({[^{}]+})/g;
+export const showAttachedImages = searchState.writer<boolean>(
+  (state) => state.showAttachedImages,
+  (state, showAttachedImages) => ({
+    ...state,
+    showAttachedImages,
+  }),
+);
+
 export const preselectedFilters = searchState.writer<string[] | Filter[], string>(
   (state) => state.preselectedFilters,
   (state, preselectedFilters) => {
-    const advancedFilters = preselectedFilters.match(advancedFilterRE);
-    const filters: string[] = !!advancedFilters
-      ? advancedFilters.map((filter) => {
-          try {
-            return JSON.parse(filter);
-          } catch (e) {
-            console.warn('Malformed advanced filter: wrong JSON syntax.', filter);
-            return filter;
-          }
-        })
-      : preselectedFilters.split(',');
     return {
       ...state,
-      preselectedFilters: filters,
+      preselectedFilters: parsePreselectedFilters(preselectedFilters),
     };
   },
+);
+
+export const filterExpression = searchState.writer<FilterExpression | undefined>(
+  (state) => state.filterExpression,
+  (state, filterExpression) => {
+    return {
+      ...state,
+      filterExpression,
+    };
+  },
+);
+
+export const resultsOrder = searchState.writer<ResultsOrder>(
+  (state) => state.resultsOrder,
+  (state, resultsOrder) => ({
+    ...state,
+    resultsOrder,
+  }),
 );
 
 export const searchFilters = searchState.writer<string[], { filters: string[] }>(
@@ -212,6 +282,8 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
     ...(state.filters.labelSets || []).map((filter) => getFilterFromLabelSet(filter.id)),
     ...(state.filters.entities || []).map((filter) => getFilterFromEntity(filter)),
+    ...(state.filters.mimeTypes || []).map((filter) => filter.key),
+    ...(state.filters.path ? [state.filters.path] : []),
   ],
   (state, data) => {
     const filters: SearchFilters = {};
@@ -246,6 +318,15 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
         } else {
           filters.entities.push(entityFilter);
         }
+      } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
+        const mimeFilter = getMimeFromFilter(filter);
+        if (!filters.mimeTypes) {
+          filters.mimeTypes = [mimeFilter];
+        } else {
+          filters.mimeTypes.push(mimeFilter);
+        }
+      } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
+        filters.path = filter;
       }
     });
     return {
@@ -253,6 +334,107 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
       filters,
     };
   },
+);
+
+export const rangeCreationISO = searchState.reader<{ start?: string; end?: string } | undefined>((state) => ({
+  start: state.creation?.range_creation_start,
+  end: state.creation?.range_creation_end,
+}));
+
+export const combinedFilters = combineLatest([searchFilters, preselectedFilters, orFilterLogic]).pipe(
+  map(([searchFilters, preselectedFilters, orFilterLogic]) => {
+    const filterOperator = orFilterLogic ? FilterOperator.any : FilterOperator.all;
+    const filters: Filter[] = searchFilters.length > 0 ? [{ [filterOperator]: searchFilters }] : [];
+    if (preselectedFilters.length === 0) {
+      return filters;
+    } else {
+      const isAdvancedFilters = preselectedFilters.every((filter) => typeof filter === 'object');
+      return isAdvancedFilters ? filters.concat(preselectedFilters) : filters.concat([{ all: preselectedFilters }]);
+    }
+  }),
+);
+
+export const combinedFilterExpression: Observable<FilterExpression> = combineLatest([
+  searchState.reader<SearchFilters>((state) => state.filters),
+  orFilterLogic,
+  filterExpression,
+  labelSets,
+  rangeCreationISO,
+]).pipe(
+  map(([filters, orFilterLogic, filterExpression, labelSets, rangeCreation]) => {
+    if (
+      ((filterExpression?.operator === 'and' || !filterExpression?.operator) && orFilterLogic) ||
+      (filterExpression?.operator === 'or' && !orFilterLogic)
+    ) {
+      // Filters cannot be combined if filters operator and filter expression operator are not the same
+      return filterExpression || {};
+    }
+    const fieldFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.entities || []).map((entity) => ({
+          prop: 'entity',
+          subtype: entity.family,
+          value: entity.entity,
+        })),
+        ...(filters.labels || [])
+          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+        ...(filters.mimeTypes || []).map((mimeType) => ({
+          prop: 'field_mimetype',
+          type: mimeType.key,
+        })),
+        ...(filters.path ? [filters.path] : []).map((path) => ({
+          prop: 'origin_path',
+          prefix: path.split(PATH_FILTER_PREFIX)[1],
+        })),
+        ...(rangeCreation?.start || rangeCreation?.end
+          ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
+          : []),
+      ],
+    };
+    const paragraphFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.labels || [])
+          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+      ],
+    };
+    const hasFieldFilters = Object.values(fieldFilters)[0].length > 0;
+    const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
+    return {
+      ...(filterExpression || {}),
+      field:
+        filterExpression?.field && hasFieldFilters
+          ? {
+              and: [filterExpression.field, fieldFilters],
+            }
+          : hasFieldFilters
+            ? fieldFilters
+            : filterExpression?.field,
+      paragraph:
+        filterExpression?.paragraph && hasParagraphFilters
+          ? {
+              and: [filterExpression.paragraph, paragraphFilters],
+            }
+          : hasParagraphFilters
+            ? paragraphFilters
+            : filterExpression?.paragraph,
+    };
+  }),
 );
 
 export const labelFilters = searchState.writer<LabelFilter[]>(
@@ -297,6 +479,28 @@ export const autofilters = searchState.writer<EntityFilter[]>(
   }),
 );
 
+export const mimeTypesfilters = searchState.writer<MimeFilter[]>(
+  (state) => state.filters.mimeTypes || [],
+  (state, mimeTypesfilters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      mimeTypes: mimeTypesfilters,
+    },
+  }),
+);
+
+export const pathFilter = searchState.writer<string | undefined>(
+  (state) => state.filters.path,
+  (state, pathFilter) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      path: pathFilter,
+    },
+  }),
+);
+
 export const autofilerDisabled = searchState.writer<boolean | undefined>(
   (state) => state.autofilerDisabled,
   (state, autofilerDisabled) => ({
@@ -307,29 +511,32 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
 
 export const creationStart = searchState.writer<string | undefined>(
   (state) =>
-    state.options.range_creation_start && new Date(state.options.range_creation_start).toISOString().slice(0, 10),
+    state.creation?.range_creation_start && new Date(state.creation.range_creation_start).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_start: date && new Date(date).toISOString(),
     },
   }),
 );
 
 export const creationEnd = searchState.writer<string | undefined>(
-  (state) => state.options.range_creation_end && new Date(state.options.range_creation_end).toISOString().slice(0, 10),
+  (state) =>
+    state.creation?.range_creation_end && new Date(state.creation.range_creation_end).toISOString().slice(0, 10),
   (state, date) => ({
     ...state,
-    options: {
-      ...state.options,
+    creation: {
+      ...state.creation,
       range_creation_end: date && new Date(`${date}T23:59:59.000Z`).toISOString(),
     },
   }),
 );
 
 export const rangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => ({ start, end })));
-export const hasRangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => start || end));
+export const hasRangeCreation = combineLatest([creationStart, creationEnd]).pipe(
+  map(([start, end]) => !!start || !!end),
+);
 
 export const isEmptySearchQuery = searchState.reader<boolean>(
   (state) =>
@@ -337,25 +544,30 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     (!state.filters.labels || state.filters.labels.length === 0) &&
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0) &&
-    !state.options.range_creation_start &&
-    !state.options.range_creation_end,
+    (!state.filters.mimeTypes || state.filters.mimeTypes.length === 0) &&
+    !state.filters.path &&
+    !state.creation?.range_creation_start &&
+    !state.creation?.range_creation_end,
 );
 
-export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
+export const hasMore = searchState.reader<boolean>((state) => state.options.top_k !== EXTENDED_RESULTS);
 export const loadMore = searchState.writer<number, void>(
-  (state) => state.options.page_number || 0,
+  (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),
   (state) => ({
     ...state,
-    options: { ...state.options, page_number: (state.options.page_number || 0) + 1 },
+    options: { ...state.options, top_k: EXTENDED_RESULTS },
   }),
 );
 
 export const pageNumber = searchState.writer<number>(
-  (state) => state.options.page_number || 0,
-  (state, pageNumber) => ({
-    ...state,
-    options: { ...state.options, page_number: pageNumber },
-  }),
+  (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),
+  (state, page) => {
+    const { top_k, ...rest } = state.options;
+    return {
+      ...state,
+      options: page === 0 ? rest : { ...rest, top_k: EXTENDED_RESULTS },
+    };
+  },
 );
 
 export const pendingResults = searchState.writer<boolean>(
@@ -381,6 +593,90 @@ export const trackingResultsReceived = searchState.writer<boolean>(
 export const trackingReset = searchState.writer<undefined>(
   () => undefined,
   (state) => ({ ...state, tracking: { ...state.tracking, startTime: 0, resultsReceived: false } }),
+);
+
+export const images = searchState.writer<
+  {
+    content_type: string;
+    b64encoded: string;
+  }[],
+  {
+    content_type: string;
+    b64encoded: string;
+  }[]
+>(
+  (state) => state.images,
+  (state, images) => ({
+    ...state,
+    images,
+  }),
+);
+
+export const noScroll = searchState.writer<boolean>(
+  (state) => state.noScroll,
+  (state, noScroll) => ({
+    ...state,
+    noScroll,
+  }),
+);
+
+export function addImage(fileObj: File) {
+  const reader = new FileReader();
+  reader.readAsDataURL(fileObj);
+  reader.onload = () => {
+    const base64 = reader.result as string;
+    const content_type = fileObj.type;
+    images.set([...images.getValue(), { content_type, b64encoded: base64.split(',')[1] }]);
+  };
+}
+
+export function removeImage(index: number) {
+  const currentImages = images.getValue();
+  if (currentImages[index]) {
+    currentImages.splice(index, 1);
+    images.set(currentImages);
+  }
+}
+
+function getType(value: string): 'string' | 'list' | 'date' {
+  const parts = value.split(':');
+  if (parts.length > 2) {
+    const type = parts[2];
+    if (type === 'string' || type === 'list' || type === 'date') {
+      return type as 'string' | 'list' | 'date';
+    }
+  }
+  return 'string';
+}
+
+function getTitle(value: string): string | undefined {
+  const parts = value.split(':');
+  if (parts.length === 4) {
+    return parts[3];
+  }
+  return;
+}
+export const displayedMetadata = searchState.writer<ResultMetadata, string>(
+  (state) => state.metadata,
+  (state, params) => {
+    const values = params.split(',');
+    const metadata: ResultMetadata = {
+      origin: values
+        .filter((value) => value.startsWith('origin'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
+      field: values
+        .filter((value) => value.startsWith('field'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
+      extra: values
+        .filter((value) => value.startsWith('extra'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value), title: getTitle(value) })),
+    };
+    return {
+      ...state,
+      metadata,
+      show: metadata.extra.length > 0 ? [...state.show, ResourceProperties.EXTRA] : state.show,
+    };
+  },
 );
 
 // emits the tracking data only after corresponding results are received
@@ -442,6 +738,8 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
+export const rephrasedQuery = searchState.reader((state) => state.results.rephrased_query);
+
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => {
@@ -499,6 +797,18 @@ export const removeEntityFilter = (entity: EntityFilter) => {
   entityFilters.set(
     currentFilters.filter((filter) => filter.entity !== entity.entity || filter.family !== entity.family),
   );
+};
+
+export const addMimeFilter = (mimeFacet: MimeFacet) => {
+  const currentFilters = mimeTypesfilters.getValue();
+  if (!currentFilters.find((filter) => filter.key === mimeFacet.facet.key)) {
+    mimeTypesfilters.set(currentFilters.concat([{ key: mimeFacet.facet.key, label: mimeFacet.label }]));
+  }
+};
+
+export const removeMimeFilter = (mimeKey: string) => {
+  const currentFilters = mimeTypesfilters.getValue();
+  mimeTypesfilters.set(currentFilters.filter((filter) => filter.key !== mimeKey));
 };
 
 export const removeAutofilter = (entity: EntityFilter) => {
@@ -584,6 +894,21 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
   }, [] as TypedResult[]);
 }
 
+function excludeResults(results: TypedResult[], excluded: TypedResult[]): TypedResult[] {
+  const excludedParagraphsIds = excluded.reduce(
+    (acc, curr) => acc.concat(curr.paragraphs.map((p) => p.id)),
+    [] as string[],
+  );
+  return results
+    .map((result) => {
+      return {
+        ...result,
+        paragraphs: result.paragraphs.filter((paragraph) => !excludedParagraphsIds.includes(paragraph.id)),
+      };
+    })
+    .filter((result) => result.paragraphs.length > 0);
+}
+
 export function getFieldDataFromResource(resource: IResource, field: FieldId): IFieldData | undefined {
   if (!field) {
     return;
@@ -657,3 +982,11 @@ export function getNonGenericField(data: ResourceData) {
       return fullId.field_type !== FIELD_TYPE.generic;
     })[0];
 }
+
+export const searchConfigId = searchState.writer<string | undefined>(
+  (state) => state.search_config_id,
+  (state, config) => ({
+    ...state,
+    search_config_id: config,
+  }),
+);

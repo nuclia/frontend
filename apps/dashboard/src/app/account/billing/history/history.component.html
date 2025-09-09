@@ -19,26 +19,30 @@
         <pa-table-cell>{{ invoice.order_number }}</pa-table-cell>
         <pa-table-cell>{{ 'account.type.' + invoice.account_type | translate }}</pa-table-cell>
         <pa-table-cell>
-          <span *ngIf="currency$ | async as currency">{{ invoice.amount | currency: currency }}</span>
+          @if (currency$ | async; as currency) {
+            <span>{{ invoice.amount | currency: currency }}</span>
+          }
         </pa-table-cell>
         <pa-table-cell>
           <pa-button
             icon="download"
             aspect="basic"
             size="small"
-            (click)="openPdf(invoice.pdf)"></pa-button>
+          (click)="openPdf(invoice.pdf)"></pa-button>
         </pa-table-cell>
       </pa-table-row>
     }
   </pa-table>
-  <div
-    class="load-more"
-    *ngIf="invoices.items.length > 0 && invoices.pagination.has_more">
-    <pa-button
-      size="small"
-      [disabled]="loading"
-      (click)="loadInvoices()">
-      {{ 'generic.show_more' | translate }}
-    </pa-button>
-  </div>
+  @if (invoices.items.length > 0 && invoices.pagination.has_more) {
+    <div
+      class="load-more"
+      >
+      <pa-button
+        size="small"
+        [disabled]="loading"
+        (click)="loadInvoices()">
+        {{ 'generic.show_more' | translate }}
+      </pa-button>
+    </div>
+  }
 </div>

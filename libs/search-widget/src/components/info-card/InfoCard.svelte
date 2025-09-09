@@ -1,10 +1,14 @@
 <script lang="ts">
-  export let entityRelations: {
-    entity: string;
-    relations: {
-      [relation: string]: string[];
-    };
-  }[] = [];
+  interface Props {
+    entityRelations?: {
+      entity: string;
+      relations: {
+        [relation: string]: string[];
+      };
+    }[];
+  }
+
+  let { entityRelations = [] }: Props = $props();
 </script>
 
 <div class="relations">
@@ -21,6 +25,4 @@
   {/each}
 </div>
 
-<style
-  lang="scss"
-  src="./InfoCard.scss"></style>
+<style src="./InfoCard.css"></style>

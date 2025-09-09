@@ -62,7 +62,7 @@
                     }
                     <app-parameters-table
                       [values]="tables[field.id] || []"
-                      (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
+                      (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
                     @if (invalidTables.includes(field.id)) {
                       <nsi-info-card
                         type="warning"
@@ -78,6 +78,18 @@
         </nsi-two-columns-configuration-item>
       }
     </ng-container>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="sync.add-page.extract-config.title"
+      description="sync.add-page.extract-config.description"
+      badge="generic.badge.advanced">
+      <div class="form-container toggle-container">
+        <app-extraction-select
+          [onlyExtract]="true"
+          [extractConfig]="extractStrategy"
+          (extractConfigChange)="updateExtractStrategy($event)"></app-extraction-select>
+      </div>
+    </nsi-two-columns-configuration-item>
 
     @if (connector.canSyncSecurityGroups) {
       <nsi-two-columns-configuration-item
@@ -104,6 +116,7 @@
             [selection]="labelSelection"
             [disabled]="(hasLabelSet | async) === false"
             (selectionChange)="updateLabelSelection($event)"
+            displayRadioForNonMultiple
             aspect="basic"
             fullWidth>
             {{ 'sync.add-page.add-labels.select-labels' | translate }}

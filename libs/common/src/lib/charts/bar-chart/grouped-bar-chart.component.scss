@@ -1,0 +1,5 @@
+@use '../charts-common' as charts;
+
+.range-chart {
+  @include charts.chart();
+}

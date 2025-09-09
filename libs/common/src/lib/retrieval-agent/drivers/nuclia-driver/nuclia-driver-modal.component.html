@@ -1,0 +1,130 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>
+    {{
+      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.nuclia')
+        | translate: { name: config?.name }
+    }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
+        <pa-checkbox formControlName="custom">
+          {{ 'retrieval-agents.drivers.form.nuclia.custom' | translate }}
+        </pa-checkbox>
+      </div>
+      @if (customConfig) {
+        <div class="form-entry">
+          <label for="kbid">{{ 'retrieval-agents.drivers.form.nuclia.kbid' | translate }}</label>
+          <pa-input
+            id="kbid"
+            externalLabel
+            formControlName="kbid"></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="url">{{ 'retrieval-agents.drivers.form.nuclia.url' | translate }}</label>
+          <pa-input
+            id="url"
+            externalLabel
+            formControlName="url"></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="manager">{{ 'retrieval-agents.drivers.form.nuclia.manager' | translate }}</label>
+          <pa-input
+            id="manager"
+            externalLabel
+            formControlName="manager"></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="key">{{ 'retrieval-agents.drivers.form.nuclia.key.label' | translate }}</label>
+          <pa-input
+            id="key"
+            formControlName="key"
+            externalLabel=""
+            [help]="'retrieval-agents.drivers.form.nuclia.key.help' | translate"></pa-input>
+        </div>
+      } @else {
+        <div class="form-entry">
+          <label for="kb">{{ 'retrieval-agents.drivers.form.nuclia.kb' | translate }}</label>
+          <pa-select
+            id="kb"
+            externalLabel
+            formControlName="kbid">
+            @for (kb of kbList; track kb.id) {
+              <pa-option
+                [value]="kb.id"
+                (selectOption)="checkFormValidators(kb.role_on_kb)">
+                {{ kb.title }}
+              </pa-option>
+            }
+          </pa-select>
+        </div>
+
+        @if (isEdit) {
+          <pa-toggle
+            formControlName="keepExistingKey"
+            withBackground>
+            {{ 'retrieval-agents.drivers.form.nuclia.keep-existing-key' | translate }}
+          </pa-toggle>
+        }
+        @if (kb && kb.role_on_kb !== 'SOWNER') {
+          <div class="form-entry">
+            <label for="key">{{ 'retrieval-agents.drivers.form.nuclia.key.label' | translate }}</label>
+            <pa-input
+              id="key"
+              formControlName="key"
+              externalLabel=""
+              [help]="'retrieval-agents.drivers.form.nuclia.key.help' | translate"></pa-input>
+          </div>
+        } @else if (kb && !keepExistingKey) {
+          <nsi-info-card icon="info">
+            {{ 'retrieval-agents.drivers.form.nuclia.key.owner-info' | translate }}
+          </nsi-info-card>
+        }
+      }
+
+      <div class="form-entry">
+        <label for="description">{{ 'retrieval-agents.drivers.form.nuclia.description.label' | translate }}</label>
+        <pa-textarea
+          id="description"
+          formControlName="description"
+          externalLabel=""
+          rows="2"
+          resizable=""
+          [help]="'retrieval-agents.drivers.form.nuclia.description.help' | translate"></pa-textarea>
+      </div>
+      <div class="form-entry">
+        <label for="filters">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.filters.label' | translate }}
+        </label>
+        <nsi-expandable-textarea
+          id="filters"
+          formControlName="filters"
+          externalLabel=""
+          rows="2"
+          help="retrieval-agents.workflow.node-types.ask.form.filters.help"
+          modalTitle="retrieval-agents.workflow.node-types.ask.form.filters.label"
+          resizable="true"></nsi-expandable-textarea>
+      </div>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

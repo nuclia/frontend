@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { SelectAccountKbService } from '@flaps/common';
 import { inject } from '@angular/core';
 import { NavigationService, SDKService, ZoneService } from '@flaps/core';
-import { filter, of, switchMap } from 'rxjs';
+import { combineLatest, filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
@@ -18,19 +18,25 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
     selectService.selectAccount('local').subscribe();
   }
 
-  const isKbListReady = sdk.currentAccount.pipe(
+  const isListReady = sdk.currentAccount.pipe(
     filter((account) => account.slug === accountSlug),
-    switchMap(() => sdk.refreshingKbList),
-    filter((refreshing) => !refreshing),
+    switchMap(() => combineLatest([sdk.refreshingKbList, sdk.refreshingAragList])),
+    filter(([refreshingKbs, refreshingArags]) => !refreshingKbs && !refreshingArags),
   );
 
   const zoneList = selectService.standalone ? of([]) : zoneService.getZones();
+  const aragList = selectService.standalone ? of([]) : sdk.aragList;
 
   return accountSlug
     ? zoneList.pipe(
-        switchMap((zones) => isKbListReady.pipe(switchMap(() => sdk.kbList.pipe(map((kbs) => ({ kbs, zones })))))),
-        switchMap(({ kbs, zones }) => {
-          if (kbs.length === 0) {
+        switchMap((zones) =>
+          isListReady.pipe(
+            switchMap(() => combineLatest([sdk.kbList, aragList]).pipe(map(([kbs, arags]) => ({ kbs, arags, zones })))),
+          ),
+        ),
+        switchMap(({ kbs, arags, zones }) => {
+          const total = kbs.length + arags.length;
+          if (total === 0) {
             return selectService.standalone
               ? of(true)
               : sdk.currentAccount.pipe(
@@ -38,11 +44,16 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
                     account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
                   ),
                 );
-          } else if (kbs.length === 1 && !selectService.standalone && !!kbs[0].role_on_kb) {
+          } else if (total === 1 && kbs.length === 1 && !selectService.standalone && !!kbs[0].role_on_kb) {
             // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
             sdk.nuclia.options.zone = kbs[0].zone;
 
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
+          } else if (total === 1 && arags.length === 1 && !selectService.standalone && !!arags[0].role_on_kb) {
+            // if there's only one ARAG, and we're not in NucliaDB admin app, then we automatically select the ARAG
+            sdk.nuclia.options.zone = arags[0].zone;
+
+            return of(router.createUrlTree([navigation.getRetrievalAgentUrl(accountSlug, arags[0].slug || '')]));
           } else {
             return of(true);
           }

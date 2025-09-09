@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { filter, map, Observable } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, UserService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AppLayoutComponent implements OnInit {
   userInfo = this.userService.userInfo;
@@ -19,8 +20,15 @@ export class AppLayoutComponent implements OnInit {
     })),
   );
   isRoot = false;
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
-  constructor(private router: Router, private userService: UserService, private sdk: SDKService) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private sdk: SDKService,
+  ) {}
 
   ngOnInit() {
     const user = this.sdk.nuclia.auth.getJWTUser();

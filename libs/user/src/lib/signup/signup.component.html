@@ -3,14 +3,17 @@
     <div class="form-header">
       <h1>{{ 'signup.title' | translate }}</h1>
     </div>
-    <div
-      class="signup-error title-xxs"
-      *ngIf="error">
-      {{ error | translate }}
-    </div>
+    @if (error) {
+      <div
+        class="signup-error title-xxs"
+        >
+        {{ error | translate }}
+      </div>
+    }
     <form
       data-cy="signup-form"
       class="signup-form"
+      method="POST"
       [formGroup]="signupForm"
       (ngSubmit)="submitForm()">
       <pa-input
@@ -25,7 +28,8 @@
         type="email"
         [help]="'signup.email.help' | translate"
         formControlName="email"
-        [errorMessages]="validationMessages.email">
+        [errorMessages]="validationMessages.email"
+        stfLowerCaseInput>
         {{ 'login.email' | translate }}
       </pa-input>
       <nsi-password-input
@@ -44,18 +48,20 @@
       </pa-button>
     </form>
 
-    <div
-      class="sso-container"
-      *ngIf="config.getSocialLogin()">
-      <stf-sso-button
-        provider="google"
-        signup></stf-sso-button>
-      @if (isGitHubEnabled | async) {
+    @if (config.getSocialLogin()) {
+      <div
+        class="sso-container"
+        >
         <stf-sso-button
-          provider="github"
+          provider="google"
+        signup></stf-sso-button>
+        @if (isGitHubEnabled | async) {
+          <stf-sso-button
+            provider="github"
           signup></stf-sso-button>
-      }
-    </div>
+        }
+      </div>
+    }
 
     <p class="existing-account">
       {{ 'signup.have_account_already' | translate }}

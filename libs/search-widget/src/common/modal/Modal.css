@@ -1,0 +1,33 @@
+/* common modal style is defined in common/common-style.css */
+.sw-modal-backdrop {
+  --modal-width: 100vw;
+
+  &.popup .modal .modal-content {
+    box-shadow: var(--shadow-modal);
+  }
+
+  &.popup .modal {
+    position: fixed;
+    left: 0;
+    top: var(--popup-top);
+    transform: none;
+    width: var(--modal-width);
+  }
+
+  &:not(.popup) .modal-content {
+    width: fit-content;
+    height: fit-content;
+  }
+}
+@media (min-width: 599px) {
+  .sw-modal-backdrop {
+    &.popup .modal {
+      --modal-width: var(--rhythm-64);
+      left: var(--popup-left);
+      max-height: calc(100vh - var(--popup-top) - var(--rhythm-3));
+    }
+    &.popup.align-right .modal {
+      left: max(calc(var(--popup-left) - var(--modal-width)), 0px);
+    }
+  }
+}

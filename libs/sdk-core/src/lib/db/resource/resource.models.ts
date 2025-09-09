@@ -1,3 +1,5 @@
+import { Operation } from '../task';
+
 export interface IResource {
   id: string;
   slug?: string;
@@ -17,6 +19,7 @@ export interface IResource {
   last_seqid?: number;
   last_account_seq?: number;
   queue?: 'private' | 'shared';
+  hidden?: boolean;
 
   data?: ResourceData;
 }
@@ -43,6 +46,8 @@ export interface ICreateResource {
   texts?: { [key: string]: TextField };
   conversations?: { [key: string]: ConversationField };
   security?: Security;
+  hidden?: boolean;
+  processing_options?: ProcessingOptions;
 }
 
 export enum FIELD_TYPE {
@@ -81,6 +86,7 @@ export type RelationEntityType = 'entity' | 'label' | 'resource' | 'user';
 export interface Relation {
   relation: RelationType;
   label?: string;
+  metadata?: RelationMetadata;
   from?: RelationEntity;
   to: RelationEntity;
 }
@@ -89,6 +95,15 @@ export interface RelationEntity {
   value: string;
   type: RelationEntityType;
   group?: string;
+}
+
+export interface RelationMetadata {
+  paragraph_id?: string;
+  source_start?: number;
+  source_end?: number;
+  to_start?: number;
+  to_end?: number;
+  data_augmentation_task_id?: string;
 }
 
 export interface Origin {
@@ -109,15 +124,28 @@ export interface Security {
   access_groups: string[];
 }
 
+export interface ProcessingOptions {
+  ml_text?: boolean;
+}
+
 export interface IError {
   body: string;
   code: number;
+  code_str?: string;
+  created?: string;
+  severity: SEVERITY;
+}
+
+export enum SEVERITY {
+  ERROR = 'ERROR',
+  WARNING = 'WARNING',
 }
 
 export interface IFieldData {
-  value?: TextField | FileField | LinkField | ConversationField;
+  value?: TextField | FileField | LinkField | ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface FieldId {
@@ -135,6 +163,7 @@ export class FileFieldData implements IFieldData {
   value?: FileField;
   extracted?: FileFieldExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface FileField {
@@ -143,6 +172,8 @@ export interface FileField {
   language?: string;
   password?: string;
   external?: boolean;
+  extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export interface FileFieldExtractedData extends ExtractedData {
@@ -234,26 +265,32 @@ export interface LinkField {
   localstorage?: { [id: string]: string };
   css_selector?: string | null;
   xpath?: string | null;
+  extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export class TextFieldData implements IFieldData {
   value?: TextField;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'KEEP_MARKDOWN' | 'HTML' | 'RST';
 
-export type TextFieldFormat = TextFormat | 'JSON';
+export type TextFieldFormat = TextFormat | 'JSON' | 'JSONL';
 
 export interface TextField {
   body: string;
   format?: TextFieldFormat;
+  extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export interface ExtractedData {
   text?: ExtractedText;
   metadata?: FieldComputedMetadata;
+  question_answers?: QuestionAnswers;
 }
 export interface ExtractedText {
   text?: string;
@@ -280,6 +317,7 @@ export interface FieldMetadata {
   language?: string;
   summary?: string;
   positions?: EntityPositions;
+  entities: FieldEntities;
   relations?: Relation[];
 }
 
@@ -291,6 +329,42 @@ export interface EntityPosition {
   entity: string;
   position: { start: number; end: number }[];
 }
+
+export interface FieldEntities {
+  [key: string]: { entities: FieldEntity[] };
+}
+
+export interface FieldEntity {
+  text: string;
+  label: string;
+  positions: { start: number; end: number }[];
+}
+
+export interface QuestionAnswers {
+  question_answers: {
+    question_answer: QuestionAnswer[];
+  };
+  split_question_answers?: {
+    [key: string]: {
+      question_answer: QuestionAnswer[];
+    };
+  };
+  deleted_splits?: string[];
+}
+
+export interface QuestionAnswer {
+  question: Question;
+  answers: Answer[];
+}
+
+export interface Question {
+  text: string;
+  language?: string;
+  ids_paragraphs: string[];
+}
+export type Answer = Question;
+
+export const DEFAULT_NER_KEY = 'processor';
 
 export interface UserFieldMetadata {
   field: { field: string; field_type: string };
@@ -334,7 +408,7 @@ export interface UserClassification extends Classification {
   cancelled_by_user?: boolean;
 }
 
-export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT';
+export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TITLE' | 'TRANSCRIPT' | 'TABLE';
 
 export interface Paragraph {
   start?: number;
@@ -346,6 +420,8 @@ export interface Paragraph {
   sentences?: Sentence[];
   key?: string;
   order?: number;
+  page?: { page?: number; page_with_visual?: boolean };
+  representation?: { is_a_table: boolean; reference_file?: string };
 }
 
 export interface Sentence {
@@ -367,6 +443,7 @@ export class LinkFieldData implements IFieldData {
   value?: LinkField;
   extracted?: LinkFieldExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface LinkFieldExtractedData extends ExtractedData {
@@ -404,13 +481,20 @@ export interface FieldClassification {
 }
 
 export class ConversationFieldData implements IFieldData {
-  value?: ConversationField;
+  value?: ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface ConversationField {
   messages: Message[];
+}
+
+export interface ConversationFieldPages {
+  pages?: number;
+  size?: number;
+  total?: number;
 }
 
 export interface Message {
@@ -425,14 +509,13 @@ export interface Message {
 export interface MessageContent {
   text: string;
   format?: TextFormat;
-  attachments?: MessageAttachment[];
+  attachments_fields?: MessageAttachment[];
 }
 
 export interface MessageAttachment {
-  filename: string;
-  content_type?: string;
-  payload: string;
-  md5: string;
+  field_id: string;
+  field_type: string;
+  split?: string;
 }
 
 export enum ResourceFieldProperties {
@@ -449,4 +532,28 @@ export enum ExtractedDataTypes {
   VECTOR = 'vectors',
   LINK = 'link',
   FILE = 'file',
+  QUESTION_ANSWERS = 'question_answers',
+}
+
+export interface TaskResults {
+  results: { [key: string]: AugmentedField };
+}
+
+export interface AugmentedField {
+  metadata: FieldMetadata;
+  applied_data_augmentation: AppliedDataAugmentation;
+  input_nuclia_tokens: number;
+  output_nuclia_tokens: number;
+  time: number;
+}
+
+export interface AppliedDataAugmentation {
+  changed?: boolean;
+  qas?: {
+    question_answer: QuestionAnswer[];
+  };
+  new_text_fields?: {
+    text_field: TextField;
+    destination: string;
+  }[];
 }

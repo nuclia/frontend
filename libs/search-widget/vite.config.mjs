@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import * as path from 'path';
-import sveltePreprocess from 'svelte-preprocess';
+import { sveltePreprocess } from 'svelte-preprocess';
+import { defineConfig } from 'vite';
 
 const widgetFolder = process.argv[5] || 'search-widget';
 const fileName = process.argv[6] || 'nuclia-widget';
@@ -9,10 +9,8 @@ const fileName = process.argv[6] || 'nuclia-widget';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [
-      { find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') },
-      { find: '@nuclia/prediction', replacement: path.resolve(__dirname, '../prediction/src/index.ts') },
-    ],
+    conditions: process.env.VITEST ? ['browser'] : undefined,
+    alias: [{ find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') }],
   },
   build: {
     outDir: `dist/libs/${widgetFolder}`,
@@ -24,18 +22,8 @@ export default defineConfig({
   },
   plugins: [
     svelte({
-      include: ['libs/search-widget/src/**/*.svelte'],
-      exclude: [`libs/search-widget/src/widgets/${widgetFolder}/*.svelte`],
       preprocess: sveltePreprocess(),
       compilerOptions: {
-        css: true,
-      },
-    }),
-    svelte({
-      include: [`libs/search-widget/src/widgets/${widgetFolder}/*.svelte`],
-      preprocess: sveltePreprocess(),
-      compilerOptions: {
-        css: true,
         customElement: true,
       },
     }),

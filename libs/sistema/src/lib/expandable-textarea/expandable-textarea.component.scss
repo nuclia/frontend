@@ -1,0 +1,27 @@
+@use '../../../styles/variables' as *;
+@use '../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/textfield/textarea/textarea.component.scss';
+
+:host:hover {
+  position: relative;
+  .expand {
+    display: block;
+  }
+}
+
+.expand {
+  display: none;
+  position: absolute;
+  right: rhythm(1.5); // Avoid overlapping with the scrollbar
+  top: rhythm(0.5);
+}
+
+.pa-field-textarea {
+  padding-right: rhythm(4);
+}
+
+:host {
+  pa-form-field-hint ::ng-deep .pa-field-help ul {
+    margin: 0;
+    padding-left: rhythm(2);
+  }
+}

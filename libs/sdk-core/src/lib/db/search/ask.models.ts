@@ -1,3 +1,4 @@
+import { RagStrategyName } from '../kb';
 import type { Search } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -11,11 +12,6 @@ export namespace Ask {
     KEYWORD = 'keyword',
     SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPHS = 'paragraphs',
-    /** @deprecated use SEMANTIC */
-    VECTORS = 'vectors'
   }
 
   export interface Answer {
@@ -23,10 +19,14 @@ export namespace Ask {
     text: string;
     id: string;
     sources?: Search.FindResults;
+    prequeries?: { [key: string]: Omit<Search.FindResults, 'type'> };
     citations?: Citations;
     jsonAnswer?: any;
     incomplete?: boolean;
     inError?: boolean;
+    metadata?: { tokens?: AskTokens; timings?: AskTimings };
+    promptContext?: string[];
+    augmentedContext?: AugmentedContext;
   }
 
   export enum Author {
@@ -45,10 +45,12 @@ export namespace Ask {
       | AnswerJsonResponseItem
       | MetadataAskResponseItem
       | CitationsAskResponseItem
+      | PrequeriesResponseItem
       | StatusAskResponseItem
       | ErrorAskResponseItem
       | RelationsAskResponseItem
-      | DebugAskResponseItem;
+      | DebugAskResponseItem
+      | AugmentedContextAskResponseItem;
   }
 
   export interface RetrievalAskResponseItem {
@@ -77,6 +79,11 @@ export namespace Ask {
     citations: Citations;
   }
 
+  export interface PrequeriesResponseItem {
+    type: 'prequeries';
+    results: { [key: string]: Omit<Search.FindResults, 'type'> };
+  }
+
   export interface StatusAskResponseItem {
     type: 'status';
     code: string;
@@ -96,12 +103,19 @@ export namespace Ask {
 
   export interface DebugAskResponseItem {
     type: 'debug';
-    debug: { [key: string]: any };
+    metadata: { [key: string]: any };
+  }
+
+  export interface AugmentedContextAskResponseItem {
+    type: 'augmented_context';
+    augmented: AugmentedContext;
   }
 
   export interface AskTokens {
     input: number;
     output: number;
+    input_nuclia: number;
+    output_nuclia: number;
   }
 
   export interface AskTimings {
@@ -113,15 +127,86 @@ export namespace Ask {
     answer: string;
     status: string;
     retrieval_results: Search.FindResults;
+    retrieval_best_matches: string[];
+    prequeries: { [key: string]: Omit<Search.FindResults, 'type'> };
     learning_id: string;
     relations: Search.Relations;
     citations: Citations;
     prompt_context?: string[];
     metadata: MetadataAskResponseItem;
     answer_json?: any;
+    error_details?: string;
+    augmented_context?: AugmentedContext;
+  }
+
+  export interface PredictAnswerResponseItem {
+    chunk: TextPredictAnswerResponseItem | StatusPredictAnswerResponseItem | JsonPredictAnswerResponseItem;
+  }
+
+  export interface TextPredictAnswerResponseItem {
+    type: 'text';
+    text: string;
+  }
+
+  export interface StatusPredictAnswerResponseItem {
+    type: 'status';
+    code: string;
+  }
+
+  export interface JsonPredictAnswerResponseItem {
+    type: 'object';
+    object: any;
+  }
+
+  export interface AugmentedContext {
+    fields: { [key: string]: AugmentedContextText };
+    paragraphs: { [key: string]: AugmentedContextText };
+  }
+
+  export interface AugmentedContextText {
+    id: string;
+    text: string;
+    parent?: string;
+    position?: {
+      index: number;
+      start: number;
+      end: number;
+      start_seconds?: number[];
+      end_seconds?: number[];
+      page_number?: number;
+    };
+    augmentation_type:
+      | RagStrategyName.FULL_RESOURCE
+      | RagStrategyName.HIERARCHY
+      | RagStrategyName.METADATAS
+      | RagStrategyName.NEIGHBOURING_PARAGRAPHS
+      | RagStrategyName.CONVERSATION;
   }
 }
 
 export interface Citations {
   [paragraphId: string]: [number, number][];
+}
+
+export interface PredictAnswerOptions {
+  retrieval?: boolean;
+  system?: string;
+  chat_history?: Ask.ContextEntry[];
+  context?: Ask.ContextEntry[];
+  query_context?: string[] | { [key: string]: string };
+  query_context_order?: { [key: string]: number };
+  truncate?: boolean;
+  user_prompt?: { prompt: string };
+  citations?: boolean;
+  citation_threshold?: number;
+  generative_model?: string;
+  max_tokens?: number;
+  query_context_images?: {
+    content_type: string;
+    b64encoded: string;
+  };
+  prefer_markdown?: boolean;
+  json_schema?: object;
+  format_prompt?: boolean;
+  rerank_context?: boolean;
 }

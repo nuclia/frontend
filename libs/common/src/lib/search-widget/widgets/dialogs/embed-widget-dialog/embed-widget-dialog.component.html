@@ -2,7 +2,23 @@
   <pa-modal-title>{{ 'search.widgets.dialog.code-snippet.title' | translate }}</pa-modal-title>
   <pa-modal-description>{{ 'search.widgets.dialog.code-snippet.description' | translate }}</pa-modal-description>
   <pa-modal-content>
-    <pre><code>{{modal.config?.data?.code}}</code></pre>
+    <pre><code>{{synchronize ? synchSnippet : snippet}}</code></pre>
+    @if (!standalone) {
+      <div>
+        <pa-toggle
+          [(value)]="synchronize"
+          labelOnRight>
+          {{ 'search.widgets.dialog.code-snippet.synchronized-config' | translate }}
+        </pa-toggle>
+      </div>
+      @if (synchronize) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'search.widgets.dialog.code-snippet.warning' | translate }}
+        </nsi-info-card>
+      }
+    }
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button

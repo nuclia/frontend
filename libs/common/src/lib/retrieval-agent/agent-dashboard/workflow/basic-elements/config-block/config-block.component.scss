@@ -1,0 +1,26 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.75);
+  padding: rhythm(1);
+
+  .empty {
+    color: $color-neutral-regular;
+  }
+
+  .config-block {
+    display: flex;
+    flex-direction: column;
+    font-size: font-size(xxs);
+    line-height: line-height(s);
+    gap: rhythm(0.5);
+    max-height: rhythm(12);
+    overflow: auto;
+
+    .title {
+      color: $color-neutral-regular;
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+}

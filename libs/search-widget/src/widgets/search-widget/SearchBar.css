@@ -1,0 +1,22 @@
+.nuclia-widget {
+  .search-box {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+  }
+  .dialog-content {
+    max-height: 80vh;
+    overflow: auto;
+    padding: var(--rhythm-3) var(--rhythm-2);
+    position: relative;
+  }
+
+  .close-button {
+    background: var(--container-background-color);
+    border-radius: 50%;
+    position: absolute;
+    right: var(--rhythm-1_5);
+    top: var(--rhythm-1_5);
+    z-index: 1;
+  }
+}

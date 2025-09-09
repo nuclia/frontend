@@ -1,0 +1,21 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry">
+      <label for="code">{{ 'retrieval-agents.workflow.node-types.restricted.form.code' | translate }}</label>
+      <nsi-expandable-textarea
+        id="code"
+        formControlName="code"
+        rows="2"
+        resizable
+        [modalTitle]="'retrieval-agents.workflow.node-types.restricted.form.code' | translate"
+        externalLabel=""></nsi-expandable-textarea>
+    </div>
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

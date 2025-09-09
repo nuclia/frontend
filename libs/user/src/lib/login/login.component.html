@@ -1,31 +1,30 @@
 <nus-user-container>
   <div class="main-container">
     <header>
-      <h1>{{ 'login.title' | translate }}</h1>
-      <p>{{ 'login.subtitle' | translate }}</p>
+      <p class="body-m">{{ 'login.subtitle' | translate }}</p>
     </header>
-    <div
-      class="login_alert title-xxs"
-      *ngIf="message || error">
-      {{ message || error || '' | translate }}
-    </div>
+    @if (message || error) {
+      <div class="login_alert title-xxs">
+        {{ message || error || '' | translate }}
+      </div>
+    }
     <div class="login_form">
       <form
         #form
-        [formGroup]="loginForm"
-        [method]="oauth ? 'POST' : null"
+        method="POST"
         [action]="oauth ? oAuthLoginUrl() : null"
         (ngSubmit)="login()">
         <div class="login_field">
           <pa-input
             #email
-            formControlName="email"
+            [formControl]="emailControl"
             required
             autocapitalize="off"
             name="username"
             type="email"
             [errorMessages]="loginValidationMessages.email"
-            (enter)="onEnterPressed('email')">
+            (enter)="onEnterPressed('email')"
+            stfLowerCaseInput>
             {{ 'login.email' | translate }}
           </pa-input>
         </div>
@@ -33,7 +32,7 @@
           <nsi-password-input
             #password
             data-cy="password"
-            formControlName="password"
+            [formControl]="passwordControl"
             name="password"
             [errorMessages]="loginValidationMessages.password">
             {{ 'login.password' | translate }}
@@ -49,26 +48,28 @@
             </a>
           </div>
         }
-        <input
-          *ngIf="oauth"
-          type="hidden"
-          name="login_challenge"
-          [value]="loginChallenge" />
+        @if (oauth) {
+          <input
+            type="hidden"
+            name="login_challenge"
+            [value]="loginChallenge" />
+        }
         <div class="login_policy body-xs">
           <span [innerHTML]="'user.consent' | translate"></span>
         </div>
-        <div
-          class="login_form_error body-xs"
-          data-cy="login-error"
-          *ngIf="formError">
-          <pa-icon
-            name="warning"
-            size="small"></pa-icon>
-          <div>
-            <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
-            <span>{{ 'login.try_again' | translate }}</span>
+        @if (loginError) {
+          <div
+            class="login_form_error body-xs"
+            data-cy="login-error">
+            <pa-icon
+              name="warning"
+              size="small"></pa-icon>
+            <div>
+              <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
+              <span>{{ (formError ? 'login.try_again' : 'login.error.login_error') | translate }}</span>
+            </div>
           </div>
-        </div>
+        }
         <div class="login_submit">
           <pa-button
             class="full-width"
@@ -88,17 +89,18 @@
         {{ 'login.recover' | translate }}
       </a>
     </div>
-    <div
-      class="login_social"
-      *ngIf="config.getSocialLogin() || !oauth">
-      <div class="login_separator body-s">
-        <span>{{ 'generic.or' | translate }}</span>
+    @if (config.getSocialLogin() || !oauth) {
+      <div class="login_social">
+        <div class="login_separator body-s">
+          <span>{{ 'generic.or' | translate }}</span>
+        </div>
+        <div class="sso-container">
+          <stf-sso-button provider="google"></stf-sso-button>
+          <stf-sso-button provider="github"></stf-sso-button>
+          <stf-sso-button provider="microsoft"></stf-sso-button>
+        </div>
       </div>
-      <div class="sso-container">
-        <stf-sso-button provider="google"></stf-sso-button>
-        <stf-sso-button provider="github"></stf-sso-button>
-      </div>
-    </div>
+    }
 
     <div class="login_signup">
       <span>{{ 'login.have_account' | translate }}</span>

@@ -1,0 +1,24 @@
+<pa-modal-advanced fitContent>
+  @if (title) {
+    <pa-modal-title>{{ title | translate }}</pa-modal-title>
+  }
+  <pa-modal-content>
+    <pa-textarea
+      [(value)]="value"
+      [resizable]="false"
+      [placeholder]="placeholder"
+      [help]="help"></pa-textarea>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="edit()">
+      {{ 'generic.edit' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

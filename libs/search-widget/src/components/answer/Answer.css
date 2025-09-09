@@ -1,0 +1,53 @@
+.sw-answer {
+  .answer-text {
+    line-height: calc(var(--font-size-base) * 1.4);
+    margin-top: var(--rhythm-1);
+    :global(.ref) {
+      background-color: var(--citation-number-background-color);
+      display: inline-block;
+      font-size: var(--font-size-medium);
+      height: var(--rhythm-3);
+      line-height: var(--rhythm-3);
+      margin: 0 var(--rhythm-0_25);
+      text-align: center;
+      width: var(--rhythm-3);
+    }
+    :global(.ref:hover) {
+      background-color: var(--citation-number-background-hover-color);
+    }
+  }
+  .error {
+    color: var(--color-neutral-light);
+  }
+  .actions {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+    padding-top: var(--rhythm-1);
+  }
+  .copy {
+    position: relative;
+  }
+  .smaller {
+    :global(svg) {
+      transform: scale(0.8);
+    }
+  }
+  .sources-container {
+    margin-top: var(--rhythm-2_5);
+    .sources-list {
+      padding-top: var(--rhythm-2);
+    }
+  }
+  .no-citations {
+    color: var(--color-neutral-light);
+    margin-top: var(--rhythm-1);
+  }
+  .images {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+  }
+}

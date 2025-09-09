@@ -1,4 +1,4 @@
-@if ((isAccountManager | async) && (canAddUsers | async)) {
+@if (canAddUsers | async) {
   <h3>{{ 'stash.users.new_user' | translate }}</h3>
   <form
     class="add-user"
@@ -6,7 +6,8 @@
     [formGroup]="addForm">
     <pa-input
       type="email"
-      formControlName="email">
+      formControlName="email"
+      stfLowerCaseInput>
       {{ 'accounts.add_user_input' | translate }}
     </pa-input>
     <pa-select
@@ -57,7 +58,7 @@
 
 <pa-table
   border
-  columns="repeat(4, 1fr)">
+  columns="repeat(3, 1fr) 64px">
   <pa-table-header>
     <pa-table-cell header>
       <span class="title-xxs">{{ 'generic.name' | translate }}</span>
@@ -68,7 +69,7 @@
     <pa-table-cell header>
       <span class="title-xxs">{{ 'generic.role' | translate }}</span>
     </pa-table-cell>
-    <pa-table-cell header></pa-table-cell>
+    <pa-table-cell-menu header></pa-table-cell-menu>
   </pa-table-header>
 
   @for (user of userRows | async; track user.id) {
@@ -91,11 +92,7 @@
           size="small"
           aspect="basic"
           [popupRef]="roleDropdown"
-          [disabled]="
-            (isAccountManager | async) === false ||
-            (user.role === 'SOWNER' && (hasSeveralOwners | async) === false) ||
-            !!user.expires
-          ">
+          [disabled]="(user.role === 'SOWNER' && (hasSeveralOwners | async) === false) || !!user.expires">
           {{ roleTitles[user.role] | translate }}
         </nsi-dropdown-button>
         <pa-dropdown #roleDropdown>
@@ -108,23 +105,21 @@
           }
         </pa-dropdown>
       </pa-table-cell>
-      <pa-table-cell>
+      <pa-table-cell-menu>
         <div class="actions">
-          @if ((isAccountManager | async) === true) {
-            <pa-button
-              aspect="basic"
-              icon="trash"
-              size="small"
-              [disabled]="
-                !user.expires &&
-                (((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false))
-              "
-              (click)="deleteUser(user)">
-              {{ 'generic.delete' | translate }}
-            </pa-button>
-          }
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            size="small"
+            [disabled]="
+              !user.expires &&
+              (((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false))
+            "
+            (click)="deleteUser(user)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
         </div>
-      </pa-table-cell>
+      </pa-table-cell-menu>
     </pa-table-row>
   }
 </pa-table>

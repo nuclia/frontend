@@ -8,19 +8,42 @@
       <pa-icon name="chart"></pa-icon>
       {{ 'account.nuclia-tokens.details' | translate }}
     </div>
-    @if (((kbList | async) || []).length > 1) {
-      <div class="select-kb">
-        <pa-select
-          [value]="selectedKb | async"
-          (valueChange)="selectedKb.next($event)">
-          <pa-option value="all">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
-          <pa-separator></pa-separator>
-          @for (kb of kbList | async; track kb.id) {
-            <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
-          }
-        </pa-select>
-      </div>
-    }
+    <div class="selectors">
+      @if (((periods | async) || []).length > 0 && selectedPeriod) {
+        <div class="select">
+          <pa-select
+            [value]="selectedPeriod.start.toString()">
+            @for (period of ((periods | async) || []); track period.start.toString()) {
+              <pa-option
+                [value]="period.start.toString()"
+                (selectOption)="selectPeriod.emit(period); loading = true"
+                >
+                @if (isSubscribedToStripe | async) {
+                  {{ period.start | date: 'MMM d, y' }} - {{ period.end | date: 'MMM d, y' }}
+                }
+                @else {
+                  {{ period.start | date: 'MMMM y' }} 
+                }
+              </pa-option>
+            }
+          </pa-select>
+        </div>
+      }
+      @if (((kbList | async) || []).length > 1) {
+        <div class="select">
+          <pa-select
+            [value]="selectedKb | async"
+            (valueChange)="selectedKb.next($event)">
+            <pa-option value="account">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
+            <pa-separator></pa-separator>
+            @for (kb of kbList | async; track kb.id) {
+              <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
+            }
+          </pa-select>
+        </div>
+      }
+    </div>
+
   </div>
   @if (!loading) {
     @let groups = visibleGroups | async;
@@ -33,15 +56,19 @@
             [description]="(group.total | number: digitsInfo) + ' tokens'">
             <pa-accordion-item-body>
               <pa-table
-                [columns]="group.displayModel ? '1fr 1fr 1fr' : '2fr 1fr'"
+                columns="1.5fr 1fr 1fr 1fr"
                 [border]="true">
                 <pa-table-header>
                   <pa-table-row>
                     <pa-table-cell header>{{ 'account.nuclia-tokens.description' | translate }}</pa-table-cell>
-                    @if (group.displayModel) {
-                      <pa-table-cell header>{{ 'account.nuclia-tokens.model' | translate }}</pa-table-cell>
-                    }
-                    <pa-table-cell header>Tokens</pa-table-cell>
+                    <pa-table-cell header>{{ 'account.nuclia-tokens.operations' | translate }}</pa-table-cell>
+                    <pa-table-cell header>{{ 'billing.tokens' | translate }}</pa-table-cell>
+                    <pa-table-cell header>
+                      <div>
+                        <div>{{ 'account.nuclia-tokens.average-cost' | translate }}</div>
+                        <div class="unit">({{ 'account.nuclia-tokens.tokens-per-operation' | translate }})</div>
+                      </div>
+                    </pa-table-cell>
                   </pa-table-row>
                 </pa-table-header>
                 @for (
@@ -53,30 +80,39 @@
                 ) {
                   <pa-table-row>
                     <pa-table-cell>
-                      <div class="type body-m">
-                        {{ item.identifier.type }}
-                        @if (item.help) {
-                          <pa-icon
-                            name="info"
-                            size="small"
-                            [paPopover]="help"></pa-icon>
+                      <div>
+                        <div class="type body-m">
+                          {{ item.identifier.type }}
+                          @if (item.help) {
+                            <pa-icon
+                              name="info"
+                              size="small"
+                              [paPopover]="help"></pa-icon>
+                          }
+                        </div>
+                        @if (item.modelName) {
+                          <div class="body-s model">({{ item.modelName }})</div>
                         }
                       </div>
                       <pa-popover #help>
                         <div class="body-s">{{ item.help }}</div>
                       </pa-popover>
                     </pa-table-cell>
-                    @if (group.displayModel) {
-                      <pa-table-cell>
-                        <span class="body-m">{{ item.modelName }}</span>
-                      </pa-table-cell>
-                    }
                     <pa-table-cell>
-                      <div class="body-s">
+                      @if (item.totalRequests > 0) {
+                        <div class="body-m">
+                          {{ item.totalRequests }}
+                        </div>
+                      }
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <div class="body-m">
                         @if ((item.counters | keyvalue).length > 1) {
                           @for (counter of item.counters | keyvalue; track counter.key; let first = $first) {
                             @if (first) {
-                              <strong>{{ 'account.nuclia-tokens.total' | translate }}: {{ item.total | number: digitsInfo }}</strong>
+                              <strong>
+                                {{ 'account.nuclia-tokens.total' | translate }}: {{ item.total | number: digitsInfo }}
+                              </strong>
                             }
                             <div>{{ counter.key }}: {{ counter.value | number: digitsInfo }}</div>
                           }
@@ -84,6 +120,13 @@
                           <div class="body-m">{{ item.total | number: digitsInfo }}</div>
                         }
                       </div>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      @if (item.average > 0) {
+                        <div class="body-m">
+                          {{ item.average | number: (item.average >= 0.01 ? '1.0-2' : '1.0-5') }}
+                        </div>
+                      }
                     </pa-table-cell>
                   </pa-table-row>
                 }

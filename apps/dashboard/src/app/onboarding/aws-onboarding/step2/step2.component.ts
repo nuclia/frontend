@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { InfoCardComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,8 +7,7 @@ import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angula
 
 @Component({
   selector: 'app-step2',
-  standalone: true,
-  imports: [CommonModule, InfoCardComponent, ReactiveFormsModule, TranslateModule, PaButtonModule, PaTogglesModule],
+  imports: [InfoCardComponent, ReactiveFormsModule, TranslateModule, PaButtonModule, PaTogglesModule],
   templateUrl: './step2.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

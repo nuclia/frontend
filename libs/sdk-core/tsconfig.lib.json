@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/sdk-core",
+    "outDir": "../../dist/sdk-core/esm",
     "declaration": true,
-    "declarationDir": "../..",
+    "declarationDir": "../../dist/sdk-core/esm/types",
     "types": [],
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,

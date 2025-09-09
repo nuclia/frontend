@@ -1,8 +1,12 @@
 <script lang="ts">
-  export let page: number | undefined;
-  export let hovering = false;
-  export let stack = false;
-  export let selected = false;
+  interface Props {
+    page: number | undefined;
+    hovering?: boolean;
+    stack?: boolean;
+    selected?: boolean;
+  }
+
+  let { page, hovering = false, stack = false, selected = false }: Props = $props();
 </script>
 
 {#if typeof page === 'number'}
@@ -15,7 +19,4 @@
   </button>
 {/if}
 
-
-<style
-  lang="scss"
-  src="./PageIndicator.scss"></style>
+<style src="./PageIndicator.css"></style>

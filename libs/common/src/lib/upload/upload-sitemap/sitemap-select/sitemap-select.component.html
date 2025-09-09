@@ -1,0 +1,11 @@
+<pa-button
+  kind="primary"
+  (click)="sitemapUpload.click()">
+  {{ 'upload.select-sitemap' | translate }}
+</pa-button>
+<input
+  (change)="readSitemap($event)"
+  #sitemapUpload
+  type="file"
+  accept="application/xml"
+  hidden />

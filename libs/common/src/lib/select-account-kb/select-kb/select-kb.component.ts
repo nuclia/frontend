@@ -1,56 +1,64 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
-import { IKnowledgeBoxItem } from '@nuclia/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-select-kb',
   templateUrl: './select-kb.component.html',
   styleUrls: ['./select-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
   standalone = this.selectService.standalone;
 
   kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
+  arags: Observable<IRetrievalAgentItem[] | null> = this.sdk.aragList.pipe(shareReplay());
   hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
     map((accounts) => !!accounts && accounts.length > 1),
   );
 
   account = this.sdk.currentAccount;
   canManage = this.features.isAccountManager;
-  canAddKb = this.standalone
-    ? of(true)
-    : this.account.pipe(
-        map(
-          (account) =>
-            account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
-        ),
-      );
+  private _canAddKb = this.account.pipe(
+    map(
+      (account) =>
+        account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
+    ),
+  );
+  canAddKb = this.standalone ? of(true) : this._canAddKb;
+
+  isRetrievalAgentEnabled = this.features.unstable.retrievalAgents;
+  canAddArag: Observable<boolean> = combineLatest([this.isRetrievalAgentEnabled, this._canAddKb]).pipe(
+    map(([aragEnabled, canAddKb]) => !this.standalone && aragEnabled && canAddKb),
+  );
 
   constructor(
     private navigation: NavigationService,
     private selectService: SelectAccountKbService,
     private router: Router,
     private sdk: SDKService,
-    private toast: SisToastService,
     private modalService: SisModalService,
-    private zoneService: ZoneService,
     private features: FeaturesService,
   ) {}
 
   createKb() {
     this.account
-      .pipe(
-        take(1),
-        switchMap((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)])),
-      )
-      .subscribe();
+      .pipe(take(1))
+      .subscribe((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)]));
+  }
+  createArag() {
+    this.account
+      .pipe(take(1))
+      .subscribe((account) =>
+        this.router.navigate([this.navigation.getAragCreationUrl(account.slug)], { queryParams: { create: true } }),
+      );
   }
 
   goToAccountManage() {
@@ -73,6 +81,20 @@ export class SelectKbComponent implements OnDestroy {
         this.account
           .pipe(take(1))
           .subscribe((account) => this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]));
+      }
+    }
+  }
+
+  goToArag(arag: IRetrievalAgentItem) {
+    if (arag.slug && arag.role_on_kb) {
+      const raSlug = arag.slug;
+      this.sdk.nuclia.options.knowledgeBox = arag.id;
+
+      if (!this.standalone) {
+        this.sdk.nuclia.options.zone = arag.zone;
+        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([, account]) =>
+          this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, raSlug)]),
+        );
       }
     }
   }

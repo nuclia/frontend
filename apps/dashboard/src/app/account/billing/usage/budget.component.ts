@@ -1,49 +1,63 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import { BillingService, Currency } from '@flaps/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AccountBudget, BillingService, Currency } from '@flaps/core';
 import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+
+const DEFAULT_BUDGET = 500;
 
 @Component({
   selector: 'app-budget',
+  imports: [CommonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './budget.component.html',
   styleUrls: ['./budget.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BudgetComponent implements OnDestroy {
-  budgetValidators = [Validators.required, Validators.min(1)];
+export class BudgetComponent implements OnDestroy, OnInit {
   form = new FormGroup({
-    budget: new FormControl<number | null>(null, { validators: this.budgetValidators }),
-    type: new FormControl<'unlimited' | 'limited' | null>(null, { validators: [Validators.required] }),
+    budget: new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(1)] }),
+    action: new FormControl<'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER'>('WARN_ACCOUNT_OWNER', {
+      validators: [Validators.required],
+    }),
   });
   unsubscribeAll = new Subject<void>();
 
   @Input() currency: Currency | undefined;
-  @Output() budgetChange = new EventEmitter<{ value: number | null } | undefined>();
+  @Input() showActions: boolean = true;
+  @Input() defaultBudget = false;
+  @Output() budgetChange = new EventEmitter<Partial<AccountBudget> | undefined>();
 
-  constructor(private billing: BillingService) {
-    this.billing
-      .getSubscription()
-      .pipe(
-        filter((subscription) => !!subscription),
-        map((subscription) => {
+  constructor(private billing: BillingService) {}
+
+  ngOnInit() {
+    if (this.defaultBudget) {
+      this.form.controls.budget.patchValue(DEFAULT_BUDGET);
+    } else {
+      this.billing
+        .getSubscription()
+        .pipe(filter((subscription) => !!subscription))
+        .subscribe((subscription) => {
           const budget = subscription?.subscription?.on_demand_budget;
-          return typeof budget === 'number' ? budget : null;
-        }),
-      )
-      .subscribe((budget) => {
-        const type = typeof budget === 'number' ? 'limited' : 'unlimited';
-        this.form.controls.budget.setValue(budget);
-        this.form.controls.type.setValue(type);
-        this.updateValidation(type);
-        this.budgetChange.emit({ value: budget });
-      });
+          this.form.patchValue({
+            budget: typeof budget === 'number' ? budget : null,
+            action: subscription?.subscription?.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+          });
+        });
+    }
 
     this.form.valueChanges
       .pipe(
         startWith(this.form.getRawValue()),
         map((values) => {
           this.budgetChange.emit(
-            this.form.valid ? { value: values.type === 'limited' ? (values.budget as number) : null } : undefined,
+            this.form.valid
+              ? {
+                  on_demand_budget: values.budget as number,
+                  action_on_budget_exhausted: this.showActions ? values.action : undefined,
+                }
+              : undefined,
           );
         }),
         takeUntil(this.unsubscribeAll),
@@ -54,12 +68,5 @@ export class BudgetComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  updateValidation(type: 'limited' | 'unlimited') {
-    type === 'limited'
-      ? this.form.controls.budget.addValidators(this.budgetValidators)
-      : this.form.controls.budget.removeValidators(this.budgetValidators);
-    this.form.controls.budget.updateValueAndValidity();
   }
 }

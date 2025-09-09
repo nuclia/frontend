@@ -18,16 +18,13 @@ export class ZoneService {
     private billingService: BillingService,
   ) {}
 
-  getZones(includeZonesBlocked = false): Observable<Zone[]> {
+  getZones(): Observable<Zone[]> {
     return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
       switchMap((zones) => {
         return this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
-            return includeZonesBlocked
-              ? zones.map((zone) => ({
-                  ...zone,
-                  notAvailableYet: blocklist.includes(zone.slug),
-                }))
+            return this.featureFlagService.showBlockedZones()
+              ? zones
               : zones.filter((zone) => !blocklist.includes(zone.slug));
           }),
         );
@@ -43,7 +40,7 @@ export class ZoneService {
                   take(1),
                   map((subscription) =>
                     subscription && subscription.provider === 'AWS_MARKETPLACE' && !this.featureFlagService.isStageOrDev
-                      ? zones.filter((zone) => zone.cloud_provider === 'AWS')
+                      ? zones.filter((zone) => zone.cloud_provider === 'AWS' && zone.slug !== 'aws-il-central-1-1')
                       : zones,
                   ),
                   catchError(() => of(zones)),

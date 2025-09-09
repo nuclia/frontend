@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StickyFooterComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
@@ -8,8 +8,7 @@ import { ExternalIndexProvider } from '@nuclia/core';
 
 @Component({
   selector: 'nus-vector-database-step',
-  standalone: true,
-  imports: [CommonModule, StickyFooterComponent, TranslateModule, PaButtonModule, VectorDatabaseFormComponent],
+  imports: [StickyFooterComponent, TranslateModule, PaButtonModule, VectorDatabaseFormComponent],
   templateUrl: './vector-database-step.component.html',
   styleUrls: ['../../_common-step.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

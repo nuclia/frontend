@@ -1,18 +1,20 @@
 <script lang="ts">
-  import { Observable, of, switchMap } from 'rxjs';
-  import { fieldData , getTextFile} from '../../../../core';
   import type { FileField, Search, TextField } from '@nuclia/core';
-  import MarkdownRenderer from './MarkdownRendering.svelte';
+  import { Observable, of, switchMap } from 'rxjs';
+  import { fieldData, getTextFile } from '../../../../core';
+  import { getUnMarked } from '../../utils';
   import HtmlRenderer from './HtmlRendering.svelte';
-  import { getUnMarked } from "../../utils";
+  import MarkdownRenderer from './MarkdownRendering.svelte';
 
-  export let selectedParagraph: Search.FindParagraph | undefined;
-  export let isHtml: boolean;
+  interface Props {
+    selectedParagraph: Search.FindParagraph | undefined;
+    isHtml: boolean;
+  }
 
-  let bodyElement: HTMLElement;
+  let { selectedParagraph, isHtml }: Props = $props();
+
+  let bodyElement: HTMLElement = $state();
   const nonWords = new RegExp(/\W/g);
-
-  $: !!selectedParagraph && bodyElement && highlightSelection();
 
   let body: Observable<string> = fieldData.pipe(
     switchMap((data) => {
@@ -20,7 +22,7 @@
       if (uri) {
         return getTextFile(uri);
       } else {
-        return of((data?.value as TextField).body || '');
+        return of((data?.value as TextField).body || data?.extracted?.text?.text || '');
       }
     }),
   );
@@ -51,6 +53,11 @@
       }
     }
   }
+  $effect(() => {
+    if (!!selectedParagraph && bodyElement) {
+      highlightSelection();
+    }
+  });
 </script>
 
 <div class="sw-text-rendering">
@@ -65,4 +72,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in global.css -->

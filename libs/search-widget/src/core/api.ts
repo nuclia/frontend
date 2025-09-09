@@ -1,6 +1,5 @@
 import type {
   ChatOptions,
-  Classification,
   FieldFullId,
   FieldMetadata,
   IErrorResponse,
@@ -9,21 +8,38 @@ import type {
   KBStates,
   LabelSets,
   NucliaOptions,
+  PredictAnswerOptions,
+  Reranker,
   Resource,
   ResourceField,
   SearchOptions,
 } from '@nuclia/core';
-import { Ask, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
+import {
+  Ask,
+  ExtractedDataTypes,
+  MIME_FACETS,
+  Nuclia,
+  ResourceFieldProperties,
+  ResourceProperties,
+  Search,
+} from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
-import type { EntityGroup, WidgetOptions } from './models';
-import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
-import { suggestionError } from './stores/suggestions.store';
-import { NucliaPrediction } from '@nuclia/prediction';
-import { searchError, searchOptions } from './stores/search.store';
-import { initTracking, logEvent } from './tracking';
-import { hasViewerSearchError } from './stores/viewer.store';
+import type { EntityGroup, WidgetOptions } from './models';
 import { reset } from './reset';
+import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
+import {
+  displayedMetadata,
+  searchConfigId,
+  noScroll,
+  searchError,
+  searchOptions,
+  showAttachedImages,
+} from './stores/search.store';
+import { suggestionError } from './stores/suggestions.store';
+import { hasViewerSearchError } from './stores/viewer.store';
+import { initTracking, logEvent } from './tracking';
+import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor } from './utils';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -31,20 +47,34 @@ const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 // IMPORTANT! do not initialise those options outside initNuclia,
 // otherwise options might be kept in memory when using the widget generator
 let nucliaApi: Nuclia | null;
-let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE: Search.Features[];
 let CHAT_MODE: Ask.Features[];
 let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
+let systemPrompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
 let vectorset: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
+let REPHRASE_PROMPT: string | undefined = undefined;
 let ASK_TO_RESOURCE = '';
-let MAX_TOKENS: number | undefined = undefined;
+let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
+let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
+let NOT_ENOUGH_DATA_MESSAGE = '';
+let NO_CHAT_HISTORY = false;
+let DEBUG = false;
+let HIGHLIGHT = false;
+let SHOW_HIDDEN = false;
+let SHOW_ATTACHED_IMAGES = false;
+let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
+let RERANKER: Reranker | undefined = undefined;
+let CITATION_THRESHOLD: number | undefined = undefined;
+let RRF_BOOSTING: number | undefined = undefined;
+let SECURITY_GROUPS: string[] | undefined;
+const ASK_SHOW: ResourceProperties[] = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -57,8 +87,8 @@ export const initNuclia = (
   SEARCH_OPTIONS = { ...DEFAULT_SEARCH_OPTIONS };
   SUGGEST_MODE = [];
   prompt = undefined;
+  systemPrompt = undefined;
   generative_model = undefined;
-  vectorset = undefined;
 
   if (nucliaApi) {
     console.error('Cannot exist more than one Nuclia widget at the same time. Cancelling the first instance.');
@@ -73,9 +103,49 @@ export const initNuclia = (
   if (widgetOptions.features?.useSynonyms) {
     SEARCH_OPTIONS.with_synonyms = true;
   }
+  if (widgetOptions.features?.showHidden) {
+    SEARCH_OPTIONS.show_hidden = true;
+  }
+  if (widgetOptions.rrf_boosting) {
+    SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
+  }
+  if (widgetOptions.not_enough_data_message) {
+    NOT_ENOUGH_DATA_MESSAGE = widgetOptions.not_enough_data_message;
+  }
+  if (widgetOptions.features?.hideAnswer) {
+    hideAnswer.set(true);
+  }
   CITATIONS = !!widgetOptions.features?.citations;
+  HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;
+  REPHRASE_PROMPT = widgetOptions.rephrase_prompt;
+  if (REPHRASE && REPHRASE_PROMPT) {
+    SEARCH_OPTIONS.rephrase_prompt = REPHRASE_PROMPT;
+  }
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
+  NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
+  DEBUG = !!widgetOptions.features?.debug;
+  SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
+  RERANKER = widgetOptions.reranker;
+  if (RERANKER) {
+    SEARCH_OPTIONS.reranker = RERANKER;
+  }
+  try {
+    const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
+    AUDIT_METADATA = metadata;
+    SEARCH_OPTIONS.audit_metadata = metadata;
+  } catch (e) {
+    console.error('Invalid audit metadata');
+  }
+  if (widgetOptions.copy_disclaimer) {
+    disclaimer.set(widgetOptions.copy_disclaimer);
+  }
+  if (widgetOptions.metadata) {
+    displayedMetadata.set(widgetOptions.metadata);
+    if (widgetOptions.metadata.includes('extra:')) {
+      ASK_SHOW.push(ResourceProperties.EXTRA);
+    }
+  }
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -89,22 +159,18 @@ export const initNuclia = (
   }
 
   searchOptions.set({
-    highlight: widgetOptions.highlight,
+    highlight: HIGHLIGHT,
     autofilter: !!widgetOptions.features?.autofilter,
     rephrase: REPHRASE,
   });
   prompt = widgetOptions.prompt;
+  systemPrompt = widgetOptions.system_prompt;
   generative_model = widgetOptions.generative_model;
   vectorset = widgetOptions.vectorset;
-
-  if (widgetOptions.features?.suggestLabels) {
-    const kbPath = nucliaApi?.knowledgeBox.fullpath;
-    if (kbPath) {
-      nucliaPrediction = new NucliaPrediction(getCDN());
-      const authHeaders = state === 'PRIVATE' ? nucliaApi.auth.getAuthHeaders() : {};
-      nucliaPrediction.loadModels(kbPath, authHeaders);
-    }
+  if (vectorset) {
+    SEARCH_OPTIONS.vectorset = vectorset;
   }
+
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
     CHAT_MODE.push(Ask.Features.RELATIONS);
@@ -115,11 +181,32 @@ export const initNuclia = (
   if (widgetOptions.features?.autocompleteFromNERs) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
-  if (widgetOptions.features?.noBM25forChat) {
-    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
+  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
+    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
   }
-  MAX_TOKENS = widgetOptions.max_tokens || undefined;
+  if (widgetOptions.features?.semanticOnly) {
+    SEARCH_MODE = SEARCH_MODE.filter((feature) => feature !== Search.Features.KEYWORD);
+  }
+  SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
+  showAttachedImages.set(SHOW_ATTACHED_IMAGES);
+  if (widgetOptions.features?.noScroll) {
+    noScroll.set(true);
+  }
+
+  MAX_TOKENS = !widgetOptions.max_output_tokens
+    ? widgetOptions.max_tokens
+    : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
+  MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
+  if (MAX_PARAGRAPHS) {
+    SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
+  }
+  SECURITY_GROUPS = (widgetOptions.security_groups?.length || 0) > 0 ? widgetOptions.security_groups : undefined;
+  if (SECURITY_GROUPS) {
+    SEARCH_OPTIONS.security = { groups: SECURITY_GROUPS };
+  }
   QUERY_PREPEND = widgetOptions.query_prepend || '';
+  CITATION_THRESHOLD = widgetOptions.citation_threshold;
+  RRF_BOOSTING = widgetOptions.rrf_boosting;
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -142,7 +229,12 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     query = QUERY_PREPEND + ' ' + query;
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options }).pipe(
+  return searchConfigId.pipe(
+    take(1),
+    tap(console.log),
+    switchMap((search_configuration) =>
+      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options, search_configuration }),
+    ),
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -161,42 +253,87 @@ export const getAnswer = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  const context = chat?.reduce((acc, curr) => {
-    acc.push({ author: Ask.Author.USER, text: curr.question });
-    acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
-    return acc;
-  }, [] as Ask.ContextEntry[]);
+  const context = NO_CHAT_HISTORY
+    ? undefined
+    : chat?.reduce((acc, curr) => {
+        acc.push({ author: Ask.Author.USER, text: curr.question });
+        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        return acc;
+      }, [] as Ask.ContextEntry[]);
+
   const defaultOptions: ChatOptions = {
-    highlight: true,
-    prompt,
+    highlight: HIGHLIGHT,
+    show: ASK_SHOW,
     generative_model,
     vectorset,
     citations: CITATIONS,
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,
+    top_k: MAX_PARAGRAPHS,
+    debug: DEBUG,
+    show_hidden: SHOW_HIDDEN,
+    audit_metadata: AUDIT_METADATA,
+    reranker: RERANKER,
+    citation_threshold: CITATION_THRESHOLD,
+    rank_fusion: RRF_BOOSTING ? { name: 'rrf', boosting: { semantic: RRF_BOOSTING } } : undefined,
+    security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
   };
+  if (prompt || systemPrompt || REPHRASE_PROMPT) {
+    defaultOptions.prompt = {
+      user: prompt || undefined,
+      system: systemPrompt || undefined,
+      rephrase: REPHRASE_PROMPT || undefined,
+    };
+  }
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }
+  options = options ? { ...defaultOptions, ...options } : defaultOptions;
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
-      .ask(query, context, CHAT_MODE, options ? { ...defaultOptions, ...options } : defaultOptions);
+      .ask(query, context, CHAT_MODE, options);
   } else {
-    return nucliaApi.knowledgeBox.ask(
-      query,
-      context,
-      CHAT_MODE,
-      options ? { ...defaultOptions, ...options } : defaultOptions,
-    );
+    return nucliaApi.knowledgeBox.ask(query, context, CHAT_MODE, options);
   }
 };
 
-export const sendFeedback = (answer: Ask.Answer, approved: boolean, comment?: string) => {
+export const getAnswerWithoutRAG = (
+  question: string,
+  chat?: Ask.Entry[],
+  options?: ChatOptions,
+): Observable<Ask.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.feedback(answer.id, approved, comment);
+
+  const context = NO_CHAT_HISTORY
+    ? undefined
+    : chat?.reduce((acc, curr) => {
+        acc.push({ author: Ask.Author.USER, text: curr.question });
+        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        return acc;
+      }, [] as Ask.ContextEntry[]);
+
+  const defaultPrompt = '{question}';
+  const predictOptions: PredictAnswerOptions = {
+    generative_model: generative_model || undefined,
+    user_prompt: { prompt: prompt || defaultPrompt },
+    system: systemPrompt || undefined,
+    retrieval: false,
+    chat_history: context && context.length > 0 ? context : undefined,
+    max_tokens: typeof MAX_TOKENS === 'number' ? MAX_TOKENS : MAX_TOKENS?.answer,
+    prefer_markdown: options?.prefer_markdown,
+    json_schema: options?.answer_json_schema,
+  };
+  return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions, false);
+};
+
+export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.feedback(answerId, approved, comment, textBlockId);
 };
 
 export const searchInResource = (
@@ -241,14 +378,6 @@ export const suggest = (query: string) => {
   );
 };
 
-export const predict = (query: string): Observable<Classification[]> => {
-  if (!nucliaPrediction) {
-    throw new Error('Nuclia prediction not initialized');
-  }
-
-  return nucliaPrediction.predict(query);
-};
-
 export const getResource = (uid: string): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -279,7 +408,7 @@ export const getResourceById = (uid: string, show: ResourceProperties[]): Observ
   ]);
 };
 
-export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): Observable<ResourceField> {
+export function getResourceField(fullFieldId: FieldFullId, valueOnly = false, page = 1): Observable<ResourceField> {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -289,6 +418,8 @@ export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): O
       fullFieldId.field_type,
       fullFieldId.field_id,
       valueOnly ? [ResourceFieldProperties.VALUE] : [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
+      undefined,
+      page,
     );
 }
 
@@ -354,6 +485,18 @@ export const getLabelSets = (): Observable<LabelSets> => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox.getLabels();
+};
+export const getMimeFacets = (): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getFacets(MIME_FACETS);
+};
+export const getFacets = (facets: string[]): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getFacets(facets);
 };
 
 export const getFile = (path: string): Observable<string> => {
@@ -436,4 +579,23 @@ export function downloadDump() {
     ?.dump()
     .pipe(take(1))
     .subscribe((data) => downloadAsJSON(data));
+}
+
+export function getApiErrors() {
+  return merge(searchError, suggestionError, chatError).pipe(
+    filter((error) => !!error?.status),
+    map((error) => ({
+      status: error?.status,
+      detail: error?.detail,
+    })),
+  );
+}
+
+export function getAttachedImageTemplate(placeholder: string): Observable<string> {
+  const path = `${nucliaApi?.knowledgeBox.path}/resource/${placeholder}`;
+  return getFileUrl(path);
+}
+
+export function getNotEngoughDataMessage() {
+  return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
 }

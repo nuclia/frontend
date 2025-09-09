@@ -58,7 +58,6 @@ export interface LearningConfigurationForm {
 
 @Component({
   selector: 'nus-embeddings-model-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -181,6 +180,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
       ENGLISH: new FormControl<boolean>(false),
       MULTILINGUAL: new FormControl<boolean>(true),
       MULTILINGUAL_ALPHA: new FormControl<boolean>(false),
+      MULTILINGUAL_BETA: new FormControl<boolean>(false),
     }),
     external: new FormGroup<{ [key: string]: AbstractControl<boolean> }>({}),
     stageOnly: new FormGroup({
@@ -232,7 +232,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
     });
     this.languages = languages.map((language) => ({ ...language, selected: false }));
 
-    this.features.unstable.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
+    this.features.authorized.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
       this.MODEL_SELECTION_LIMIT = vectorsetEnabled ? 5 : 1;
       this.cdr.markForCheck();
     });

@@ -11,13 +11,12 @@ import {
   numberAttribute,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-badge',
-  standalone: true,
-  imports: [CommonModule, PaTooltipModule, PaIconModule],
+  imports: [PaTooltipModule, PaIconModule],
   templateUrl: './badge.component.html',
   styleUrl: './badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,0 +1,134 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.lab-container {
+  padding: rhythm(3) 0;
+
+  .page-description {
+    margin-bottom: rhythm(3);
+  }
+
+  .form-container,
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    max-width: calc(rhythm(80) + rhythm(8));
+  }
+
+  .field-and-button {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+
+    pa-input,
+    pa-textarea,
+    nsi-expandable-textarea {
+      flex: 1 1 auto;
+    }
+    pa-button {
+      margin-top: calc(-1 * #{rhythm(2) + rhythm(0.5)});
+    }
+  }
+  .checkbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+
+    .checkbox-and-help {
+      display: flex;
+      justify-content: space-between;
+    }
+    .config-details-list {
+      margin: 0 0 0 rhythm(1);
+      padding: 0;
+    }
+  }
+
+  .prompt-container {
+    pre {
+      background: $color-neutral-lightest;
+      padding: rhythm(0.25) rhythm(0.5);
+      white-space: break-spaces;
+    }
+  }
+  .select-with-background {
+    display: block;
+    margin-top: rhythm(1);
+    margin-bottom: rhythm(2);
+
+    ::ng-deep .pa-field .pa-field-control {
+      background-color: $color-neutral-lightest;
+    }
+  }
+  .search-config {
+    .title-s {
+      margin-bottom: rhythm(1);
+    }
+  }
+
+  .answer-expander {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+
+    .title-s {
+      flex: 1 0 auto;
+    }
+
+    pa-button {
+      transition: transform $transition-hint;
+    }
+  }
+
+  .question {
+    margin-top: rhythm(3);
+    &.collapsed {
+      .answer-expander pa-button {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+    padding: rhythm(1) 0 rhythm(0.5);
+  }
+
+  .answer-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+    transition:
+      height $transition-hint,
+      margin-bottom $transition-hint,
+      opacity $transition-hint;
+
+    .config-container {
+      align-items: center;
+      background: $color-neutral-lighter;
+      display: flex;
+      justify-content: space-between;
+      padding: rhythm(0.5) rhythm(1.5);
+      margin: 0 calc(#{rhythm(1.5) * -1});
+    }
+    .tokens-container {
+      display: flex;
+      justify-content: space-between;
+      gap: rhythm(2);
+      strong {
+        margin-left: rhythm(0.5);
+      }
+    }
+  }
+
+  .expander-card-container {
+    border: 1px solid $color-neutral-light;
+    border-radius: $border-radius-chip;
+    margin: rhythm(2) 0;
+    padding: rhythm(1) rhythm(1.5);
+  }
+}

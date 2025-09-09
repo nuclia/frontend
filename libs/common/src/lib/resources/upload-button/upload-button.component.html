@@ -23,9 +23,14 @@
     {{ 'upload.link' | translate }}
   </pa-option>
   <pa-option
-    icon="file"
+    icon="file-empty"
     (selectOption)="upload('csv')">
-    {{ 'upload.upload_from_csv' | translate }}
+    {{ 'upload.texts' | translate }}
+  </pa-option>
+  <pa-option
+    icon="connectors"
+    (selectOption)="upload('sitemap')">
+    {{ 'upload.sitemap.title' | translate }}
   </pa-option>
   <pa-option
     icon="chat"

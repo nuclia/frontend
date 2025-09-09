@@ -1,4 +1,5 @@
-@import 'edit-resource.tokens';
+@use 'edit-resource.tokens' as tokens;
+@use 'apps/dashboard/src/variables' as *;
 
 .main-container {
   display: flex;
@@ -9,12 +10,14 @@
   }
 }
 
-.search-box-container {
+.sticky-header {
   $width-search-input: rhythm(40);
-  position: absolute;
-  background: white;
-  top: 0;
-  padding: #{$sticky-top} calc(#{$width-page-content} - #{$width-search-input}) #{rhythm(2)} 0;
+  position: sticky;
+  background: $color-light-stronger;
+  top: #{tokens.$height-header};
+  padding: var(--app-layout-padding-top) 0 #{rhythm(3)} 0;
+  margin-top: calc(var(--app-layout-padding-top) * -1);
+  width: tokens.$width-page-content;
   z-index: 1;
 
   pa-input {
@@ -28,11 +31,7 @@
 .scrollable-area {
   flex: 1 1 auto;
   padding: 0 0 0 rhythm(1.5);
-  max-width: $width-page-content;
-
-  &.with-search-and-footer {
-    margin-top: $annotation-header-height;
-  }
+  max-width: tokens.$width-page-content;
 }
 
 .right-panel-container {
@@ -43,7 +42,7 @@
 
   > :first-child {
     position: sticky;
-    top: $sticky-top;
+    top: tokens.$sticky-top;
   }
 }
 
@@ -55,7 +54,7 @@
 
   .loading-mask {
     bottom: 0;
-    background: rgba($color-dark-stronger, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     left: 0;
     position: absolute;
     right: 0;
@@ -74,10 +73,10 @@
       display: flex;
       flex: 1 0 auto;
       justify-content: center;
-      height: $thumbnail-height;
+      height: tokens.$thumbnail-height;
       text-align: center;
       transition: background-color $transition-hint;
-      width: $thumbnail-width;
+      width: tokens.$thumbnail-width;
 
       &.file-over {
         background-color: $color-neutral-lightest;

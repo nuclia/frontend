@@ -1,11 +1,13 @@
 import type { Observable } from 'rxjs';
-import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
-import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
+import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
+import type { Ask, CatalogOptions, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
 import { Agentic } from '../search/agentic';
+import { TaskManager } from '../task';
+import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
+import { ActivityMonitor } from './activity';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -15,31 +17,32 @@ export enum LabelSetKind {
   PARAGRAPHS = 'PARAGRAPHS',
 }
 
-export enum EventType {
-  VISITED = 'VISITED',
-  MODIFIED = 'MODIFIED',
-  DELETED = 'DELETED',
-  NEW = 'NEW',
-  STARTED = 'STARTED',
-  STOPPED = 'STOPPED',
-  SEARCH = 'SEARCH',
-  PROCESSED = 'PROCESSED',
-  CHAT = 'CHAT',
-}
-
-export interface IKnowledgeBoxCreation {
+export interface IKnowledgeBoxBase {
   id: string;
   slug: string;
   title: string;
   state?: KBStates;
   description?: string;
   zone: string;
-  uuid?: string;
   allowed_origins?: string[] | null;
   search_configs?: { [key: string]: any };
+  hidden_resources_enabled?: boolean;
+  hidden_resources_hide_on_creation?: boolean;
 }
 
-export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {
+export interface IKnowledgeBoxStandalone {
+  slug: string;
+  uuid: string;
+  config?: {
+    slug?: string;
+    title?: string;
+    description?: string;
+    hidden_resources_enabled?: boolean;
+    hidden_resources_hide_on_creation?: boolean;
+  };
+}
+
+export interface IKnowledgeBoxItem extends IKnowledgeBoxBase {
   role_on_kb?: KBRoles;
 }
 
@@ -77,7 +80,7 @@ export interface KbInvite {
   expires: string;
 }
 
-export interface IKnowledgeBox extends IKnowledgeBoxCreation {
+export interface IKnowledgeBox extends IKnowledgeBoxBase {
   external_index_provider?: 'pinecone';
 
   get path(): string;
@@ -89,6 +92,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
   getSynonyms(): Observable<Synonyms>;
+
+  getFacets(facets: string[]): Observable<Search.FacetsResult>;
 
   getLabels(): Observable<LabelSets>;
 
@@ -132,6 +137,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   tokens(text: string): Observable<SentenceToken[]>;
 
+  predictAnswer(question: string, options?: PredictAnswerOptions): Observable<Ask.Answer | IErrorResponse>;
+
   generate(question: string, context: string[]): Observable<{ answer: string; cannotAnswer: boolean }>;
 
   generateJSON(
@@ -140,29 +147,23 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
     context: string[],
   ): Observable<{ answer: object; success: boolean }>;
 
-  rephrase(question: string): Observable<string>;
+  rephrase(question: string, user_context?: string[], rephrase_prompt?: string): Observable<string>;
 
   generateRandomQuestionAboutResource(resource: Resource): Observable<string>;
 
-  catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse>;
+  catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse>;
 
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
 
-  feedback(answerId: string, good: boolean): Observable<void>;
-  listFeedback(): Observable<string[]>;
+  feedback(answerId: string, good: boolean, feedback?: string, text_block_id?: string): Observable<void>;
 
   counters(): Observable<Counters>;
 
   listResources(page?: number, size?: number): Observable<ResourceList>;
 
-  getTempToken(): Observable<string>;
-
-  listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
-
-  listActivityDownloads(type: EventType): Observable<ActivityDownloadList>;
-
-  downloadActivity(type: EventType, month: string): Observable<Blob>;
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTempToken(payload?: any, ignoreExpiration?: boolean): Observable<string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }>;
   getLearningSchema(): Observable<LearningConfigurations>;
 
@@ -178,11 +179,20 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
     scheduled?: boolean,
     limit?: number,
   ): Observable<{ cursor: string; results: ProcessingStatus[] }>;
+  getSearchConfig(id: string): Observable<SearchConfig>;
+
+  getExtractStrategies(): Observable<ExtractStrategies>;
+
+  getSplitStrategies(): Observable<SplitStrategies>;
+
+  getSearchConfigs(): Observable<SearchConfigs>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
   admin?: boolean;
   contrib?: boolean;
+  activityMonitor?: ActivityMonitor;
+  taskManager: TaskManager;
 
   modify(data: Partial<IKnowledgeBox>): Observable<void>;
 
@@ -240,6 +250,24 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   updateUsers(data: KbUserPayload): Observable<void>;
 
   inviteToKb(data: InviteKbData): Observable<void>;
+
+  addVectorset(model: string): Observable<void>;
+
+  removeVectorset(model: string): Observable<void>;
+
+  createExtractStrategy(config: ExtractConfig): Observable<void>;
+
+  deleteExtractStrategy(id: string): Observable<void>;
+
+  createSplitStrategy(strategy: SplitStrategy): Observable<void>;
+
+  deleteSplitStrategy(id: string): Observable<void>;
+
+  createSearchConfig(id: string, config: SearchConfig): Observable<void>;
+
+  updateSearchConfig(id: string, config: SearchConfig): Observable<void>;
+
+  deleteSearchConfig(id: string): Observable<void>;
 }
 
 export type PINECONE_REGIONS =
@@ -303,40 +331,30 @@ export interface LabelSets {
   [id: string]: LabelSet;
 }
 
-export interface WidgetFeatures {
-  editLabels?: boolean;
-  entityAnnotation?: boolean;
-  filter?: boolean;
-  navigateToFile?: boolean;
-  navigateToLink?: boolean;
-  notPublic?: boolean;
-  permalink?: boolean;
-  relations?: boolean;
-  suggestions?: boolean;
-  suggestLabels?: boolean;
-  autocompleteFromNERs?: boolean;
-  displayMetadata?: boolean;
-  answers?: boolean;
-  hideLogo?: boolean;
-  hideResults?: boolean;
-  hideThumbnails?: boolean;
-  displayFieldList?: boolean;
-  knowledgeGraph?: boolean;
-  useSynonyms?: boolean;
-  autofilter?: boolean;
-  noBM25forChat?: boolean;
-  citations?: boolean;
-  rephrase?: boolean;
-  dumpLog?: boolean;
-  preferMarkdown?: boolean;
-  openNewTab?: boolean;
+export enum RAG_METADATAS {
+  ORIGIN = 'origin',
+  LABELS = 'classification_labels',
+  NERS = 'ners',
+  EXTRA = 'extra_metadata',
 }
 
 export enum RagStrategyName {
   FIELD_EXTENSION = 'field_extension',
   FULL_RESOURCE = 'full_resource',
   HIERARCHY = 'hierarchy',
+  METADATAS = 'metadata_extension',
+  NEIGHBOURING_PARAGRAPHS = 'neighbouring_paragraphs',
+  PREQUERIES = 'prequeries',
+  CONVERSATION = 'conversation',
+  GRAPH = 'graph_beta',
 }
+
+export interface Prequery {
+  request: SearchOptions & { query: string; features?: Search.Features[] };
+  weight?: number;
+  id?: string;
+}
+
 export interface FieldExtensionStrategy {
   name: RagStrategyName.FIELD_EXTENSION;
   fields: string[];
@@ -344,12 +362,57 @@ export interface FieldExtensionStrategy {
 export interface FullResourceStrategy {
   name: RagStrategyName.FULL_RESOURCE;
   count?: number;
+  include_remaining_text_blocks?: boolean;
+  apply_to?: {
+    exclude: string[];
+  };
 }
 export interface HierarchyStrategy {
   name: RagStrategyName.HIERARCHY;
   count?: number;
 }
-export type RAGStrategy = FieldExtensionStrategy | FullResourceStrategy | HierarchyStrategy;
+export interface MetadatasStrategy {
+  name: RagStrategyName.METADATAS;
+  types: RAG_METADATAS[];
+}
+export interface NeighbouringParagraphsStrategy {
+  name: RagStrategyName.NEIGHBOURING_PARAGRAPHS;
+  before: number;
+  after: number;
+}
+export interface PrequeriesStrategy {
+  name: RagStrategyName.PREQUERIES;
+  queries: Prequery[];
+}
+export interface ConversationalStrategy {
+  name: RagStrategyName.CONVERSATION;
+  attachments_text: boolean;
+  attachments_images: boolean;
+  full: boolean;
+  max_messages?: number;
+}
+export interface GraphStrategy {
+  name: RagStrategyName.GRAPH;
+  hops: number;
+  top_k: number;
+  /** @deprecated
+   * Use exclude_processor_relations
+   */
+  agentic_graph_only?: boolean; // backward compat
+  exclude_processor_relations?: boolean;
+  relation_ranking?: 'generative' | 'reranker';
+  relation_text_as_paragraphs?: boolean;
+  query_entity_detection?: 'predict' | 'suggest';
+}
+export type RAGStrategy =
+  | FieldExtensionStrategy
+  | FullResourceStrategy
+  | HierarchyStrategy
+  | MetadatasStrategy
+  | NeighbouringParagraphsStrategy
+  | PrequeriesStrategy
+  | ConversationalStrategy
+  | GraphStrategy;
 
 export enum RagImageStrategyName {
   PAGE_IMAGE = 'page_image',
@@ -389,10 +452,6 @@ export interface EventList {
 }
 
 export type Event = { [key: string]: any };
-
-export interface ActivityDownloadList {
-  downloads: string[];
-}
 
 export interface ServiceAccountKey {
   id: string;
@@ -459,3 +518,65 @@ export interface ResourceOperationNotification extends ResourceBaseNotification 
   operation: NotificationOperation;
 }
 export type ResourceProcessingNotification = ResourceBaseNotification;
+
+export type ExtractStrategies = {
+  [id: string]: ExtractConfig;
+};
+
+export interface ExtractConfig {
+  name?: string;
+  vllm_config?: ExtractVLLMConfig;
+  ai_tables?: ExtractVLLMConfig;
+  split?: { max_paragraph?: number };
+}
+
+export interface ExtractLLMConfig {
+  generative_model?: string;
+  generative_provider?: string;
+  generative_prompt_id?: string;
+  user_keys?: any;
+}
+
+export interface ExtractVLLMConfig {
+  llm?: ExtractLLMConfig;
+  rules?: string[];
+  merge_pages?: boolean;
+  max_pages_to_merge?: number;
+}
+
+export type SplitStrategies = {
+  [id: string]: SplitStrategy;
+};
+
+export interface SplitStrategy {
+  name?: string;
+  max_paragraph?: number;
+  custom_split?: CustomSplitStrategy;
+  llm_split?: SplitLLMConfig;
+  manual_split?: { splitter: string };
+}
+
+export interface SplitLLMConfig {
+  llm?: ExtractLLMConfig;
+  rules?: string[];
+}
+
+export enum CustomSplitStrategy {
+  NONE = 0,
+  MANUAL = 1,
+  LLM = 2,
+}
+
+export type SearchConfigs = { [key: string]: SearchConfig };
+
+export type SearchConfig = AskConfig | FindConfig;
+
+export interface AskConfig {
+  kind: 'ask';
+  config: ChatOptions;
+}
+
+export interface FindConfig {
+  kind: 'find';
+  config: SearchOptions;
+}

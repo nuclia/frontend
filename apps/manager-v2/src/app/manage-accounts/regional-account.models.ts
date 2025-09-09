@@ -1,4 +1,13 @@
-import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBStates } from '@nuclia/core';
+import {
+  AccountBlockingState,
+  AccountLimits,
+  AccountTypes,
+  BlockedFeature,
+  CustomModelItem,
+  KBStates,
+  ModelType,
+} from '@nuclia/core';
+import { ZoneSummary } from '../manage-zones/zone.models';
 import { AccountUser } from './global-account.models';
 
 export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
@@ -26,6 +35,9 @@ export interface Account {
   stashes: {
     max_stashes: number;
   };
+  arags?: {
+    max_arags: number;
+  };
   title: string;
   trial_expiration_date?: string;
   type: AccountTypes;
@@ -42,4 +54,16 @@ export interface Kb {
   created: string;
   admin: boolean;
   contrib: boolean;
+}
+
+export interface AccountModelPayload {
+  model_types: ModelType[];
+  location: string;
+  description?: string;
+  openai_compat?: any;
+}
+
+export interface ZoneModels {
+  zone: ZoneSummary;
+  models: CustomModelItem[];
 }

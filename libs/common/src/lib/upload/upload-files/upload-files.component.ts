@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { forkJoin, map, take } from 'rxjs';
-import { DroppedFile, FeaturesService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
+import { DroppedFile, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
@@ -14,6 +14,7 @@ const GENERAL_LABELSET = 'General';
   templateUrl: './upload-files.component.html',
   styleUrls: ['./upload-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadFilesComponent {
   @Input() folderMode: boolean = false;
@@ -32,32 +33,15 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
-  betaProcessings = ['table', 'invoice'];
-  processings = forkJoin([
-    this.features.unstable.tableProcessing.pipe(take(1)),
-    this.features.unstable.aiTableProcessing.pipe(take(1)),
-    this.features.unstable.invoiceProcessing.pipe(take(1)),
-  ]).pipe(
-    map(([table, aitable, invoice]) => {
-      const processings = [];
-      if (table) {
-        processings.push('table');
-      }
-      if (aitable) {
-        processings.push('aitable');
-      }
-      if (invoice) {
-        processings.push('invoice');
-      }
-      return processings;
-    }),
-  );
-  processing = 'none';
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  spitConfigEnabled = this.features.unstable.splitConfig;
+  extractStrategy?: string;
+  splitStrategy?: string;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -68,7 +52,6 @@ export class UploadFilesComponent {
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
-    private tracking: STFTrackingService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
     private features: FeaturesService,
@@ -134,11 +117,17 @@ export class UploadFilesComponent {
           file.lang = this.langCode.getRawValue();
         });
       }
-      if (this.processing !== 'none') {
-        labelledFiles.forEach((file) => (file.contentType = `${file.type}+${this.processing}`));
+      if (this.extractStrategy) {
+        labelledFiles.forEach((file) => {
+          file.processing = this.extractStrategy;
+        });
+      }
+      if (this.splitStrategy) {
+        labelledFiles.forEach((file) => {
+          file.split = this.splitStrategy;
+        });
       }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
-      this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
       this.close.emit();
     }

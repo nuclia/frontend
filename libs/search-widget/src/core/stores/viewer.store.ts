@@ -1,6 +1,14 @@
 import type { ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
-import type { CloudLink, FieldFullId, IFieldData, FieldMetadata } from '@nuclia/core';
+import type {
+  CloudLink,
+  FieldFullId,
+  IFieldData,
+  FieldMetadata,
+  ConversationField,
+  ConversationFieldPages,
+  Paragraph,
+} from '@nuclia/core';
 import {
   FIELD_TYPE,
   FileFieldData,
@@ -10,9 +18,9 @@ import {
   Search,
   sliceUnicode,
 } from '@nuclia/core';
-import { getFileUrls } from '../api';
+import { getFileUrls, getResourceField } from '../api';
 import type { Observable } from 'rxjs';
-import { filter, map, of, switchMap, take } from 'rxjs';
+import { filter, map, of, pairwise, switchMap, take } from 'rxjs';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
@@ -149,7 +157,7 @@ export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>
     if (!!state.searchInFieldResults) {
       return state.searchInFieldResults[state.selectedParagraphIndex];
     }
-    if (state.currentResult && state.currentResult.paragraphs) {
+    if (state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== -1) {
       return state.currentResult.paragraphs[state.selectedParagraphIndex];
     }
   }
@@ -294,6 +302,20 @@ export const fieldMetadata = viewerState.writer<FieldMetadata | undefined, Field
       : state,
 );
 
+export const resultParagraphs = viewerState.writer<Search.FindParagraph[]>(
+  (state) => state.currentResult?.paragraphs || [],
+  (state, paragraphs) =>
+    state.currentResult
+      ? {
+          ...state,
+          currentResult: {
+            ...state.currentResult,
+            paragraphs: paragraphs,
+          },
+        }
+      : state,
+);
+
 export const transcripts = viewerState.writer<Search.FindParagraph[]>(
   (state) => state.transcripts,
   (state, transcripts) => ({
@@ -305,6 +327,15 @@ export const transcripts = viewerState.writer<Search.FindParagraph[]>(
 export const fieldSummary = viewerState.reader<string>((state) => state.summary);
 
 export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.fieldFullId?.field_type || null);
+
+export const viewerOpened = isPreviewing.pipe(
+  pairwise(),
+  filter(([prev, curr]) => !prev && curr),
+);
+export const viewerClosed = isPreviewing.pipe(
+  pairwise(),
+  filter(([prev, curr]) => prev && !curr),
+);
 
 export function getFieldUrl(forcePdf?: boolean): Observable<string> {
   return viewerState.store.pipe(
@@ -346,29 +377,9 @@ export function loadTranscripts() {
             (paragraph) => paragraph.kind === 'TRANSCRIPT',
           );
           const fieldFullId = state.fieldFullId;
-          return paragraphs.map((paragraph, index) => {
-            const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
-            const start = paragraph.start || 0;
-            const end = paragraph.end || 0;
-            const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
-              fieldFullId.field_id
-            }/${start}-${end}`;
-            return {
-              id,
-              order: paragraph.order || 0,
-              text: paragraphText,
-              labels: [],
-              score: 0,
-              score_type: Search.FindScoreType.BOTH,
-              position: {
-                index,
-                start,
-                end,
-                start_seconds: paragraph.start_seconds,
-                end_seconds: paragraph.end_seconds,
-              },
-            };
-          });
+          return paragraphs.map((paragraph, index) =>
+            getFindParagraphFromParagraph(paragraph, fieldFullId, text, index),
+          );
         }
       }),
     )
@@ -383,4 +394,64 @@ export function getPlayableVideo(): Observable<CloudLink | undefined> {
       return data?.extracted?.file?.file_generated?.['video.mpd'] || data?.value?.file;
     }),
   );
+}
+
+export const totalMessagePages = viewerState.reader<number>(
+  (state) =>
+    (state.currentResult?.data?.['conversations']?.[state.fieldFullId?.field_id || '']?.value as ConversationFieldPages)
+      ?.pages || 0,
+);
+
+export function loadMessagePage(page: number) {
+  fieldFullId
+    .pipe(
+      take(1),
+      filter((field) => !!field),
+      switchMap((field) => getResourceField(field, undefined, page)),
+    )
+    .subscribe((field) => {
+      const fieldDataValue = fieldData.getValue();
+      fieldData.set({
+        ...fieldDataValue,
+        value: {
+          messages: ((fieldDataValue?.value as ConversationField)?.messages || []).concat(
+            (field.value as ConversationField).messages,
+          ),
+        },
+      });
+    });
+}
+
+export function getFindParagraphFromParagraph(
+  paragraph: Paragraph,
+  fieldFullId: FieldFullId,
+  text: string,
+  index?: number,
+): Search.FindParagraph {
+  const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
+  const start = paragraph.start || 0;
+  const end = paragraph.end || 0;
+  const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
+    fieldFullId.field_id
+  }/${start}-${end}`;
+  return {
+    id,
+    order: paragraph.order || 0,
+    text: paragraphText,
+    labels: [],
+    score: 0,
+    score_type: Search.FindScoreType.BOTH,
+    position: {
+      index: index || 0,
+      start,
+      end,
+      start_seconds: paragraph.start_seconds,
+      end_seconds: paragraph.end_seconds,
+      page_number: paragraph.page?.page,
+    },
+    fuzzy_result: false,
+    page_with_visual: !!paragraph.page?.page_with_visual,
+    is_a_table: !!paragraph.representation?.is_a_table,
+    reference: paragraph.representation?.reference_file || '',
+  };
 }

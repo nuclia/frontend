@@ -5,6 +5,7 @@ import { AppService } from '../services';
 
 @Pipe({
   name: 'formatDate',
+  standalone: false,
 })
 export class FormatDatePipe implements PipeTransform {
   constructor(private appService: AppService) {}

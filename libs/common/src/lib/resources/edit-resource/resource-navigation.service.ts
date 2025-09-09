@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, Observable, switchMap, take } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { ResourceListParams, searchResources } from '../resource-list/resource-list.model';
 import { deDuplicateList } from '@nuclia/core';
+import { BehaviorSubject, combineLatest, filter, Observable, switchMap, take } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ResourceListParams, searchResources } from '../resource-list/resource-list.model';
 
 interface ResourceNavigationModel extends ResourceListParams {
   resourceIdList: string[];
   hasMore: boolean;
+  isArag?: boolean;
 }
 
 @Injectable({
@@ -82,7 +83,9 @@ export class ResourceNavigationService {
   private navigateToNextResource(currentData: ResourceNavigationModel, nextIndex: number) {
     const resourceId = currentData.resourceIdList[nextIndex];
     const snapshot = this._currentRoute?.snapshot;
-    let newUrl = location.pathname.replace(/\/resources\/[a-z0-9]+\/edit/, `/resources/${resourceId}/edit`);
+    let newUrl = currentData.isArag
+      ? location.pathname.replace(/\/sessions\/[a-z0-9]+\/edit/, `/sessions/${resourceId}/edit`)
+      : location.pathname.replace(/\/resources\/[a-z0-9]+\/edit/, `/resources/${resourceId}/edit`);
     const lastPath = snapshot?.routeConfig?.path?.split('/')[0];
     if (lastPath && lastPath !== 'resource') {
       newUrl = `${newUrl.split(lastPath)[0]}${lastPath}`;

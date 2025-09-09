@@ -75,9 +75,7 @@
                     class="title-s"
                     for="vat">
                     {{ 'billing.vat_id' | translate }}
-                    @if (vatRequired) {
-                      <span>*</span>
-                    }
+                    <span>*</span>
                   </label>
                   <pa-input
                     id="vat"
@@ -306,6 +304,8 @@
           @if (currency$ | async; as currency) {
             <app-budget
               [currency]="currency"
+              [showActions]="false"
+              [defaultBudget]="true"
               (budgetChange)="budget = $event"></app-budget>
             <div class="submit">
               <pa-button

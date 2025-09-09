@@ -11,14 +11,14 @@ import {
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { CreateWidgetDialogComponent } from './dialogs';
 import { filter, map, Observable, switchMap, take } from 'rxjs';
-import { DEFAULT_WIDGET_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '../search-widget.models';
+import { DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
 import { SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core'
 
 @Component({
   selector: 'stf-widget-list',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,
@@ -80,7 +80,7 @@ export class WidgetListComponent implements OnInit {
                 DEFAULT_WIDGET_CONFIG,
                 NUCLIA_STANDARD_SEARCH_CONFIG.id,
                 configuration['generative_model'] || '',
-                configuration['semantic_model'] || '',
+                configuration['default_semantic_model'] || '',
               ),
             ),
             switchMap((widgetSlug) => this.router.navigate(['.', widgetSlug], { relativeTo: this.route })),
@@ -98,7 +98,7 @@ export class WidgetListComponent implements OnInit {
     this.searchWidgetService.renameWidget(slug, name).subscribe();
   }
 
-  duplicateAsNew(widget: Widget) {
+  duplicateAsNew(widget: Widget.Widget) {
     this.searchWidgetService
       .duplicateWidget(widget)
       .subscribe((slug) => this.router.navigate(['./', slug], { relativeTo: this.route }));

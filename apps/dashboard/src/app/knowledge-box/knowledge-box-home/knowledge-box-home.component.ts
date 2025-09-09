@@ -1,21 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
-import { AppService, searchResources, UploadService } from '@flaps/common';
-import { ChartData, MetricsService } from '../../account/metrics.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
+import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
-import { Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
-import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { takeUntil } from 'rxjs/operators';
+import { ChartData, MetricsService } from '../../account/metrics.service';
+import { UsageModalComponent } from './kb-usage/usage-modal.component';
 
 @Component({
   selector: 'app-knowledge-box-home',
   templateUrl: './knowledge-box-home.component.html',
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
-export class KnowledgeBoxHomeComponent implements OnDestroy {
+export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   locale: Observable<string> = this.app.currentLocale;
@@ -25,6 +26,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isKbContrib = this.features.isKBContrib;
   isAccountManager = this.features.isAccountManager;
+  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
@@ -40,33 +42,43 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     map((kb) => kb.state),
     map((state) => (state ? `dashboard-home.state.${state.toLowerCase()}` : '')),
   );
-  counters: Observable<Counters> = this.sdk.counters;
+  counters: Observable<Counters | undefined> = this.sdk.counters;
 
   allChartsData: Observable<Partial<{ [key in UsageType]: ChartData }>> = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getUsageCharts(kb.id)),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
   );
   processingChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SLOW_PROCESSING_TIME]));
-  searchChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SEARCHES_PERFORMED]));
   nucliaTokenChart = this.allChartsData.pipe(map((charts) => charts[UsageType.NUCLIA_TOKENS]));
 
-  searchQueriesCounts = this.isAccountManager.pipe(
+  searchChartsData = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED, kb.id)),
+    switchMap(() => this.metrics.getSearchCharts()),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
   );
+  searchChart = this.searchChartsData.pipe(map((charts) => charts.search));
+  askChart = this.searchChartsData.pipe(map((charts) => charts.ask));
+
   nucliaTokensCounts = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getUsageCount(UsageType.NUCLIA_TOKENS, kb.id)),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
   );
+  searchQueriesCounts = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap(() => this.metrics.getSearchCount()),
+    takeUntil(this.unsubscribeAll),
+    shareReplay(1),
+  );
+  isSubscribed = this.metrics.isSubscribedToStripe;
 
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
     map(([account, kb]) => {
@@ -114,6 +126,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   currentChart: OptionModel = this.defaultChartOption;
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
+    new OptionModel({ id: 'ask', label: 'metrics.ask.title', value: 'ask' }),
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
     new OptionModel({ id: 'token', label: 'metrics.nuclia-tokens.title', value: 'token' }),
   ];
@@ -124,18 +137,33 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     slug: 'copy',
   };
 
+  healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
+
+  uploadBlocked = this.account.pipe(
+    map(
+      (account) =>
+        account.blocked_features.includes(BlockedFeature.UPLOAD) ||
+        account.blocked_features.includes(BlockedFeature.PROCESSING),
+    ),
+  );
+  generativeBlocked = this.account.pipe(map((account) => account.blocked_features.includes(BlockedFeature.GENERATIVE)));
+
   constructor(
     private app: AppService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
     private features: FeaturesService,
     private navigationService: NavigationService,
-    private uploadService: UploadService,
     private metrics: MetricsService,
     private modal: SisModalService,
     private zoneService: ZoneService,
+    private remiMetrics: RemiMetricsService,
   ) {}
+
+  ngOnInit() {
+    // We want the health status on the last 7 days
+    this.remiMetrics.updatePeriod('7d');
+  }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
@@ -143,12 +171,10 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   }
 
   copyEndpoint() {
-    this.tracking.logEvent('home_page_copy', { data: 'endpoint' });
     this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
   }
 
   copyUid() {
-    this.tracking.logEvent('home_page_copy', { data: 'uid' });
     this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
   }
 
@@ -169,18 +195,27 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   }
 
   selectChart(option: OptionModel) {
-    this.tracking.logEvent('select_home_chart', { chart: option.value });
     this.currentChart = option;
+    // when selecting another chart, first the chart is removed from the DOM causing the page height to be reduced
+    // then the new chart is added to the DOM increasing again the page height, but the scroll position is lost in the process
+    // so we scroll back to the bottom of the page
+    setTimeout(() => {
+      const mainElement = document.querySelector('main');
+      if (mainElement) {
+        mainElement.scrollTo({ top: mainElement.offsetHeight, behavior: 'smooth' });
+      }
+    }, 100);
   }
 
   openFullscreen() {
-    this.tracking.logEvent('open_home_chart_fullscreen');
     this.modal.openModal(
       UsageModalComponent,
       new ModalConfig({
         data: {
           processingChart: this.processingChart,
           searchChart: this.searchChart,
+          askChart: this.askChart,
+          tokenChart: this.nucliaTokenChart,
           currentChart: this.currentChart,
           chartDropdownOptions: this.chartDropdownOptions,
         },
@@ -188,7 +223,14 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     );
   }
 
-  trackNavigationFromHome(destination: string) {
-    this.tracking.logEvent('navigate_from_home_page', { destination });
+  navigateToTestPage() {
+    combineLatest([this.account, this.currentKb])
+      .pipe(
+        take(1),
+        map(([account, kb]) => this.navigationService.getTestPageUrl(account.slug, kb.slug)),
+      )
+      .subscribe((url) => {
+        window.open(url, 'blank', 'noreferrer');
+      });
   }
 }

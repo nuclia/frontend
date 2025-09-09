@@ -1,11 +1,11 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables';
 
 .version {
   position: fixed;
   bottom: 0;
   right: 0;
-  font-weight: $font-weight-thin;
-  color: $color-neutral-regular;
+  font-weight: variables.$font-weight-thin;
+  color: variables.$color-neutral-regular;
   background-color: transparent;
   font-size: font-size(xxs);
   padding-right: rhythm(0.5);

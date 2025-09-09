@@ -1,0 +1,74 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../../../agent-dashboard.tokens' as dashboard;
+
+.node-configuration-form {
+  $footer-height: rhythm(8);
+
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  height: calc(
+    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} - var(
+        --header-height,
+        #{dashboard.$height-sidebar-header}
+      ) - #{$footer-height} - #{rhythm(1)}
+  );
+  // those margin and padding right allow to stick the scrollbar on the side
+  margin-right: calc(#{dashboard.$padding-sidebar} * -1);
+  padding: rhythm(2) dashboard.$padding-sidebar rhythm(2) 0;
+  overflow: auto;
+
+  pa-toggle .pa-field-label {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+  }
+  .form-entry > label,
+  .label-and-button > label {
+    @include dashboard.form-label();
+  }
+  .form-entry.field-list {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+  .entry-with-button {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    :first-child {
+      flex: 1 0 auto;
+    }
+  }
+  .label-and-button {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .config-property-form {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .config-property-form {
+    margin-top: rhythm(2);
+  }
+
+  footer {
+    background-color: $color-light-stronger;
+    box-shadow: $box-shadow-border-top;
+    bottom: 0;
+    display: flex;
+    gap: rhythm(1.5);
+    left: 0;
+    padding: rhythm(1.5);
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+
+    > * {
+      flex: 1;
+    }
+  }
+}

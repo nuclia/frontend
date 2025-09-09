@@ -1,5 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { LabelsService, SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  IError,
+  IResource,
+  KnowledgeBox,
+  LabelSets,
+  ProcessingStatus,
+  Resource,
+  RESOURCE_STATUS,
+  SortOption,
+} from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -20,28 +32,20 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { FormatETAPipe } from '../../pipes';
+import { UploadService } from '../../upload/upload.service';
+import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
 import {
+  DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
+  formatQuery,
   getSearchOptions,
+  LabelsLogic,
   ResourceListParams,
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import {
-  IResource,
-  KnowledgeBox,
-  LabelSets,
-  ProcessingStatus,
-  Resource,
-  RESOURCE_STATUS,
-  SortOption,
-} from '@nuclia/core';
-import { TranslateService } from '@ngx-translate/core';
-import { UploadService } from '../../upload/upload.service';
-import { SisToastService } from '@nuclia/sistema';
-import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
-import { FormatETAPipe } from '../../pipes';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -69,8 +73,11 @@ export class ResourceListService {
   data = this._data.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
+  private _searchMode = new BehaviorSubject<'title' | 'uid' | 'slug'>('title');
+  searchMode = this._searchMode.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
   headerHeight = this._headerHeight.asObservable();
+  private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
 
   private _page = new BehaviorSubject<number>(0);
   page = this._page.asObservable();
@@ -82,17 +89,22 @@ export class ResourceListService {
     map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
   );
 
-  isShardReady = new BehaviorSubject<boolean>(false);
-
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
   );
 
   totalKbResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   prevFilters = this._filters.pipe(
     startWith([]),
+    pairwise(),
+    map(([prev]) => prev),
+    shareReplay(1),
+  );
+  prevLabelsLogic = this._labelsLogic.pipe(
+    startWith(DEFAULT_LABELS_LOGIC),
     pairwise(),
     map(([prev]) => prev),
     shareReplay(1),
@@ -126,15 +138,18 @@ export class ResourceListService {
     this._sort = DEFAULT_SORTING;
     this._query.next('');
     this._filters.next([]);
+    this._labelsLogic.next(DEFAULT_LABELS_LOGIC);
+    this._searchMode.next('title');
   }
 
   get sort(): SortOption {
     return this._sort;
   }
 
-  filter(filters: string[]) {
+  filter(filters: string[], labelsLogic: LabelsLogic = DEFAULT_LABELS_LOGIC) {
     this._page.next(0);
     this._filters.next(filters);
+    this._labelsLogic.next(labelsLogic);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
@@ -164,18 +179,22 @@ export class ResourceListService {
     this._query.next(query);
   }
 
+  setSearchMode(mode: 'title' | 'uid' | 'slug') {
+    this._searchMode.next(mode);
+  }
+
   setHeaderHeight(height: number) {
     this._headerHeight.next(height);
   }
 
-  loadResources(replaceData = true, updateCount = true): Observable<void> {
-    const loadRequest =
+  loadResources(replaceData = true, updateCount = true) {
+    return forkJoin([
       this.status === RESOURCE_STATUS.PENDING
         ? this.loadPendingResources(replaceData)
-        : this.loadResourcesFromCatalog(replaceData);
-
-    return loadRequest.pipe(
-      switchMap(() => (updateCount ? this.uploadService.updateStatusCount().pipe(map(() => {})) : of(undefined))),
+        : this.loadResourcesFromCatalog(replaceData),
+      updateCount ? this.uploadService.updateStatusCount() : of(undefined),
+    ]).pipe(
+      map(() => undefined),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
         this.toastService.error(this.translate.instant('resource.error.loading-failed'));
@@ -235,19 +254,28 @@ export class ResourceListService {
       page: this._page.value,
       pageSize: this._pageSize.value,
       sort: this._sort,
-      query: this._query.value.trim().replace('.', '\\.'),
+      query: formatQuery(this._query.value),
       filters: this._filters.value,
+      labelsLogic: this._labelsLogic.value,
     };
+    const searchMode = this._searchMode.value;
     return forkJoin([
       this.labelSets.pipe(take(1)),
       this.sdk.currentKb.pipe(
         take(1),
-        switchMap((kb) => searchResources(kb, resourceListParams)),
+        switchMap((kb) =>
+          searchResources(
+            kb,
+            resourceListParams,
+            searchMode === 'uid' ? this._query.value : undefined,
+            searchMode === 'slug' ? this._query.value : undefined,
+          ),
+        ),
       ),
     ]).pipe(
       map(([labelSets, { results, kbId }]) => {
         const newResults: ResourceWithLabels[] = Object.values(results.resources || {}).map((resourceData) =>
-          this.getResourceWithLabels(kbId, resourceData, labelSets),
+          this.getResourceWithLabelsAndErrors(kbId, resourceData, labelSets),
         );
         const newData = replaceData
           ? newResults
@@ -271,7 +299,11 @@ export class ResourceListService {
     );
   }
 
-  private getResourceWithLabels(kbId: string, resourceData: IResource, labelSets: LabelSets): ResourceWithLabels {
+  private getResourceWithLabelsAndErrors(
+    kbId: string,
+    resourceData: IResource,
+    labelSets: LabelSets,
+  ): ResourceWithLabels {
     const resource = new Resource(this.sdk.nuclia, kbId, resourceData);
     const resourceWithLabels: ResourceWithLabels = {
       resource,
@@ -283,6 +315,14 @@ export class ResourceListService {
         ...label,
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
+    }
+    const errors = resource
+      .getFields()
+      .reduce((errors, field) => errors.concat(field.errors || field.error || []), [] as IError[])
+      .map((error) => error?.body || '')
+      .filter((error) => !!error);
+    if (errors.length > 0) {
+      resourceWithLabels.errors = errors.join('. ');
     }
 
     return resourceWithLabels;
@@ -319,12 +359,17 @@ export class ResourceListService {
   getAllResources(
     sort: SortOption = DEFAULT_SORTING,
     status?: RESOURCE_STATUS,
+    applyFilters = false,
   ): Observable<{ resources: Resource[]; incomplete: boolean }> {
     let kb: KnowledgeBox;
     let errors = 0;
+    const query = applyFilters ? formatQuery(this._query.value) : '';
+    const filters = applyFilters
+      ? { filters: this._filters.value, labelsLogic: this._labelsLogic.value, query }
+      : { filters: [], query };
     const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
-      const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, query: '', filters: [] });
-      return kb.catalog('', searchOptions);
+      const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, ...filters });
+      return kb.catalog(query, searchOptions);
     };
     return this.sdk.currentKb.pipe(
       take(1),
@@ -352,8 +397,8 @@ export class ResourceListService {
     );
   }
 
-  downloadResources() {
-    return this.getAllResources().pipe(
+  downloadResources(status?: RESOURCE_STATUS) {
+    return this.getAllResources(undefined, status).pipe(
       tap((result) => {
         const header = 'Id,Title,Labels,Date';
         const rows = result.resources.map((resource) => {
@@ -363,7 +408,9 @@ export class ResourceListService {
             labels.join(','),
           )}",${date}`;
         });
-        const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_resource_list.csv`;
+        const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_resource_list${
+          status ? '_' + status.toLowerCase() : ''
+        }.csv`;
         const content = `${header}\n${rows.join('\n')}`;
         const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);

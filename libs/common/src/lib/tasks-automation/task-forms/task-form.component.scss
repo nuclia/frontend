@@ -1,15 +1,27 @@
-@import 'apps/dashboard/src/variables';
-@import 'task-form.common';
+@use 'apps/dashboard/src/variables' as *;
+@use '../task.common';
 
 :host {
-  .filter-form-container {
-    .filter-row {
-      display: flex;
-      gap: rhythm(1.5);
+  header {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    margin-bottom: rhythm(4);
+  }
 
-      & > * {
-        width: calc((100% - #{rhythm(1.5)}) / 2);
-      }
+  .title-s {
+    margin-bottom: rhythm(1);
+  }
+  .apply-to-da-fields {
+    display: flex;
+    pa-toggle {
+      margin-left: auto;
     }
+  }
+
+  app-parameters-table {
+    display: block;
+    margin-top: rhythm(1);
   }
 }

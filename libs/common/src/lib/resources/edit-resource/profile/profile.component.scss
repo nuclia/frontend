@@ -1,5 +1,4 @@
-@import 'apps/dashboard/src/variables';
-@import '../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
 
 .form-section {
   display: flex;

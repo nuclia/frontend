@@ -15,6 +15,7 @@ import { NerService } from './ner.service';
   templateUrl: './entities.component.html',
   styleUrls: ['./entities.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class EntitiesComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

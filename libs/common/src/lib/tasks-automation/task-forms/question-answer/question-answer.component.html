@@ -1,39 +1,33 @@
-<div class="page-spacing">
-  <header>
-    <nsi-back-button [link]="backRoute | async">
-      {{ 'tasks-automation.bach-to-tasks' | translate }}
-    </nsi-back-button>
-
-    <div>
-      <h1 class="page-title">{{ 'tasks-automation.question-answer.title' | translate }}</h1>
-      <p class="page-description">{{ 'tasks-automation.question-answer.description' | translate }}</p>
-    </div>
-  </header>
-
-  <app-task-form
-    triggerDescription="tasks-automation.question-answer.trigger-description"
-    activateButtonLabel="tasks-automation.question-answer.footer.activate-button-label"
-    footerNoteAutomation="tasks-automation.question-answer.footer.apply-automation"
-    footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
-    [availableLLMs]="generativeModels"
-    [validFormInside]="questionAnswerForm.valid"
-    (activate)="activateTask($event)"
-    (cancel)="backToTaskList()">
-    <div>
-      <nsi-two-columns-configuration-item
-        itemTitle="tasks-automation.question-answer.field-name.title"
-        description="tasks-automation.question-answer.field-name.description">
-        <div class="form-container">
-          <nsi-info-card>{{ 'tasks-automation.question-answer.field-name.info' | translate }}</nsi-info-card>
-          <div [formGroup]="questionAnswerForm">
-            <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
-            <pa-input
-              formControlName="fieldName"
-              [errorMessages]="errorMessages"
-              [placeholder]="'tasks-automation.form.field-name.placeholder' | translate"></pa-input>
+<app-task-form
+  [task]="task | async"
+  [type]="type"
+  triggerDescription="tasks-automation.question-answer.trigger-description"
+  footerNoteAutomation="tasks-automation.question-answer.footer.apply-automation"
+  footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
+  [validFormInside]="questionAnswerForm.valid"
+  (save)="onSave($event)"
+  (cancel)="backToTaskList()">
+  <div>
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.question-answer.prompts.title"
+      description="tasks-automation.question-answer.prompts.description"
+      badge="generic.badge.optional">
+      <div class="form-container">
+        <div [formGroup]="questionAnswerForm">
+          <div class="form-container">
+            <pa-textarea
+              formControlName="question_generator_prompt"
+              rows="3">
+              {{ 'tasks-automation.form.prompts.question-prompt' | translate }}
+            </pa-textarea>
+            <pa-textarea
+              formControlName="generate_answers_prompt"
+              rows="3">
+              {{ 'tasks-automation.form.prompts.answer-prompt' | translate }}
+            </pa-textarea>
           </div>
         </div>
-      </nsi-two-columns-configuration-item>
-    </div>
-  </app-task-form>
-</div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  </div>
+</app-task-form>

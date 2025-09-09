@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Tabs from '../../../common/tabs/TabsList.svelte';
-  import Tab from '../../../common/tabs/TabItem.svelte';
-  import { combineLatest, filter, map, Subject, take } from 'rxjs';
-  import { fieldData } from '../../../core';
   import type { FileFieldExtractedData } from '@nuclia/core';
+  import { combineLatest, filter, map, Subject, take } from 'rxjs';
   import { onMount } from 'svelte';
+  import Tab from '../../../common/tabs/TabItem.svelte';
+  import Tabs from '../../../common/tabs/TabsList.svelte';
+  import { fieldData } from '../../../core';
 
   const selectedSheetId = new Subject<string>();
   const sheets = fieldData.pipe(
@@ -29,7 +29,6 @@
     selectedSheetId.next(id);
   }
 </script>
-
 
 <div class="sw-spreadsheet-renderer">
   <div class="tabs">
@@ -64,8 +63,4 @@
   </div>
 </div>
 
-
-
-<style
-  lang="scss"
-  src="./SpreadsheetRenderer.scss"></style>
+<style src="./SpreadsheetRenderer.css"></style>

@@ -1,0 +1,31 @@
+.pdf-container {
+  bottom: 0;
+  overflow: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  .loading-container {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+  .pdf-controller {
+    align-items: center;
+    background-color: var(--modal-background-color);
+    border-radius: var(--rhythm-0_5);
+    bottom: var(--rhythm-3);
+    display: flex;
+    gap: var(--rhythm-1);
+    left: calc(var(--container-width) / 2);
+    padding: var(--rhythm-1);
+    position: fixed;
+    transform: translateX(-50%);
+
+    .pdf-zoom-container {
+      margin-left: var(--rhythm-2);
+    }
+  }
+}

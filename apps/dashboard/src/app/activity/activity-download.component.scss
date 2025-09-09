@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .primary-tabs {
   display: block;
@@ -17,7 +17,6 @@
 
 .activity-container {
   background-color: $color-neutral-lightest;
-  width: rhythm(90);
 }
 
 .download-list {
@@ -33,4 +32,12 @@
   &:last-child {
     border-bottom: 0;
   }
+}
+
+.email-sent {
+  padding: rhythm(1);
+}
+
+:host ::ng-deep button[disabled] pa-icon {
+  opacity: 0.3;
 }

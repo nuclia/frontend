@@ -1,0 +1,99 @@
+<div class="page-spacing">
+  <header>
+    <div class="page-title">
+      {{ 'retrieval-agents.drivers.title' | translate }}
+      <div class="add-driver-container">
+        <nsi-dropdown-button
+          icon="circle-plus"
+          iconAndText
+          fullWidth
+          [popupRef]="driverTypes">
+          {{ 'retrieval-agents.drivers.add.button' | translate }}
+        </nsi-dropdown-button>
+        <pa-dropdown #driverTypes>
+          <pa-option (selectOption)="addDriver('nuclia')">
+            {{ 'retrieval-agents.drivers.add.nuclia' | translate }}
+          </pa-option>
+          <pa-option
+            (selectOption)="addDriver('internet')"
+            [description]="
+              hasAllInternetDrivers() ? ('retrieval-agents.drivers.add.internet.all-configured' | translate) : ''
+            "
+            [disabled]="hasAllInternetDrivers()">
+            {{ 'retrieval-agents.drivers.add.internet.label' | translate }}
+          </pa-option>
+          @if (hasSql | async) {
+            <pa-option (selectOption)="addDriver('sql')">
+              {{ 'retrieval-agents.drivers.add.sql' | translate }}
+            </pa-option>
+          }
+          @if (hasCypher | async) {
+            <pa-option (selectOption)="addDriver('cypher')">
+              {{ 'retrieval-agents.drivers.add.cypher' | translate }}
+            </pa-option>
+          }
+          @if (hasMcp | async) {
+            <pa-option (selectOption)="addDriver('mcpsse')">
+              {{ 'retrieval-agents.drivers.add.mcpsse' | translate }}
+            </pa-option>
+            <pa-option (selectOption)="addDriver('mcpstdio')">
+              {{ 'retrieval-agents.drivers.add.mcpstdio' | translate }}
+            </pa-option>
+          }
+          @if (hasAlinia | async) {
+            <pa-option (selectOption)="addDriver('guardrails')">
+              {{ 'retrieval-agents.drivers.add.guardrails' | translate }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
+    </div>
+    <div class="page-description">{{ 'retrieval-agents.drivers.description' | translate }}</div>
+  </header>
+
+  <div class="driver-list">
+    @if (!drivers || drivers().length === 0) {
+      <nsi-info-card>
+        {{ 'retrieval-agents.drivers.empty' | translate }}
+      </nsi-info-card>
+    } @else {
+      <pa-table
+        columns="3fr 1fr 96px"
+        border
+        class="driver-list">
+        <pa-table-header>
+          <pa-table-cell header>{{ 'retrieval-agents.drivers.table.name' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'retrieval-agents.drivers.table.provider' | translate }}</pa-table-cell>
+          <pa-table-cell-menu header>{{ 'retrieval-agents.drivers.table.actions' | translate }}</pa-table-cell-menu>
+        </pa-table-header>
+        @for (driver of drivers(); track driver.identifier) {
+          <pa-table-row clickable>
+            <pa-table-cell (click)="edit(driver)">{{ driver.name }}</pa-table-cell>
+            <pa-table-cell (click)="edit(driver)">
+              {{ 'retrieval-agents.drivers.types.' + driver.provider | translate }}
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <div>
+                <pa-button
+                  aspect="basic"
+                  size="small"
+                  icon="more-vertical"
+                  [paPopup]="menu"></pa-button>
+                <pa-dropdown #menu>
+                  <pa-option (selectOption)="edit(driver)">
+                    {{ 'retrieval-agents.drivers.table.edit' | translate }}
+                  </pa-option>
+                  <pa-option
+                    destructive=""
+                    (selectOption)="deleteDriver(driver)">
+                    {{ 'retrieval-agents.drivers.table.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              </div>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    }
+  </div>
+</div>

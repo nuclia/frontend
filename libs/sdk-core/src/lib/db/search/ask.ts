@@ -1,9 +1,16 @@
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import { Ask } from './ask.models';
-import { ChatOptions } from './search.models';
+import { Ask, PredictAnswerOptions } from './ask.models';
+import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
+
+const ERROR_CODES: { [key: string]: number } = {
+  success: 0,
+  error: -1,
+  no_context: -2,
+  no_retrieval_data: -3,
+};
 
 export function ask(
   nuclia: INuclia,
@@ -26,11 +33,10 @@ export function ask(
   const body = {
     query,
     context,
-    show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
+    show: searchOptions.show || [ResourceProperties.BASIC, ResourceProperties.VALUES],
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };
-  body['shards'] = nuclia.currentShards?.[kbid] || [];
   nuclia.events?.log('lastQuery', {
     endpoint,
     params: body,
@@ -39,17 +45,41 @@ export function ask(
   });
   return synchronous
     ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
-        map(({ answer, relations, retrieval_results, citations, learning_id, answer_json }) => {
-          return {
-            type: 'answer',
-            text: answer,
-            sources: { ...retrieval_results, relations },
+        map(
+          ({
+            answer,
+            relations,
+            retrieval_results,
             citations,
-            incomplete: false,
-            id: learning_id,
-            jsonAnswer: answer_json,
-          } as Ask.Answer;
-        }),
+            learning_id,
+            answer_json,
+            status,
+            error_details,
+            metadata,
+            prompt_context,
+            augmented_context,
+          }) => {
+            if (status !== 'success') {
+              return {
+                type: 'error',
+                status: ERROR_CODES[status] || -1,
+                detail: error_details || '',
+              } as IErrorResponse;
+            }
+            return {
+              type: 'answer',
+              text: answer,
+              sources: { ...retrieval_results, relations },
+              citations,
+              incomplete: false,
+              id: learning_id,
+              jsonAnswer: answer_json,
+              metadata,
+              promptContext: prompt_context,
+              augmentedContext: augmented_context,
+            } as Ask.Answer;
+          },
+        ),
         tap((res) => nuclia.events?.log('lastResults', res)),
       )
     : nuclia.rest.getStreamedResponse(endpoint, body).pipe(
@@ -73,6 +103,14 @@ export function ask(
             return acc;
           }, [] as Ask.AskResponseItem[]);
 
+          const statusItem = items.find((item) => item.item.type === 'status');
+          if (statusItem) {
+            const item = statusItem.item as Ask.StatusAskResponseItem;
+            const status = parseInt(item.code, 10);
+            if (!Number.isNaN(status) && status !== 0) {
+              return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
+            }
+          }
           let answer = items
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
@@ -84,6 +122,11 @@ export function ask(
           }
           const citationsItem = items.find((item) => item.item.type === 'citations');
           const citations = citationsItem ? (citationsItem.item as Ask.CitationsAskResponseItem).citations : undefined;
+          const prequeriesItem = items.find((item) => item.item.type === 'prequeries');
+          const prequeries: { [key: string]: Omit<Search.FindResults, 'type'> } | undefined = prequeriesItem
+            ? (prequeriesItem.item as Ask.PrequeriesResponseItem).results
+            : undefined;
+
           const jsonAnswerItem = items.find((response) => response.item.type === 'answer_json');
           let jsonAnswer: Ask.AnswerJsonResponseItem | undefined;
           if (jsonAnswerItem) {
@@ -92,6 +135,21 @@ export function ask(
               answer = jsonAnswer.object['answer'];
             }
           }
+          const metadataItem = items.find((item) => item.item.type === 'metadata');
+          const metadata = metadataItem
+            ? {
+                timings: (metadataItem.item as Ask.MetadataAskResponseItem).timings,
+                tokens: (metadataItem.item as Ask.MetadataAskResponseItem).tokens,
+              }
+            : undefined;
+          const debugItem = items.find((item) => item.item.type === 'debug');
+          const promptContext = debugItem
+            ? (debugItem.item as Ask.DebugAskResponseItem).metadata?.['prompt_context']
+            : undefined;
+          const augmentedContextItem = items.find((item) => item.item.type === 'augmented_context');
+          const augmentedContext = augmentedContextItem
+            ? (augmentedContextItem.item as Ask.AugmentedContextAskResponseItem).augmented
+            : undefined;
 
           return {
             type: 'answer',
@@ -100,17 +158,127 @@ export function ask(
             incomplete,
             id,
             citations,
+            prequeries,
             jsonAnswer: jsonAnswer?.object,
+            metadata,
+            promptContext,
+            augmentedContext,
           } as Ask.Answer;
         }),
         catchError((error) =>
-          of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),
+          of({ type: 'error', status: error.status, detail: error.detail || error.details || '' } as IErrorResponse),
         ),
         tap((res) => {
           nuclia.events?.log('lastResults', res);
-          if (res.type === 'answer' && res.sources) {
-            nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.sources.shards || [] };
-          }
         }),
       );
+}
+
+export function predictAnswer(
+  nuclia: INuclia,
+  path: string,
+  question: string,
+  options: PredictAnswerOptions = {},
+  synchronous?: boolean,
+): Observable<Ask.Answer | IErrorResponse> {
+  const endpoint = `${path}/predict/chat`;
+  const body = { question, user_id: Ask.Author.USER, ...options };
+  const extraHeaders: { [key: string]: string } = synchronous ? {} : { accept: 'application/x-ndjson' };
+  nuclia.events?.log('lastQuery', {
+    endpoint,
+    params: body,
+    headers: nuclia.rest.getHeaders('POST', endpoint, extraHeaders, synchronous),
+    nucliaOptions: nuclia.options,
+  });
+  return (
+    synchronous
+      ? nuclia.rest.post<Response>(endpoint, body, extraHeaders, true).pipe(
+          switchMap((res) => {
+            const id = res.headers.get('nuclia-learning-id') || '';
+            return from(res.text()).pipe(
+              map((text) => {
+                if (options?.json_schema) {
+                  const rows = text.split('\n').filter((d) => d);
+                  return rows.reduce(
+                    (acc, row) => {
+                      const obj = JSON.parse(row).chunk;
+                      if (obj.type === 'object') {
+                        acc.jsonAnswer = obj.object;
+                      }
+                      if (obj.type === 'status') {
+                        acc.status = parseInt(obj.code);
+                      }
+                      return acc;
+                    },
+                    { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
+                  );
+                } else {
+                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
+                }
+              }),
+            );
+          }),
+          map(({ id, answer, jsonAnswer, status }) => {
+            if (!Number.isNaN(status) && status !== 0) {
+              return { type: 'error', status, detail: answer } as IErrorResponse;
+            }
+            return {
+              type: 'answer',
+              id,
+              text: answer,
+              jsonAnswer,
+              incomplete: false,
+              inError: false,
+            } as Ask.Answer;
+          }),
+        )
+      : nuclia.rest.getStreamedResponse(endpoint, body, extraHeaders).pipe(
+          map(({ data, incomplete, headers }) => {
+            const id = headers.get('nuclia-learning-id') || '';
+            let previous = '';
+            const rows = new TextDecoder()
+              .decode(data.buffer)
+              .split('\n')
+              .filter((d) => d);
+            const items = rows.reduce((acc, row) => {
+              previous += row;
+              try {
+                const obj = JSON.parse(previous) as Ask.PredictAnswerResponseItem;
+                acc.push(obj);
+                previous = '';
+              } catch (e) {
+                // block is not complete yet
+              }
+              return acc;
+            }, [] as Ask.PredictAnswerResponseItem[]);
+            const statusItem = items.find((item) => item.chunk.type === 'status');
+            if (statusItem) {
+              const item = statusItem.chunk as Ask.StatusPredictAnswerResponseItem;
+              const status = parseInt(item.code, 10);
+              if (!Number.isNaN(status) && status !== 0) {
+                return { type: 'error', status } as IErrorResponse;
+              }
+            }
+            const jsonAnswerItem = items.find((item) => item.chunk.type === 'object');
+            const jsonAnswer = jsonAnswerItem
+              ? (jsonAnswerItem.chunk as Ask.JsonPredictAnswerResponseItem).object
+              : undefined;
+            const text = items
+              .filter((item) => item.chunk.type === 'text')
+              .map((item) => (item.chunk as Ask.TextPredictAnswerResponseItem).text)
+              .join('');
+            return {
+              type: 'answer',
+              id,
+              text,
+              jsonAnswer,
+              incomplete,
+              inError: false,
+            } as Ask.Answer;
+          }),
+        )
+  ).pipe(
+    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse)),
+    tap((res) => nuclia.events?.log('lastResults', res)),
+  );
 }

@@ -1,19 +1,9 @@
-import {
-  getAnswer,
-  getEntities,
-  getLabelSets,
-  getResourceById,
-  getResourceField,
-  predict,
-  searchInResource,
-  suggest,
-} from '../api';
-import { labelSets, labelState } from './labels.store';
-import type { Suggestions } from './suggestions.store';
-import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
+import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse, LabelSets } from '@nuclia/core';
+import { getFieldTypeFromString, PATH_FILTER_PREFIX, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
   debounceTime,
+  delay,
   distinctUntilChanged,
   filter,
   forkJoin,
@@ -28,52 +18,101 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
+import {
+  getAnswer,
+  getAnswerWithoutRAG,
+  getEntities,
+  getLabelSets,
+  getMimeFacets,
+  getNotEngoughDataMessage,
+  getResourceById,
+  getResourceField,
+  searchInResource,
+  suggest,
+} from '../api';
+import { currentLanguage, translateInstant } from '../i18n';
+import type { NerNode } from '../knowledge-graph.models';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { isCitationsEnabled, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
-import type {
-  Ask,
-  BaseSearchOptions,
-  ChatOptions,
-  Classification,
-  FieldFullId,
-  IErrorResponse,
-  Search,
-} from '@nuclia/core';
-import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
+import { reset } from '../reset';
+import { unsubscribeTriggerSearch } from '../search-bar';
+import { logEvent } from '../tracking';
 import {
-  formatQueryKey,
+  creationEndKey,
+  creationStartKey,
+  filterKey,
   getFindParagraphs,
+  getPreviewParam,
   getUrlParams,
   hasNoResultsWithAutofilter,
+  markdownToTxt,
+  paragraphKey,
+  previewKey,
+  queryKey,
   updateQueryParams,
 } from '../utils';
 import {
+  answerState,
+  appendChatEntry,
+  chat,
+  chatError,
+  currentAnswer,
+  currentQuestion,
+  hasNotEnoughData,
+  isSpeechOn,
+  lastSpeakableFullAnswer,
+} from './answers.store';
+import { entities, entitiesState } from './entities.store';
+import { graphSearchResults, graphSelection, graphState } from './graph.store';
+import { labelSets, labelState } from './labels.store';
+import { mimeFacets } from './mime.store';
+import {
+  combinedFilterExpression,
+  combinedFilters,
   creationEnd,
   creationStart,
+  filterExpression,
   getFieldDataFromResource,
   getResultType,
+  images,
   isEmptySearchQuery,
   pendingResults,
-  preselectedFilters,
+  rangeCreationISO,
   resultList,
+  searchConfigId,
   searchFilters,
   searchQuery,
   searchState,
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
-import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
-import { graphSearchResults, graphSelection, graphState } from './graph.store';
-import type { NerNode } from '../knowledge-graph.models';
-import { entities, entitiesState } from './entities.store';
-import { unsubscribeTriggerSearch } from '../search-bar';
-import { logEvent } from '../tracking';
-import { translateInstant } from '../i18n';
-import { reset } from '../reset';
+import type { Suggestions } from './suggestions.store';
+import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
+import {
+  fieldData,
+  fieldFullId,
+  getFindParagraphFromParagraph,
+  resultParagraphs,
+  selectedParagraphIndex,
+  viewerClosed,
+  viewerData,
+  viewerOpened,
+  viewerState,
+} from './viewer.store';
+import {
+  disableRAG,
+  isCitationsEnabled,
+  isSpeechEnabled,
+  isSpeechSynthesisEnabled,
+  widgetImageRagStrategies,
+  widgetRagStrategies,
+} from './widget.store';
+import { loadPaths } from './paths.store';
 
 const subscriptions: Subscription[] = [];
+
+const CHAT_HISTORY_KEY = 'nuclia.chat.history';
 
 function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
@@ -92,14 +131,34 @@ reset.subscribe(() => resetStatesAndEffects());
 /**
  * Initialise label sets in the store
  */
-export function initLabelStore() {
+export function initLabelStore(labelsetsExcludedFromFilters?: string) {
+  const excludedLabelSets = (labelsetsExcludedFromFilters || '').split(',');
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
-  getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
+  getLabelSets().subscribe((labelSetMap) => {
+    const filteredLabelSets = Object.entries(labelSetMap).reduce((filteredMap, [labelSetKey, labelSet]) => {
+      if (!excludedLabelSets.includes(labelSetKey)) {
+        filteredMap = { ...filteredMap, [labelSetKey]: labelSet };
+      }
+      return filteredMap;
+    }, {} as LabelSets);
+    labelSets.set(filteredLabelSets);
+  });
 }
 export function initEntitiesStore() {
   getEntities().subscribe((entityMap) => entities.set(entityMap));
 }
-
+/**
+ * Initialise mime types in the store
+ */
+export function initMimeTypeStore() {
+  getMimeFacets().subscribe((mimeFacetsMap) => mimeFacets.set(mimeFacetsMap));
+}
+/**
+ * Initialise path facets in the store
+ */
+export function initPathsStore() {
+  loadPaths(['/origin.path'], true).subscribe();
+}
 /**
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.
  */
@@ -120,12 +179,9 @@ export function activateTypeAheadSuggestions() {
             results: NO_SUGGESTION_RESULTS,
           } as Suggestions);
         }
-        const requests: [Observable<Search.Suggestions | IErrorResponse>, Observable<Classification[]>] =
-          widgetFeatures.getValue()?.suggestLabels ? [suggest(query), predict(query)] : [suggest(query), of([])];
-        return forkJoin(requests).pipe(
-          map(([results, predictions]) => ({
-            results: results.type !== 'error' ? results : NO_SUGGESTION_RESULTS,
-            labels: predictions,
+        return suggest(query).pipe(
+          map((results) => ({
+            results,
           })),
         );
       }),
@@ -134,12 +190,6 @@ export function activateTypeAheadSuggestions() {
 
   subscriptions.push(subscription);
 }
-
-const queryKey = formatQueryKey('query');
-const filterKey = formatQueryKey('filter');
-const previewKey = formatQueryKey('preview');
-const creationStartKey = formatQueryKey('creationStart');
-const creationEndKey = formatQueryKey('creationEnd');
 
 /**
  * Initialise answer feature
@@ -173,6 +223,38 @@ export function initAnswer() {
         ),
       )
       .subscribe(),
+  );
+  subscriptions.push(
+    isSpeechEnabled
+      .pipe(
+        filter((isSpeechEnabled) => isSpeechEnabled),
+        take(1),
+      )
+      .subscribe(() => SpeechSettings.init()),
+  );
+  subscriptions.push(
+    combineLatest([isSpeechOn, SpeechStore.isStarted])
+      .pipe(distinctUntilChanged())
+      .subscribe(([on, started]) => {
+        if (on && !started) {
+          SpeechSettings.start();
+        } else if (!on && started) {
+          SpeechSettings.stop();
+        }
+      }),
+  );
+  subscriptions.push(
+    combineLatest([lastSpeakableFullAnswer, isSpeechSynthesisEnabled])
+      .pipe(
+        filter(([answer, enabled]) => !!answer && !!enabled),
+        map(([answer]) => (answer as Ask.Answer).text),
+        distinctUntilChanged(),
+      )
+      .subscribe((text) => {
+        const lang = currentLanguage.getValue();
+        const speakable = markdownToTxt(text);
+        speak(speakable, lang);
+      }),
   );
 }
 
@@ -223,21 +305,24 @@ export function activatePermalinks() {
         filter((data) => !!data.fieldFullId),
       )
       .subscribe((viewerState) => {
-        const previewId = `${viewerState.fieldFullId?.resourceId}|${viewerState.fieldFullId?.field_type}|${viewerState.fieldFullId?.field_id}`;
-        const selectedIndex = `${viewerState.selectedParagraphIndex}`;
         const urlParams = getUrlParams();
-        urlParams.set(previewKey, `${previewId}|${selectedIndex}`);
+        urlParams.set(
+          previewKey,
+          getPreviewParam(viewerState.fieldFullId?.resourceId || '', viewerState.fieldFullId as FieldFullId),
+        );
         updateQueryParams(urlParams);
       }),
     //Remove preview parameters from the URL when preview is closed
     fieldFullId
       .pipe(
         distinctUntilChanged(),
+        skip(1),
         filter((fullId) => !fullId),
       )
       .subscribe(() => {
         const urlParams = getUrlParams();
         urlParams.delete(previewKey);
+        urlParams.delete(paragraphKey);
         updateQueryParams(urlParams);
       }),
   ];
@@ -267,8 +352,9 @@ function initStoreFromUrlParams() {
 
   // Viewer store
   const preview = urlParams.get(previewKey);
+  const initialParagraph = urlParams.get(paragraphKey);
   if (preview) {
-    const [resourceId, type, field_id, selectedIndex] = preview.split('|');
+    const [resourceId, type, field_id] = preview.split('|');
     const field_type = getFieldTypeFromString(type);
     if (resourceId && field_type && field_id) {
       resultList
@@ -301,35 +387,62 @@ function initStoreFromUrlParams() {
               );
             }
           }),
+          tap((previewResult: TypedResult | undefined) => {
+            if (previewResult) {
+              viewerData.set({ result: previewResult, selectedParagraphIndex: -1 });
+            }
+          }),
+          switchMap(() =>
+            initialParagraph
+              ? viewerData.pipe(
+                  // wait untill paragraphs are loaded
+                  filter((data) => !!data.currentResult?.fieldData?.extracted),
+                  take(1),
+                  delay(10),
+                  tap((data) => {
+                    const text = data.currentResult?.fieldData?.extracted?.text?.text || '';
+                    const fieldFullId = data.fieldFullId;
+                    const [start, end] = initialParagraph?.split('-') || ['0', '0'];
+                    const paragraph = data.currentResult?.fieldData?.extracted?.metadata?.metadata.paragraphs.find(
+                      (paragraph) => paragraph.start == parseInt(start) && paragraph.end === parseInt(end),
+                    );
+                    if (paragraph && fieldFullId) {
+                      resultParagraphs.set([getFindParagraphFromParagraph(paragraph, fieldFullId, text)]);
+                      selectedParagraphIndex.set({ index: 0, playFromTranscripts: false });
+                    }
+                  }),
+                )
+              : of(undefined),
+          ),
         )
-        .subscribe((previewResult: TypedResult | undefined) => {
-          const index = selectedIndex !== 'null' ? parseInt(selectedIndex, 10) : -1;
-          if (previewResult) {
-            viewerData.set({
-              result: previewResult,
-              selectedParagraphIndex: index,
-            });
-          }
-        });
+        .subscribe();
     }
   }
 }
 
 // Load field data when fieldFullId is set
-export function initViewer() {
-  const subscription = fieldFullId
-    .pipe(
-      distinctUntilChanged(),
-      switchMap((fullId) => {
-        if (fullId) {
-          return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
-        } else {
-          return of(null);
-        }
-      }),
-    )
-    .subscribe();
-  subscriptions.push(subscription);
+export function initViewer(dispatch?: (event: string, details: boolean) => void) {
+  const viewerSubscriptions = [
+    fieldFullId
+      .pipe(
+        distinctUntilChanged(),
+        switchMap((fullId) => {
+          if (fullId) {
+            return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
+          } else {
+            return of(null);
+          }
+        }),
+      )
+      .subscribe(),
+    viewerClosed.subscribe(() => {
+      dispatch?.('closePreview', true);
+    }),
+    viewerOpened.subscribe(() => {
+      dispatch?.('openPreview', true);
+    }),
+  ];
+  subscriptions.push(...viewerSubscriptions);
 }
 
 export function setupTriggerGraphNerSearch() {
@@ -364,51 +477,93 @@ export function askQuestion(
   reset: boolean,
   options: BaseSearchOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
+  let hasError = false;
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
-    switchMap(({ question }) =>
-      chat.pipe(
-        take(1),
-        map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
-        switchMap((entries) =>
-          combineLatest([searchFilters.pipe(take(1)), preselectedFilters.pipe(take(1))]).pipe(
-            switchMap(([filters, preselectedFilters]) =>
-              getAnswer(question, entries, { ...options, filters: filters.concat(preselectedFilters) }).pipe(
-                tap((result) => {
-                  if (result.type === 'error') {
-                    if ([412, 529].includes(result.status)) {
-                      chat.set({
-                        question,
-                        answer: {
-                          inError: true,
-                          text: translateInstant('answer.error.rephrasing'),
-                          type: 'answer',
-                          id: '',
-                        },
-                      });
-                    } else {
-                      chatError.set(result);
-                    }
-                    pendingResults.set(false);
-                  } else {
-                    if (result.incomplete) {
-                      if (hasNoResultsWithAutofilter(result.sources, options)) {
-                        // when no results with autofilter on, a secondary call is made with autofilter off,
-                        // meanwhile, we do not want to display the 'Not enough data' message
-                        result.text = '';
-                      }
-                      currentAnswer.set(result);
-                    } else {
-                      chat.set({ question, answer: result });
-                      pendingResults.set(false);
-                    }
-                  }
-                }),
-              ),
-            ),
-          ),
+    switchMap(() =>
+      forkJoin([
+        chat.pipe(
+          take(1),
+          map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
         ),
-      ),
+        combinedFilters.pipe(take(1)),
+        combinedFilterExpression.pipe(take(1)),
+        filterExpression.pipe(take(1)),
+        rangeCreationISO.pipe(take(1)),
+        disableRAG.pipe(take(1)),
+        images.pipe(take(1)),
+        searchConfigId.pipe(take(1)),
+      ]),
+    ),
+    switchMap(
+      ([
+        entries,
+        filters,
+        combinedFilterExpression,
+        filterExpression,
+        rangeCreation,
+        disableRAG,
+        extra_context_images,
+        search_configuration,
+      ]) => {
+        options.search_configuration = search_configuration;
+        return (
+          disableRAG
+            ? getAnswerWithoutRAG(question, entries, options)
+            : getAnswer(question, entries, {
+                ...options,
+                filters: filterExpression ? undefined : filters,
+                filter_expression: filterExpression ? combinedFilterExpression : undefined,
+                range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
+                range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
+                extra_context_images,
+              })
+        ).pipe(
+          tap((result) => {
+            hasNotEnoughData.set(result.type === 'error' && result.status === -2);
+            if (result.type === 'error') {
+              if ([-3, -2, -1, 412, 529].includes(result.status)) {
+                const messages: { [key: string]: string } = {
+                  '-3': 'answer.error.no_retrieval_data',
+                  '-2': 'answer.error.llm_cannot_answer',
+                  '-1': 'answer.error.llm_error',
+                  '412': 'answer.error.rephrasing',
+                  '529': 'answer.error.rephrasing',
+                };
+                if (!hasError) {
+                  // error is set only once
+                  hasError = true;
+                  const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+                  appendChatEntry.set({
+                    question,
+                    answer: {
+                      inError: true,
+                      text: translateInstant(text),
+                      type: 'answer',
+                      id: '',
+                    },
+                  });
+                }
+              } else {
+                chatError.set(result);
+              }
+              pendingResults.set(false);
+            } else {
+              if (result.incomplete) {
+                if (hasNoResultsWithAutofilter(result.sources, options)) {
+                  // when no results with autofilter on, a secondary call is made with autofilter off,
+                  // meanwhile, we do not want to display the 'Not enough data' message
+                  result.text = '';
+                }
+                currentAnswer.set(result);
+              } else {
+                appendChatEntry.set({ question, answer: result });
+                pendingResults.set(false);
+              }
+            }
+          }),
+        );
+      },
     ),
   );
 }
@@ -424,4 +579,20 @@ export function initUsageTracking(noTracking?: boolean) {
         .subscribe((engagement) => logEvent('engage', { ...engagement })),
     );
   }
+}
+
+export function initChatHistoryPersistence(id?: string) {
+  const key = id ? `${CHAT_HISTORY_KEY}.${id}` : CHAT_HISTORY_KEY;
+  const chatHistory = localStorage.getItem(key);
+  if (chatHistory) {
+    chat.set(JSON.parse(chatHistory));
+  }
+  subscriptions.push(
+    chat
+      .pipe(
+        distinctUntilChanged(),
+        filter((history) => !history[history.length - 1]?.answer?.incomplete),
+      )
+      .subscribe((history) => localStorage.setItem(key, JSON.stringify(history))),
+  );
 }

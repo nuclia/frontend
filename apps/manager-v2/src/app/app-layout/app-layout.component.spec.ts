@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppLayoutComponent } from './app-layout.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService, UserService } from '@flaps/core';
+import { RouterModule } from '@angular/router';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
+import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import { AppLayoutComponent } from './app-layout.component';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
@@ -14,7 +14,7 @@ describe('AppLayoutComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(TranslateModule),
         MockModule(PaAvatarModule),
         MockModule(PaDropdownModule),
@@ -30,6 +30,7 @@ describe('AppLayoutComponent', () => {
           },
         } as unknown as SDKService),
         MockProvider(UserService, { userInfo: of(undefined) }),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
 

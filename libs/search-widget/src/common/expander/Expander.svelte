@@ -2,32 +2,37 @@
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { IconButton } from '../button';
 
-  export let expanded: boolean = false;
-  export let duration: number = 300;
+  interface Props {
+    expanded?: boolean;
+    duration?: number;
+    header?: import('svelte').Snippet;
+    children?: import('svelte').Snippet;
+  }
+
+  let { expanded = $bindable(false), duration = 300, header, children }: Props = $props();
 
   const dispatch = createEventDispatcher();
-  let content: HTMLElement;
-  let showContent: boolean = false;
-  let contentHeight = 0;
+  let content: HTMLElement = $state();
+  let showContent: boolean = $state(false);
+  let contentHeight = $state(0);
   let timer;
-
-  $: if (expanded) {
-    expand();
-  } else {
-    collapse();
-  }
 
   onMount(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      if (entries[0].contentRect.height !== contentHeight) {
-        contentHeight = entries[0].contentRect.height;
-      }
+      window.requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) {
+          return;
+        }
+        if (expanded && entries[0].contentRect.height !== contentHeight) {
+          contentHeight = entries[0].contentRect.height;
+        }
+      });
     });
     resizeObserver.observe(content);
 
     return () => {
       resizeObserver.disconnect();
-    }
+    };
   });
 
   const expand = async () => {
@@ -45,37 +50,44 @@
       dispatch('toggleExpander', { expanded: false });
     }, duration);
   };
+  $effect(() => {
+    if (expanded) {
+      expand();
+    } else {
+      collapse();
+    }
+  });
 </script>
 
 <div class="sw-expander">
-  <div
-    on:click={() => (expanded = !expanded)}
-    on:keypress={(e) => {
-      if (e.key === 'Enter') {
-        expanded = !expanded;
-      }
-    }}
-    class="header"
-    class:expanded>
-    <span class="expander-icon">
-      <IconButton
-        icon="chevron-right"
-        size="small"
-        aspect="basic" />
-    </span>
-    <slot name="header" />
-  </div>
+  {#if header}
+    <div
+      onclick={() => (expanded = !expanded)}
+      onkeypress={(e) => {
+        if (e.key === 'Enter') {
+          expanded = !expanded;
+        }
+      }}
+      class="header"
+      class:expanded>
+      <span class="expander-icon">
+        <IconButton
+          icon="chevron-right"
+          size="small"
+          aspect="basic" />
+      </span>
+      {@render header?.()}
+    </div>
+  {/if}
   <div
     class="expander-content"
     style:height="{contentHeight}px"
-    style:display={showContent ? 'block' : 'none'}
+    style:visibility={showContent ? 'visible' : 'hidden'}
     style:transition={`height ${duration}ms`}>
     <div bind:this={content}>
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 </div>
 
-<style
-  lang="scss"
-  src="./Expander.scss"></style>
+<style src="./Expander.css"></style>

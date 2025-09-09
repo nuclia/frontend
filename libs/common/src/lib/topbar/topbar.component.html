@@ -4,22 +4,17 @@
     (click)="goToHome()">
     <img
       class="topbar-logo-expanded"
-      [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
-      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
-    @if (isStage) {
+      [src]="!standalone ? logoPath : 'assets/logos/nucliadb.svg'"
+      [alt]="!standalone ? brandName : 'NucliaDB'" />
+    @if (isStageOrDev) {
       <img
         src="assets/logos/stage-icon.svg"
         class="is-stage"
         alt="Stage" />
     }
-
-    <img
-      class="topbar-logo-collapsed"
-      [src]="!standalone ? 'assets/logos/nuclia-symbol.svg' : 'assets/logos/nucliadb-symbol.svg'"
-      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
   </button>
 
-  @if (showDemo) {
+  @if (showDemo && (hasDemoButton | async)) {
     <pa-button
       kind="primary"
       aspect="basic"
@@ -28,7 +23,8 @@
       (keyup.enter)="bookDemo()">
       <a
         href="https://nuclia.com/book-a-demo/"
-        target="_blank">
+        target="_blank"
+        rel="noopener noreferrer">
         {{ 'need-help-book-demo' | translate }}
       </a>
     </pa-button>

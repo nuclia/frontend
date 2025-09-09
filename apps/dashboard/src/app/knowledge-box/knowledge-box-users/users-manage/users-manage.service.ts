@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { InviteKbData, KBRoles, WritableKnowledgeBox } from '@nuclia/core';
@@ -11,8 +11,9 @@ export class UsersManageService {
 
   usersKb = this._onUpdateUsers.pipe(
     switchMap(() =>
-      forkJoin([this._kb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
-        switchMap(([kb, account]) => kb.getUsers(account.slug)),
+      this._kb.pipe(
+        take(1),
+        switchMap((kb) => kb.getUsers()),
       ),
     ),
     shareReplay(1),

@@ -1,6 +1,8 @@
 <pa-modal-dialog>
   <pa-modal-title>Dialog title</pa-modal-title>
-  <pa-modal-description *ngIf="!!modal.config.data?.['displayDescription']">Dialog description</pa-modal-description>
+  @if (!!modal.config.data?.['displayDescription']) {
+    <pa-modal-description>Dialog description</pa-modal-description>
+  }
   <pa-modal-content>
     <div>
       <p>Some simple content, like a simple form.</p>

@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FeaturesService,
   NavigationService,
@@ -8,32 +10,28 @@ import {
   STFUtils,
   ZoneService,
 } from '@flaps/core';
+import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
-  InfoCardComponent,
   SisModalService,
   SisProgressModule,
   SisToastService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import {
   EmbeddingsModelFormComponent,
   LearningConfigurationForm,
   VectorDatabaseFormComponent,
   VectorDbModel,
 } from '@nuclia/user';
+import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,
@@ -46,7 +44,6 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
     PaTogglesModule,
     EmbeddingsModelFormComponent,
     SisProgressModule,
-    InfoCardComponent,
     VectorDatabaseFormComponent,
   ],
   templateUrl: './kb-creation.component.html',
@@ -63,6 +60,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
   private featureService = inject(FeaturesService);
+  private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -115,8 +113,15 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
-      this.sdk.nuclia.db.getLearningSchema().subscribe((schema) => {
-        this.learningSchema.next(schema);
+      this.sdk.nuclia.db.getLearningSchema().subscribe({
+        next: (schema) => {
+          this.learningSchema.next(schema);
+        },
+        error: (error) => {
+          this.toaster.error(
+            this.translate.instant('kb.create.error-loading-schema', { error: error.body.detail || 'Unknown error' }),
+          );
+        },
       });
     } else {
       // update learning schema when zone changes

@@ -1,0 +1,7 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.generated-fields {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}

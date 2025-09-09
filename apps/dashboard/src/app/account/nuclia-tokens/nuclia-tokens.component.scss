@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .total {
   margin-bottom: rhythm(4);
@@ -17,12 +17,25 @@
   }
 }
 
-.select-kb {
-  width: rhythm(35);
+.selectors {
+  display: flex;
+  gap: rhythm(1);
+}
+.select {
+  min-width: rhythm(24);
 }
 
 .type {
   align-items: center;
   display: flex;
-  gap: rhythm(0.5);
+  gap: rhythm(1);
+}
+
+.model {
+  color: $color-neutral-regular;
+}
+
+.unit {
+  color: $color-neutral-regular;
+  font-weight: $font-weight-regular;
 }

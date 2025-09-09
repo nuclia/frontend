@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
-import { ParagraphWithText } from './edit-resource.helpers';
-import { FieldId, longToShortFieldType, Resource, Search } from '@nuclia/core';
+import {
+  getConversationParagraphs,
+  getParagraphs,
+  getParagraphsWithClassifications,
+  ParagraphWithText,
+} from './edit-resource.helpers';
+import { FieldId, longToShortFieldType, Message, Paragraph, Resource, Search } from '@nuclia/core';
 import { cloneDeep } from '@flaps/core';
 
 @Injectable({
@@ -21,18 +26,33 @@ export class ParagraphService {
       if (!searchResults || !searchResults.paragraphs?.results) {
         return allParagraphs;
       }
-      return allParagraphs.filter(
-        (paragraph) =>
-          !!searchResults.paragraphs?.results.find(
-            (res) => paragraph.start === res.position?.start && paragraph.end === res.position?.end,
-          ),
-      );
+      return allParagraphs
+        .map((paragraph) => ({
+          paragraph,
+          score:
+            searchResults.paragraphs?.results.find(
+              (res) => paragraph.start === res.position?.start && paragraph.end === res.position?.end,
+            )?.score || 0,
+        }))
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(({ paragraph }) => paragraph);
     }),
   );
   hasParagraph: Observable<boolean> = combineLatest([this._allParagraphs, this._paragraphLoaded]).pipe(
     map(([paragraphs, loaded]) => !loaded || paragraphs.length > 0),
   );
   paragraphLoaded: Observable<boolean> = this._paragraphLoaded.asObservable();
+
+  initParagraphs(fieldId: FieldId, resource: Resource, messages?: Message[]) {
+    const paragraphs: Paragraph[] = messages
+      ? getConversationParagraphs(fieldId, resource, messages)
+      : getParagraphs(fieldId, resource);
+    const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, resource).filter(
+      (paragraph) => !(paragraph.kind === 'OCR' && !paragraph.text),
+    );
+    this.setupParagraphs(enhancedParagraphs);
+  }
 
   hasModifications(): boolean {
     return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._allParagraphs.value);
@@ -69,11 +89,16 @@ export class ParagraphService {
     }
   }
 
-  searchInField(query: string, resource: Resource, field: FieldId, pageNumber = 0): Observable<Search.Results> {
+  searchInField(
+    query: string,
+    resource: Resource,
+    field: FieldId,
+    extendedResults = false,
+  ): Observable<Search.Results> {
     return resource
       .search(query, [Search.ResourceFeatures.KEYWORD], {
         fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
-        page_number: pageNumber,
+        top_k: extendedResults ? 200 : 20,
       })
       .pipe(map((res) => (res.type === 'error' ? { type: 'searchResults' } : res)));
   }

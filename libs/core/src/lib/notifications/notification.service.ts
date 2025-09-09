@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { NotificationData, NotificationUI } from './notification.model';
-import { NavigationService } from '../services';
-import { SDKService } from '../api';
-import { differenceInSeconds } from 'date-fns';
 import { WritableKnowledgeBox } from '@nuclia/core';
+import { differenceInSeconds } from 'date-fns';
+import { BehaviorSubject, combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SDKService } from '../api';
+import { NavigationService } from '../services';
+import { NotificationData, NotificationUI } from './notification.model';
 
 @Injectable({
   providedIn: 'root',
@@ -28,14 +28,17 @@ export class NotificationService {
 
   startListening() {
     if (!this.sdk.nuclia.options.standalone) {
-      combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
+      combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.isArag])
         .pipe(
-          tap(([, kb]) => {
+          tap(([, kb, isArag]) => {
             if (this._currentKb) {
               this.stopListening();
             }
-            this._currentKb = kb;
+            if (!isArag) {
+              this._currentKb = kb;
+            }
           }),
+          filter(([, , isArag]) => !isArag),
           switchMap(([account, kb]) =>
             kb.listenToResourceOperationNotifications().pipe(
               tap((notifications) => {

@@ -1,12 +1,11 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './create-widget-dialog.component.html',
   styleUrl: './create-widget-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

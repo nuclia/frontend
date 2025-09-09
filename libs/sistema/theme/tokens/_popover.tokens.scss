@@ -1,5 +1,5 @@
-@import 'palette.tokens';
-@import 'spacing.tokens';
-
-$color-background-popover: $color-dark-stronger;
-$color-text-popover: $color-neutral-lightest;
+@use 'palette.tokens' as palette;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/popover.tokens' with (
+  $color-background-popover: palette.$color-dark-stronger,
+  $color-text-popover: palette.$color-neutral-lightest
+);

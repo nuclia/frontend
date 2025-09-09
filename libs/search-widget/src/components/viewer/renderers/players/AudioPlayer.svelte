@@ -1,21 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { _, getCDN } from '../../../../core';
   import { PlayerControls } from './';
 
-  export let src;
-  export let time;
+  let { src, time } = $props();
 
-  let wavesAnimation: HTMLVideoElement;
-  let audio: HTMLMediaElement;
+  let wavesAnimation: HTMLVideoElement = $state();
+  let audio: HTMLMediaElement = $state();
 
-  let onError = false;
-  let firstLoadDone = false;
-
-  $: if (firstLoadDone && typeof time === 'number') {
-    audio.currentTime = time;
-    playAudioAndWaves();
-  }
+  let onError = $state(false);
+  let firstLoadDone = $state(false);
 
   const dispatch = createEventDispatcher();
 
@@ -48,8 +42,13 @@
       wavesAnimation.play();
     });
   }
+  $effect(() => {
+    if (firstLoadDone && typeof time === 'number') {
+      audio.currentTime = time;
+      playAudioAndWaves();
+    }
+  });
 </script>
-
 
 <div class="sw-audio-player">
   {#if onError}
@@ -59,12 +58,12 @@
     class="waves-animation"
     src={`${getCDN()}tiles/audio-waves.mp4`}
     loop
-    bind:this={wavesAnimation} />
-  <PlayerControls player={audio}
-                  on:play={() => wavesAnimation.play()}
-                  on:pause={() => wavesAnimation.pause()}/>
+    bind:this={wavesAnimation}>
+  </video>
+  <PlayerControls
+    player={audio}
+    on:play={() => wavesAnimation.play()}
+    on:pause={() => wavesAnimation.pause()} />
 </div>
 
-<style
-  lang="scss"
-  src="./AudioPlayer.scss"></style>
+<style src="./AudioPlayer.css"></style>

@@ -1,5 +1,5 @@
 <div class="resource-list page-spacing">
-  @if ((emptyKb | async) === true && (isShardReady | async) === true) {
+  @if ((emptyKb | async) === true) {
     <div
       class="empty-kb"
       data-cy="empty-kb">
@@ -24,7 +24,7 @@
               [disabled]="filterOptions.mainTypes.length === 0"
               [popupRef]="mainTypeFilters">
               {{ 'resource.filter.resource-type' | translate }}
-              {{ selectedMainTypes.length ? '(' + selectedMainTypes.length + ')' : '' }}
+              {{ selectedMainTypeOptions.length ? '(' + selectedMainTypeOptions.length + ')' : '' }}
             </nsi-dropdown-button>
             <pa-dropdown #mainTypeFilters>
               @for (option of filterOptions.mainTypes; track option.id) {
@@ -41,28 +41,32 @@
               }
             </pa-dropdown>
           </div>
-          <div>
-            <nsi-dropdown-button
-              freeWidth
-              aspect="basic"
+          <div class="label-filters">
+            <app-label-dropdown
+              [labelSets]="displayedLabelSets"
+              [selection]="selectedClassifications"
+              (selectionChange)="updateClassifications($event)"
               [disabled]="filterOptions.classification.length === 0"
-              [popupRef]="classificationFilters">
+              [fullWidth]="true"
+              [multiple]="true"
+              aspect="basic">
               {{ 'resource.classification-column' | translate }}
               {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
-            </nsi-dropdown-button>
-            <pa-dropdown #classificationFilters>
-              @for (option of filterOptions.classification; track option.id) {
-                <pa-option
-                  (selectOption)="onSelectFilter(option, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [(value)]="option.selected"
-                    (valueChange)="onToggleFilter()">
-                    {{ option.label }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            </pa-dropdown>
+            </app-label-dropdown>
+            @if (selectedClassificationOptions.length > 1) {
+              <div class="labels-logic">
+                <pa-toggle
+                  labelOnRight
+                  [value]="andLogicForLabels"
+                  (valueChange)="updateLabelsLogic($event)"
+                  [paPopover]="labelsLogic">
+                  {{ andLogicForLabels ? 'AND' : 'OR' }}
+                </pa-toggle>
+                <pa-popover #labelsLogic>
+                  {{ (andLogicForLabels ? 'resource.filter.and' : 'resource.filter.or') | translate }}
+                </pa-popover>
+              </div>
+            }
           </div>
 
           <div>
@@ -108,14 +112,44 @@
             </pa-dropdown>
           </div>
 
+          @if (hiddenResourcesEnabled | async) {
+            <div>
+              <nsi-dropdown-button
+                freeWidth
+                aspect="basic"
+                [popupRef]="visibilityFilters">
+                {{ 'resource.visibility' | translate }}
+                {{ filterOptions.hidden !== undefined ? '(1)' : '' }}
+              </nsi-dropdown-button>
+              <pa-dropdown #visibilityFilters>
+                <pa-option dontCloseOnSelect>
+                  <pa-checkbox
+                    [value]="filterOptions.hidden === true"
+                    (change)="onHiddenChange(true)">
+                    {{ 'resource.hidden' | translate }}
+                  </pa-checkbox>
+                </pa-option>
+                <pa-option dontCloseOnSelect>
+                  <pa-checkbox
+                    [value]="filterOptions.hidden === false"
+                    (change)="onHiddenChange(false)">
+                    {{ 'resource.non-hidden' | translate }}
+                  </pa-checkbox>
+                </pa-option>
+              </pa-dropdown>
+            </div>
+          }
+
           @if (isMainView || isProcessedView) {
-            <pa-input
+            <nsi-search-input
               icon="search"
+              [modes]="searchModes"
               [value]="query | async"
+              (modeSelected)="onModeChange($event)"
               (valueChange)="onQueryChange($event)"
               (keyup.enter)="search()">
               {{ 'stash.search' | translate }}
-            </pa-input>
+            </nsi-search-input>
           }
         </div>
 
@@ -157,10 +191,10 @@
         @if (isFiltering | async) {
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
         }
-        @for (option of selectedClassifications; track option.value) {
+        @for (option of selectedClassificationOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
-        @for (option of selectedMainTypes; track option.value) {
+        @for (option of selectedMainTypeOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
         @if (filterOptions.creation.start) {
@@ -174,6 +208,12 @@
             {{ 'resource.filter.until' | translate }}:
             <span>{{ filterOptions.creation.end.date | date: 'mediumDate' }}</span>
           </pa-chip-closeable>
+        }
+        @if (filterOptions.hidden === true) {
+          <pa-chip-closeable (closed)="clearHidden()">{{ 'resource.hidden' | translate }}</pa-chip-closeable>
+        }
+        @if (filterOptions.hidden === false) {
+          <pa-chip-closeable (closed)="clearHidden()">{{ 'resource.non-hidden' | translate }}</pa-chip-closeable>
         }
         @if (showClearButton | async) {
           <pa-button

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { AccountService, BillingService, Currency } from '@flaps/core';
 import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
@@ -10,12 +10,17 @@ import { AccountTypes } from '@nuclia/core';
   templateUrl: './subscriptions.component.html',
   styleUrls: ['./subscriptions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SubscriptionsComponent implements OnDestroy {
-  accountType = this.billing.type.pipe(shareReplay());
-  currency?: Currency;
+  accountType = this.billing.type.pipe(shareReplay(1));
+  currency = new BehaviorSubject<Currency | undefined>(undefined);
   canSelectCurrency = false;
-  prices = this.billing.getPrices().pipe(shareReplay());
+  prices = this.currency.pipe(
+    filter((currency) => !!currency),
+    switchMap((currency) => this.billing.getPrices(currency)),
+    shareReplay(1),
+  );
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
   customerCurrency = this.billing
     .getCustomer()
@@ -30,6 +35,7 @@ export class SubscriptionsComponent implements OnDestroy {
     ? ['v3fly', 'v3growth', 'v3enterprise']
     : ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
   isSubscribedToAws = this.billing.isSubscribedToAws;
+  isManuallySubscribed = this.billing.isManuallySubscribed;
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -43,9 +49,9 @@ export class SubscriptionsComponent implements OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([currency, initialCurrency]) => {
         if (currency) {
-          this.currency = currency;
+          this.currency.next(currency);
         } else {
-          this.currency = initialCurrency;
+          this.currency.next(initialCurrency);
           this.canSelectCurrency = true;
         }
         this.cdr.markForCheck();

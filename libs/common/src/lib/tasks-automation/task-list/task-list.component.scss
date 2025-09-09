@@ -1,8 +1,36 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
-.task-list {
+.page-spacing {
   display: flex;
   flex-direction: column;
+  gap: rhythm(5);
+}
+
+.with-badge {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
+.header {
+  color: $color-neutral-regular;
+  padding: rhythm(1) 0;
+}
+
+a:hover {
+  color: $color-tertiary-strong;
+}
+
+.section h2 {
+  color: $color-neutral-regular;
+  margin-bottom: rhythm(1.5);
+}
+
+.create-task {
+  display: flex;
   gap: rhythm(1.5);
-  margin-top: rhythm(4);
+  flex-wrap: wrap;
+  app-task-card {
+    width: rhythm(45);
+  }
 }

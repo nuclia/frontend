@@ -36,6 +36,14 @@ export class UserService {
     return this.sdk.nuclia.rest.get(`${SEARCH_USERS_ACCOUNT_ENDPOINT}/${accountId}/${term}`);
   }
 
+  createUser(user: { name: string; email: string; type: 'USER' | 'ROOT' }): Observable<User> {
+    return this.sdk.nuclia.rest.post(`${USERS_ENDPOINT}`, user);
+  }
+
+  modifyUser(userId: string, user: Partial<User>): Observable<User> {
+    return this.sdk.nuclia.rest.patch(`${USER_ENDPOINT}/${userId}`, user);
+  }
+
   deleteUser(userId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`${USER_ENDPOINT}/${userId}`);
   }

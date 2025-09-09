@@ -13,6 +13,7 @@ const AUTHORIZED_REDIRECTS_REGEX = [/^chrome\-extension\:\/\/[a-z]+\/options\/op
   templateUrl: './redirect.component.html',
   styleUrls: ['./redirect.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class RedirectComponent {
   fromChromeExtension = false;

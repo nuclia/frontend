@@ -1,0 +1,36 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.field-and-button {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  margin-top: rhythm(1);
+
+  pa-input,
+  pa-textarea {
+    flex: 1 1 auto;
+  }
+  pa-button {
+    margin-top: calc(-1 * #{rhythm(2) + rhythm(0.5)});
+  }
+}
+
+ol {
+  padding: 0 0 0 rhythm(2);
+
+  .list-item {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    pre > code {
+      white-space: break-spaces;
+    }
+  }
+}

@@ -1,25 +1,43 @@
 <script lang="ts">
-  import Answer from './Answer.svelte';
-  import { _, chat, chatError, isServiceOverloaded, isStreaming } from '../../core';
-  import ChatInput from './ChatInput.svelte';
-  import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
+  import Button from '../../common/button/Button.svelte';
+  import {
+    _,
+    chat,
+    chatPlaceholderDiscussion,
+    chatPlaceholderInitial,
+    hasChatEntries,
+    isStreaming,
+    resetChat,
+  } from '../../core';
+  import Answer from './Answer.svelte';
+  import ChatInput from './ChatInput.svelte';
 
-  export let fullscreen = true;
-  export let show = !fullscreen;
-  export let height;
-
-  $: {
-    if (fullscreen) {
-      show ? freezeBackground(true) : unblockBackground(true);
-    }
+  interface Props {
+    fullscreen?: boolean;
+    show?: any;
+    height: any;
+    standaloneChat?: boolean;
   }
 
-  const dispatch = createEventDispatcher();
-  let entriesContainerElement: HTMLDivElement;
+  let { fullscreen = true, show = !fullscreen, height, standaloneChat = false }: Props = $props();
 
-  let isScrolling = false;
+  $effect(() => {
+    if (fullscreen) {
+      if (show) {
+        freezeBackground(true);
+      } else {
+        unblockBackground(true);
+      }
+    }
+  });
+
+  const dispatch = createEventDispatcher();
+  let entriesContainerElement: HTMLDivElement | undefined = $state();
+
+  let isScrolling = $state(false);
 
   onMount(() => {
     const sub = chat
@@ -29,7 +47,12 @@
         filter(() => show),
       )
       .subscribe(() => {
-        entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
+        if (entriesContainerElement) {
+          entriesContainerElement.scrollTo({
+            top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
+            behavior: 'smooth',
+          });
+        }
       });
     return () => sub.unsubscribe();
   });
@@ -37,6 +60,10 @@
   function checkIfScrolling() {
     isScrolling =
       !!entriesContainerElement && entriesContainerElement.offsetHeight < entriesContainerElement.scrollHeight;
+  }
+
+  function resetConversation() {
+    resetChat.set();
   }
 </script>
 
@@ -58,6 +85,7 @@
       style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
       <div
         class="entries-container"
+        class:hidden={$chat.length === 0}
         bind:this={entriesContainerElement}>
         {#each $chat as entry, i}
           <div class="chat-entry">
@@ -89,13 +117,23 @@
         class="input-container"
         class:scrolling-behind={isScrolling}>
         <ChatInput
-          placeholder={$_('answer.placeholder')}
+          placeholder={$_($hasChatEntries ? $chatPlaceholderDiscussion : $chatPlaceholderInitial)}
+          disabled={$isStreaming}
           {fullscreen} />
+        {#if standaloneChat}
+          <div class="reset-button">
+            <Button
+              aspect="basic"
+              disabled={!$hasChatEntries}
+              size="small"
+              on:click={resetConversation}>
+              {$_('answer.reset')}
+            </Button>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
 {/if}
 
-<style
-  lang="scss"
-  src="./Chat.scss"></style>
+<style src="./Chat.css"></style>

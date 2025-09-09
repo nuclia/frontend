@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
-  import Label from '../../common/label/Label.svelte';
-  import Chip from '../../common/chip/Chip.svelte';
   import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
+  import { createEventDispatcher } from 'svelte';
+  import Chip from '../../common/chip/Chip.svelte';
+  import Label from '../../common/label/Label.svelte';
   import type { TypedResult } from '../../core';
   import {
     _,
@@ -17,19 +20,25 @@
     goToUrl,
     navigateToFile,
     navigateToLink,
+    navigateToOriginURL,
     NO_SUGGESTION_RESULTS,
     openNewTab,
+    permalink,
+    previewBaseUrl,
     selectedEntity,
     suggestionError,
     suggestions,
     suggestionsHasError,
     viewerData,
   } from '../../core';
-  import { createEventDispatcher } from 'svelte';
 
-  export let paragraphs: Search.Paragraph[] = [];
-  export let entities: { family: string; value: string }[] = [];
-  export let labels: Classification[] = [];
+  interface Props {
+    paragraphs?: Search.Paragraph[];
+    entities?: { family: string; value: string }[];
+    labels?: Classification[];
+  }
+
+  let { paragraphs = [], entities = [], labels = [] }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -38,12 +47,28 @@
       .pipe(
         switchMap((resource) => {
           const firstResourceField = getFirstResourceField(resource);
-          return combineLatest([navigateToFile, navigateToLink]).pipe(
+          return combineLatest([
+            navigateToFile,
+            navigateToLink,
+            navigateToOriginURL,
+            openNewTab,
+            permalink,
+            previewBaseUrl,
+          ]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink]) =>
+            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink, baseUrl]) =>
               iif(
-                () => (navigateToFile || navigateToLink) && !!firstResourceField,
-                getNavigationUrl(navigateToFile, navigateToLink, resource, firstResourceField as ResourceField),
+                () => (navigateToFile || navigateToLink || openNewTab) && !!firstResourceField,
+                getNavigationUrl(
+                  navigateToFile,
+                  navigateToLink,
+                  navigateToOriginURL,
+                  openNewTab,
+                  permalink,
+                  baseUrl,
+                  resource,
+                  firstResourceField as ResourceField,
+                ),
                 of(false),
               ),
             ),
@@ -55,7 +80,7 @@
             ),
             tap(({ url, resource, openNewTab }) => {
               if (url) {
-                goToUrl(url, undefined, openNewTab);
+                goToUrl(url, openNewTab);
               } else {
                 openViewer(resource, firstResourceField);
               }
@@ -75,11 +100,11 @@
         ...resource,
         resultType,
         resultIcon,
-        field: { field_id: field.field_id, field_type: field.field_type }
+        field: { field_id: field.field_id, field_type: field.field_type },
       };
       viewerData.set({
         result,
-        selectedParagraphIndex: -1
+        selectedParagraphIndex: -1,
       });
     }
   }
@@ -136,8 +161,8 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
-              on:click|preventDefault={() => goToResource(paragraph)}
-              on:keyup={(e) => {
+              onclick={preventDefault(() => goToResource(paragraph))}
+              onkeyup={(e) => {
                 if (e.key === 'Enter') goToResource(paragraph);
               }}
               tabindex="0">
@@ -150,6 +175,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./Suggestions.scss"></style>
+<style src="./Suggestions.css"></style>

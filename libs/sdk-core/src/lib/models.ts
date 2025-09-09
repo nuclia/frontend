@@ -6,8 +6,11 @@ import {
   AccountModification,
   AccountStatus,
   AccountTypes,
+  CustomModel,
+  CustomModelItem,
   EventList,
   IKnowledgeBoxItem,
+  IRetrievalAgentItem,
   IStandaloneKb,
   KbIndex,
   KBRoles,
@@ -20,6 +23,8 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   QueryInfo,
+  RetrievalAgent,
+  RetrievalAgentCreation,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -32,7 +37,6 @@ export interface INuclia {
   rest: IRest;
   db: IDb;
   events?: IEvents;
-  currentShards?: { [kb: string]: string[] };
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;
@@ -105,8 +109,12 @@ export interface IRest {
   getZoneSlug(zoneId: string): Observable<string>;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getStreamedResponse(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
+  getStreamedResponse(
+    path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: any,
+    extraHeaders?: { [key: string]: string },
+  ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
 
   getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }>;
   checkAuthorization(path: string): Observable<{ allowed: boolean; roles: (KBRoles | NucliaDBRole)[] }>;
@@ -119,6 +127,8 @@ export interface IRest {
   ): {
     [key: string]: string;
   };
+
+  getWsUrl(path: string, ephemeralToken: string): string;
 }
 export interface IDb {
   getAccounts(): Observable<Account[]>;
@@ -141,6 +151,18 @@ export interface IDb {
     knowledgeBox: KnowledgeBoxCreation,
     zone?: string,
   ): Observable<WritableKnowledgeBox>;
+
+  getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgent(): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
+  createRetrievalAgent(
+    accountId: string,
+    retrievalAgent: RetrievalAgentCreation,
+    zone: string,
+  ): Observable<RetrievalAgent>;
+
   getUsage(
     accountId: string,
     from: string,
@@ -168,7 +190,7 @@ export interface IDb {
   getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
   predictAnswer(question: string, context: string[], model?: string): Observable<string>;
-  predictQuery(text: string, rephrase?: boolean, model?: string): Observable<QueryInfo>;
+  predictQuery(text: string, rephrase?: boolean, model?: string, rephrase_prompt?: string): Observable<QueryInfo>;
   predictSummarize(
     text: string,
     user_prompt?: string,
@@ -181,6 +203,10 @@ export interface IDb {
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
   getAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
   deleteAccountInvitation(accountId: string, email: string): Observable<void>;
+  getModels(accountId: string, zone: string): Observable<CustomModelItem[]>;
+  getModel(modelId: string, accountId: string, zone: string): Observable<CustomModel>;
+  addModelToKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
+  deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
 }
 
 export interface NucliaOptions {

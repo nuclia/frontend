@@ -1,39 +1,140 @@
 <div class="page-spacing">
   <div>
-    <h1 class="page-title">{{ 'tasks-automation.page-title' | translate }}</h1>
-    <p class="page-description">{{ 'tasks-automation.page-description' | translate }}</p>
+    <h1 class="page-title with-badge">
+      {{ 'tasks-automation.page-title' | translate }}
+      <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+    </h1>
+    <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
-  <div class="task-list">
-    <app-task-list-item
-      taskType="summarize"
-      taskTitle="tasks-automation.summarize-resources.title"
-      taskDescription="tasks-automation.summarize-resources.description"
-      (newTask)="createTask('summarize-resources')"></app-task-list-item>
-    <app-task-list-item
-      taskType="global-question"
-      taskTitle="tasks-automation.global-question.title"
-      taskDescription="tasks-automation.global-question.description"
-      (newTask)="createTask('global-question')"></app-task-list-item>
-    <app-task-list-item
-      taskType="label-resources"
-      taskTitle="tasks-automation.label-resources.title"
-      taskDescription="tasks-automation.label-resources.description"
-      (newTask)="createTask('label-resources')"></app-task-list-item>
-    <app-task-list-item
-      taskType="label-text-blocks"
-      taskTitle="tasks-automation.label-text-blocks.title"
-      taskDescription="tasks-automation.label-text-blocks.description"
-      (newTask)="createTask('label-text-blocks')"></app-task-list-item>
-    <app-task-list-item
-      taskType="label-ners"
-      taskTitle="tasks-automation.label-ners.title"
-      taskDescription="tasks-automation.label-ners.description"
-      (newTask)="createTask('label-ners')"></app-task-list-item>
-    <app-task-list-item
-      taskType="question-answer"
-      taskTitle="tasks-automation.question-answer.title"
-      taskDescription="tasks-automation.question-answer.description"
-      (newTask)="createTask('question-answer')"></app-task-list-item>
+  @if (((taskList | async) || []).length > 0) {
+    <div class="section">
+      <h2 class="body-m">{{ 'tasks-automation.your-agents' | translate }}</h2>
+      <pa-table
+        border
+        columns="repeat(3, 250px) 1fr 80px">
+        <pa-table-header>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.name' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.type' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-sortable-header-cell
+            [isDescending]="isDescending | async"
+            (sort)="toggleOrder()"
+            enabled>
+            <span class="header">{{ 'tasks-automation.table.header.creation-date' | translate }}</span>
+          </pa-table-sortable-header-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.status' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.actions' | translate }}</span>
+          </pa-table-cell>
+        </pa-table-header>
+        @for (task of taskList | async; track task) {
+          <pa-table-row>
+            <pa-table-cell>
+              <a
+                class="title-xxs"
+                [routerLink]="task.id">
+                {{ task.title }}
+              </a>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="task-type">
+                <pa-icon
+                  [name]="icons[task.taskName] || ''"
+                  size="small"></pa-icon>
+                <span class="title-xxs">{{ 'tasks-automation.type.' + task.taskName + '.title' | translate }}</span>
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                <pa-datetime
+                  [datetime]="task.creationDate"
+                  dateOnly></pa-datetime>
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                @if (task.enabled) {
+                  {{ 'tasks-automation.status.active' | translate }}
+                } @else {
+                  {{ 'tasks-automation.status.disabled' | translate }}
+                }
+              </span>
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <pa-button
+                aspect="basic"
+                icon="more-vertical"
+                size="small"
+                [paPopup]="cellMenu"></pa-button>
+              <pa-dropdown #cellMenu>
+                <pa-option
+                  (selectOption)="editTask(task.id)"
+                  destructive>
+                  {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
+                </pa-option>
+                <pa-option (selectOption)="duplicateTask(task.id)">
+                  {{ 'tasks-automation.actions.duplicate.action' | translate }}
+                </pa-option>
+                @if (task.canClean) {
+                  <pa-option
+                    (selectOption)="cleanTask(task.id)"
+                    destructive>
+                    {{ 'tasks-automation.actions.delete-data.title' | translate }}
+                  </pa-option>
+                }
+                <pa-option
+                  (selectOption)="deleteTask(task.id, false)"
+                  destructive>
+                  {{ 'tasks-automation.actions.delete-agent.title' | translate }}
+                </pa-option>
+                @if (task.canClean) {
+                  <pa-option
+                    (selectOption)="deleteTask(task.id, true)"
+                    destructive>
+                    {{ 'tasks-automation.actions.delete-all.title' | translate }}
+                  </pa-option>
+                }
+              </pa-dropdown>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    </div>
+  }
+
+  <div class="section">
+    <h2 class="body-m">{{ 'tasks-automation.data-augmentation-section' | translate }}</h2>
+    <div class="create-task">
+      <app-task-card
+        type="labeler"
+        (newTask)="createTask('labeler')"
+        [ready]="labelerTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="ask"
+        (newTask)="createTask('ask')"
+        [ready]="askTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="llm-graph"
+        (newTask)="createTask('llm-graph')"
+        [ready]="graphTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="synthetic-questions"
+        (newTask)="createTask('synthetic-questions')"
+        [ready]="questionsTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="llama-guard"
+        (newTask)="createTask('llama-guard')"
+        [ready]="contentSafetyTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="prompt-guard"
+        (newTask)="createTask('prompt-guard')"
+        [ready]="promptSafetyTaskEnabled | async"></app-task-card>
+    </div>
   </div>
 </div>

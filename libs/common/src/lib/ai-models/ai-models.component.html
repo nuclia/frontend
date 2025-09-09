@@ -24,10 +24,18 @@
         {{ 'kb.ai-models.tabs.summarization' | translate }}
       </pa-tab>
       <pa-tab
+        [stfUnauthorizedFeature]="!standalone && (isVectorsetAuthorized | async) === false"
         (click)="selectTab('semantic-model')"
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
+      @if ((extractConfigEnabled | async) && !standalone) {
+        <pa-tab
+          (click)="selectTab('extraction')"
+          [active]="selectedTab === 'extraction'">
+          {{ 'kb.ai-models.tabs.extraction' | translate }}
+        </pa-tab>
+      }
       <pa-tab
         [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
         (click)="selectTab('anonymization')"
@@ -54,6 +62,9 @@
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
+      }
+      @case ('extraction') {
+        <stf-extraction [learningConfigurations]="learningConfigurations"></stf-extraction>
       }
       @case ('anonymization') {
         <stf-anonymization

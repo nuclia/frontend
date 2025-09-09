@@ -1,0 +1,13 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.create-agent-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  label {
+    @include title-xs();
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(0.5);
+  }
+}

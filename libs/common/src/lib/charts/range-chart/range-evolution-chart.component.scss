@@ -1,0 +1,16 @@
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
+
+.range-chart {
+  @include charts.chart();
+
+  .range-area {
+    fill: $color-primary-lightest;
+  }
+
+  .evolution-line {
+    fill: none;
+    stroke: $color-primary-regular;
+    stroke-width: 1.5;
+  }
+}

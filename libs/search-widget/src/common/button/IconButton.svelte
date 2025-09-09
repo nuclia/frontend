@@ -1,16 +1,30 @@
 <script lang="ts">
-  import Icon from '../icons/Icon.svelte';
   import { createEventDispatcher } from 'svelte';
+  import { createBubbler } from 'svelte/legacy';
+  import Icon from '../icons/Icon.svelte';
 
-  export let icon = '';
-  export let ariaLabel = '';
-  export let aspect = 'solid'; // solid or basic
-  export let kind = 'secondary'; // primary | secondary
-  export let size = 'medium'; // medium | small | xsmall
-  export let disabled = false;
-  export let active = false;
+  const bubble = createBubbler();
+  interface Props {
+    icon?: string;
+    ariaLabel?: string;
+    aspect?: string; // solid or basic
+    kind?: string; // primary | secondary
+    size?: string; // medium | small | xsmall
+    disabled?: boolean;
+    active?: boolean;
+  }
 
-  $: iconSize = size === 'xsmall' ? 'small' : 'medium';
+  let {
+    icon = '',
+    ariaLabel = '',
+    aspect = 'solid',
+    kind = 'secondary',
+    size = 'medium',
+    disabled = false,
+    active = false,
+  }: Props = $props();
+
+  let iconSize = $derived(size === 'xsmall' ? 'small' : 'medium');
 
   const dispatch = createEventDispatcher();
 
@@ -28,13 +42,11 @@
   aria-label={ariaLabel}
   tabindex="0"
   {disabled}
-  on:click
-  on:keyup={onKeyup}>
+  onclick={bubble('click')}
+  onkeyup={onKeyup}>
   <Icon
     name={icon}
     size={iconSize} />
 </button>
 
-<style
-  lang="scss"
-  src="./Button.scss"></style>
+<style src="./Button.css"></style>

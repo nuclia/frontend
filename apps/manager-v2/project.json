@@ -2,15 +2,15 @@
   "name": "manager-v2",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "prefix": "nma",
+  "sourceRoot": "apps/manager-v2/src",
+  "tags": [],
   "generators": {
     "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }
   },
-  "prefix": "nma",
-  "sourceRoot": "apps/manager-v2/src",
-  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -32,8 +32,13 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n/common"
+          },
+          {
+            "glob": "**/*",
             "input": "libs/user/src/assets/i18n",
-            "output": "assets/i18n"
+            "output": "assets/i18n/user"
           },
           {
             "glob": "**/*",
@@ -83,8 +88,13 @@
             },
             {
               "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
               "input": "libs/user/src/assets/i18n",
-              "output": "assets/i18n"
+              "output": "assets/i18n/user"
             },
             {
               "glob": "**/*",
@@ -115,8 +125,13 @@
             },
             {
               "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
               "input": "libs/user/src/assets/i18n",
-              "output": "assets/i18n"
+              "output": "assets/i18n/user"
             },
             {
               "glob": "**/*",
@@ -143,7 +158,8 @@
           "buildTarget": "manager-v2:build:local-stage"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "local-stage",
+      "continuous": true
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",

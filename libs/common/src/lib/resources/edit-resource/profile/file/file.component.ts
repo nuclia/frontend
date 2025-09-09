@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { FIELD_TYPE, FileFieldData } from '@nuclia/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 
 @Component({
   templateUrl: 'file.component.html',
   styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceFileComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
@@ -29,6 +30,7 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
   isReady = false;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private editResource: EditResourceService,
     private cdr: ChangeDetectorRef,
@@ -71,8 +73,12 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
     this.fieldId
       .pipe(
         take(1),
-        switchMap((fieldId) => this.editResource.confirmAndDelete(FIELD_TYPE.file, fieldId, this.route)),
+        switchMap((fieldId) => this.editResource.confirmAndDelete(FIELD_TYPE.file, fieldId)),
       )
-      .subscribe();
+      .subscribe((success) => {
+        if (success) {
+          this.router.navigate(['../../resource'], { relativeTo: this.route });
+        }
+      });
   }
 }

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { StandaloneService } from '../../services';
 import { UploadService } from '../upload.service';
-import { STFTrackingService } from '@flaps/core';
 import { FormControl, Validators } from '@angular/forms';
 import { TextFormat } from '@nuclia/core';
 
@@ -11,6 +10,7 @@ import { TextFormat } from '@nuclia/core';
   templateUrl: './upload-qna.component.html',
   styleUrls: ['./upload-qna.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadQnaComponent {
   standalone = this.standaloneService.standalone;
@@ -30,7 +30,6 @@ export class UploadQnaComponent {
     private uploadService: UploadService,
     private standaloneService: StandaloneService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
   ) {}
 
   close(): void {
@@ -44,7 +43,6 @@ export class UploadQnaComponent {
 
   upload() {
     if (this.resourceTitle.valid && this.qna.length > 0) {
-      this.tracking.logEvent('upload_q_and_a_from_csv');
       this.isUploading = true;
       this.uploadService
         .uploadQnaResource(

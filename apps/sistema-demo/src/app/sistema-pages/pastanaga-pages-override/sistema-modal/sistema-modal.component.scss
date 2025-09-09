@@ -1,4 +1,4 @@
-@import '../../../../variables';
+@use '../../../../variables' as *;
 
 .open-modal-button {
   margin-bottom: rhythm(1);

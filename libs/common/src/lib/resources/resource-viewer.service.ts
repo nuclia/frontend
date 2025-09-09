@@ -1,10 +1,11 @@
-import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
+import { combineLatest, filter, fromEvent, map, Observable, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FieldFullId } from '@nuclia/core';
+import { Location } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +18,10 @@ export class ResourceViewerService {
     private sdk: SDKService,
     private translation: TranslateService,
     private modalService: SisModalService,
-    private trackingService: STFTrackingService,
     private zone: NgZone,
     private features: FeaturesService,
     private navigationService: NavigationService,
+    private location: Location,
   ) {}
 
   init(widgetSelector: string) {
@@ -156,13 +157,44 @@ export class ResourceViewerService {
     }
   }
 
+  handleBackButton(widget: any) {
+    widget?.addEventListener('openPreview', () => {
+      let backButtonClicked = false;
+      let initialPath = window.location.pathname;
+
+      // Add history entry
+      this.location.go(window.location.pathname, window.location.search, this.location.getState());
+
+      // Close the viewer if the browser back button is clicked
+      const subs = this.location.subscribe(() => {
+        backButtonClicked = true;
+        subs.unsubscribe();
+        widget?.closePreview();
+      });
+
+      // If viewer is closed by clicking the cross icon, remove the history entry
+      fromEvent(widget, 'closePreview')
+        .pipe(take(1))
+        .subscribe(() => {
+          subs.unsubscribe();
+          // Wait for any pending navigation to take effect
+          setTimeout(() => {
+            const navigateForward = window.location.pathname !== initialPath;
+            if (!backButtonClicked && !navigateForward) {
+              history.back();
+            }
+          }, 100);
+        });
+    });
+  }
+
   private getResourcesBasePath(): Observable<string> {
     return combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
       take(1),
       map(([kb, account]) => {
         const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
         return `${this.navigationService.getKbUrl(account.slug, kbSlug)}/resources`;
-      })
+      }),
     );
   }
   private navigateTo(path: string) {

@@ -15,8 +15,7 @@
         </pa-input>
         <pa-input
           id="account-slug"
-          formControlName="slug"
-          readonly>
+          formControlName="slug">
           {{ 'generic.slug' | translate }}
         </pa-input>
         <pa-input
@@ -41,12 +40,13 @@
             {{ 'generic.save' | translate }}
           </pa-button>
 
-          <pa-button
-            *ngIf="!accountForm.pristine"
-            aspect="basic"
-            (click)="initAccountForm()">
-            {{ 'generic.cancel' | translate }}
-          </pa-button>
+          @if (!accountForm.pristine) {
+            <pa-button
+              aspect="basic"
+              (click)="initAccountForm()">
+              {{ 'generic.cancel' | translate }}
+            </pa-button>
+          }
         </div>
       </form>
     </div>
@@ -58,8 +58,10 @@
       <form
         [formGroup]="samlForm"
         (ngSubmit)="saveSaml()">
-        <pa-input formControlName="domain">
-          {{ 'account.saml.domain' | translate }}
+        <pa-input
+          formControlName="domains"
+          [help]="'account.saml.domains-help' | translate">
+          {{ 'account.saml.domains' | translate }}
         </pa-input>
         <pa-input formControlName="entity_id">
           {{ 'account.saml.entity-id' | translate }}
@@ -72,6 +74,15 @@
           rows="3">
           {{ 'account.saml.x509-cert' | translate }}
         </pa-textarea>
+        <pa-select
+          formControlName="authn_context"
+          [label]="'account.saml.authn_context' | translate">
+          <pa-option value="">&mdash;</pa-option>
+          <pa-option value="exact">exact</pa-option>
+          <pa-option value="minimum">minimum</pa-option>
+          <pa-option value="better">better</pa-option>
+          <pa-option value="maximum">maximum</pa-option>
+        </pa-select>
         <div class="account-form-cta">
           <pa-button
             type="submit"
@@ -80,11 +91,17 @@
             {{ 'generic.save' | translate }}
           </pa-button>
           <pa-button
-            *ngIf="!samlForm.pristine"
-            aspect="basic"
-            (click)="initSamlForm()">
-            {{ 'generic.cancel' | translate }}
+            kind="destructive"
+            (click)="removeSaml()">
+            {{ 'generic.delete' | translate }}
           </pa-button>
+          @if (!samlForm.pristine) {
+            <pa-button
+              aspect="basic"
+              (click)="initSamlForm()">
+              {{ 'generic.cancel' | translate }}
+            </pa-button>
+          }
         </div>
       </form>
     </div>
@@ -94,26 +111,37 @@
     <div class="section-container">
       <div class="dangerous-zone">
         <h3>{{ 'account.delete_account' | translate }}</h3>
-        <div *ngIf="(cannotDeleteAccount | async) === false">
-          <p>{{ 'account.delete_account_warning_1' | translate }}</p>
-          <ul>
-            <li>{{ 'account.delete_account_warning_2' | translate }}</li>
-            <li>{{ 'account.delete_account_warning_3' | translate }}</li>
-            <li>{{ 'account.delete_account_warning_4' | translate }}</li>
-          </ul>
-          <pa-button
-            kind="destructive"
-            (click)="deleteAccount()">
-            {{ 'generic.delete' | translate }}
-          </pa-button>
-        </div>
-        <div *ngIf="(cannotDeleteAccount | async) === true">
-          <p>{{ 'account.delete.subscription_detected' | translate }}</p>
-          <p>
-            {{ 'account.delete.go_to' | translate }}
-            <a [routerLink]="cancelSubscriptionUrl | async">{{ 'billing.my-subscription' | translate }}</a>
-          </p>
-        </div>
+        @if ((cannotDeleteAccount | async) === false) {
+          <div>
+            <p>{{ 'account.delete_account_warning_1' | translate }}</p>
+            <ul>
+              <li>{{ 'account.delete_account_warning_2' | translate }}</li>
+              <li>{{ 'account.delete_account_warning_3' | translate }}</li>
+              <li>{{ 'account.delete_account_warning_4' | translate }}</li>
+            </ul>
+            <pa-button
+              kind="destructive"
+              (click)="deleteAccount()">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </div>
+        } @else if ((cannotDeleteAccount | async) === true) {
+          <div>
+            <p>{{ 'account.delete.active-subscription' | translate }}</p>
+            @if (isSubscribedToStripe | async) {
+              <p>
+                {{ 'account.delete.subscription-details' | translate }}
+                <a [routerLink]="stripeSubscriptionUrl | async">{{ 'billing.my-subscription' | translate }}</a>
+              </p>
+            }
+            @if (isSubscribedToAws | async) {
+              <p>
+                {{ 'account.delete.subscription-details' | translate }}
+                <a [routerLink]="awsSubscriptionUrl | async">{{ 'navbar.subscription' | translate }}</a>
+              </p>
+            }
+          </div>
+        }
       </div>
     </div>
   </div>

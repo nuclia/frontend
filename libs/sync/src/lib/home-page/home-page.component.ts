@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { SDKService } from '@flaps/core';
 import {
   HeaderCell,
   PaButtonModule,
@@ -14,7 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { filter, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BadgeComponent,
   DropdownButtonComponent,
@@ -22,13 +23,11 @@ import {
   SisModalService,
   SisToastService,
 } from '@nuclia/sistema';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { filter, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
-import { SDKService } from '@flaps/core';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BadgeComponent,
@@ -40,7 +39,6 @@ import { SDKService } from '@flaps/core';
     PaTogglesModule,
     PaTooltipModule,
     ReactiveFormsModule,
-    RouterOutlet,
     TranslateModule,
     PaTableModule,
     RouterLink,

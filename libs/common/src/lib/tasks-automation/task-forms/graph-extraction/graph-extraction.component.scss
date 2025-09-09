@@ -1,0 +1,54 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../../task.common';
+
+.input-with-help {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-input {
+    flex-grow: 1;
+  }
+}
+
+.inline-inputs {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  & > * {
+    width: 50%;
+  }
+}
+
+.form-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-top: rhythm(2);
+}
+
+.form-group {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-default;
+  padding-bottom: rhythm(2);
+  .form-container {
+    padding: 0 rhythm(2);
+  }
+}
+
+.form-group-header {
+  align-items: center;
+  background-color: $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 rhythm(1.5);
+  margin-bottom: rhythm(2);
+}
+
+pa-textarea {
+  display: block;
+  padding: 0 rhythm(2);
+}
+
+:host ::ng-deep pa-table-cell h4 {
+  margin: 0;
+}

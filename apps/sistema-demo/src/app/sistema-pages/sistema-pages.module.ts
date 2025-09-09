@@ -1,6 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaDemoModule } from '../../../../../libs/pastanaga-angular/projects/demo/src';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -12,9 +13,16 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
-import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  BackButtonComponent,
+  DropdownButtonComponent,
+  SisLabelModule,
+  SisPasswordInputModule,
+  SisProgressModule,
+  SisSearchInputComponent,
+} from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../libs/pastanaga-angular/projects/demo/src';
 import {
   DialogExampleComponent,
   ModalExampleComponent,
@@ -25,17 +33,11 @@ import {
   SistemaToastComponent,
 } from './pastanaga-pages-override';
 import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
-import {
-  BackButtonComponent,
-  DropdownButtonComponent,
-  SisLabelModule,
-  SisPasswordInputModule,
-  SisProgressModule,
-} from '@nuclia/sistema';
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
+import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
+import { SistemaSearchInputComponent } from './sistema-search-input/sistema-search-input.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
-import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import { TranslateModule } from '@ngx-translate/core';
     SistemaBackButtonComponent,
     SistemaDropdownButtonComponent,
     SistemaPasswordInputComponent,
+    SistemaSearchInputComponent,
     SistemaSpinnerComponent,
   ],
   imports: [
@@ -71,6 +74,7 @@ import { TranslateModule } from '@ngx-translate/core';
     BackButtonComponent,
     DropdownButtonComponent,
     SisPasswordInputModule,
+    SisSearchInputComponent,
     SisProgressModule,
     ReactiveFormsModule,
     SisLabelModule,

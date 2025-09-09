@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import {
   DropdownButtonComponent,
   InfoCardComponent,
-  SisToastService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
@@ -22,6 +21,8 @@ import {
   OptionModel,
   PaButtonModule,
   PaDropdownModule,
+  PaExpanderModule,
+  PaIconModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -30,35 +31,51 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { Classification, Filter, Search } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
-import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { GenerativeModelPipe } from '../../pipes';
+import {
+  Classification,
+  FIELD_TYPE,
+  LearningConfigurations,
+  LLMConfig,
+  longToShortFieldType,
+  TaskFullDefinition,
+  TaskName,
+  TaskTrigger,
+} from '@nuclia/core';
+import { BehaviorSubject, filter, map, Subject, switchMap } from 'rxjs';
+import { delay, take, takeUntil } from 'rxjs/operators';
+import { TasksAutomationService } from '../tasks-automation.service';
+import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
+import { UserKeysComponent, UserKeysForm } from '../../ai-models';
+import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../tasks-automation.models';
+import { RouterModule } from '@angular/router';
+
+const DEFAULT_CHEAP_LLM = 'gemini-2.5-flash-lite';
 
 export interface TaskFormCommonConfig {
-  applyTaskTo: 'automation' | 'once';
-  filters: {
-    searchIn: 'titleOrContent' | 'title' | 'content';
-    searchQuery: string;
-    selectedFilters: string[] | Filter[];
+  name: string;
+  filter: {
+    contains: string[];
+    contains_operator?: 0 | 1;
+    field_types: string[];
+    labels?: string[];
+    labels_operator?: 0 | 1;
+    apply_to_agent_generated_fields?: boolean;
   };
-  llm: string;
-  webhook: {
-    url: string;
-    headers: { key: string; value: string; secret: boolean }[];
-  };
+  llm: LLMConfig;
+  webhook?: TaskTrigger;
 }
 
 @Component({
   selector: 'app-task-form',
-  standalone: true,
   imports: [
     CommonModule,
     DropdownButtonComponent,
     InfoCardComponent,
     LabelModule,
     PaDropdownModule,
+    PaExpanderModule,
+    PaIconModule,
+    ParametersTableComponent,
     PaTextFieldModule,
     PaTogglesModule,
     PaTooltipModule,
@@ -67,9 +84,9 @@ export interface TaskFormCommonConfig {
     TranslateModule,
     PaTableModule,
     PaButtonModule,
-    GenerativeModelPipe,
+    RouterModule,
     StickyFooterComponent,
-    ParametersTableComponent,
+    UserKeysComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
@@ -77,125 +94,155 @@ export interface TaskFormCommonConfig {
 })
 export class TaskFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
-  private toaster = inject(SisToastService);
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
+  private tasksAutomation = inject(TasksAutomationService);
 
   private unsubscribeAll = new Subject<void>();
 
-  // List of LLMs available for this task
-  @Input() availableLLMs: string[] = [];
+  // Task type
+  @Input() type: TaskName = 'labeler';
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
-  // Label displayed on the submit button
-  @Input() activateButtonLabel = '';
   // Note displayed on the footer when task is applied automatically
   @Input() footerNoteAutomation = '';
   // Note displayed on the footer when task is applied once
   @Input() footerNoteOneTime = '';
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
+  // Flag indicating if the model selection is hidden
+  @Input({ transform: booleanAttribute }) set modelsHidden(value: boolean) {
+    this._modelsHidden = value;
+    this.form.controls.llm.controls.model.clearValidators();
+  }
+  get modelsHidden() {
+    return this._modelsHidden;
+  }
+  private _modelsHidden: boolean = false;
+  // Task whose data is displayed in the form
+  @Input() set task(value: DataAugmentationTaskOnGoing | undefined | null) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task?: DataAugmentationTaskOnGoing;
 
   @Output() cancel = new EventEmitter<void>();
-  @Output() activate = new EventEmitter<TaskFormCommonConfig>();
+  @Output() save = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
-    applyTaskTo: new FormControl<'automation' | 'once'>('automation', { nonNullable: true }),
-    filters: new FormGroup({
-      searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
-      searchQuery: new FormControl<string>('', { nonNullable: true }),
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    filter: new FormGroup({
+      contains: new FormControl<string>('', { nonNullable: true }),
+      contains_operator: new FormControl<boolean>(false),
+      labels_operator: new FormControl<boolean>(false),
+      apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
-    llm: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    llm: new FormGroup({
+      model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    }),
     webhook: new FormGroup({
       url: new FormControl<string>('', { nonNullable: true }),
     }),
   });
-  headers: { key: string; value: string; secret: boolean }[] = [];
+  userKeysForm?: UserKeysForm;
+  headers: { key: string; value: string }[] = [];
+  parameters: { key: string; value: string }[] = [];
+  tasksRoute = this.tasksAutomation.tasksRoute;
+  formInitialized = new BehaviorSubject(false);
+  selectedFilters = new BehaviorSubject<string[]>([]);
 
-  selectedFilters = new BehaviorSubject<string[] | Filter[]>([]);
-
-  get applyTaskValue() {
-    return this.form.controls.applyTaskTo.value;
-  }
-  get llmValue() {
-    return this.form.controls.llm.value;
+  get generativeModel() {
+    return this.learningConfigurations?.['generative_model'].options?.find(
+      (option) => option.value === this.form.controls.llm.controls.model.value,
+    );
   }
 
   resourceCount?: number;
 
-  resourceTypeFilters: OptionModel[] = [];
-  allResourceTypesSelected = false;
-  get resourceTypeSelectionCount(): number {
-    return this.resourceTypeFilters.filter((option) => option.selected).length;
+  fieldTypeFilters: OptionModel[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text, FIELD_TYPE.conversation].map(
+    (t) => new OptionModel({ id: longToShortFieldType(t), value: longToShortFieldType(t), label: t }),
+  );
+  get allFieldTypesSelected() {
+    return this.fieldTypeFilters.every((option) => option.selected);
   }
-  get resourceTypeTotalCount(): number {
-    return this.resourceTypeFilters.length;
+  get fieldTypeSelectionCount(): number {
+    return this.fieldTypeFilters.filter((option) => option.selected).length;
   }
-
-  languageFilters: OptionModel[] = [];
-  allLanguagesSelected = false;
-  get languageSelectionCount(): number {
-    return this.languageFilters.filter((option) => option.selected).length;
+  get fieldTypesTotalCount(): number {
+    return this.fieldTypeFilters.length;
   }
-  get languageTotalCount(): number {
-    return this.languageFilters.length;
+  get selectedFieldTypes() {
+    return this.fieldTypeFilters.filter((option) => option.selected).map((option) => option.value);
   }
 
   hasLabelSets = this.labelService.hasResourceLabelSets;
-  resourceLabelSets = this.labelService.resourceLabelSets.pipe(
-    tap((labelSets) => {
-      if (labelSets) {
-        // FIXME for edition depending on how the filters will be stored
-        const currentFilters: string[] = [];
-        this.labelSelection = Object.entries(labelSets).reduce((selection, [id, labelset]) => {
-          labelset.labels.forEach((label) => {
-            const labelFilter = `/classification.labels/${id}/${label.title}`;
-            if (currentFilters.includes(labelFilter)) {
-              selection.push({ labelset: id, label: label.title });
-            }
-          });
-          return selection;
-        }, [] as Classification[]);
-        this.cdr.markForCheck();
-      }
-    }),
-  );
+  resourceLabelSets = this.labelService.resourceLabelSets;
   labelSelection: Classification[] = [];
-  labelFilters: string[] = [];
+  get labelFilters() {
+    return this.labelSelection.map((label) => `${label.labelset}/${label.label}`);
+  }
   get labelSelectionCount(): number {
     return this.labelFilters.length;
   }
+  taskDefinition?: TaskFullDefinition;
+  learningConfigurations?: LearningConfigurations;
+  availableLLMs: OptionModel[] = [];
+  unsupportedLLMs = ['generative-multilingual-2023'];
+
+  get properties() {
+    return this.taskDefinition?.validation.properties;
+  }
+  get filterProperties() {
+    return this.properties?.['filter']?.['anyOf']?.[0]?.properties;
+  }
+  can_apply_to_agent_generated_fields = false;
 
   ngOnInit() {
-    this.form.patchValue({ llm: this.availableLLMs[0] });
+    this.tasksAutomation.taskDefinitions
+      .pipe(
+        map((tasks) => tasks.find((task) => task.name === this.type)),
+        filter((task) => !!task),
+        take(1),
+      )
+      .subscribe((task) => {
+        this.taskDefinition = task;
+        this.can_apply_to_agent_generated_fields = task.name === 'labeler' || task.name === 'llm-graph';
+        this.cdr.markForCheck();
+      });
 
     this.sdk.currentKb
       .pipe(
-        switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS.concat(LANGUAGE_FACET) })),
-        map((results) => {
-          if (results.type === 'error') {
-            return;
-          }
-          const facets: Search.FacetsResult = results.fulltext?.facets || {};
-          return formatFiltersFromFacets(facets);
-        }),
-        filter((filters) => !!filters),
-        map((filters) => filters as Filters),
+        take(1),
+        switchMap((kb) => kb.getLearningSchema()),
       )
-      .subscribe((filters) => {
-        this.resourceTypeFilters = filters.mainTypes;
-        if (filters.languages) {
-          this.languageFilters = filters.languages;
+      .subscribe((schema) => {
+        this.learningConfigurations = schema;
+        const hasDefaultLLM = (schema?.['generative_model']?.options || []).some(
+          (option) => option.value === DEFAULT_CHEAP_LLM,
+        );
+        if (!this.form.controls.llm.controls.model.value) {
+          this.form.controls.llm.controls.model.setValue(
+            hasDefaultLLM ? DEFAULT_CHEAP_LLM : schema?.['generative_model']?.default,
+          );
         }
-        this.cdr.detectChanges();
+        this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
+          .filter((option) => !this.unsupportedLLMs.includes(option.value))
+          .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
+        this.cdr.markForCheck();
       });
 
+    /*
     combineLatest([this.form.valueChanges, this.selectedFilters])
       .pipe(
-        filter(([data]) => data.applyTaskTo === 'once'),
+        filter(([data]) => data.applyTaskTo === 'EXISTING'),
         debounceTime(300),
         switchMap(([data, filters]) =>
-          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filters?.searchQuery || '', { filters }))),
+          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filter?.contains || '', { filters }))),
         ),
         takeUntil(this.unsubscribeAll),
       )
@@ -208,6 +255,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         },
         error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
       });
+    */
   }
 
   ngOnDestroy() {
@@ -215,18 +263,64 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleAll(filter: 'types' | 'languages', event: MouseEvent | KeyboardEvent) {
+  initForm(task: DataAugmentationTaskOnGoing) {
+    const triggers =
+      this.task?.parameters.operations?.[0]?.[getOperationFromTaskName(this.task.task.name) || 'ask']?.triggers?.[0];
+    this.form.patchValue({
+      ...task.parameters,
+      filter: {
+        ...task.parameters.filter,
+        contains: task.parameters.filter.contains?.join(', ') || '',
+        contains_operator: task.parameters.filter.contains_operator === 1,
+        labels_operator: task.parameters.filter.labels_operator === 1,
+      },
+      webhook: { url: triggers?.url || '' },
+    });
+    this.fieldTypeFilters.forEach((option) => {
+      option.selected = (task.parameters.filter.field_types || []).includes(option.id);
+    });
+    this.labelSelection = (task.parameters.filter.labels || []).map((label) => ({
+      labelset: label.split('/')[0],
+      label: label.split('/')[1],
+    }));
+    if (triggers) {
+      this.headers = Object.entries(triggers.headers || {}).map(([key, value]) => ({ key, value }));
+      this.parameters = Object.entries(triggers.params || {}).map(([key, value]) => ({ key, value }));
+    }
+    this.formInitialized.next(true);
+    this.cdr.markForCheck();
+  }
+
+  initUserKeysForm(form: UserKeysForm) {
+    this.userKeysForm = form;
+    this.formInitialized
+      .pipe(
+        filter((value) => value),
+        take(1),
+        delay(100), // Wait until the form is updated
+      )
+      .subscribe(() => {
+        if (this.generativeModel?.user_key) {
+          const userkeys = this.task?.parameters.llm.keys?.[this.generativeModel.user_key];
+          this.userKeysForm?.patchValue({
+            enabled: !!userkeys,
+            user_keys: userkeys,
+          });
+        }
+      });
+    // Change detection is needed when the child component changes the form
+    this.userKeysForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.cdr.detectChanges();
+    });
+  }
+
+  toggleAll(filter: 'types' | 'fieldTypes', event: MouseEvent | KeyboardEvent) {
     const tagName = (event.target as HTMLElement).tagName;
     if (tagName === 'LI' || tagName === 'INPUT') {
       switch (filter) {
-        case 'types':
-          this.resourceTypeFilters = this.resourceTypeFilters.map(
-            (option) => new OptionModel({ ...option, selected: !this.allResourceTypesSelected }),
-          );
-          break;
-        case 'languages':
-          this.languageFilters = this.languageFilters.map(
-            (option) => new OptionModel({ ...option, selected: !this.allLanguagesSelected }),
+        case 'fieldTypes':
+          this.fieldTypeFilters = this.fieldTypeFilters.map(
+            (option) => new OptionModel({ ...option, selected: !this.allFieldTypesSelected }),
           );
           break;
       }
@@ -241,36 +335,45 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateFiltersWithLabels(labels: Classification[]) {
-    this.labelFilters = labels.map((label) => `/classification.labels/${label.labelset}/${label.label}`);
+  updateFiltersWithLabels() {
     this.onToggleFilter();
   }
 
   onToggleFilter() {
-    this.allResourceTypesSelected = this.resourceTypeFilters.every((option) => option.selected);
-    this.allLanguagesSelected = this.languageFilters.every((option) => option.selected);
-
-    const selectedResourceTypes = this.resourceTypeFilters
-      .filter((option) => option.selected)
-      .map((option) => option.value);
-    const selectedLanguages = this.languageFilters.filter((option) => option.selected).map((option) => option.value);
-
-    const resourceTypesFilters: Filter[] = selectedResourceTypes.length > 0 ? [{ any: selectedResourceTypes }] : [];
-    const languageFilters: Filter[] = selectedLanguages.length > 0 ? [{ any: selectedLanguages }] : [];
-    const selectedLabels: Filter[] = this.labelFilters.length > 0 ? [{ any: this.labelFilters }] : [];
-    this.selectedFilters.next(resourceTypesFilters.concat(languageFilters).concat(selectedLabels));
+    this.selectedFilters.next(this.selectedFieldTypes.concat(this.labelFilters));
   }
 
-  activateTask() {
+  onSave() {
     const rawValue = this.form.getRawValue();
-    this.activate.emit({
+    const userKeys = this.userKeysForm?.getRawValue();
+    this.save.emit({
       ...rawValue,
-      webhook: { ...rawValue.webhook, headers: this.headers },
-      filters: { ...rawValue.filters, selectedFilters: this.selectedFilters.value },
+      webhook: rawValue.webhook.url.trim()
+        ? {
+            ...rawValue.webhook,
+            headers: this.headers
+              .filter((header) => header.key.trim() && header.value.trim())
+              .reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {}),
+            params: this.parameters
+              .filter((header) => header.key.trim() && header.value.trim())
+              .reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {}),
+          }
+        : undefined,
+      filter: {
+        contains: rawValue.filter.contains ? rawValue.filter.contains.split(',').map((s) => s.trim()) : [],
+        contains_operator: rawValue.filter.contains_operator ? 1 : 0,
+        field_types: this.selectedFieldTypes,
+        labels: this.labelFilters,
+        labels_operator: rawValue.filter.labels_operator ? 1 : 0,
+        apply_to_agent_generated_fields: !!rawValue.filter.apply_to_agent_generated_fields,
+      },
+      llm: {
+        ...rawValue.llm,
+        keys:
+          this.generativeModel?.user_key && userKeys?.enabled
+            ? { [this.generativeModel.user_key]: userKeys.user_keys }
+            : {},
+      },
     });
-  }
-
-  setHeaders(headers: { key: string; value: string; secret: boolean }[]) {
-    this.headers = headers;
   }
 }

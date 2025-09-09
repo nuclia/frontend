@@ -1,102 +1,99 @@
 <script lang="ts">
-  import type { TypedResult } from '../../core';
-  import { getDataKeyFromFieldType } from '@nuclia/core';
+  import { onMount } from 'svelte';
   import { IconButton } from '../../common';
-  import { formatSize } from '../../core';
+  import type { TypedResult } from '../../core';
+  import { formatDate, formatSize } from '../../core';
 
-  export let result: TypedResult;
-
-  const excludedMetadata = ['filename', 'body'];
-  let metadataList: { label: string; value: string; }[] = [];
-  $: {
-    const fieldId = result.field;
-    if (fieldId) {
-      const keyFromFieldType = result.field && getDataKeyFromFieldType(result.field.field_type);
-      if (keyFromFieldType) {
-        const data = result.data?.[keyFromFieldType]?.[fieldId.field_id]?.value || {};
-        metadataList = Object.entries(data).filter(([key, value]) => !excludedMetadata.includes(key) && !!value).reduce((list, [key, value]) => {
-          if (typeof value === 'object') {
-            Object.entries(value).filter(([subKey, subValue]) => {
-              if (subKey === 'uri') {
-                return !(subValue as string).startsWith('/kb');
-              }
-              return !excludedMetadata.includes(subKey) && !!subValue;
-            }).forEach(([subKey, subValue]) => {
-              list.push({ label: subKey, value: subKey === 'size' ? formatSize(subValue as number) : `${subValue}` });
-            });
-          } else {
-            list.push({ label: key, value: key === 'added' ? value.substring(0, value.indexOf('T')) : value });
-          }
-          return list;
-        }, [] as { label: string; value: string; }[]);
-      }
-    }
+  interface Props {
+    result: TypedResult;
   }
 
-  let lineCount = 2;
-  let expanded = false;
-  let metadataElements: HTMLElement[] = [];
-  $: lastMetadata = metadataElements[metadataElements.length - 1];
-  $: hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 1;
-  $: expanderLeft = getExpanderLeftPosition(metadataElements);
+  let { result }: Props = $props();
+
+  let expanded = $state(false);
+  let containerWidth = $state(0);
+  let metadataElements: HTMLElement[] = $state([]);
+  let expanderLeft = $state(0);
+  let hasMoreMetadata = $state(false);
+  let lastMetadata = $derived(metadataElements[metadataElements.length - 1]);
 
   function getExpanderLeftPosition(elements: HTMLElement[]) {
-    return elements.reduce((left, element) => {
-      if (element.offsetTop === 0) {
+    const left = elements.reduce((left, element) => {
+      // update left when the element is visible on the first line (line height is 22px)
+      if (element.offsetTop < 22) {
         left = element.offsetLeft + element.offsetWidth + 8;
       }
       return left;
     }, 0);
+    return left;
   }
 
   function expandMetadata() {
     expanded = !expanded;
-    if (expanded) {
-      // on mobile metadata can be on several lines, so to make a simple calculation we consider we can display 2 items per line
-      lineCount = metadataElements.reduce((count, element) => {
-        if (element.offsetTop > 0) {
-          count = count + 1;
-        }
-        return count;
-      }, 1) / 2;
-    }
   }
 
-  function onResize() {
+  function updateMetadataExpander() {
     hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 1;
     expanderLeft = getExpanderLeftPosition(metadataElements);
   }
+
+  $effect(() => {
+    // Update metadata expander position when container width changes
+    // It's better than listening to window resize because window event isn't triggered when we resize divs internally (like resizing a right panel for example)
+    containerWidth;
+    updateMetadataExpander();
+  });
+
+  onMount(() => {
+    setTimeout(() => {
+      // wait for elements to be properly mounted before computed metadata expander position
+      updateMetadataExpander();
+    }, 0);
+  });
 </script>
 
-<svelte:window on:resize={onResize}></svelte:window>
-
-{#if metadataList.length > 0}
-  <div class="sw-field-metadata"
-       class:expanded
-       style:--line-count={lineCount}>
-    <div class="metadata-container ellipsis"
-         on:click={expandMetadata}
-         on:keyup={(e) => {if (e.key === 'Enter') expandMetadata();}}>
-      {#each metadataList as metadata, i}
+{#if result.resultMetadata && result.resultMetadata.length > 0}
+  <div
+    class="sw-field-metadata"
+    class:expanded
+    bind:offsetWidth={containerWidth}>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div
+      class="metadata-container"
+      class:ellipsis={!expanded}
+      onclick={expandMetadata}
+      onkeyup={(e) => {
+        if (e.key === 'Enter') expandMetadata();
+      }}>
+      {#each result.resultMetadata as metadata, i}
         <div bind:this={metadataElements[i]}>
-          <span class="body-s">{metadata.label}:</span>
-          <span class="title-xxs">{metadata.value}</span>
+          <span class="body-s">{metadata.title || metadata.label}:</span>
+          <span class="title-xxs">
+            {#if metadata.type === 'date'}
+              {formatDate(metadata.value as string)}
+            {:else if metadata.label === 'size'}
+              {formatSize(metadata.value as number)}
+            {:else if metadata.type === 'list'}
+              {(metadata.value as string[]).join(', ')}
+            {:else}
+              {metadata.value}
+            {/if}
+          </span>
         </div>
       {/each}
     </div>
     {#if hasMoreMetadata}
-      <div class="expander-container" style:left="{expanderLeft}px">
-        <IconButton size="xsmall"
-                    icon="chevron-down"
-                    aspect="basic"
-                    on:click={expandMetadata}
-        ></IconButton>
+      <div
+        class="expander-container"
+        style:left="{expanderLeft}px">
+        <IconButton
+          size="xsmall"
+          icon="chevron-down"
+          aspect="basic"
+          on:click={expandMetadata}></IconButton>
       </div>
     {/if}
   </div>
 {/if}
 
-
-<style
-  lang="scss"
-  src="./FieldMetadata.scss"></style>
+<style src="./FieldMetadata.css"></style>

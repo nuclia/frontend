@@ -7,6 +7,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 @Component({
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);
@@ -16,11 +17,16 @@ export class AccountListComponent {
     map(([accounts, filter]) =>
       filter
         ? accounts.filter(
-            (account) => account.id.includes(filter) || account.title.includes(filter) || account.slug.includes(filter),
+            (account) =>
+              account.id.includes(filter) ||
+              account.title.includes(filter) ||
+              account.slug.includes(filter) ||
+              account.email.includes(filter) ||
+              account.type.includes(filter),
           )
         : accounts,
     ),
-    map((accounts) => accounts.sort((a, b) => a.title.localeCompare(b.title))),
+    map((accounts) => accounts.sort((a, b) => `${a.type}-${a.title}`.localeCompare(`${b.type}-${b.title}`))),
   );
 
   lastIndex = 100;

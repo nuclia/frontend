@@ -5,6 +5,7 @@ import { take } from 'rxjs';
 
 @Component({
   template: '',
+  standalone: false,
 })
 export class RedirectComponent {
   constructor(

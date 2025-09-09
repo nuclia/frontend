@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 @Component({
   template: '<div class="user-background"></div>',
+  standalone: false,
 })
 export class LogoutComponent implements OnInit {
   constructor(private router: Router, private sdk: SDKService) {}

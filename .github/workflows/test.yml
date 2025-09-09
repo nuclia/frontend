@@ -3,9 +3,11 @@ on:
   pull_request:
     branches:
       - main
+      - dev
   push:
     branches-ignore:
       - main
+      - dev
 
 permissions:
   contents: write
@@ -21,7 +23,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'yarn'
       - name: Install project dependencies
         run: |-

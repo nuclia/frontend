@@ -25,7 +25,9 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import {
+  AccountBudget,
   BillingService,
+  COUNTRIES,
   injectScript,
   NavigationService,
   RecurrentPriceInterval,
@@ -34,7 +36,6 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';
@@ -45,6 +46,7 @@ import { SubscriptionService } from '../subscription.service';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CheckoutComponent implements OnDestroy, OnInit {
   customerForm = new FormGroup({
@@ -52,7 +54,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    vat: new FormControl<string>('', { nonNullable: true }),
+    vat: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     phone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     country: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -62,7 +64,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   });
 
   cardName = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
-  budget?: { value: number | null };
+  budget?: Partial<AccountBudget>;
 
   errors: IErrorMessages = {
     required: 'validation.required',
@@ -72,7 +74,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   loading = false;
   countries = COUNTRIES;
-  requiredVatCountries = REQUIRED_VAT_COUNTRIES;
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -85,12 +86,23 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.route.queryParams.pipe(map((params) => params['type'])),
   ]).pipe(
     map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
-    shareReplay(),
+    shareReplay(1),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
 
-  prices$ = this.billingService.getPrices().pipe(shareReplay());
+  updateCurrency = new Subject<string>();
+  currency$ = merge(
+    this.subscription.initialCurrency.pipe(take(1)),
+    this.updateCurrency.pipe(
+      distinctUntilChanged(),
+      switchMap((country) => this.billingService.getCurrency(country)),
+    ),
+  ).pipe(shareReplay(1));
+  prices$ = this.currency$.pipe(
+    switchMap((currency) => this.billingService.getPrices(currency)),
+    shareReplay(1),
+  );
   monthly = combineLatest([
     this.prices$,
     this.accountType.pipe(
@@ -98,14 +110,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       map((accountType) => accountType as AccountTypes),
     ),
   ]).pipe(map(([prices, accountType]) => !!prices[accountType]?.recurring?.month));
-  updateCurrency = new Subject<string>();
-  currency$ = merge(
-    this.subscription.initialCurrency,
-    this.updateCurrency.pipe(
-      distinctUntilChanged(),
-      switchMap((country) => this.billingService.getCurrency(country)),
-    ),
-  ).pipe(shareReplay(1));
 
   billingDetailsEnabled = true;
   editCustomer = true;
@@ -121,9 +125,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
   get isCompany() {
     return !this.customerForm.value.not_company;
-  }
-  get vatRequired() {
-    return this.customerForm.controls.vat.hasValidator(Validators.required);
   }
 
   private _stripe: any;
@@ -203,9 +204,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   updateCustomerValidation(newValues: typeof this.customerForm.value) {
     const values = { ...this.customerForm.value, ...newValues };
     this.customerForm.controls.company.setValidators(values.not_company ? [] : [Validators.required]);
-    this.customerForm.controls.vat.setValidators(
-      !values.not_company && this.requiredVatCountries.includes(values.country || '') ? [Validators.required] : [],
-    );
+    this.customerForm.controls.vat.setValidators(values.not_company ? [] : [Validators.required]);
     this.customerForm.controls.company.updateValueAndValidity();
     this.customerForm.controls.vat.updateValueAndValidity();
   }
@@ -342,7 +341,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId || '',
-              on_demand_budget: this.budget?.value || null,
+              on_demand_budget: this.budget?.on_demand_budget || null,
               account_type: accountType,
               billing_interval: monthly ? RecurrentPriceInterval.MONTH : RecurrentPriceInterval.YEAR,
             })
@@ -435,7 +434,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
               customer: this.customer,
               token: this.token,
               prices: prices[accountType],
-              budget: this.budget?.value || null,
+              budget: this.budget?.on_demand_budget || null,
               currency,
             },
           }).onClose,
@@ -455,7 +454,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   modifyBudget() {
-    this.billingService.saveBudget(this.budget?.value || null).subscribe({
+    if (!this.budget) {
+      return;
+    }
+    this.billingService.saveBudget(this.budget).subscribe({
       next: ({ budgetBelowTotal }) => {
         if (budgetBelowTotal) {
           this.toaster.warning('billing.budget-warning');

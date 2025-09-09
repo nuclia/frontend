@@ -29,6 +29,7 @@ export interface UploadResponse {
   completed?: boolean;
   conflict?: boolean;
   limitExceeded?: boolean;
+  blocked?: boolean;
 }
 
 export interface UploadStatus {
@@ -39,6 +40,7 @@ export interface UploadStatus {
   failed: number;
   conflicts?: number;
   limitExceeded?: number;
+  blocked?: number;
 }
 
 export interface FileUploadStatus {
@@ -48,6 +50,7 @@ export interface FileUploadStatus {
   failed: boolean;
   conflicts?: boolean;
   limitExceeded?: boolean;
+  blocked?: boolean;
 }
 
 export interface FileWithMetadata extends File {
@@ -55,6 +58,8 @@ export interface FileWithMetadata extends File {
   md5?: string;
   payload?: ICreateResource;
   contentType?: string;
+  processing?: string;
+  split?: string;
 }
 
 export interface FileMetadata {
@@ -63,6 +68,8 @@ export interface FileMetadata {
   filename?: string;
   md5?: string;
   rslug?: string;
+  processing?: string;
+  split?: string;
 }
 
 const uploadRetryConfig: RetryConfig = {
@@ -94,6 +101,12 @@ export const upload = (
   }
   if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
     metadata.md5 = (data as FileWithMetadata).md5;
+  }
+  if ((data as FileWithMetadata).processing) {
+    metadata.processing = (data as FileWithMetadata).processing;
+  }
+  if ((data as FileWithMetadata).split) {
+    metadata.split = (data as FileWithMetadata).split;
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>
@@ -143,7 +156,7 @@ export const uploadFile = (
         return of({ failed: true });
       }
     }),
-    catchError((error) => of({ failed: true, limitExceeded: error.status === 429 })),
+    catchError((error) => of({ failed: true, limitExceeded: error.status === 429, blocked: error.status === 402 })),
   );
 };
 
@@ -179,6 +192,12 @@ export const TUSuploadFile = (
   if (uploadMetadata.length > 0) {
     headers['upload-metadata'] = uploadMetadata.join(',');
   }
+  if (metadata?.processing) {
+    headers['x-extract-strategy'] = metadata.processing;
+  }
+  if (metadata?.split) {
+    headers['x-split-strategy'] = metadata.split;
+  }
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
     retry(retry429Config(maxWaitOn429)),
@@ -188,7 +207,12 @@ export const TUSuploadFile = (
       merge(
         of(res).pipe(
           filter((res) => res.status !== 201 || !res.headers.get('location')),
-          map((res) => ({ failed: true, conflict: res.status === 409, limitExceeded: res.status === 429 })),
+          map((res) => ({
+            failed: true,
+            conflict: res.status === 409,
+            limitExceeded: res.status === 429,
+            blocked: res.status === 402,
+          })),
         ),
         of(res).pipe(
           filter((res) => res.status === 201 && !!res.headers.get('location')),
@@ -229,7 +253,7 @@ export const TUSuploadFile = (
                       }),
                       catchError(() => {
                         failed = true;
-                        return of({ failed: true, limitExceeded: res.status === 429 });
+                        return of({ failed: true, limitExceeded: res.status === 429, blocked: res.status === 402 });
                       }),
                     );
               }),
@@ -289,6 +313,9 @@ export const batchUpload = (
       if (res.status.limitExceeded) {
         fileStatus.limitExceeded = true;
       }
+      if (res.status.blocked) {
+        fileStatus.blocked = true;
+      }
       if (res.status.completed) {
         fileStatus.uploaded = true;
       }
@@ -300,12 +327,13 @@ export const batchUpload = (
       const failed = filesStatus.filter((item) => item.failed).length;
       const conflicts = filesStatus.filter((item) => item.conflicts).length;
       const limitExceeded = filesStatus.filter((item) => item.limitExceeded).length;
+      const blocked = filesStatus.filter((item) => item.blocked).length;
       const uploaded = filesStatus.filter((item) => item.uploaded).length;
       const completed = filesStatus.filter((item) => !item.failed && !item.uploaded).length === 0;
       const progress = Math.round(
         (filesStatus.reduce((acc, status) => acc + (status.file.size * status.progress) / 100, 0) / totalSize) * 100,
       );
-      return { files: filesStatus, progress, completed, uploaded, failed, conflicts, limitExceeded };
+      return { files: filesStatus, progress, completed, uploaded, failed, conflicts, limitExceeded, blocked };
     }),
   );
 };
@@ -334,6 +362,12 @@ export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: str
   }
   if (metadata?.lang) {
     headers['x-language'] = metadata.lang;
+  }
+  if (metadata?.processing) {
+    headers['x-extract-strategy'] = metadata.processing;
+  }
+  if (metadata?.split) {
+    headers['x-split-strategy'] = metadata.split;
   }
   return headers;
 };

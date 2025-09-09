@@ -1,0 +1,39 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry">
+      <label for="prompt">Prompt</label>
+      <nsi-expandable-textarea
+        id="prompt"
+        formControlName="prompt"
+        rows="2"
+        resizable
+        modalTitle="Prompt"
+        externalLabel=""></nsi-expandable-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="model">{{ 'retrieval-agents.workflow.common-forms.model' | translate }}</label>
+      <pa-input
+        id="model"
+        externalLabel=""
+        formControlName="model"></pa-input>
+    </div>
+    <div class="form-entry">
+      <label for="retries">{{ 'retrieval-agents.workflow.node-types.restart.form.retries.label' | translate }}</label>
+      <pa-input
+        id="retries"
+        type="number"
+        min="0"
+        externalLabel=""
+        formControlName="retries"
+        [errorMessages]="{
+          pattern: 'retrieval-agents.workflow.node-types.restart.form.retries.integer-error' | translate
+        }"></pa-input>
+    </div>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

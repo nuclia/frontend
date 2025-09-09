@@ -29,10 +29,12 @@ export interface Account {
   id: string;
   limits?: AccountLimits;
   max_kbs: number;
+  max_arags: number;
   max_users: number | null;
   saml_entity_id?: string;
   saml_sso_url?: string;
   saml_x509_cert?: string;
+  saml_config?: SamlConfig;
   slug: string;
   title: string;
   trial_expiration_date?: string;
@@ -59,7 +61,10 @@ export type UsageLimitsEntries =
   | 'monthly_limit_paragraphs_processed'
   | 'monthly_limit_paragraphs_stored'
   | 'monthly_limit_self_hosted_answers_generated'
-  | 'monthly_limit_self_hosted_searches_performed';
+  | 'monthly_limit_self_hosted_searches_performed'
+  | 'storage_limit_max_bytes_per_kb'
+  | 'storage_limit_max_resources_per_kb';
+
 export type UsageLimits = { [key in UsageLimitsEntries]: number };
 export type NullableUsageLimits = { [key in UsageLimitsEntries]: number | null };
 
@@ -97,23 +102,26 @@ export interface AccountCreation {
   zone?: string;
 }
 
+export interface SamlConfig {
+  domains: string[];
+  entity_id: string;
+  sso_url: string;
+  x509_cert: string;
+  authn_context?: 'exact' | 'minimum' | 'better' | 'maximum';
+}
+
 export interface AccountModification {
   title?: string;
   description?: string;
-  g_speech_to_text?: boolean;
-  saml?: {
-    domain: string;
-    entity_id: string;
-    sso_url: string;
-    x509_cert: string;
-  };
+  saml_config?: SamlConfig | null;
+  slug?: string;
 }
 
 export interface AccountStatus {
   available: boolean;
 }
 
-export type UsageAggregation = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+export type UsageAggregation = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year' | 'millennium';
 
 export interface CommonMetricDetails {
   identifier: {
@@ -124,6 +132,7 @@ export interface CommonMetricDetails {
     input: number | null;
     output: number | null;
     image: number | null;
+    storage: number | null;
   };
 }
 
@@ -146,6 +155,23 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     input: number | null;
     output: number | null;
     image: number | null;
+    storage: number | null;
+  };
+  nuclia_tokens_billed: {
+    search: number | null;
+    input: number | null;
+    output: number | null;
+    image: number | null;
+    storage: number | null;
+  };
+  requests: {
+    api: number | null;
+    chrome_extension: number | null;
+    dashboard: number | null;
+    desktop: number | null;
+    internal: number | null;
+    web: number | null;
+    widget: number | null;
   };
 }
 
@@ -174,7 +200,7 @@ export enum UsageType {
   SEARCHES_PERFORMED = 'searches_performed',
   SUGGESTIONS_PERFORMED = 'suggestions_performed',
   AI_TOKENS_USED = 'ai_tokens_used',
-  NUCLIA_TOKENS = 'nuclia_tokens',
+  NUCLIA_TOKENS = 'nuclia_tokens_billed',
 }
 
 export interface Welcome {
@@ -268,13 +294,43 @@ export interface LearningConfigurationProperty {
   // used in hf_embedding
   default?: any;
   description?: string;
+  anyOf?: { type: string }[];
+  $ref?: string;
+  values?: { value: string; label: string }[];
 }
 
 export interface LearningConfigurationSchema {
   title: string;
-  type: string;
+  type: 'integer' | 'number' | 'string' | 'boolean';
   properties: { [key: string]: LearningConfigurationProperty };
   required: string[];
+  $defs?: { [key: string]: LearningConfigurationSchema };
+  enum?: number[];
+  titles?: string[];
+}
+
+export function getLearningConfigPropType(property: LearningConfigurationProperty): string {
+  if (property.type) {
+    return property.type;
+  }
+  if (property.anyOf) {
+    const types = property.anyOf.map((item) => item.type).filter((item) => item !== 'null');
+    if (types.length === 1) {
+      return types[0];
+    }
+  }
+  return 'string';
+}
+
+export function getSubSchema(
+  schema: LearningConfigurationSchema,
+  property: LearningConfigurationProperty,
+): LearningConfigurationSchema | undefined {
+  const key = property.$ref?.split('/').pop();
+  if (key && schema.$defs && schema.$defs[key]) {
+    return schema.$defs[key];
+  }
+  return undefined;
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];
@@ -340,4 +396,37 @@ export interface QueryInfo {
   entities?: TokenSearch;
   sentence?: SentenceSearch;
   query: string;
+}
+
+export enum ModelType {
+  GENERATIVE = 'GENERATIVE',
+  NER = 'NER',
+  RESOURCE_LABELER = 'RESOURCE_LABELER',
+  CLASSIFIER = 'CLASSIFIER',
+  ANONYMIZER = 'ANONYMIZER',
+  VISUAL_LABELER = 'VISUAL_LABELER',
+  SUMMARY = 'SUMMARY',
+  DUMMY = 'DUMMY',
+  PARAGRAPH_LABELER = 'PARAGRAPH_LABELER',
+  EMBEDDINGS = 'EMBEDDINGS',
+  RELATIONS = 'RELATIONS',
+}
+
+interface BaseCustomModel {
+  model_id: string | null;
+  account: string | null;
+  model_types?: ModelType[];
+  trained_date: string | null;
+  location: string | null;
+  trained_kbid: string | null;
+}
+
+export interface CustomModelItem extends BaseCustomModel {
+  title: string | null;
+}
+
+export interface CustomModel extends BaseCustomModel {
+  log: string | null;
+  kbids: string[];
+  openai_compat: any | null;
 }

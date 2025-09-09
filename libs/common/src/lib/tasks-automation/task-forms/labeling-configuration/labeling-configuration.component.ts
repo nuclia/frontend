@@ -10,105 +10,171 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  BadgeComponent,
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisModalService,
-  SisToastService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
-import { LabelModule, LabelSetFormModalComponent, LabelsService, SDKService } from '@flaps/core';
+import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { LabelModule, LabelSetFormModalComponent, LabelsService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModalConfig, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { LabelSet, LabelSetKind, LabelSets, Search } from '@nuclia/core';
-import { filter, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaIconModule,
+  OptionModel,
+} from '@guillotinaweb/pastanaga-angular';
+import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
+import { combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
+import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
 
-interface LabelingConfigurationBase {
-  selectedLabelSet?: { id: string; labelSet: LabelSet };
-  labelingBy: 'existing-labeling' | 'prompt';
-  prompt: string;
-}
-
-export interface LabelingConfiguration extends LabelingConfigurationBase {
+export interface LabelingConfiguration {
+  label: LabelOperation;
   valid: boolean;
+  on: TaskApplyTo;
 }
 
 @Component({
   selector: 'stf-labeling-configuration',
-  standalone: true,
   imports: [
     CommonModule,
-    DropdownButtonComponent,
     InfoCardComponent,
     LabelModule,
     PaButtonModule,
     PaTogglesModule,
     PaTextFieldModule,
+    PaDropdownModule,
+    PaPopupModule,
+    PaIconModule,
     ReactiveFormsModule,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
-    BadgeComponent,
   ],
   templateUrl: './labeling-configuration.component.html',
   styleUrl: './labeling-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelingConfigurationComponent implements OnInit, OnDestroy {
-  private sdk = inject(SDKService);
+  private cdr = inject(ChangeDetectorRef);
+
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
-  private toaster = inject(SisToastService);
-  private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll = new Subject<void>();
   private _type: 'resources' | 'text-blocks' = 'resources';
-  @Input() set type(value: 'resources' | 'text-blocks') {
-    this._type = value;
-    this.labelSets = value === 'resources' ? this.labelService.resourceLabelSets : this.labelService.textBlockLabelSets;
-    this.hasLabelSet =
-      value === 'resources' ? this.labelService.hasResourceLabelSets : this.labelService.hasTextBlockLabelSets;
-  }
   get type() {
     return this._type;
   }
 
+  @Input() set task(value: DataAugmentationTaskOnGoing | undefined | null) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task?: DataAugmentationTaskOnGoing;
+
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
-  labelSets?: Observable<LabelSets | null>;
-  hasLabelSet?: Observable<boolean>;
-  selectedLabelSet?: { id: string; labelSet: LabelSet };
-  labeledResourceCount?: number;
+  labelSets: LabelSets | null = null;
+  labelSetOptions: OptionModel[] = [];
+  hasLabelSet = false;
 
-  labelingOptionsForm = new FormGroup({
-    labelingBy: new FormControl<'existing-labeling' | 'prompt'>('existing-labeling', { nonNullable: true }),
-    prompt: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+  labelingForm = new FormGroup({
+    on: new FormControl('resources', { nonNullable: true }),
+    ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    description: new FormControl('', { nonNullable: true }),
+    multiple: new FormControl<boolean>(false, { nonNullable: true }),
+    labels: new FormArray([
+      new FormGroup({
+        label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+        description: new FormControl('', { nonNullable: true }),
+        examples: new FormArray<FormControl<string>>([]),
+      }),
+    ]),
   });
-  errorMessages = {
-    required: 'validation.required',
-  };
 
-  get labelingByValue() {
-    return this.labelingOptionsForm.controls.labelingBy.value;
+  get labelsControls() {
+    return this.labelingForm.controls.labels.controls;
   }
 
-  private validConfiguration(config: LabelingConfigurationBase) {
-    return (
-      !!config.selectedLabelSet &&
-      (config.labelingBy === 'existing-labeling' || (config.labelingBy === 'prompt' && !!config.prompt))
+  get selectedLabelset() {
+    return this.labelingForm.value.ident;
+  }
+
+  labelOptions = combineLatest([
+    this.labelService.labelSets,
+    this.labelingForm.controls.ident.valueChanges.pipe(startWith(this.selectedLabelset)),
+  ]).pipe(
+    map(([labelSets, selectedLabelset]) =>
+      (labelSets?.[selectedLabelset || '']?.labels || []).map(
+        (label) => new OptionModel({ id: label.title, value: label.title, label: label.title }),
+      ),
+    ),
+    shareReplay(1),
+  );
+
+  ngOnInit() {
+    this.labelingForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.configurationChange.emit({
+        label: this.labelingForm.getRawValue(),
+        valid: this.labelingForm.valid,
+        on: this.type === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
+      });
+    });
+    this.updateLabelsets();
+  }
+
+  initForm(task: DataAugmentationTaskOnGoing) {
+    const labelOperation = task.parameters?.operations?.find((operation) => operation.label)?.label;
+    if (labelOperation) {
+      const { labels, ...rest } = labelOperation;
+      this.labelingForm.patchValue({
+        ...rest,
+        on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
+      });
+      this.labelingForm.controls.labels.clear();
+      labelOperation.labels?.forEach(() => {
+        this.addLabel();
+      });
+      if (labels) {
+        this.labelingForm.controls.labels.patchValue(labels);
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
+  addLabel() {
+    this.labelingForm.controls.labels.push(
+      new FormGroup({
+        label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+        description: new FormControl('', { nonNullable: true }),
+        examples: new FormArray<FormControl<string>>([]),
+      }),
     );
   }
 
-  ngOnInit() {
-    this.labelingOptionsForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      const config = { ...this.labelingOptionsForm.getRawValue(), selectedLabelSet: this.selectedLabelSet };
-      this.configurationChange.emit({
-        ...config,
-        valid: this.validConfiguration(config),
-      });
-    });
+  removeLabel(index: number) {
+    this.labelingForm.controls.labels.removeAt(index);
+  }
+
+  clearLabels() {
+    const currentLabelset = this.labelSets?.[this.labelingForm.controls.ident.value];
+    if (currentLabelset?.multiple) {
+      this.labelingForm.controls.multiple.enable();
+      this.labelingForm.controls.multiple.setValue(true);
+    } else {
+      this.labelingForm.controls.multiple.disable();
+      this.labelingForm.controls.multiple.setValue(false);
+    }
+    this.labelingForm.controls.labels.clear();
+    this.labelingForm.controls.description.setValue('');
+    this.addLabel();
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {
@@ -127,47 +193,54 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       .onClose.pipe(
         filter((labelset) => !!labelset),
         map((data) => data as { id: string; labelSet: LabelSet }),
+        switchMap((data) => this._updateLabelsets(this.type).pipe(map(() => data))),
       )
       .subscribe((data) => {
         if (
           (data.labelSet.kind[0] === LabelSetKind.RESOURCES && this.type === 'resources') ||
           (data.labelSet.kind[0] === LabelSetKind.PARAGRAPHS && this.type === 'text-blocks')
         ) {
-          this.triggerSelectLabelSet(data);
+          this.labelingForm.controls.ident.setValue(data.id);
         }
       });
   }
 
-  triggerSelectLabelSet(data: { id: string; labelSet: LabelSet }) {
-    this.selectedLabelSet = data;
-    const config = { ...this.labelingOptionsForm.getRawValue(), selectedLabelSet: data };
-    this.configurationChange.emit({ ...config, valid: this.validConfiguration(config) });
-    const facetId = `/classification.labels/${data.id}`;
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          this.type === 'resources'
-            ? kb.catalog('', { faceted: [facetId] })
-            : kb.search('', [Search.Features.KEYWORD], { faceted: [facetId] }),
-        ),
-      )
-      .subscribe({
-        next: (results) => {
-          if (results.type === 'error') {
-            this.toaster.error('tasks-automation.errors.counting-labeled-resources');
-          } else {
-            const facets: Search.FacetsResult =
-              (this.type === 'resources' ? results.fulltext?.facets : results.paragraphs?.facets) || {};
-            this.labeledResourceCount = Object.values(facets[facetId] || {}).reduce((count, value) => {
-              return count + value;
-            }, 0);
-            this.cdr.detectChanges();
-          }
-        },
-        error: () => {
-          this.toaster.error('tasks-automation.errors.counting-labeled-resources');
-        },
-      });
+  private _updateLabelsets(type: 'resources' | 'text-blocks' = 'resources'): Observable<void> {
+    if (type) {
+      this._type = type === 'resources' ? 'resources' : 'text-blocks';
+    }
+    if (this._type === 'resources') {
+      return forkJoin([
+        this.labelService.resourceLabelSets.pipe(take(1)),
+        this.labelService.hasResourceLabelSets.pipe(take(1)),
+      ]).pipe(
+        map(([labelSets, hasLabelSet]) => {
+          this.labelSets = labelSets;
+          this.hasLabelSet = hasLabelSet;
+          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
+          return undefined;
+        }),
+      );
+    } else {
+      return forkJoin([
+        this.labelService.textBlockLabelSets.pipe(take(1)),
+        this.labelService.hasTextBlockLabelSets.pipe(take(1)),
+      ]).pipe(
+        map(([labelSets, hasLabelSet]) => {
+          this.labelSets = labelSets;
+          this.hasLabelSet = hasLabelSet;
+          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
+          return undefined;
+        }),
+      );
+    }
+  }
+  updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
+    this._updateLabelsets(type).subscribe(() => this.cdr.markForCheck());
+  }
+  getLabelsetOptions(labelSets: LabelSets) {
+    return Object.entries(labelSets).map(
+      ([key, labelSet]) => new OptionModel({ id: key, value: key, label: labelSet.title }),
+    );
   }
 }

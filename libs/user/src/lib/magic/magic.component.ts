@@ -7,6 +7,7 @@ import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 @Component({
   selector: 'stf-magic',
   templateUrl: './magic.component.html',
+  standalone: false,
 })
 export class MagicComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

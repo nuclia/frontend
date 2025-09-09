@@ -1,0 +1,21 @@
+@if (results && task) {
+  @if (task.task.name === 'ask') {
+    <div class="generated-fields">
+      @for (field of results.results | keyvalue; track field.key) {
+        @if (field.key !== 'a/title' && !field.key.startsWith('t/da-')) {
+          @for (textField of field.value.applied_data_augmentation.new_text_fields; track textField.destination) {
+            <nsi-info-card>{{ textField.text_field.body }}</nsi-info-card>
+          }
+        }
+      }
+    </div>
+  } @else if (task.task.name === 'labeler') {
+    <app-labeler-results
+      [results]="results"
+      [task]="task"></app-labeler-results>
+  } @else if (task.task.name === 'llm-graph') {
+    <app-graph-results
+      [results]="results"
+      [task]="task"></app-graph-results>
+  }
+}

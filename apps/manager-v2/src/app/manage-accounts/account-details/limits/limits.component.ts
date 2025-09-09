@@ -13,6 +13,7 @@ import { AccountDetails } from '../../account-ui.models';
   templateUrl: './limits.component.html',
   styleUrls: ['./limits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
@@ -149,6 +150,9 @@ export class LimitsComponent implements OnInit, OnDestroy {
         monthly_limit_paragraphs_stored: value,
         monthly_limit_self_hosted_answers_generated: value,
         monthly_limit_self_hosted_searches_performed: value,
+        storage_limit_max_bytes_per_kb: value,
+        storage_limit_max_resources_per_kb: value
+
       },
     };
     return resetPayload;

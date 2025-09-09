@@ -1,5 +1,8 @@
 <script>
-  export let active;
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
+  let { active, children } = $props();
 </script>
 
 <li
@@ -9,16 +12,14 @@
   <button
     class="link"
     role="tab"
-    on:click
+    onclick={bubble('click')}
     aria-expanded={active}>
     <span
       class="link-wrapper ellipsis"
       tabindex="-1">
-      <slot />
+      {@render children?.()}
     </span>
   </button>
 </li>
 
-<style
-  lang="scss"
-  src="./TabItem.scss"></style>
+<style src="./TabItem.css"></style>

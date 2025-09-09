@@ -3,13 +3,15 @@
     <h2>{{ 'billing.features.title' | translate }}</h2>
   </pa-modal-title>
   <pa-modal-content>
-    <div *ngFor="let feature of features">
-      <h3 class="title-s">
-        {{ 'billing.features.' + feature | translate }}
-      </h3>
-      <p class="body-s">
-        {{ 'billing.features.' + feature + '.help' | translate }}
-      </p>
-    </div>
+    @for (feature of features; track feature) {
+      <div>
+        <h3 class="title-s">
+          {{ 'billing.features.' + feature | translate }}
+        </h3>
+        <p class="body-s">
+          {{ 'billing.features.' + feature + '.help' | translate }}
+        </p>
+      </div>
+    }
   </pa-modal-content>
 </pa-modal-dialog>

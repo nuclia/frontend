@@ -1,0 +1,33 @@
+.images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rhythm-0_5);
+  margin: var(--rhythm-1);
+  .image-preview {
+    background: var(--color-neutral-lightest);
+    height: var(--rhythm-10);
+    width: var(--rhythm-10);
+    position: relative;
+    img {
+      height: var(--rhythm-10);
+      width: var(--rhythm-10);
+      object-fit: contain;
+      opacity: 1;
+    }
+    .image-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: var(--rhythm-0_5);
+      display: none;
+    }
+    &:hover {
+      .image-btn {
+        display: block;
+      }
+      img {
+        opacity: 0.5;
+      }
+    }
+  }
+}

@@ -8,7 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTableModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -19,17 +19,15 @@ import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } fr
   templateUrl: 'parameters-table.component.html',
   styleUrls: ['parameters-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    CommonModule,
     TranslateModule,
     PaTableModule,
     PaTextFieldModule,
     PaButtonModule,
     PaTogglesModule,
     ReactiveFormsModule,
-    PaButtonModule,
-  ],
+    PaButtonModule
+],
 })
 export class ParametersTableComponent implements OnInit, OnDestroy {
   form = new FormGroup({
@@ -38,15 +36,16 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
   length = 0;
 
   @Input()
-  set values(values: { key: string; value: string; secret: boolean }[]) {
-    if (values.length !== this.length) {
+  set values(values: { key: string; value: string; secret?: boolean }[]) {
+    if (JSON.stringify(this.normalize(values)) !== JSON.stringify(this.rows.map((row) => row.value))) {
       this.length = values.length;
       this.setForm(values);
     }
   }
   @Input({ transform: booleanAttribute }) readonly = false;
+  @Input({ transform: booleanAttribute }) secretDisabled = false;
 
-  @Output() valuesChanges = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
+  @Output() valuesChange = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
 
   get rows() {
     return this.form.controls.rows.controls;
@@ -90,14 +89,14 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
     const current = this.form.value.rows || [];
     combineLatest(this.rows.map((r, i) => r.valueChanges.pipe(startWith(current[i] || {}), distinctUntilChanged())))
       .pipe(takeUntil(this.unsubscribe), distinctUntilChanged())
-      .subscribe((data) => this.valuesChanges.emit(this.normalize(data)));
+      .subscribe((data) => this.valuesChange.emit(this.normalize(data)));
   }
 
   private normalize(rows?: Partial<{ key?: string; value?: string; secret?: boolean }[]>) {
     return (rows || []).map((row) => ({
       key: row?.key || '',
       value: row?.value || '',
-      secret: row?.secret || false,
+      secret: this.secretDisabled ? false : !!row?.secret,
     }));
   }
 

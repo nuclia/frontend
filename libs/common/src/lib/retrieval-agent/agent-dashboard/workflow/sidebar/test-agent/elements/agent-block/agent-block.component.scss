@@ -1,0 +1,13 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  pa-accordion ::ng-deep .pa-accordion-item-title > .title-xs {
+    font-size: font-size(xs) !important;
+  }
+}
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}

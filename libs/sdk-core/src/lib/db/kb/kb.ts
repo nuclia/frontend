@@ -1,47 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import {
   catchError,
   defer,
   forkJoin,
-  from,
   map,
   Observable,
   of,
   retry,
   RetryConfig,
+  shareReplay,
   switchMap,
   tap,
   throwError,
   timer,
 } from 'rxjs';
-import {
-  ActivityDownloadList,
-  Counters,
-  Entities,
-  EntitiesGroup,
-  EventList,
-  EventType,
-  FullKbUser,
-  IKnowledgeBox,
-  IKnowledgeBoxCreation,
-  InviteKbData,
-  IWritableKnowledgeBox,
-  KbInvite,
-  KbUser,
-  KbUserPayload,
-  LabelSet,
-  LabelSets,
-  ProcessingStatus,
-  ResourceList,
-  ResourceOperationNotification,
-  ResourcePagination,
-  ResourceProcessingNotification,
-  SentenceToken,
-  ServiceAccount,
-  ServiceAccountCreation,
-  Synonyms,
-  SynonymsPayload,
-} from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
+import { ABORT_STREAMING_REASON } from '../../rest';
+import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
+import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import {
   ExtractedDataTypes,
   ICreateResource,
@@ -52,15 +28,57 @@ import {
   retry429Config,
   UserMetadata,
 } from '../resource';
+import {
+  ask,
+  catalog,
+  CatalogOptions,
+  ChatOptions,
+  find,
+  MAX_FACETS_PER_REQUEST,
+  predictAnswer,
+  search,
+  Search,
+  SearchOptions,
+  suggest,
+} from '../search';
+import { Agentic } from '../search/agentic';
+import { Ask, PredictAnswerOptions } from '../search/ask.models';
+import { TaskManager } from '../task';
+import { Training } from '../training';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { ask, catalog, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
-import { Training } from '../training';
-import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
-import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
-import { ABORT_STREAMING_REASON } from '../../rest';
-import { Ask } from '../search/ask.models';
-import { Agentic } from '../search/agentic';
+import { ActivityMonitor } from './activity';
+import {
+  Counters,
+  Entities,
+  EntitiesGroup,
+  ExtractConfig,
+  ExtractStrategies,
+  FullKbUser,
+  IKnowledgeBox,
+  IKnowledgeBoxBase,
+  IKnowledgeBoxStandalone,
+  InviteKbData,
+  IWritableKnowledgeBox,
+  KbInvite,
+  KbUserPayload,
+  LabelSet,
+  LabelSets,
+  ProcessingStatus,
+  ResourceList,
+  ResourceOperationNotification,
+  ResourcePagination,
+  ResourceProcessingNotification,
+  SearchConfig,
+  SearchConfigs,
+  SentenceToken,
+  ServiceAccount,
+  ServiceAccountCreation,
+  SplitStrategies,
+  SplitStrategy,
+  Synonyms,
+  SynonymsPayload,
+} from './kb.models';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -75,7 +93,8 @@ export interface KnowledgeBox extends IKnowledgeBox {}
 export class KnowledgeBox implements IKnowledgeBox {
   accountId: string;
   protected nuclia: INuclia;
-  private tempToken?: { token: string; expiration: number };
+  private tempTokenReplay: Observable<string> | undefined;
+  private tempTokenExpiration = 0;
   private notifications?: Observable<NotificationMessage[]>;
   private notificationsController?: AbortController;
 
@@ -122,15 +141,21 @@ export class KnowledgeBox implements IKnowledgeBox {
     return `${this.nuclia.regionalBackend}/v1/kb/${this.id}`;
   }
 
-  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxCreation) {
+  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxBase | IKnowledgeBoxStandalone) {
     this.nuclia = nuclia;
     this.accountId = account;
-    Object.assign(this, data);
-    if (!data.id && data.uuid) {
+    if ('uuid' in data) {
       this.id = data.uuid;
+      this.slug = data.slug;
+      this.title = data.config?.title || '';
+      this.description = data.config?.description;
+      this.hidden_resources_enabled = data.config?.hidden_resources_enabled;
+      this.hidden_resources_hide_on_creation = data.config?.hidden_resources_hide_on_creation;
+    } else {
+      Object.assign(this, data);
     }
-    if (!data.title && data.slug) {
-      this.title = data.slug;
+    if (!this.title && this.slug) {
+      this.title = this.slug;
     }
   }
 
@@ -153,6 +178,37 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`).pipe(
       map((res) => res?.labelsets || {}),
       catchError(() => of({})),
+    );
+  }
+
+  /**
+   * Get the total amount of matches in the Knowledge Box for specific criteria (facets) passed in argument
+   * @param facets List of facets to request
+   * @returns An observable containing an object where each key is a string and maps to an object containing values and their corresponding counts.
+   */
+  getFacets(facets: string[]): Observable<Search.FacetsResult> {
+    // catalog endpoint has a limit on the number of facets that can be retrieved per request
+    const facetChunks = facets.reduce(
+      (chunks, curr) => {
+        const lastChunk = chunks[chunks.length - 1];
+        lastChunk.length < MAX_FACETS_PER_REQUEST ? lastChunk.push(curr) : chunks.push([curr]);
+        return chunks;
+      },
+      [[]] as string[][],
+    );
+    return forkJoin(
+      facetChunks.map((faceted) => {
+        return this.catalog('', {
+          faceted,
+          page_size: 0, // Search results are excluded to improve performance
+        });
+      }),
+    ).pipe(
+      map((results) =>
+        results
+          .filter((result) => result.type !== 'error')
+          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
+      ),
     );
   }
 
@@ -199,7 +255,13 @@ export class KnowledgeBox implements IKnowledgeBox {
         ResourceProperties.EXTRA,
         ResourceProperties.SECURITY,
       ],
-      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+      [
+        ExtractedDataTypes.TEXT,
+        ExtractedDataTypes.METADATA,
+        ExtractedDataTypes.LINK,
+        ExtractedDataTypes.FILE,
+        ExtractedDataTypes.QUESTION_ANSWERS,
+      ],
     );
   }
 
@@ -225,7 +287,13 @@ export class KnowledgeBox implements IKnowledgeBox {
         ResourceProperties.EXTRA,
         ResourceProperties.SECURITY,
       ],
-      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+      [
+        ExtractedDataTypes.TEXT,
+        ExtractedDataTypes.METADATA,
+        ExtractedDataTypes.LINK,
+        ExtractedDataTypes.FILE,
+        ExtractedDataTypes.QUESTION_ANSWERS,
+      ],
     );
   }
 
@@ -408,6 +476,28 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   /**
+   * Performs a question answering operation
+   * 
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .predictAnswer('Who is Eric from Toronto?'))
+      .subscribe((answer) => {
+        if (answer.type !== 'error') {
+          console.log('answer', answer.text);
+        }
+      });
+    ```
+   */
+  predictAnswer(
+    question: string,
+    options?: PredictAnswerOptions,
+    synchronous = true,
+  ): Observable<Ask.Answer | IErrorResponse> {
+    return predictAnswer(this.nuclia, this.path, question, options, synchronous);
+  }
+
+  /**
    * Performs a question answering operation based on a given context.
    *
    * Example:
@@ -418,33 +508,17 @@ export class KnowledgeBox implements IKnowledgeBox {
         'Eric was born in France',
         'Eric lives in Toronto',
       ]))
-      .subscribe((answer) => {
+      .subscribe(({ answer }) => {
         console.log('answer', answer);
       });
     ```
   */
   generate(question: string, context: string[] = []): Observable<{ answer: string; cannotAnswer: boolean }> {
-    return this.nuclia.rest
-      .post<Response>(
-        `${this.path}/predict/chat`,
-        {
-          question,
-          query_context: context,
-          user_id: 'USER',
-        },
-        undefined,
-        true,
-      )
-      .pipe(
-        switchMap((res) => from(res.text())),
-        map((text) => {
-          const cannotAnswer = text.slice(-1) !== '0';
-          return {
-            answer: text.slice(0, -1),
-            cannotAnswer,
-          };
-        }),
-      );
+    return this.predictAnswer(question, { query_context: context }, true).pipe(
+      map((res) =>
+        res.type === 'answer' ? { answer: res.text, cannotAnswer: false } : { answer: res.detail, cannotAnswer: true },
+      ),
+    );
   }
 
   /**
@@ -488,37 +562,11 @@ export class KnowledgeBox implements IKnowledgeBox {
     json_schema: object,
     context: string[] = [],
   ): Observable<{ answer: object; success: boolean }> {
-    return this.nuclia.rest
-      .post<Response>(
-        `${this.path}/predict/chat`,
-        {
-          question,
-          query_context: context,
-          user_id: 'USER',
-          json_schema,
-        },
-        undefined,
-        true,
-      )
-      .pipe(
-        switchMap((res) => from(res.text())),
-        map((ndjson) => {
-          const rows = ndjson.split('\n').filter((d) => d);
-          return rows.reduce(
-            (acc, row) => {
-              const obj = JSON.parse(row).chunk;
-              if (obj.type === 'object') {
-                acc.answer = obj.object;
-              }
-              if (obj.type === 'status') {
-                acc.success = obj.code === '0';
-              }
-              return acc;
-            },
-            {} as { answer: object; success: boolean },
-          );
-        }),
-      );
+    return this.predictAnswer(question, { query_context: context, json_schema }, true).pipe(
+      map((res) =>
+        res.type === 'answer' ? { answer: res.jsonAnswer, success: true } : { answer: {}, success: false },
+      ),
+    );
   }
 
   /**
@@ -533,9 +581,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     });
     ```
   */
-  rephrase(question: string): Observable<string> {
+  rephrase(question: string, user_context?: string[], rephrase_prompt?: string): Observable<string> {
     return this.nuclia.rest
-      .post<string>(`${this.path}/predict/rephrase`, { question, user_id: 'USER' })
+      .post<string>(`${this.path}/predict/rephrase`, { question, user_id: 'USER', user_context, rephrase_prompt })
       .pipe(map((res) => res.slice(0, -1)));
   }
 
@@ -581,7 +629,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
   }
 
-  catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {
+  catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse> {
     return catalog(this.nuclia, this.id, query, options);
   }
 
@@ -594,12 +642,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
   }
 
-  feedback(answerId: string, good: boolean, feedback = ''): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback });
-  }
-
-  listFeedback(): Observable<string[]> {
-    return this.nuclia.rest.get<string[]>(`${this.path}/feedback`);
+  feedback(answerId: string, good: boolean, feedback = '', text_block_id?: string): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/feedback`, {
+      ident: answerId,
+      good,
+      task: 'CHAT',
+      feedback,
+      text_block_id,
+    });
   }
 
   /** Returns totals for each kind of contents stored in the Knowledge Box (resources, fields, paragraphs, vectors) */
@@ -634,55 +684,42 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```ts
     const downloadLink = `${nuclia.rest.getFullpath(filePath)}?eph-token=${nuclia.knowledgeBox.getTempToken()}`;
     ```
+   * @param payload Optional payload to provide extra data for the token generation
+   * @param ignoreExpiration Optional By default, a temp token is valid for 5min and the same token returned if this method is called several times during this time.
+   * Passing ignoreExpiration flag to true will ignore this expiration delay and will always return a new token.
    */
-  getTempToken(): Observable<string> {
-    if (this.tempToken && this.tempToken.expiration > Date.now()) {
-      return of(this.tempToken.token);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTempToken(payload?: any, ignoreExpiration = false): Observable<string> {
+    if (ignoreExpiration || !this.tempTokenReplay || this.tempTokenExpiration < Date.now()) {
+      this.tempTokenReplay = this._getTempToken(payload).pipe(
+        map((res) => res.token),
+        shareReplay(1),
+      );
+      this.tempTokenExpiration = Date.now() + TEMP_TOKEN_DURATION;
     }
-    let request: Observable<{ token: string }> | undefined;
+    return this.tempTokenReplay;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _getTempToken(payload?: any): Observable<{ token: string }> {
     if (!this.nuclia.options.standalone) {
       const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
       if (!accountId || !zone) {
         throw new Error('Account id and zone are required to get a temp token');
       }
-      request = this.nuclia.rest.post<{ token: string }>(
+      return this.nuclia.rest.post<{ token: string }>(
         `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
-        {},
+        payload || {},
         undefined,
         undefined,
         undefined,
         zone,
       );
     } else {
-      request = this.nuclia.rest.get<{ token: string }>('/temp-access-token');
+      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
-    return request.pipe(
-      map((res) => res.token),
-      tap((token) => (this.tempToken = { token, expiration: Date.now() + TEMP_TOKEN_DURATION })),
-    );
   }
-
-  /**
-   * @deprecated
-   */
-  listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
-    const params = [type ? `type=${type}` : '', page ? `page=${page}` : '', size ? `size=${size}` : '']
-      .filter((p) => p)
-      .join('&');
-    return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
-  }
-
-  listActivityDownloads(type: EventType): Observable<ActivityDownloadList> {
-    return this.nuclia.rest.get<ActivityDownloadList>(`/kb/${this.id}/activity/downloads?type=${type}`);
-  }
-
-  downloadActivity(type: EventType, month: string): Observable<Blob> {
-    return this.nuclia.rest
-      .get<Response>(`/kb/${this.id}/activity/download?type=${type}&month=${month}`, {}, true)
-      .pipe(switchMap((res) => from(res.blob())));
-  }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }> {
     return this.nuclia.rest.get<{ [id: string]: any }>(`/kb/${this.id}/configuration`);
   }
@@ -693,28 +730,12 @@ export class KnowledgeBox implements IKnowledgeBox {
       .pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
-  getUsers(accountSlug: string): Observable<FullKbUser[]> {
-    return forkJoin([
-      this.nuclia.db.getAccountUsers(accountSlug),
-      this.nuclia.rest.get<KbUser[]>(
-        `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
-        undefined,
-        undefined,
-        this.nuclia.options.zone,
-      ),
-    ]).pipe(
-      map(([accountUsers, kbUsers]) => {
-        return kbUsers.reduce((fullKbUsers, kbUser) => {
-          const accountUser = accountUsers.find((accountUser) => accountUser.id === kbUser.id);
-          if (accountUser) {
-            fullKbUsers.push({
-              ...accountUser,
-              role: kbUser.role,
-            });
-          }
-          return fullKbUsers;
-        }, [] as FullKbUser[]);
-      }),
+  getUsers(): Observable<FullKbUser[]> {
+    return this.nuclia.rest.get<FullKbUser[]>(
+      `/account/${this.nuclia.options.accountId}/kb/${this.id}/users?include_user_detail=true`,
+      undefined,
+      undefined,
+      this.nuclia.options.zone,
     );
   }
 
@@ -868,6 +889,22 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     return this.nuclia.rest.get(`${this.path}/processing-status?${queryParams}`);
   }
+
+  getExtractStrategies(): Observable<ExtractStrategies> {
+    return this.nuclia.rest.get<ExtractStrategies>(`${this.path}/extract_strategies`);
+  }
+
+  getSplitStrategies(): Observable<SplitStrategies> {
+    return this.nuclia.rest.get<SplitStrategies>(`${this.path}/split_strategies`);
+  }
+
+  getSearchConfig(id: string): Observable<SearchConfig> {
+    return this.nuclia.rest.get<SearchConfig>(`${this.path}/search_configurations/${id}`);
+  }
+
+  getSearchConfigs(): Observable<SearchConfigs> {
+    return this.nuclia.rest.get<SearchConfigs>(`${this.path}/search_configurations`);
+  }
 }
 
 /** Extends `KnowledgeBox` with all the write operations. */
@@ -877,12 +914,33 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** True if the current user is a contributor of the Knowledge Box. */
   contrib?: boolean;
   private _training?: Training;
+  private _activityMonitor?: ActivityMonitor;
+  private _taskManager?: TaskManager;
 
+  /**
+   * Entry point to task manager
+   */
+  get taskManager(): TaskManager {
+    if (!this._taskManager) {
+      this._taskManager = new TaskManager(this, this.nuclia);
+    }
+    return this._taskManager;
+  }
+
+  /**
+   * @deprecated
+   */
   get training(): Training {
     if (!this._training) {
       this._training = new Training(this, this.nuclia);
     }
     return this._training;
+  }
+  get activityMonitor(): ActivityMonitor {
+    if (!this._activityMonitor) {
+      this._activityMonitor = new ActivityMonitor(this, this.nuclia);
+    }
+    return this._activityMonitor;
   }
 
   /**
@@ -1006,12 +1064,14 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     metadata?: UserMetadata,
     synchronous = true,
     origin?: Origin,
+    slug?: string,
   ): Observable<{ uuid: string }> {
     return this.createResource(
       {
         links: { link },
         usermetadata: metadata,
         title: link.uri,
+        slug,
         icon: 'application/stf-link',
         ...(origin ? { origin } : {}),
       },
@@ -1150,5 +1210,49 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     const { endpoint, zone } = this.getKbEndpointAndZone();
     const encodedEmail = encodeURIComponent(email);
     return this.nuclia.rest.delete(`${endpoint}/invite?email=${encodedEmail}`, undefined, undefined, zone);
+  }
+
+  /**
+   * Add an embedding model to the Knowledge box
+   * @param model
+   */
+  addVectorset(model: string): Observable<void> {
+    return this.nuclia.rest.post(`/kb/${this.id}/vectorsets/${model}`, {});
+  }
+
+  /**
+   * Remove an embedding model from the Knowledge box
+   * @param model
+   */
+  removeVectorset(model: string): Observable<void> {
+    return this.nuclia.rest.delete(`/kb/${this.id}/vectorsets/${model}`);
+  }
+
+  createExtractStrategy(config: ExtractConfig): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/extract_strategies`, config);
+  }
+
+  deleteExtractStrategy(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
+  }
+
+  createSplitStrategy(strategy: SplitStrategy): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/split_strategies`, strategy);
+  }
+
+  deleteSplitStrategy(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/split_strategies/strategy/${id}`);
+  }
+
+  createSearchConfig(id: string, config: SearchConfig): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/search_configurations/${id}`, config);
+  }
+
+  updateSearchConfig(id: string, config: SearchConfig): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/search_configurations/${id}`, config);
+  }
+
+  deleteSearchConfig(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/search_configurations/${id}`);
   }
 }

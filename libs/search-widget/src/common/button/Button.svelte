@@ -1,11 +1,27 @@
 <script lang="ts">
-  export let aspect = 'solid'; // solid or basic
-  export let kind = 'secondary'; // primary | secondary
-  export let size = 'medium'; // medium or small
-  export let active = false;
-  export let disabled = false;
-  export let type = 'button';
-  let label: HTMLSpanElement;
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
+  interface Props {
+    aspect?: string; // solid or basic
+    kind?: string; // primary | secondary
+    size?: string; // medium or small
+    active?: boolean;
+    disabled?: boolean;
+    type?: string;
+    children?: import('svelte').Snippet;
+  }
+
+  let {
+    aspect = 'solid',
+    kind = 'secondary',
+    size = 'medium',
+    active = false,
+    disabled = false,
+    type = 'button',
+    children,
+  }: Props = $props();
+  let label: HTMLSpanElement = $state();
 </script>
 
 <button
@@ -16,15 +32,13 @@
   aria-label={label ? label.textContent : ''}
   tabindex="0"
   {disabled}
-  on:click>
+  onclick={bubble('click')}>
   <span
     tabindex="-1"
     class="button-label"
     bind:this={label}>
-    <slot />
+    {@render children?.()}
   </span>
 </button>
 
-<style
-  lang="scss"
-  src="./Button.scss"></style>
+<style src="./Button.css"></style>

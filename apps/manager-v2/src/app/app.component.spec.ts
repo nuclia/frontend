@@ -1,16 +1,16 @@
-import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MockProvider } from 'ng-mocks';
-import { BackendConfigurationService } from '@flaps/core';
-import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { EventEmitter } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { BackendConfigurationService } from '@flaps/core';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterModule.forRoot([])],
       declarations: [AppComponent],
       providers: [
         MockProvider(BackendConfigurationService),

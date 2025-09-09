@@ -1,8 +1,10 @@
 <div class="empty-chart">
-  <div
-    class="empty-chart-row"
-    *ngFor="let line of _numLines">
-    <div class="empty-chart-line"></div>
-    <div class="empty-chart-axis"></div>
-  </div>
+  @for (line of _numLines; track line) {
+    <div
+      class="empty-chart-row"
+      >
+      <div class="empty-chart-line"></div>
+      <div class="empty-chart-axis"></div>
+    </div>
+  }
 </div>

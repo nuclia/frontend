@@ -1,0 +1,34 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'search.configuration.find-resource-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <div class="form-container">
+      <pa-input
+        icon="search"
+        [paPopup]="dropdown"
+        #popup="paPopupRef"
+        popupDisabled
+        [sameWidth]="true"
+        [(value)]="query"
+        (keyUp)="!dropdown.isDisplayed && popup.toggle()"
+        (focusing)="!dropdown.isDisplayed && popup.toggle()"
+        (valueChange)="search.next($event)">
+        {{ 'generic.title' | translate }}
+      </pa-input>
+      <pa-dropdown #dropdown>
+        @for (resource of resources | async; track resource.id) {
+          <pa-option
+            icon="chevron-right"
+            iconOnRight
+            [description]="resource.slug"
+            (selectOption)="modal.close(resource)">
+            {{ resource.title }}
+          </pa-option>
+        } @empty {
+          @if (query.length > minLength) {
+            <pa-option readonly>{{ 'resource.no-results' | translate }}</pa-option>
+          }
+        }
+      </pa-dropdown>
+    </div>
+  </pa-modal-content>
+</pa-modal-dialog>

@@ -2,39 +2,53 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
-  accountOwnerGuard,
+  AgentDashboardComponent,
   AiModelsComponent,
+  aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
+  DriversPageComponent,
+  EditResourceComponent,
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
+  MetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
-  PromptLabComponent,
+  PreviewComponent,
+  RagLabPageComponent,
+  ResourceFileComponent,
+  ResourceLinkComponent,
+  ResourceTextComponent,
+  RetrievalAgentComponent,
   rootGuard,
   SearchPageComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
   selectKbGuard,
+  SessionInfoComponent,
+  SessionsComponent,
+  SessionsListComponent,
   setAccountGuard,
+  setAgentGuard,
   setKbGuard,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { FarewellComponent } from './farewell/farewell.component';
-import { RedirectComponent } from './redirect/redirect.component';
+import { FeedbackComponent } from './farewell/feedback.component';
 import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
-import { inviteGuard } from './onboarding/invite/invite.guard';
-import { InviteComponent } from './onboarding/invite/invite.component';
-import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
+import { InviteComponent } from './onboarding/invite/invite.component';
+import { inviteGuard } from './onboarding/invite/invite.guard';
+import { RedirectComponent } from './redirect/redirect.component';
+import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [
   {
@@ -126,11 +140,16 @@ const routes: Routes = [
               {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
-                canActivate: [accountOwnerGuard],
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
+              },
+              {
+                path: 'metrics',
+                component: MetricsPageComponent,
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {
@@ -141,8 +160,12 @@ const routes: Routes = [
                   ),
               },
               {
+                path: 'rag-lab',
+                component: RagLabPageComponent,
+              },
+              {
                 path: 'prompt-lab',
-                component: PromptLabComponent,
+                redirectTo: 'rag-lab',
               },
               {
                 path: 'tasks',
@@ -150,6 +173,96 @@ const routes: Routes = [
                   import('../../../../libs/common/src/lib/tasks-automation/tasks-automation.routes').then(
                     (m) => m.TASK_AUTOMATION_ROUTES,
                   ),
+              },
+            ],
+          },
+          {
+            path: ':zone/arag/:agent',
+            component: RetrievalAgentComponent,
+            canActivate: [setAgentGuard],
+            children: [
+              {
+                path: '',
+                component: AgentDashboardComponent,
+              },
+              {
+                path: 'sessions',
+                component: SessionsComponent,
+                children: [
+                  {
+                    path: '',
+                    component: SessionsListComponent,
+                  },
+                  {
+                    path: ':id/edit',
+                    component: EditResourceComponent,
+                    data: { mode: 'arag' },
+                    children: [
+                      {
+                        path: '',
+                        redirectTo: 'preview',
+                        pathMatch: 'full',
+                      },
+                      {
+                        path: 'preview',
+                        component: SessionInfoComponent,
+                      },
+                      {
+                        path: 'text/:fieldId',
+                        component: ResourceTextComponent,
+                      },
+                      {
+                        path: 'link/:fieldId',
+                        component: ResourceLinkComponent,
+                      },
+                      {
+                        path: 'file/:fieldId',
+                        component: ResourceFileComponent,
+                      },
+                      {
+                        path: 'preview/:fieldType/:fieldId',
+                        component: PreviewComponent,
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                path: 'drivers',
+                component: DriversPageComponent,
+              },
+              {
+                path: 'search',
+                component: SearchPageComponent,
+              },
+              {
+                path: 'widgets',
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
+                    (m) => m.WIDGETS_ROUTES,
+                  ),
+              },
+              {
+                path: 'manage',
+                component: KnowledgeBoxSettingsComponent,
+              },
+              {
+                path: 'ai-models',
+                component: AiModelsComponent,
+              },
+              {
+                path: 'users',
+                component: KnowledgeBoxUsersComponent,
+                canActivate: [aragOwnerGuard],
+              },
+              {
+                path: 'keys',
+                component: KnowledgeBoxKeysComponent,
+                canActivate: [aragOwnerGuard],
+              },
+              {
+                path: 'activity',
+                loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
               },
             ],
           },
@@ -173,6 +286,23 @@ const routes: Routes = [
         path: ':account',
         component: SelectKbComponent,
         canActivate: [selectKbGuard],
+      },
+    ],
+  },
+  {
+    path: 'test/:account/:zone/:kb',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        canActivate: [setAccountGuard],
+        children: [
+          {
+            path: '',
+            canActivate: [setKbGuard],
+            component: TestPageComponent,
+          },
+        ],
       },
     ],
   },

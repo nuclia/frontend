@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 :host {
   .title-xxs {
     margin-bottom: rhythm(1);
@@ -13,7 +13,7 @@
       margin-bottom: rhythm(2);
     }
 
-    pa-textarea ::ng-deep textarea {
+    nsi-expandable-textarea ::ng-deep textarea {
       height: rhythm(20);
     }
   }

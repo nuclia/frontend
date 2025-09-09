@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ManageZonesComponent } from './manage-zones.component';
 import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailsComponent } from './zone-details/zone-details.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 const ROUTES: Routes = [
   {
@@ -23,7 +24,7 @@ const ROUTES: Routes = [
         component: ZoneListComponent,
       },
       {
-        path: ':zoneId',
+        path: ':zoneId', // same path used when adding a zone, where the "id" is "add"
         component: ZoneDetailsComponent,
       },
     ],
@@ -40,6 +41,7 @@ const ROUTES: Routes = [
     PaIconModule,
     ReactiveFormsModule,
     PaScrollModule,
+    TranslateModule,
   ],
   declarations: [ManageZonesComponent, ZoneDetailsComponent, ZoneListComponent],
 })

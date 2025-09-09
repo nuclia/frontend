@@ -1,0 +1,42 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>
+    <h2>{{ 'resource.warning.warnings' | translate }}</h2>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <div class="table-container">
+      <pa-table
+        columns="200px 1fr"
+        border>
+        <pa-table-header>
+          <pa-table-row>
+            <pa-table-cell header>
+              <span class="title-s">{{ 'resource.warning.date' | translate }}</span>
+            </pa-table-cell>
+            <pa-table-cell header>
+              <span class="title-s">{{ 'resource.warning.message' | translate }}</span>
+            </pa-table-cell>
+          </pa-table-row>
+        </pa-table-header>
+        @for (error of errors; track error.body) {
+          <pa-table-row>
+            <pa-table-cell>
+              <span class="body-s">
+                @if (error.created) {
+                  {{ error.created | date: 'medium' }}
+                } @else {
+                  -
+                }
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <div class="body-s message">{{ error.body }}</div>
+            </pa-table-cell>
+          </pa-table-row>
+        }
+      </pa-table>
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>

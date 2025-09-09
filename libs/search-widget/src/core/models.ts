@@ -1,4 +1,4 @@
-import type { FieldFullId, Search, WidgetFeatures } from '@nuclia/core';
+import type { FieldFullId, Reranker, Search, Widget } from '@nuclia/core';
 
 export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
 
@@ -8,9 +8,29 @@ export interface RankedParagraph extends Search.FindParagraph {
 }
 export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }> & { ranks?: number[] };
 
+export interface DisplayableMetadata {
+  label: string;
+  value: string | string[] | number;
+  type: 'string' | 'list' | 'date';
+  title?: string;
+}
+
+export interface ResultMetadataItem {
+  path: string;
+  type: 'string' | 'list' | 'date';
+  title?: string;
+}
+
+export interface ResultMetadata {
+  origin: ResultMetadataItem[];
+  field: ResultMetadataItem[];
+  extra: ResultMetadataItem[];
+}
+
 export interface TypedResult extends RankedFieldResult {
   resultType: ResultType;
   resultIcon: string;
+  resultMetadata?: DisplayableMetadata[];
 }
 
 export interface FindResultsAsList extends Omit<Search.FindResults, 'resources'> {
@@ -43,14 +63,26 @@ export const NO_SUGGESTION_RESULTS: Search.Suggestions = {
 
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
-  highlight?: boolean;
-  features?: WidgetFeatures;
+  features?: Widget.WidgetFeatures;
   prompt?: string;
+  system_prompt?: string;
+  rephrase_prompt?: string;
   generative_model?: string;
   vectorset?: string;
   ask_to_resource?: string;
   max_tokens?: number;
+  max_output_tokens?: number;
+  max_paragraphs?: number;
   query_prepend?: string;
+  audit_metadata?: string;
+  reranker?: Reranker;
+  citation_threshold?: number;
+  rrf_boosting?: number;
+  feedback?: Widget.WidgetFeedback;
+  copy_disclaimer?: string;
+  not_enough_data_message?: string;
+  metadata?: string;
+  security_groups?: string[];
 }
 
 export interface WidgetAction {
@@ -67,12 +99,14 @@ export interface EntityGroup {
   entities?: string[];
 }
 
-export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
+export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies' | 'mime' | 'path';
 export interface WidgetFilters {
   labels?: boolean;
   entities?: boolean;
   created?: boolean;
   labelFamilies?: boolean;
+  mime?: boolean;
+  path?: boolean;
 }
 
 export interface JsonSchema {

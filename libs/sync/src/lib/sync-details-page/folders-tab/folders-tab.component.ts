@@ -7,26 +7,23 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ISyncEntity, SyncItem } from '../../logic';
-import { FolderSelectionComponent } from '../../folder-selection';
+
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { FolderListComponent, InfoCardComponent, StickyFooterComponent } from '@nuclia/sistema';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FolderListComponent, StickyFooterComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
+import { FolderSelectionComponent } from '../../folder-selection';
+import { ISyncEntity, SyncItem } from '../../logic';
 
 @Component({
   selector: 'nsy-folders-tab',
-  standalone: true,
   imports: [
-    CommonModule,
     FolderSelectionComponent,
     PaTextFieldModule,
     PaButtonModule,
     TranslateModule,
     PaIconModule,
-    InfoCardComponent,
     FolderListComponent,
     StickyFooterComponent,
     ReactiveFormsModule,

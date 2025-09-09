@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
-import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
-import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
-import { Account, Kb } from './regional-account.models';
-import { ZoneService } from '../manage-zones/zone.service';
-import { KBRoles, Nuclia } from '@nuclia/core';
-import { ZoneSummary } from '../manage-zones/zone.models';
 import { STATUS_FACET } from '@flaps/common';
+import { SDKService } from '@flaps/core';
+import { KBRoles, Nuclia } from '@nuclia/core';
+import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { ZoneSummary } from '../manage-zones/zone.models';
+import { ZoneService } from '../manage-zones/zone.service';
+import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
+import { Account, AccountModelPayload, Kb, ZoneModels } from './regional-account.models';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -30,29 +30,35 @@ export class RegionalAccountService {
   getKbList(accountSlug: string): Observable<KbSummary[]> {
     return forkJoin([this.zoneService.getZoneDict(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
       switchMap(([zoneDict, indexes]) =>
-        forkJoin(
-          indexes.map((index) => {
-            const zone = zoneDict[index.zone_id];
-            return this.sdk.nuclia.rest
-              .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
-              .pipe(
-                map((kb) => ({
-                  ...kb,
-                  accountId: index.account_id,
-                  zone,
-                  private: kb.state === 'PRIVATE',
-                  activity: {
-                    redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
-                    grafana: `http://platform.grafana.nuclia.com/d/${
-                      index.account_id
-                    }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
-                      zone.slug === 'europe-1' ? 'flaps' : zone.slug
-                    }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
-                  },
-                })),
-              );
-          }),
-        ),
+        indexes.length === 0
+          ? of([])
+          : forkJoin(
+              indexes.map((index) => {
+                const zone = zoneDict[index.zone_id];
+                return this.sdk.nuclia.rest
+                  .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
+                  .pipe(
+                    map((kb) => ({
+                      ...kb,
+                      accountId: index.account_id,
+                      zone,
+                      private: kb.state === 'PRIVATE',
+                      activity: {
+                        redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
+                        grafana: `http://platform.grafana.nuclia.com/d/${
+                          index.account_id
+                        }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
+                          zone.slug === 'europe-1' ? 'flaps' : zone.slug
+                        }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
+                      },
+                    })),
+                    catchError(() => {
+                      console.error(`Loading KB ${index.kb_id} failed`);
+                      return of(undefined);
+                    }),
+                  );
+              }),
+            ).pipe(map((kbs) => kbs.filter((kb) => !!kb) as KbSummary[])),
       ),
     );
   }
@@ -208,6 +214,7 @@ export class RegionalAccountService {
       email: account.email,
       limits: account.limits,
       maxKbs: account.stashes.max_stashes,
+      maxArags: account.arags?.max_arags || 0,
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
       created: account.created,
@@ -242,6 +249,48 @@ export class RegionalAccountService {
           console.error(`No zone found for KB`, kbSummary);
         }
       }),
+    );
+  }
+
+  createModel(data: AccountModelPayload, accountId: string, zoneSlug: string) {
+    return this.sdk.nuclia.rest.post<{ id: string }>(
+      `/account/${accountId}/models`,
+      data,
+      undefined,
+      undefined,
+      true,
+      zoneSlug,
+    );
+  }
+
+  updateModel(data: AccountModelPayload, modelId: string, accountId: string, zoneSlug: string) {
+    return this.sdk.nuclia.rest.patch<{ id: string }>(
+      `/account/${accountId}/model/${modelId}`,
+      data,
+      undefined,
+      undefined,
+      true,
+      zoneSlug,
+    );
+  }
+
+  deleteModel(modelId: string, accountId: string, zoneSlug: string) {
+    return this.sdk.nuclia.rest.delete(`/account/${accountId}/model/${modelId}`, undefined, true, zoneSlug);
+  }
+
+  getModelsPerZone(accountId: string): Observable<ZoneModels[]> {
+    return this.zoneService.getZoneDict().pipe(
+      take(1),
+      switchMap((zones) =>
+        forkJoin(
+          Object.values(zones).map((zone) =>
+            this.sdk.nuclia.db.getModels(accountId, zone.slug).pipe(
+              map((models) => ({ zone, models })),
+              catchError(() => of({ zone, models: [] })),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

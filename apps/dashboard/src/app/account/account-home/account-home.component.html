@@ -4,14 +4,13 @@
       <div>
         <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
         <div class="page-description">
-          @if ((isSubscribed | async) && (period | async)) {
-            {{ 'account.consumption-since' | translate: { since: (period | async)?.start | date: 'YYYY-MM-dd' } }}
-          } @else {
-            {{ 'account.consumption-description' | translate }}
-          }
+          {{ 'account.consumption-description' | translate }}
         </div>
       </div>
-      <app-nuclia-tokens></app-nuclia-tokens>
+      <app-nuclia-tokens
+        [usage]="usage"
+        [selectedPeriod]="selectedPeriod | async"
+        (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
     </div>
     <div class="right-column">
       @if (canUpgrade | async) {
@@ -31,6 +30,11 @@
                   <pa-icon
                     size="small"
                     name="lock"></pa-icon>
+                }
+                @if (tokensCount?.[kb.id]; as tokens) {
+                  @if (tokens > 1) {
+                    <span class="tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                  }
                 }
               </li>
             }

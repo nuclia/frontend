@@ -1,0 +1,57 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  background: $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  color: $color-neutral-regular;
+  display: flex;
+  align-items: center;
+  font-size: font-size(xxs);
+  font-weight: $font-weight-semi-bold;
+  height: rhythm(5);
+  justify-content: center;
+  line-height: line-height(s);
+  padding: 0 rhythm(1);
+  text-transform: uppercase;
+
+  .output {
+    align-items: center;
+    background: $color-light-stronger;
+    border-radius: 50%;
+    border: 1.5px solid $color-neutral-regular;
+    display: flex;
+    flex-shrink: 0;
+    height: rhythm(2);
+    justify-content: center;
+    position: absolute;
+    right: calc(#{rhythm(1)} * -1);
+    transition: border $transition-hint;
+    width: rhythm(2);
+
+    svg {
+      opacity: 0;
+      fill: $color-primary-strong;
+      transition: opacity $transition-hint;
+    }
+
+    &:not(.disabled) {
+      cursor: pointer;
+
+      &:hover,
+      &.active {
+        border-color: $color-primary-regular;
+
+        svg {
+          opacity: 1;
+        }
+      }
+    }
+    &.disabled {
+      border-color: $color-neutral-light;
+      cursor: default;
+    }
+    &.processing {
+      border: 1.5px solid $color-success-strong;
+    }
+  }
+}

@@ -1,7 +1,8 @@
-@import '../charts-common';
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
 
 .bar-chart {
-  @include chart();
+  @include charts.chart();
 
   .bar {
     fill: $color-primary-regular;

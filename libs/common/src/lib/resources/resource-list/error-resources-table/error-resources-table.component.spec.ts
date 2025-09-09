@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ErrorResourcesTableComponent } from './error-resources-table.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RouterModule } from '@angular/router';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   PaButtonModule,
   PaScrollModule,
@@ -10,13 +9,14 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { SisModalService, SisSearchInputComponent, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
 import { UploadService } from '../../../upload/upload.service';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
+import { ErrorResourcesTableComponent } from './error-resources-table.component';
 
 describe('ErrorResourcesTableComponent', () => {
   let component: ErrorResourcesTableComponent;
@@ -26,7 +26,7 @@ describe('ErrorResourcesTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ErrorResourcesTableComponent],
       imports: [
-        RouterTestingModule,
+        RouterModule.forRoot([]),
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
@@ -35,6 +35,7 @@ describe('ErrorResourcesTableComponent', () => {
         MockModule(PaTooltipModule),
         MockComponent(StickyFooterComponent),
         MockComponent(TablePaginationComponent),
+        MockComponent(SisSearchInputComponent),
       ],
       providers: [
         MockProvider(SDKService, {

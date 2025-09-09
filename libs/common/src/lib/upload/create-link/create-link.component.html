@@ -15,7 +15,7 @@
       <nsi-info-card
         type="warning"
         icon="warning">
-        {{ 'upload.limit-warning' | translate: { limit: pendingResourcesLimit | number } }}
+        {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
       </nsi-info-card>
     }
     @if (standalone && (hasValidKey | async) === false) {
@@ -74,7 +74,7 @@
             {{ 'modal.create_link.multiple-links.label' | translate }}
           </pa-textarea>
         }
-        @if (linkForm.value.linkTo === 'web' && (linkForm.value.type === 'one' || linkForm.value.type === 'multiple')) {
+        @if (linkForm.value.linkTo === 'web' && ['one', 'multiple'].includes(linkForm.value.type || '')) {
           <pa-expander [expanded]="false">
             <pa-expander-header>{{ 'modal.create_link.restrict' | translate }}</pa-expander-header>
             <pa-expander-body>
@@ -92,6 +92,37 @@
             </pa-expander-body>
           </pa-expander>
         }
+        @if ((extractConfigEnabled | async) && !standalone && linkForm.value.type !== 'csv') {
+          <pa-expander
+            [contentLoaded]="updateOptionsExpander"
+            [expanded]="false">
+            <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
+            <pa-expander-body>
+              <div class="language-detection">
+                <pa-toggle
+                  labelOnRight
+                  [(value)]="automaticLanguageDetection">
+                  {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
+                </pa-toggle>
+
+                @if (!automaticLanguageDetection) {
+                  <pa-input
+                    minlength="2"
+                    maxlength="2"
+                    help="upload.advanced.language-detection.input-help"
+                    [formControl]="langCode">
+                    {{ 'upload.advanced.language-detection.input-label' | translate }}
+                  </pa-input>
+                }
+              </div>
+              <app-extraction-select
+                [(extractConfig)]="extractStrategy"
+                [(splitConfig)]="splitStrategy"
+                [onlyExtract]="!(splitConfigEnabled | async)"
+                (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"></app-extraction-select>
+            </pa-expander-body>
+          </pa-expander>
+        }
 
         @if (linkForm.value.type === 'csv') {
           <div class="csv-container">
@@ -100,7 +131,9 @@
               [fields]="3"
               (select)="checkCsv($event)"></app-csv-select>
             @if (csv.length > 0) {
-              <p class="title-xxs">{{ 'modal.create_link.csv-summary' | translate: { count: csv.length } }}</p>
+              <nsi-info-card>
+                {{ 'modal.create_link.upload-summary' | translate: { count: csv.length } }}
+              </nsi-info-card>
             }
           </div>
         }
@@ -125,7 +158,7 @@
     <pa-button
       type="submit"
       kind="primary"
-      [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending"
+      [disabled]="invalid || pending"
       (click)="add()">
       {{ 'generic.add' | translate }}
     </pa-button>

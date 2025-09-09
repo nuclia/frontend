@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService, STFTrackingService } from '@flaps/core';
-import { Classification } from '@nuclia/core';
-import { Observable, switchMap } from 'rxjs';
+import { FeaturesService, SDKService } from '@flaps/core';
+import { Classification, WritableKnowledgeBox } from '@nuclia/core';
+import { Observable, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -17,21 +17,24 @@ interface Row {
   xpath?: string;
 }
 
+type UploadOption = 'one' | 'multiple' | 'csv';
+
 @Component({
   selector: 'app-create-link',
   templateUrl: './create-link.component.html',
   styleUrls: ['./create-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CreateLinkComponent {
   linkForm = new FormGroup({
     link: new FormControl<string>('', { nonNullable: true, validators: [Validators.pattern(/^http(s?):\/\//)] }),
     links: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)],
+      validators: [Validators.pattern(/^(([\r\n]*http(s?):\/\/.*?)|\n)+$/)],
     }),
     linkTo: new FormControl<'web' | 'file'>('web', { nonNullable: true }),
-    type: new FormControl<'one' | 'multiple' | 'csv'>('one', { nonNullable: true }),
+    type: new FormControl<UploadOption>('one', { nonNullable: true }),
     css_selector: new FormControl<string | null>(null),
     xpath: new FormControl<string | null>(null),
   });
@@ -44,19 +47,36 @@ export class CreateLinkComponent {
   pending = false;
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
+  automaticLanguageDetection = true;
+  langCode = new FormControl<string | undefined>(undefined, {
+    nonNullable: true,
+    validators: [Validators.pattern(/^[a-z]{2}$/)],
+  });
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  splitConfigEnabled = this.features.unstable.splitConfig;
+  extractStrategy?: string;
+  splitStrategy?: string;
+  updateOptionsExpander = 0;
+
+  get invalid() {
+    return (
+      (this.linkForm.value.type === 'csv' && this.csv.length === 0) ||
+      (['one', 'multiple'].includes(this.linkForm.value.type || '') && this.linkForm.invalid)
+    );
+  }
 
   constructor(
     public modal: ModalRef,
     private uploadService: UploadService,
     private sdk: SDKService,
-    private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
+    private features: FeaturesService,
   ) {}
 
   add() {
@@ -68,49 +88,73 @@ export class CreateLinkComponent {
       let obs: Observable<{ errors: number }>;
       switch (formValue.type) {
         case 'multiple':
-          this.tracking.logEvent('multiple_links_upload');
           const links: string[] = formValue.links
             .split('\n')
             .map((link: string) => link.trim())
             .filter((link: string) => !!link);
-          obs = this.uploadService.bulkUpload(
-            links.map((link) =>
-              this.getResourceCreationObs(
-                isCloudFile,
-                link,
-                this.selectedLabels,
-                formValue.css_selector,
-                formValue.xpath,
+          obs = this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload(
+                links.map((link) =>
+                  this.getResourceCreationObs(
+                    kb,
+                    isCloudFile,
+                    link,
+                    this.selectedLabels,
+                    formValue.css_selector,
+                    formValue.xpath,
+                    this.extractStrategy,
+                    this.splitStrategy,
+                    this.langCode.value,
+                  ),
+                ),
               ),
             ),
           );
           break;
         case 'one':
-          this.tracking.logEvent('link_upload');
-          obs = this.uploadService.bulkUpload([
-            this.getResourceCreationObs(
-              isCloudFile,
-              formValue.link,
-              this.selectedLabels,
-              formValue.css_selector,
-              formValue.xpath,
+          obs = this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload([
+                this.getResourceCreationObs(
+                  kb,
+                  isCloudFile,
+                  formValue.link,
+                  this.selectedLabels,
+                  formValue.css_selector,
+                  formValue.xpath,
+                  this.extractStrategy,
+                  this.splitStrategy,
+                  this.langCode.value,
+                ),
+              ]),
             ),
-          ]);
+          );
           break;
         case 'csv':
-          this.tracking.logEvent('link_upload_from_csv');
           const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
-          obs = this.uploadService
-            .createMissingLabels(allLabels)
-            .pipe(
-              switchMap(() =>
-                this.uploadService.bulkUpload(
-                  this.csv.map((row) =>
-                    this.getResourceCreationObs(isCloudFile, row.link, row.labels, row.css_selector, row.xpath),
+          obs = this.uploadService.createMissingLabels(allLabels).pipe(
+            switchMap(() => this.sdk.currentKb.pipe(take(1))),
+            switchMap((kb) =>
+              this.uploadService.bulkUpload(
+                this.csv.map((row) =>
+                  this.getResourceCreationObs(
+                    kb,
+                    isCloudFile,
+                    row.link,
+                    row.labels,
+                    row.css_selector,
+                    row.xpath,
+                    this.extractStrategy,
+                    this.splitStrategy,
+                    this.langCode.value,
                   ),
                 ),
               ),
-            );
+            ),
+          );
           break;
       }
 
@@ -137,7 +181,7 @@ export class CreateLinkComponent {
       this.csv = csv as Row[];
       this.cdr?.markForCheck();
     } else {
-      this.toaster.error('upload.invalid_csv');
+      this.toaster.error('upload.invalid-csv-labels');
     }
   }
 
@@ -146,14 +190,30 @@ export class CreateLinkComponent {
   }
 
   private getResourceCreationObs(
+    kb: WritableKnowledgeBox,
     isCloudFile: boolean,
     link: string,
     labels: Classification[],
     css_selector?: string | null,
     xpath?: string | null,
+    extract_strategy?: string,
+    split_strategy?: string,
+    language?: string,
   ): Observable<{ uuid: string }> {
     return isCloudFile
-      ? this.uploadService.createCloudFileResource(link, labels)
-      : this.uploadService.createLinkResource(link, labels, css_selector, xpath);
+      ? this.uploadService.createCloudFileResource(kb, link, labels, extract_strategy, language)
+      : this.uploadService.createLinkResource(
+          kb,
+          link,
+          labels,
+          css_selector,
+          xpath,
+          undefined,
+          undefined,
+          undefined,
+          extract_strategy,
+          split_strategy,
+          language,
+        );
   }
 }

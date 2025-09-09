@@ -10,6 +10,7 @@ import { map, of } from 'rxjs';
   templateUrl: './pending-resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PendingResourcesTableComponent extends ResourcesTableDirective {
   override status: RESOURCE_STATUS = RESOURCE_STATUS.PENDING;

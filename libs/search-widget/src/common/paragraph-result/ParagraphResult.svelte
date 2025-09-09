@@ -1,34 +1,47 @@
 <script lang="ts">
-  import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
-  import PageIndicator from '../indicators/PageIndicator.svelte';
+  import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
   import type { RankedParagraph, ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
-  import { Search } from '@nuclia/core';
-  import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
+  import PageIndicator from '../indicators/PageIndicator.svelte';
+  import TimeIndicator from '../indicators/TimeIndicator.svelte';
 
-  export let paragraph: RankedParagraph;
-  export let resultType: ResultType;
-  export let stack = false;
-  export let ellipsis = false;
-  export let selected = false;
-  export let minimized = false;
-  export let noIndicator = false;
-  export let disabled = false;
+  interface Props {
+    paragraph: RankedParagraph;
+    resultType: ResultType;
+    stack?: boolean;
+    ellipsis?: boolean;
+    selected?: boolean;
+    minimized?: boolean;
+    noIndicator?: boolean;
+    disabled?: boolean;
+    expanded?: boolean;
+  }
 
-  let hovering = false;
-  let expanded = false;
-  let hasEllipsis = false;
+  let {
+    paragraph,
+    resultType,
+    stack = false,
+    ellipsis = false,
+    selected = false,
+    minimized = false,
+    noIndicator = false,
+    disabled = false,
+    expanded = $bindable(false),
+  }: Props = $props();
+
+  let hovering = $state(false);
+  let hasEllipsis = $state(false);
 
   const dispatch = createEventDispatcher();
   const open = () => {
     dispatch('open', true);
   };
   const mediaKinds: ResultType[] = ['audio', 'video'];
-  $: isMedia = mediaKinds.includes(resultType);
-  $: isPdf = resultType === 'pdf';
+  let isMedia = $derived(mediaKinds.includes(resultType));
+  let isPdf = $derived(resultType === 'pdf');
 
-  let paragraphElement: HTMLElement;
+  let paragraphElement: HTMLElement = $state();
   function checkHeight() {
     hasEllipsis = ellipsis && paragraphElement && paragraphElement.offsetHeight > 24;
   }
@@ -60,10 +73,10 @@
     class:selected
     class:disabled
     class:hover={expanded}
-    on:mouseenter={() => (hovering = true)}
-    on:mouseleave={() => (hovering = false)}
-    on:click={disabled ? null : open}
-    on:keyup={(e) => {
+    onmouseenter={() => (hovering = true)}
+    onmouseleave={() => (hovering = false)}
+    onclick={disabled ? null : open}
+    onkeyup={(e) => {
       if (e.key === 'Enter' && !disabled) open();
     }}>
     <div
@@ -94,6 +107,4 @@
   </div>
 </li>
 
-<style
-  lang="scss"
-  src="./ParagraphResult.scss"></style>
+<style src="./ParagraphResult.css"></style>

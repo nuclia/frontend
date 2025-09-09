@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .main-container {
   display: flex;
@@ -19,11 +19,6 @@
 
   nsi-info-card {
     margin-top: rhythm(1);
-  }
-
-  pa-input.budget-input,
-  pa-button.budget-button .pa-button {
-    width: rhythm(22);
   }
 
   footer {

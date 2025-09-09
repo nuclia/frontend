@@ -1,0 +1,79 @@
+<app-task-form
+  [task]="task | async"
+  [type]="type"
+  triggerDescription="tasks-automation.generator.trigger-description"
+  footerNoteAutomation="tasks-automation.generator.footer.apply-automation"
+  footerNoteOneTime="tasks-automation.generator.footer.apply-one-time"
+  [validFormInside]="askForm.valid"
+  (cancel)="backToTaskList()"
+  (save)="onSave($event)">
+  <div [formGroup]="askForm">
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.generator.your-question.title"
+      description="tasks-automation.generator.your-question.description">
+      <div class="form-container">
+        <pa-toggle
+          formControlName="json"
+          labelOnRight
+          (valueChange)="updateForm()">
+          {{ 'tasks-automation.generator.your-question.use-json' | translate }}
+        </pa-toggle>
+        <pa-toggle
+          formControlName="customPrompt"
+          labelOnRight>
+          {{ 'tasks-automation.generator.your-question.advanced-prompt' | translate }}
+        </pa-toggle>
+        @if (isJSON) {
+          <nsi-info-card>
+            {{ 'tasks-automation.generator.your-question.info-json' | translate }}
+            <blockquote>
+              <code>
+                {{ jsonExample | json }}
+              </code>
+            </blockquote>
+          </nsi-info-card>
+          <pa-textarea
+            rows="4"
+            formControlName="question"
+            [errorMessages]="errorMessages">
+            {{ 'tasks-automation.generator.your-question.json-schema' | translate }}
+          </pa-textarea>
+        } @else {
+          @if (customPrompt) {
+            <nsi-info-card>
+              <span [innerHTML]="'tasks-automation.generator.your-question.info-prompt' | translate"></span>
+            </nsi-info-card>
+          } @else {
+            <nsi-info-card>{{ 'tasks-automation.generator.your-question.info-question' | translate }}</nsi-info-card>
+          }
+          <pa-textarea
+            rows="4"
+            formControlName="question"
+            [errorMessages]="errorMessages">
+            {{
+              (customPrompt
+                ? 'tasks-automation.generator.your-question.prompt-label'
+                : 'tasks-automation.generator.your-question.question-label'
+              ) | translate
+            }}
+          </pa-textarea>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.generator.field-name.title"
+      description="tasks-automation.generator.field-name.description">
+      <div class="form-container">
+        <nsi-info-card>{{ 'tasks-automation.generator.field-name.info' | translate }}</nsi-info-card>
+        <div>
+          <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
+          <pa-input
+            formControlName="destination"
+            [errorMessages]="errorMessages"
+            [placeholder]="'tasks-automation.form.field-name.placeholder' | translate"></pa-input>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  </div>
+</app-task-form>

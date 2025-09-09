@@ -1,16 +1,18 @@
 <div class="main-container">
   <div class="scrollable-area">
-    <ng-container *ngIf="(field | async)?.value">
+    @if ((field | async)?.value) {
       <p [innerHTML]="'resource.field-file-dropzone-label' | translate: { filename: (filename | async) }"></p>
       <stf-dropzone
         [isUploading]="isUploading"
-        (file)="newFile = $event"></stf-dropzone>
-    </ng-container>
+      (file)="newFile = $event"></stf-dropzone>
+    }
 
-    <p *ngIf="newFile">
-      <strong>{{ 'resource.field-file-new-file' | translate }}</strong>
-      {{ newFile.name }}
-    </p>
+    @if (newFile) {
+      <p>
+        <strong>{{ 'resource.field-file-new-file' | translate }}</strong>
+        {{ newFile.name }}
+      </p>
+    }
   </div>
 </div>
 <footer class="form-field-buttons">

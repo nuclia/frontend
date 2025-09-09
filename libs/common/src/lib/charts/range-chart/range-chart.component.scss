@@ -1,0 +1,19 @@
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
+
+.range-chart {
+  @include charts.chart();
+
+  .domain,
+  .tick line {
+    stroke: charts.$chart-line-color;
+  }
+
+  .range-point {
+    fill: $color-primary-regular;
+    stroke: $color-primary-regular;
+  }
+  .range-line {
+    stroke: $color-dark-stronger;
+  }
+}

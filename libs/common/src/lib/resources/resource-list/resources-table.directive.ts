@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
 import { BulkAction, ColumnHeader, MenuAction, PAGE_SIZES } from './resource-list.model';
 import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
-import { delay, map, switchMap } from 'rxjs/operators';
+import { delay, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -15,6 +15,7 @@ import {
   mergeMap,
   Observable,
   of,
+  Subject,
   take,
   tap,
   toArray,
@@ -37,6 +38,7 @@ export const COMMON_COLUMNS = [
 
 @Directive({
   selector: '[stfResourcesTable]',
+  standalone: false,
 })
 export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected resourceListService = inject(ResourceListService);
@@ -61,6 +63,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   pageSizes = PAGE_SIZES;
   headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
+  unsubscribeAll = new Subject<void>();
 
   isSummarizationAuthorized = this.features.authorized.summarization;
 
@@ -117,17 +120,18 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceListService.status = this.status;
-    this.resourceListService.isShardReady
-      .pipe(
-        filter((ready) => ready),
-        take(1),
-        switchMap(() => this.resourceListService.loadResources()),
-      )
-      .subscribe();
+    this.resourceListService.loadResources().subscribe();
+    combineLatest([this.data, this.page])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(() => {
+        this.clearSelection();
+      });
   }
 
   ngOnDestroy() {
     this.resourceListService.clear();
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   protected getApplySortingMapper() {
@@ -189,29 +193,67 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
           .pipe(
             filter((authorized) => authorized),
             take(1),
-            switchMap(() => this.summarize(resource)),
+            switchMap(() => this.summarize([resource])),
           )
           .subscribe();
+        break;
+      case 'hide':
+        this.changeVisibility([resource], true).subscribe();
+        break;
+      case 'unhide':
+        this.changeVisibility([resource], false).subscribe();
         break;
     }
   }
 
-  summarize(resource: Resource) {
+  bulkSummarize() {
+    this.getSelectedResources()
+      .pipe(switchMap((resources) => this.summarize(resources)))
+      .subscribe();
+  }
+
+  summarize(resources: Resource[]) {
+    let errors = 0;
     const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
-    return this.modalService
-      .openConfirm({
-        title: 'resource.confirm-summarize.title',
-        description: 'resource.confirm-summarize.description',
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentKb),
-        take(1),
-        tap(() => window.addEventListener('beforeunload', avoidTabClosing)),
-        switchMap((kb) => kb.summarize([resource.id])),
-        switchMap((summary) => resource.modify({ summary })),
-        tap(() => window.removeEventListener('beforeunload', avoidTabClosing)),
-      );
+    const title = resources.length > 1 ? 'resource.confirm-summarize.plural-title' : 'resource.confirm-summarize.title';
+    const description =
+      resources.length > 1 ? 'resource.confirm-summarize.plural-description' : 'resource.confirm-summarize.description';
+    return this.modalService.openConfirm({ title, description }).onClose.pipe(
+      filter((yes) => !!yes),
+      tap(() => {
+        window.addEventListener('beforeunload', avoidTabClosing);
+        this.selection = [];
+        this.cdr.markForCheck();
+      }),
+      switchMap(() => this.sdk.currentKb),
+      take(1),
+      switchMap((kb) => {
+        const bulkActionItems = resources.map((resource) =>
+          defer(() =>
+            kb.summarize([resource.id]).pipe(
+              switchMap((summary) => resource.modify({ summary })),
+              catchError(() => {
+                errors++;
+                return of(null);
+              }),
+            ),
+          ),
+        );
+        return from(bulkActionItems);
+      }),
+      mergeMap((obs) => obs, 20),
+      toArray(),
+      tap((count) => {
+        if (count.length > 0) {
+          window.removeEventListener('beforeunload', avoidTabClosing);
+          if (errors === 0) {
+            this.toaster.success('resource.summarization-completed');
+          } else {
+            this.toaster.error(this.translate.instant('resource.summarization-errors', { count: errors }));
+          }
+        }
+      }),
+    );
   }
 
   delete(resources: Resource[]) {
@@ -321,6 +363,42 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     });
   }
 
+  changeVisibility(resources: Resource[], hide: boolean) {
+    this.isLoading = true;
+    if (resources.length > 1) {
+      this.bulkAction = {
+        inProgress: true,
+        done: 0,
+        errors: 0,
+        total: resources.length,
+        label: hide ? 'resource.hiding' : 'resource.unhiding',
+      };
+      this.cdr.markForCheck();
+    }
+    const bulkActionItems = resources.map((resource) =>
+      this.updateBulkAction(defer(() => resource.modify({ hidden: hide }))),
+    );
+    return from(bulkActionItems).pipe(
+      mergeMap((obs) => obs, 6),
+      toArray(),
+      delay(1000),
+      switchMap(() => this.resourceListService.loadResources()),
+      tap(() => {
+        this.manageBulkActionResults(hide ? 'hiding' : 'unhiding');
+        this.sdk.refreshCounter(true);
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  bulkChangeVisibility(hide: boolean) {
+    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.changeVisibility(resources, hide))).subscribe();
+    if (this.allResourcesSelected) {
+      this.allResourcesSelected = false;
+    }
+  }
+
   toggleAll() {
     forkJoin([this.allSelected.pipe(take(1)), this.data.pipe(take(1))]).subscribe(([allSelected, rows]) => {
       this.selection = allSelected ? [] : rows.map((row) => row.resource.id);
@@ -358,7 +436,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
-  private updateBulkAction(observable: Observable<void>): Observable<any> {
+  protected updateBulkAction(observable: Observable<void>): Observable<any> {
     return observable.pipe(
       tap(() => {
         this.bulkAction = {
@@ -377,7 +455,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
-  private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
+  protected manageBulkActionResults(action: 'reprocessing' | 'deleting' | 'hiding' | 'unhiding' | 'labelling') {
     if (this.bulkAction.errors > 0) {
       const message = this.translate.instant(
         this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,
@@ -396,15 +474,14 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private getAllResources(): Observable<Resource[]> {
+  protected getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
-    return this.resourceListService
-      .getAllResources(this.sorting, this.status)
-      .pipe(tap(() => {
+    return this.resourceListService.getAllResources(this.sorting, this.status, true).pipe(
+      tap(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-      map((result) => result.resources)
+      map((result) => result.resources),
     );
   }
 }

@@ -11,10 +11,7 @@ describe('BackendConfigurationService', () => {
           provide: AppInitService,
           useValue: {
             getConfig: () => ({
-              backend: {
-                posthog_key: '',
-                posthog_host: '',
-              },
+              backend: {},
             }),
           },
         },
@@ -23,7 +20,7 @@ describe('BackendConfigurationService', () => {
   );
 
   it('should be created', () => {
-    const service: BackendConfigurationService = TestBed.get(BackendConfigurationService);
+    const service: BackendConfigurationService = TestBed.inject(BackendConfigurationService);
     expect(service).toBeTruthy();
   });
 });

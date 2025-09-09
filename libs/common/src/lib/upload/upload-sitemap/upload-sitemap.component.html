@@ -1,0 +1,125 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    {{ 'upload.sitemap.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div
+      class="sitemap-form"
+      [formGroup]="sitemapForm">
+      @if (sitemapLinks.length > pendingResourcesLimit) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
+        </nsi-info-card>
+      }
+      <app-sitemap-select (select)="setSitemapLinks($event)"></app-sitemap-select>
+
+      <pa-input
+        formControlName="sitemapFilter"
+        placeholder="https://example.com/news/2024/"
+        icon="filter"
+        (change)="filterSitemapLinks()">
+        {{ 'upload.sitemap.filter' | translate }}
+      </pa-input>
+      @if (sitemapLinks.length > 0) {
+        <nsi-info-card>
+          {{ 'modal.create_link.upload-summary' | translate: { count: filteredSitemapLinks.length } }}
+        </nsi-info-card>
+      }
+
+      <app-label-field [(selection)]="selectedLabels"></app-label-field>
+
+      <pa-expander [expanded]="false">
+        <pa-expander-header>
+          {{ 'modal.create_link.restrict' | translate }}
+        </pa-expander-header>
+        <pa-expander-body>
+          <pa-input
+            formControlName="css_selector"
+            [placeholder]="'modal.create_link.css-selector.placeholder' | translate">
+            {{ 'modal.create_link.css-selector.label' | translate }}
+          </pa-input>
+          <pa-input
+            formControlName="xpath"
+            [placeholder]="'modal.create_link.xpath-selector.placeholder' | translate"
+            [help]="'modal.create_link.xpath-selector.help' | translate">
+            {{ 'modal.create_link.xpath-selector.label' | translate }}
+          </pa-input>
+        </pa-expander-body>
+      </pa-expander>
+
+      <pa-expander [expanded]="false">
+        <pa-expander-header>
+          {{ 'upload.advanced.title' | translate }}
+        </pa-expander-header>
+        <pa-expander-body>
+          <div class="options">
+            @if ((extractConfigEnabled | async) && !standalone) {
+              <app-extraction-select
+                [(extractConfig)]="extractStrategy"
+                [(splitConfig)]="splitStrategy"
+                [onlyExtract]="!(splitConfigEnabled | async)"></app-extraction-select>
+            }
+            <div class="table-title title-xs">
+              {{ 'upload.sitemap.headers' | translate }}
+              <pa-icon
+                size="small"
+                name="info"
+                [paPopover]="headersHelp"></pa-icon>
+              <pa-popover #headersHelp>
+                <div class="body-s">{{ 'upload.sitemap.parameters-help' | translate }}</div>
+              </pa-popover>
+            </div>
+            <app-parameters-table
+              secretDisabled
+              [(values)]="headers"></app-parameters-table>
+            <div class="table-title title-xs">
+              {{ 'upload.sitemap.cookies' | translate }}
+              <pa-icon
+                size="small"
+                name="info"
+                [paPopover]="cookiesHelp"></pa-icon>
+              <pa-popover #cookiesHelp>
+                <div class="body-s">{{ 'upload.sitemap.parameters-help' | translate }}</div>
+              </pa-popover>
+            </div>
+            <app-parameters-table
+              secretDisabled
+              [(values)]="cookies"></app-parameters-table>
+            <div class="table-title title-xs">
+              {{ 'upload.sitemap.localstorage' | translate }}
+              <pa-icon
+                size="small"
+                name="info"
+                [paPopover]="localstorageHelp"></pa-icon>
+              <pa-popover #localstorageHelp>
+                <div class="body-s">{{ 'upload.sitemap.parameters-help' | translate }}</div>
+              </pa-popover>
+            </div>
+            <app-parameters-table
+              secretDisabled
+              [(values)]="localstorage"></app-parameters-table>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
+    </div>
+    @if (isUploading) {
+      <nsi-spinner size="small"></nsi-spinner>
+    }
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      type="submit"
+      kind="primary"
+      (click)="upload()"
+      [disabled]="this.filteredSitemapLinks.length === 0 || isUploading">
+      {{ 'generic.add' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

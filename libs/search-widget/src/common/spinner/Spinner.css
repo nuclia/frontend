@@ -1,0 +1,131 @@
+.sw-spinner-wrapper {
+  --inner-size: var(--rhythm-6);
+
+  display: block;
+  position: relative;
+  height: calc(var(--inner-size) * 2);
+  min-height: calc(var(--inner-size) * 2);
+  width: 100%;
+
+  .spinner {
+    position: absolute;
+    overflow: hidden;
+    left: 50%;
+    margin-left: calc(-1 * var(--inner-size));
+    animation: outer-rotate 2.91667s linear infinite;
+
+    .inner {
+      animation: sporadic-rotate 5.25s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+      height: calc(var(--inner-size) * 2);
+      position: relative;
+      width: calc(var(--inner-size) * 2);
+
+      .gap {
+        position: absolute;
+        left: var(--inner-size);
+        right: var(--inner-size);
+        top: 0;
+        bottom: 0;
+        border-top: var(--rhythm-1_5) solid;
+        box-sizing: border-box;
+      }
+
+      .left,
+      .right {
+        height: calc(var(--inner-size) * 2);
+        position: absolute;
+        overflow: hidden;
+        top: 0;
+        width: var(--inner-size);
+      }
+
+      .left .half-circle,
+      .right .half-circle {
+        border: var(--rhythm-1_5) solid var(--color-primary-regular);
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        box-sizing: border-box;
+        height: calc(var(--inner-size) * 2);
+        position: absolute;
+        top: 0;
+        width: calc(var(--inner-size) * 2);
+      }
+
+      .left {
+        left: 0;
+      }
+
+      .left .half-circle {
+        left: 0;
+        border-right-color: transparent;
+        animation: left-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+      }
+
+      .right {
+        right: 0;
+      }
+
+      .right .half-circle {
+        right: 0;
+        border-left-color: transparent;
+        animation: right-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+      }
+    }
+  }
+}
+
+@keyframes outer-rotate {
+  0% {
+    transform: rotate(0deg) scale(0.5);
+  }
+  100% {
+    transform: rotate(360deg) scale(0.5);
+  }
+}
+
+@keyframes left-wobble {
+  0%,
+  100% {
+    transform: rotate(130deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes right-wobble {
+  0%,
+  100% {
+    transform: rotate(-130deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes sporadic-rotate {
+  12.5% {
+    transform: rotate(135deg);
+  }
+  25% {
+    transform: rotate(270deg);
+  }
+  37.5% {
+    transform: rotate(405deg);
+  }
+  50% {
+    transform: rotate(540deg);
+  }
+  62.5% {
+    transform: rotate(675deg);
+  }
+  75% {
+    transform: rotate(810deg);
+  }
+  87.5% {
+    transform: rotate(945deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
+}

@@ -7,18 +7,19 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
-import { EditResourceService } from './edit-resource.service';
-import { take, takeUntil } from 'rxjs/operators';
-import { EditResourceView } from './edit-resource.helpers';
-import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
+import { EditResourceService } from './edit-resource.service';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
   hasError?: boolean;
+  title?: string;
 }
 
 @Component({
@@ -26,15 +27,25 @@ interface ResourceFieldWithIcon extends ResourceField {
   styleUrls: ['edit-resource.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
-  backRoute: Observable<string> = this.navigationService.homeUrl.pipe(map((homeUrl) => `${homeUrl}/resources`));
+  isArag = combineLatest([this.route.data, this.features.unstable.retrievalAgents]).pipe(
+    map(([data, isAragEnabled]) => isAragEnabled && data['mode'] === 'arag'),
+    takeUntil(this.unsubscribeAll),
+  );
+  backRoute: Observable<string> = combineLatest([this.navigationService.homeUrl, this.isArag]).pipe(
+    map(([homeUrl, isArag]) => (isArag ? `${homeUrl}/sessions` : `${homeUrl}/resources`)),
+  );
   currentView: EditResourceView | null = null;
   currentField: Observable<FieldId | 'resource'> = this.editResource.currentField;
   resource: Observable<Resource | null> = this.editResource.resource;
-  fields: Observable<ResourceFieldWithIcon[]> = this.editResource.fields.pipe(
-    map((fields) =>
+  fields: Observable<ResourceFieldWithIcon[]> = combineLatest([
+    this.editResource.resource,
+    this.editResource.fields,
+  ]).pipe(
+    map(([resource, fields]) =>
       fields
         .filter((field) => field.field_type !== FIELD_TYPE.generic)
         .map((field) => ({
@@ -45,8 +56,20 @@ export class EditResourceComponent implements OnInit, OnDestroy {
               : field.field_type === FIELD_TYPE.conversation
                 ? 'chat'
                 : field.field_type,
-          hasError: !!field.error,
+          hasError:
+            !!resource &&
+            getErrors(field, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR).length > 0,
         })),
+    ),
+  );
+  originalFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
+    map((fields) => fields.filter((field) => !field.field_id.startsWith('da-'))),
+  );
+  generatedFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
+    map((fields) =>
+      fields
+        .filter((field) => field.field_id.startsWith('da-'))
+        .map((field) => ({ ...field, title: field.field_id.split('-')[1] })),
     ),
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
@@ -67,13 +90,13 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
   ) {
-    this.route.params
+    combineLatest([this.route.params, this.isArag])
       .pipe(
-        filter((params) => !!params['id']),
-        switchMap((params) => {
+        filter(([params]) => !!params['id']),
+        switchMap(([params, isArag]) => {
           const resourceId = params['id'];
           this.resourceNavigationService.currentResourceId = resourceId;
-          return this.editResource.loadResource(resourceId);
+          return isArag ? this.editResource.loadSession(resourceId) : this.editResource.loadResource(resourceId);
         }),
         takeUntil(this.unsubscribeAll),
       )
@@ -136,14 +159,24 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
 
   deleteResource() {
-    this.modal
-      .openConfirm({
-        title: 'resource.confirm-delete.title',
-        description: 'resource.confirm-delete.description',
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
+    this.isArag
+      .pipe(
+        switchMap((isArag) => {
+          const confirmData = isArag
+            ? {
+                title: 'retrieval-agents.sessions.list.confirm-deletion.title',
+                description: 'retrieval-agents.sessions.list.confirm-deletion.description',
+              }
+            : {
+                title: 'resource.confirm-delete.title',
+                description: 'resource.confirm-delete.description',
+              };
+          return this.modal.openConfirm({
+            ...confirmData,
+            confirmLabel: 'generic.delete',
+            isDestructive: true,
+          }).onClose;
+        }),
         filter((confirm) => !!confirm),
         switchMap(() => this.editResource.resource),
         take(1),
@@ -188,5 +221,13 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
   nextResource() {
     this.resourceNavigationService.goToNext();
+  }
+
+  deleteField(field: FieldId) {
+    this.editResource.confirmAndDelete(field.field_type, field.field_id).subscribe((success) => {
+      if (success) {
+        this.navigateToField('resource');
+      }
+    });
   }
 }

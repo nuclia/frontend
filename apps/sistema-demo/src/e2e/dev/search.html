@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Agentic RAG – Search</title>
+  </head>
+  <body style="padding: 32px">
+    <script src="https://cdn.gcp-global-dev-1.nuclia.io/nuclia-widget.umd.js"></script>
+    <nuclia-search-bar
+      style="display: block; margin-bottom: 16px"
+      knowledgebox="0d773aed-bfb8-4228-a9d7-ed9f0ff171eb"
+      backend="https://gcp-global-dev-1.nuclia.io/api"
+      zone="gcp-dev-1"
+      features="filter,suggestions,permalink,displayMetadata"
+      filters="labels,entities"></nuclia-search-bar>
+    <nuclia-search-results></nuclia-search-results>
+  </body>
+</html>

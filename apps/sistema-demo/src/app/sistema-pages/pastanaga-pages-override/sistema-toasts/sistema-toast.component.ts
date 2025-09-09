@@ -4,6 +4,7 @@ import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './sistema-toast.component.html',
+  standalone: false,
 })
 export class SistemaToastComponent {
   code = `constructor(private toaster: SisToastService) {}

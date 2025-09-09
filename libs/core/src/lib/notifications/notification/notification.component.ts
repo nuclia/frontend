@@ -9,7 +9,6 @@ import { NavigationService } from '../../services';
 
 @Component({
   selector: 'stf-notification',
-  standalone: true,
   imports: [CommonModule, PaIconModule, PaDateTimeModule, NotificationTypePipe, TranslateModule, RouterModule],
   templateUrl: './notification.component.html',
   styleUrl: './notification.component.scss',

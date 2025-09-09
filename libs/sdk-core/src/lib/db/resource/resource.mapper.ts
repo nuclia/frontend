@@ -1,36 +1,5 @@
-import type { Resource } from './resource';
-import { Classification, FIELD_TYPE, ResourceData } from './resource.models';
+import { FIELD_TYPE, ResourceData } from './resource.models';
 import { SHORT_FIELD_TYPE } from '../search';
-
-interface AlgoliaRecord {
-  title?: string;
-  fullText?: string[];
-  images?: string[];
-}
-
-export const resourceToAlgoliaFormat = (resource: Resource, backend: string): AlgoliaRecord => {
-  const record: AlgoliaRecord = {
-    title: resource.title,
-    fullText: resource
-      .getExtractedTexts()
-      .filter((extracted) => extracted)
-      .map((extracted) => extracted.text as string),
-  };
-
-  resource.getClassifications().forEach((classification: Classification) => {
-    if (classification.labelset && classification.label) {
-      // Adding labels as properties of the final json
-      (record as any)[classification.labelset] = classification.label;
-    }
-  });
-
-  const images = resource
-    .getThumbnails()
-    .filter((link) => !!link.uri)
-    .map((link) => `${backend}/v1${link.uri}`);
-
-  return { ...record, images, ...resource.getNamedEntities() };
-};
 
 /**
  * Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason

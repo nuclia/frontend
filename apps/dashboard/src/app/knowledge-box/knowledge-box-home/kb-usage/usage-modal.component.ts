@@ -10,13 +10,14 @@ import { UsageChartsComponent } from './usage-charts.component';
 export interface UsageModalConfig {
   processingChart: Observable<ChartData>;
   searchChart: Observable<ChartData>;
+  askChart: Observable<ChartData>;
+  tokenChart: Observable<ChartData>;
   currentChart: OptionModel;
   chartDropdownOptions: OptionModel[];
 }
 
 @Component({
   selector: 'app-usage-modal',
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

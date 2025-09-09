@@ -9,6 +9,7 @@ import { ResourcesTableComponent } from '../resources-table/resources-table.comp
   templateUrl: '../resources-table/resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ProcessedResourcesTableComponent extends ResourcesTableComponent {
   override status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;

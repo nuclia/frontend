@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-segmented-buttons',
-  standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslateModule],
   templateUrl: './segmented-buttons.component.html',
   styleUrl: './segmented-buttons.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

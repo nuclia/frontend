@@ -1,14 +1,10 @@
 import { Routes } from '@angular/router';
-import {
-  GlobalQuestionComponent,
-  LabelNersComponent,
-  LabelResourcesComponent,
-  LabelTextBlocksComponent,
-  QuestionAnswerComponent,
-  SummarizeResourcesComponent,
-} from './task-forms';
+import { AskComponent, GraphExtractionComponent, LabelerComponent, QuestionAnswerComponent } from './task-forms';
 import { TasksAutomationComponent } from './tasks-automation.component';
 import { TaskListComponent } from './task-list';
+import { ContentSafetyComponent } from './task-forms/content-safety/content-safety.component';
+import { LLMSecurityComponent } from './task-forms/llm-security/llm-security.component';
+import { TaskDetailsComponent } from './task-details/task-details.component';
 
 export const TASK_AUTOMATION_ROUTES: Routes = [
   {
@@ -19,53 +15,26 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         path: '',
         component: TaskListComponent,
       },
+      { path: 'ask', component: AskComponent },
+      { path: 'ask/:taskId', component: AskComponent },
+
+      { path: 'synthetic-questions', component: QuestionAnswerComponent },
+      { path: 'synthetic-questions/:taskId', component: QuestionAnswerComponent },
+
+      { path: 'labeler', component: LabelerComponent },
+      { path: 'labeler/:taskId', component: LabelerComponent },
+
+      { path: 'llm-graph', component: GraphExtractionComponent },
+      { path: 'llm-graph/:taskId', component: GraphExtractionComponent },
+
+      { path: 'prompt-guard', component: LLMSecurityComponent },
+      { path: 'prompt-guard/:taskId', component: LLMSecurityComponent },
+
+      { path: 'llama-guard', component: ContentSafetyComponent },
+      { path: 'llama-guard/:taskId', component: ContentSafetyComponent },
       {
-        path: 'global-question',
-        component: GlobalQuestionComponent,
-      },
-      {
-        path: 'global-question/:taskId',
-        component: GlobalQuestionComponent,
-      },
-      {
-        path: 'summarize-resources',
-        component: SummarizeResourcesComponent,
-      },
-      {
-        path: 'summarize-resources/:taskId',
-        component: SummarizeResourcesComponent,
-      },
-      {
-        path: 'question-answer',
-        component: QuestionAnswerComponent,
-      },
-      {
-        path: 'question-answer/:taskId',
-        component: QuestionAnswerComponent,
-      },
-      {
-        path: 'label-resources',
-        component: LabelResourcesComponent,
-      },
-      {
-        path: 'label-resources/:taskId',
-        component: LabelResourcesComponent,
-      },
-      {
-        path: 'label-text-blocks',
-        component: LabelTextBlocksComponent,
-      },
-      {
-        path: 'label-text-blocks/:taskId',
-        component: LabelTextBlocksComponent,
-      },
-      {
-        path: 'label-ners',
-        component: LabelNersComponent,
-      },
-      {
-        path: 'label-ners/:taskId',
-        component: LabelNersComponent,
+        path: ':taskId',
+        component: TaskDetailsComponent,
       },
     ],
   },

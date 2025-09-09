@@ -10,11 +10,12 @@
         <pa-select
           formControlName="role"
           [label]="'generic.role' | translate">
-          <pa-option
-            *ngFor="let role of roles"
-            [value]="role">
-            {{ roleTitles[role] | translate }}
-          </pa-option>
+          @for (role of roles; track role) {
+            <pa-option
+              [value]="role">
+              {{ roleTitles[role] | translate }}
+            </pa-option>
+          }
         </pa-select>
         <pa-button
           type="submit"
@@ -28,71 +29,72 @@
       <div class="container">
         <h4>{{ 'api-key-management.view-edit-keys.title' | translate }}</h4>
         <div class="service-access-list">
-          <div
-            class="service-access"
-            *ngFor="let sa of serviceAccess">
-            <div class="service-access-header">
-              <div class="service-access-title">
-                <pa-button
-                  aspect="basic"
-                  icon="chevron-right"
-                  size="small"
-                  class="service-access-title-arrow"
-                  [disabled]="!sa.keys || sa.keys.length === 0"
-                  [class.expanded]="isExpanded(sa.id)"
+          @for (sa of serviceAccess; track sa) {
+            <div
+              class="service-access"
+              >
+              <div class="service-access-header">
+                <div class="service-access-title">
+                  <pa-button
+                    aspect="basic"
+                    icon="chevron-right"
+                    size="small"
+                    class="service-access-title-arrow"
+                    [disabled]="!sa.keys || sa.keys.length === 0"
+                    [class.expanded]="isExpanded(sa.id)"
                   (click)="toggleSA(sa.id)"></pa-button>
-                <span>{{ sa.title }}</span>
-              </div>
-              <div class="service-access-actions">
-                <pa-button
-                  (click)="createKey(sa)"
-                  aspect="basic"
-                  icon="plus"
-                  size="small"
-                  paTooltip="api-key-management.create-key.button">
-                  {{ 'api-key-management.create-key.button' | translate }}
-                </pa-button>
-                <pa-button
-                  (click)="deleteServiceAccess(sa)"
-                  aspect="basic"
-                  icon="trash"
-                  size="small"
-                  paTooltip="generic.delete">
-                  {{ 'generic.delete' | translate }}
-                </pa-button>
-              </div>
-            </div>
-
-            @if (sa.keys && sa.keys.length > 0) {
-              <div
-                class="service-access-keys"
-                [class.expanded]="isExpanded(sa.id)">
-                <div
-                  class="service-access-key"
-                  *ngFor="let key of sa.keys">
-                  <div class="service-access-key-id">
-                    {{ key.id }}
-                  </div>
-                  <div>
-                    <pa-datetime
-                      [datetime]="key.expires"
-                      dateOnly></pa-datetime>
-                  </div>
-                  <div class="service-access-key-actions">
-                    <pa-button
-                      (click)="deleteKey(sa, key)"
-                      class="delete-key"
-                      aspect="basic"
-                      icon="trash"
-                      size="small"
-                      paTooltip="generic.delete">
-                      {{ 'generic.delete' | translate }}
-                    </pa-button>
-                  </div>
+                  <span>{{ sa.title }}</span>
+                </div>
+                <div class="service-access-actions">
+                  <pa-button
+                    (click)="createKey(sa.id)"
+                    aspect="basic"
+                    icon="plus"
+                    size="small"
+                    paTooltip="api-key-management.create-key.button">
+                    {{ 'api-key-management.create-key.button' | translate }}
+                  </pa-button>
+                  <pa-button
+                    (click)="deleteServiceAccess(sa)"
+                    aspect="basic"
+                    icon="trash"
+                    size="small"
+                    paTooltip="generic.delete">
+                    {{ 'generic.delete' | translate }}
+                  </pa-button>
                 </div>
               </div>
-            }
-          </div>
+              @if (sa.keys && sa.keys.length > 0) {
+                <div
+                  class="service-access-keys"
+                  [class.expanded]="isExpanded(sa.id)">
+                  @for (key of sa.keys; track key) {
+                    <div
+                      class="service-access-key"
+                      >
+                      <div class="service-access-key-id">
+                        {{ key.id }}
+                      </div>
+                      <div>
+                        {{ key.expires + 'Z' | date: 'mediumDate' }}
+                      </div>
+                      <div class="service-access-key-actions">
+                        <pa-button
+                          (click)="deleteKey(sa, key)"
+                          class="delete-key"
+                          aspect="basic"
+                          icon="trash"
+                          size="small"
+                          paTooltip="generic.delete">
+                          {{ 'generic.delete' | translate }}
+                        </pa-button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
         </div>
       </div>
     }
@@ -109,11 +111,11 @@
         header
       </p>
       <pre><code>curl $$KB_URL$$/upload \
- -X POST \
- -H "content-type: video/mp4"
- -H "x-language: fr"
- -H "X-NUCLIA-SERVICEACCOUNT: Bearer YOUR-API-KEY" \
- -T /path/to/file.mp4</code></pre>
+        -X POST \
+        -H "content-type: video/mp4"
+        -H "x-language: fr"
+        -H "X-NUCLIA-SERVICEACCOUNT: Bearer YOUR-API-KEY" \
+      -T /path/to/file.mp4</code></pre>
     </ncom-hint>
   }
 </div>

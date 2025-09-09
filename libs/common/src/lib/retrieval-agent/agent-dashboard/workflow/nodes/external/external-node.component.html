@@ -1,0 +1,8 @@
+<app-node-box
+  [state]="state()"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.external.title' | translate"
+  [origin]="origin()"
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
+  <app-config-block [config]="externalConfig()"></app-config-block>
+</app-node-box>

@@ -10,17 +10,19 @@
         {{ 'account.delete_account_confirm' | translate }}
       </pa-checkbox>
     </div>
-    <div
-      class="delete-user"
-      *ngIf="canKeepUser | async">
-      <label for="group-keep-user">{{ 'account.delete.keep_user_title' | translate }}</label>
-      <pa-radio-group
-        [(value)]="keepUser"
-        id="group-keep-user">
-        <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
-        <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>
-      </pa-radio-group>
-    </div>
+    @if (canKeepUser | async) {
+      <div
+        class="delete-user"
+        >
+        <label for="group-keep-user">{{ 'account.delete.keep_user_title' | translate }}</label>
+        <pa-radio-group
+          [(value)]="keepUser"
+          id="group-keep-user">
+          <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
+          <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>
+        </pa-radio-group>
+      </div>
+    }
   </pa-modal-content>
   <pa-modal-footer>
     <div class="pa-modal-footer pa-dual-buttons">

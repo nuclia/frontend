@@ -1,18 +1,20 @@
 <script lang="ts">
+  import type { Search } from '@nuclia/core';
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
   import { fieldData, getExtractedTexts } from '../../../../core';
-  import type { Search } from '@nuclia/core';
   import PlainTextRenderer from './PlainTextRendering.svelte';
   import RstRenderer from './RstRendering.svelte';
 
-  export let selectedParagraph: Search.FindParagraph | undefined;
-  export let isRst = false;
+  interface Props {
+    selectedParagraph: Search.FindParagraph | undefined;
+    isRst?: boolean;
+  }
 
-  let textViewerElement: HTMLElement;
-  let selected = '';
+  let { selectedParagraph, isRst = false }: Props = $props();
 
-  $: !!selectedParagraph && textViewerElement && highlightSelection();
+  let textViewerElement: HTMLElement = $state();
+  let selected = $state('');
 
   let extractedTexts: Observable<{ shortId: string; text: string }[]> = fieldData.pipe(
     map((data) => getExtractedTexts(data)),
@@ -25,10 +27,17 @@
     selected = selectedParagraph?.id.split('/').pop() || '';
     if (selected) {
       setTimeout(() =>
-        textViewerElement?.querySelector(`#paragraph${selected}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
+        textViewerElement
+          ?.querySelector(`#paragraph${selected}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
       );
     }
   }
+  $effect(() => {
+    if (!!selectedParagraph && textViewerElement) {
+      highlightSelection();
+    }
+  });
 </script>
 
 <div
@@ -49,4 +58,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in global.css -->

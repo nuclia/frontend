@@ -1,0 +1,7 @@
+@use 'apps/dashboard/src/variables' as *;
+
+pa-date-picker {
+  display: block;
+  padding-top: rhythm(1);
+  margin-bottom: rhythm(2);
+}

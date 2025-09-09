@@ -6,9 +6,12 @@ import type {
   IResource,
   RelationEntityType,
   RelationType,
+  RESOURCE_STATUS,
+  TypeParagraph,
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
 import { RAGImageStrategy, RAGStrategy } from '../kb';
+import { Ask } from './ask.models';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -37,28 +40,56 @@ export type Filter = {
   [operator in FilterOperator]?: string[];
 };
 
+export interface Prompts {
+  system?: string;
+  user?: string;
+  rephrase?: string;
+}
+
+export interface MinScore {
+  bm25?: number;
+  semantic?: number;
+}
+
+export interface RankFusion {
+  name: 'rrf';
+  boosting: {
+    semantic: number;
+  };
+}
+
 export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
-  min_score?: number;
+  filter_expression?: FilterExpression;
+  keyword_filters?: string[] | Filter[];
+  min_score?: number | MinScore;
   range_creation_start?: string;
   range_creation_end?: string;
   range_modification_start?: string;
   range_modification_end?: string;
   show?: ResourceProperties[];
+  /** @deprecated */
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   resource_filters?: string[];
-  shards?: string[];
   autofilter?: boolean;
   highlight?: boolean;
   rephrase?: boolean;
   vectorset?: string;
+  debug?: boolean;
+  show_hidden?: boolean;
+  audit_metadata?: { [key: string]: string };
+  top_k?: number;
+  reranker?: Reranker;
+  rank_fusion?: RankFusion;
+  security?: { groups: string[] };
+  search_configuration?: string;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
-  prompt?: string;
+  prompt?: string | Prompts;
   /**
    * It will return the text blocks that have been effectively used to build each section of the answer.
    */
@@ -67,23 +98,190 @@ export interface ChatOptions extends BaseSearchOptions {
   rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;
   /**
-   * Defines the maximum number of tokens that the model will generate.
+   * Defines the maximum number of tokens that the model will take as context.
    */
-  max_tokens?: number;
+  max_tokens?: number | { context?: number; answer?: number };
   prefer_markdown?: boolean;
   answer_json_schema?: object;
   extra_context?: string[];
+  citation_threshold?: number;
+  features?: Ask.Features[];
+  extra_context_images?: {
+    content_type: string;
+    b64encoded: string;
+  }[];
 }
 
 export interface SearchOptions extends BaseSearchOptions {
   faceted?: string[];
   sort?: SortOption;
+  /**
+   * @deprecated use top_k
+   */
   page_number?: number;
+  /**
+   * @deprecated use top_k
+   */
   page_size?: number;
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
   with_synonyms?: boolean;
+  rephrase_prompt?: string;
+  features?: Search.Features[];
 }
+
+export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'> {
+  hidden?: boolean;
+  page_number?: number;
+  page_size?: number;
+  filter_expression?: {
+    resource: ResourceFilterExpression;
+  };
+}
+
+export interface And<T> {
+  and: T[];
+}
+export interface Or<T> {
+  or: T[];
+}
+export interface Not<T> {
+  not: T[];
+}
+export interface ResourceFilter {
+  prop: 'resource';
+  id?: string;
+  slug?: string;
+}
+export interface FieldFilter {
+  prop: 'field';
+  type: FIELD_TYPE;
+  name?: string;
+}
+export interface KeywordFilter {
+  prop: 'keyword';
+  word: string;
+}
+export interface DateCreatedFilter {
+  prop: 'created';
+  since?: string;
+  until?: string;
+}
+export interface DateModifiedFilter {
+  prop: 'modified';
+  since?: string;
+  until?: string;
+}
+export interface LabelFilter {
+  prop: 'label';
+  labelset: string;
+  label?: string;
+}
+export interface ResourceMimetypeFilter {
+  prop: 'resource_mimetype';
+  type: string;
+  subtype?: string;
+}
+export interface FieldMimetypeFilter {
+  prop: 'field_mimetype';
+  type: string;
+  subtype?: string;
+}
+export interface EntityFilter {
+  prop: 'entity';
+  subtype: string;
+  value?: string;
+}
+export interface LanguageFilter {
+  prop: 'language';
+  language: string;
+  only_primary?: boolean;
+}
+export interface OriginTagFilter {
+  prop: 'origin_tag';
+  tag: string;
+}
+export interface OriginMetadataFilter {
+  prop: 'origin_metadata';
+  field: string;
+  value?: string;
+}
+export interface OriginPathFilter {
+  prop: 'origin_path';
+  prefix?: string;
+}
+export interface OriginSourceFilter {
+  prop: 'origin_source';
+  id?: string;
+}
+export interface OriginCollaboratorFilter {
+  prop: 'origin_collaborator';
+  collaborator: string;
+}
+export interface StatusFilter {
+  prop: 'status';
+  status: RESOURCE_STATUS;
+}
+export interface GeneratedFilter {
+  prop: 'generated';
+  by: string;
+  da_task?: string;
+}
+export interface KindFilter {
+  prop: 'kind';
+  kind: TypeParagraph;
+}
+
+export interface FilterExpression {
+  field?: FieldFilterExpression;
+  paragraph?: ParagraphFilterExpression;
+  operator?: 'and' | 'or';
+}
+
+export type FieldFilterExpression =
+  | And<FieldFilterExpression>
+  | Or<FieldFilterExpression>
+  | Not<FieldFilterExpression>
+  | ResourceFilter
+  | FieldFilter
+  | KeywordFilter
+  | DateCreatedFilter
+  | DateModifiedFilter
+  | LabelFilter
+  | ResourceMimetypeFilter
+  | FieldMimetypeFilter
+  | EntityFilter
+  | LanguageFilter
+  | OriginTagFilter
+  | OriginMetadataFilter
+  | OriginPathFilter
+  | OriginSourceFilter
+  | OriginCollaboratorFilter
+  | GeneratedFilter;
+
+export type ParagraphFilterExpression =
+  | And<ParagraphFilterExpression>
+  | Or<ParagraphFilterExpression>
+  | Not<ParagraphFilterExpression>
+  | LabelFilter
+  | KindFilter;
+
+export type ResourceFilterExpression =
+  | And<ResourceFilterExpression>
+  | Or<ResourceFilterExpression>
+  | Not<ResourceFilterExpression>
+  | ResourceFilter
+  | DateCreatedFilter
+  | DateModifiedFilter
+  | LabelFilter
+  | ResourceMimetypeFilter
+  | LanguageFilter
+  | OriginTagFilter
+  | OriginMetadataFilter
+  | OriginPathFilter
+  | OriginSourceFilter
+  | OriginCollaboratorFilter
+  | StatusFilter;
 
 export enum SHORT_FIELD_TYPE {
   text = 't',
@@ -93,6 +291,11 @@ export enum SHORT_FIELD_TYPE {
   conversation = 'c',
 }
 
+export enum Reranker {
+  NOOP = 'noop',
+  PREDICT = 'predict',
+}
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Search {
   export enum Features {
@@ -100,24 +303,12 @@ export namespace Search {
     SEMANTIC = 'semantic',
     FULLTEXT = 'fulltext',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use FULLTEXT */
-    DOCUMENT = 'document',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum ResourceFeatures {
     KEYWORD = 'keyword',
     SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum SuggestionFeatures {
@@ -129,7 +320,6 @@ export namespace Search {
   export interface FindResults {
     type: 'findResults';
     resources?: { [id: string]: FindResource };
-    shards?: string[];
     next_page: boolean;
     page_number: number;
     page_size: number;
@@ -138,6 +328,7 @@ export namespace Search {
     relations?: Relations;
     autofilters?: string[];
     searchId?: string;
+    rephrased_query?: string;
   }
 
   export interface FindResource extends IResource {
@@ -152,6 +343,7 @@ export namespace Search {
     VECTOR = 'VECTOR',
     BM25 = 'BM25',
     BOTH = 'BOTH',
+    RERANKER = 'RERANKER',
   }
 
   export interface FindParagraph {
@@ -169,6 +361,10 @@ export namespace Search {
       end_seconds?: number[];
       page_number?: number;
     };
+    fuzzy_result: boolean;
+    page_with_visual: boolean;
+    is_a_table: boolean;
+    reference: string;
   }
 
   export interface Results {
@@ -178,7 +374,6 @@ export namespace Search {
     paragraphs?: Paragraphs;
     fulltext?: Fulltext;
     relations?: Relations;
-    shards?: string[];
   }
 
   export interface Pagination {

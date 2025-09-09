@@ -19,7 +19,6 @@
   },
   "peerDependencies": {
     "@nuclia/core": "^1.1.5",
-    "@nuclia/prediction": "^1.0.0",
     "date-fns": "^2.29.3",
     "rxjs": "^7.5.2",
     "svelte": "^3.55.0"

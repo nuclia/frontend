@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-info-card',
-  standalone: true,
-  imports: [CommonModule, PaIconModule],
+  imports: [PaIconModule],
   templateUrl: './info-card.component.html',
   styleUrl: './info-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

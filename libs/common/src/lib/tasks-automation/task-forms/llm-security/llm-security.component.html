@@ -1,0 +1,27 @@
+<app-task-form
+  [task]="task | async"
+  [type]="type"
+  triggerDescription="tasks-automation.trigger-description"
+  footerNoteAutomation="tasks-automation.llm-security.footer.apply-automation"
+  footerNoteOneTime="tasks-automation.llm-security.footer.apply-one-time"
+  [validFormInside]="form.valid"
+  [modelsHidden]="true"
+  (cancel)="backToTaskList()"
+  (save)="onSave($event)">
+  <div [formGroup]="form">
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.llm-security.labeling.title"
+      description="tasks-automation.llm-security.labeling.description">
+      <div class="form-container">
+        <pa-radio-group formControlName="on">
+          <pa-radio value="resources">
+            {{ 'tasks-automation.form.on.resources' | translate }}
+          </pa-radio>
+          <pa-radio value="text-blocks">
+            {{ 'tasks-automation.form.on.text-blocks' | translate }}
+          </pa-radio>
+        </pa-radio-group>
+      </div>
+    </nsi-two-columns-configuration-item>
+  </div>
+</app-task-form>

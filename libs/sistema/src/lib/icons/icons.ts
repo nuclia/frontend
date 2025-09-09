@@ -26,6 +26,8 @@ export function getMimeIcon(mime: string): string {
     return 'audio';
   } else if (mime.includes('image')) {
     return 'image';
+  } else if (mime.includes('message')) {
+    return 'chat';
   } else {
     return mimeIcons[mime] || genericIcon;
   }

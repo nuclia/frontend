@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FolderTree, FolderTreeComponent } from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   selector: 'nsd-sistema-folder-tree',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, FolderTreeComponent],
   templateUrl: './sistema-folder-tree.component.html',
-  styleUrl: './sistema-folder-tree.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaFolderTreeComponent {

@@ -1,7 +1,19 @@
 <pa-modal-advanced fitContentHeight>
   <pa-modal-title>{{ 'account.invite-collaborators.title' | translate }}</pa-modal-title>
   <pa-modal-content>
-    <pa-radio-group [(value)]="selectedRadio">
+    <div class="password">
+      <img src="assets/signup/check-email.png" />
+      <p
+        class="body-m"
+        [innerHTML]="'account.invite-collaborators.set-password' | translate: { email: accountEmail | async }"></p>
+    </div>
+    <h3>{{ 'account.invite-collaborators.subtitle' | translate }}</h3>
+    <pa-radio-group
+      [(value)]="selectedRadio"
+      [noBackground]="true">
+      <pa-radio value="kb">
+        <span class="title-s">{{ 'account.invite-collaborators.kb.title' | translate }}</span>
+      </pa-radio>
       <pa-radio value="sso">
         <span class="title-s">{{ 'account.invite-collaborators.setup-sso.title' | translate }}</span>
       </pa-radio>
@@ -28,7 +40,8 @@
           type="email"
           help="account.invite-collaborators.add-users.email.help"
           [formControl]="email"
-          (enter)="addUser()">
+          (enter)="addUser()"
+          stfLowerCaseInput>
           {{ 'account.invite-collaborators.add-users.email.label' | translate }}
         </pa-input>
       </div>
@@ -55,9 +68,11 @@
       [disabled]="selectedRadio === 'invite' && toBeInvited.length === 0"
       (click)="onDone()">
       {{
-        (selectedRadio === 'sso'
-          ? 'account.invite-collaborators.done'
-          : 'account.invite-collaborators.add-users.invite-button'
+        (selectedRadio === 'kb'
+          ? 'generic.go'
+          : selectedRadio === 'sso'
+            ? 'account.invite-collaborators.done'
+            : 'account.invite-collaborators.add-users.invite-button'
         ) | translate
       }}
     </pa-button>

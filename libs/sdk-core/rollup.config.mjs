@@ -1,11 +1,11 @@
 import resolve from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import generatePackageJson from 'rollup-plugin-generate-package-json';
-import dts from 'rollup-plugin-dts';
+import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
-import packageJson from './package.json' assert {type: 'json'};
+import dts from 'rollup-plugin-dts';
+import generatePackageJson from 'rollup-plugin-generate-package-json';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import packageJson from './package.json' with { type: 'json' };
 
 export default [
   {
@@ -51,12 +51,12 @@ export default [
         packageJsonPath: 'libs/sdk-core/package.json',
       }),
       resolve(),
-      typescript({ tsconfig: './tsconfig.lib.json' }),
+      typescript({ tsconfig: './tsconfig.lib.umd.json' }),
       terser({ format: { comments: false } }),
     ],
   },
   {
-    input: '../../dist/sdk-core/esm/libs/sdk-core/src/index.d.ts',
+    input: '../../dist/sdk-core/esm/types/libs/sdk-core/src/index.d.ts',
     output: [{ file: '../../dist/sdk-core/types/index.d.ts', format: 'esm' }],
     external: [/\.css$/],
     plugins: [dts()],
