@@ -44,6 +44,7 @@
 	"onboarding.kb-creation.failed": "Un problème s'est produit lors de la création de la Knowledge Box",
 	"onboarding.loading": "Chargement…",
 	"onboarding.next-button": "Étape suivante",
+	"onboarding.privacy-policy": "En soumettant ce formulaire, vous comprenez et acceptez que vos données personnelles soient traitées par Progress Software ou ses <a href=\"https://www.progress.com/partners/partner-locator\">Partenaires</a>, comme décrit dans notre <a href=\"https://www.progress.com/legal/privacy-policy\">Politique de Confidentialité</a>. Vous pouvez vous désinscrire des communications marketing à tout moment <a href=\"https://forms.progress.com/SubscriptionMgt-English\">ici</a> ou via l’option de désinscription incluse dans les e-mails envoyés par nous ou par nos Partenaires.",
 	"onboarding.setting-up.account_creation": "Création du compte...",
 	"onboarding.setting-up.kb_creation": "Création du stockage…",
 	"onboarding.setting-up.subtitle": "Téléchargez vos données à l'étape suivante et une fois traitées, vous serez prêt pour votre première recherche.",

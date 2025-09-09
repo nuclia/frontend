@@ -6,6 +6,7 @@ export interface OnboardingPayload {
   role?: string;
   organization_size?: string;
   country: string;
+  accept_privacy_policy: boolean;
 }
 
 export interface AwsOnboardingPayload extends OnboardingPayload {

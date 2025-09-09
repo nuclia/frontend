@@ -165,17 +165,19 @@
     <pa-checkbox formControlName="getUpdates">{{ 'onboarding.step1.updates' | translate }}</pa-checkbox>
 
     <pa-checkbox
-      noEllipsis
-      class="consent"
-      [formControl]="consent">
-      <span [innerHTML]="'user.consent' | translate"></span>
+      formControlName="acceptPrivacyPolicy"
+      [noEllipsis]="true">
+      <div [innerHTML]="'user.consent' | translate"></div>
     </pa-checkbox>
+    <div
+      class="privacy-policy-text"
+      [innerHTML]="'onboarding.privacy-policy' | translate"></div>
   </div>
   <nsi-sticky-footer>
     <pa-button
       type="submit"
       kind="primary"
-      [disabled]="onboardingForm.invalid || !consent.value">
+      [disabled]="onboardingForm.invalid">
       {{ 'onboarding.next-button' | translate }}
     </pa-button>
   </nsi-sticky-footer>
