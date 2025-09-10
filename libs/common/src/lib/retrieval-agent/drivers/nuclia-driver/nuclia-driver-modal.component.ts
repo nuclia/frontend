@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
@@ -26,8 +25,8 @@ import { getListFromTextarea } from '../../arag.utils';
     InfoCardComponent,
     ReactiveFormsModule,
     TranslateModule,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   templateUrl: './nuclia-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +89,7 @@ export class NucliaDriverModalComponent {
         keepExistingKey: true,
         custom,
         key: custom ? driver.config.key : undefined,
+        filters: (driver.config.filters || []).join('\n'),
       });
     }
   }
