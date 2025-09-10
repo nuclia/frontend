@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
+import { combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -52,6 +52,9 @@ export class TopbarComponent {
   );
   billingUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
+  );
+  showTrial = combineLatest([this.features.isTrial, this.accountType]).pipe(
+    map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
   );
 
   standalone = this.standaloneService.standalone;

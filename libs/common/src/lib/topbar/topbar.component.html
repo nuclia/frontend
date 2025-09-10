@@ -38,6 +38,9 @@
         size="small"
         [routerLink]="billingUrl | async">
         {{ 'account.type.' + (accountType | async) | translate }}
+        @if (showTrial | async) {
+          ({{ 'account.type.trial-mode' | translate }})
+        }
       </pa-button>
     }
 
