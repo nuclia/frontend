@@ -23,8 +23,7 @@
         <pa-select
           formControlName="generativeModel"
           [label]="'search.configuration.generative-answer.generative-model.select-label' | translate"
-          [options]="generativeModels"
-          (valueChange)="checkVisionModelSupport()"></pa-select>
+          [options]="generativeModels"></pa-select>
       </div>
     </div>
 
@@ -473,11 +472,6 @@
                   | translate
               }}
             </pa-checkbox>
-            @if (attachmentsImagesEnabled && notSupportingVision) {
-              <nsi-info-card type="warning">
-                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
-              </nsi-info-card>
-            }
             <pa-checkbox formControlName="full">
               {{ 'search.configuration.generative-answer.rag-strategies.conversational.option.full' | translate }}
             </pa-checkbox>
@@ -522,11 +516,6 @@
                 {{ 'search.configuration.generative-answer.rag-strategies.page-images.input-label' | translate }}
               </pa-input>
             </div>
-            @if (notSupportingVision) {
-              <nsi-info-card type="warning">
-                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
-              </nsi-info-card>
-            }
           </div>
           <div class="config-form-field">
             <pa-toggle
@@ -542,11 +531,6 @@
                 'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-description' | translate
               }}
             </div>
-            @if (notSupportingVision) {
-              <nsi-info-card type="warning">
-                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
-              </nsi-info-card>
-            }
           </div>
         }
       </ng-container>

@@ -1577,7 +1577,6 @@
 	"search.configuration.generative-answer.rag-strategies.graph.toggle-label": "Graphe de connaissances",
 	"search.configuration.generative-answer.rag-strategies.graph.top_k": "Top K",
 	"search.configuration.generative-answer.rag-strategies.graph.top_k-description": "Nombre maximal de relations pertinentes à utiliser",
-	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Nécessite l’utilisation d’OpenAI ChatGPT-Vision ou Google Gemini Pro Vision.",
 	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Chaque paragraphe sera suivi de différents ensembles de métadonnées.",
 	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-label": "Ajouter des métadonnées",
 	"search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding": "Nombre de paragraphes précédents",
