@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { MODELS_SUPPORTING_VISION } from '../../search-widget.models';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -190,9 +189,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   get currentModel() {
     return this.form.controls.generativeModel.value;
   }
-  get notSupportingVision() {
-    return !MODELS_SUPPORTING_VISION.includes(this.currentModel);
-  }
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
@@ -211,21 +207,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  checkVisionModelSupport() {
-    if (this.notSupportingVision) {
-      this.form.controls.ragStrategies.patchValue({
-        includePageImages: false,
-        includeParagraphImages: false,
-      });
-      this.includePageImagesControl.disable();
-      this.includeParagraphImagesControl.disable();
-    } else {
-      this.includePageImagesControl.enable();
-      this.includeParagraphImagesControl.enable();
-    }
-    this.heightChanged.emit();
   }
 
   searchResource() {

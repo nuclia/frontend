@@ -15,7 +15,6 @@ import {
   Widget,
 } from '@nuclia/core';
 
-export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
 
 export interface SearchAndWidgets {
