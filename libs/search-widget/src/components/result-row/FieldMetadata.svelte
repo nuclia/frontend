@@ -67,7 +67,9 @@
       }}>
       {#each result.resultMetadata as metadata, i}
         <div bind:this={metadataElements[i]}>
-          <span class="body-s">{metadata.title || metadata.label}:</span>
+          {#if metadata.title !== 'NO_TITLE'}
+            <span class="body-s">{metadata.title || metadata.label}:</span>
+          {/if}
           <span class="title-xxs">
             {#if metadata.type === 'date'}
               {formatDate(metadata.value as string)}

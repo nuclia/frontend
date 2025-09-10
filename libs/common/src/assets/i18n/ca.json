@@ -1618,7 +1618,7 @@
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Data de creació",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Etiquetes",
 	"search.configuration.result-display.display-metadata.example.select-label": "Exemple d'expressió",
-	"search.configuration.result-display.display-metadata.metadata-help": "Una expressió per línia, utilitzant la sintaxi <code>kind:path:type:title</code>, amb:\n<ul><li><code>kinds</code>: 'origin', 'field', o 'extra'</li>\n<li><code>path</code>: path.to.atribut\n<li><code>type</code>: 'string', 'date', o 'list' (opcional. 'string' per defecte)</li>\n<li><code>title</code>: metadades title to display (opcional. Quan està definit, també s'ha de definir el type)\n</ul>",
+	"search.configuration.result-display.display-metadata.metadata-help": "Una expressió per línia, utilitzant la sintaxi <code>kind:path:type:title</code>, amb:\n<ul><li><code>kinds</code>: 'origin', 'field', or 'extra'</li>\n<li><code>path</code>: path.to.attribute\n<li><code>type</code>: 'string', 'date', or 'list' (Opcional, 'string' per defecte)</li>\n<li><code>title</code>: metadade títol a mostrar (Opcional, quan es defineix, també s'ha de definir el tipus. Si no es defineix, el títol serà el nom de l'atribut. Introduïu 'NO_TITLE' per no mostrar cap títol)\n</ul>",
 	"search.configuration.result-display.display-metadata.metadata-label": "Metadades per mostrar",
 	"search.configuration.result-display.display-metadata.toggle-description": "Les metadades es mostren sota el títol de cada recurs.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Mostra metadades",

@@ -1642,7 +1642,7 @@
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Creation date",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Tags",
 	"search.configuration.result-display.display-metadata.example.select-label": "Expression example",
-	"search.configuration.result-display.display-metadata.metadata-help": "One expression per line, using the syntax <code>kind:path:type:title</code>, with:\n<ul><li><code>kinds</code>: 'origin', 'field', or 'extra'</li>\n<li><code>path</code>: path.to.attribute\n<li><code>type</code>: 'string', 'date', or 'list' (optional. 'string' by default)</li>\n<li><code>title</code>: metadata title to display (optional. When set, type must be set as well)\n</ul>",
+	"search.configuration.result-display.display-metadata.metadata-help": "One expression per line, using the syntax <code>kind:path:type:title</code>, with:\n<ul><li><code>kinds</code>: 'origin', 'field', or 'extra'</li>\n<li><code>path</code>: path.to.attribute\n<li><code>type</code>: 'string', 'date', or 'list' (Optional, 'string' by default)</li>\n<li><code>title</code>: metadata title to display (Optional, when set, type must be set as well. If not set, the title will be the attribute name. Enter 'NO_TITLE' to not display any title)\n</ul>",
 	"search.configuration.result-display.display-metadata.metadata-label": "Metadata to display",
 	"search.configuration.result-display.display-metadata.toggle-description": "Metadata are displayed under the title of each resource.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Display metadata",

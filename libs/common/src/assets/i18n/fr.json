@@ -1618,7 +1618,7 @@
 	"search.configuration.result-display.display-metadata.example.origin-created-date": "Date de création",
 	"search.configuration.result-display.display-metadata.example.origin-tags-list": "Mots clés",
 	"search.configuration.result-display.display-metadata.example.select-label": "Exemple d'expression",
-	"search.configuration.result-display.display-metadata.metadata-help": "Une expression par ligne, utilisant la syntaxe <code>kind:path:type:title</code>, avec :\n<ul><li><code>kinds</code> : 'origin', 'field' ou 'extra'</li>\n<li><code>path</code> : chemin.vers.attribut\n<li><code>type</code> : 'string', 'date' ou 'list' (facultatif. 'string' par défaut)</li>\n<li><code>title</code> : titre des métadonnées à afficher (facultatif. Lorsqu'il est défini, le type doit également être défini)\n</ul>",
+	"search.configuration.result-display.display-metadata.metadata-help": "Une expression par ligne, utilisant la syntaxe <code>kind:path:type:title</code>, avec :\n<ul><li><code>kinds</code> : 'origin', 'field' ou 'extra'</li>\n<li><code>path</code> : path.to.attribute\n<li><code>type</code> : 'string', 'date' ou 'list' (facultatif, 'string' par défaut)</li>\n<li><code>title</code> : titre de la métadonnée à afficher (facultatif, lorsqu'il est défini, le type doit également être défini. S'il n'est pas défini, le titre sera le nom de l'attribut. Saisissez 'NO_TITLE' pour n'afficher aucun titre)\n</ul>",
 	"search.configuration.result-display.display-metadata.metadata-label": "Métadonnées à afficher",
 	"search.configuration.result-display.display-metadata.toggle-description": "Les métadonnées sont affichées sous le titre de chaque ressource.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Afficher les métadonnées",
