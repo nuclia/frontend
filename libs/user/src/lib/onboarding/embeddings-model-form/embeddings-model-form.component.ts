@@ -234,6 +234,10 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
 
     this.features.authorized.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
       this.MODEL_SELECTION_LIMIT = vectorsetEnabled ? 5 : 1;
+      if (this.MODEL_SELECTION_LIMIT === 1) {
+        // if limit is 1, unset the default selected value, so the user sees any model is selectable
+        this.form.get('nuclia')?.get('MULTILINGUAL')?.patchValue(false);
+      }
       this.cdr.markForCheck();
     });
   }
