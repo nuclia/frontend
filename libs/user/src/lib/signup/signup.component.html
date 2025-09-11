@@ -4,9 +4,7 @@
       <h1>{{ 'signup.title' | translate }}</h1>
     </div>
     @if (error) {
-      <div
-        class="signup-error title-xxs"
-        >
+      <div class="signup-error title-xxs">
         {{ error | translate }}
       </div>
     }
@@ -49,17 +47,18 @@
     </form>
 
     @if (config.getSocialLogin()) {
-      <div
-        class="sso-container"
-        >
+      <div class="sso-container">
         <stf-sso-button
           provider="google"
-        signup></stf-sso-button>
+          signup></stf-sso-button>
         @if (isGitHubEnabled | async) {
           <stf-sso-button
             provider="github"
-          signup></stf-sso-button>
+            signup></stf-sso-button>
         }
+        <stf-sso-button
+          provider="microsoft"
+          signup></stf-sso-button>
       </div>
     }
 
