@@ -46,7 +46,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   @Input() set config(value: Widget.GenerativeAnswerConfig | undefined) {
     if (value) {
       if (value.ragStrategies?.graph) {
-        value.ragStrategies.graph.exclude_processor_relations = !!value.ragStrategies.graph.agentic_graph_only;
+        value.ragStrategies.graph.exclude_processor_relations =
+          value.ragStrategies.graph.exclude_processor_relations || !!value.ragStrategies.graph.agentic_graph_only;
       }
       this.form.patchValue(value);
     }
