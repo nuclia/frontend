@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { SelectAccountKbService } from '@flaps/common';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { UserService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
@@ -28,7 +28,13 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
       map(() => true),
     );
   }
-  return forkJoin([selectService.loadAccounts().pipe(take(1)), userService.userInfo.pipe(take(1))]).pipe(
+  return forkJoin([
+    selectService.loadAccounts().pipe(take(1)),
+    userService.userInfo.pipe(
+      filter((d) => !!d),
+      take(1),
+    ),
+  ]).pipe(
     switchMap(([accounts, userInfo]) => {
       // No accounts
       if (accounts.length === 0) {
