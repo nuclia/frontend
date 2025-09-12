@@ -16,6 +16,10 @@
       background-color: var(--citation-number-background-hover-color);
     }
   }
+  .reasoning-text {
+    font-size: 75%;
+    margin-left: calc(var(--rhythm-4) + var(--rhythm-0_5));
+  }
   .error {
     color: var(--color-neutral-light);
   }

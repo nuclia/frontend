@@ -58,6 +58,7 @@ export function ask(
             metadata,
             prompt_context,
             augmented_context,
+            reasoning,
           }) => {
             if (status !== 'success') {
               return {
@@ -77,6 +78,7 @@ export function ask(
               metadata,
               promptContext: prompt_context,
               augmentedContext: augmented_context,
+              reasoning,
             } as Ask.Answer;
           },
         ),
@@ -114,6 +116,10 @@ export function ask(
           let answer = items
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
+            .join('');
+          let reasoning = items
+            .filter((item) => item.item.type === 'reasoning')
+            .map((item) => (item.item as Ask.ReasoningAskResponseItem).text)
             .join('');
           const sourcesItem = items.find((item) => item.item.type === 'retrieval');
           const sources = sourcesItem ? (sourcesItem.item as Ask.RetrievalAskResponseItem).results : undefined;
@@ -163,6 +169,7 @@ export function ask(
             metadata,
             promptContext,
             augmentedContext,
+            reasoning,
           } as Ask.Answer;
         }),
         catchError((error) =>

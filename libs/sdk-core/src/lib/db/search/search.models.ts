@@ -87,6 +87,8 @@ export interface BaseSearchOptions {
   search_configuration?: string;
 }
 
+export type ReasoningParam = boolean | { display: boolean; effort: 'low' | 'medium' | 'high'; budget_tokens: number };
+
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
   prompt?: string | Prompts;
@@ -110,6 +112,7 @@ export interface ChatOptions extends BaseSearchOptions {
     content_type: string;
     b64encoded: string;
   }[];
+  reasoning?: ReasoningParam;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

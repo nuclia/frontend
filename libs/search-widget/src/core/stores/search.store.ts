@@ -8,6 +8,7 @@ import type {
   IFieldData,
   IResource,
   Paragraph,
+  ReasoningParam,
   ResourceData,
   ResourceField,
   Search,
@@ -109,6 +110,7 @@ interface SearchState {
   }[];
   resultsOrder: ResultsOrder;
   noScroll: boolean;
+  reasoning: ReasoningParam;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -137,6 +139,7 @@ export const searchState = new SvelteState<SearchState>({
   images: [],
   resultsOrder: 'relevance',
   noScroll: false,
+  reasoning: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -265,6 +268,16 @@ export const filterExpression = searchState.writer<FilterExpression | undefined>
     return {
       ...state,
       filterExpression,
+    };
+  },
+);
+
+export const reasoningParam = searchState.writer<ReasoningParam>(
+  (state) => state.reasoning,
+  (state, reasoning) => {
+    return {
+      ...state,
+      reasoning,
     };
   },
 );
