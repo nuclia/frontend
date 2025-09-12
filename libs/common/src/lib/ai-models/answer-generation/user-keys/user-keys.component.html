@@ -55,6 +55,18 @@
                           [help]="subfield.value.description">
                           {{ subfield.value.title }}
                         </pa-input>
+                      } @else if (subfield.value.values) {
+                        <div>
+                          <label [for]="subfield.key">{{ subfield.value.title }}</label>
+                          <p class="body-s">{{ subfield.value.description }}</p>
+                          <pa-radio-group [formControlName]="subfield.key">
+                            @for (value of subfield.value.values; track value.value) {
+                              <pa-radio [value]="value.value">
+                                {{ value.label }}
+                              </pa-radio>
+                            }
+                          </pa-radio-group>
+                        </div>
                       } @else {
                         <pa-input
                           [formControlName]="subfield.key"

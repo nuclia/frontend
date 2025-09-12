@@ -1,4 +1,4 @@
-import { AccountTypes, LearningConfigurations } from '@nuclia/core';
+import { AccountTypes, getSubSchema, LearningConfigurations, LearningConfigurationSchema } from '@nuclia/core';
 
 const MODELS_WITH_LIMITED_MULTILINGUAL_SUPPORT = ['gemini-pro', 'gemini-1-5-pro', 'gemini-1-5-pro-vision'];
 const MODELS_STARTER_ACCOUNT = ['chatgpt-azure', 'chatgpt-azure-3', 'generative-multilingual-2023'];
@@ -48,3 +48,19 @@ export const keyProviders: { [key: string]: string } = {
   chatgpt4: 'ChatGPT 4',
   hf_llm: 'Hugging Face',
 };
+
+export function convertEnumProperties(config: any, rootSchema: LearningConfigurationSchema, schema = rootSchema) {
+  return Object.entries(config).reduce((acc, [key, prop]) => {
+    const subSchema = getSubSchema(rootSchema, schema.properties?.[key]);
+    if (subSchema) {
+      if (subSchema.enum) {
+        // enum are integers, but pastanaga radio groups only accept strings
+        prop = `${prop}`;
+      } else {
+        prop = convertEnumProperties(prop, rootSchema, subSchema);
+      }
+    }
+    acc[key] = prop;
+    return acc;
+  }, {} as any);
+}
