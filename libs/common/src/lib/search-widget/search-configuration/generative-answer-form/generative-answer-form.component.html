@@ -135,6 +135,48 @@
     }
     <div class="config-form-field">
       <pa-toggle
+        formControlName="showReasoning"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.reasoning.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.reasoning.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="showReasoningEnabled">
+        <pa-select
+          formControlName="reasoningEffort"
+          [label]="'search.configuration.generative-answer.reasoning.effort-label' | translate"
+          [help]="'search.configuration.generative-answer.reasoning.effort-help' | translate">
+          <pa-option value="low">
+            {{ 'search.configuration.generative-answer.reasoning.effort-low' | translate }}
+          </pa-option>
+          <pa-option value="medium">
+            {{ 'search.configuration.generative-answer.reasoning.effort-medium' | translate }}
+          </pa-option>
+          <pa-option value="high">
+            {{ 'search.configuration.generative-answer.reasoning.effort-high' | translate }}
+          </pa-option>
+        </pa-select>
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="showReasoningEnabled">
+        <pa-input
+          formControlName="reasoningBudget"
+          type="number"
+          [help]="'search.configuration.generative-answer.reasoning.budget-help' | translate">
+          {{ 'search.configuration.generative-answer.reasoning.budget-label' | translate }}
+        </pa-input>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
         formControlName="limitTokenConsumption"
         withBackground
         spaceBetweenLabelAndToggle

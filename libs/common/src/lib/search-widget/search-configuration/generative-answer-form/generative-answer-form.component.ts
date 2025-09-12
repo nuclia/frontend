@@ -73,6 +73,15 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       nonNullable: true,
       updateOn: 'blur',
     }),
+    showReasoning: new FormControl<boolean>(false, { nonNullable: true }),
+    reasoningEffort: new FormControl<'low' | 'medium' | 'high'>('medium', {
+      nonNullable: true,
+      updateOn: 'blur',
+    }),
+    reasoningBudget: new FormControl<number>(15000, {
+      nonNullable: true,
+      updateOn: 'blur',
+    }),
     limitTokenConsumption: new FormControl<boolean>(false, { nonNullable: true }),
     tokenConsumptionLimit: new FormControl<number | null>(null),
     outputTokenConsumptionLimit: new FormControl<number | null>(null),
@@ -150,6 +159,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get askSpecificResourceEnabled() {
     return this.form.controls.askSpecificResource.value;
+  }
+  get showReasoningEnabled() {
+    return this.form.controls.showReasoning.value;
   }
   get limitTokenConsumptionEnabled() {
     return this.form.controls.limitTokenConsumption.value;
