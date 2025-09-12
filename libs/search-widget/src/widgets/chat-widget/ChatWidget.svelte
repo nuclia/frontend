@@ -10,6 +10,7 @@
     type Nuclia,
     type RAGImageStrategy,
     type RAGStrategy,
+    type ReasoningParam,
     type Widget,
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
@@ -24,6 +25,7 @@
     DEFAULT_CHAT_PLACEHOLDER,
     filterExpression,
     preselectedFilters,
+    reasoningParam,
     resetChat,
     searchConfigId,
     widgetFeatures,
@@ -85,6 +87,7 @@
     security_groups?: string | undefined;
     layout?: 'inline' | 'fullscreen' = 'inline';
     height?: string;
+    reasoning?: string;
   }
   let { ...componentProps } = $props();
   let config = $state(new Props());
@@ -131,6 +134,7 @@
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let layout = $derived(componentProps.layout || config.layout);
   let height = $derived(componentProps.height || config.height);
+  let reasoning = $derived(componentProps.reasoning || config.reasoning);
 
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
@@ -139,6 +143,7 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let _reasoning: ReasoningParam | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -243,6 +248,11 @@
       } catch (e) {
         console.log(`Invalid filter_expression`);
       }
+      try {
+        _reasoning = reasoning ? JSON.parse(reasoning) : undefined;
+      } catch (e) {
+        console.log(`Invalid reasoning parameter`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -281,6 +291,9 @@
         preselectedFilters.set(preselected_filters);
       } else if (_filter_expression) {
         filterExpression.set(_filter_expression);
+      }
+      if (_reasoning) {
+        reasoningParam.set(_reasoning);
       }
 
       initAnswer();
