@@ -55,6 +55,19 @@ import { FilterExpressionModalComponent } from '../../search-widget/search-confi
 
 const DEFAULT_CHEAP_LLM = 'gemini-2.5-flash-lite';
 
+const DEFAULT_FILTER_EXPRESSION = `{
+  "field": {
+    "and": [
+      {
+        "not": {
+          "prop": "field",
+          "type": "generic"
+        }
+      }
+    ]
+  }
+}`;
+
 export interface TaskFormCommonConfig {
   name: string;
   filter: {
@@ -149,7 +162,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       labels_operator: new FormControl<boolean>(false),
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
-    filter_expression_json: new FormControl<string>('', { nonNullable: true }),
+    filter_expression_json: new FormControl<string>(DEFAULT_FILTER_EXPRESSION, { nonNullable: true }),
     llm: new FormGroup({
       model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     }),
