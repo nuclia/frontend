@@ -7,10 +7,10 @@ import { CommonModule } from '@angular/common';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { RegionalAccountService } from '../../../regional-account.service';
 import { ZoneService } from '../../../../manage-zones/zone.service';
-import { getSubSchema, ModelType } from '@nuclia/core';
+import { ModelType } from '@nuclia/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { UserKeysComponent, UserKeysForm } from '@flaps/common';
+import { convertEnumProperties, UserKeysComponent, UserKeysForm } from '@flaps/common';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, UserKeysComponent],
@@ -113,18 +113,11 @@ export class AddModelComponent implements OnDestroy {
 
         if (openai_compat) {
           const openaiCompatSchema = schema?.['user_keys']?.schemas?.['openai_compat'];
-          openai_compat = Object.entries(openai_compat).reduce((acc, [key, prop]) => {
-            if (openaiCompatSchema) {
-              const subSchema = getSubSchema(openaiCompatSchema, openaiCompatSchema.properties?.[key]);
-              if (subSchema && subSchema.enum) {
-                // enum are integers, but pastanaga radio groups only accept strings
-                prop = `${prop}`;
-              }
-            }
-            acc[key] = prop;
-            return acc;
-          }, {} as any);
+          if (openaiCompatSchema) {
+            openai_compat = convertEnumProperties(openai_compat, openaiCompatSchema);
+          }
         }
+
         setTimeout(() => {
           // Wait for the userKeysForm to be ready
           this.userKeysForm?.controls.enabled?.patchValue(!!openai_compat);

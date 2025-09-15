@@ -16,6 +16,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   getLearningConfigPropType,
   getSubSchema,
+  LearningConfigurationSchema,
   type LearningConfigurationOption,
   type LearningConfigurationProperty,
   type LearningConfigurations,
@@ -29,12 +30,15 @@ export type UserKeysForm = FormGroup<{
   user_keys: FormGroup<{ [key: string]: any }>;
 }>;
 
+type UserKeyProperty = LearningConfigurationProperty & {
+  isSubForm?: boolean;
+  properties?: { key: string; value: LearningConfigurationProperty }[];
+};
+
 interface UserKeysProperties {
-  [key: string]: LearningConfigurationProperty & {
-    isSubForm?: boolean;
-    properties?: { key: string; value: LearningConfigurationProperty }[];
-  };
+  [key: string]: UserKeyProperty;
 }
+
 @Component({
   selector: 'stf-user-keys',
   imports: [
@@ -90,34 +94,13 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   }
   get userKeysProperties(): UserKeysProperties {
     return Object.entries(this.userKeys?.properties || {}).reduce((acc, [key, prop]) => {
-      const subSchema = this.userKeys && getSubSchema(this.userKeys, this.userKeys?.properties?.[key]);
-      if (subSchema) {
-        if (subSchema.properties) {
-          acc[key] = {
-            ...prop,
-            isSubForm: true,
-            properties: Object.entries(subSchema.properties).map(([subKey, subProp]) => ({
-              key: subKey,
-              value: { ...subProp, type: getLearningConfigPropType(subProp) },
-            })),
-          };
-        } else if (subSchema.enum) {
-          acc[key] = {
-            ...prop,
-            title: subSchema.title,
-            values: subSchema.enum.map((value, index) => ({
-              value: `${value}`,
-              label: subSchema.titles?.[index] || `${value}`,
-            })),
-          };
-        }
-      } else {
-        acc[key] = prop;
+      if (this.userKeys) {
+        acc[key] = this.getUserKeysProperty(this.userKeys, prop);
       }
       return acc;
     }, {} as UserKeysProperties);
   }
-
+  
   get userKeysPropertiesEntries() {
     return Object.entries(this.userKeysProperties).map(([key, value]) => ({
       key,
@@ -180,7 +163,7 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
                   new FormControl<number>(prop.default || prop.default === 0 ? prop.default : null),
                 );
               } else {
-                subForm.addControl(subKey, new FormControl<string>(prop.default || ''));
+                subForm.addControl(subKey, new FormControl<string>(prop.default?.toString() || ''));
               }
             });
             this.userKeysGroup.addControl(key, subForm);
@@ -210,5 +193,30 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       this.userKeysGroup.get(key)?.markAsPristine();
       this.userKeysGroup.get(key)?.updateValueAndValidity();
     });
+  }
+
+  getUserKeysProperty(schema: LearningConfigurationSchema, prop: LearningConfigurationProperty): UserKeyProperty {
+    const subSchema = getSubSchema(schema, prop);
+    if (subSchema) {
+      if (subSchema.properties) {
+        return {
+          ...prop,
+          isSubForm: true,
+          properties: Object.entries(subSchema.properties).map(([subKey, subProp]) => {
+            return { key: subKey, value: this.getUserKeysProperty(schema, subProp) };
+          }),
+        };
+      } else if (subSchema.enum) {
+        return {
+          ...prop,
+          title: subSchema.title,
+          values: subSchema.enum.map((value, index) => ({
+            value: `${value}`,
+            label: subSchema.titles?.[index] || `${value}`,
+          })),
+        };
+      }
+    }
+    return { ...prop, type: getLearningConfigPropType(prop) };
   }
 }

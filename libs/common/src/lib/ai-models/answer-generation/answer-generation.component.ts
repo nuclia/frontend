@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { getSubSchema, LearningConfigurationOption } from '@nuclia/core';
+import { LearningConfigurationOption } from '@nuclia/core';
 import {
   ExpandableTextareaComponent,
   InfoCardComponent,
@@ -12,7 +12,7 @@ import {
 } from '@nuclia/sistema';
 import { filter, of, Subject, take } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { keyProviders } from '../ai-models.utils';
+import { convertEnumProperties, keyProviders } from '../ai-models.utils';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 
@@ -122,15 +122,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
             let userKeys = kbConfig['user_keys'][userKeyId];
             const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
             if (userKeys && schema) {
-              userKeys = Object.entries(userKeys).reduce((acc, [key, prop]) => {
-                const subSchema = getSubSchema(schema, schema.properties?.[key]);
-                if (subSchema && subSchema.enum) {
-                  // enum are integers, but pastanaga radio groups only accept strings
-                  prop = `${prop}`;
-                }
-                acc[key] = prop;
-                return acc;
-              }, {} as any);
+              userKeys = convertEnumProperties(userKeys, schema);
             }
             this.userKeyToggle?.patchValue(ownKey);
             this.userKeysGroup?.patchValue(userKeys);
