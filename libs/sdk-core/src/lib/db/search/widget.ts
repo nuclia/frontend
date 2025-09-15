@@ -105,7 +105,8 @@ export namespace Widget {
     tokenConsumptionLimit: number | null;
     outputTokenConsumptionLimit: number | null;
     preferMarkdown: boolean;
-    contextImages: boolean;
+    useImages: boolean;
+    imageUsage: 'query' | 'context';
     ragStrategies: RagStrategiesConfig;
   }
 
@@ -227,6 +228,7 @@ export namespace Widget {
     persistChatHistory?: boolean;
     hideAnswer?: boolean;
     contextImages?: boolean;
+    queryImage?: boolean;
     sortResults?: boolean;
     noScroll?: boolean;
   }
@@ -288,7 +290,8 @@ const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   tokenConsumptionLimit: null,
   outputTokenConsumptionLimit: null,
   preferMarkdown: false,
-  contextImages: false,
+  useImages: false,
+  imageUsage: 'query',
   ragStrategies: {
     includeTextualHierarchy: false,
     metadatasRagStrategy: false,
@@ -522,7 +525,14 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
-    contextImages: config.generativeAnswer.generateAnswer && config.generativeAnswer.contextImages,
+    contextImages:
+      config.generativeAnswer.generateAnswer &&
+      config.generativeAnswer.useImages &&
+      config.generativeAnswer.imageUsage === 'context',
+    queryImage:
+      config.generativeAnswer.generateAnswer &&
+      config.generativeAnswer.useImages &&
+      config.generativeAnswer.imageUsage === 'query',
     semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,

@@ -223,7 +223,7 @@
     </div>
     <div class="config-form-field">
       <pa-toggle
-        formControlName="contextImages"
+        formControlName="useImages"
         withBackground
         spaceBetweenLabelAndToggle
         (valueChange)="heightChanged.emit()">
@@ -233,6 +233,22 @@
       </pa-toggle>
       <div class="config-form-help">
         {{ 'search.configuration.generative-answer.images-in-question.toggle-description' | translate }}
+        <div
+          class="extra-fields"
+          [class.visible]="useImages">
+          <pa-radio-group formControlName="imageUsage">
+            <pa-radio
+              value="query"
+              help="search.configuration.generative-answer.images-in-question.as-query-help">
+              {{ 'search.configuration.generative-answer.images-in-question.as-query' | translate }}
+            </pa-radio>
+            <pa-radio
+              value="context"
+              help="search.configuration.generative-answer.images-in-question.as-context-help">
+              {{ 'search.configuration.generative-answer.images-in-question.as-context' | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
       </div>
     </div>
     @if (useSearchResults) {

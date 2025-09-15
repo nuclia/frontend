@@ -1,7 +1,9 @@
-# 1.27.1 (UNRELEASED)
+# 1.28.0 (2025-09-15)
 
 ### Improvements
 
+- Support `query_image`
+- Return reasoning on `/ask`
 - Add `getFacets` method to Knowledge Box
 - Add support for split strategies
 - Allow to modify the account slug

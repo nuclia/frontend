@@ -112,6 +112,10 @@ export interface ChatOptions extends BaseSearchOptions {
     content_type: string;
     b64encoded: string;
   }[];
+  query_image?: {
+    content_type: string;
+    b64encoded: string;
+  };
   reasoning?: ReasoningParam;
 }
 

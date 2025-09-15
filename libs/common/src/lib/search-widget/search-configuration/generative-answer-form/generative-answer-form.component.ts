@@ -86,7 +86,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     tokenConsumptionLimit: new FormControl<number | null>(null),
     outputTokenConsumptionLimit: new FormControl<number | null>(null),
     preferMarkdown: new FormControl<boolean>(false, { nonNullable: true }),
-    contextImages: new FormControl<boolean>(false, { nonNullable: true }),
+    useImages: new FormControl<boolean>(false, { nonNullable: true }),
+    imageUsage: new FormControl<'query' | 'context'>('query', { nonNullable: true }),
     ragStrategies: new FormGroup({
       includeTextualHierarchy: new FormControl<boolean>(false, { nonNullable: true }),
       includeNeighbouringParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
@@ -165,6 +166,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get limitTokenConsumptionEnabled() {
     return this.form.controls.limitTokenConsumption.value;
+  }
+  get useImages() {
+    return this.form.controls.useImages.value;
   }
   get entireResourceAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.entireResourceAsContext.value;

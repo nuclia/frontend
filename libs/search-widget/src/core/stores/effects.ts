@@ -103,6 +103,7 @@ import {
 } from './viewer.store';
 import {
   disableRAG,
+  hasQueryImage,
   isCitationsEnabled,
   isSpeechEnabled,
   isSpeechSynthesisEnabled,
@@ -494,6 +495,7 @@ export function askQuestion(
         rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
+        hasQueryImage.pipe(take(1)),
         searchConfigId.pipe(take(1)),
       ]),
     ),
@@ -506,7 +508,8 @@ export function askQuestion(
         reasoning,
         rangeCreation,
         disableRAG,
-        extra_context_images,
+        _images,
+        _hasQueryImage,
         search_configuration,
       ]) => {
         options.search_configuration = search_configuration;
@@ -519,7 +522,8 @@ export function askQuestion(
                 filter_expression: filterExpression ? combinedFilterExpression : undefined,
                 range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
                 range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
-                extra_context_images,
+                extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
+                query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
                 reasoning,
               })
         ).pipe(

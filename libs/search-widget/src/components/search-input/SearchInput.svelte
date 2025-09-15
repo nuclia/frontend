@@ -25,9 +25,11 @@
     getCDN,
     hasContextImages,
     hasFilterButton,
+    hasQueryImage,
     hasSearchButton,
     hasSuggestions,
     hideLogo,
+    images,
     isStreaming,
     labelFilters,
     labelSetFilters,
@@ -299,7 +301,7 @@
         on:input={onInput}
         on:keypress={onKeyPress}
         on:keyup={onKeyUp}></Textarea>
-      {#if $hasContextImages}
+      {#if $hasContextImages || $hasQueryImage}
         <input
           type="file"
           accept="image/*"
@@ -309,6 +311,7 @@
           aspect="basic"
           icon="photo"
           ariaLabel={$_('input.add-image')}
+          disabled={$hasQueryImage && $images.length > 0}
           on:click={selectImage}
           on:enter={selectImage} />
       {/if}
