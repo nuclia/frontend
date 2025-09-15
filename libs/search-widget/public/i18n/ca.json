@@ -23,6 +23,7 @@
 	"answer.json-answer.title": "Resposta JSON",
 	"answer.no-citations": "El sistema no ha estat capaç d'indicar explícitament les fonts que s'han utilitzat per produir aquesta resposta.",
 	"answer.placeholder": "Parlem",
+	"answer.reasoning": "Raonament",
 	"answer.reset": "Restableix la conversa",
 	"answer.sources": "Fonts",
 	"answer.title": "Resposta",

@@ -262,7 +262,7 @@
       <Expander expanded={true}>
         {#snippet header()}
           <div class="title-xxs">
-            {$_('Reasoning')}
+            {$_('answer.reasoning')}
           </div>
         {/snippet}
         <div class="reasoning-text">
