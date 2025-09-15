@@ -17,7 +17,7 @@
   }
 </script>
 
-{#if $firstAnswer.text || $chatError}
+{#if $firstAnswer.text || $firstAnswer.reasoning || $chatError}
   <div class="sw-initial-answer">
     {#if $chatError}
       <strong>

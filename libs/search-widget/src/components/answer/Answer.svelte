@@ -42,6 +42,7 @@
 
   let { answer, rank = 0, initialAnswer = false }: Props = $props();
   let text = $derived(addReferences(answer.text || '', answer.citations || {}));
+  let reasoning = $derived(answer.reasoning);
   let sources = $derived(getSourcesResults(answer));
   let selectedCitation: number | undefined = $state();
   let element: HTMLElement | undefined = $state();
@@ -256,6 +257,18 @@
           <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
         {/each}
       </div>
+    {/if}
+    {#if reasoning}
+      <Expander expanded={true}>
+        {#snippet header()}
+          <div class="title-xxs">
+            {$_('answer.reasoning')}
+          </div>
+        {/snippet}
+        <div class="reasoning-text">
+          <MarkdownRendering text={reasoning} />
+        </div>
+      </Expander>
     {/if}
   {/if}
   {#if !answer.inError}

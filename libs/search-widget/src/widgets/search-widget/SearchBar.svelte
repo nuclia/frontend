@@ -17,6 +17,7 @@
     type Nuclia,
     type RAGImageStrategy,
     type RAGStrategy,
+    type ReasoningParam,
     type Widget,
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
@@ -45,6 +46,7 @@
     entityRelations,
     filterExpression,
     preselectedFilters,
+    reasoningParam,
     searchConfigId,
     searchFilters,
     searchQuery,
@@ -121,6 +123,7 @@
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
     security_groups?: string | undefined;
+    reasoning?: string;
   }
 
   let { ...componentProps } = $props();
@@ -173,6 +176,7 @@
   let widget_id = $derived(componentProps.widget_id || config.widget_id);
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
+  let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let darkMode = $derived(mode === 'dark');
 
   $effect(() => {
@@ -196,6 +200,7 @@
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
   let _filter_expression: FilterExpression | undefined;
+  let _reasoning: ReasoningParam | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -256,6 +261,7 @@
       feedback,
       widget_id,
       search_config_id,
+      _reasoning,
     });
   }
 
@@ -340,6 +346,11 @@
       } catch (e) {
         console.log(`Invalid filter_expression`);
       }
+      try {
+        _reasoning = reasoning ? JSON.parse(reasoning) : undefined;
+      } catch (e) {
+        console.log(`Invalid reasoning parameter`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -395,6 +406,9 @@
         preselectedFilters.set(preselected_filters);
       } else if (_filter_expression) {
         filterExpression.set(_filter_expression);
+      }
+      if (_reasoning) {
+        reasoningParam.set(_reasoning);
       }
       if (_features.answers) {
         initAnswer();

@@ -79,6 +79,7 @@ import {
   isEmptySearchQuery,
   pendingResults,
   rangeCreationISO,
+  reasoningParam,
   resultList,
   searchConfigId,
   searchFilters,
@@ -489,6 +490,7 @@ export function askQuestion(
         combinedFilters.pipe(take(1)),
         combinedFilterExpression.pipe(take(1)),
         filterExpression.pipe(take(1)),
+        reasoningParam.pipe(take(1)),
         rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
@@ -501,6 +503,7 @@ export function askQuestion(
         filters,
         combinedFilterExpression,
         filterExpression,
+        reasoning,
         rangeCreation,
         disableRAG,
         extra_context_images,
@@ -517,6 +520,7 @@ export function askQuestion(
                 range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
                 range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                 extra_context_images,
+                reasoning,
               })
         ).pipe(
           tap((result) => {

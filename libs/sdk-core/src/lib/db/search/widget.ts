@@ -98,6 +98,9 @@ export namespace Widget {
     systemPrompt: string;
     askSpecificResource: boolean;
     specificResourceSlug: string;
+    showReasoning: boolean;
+    reasoningEffort: 'low' | 'medium' | 'high';
+    reasoningBudget: number;
     limitTokenConsumption: boolean;
     tokenConsumptionLimit: number | null;
     outputTokenConsumptionLimit: number | null;
@@ -278,6 +281,9 @@ const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   systemPrompt: '',
   askSpecificResource: false,
   specificResourceSlug: '',
+  showReasoning: false,
+  reasoningEffort: 'medium',
+  reasoningBudget: 15000,
   limitTokenConsumption: false,
   tokenConsumptionLimit: null,
   outputTokenConsumptionLimit: null,
@@ -488,6 +494,7 @@ export function getWidgetParameters(
     rag_strategies: ragProperties,
     rag_images_strategies: ragImagesProperties,
     ask_to_resource: getAskToResource(searchConfig.generativeAnswer),
+    reasoning: getReasoning(searchConfig.generativeAnswer),
     max_tokens: getMaxTokens(searchConfig.generativeAnswer),
     max_output_tokens: getMaxOutputTokens(searchConfig.generativeAnswer),
     max_paragraphs: getMaxParagraphs(searchConfig.searchBox),
@@ -730,6 +737,11 @@ function getNotEnoughDataMessage(config: Widget.WidgetConfiguration): string {
 }
 function getAskToResource(config: Widget.GenerativeAnswerConfig): string {
   return config.askSpecificResource && !!config.specificResourceSlug.trim() ? config.specificResourceSlug.trim() : '';
+}
+function getReasoning(config: Widget.GenerativeAnswerConfig): string {
+  return config.showReasoning
+    ? JSON.stringify({ display: true, effort: config.reasoningEffort, budget_tokens: config.reasoningBudget })
+    : '';
 }
 function getMaxTokens(config: Widget.GenerativeAnswerConfig): string | undefined {
   return config.limitTokenConsumption && !!config.tokenConsumptionLimit

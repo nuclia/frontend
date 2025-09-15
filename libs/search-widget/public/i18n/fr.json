@@ -23,6 +23,7 @@
 	"answer.json-answer.title": "Réponse JSON",
 	"answer.no-citations": "Le système n'a pas été en mesure d'indiquer explicitement les sources utilisées pour produire cette réponse.",
 	"answer.placeholder": "Discutons",
+	"answer.reasoning": "Raisonnement",
 	"answer.reset": "Réinitialiser la conversation",
 	"answer.sources": "Sources",
 	"answer.title": "Réponse",

@@ -23,6 +23,7 @@
 	"answer.json-answer.title": "Respuesta JSON",
 	"answer.no-citations": "El sistema no fue capaz de indicar explícitamente las fuentes que se han utilizado para elaborar esta respuesta.",
 	"answer.placeholder": "Charlemos",
+	"answer.reasoning": "Razonamiento",
 	"answer.reset": "Reiniciar la conversación",
 	"answer.sources": "Fuentes",
 	"answer.title": "Respuesta",

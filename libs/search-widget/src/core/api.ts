@@ -231,7 +231,6 @@ export const search = (query: string, options: SearchOptions): Observable<Search
 
   return searchConfigId.pipe(
     take(1),
-    tap(console.log),
     switchMap((search_configuration) =>
       nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options, search_configuration }),
     ),

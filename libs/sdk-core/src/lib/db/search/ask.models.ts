@@ -27,6 +27,7 @@ export namespace Ask {
     metadata?: { tokens?: AskTokens; timings?: AskTimings };
     promptContext?: string[];
     augmentedContext?: AugmentedContext;
+    reasoning?: string;
   }
 
   export enum Author {
@@ -50,7 +51,8 @@ export namespace Ask {
       | ErrorAskResponseItem
       | RelationsAskResponseItem
       | DebugAskResponseItem
-      | AugmentedContextAskResponseItem;
+      | AugmentedContextAskResponseItem
+      | ReasoningAskResponseItem;
   }
 
   export interface RetrievalAskResponseItem {
@@ -60,6 +62,10 @@ export namespace Ask {
 
   export interface AnswerAskResponseItem {
     type: 'answer';
+    text: string;
+  }
+  export interface ReasoningAskResponseItem {
+    type: 'reasoning';
     text: string;
   }
 
@@ -137,6 +143,7 @@ export namespace Ask {
     answer_json?: any;
     error_details?: string;
     augmented_context?: AugmentedContext;
+    reasoning?: string;
   }
 
   export interface PredictAnswerResponseItem {
