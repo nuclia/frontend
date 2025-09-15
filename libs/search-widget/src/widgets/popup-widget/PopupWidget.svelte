@@ -73,7 +73,7 @@
   }
 
   let {
-    backend = 'https://nuclia.cloud/api',
+    backend = 'https://rag.progress.cloud/api',
     zone = 'europe-1',
     knowledgebox,
     placeholder = '',

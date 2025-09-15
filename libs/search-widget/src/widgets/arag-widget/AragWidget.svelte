@@ -37,7 +37,7 @@
   let nucliaAPI: Nuclia;
   let svgSprite: string = $state('');
   let {
-    backend = 'https://nuclia.cloud/api',
+    backend = 'https://rag.progress.cloud/api',
     zone = 'europe-1',
     arag,
     session,

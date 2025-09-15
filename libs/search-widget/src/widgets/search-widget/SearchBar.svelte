@@ -78,7 +78,7 @@
 
   let nucliaAPI: Nuclia;
   class Props {
-    backend = 'https://nuclia.cloud/api';
+    backend = 'https://rag.progress.cloud/api';
     zone = 'europe-1';
     knowledgebox: string;
     placeholder?: string;

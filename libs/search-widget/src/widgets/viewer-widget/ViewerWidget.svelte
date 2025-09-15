@@ -57,7 +57,7 @@
   }
 
   let {
-    backend = 'https://nuclia.cloud/api',
+    backend = 'https://rag.progress.cloud/api',
     zone = '',
     knowledgebox = '',
     lang = $bindable(''),
