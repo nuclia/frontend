@@ -208,7 +208,7 @@ export class AddFilterModalComponent {
         expression = { or: [] };
         break;
       case 'not':
-        expression = { not: [] };
+        expression = { not: undefined };
         break;
       default:
         const filterParams = Object.fromEntries(

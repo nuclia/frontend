@@ -122,41 +122,71 @@
   } @else {
     @let key = filter.and ? 'and' : filter.or ? 'or' : 'not';
     <div class="filter-expression">
-      <div class="filter">
-        <pa-select
-          [value]="key"
-          (valueChange)="editOperator($event, target, filter, parent, index)"
-          dim>
-          <pa-option value="and">AND</pa-option>
-          <pa-option value="or">OR</pa-option>
-          <pa-option value="not">NOT</pa-option>
-        </pa-select>
-        <div class="actions">
-          <pa-button
-            icon="plus"
-            aspect="basic"
-            size="small"
-            (click)="add(target, filter)">
-            {{ 'generic.add' | translate }}
-          </pa-button>
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            kind="destructive"
-            size="small"
-            (click)="delete(target, parent, index)">
-            {{ 'generic.delete' | translate }}
-          </pa-button>
+      @if (key === 'and' || key === 'or') {
+        <div class="filter">
+          <pa-select
+            [value]="key"
+            (valueChange)="editOperator($event, target, filter, parent, index)"
+            dim>
+            <pa-option value="and">AND</pa-option>
+            <pa-option value="or">OR</pa-option>
+          </pa-select>
+          <div class="actions">
+            <pa-button
+              icon="plus"
+              aspect="basic"
+              size="small"
+              (click)="add(target, filter)">
+              {{ 'generic.add' | translate }}
+            </pa-button>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              kind="destructive"
+              size="small"
+              (click)="delete(target, parent, index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </div>
         </div>
-      </div>
-      @if (filter[key].length > 0) {
-        <div class="children">
-          @for (child of filter[key]; track child; let index = $index) {
+        @if (filter[key].length > 0) {
+          <div class="children">
+            @for (child of filter[key]; track child; let index = $index) {
+              <ng-container
+                [ngTemplateOutlet]="filterItem"
+                [ngTemplateOutletContext]="{ parent: filter, filter: child, index, target }" />
+            }
+          </div>
+        }
+      } @else {
+        <div class="filter">
+          <div class="body-m">NOT</div>
+          <div class="actions">
+            <pa-button
+              icon="plus"
+              aspect="basic"
+              size="small"
+              [disabled]="filter.not"
+              (click)="add(target, filter)">
+              {{ 'generic.add' | translate }}
+            </pa-button>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              kind="destructive"
+              size="small"
+              (click)="delete(target, parent, index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </div>
+        </div>
+        @if (filter.not) {
+          <div class="children">
             <ng-container
               [ngTemplateOutlet]="filterItem"
-              [ngTemplateOutletContext]="{ parent: filter, filter: child, index, target }" />
-          }
-        </div>
+              [ngTemplateOutletContext]="{ parent: filter, filter: filter.not, target }" />
+          </div>
+        }
       }
     </div>
   }
