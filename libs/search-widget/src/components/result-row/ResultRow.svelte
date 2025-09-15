@@ -85,18 +85,18 @@
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
-    if (result.field) {
-      forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
-        if (url) {
-          goToUrl(url, metaKeyOn || openNewTab);
-        } else {
+    forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([_url, openNewTab]) => {
+      if (_url) {
+        goToUrl(_url, metaKeyOn || openNewTab);
+      } else {
+        if (result.field) {
           viewerData.set({
             result,
             selectedParagraphIndex: typeof index === 'number' ? index : -1,
           });
         }
-      });
-    }
+      }
+    });
   }
 
   function getUrl(paragraph?: Search.FindParagraph) {
@@ -110,13 +110,12 @@
     ]).pipe(
       take(1),
       switchMap(([toFile, toLink, toOrigin, newTab, permalink, baseUrl]) => {
-        if (result.field) {
-          const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-          return toFile || toLink || toOrigin || newTab
-            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, baseUrl, result, resourceField, paragraph)
-            : of(undefined);
-        }
-        return of(undefined);
+        const resourceField: ResourceField | undefined = result.field
+          ? { ...result.field, ...result.fieldData }
+          : undefined;
+        return toFile || toLink || toOrigin || newTab
+          ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, baseUrl, result, resourceField, paragraph)
+          : of(undefined);
       }),
     );
   }

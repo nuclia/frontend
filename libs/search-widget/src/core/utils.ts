@@ -296,7 +296,7 @@ export const getNavigationUrl = (
   permalink: boolean,
   previewBaseUrl: string,
   resource: IResource,
-  field: ResourceField,
+  field?: ResourceField,
   paragraph?: Search.FindParagraph,
 ): Observable<string | undefined> => {
   const url = getExternalUrl(resource, navigateToOriginURL, field);
@@ -328,7 +328,7 @@ export const getNavigationUrl = (
   }
 };
 
-export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field: ResourceField) => {
+export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field?: ResourceField) => {
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
   } else {
