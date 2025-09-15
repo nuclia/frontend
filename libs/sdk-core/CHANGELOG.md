@@ -1,3 +1,9 @@
+# 1.28.1 (unreleased)
+
+### Improvements
+
+- Add support for filter expressions on tasks
+
 # 1.28.0 (2025-09-15)
 
 ### Improvements
@@ -7,7 +13,6 @@
 - Add `getFacets` method to Knowledge Box
 - Add support for split strategies
 - Allow to modify the account slug
-- Add support for filter expressions on tasks
 
 # 1.27.0 (2025-06-16)
 
