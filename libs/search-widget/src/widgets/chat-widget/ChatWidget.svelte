@@ -45,7 +45,7 @@
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
   class Props {
-    backend = 'https://nuclia.cloud/api';
+    backend = 'https://rag.progress.cloud/api';
     zone = 'europe-1';
     knowledgebox: any;
     lang?: string;
