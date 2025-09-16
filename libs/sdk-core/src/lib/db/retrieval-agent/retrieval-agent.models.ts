@@ -15,6 +15,7 @@ import {
 } from './retrieval-agent.types';
 import { Session } from './session';
 import { ISession } from './session.models';
+import { JSONSchema4 } from 'json-schema';
 
 export type IRetrievalAgentBase = IKnowledgeBoxBase;
 export type IRetrievalAgentItem = IKnowledgeBoxItem;
@@ -99,6 +100,8 @@ export interface IRetrievalAgent
   addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }>;
   patchPostprocess(agent: PostprocessAgent): Observable<void>;
   deletePostprocess(agentId: string): Observable<void>;
+
+  getSchemas(): Observable<ARAGSchemas>;
 }
 
 export interface Rule {
@@ -436,4 +439,14 @@ export interface PreprocessAliniaAgent extends PreprocessAgent, PreprocessAlinia
 }
 export interface PostprocessAliniaAgent extends PostprocessAgent, PostprocessAliniaCreation {
   module: 'postprocess_alinia';
+}
+
+export interface ARAGSchemas {
+  agents: {
+    context: JSONSchema4[];
+    generation: JSONSchema4[];
+    preprocess: JSONSchema4[];
+    postprocess: JSONSchema4[];
+  };
+  drivers: JSONSchema4[];
 }
