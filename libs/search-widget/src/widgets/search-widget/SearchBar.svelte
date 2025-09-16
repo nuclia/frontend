@@ -22,13 +22,13 @@
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { IconButton, Modal } from '../../common';
+  import { Icon, IconButton, Modal } from '../../common';
   import globalCss from '../../common/global.css?inline';
   import { InfoCard, onClosePreview } from '../../components';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { type WidgetFilters } from '../../core';
   import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
-  import { setLang } from '../../core/i18n';
+  import { _, setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
   import {
     activatePermalinks,
@@ -66,7 +66,14 @@
     widgetPlaceholder,
     widgetRagStrategies,
   } from '../../core/stores/widget.store';
-  import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
+  import {
+    injectCustomCss,
+    isBrowserUnsupported,
+    loadFonts,
+    loadSvgSprite,
+    loadWidgetConfig,
+    setCDN,
+  } from '../../core/utils';
 
   const _initialized = new BehaviorSubject(false);
   const initialized = _initialized.asObservable().pipe(filter((r) => r));
@@ -487,6 +494,12 @@
     hidden>
     {@html svgSprite}
   </div>
+  {#if isBrowserUnsupported}
+    <div class="unsupported body-s">
+      <Icon name="warning" />
+      {$_('input.unsupported')}
+    </div>
+  {/if}
 </div>
 
 <style src="./SearchBar.css"></style>

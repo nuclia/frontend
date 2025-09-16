@@ -70,6 +70,7 @@
 	"input.path": "Ruta",
 	"input.placeholder": "Escribe tu pregunta aqui",
 	"input.to": "Hasta el",
+	"input.unsupported": "Tu navegador no es compatible: es posible que algunas funciones no funcionen correctamente",
 	"modal.back": "Volver",
 	"resource.classification": "Classificación",
 	"resource.creation": "Fecha de creación",
