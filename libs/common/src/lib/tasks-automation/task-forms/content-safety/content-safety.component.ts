@@ -46,6 +46,7 @@ export class ContentSafetyComponent extends TaskRouteDirective {
     const parameters = {
       name: commonConfig.name,
       filter: commonConfig.filter,
+      filter_expression_json: commonConfig.filter_expression_json,
       llm: {},
       on: this.form.value.on === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
       operations: [{ llama_guard: { enabled: true, triggers: commonConfig.webhook && [commonConfig.webhook] } }],

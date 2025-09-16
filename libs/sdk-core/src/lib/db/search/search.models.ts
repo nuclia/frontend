@@ -153,7 +153,7 @@ export interface Or<T> {
   or: T[];
 }
 export interface Not<T> {
-  not: T[];
+  not: T;
 }
 export interface ResourceFilter {
   prop: 'resource';

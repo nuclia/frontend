@@ -31,49 +31,50 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
       </pa-accordion>
-
-      @if (filterExpression.field && filterExpression.paragraph) {
-        <div class="filter-logic">
-          <pa-select [(value)]="filterExpression.operator">
-            <pa-option value="and">AND</pa-option>
-            <pa-option value="or">OR</pa-option>
-          </pa-select>
-          <span>
-            <pa-icon
-              name="info"
-              size="small"
-              [paPopover]="labelsLogic"></pa-icon>
-            <pa-popover #labelsLogic>
-              {{ 'search.configuration.filter-expression-modal.operator' | translate }}
-            </pa-popover>
-          </span>
-        </div>
+      @if (!dataAugmentation) {
+        @if (filterExpression.field && filterExpression.paragraph) {
+          <div class="filter-logic">
+            <pa-select [(value)]="filterExpression.operator">
+              <pa-option value="and">AND</pa-option>
+              <pa-option value="or">OR</pa-option>
+            </pa-select>
+            <span>
+              <pa-icon
+                name="info"
+                size="small"
+                [paPopover]="labelsLogic"></pa-icon>
+              <pa-popover #labelsLogic>
+                {{ 'search.configuration.filter-expression-modal.operator' | translate }}
+              </pa-popover>
+            </span>
+          </div>
+        }
+        <pa-accordion>
+          <pa-accordion-item
+            id="paragraph"
+            [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
+            [expanded]="filterExpression.paragraph">
+            <pa-accordion-item-body>
+              @if (filterExpression.paragraph) {
+                <ng-container
+                  [ngTemplateOutlet]="filterItem"
+                  [ngTemplateOutletContext]="{ filter: filterExpression.paragraph, target: 'paragraph' }" />
+              }
+              @if (!filterExpression.paragraph) {
+                <div>
+                  <pa-button
+                    aspect="basic"
+                    icon="circle-plus"
+                    iconAndText
+                    (click)="add('paragraph')">
+                    {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                  </pa-button>
+                </div>
+              }
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
       }
-      <pa-accordion>
-        <pa-accordion-item
-          id="paragraph"
-          [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
-          [expanded]="filterExpression.paragraph">
-          <pa-accordion-item-body>
-            @if (filterExpression.paragraph) {
-              <ng-container
-                [ngTemplateOutlet]="filterItem"
-                [ngTemplateOutletContext]="{ filter: filterExpression.paragraph, target: 'paragraph' }" />
-            }
-            @if (!filterExpression.paragraph) {
-              <div>
-                <pa-button
-                  aspect="basic"
-                  icon="circle-plus"
-                  iconAndText
-                  (click)="add('paragraph')">
-                  {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
-                </pa-button>
-              </div>
-            }
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-      </pa-accordion>
     </div>
   </pa-modal-content>
   <pa-modal-footer>
@@ -121,41 +122,71 @@
   } @else {
     @let key = filter.and ? 'and' : filter.or ? 'or' : 'not';
     <div class="filter-expression">
-      <div class="filter">
-        <pa-select
-          [value]="key"
-          (valueChange)="editOperator($event, target, filter, parent, index)"
-          dim>
-          <pa-option value="and">AND</pa-option>
-          <pa-option value="or">OR</pa-option>
-          <pa-option value="not">NOT</pa-option>
-        </pa-select>
-        <div class="actions">
-          <pa-button
-            icon="plus"
-            aspect="basic"
-            size="small"
-            (click)="add(target, filter)">
-            {{ 'generic.add' | translate }}
-          </pa-button>
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            kind="destructive"
-            size="small"
-            (click)="delete(target, parent, index)">
-            {{ 'generic.delete' | translate }}
-          </pa-button>
+      @if (key === 'and' || key === 'or') {
+        <div class="filter">
+          <pa-select
+            [value]="key"
+            (valueChange)="editOperator($event, target, filter, parent, index)"
+            dim>
+            <pa-option value="and">AND</pa-option>
+            <pa-option value="or">OR</pa-option>
+          </pa-select>
+          <div class="actions">
+            <pa-button
+              icon="plus"
+              aspect="basic"
+              size="small"
+              (click)="add(target, filter)">
+              {{ 'generic.add' | translate }}
+            </pa-button>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              kind="destructive"
+              size="small"
+              (click)="delete(target, parent, index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </div>
         </div>
-      </div>
-      @if (filter[key].length > 0) {
-        <div class="children">
-          @for (child of filter[key]; track child; let index = $index) {
+        @if (filter[key].length > 0) {
+          <div class="children">
+            @for (child of filter[key]; track child; let index = $index) {
+              <ng-container
+                [ngTemplateOutlet]="filterItem"
+                [ngTemplateOutletContext]="{ parent: filter, filter: child, index, target }" />
+            }
+          </div>
+        }
+      } @else {
+        <div class="filter">
+          <div class="body-m">NOT</div>
+          <div class="actions">
+            <pa-button
+              icon="plus"
+              aspect="basic"
+              size="small"
+              [disabled]="filter.not"
+              (click)="add(target, filter)">
+              {{ 'generic.add' | translate }}
+            </pa-button>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              kind="destructive"
+              size="small"
+              (click)="delete(target, parent, index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </div>
+        </div>
+        @if (filter.not) {
+          <div class="children">
             <ng-container
               [ngTemplateOutlet]="filterItem"
-              [ngTemplateOutletContext]="{ parent: filter, filter: child, index, target }" />
-          }
-        </div>
+              [ngTemplateOutletContext]="{ parent: filter, filter: filter.not, target }" />
+          </div>
+        }
       }
     </div>
   }

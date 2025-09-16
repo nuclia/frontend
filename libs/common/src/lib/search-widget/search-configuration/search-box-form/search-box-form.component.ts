@@ -189,7 +189,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     this.modalService
       .openModal(
         FilterExpressionModalComponent,
-        new ModalConfig({ data: this.preselectedFilterExpressionControl.value }),
+        new ModalConfig({ data: { filterExpression: this.preselectedFilterExpressionControl.value } }),
       )
       .onClose.pipe(filter((filters) => !!filters))
       .subscribe((filters: string) => this.preselectedFilterExpressionControl.patchValue(filters));

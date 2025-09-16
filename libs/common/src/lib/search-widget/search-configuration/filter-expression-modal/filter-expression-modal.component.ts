@@ -24,13 +24,13 @@ import { FilterValueComponent } from './filter-value/filter-value.component';
 export type AnyFilterExpression =
   | And<AnyFilterExpression>
   | Or<AnyFilterExpression>
-  | Not<AnyFilterExpression>
+  | Not<AnyFilterExpression | undefined>
   | FieldFilterExpression
   | ParagraphFilterExpression;
 
 export type NonOperatorFilterExpression = Exclude<
   AnyFilterExpression,
-  And<AnyFilterExpression> | Or<AnyFilterExpression> | Not<AnyFilterExpression>
+  And<AnyFilterExpression> | Or<AnyFilterExpression> | Not<AnyFilterExpression | undefined>
 >;
 
 export type FilterTarget = 'field' | 'paragraph';
@@ -57,16 +57,18 @@ export type FilterTarget = 'field' | 'paragraph';
 })
 export class FilterExpressionModalComponent {
   filterExpression: FilterExpression = {};
+  dataAugmentation = false;
 
   @ViewChildren(AccordionItemComponent) accordionItems: AccordionItemComponent[] = [];
 
   constructor(
-    public modal: ModalRef<string, string>,
+    public modal: ModalRef<{ filterExpression: string; dataAugmentation?: boolean }, string>,
     private modalService: SisModalService,
     private cdr: ChangeDetectorRef,
   ) {
     try {
-      this.filterExpression = JSON.parse(this.modal.config.data || '{}');
+      this.filterExpression = JSON.parse(this.modal.config.data?.filterExpression || '{}');
+      this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
     } catch {
       // Invalid filter expression
     }
@@ -83,7 +85,10 @@ export class FilterExpressionModalComponent {
 
   add(target: FilterTarget, parent?: AnyFilterExpression) {
     this.modalService
-      .openModal(AddFilterModalComponent, new ModalConfig({ data: { target } }))
+      .openModal(
+        AddFilterModalComponent,
+        new ModalConfig({ data: { target, dataAugmentation: this.dataAugmentation } }),
+      )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {
         if (parent) {
@@ -92,7 +97,7 @@ export class FilterExpressionModalComponent {
           } else if ('or' in parent) {
             parent.or = parent.or ? [...parent.or, result] : [result];
           } else if ('not' in parent) {
-            parent.not = parent.not ? [...parent.not, result] : [result];
+            parent.not = result;
           }
         } else {
           if (target === 'field') {
@@ -109,7 +114,10 @@ export class FilterExpressionModalComponent {
 
   edit(target: FilterTarget, expression: AnyFilterExpression, parent?: AnyFilterExpression, index?: number) {
     this.modalService
-      .openModal(AddFilterModalComponent, new ModalConfig({ data: { expression, target } }))
+      .openModal(
+        AddFilterModalComponent,
+        new ModalConfig({ data: { expression, target, dataAugmentation: this.dataAugmentation } }),
+      )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {
         this.replaceExpression(target, result, parent, index);
@@ -119,7 +127,7 @@ export class FilterExpressionModalComponent {
   }
 
   editOperator(
-    operator: 'and' | 'or' | 'not',
+    operator: 'and' | 'or',
     target: FilterTarget,
     expression: AnyFilterExpression,
     parent?: AnyFilterExpression,
@@ -127,17 +135,19 @@ export class FilterExpressionModalComponent {
   ) {
     const children = this.getChildren(expression);
     if (children) {
-      if (target === 'field') {
-        const newExpression = this.createOperator(operator, children);
-        this.replaceExpression(target, newExpression, parent, index);
-      }
+      const newExpression = operator === 'and' ? { and: children } : { or: children };
+      this.replaceExpression(target, newExpression, parent, index);
     }
   }
 
   delete(target: FilterTarget, parent?: AnyFilterExpression, index?: number) {
-    if (parent && typeof index === 'number') {
-      const siblings = this.getChildren(parent);
-      siblings?.splice(index, 1);
+    if (parent) {
+      if ('not' in parent) {
+        parent.not = undefined;
+      } else if (typeof index === 'number') {
+        const siblings = this.getChildren(parent);
+        siblings?.splice(index, 1);
+      }
     } else {
       if (target === 'field') {
         this.filterExpression.field = undefined;
@@ -160,9 +170,13 @@ export class FilterExpressionModalComponent {
     parent?: AnyFilterExpression,
     index?: number,
   ) {
-    if (parent && typeof index === 'number') {
-      const siblings = this.getChildren(parent);
-      siblings?.splice(index, 1, expression);
+    if (parent) {
+      if ('not' in parent) {
+        parent.not = expression;
+      } else if (typeof index === 'number') {
+        const siblings = this.getChildren(parent);
+        siblings?.splice(index, 1, expression);
+      }
     } else {
       if (target === 'field') {
         this.filterExpression.field = expression as FieldFilterExpression;
@@ -184,17 +198,7 @@ export class FilterExpressionModalComponent {
   }
 
   private getChildren(expression: AnyFilterExpression): AnyFilterExpression[] | undefined {
-    return 'and' in expression
-      ? expression.and
-      : 'or' in expression
-        ? expression.or
-        : 'not' in expression
-          ? expression.not
-          : undefined;
-  }
-
-  private createOperator(operator: string, children: AnyFilterExpression[]) {
-    return operator === 'and' ? { and: children } : operator === 'or' ? { or: children } : { not: children };
+    return 'and' in expression ? expression.and : 'or' in expression ? expression.or : undefined;
   }
 
   private hasEmptyExpressions(expressions: AnyFilterExpression[]): boolean {
@@ -204,7 +208,7 @@ export class FilterExpressionModalComponent {
       } else if ('or' in expression) {
         return expression.or.length === 0 || this.hasEmptyExpressions(expression.or);
       } else if ('not' in expression) {
-        return expression.not.length === 0 || this.hasEmptyExpressions(expression.not);
+        return expression.not === undefined || this.hasEmptyExpressions([expression.not]);
       } else {
         return false;
       }
