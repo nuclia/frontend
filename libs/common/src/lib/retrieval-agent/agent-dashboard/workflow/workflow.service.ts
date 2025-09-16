@@ -902,4 +902,8 @@ export class WorkflowService {
       ),
     );
   }
+
+  getSchemas() {
+    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
+  }
 }

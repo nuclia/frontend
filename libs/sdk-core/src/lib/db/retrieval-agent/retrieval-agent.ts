@@ -10,6 +10,7 @@ import {
   mapErrorResponseFromAnswer,
 } from './interactions.models';
 import {
+  ARAGSchemas,
   ContextAgent,
   ContextAgentCreation,
   GenerationAgent,
@@ -446,5 +447,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   deletePostprocess(agentId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/postprocess/${agentId}`);
+  }
+
+  /**
+   * Get the agents and drivers schemas
+   */
+  getSchemas(): Observable<ARAGSchemas> {
+    return this.nuclia.rest.get<ARAGSchemas>(`${this.path}/schema`);
   }
 }

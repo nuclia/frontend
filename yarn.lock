@@ -16150,6 +16150,7 @@ __metadata:
     "@types/jasmine": 4.0.3
     "@types/jest": 29.5.12
     "@types/jexl": ^2.2.0
+    "@types/json-schema": ^7.0.15
     "@types/latinize": ^0.2.16
     "@types/lru-cache": ^5.1.0
     "@types/node": 18.19.10
