@@ -1,4 +1,11 @@
-<svelte:options customElement="nuclia-chat" />
+<svelte:options
+  customElement={{
+    tag: 'nuclia-chat',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
+  accessors />
 
 <script lang="ts">
   import {
