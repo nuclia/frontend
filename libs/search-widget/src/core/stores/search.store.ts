@@ -858,13 +858,15 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
   const keyList: string[] = [];
   return resources.reduce((resultList, resource) => {
     const fieldCount = Object.keys(resource.fields).length;
+    const dataFieldCount = Object.keys(resource.fields).filter((fid) => !fid.startsWith('/a/')).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
-        // filter out generic fields when there are not the only field
         const fieldType = fullFieldId.split('/')[1];
+        // filter out generic fields when there are also data fields
         return fieldCount === 1
           ? true
-          : !fullFieldId.startsWith('/a/') && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
+          : (dataFieldCount === 0 || !fullFieldId.startsWith('/a/')) &&
+              shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
         let [, shortType, field_id] = fullFieldId.split('/');
