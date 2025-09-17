@@ -71,6 +71,7 @@
 	"input.path": "Path",
 	"input.placeholder": "Type your question here",
 	"input.to": "To",
+	"input.unsupported": "Your browser is not supported: some features may not work as expected",
 	"modal.back": "Back",
 	"resource.classification": "Classification",
 	"resource.creation": "Date of creation",

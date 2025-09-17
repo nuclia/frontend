@@ -70,6 +70,7 @@
 	"input.path": "Camí",
 	"input.placeholder": "Escriviu la vostra pregunta aquí",
 	"input.to": "Fins al",
+	"input.unsupported": "El teu navegador no és compatible: és possible que algunes funcions no funcionin correctament",
 	"modal.back": "Tornar",
 	"resource.classification": "Classificació",
 	"resource.creation": "Data de creació",

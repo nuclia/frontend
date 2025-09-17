@@ -68,6 +68,7 @@
 	"input.path": "Chemin",
 	"input.placeholder": "Posez votre question ici",
 	"input.to": "Jusqu'au",
+	"input.unsupported": "Votre navigateur n'est pas pris en charge: certaines fonctionnalités peuvent ne pas fonctionner comme prévu.",
 	"modal.back": "Retour",
 	"resource.classification": "Classification",
 	"resource.creation": "Date de création",

@@ -578,3 +578,21 @@ export function getResultMetadata(metadata: ResultMetadata, resource: IResource,
   }
   return metadataValues;
 }
+
+function supportsCSSNesting() {
+  // Check for css nesting support as some Safari version do ot support it
+  const style = document.createElement('style');
+  style.textContent = `
+    div {
+      & pre {
+        color: black;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  const isSupported = style.sheet && style.sheet.cssRules.length > 0;
+  document.head.removeChild(style);
+  return !!isSupported;
+}
+
+export const isBrowserUnsupported = !supportsCSSNesting();
