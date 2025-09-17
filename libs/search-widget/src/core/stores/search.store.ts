@@ -39,7 +39,7 @@ import {
 } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
-import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from '../models';
+import type { FindResultsAsList, RankedFieldResult, ResultMetadata, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
@@ -860,29 +860,22 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
     const fieldCount = Object.keys(resource.fields).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
-        // filter out title field when it’s not the only field
+        // filter out generic fields when there are not the only field
         const fieldType = fullFieldId.split('/')[1];
         return fieldCount === 1
           ? true
-          : fullFieldId !== '/a/title' && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
+          : !fullFieldId.startsWith('/a/') && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
         let [, shortType, field_id] = fullFieldId.split('/');
-        let fieldId: FieldId;
-
-        if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
-          // if matching field is generic, we take the first other field from resource data
-          fieldId = getNonGenericField(resource.data);
-        } else {
-          const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
-          fieldId = { field_id, field_type };
-        }
-        const fieldResult: Search.FieldResult = {
+        const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+        const fieldId: FieldId = { field_id, field_type };
+        const fieldResult: RankedFieldResult = {
           ...resource,
           field: fieldId,
           fieldData: getFieldDataFromResource(resource, fieldId),
           paragraphs:
-            fullFieldId !== '/a/title' ? Object.values(field.paragraphs).sort((a, b) => a.order - b.order) : [],
+            fullFieldId !== '/a/title' ? Object.values(field.paragraphs).sort((a, b) => a.order - b.order) || [] : [],
         };
         const { resultType, resultIcon } = getResultType(fieldResult);
         const typedResult: TypedResult = {
