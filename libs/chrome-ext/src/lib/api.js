@@ -1,5 +1,5 @@
-const API_URL = 'https://nuclia.cloud/api';
-const DASHBOARD_URL = 'https://nuclia.cloud';
+const API_URL = 'https://rag.progress.cloud/api';
+const DASHBOARD_URL = 'https://rag.progress.cloud';
 
 const SETTINGS = { NUCLIA_ACCOUNT: '', NUCLIA_KB: '', NUCLIA_TOKEN: '', ZONE: '' };
 
