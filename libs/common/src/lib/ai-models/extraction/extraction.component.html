@@ -44,7 +44,8 @@
   <nsi-two-columns-configuration-item
     noTopBorder
     itemTitle="kb.ai-models.extraction.split.title"
-    description="kb.ai-models.extraction.split.description">
+    description="kb.ai-models.extraction.split.description"
+    badge="beta">
     <div class="configurations">
       @if (splitStrategies | async | keyvalue; as strategies) {
         @if (strategies.length > 0) {
