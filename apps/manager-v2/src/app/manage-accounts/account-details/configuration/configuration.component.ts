@@ -46,10 +46,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   defaultLimits?: AccountTypeDefaults;
   isTrial = false;
 
-  get canModifyTrialExpiration() {
-    return this.isTrial && this.accountBackup?.type !== 'stash-enterprise';
-  }
-
   constructor(
     private store: ManagerStore,
     private accountService: AccountService,
@@ -90,9 +86,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
         maxArags: arags.arags_radio === 'limit' ? arags.maxArags : -1,
       };
-      if (this.canModifyTrialExpiration) {
-        payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
-      }
+      payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
       this.accountService.updateAccount(this.accountBackup.id, payload).subscribe({
         next: (updatedAccount) => {
           this.isSaving = false;
