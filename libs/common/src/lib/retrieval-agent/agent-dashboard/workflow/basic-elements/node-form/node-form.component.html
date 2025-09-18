@@ -1,0 +1,159 @@
+<div *ngIf="!isFormReady" class="loading-indicator">
+  Loading...
+</div>
+
+<app-configuration-form
+  *ngIf="isFormReady"
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <ng-container *ngIf="schemaKeys.length">
+        <ng-container *ngFor="let key of schemaKeys">
+            <ng-container *ngIf="!isFieldIgnored(key)">
+                <ng-container [ngSwitch]="key">
+                    <!-- Custom rendering for 'rules' key -->
+                    <ng-container *ngSwitchCase="'rules'">
+                        <ng-container *ngIf="configForm.get(key)">
+                            <app-rules-field
+                                [form]="configForm"
+                                [config]="config"></app-rules-field>
+                        </ng-container>
+                    </ng-container>
+
+                    <!-- Custom rendering for 'model' type keys -->
+                    <ng-container *ngSwitchCase="'model'">
+                        <app-model-select
+                            [label]="schema.properties[key].title || key"
+                            [required]="requiredFields.has(key)"
+                            [form]="configForm"
+                            [controlName]="key">
+                        </app-model-select>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'summarize_model'">
+                        <app-model-select
+                            [label]="schema.properties[key].title || key"
+                            [required]="requiredFields.has(key)"
+                            [form]="configForm"
+                            [controlName]="key">
+                        </app-model-select>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'tool_choice_model'">
+                        <app-model-select
+                            [label]="schema.properties[key].title || key"
+                            [required]="requiredFields.has(key)"
+                            [form]="configForm"
+                            [controlName]="key">
+                        </app-model-select>
+                    </ng-container>
+
+                    <!-- Custom rendering for source/driver type keys -->
+                    <ng-container *ngSwitchCase="'kb'">
+                        <app-driver-select
+                            [label]="schema.properties[key].title || key"
+                            [required]="requiredFields.has(key)"
+                            [form]="configForm"
+                            [controlName]="key"
+                            [provider]="'nucliadb'">
+                        </app-driver-select>
+                    </ng-container>
+
+                    <!-- TODO: Custom renderings -->
+                    <ng-container *ngSwitchCase="'labels'">
+                        <label>
+                            <i>[Custom]</i> {{ schema.properties[key].title || key }}
+                            <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                        </label>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'rids'">
+                        <label>
+                            <i>[Custom]</i> {{ schema.properties[key].title || key }}
+                            <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                        </label>
+                    </ng-container>
+
+                    <!-- Default: switch by type -->
+                    <ng-container *ngSwitchDefault>
+                        <ng-container [ngSwitch]="getType(schema.properties[key])">
+                            <!-- String input -->
+                            <div *ngSwitchCase="'string'">
+                                <ng-container *ngIf="configForm.get(key)">
+                                    <pa-input
+                                        [id]="key"
+                                        [formControlName]="key"
+                                        type="text"
+                                        [placeholder]="schema.properties[key].description || ''"
+                                        [help]="schema.properties[key].description || ''"
+                                        [required]="requiredFields.has(key)">
+                                        {{ schema.properties[key].title || key }}
+                                        <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                                    </pa-input>
+                                </ng-container>
+                            </div>
+                            
+                            <!-- Boolean toggle -->
+                            <div *ngSwitchCase="'boolean'">
+                                <ng-container *ngIf="configForm.get(key)">
+                                    <pa-toggle 
+                                        [formControlName]="key"
+                                        [required]="requiredFields.has(key)"
+                                        withBackground>
+                                        {{ schema.properties[key].title || key }}
+                                        <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                                    </pa-toggle>
+                                </ng-container>
+                            </div>
+                            
+                            <!-- Array input -->
+                            <div *ngSwitchCase="'array'">
+                                <ng-container *ngIf="configForm.get(key)">
+                                    <app-array-string-field
+                                        [form]="configForm"
+                                        [arrayName]="key"
+                                        [label]="schema.properties[key].title || key"
+                                        [required]="requiredFields.has(key)"
+                                        [config]="config">
+                                    </app-array-string-field>
+                                </ng-container>
+                            </div>
+                            
+                            <!-- Const value (read-only) -->
+                            <div *ngSwitchCase="'const'">
+                                <ng-container *ngIf="configForm.get(key)">
+                                    <pa-input
+                                        [id]="key"
+                                        [formControlName]="key"
+                                        type="text"
+                                        [placeholder]="schema.properties[key].description || ''"
+                                        [help]="schema.properties[key].description || ''"
+                                        [readonly]="readonly"
+                                        [required]="requiredFields.has(key)">
+                                        {{ schema.properties[key].title || key }}
+                                        <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                                    </pa-input>
+                                </ng-container>
+                            </div>
+                            
+                            <!-- Fallback for unknown types -->
+                            <div *ngSwitchDefault>
+                                <ng-container *ngIf="configForm.get(key)">
+                                    <pa-input
+                                        [id]="key"
+                                        [formControlName]="key"
+                                        type="text"
+                                        [placeholder]="schema.properties[key].description || ''"
+                                        [help]="schema.properties[key].description || ''"
+                                        [required]="requiredFields.has(key)">
+                                        {{ schema.properties[key].title || key }}
+                                        <span *ngIf="requiredFields.has(key)" style="color: red">*</span>
+                                    </pa-input>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+  </ng-container>
+</app-configuration-form>

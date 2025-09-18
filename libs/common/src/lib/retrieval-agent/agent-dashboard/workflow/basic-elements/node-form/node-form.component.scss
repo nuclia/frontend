@@ -1,0 +1,17 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+input[type="text"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}

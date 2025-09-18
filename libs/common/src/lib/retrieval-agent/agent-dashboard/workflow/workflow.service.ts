@@ -3,6 +3,7 @@ import {
   ComponentRef,
   createComponent,
   ElementRef,
+  EventEmitter,
   inject,
   Injectable,
   Renderer2,
@@ -24,9 +25,10 @@ import {
   PostprocessAgent,
   PreprocessAgent,
   McpAgent,
+  ARAGSchemas,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -99,6 +101,8 @@ import {
   unselectNode,
   updateNode,
 } from './workflow.state';
+import { NodeFormComponent } from './basic-elements/node-form';
+import { FormGroup } from '@angular/forms';
 
 const COLUMN_CLASS = 'workflow-col';
 const COLUMN_SECTION_CLASS = 'column-section';
@@ -119,6 +123,10 @@ export class WorkflowService {
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
   private featureService = inject(FeaturesService);
+
+  // Shared schemas state
+  private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
+  schemas$ = this._schemasSubject.asObservable();
 
   private columns: HTMLElement[] = [];
 
@@ -624,15 +632,26 @@ export class WorkflowService {
       `retrieval-agents.workflow.node-types.${this.getNodeTypeKey(node.nodeType)}.title`,
     );
     container.classList.remove('no-form');
-    const formRef = this.getFormRef(node.nodeType);
+    const formRef = this.getFormRef(node.nodeType, node.nodeCategory);
     formRef.setInput('category', nodeCategory);
     const config = node.nodeConfig;
-    if (config) {
+
+    if ('formReady' in formRef.instance) {
+      // Dynamic node-form: subscribe to formReady
+      (formRef.instance.formReady as EventEmitter<FormGroup>).subscribe((configForm: FormGroup) => {
+        if (config) {
+          formRef.instance.config = config;
+          configForm.patchValue(config);
+        }
+      });
+    } else if (config) {
+      // Legacy form: patch directly if form is already initialized
       // For some forms like Restart, the patch won't work for all fields,
       // so we also pass the config in the form components to handle those specific cases directly there
       formRef.instance.config = config;
       formRef.instance.configForm.patchValue(config);
     }
+
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
@@ -804,18 +823,19 @@ export class WorkflowService {
    * @param nodeType Type of the node corresponding to the form to be created
    * @returns ComponentRef<FormDirective> corresponding to the node type.
    */
-  private getFormRef(nodeType: NodeType): ComponentRef<FormDirective> {
+  private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
+    let nodeTypeOverride: string = nodeType;
     switch (nodeType) {
-      case 'historical':
-        return createComponent(HistoricalFormComponent, { environmentInjector: this.environmentInjector });
-      case 'rephrase':
-        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
       case 'pre_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'context_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'post_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+        nodeTypeOverride = 'conditional';
+        break;
+        // return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+      // case 'context_conditional':
+      //   return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+      // case 'post_conditional':
+      //   return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
         return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':
@@ -826,8 +846,6 @@ export class WorkflowService {
         return createComponent(BasicAskFormComponent, { environmentInjector: this.environmentInjector });
       case 'internet':
         return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
-      case 'sql':
-        return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
       case 'cypher':
         return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
       case 'remi':
@@ -835,7 +853,9 @@ export class WorkflowService {
       case 'external':
         return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
       case 'restricted':
-        return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
+        nodeTypeOverride = 'python';
+        break;
+      //   return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
       case 'mcp':
         return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
       case 'generate':
@@ -843,9 +863,15 @@ export class WorkflowService {
       case 'preprocess_alinia':
       case 'postprocess_alinia':
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
-      default:
-        throw new Error(`No form component for type ${nodeType}`);
+      // default:
+      //   throw new Error(`No form component for type ${nodeType}`);
     }
+
+    const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector});
+    defaultRef.setInput('agentType', nodeCategory); // 'preprocess' | 'context' | 'generation' | 'postprocess'
+    defaultRef.setInput('agentName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
+    defaultRef.setInput('formGroupName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
+    return defaultRef;
   }
 
   private getPossibleNodes(nodeCategory: NodeCategory): Observable<NodeType[]> {
@@ -905,5 +931,14 @@ export class WorkflowService {
 
   getSchemas() {
     return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
+  }
+
+  /**
+   * Fetch schemas and update shared state
+   */
+  fetchSchemas() {
+    this.getSchemas().subscribe(schemas => {
+      this._schemasSubject.next(schemas);
+    });
   }
 }

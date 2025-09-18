@@ -1,0 +1,30 @@
+<div class="array-string-field">
+  <label>
+    {{ label }}
+    <span *ngIf="required" style="color: red">*</span>
+  </label>
+  <div [formGroup]="form">
+    <div [formArrayName]="arrayName">
+        <div *ngFor="let ctrl of array.controls; let i = index" class="array-item">
+        <pa-input 
+            [formControlName]="i" 
+            type="text" 
+            [required]="required"></pa-input>
+        <pa-button 
+            size="small"
+            aspect="basic"
+            icon="trash"
+            (click)="removeField(i)" 
+            aria-label="Delete">
+            {{ 'retrieval-agents.workflow.common-forms.rules.remove' | translate }}
+        </pa-button>
+        </div>
+    </div>
+  </div>
+  <pa-button 
+    size="small"
+    aspect="basic"
+    (click)="addField()">
+    + Add
+  </pa-button>
+</div>

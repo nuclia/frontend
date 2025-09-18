@@ -1,0 +1,14 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    <span *ngIf="required" style="color: red">*</span>
+  </label>
+  <div [formGroup]="form">
+    <pa-select
+        [id]="controlName"
+        [formControlName]="controlName"
+        [options]="options()"
+        [required]="required">
+    </pa-select>
+  </div>
+</div>
