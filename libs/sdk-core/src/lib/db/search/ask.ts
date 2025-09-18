@@ -60,7 +60,7 @@ export function ask(
             augmented_context,
             reasoning,
           }) => {
-            if (status !== 'success') {
+            if (status !== 'success' && !canIgnoreStatus(status, body, !!retrieval_results)) {
               return {
                 type: 'error',
                 status: ERROR_CODES[status] || -1,
@@ -109,7 +109,8 @@ export function ask(
           if (statusItem) {
             const item = statusItem.item as Ask.StatusAskResponseItem;
             const status = parseInt(item.code, 10);
-            if (!Number.isNaN(status) && status !== 0) {
+            const hasResults = items.some((item) => item.item.type === 'retrieval');
+            if (!Number.isNaN(status) && status !== 0 && !canIgnoreStatus(item.status, body, hasResults)) {
               return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
             }
           }
@@ -288,4 +289,9 @@ export function predictAnswer(
     catchError((error) => of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse)),
     tap((res) => nuclia.events?.log('lastResults', res)),
   );
+}
+
+function canIgnoreStatus(status: string, options: ChatOptions, hasResults: boolean) {
+  // When response generation is disabled, the error status should be ignored in order to return the search results.
+  return status === 'error' && options.generative_model === 'generative-multilingual-2023' && hasResults;
 }

@@ -126,7 +126,9 @@ export class SearchWidgetService {
     const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
     const scriptSrc = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
     const widgetParameters =
-      currentConfig.type === 'config' ? getWidgetParameters(currentConfig, widgetOptions) : undefined;
+      currentConfig.type === 'config'
+        ? getWidgetParameters(currentConfig, widgetOptions)
+        : ({ features: currentConfig.value.kind === 'ask' ? 'answers' : '' } as { [key: string]: any });
     const parameters = !!widgetParameters
       ? Object.entries(widgetParameters)
           .filter(([, value]) => !!value)
