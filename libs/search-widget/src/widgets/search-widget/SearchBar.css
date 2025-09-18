@@ -18,12 +18,12 @@
     right: var(--rhythm-1_5);
     top: var(--rhythm-1_5);
     z-index: 1;
-  }
-  .unsupported {
-    align-items: center;
-    display: flex;
-    color: var(--color-secondary-strong);
-    gap: var(--rhythm-0_5);
-    margin-top: var(--rhythm-0_5);
-  }  
+  } 
 }
+.unsupported {
+  align-items: center;
+  display: flex;
+  color: var(--color-secondary-strong);
+  gap: var(--rhythm-0_5);
+  margin-top: var(--rhythm-0_5);
+} 
