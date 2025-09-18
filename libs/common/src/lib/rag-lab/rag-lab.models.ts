@@ -17,4 +17,5 @@ export interface ResultEntry {
   configId?: string;
   rendered?: string;
   tokens?: Ask.AskTokens;
+  timings?: Ask.AskTimings;
 }

@@ -22301,6 +22301,29 @@
 												</translations>
 											</concept_node>
 											<concept_node>
+												<name>first-word-time</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
 												<name>input-tokens</name>
 												<description/>
 												<comment/>
@@ -22394,6 +22417,29 @@
 											</concept_node>
 											<concept_node>
 												<name>title</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>total-time</name>
 												<description/>
 												<comment/>
 												<translations>

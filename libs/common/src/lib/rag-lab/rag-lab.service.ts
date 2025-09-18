@@ -167,6 +167,7 @@ export class RagLabService {
                             options,
                             rendered,
                             tokens: answer.metadata?.tokens,
+                            timings: answer.metadata?.timings,
                           },
                           forTab,
                         ),
@@ -199,10 +200,11 @@ export class RagLabService {
       options: RequestConfig;
       rendered?: string;
       tokens?: Ask.AskTokens;
+      timings?: Ask.AskTimings;
     },
     forTab: 'prompt' | 'rag',
   ) {
-    const { query, options, result, tokens } = entry;
+    const { query, options, result, tokens, timings } = entry;
     const configId = options.searchConfigId;
     const model = options.generative_model as string;
     const modelName = this.getModelName(model);
@@ -217,7 +219,7 @@ export class RagLabService {
           ? (result as Ask.Answer).text
           : `Error: ${result.detail}`;
     if (queryEntry) {
-      queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered, tokens });
+      queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered, tokens, timings });
       entries.splice(entryIndex, 1, queryEntry);
       results.next([...entries]);
     } else {
@@ -226,7 +228,7 @@ export class RagLabService {
           {
             query,
             prompt: options.prompt as Prompts,
-            results: [{ configId, model, modelName, answer, rendered: entry.rendered, tokens }],
+            results: [{ configId, model, modelName, answer, rendered: entry.rendered, tokens, timings }],
           },
         ]),
       );
@@ -239,7 +241,8 @@ export class RagLabService {
     if (this._promptLabResults.value.length === 0) {
       return;
     }
-    let csv = `Query,${generativeModels.map((model) => this.getModelName(model)).join(',')}`;
+    const modelsNames = generativeModels.map((model) => this.getModelName(model));
+    let csv = `Query,${modelsNames.join(',')},Metadata`;
     this._promptLabResults.value.forEach(({ query, prompt, results }) => {
       const answers = generativeModels
         .map((model) => {
@@ -247,10 +250,11 @@ export class RagLabService {
           return `"${this.formatCellValue(modelResult?.answer || 'No answer')}"`;
         })
         .join(',');
+      const metadata = `"${this.formatCellValue(this.getMetadata(modelsNames, results))}"`;
       csv += `\n"Query: ${this.formatCellValue(query)}${
         (prompt?.user ? '\nPrompt: ' + this.formatCellValue(prompt.user) : '') +
         (prompt?.system ? '\nSystem prompt: ' + this.formatCellValue(prompt.system) : '')
-      }",${answers}`;
+      }",${answers},${metadata}`;
     });
     const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_models_comparison.csv`;
     this.generateCsv(csv, filename);
@@ -260,7 +264,8 @@ export class RagLabService {
     if (this._ragLabResults.value.length === 0) {
       return;
     }
-    let csv = `Query,${configs.map((config) => `${config.configId} (${config.generativeModel})`).join(',')}`;
+    const configIds = configs.map((config) => `${config.configId} (${config.generativeModel})`);
+    let csv = `Query,${configIds.join(',')},Metadata`;
     this._ragLabResults.value.forEach(({ query, prompt, results }) => {
       const answers = configs
         .map((config) => {
@@ -268,10 +273,11 @@ export class RagLabService {
           return `"${this.formatCellValue(modelResult?.answer || 'No answer')}"`;
         })
         .join(',');
+      const metadata = `"${this.formatCellValue(this.getMetadata(configIds, results))}"`;
       csv += `\n"Query: ${this.formatCellValue(query)}${
         (prompt?.user ? '\nPrompt: ' + this.formatCellValue(prompt.user) : '') +
         (prompt?.system ? '\nSystem prompt: ' + this.formatCellValue(prompt.system) : '')
-      }",${answers}`;
+      }",${answers},${metadata}`;
     });
     const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_RAG_comparison.csv`;
     this.generateCsv(csv, filename);
@@ -287,6 +293,30 @@ export class RagLabService {
       link.click();
       URL.revokeObjectURL(url);
     }
+  }
+
+  private getMetadata(columns: string[], results: ResultEntry[]) {
+    return results
+      .map((result, i) => {
+        const tokens = result?.tokens
+          ? [
+              `${this.translate.instant('rag-lab.common.results.input-tokens')}: ${result.tokens.input_nuclia}`,
+              `${this.translate.instant('rag-lab.common.results.output-tokens')}: ${result.tokens.output_nuclia}`,
+            ]
+          : [];
+        const timings = result?.tokens
+          ? [
+              `${this.translate.instant('rag-lab.common.results.first-word-time')}: ${
+                result.timings?.generative_first_chunk?.toFixed(2) || '-'
+              }s`,
+              `${this.translate.instant('rag-lab.common.results.total-time')}: ${
+                result.timings?.generative_total?.toFixed(2) || '-'
+              }s`,
+            ]
+          : [];
+        return `${columns[i]} | ${tokens.concat(timings).join(' | ')}`;
+      })
+      .join('\n');
   }
 
   private formatCellValue(value: string): string {
