@@ -870,8 +870,15 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
       })
       .map(([fullFieldId, field]) => {
         let [, shortType, field_id] = fullFieldId.split('/');
-        const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
-        const fieldId: FieldId = { field_id, field_type };
+        let fieldId: FieldId;
+
+        if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
+          // if matching field is generic, we take the first other field from resource data
+          fieldId = getNonGenericField(resource.data);
+        } else {
+          const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+          fieldId = { field_id, field_type };
+        }
         const fieldResult: RankedFieldResult = {
           ...resource,
           field: fieldId,
