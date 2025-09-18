@@ -1,5 +1,5 @@
 import { distinctUntilChanged, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { search } from './api';
+import { getAnswer, search } from './api';
 import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
@@ -17,6 +17,7 @@ import {
   pendingResults,
   preferMarkdown,
   rangeCreationISO,
+  searchConfigId,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -73,6 +74,7 @@ export const setupTriggerSearch = (
                 widgetImageRagStrategies.pipe(take(1)),
                 preferMarkdown.pipe(take(1)),
                 widgetJsonSchema.pipe(take(1)),
+                searchConfigId.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -93,6 +95,7 @@ export const setupTriggerSearch = (
                     ragImageStrategies,
                     preferMarkdown,
                     jsonSchema,
+                    searchConfigId,
                   ]) => {
                     dispatch('search', { query, filters });
                     const currentOptions: SearchOptions = {
@@ -139,6 +142,24 @@ export const setupTriggerSearch = (
                           hideResults,
                           loadingMore: false,
                           options: currentOptions,
+                        })),
+                      );
+                    } else if (isAnswerEnabled && searchConfigId && trigger?.more) {
+                      // If search configuration kind is "ask", then additional search results must be retrieved using /ask instead of /find
+                      const chatOptions: ChatOptions = {
+                        ...currentOptions,
+                        generative_model: 'generative-multilingual-2023',
+                        search_configuration: searchConfigId,
+                        synchronous: true,
+                      };
+                      return getAnswer(query, undefined, chatOptions).pipe(
+                        filter((res) => res.type !== 'error'),
+                        map((res) => ({
+                          results: res.sources,
+                          append: true,
+                          hideResults,
+                          loadingMore: true,
+                          options: chatOptions,
                         })),
                       );
                     } else {
