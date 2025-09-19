@@ -1,4 +1,11 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../../agent-dashboard.tokens' as dashboard;
+
+.node-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}
 
 form {
   display: flex;

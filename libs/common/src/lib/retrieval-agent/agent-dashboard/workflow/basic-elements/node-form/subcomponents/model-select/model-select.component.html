@@ -1,7 +1,7 @@
 <div class="form-entry">
   <label [for]="controlName">
     {{ label }}
-    @if (requiredFields.has(key)) {
+    @if (required) {
       <span style="color: red">*</span>
     }
   </label>

@@ -1,0 +1,68 @@
+.form-entry {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+
+    .required {
+      color: var(--color-error);
+      margin-left: 4px;
+    }
+  }
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .radio-input {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .radio-label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+    user-select: none;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  .radio-input:checked + .radio-label {
+    color: var(--color-primary);
+    font-weight: 500;
+  }
+}
+
+/* For inline layout if preferred */
+.radio-group.inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.child-content {
+  margin-top: 16px;
+  padding-left: 24px;
+  border-left: 2px solid var(--color-border, #e0e0e0);
+  padding-top: 8px;
+
+  .nested-detection-config {
+    padding: 16px;
+    background-color: var(--color-background-secondary, #f8f9fa);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-light, #e9ecef);
+  }
+}

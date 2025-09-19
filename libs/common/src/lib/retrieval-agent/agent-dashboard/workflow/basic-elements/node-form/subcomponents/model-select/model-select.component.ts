@@ -23,10 +23,12 @@ export class ModelSelectComponent implements OnInit {
   options = signal<OptionModel[] | null>(null);
 
   ngOnInit(): void {
-    this.workflowService.getModels().subscribe((models) => {
-      this.options.set(
-        models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
-      );
+    this.workflowService.models$.subscribe((models) => {
+      if (models?.length) {
+        this.options.set(
+          models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+        );
+      }
     });
   }
 }

@@ -3,167 +3,40 @@
 }
 
 @if (isFormReady) {
-  <app-configuration-form
-    [form]="form"
-    (cancel)="cancel.emit()"
-    (triggerSubmit)="submit()">
-    <ng-container [formGroup]="configForm">
-      @if (schemaKeys.length) {
-        @for (key of schemaKeys; track key) {
-          @if (!isFieldIgnored(key)) {
-            @switch (key) {
-              <!-- Custom rendering for 'rules' key -->
-              @case ('rules') {
-                @if (configForm.get(key)) {
-                  <app-rules-field
-                    [form]="configForm"
-                    [config]="config"></app-rules-field>
-                }
-              }
+  @if (!isNested) {
+    <!-- Full form wrapper for non-nested usage -->
+    <app-configuration-form
+      [form]="form"
+      (cancel)="cancel.emit()"
+      (triggerSubmit)="submit()">
+      @if (configForm) {
+        <ng-container *ngTemplateOutlet="formContent"></ng-container>
+      }
+    </app-configuration-form>
+  } @else {
+    <!-- Direct form content for nested usage -->
+    @if (configForm) {
+      <ng-container *ngTemplateOutlet="formContent"></ng-container>
+    }
+  }
+}
 
-              <!-- Custom rendering for 'model' type keys -->
-              @case ('model') {
-                <app-model-select
-                  [label]="schema.properties[key].title || key"
-                  [required]="requiredFields.has(key)"
-                  [form]="configForm"
-                  [controlName]="key"></app-model-select>
-              }
-              @case ('summarize_model') {
-                <app-model-select
-                  [label]="schema.properties[key].title || key"
-                  [required]="requiredFields.has(key)"
-                  [form]="configForm"
-                  [controlName]="key"></app-model-select>
-              }
-              @case ('tool_choice_model') {
-                <app-model-select
-                  [label]="schema.properties[key].title || key"
-                  [required]="requiredFields.has(key)"
-                  [form]="configForm"
-                  [controlName]="key"></app-model-select>
-              }
-
-              <!-- Custom rendering for source/driver type keys -->
-              @case ('kb') {
-                <app-driver-select
-                  [label]="schema.properties[key].title || key"
-                  [required]="requiredFields.has(key)"
-                  [form]="configForm"
-                  [controlName]="key"
-                  [provider]="'nucliadb'"></app-driver-select>
-              }
-
-              <!-- TODO: Custom renderings -->
-              @case ('labels') {
-                <label>
-                  <i>[Custom]</i>
-                  {{ schema.properties[key].title || key }}
-                  @if (requiredFields.has(key)) {
-                    <span style="color: red">*</span>
-                  }
-                </label>
-              }
-              @case ('rids') {
-                <label>
-                  <i>[Custom]</i>
-                  {{ schema.properties[key].title || key }}
-                  @if (requiredFields.has(key)) {
-                    <span style="color: red">*</span>
-                  }
-                </label>
-              }
-
-              <!-- Default: switch by type -->
-              @default {
-                @switch (getType(schema.properties[key])) {
-                  <!-- String input -->
-                  @case ('string') {
-                    @if (configForm.get(key)) {
-                      <pa-input
-                        [id]="key"
-                        [formControlName]="key"
-                        type="text"
-                        [placeholder]="schema.properties[key].description || ''"
-                        [help]="schema.properties[key].description || ''"
-                        [required]="requiredFields.has(key)">
-                        {{ schema.properties[key].title || key }}
-                        @if (requiredFields.has(key)) {
-                          <span style="color: red">*</span>
-                        }
-                      </pa-input>
-                    }
-                  }
-
-                  <!-- Boolean toggle -->
-                  @case ('boolean') {
-                    @if (configForm.get(key)) {
-                      <pa-toggle
-                        [formControlName]="key"
-                        [required]="requiredFields.has(key)"
-                        withBackground>
-                        {{ schema.properties[key].title || key }}
-                        @if (requiredFields.has(key)) {
-                          <span style="color: red">*</span>
-                        }
-                      </pa-toggle>
-                    }
-                  }
-
-                  <!-- Array input -->
-                  @case ('array') {
-                    @if (configForm.get(key)) {
-                      <app-array-string-field
-                        [form]="configForm"
-                        [arrayName]="key"
-                        [label]="schema.properties[key].title || key"
-                        [required]="requiredFields.has(key)"
-                        [config]="config"></app-array-string-field>
-                    }
-                  }
-
-                  <!-- Const value (read-only) -->
-                  @case ('const') {
-                    @if (configForm.get(key)) {
-                      <pa-input
-                        [id]="key"
-                        [formControlName]="key"
-                        type="text"
-                        [placeholder]="schema.properties[key].description || ''"
-                        [help]="schema.properties[key].description || ''"
-                        [readonly]="readonly"
-                        [required]="requiredFields.has(key)">
-                        {{ schema.properties[key].title || key }}
-                        @if (requiredFields.has(key)) {
-                          <span style="color: red">*</span>
-                        }
-                      </pa-input>
-                    }
-                  }
-
-                  <!-- Fallback for unknown types -->
-                  @default {
-                    @if (configForm.get(key)) {
-                      <pa-input
-                        [id]="key"
-                        [formControlName]="key"
-                        type="text"
-                        [placeholder]="schema.properties[key].description || ''"
-                        [help]="schema.properties[key].description || ''"
-                        [required]="requiredFields.has(key)">
-                        {{ schema.properties[key].title || key }}
-                        @if (requiredFields.has(key)) {
-                          <span style="color: red">*</span>
-                        }
-                      </pa-input>
-                    }
-                  }
-                }
-              }
-            }
-          }
+<!-- Template for the actual form fields -->
+<ng-template #formContent>
+  <div class="node-form">
+    @if (renderableFields.length) {
+      @for (field of renderableFields; track field.key) {
+        @if (configForm.get(field.key)) {
+          <app-field-renderer
+            [fieldConfig]="field.config"
+            [form]="configForm"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"
+            [config]="config"></app-field-renderer>
         }
       }
-    </ng-container>
-  </app-configuration-form>
-}
+    }
+  </div>
+</ng-template>

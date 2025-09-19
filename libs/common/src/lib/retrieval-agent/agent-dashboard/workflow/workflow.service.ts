@@ -26,9 +26,22 @@ import {
   PreprocessAgent,
   McpAgent,
   ARAGSchemas,
+  LearningConfigurationOption,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -127,6 +140,10 @@ export class WorkflowService {
   // Shared schemas state
   private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
   schemas$ = this._schemasSubject.asObservable();
+
+  // Shared Models state
+  private _modelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
+  models$ = this._modelsSubject.asObservable();
 
   private columns: HTMLElement[] = [];
 
@@ -831,7 +848,7 @@ export class WorkflowService {
       case 'post_conditional':
         nodeTypeOverride = 'conditional';
         break;
-        // return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+      // return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       // case 'context_conditional':
       //   return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       // case 'post_conditional':
@@ -867,7 +884,7 @@ export class WorkflowService {
       //   throw new Error(`No form component for type ${nodeType}`);
     }
 
-    const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector});
+    const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector });
     defaultRef.setInput('agentType', nodeCategory); // 'preprocess' | 'context' | 'generation' | 'postprocess'
     defaultRef.setInput('agentName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
     defaultRef.setInput('formGroupName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
@@ -929,6 +946,15 @@ export class WorkflowService {
     );
   }
 
+  /**
+   * Fetch models and update shared state
+   */
+  fetchModels() {
+    this.getModels().subscribe((models) => {
+      this._modelsSubject.next(models);
+    });
+  }
+
   getSchemas() {
     return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
   }
@@ -937,7 +963,7 @@ export class WorkflowService {
    * Fetch schemas and update shared state
    */
   fetchSchemas() {
-    this.getSchemas().subscribe(schemas => {
+    this.getSchemas().subscribe((schemas) => {
       this._schemasSubject.next(schemas);
     });
   }

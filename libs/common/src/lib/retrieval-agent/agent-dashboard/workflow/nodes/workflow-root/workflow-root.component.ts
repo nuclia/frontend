@@ -1,4 +1,3 @@
-
 import { AfterViewInit, ChangeDetectionStrategy, Component, output, ViewChild } from '@angular/core';
 import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { ArrowDownComponent, ConnectableEntryComponent, NodeBoxComponent, NodeDirective } from '../../basic-elements';
@@ -25,6 +24,7 @@ export class WorkflowRootComponent extends NodeDirective implements AfterViewIni
 
   ngAfterViewInit(): void {
     this.workflowService.fetchSchemas();
+    this.workflowService.fetchModels();
     this.rootInitialized.emit({
       preprocess: this.preprocess,
       context: this.context,
