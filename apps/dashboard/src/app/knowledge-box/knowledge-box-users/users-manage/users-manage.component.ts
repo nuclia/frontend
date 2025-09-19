@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
@@ -83,25 +83,36 @@ export class UsersManageComponent {
     return this.sdk.currentAccount
       .pipe(
         take(1),
-        switchMap((account) => this.sdk.nuclia.db.getAccountUsers(account.slug)),
-        switchMap((accountUsers) => {
+        switchMap((account) =>
+          this.sdk.nuclia.db.getAccountUsers(account.slug).pipe(map((accountUsers) => ({ accountUsers, account }))),
+        ),
+        switchMap(({ accountUsers, account }) => {
           const user = accountUsers.find((user) => user.email === data.email);
           if (user) {
             return this.users.addUser(user.id, data.role);
           } else {
-            return this.users.inviteUser(data).pipe(
-              tap(() =>
-                this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email })),
-              ),
-              catchError((error) => {
-                if (error?.status === 409) {
-                  this.toaster.error(
-                    this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }),
-                  );
-                }
-                throw error;
-              }),
-            );
+            if (account.can_manage_account) {
+              return this.users.inviteUser(data).pipe(
+                tap(() =>
+                  this.toaster.success(
+                    this.translate.instant('stash.invited_user', { user: this.addForm.value.email }),
+                  ),
+                ),
+                catchError((error) => {
+                  if (error?.status === 409) {
+                    this.toaster.error(
+                      this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }),
+                    );
+                  }
+                  throw error;
+                }),
+              );
+            } else {
+              this.toaster.error(
+                this.translate.instant('kb.users.insufficient-permissions', { email: this.addForm.value.email }),
+              );
+              return of(undefined);
+            }
           }
         }),
       )

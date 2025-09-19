@@ -732,6 +732,7 @@
 	"kb.settings.toasts.failure": "Une erreur s’est produite lors de l’enregistrement des paramètres.",
 	"kb.settings.toasts.success": "Les nouveaux paramètres ont été enregistrés avec succès.",
 	"kb.users.already-exists": "Un utilisateur avec l’adresse e-mail <strong>{{email}}</strong> existe déjà dans cette Knowledge Box",
+	"kb.users.insufficient-permissions": "Vous ne pouvez pas inviter <strong>{{email}}</strong>, car il ne fait pas partie de ce compte.<br>\nL'utilisateur doit d'abord être invité sur le compte par un gestionnaire de compte.",
 	"kb.users.pending-invitation": "En attente d’acceptation: expire le {{date}}",
 	"label-set.add": "Ajouter un jeu d’étiquettes",
 	"label-set.add-button": "Ajouter nouveau",

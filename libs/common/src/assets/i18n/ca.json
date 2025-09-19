@@ -732,6 +732,7 @@
 	"kb.settings.toasts.failure": "S’ha produït un error en desar la configuració.",
 	"kb.settings.toasts.success": "La nova configuració s’ha desat correctament.",
 	"kb.users.already-exists": "Un usuari amb correu electrònic <strong>{{email}}</strong> ja existeix en aquesta Knowledge Box",
+	"kb.users.insufficient-permissions": "No pots invitar <strong>{{email}}</strong> perquè no forma part d'aquest compte.<br>\nPrimer un administrador del compte ha de convidar l'usuari al compte.",
 	"kb.users.pending-invitation": "Invitació pendent: caduca el {{date}}",
 	"label-set.add": "Afegeix conjunt d’etiquetes",
 	"label-set.add-button": "Afegir nou",
