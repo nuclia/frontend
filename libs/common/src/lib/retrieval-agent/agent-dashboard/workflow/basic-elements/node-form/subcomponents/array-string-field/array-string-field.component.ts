@@ -9,14 +9,8 @@ import { NodeConfig } from '../../../../workflow.models';
   selector: 'app-array-string-field',
   templateUrl: './array-string-field.component.html',
   styleUrls: ['./array-string-field.component.scss'],
-  standalone: true, 
-  imports: [
-    CommonModule,
-    PaButtonModule,
-    PaTextFieldModule, 
-    ReactiveFormsModule,
-    TranslateModule,
-  ]
+  standalone: true,
+  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
 export class ArrayStringFieldComponent {
   @Input() form!: FormGroup;
@@ -24,10 +18,10 @@ export class ArrayStringFieldComponent {
   @Input() config!: NodeConfig;
   @Input() label: string = '';
   @Input() required: boolean = false;
-  
+
   ngOnInit() {
     // Defensive: config may be undefined, arrayName may not exist
-    const values = (this.config && typeof this.arrayName === 'string') ? (this.config as any)[this.arrayName] : undefined;
+    const values = this.config && typeof this.arrayName === 'string' ? (this.config as any)[this.arrayName] : undefined;
     if (Array.isArray(values) && values.length > 0) {
       // Ensure FormArray has enough controls
       const numberToCreate = values.length - this.array.length;

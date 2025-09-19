@@ -1,6 +1,8 @@
+@use 'apps/dashboard/src/variables' as *;
+
 .form-entry {
-  margin-bottom: 1em;
+  margin-bottom: rhythm(4);
 }
 label {
-  font-weight: 500;
+  font-weight: $font-weight-semi-bold;
 }

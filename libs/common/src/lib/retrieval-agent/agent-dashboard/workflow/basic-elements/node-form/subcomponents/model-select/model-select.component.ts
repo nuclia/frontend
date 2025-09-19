@@ -10,12 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './model-select.component.html',
   styleUrls: ['./model-select.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule, 
-    PaTextFieldModule,
-    ReactiveFormsModule,
-    TranslateModule,
-  ]
+  imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
 export class ModelSelectComponent implements OnInit {
   @Input() label: string = '';
@@ -29,9 +24,9 @@ export class ModelSelectComponent implements OnInit {
 
   ngOnInit(): void {
     this.workflowService.getModels().subscribe((models) => {
-        this.options.set(
-            models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
-        );
+      this.options.set(
+        models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+      );
     });
   }
 }

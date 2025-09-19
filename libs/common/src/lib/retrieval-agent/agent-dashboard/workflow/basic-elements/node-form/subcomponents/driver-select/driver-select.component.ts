@@ -16,14 +16,14 @@ import { aragUrl } from '../../../../workflow.state';
   styleUrls: ['./driver-select.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     InfoCardComponent,
     PaButtonModule,
     PaTextFieldModule,
     ReactiveFormsModule,
     RouterLink,
     TranslateModule,
-  ]
+  ],
 })
 export class DriverSelectComponent implements OnInit {
   @Input() label: string = '';
@@ -39,25 +39,25 @@ export class DriverSelectComponent implements OnInit {
 
   ngOnInit(): void {
     this.sdk.currentArag
-          .pipe(
-            take(1),
-            switchMap((arag) => arag.getDrivers(this.provider) as Observable<NucliaDBDriver[]>),
-            map((drivers) =>
-              drivers.map(
-                (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
-              ),
-            ),
-          )
-          .subscribe((options) =>
-            this.options.set(
-              [
-                new OptionModel({
-                  id: '',
-                  label: '–',
-                  value: '',
-                }),
-              ].concat(options),
-            ),
-          );
+      .pipe(
+        take(1),
+        switchMap((arag) => arag.getDrivers(this.provider) as Observable<NucliaDBDriver[]>),
+        map((drivers) =>
+          drivers.map(
+            (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
+          ),
+        ),
+      )
+      .subscribe((options) =>
+        this.options.set(
+          [
+            new OptionModel({
+              id: '',
+              label: '–',
+              value: '',
+            }),
+          ].concat(options),
+        ),
+      );
   }
 }

@@ -1,15 +1,16 @@
 <div class="form-entry">
   <label [for]="controlName">
     {{ label }}
-    <span *ngIf="required" style="color: red">*</span>
+    @if (requiredFields.has(key)) {
+      <span style="color: red">*</span>
+    }
   </label>
   <div [formGroup]="form">
     <pa-select
-        [id]="controlName"
-        [formControlName]="controlName"
-        [options]="options()"
-        [required]="required">
-    </pa-select>
+      [id]="controlName"
+      [formControlName]="controlName"
+      [options]="options()"
+      [required]="required"></pa-select>
   </div>
 
   @if (options()?.length === 1) {

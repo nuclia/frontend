@@ -1,20 +1,22 @@
+@use 'apps/dashboard/src/variables' as *;
+
 .array-item {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5em;
+  margin-bottom: rhythm(2);
 }
 .delete-btn {
   background: none;
   border: none;
   color: #c00;
   cursor: pointer;
-  margin-left: 0.5em;
+  margin-left: rhythm(2);
 }
 .add-btn {
-  margin-top: 0.5em;
+  margin-top: rhythm(2);
   background: #eee;
   border: 1px solid #ccc;
-  padding: 0.25em 0.75em;
+  padding: rhythm(1) rhythm(3);
   cursor: pointer;
 }
 .icon {

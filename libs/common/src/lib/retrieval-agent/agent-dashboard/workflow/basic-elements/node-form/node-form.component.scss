@@ -1,17 +1,19 @@
+@use 'apps/dashboard/src/variables' as *;
+
 form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: rhythm(4);
 }
 label {
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: rhythm(1);
 }
-input[type="text"] {
-  padding: 0.5rem;
+input[type='text'] {
+  padding: rhythm(2);
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-input[type="checkbox"] {
-  margin-right: 0.5rem;
+input[type='checkbox'] {
+  margin-right: rhythm(2);
 }

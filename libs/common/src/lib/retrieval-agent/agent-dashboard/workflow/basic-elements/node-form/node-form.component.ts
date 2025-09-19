@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, input, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
@@ -21,25 +21,25 @@ import { ModelSelectComponent, ArrayStringFieldComponent, DriverSelectComponent 
     ConfigurationFormComponent,
     PaButtonModule,
     PaTogglesModule,
-    PaTextFieldModule, 
-    RulesFieldComponent, 
+    PaTextFieldModule,
+    RulesFieldComponent,
     CommonModule,
-    ModelSelectComponent, 
+    ModelSelectComponent,
     DriverSelectComponent,
-    ArrayStringFieldComponent
-  ]
+    ArrayStringFieldComponent,
+  ],
 })
 export class NodeFormComponent extends FormDirective implements OnInit {
-    @Input() agentType!: keyof ARAGSchemas['agents'];
-    @Input() agentName!: string;
-    @Input() formGroupName!: string;
+  @Input() agentType!: keyof ARAGSchemas['agents'];
+  @Input() agentName!: string;
+  @Input() formGroupName!: string;
 
-    @Output() formReady = new EventEmitter<FormGroup>();
+  @Output() formReady = new EventEmitter<FormGroup>();
 
   private workflowService = inject(WorkflowService);
 
   override form: FormGroup<any> = new FormGroup({
-      [this.formGroupName as unknown as string]: new FormGroup({})
+    [this.formGroupName as unknown as string]: new FormGroup({}),
   });
 
   isFormReady = false;
@@ -50,7 +50,7 @@ export class NodeFormComponent extends FormDirective implements OnInit {
       const config = this.buildFormFromSchema(schemas, this.agentType, this.agentName);
       this.schema = config.schema || {};
       this.form = new FormGroup({
-        [this.formGroupName as unknown as string]: config.formGroup
+        [this.formGroupName as unknown as string]: config.formGroup,
       });
       this.formReady.emit(this.configForm);
       this.isFormReady = true;
@@ -65,8 +65,7 @@ export class NodeFormComponent extends FormDirective implements OnInit {
   // Don't render these fields
   isFieldIgnored(key: string): boolean {
     const ignoredFields = new Set(['type', 'id', 'module', 'title']);
-    return ignoredFields.has(key)
-      || !!this.schema.properties?.[key]?.title?.includes?.('agent');
+    return ignoredFields.has(key) || !!this.schema.properties?.[key]?.title?.includes?.('agent');
   }
 
   // Required fields from schema
@@ -77,7 +76,7 @@ export class NodeFormComponent extends FormDirective implements OnInit {
 
   // All schema keys
   get schemaKeys(): string[] {
-    const keys = Object.keys(this.schema.properties || {});;
+    const keys = Object.keys(this.schema.properties || {});
     return keys;
   }
 
