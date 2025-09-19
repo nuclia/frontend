@@ -98,7 +98,7 @@
 	"signup.sign-up-with": "Sign up with {{provider}}",
 	"signup.signup-button-label": "Sign Up",
 	"signup.title": "Get started for free",
-	"user.consent": "By using Agentic RAG, you accept the <a href=\"https://www.progress.com/legal/\" target=\"_blank\" rel=\"noopener noreferrer\">Terms and Conditions</a> and <a href=\"https://www.progress.com/legal/privacy-policy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a>. (Required)",
+	"user.consent": "By using Agentic RAG, you accept the <a href=\"https://www.progress.com/docs/default-source/eula/rev-tmplt02sept2025agenticrag08sep2025.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Terms and Conditions</a> and <a href=\"https://www.progress.com/legal/privacy-policy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a>. (Required)",
 	"user.kb.creation-form.models.description": "Embeddings are like fingerprints for words or data. They help computers understand similarities and differences between them, making tasks like understanding language or recognizing patterns easier for machines.",
 	"user.kb.creation-form.models.external-model.accordion-help": "The embeddings model runs in our partners infrastructure",
 	"user.kb.creation-form.models.external-model.accordion-label": "External trusted partners models",
