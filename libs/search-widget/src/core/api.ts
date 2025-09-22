@@ -324,6 +324,7 @@ export const getAnswerWithoutRAG = (
     max_tokens: typeof MAX_TOKENS === 'number' ? MAX_TOKENS : MAX_TOKENS?.answer,
     prefer_markdown: options?.prefer_markdown,
     json_schema: options?.answer_json_schema,
+    reasoning: options?.reasoning,
   };
   return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions, false);
 };

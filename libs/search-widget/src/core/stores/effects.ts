@@ -512,19 +512,19 @@ export function askQuestion(
         _hasQueryImage,
         search_configuration,
       ]) => {
-        options.search_configuration = search_configuration;
+        const chatOptions = { ...options, reasoning: reasoning || undefined };
         return (
           disableRAG
-            ? getAnswerWithoutRAG(question, entries, options)
+            ? getAnswerWithoutRAG(question, entries, chatOptions)
             : getAnswer(question, entries, {
-                ...options,
+                ...chatOptions,
                 filters: filterExpression ? undefined : filters,
                 filter_expression: filterExpression ? combinedFilterExpression : undefined,
                 range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
                 range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                 extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
                 query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
-                reasoning,
+                search_configuration,
               })
         ).pipe(
           tap((result) => {
