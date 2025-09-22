@@ -12,6 +12,7 @@ import type {
   Reranker,
   Resource,
   ResourceField,
+  Routing,
   SearchOptions,
 } from '@nuclia/core';
 import {
@@ -35,6 +36,7 @@ import {
   searchError,
   searchOptions,
   showAttachedImages,
+  routedConfig,
 } from './stores/search.store';
 import { suggestionError } from './stores/suggestions.store';
 import { hasViewerSearchError } from './stores/viewer.store';
@@ -316,7 +318,7 @@ export const getAnswerWithoutRAG = (
 
   const defaultPrompt = '{question}';
   const predictOptions: PredictAnswerOptions = {
-    generative_model: generative_model || undefined,
+    generative_model: options?.generative_model || generative_model || undefined,
     user_prompt: { prompt: prompt || defaultPrompt },
     system: systemPrompt || undefined,
     retrieval: false,
@@ -598,4 +600,59 @@ export function getAttachedImageTemplate(placeholder: string): Observable<string
 
 export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
+}
+
+export function getRouting(question: string, routing: Routing): Observable<string> {
+  const configs = routing.rules.map((rule) => rule.search_config);
+  const rules = routing.rules
+    .map(
+      (rule) => `- Category name: ${rule.search_config}
+  Description: ${rule.prompt}
+  If that's the case, return "${rule.search_config}".`,
+    )
+    .join(`\n\n`);
+  const fullPrompt = `Identify which of the following categories is the most appropriate for the question, and return the corresponding category name.
+
+**CATEGORIES**:
+
+${rules}
+
+- Category name: FALLBACK
+  Description: If none of the previous descriptions correspond to the question, return "FALLBACK".
+
+**ANSWER**:
+Only return the category name. The value must be ${configs.map((c) => `"${c}"`).join(' or ')} or "FALLBACK".
+`;
+  const answer_json_schema: object = {
+    name: 'routing',
+    description:
+      'User intent analysis. The objective is to return the id of the most appropriate category for the given question',
+    parameters: {
+      type: 'object',
+      properties: {
+        category: {
+          type: 'string',
+          description: fullPrompt,
+        },
+      },
+      required: ['category'],
+    },
+  };
+
+  return getAnswerWithoutRAG(question, undefined, {
+    answer_json_schema,
+    generative_model: routing.generative_model,
+    synchronous: true,
+  }).pipe(
+    map((res) => {
+      if (res.type === 'error') {
+        return 'FALLBACK';
+      } else {
+        return res.jsonAnswer?.category && configs.includes(res.jsonAnswer?.category)
+          ? res.jsonAnswer?.category
+          : 'FALLBACK';
+      }
+    }),
+    tap((config) => routedConfig.set(config)),
+  );
 }

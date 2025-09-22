@@ -89,6 +89,13 @@ export interface BaseSearchOptions {
 
 export type ReasoningParam = boolean | { display: boolean; effort: 'low' | 'medium' | 'high'; budget_tokens: number };
 
+export interface Routing {
+  generative_model?: string;
+  rules: {
+    search_config: string;
+    prompt: string;
+  }[];
+}
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
   prompt?: string | Prompts;

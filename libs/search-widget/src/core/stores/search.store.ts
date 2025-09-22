@@ -11,6 +11,7 @@ import type {
   ReasoningParam,
   ResourceData,
   ResourceField,
+  Routing,
   Search,
   SearchOptions,
 } from '@nuclia/core';
@@ -111,6 +112,8 @@ interface SearchState {
   resultsOrder: ResultsOrder;
   noScroll: boolean;
   reasoning: ReasoningParam;
+  routing: RoutingParam | undefined;
+  routedConfig: string;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -140,6 +143,8 @@ export const searchState = new SvelteState<SearchState>({
   resultsOrder: 'relevance',
   noScroll: false,
   reasoning: false,
+  routing: undefined,
+  routedConfig: '',
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -278,6 +283,26 @@ export const reasoningParam = searchState.writer<ReasoningParam>(
     return {
       ...state,
       reasoning,
+    };
+  },
+);
+
+export const routingParam = searchState.writer<Routing | undefined>(
+  (state) => state.routing,
+  (state, routing) => {
+    return {
+      ...state,
+      routing,
+    };
+  },
+);
+
+export const routedConfig = searchState.writer<string>(
+  (state) => state.routedConfig,
+  (state, routedConfig) => {
+    return {
+      ...state,
+      routedConfig,
     };
   },
 );
