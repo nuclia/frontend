@@ -5,6 +5,8 @@
 	"answer.debug.prompt-context": "A continuació es mostren els blocs de text proporcionats com a context en el prompt enviat al LLM",
 	"answer.debug.rephrase": "Reformulació",
 	"answer.debug.rephrased-query": "Consulta reformulada",
+	"answer.debug.routed-config": "Configuració de cerca encaminada",
+	"answer.debug.routing": "Enrutament",
 	"answer.debug.seconds": "Segons",
 	"answer.debug.text-blocks": "Blocs de text",
 	"answer.debug.title": "Metadades de la resposta",

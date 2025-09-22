@@ -3,6 +3,7 @@
   import { Expander, IconButton, Modal } from '../../common';
   import { _ } from '../../core/i18n';
   import { MarkdownRendering } from '../viewer';
+  import { routedConfig, routingParam } from '../../core';
 
   export let answer: Partial<Ask.Answer> | undefined = undefined;
   export let rephrasedQuery = '';
@@ -34,6 +35,22 @@
                 <td>{$_('answer.debug.rephrased-query')}</td>
                 <td class="title-s">
                   {rephrasedQuery}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {/if}
+
+      {#if $routingParam}
+        <div>
+          <div class="title-m">{$_('answer.debug.routing')}</div>
+          <table class="body-m">
+            <tbody>
+              <tr>
+                <td>{$_('answer.debug.routed-config')}</td>
+                <td class="title-s">
+                  {$routedConfig}
                 </td>
               </tr>
             </tbody>
