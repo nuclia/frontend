@@ -1,50 +1,34 @@
 <div class="account-status">
   <div class="title-m account-type-container">
     <div>
-      @if (isTrial | async) {
+      @if ((accountType | async) === 'stash-trial') {
         {{ 'account.free_trial' | translate }}
       } @else {
         {{ 'account.type.' + (accountType | async) | translate }}
       }
     </div>
     <div class="expiration">
-      @if ((isSubscribed | async) && (isCancelScheduled | async)) {
+      @if (trialExpired | async) {
+        <span>{{ 'account.expired' | translate }}</span>
+      } @else {
         <span>
           {{
-            (subscriptionDaysLeft | async) === 1
+            (daysLeft | async) === 1
               ? ('account.day_left' | translate)
-              : ('account.days_left' | translate: { days: (subscriptionDaysLeft | async) })
+              : ('account.days_left' | translate: { days: (daysLeft | async) })
           }}
         </span>
-      }
-      @if (isTrial | async) {
-        @if (trialExpired | async) {
-          <span>{{ 'account.expired' | translate }}</span>
-        } @else if (!(trialExpired | async) && (daysLeft | async) !== null) {
-          <span>
-            {{
-              (daysLeft | async) === 1
-                ? ('account.day_left' | translate)
-                : ('account.days_left' | translate: { days: (daysLeft | async) })
-            }}
-          </span>
-        }
       }
     </div>
   </div>
   <div class="buttons">
-    @if ((isSubscribed | async) && (isCancelScheduled | async)) {
-      <pa-button [routerLink]="reactivateUrl | async">
-        {{ 'billing.reactivate' | translate }}
-      </pa-button>
-    } @else if (!((isSubscribed | async) && (isCancelScheduled | async))) {
+    @if (canUpgrade | async) {
       <pa-button
         [routerLink]="upgradeUrl | async"
         [class.full-width]="canExtendTrial | async">
         {{ 'billing.upgrade' | translate }}
       </pa-button>
     }
-
     @if (canExtendTrial | async) {
       <pa-button
         aspect="basic"

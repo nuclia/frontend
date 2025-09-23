@@ -25,7 +25,6 @@ export class MetricsService {
   private featureService = inject(FeaturesService);
 
   account$ = this.sdk.currentAccount;
-  canUpgrade = this.featureService.canUpgrade;
 
   isTrial = this.featureService.isTrial;
   isSubscribedToStripe = this.billingService.isSubscribedToStripe;
