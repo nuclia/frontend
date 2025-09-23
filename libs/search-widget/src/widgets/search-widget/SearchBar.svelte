@@ -297,6 +297,20 @@
     if (_features.permalink) {
       activatePermalinks();
     }
+    if (_features.filter) {
+      if (_filters.labels || _filters.labelFamilies) {
+        initLabelStore(labelsets_excluded_from_filters);
+      }
+      if (_filters.entities) {
+        initEntitiesStore();
+      }
+      if (_filters.mime) {
+        initMimeTypeStore();
+      }
+      if (_filters.path) {
+        initPathsStore();
+      }
+    }
     if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
@@ -395,20 +409,6 @@
       widgetJsonSchema.set(_jsonSchema);
       widgetFeedback.set(feedback);
 
-      if (_features.filter) {
-        if (_filters.labels || _filters.labelFamilies) {
-          initLabelStore(labelsets_excluded_from_filters);
-        }
-        if (_filters.entities) {
-          initEntitiesStore();
-        }
-        if (_filters.mime) {
-          initMimeTypeStore();
-        }
-        if (_filters.path) {
-          initPathsStore();
-        }
-      }
       if (preselected_filters) {
         preselectedFilters.set(preselected_filters);
       } else if (_filter_expression) {
