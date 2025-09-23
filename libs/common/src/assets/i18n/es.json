@@ -732,6 +732,7 @@
 	"kb.settings.toasts.failure": "Se produjo un error al guardar la configuración.",
 	"kb.settings.toasts.success": "La nueva configuración se ha guardado correctamente.",
 	"kb.users.already-exists": "Ya existe un usuario con correo electrónico <strong>{{email}}</strong> en esta Knowledge Box",
+	"kb.users.insufficient-permissions": "No puedes invitar a <strong>{{email}}</strong> porque no forma parte de esta cuenta.<br>\nEl usuario debe ser invitado primero a la cuenta por un administrador del compte.",
 	"kb.users.pending-invitation": "Invitación pendiente: expira el {{date}}",
 	"label-set.add": "Agregar conjunto de etiquetas",
 	"label-set.add-button": "Añadir nuevo",

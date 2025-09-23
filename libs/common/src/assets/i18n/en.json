@@ -732,6 +732,7 @@
 	"kb.settings.toasts.failure": "An error occurred when saving the settings.",
 	"kb.settings.toasts.success": "The new settings have been saved successfully.",
 	"kb.users.already-exists": "A user with email <strong>{{email}}</strong> already exists in this knowledge Box",
+	"kb.users.insufficient-permissions": "You cannot invite <strong>{{email}}</strong> because they are not part of this account.<br>\nThe user must first be invited to the account by an account manager.",
 	"kb.users.pending-invitation": "Pending invitation: expires on {{date}}",
 	"label-set.add": "Add label set",
 	"label-set.add-button": "Add new",
