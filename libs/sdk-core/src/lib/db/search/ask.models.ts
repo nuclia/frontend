@@ -1,5 +1,5 @@
 import { RagStrategyName } from '../kb';
-import type { Search } from './search.models';
+import type { ReasoningParam, Search } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Ask {
@@ -216,4 +216,5 @@ export interface PredictAnswerOptions {
   json_schema?: object;
   format_prompt?: boolean;
   rerank_context?: boolean;
+  reasoning?: ReasoningParam;
 }
