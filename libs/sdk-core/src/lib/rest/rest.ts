@@ -414,8 +414,6 @@ export class Rest implements IRest {
   }
 
   getWsUrl(path: string, ephemeralToken: string): string {
-    let url = `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
-    url = url.replace('rag.progress.cloud', 'nuclia.cloud');
-    return url;
+    return `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
   }
 }
