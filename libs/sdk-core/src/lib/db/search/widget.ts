@@ -9,7 +9,7 @@ import {
   RagStrategyName,
   SearchConfig,
 } from '../kb';
-import { Filter, Reranker } from './search.models';
+import { Filter, Reranker, Routing } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Widget {
@@ -129,6 +129,11 @@ export namespace Widget {
     sortResults: boolean;
   }
 
+  export interface RoutingConfig {
+    useRouting: boolean;
+    routing?: Routing;
+  }
+
   export interface SearchAPIConfig {
     id: string;
     value: SearchConfig;
@@ -142,6 +147,7 @@ export namespace Widget {
     searchBox: SearchBoxConfig;
     generativeAnswer: GenerativeAnswerConfig;
     resultDisplay: ResultDisplayConfig;
+    routing: RoutingConfig;
   }
 
   export interface WidgetConfiguration {
@@ -359,6 +365,9 @@ export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
     ...DEFAULT_RESULT_DISPLAY_CONFIG,
     displayResults: true,
   },
+  routing: {
+    useRouting: false,
+  },
 };
 
 export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
@@ -498,6 +507,7 @@ export function getWidgetParameters(
     rag_images_strategies: ragImagesProperties,
     ask_to_resource: getAskToResource(searchConfig.generativeAnswer),
     reasoning: getReasoning(searchConfig.generativeAnswer),
+    routing: getRouting(searchConfig.routing),
     max_tokens: getMaxTokens(searchConfig.generativeAnswer),
     max_output_tokens: getMaxOutputTokens(searchConfig.generativeAnswer),
     max_paragraphs: getMaxParagraphs(searchConfig.searchBox),
@@ -752,6 +762,9 @@ function getReasoning(config: Widget.GenerativeAnswerConfig): string {
   return config.showReasoning
     ? JSON.stringify({ display: true, effort: config.reasoningEffort, budget_tokens: config.reasoningBudget })
     : '';
+}
+function getRouting(config: Widget.RoutingConfig): string {
+  return config.useRouting ? JSON.stringify(config.routing) : '';
 }
 function getMaxTokens(config: Widget.GenerativeAnswerConfig): string | undefined {
   return config.limitTokenConsumption && !!config.tokenConsumptionLimit

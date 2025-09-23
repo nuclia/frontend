@@ -172,6 +172,23 @@
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>
         </pa-accordion-item>
+        @if (isRoutingEnabled | async) {
+          <pa-accordion-item
+            #routing
+            id="routing"
+            [itemTitle]="'search.configuration.routing.section-title' | translate"
+            [description]="'search.configuration.routing.section-description' | translate"
+            (expandedChange)="updateRoutingHeight()">
+            <pa-accordion-item-body>
+              <stf-routing-form
+                [config]="savedConfig?.routing"
+                [kind]="useGenerativeAnswer ? 'ask' : 'find'"
+                [generativeModels]="generativeModels"
+                (configChanged)="updateRoutingConfig($event)"
+                (heightChanged)="updateRoutingHeight()"></stf-routing-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
       </pa-accordion>
     }
   }

@@ -1,0 +1,83 @@
+<form [formGroup]="form">
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="useRouting"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="heightChanged.emit()">
+      <span class="toggle-label">
+        {{ 'search.configuration.routing.use-routing.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.routing.use-routing.toggle-description' | translate }}
+    </div>
+    <div
+      class="extra-fields"
+      [class.visible]="useRouting"
+      formGroupName="routing">
+      <div class="config-form-field">
+        <div class="title-xs">{{ 'search.configuration.generative-answer.generative-model.title' | translate }}</div>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.generative-model.description' | translate }}
+        </div>
+        <div class="extra-fields visible">
+          <pa-select
+            formControlName="generative_model"
+            [label]="'search.configuration.generative-answer.generative-model.select-label' | translate"
+            [options]="generativeModels"></pa-select>
+        </div>
+        <div
+          class="extra-fields visible"
+          formArrayName="rules">
+          @for (rule of rulesControls; track rule; let ruleIndex = $index) {
+            <div
+              [formGroup]="rule"
+              class="rule-group">
+              <div class="rule-group-header">
+                <div class="title-s">
+                  {{ 'search.configuration.routing.rule' | translate }}
+                </div>
+                <pa-button
+                  aspect="basic"
+                  size="small"
+                  icon="trash"
+                  (click)="removeRule(ruleIndex)"></pa-button>
+              </div>
+              <div class="rule-container">
+                <pa-select
+                  formControlName="search_config"
+                  [label]="'search.configuration.routing.search-config' | translate">
+                  @for (searchConfig of searchConfigs || []; track searchConfig) {
+                    <pa-option [value]="searchConfig">
+                      {{ searchConfig }}
+                    </pa-option>
+                  }
+                </pa-select>
+                <nsi-expandable-textarea
+                  formControlName="prompt"
+                  resizable
+                  rows="7"
+                  [placeholder]="'search.configuration.routing.prompt-placeholder' | translate"
+                  help="search.configuration.routing.prompt-help"
+                  modalTitle="search.configuration.routing.prompt-label"
+                  (resizing)="heightChanged.emit()">
+                  {{ 'search.configuration.routing.prompt-label' | translate }}
+                </nsi-expandable-textarea>
+              </div>
+            </div>
+          }
+          <div>
+            <pa-button
+              size="small"
+              icon="plus"
+              iconAndText
+              (click)="addRule()">
+              {{ 'search.configuration.routing.add-rule' | translate }}
+            </pa-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

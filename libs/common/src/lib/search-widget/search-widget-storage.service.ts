@@ -229,4 +229,16 @@ export class SearchWidgetStorageService {
       tap(() => this.storageUpdated.next()),
     );
   }
+
+  getSearchConfigIdsByType(kind: string): Observable<string[]> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.getSearchConfigs()),
+      map((configs) =>
+        Object.entries(configs)
+          .filter(([id, value]) => value.kind === kind)
+          .map(([id, value]) => id),
+      ),
+    );
+  }
 }

@@ -50,6 +50,7 @@ import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
+import { RoutingFormComponent } from './routing-form/routing-form.component';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
@@ -77,6 +78,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     SearchBoxFormComponent,
     GenerativeAnswerFormComponent,
     ResultsDisplayFormComponent,
+    RoutingFormComponent,
     RouterLink,
     TranslateModule,
     PaTooltipModule,
@@ -111,12 +113,14 @@ export class SearchConfigurationComponent {
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
   @ViewChild('generativeAnswer', { read: AccordionItemComponent }) generativeAnswerItem?: AccordionItemComponent;
   @ViewChild('results', { read: AccordionItemComponent }) resultsItem?: AccordionItemComponent;
+  @ViewChild('routing', { read: AccordionItemComponent }) routingItem?: AccordionItemComponent;
 
   @HostBinding('class.bigger-gap') get hasWidgetLine() {
     return this.displayWidgetButtonLine;
   }
 
   isRagLabAuthorized = this.features.authorized.promptLab;
+  isRoutingEnabled = this.features.unstable.routing;
   configurations: OptionType[] = [];
 
   selectedConfig = new FormControl<string>('');
@@ -347,6 +351,7 @@ export class SearchConfigurationComponent {
           searchBox: { ...this.savedConfig.searchBox },
           generativeAnswer: { ...this.savedConfig.generativeAnswer },
           resultDisplay: { ...this.savedConfig.resultDisplay },
+          routing: { ...this.savedConfig.routing },
         };
       } else {
         this.currentJsonConfig = this.originalJsonConfig;
@@ -443,6 +448,7 @@ export class SearchConfigurationComponent {
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, generativeAnswer: config };
     this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.useGenerativeAnswer = config.generateAnswer;
     this.updateWidget();
   }
   updateResultDisplayConfig(config: Widget.ResultDisplayConfig) {
@@ -451,6 +457,15 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, resultDisplay: config };
+    this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.updateWidget();
+  }
+  updateRoutingConfig(config: Widget.RoutingConfig) {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') {
+      return;
+    }
+    const currentConfig = this.currentConfig || { ...this.savedConfig };
+    this.currentConfig = { ...currentConfig, routing: config };
     this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
@@ -464,11 +479,15 @@ export class SearchConfigurationComponent {
   updateResultsHeight() {
     this.resultsItem?.updateContentHeight();
   }
+  updateRoutingHeight() {
+    this.routingItem?.updateContentHeight();
+  }
 
   updateHeight() {
     this.updateSearchBoxHeight();
     this.updateGenerativeAnswerHeight();
     this.updateResultsHeight();
+    this.updateRoutingHeight();
   }
 
   scrollOnTop() {
@@ -534,6 +553,7 @@ export class SearchConfigurationComponent {
 
   updateGenerativeAnswer(useGenerativeAnswer: boolean) {
     this.useGenerativeAnswer = useGenerativeAnswer;
+    console.log(this.useGenerativeAnswer);
     if (this.currentConfig?.type === 'api') {
       this.currentConfig.value.kind = useGenerativeAnswer ? 'ask' : 'find';
     }
