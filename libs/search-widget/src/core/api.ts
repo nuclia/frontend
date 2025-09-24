@@ -223,7 +223,7 @@ export const resetNuclia = () => {
   reset.next();
 };
 
-export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
+export const find = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -234,7 +234,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   return searchConfigId.pipe(
     take(1),
     switchMap((search_configuration) =>
-      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options, search_configuration }),
+      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, search_configuration, ...options }),
     ),
     filter((res) => {
       if (res.type === 'error') {

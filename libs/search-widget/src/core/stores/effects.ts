@@ -1,4 +1,13 @@
-import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse, LabelSets } from '@nuclia/core';
+import type {
+  Ask,
+  BaseSearchOptions,
+  ChatOptions,
+  FieldFullId,
+  IErrorResponse,
+  LabelSets,
+  Search,
+  SearchOptions,
+} from '@nuclia/core';
 import { getFieldTypeFromString, PATH_FILTER_PREFIX, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
@@ -20,6 +29,7 @@ import {
 } from 'rxjs';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import {
+  find,
   getAnswer,
   getAnswerWithoutRAG,
   getEntities,
@@ -82,6 +92,7 @@ import {
   rangeCreationISO,
   reasoningParam,
   resultList,
+  routedConfig,
   routingParam,
   searchConfigId,
   searchFilters,
@@ -629,6 +640,26 @@ export function askQuestion(
         }
       }
     }),
+  );
+}
+
+export function getSearchResults(
+  query: string,
+  options: SearchOptions,
+  loadMore: boolean,
+): Observable<Search.FindResults> {
+  return routingParam.pipe(
+    take(1),
+    switchMap((routing) => {
+      if (loadMore) {
+        return routedConfig;
+      } else {
+        return routing ? getRouting(query, routing).pipe(take(1)) : of('FALLBACK');
+      }
+    }),
+    switchMap((config) =>
+      config && config !== 'FALLBACK' ? find(query, { search_configuration: config }) : find(query, options),
+    ),
   );
 }
 
