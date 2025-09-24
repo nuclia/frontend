@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
-import { BillingService, FeaturesService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
+import { combineLatest, filter, map, switchMap, take } from 'rxjs';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -22,12 +22,7 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 export class AccountStatusComponent {
   isTrial = this.features.isTrial;
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isSubscribed = this.billingService.isSubscribedToStripe;
-  subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
-  reactivateUrl = this.sdk.currentAccount.pipe(
-    map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),
-  );
   daysLeft = this.sdk.currentAccount.pipe(
     filter((account) => !!account.trial_expiration_date),
     map((account) => {
@@ -47,21 +42,10 @@ export class AccountStatusComponent {
       return expiration < now;
     }),
   );
-  isCancelScheduled = this.subscription.pipe(
-    map((subscription) => subscription?.status === SubscriptionStatus.CANCEL_SCHEDULED),
-  );
-  subscriptionDaysLeft = this.subscription.pipe(
-    map((subscription) => {
-      const expiration = new Date(subscription?.end_billing_period || '');
-      const now = new Date();
-      const difference = differenceInDays(expiration, now) + 1;
-      return difference > 0 ? difference : 0;
-    }),
-  );
+  canUpgrade = this.features.canUpgrade;
 
   constructor(
     private sdk: SDKService,
-    private billingService: BillingService,
     private navigation: NavigationService,
     private modalService: SisModalService,
     private router: Router,

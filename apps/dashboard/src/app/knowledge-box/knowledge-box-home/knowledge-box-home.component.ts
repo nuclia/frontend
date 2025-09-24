@@ -86,7 +86,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
-  canUpgrade = this.features.canUpgrade;
+  showAccountStatus = combineLatest([this.features.isAccountManager, this.features.isTrial]).pipe(
+    map(([isManager, isTrial]) => isManager && isTrial),
+  );
 
   selectedResourcesTab: 'processed' | 'pending' = 'processed';
   latestProcessedResources: Observable<IResource[]> = this.currentKb.pipe(

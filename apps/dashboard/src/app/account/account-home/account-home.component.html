@@ -13,7 +13,7 @@
         (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
     </div>
     <div class="right-column">
-      @if (canUpgrade | async) {
+      @if (isTrial | async) {
         <app-account-status></app-account-status>
       }
       <div>

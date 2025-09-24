@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, UsagePoint, UsageType } from '@nuclia/core';
 import {
   combineLatest,
@@ -29,7 +29,7 @@ import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal
 export class AccountHomeComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   account$ = this.metrics.account$;
-  canUpgrade = this.metrics.canUpgrade;
+  isTrial = this.features.isTrial;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
   selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
 
@@ -45,6 +45,7 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
     private metrics: MetricsService,
     private route: ActivatedRoute,
     private modal: SisModalService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit() {
