@@ -249,7 +249,9 @@
     <div
       class="answer-text"
       class:error={answer.inError}>
-      <MarkdownRendering {text} />
+      <MarkdownRendering
+        {text}
+        markers={true} />
     </div>
     {#if $showAttachedImages && images.length > 0}
       <div class="images">
