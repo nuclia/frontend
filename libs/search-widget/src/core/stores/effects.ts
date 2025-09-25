@@ -496,12 +496,6 @@ export function askQuestion(
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(() =>
-      routingParam.pipe(
-        take(1),
-        switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of('FALLBACK'))),
-      ),
-    ),
-    switchMap((routedConfig) =>
       forkJoin([
         chat.pipe(
           take(1),
@@ -516,7 +510,10 @@ export function askQuestion(
         images.pipe(take(1)),
         hasQueryImage.pipe(take(1)),
         searchConfigId.pipe(take(1)),
-        of(routedConfig),
+        routingParam.pipe(
+          take(1),
+          switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of('FALLBACK'))),
+        ),
       ]),
     ),
     switchMap(
@@ -549,7 +546,6 @@ export function askQuestion(
                 extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
                 query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
                 reasoning,
-                search_configuration,
               });
         }
       },
