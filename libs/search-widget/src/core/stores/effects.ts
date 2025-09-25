@@ -652,7 +652,7 @@ export function getSearchResults(
     take(1),
     switchMap((routing) => {
       if (loadMore) {
-        return routedConfig;
+        return routedConfig.pipe(take(1));
       } else {
         return routing ? getRouting(query, routing).pipe(take(1)) : of('FALLBACK');
       }

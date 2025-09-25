@@ -54,10 +54,14 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       for (let i = 0; i < (value.routing?.rules || []).length; i++) {
         this.addRule();
       }
+      // delay the value patch so the config selects are updated according the kind
       setTimeout(() => {
         this.form.patchValue(value);
         this.cdr.markForCheck();
-      }, 200);
+      }, 500);
+    } else {
+      this.form.reset();
+      this.cdr.markForCheck();
     }
   }
   @Input() set kind(value: string) {

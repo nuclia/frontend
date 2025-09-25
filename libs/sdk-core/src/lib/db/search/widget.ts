@@ -763,8 +763,8 @@ function getReasoning(config: Widget.GenerativeAnswerConfig): string {
     ? JSON.stringify({ display: true, effort: config.reasoningEffort, budget_tokens: config.reasoningBudget })
     : '';
 }
-function getRouting(config: Widget.RoutingConfig): string {
-  return config.useRouting ? JSON.stringify(config.routing) : '';
+function getRouting(config: Widget.RoutingConfig | undefined): string {
+  return config?.useRouting ? JSON.stringify(config.routing) : '';
 }
 function getMaxTokens(config: Widget.GenerativeAnswerConfig): string | undefined {
   return config.limitTokenConsumption && !!config.tokenConsumptionLimit
