@@ -18,6 +18,7 @@
     type RAGImageStrategy,
     type RAGStrategy,
     type ReasoningParam,
+    type Routing,
     type Widget,
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
@@ -34,6 +35,7 @@
     preselectedFilters,
     reasoningParam,
     resetChat,
+    routingParam,
     searchConfigId,
     widgetFeatures,
     widgetFeedback,
@@ -95,6 +97,7 @@
     layout?: 'inline' | 'fullscreen' = 'inline';
     height?: string;
     reasoning?: string;
+    routing?: string;
   }
   let { ...componentProps } = $props();
   let config = $state(new Props());
@@ -142,6 +145,7 @@
   let layout = $derived(componentProps.layout || config.layout);
   let height = $derived(componentProps.height || config.height);
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
+  let routing = $derived(componentProps.routing || config.routing);
 
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
@@ -151,6 +155,7 @@
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
   let _reasoning: ReasoningParam | undefined;
+  let _routing: Routing | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -260,6 +265,11 @@
       } catch (e) {
         console.log(`Invalid reasoning parameter`);
       }
+      try {
+        _routing = routing ? JSON.parse(routing) : undefined;
+      } catch (e) {
+        console.log(`Invalid routing parameter`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -301,6 +311,9 @@
       }
       if (_reasoning) {
         reasoningParam.set(_reasoning);
+      }
+      if (_routing) {
+        routingParam.set(_routing);
       }
 
       initAnswer();

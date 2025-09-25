@@ -18,6 +18,7 @@
     type RAGImageStrategy,
     type RAGStrategy,
     type ReasoningParam,
+    type Routing,
     type Widget,
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
@@ -47,6 +48,7 @@
     filterExpression,
     preselectedFilters,
     reasoningParam,
+    routingParam,
     searchConfigId,
     searchFilters,
     searchQuery,
@@ -131,6 +133,7 @@
     search_config_id?: string | undefined;
     security_groups?: string | undefined;
     reasoning?: string;
+    routing?: string;
   }
 
   let { ...componentProps } = $props();
@@ -184,6 +187,7 @@
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
+  let routing = $derived(componentProps.routing || config.routing);
   let darkMode = $derived(mode === 'dark');
 
   $effect(() => {
@@ -208,6 +212,7 @@
   let _max_paragraphs: number | undefined;
   let _filter_expression: FilterExpression | undefined;
   let _reasoning: ReasoningParam | undefined;
+  let _routing: Routing | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -269,6 +274,7 @@
       widget_id,
       search_config_id,
       _reasoning,
+      _routing,
     });
   }
 
@@ -372,6 +378,11 @@
       } catch (e) {
         console.log(`Invalid reasoning parameter`);
       }
+      try {
+        _routing = routing ? JSON.parse(routing) : undefined;
+      } catch (e) {
+        console.log(`Invalid routing parameter`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -416,6 +427,9 @@
       }
       if (_reasoning) {
         reasoningParam.set(_reasoning);
+      }
+      if (_routing) {
+        routingParam.set(_routing);
       }
       if (_features.answers) {
         initAnswer();

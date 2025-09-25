@@ -126,19 +126,17 @@
         {/if}
         {#if !$isAnswerEnabled && $debug}
           <div class="actions">
-            {#if $rephrasedQuery}
-              <div>
-                <IconButton
-                  aspect="basic"
-                  icon="info"
-                  size="small"
-                  kind="secondary"
-                  on:click={() => (showMetadata = true)} />
-                <DebugInfo
-                  rephrasedQuery={$rephrasedQuery}
-                  bind:show={showMetadata} />
-              </div>
-            {/if}
+            <div>
+              <IconButton
+                aspect="basic"
+                icon="info"
+                size="small"
+                kind="secondary"
+                on:click={() => (showMetadata = true)} />
+              <DebugInfo
+                rephrasedQuery={$rephrasedQuery}
+                bind:show={showMetadata} />
+            </div>
             <Button
               aspect="basic"
               size="small"

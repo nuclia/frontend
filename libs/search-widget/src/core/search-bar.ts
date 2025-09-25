@@ -1,5 +1,5 @@
 import { distinctUntilChanged, filter, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { getAnswer, search } from './api';
+import { getAnswer } from './api';
 import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
@@ -9,6 +9,7 @@ import {
   combinedFilters,
   disableAnswers,
   filterExpression,
+  getSearchResults,
   hideResults,
   isAnswerEnabled,
   isEmptySearchQuery,
@@ -163,7 +164,7 @@ export const setupTriggerSearch = (
                         })),
                       );
                     } else {
-                      return search(query, currentOptions).pipe(
+                      return getSearchResults(query, currentOptions, !!trigger?.more).pipe(
                         map((results) => ({
                           results,
                           append: !!trigger?.more,

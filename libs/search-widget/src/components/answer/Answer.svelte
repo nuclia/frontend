@@ -245,6 +245,26 @@
 <div
   class="sw-answer"
   bind:this={element}>
+  {#if $debug && !$chat[rank]?.answer.incomplete}
+    <div class="actions smaller">
+      <IconButton
+        aspect="basic"
+        icon="info"
+        size="small"
+        kind="secondary"
+        on:click={() => (showMetadata = true)} />
+      <DebugInfo
+        {answer}
+        rephrasedQuery={answer.sources?.rephrased_query}
+        bind:show={showMetadata} />
+      <Button
+        aspect="basic"
+        size="small"
+        on:click={() => downloadDump()}>
+        <span class="title-s">{$_('answer.download-log')}</span>
+      </Button>
+    </div>
+  {/if}
   {#if !$hideAnswer || answer.inError}
     <div
       class="answer-text"
@@ -296,20 +316,6 @@
                 <Feedback {rank} />
               </div>
             {/if}
-            {#if $debug}
-              <div class="smaller">
-                <IconButton
-                  aspect="basic"
-                  icon="info"
-                  size="small"
-                  kind="secondary"
-                  on:click={() => (showMetadata = true)} />
-                <DebugInfo
-                  {answer}
-                  rephrasedQuery={answer.sources?.rephrased_query}
-                  bind:show={showMetadata} />
-              </div>
-            {/if}
             {#if initialAnswer}
               <Button
                 aspect="basic"
@@ -318,14 +324,6 @@
                 <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
               </Button>
             {/if}
-          {/if}
-          {#if $debug}
-            <Button
-              aspect="basic"
-              size="small"
-              on:click={() => downloadDump()}>
-              <span class="title-s">{$_('answer.download-log')}</span>
-            </Button>
           {/if}
         {/if}
       </div>

@@ -5,6 +5,8 @@
 	"answer.debug.prompt-context": "Below are the text blocks provided as context into the prompt submitted to the LLM",
 	"answer.debug.rephrase": "Rephrase",
 	"answer.debug.rephrased-query": "Rephrased query",
+	"answer.debug.routed-config": "Routed search configuration",
+	"answer.debug.routing": "Routing",
 	"answer.debug.seconds": "Seconds",
 	"answer.debug.text-blocks": "Text blocks",
 	"answer.debug.title": "Answer metadata",

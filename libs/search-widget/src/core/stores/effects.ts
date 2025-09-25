@@ -1,4 +1,13 @@
-import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse, LabelSets } from '@nuclia/core';
+import type {
+  Ask,
+  BaseSearchOptions,
+  ChatOptions,
+  FieldFullId,
+  IErrorResponse,
+  LabelSets,
+  Search,
+  SearchOptions,
+} from '@nuclia/core';
 import { getFieldTypeFromString, PATH_FILTER_PREFIX, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
@@ -20,6 +29,7 @@ import {
 } from 'rxjs';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import {
+  find,
   getAnswer,
   getAnswerWithoutRAG,
   getEntities,
@@ -28,6 +38,7 @@ import {
   getNotEngoughDataMessage,
   getResourceById,
   getResourceField,
+  getRouting,
   searchInResource,
   suggest,
 } from '../api';
@@ -81,6 +92,8 @@ import {
   rangeCreationISO,
   reasoningParam,
   resultList,
+  routedConfig,
+  routingParam,
   searchConfigId,
   searchFilters,
   searchQuery,
@@ -497,6 +510,10 @@ export function askQuestion(
         images.pipe(take(1)),
         hasQueryImage.pipe(take(1)),
         searchConfigId.pipe(take(1)),
+        routingParam.pipe(
+          take(1),
+          switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of('FALLBACK'))),
+        ),
       ]),
     ),
     switchMap(
@@ -511,67 +528,133 @@ export function askQuestion(
         _images,
         _hasQueryImage,
         search_configuration,
+        routedConfig,
       ]) => {
-        const chatOptions = { ...options, reasoning: reasoning || undefined };
-        return (
-          disableRAG
+        if (routedConfig && routedConfig !== 'FALLBACK') {
+          return getAnswer(question, entries, { search_configuration: routedConfig });
+        } else {
+          const chatOptions = { ...options, reasoning: reasoning || undefined };
+          return disableRAG
             ? getAnswerWithoutRAG(question, entries, chatOptions)
             : getAnswer(question, entries, {
                 ...chatOptions,
+                search_configuration,
                 filters: filterExpression ? undefined : filters,
                 filter_expression: filterExpression ? combinedFilterExpression : undefined,
                 range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
                 range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
                 extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
                 query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
-                search_configuration,
-              })
-        ).pipe(
-          tap((result) => {
-            hasNotEnoughData.set(result.type === 'error' && result.status === -2);
-            if (result.type === 'error') {
-              if ([-3, -2, -1, 412, 529].includes(result.status)) {
-                const messages: { [key: string]: string } = {
-                  '-3': 'answer.error.no_retrieval_data',
-                  '-2': 'answer.error.llm_cannot_answer',
-                  '-1': 'answer.error.llm_error',
-                  '412': 'answer.error.rephrasing',
-                  '529': 'answer.error.rephrasing',
-                };
-                if (!hasError) {
-                  // error is set only once
-                  hasError = true;
-                  const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-                  appendChatEntry.set({
-                    question,
-                    answer: {
-                      inError: true,
-                      text: translateInstant(text),
-                      type: 'answer',
-                      id: '',
-                    },
-                  });
-                }
-              } else {
-                chatError.set(result);
-              }
-              pendingResults.set(false);
-            } else {
-              if (result.incomplete) {
-                if (hasNoResultsWithAutofilter(result.sources, options)) {
-                  // when no results with autofilter on, a secondary call is made with autofilter off,
-                  // meanwhile, we do not want to display the 'Not enough data' message
-                  result.text = '';
-                }
-                currentAnswer.set(result);
-              } else {
-                appendChatEntry.set({ question, answer: result });
-                pendingResults.set(false);
-              }
-            }
-          }),
-        );
+                reasoning,
+              });
+        }
       },
+    ),
+    tap((result) => {
+      hasNotEnoughData.set(result.type === 'error' && result.status === -2);
+      if (result.type === 'error') {
+        if ([-3, -2, -1, 412, 529].includes(result.status)) {
+          const messages: { [key: string]: string } = {
+            '-3': 'answer.error.no_retrieval_data',
+            '-2': 'answer.error.llm_cannot_answer',
+            '-1': 'answer.error.llm_error',
+            '412': 'answer.error.rephrasing',
+            '529': 'answer.error.rephrasing',
+          };
+          if (!hasError) {
+            // error is set only once
+            hasError = true;
+            const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+            appendChatEntry.set({
+              question,
+              answer: {
+                inError: true,
+                text: translateInstant(text),
+                type: 'answer',
+                id: '',
+              },
+            });
+          }
+        } else {
+          chatError.set(result);
+        }
+        pendingResults.set(false);
+      } else {
+        if (result.incomplete) {
+          if (hasNoResultsWithAutofilter(result.sources, options)) {
+            // when no results with autofilter on, a secondary call is made with autofilter off,
+            // meanwhile, we do not want to display the 'Not enough data' message
+            result.text = '';
+          }
+          currentAnswer.set(result);
+        } else {
+          appendChatEntry.set({ question, answer: result });
+          pendingResults.set(false);
+        }
+      }
+    }),
+    tap((result) => {
+      hasNotEnoughData.set(result.type === 'error' && result.status === -2);
+      if (result.type === 'error') {
+        if ([-3, -2, -1, 412, 529].includes(result.status)) {
+          const messages: { [key: string]: string } = {
+            '-3': 'answer.error.no_retrieval_data',
+            '-2': 'answer.error.llm_cannot_answer',
+            '-1': 'answer.error.llm_error',
+            '412': 'answer.error.rephrasing',
+            '529': 'answer.error.rephrasing',
+          };
+          if (!hasError) {
+            // error is set only once
+            hasError = true;
+            const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+            appendChatEntry.set({
+              question,
+              answer: {
+                inError: true,
+                text: translateInstant(text),
+                type: 'answer',
+                id: '',
+              },
+            });
+          }
+        } else {
+          chatError.set(result);
+        }
+        pendingResults.set(false);
+      } else {
+        if (result.incomplete) {
+          if (hasNoResultsWithAutofilter(result.sources, options)) {
+            // when no results with autofilter on, a secondary call is made with autofilter off,
+            // meanwhile, we do not want to display the 'Not enough data' message
+            result.text = '';
+          }
+          currentAnswer.set(result);
+        } else {
+          appendChatEntry.set({ question, answer: result });
+          pendingResults.set(false);
+        }
+      }
+    }),
+  );
+}
+
+export function getSearchResults(
+  query: string,
+  options: SearchOptions,
+  loadMore: boolean,
+): Observable<Search.FindResults> {
+  return routingParam.pipe(
+    take(1),
+    switchMap((routing) => {
+      if (loadMore) {
+        return routedConfig.pipe(take(1));
+      } else {
+        return routing ? getRouting(query, routing).pipe(take(1)) : of('FALLBACK');
+      }
+    }),
+    switchMap((config) =>
+      config && config !== 'FALLBACK' ? find(query, { search_configuration: config }) : find(query, options),
     ),
   );
 }
