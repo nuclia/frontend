@@ -1,0 +1,15 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    @if (required) {
+      <span style="color: red">*</span>
+    }
+  </label>
+  <div [formGroup]="form">
+    <pa-select
+      [id]="controlName"
+      [formControlName]="controlName"
+      [options]="options()"
+      [required]="required"></pa-select>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    @if (required) {
+      <span class="required">*</span>
+    }
+  </label>
+  <div
+    class="radio-group"
+    [formGroup]="form">
+    @if (options()) {
+      @for (option of options(); track option.id) {
+        <div class="radio-item">
+          <input
+            type="radio"
+            [id]="controlName + '_' + option.id"
+            [formControlName]="controlName"
+            [value]="option.value"
+            class="radio-input" />
+          <label
+            [for]="controlName + '_' + option.id"
+            class="radio-label">
+            {{ option.label }}
+          </label>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Conditional child content -->
+  @if (showChildren()) {
+    <div class="child-content">
+      <ng-content></ng-content>
+    </div>
+  }
+</div>
