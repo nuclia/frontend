@@ -1,0 +1,10 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-entry {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+label {
+  font-weight: $font-weight-semi-bold;
+}

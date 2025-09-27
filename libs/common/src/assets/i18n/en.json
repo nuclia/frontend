@@ -1403,6 +1403,8 @@
 	"retrieval-agents.workflow.node-types.restricted.description": "Code your agent in Python",
 	"retrieval-agents.workflow.node-types.restricted.form.code": "Code",
 	"retrieval-agents.workflow.node-types.restricted.title": "Python",
+	"code-editor.help.tab": "Use Tab for indentation, Shift+Tab to remove indentation",
+	"code-editor.language.label": "Language",
 	"retrieval-agents.workflow.node-types.root.context": "Retrieval context",
 	"retrieval-agents.workflow.node-types.root.generation": "Generation",
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postprocess",

@@ -1,0 +1,44 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.driver-subform-field {
+  .subform-header {
+    margin-bottom: rhythm(3);
+  }
+
+  .subform-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--pa-color-neutral-800);
+
+    .required-indicator {
+      color: var(--pa-color-danger-600);
+      margin-left: rhythm(1);
+    }
+  }
+
+  .subform-content {
+    border: 1px solid var(--pa-color-neutral-300);
+    border-radius: 6px;
+    background-color: var(--pa-color-neutral-50);
+  }
+
+  .subform-fields {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subform-field {
+    background-color: white;
+    padding: rhythm(1);
+    border-radius: 4px;
+    border: 1px solid var(--pa-color-neutral-200);
+  }
+
+  .loading,
+  .no-fields {
+    text-align: center;
+    padding: rhythm(5);
+    color: var(--pa-color-neutral-600);
+    font-style: italic;
+  }
+}

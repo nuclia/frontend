@@ -1,0 +1,42 @@
+@if (!isFormReady) {
+  <div class="loading-indicator">Loading...</div>
+}
+
+@if (isFormReady) {
+  @if (!isNested) {
+    <!-- Full form wrapper for non-nested usage -->
+    <app-configuration-form
+      [form]="form"
+      (cancel)="cancel.emit()"
+      (triggerSubmit)="submit()">
+      @if (configForm) {
+        <ng-container *ngTemplateOutlet="formContent"></ng-container>
+      }
+    </app-configuration-form>
+  } @else {
+    <!-- Direct form content for nested usage -->
+    @if (configForm) {
+      <ng-container *ngTemplateOutlet="formContent"></ng-container>
+    }
+  }
+}
+
+<!-- Template for the actual form fields -->
+<ng-template #formContent>
+  <div class="node-form">
+    @if (renderableFields.length) {
+      @for (field of renderableFields; track field.key) {
+        @if (configForm.get(field.key)) {
+          <app-field-renderer
+            [fieldConfig]="field.config"
+            [form]="configForm"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"
+            [config]="config"></app-field-renderer>
+        }
+      }
+    }
+  </div>
+</ng-template>

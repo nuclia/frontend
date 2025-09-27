@@ -1,0 +1,15 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.dynamic-driver-modal {
+  pa-modal-content {
+    min-height: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  pa-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: rhythm(3);
+  }
+}

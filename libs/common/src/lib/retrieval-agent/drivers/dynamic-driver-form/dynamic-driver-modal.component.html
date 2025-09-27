@@ -1,0 +1,32 @@
+<pa-modal-advanced
+  fitContentHeight=""
+  class="dynamic-driver-modal"
+  (backdropClick)="onBackdropClick()">
+  <pa-modal-title>
+    {{ modalTitle() }}
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <app-dynamic-driver-form
+      [driverTitle]="driverTitle"
+      [existingDriver]="existingDriver"
+      [existingDrivers]="existingDrivers"
+      (formReady)="onFormReady($event)"
+      (formValid)="onFormValidChange($event)"></app-dynamic-driver-form>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="onCancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+
+    <pa-button
+      kind="primary"
+      [disabled]="!isFormValid() || isLoading()"
+      (click)="onSave()">
+      {{ saveButtonText() }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
