@@ -22,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { SearchWidgetStorageService } from '../../search-widget-storage.service';
 
 @Component({
@@ -47,7 +47,13 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private searchWidgetStorage = inject(SearchWidgetStorageService);
   private cdr = inject(ChangeDetectorRef);
-  searchConfigs: string[] = [];
+  searchConfigs = this.searchWidgetStorage.searchAPIConfigs.pipe(
+    map((configs) =>
+      Object.entries(configs)
+        .filter(([id, config]) => config.kind === this.kind)
+        .map(([id]) => id),
+    ),
+  );
 
   @Input() set config(value: Widget.RoutingConfig | undefined) {
     if (value) {
@@ -64,11 +70,12 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }
   }
-  @Input() set kind(value: string) {
-    this.searchWidgetStorage.getSearchConfigIdsByType(value).subscribe((ids) => {
-      this.searchConfigs = ids;
-      this.cdr.markForCheck();
-    });
+  private _kind: string = '';
+  @Input() get kind(): string {
+    return this._kind;
+  }
+  set kind(value: string) {
+    this._kind = value;
   }
 
   @Input({ required: true }) generativeModels: OptionModel[] = [];
