@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widget.models';
 import { SDKService } from '@flaps/core';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
-import { SearchConfig, Widget } from '@nuclia/core';
+import { SearchConfig, SearchConfigs, Widget } from '@nuclia/core';
 
 const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
@@ -21,6 +21,8 @@ export class SearchWidgetStorageService {
 
   private storageUpdated = new Subject<void>();
   private searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets | undefined));
+  private _searchConfigs = new ReplaySubject<SearchConfigs>(1);
+  searchAPIConfigs = this._searchConfigs.asObservable();
 
   ragLabQuestions: Observable<string[]> = this.searchAndWidgets.pipe(map((data) => data?.ragLabQuestions || []));
 
@@ -36,7 +38,7 @@ export class SearchWidgetStorageService {
           (configMap[kb.id] || []).map((config) => ({ ...config, type: 'config' }) as Widget.TypedSearchConfiguration),
         );
       } else {
-        return kb.getSearchConfigs().pipe(
+        return this.searchAPIConfigs.pipe(
           map((searchOptions) => {
             const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
               (config) =>
@@ -74,6 +76,17 @@ export class SearchWidgetStorageService {
     }),
     map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))),
   );
+
+  constructor() {
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) => kb.getSearchConfigs()),
+      )
+      .subscribe((configs) => {
+        this._searchConfigs.next(configs);
+      });
+  }
 
   storeRagLabQuestions(updatedQuestions: string[]) {
     return this.sdk.currentKb.pipe(
@@ -180,13 +193,14 @@ export class SearchWidgetStorageService {
       return this.sdk.currentKb.pipe(
         take(1),
         switchMap((kb) =>
-          kb
-            .getSearchConfigs()
-            .pipe(
-              switchMap((configs) =>
-                configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
-              ),
+          this.searchAPIConfigs.pipe(
+            take(1),
+            switchMap((configs) =>
+              configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
             ),
+            switchMap(() => kb.getSearchConfigs()),
+            tap((configs) => this._searchConfigs.next(configs)),
+          ),
         ),
       );
     }
@@ -199,9 +213,12 @@ export class SearchWidgetStorageService {
       return this.sdk.currentKb.pipe(
         take(1),
         switchMap((kb) =>
-          kb
-            .getSearchConfigs()
-            .pipe(switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined)))),
+          this.searchAPIConfigs.pipe(
+            take(1),
+            switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined))),
+            switchMap(() => kb.getSearchConfigs()),
+            tap((configs) => this._searchConfigs.next(configs)),
+          ),
         ),
       );
     }
@@ -227,18 +244,6 @@ export class SearchWidgetStorageService {
         }
       }),
       tap(() => this.storageUpdated.next()),
-    );
-  }
-
-  getSearchConfigIdsByType(kind: string): Observable<string[]> {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => kb.getSearchConfigs()),
-      map((configs) =>
-        Object.entries(configs)
-          .filter(([id, value]) => value.kind === kind)
-          .map(([id, value]) => id),
-      ),
     );
   }
 }

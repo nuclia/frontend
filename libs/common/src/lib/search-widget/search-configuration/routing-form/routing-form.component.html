@@ -48,7 +48,7 @@
                 <pa-select
                   formControlName="search_config"
                   [label]="'search.configuration.routing.search-config' | translate">
-                  @for (searchConfig of searchConfigs || []; track searchConfig) {
+                  @for (searchConfig of (searchConfigs | async) || []; track searchConfig) {
                     <pa-option [value]="searchConfig">
                       {{ searchConfig }}
                     </pa-option>
