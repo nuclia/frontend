@@ -264,7 +264,7 @@
 	"billing.next-payment": "Proper pagament",
 	"billing.not_company": "No soc una empresa",
 	"billing.nucliadb": "NucliaDB",
-	"billing.on_premise_cost": "Amb <strong>NucliaDB On-prem</strong> no comporta cap cost addicional.",
+	"billing.on_premise_cost": "Amb <strong>NucliaDB Hybrid</strong> no comporta cap cost addicional.",
 	"billing.order_number": "Número de comanda",
 	"billing.paragraphs_per_file": "Un fitxer de text de 10 pàgines conté aproximadament 300 blocs de text",
 	"billing.parameter.ai-tokens-used": "Peticions de cerca",

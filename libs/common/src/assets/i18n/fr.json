@@ -264,7 +264,7 @@
 	"billing.next-payment": "Prochain paiement",
 	"billing.not_company": "Je ne suis pas une entreprise",
 	"billing.nucliadb": "NucliaDB",
-	"billing.on_premise_cost": "Avec <strong>NucliaDB On-prem</strong> n’entraîne aucun coût supplémentaire.\n",
+	"billing.on_premise_cost": "Avec <strong>NucliaDB Hybrid</strong> n’entraîne aucun coût supplémentaire.\n",
 	"billing.order_number": "Numéro de commande",
 	"billing.paragraphs_per_file": "Un fichier texte de 10 pages contient environ 300 blocs de texte",
 	"billing.parameter.ai-tokens-used": "Demandes de recherche",
