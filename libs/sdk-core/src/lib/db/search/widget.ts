@@ -112,7 +112,7 @@ export namespace Widget {
 
   export interface ResultDisplayConfig {
     displayResults: boolean;
-    showResultType: 'citations' | 'all-resources';
+    showResultType: 'citations' | 'all-resources' | 'llmCitations';
     displayMetadata: boolean;
     hideAnswer: boolean;
     metadatas?: string[];
@@ -555,7 +555,11 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
     showHidden: config.searchBox.showHiddenResources,
     citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
-    hideResults: !config.resultDisplay.displayResults || config.resultDisplay.showResultType === 'citations',
+    llmCitations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'llmCitations',
+    hideResults:
+      !config.resultDisplay.displayResults ||
+      config.resultDisplay.showResultType === 'citations' ||
+      config.resultDisplay.showResultType === 'llmCitations',
     displayMetadata: config.resultDisplay.displayMetadata,
     hideAnswer: config.resultDisplay.hideAnswer,
     hideThumbnails: !config.resultDisplay.displayThumbnails,

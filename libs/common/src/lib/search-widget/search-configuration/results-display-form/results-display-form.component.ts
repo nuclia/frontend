@@ -136,7 +136,9 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   metadataExampleControl = new FormControl('');
   form = new FormGroup({
     displayResults: new FormControl<boolean>(false, { nonNullable: true }),
-    showResultType: new FormControl<'citations' | 'all-resources'>('all-resources', { nonNullable: true }),
+    showResultType: new FormControl<'citations' | 'all-resources' | 'llmCitations'>('all-resources', {
+      nonNullable: true,
+    }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     metadatas: new FormControl<string>('', { nonNullable: true }),
     displayThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
