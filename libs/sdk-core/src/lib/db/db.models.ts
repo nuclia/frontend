@@ -430,3 +430,16 @@ export interface CustomModel extends BaseCustomModel {
   kbids: string[];
   openai_compat: any | null;
 }
+
+export interface ModelConfigurationItem {
+  id: string;
+  default_model_id: string;
+  description?: string;
+}
+
+export interface ModelConfiguration extends ModelConfigurationItem {
+  user_keys?: any;
+  user_prompts?: any;
+}
+
+export type ModelConfigurationCreation = Omit<ModelConfiguration, 'id'>;

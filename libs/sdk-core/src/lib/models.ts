@@ -17,6 +17,9 @@ import {
   KnowledgeBox,
   KnowledgeBoxCreation,
   LearningConfigurations,
+  ModelConfiguration,
+  ModelConfigurationCreation,
+  ModelConfigurationItem,
   NUAClient,
   NUAClientPayload,
   PredictedToken,
@@ -207,6 +210,14 @@ export interface IDb {
   getModel(modelId: string, accountId: string, zone: string): Observable<CustomModel>;
   addModelToKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
   deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
+  getModelConfigurations(accountId: string, zone: string): Observable<ModelConfigurationItem[]>;
+  getModelConfiguration(modelId: string, accountId: string, zone: string): Observable<ModelConfiguration>;
+  createModelConfiguration(
+    model: ModelConfigurationCreation,
+    accountId: string,
+    zone: string,
+  ): Observable<{ id: string }>;
+  deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void>;
 }
 
 export interface NucliaOptions {
