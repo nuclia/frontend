@@ -9,6 +9,7 @@
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
     hasChatEntries,
+    isReasoning,
     isStreaming,
     resetChat,
   } from '../../core';
@@ -111,7 +112,7 @@
         {/each}
       </div>
       {#if $isStreaming}
-        <LoadingDots />
+        <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
       {/if}
       <div
         class="input-container"

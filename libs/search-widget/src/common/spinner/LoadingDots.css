@@ -1,15 +1,22 @@
 .sw-loading-dots {
   align-content: center;
   display: flex;
-  gap: var(--rhythm-1);
+  flex-direction: column;
   justify-content: center;
-
-  /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
+  gap: var(--rhythm-1);
   &:not(.small) {
     margin: var(--rhythm-12) auto 0;
     text-align: center;
   }
+}
 
+.loading-dots {
+  align-content: center;
+  display: flex;
+  gap: var(--rhythm-1);
+  justify-content: center;
+
+  /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
   & > div {
     width: var(--rhythm-2);
     height: var(--rhythm-2);
