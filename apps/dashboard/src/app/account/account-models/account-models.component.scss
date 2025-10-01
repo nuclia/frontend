@@ -7,6 +7,17 @@
   .account-models-content {
     max-width: $width-large-screen;
   }
+
+  pa-tabs {
+    display: block;
+    margin-bottom: rhythm(4);
+  }
+  .configs {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+  }
+
   .toggles {
     display: flex;
     flex-direction: column;

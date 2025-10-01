@@ -1,0 +1,72 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    <h2>
+      {{ (createMode ? 'account.models.model-configs.create' : 'account.models.model-configs.details') | translate }}
+    </h2>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <form
+      class="form"
+      [formGroup]="configForm">
+      <pa-select
+        formControlName="default_model_id"
+        [label]="'account.models.model-configs.generative-model' | translate"
+        [options]="generativeModelOptions | async"></pa-select>
+      <pa-input
+        formControlName="description"
+        [errorMessages]="validationMessages.description">
+        {{ 'generic.description' | translate }}
+      </pa-input>
+      <pa-select
+        formControlName="zone"
+        [label]="'account.models.model-configs.zone' | translate"
+        [options]="zoneOptions || []"></pa-select>
+      <ng-container [formGroup]="promptsForm">
+        @if (userPrompt | async; as prompt) {
+          <nsi-expandable-textarea
+            formControlName="prompt"
+            rows="3"
+            [help]="prompt.info ? prompt.info : ''"
+            modalTitle="Prompt">
+            Prompt
+          </nsi-expandable-textarea>
+        }
+        @if (systemPrompt | async; as prompt) {
+          <nsi-expandable-textarea
+            formControlName="system"
+            rows="3"
+            [help]="prompt.info ? prompt.info : ''"
+            modalTitle="account.models.model-configs.system-prompt">
+            {{ 'account.models.model-configs.system-prompt' | translate }}
+          </nsi-expandable-textarea>
+        }
+      </ng-container>
+      @if (schema | async; as schema) {
+        @if (generativeModel | async; as generativeModel) {
+          <stf-user-keys
+            [generativeModel]="generativeModel"
+            [learningConfigurations]="schema"
+            (formReady)="initUserKeys($event)"></stf-user-keys>
+        }
+      }
+    </form>
+  </pa-modal-content>
+
+  @if (createMode) {
+    <pa-modal-footer>
+      <pa-button
+        aspect="basic"
+        (click)="close()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="configForm.invalid || userKeysForm?.invalid"
+        (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
+    </pa-modal-footer>
+  }
+</pa-modal-advanced>
