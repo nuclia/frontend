@@ -1,0 +1,38 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    @if (required) {
+      <span style="color: red">*</span>
+    }
+  </label>
+  <div [formGroup]="form">
+    @if (multiselect) {
+      <!-- For multiselect, we need to handle FormArray differently -->
+      <pa-select
+        [id]="controlName"
+        [options]="options()"
+        [multiple]="true"
+        [value]="selectedValuesAsString"
+        (valueChange)="updateFormArray($event)"></pa-select>
+    } @else {
+      <!-- Regular single select using formControlName -->
+      <pa-select
+        [id]="controlName"
+        [formControlName]="controlName"
+        [options]="options()"
+        [multiple]="false"></pa-select>
+    }
+  </div>
+
+  @if (hasNoValidOptions()) {
+    <nsi-info-card type="warning">
+      {{ 'retrieval-agents.workflow.node-types.ask.form.no-source' | translate }}
+    </nsi-info-card>
+    <pa-button
+      aspect="basic"
+      size="small"
+      [routerLink]="driversPath()">
+      {{ 'retrieval-agents.workflow.node-types.ask.form.go-to-drivers' | translate }}
+    </pa-button>
+  }
+</div>

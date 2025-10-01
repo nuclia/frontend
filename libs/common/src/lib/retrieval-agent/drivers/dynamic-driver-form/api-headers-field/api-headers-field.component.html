@@ -1,0 +1,61 @@
+<div class="api-headers-field">
+  <div class="headers-label">
+    <label class="field-label">
+      {{ label }}
+      @if (required) {
+        <span class="required-indicator">*</span>
+      }
+    </label>
+    <pa-button
+      aspect="basic"
+      size="small"
+      (click)="addHeader()"
+      class="add-header-btn">
+      {{ 'generic.add' | translate }}
+    </pa-button>
+  </div>
+
+  <div class="headers-container">
+    @for (header of headerEntries(); track $index) {
+      <div class="header-row">
+        <div class="header-key">
+          <pa-input
+            type="text"
+            [placeholder]="'Header name (e.g., Authorization)'"
+            [value]="header.key"
+            (valueChange)="onHeaderKeyChange($index, $event)">
+            Key
+          </pa-input>
+        </div>
+
+        <div class="header-value">
+          <pa-input
+            type="text"
+            [placeholder]="'Header value (e.g., Bearer token)'"
+            [value]="header.value"
+            (valueChange)="onHeaderValueChange($index, $event)">
+            Value
+          </pa-input>
+        </div>
+
+        <div class="header-actions">
+          @if (headerEntries().length > 1) {
+            <pa-button
+              aspect="basic"
+              size="small"
+              (click)="removeHeader($index)"
+              class="remove-header-btn">
+              <pa-icon name="trash"></pa-icon>
+            </pa-button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (headerEntries().length === 0) {
+    <div class="no-headers">
+      <p>No headers configured. Click "Add Header" to add API headers.</p>
+    </div>
+  }
+</div>

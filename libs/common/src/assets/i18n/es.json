@@ -344,6 +344,8 @@
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Precios sin IVA",
 	"billing.year": "Año",
+	"code-editor.help.tab": "Utilice Tab para sangría, Shift+Tab para eliminar sangría",
+	"code-editor.language.label": "Idioma",
 	"confirm.delete_body": "Eliminar recurso",
 	"confirm.delete_title": "¿Seguro que quieres eliminar este recurso?",
 	"dashboard-home.blocked.generative": "Has alcanzado tu cuota de respuestas generativas",

@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -30,8 +29,7 @@ export class AskNodeComponent extends NodeDirective implements OnInit {
       const items: ConfigBlockItem[] = [
         {
           title: this.translate.instant('retrieval-agents.workflow.node-types.ask.form.sources'),
-          content: config.sources
-            .split(',')
+          content: (Array.isArray(config.sources) ? config.sources : config.sources.split(','))
             .map((source) => {
               const driver = this.driverList().find((driver) => driver.identifier === source);
               return driver?.name || source;

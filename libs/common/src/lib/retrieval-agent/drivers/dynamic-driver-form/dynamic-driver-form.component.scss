@@ -1,0 +1,22 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.dynamic-driver-form {
+  padding-top: rhythm(2);
+
+  .driver-form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+  }
+
+  .field-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .loading {
+    text-align: center;
+    padding: rhythm(5);
+    color: var(--pa-color-neutral-600);
+  }
+}

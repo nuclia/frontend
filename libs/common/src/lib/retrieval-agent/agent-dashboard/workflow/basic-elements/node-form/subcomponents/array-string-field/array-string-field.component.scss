@@ -1,0 +1,24 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.array-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: rhythm(2);
+}
+.delete-btn {
+  background: none;
+  border: none;
+  color: #c00;
+  cursor: pointer;
+  margin-left: rhythm(2);
+}
+.add-btn {
+  margin-top: rhythm(1);
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: rhythm(1) rhythm(3);
+  cursor: pointer;
+}
+.icon {
+  font-size: 1.2em;
+}

@@ -344,6 +344,8 @@
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Prices without VAT",
 	"billing.year": "Year",
+	"code-editor.help.tab": "Use Tab for indentation, Shift+Tab to remove indentation",
+	"code-editor.language.label": "Language",
 	"confirm.delete_body": "Delete resource",
 	"confirm.delete_title": "Are you sure you want to delete this resource?",
 	"dashboard-home.blocked.generative": "Your generative answers quota has been reached",

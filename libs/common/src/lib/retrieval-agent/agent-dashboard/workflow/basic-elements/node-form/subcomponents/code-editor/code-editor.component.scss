@@ -1,0 +1,314 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-entry {
+  margin-bottom: rhythm(2);
+
+  .required {
+    color: var(--color-error-regular);
+    margin-left: rhythm(0.25);
+  }
+}
+
+.code-editor-container {
+  position: relative;
+  border: 1px solid var(--color-neutral-light);
+  border-radius: rhythm(1);
+  overflow: hidden;
+  background-color: var(--color-neutral-lightest);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+
+  &:focus-within {
+    border-color: var(--color-primary-regular);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-regular) 10%, transparent);
+  }
+}
+
+.highlight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: auto;
+  z-index: 1;
+  box-sizing: border-box;
+
+  /* Style the highlight container itself as the pre element */
+  margin: 0;
+  padding: rhythm(1.5);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-neutral-darkest);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  tab-size: 4; // Python uses 4-space indentation
+
+  /* Ensure identical text rendering to textarea */
+  letter-spacing: 0;
+  text-indent: 0;
+  text-align: left;
+  vertical-align: top;
+
+  /* Remove the nested pre styling since we're not using it anymore */
+  pre {
+    display: none;
+  }
+
+  /* Style the injected code element */
+  > code {
+    display: block;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    white-space: inherit;
+    word-wrap: inherit;
+    overflow-wrap: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-indent: inherit;
+    text-align: inherit;
+  }
+
+  // Prism.js light theme syntax highlighting colors using design system
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: var(--color-neutral-dark);
+    font-style: italic;
+  }
+
+  .token.punctuation {
+    color: var(--color-neutral-darkest);
+  }
+
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: var(--color-primary-dark);
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: var(--color-success-dark);
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string {
+    color: var(--color-neutral-darkest);
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.keyword {
+    color: var(--color-error-regular);
+  }
+
+  .token.function,
+  .token.class-name {
+    color: var(--color-secondary-regular);
+  }
+
+  .token.regex,
+  .token.important,
+  .token.variable {
+    color: var(--color-warning-regular);
+  }
+
+  .token.important,
+  .token.bold {
+    font-weight: bold;
+  }
+
+  .token.italic {
+    font-style: italic;
+  }
+}
+
+.code-textarea {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 200px;
+  padding: rhythm(1.5);
+  border: none;
+  background: transparent;
+  color: var(--color-neutral-darkest); /* Keep text visible for cursor positioning */
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  tab-size: 4; // Python uses 4-space indentation
+  caret-color: var(--color-neutral-darkest);
+  box-sizing: border-box;
+  overflow: auto;
+
+  /* Ensure identical text rendering */
+  letter-spacing: 0;
+  text-indent: 0;
+  text-align: left;
+  vertical-align: top;
+
+  /* Make the actual text semi-transparent so highlight shows through */
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.1);
+
+  &::placeholder {
+    color: var(--color-neutral-dark);
+    opacity: 0.7;
+    -webkit-text-fill-color: var(--color-neutral-dark);
+  }
+
+  /* Show placeholder text when textarea is empty */
+  &:placeholder-shown {
+    -webkit-text-fill-color: var(--color-neutral-dark);
+  }
+
+  /* Make text selection visible */
+  &::selection {
+    background-color: rgba(0, 123, 255, 0.3);
+    color: inherit;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  // Override browser autocomplete styling
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+.editor-help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: rhythm(1);
+  font-size: 0.75rem;
+  color: var(--color-neutral-dark);
+
+  .help-text {
+    opacity: 0.8;
+  }
+
+  .language-info {
+    font-weight: 500;
+    color: var(--color-neutral-darkest);
+  }
+}
+
+.syntax-errors {
+  margin-top: rhythm(1);
+  padding: rhythm(1);
+  background-color: color-mix(in srgb, var(--color-error-regular) 5%, transparent);
+  border: 1px solid var(--color-error-light);
+  border-radius: 4px;
+  font-size: 0.75rem;
+
+  .error-header {
+    display: flex;
+    align-items: center;
+    gap: rhythm(0.5);
+    margin-bottom: rhythm(0.5);
+    font-weight: 500;
+    color: var(--color-error-regular);
+
+    .error-icon {
+      font-size: 0.875rem;
+    }
+
+    .error-title {
+      font-size: 0.8125rem;
+    }
+  }
+
+  .error-item {
+    display: flex;
+    gap: rhythm(0.5);
+    margin-bottom: rhythm(0.25);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .error-line {
+      font-weight: 500;
+      color: var(--color-error-dark);
+      min-width: 60px;
+    }
+
+    .error-message {
+      color: var(--color-error-regular);
+    }
+  }
+}
+
+.child-content {
+  margin-top: rhythm(2);
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .code-editor-container {
+    border-width: 2px;
+  }
+
+  .language-select {
+    border-width: 2px;
+  }
+
+  .highlight-layer .token.comment {
+    color: var(--color-neutral-dark);
+    font-weight: bold;
+  }
+
+  .highlight-layer .token.string {
+    color: var(--color-success-dark);
+    font-weight: bold;
+  }
+
+  .highlight-layer .token.keyword {
+    color: var(--color-error-regular);
+    font-weight: bold;
+  }
+
+  .code-textarea {
+    color: var(--color-neutral-darkest);
+    caret-color: var(--color-neutral-darkest);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .language-select,
+  .code-editor-container {
+    transition: none;
+  }
+}

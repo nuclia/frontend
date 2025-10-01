@@ -344,6 +344,8 @@
 	"billing.vat_id": "Numéro de TVA",
 	"billing.without_vat": "Prix sans TVA",
 	"billing.year": "Année",
+	"code-editor.help.tab": "Utilisez Tab pour l'indentation, Maj+Tab pour supprimer l'indentation",
+	"code-editor.language.label": "Langue",
 	"confirm.delete_body": "Supprimer la ressource",
 	"confirm.delete_title": "Voulez-vous vraiment supprimer cette ressource?",
 	"dashboard-home.blocked.generative": "Votre quota de réponses génératives a été atteint",

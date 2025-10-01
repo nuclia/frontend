@@ -5,8 +5,9 @@ export * from './headers-field/headers-field.component';
 export * from './link';
 export * from './node-box/node-box.component';
 export * from './node-selector/node-selector.component';
-export * from './rules-field/rules-field.component';
+export * from './rules-field';
 
 export * from './arrow-down.component';
 export * from './form.directive';
 export * from './node.directive';
+export * from './node-form';

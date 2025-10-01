@@ -3,6 +3,7 @@ import {
   ComponentRef,
   createComponent,
   ElementRef,
+  EventEmitter,
   inject,
   Injectable,
   Renderer2,
@@ -24,9 +25,24 @@ import {
   PostprocessAgent,
   PreprocessAgent,
   McpAgent,
+  ARAGSchemas,
+  LearningConfigurationOption,
+  Driver,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -34,37 +50,35 @@ import {
   NodeDirective,
   NodeSelectorComponent,
 } from './basic-elements';
-import {
-  AskFormComponent,
-  AskNodeComponent,
-  BasicAskFormComponent,
-  ConditionalFormComponent,
-  ConditionalNodeComponent,
-  CypherFormComponent,
-  CypherNodeComponent,
-  ExternalFormComponent,
-  ExternalNodeComponent,
-  GenerateFormComponent,
-  GenerateNodeComponent,
-  HistoricalFormComponent,
-  HistoricalNodeComponent,
-  InternetFormComponent,
-  InternetNodeComponent,
-  McpFormComponent,
-  McpNodeComponent,
-  RemiFormComponent,
-  RemiNodeComponent,
-  RephraseFormComponent,
-  RephraseNodeComponent,
-  RestartFormComponent,
-  RestartNodeComponent,
-  RestrictedFormComponent,
-  RestrictedNodeComponent,
-  SqlFormComponent,
-  SqlNodeComponent,
-  SummarizeFormComponent,
-  SummarizeNodeComponent,
-} from './nodes';
+import { AskFormComponent } from './nodes/ask/ask-form.component';
+import { AskNodeComponent } from './nodes/ask/ask-node.component';
+import { BasicAskFormComponent } from './nodes/ask/basic-ask-form.component';
+import { ConditionalFormComponent } from './nodes/conditional/conditional-form.component';
+import { ConditionalNodeComponent } from './nodes/conditional/conditional-node.component';
+import { CypherFormComponent } from './nodes/cypher/cypher-form.component';
+import { CypherNodeComponent } from './nodes/cypher/cypher-node.component';
+import { ExternalFormComponent } from './nodes/external/external-form.component';
+import { ExternalNodeComponent } from './nodes/external/external-node.component';
+import { GenerateFormComponent } from './nodes/generate/generate-form.component';
+import { GenerateNodeComponent } from './nodes/generate/generate-node.component';
+import { HistoricalFormComponent } from './nodes/historical/historical-form.component';
+import { HistoricalNodeComponent } from './nodes/historical/historical-node.component';
+import { InternetFormComponent } from './nodes/internet/internet-form.component';
+import { InternetNodeComponent } from './nodes/internet/internet-node.component';
+import { McpFormComponent } from './nodes/mcp/mcp-form.component';
+import { McpNodeComponent } from './nodes/mcp/mcp-node.component';
+import { RemiFormComponent } from './nodes/remi/remi-form.component';
+import { RemiNodeComponent } from './nodes/remi/remi-node.component';
+import { RephraseFormComponent } from './nodes/rephrase/rephrase-form.component';
+import { RephraseNodeComponent } from './nodes/rephrase/rephrase-node.component';
+import { RestartFormComponent } from './nodes/restart/restart-form.component';
+import { RestartNodeComponent } from './nodes/restart/restart-node.component';
+import { RestrictedFormComponent } from './nodes/restricted/restricted-form.component';
+import { RestrictedNodeComponent } from './nodes/restricted/restricted-node.component';
+import { SqlFormComponent } from './nodes/sql/sql-form.component';
+import { SqlNodeComponent } from './nodes/sql/sql-node.component';
+import { SummarizeFormComponent } from './nodes/summarize/summarize-form.component';
+import { SummarizeNodeComponent } from './nodes/summarize/summarize-node.component';
 import { GuardrailsFormComponent, GuardrailsNodeComponent } from './nodes/guardrails';
 import { RulesPanelComponent, TestPanelComponent } from './sidebar';
 import {
@@ -99,6 +113,8 @@ import {
   unselectNode,
   updateNode,
 } from './workflow.state';
+import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 const COLUMN_CLASS = 'workflow-col';
 const COLUMN_SECTION_CLASS = 'column-section';
@@ -119,6 +135,18 @@ export class WorkflowService {
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
   private featureService = inject(FeaturesService);
+
+  // Shared schemas state
+  private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
+  schemas$ = this._schemasSubject.asObservable();
+
+  // Shared Models state
+  private _modelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
+  models$ = this._modelsSubject.asObservable();
+
+  // Driver Model state
+  private _driverModelsSubject = new BehaviorSubject<Driver[] | null>(null);
+  driverModels$ = this._driverModelsSubject.asObservable();
 
   private columns: HTMLElement[] = [];
 
@@ -624,15 +652,29 @@ export class WorkflowService {
       `retrieval-agents.workflow.node-types.${this.getNodeTypeKey(node.nodeType)}.title`,
     );
     container.classList.remove('no-form');
-    const formRef = this.getFormRef(node.nodeType);
+    const formRef = this.getFormRef(node.nodeType, node.nodeCategory);
     formRef.setInput('category', nodeCategory);
     const config = node.nodeConfig;
+
+    // Set config before form initialization for both dynamic and legacy forms
     if (config) {
+      formRef.instance.config = config;
+    }
+
+    if ('formReady' in formRef.instance) {
+      // Dynamic node-form: subscribe to formReady
+      (formRef.instance.formReady as EventEmitter<FormGroup>).subscribe((configForm: FormGroup) => {
+        if (config) {
+          this.patchFormValuesSafely(configForm, config);
+        }
+      });
+    } else if (config) {
+      // Legacy form: patch directly if form is already initialized
       // For some forms like Restart, the patch won't work for all fields,
       // so we also pass the config in the form components to handle those specific cases directly there
-      formRef.instance.config = config;
-      formRef.instance.configForm.patchValue(config);
+      this.patchFormValuesSafely(formRef.instance.configForm, config);
     }
+
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
@@ -804,48 +846,41 @@ export class WorkflowService {
    * @param nodeType Type of the node corresponding to the form to be created
    * @returns ComponentRef<FormDirective> corresponding to the node type.
    */
-  private getFormRef(nodeType: NodeType): ComponentRef<FormDirective> {
+  private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
+    let nodeTypeOverride: string = nodeType;
     switch (nodeType) {
-      case 'historical':
-        return createComponent(HistoricalFormComponent, { environmentInjector: this.environmentInjector });
-      case 'rephrase':
-        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
       case 'pre_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'context_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'post_conditional':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
-      case 'summarize':
-        return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
-      case 'restart':
-        return createComponent(RestartFormComponent, { environmentInjector: this.environmentInjector });
-      case 'ask':
-        return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
+        nodeTypeOverride = 'conditional';
+        break;
       case 'basic_ask':
-        return createComponent(BasicAskFormComponent, { environmentInjector: this.environmentInjector });
-      case 'internet':
-        return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
-      case 'sql':
-        return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
-      case 'cypher':
-        return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
-      case 'remi':
-        return createComponent(RemiFormComponent, { environmentInjector: this.environmentInjector });
-      case 'external':
-        return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
+        nodeTypeOverride = 'basicask';
+        break;
       case 'restricted':
-        return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
-      case 'mcp':
-        return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
-      case 'generate':
-        return createComponent(GenerateFormComponent, { environmentInjector: this.environmentInjector });
+        nodeTypeOverride = 'python';
+        break;
       case 'preprocess_alinia':
       case 'postprocess_alinia':
-        return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
-      default:
-        throw new Error(`No form component for type ${nodeType}`);
+        nodeTypeOverride = 'alinia';
+        break;
+
+      case 'ask':
+        return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
+      case 'internet':
+        return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
+      case 'external':
+        return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
+      case 'rephrase':
+        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
     }
+
+    const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector });
+    defaultRef.setInput('agentType', nodeCategory); // 'preprocess' | 'context' | 'generation' | 'postprocess'
+    defaultRef.setInput('agentName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
+    defaultRef.setInput('formGroupName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
+    defaultRef.setInput('schemas', this._schemasSubject.getValue()); // Provide current schemas
+    return defaultRef;
   }
 
   private getPossibleNodes(nodeCategory: NodeCategory): Observable<NodeType[]> {
@@ -903,7 +938,133 @@ export class WorkflowService {
     );
   }
 
+  /**
+   * Fetch models and update shared state
+   */
+  fetchModels() {
+    this.getModels().subscribe((models) => {
+      this._modelsSubject.next(models);
+    });
+  }
+
   getSchemas() {
     return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
+  }
+
+  /**
+   * Safely patch form values, handling FormArray controls properly
+   */
+  private patchFormValuesSafely(formGroup: FormGroup, config: any) {
+    console.log('patchFormValuesSafely called with:', {
+      config,
+      formControls: Object.keys(formGroup.controls),
+      formGroup,
+    });
+
+    const patchData: any = {};
+
+    Object.keys(config).forEach((key) => {
+      const control = formGroup.get(key);
+      const value = config[key];
+
+      if (control && control instanceof FormArray) {
+        // For FormArray controls, handle both array and string values
+        const formArray = control as FormArray;
+        let arrayValue: any[];
+
+        if (Array.isArray(value)) {
+          arrayValue = value;
+        } else if (typeof value === 'string' && value.trim() !== '') {
+          // Convert string to single-item array
+          arrayValue = [value];
+        } else if (value === null || value === undefined || value === '') {
+          // Handle null/undefined/empty values as empty array
+          arrayValue = [];
+        } else {
+          // For other types, try to convert to array
+          arrayValue = [value];
+        }
+
+        console.log(`Handling FormArray ${key}:`, { originalValue: value, convertedValue: arrayValue });
+
+        // Rebuild the FormArray with the proper array values
+        formArray.clear();
+        arrayValue.forEach((item) => {
+          formArray.push(new FormControl(item));
+        });
+
+        // Don't include in patchData since we handled it directly
+      } else if (Array.isArray(value)) {
+        // If value is an array but control is not a FormArray, skip it or convert it
+        console.warn(`Field ${key} has array value but control is not FormArray:`, {
+          key,
+          value,
+          control: control ? control.constructor.name : 'null',
+          controlValue: control?.value,
+        });
+        // Skip this field to prevent forEach error in patchValue
+      } else {
+        // For other controls, include in regular patch
+        patchData[key] = value;
+      }
+    });
+
+    // Patch the remaining non-FormArray controls
+    if (Object.keys(patchData).length > 0) {
+      try {
+        console.log('Attempting to patch form with patchData:', patchData);
+        console.log('Form structure before patch:', {
+          formControls: Object.keys(formGroup.controls),
+          controlTypes: Object.entries(formGroup.controls).map(([key, control]) => [key, control.constructor.name]),
+        });
+
+        formGroup.patchValue(patchData);
+        console.log('Successfully patched form with safe data');
+      } catch (error) {
+        console.error('Error patching form values:', { error, patchData, formGroup });
+        // Let's also log which specific control is causing issues
+        Object.entries(patchData).forEach(([key, value]) => {
+          try {
+            const control = formGroup.get(key);
+            if (control) {
+              control.patchValue(value);
+              console.log(`Successfully patched ${key} individually`);
+            }
+          } catch (individualError) {
+            console.error(`Error patching ${key}:`, {
+              key,
+              value,
+              control: formGroup.get(key),
+              error: individualError,
+            });
+          }
+        });
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Fetch schemas and update shared state
+   */
+  fetchSchemas() {
+    this.getSchemas().subscribe((schemas) => {
+      this._schemasSubject.next(schemas);
+    });
+  }
+
+  /**
+   * Fetch drivers and update shared state
+   */
+  fetchDrivers() {
+    this.sdk.currentArag
+      .pipe(
+        take(1),
+        switchMap((arag) => arag.getDrivers()),
+      )
+      .subscribe({
+        next: (drivers) => this._driverModelsSubject.next(drivers),
+        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.load-drivers')),
+      });
   }
 }

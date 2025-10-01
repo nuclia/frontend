@@ -1,0 +1,70 @@
+.subform-field {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 8px 0;
+  background-color: #fafafa;
+}
+
+.subform-header {
+  margin-bottom: 12px;
+}
+
+.subform-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.subform-description {
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.subform-content {
+  background-color: white;
+  border-radius: 4px;
+  padding: 12px;
+  border-left: 3px solid #007bff;
+}
+
+.subform-placeholder {
+  padding: 12px;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}
+
+.subform-field-item {
+  margin-bottom: 12px;
+
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #333;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  .form-check-input {
+    margin-right: 8px;
+  }
+}

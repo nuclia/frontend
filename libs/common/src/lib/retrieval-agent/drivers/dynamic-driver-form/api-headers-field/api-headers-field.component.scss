@@ -1,0 +1,82 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.api-headers-field {
+  .headers-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .field-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--pa-color-neutral-800);
+
+    .required-indicator {
+      color: var(--pa-color-danger-600);
+      margin-left: rhythm(1);
+    }
+  }
+
+  .add-header-btn {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+  }
+
+  .headers-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: rhythm(2);
+    align-items: end;
+    padding: rhythm(0.5);
+    background-color: var(--pa-color-neutral-50);
+    border: 1px solid var(--pa-color-neutral-200);
+    border-radius: 6px;
+
+    &:hover {
+      background-color: var(--pa-color-neutral-75);
+    }
+  }
+
+  .header-key,
+  .header-value {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .remove-header-btn {
+    color: var(--pa-color-danger-600);
+
+    &:hover {
+      color: var(--pa-color-danger-700);
+      background-color: var(--pa-color-danger-50);
+    }
+  }
+
+  .no-headers {
+    text-align: center;
+    padding: rhythm(4);
+    color: var(--pa-color-neutral-600);
+    font-style: italic;
+    background-color: var(--pa-color-neutral-50);
+    border: 1px dashed var(--pa-color-neutral-300);
+    border-radius: 6px;
+
+    p {
+      margin: 0;
+    }
+  }
+}
