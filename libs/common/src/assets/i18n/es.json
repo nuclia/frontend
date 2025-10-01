@@ -608,7 +608,7 @@
 	"kb.ai-models.answer-generation.select-llm.own-key.label": "Utilice su propia clave de {{provider}}",
 	"kb.ai-models.answer-generation.select-llm.own-key.title": "Rellena tu clave de {{provider}} ",
 	"kb.ai-models.answer-generation.select-llm.title": "Seleccione el LLM utilizado para generar respuestas",
-	"kb.ai-models.answer-generation.select-llm.unavailable": "El modelo seleccionado <strong>{{model}}</strong> no está disponible. Por favor seleccione uno diferente,",
+	"kb.ai-models.answer-generation.select-llm.unavailable": "El modelo seleccionado <strong>{{model}}</strong> no está disponible. Por favor seleccione un modelo diferente,",
 	"kb.ai-models.answer-generation.set-prompt": "Establecer un prompt",
 	"kb.ai-models.common.examples": "Ejemplos",
 	"kb.ai-models.common.prompt.label": "Su prompt",
