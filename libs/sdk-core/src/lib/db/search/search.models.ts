@@ -102,7 +102,7 @@ export interface ChatOptions extends BaseSearchOptions {
   /**
    * It will return the text blocks that have been effectively used to build each section of the answer.
    */
-  citations?: boolean;
+  citations?: boolean | 'none' | 'default' | 'llm_footnotes';
   rag_strategies?: RAGStrategy[];
   rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;

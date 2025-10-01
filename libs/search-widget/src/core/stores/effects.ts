@@ -8,7 +8,7 @@ import type {
   Search,
   SearchOptions,
 } from '@nuclia/core';
-import { getFieldTypeFromString, PATH_FILTER_PREFIX, ResourceProperties } from '@nuclia/core';
+import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
   combineLatest,
   debounceTime,
@@ -117,7 +117,8 @@ import {
 import {
   disableRAG,
   hasQueryImage,
-  isCitationsEnabled,
+  isDefaultCitationsEnabled,
+  isLLMCitationsEnabled,
   isSpeechEnabled,
   isSpeechSynthesisEnabled,
   widgetImageRagStrategies,
@@ -221,15 +222,18 @@ export function initAnswer() {
           forkJoin([
             widgetRagStrategies.pipe(take(1)),
             widgetImageRagStrategies.pipe(take(1)),
-            isCitationsEnabled.pipe(take(1)),
+            isDefaultCitationsEnabled.pipe(take(1)),
+            isLLMCitationsEnabled.pipe(take(1)),
           ]).pipe(
-            switchMap(([ragStrategies, ragImageStrategies, isCitationsEnabled]) => {
+            switchMap(([ragStrategies, ragImageStrategies, isDefaultCitationsEnabled, isLLMCitationsEnabled]) => {
               const chatOptions: ChatOptions = {};
               if (ragStrategies.length > 0) {
                 chatOptions.rag_strategies = ragStrategies;
                 chatOptions.rag_images_strategies = ragImageStrategies;
               }
-              if (isCitationsEnabled) {
+              if (isLLMCitationsEnabled) {
+                chatOptions.citations = 'llm_footnotes';
+              } else if (isDefaultCitationsEnabled) {
                 chatOptions.citations = true;
               }
               return askQuestion(question, reset, chatOptions);

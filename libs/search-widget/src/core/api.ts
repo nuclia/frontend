@@ -58,7 +58,7 @@ let prompt: string | undefined = undefined;
 let systemPrompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
 let vectorset: string | undefined = undefined;
-let CITATIONS = false;
+let CITATIONS: boolean | 'none' | 'default' | 'llm_footnotes' = false;
 let REPHRASE = false;
 let REPHRASE_PROMPT: string | undefined = undefined;
 let ASK_TO_RESOURCE = '';
@@ -117,7 +117,7 @@ export const initNuclia = (
   if (widgetOptions.features?.hideAnswer) {
     hideAnswer.set(true);
   }
-  CITATIONS = !!widgetOptions.features?.citations;
+  CITATIONS = !!widgetOptions.features?.llmCitations ? 'llm_footnotes' : !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;
   REPHRASE_PROMPT = widgetOptions.rephrase_prompt;

@@ -25,7 +25,15 @@ export const permalink: Observable<boolean> = widgetFeatures.pipe(map((features)
 export const previewBaseUrl = writableSubject<string>('');
 export const hasFilterButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.answers));
-export const isCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.citations));
+export const isDefaultCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.citations),
+);
+export const isLLMCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.llmCitations),
+);
+export const isCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.citations || !!features?.llmCitations),
+);
 export const isKnowledgeGraphEnabled: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.knowledgeGraph),
 );

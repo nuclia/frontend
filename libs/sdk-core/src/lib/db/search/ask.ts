@@ -129,6 +129,10 @@ export function ask(
           }
           const citationsItem = items.find((item) => item.item.type === 'citations');
           const citations = citationsItem ? (citationsItem.item as Ask.CitationsAskResponseItem).citations : undefined;
+          const citationFootnotesItem = items.find((item) => item.item.type === 'footnote_citations');
+          const citation_footnote_to_context = citationFootnotesItem
+            ? (citationFootnotesItem.item as Ask.CitationFootnotesAskResponseItem).footnote_to_context
+            : undefined;
           const prequeriesItem = items.find((item) => item.item.type === 'prequeries');
           const prequeries: { [key: string]: Omit<Search.FindResults, 'type'> } | undefined = prequeriesItem
             ? (prequeriesItem.item as Ask.PrequeriesResponseItem).results
@@ -165,6 +169,7 @@ export function ask(
             incomplete,
             id,
             citations,
+            citation_footnote_to_context,
             prequeries,
             jsonAnswer: jsonAnswer?.object,
             metadata,

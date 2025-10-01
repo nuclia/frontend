@@ -214,6 +214,7 @@ export namespace Widget {
      */
     noBM25forChat?: boolean;
     citations?: boolean;
+    llmCitations?: boolean;
     rephrase?: boolean;
     debug?: boolean;
     preferMarkdown?: boolean;
