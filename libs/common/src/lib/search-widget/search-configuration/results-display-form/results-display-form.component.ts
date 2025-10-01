@@ -49,6 +49,13 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
     ExpandableTextareaComponent,
   ],
   templateUrl: './results-display-form.component.html',
+  styles: [
+    `
+      nsi-badge {
+        display: inline-block;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
