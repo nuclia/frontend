@@ -593,49 +593,6 @@ export function askQuestion(
         }
       }
     }),
-    tap((result) => {
-      hasNotEnoughData.set(result.type === 'error' && result.status === -2);
-      if (result.type === 'error') {
-        if ([-3, -2, -1, 412, 529].includes(result.status)) {
-          const messages: { [key: string]: string } = {
-            '-3': 'answer.error.no_retrieval_data',
-            '-2': 'answer.error.llm_cannot_answer',
-            '-1': 'answer.error.llm_error',
-            '412': 'answer.error.rephrasing',
-            '529': 'answer.error.rephrasing',
-          };
-          if (!hasError) {
-            // error is set only once
-            hasError = true;
-            const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-            appendChatEntry.set({
-              question,
-              answer: {
-                inError: true,
-                text: translateInstant(text),
-                type: 'answer',
-                id: '',
-              },
-            });
-          }
-        } else {
-          chatError.set(result);
-        }
-        pendingResults.set(false);
-      } else {
-        if (result.incomplete) {
-          if (hasNoResultsWithAutofilter(result.sources, options)) {
-            // when no results with autofilter on, a secondary call is made with autofilter off,
-            // meanwhile, we do not want to display the 'Not enough data' message
-            result.text = '';
-          }
-          currentAnswer.set(result);
-        } else {
-          appendChatEntry.set({ question, answer: result });
-          pendingResults.set(false);
-        }
-      }
-    }),
   );
 }
 
