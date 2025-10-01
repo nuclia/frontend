@@ -24,6 +24,7 @@
     hideResults,
     isAnswerEnabled,
     isEmptySearchQuery,
+    isReasoning,
     jsonAnswer,
     jsonSchemaEnabled,
     loadFonts,
@@ -196,7 +197,7 @@
       </div>
     </div>
     {#if $showLoading}
-      <LoadingDots />
+      <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
     {/if}
   {/if}
 

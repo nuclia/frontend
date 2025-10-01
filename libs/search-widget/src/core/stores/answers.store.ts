@@ -62,6 +62,8 @@ export const firstAnswer = answerState.reader((state) =>
     : state.chat[0]?.answer || EMPTY_ANSWER,
 );
 
+export const isReasoning = answerState.reader((state) => !state.currentAnswer.text && !!state.currentAnswer.reasoning);
+
 export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );

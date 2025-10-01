@@ -14,7 +14,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { InfiniteScroll, LoadingDots } from '../../common';
   import globalCss from '../../common/global.css?inline';
-  import { logEvent } from '../../core';
+  import { isReasoning, logEvent } from '../../core';
   import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { _, setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -230,7 +230,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if ready && !!svgSprite && visible}
     <div
       class="backdrop"
@@ -292,7 +292,7 @@
               </div>
             </div>
             {#if $showLoading}
-              <LoadingDots />
+              <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
             {/if}
           {/if}
         </div>
