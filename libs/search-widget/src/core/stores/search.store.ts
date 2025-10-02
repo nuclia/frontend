@@ -1063,6 +1063,8 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
   };
 }
 
+const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2})/g);
+
 export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   if (!answer.citations && !answer.citation_footnote_to_context) {
     return [];
@@ -1070,13 +1072,27 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   const metadata = displayedMetadata.getValue();
   const resources = answer.sources?.resources || {};
   const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
-  const citationIds = answer.citations
-    ? Object.keys(answer.citations)
-    : answer.citation_footnote_to_context
-      ? Object.entries(answer.citation_footnote_to_context)
-          .sort((entry1, entry2) => entry1[0].localeCompare(entry2[0]))
-          .map((entry) => entry[1])
-      : [];
+  let citationIds: string[] = [];
+  if (answer.citations) {
+    citationIds = Object.keys(answer.citations);
+  } else if (answer.citation_footnote_to_context) {
+    // With llm_footnotes, the generated answer contains numbered markers (like `[1]`)
+    // directly in the text. And at the end of the generated answer, there is a list of
+    // references, like `[1]: block-AB`.
+    // The `footnote_to_context` entry gives the mapping between theses block ids and the
+    // actual paragraph ids.
+    // To attribute the proper citation to the proper marker, we extract the marker numbers from the
+    // generated answer, and we sort the list of sources accordingly.
+    const references = (answer.text || '').matchAll(FOOTNOTES_REF);
+    const refIndexes: { block: string; index: number }[] = [];
+    for (const match of references) {
+      refIndexes.push({ block: match[2], index: parseInt(match[1]) });
+    }
+    const ordered = refIndexes.sort((entry1, entry2) => entry1.index - entry2.index).map((entry) => entry.block);
+    citationIds = Object.entries(answer.citation_footnote_to_context)
+      .sort((entry1, entry2) => ordered.indexOf(entry1[0]) - ordered.indexOf(entry2[0]))
+      .map((entry) => entry[1]);
+  }
   const augmentedContext = answer.augmentedContext;
   return citationIds.reduce((acc, citationId, index) => {
     // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
