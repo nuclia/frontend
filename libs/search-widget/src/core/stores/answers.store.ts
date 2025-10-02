@@ -211,23 +211,14 @@ function addCitationReferences(rawText: string, citations: Citations) {
   return rawText;
 }
 
-const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2})/g);
+const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\sblock-[A-Z]{2}/g);
 
 function addLLMCitationReferences(rawText: string, footnotes: CitationFootnotes) {
-  // With llm_footnotes, the generated answer contains numbered markers (like `[1]`)
-  // directly in the text. And at the end of the generated answer, there is a list of
-  // references, like `[1]: block-AB`.
-  // The `footnote_to_context` entry gives the mapping between theses block ids and the
-  // actual paragraph ids.
-  // To attribute the proper citation to the proper marke, we sort according the alphabetical
-  // order of the block ids, both here and when creating the list of sources in `getSourcesResults()`
   const references = rawText.matchAll(FOOTNOTES_REF);
-  const ordered = Object.keys(footnotes).sort((key1, key2) => key1.localeCompare(key2));
   for (const match of references) {
     const footnoteIndex = match[1];
-    const markerIndex = ordered.indexOf(match[2]) + 1;
     rawText = rawText.replace(match[0], '');
-    rawText = rawText.replaceAll(`[${footnoteIndex}]`, `<span class="ref">${markerIndex}</span>`);
+    rawText = rawText.replaceAll(`[${footnoteIndex}]`, `<span class="ref">${footnoteIndex}</span>`);
   }
   return rawText;
 }
