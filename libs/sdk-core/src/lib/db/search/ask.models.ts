@@ -144,6 +144,7 @@ export namespace Ask {
     learning_id: string;
     relations: Search.Relations;
     citations: Citations;
+    citation_footnote_to_context: CitationFootnotes;
     prompt_context?: string[];
     metadata: MetadataAskResponseItem;
     answer_json?: any;
