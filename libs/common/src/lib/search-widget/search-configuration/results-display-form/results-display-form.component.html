@@ -22,8 +22,14 @@
           </pa-radio>
           <pa-radio
             value="citations"
-            help="search.configuration.result-display.display-results.citations-only-radio-help">
-            {{ 'search.configuration.result-display.display-results.citations-only-radio' | translate }}
+            help="search.configuration.result-display.display-results.citations-radio-help">
+            {{ 'search.configuration.result-display.display-results.citations-radio' | translate }}
+          </pa-radio>
+          <pa-radio
+            value="llmCitations"
+            help="search.configuration.result-display.display-results.llm-citations-radio-help">
+            {{ 'search.configuration.result-display.display-results.llm-citations-radio' | translate }}
+            <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
           </pa-radio>
         </pa-radio-group>
       </div>

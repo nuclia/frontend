@@ -1,4 +1,11 @@
-import { Search, type Ask, type IErrorResponse } from '@nuclia/core';
+import {
+  Search,
+  sliceUnicode,
+  type Ask,
+  type CitationFootnotes,
+  type Citations,
+  type IErrorResponse,
+} from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
 
@@ -160,26 +167,67 @@ export const hideAnswer = answerState.writer<boolean, boolean>(
   (state, param) => ({ ...state, hideAnswer: param }),
 );
 
-export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedContextText): Search.FindParagraph {
-  const position = paragraph.id.split('/').pop()?.split('-');
-  return {
-    order: 0,
-    score: 1,
-    score_type: Search.FindScoreType.BOTH,
-    text: paragraph.text,
-    id: paragraph.id,
-    labels: [],
-    position: {
-      index: paragraph.position?.index || 0,
-      start: parseInt(position?.[0] || ''),
-      end: parseInt(position?.[1] || ''),
-      page_number: paragraph.position?.page_number,
-      start_seconds: paragraph.position?.start_seconds,
-      end_seconds: paragraph.position?.end_seconds,
-    },
-    fuzzy_result: false,
-    page_with_visual: false,
-    is_a_table: false,
-    reference: '',
-  };
+const TABLE_BORDER = new RegExp(/^[-|]+$/);
+
+export function addReferences(answer: Partial<Ask.Answer>) {
+  if (answer.citations) {
+    return addCitationReferences(answer.text || '', answer.citations);
+  } else if (answer.citation_footnote_to_context) {
+    return addLLMCitationReferences(answer.text || '', answer.citation_footnote_to_context);
+  } else {
+    return answer.text || '';
+  }
+}
+
+function addCitationReferences(rawText: string, citations: Citations) {
+  Object.values(citations)
+    .reduce(
+      (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
+      [] as { index: number; end: number }[],
+    )
+    .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
+    .reverse()
+    .forEach((ref) => {
+      let before = sliceUnicode(rawText, 0, ref.end);
+      let after = sliceUnicode(rawText, ref.end);
+      const lines = before.split('\n');
+      const lastLine = lines[lines.length - 1];
+      const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
+      // if the citation marker has been positioned on a table border, we need to move it to the previous line
+      // so it does not break the table
+      if (lastLineIsTableBorder) {
+        before = lines.slice(0, -1).join('\n');
+        after = `\n${lastLine}${after}`;
+      }
+      const lastChar = before.slice(-1);
+      // if the citation marker has been positioned after a cell, we need to move it into the cell
+      // so it does not break the table
+      if (lastChar === '|' || lastChar === '<') {
+        before = before.slice(0, -1);
+        after = `${lastChar}${after}`;
+      }
+      rawText = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
+    });
+  return rawText;
+}
+
+const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2})/g);
+
+function addLLMCitationReferences(rawText: string, footnotes: CitationFootnotes) {
+  // With llm_footnotes, the generated answer contains numbered markers (like `[1]`)
+  // directly in the text. And at the end of the generated answer, there is a list of
+  // references, like `[1]: block-AB`.
+  // The `footnote_to_context` entry gives the mapping between theses block ids and the
+  // actual paragraph ids.
+  // To attribute the proper citation to the proper marke, we sort according the alphabetical
+  // order of the block ids, both here and when creating the list of sources in `getSourcesResults()`
+  const references = rawText.matchAll(FOOTNOTES_REF);
+  const ordered = Object.keys(footnotes).sort((key1, key2) => key1.localeCompare(key2));
+  for (const match of references) {
+    const footnoteIndex = match[1];
+    const markerIndex = ordered.indexOf(match[2]) + 1;
+    rawText = rawText.replace(match[0], '');
+    rawText = rawText.replaceAll(`[${footnoteIndex}]`, `<span class="ref">${markerIndex}</span>`);
+  }
+  return rawText;
 }

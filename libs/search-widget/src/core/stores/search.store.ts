@@ -1,19 +1,20 @@
-import type {
-  ChatOptions,
-  Classification,
-  FieldId,
-  Filter,
-  FilterExpression,
-  IErrorResponse,
-  IFieldData,
-  IResource,
-  Paragraph,
-  ReasoningParam,
-  ResourceData,
-  ResourceField,
-  Routing,
+import {
   Search,
-  SearchOptions,
+  type Ask,
+  type ChatOptions,
+  type Classification,
+  type FieldId,
+  type Filter,
+  type FilterExpression,
+  type IErrorResponse,
+  type IFieldData,
+  type IResource,
+  type Paragraph,
+  type ReasoningParam,
+  type ResourceData,
+  type ResourceField,
+  type Routing,
+  type SearchOptions,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -40,7 +41,14 @@ import {
 } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
-import type { FindResultsAsList, RankedFieldResult, ResultMetadata, ResultType, TypedResult } from '../models';
+import type {
+  FindResultsAsList,
+  RankedFieldResult,
+  RankedParagraph,
+  ResultMetadata,
+  ResultType,
+  TypedResult,
+} from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
@@ -1030,3 +1038,122 @@ export const searchConfigId = searchState.writer<string | undefined>(
     search_config_id: config,
   }),
 );
+
+export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedContextText): Search.FindParagraph {
+  const position = paragraph.id.split('/').pop()?.split('-');
+  return {
+    order: 0,
+    score: 1,
+    score_type: Search.FindScoreType.BOTH,
+    text: paragraph.text,
+    id: paragraph.id,
+    labels: [],
+    position: {
+      index: paragraph.position?.index || 0,
+      start: parseInt(position?.[0] || ''),
+      end: parseInt(position?.[1] || ''),
+      page_number: paragraph.position?.page_number,
+      start_seconds: paragraph.position?.start_seconds,
+      end_seconds: paragraph.position?.end_seconds,
+    },
+    fuzzy_result: false,
+    page_with_visual: false,
+    is_a_table: false,
+    reference: '',
+  };
+}
+
+export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
+  if (!answer.citations && !answer.citation_footnote_to_context) {
+    return [];
+  }
+  const metadata = displayedMetadata.getValue();
+  const resources = answer.sources?.resources || {};
+  const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
+  const citationIds = answer.citations
+    ? Object.keys(answer.citations)
+    : answer.citation_footnote_to_context
+      ? Object.entries(answer.citation_footnote_to_context)
+          .sort((entry1, entry2) => entry1[0].localeCompare(entry2[0]))
+          .map((entry) => entry[1])
+      : [];
+  const augmentedContext = answer.augmentedContext;
+  return citationIds.reduce((acc, citationId, index) => {
+    // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
+    // Note: the widget does not support extra_context, but a proxy could be injecting some
+    // and it must not break the widget. The objective is not to display the citations properly in this case
+    // (as customer should implement their own widget to handle this case), but just to not break the widget.
+    if (citationId.includes('/')) {
+      const citationPath = citationId.split('/');
+      const [resourceId, shortFieldType, fieldId] = citationPath;
+      const resource = resources[resourceId];
+      const graphPrequeryResource = graphPrequeryResources[resourceId];
+      if (resource && citationPath.length === 4) {
+        // the citation is about a paragraph
+        let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
+        if (!paragraph) {
+          const augmentedParagraph = augmentedContext?.paragraphs[citationId];
+          if (augmentedParagraph) {
+            paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
+          }
+        }
+        if (paragraph) {
+          paragraph.rank = index + 1;
+          let field: FieldId;
+          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+            // we take the first other field that is not generic
+            field = getNonGenericField(resource.data || {});
+          } else {
+            field = {
+              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+              field_id: fieldId,
+            };
+          }
+          const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+          if (!existing) {
+            const fieldData = getFieldDataFromResource(resource, field);
+            const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
+            const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+            acc.push({
+              ...resource,
+              resultType,
+              resultIcon,
+              field,
+              fieldData,
+              paragraphs: [paragraph],
+              resultMetadata,
+            });
+          } else {
+            existing.paragraphs!.push(paragraph);
+          }
+        }
+      } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+        // the citation is about a resource or a relation
+        const res = resources[resourceId] || graphPrequeryResource;
+        const existing = acc.find((r) => r.id === res.id);
+        if (!existing) {
+          const field = {
+            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+            field_id: fieldId,
+          };
+          const fieldData = getFieldDataFromResource(res, field);
+          const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
+          const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+          acc.push({
+            ...res,
+            resultType,
+            resultIcon,
+            field,
+            fieldData,
+            paragraphs: [],
+            resultMetadata,
+            ranks: [index + 1],
+          });
+        } else {
+          existing.ranks!.push(index + 1);
+        }
+      }
+    }
+    return acc;
+  }, [] as TypedResult[]);
+}

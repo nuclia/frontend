@@ -95,7 +95,12 @@ export function getChatOptions(searchConfig: Widget.SearchConfiguration, default
     ...getBaseSearchOptions(searchConfig),
     generative_model: searchConfig.generativeAnswer.generativeModel || defaultGenerativeModel,
     prefer_markdown: searchConfig.generativeAnswer.preferMarkdown,
-    citations: searchConfig.resultDisplay.showResultType === 'citations',
+    citations:
+      searchConfig.resultDisplay.showResultType === 'citations'
+        ? true
+        : searchConfig.resultDisplay.showResultType === 'llmCitations'
+          ? 'llm_footnotes'
+          : false,
   };
   if (
     searchConfig.generativeAnswer.prompt.trim() ||

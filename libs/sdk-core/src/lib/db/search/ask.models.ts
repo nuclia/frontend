@@ -21,6 +21,7 @@ export namespace Ask {
     sources?: Search.FindResults;
     prequeries?: { [key: string]: Omit<Search.FindResults, 'type'> };
     citations?: Citations;
+    citation_footnote_to_context?: CitationFootnotes;
     jsonAnswer?: any;
     incomplete?: boolean;
     inError?: boolean;
@@ -46,6 +47,7 @@ export namespace Ask {
       | AnswerJsonResponseItem
       | MetadataAskResponseItem
       | CitationsAskResponseItem
+      | CitationFootnotesAskResponseItem
       | PrequeriesResponseItem
       | StatusAskResponseItem
       | ErrorAskResponseItem
@@ -83,6 +85,10 @@ export namespace Ask {
   export interface CitationsAskResponseItem {
     type: 'citations';
     citations: Citations;
+  }
+  export interface CitationFootnotesAskResponseItem {
+    type: 'footnote_citations';
+    footnote_to_context: CitationFootnotes;
   }
 
   export interface PrequeriesResponseItem {
@@ -138,6 +144,7 @@ export namespace Ask {
     learning_id: string;
     relations: Search.Relations;
     citations: Citations;
+    citation_footnote_to_context: CitationFootnotes;
     prompt_context?: string[];
     metadata: MetadataAskResponseItem;
     answer_json?: any;
@@ -193,6 +200,10 @@ export namespace Ask {
 
 export interface Citations {
   [paragraphId: string]: [number, number][];
+}
+
+export interface CitationFootnotes {
+  [blockId: string]: string;
 }
 
 export interface PredictAnswerOptions {

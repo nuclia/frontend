@@ -1,8 +1,9 @@
-# 1.28.1 (unreleased)
+# 1.29.0 (2025-10-01)
 
-### Improvements
+### Features
 
 - Add support for filter expressions on tasks
+- Support LLM citations
 
 # 1.28.0 (2025-09-15)
 
