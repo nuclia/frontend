@@ -29,6 +29,7 @@ import {
   AccountStatus,
   CustomModel,
   CustomModelItem,
+  improveSchemaNames,
   KbIndex,
   LearningConfigurations,
   ModelConfiguration,
@@ -619,7 +620,7 @@ export class Db implements IDb {
     const request = standalone
       ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
       : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
-    return request.pipe(map((config) => normalizeSchemaProperty(config)));
+    return request.pipe(map((config) => improveSchemaNames(normalizeSchemaProperty(config))));
   }
 
   /**
