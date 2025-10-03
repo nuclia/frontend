@@ -179,6 +179,7 @@
 	"account.users_left": "Licencias disponibles",
 	"accounts.add_user_input": "Correo del usuario",
 	"activity.actor": "Actor",
+	"activity.clear": "Borrar selección",
 	"activity.columns": "Columnas visibles",
 	"activity.email-sent": "La generación del registro puede tardar un tiempo, se enviará un enlace de descarga a {{email}} cuando finalice.",
 	"activity.filter": "Filtrar",

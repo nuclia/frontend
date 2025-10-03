@@ -13,13 +13,14 @@ import {
 import { LogEntry, LogValueObject, LogValueString } from './log.models';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
+import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
 import { unparse } from 'papaparse';
 import { ActivityLogTableModalComponent } from './log-table-modal.component';
 
 @Component({
   standalone: true,
   imports: [
+    ButtonMiniComponent,
     PaTableModule,
     PaDateTimeModule,
     CommonModule,
@@ -100,6 +101,11 @@ export class ActivityLogTableComponent {
     this.hiddenHeaders = this.hiddenHeaders.includes(header)
       ? this.hiddenHeaders.filter((item) => item !== header)
       : this.hiddenHeaders.concat(header);
+  }
+
+  clearHeaders(event: Event) {
+    event.stopPropagation();
+    this.hiddenHeaders = this.headers;
   }
 
   downloadCSV() {
