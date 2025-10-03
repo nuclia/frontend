@@ -1,0 +1,59 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    @if (required) {
+      <span class="required">*</span>
+    }
+  </label>
+
+  <!-- Code Editor Container -->
+  <div
+    class="code-editor-container"
+    [formGroup]="form">
+    <!-- Syntax Highlighting Layer -->
+    <div
+      #highlightContainer
+      class="highlight-layer"
+      aria-hidden="true"></div>
+
+    <!-- Code Input Textarea -->
+    <textarea
+      #codeTextarea
+      [id]="controlName"
+      [formControlName]="controlName"
+      [placeholder]="placeholder"
+      [rows]="rows"
+      class="code-textarea"
+      spellcheck="false"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      (input)="onTextareaInput($event)"></textarea>
+  </div>
+
+  <!-- Helper Text -->
+  <div class="editor-help">
+    <span class="help-text">Python Code Editor - Tab for 4-space indent, Enter for smart indentation</span>
+    <span class="language-info">Python</span>
+  </div>
+
+  <!-- Syntax Errors -->
+  @if (validationErrors().length > 0) {
+    <div class="syntax-errors">
+      <div class="error-header">
+        <span class="error-icon">⚠️</span>
+        <span class="error-title">Python Syntax Issues:</span>
+      </div>
+      @for (error of validationErrors(); track error) {
+        <div class="error-item">
+          <span class="error-message">{{ error }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Conditional child content for nested properties -->
+  <div class="child-content">
+    <ng-content></ng-content>
+  </div>
+</div>

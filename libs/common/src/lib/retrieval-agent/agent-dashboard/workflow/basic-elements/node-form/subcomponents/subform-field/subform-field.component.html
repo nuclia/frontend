@@ -1,0 +1,154 @@
+<div
+  class="subform-field"
+  [formGroup]="form">
+  <div class="subform-header">
+    <label class="subform-label">
+      {{ label }}
+      <span
+        *ngIf="required"
+        style="color: red">
+        *
+      </span>
+    </label>
+    <small
+      *ngIf="property.description"
+      class="subform-description">
+      {{ property.description }}
+    </small>
+  </div>
+
+  <div
+    class="subform-content"
+    *ngIf="resolvedSchema && subFormGroup">
+    <div [formGroup]="subFormGroup">
+      <!-- Render fields directly using the same logic as FieldRendererComponent but without circular dependency -->
+      <div
+        *ngFor="let field of renderableFields"
+        class="subform-field-item">
+        <ng-container [ngSwitch]="field.config.component">
+          <!-- Array string field -->
+          <app-array-string-field
+            *ngSwitchCase="'array-string-field'"
+            [form]="subFormGroup"
+            [arrayName]="field.key"
+            [label]="field.label"
+            [required]="field.required"
+            [config]="getSchemasAsNodeConfig()"></app-array-string-field>
+
+          <!-- Code editor -->
+          <app-code-editor
+            *ngSwitchCase="'code-editor'"
+            [form]="subFormGroup"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"
+            [initialLanguage]="field.config.additionalProps?.['initialLanguage'] || 'javascript'"
+            [availableLanguages]="field.config.additionalProps?.['availableLanguages']"
+            [showLanguageSelector]="field.config.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
+
+          <!-- Driver select -->
+          <app-driver-select
+            *ngSwitchCase="'driver-select'"
+            [label]="field.label"
+            [required]="field.required"
+            [form]="subFormGroup"
+            [controlName]="field.key"
+            [provider]="field.config.additionalProps?.['provider']"
+            [multiselect]="field.config.additionalProps?.['multiselect']"></app-driver-select>
+
+          <!-- Enum select -->
+          <app-enum-select
+            *ngSwitchCase="'enum-select'"
+            [form]="subFormGroup"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"></app-enum-select>
+
+          <!-- MCP Source Select -->
+          <app-mcp-source-select
+            *ngSwitchCase="'mcp-source-select'"
+            [form]="subFormGroup"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"></app-mcp-source-select>
+
+          <!-- Model select fields -->
+          <app-model-select
+            *ngSwitchCase="'model-select'"
+            [label]="field.label"
+            [required]="field.required"
+            [form]="subFormGroup"
+            [controlName]="field.key"></app-model-select>
+
+          <!-- Rules field -->
+          <app-rules-field
+            *ngSwitchCase="'rules-field'"
+            [form]="subFormGroup"
+            [config]="getSchemasAsNodeConfig()"></app-rules-field>
+
+          <!-- Transport field -->
+          <app-transport-field
+            *ngSwitchCase="'transport-field'"
+            [form]="subFormGroup"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"></app-transport-field>
+
+          <!-- Boolean toggle -->
+          <pa-toggle
+            *ngSwitchCase="'pa-toggle'"
+            [formControlName]="field.key"
+            [required]="field.required"
+            withBackground>
+            {{ field.label }}
+            <span
+              *ngIf="field.required"
+              style="color: red">
+              *
+            </span>
+          </pa-toggle>
+
+          <!-- Custom placeholder for TODO fields -->
+          <div *ngSwitchCase="'custom-placeholder'">
+            <label>
+              <i>[Custom]</i>
+              {{ field.label }}
+              <span
+                *ngIf="field.required"
+                style="color: red">
+                *
+              </span>
+            </label>
+          </div>
+
+          <!-- Text input and fallback -->
+          <pa-input
+            *ngSwitchDefault
+            [id]="field.key"
+            [formControlName]="field.key"
+            [type]="getFieldType(field)"
+            [placeholder]="field.property.description || ''"
+            [help]="field.property.description || ''"
+            [required]="field.required">
+            {{ field.label }}
+            <span
+              *ngIf="field.required"
+              style="color: red">
+              *
+            </span>
+          </pa-input>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="!resolvedSchema"
+    class="subform-placeholder">
+    <em>Unable to resolve schema for: {{ property.$ref || 'unknown reference' }}</em>
+  </div>
+</div>

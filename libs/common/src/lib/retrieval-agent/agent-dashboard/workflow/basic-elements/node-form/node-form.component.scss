@@ -1,0 +1,26 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../../../agent-dashboard.tokens' as dashboard;
+
+.node-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+label {
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: rhythm(1);
+}
+input[type='text'] {
+  padding: rhythm(2);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+input[type='checkbox'] {
+  margin-right: rhythm(2);
+}

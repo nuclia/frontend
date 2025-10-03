@@ -353,6 +353,8 @@
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Preus sense IVA",
 	"billing.year": "Any",
+	"code-editor.help.tab": "Feu servir Tab per a la sagnia, Maj+Tab per eliminar la sagnia",
+	"code-editor.language.label": "Llenguatge",
 	"confirm.delete_body": "Eliminar recurs",
 	"confirm.delete_title": "Segur que vols eliminar el recurs?",
 	"dashboard-home.blocked.generative": "Has arribat a la teva quota de respostes generatives",

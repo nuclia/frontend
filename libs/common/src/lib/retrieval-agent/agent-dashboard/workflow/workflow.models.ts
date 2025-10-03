@@ -364,7 +364,7 @@ export function basicAskUiToCreation(config: BasicAskAgentUI): BasicAskAgentCrea
   const { sources, generative_model, summarize_model, ...agentConfig } = config;
   return {
     module: 'basic_ask',
-    sources: sources.split(','),
+    sources: Array.isArray(sources) ? sources : sources.split(','),
     // null is not allowed on model params
     generative_model: generative_model || undefined,
     summarize_model: summarize_model || undefined,

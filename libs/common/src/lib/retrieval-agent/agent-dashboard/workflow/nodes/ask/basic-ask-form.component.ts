@@ -33,7 +33,7 @@ export class BasicAskFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     ask: new FormGroup({
-      sources: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      sources: new FormArray<FormControl<string>>([], { validators: [Validators.required] }),
       fallback: new FormControl<BaseContextAgent | null>(null),
       generative_model: new FormControl<string>('', { nonNullable: true }),
       summarize_model: new FormControl<string>('', { nonNullable: true }),
@@ -70,10 +70,11 @@ export class BasicAskFormComponent extends FormDirective implements OnInit {
       .subscribe((options) => this.sourceOptions.set(options));
 
     if (this.config) {
-      const { rules, ...config } = this.config as BasicAskAgentUI;
+      const { rules, sources, ...config } = this.config as BasicAskAgentUI;
       const formConfig = {
         ...config,
         rules: rules || [],
+        sources: Array.isArray(sources) ? sources : sources ? [sources] : [],
       };
       this.configForm.patchValue(formConfig);
     }
@@ -81,5 +82,21 @@ export class BasicAskFormComponent extends FormDirective implements OnInit {
     this.workflowService.getModels().subscribe((models) => {
       this.models.set(models);
     });
+  }
+
+  override submit() {
+    if (this.form.valid) {
+      const rawValue = this.configForm.getRawValue();
+
+      // Convert sources array back to comma-separated string
+      const processedValue = {
+        ...rawValue,
+        sources: Array.isArray(rawValue.sources)
+          ? rawValue.sources.filter((source) => source && String(source).trim() !== '').join(',')
+          : rawValue.sources,
+      };
+
+      this.submitForm.emit(processedValue);
+    }
   }
 }

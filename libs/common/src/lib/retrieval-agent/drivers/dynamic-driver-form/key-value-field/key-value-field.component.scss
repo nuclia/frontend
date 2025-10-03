@@ -1,0 +1,30 @@
+.form-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .label-and-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    label {
+      font-weight: 500;
+      font-size: 14px;
+    }
+  }
+
+  .key-value-pair {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+
+    pa-input {
+      flex: 1;
+    }
+
+    pa-button {
+      flex-shrink: 0;
+    }
+  }
+}

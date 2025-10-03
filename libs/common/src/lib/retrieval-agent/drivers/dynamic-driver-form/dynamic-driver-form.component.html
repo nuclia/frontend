@@ -1,0 +1,23 @@
+<div class="dynamic-driver-form">
+  @if (isFormReady()) {
+    <form
+      [formGroup]="form"
+      class="driver-form">
+      @for (field of renderableFields; track field.key) {
+        <div class="field-container">
+          <app-driver-field-renderer
+            [fieldConfig]="field.config"
+            [form]="form"
+            [controlName]="field.key"
+            [label]="field.label"
+            [property]="field.property"
+            [required]="field.required"></app-driver-field-renderer>
+        </div>
+      }
+    </form>
+  } @else {
+    <div class="loading">
+      {{ 'common.loading' | translate }}
+    </div>
+  }
+</div>

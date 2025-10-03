@@ -1,0 +1,145 @@
+<div [formGroup]="form">
+  <ng-container [ngSwitch]="fieldConfig.component">
+    <!-- Array string field -->
+    <app-array-string-field
+      *ngSwitchCase="'array-string-field'"
+      [form]="form"
+      [arrayName]="controlName"
+      [label]="label"
+      [required]="required"
+      [config]="config"></app-array-string-field>
+
+    <!-- Code editor -->
+    <app-code-editor
+      *ngSwitchCase="'code-editor'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"
+      [initialLanguage]="fieldConfig.additionalProps?.['initialLanguage'] || 'javascript'"
+      [availableLanguages]="fieldConfig.additionalProps?.['availableLanguages']"
+      [showLanguageSelector]="fieldConfig.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
+
+    <!-- Driver select -->
+    <app-driver-select
+      *ngSwitchCase="'driver-select'"
+      [label]="label"
+      [required]="required"
+      [form]="form"
+      [controlName]="controlName"
+      [provider]="fieldConfig.additionalProps?.['provider']"
+      [multiselect]="fieldConfig.additionalProps?.['multiselect']"></app-driver-select>
+
+    <!-- Enum select -->
+    <app-enum-select
+      *ngSwitchCase="'enum-select'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-enum-select>
+
+    <!-- MCP Source Select -->
+    <app-mcp-source-select
+      *ngSwitchCase="'mcp-source-select'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-mcp-source-select>
+
+    <!-- Model select fields -->
+    <app-model-select
+      *ngSwitchCase="'model-select'"
+      [label]="label"
+      [required]="required"
+      [form]="form"
+      [controlName]="controlName"></app-model-select>
+
+    <!-- Rules field -->
+    <app-rules-field
+      *ngSwitchCase="'rules-field'"
+      [form]="form"
+      [config]="config"></app-rules-field>
+
+    <!-- Subform field for $ref properties -->
+    <app-subform-field
+      *ngSwitchCase="'subform-field'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-subform-field>
+
+    <!-- Transport field -->
+    <app-transport-field
+      *ngSwitchCase="'transport-field'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-transport-field>
+
+    <!-- Text input (includes string, const, and fallback) -->
+    <pa-input
+      *ngSwitchCase="'pa-input'"
+      [id]="controlName"
+      [formControlName]="controlName"
+      [type]="getFieldType()"
+      [placeholder]="property.description || ''"
+      [help]="property.description || ''"
+      [required]="required">
+      {{ label }}
+      <span
+        *ngIf="required"
+        style="color: red">
+        *
+      </span>
+    </pa-input>
+
+    <!-- Boolean toggle -->
+    <pa-toggle
+      *ngSwitchCase="'pa-toggle'"
+      [formControlName]="controlName"
+      [required]="required"
+      withBackground>
+      {{ label }}
+      <span
+        *ngIf="required"
+        style="color: red">
+        *
+      </span>
+    </pa-toggle>
+
+    <!-- Custom placeholder for TODO fields -->
+    <div *ngSwitchCase="'custom-placeholder'">
+      <label>
+        <i>[Custom]</i>
+        {{ label }}
+        <span
+          *ngIf="required"
+          style="color: red">
+          *
+        </span>
+      </label>
+    </div>
+
+    <!-- Fallback to text input -->
+    <pa-input
+      *ngSwitchDefault
+      [id]="controlName"
+      [formControlName]="controlName"
+      type="text"
+      [placeholder]="property.description || ''"
+      [help]="property.description || ''"
+      [required]="required">
+      {{ label }}
+      <span
+        *ngIf="required"
+        style="color: red">
+        *
+      </span>
+    </pa-input>
+  </ng-container>
+</div>

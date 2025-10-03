@@ -1,0 +1,104 @@
+<div
+  class="driver-subform-field"
+  [formGroup]="form">
+  <div class="subform-header">
+    <label class="subform-label">
+      {{ label }}
+      @if (required) {
+        <span class="required-indicator">*</span>
+      }
+    </label>
+  </div>
+
+  <div class="subform-content">
+    @if (isLoading()) {
+      <div class="loading">Loading configuration...</div>
+    } @else if (renderableFields().length === 0) {
+      <div class="no-fields">No configuration fields available</div>
+    } @else if (!getSubform()) {
+      <div class="subform-error">
+        <span>Subform not initialized for: {{ controlName }}</span>
+      </div>
+    } @else {
+      <div class="subform-fields">
+        @for (field of renderableFields(); track field.key) {
+          @if (getFormControl(field.key)) {
+            <div class="subform-field">
+              @switch (field.config.component) {
+                @case ('api-headers-field') {
+                  <app-api-headers-field
+                    [form]="getSafeSubform()"
+                    [controlName]="field.key"
+                    [label]="field.label"
+                    [required]="field.required"></app-api-headers-field>
+                }
+                @case ('key-value-field') {
+                  <app-key-value-field
+                    [form]="getSafeSubform()"
+                    [controlName]="field.key"
+                    [label]="field.label"
+                    [property]="field.property"
+                    [required]="field.required"></app-key-value-field>
+                }
+                @case ('pa-input') {
+                  <pa-input
+                    [id]="controlName + '_' + field.key"
+                    [formControl]="getSafeFormControl(field.key)"
+                    [type]="field.config.type === 'number' ? 'number' : 'text'"
+                    [placeholder]="field.property.description || ''"
+                    [required]="field.required">
+                    {{ field.label }}
+                    @if (field.required) {
+                      <span style="color: red">*</span>
+                    }
+                  </pa-input>
+                }
+                @case ('pa-toggle') {
+                  <pa-toggle
+                    [id]="controlName + '_' + field.key"
+                    [formControl]="getSafeFormControl(field.key)"
+                    [required]="field.required">
+                    {{ field.label }}
+                    @if (field.required) {
+                      <span style="color: red">*</span>
+                    }
+                  </pa-toggle>
+                }
+                @case ('enum-select') {
+                  <pa-input
+                    [id]="controlName + '_' + field.key"
+                    [formControl]="getSafeFormControl(field.key)"
+                    type="text"
+                    [placeholder]="field.property.description || ''"
+                    [required]="field.required">
+                    {{ field.label }}
+                    @if (field.required) {
+                      <span style="color: red">*</span>
+                    }
+                  </pa-input>
+                }
+                @default {
+                  <pa-input
+                    [id]="controlName + '_' + field.key"
+                    [formControl]="getSafeFormControl(field.key)"
+                    type="text"
+                    [placeholder]="field.property.description || ''"
+                    [required]="field.required">
+                    {{ field.label }}
+                    @if (field.required) {
+                      <span style="color: red">*</span>
+                    }
+                  </pa-input>
+                }
+              }
+            </div>
+          } @else {
+            <div class="field-error">
+              <span>Form control missing for field: {{ field.key }} in {{ controlName }}</span>
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

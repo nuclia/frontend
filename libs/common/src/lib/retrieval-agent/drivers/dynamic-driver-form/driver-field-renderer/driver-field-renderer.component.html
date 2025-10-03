@@ -1,0 +1,100 @@
+<div [formGroup]="form">
+  @switch (fieldConfig.component) {
+    <!-- Array string field -->
+    @case ('array-string-field') {
+      <app-array-string-field
+        [form]="form"
+        [arrayName]="controlName"
+        [label]="label"
+        [required]="required"
+        [config]="config"></app-array-string-field>
+    }
+
+    <!-- KB Select -->
+    @case ('kb-select') {
+      <kb-select
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [required]="required"></kb-select>
+    }
+
+    <!-- Key-Value Field -->
+    @case ('key-value-field') {
+      <key-value-field
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [required]="required"></key-value-field>
+    }
+
+    <!-- API Headers Field -->
+    @case ('api-headers-field') {
+      <app-api-headers-field
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [required]="required"></app-api-headers-field>
+    }
+
+    <!-- Enum select -->
+    @case ('enum-select') {
+      <app-enum-select
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [property]="property"
+        [required]="required"></app-enum-select>
+    }
+
+    <!-- Driver subform field for $ref properties -->
+    @case ('driver-subform-field') {
+      <app-driver-subform-field
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [property]="property"
+        [required]="required"></app-driver-subform-field>
+    }
+
+    <!-- Subform field for $ref properties (legacy) -->
+    @case ('subform-field') {
+      <app-driver-subform-field
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [property]="property"
+        [required]="required"></app-driver-subform-field>
+    }
+
+    <!-- Boolean toggle -->
+    @case ('pa-toggle') {
+      <pa-toggle
+        [formControlName]="controlName"
+        [required]="required"
+        withBackground>
+        {{ label }}
+        @if (required) {
+          <span style="color: red">*</span>
+        }
+      </pa-toggle>
+    }
+
+    <!-- Text input (includes string, number, password, url, etc.) -->
+    @default {
+      <pa-input
+        [id]="controlName"
+        [formControlName]="controlName"
+        [type]="getInputType()"
+        [readonly]="isReadonly()"
+        [placeholder]="property.description || ''"
+        [help]="property.description || ''"
+        [required]="required">
+        {{ label }}
+        @if (required) {
+          <span style="color: red">*</span>
+        }
+      </pa-input>
+    }
+  }
+</div>
