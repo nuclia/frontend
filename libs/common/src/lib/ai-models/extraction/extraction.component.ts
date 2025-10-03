@@ -25,7 +25,7 @@ export class ExtractionComponent {
   @Input() learningConfigurations?: LearningConfigurations;
   extractStrategies = new BehaviorSubject<ExtractStrategies | null>({});
   splitStrategies = new BehaviorSubject<SplitStrategies>({});
-  splitStrategiesEnabled = this.features.unstable.splitConfig;
+  splitStrategiesEnabled = this.features.authorized.splitConfig;
 
   constructor() {
     this.updateExtractStrategies().subscribe();

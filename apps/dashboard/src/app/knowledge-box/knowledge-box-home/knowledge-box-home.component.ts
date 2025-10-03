@@ -26,7 +26,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isKbContrib = this.features.isKBContrib;
   isAccountManager = this.features.isAccountManager;
-  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
+  isRemiMetricsEnabled = this.features.authorized.remiMetrics;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));

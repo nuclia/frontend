@@ -38,8 +38,8 @@ export class ExtractionModalComponent implements OnInit {
   config = this.modal.config.data?.config;
   createMode = !this.id;
 
-  aiTablesEnabled = this.features.unstable.aiTableProcessing;
-  visualLLMEnabled = this.features.unstable.visualLLMProcessing;
+  aiTablesEnabled = this.features.authorized.aiTableProcessing;
+  visualLLMEnabled = this.features.authorized.visualLLMProcessing;
 
   vllmConfig?: ExtractVLLMConfig;
   aiTables?: ExtractVLLMConfig;

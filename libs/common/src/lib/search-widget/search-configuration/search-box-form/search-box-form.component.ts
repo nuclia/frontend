@@ -111,7 +111,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
-  autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
+  autocompleteFromNerEnabled = this.featuresService.authorized.suggestEntities;
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   get useSearchResults() {

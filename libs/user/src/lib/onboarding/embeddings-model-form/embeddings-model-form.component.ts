@@ -200,7 +200,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
   languages: { id: string; label: string; selected: boolean }[];
 
   isExtraSemanticModelEnabled = this.features.unstable.extraSemanticModel;
-  isHuggingFaceSemanticModelEnabled = this.features.unstable.huggingFaceSemanticModel;
+  isHuggingFaceSemanticModelEnabled = this.features.authorized.huggingFaceSemanticModel;
 
   get nucliaModelControls() {
     return this.form.controls.nuclia.controls;

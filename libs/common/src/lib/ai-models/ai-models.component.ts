@@ -61,7 +61,7 @@ export class AiModelsComponent implements OnInit {
   isSummarizationAuthorized = this.features.authorized.summarization;
   isVectorsetAuthorized = this.features.authorized.vectorset;
   isAnonymizationAuthorized = this.features.authorized.anonymization;
-  extractConfigEnabled = this.features.unstable.extractConfig;
+  extractConfigEnabled = this.features.authorized.extractConfig;
   standalone = this.standaloneService.standalone;
 
   constructor(
