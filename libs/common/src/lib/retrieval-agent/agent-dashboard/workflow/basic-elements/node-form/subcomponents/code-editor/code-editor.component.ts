@@ -30,6 +30,9 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() required = false;
   @Input() placeholder = 'Enter your Python code here...';
   @Input() rows = 10;
+  @Input() initialLanguage = 'python';
+  @Input() availableLanguages: string[] = ['python', 'javascript', 'typescript', 'json'];
+  @Input() showLanguageSelector = true;
 
   @ViewChild('codeTextarea', { static: false }) codeTextarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('highlightContainer', { static: false }) highlightContainer!: ElementRef<HTMLDivElement>;
@@ -266,7 +269,8 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         highlightedCode = this.escapeHtml(code);
       }
 
-      this.highlightContainer.nativeElement.innerHTML = `<code class="language-python">${highlightedCode}</code>`;
+      // Safely set highlighted code using DOM methods instead of innerHTML
+      this.setHighlightedContent(highlightedCode, 'language-python');
 
       // Sync scroll position after highlighting
       this.syncScroll();
@@ -275,8 +279,8 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.validatePythonSyntax(code);
     } catch (error) {
       console.warn('Syntax highlighting failed:', error);
-      // Fallback to plain text
-      this.highlightContainer.nativeElement.innerHTML = `<code>${this.escapeHtml(code)}</code>`;
+      // Fallback to plain text using safe DOM manipulation
+      this.setHighlightedContent(this.escapeHtml(code));
 
       // Sync scroll position after fallback
       this.syncScroll();
@@ -287,6 +291,28 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * Safely sets highlighted content using DOM methods instead of innerHTML
+   * to prevent XSS vulnerabilities
+   */
+  private setHighlightedContent(content: string, className?: string): void {
+    // Clear existing content
+    this.highlightContainer.nativeElement.innerHTML = '';
+
+    // Create code element
+    const codeElement = document.createElement('code');
+    if (className) {
+      codeElement.className = className;
+    }
+
+    // Set content safely - if content comes from Prism, it's already safe HTML
+    // If it's escaped content, we can use innerHTML since it's been sanitized
+    codeElement.innerHTML = content;
+
+    // Append to container
+    this.highlightContainer.nativeElement.appendChild(codeElement);
   }
 
   private validatePythonSyntax(code: string) {

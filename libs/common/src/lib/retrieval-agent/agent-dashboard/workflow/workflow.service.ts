@@ -985,7 +985,7 @@ export class WorkflowService {
           arrayValue = [value];
         }
 
-        console.log(`Handling FormArray ${key}:`, { originalValue: value, convertedValue: arrayValue });
+        console.log('Handling FormArray:', key, { originalValue: value, convertedValue: arrayValue });
 
         // Rebuild the FormArray with the proper array values
         formArray.clear();
@@ -996,7 +996,7 @@ export class WorkflowService {
         // Don't include in patchData since we handled it directly
       } else if (Array.isArray(value)) {
         // If value is an array but control is not a FormArray, skip it or convert it
-        console.warn(`Field ${key} has array value but control is not FormArray:`, {
+        console.warn('Field has array value but control is not FormArray:', key, {
           key,
           value,
           control: control ? control.constructor.name : 'null',
@@ -1028,10 +1028,10 @@ export class WorkflowService {
             const control = formGroup.get(key);
             if (control) {
               control.patchValue(value);
-              console.log(`Successfully patched ${key} individually`);
+              console.log('Successfully patched control individually:', key);
             }
           } catch (individualError) {
-            console.error(`Error patching ${key}:`, {
+            console.error('Error patching control:', key, {
               key,
               value,
               control: formGroup.get(key),

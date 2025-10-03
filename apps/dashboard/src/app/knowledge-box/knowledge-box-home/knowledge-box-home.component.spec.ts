@@ -6,7 +6,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { AppService, RemiMetricsService, UploadModule, UploadService } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, ZoneService, STFPipesModule } from '@flaps/core';
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
@@ -51,23 +51,40 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockModule(PaTabsModule),
           MockModule(RouterModule),
           MockModule(UploadModule),
+          STFPipesModule,
           MockComponent(DropdownButtonComponent),
           MockComponent(AccountStatusComponent),
           MockComponent(HomeContainerComponent),
           MockComponent(UsageChartsComponent),
         ],
         providers: [
-          MockProvider(AppService),
+          MockProvider(AppService, {
+            currentLocale: of('en'),
+          }),
           MockProvider(SDKService, {
             currentKb: of({
               id: 'kb-id',
               slug: 'kb-slug',
               state: 'PRIVATE',
+              zone: 'test-zone',
               fullpath: 'http://somewhere/api',
               getConfiguration: () => of({}),
               catalog: () => of({ type: 'searchResults' }),
             } as unknown as WritableKnowledgeBox),
-            currentAccount: of({} as Account),
+            currentAccount: of({
+              id: 'test-id',
+              slug: 'test-account',
+              title: 'Test Account',
+              zone: 'test-zone',
+              type: 'stash-trial',
+              can_manage_account: true,
+              blocked_features: [],
+              max_kbs: 10,
+              max_arags: 5,
+              max_users: 100,
+              creation_date: '2023-01-01',
+            } as Account),
+            counters: of({}),
             nuclia: {
               options: { standalone: false },
               db: {},
@@ -87,9 +104,26 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockProvider(UploadService, {
             getResourceStatusCount: () => of({ type: 'searchResults' }),
           }),
-          MockProvider(MetricsService),
+          {
+            provide: MetricsService,
+            useValue: {
+              getUsageCharts: () => of({}),
+              getSearchCharts: () => of({ search: {}, ask: {} }),
+              getUsageCount: () => of(0),
+              getSearchCount: () => of(0),
+              isSubscribedToStripe: of(false),
+            },
+          },
           MockProvider(SisModalService),
-          MockProvider(ZoneService),
+          {
+            provide: ZoneService,
+            useValue: {
+              getZones: () =>
+                of([
+                  { slug: 'test-zone', title: 'Test Zone', id: 'test-id', cloud_provider: 'test', subdomain: 'test' },
+                ]),
+            },
+          },
           MockProvider(RemiMetricsService),
         ],
       }).compileComponents();

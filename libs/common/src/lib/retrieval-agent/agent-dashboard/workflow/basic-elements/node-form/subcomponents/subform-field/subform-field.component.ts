@@ -201,6 +201,6 @@ export class SubformFieldComponent implements OnInit {
 
   onSubformReady(subform: FormGroup) {
     // The subform is ready, we can perform any additional setup if needed
-    console.log(`Subform ready for ${this.controlName}:`, subform);
+    console.log('Subform ready for control:', this.controlName, subform);
   }
 }
