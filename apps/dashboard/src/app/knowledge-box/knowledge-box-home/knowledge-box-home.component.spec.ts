@@ -77,7 +77,7 @@ describe('KnowledgeBoxHomeComponent', () => {
             isTrial: of(true),
             isAccountManager: of(true),
             isKbAdmin: of(true),
-            unstable: {
+            authorized: {
               remiMetrics: of(false),
             },
           } as FeaturesService),
