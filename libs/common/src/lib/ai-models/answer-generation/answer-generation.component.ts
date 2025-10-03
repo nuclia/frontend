@@ -45,9 +45,12 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     user_prompts: new FormGroup({}),
+    allowed_models: new FormControl<'all' | 'custom'>('all', { nonNullable: true, validators: [Validators.required] }),
   });
   userKeysForm?: UserKeysForm;
   currentGenerativeModel?: LearningConfigurationOption;
+  forceRadioRerender = false;
+  modelManagementEnabled = this.features.unstable.modelManagement;
   unsubscribeAll = new Subject<void>();
 
   get generativeModelValue() {
@@ -73,6 +76,9 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
   }
   get pristine() {
     return this.configForm.pristine && this.userKeysForm?.pristine;
+  }
+  get isModelConfiguration() {
+    return this.generativeModelValue.includes('/');
   }
 
   ngOnDestroy() {
@@ -111,7 +117,10 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     }
 
     if (kbConfig) {
-      this.configForm.patchValue(kbConfig);
+      this.configForm.patchValue({
+        ...kbConfig,
+        allowed_models: kbConfig['allow_all_default_models'] === false ? 'custom' : 'all',
+      });
       this.updateCurrentGenerativeModel();
       // Wait for the user key form to update before setting their values
       setTimeout(() => {
@@ -132,6 +141,14 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
         this.userKeysForm?.markAsPristine();
         this.cdr.markForCheck();
       });
+
+      // The radio group need to be re-rendered because does not support dynamic options
+      this.forceRadioRerender = true;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.forceRadioRerender = false;
+        this.cdr.markForCheck();
+      });
     }
   }
 
@@ -142,7 +159,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
 
     this.saving = true;
     const kbBackup = this.kb;
-    const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
+    const { allowed_models, ...kbConfig }: { [key: string]: any } = this.configForm.getRawValue();
     kbConfig['user_keys'] =
       this.currentGenerativeModel?.user_key && this.hasOwnKey
         ? { [this.currentGenerativeModel?.user_key]: this.userKeysGroup?.value }
@@ -159,6 +176,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       },
       {} as { [key: string]: any },
     );
+    kbConfig['allow_all_default_models'] = allowed_models === 'all';
 
     this.kb
       .setConfiguration(kbConfig)
@@ -188,12 +206,9 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       return;
     }
 
-    const generativeOption = (this.learningConfigurations['generative_model'].options || []).find(
+    this.currentGenerativeModel = (this.learningConfigurations['generative_model'].options || []).find(
       (option) => option.value === (modelValue || this.generativeModelValue),
     );
-    if (generativeOption) {
-      this.currentGenerativeModel = generativeOption;
-    }
   }
 
   setPrompt(key: string, promptType: string, value: string) {

@@ -1,3 +1,9 @@
+# 1.29.1 (unreleased)
+
+### Improvements
+
+- Support model configurations
+
 # 1.29.0 (2025-10-01)
 
 ### Features

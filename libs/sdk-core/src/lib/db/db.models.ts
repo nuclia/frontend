@@ -282,6 +282,20 @@ export function normalizeSchemaProperty(config: LearningConfigurations): Learnin
   return config;
 }
 
+export function improveSchemaNames(config: LearningConfigurations): LearningConfigurations {
+  (config['generative_model'].options || []).forEach((option) => {
+    if (option.value.includes('/')) {
+      option.name = `${option.name} (custom)`;
+    }
+  });
+  (config['summary_model'].options || []).forEach((option) => {
+    if (option.value.includes('/')) {
+      option.name = `${option.name} (custom)`;
+    }
+  });
+  return config;
+}
+
 export const USER_PROMPTS = 'user_prompts';
 export const SUMMARY_PROMPT = 'summary_prompt';
 
@@ -430,3 +444,16 @@ export interface CustomModel extends BaseCustomModel {
   kbids: string[];
   openai_compat: any | null;
 }
+
+export interface ModelConfigurationItem {
+  id: string;
+  default_model_id: string;
+  description?: string;
+}
+
+export interface ModelConfiguration extends ModelConfigurationItem {
+  user_keys?: any;
+  user_prompts?: any;
+}
+
+export type ModelConfigurationCreation = Omit<ModelConfiguration, 'id'>;

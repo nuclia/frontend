@@ -7,109 +7,138 @@
       itemTitle="kb.ai-models.answer-generation.select-llm.title"
       description="kb.ai-models.answer-generation.select-llm.description">
       <div class="form-container">
+        @if (!currentGenerativeModel) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            <span
+              [innerHTML]="
+                'kb.ai-models.answer-generation.select-llm.unavailable' | translate: { model: generativeModelValue }
+              "></span>
+          </nsi-info-card>
+        }
         @if (learningConfig['generative_model'].options; as options) {
-          <pa-radio-group
-            formControlName="generative_model"
-            id="generative"
-            (valueChange)="updateCurrentGenerativeModel($event)">
-            @for (option of options; track option.value) {
-              <pa-radio
-                [value]="option.value"
-                fullProBadge
-                [popoverHelp]="popoverHelp[option.value] | translate">
-                {{ option.name }}
-              </pa-radio>
+          @if (!forceRadioRerender) {
+            <pa-radio-group
+              formControlName="generative_model"
+              id="generative"
+              (valueChange)="updateCurrentGenerativeModel($event)">
+              @for (option of options; track option.value) {
+                <pa-radio
+                  [value]="option.value"
+                  fullProBadge
+                  [popoverHelp]="popoverHelp[option.value] | translate">
+                  {{ option.name }}
+                </pa-radio>
+              }
+            </pa-radio-group>
+            @if (!isModelConfiguration) {
+              <stf-user-keys
+                [generativeModel]="currentGenerativeModel"
+                [learningConfigurations]="learningConfig"
+                (formReady)="userKeysForm = $event"></stf-user-keys>
             }
-          </pa-radio-group>
-          <stf-user-keys
-            [generativeModel]="currentGenerativeModel"
-            [learningConfigurations]="learningConfig"
-            (formReady)="userKeysForm = $event"></stf-user-keys>
+          }
         }
       </div>
     </nsi-two-columns-configuration-item>
 
-    <ng-container [formGroup]="userPromptForm">
-      @for (userPrompt of userPromptSchemas || {} | keyvalue; track userPrompt.key) {
-        <div
-          [formGroupName]="userPrompt.key"
-          [hidden]="userPrompt.key !== currentGenerativeModel?.user_prompt">
-          @if (userPrompt.value.properties['prompt']; as prompt) {
-            <nsi-two-columns-configuration-item
-              badge="generic.badge.optional"
-              [itemTitle]="
-                'kb.ai-models.answer-generation.prompt.title'
-                  | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
-              "
-              description="kb.ai-models.answer-generation.prompt.description"
-              [unauthorized]="(isUserPromptsAuthorized | async) === false"
-              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
-              <div class="form-container small-gap">
-                <nsi-info-card>{{ prompt.info }}</nsi-info-card>
-                <pa-select
-                  formControlName="prompt_examples"
-                  [label]="'kb.ai-models.common.examples' | translate"
-                  (valueChange)="setPrompt(userPrompt.key, 'prompt', $event)">
-                  @for (option of prompt.examples || []; track option) {
-                    <pa-option [value]="option">
-                      {{ option }}
-                    </pa-option>
-                  }
-                </pa-select>
+    @if (!isModelConfiguration) {
+      <ng-container [formGroup]="userPromptForm">
+        @for (userPrompt of userPromptSchemas || {} | keyvalue; track userPrompt.key) {
+          <div
+            [formGroupName]="userPrompt.key"
+            [hidden]="userPrompt.key !== currentGenerativeModel?.user_prompt">
+            @if (userPrompt.value.properties['prompt']; as prompt) {
+              <nsi-two-columns-configuration-item
+                badge="generic.badge.optional"
+                [itemTitle]="
+                  'kb.ai-models.answer-generation.prompt.title'
+                    | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
+                "
+                description="kb.ai-models.answer-generation.prompt.description"
+                [unauthorized]="(isUserPromptsAuthorized | async) === false"
+                (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
+                <div class="form-container small-gap">
+                  <nsi-info-card>{{ prompt.info }}</nsi-info-card>
+                  <pa-select
+                    formControlName="prompt_examples"
+                    [label]="'kb.ai-models.common.examples' | translate"
+                    (valueChange)="setPrompt(userPrompt.key, 'prompt', $event)">
+                    @for (option of prompt.examples || []; track option) {
+                      <pa-option [value]="option">
+                        {{ option }}
+                      </pa-option>
+                    }
+                  </pa-select>
 
-                <nsi-expandable-textarea
-                  formControlName="prompt"
-                  resizable
-                  acceptHtmlTags
-                  modalTitle="kb.ai-models.common.prompt.label"
-                  [rows]="3">
-                  {{ 'kb.ai-models.common.prompt.label' | translate }}
-                </nsi-expandable-textarea>
+                  <nsi-expandable-textarea
+                    formControlName="prompt"
+                    resizable
+                    acceptHtmlTags
+                    modalTitle="kb.ai-models.common.prompt.label"
+                    [rows]="3">
+                    {{ 'kb.ai-models.common.prompt.label' | translate }}
+                  </nsi-expandable-textarea>
 
-                <nsi-info-card
-                  type="warning"
-                  icon="warning">
-                  {{ 'kb.ai-models.common.prompt.warning' | translate }}
-                </nsi-info-card>
-              </div>
-            </nsi-two-columns-configuration-item>
-          }
-          @if (userPrompt.value.properties['system']; as system) {
-            <nsi-two-columns-configuration-item
-              badge="generic.badge.optional"
-              [itemTitle]="
-                'kb.ai-models.answer-generation.behavior.title'
-                  | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
-              "
-              description="kb.ai-models.answer-generation.behavior.description"
-              [unauthorized]="(isUserPromptsAuthorized | async) === false"
-              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
-              <div class="form-container small-gap">
-                <pa-select
-                  formControlName="system_examples"
-                  [label]="'kb.ai-models.common.examples' | translate"
-                  (valueChange)="setPrompt(userPrompt.key, 'system', $event)">
-                  @for (option of system.examples || []; track option) {
-                    <pa-option [value]="option">
-                      {{ option }}
-                    </pa-option>
-                  }
-                </pa-select>
+                  <nsi-info-card
+                    type="warning"
+                    icon="warning">
+                    {{ 'kb.ai-models.common.prompt.warning' | translate }}
+                  </nsi-info-card>
+                </div>
+              </nsi-two-columns-configuration-item>
+            }
+            @if (userPrompt.value.properties['system']; as system) {
+              <nsi-two-columns-configuration-item
+                badge="generic.badge.optional"
+                [itemTitle]="
+                  'kb.ai-models.answer-generation.behavior.title'
+                    | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
+                "
+                description="kb.ai-models.answer-generation.behavior.description"
+                [unauthorized]="(isUserPromptsAuthorized | async) === false"
+                (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
+                <div class="form-container small-gap">
+                  <pa-select
+                    formControlName="system_examples"
+                    [label]="'kb.ai-models.common.examples' | translate"
+                    (valueChange)="setPrompt(userPrompt.key, 'system', $event)">
+                    @for (option of system.examples || []; track option) {
+                      <pa-option [value]="option">
+                        {{ option }}
+                      </pa-option>
+                    }
+                  </pa-select>
 
-                <nsi-expandable-textarea
-                  formControlName="system"
-                  resizable
-                  acceptHtmlTags
-                  modalTitle="kb.ai-models.answer-generation.behavior.label"
-                  [rows]="3">
-                  {{ 'kb.ai-models.answer-generation.behavior.label' | translate }}
-                </nsi-expandable-textarea>
-              </div>
-            </nsi-two-columns-configuration-item>
-          }
+                  <nsi-expandable-textarea
+                    formControlName="system"
+                    resizable
+                    acceptHtmlTags
+                    modalTitle="kb.ai-models.answer-generation.behavior.label"
+                    [rows]="3">
+                    {{ 'kb.ai-models.answer-generation.behavior.label' | translate }}
+                  </nsi-expandable-textarea>
+                </div>
+              </nsi-two-columns-configuration-item>
+            }
+          </div>
+        }
+      </ng-container>
+    }
+    @if (modelManagementEnabled | async) {
+      <nsi-two-columns-configuration-item
+        noTopBorder
+        itemTitle="kb.ai-models.answer-generation.restrict.title"
+        description="kb.ai-models.answer-generation.restrict.description">
+        <div class="form-container">
+          <pa-radio-group formControlName="allowed_models">
+            <pa-radio value="all">{{ 'kb.ai-models.answer-generation.restrict.all' | translate }}</pa-radio>
+            <pa-radio value="custom">{{ 'kb.ai-models.answer-generation.restrict.custom' | translate }}</pa-radio>
+          </pa-radio-group>
         </div>
-      }
-    </ng-container>
+      </nsi-two-columns-configuration-item>
+    }
     <nsi-sticky-footer>
       <pa-button
         aspect="basic"

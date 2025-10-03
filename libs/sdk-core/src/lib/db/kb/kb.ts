@@ -16,7 +16,12 @@ import {
 } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { ABORT_STREAMING_REASON } from '../../rest';
-import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
+import {
+  improveSchemaNames,
+  LearningConfigurations,
+  normalizeSchemaProperty,
+  ResourceProperties,
+} from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import {
   ExtractedDataTypes,
@@ -727,7 +732,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   getLearningSchema(): Observable<LearningConfigurations> {
     return this.nuclia.rest
       .get<LearningConfigurations>(`/kb/${this.id}/schema`)
-      .pipe(map((config) => normalizeSchemaProperty(config)));
+      .pipe(map((config) => improveSchemaNames(normalizeSchemaProperty(config))));
   }
 
   getUsers(): Observable<FullKbUser[]> {

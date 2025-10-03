@@ -1,0 +1,13 @@
+@use 'apps/dashboard/src/variables' as *;
+
+h2 {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding: rhythm(2) 0 rhythm(4) 0;
+  width: rhythm(80);
+}

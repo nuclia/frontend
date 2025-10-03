@@ -1,18 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SDKService, ZoneService } from '@flaps/core';
-import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaTableModule,
+  PaTabsModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CustomModel, KnowledgeBox, ModelType } from '@nuclia/core';
+import { CustomModel, KnowledgeBox, ModelConfigurationItem, ModelType } from '@nuclia/core';
 import {
   BadgeComponent,
   InfoCardComponent,
+  SisModalService,
   SisProgressModule,
   SisToastService,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { forkJoin, of, Subject } from 'rxjs';
-import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { forkJoin, of, ReplaySubject, Subject } from 'rxjs';
+import { catchError, filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
+import { CreateConfigComponent } from './create-config/create-config.component';
 
 interface CustomModelWithTitle extends CustomModel {
   title: string;
@@ -25,6 +33,10 @@ type ModelSelection = {
   default: boolean;
 };
 
+interface ModelConfigurationWithZone extends ModelConfigurationItem {
+  zone: string;
+}
+
 @Component({
   selector: 'app-account-models',
   imports: [
@@ -32,6 +44,8 @@ type ModelSelection = {
     CommonModule,
     InfoCardComponent,
     PaButtonModule,
+    PaTableModule,
+    PaTabsModule,
     PaTogglesModule,
     SisProgressModule,
     TwoColumnsConfigurationItemComponent,
@@ -45,26 +59,26 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
   private sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
   private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
 
   unsubscribeAll = new Subject<void>();
   kbList = this.sdk.kbList;
+  modelConfigs = new ReplaySubject<ModelConfigurationWithZone[]>(1);
+  selectedTab: 'configs' | 'custom-models' = 'configs';
   selection: { [kbId: string]: ModelSelection[] } = {};
-  hasModels = false;
+  hasCustomModels = false;
   isLoading = true;
   isSaving = false;
 
-  modelsByZone = forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zoneService.getZones()]).pipe(
+  zones = this.zoneService.getZones().pipe(shareReplay(1));
+
+  customModels = forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones]).pipe(
     switchMap(([account, zones]) =>
       forkJoin(
         zones.map((zone) =>
           this.sdk.nuclia.db.getModels(account.id, zone.slug).pipe(
-            map((models) =>
-              models.filter(
-                (model) =>
-                  model.model_types?.includes(ModelType.GENERATIVE),
-              ),
-            ),
+            map((models) => models.filter((model) => model.model_types?.includes(ModelType.GENERATIVE))),
             switchMap((modelItems) =>
               modelItems.length === 0
                 ? of([])
@@ -118,11 +132,13 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
   );
 
   ngOnInit(): void {
-    forkJoin([this.kbList.pipe(take(1)), this.modelsByZone, this.defaultModels]).subscribe(
-      ([kbList, modelsByZone, defaultModels]) => {
+    this.updateModelConfigs().subscribe();
+
+    forkJoin([this.kbList.pipe(take(1)), this.customModels, this.defaultModels]).subscribe(
+      ([kbList, customModels, defaultModels]) => {
         this.selection = kbList.reduce(
           (selection, kb) => {
-            selection[kb.id] = modelsByZone[kb.zone].map((model) => ({
+            selection[kb.id] = customModels[kb.zone].map((model) => ({
               modelId: model.model_id || '',
               title: model.title,
               selected: !!model.kbids?.includes(kb.id),
@@ -132,10 +148,88 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
           },
           {} as { [kbId: string]: ModelSelection[] },
         );
-        this.hasModels = Object.values(modelsByZone).reduce((acc, modelList) => acc + modelList.length, 0) > 0;
+        this.hasCustomModels = Object.values(customModels).reduce((acc, modelList) => acc + modelList.length, 0) > 0;
         this.isLoading = false;
         this.cdr.markForCheck();
       },
+    );
+  }
+
+  createConfig() {
+    return this.zones
+      .pipe(
+        switchMap(
+          (zones) => this.modalService.openModal(CreateConfigComponent, new ModalConfig({ data: { zones } })).onClose,
+        ),
+        filter((data) => !!data),
+        switchMap((data) =>
+          this.sdk.currentAccount.pipe(
+            take(1),
+            switchMap((account) => {
+              const { zone, ...config } = data;
+              return this.sdk.nuclia.db.createModelConfiguration(config, account.id, zone);
+            }),
+          ),
+        ),
+        switchMap(() => this.updateModelConfigs()),
+      )
+      .subscribe();
+  }
+
+  displayConfig(config: ModelConfigurationWithZone) {
+    return forkJoin([
+      this.zones,
+      this.sdk.currentAccount.pipe(
+        take(1),
+        switchMap((account) => this.sdk.nuclia.db.getModelConfiguration(config.id, account.id, config.zone)),
+      ),
+    ]).subscribe(([zones, configDetails]) => {
+      this.modalService.openModal(
+        CreateConfigComponent,
+        new ModalConfig({ data: { zones, config: configDetails, zone: config.zone } }),
+      );
+    });
+  }
+
+  deleteConfig(config: ModelConfigurationWithZone, event?: Event) {
+    event?.stopPropagation();
+    return this.modalService
+      .openConfirm({
+        title: 'account.models.model-configs.delete',
+        description: 'account.models.model-configs.delete-confirm',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.sdk.currentAccount.pipe(take(1))),
+        switchMap((account) => this.sdk.nuclia.db.deleteModelConfiguration(config.id, account.id, config.zone)),
+        switchMap(() => this.updateModelConfigs()),
+      )
+      .subscribe();
+  }
+
+  updateModelConfigs() {
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones]).pipe(
+      switchMap(([account, zones]) =>
+        forkJoin(
+          zones.map((zone) =>
+            this.sdk.nuclia.db.getModelConfigurations(account.id, zone.slug).pipe(
+              map((configs) => ({ zone, configs })),
+              catchError(() => of({ zone, configs: [] })),
+            ),
+          ),
+        ),
+      ),
+      map((configs) =>
+        configs.reduce(
+          (acc, curr) => acc.concat(curr.configs.map((config) => ({ ...config, zone: curr.zone.slug }))),
+          [] as ModelConfigurationWithZone[],
+        ),
+      ),
+      tap((models) => {
+        this.modelConfigs.next(models);
+      }),
     );
   }
 
@@ -162,7 +256,7 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.toaster.error('account.models.error');
+          this.toaster.error('account.models.custom-models.error');
           this.isSaving = false;
           this.cdr.markForCheck();
         },

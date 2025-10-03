@@ -247,12 +247,15 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((schema) => {
         this.learningConfigurations = schema;
-        const hasDefaultLLM = (schema?.['generative_model']?.options || []).some(
+        const hasCheapLLM = (schema?.['generative_model']?.options || []).some(
           (option) => option.value === DEFAULT_CHEAP_LLM,
+        );
+        const hasDefaultLLM = (schema?.['generative_model']?.options || []).some(
+          (option) => option.value === schema?.['generative_model']?.default,
         );
         if (!this.form.controls.llm.controls.model.value) {
           this.form.controls.llm.controls.model.setValue(
-            hasDefaultLLM ? DEFAULT_CHEAP_LLM : schema?.['generative_model']?.default,
+            hasCheapLLM ? DEFAULT_CHEAP_LLM : hasDefaultLLM ? schema?.['generative_model']?.default : '',
           );
         }
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])

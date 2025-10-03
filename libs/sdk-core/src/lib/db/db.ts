@@ -29,8 +29,12 @@ import {
   AccountStatus,
   CustomModel,
   CustomModelItem,
+  improveSchemaNames,
   KbIndex,
   LearningConfigurations,
+  ModelConfiguration,
+  ModelConfigurationCreation,
+  ModelConfigurationItem,
   normalizeSchemaProperty,
   NUA_KEY,
   NUAClient,
@@ -616,7 +620,7 @@ export class Db implements IDb {
     const request = standalone
       ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
       : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
-    return request.pipe(map((config) => normalizeSchemaProperty(config)));
+    return request.pipe(map((config) => improveSchemaNames(normalizeSchemaProperty(config))));
   }
 
   /**
@@ -810,5 +814,50 @@ export class Db implements IDb {
    */
   deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string) {
     return this.nuclia.rest.delete(`/account/${accountId}/models/${kbId}/${modelId}`, undefined, true, zone);
+  }
+
+  /**
+   * Get the list of model configurations of an account
+   */
+  getModelConfigurations(accountId: string, zone: string) {
+    return this.nuclia.rest.get<ModelConfigurationItem[]>(
+      `/account/${accountId}/default_models`,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Get a model configuration
+   */
+  getModelConfiguration(modelId: string, accountId: string, zone: string) {
+    return this.nuclia.rest.get<ModelConfiguration>(
+      `/account/${accountId}/default_model/${modelId}`,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Creates a new model configuration
+   */
+  createModelConfiguration(model: ModelConfigurationCreation, accountId: string, zone: string) {
+    return this.nuclia.rest.post<{ id: string }>(
+      `/account/${accountId}/default_models`,
+      model,
+      undefined,
+      undefined,
+      true,
+      zone,
+    );
+  }
+
+  /**
+   * Deletes a model configuration
+   */
+  deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/default_model/${modelId}`, undefined, true, zone);
   }
 }
