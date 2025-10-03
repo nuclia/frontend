@@ -10,6 +10,15 @@
   }
 }
 
+.clear {
+  background: $color-light-stronger;
+  border-top: 1px solid $color-neutral-light;
+  bottom: 0;
+  padding: rhythm(1);
+  position: sticky;
+  z-index: 1;
+}
+
 .container {
   overflow: auto;
   margin: rhythm(0.5) 0;

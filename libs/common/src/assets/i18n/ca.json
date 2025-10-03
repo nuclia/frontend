@@ -179,6 +179,7 @@
 	"account.users_left": "Llicències disponibles",
 	"accounts.add_user_input": "Correu de l’usuari",
 	"activity.actor": "Actor",
+	"activity.clear": "Esborrar la selecció",
 	"activity.columns": "Columnes visibles",
 	"activity.email-sent": "La generació del registre pot trigar un temps, s'enviarà un enllaç de descàrrega a {{email}} quan hagi acabat.",
 	"activity.filter": "Filtrar",

@@ -19,6 +19,15 @@
           </pa-checkbox>
         </pa-option>
       }
+      @if (displayedHeaders.length > 0) {
+        <div class="clear">
+          <nsi-button-mini
+            icon="circle-cross"
+            (click)="clearHeaders($event)">
+            {{ 'activity.clear' | translate }}
+          </nsi-button-mini>
+        </div>
+      }
     </pa-dropdown>
   </div>
   <pa-button
@@ -43,7 +52,10 @@
   <div class="table">
     <pa-table
       border
-      [columns]="'fit-content(400px) repeat(' + (displayedHeaders.length || 1) + ', fit-content(400px))'">
+      [columns]="
+        'fit-content(400px)' +
+        (displayedHeaders.length ? ' repeat(' + displayedHeaders.length + ', fit-content(400px))' : '')
+      ">
       @if (displayedRows.length === 0) {
         <pa-table-row>
           <pa-table-cell>N/A</pa-table-cell>

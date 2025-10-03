@@ -179,6 +179,7 @@
 	"account.users_left": "Total licenses left",
 	"accounts.add_user_input": "User’s email",
 	"activity.actor": "Actor",
+	"activity.clear": "Clear selection",
 	"activity.columns": "Displayed columns",
 	"activity.email-sent": "The log generation may take time, a download link will be sent to {{email}} when finished.",
 	"activity.filter": "Filter",
