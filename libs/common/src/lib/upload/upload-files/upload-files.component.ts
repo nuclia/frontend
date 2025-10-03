@@ -38,8 +38,8 @@ export class UploadFilesComponent {
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
-  extractConfigEnabled = this.features.unstable.extractConfig;
-  spitConfigEnabled = this.features.unstable.splitConfig;
+  extractConfigEnabled = this.features.authorized.extractConfig;
+  spitConfigEnabled = this.features.authorized.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
 

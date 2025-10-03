@@ -90,7 +90,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   noStripe = this.backendConfig.noStripe();
   isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
-  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
+  isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
 

@@ -60,8 +60,8 @@ export class UploadSitemapComponent {
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
   standalone = this.standaloneService.standalone;
-  extractConfigEnabled = this.features.unstable.extractConfig;
-  splitConfigEnabled = this.features.unstable.splitConfig;
+  extractConfigEnabled = this.features.authorized.extractConfig;
+  splitConfigEnabled = this.features.authorized.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
 

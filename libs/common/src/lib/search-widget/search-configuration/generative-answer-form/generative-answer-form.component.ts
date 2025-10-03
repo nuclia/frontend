@@ -145,9 +145,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   userPromptInfo = '';
   userPromptOverridden = false;
   systemPromptOverridden = false;
-  isRagImagesEnabled = this.featuresService.unstable.ragImages;
+  isRagImagesEnabled = this.featuresService.authorized.ragImages;
   metadataIds = Object.values(RAG_METADATAS);
-  isGraphSearchEnabled = this.featuresService.unstable.graphSearch;
+  isGraphSearchEnabled = this.featuresService.authorized.graphSearch;
 
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
