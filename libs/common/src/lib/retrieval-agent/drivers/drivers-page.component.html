@@ -13,7 +13,7 @@
           </nsi-dropdown-button>
           <pa-dropdown #driverTypes>
             @for (driver of schemas()?.drivers; track driver.title) {
-              @if (shouldShowDriver(driver.title)) {
+              @if (driver.title && shouldShowDriver(driver.title)) {
                 <pa-option
                   (selectOption)="addDriver(driver.title)"
                   [description]="getDriverDescription(driver.title)"

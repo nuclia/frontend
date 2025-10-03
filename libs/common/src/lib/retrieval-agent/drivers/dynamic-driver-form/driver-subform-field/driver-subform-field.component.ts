@@ -8,7 +8,7 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { CommonModule } from '@angular/common';
 import { DriverFieldConfigService, DriverFieldConfig } from '../driver-field-config.service';
@@ -257,6 +257,14 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
     }
 
     return control;
+  }
+
+  getSafeFormControl(fieldKey: string): any {
+    return this.getFormControl(fieldKey) || new FormControl('');
+  }
+
+  getSafeSubform(): FormGroup {
+    return this.getSubform() || new FormGroup({});
   } /**
    * Check if a specific form control exists and is properly initialized
    */

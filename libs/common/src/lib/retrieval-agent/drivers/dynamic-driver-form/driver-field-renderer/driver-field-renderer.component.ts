@@ -112,7 +112,7 @@ export class DriverFieldRendererComponent implements OnInit {
     // Component initialization
   }
 
-  getInputType(): string {
+  getInputType(): any {
     if (this.fieldConfig.type === 'password') return 'password';
     if (this.fieldConfig.type === 'number') return 'number';
     if (this.fieldConfig.type === 'url') return 'url';

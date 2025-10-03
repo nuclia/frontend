@@ -27,14 +27,14 @@
               @switch (field.config.component) {
                 @case ('api-headers-field') {
                   <app-api-headers-field
-                    [form]="getSubform()"
+                    [form]="getSafeSubform()"
                     [controlName]="field.key"
                     [label]="field.label"
                     [required]="field.required"></app-api-headers-field>
                 }
                 @case ('key-value-field') {
                   <app-key-value-field
-                    [form]="getSubform()"
+                    [form]="getSafeSubform()"
                     [controlName]="field.key"
                     [label]="field.label"
                     [property]="field.property"
@@ -43,7 +43,7 @@
                 @case ('pa-input') {
                   <pa-input
                     [id]="controlName + '_' + field.key"
-                    [formControl]="getFormControl(field.key)"
+                    [formControl]="getSafeFormControl(field.key)"
                     [type]="field.config.type === 'number' ? 'number' : 'text'"
                     [placeholder]="field.property.description || ''"
                     [required]="field.required">
@@ -56,7 +56,7 @@
                 @case ('pa-toggle') {
                   <pa-toggle
                     [id]="controlName + '_' + field.key"
-                    [formControl]="getFormControl(field.key)"
+                    [formControl]="getSafeFormControl(field.key)"
                     [required]="field.required">
                     {{ field.label }}
                     @if (field.required) {
@@ -67,7 +67,7 @@
                 @case ('enum-select') {
                   <pa-input
                     [id]="controlName + '_' + field.key"
-                    [formControl]="getFormControl(field.key)"
+                    [formControl]="getSafeFormControl(field.key)"
                     type="text"
                     [placeholder]="field.property.description || ''"
                     [required]="field.required">
@@ -80,7 +80,7 @@
                 @default {
                   <pa-input
                     [id]="controlName + '_' + field.key"
-                    [formControl]="getFormControl(field.key)"
+                    [formControl]="getSafeFormControl(field.key)"
                     type="text"
                     [placeholder]="field.property.description || ''"
                     [required]="field.required">

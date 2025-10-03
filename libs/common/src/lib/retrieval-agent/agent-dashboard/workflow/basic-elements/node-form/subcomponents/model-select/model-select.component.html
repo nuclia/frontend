@@ -5,10 +5,10 @@
       <span style="color: red">*</span>
     }
   </label>
-  <div [formGroup]="form">
+  <div [formGroup]="form!">
     <pa-select
       [id]="controlName"
-      [formControlName]="controlName"
+      [formControlName]="controlName!"
       [options]="options()"
       [required]="required"></pa-select>
   </div>

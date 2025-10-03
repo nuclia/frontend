@@ -17,9 +17,9 @@
       [label]="label"
       [property]="property"
       [required]="required"
-      [initialLanguage]="fieldConfig.additionalProps?.initialLanguage || 'javascript'"
-      [availableLanguages]="fieldConfig.additionalProps?.availableLanguages"
-      [showLanguageSelector]="fieldConfig.additionalProps?.showLanguageSelector ?? true"></app-code-editor>
+      [initialLanguage]="fieldConfig.additionalProps?.['initialLanguage'] || 'javascript'"
+      [availableLanguages]="fieldConfig.additionalProps?.['availableLanguages']"
+      [showLanguageSelector]="fieldConfig.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
 
     <!-- Driver select -->
     <app-driver-select
@@ -28,8 +28,8 @@
       [required]="required"
       [form]="form"
       [controlName]="controlName"
-      [provider]="fieldConfig.additionalProps?.provider"
-      [multiselect]="fieldConfig.additionalProps?.multiselect"></app-driver-select>
+      [provider]="fieldConfig.additionalProps?.['provider']"
+      [multiselect]="fieldConfig.additionalProps?.['multiselect']"></app-driver-select>
 
     <!-- Enum select -->
     <app-enum-select
@@ -86,7 +86,7 @@
       *ngSwitchCase="'pa-input'"
       [id]="controlName"
       [formControlName]="controlName"
-      [type]="fieldConfig.type || 'text'"
+      [type]="getFieldType()"
       [placeholder]="property.description || ''"
       [help]="property.description || ''"
       [required]="required">

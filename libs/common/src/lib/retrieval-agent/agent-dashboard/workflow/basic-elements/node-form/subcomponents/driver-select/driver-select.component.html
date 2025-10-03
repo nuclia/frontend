@@ -5,7 +5,7 @@
       <span style="color: red">*</span>
     }
   </label>
-  <div [formGroup]="form">
+  <div [formGroup]="form!">
     @if (multiselect) {
       <!-- For multiselect, we need to handle FormArray differently -->
       <pa-select
@@ -18,7 +18,7 @@
       <!-- Regular single select using formControlName -->
       <pa-select
         [id]="controlName"
-        [formControlName]="controlName"
+        [formControlName]="controlName!"
         [options]="options()"
         [multiple]="false"></pa-select>
     }

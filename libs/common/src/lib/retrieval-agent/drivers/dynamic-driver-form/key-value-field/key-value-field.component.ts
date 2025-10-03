@@ -52,6 +52,31 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get properly typed input type for template
+   */
+  getValueInputType(): any {
+    if (!this.property?.additionalProperties) return 'text';
+
+    const additionalProps = this.property.additionalProperties as JSONSchema4;
+
+    // Check if it's a direct type
+    if (additionalProps.type === 'number') return 'number';
+    if (additionalProps.type === 'string') return 'text';
+
+    // Check anyOf for number type
+    if (additionalProps.anyOf) {
+      const hasNumber = additionalProps.anyOf.some((item: any) => item.type === 'number');
+      if (hasNumber) return 'number';
+    }
+
+    return 'text';
+  }
+
+  getFormGroupFromControl(control: any): FormGroup {
+    return control as FormGroup;
+  }
+
+  /**
    * Get the placeholder text for the value field based on supported types
    */
   get valuePlaceholder(): string {

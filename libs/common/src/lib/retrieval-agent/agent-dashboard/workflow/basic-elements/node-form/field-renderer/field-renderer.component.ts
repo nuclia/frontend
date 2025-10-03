@@ -45,4 +45,8 @@ export class FieldRendererComponent {
   @Input() property!: JSONSchema4;
   @Input() required: boolean = false;
   @Input() config?: any;
+
+  getFieldType(): any {
+    return this.fieldConfig.type || 'text';
+  }
 }

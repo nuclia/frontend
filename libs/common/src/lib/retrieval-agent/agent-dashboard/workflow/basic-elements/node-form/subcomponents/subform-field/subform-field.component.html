@@ -33,7 +33,7 @@
             [arrayName]="field.key"
             [label]="field.label"
             [required]="field.required"
-            [config]="schemas"></app-array-string-field>
+            [config]="getSchemasAsNodeConfig()"></app-array-string-field>
 
           <!-- Code editor -->
           <app-code-editor
@@ -43,9 +43,9 @@
             [label]="field.label"
             [property]="field.property"
             [required]="field.required"
-            [initialLanguage]="field.config.additionalProps?.initialLanguage || 'javascript'"
-            [availableLanguages]="field.config.additionalProps?.availableLanguages"
-            [showLanguageSelector]="field.config.additionalProps?.showLanguageSelector ?? true"></app-code-editor>
+            [initialLanguage]="field.config.additionalProps?.['initialLanguage'] || 'javascript'"
+            [availableLanguages]="field.config.additionalProps?.['availableLanguages']"
+            [showLanguageSelector]="field.config.additionalProps?.['showLanguageSelector'] ?? true"></app-code-editor>
 
           <!-- Driver select -->
           <app-driver-select
@@ -54,8 +54,8 @@
             [required]="field.required"
             [form]="subFormGroup"
             [controlName]="field.key"
-            [provider]="field.config.additionalProps?.provider"
-            [multiselect]="field.config.additionalProps?.multiselect"></app-driver-select>
+            [provider]="field.config.additionalProps?.['provider']"
+            [multiselect]="field.config.additionalProps?.['multiselect']"></app-driver-select>
 
           <!-- Enum select -->
           <app-enum-select
@@ -87,7 +87,7 @@
           <app-rules-field
             *ngSwitchCase="'rules-field'"
             [form]="subFormGroup"
-            [config]="schemas"></app-rules-field>
+            [config]="getSchemasAsNodeConfig()"></app-rules-field>
 
           <!-- Transport field -->
           <app-transport-field
@@ -130,7 +130,7 @@
             *ngSwitchDefault
             [id]="field.key"
             [formControlName]="field.key"
-            [type]="field.config.type || 'text'"
+            [type]="getFieldType(field)"
             [placeholder]="field.property.description || ''"
             [help]="field.property.description || ''"
             [required]="field.required">

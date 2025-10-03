@@ -199,6 +199,14 @@ export class SubformFieldComponent implements OnInit {
     return this.form.get(this.controlName) as FormGroup;
   }
 
+  getFieldType(field: RenderableField): any {
+    return field.config.type || 'text';
+  }
+
+  getSchemasAsNodeConfig(): any {
+    return this.schemas as any;
+  }
+
   onSubformReady(subform: FormGroup) {
     // The subform is ready, we can perform any additional setup if needed
     console.log('Subform ready for control:', this.controlName, subform);
