@@ -1,0 +1,14 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.toggles {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.toggle-label {
+  @include title-xs();
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}

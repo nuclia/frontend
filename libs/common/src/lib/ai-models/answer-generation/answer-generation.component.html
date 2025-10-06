@@ -18,26 +18,24 @@
           </nsi-info-card>
         }
         @if (learningConfig['generative_model'].options; as options) {
-          @if (!forceRadioRerender) {
-            <pa-radio-group
-              formControlName="generative_model"
-              id="generative"
-              (valueChange)="updateCurrentGenerativeModel($event)">
-              @for (option of options; track option.value) {
-                <pa-radio
-                  [value]="option.value"
-                  fullProBadge
-                  [popoverHelp]="popoverHelp[option.value] | translate">
-                  {{ option.name }}
-                </pa-radio>
-              }
-            </pa-radio-group>
-            @if (!isModelConfiguration) {
-              <stf-user-keys
-                [generativeModel]="currentGenerativeModel"
-                [learningConfigurations]="learningConfig"
-                (formReady)="userKeysForm = $event"></stf-user-keys>
+          <pa-radio-group
+            formControlName="generative_model"
+            id="generative"
+            (valueChange)="updateCurrentGenerativeModel($event)">
+            @for (option of options; track option.value) {
+              <pa-radio
+                [value]="option.value"
+                fullProBadge
+                [popoverHelp]="popoverHelp[option.value] | translate">
+                {{ option.name }}
+              </pa-radio>
             }
+          </pa-radio-group>
+          @if (!isModelConfiguration) {
+            <stf-user-keys
+              [generativeModel]="currentGenerativeModel"
+              [learningConfigurations]="learningConfig"
+              (formReady)="userKeysForm = $event"></stf-user-keys>
           }
         }
       </div>
@@ -125,19 +123,6 @@
           </div>
         }
       </ng-container>
-    }
-    @if (modelManagementEnabled | async) {
-      <nsi-two-columns-configuration-item
-        noTopBorder
-        itemTitle="kb.ai-models.answer-generation.restrict.title"
-        description="kb.ai-models.answer-generation.restrict.description">
-        <div class="form-container">
-          <pa-radio-group formControlName="allowed_models">
-            <pa-radio value="all">{{ 'kb.ai-models.answer-generation.restrict.all' | translate }}</pa-radio>
-            <pa-radio value="custom">{{ 'kb.ai-models.answer-generation.restrict.custom' | translate }}</pa-radio>
-          </pa-radio-group>
-        </div>
-      </nsi-two-columns-configuration-item>
     }
     <nsi-sticky-footer>
       <pa-button
