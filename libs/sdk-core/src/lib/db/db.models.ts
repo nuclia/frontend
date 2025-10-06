@@ -283,12 +283,12 @@ export function normalizeSchemaProperty(config: LearningConfigurations): Learnin
 }
 
 export function improveSchemaNames(config: LearningConfigurations): LearningConfigurations {
-  (config['generative_model'].options || []).forEach((option) => {
+  (config['generative_model']?.options || []).forEach((option) => {
     if (option.value.includes('/')) {
       option.name = `${option.name} (custom)`;
     }
   });
-  (config['summary_model'].options || []).forEach((option) => {
+  (config['summary_model']?.options || []).forEach((option) => {
     if (option.value.includes('/')) {
       option.name = `${option.name} (custom)`;
     }
