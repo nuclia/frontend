@@ -10,7 +10,7 @@ import {
   SisToastService,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { forkJoin, of, ReplaySubject } from 'rxjs';
+import { combineLatest, forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
 
 interface CustomModelWithTitle extends CustomModel {
@@ -53,7 +53,7 @@ export class CustomModelsComponent implements OnInit {
     }
   }
 
-  kbList = this.sdk.kbList;
+  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList]).pipe(map(([kbs, arags]) => kbs.concat(arags)));
   selection: { [kbId: string]: ModelSelection[] } = {};
   hasCustomModels = false;
   isSaving = false;

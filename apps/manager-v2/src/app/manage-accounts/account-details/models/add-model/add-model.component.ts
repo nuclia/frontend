@@ -91,6 +91,7 @@ export class AddModelComponent implements OnDestroy {
     ])
       .pipe(
         takeUntil(this.unsubscribeAll),
+        filter(([, modelId]) => !!modelId),
         tap(([, modelId]) => (this.modelId = modelId)),
         switchMap(([account, modelId, zoneSlug]) =>
           forkJoin([

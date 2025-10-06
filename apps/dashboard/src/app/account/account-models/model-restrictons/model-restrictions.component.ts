@@ -5,7 +5,7 @@ import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/p
 import { TranslateModule } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
-import { forkJoin, of } from 'rxjs';
+import { combineLatest, forkJoin, of } from 'rxjs';
 import { map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { CustomModelsComponent } from '../custom-models/custom-models.component';
 
@@ -29,7 +29,7 @@ export class ModelRestrictionsComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
 
-  kbList = this.sdk.kbList;
+  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList]).pipe(map(([kbs, arags]) => kbs.concat(arags)));
   selection: { [kbId: string]: boolean } = {};
   isLoading = true;
   isSaving = false;
