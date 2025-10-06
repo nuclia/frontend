@@ -179,6 +179,7 @@
 	"account.users_left": "Total des licences restantes",
 	"accounts.add_user_input": "Email de l’utilisateur",
 	"activity.actor": "Acteur",
+	"activity.clear": "Effacer la sélection",
 	"activity.columns": "Colonnes affichées",
 	"activity.email-sent": "La génération du journal peut prendre du temps, un lien de téléchargement sera envoyé à {{email}} une fois terminé.",
 	"activity.filter": "Filtrer",

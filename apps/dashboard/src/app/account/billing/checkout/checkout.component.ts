@@ -443,7 +443,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   updatePaymentMethod() {
-    const isProd = location.hostname === 'nuclia.cloud';
+    const isProd = location.hostname === 'rag.progress.cloud';
     window.open(
       isProd
         ? 'https://billing.stripe.com/p/login/3csdRbcYAb0y07u000'
