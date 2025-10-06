@@ -119,56 +119,73 @@ export class DriversService {
     return of(this._drivers()).pipe(
       take(1),
       switchMap((existingDrivers) => {
-        const modalRef = this.modal.openModal(
-          DynamicDriverModalComponent,
-          new ModalConfig({
-            data: {
-              driverTitle,
-              existingDrivers,
-            },
-          }),
-        );
-
-        return modalRef.onClose.pipe(
-          timeout(300000), // 5 minute timeout to prevent hanging
-          tap((result) => {
-            console.log('Modal onClose result:', result);
-          }),
-          switchMap((driver) => {
-            if (!driver) {
-              // Modal was cancelled - return empty observable that completes immediately
-              console.log('Modal was cancelled or closed without data');
-              return of(null);
-            }
-
-            console.log('Processing driver creation with data:', driver);
-            // Process the driver creation
-            const driverWithId = {
-              ...driver,
-              identifier: `${driver.provider}-${STFUtils.generateRandomSlugSuffix()}`,
-            };
-
-            return this.sdk.currentArag.pipe(
+        let modalRef$: Observable<ModalRef<any>>;
+        switch (driverTitle) {
+          case 'NucliaDBConfig':
+            modalRef$ = this.sdk.kbList.pipe(
               take(1),
-              switchMap((arag) => arag.addDriver(driverWithId)),
-              switchMap(() => this.sdk.refreshCurrentArag()),
-              tap(() => this.refreshDrivers()),
-              catchError((error) => {
-                this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.creation'));
-                return throwError(() => error);
-              }),
+              map((kbList) => this.modal.openModal(NucliaDriverModalComponent, new ModalConfig({ data: { kbList } }))),
             );
-          }),
-          catchError((error) => {
-            console.error('Modal operation error or timeout:', error);
-            // Ensure modal is dismissed on error
-            try {
-              modalRef.dismiss();
-            } catch (dismissError) {
-              console.error('Error dismissing modal after timeout:', dismissError);
-            }
-            return of(null);
-          }),
+            break;
+          default:
+            modalRef$ = of(
+              this.modal.openModal(
+                DynamicDriverModalComponent,
+                new ModalConfig({
+                  data: {
+                    driverTitle,
+                    existingDrivers,
+                  },
+                }),
+              ),
+            );
+            break;
+        }
+
+        return modalRef$.pipe(
+          switchMap((modalRef) =>
+            modalRef.onClose.pipe(
+              timeout(300000), // 5 minute timeout to prevent hanging
+              tap((result) => {
+                console.log('Modal onClose result:', result);
+              }),
+              switchMap((driver) => {
+                if (!driver) {
+                  // Modal was cancelled - return empty observable that completes immediately
+                  console.log('Modal was cancelled or closed without data');
+                  return of(null);
+                }
+
+                console.log('Processing driver creation with data:', driver);
+                // Process the driver creation
+                const driverWithId = {
+                  ...driver,
+                  identifier: `${driver.provider}-${STFUtils.generateRandomSlugSuffix()}`,
+                };
+
+                return this.sdk.currentArag.pipe(
+                  take(1),
+                  switchMap((arag) => arag.addDriver(driverWithId)),
+                  switchMap(() => this.sdk.refreshCurrentArag()),
+                  tap(() => this.refreshDrivers()),
+                  catchError((error) => {
+                    this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.creation'));
+                    return throwError(() => error);
+                  }),
+                );
+              }),
+              catchError((error) => {
+                console.error('Modal operation error or timeout:', error);
+                // Ensure modal is dismissed on error
+                try {
+                  modalRef.dismiss();
+                } catch (dismissError) {
+                  console.error('Error dismissing modal after timeout:', dismissError);
+                }
+                return of(null);
+              }),
+            ),
+          ),
         );
       }),
     );

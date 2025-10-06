@@ -1,0 +1,42 @@
+<div
+  class="form-entry"
+  [formGroup]="keyValueForm">
+  <div class="label-and-button">
+    <label>
+      {{ label }}
+      @if (required) {
+        <span style="color: red">*</span>
+      }
+    </label>
+    <pa-button
+      size="small"
+      aspect="basic"
+      (click)="addKeyValue()">
+      Add
+    </pa-button>
+  </div>
+  @for (group of keyValueForm.controls | keyvalue; track group.key) {
+    <div
+      class="key-value-pair"
+      [formGroup]="getFormGroupFromControl(group.value)">
+      <pa-input
+        formControlName="key"
+        placeholder="Property name">
+        Key
+      </pa-input>
+      <pa-input
+        formControlName="value"
+        [type]="getValueInputType()"
+        [placeholder]="valuePlaceholder">
+        Value
+      </pa-input>
+      <pa-button
+        icon="trash"
+        aspect="basic"
+        size="small"
+        (click)="removeKeyValue(group.key)">
+        Remove
+      </pa-button>
+    </div>
+  }
+</div>

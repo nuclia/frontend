@@ -64,10 +64,6 @@ export class NodeFormComponent extends FormDirective implements OnInit {
       this.isFormReady = true;
       this.formReady.emit(this.configForm);
     } else if (this.schemas) {
-      // Normal usage - use provided schemas
-      // Make sure config is available for form building
-      console.log('Building form with config:', this.config);
-
       const formConfig = this.buildFormFromSchema(this.schemas, this.agentType, this.agentName);
       this.schema = formConfig.schema || {};
       this.form = new FormGroup({
