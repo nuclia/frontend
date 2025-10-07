@@ -81,6 +81,15 @@
       [property]="property"
       [required]="required"></app-transport-field>
 
+    <!-- Key-value field -->
+    <app-key-value-field
+      *ngSwitchCase="'key-value-field'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-key-value-field>
+
     <!-- Text input (includes string, const, and fallback) -->
     <pa-input
       *ngSwitchCase="'pa-input'"

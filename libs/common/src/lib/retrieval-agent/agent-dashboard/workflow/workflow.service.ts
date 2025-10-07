@@ -955,12 +955,6 @@ export class WorkflowService {
    * Safely patch form values, handling FormArray controls properly
    */
   private patchFormValuesSafely(formGroup: FormGroup, config: any) {
-    console.log('patchFormValuesSafely called with:', {
-      config,
-      formControls: Object.keys(formGroup.controls),
-      formGroup,
-    });
-
     const patchData: any = {};
 
     Object.keys(config).forEach((key) => {
@@ -984,8 +978,6 @@ export class WorkflowService {
           // For other types, try to convert to array
           arrayValue = [value];
         }
-
-        console.log('Handling FormArray:', key, { originalValue: value, convertedValue: arrayValue });
 
         // Rebuild the FormArray with the proper array values
         formArray.clear();
@@ -1012,14 +1004,7 @@ export class WorkflowService {
     // Patch the remaining non-FormArray controls
     if (Object.keys(patchData).length > 0) {
       try {
-        console.log('Attempting to patch form with patchData:', patchData);
-        console.log('Form structure before patch:', {
-          formControls: Object.keys(formGroup.controls),
-          controlTypes: Object.entries(formGroup.controls).map(([key, control]) => [key, control.constructor.name]),
-        });
-
         formGroup.patchValue(patchData);
-        console.log('Successfully patched form with safe data');
       } catch (error) {
         console.error('Error patching form values:', { error, patchData, formGroup });
         // Let's also log which specific control is causing issues

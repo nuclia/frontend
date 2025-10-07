@@ -16,6 +16,7 @@ export class FieldConfigService {
   private readonly specialFieldMappings: Record<string, FieldConfig> = {
     rules: { component: 'rules-field', type: 'custom' },
     transport: { component: 'transport-field', type: 'custom' },
+    roots: { component: 'key-value-field', type: 'custom' },
     // TODOs
     labels: { component: 'custom-placeholder', type: 'custom' },
     rids: { component: 'custom-placeholder', type: 'custom' },

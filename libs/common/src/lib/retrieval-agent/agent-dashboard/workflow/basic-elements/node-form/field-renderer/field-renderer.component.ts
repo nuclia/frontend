@@ -10,6 +10,7 @@ import {
   CodeEditorComponent,
   DriverSelectComponent,
   EnumSelectComponent,
+  KeyValueFieldComponent,
   TransportFieldComponent,
 } from '../subcomponents';
 import { ModelSelectComponent } from '../subcomponents/model-select/model-select.component';
@@ -35,6 +36,7 @@ import { RulesFieldComponent } from '../../rules-field/rules-field.component';
     McpSourceSelectComponent,
     RulesFieldComponent,
     TransportFieldComponent,
+    KeyValueFieldComponent,
   ],
 })
 export class FieldRendererComponent {
