@@ -25,7 +25,7 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   @Input() required: boolean = false;
 
   private destroy$ = new Subject<void>();
-  private keyValueForm = new FormGroup({});
+  keyValueForm = new FormGroup({});
 
   get parentControl(): FormControl {
     return this.form.get(this.controlName) as FormControl;
