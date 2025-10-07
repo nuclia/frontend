@@ -20,7 +20,8 @@ export interface IDriver {
     | GoogleConfig
     | SqlConfig
     | McpSseConfig
-    | McpStdioConfig;
+    | McpStdioConfig
+    | McpHttpConfig;
 }
 
 export type DriverCreation = Omit<IDriver, 'id'>;
@@ -73,6 +74,10 @@ export interface McpSseDriver extends IDriver {
 export interface McpStdioDriver extends IDriver {
   provider: 'mcpstdio';
   config: McpStdioConfig;
+}
+export interface McpHttpDriver extends IDriver {
+  provider: 'mcphttp';
+  config: McpHttpConfig;
 }
 export interface AliniaDriver extends IDriver {
   provider: 'alinia';
@@ -136,6 +141,7 @@ export interface McpStdioConfig {
   encoding?: string;
   encoding_error_handler?: 'strict' | 'ignore' | 'replace';
 }
+export interface McpHttpConfig {}
 export interface AliniaConfig {
   key: string;
 }

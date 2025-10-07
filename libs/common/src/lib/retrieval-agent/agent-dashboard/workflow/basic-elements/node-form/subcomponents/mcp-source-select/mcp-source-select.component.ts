@@ -4,9 +4,8 @@ import { CommonModule } from '@angular/common';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { JSONSchema4 } from 'json-schema';
 import { SDKService } from '@flaps/core';
-import { McpSseDriver, McpStdioDriver } from '@nuclia/core';
+import { McpHttpDriver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { switchMap, take } from 'rxjs';
 import { WorkflowService } from '../../../../workflow.service';
 
 @Component({
@@ -26,19 +25,44 @@ export class McpSourceSelectComponent implements OnInit {
   private sdk = inject(SDKService);
   private workflowService = inject(WorkflowService);
   private toaster = inject(SisToastService);
-  private drivers = signal<(McpSseDriver | McpStdioDriver)[]>([]);
+  private drivers = signal<(McpHttpDriver | McpSseDriver | McpStdioDriver)[]>([]);
+  private transportType = signal<string | null>(null);
 
   // Computed properties
-  mcpList = computed(() => this.drivers());
+  mcpList = computed(() => {
+    const transport = this.transportType();
+    const allDrivers = this.drivers();
+
+    if (!transport || !allDrivers.length) {
+      return allDrivers;
+    }
+
+    return allDrivers.filter((driver) => driver.provider.includes(transport.toLowerCase()));
+  });
 
   ngOnInit(): void {
     this.workflowService.driverModels$.subscribe((drivers) => {
       const mcpDrivers =
-        (drivers?.filter((driver) => driver.provider === 'mcpsse' || driver.provider === 'mcpstdio') as (
+        (drivers?.filter((driver) => driver.provider.includes('mcp')) as (
           | McpSseDriver
           | McpStdioDriver
+          | McpHttpDriver
         )[]) || [];
       this.drivers.set(mcpDrivers);
     });
+
+    // Listen for transport changes in the form
+    if (this.form) {
+      const transportControl = this.form.get('transport');
+      if (transportControl) {
+        // Set initial value
+        this.transportType.set(transportControl.value);
+
+        // Listen for changes
+        transportControl.valueChanges.subscribe((value) => {
+          this.transportType.set(value);
+        });
+      }
+    }
   }
 }

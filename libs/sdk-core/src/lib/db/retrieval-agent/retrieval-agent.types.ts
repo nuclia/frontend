@@ -7,7 +7,8 @@ export type ProviderType =
   | 'nucliadb'
   | 'sql'
   | 'mcpsse'
-  | 'mcpstdio';
+  | 'mcpstdio'
+  | 'mcphttp';
 
 export type AragModule =
   | 'historical'
