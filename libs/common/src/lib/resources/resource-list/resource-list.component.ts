@@ -306,6 +306,10 @@ export class ResourceListComponent implements OnDestroy {
   onModeChange(mode: string) {
     this.searchMode = mode as 'title' | 'uid' | 'slug';
     this.resourceListService.setSearchMode(this.searchMode);
-    this.search();
+    this.query.pipe(take(1)).subscribe((query) => {
+      if (query) {
+        this.search();
+      }
+    });
   }
 }
