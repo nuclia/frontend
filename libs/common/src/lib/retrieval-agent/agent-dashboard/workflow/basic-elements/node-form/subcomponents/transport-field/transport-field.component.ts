@@ -133,9 +133,9 @@ export class TransportFieldComponent implements OnInit {
     // This method is kept for backwards compatibility but logic moved to computed
   }
 
-  getTransportHelpText(transport: string): string | undefined {
+  getTransportHelpText(transport: string): string {
     const availability = this.driverAvailability();
-    return availability[transport] === false ? `retrieval-agents.workflow.node-types.mcp.form.no-source` : undefined;
+    return availability[transport] === false ? `retrieval-agents.workflow.node-types.mcp.form.no-source` : '';
   }
 
   isTransportDisabled(transport: string): boolean {

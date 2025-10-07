@@ -12,7 +12,7 @@
           [value]="transport"
           [disabled]="isTransportDisabled(transport)"
           [help]="
-            isTransportDisabled(transport)
+            isTransportDisabled(transport) && getTransportHelpText(transport)
               ? (getTransportHelpText(transport) | translate: { transport: transport })
               : undefined
           ">
