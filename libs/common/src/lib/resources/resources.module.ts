@@ -65,30 +65,12 @@ const ROUTES: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'all',
+        pathMatch: 'full',
+      },
+      {
+        path: ':status',
         component: ResourceListComponent,
-        children: [
-          {
-            path: '',
-            redirectTo: 'all',
-            pathMatch: 'full',
-          },
-          {
-            path: 'all',
-            component: ResourcesTableComponent,
-          },
-          {
-            path: 'processed',
-            component: ProcessedResourcesTableComponent,
-          },
-          {
-            path: 'pending',
-            component: PendingResourcesTableComponent,
-          },
-          {
-            path: 'error',
-            component: ErrorResourcesTableComponent,
-          },
-        ],
       },
       {
         path: ':id/edit',

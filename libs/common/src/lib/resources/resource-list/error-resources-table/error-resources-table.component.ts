@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { COMMON_COLUMNS, ResourcesTableDirective } from '../resources-table.directive';
 import { map } from 'rxjs';
-import { RESOURCE_STATUS } from '@nuclia/core';
 import { UploadService } from '../../../upload/upload.service';
 import { ColumnHeader } from '../resource-list.model';
 
@@ -13,7 +12,6 @@ import { ColumnHeader } from '../resource-list.model';
   standalone: false,
 })
 export class ErrorResourcesTableComponent extends ResourcesTableDirective {
-  override status: RESOURCE_STATUS = RESOURCE_STATUS.ERROR;
   private uploadService = inject(UploadService);
   totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.error));
 
