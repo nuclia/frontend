@@ -1,0 +1,41 @@
+@if (isLoading) {
+  <nsi-spinner></nsi-spinner>
+} @else {
+  <div class="model-restrictions">
+    <pa-table
+      columns="2fr 1fr"
+      border>
+      <pa-table-header>
+        <pa-table-cell header>
+          {{ 'Knowledge Box / ' + ( 'generic.retrieval-agent' | translate) }}
+        </pa-table-cell>
+        <pa-table-cell header>{{ 'account.models.restrictions.allowed-models' | translate }}</pa-table-cell>
+      </pa-table-header>
+      @for (kb of kbList | async; track kb.id) {
+        <pa-table-row>
+          <pa-table-cell>{{ kb.title }}</pa-table-cell>
+          <pa-table-cell>
+            <div>
+              <pa-toggle
+                [(value)]="selection[kb.id]"
+                [disabled]="isSaving"
+                (click)="!isSaving && save(kb, !selection[kb.id])"
+                labelOnRight>
+                <span class="body-s">
+                  {{
+                    (selection[kb.id] ? 'account.models.restrictions.all' : 'account.models.restrictions.custom')
+                      | translate
+                  }}
+                </span>
+              </pa-toggle>
+            </div>
+          </pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+
+    <div>
+      <app-custom-models [kbConfigs]="(kbConfigs | async) || undefined"></app-custom-models>
+    </div>
+  </div>
+}

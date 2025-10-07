@@ -1,9 +1,3 @@
-@if (isLoading) {
-  <div class="loading-shade">
-    <nsi-spinner></nsi-spinner>
-  </div>
-}
-
 <div class="account-models page-spacing">
   <div class="account-models-header">
     <div>
@@ -13,100 +7,68 @@
   </div>
 
   <div class="account-models-content">
-    @if (!isLoading) {
-      <pa-tabs notFullWidth>
-        <pa-tab
-          [active]="selectedTab === 'configs'"
-          (click)="selectedTab = 'configs'">
-          {{ 'account.models.model-configs.title' | translate }}
-        </pa-tab>
-        <pa-tab
-          [active]="selectedTab === 'custom-models'"
-          (click)="selectedTab = 'custom-models'">
-          {{ 'account.models.custom-models.title' | translate }}
-        </pa-tab>
-      </pa-tabs>
+    <pa-tabs notFullWidth>
+      <pa-tab
+        [active]="selectedTab === 'configs'"
+        (click)="selectedTab = 'configs'">
+        {{ 'account.models.model-configs.title' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="selectedTab === 'restrictions'"
+        (click)="selectedTab = 'restrictions'">
+        {{ 'account.models.restrictions.title' | translate }}
+      </pa-tab>      
+    </pa-tabs>
 
-      @if (selectedTab === 'configs') {
-        <div class="configs">
-          <div class="create">
-            <pa-button
-              iconAndText
-              icon="circle-plus"
-              (click)="createConfig()">
-              {{ 'account.models.model-configs.create' | translate }}
-            </pa-button>
-          </div>
-          @if (modelConfigs | async; as configs) {
-            @if (configs.length > 0) {
-              <pa-table
-                columns="2fr 2fr 1fr 60px"
-                border>
-                <pa-table-header>
-                  <pa-table-cell header>
-                    {{ 'account.models.model-configs.generative-model' | translate }}
-                  </pa-table-cell>
-                  <pa-table-cell header>{{ 'generic.description' | translate }}</pa-table-cell>
-                  <pa-table-cell header>{{ 'account.models.model-configs.zone' | translate }}</pa-table-cell>
-                  <pa-table-cell header></pa-table-cell>
-                </pa-table-header>
-                @for (config of configs; track config.id) {
-                  <pa-table-row
-                    clickable
-                    (click)="displayConfig(config)">
-                    <pa-table-cell class="body-m">{{ config.default_model_id }}</pa-table-cell>
-                    <pa-table-cell class="body-s">{{ config.description }}</pa-table-cell>
-                    <pa-table-cell class="body-m">{{ config.zone }}</pa-table-cell>
-                    <pa-table-cell>
-                      <pa-button
-                        icon="trash"
-                        kind="destructive"
-                        aspect="basic"
-                        size="small"
-                        (click)="deleteConfig(config, $event)">
-                        {{ 'generic.delete' | translate }}
-                      </pa-button>
-                    </pa-table-cell>
-                  </pa-table-row>
-                }
-              </pa-table>
-            }
-          }
+    @if (selectedTab === 'configs') {
+      <div class="configs">
+        <div class="create">
+          <pa-button
+            iconAndText
+            icon="circle-plus"
+            (click)="createConfig()">
+            {{ 'account.models.model-configs.create' | translate }}
+          </pa-button>
         </div>
-      }
-
-      @if (selectedTab === 'custom-models') {
-        @if (!hasCustomModels) {
-          <nsi-info-card icon="info">{{ 'account.models.custom-models.empty-list' | translate }}</nsi-info-card>
-        } @else {
-          @for (kb of kbList | async; track kb.id) {
-            <nsi-two-columns-configuration-item
-              [itemTitle]="kb.title"
-              description="account.models.custom-models.selection">
-              <div class="toggles">
-                @for (model of selection[kb.id]; track model.modelId) {
-                  <pa-toggle
-                    withBackground
-                    [disabled]="model.default || isSaving"
-                    [(value)]="model.selected"
-                    (click)="!model.default && !isSaving && save(model.modelId, kb.id, kb.zone, model.selected)">
-                    <span class="toggle-label">
-                      {{ model.title }}
-                      @if (model.default) {
-                        <nsi-badge
-                          kind="tertiary"
-                          icon="lock-filled">
-                          {{ 'account.models.custom-models.default' | translate }}
-                        </nsi-badge>
-                      }
-                    </span>
-                  </pa-toggle>
-                }
-              </div>
-            </nsi-two-columns-configuration-item>
+        @if (modelConfigs | async; as configs) {
+          @if (configs.length > 0) {
+            <pa-table
+              columns="2fr 2fr 1fr 60px"
+              border>
+              <pa-table-header>
+                <pa-table-cell header>
+                  {{ 'account.models.model-configs.generative-model' | translate }}
+                </pa-table-cell>
+                <pa-table-cell header>{{ 'generic.description' | translate }}</pa-table-cell>
+                <pa-table-cell header>{{ 'account.models.model-configs.zone' | translate }}</pa-table-cell>
+                <pa-table-cell header></pa-table-cell>
+              </pa-table-header>
+              @for (config of configs; track config.id) {
+                <pa-table-row
+                  clickable
+                  (click)="displayConfig(config)">
+                  <pa-table-cell class="body-m">{{ config.default_model_id }}</pa-table-cell>
+                  <pa-table-cell class="body-s">{{ config.description }}</pa-table-cell>
+                  <pa-table-cell class="body-m">{{ config.zone }}</pa-table-cell>
+                  <pa-table-cell>
+                    <pa-button
+                      icon="trash"
+                      kind="destructive"
+                      aspect="basic"
+                      size="small"
+                      (click)="deleteConfig(config, $event)">
+                      {{ 'generic.delete' | translate }}
+                    </pa-button>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
           }
         }
-      }
+      </div>
+    }
+    @if (selectedTab === 'restrictions') {
+      <app-model-restrictions></app-model-restrictions>
     }
   </div>
 </div>

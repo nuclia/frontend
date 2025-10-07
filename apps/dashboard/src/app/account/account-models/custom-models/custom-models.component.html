@@ -1,0 +1,29 @@
+@if (hasCustomModels) {
+  <h2>{{ 'account.models.custom-models.title' | translate }}</h2>
+  @for (kb of kbList | async; track kb.id) {
+    <nsi-two-columns-configuration-item
+      [itemTitle]="kb.title"
+      description="account.models.custom-models.selection">
+      <div class="toggles">
+        @for (model of selection[kb.id]; track model.modelId) {
+          <pa-toggle
+            withBackground
+            [disabled]="model.default || isSaving"
+            [(value)]="model.selected"
+            (click)="!model.default && !isSaving && save(model.modelId, kb.id, kb.zone, model.selected)">
+            <span class="toggle-label">
+              {{ model.title }}
+              @if (model.default) {
+                <nsi-badge
+                  kind="tertiary"
+                  icon="lock-filled">
+                  {{ 'account.models.custom-models.default' | translate }}
+                </nsi-badge>
+              }
+            </span>
+          </pa-toggle>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+}
