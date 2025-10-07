@@ -1,5 +1,18 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.label-set-title {
+.label-set-item {
   padding: 0 rhythm(1);
+}
+
+.label-set-title {
+  font-weight: $font-weight-semi-bold;
+}
+
+.label-set-id {
+  color: $color-neutral-regular;
+  margin-left: rhythm(0.5);
+  text-transform: none;
+  li.selected & {
+    color: $color-neutral-light;
+  }
 }

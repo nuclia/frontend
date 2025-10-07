@@ -7,9 +7,10 @@
       [attr.data-cy]="'label-set-' + labelSet.id"
       [routerLink]="'./' + labelSet.id">
       <div
-        class="label-set-title"
+        class="label-set-item"
         paEllipsisTooltip>
-        {{ labelSet.title }}
+        <span class="label-set-title">{{ labelSet.title }}</span>
+        <span class="label-set-id">(id: {{ labelSet.id }})</span>
       </div>
       @if (isAdmin) {
         <div class="action-buttons-container">
