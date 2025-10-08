@@ -51,8 +51,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected translate = inject(TranslateService);
   protected features = inject(FeaturesService);
 
-  // status is set to processed by default, but will be overridden by each component extending this directive
-  status?: RESOURCE_STATUS;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
   page = this.resourceListService.page;
@@ -119,8 +117,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   );
 
   ngOnInit() {
-    this.resourceListService.status = this.status;
-    this.resourceListService.loadResources().subscribe();
     combineLatest([this.data, this.page])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => {
@@ -129,7 +125,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.resourceListService.clear();
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
@@ -307,7 +302,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   }
 
   reprocess(resources: Resource[]) {
-    const wait: number = this.status === RESOURCE_STATUS.ERROR ? 2000 : 1000;
+    const wait: number = this.resourceListService.status === RESOURCE_STATUS.ERROR ? 2000 : 1000;
     const title = resources.length > 1 ? 'resource.confirm-reprocess.plural-title' : 'resource.confirm-reprocess.title';
     const description =
       resources.length > 1 ? 'resource.confirm-reprocess.plural-description' : 'resource.confirm-reprocess.description';
@@ -476,7 +471,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   protected getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
-    return this.resourceListService.getAllResources(this.sorting, this.status, true).pipe(
+    return this.resourceListService.getAllResources(this.sorting, this.resourceListService.status, true).pipe(
       tap(() => {
         this.isLoading = false;
         this.cdr.markForCheck();

@@ -227,7 +227,15 @@
     </div>
 
     <div class="resource-list-content">
-      <router-outlet></router-outlet>
+      @if (isMainView) {
+        <stf-resources-table></stf-resources-table>
+      } @else if (isProcessedView) {
+        <stf-processed-resources-table></stf-processed-resources-table>
+      } @else if (isPendingView) {
+        <stf-pending-resources-table></stf-pending-resources-table>
+      } @else if (isErrorView) {
+        <stf-error-resources-table></stf-error-resources-table>
+      }
     </div>
   }
 </div>

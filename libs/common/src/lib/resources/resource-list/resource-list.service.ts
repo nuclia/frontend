@@ -169,6 +169,12 @@ export class ResourceListService {
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
+  setStatus(status?: RESOURCE_STATUS) {
+    this._page.next(0);
+    this.status = status;
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: true });
+  }
+
   setPageSize(pageSize: number) {
     this._page.next(0);
     this._pageSize.next(pageSize);

@@ -11,6 +11,7 @@ import {
   getLabelFromFilter,
   LabelSets,
   MIME_FACETS,
+  RESOURCE_STATUS,
   Search,
   trimLabelSets,
 } from '@nuclia/core';
@@ -45,6 +46,7 @@ export class ResourceListComponent implements OnDestroy {
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
+  status = this.route.params.pipe(map((params) => this.getStatusFromParam(params['status'] || '')));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
   andLogicForLabels: boolean = false;
   displayedLabelSets: LabelSets = {};
@@ -82,7 +84,10 @@ export class ResourceListComponent implements OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {
-    this.uploadService.updateStatusCount().subscribe();
+    this.status.pipe(distinctUntilChanged(), takeUntil(this.unsubscribeAll)).subscribe((status) => {
+      this.resourceListService.clear();
+      this.resourceListService.setStatus(status);
+    });
     this.uploadService.refreshNeeded
       .pipe(
         switchMap(() => this.resourceListService.loadResources(true, false)),
@@ -128,7 +133,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   goToView(path: '' | 'processed' | 'pending' | 'error') {
-    this.router.navigate([`./${path}`], { relativeTo: this.route });
+    this.router.navigate([`../${path}`], { relativeTo: this.route });
   }
 
   search() {
@@ -306,6 +311,20 @@ export class ResourceListComponent implements OnDestroy {
   onModeChange(mode: string) {
     this.searchMode = mode as 'title' | 'uid' | 'slug';
     this.resourceListService.setSearchMode(this.searchMode);
-    this.search();
+    this.query.pipe(take(1)).subscribe((query) => {
+      if (query) {
+        this.search();
+      }
+    });
+  }
+
+  getStatusFromParam(param: string): RESOURCE_STATUS | undefined {
+    return param === 'processed'
+      ? RESOURCE_STATUS.PROCESSED
+      : param === 'pending'
+        ? RESOURCE_STATUS.PENDING
+        : param === 'error'
+          ? RESOURCE_STATUS.ERROR
+          : undefined;
   }
 }

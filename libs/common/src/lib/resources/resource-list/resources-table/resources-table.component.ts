@@ -24,6 +24,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   );
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
+  status = this.resourceListService.status;
   isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
     map(([filters, query]) => filters.length > 0 || query !== ''),
   );
