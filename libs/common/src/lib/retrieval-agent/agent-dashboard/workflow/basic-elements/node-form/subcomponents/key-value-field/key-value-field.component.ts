@@ -118,6 +118,11 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
     this.keyValueForm.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(300)).subscribe(() => {
       this.syncToParentForm();
     });
+
+    // Initial sync to set undefined if no values exist
+    if (!existingValue || Object.keys(existingValue).length === 0) {
+      this.syncToParentForm();
+    }
   }
 
   ngOnDestroy(): void {
@@ -157,8 +162,9 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   /**
    * Get the final object value from the key-value pairs
    */
-  getObjectValue(): Record<string, any> {
+  getObjectValue(): Record<string, any> | undefined {
     const result: Record<string, any> = {};
+    let hasValidEntries = false;
 
     Object.values(this.keyValueForm.controls).forEach((control) => {
       if (control instanceof FormGroup) {
@@ -168,11 +174,13 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
         if (key && value !== undefined && value !== '') {
           // Convert value to appropriate type based on additionalProperties
           result[key] = this.convertValue(value);
+          hasValidEntries = true;
         }
       }
     });
 
-    return result;
+    // Return undefined if no valid entries, otherwise return the object
+    return hasValidEntries ? result : undefined;
   }
 
   private convertValue(value: string): any {
