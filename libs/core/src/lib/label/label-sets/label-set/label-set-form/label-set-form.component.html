@@ -10,7 +10,8 @@
             formControlName="title"
             data-cy="label-set-title-input"
             [showAllErrors]="false"
-            [errorMessages]="validationMessages.title">
+            [errorMessages]="validationMessages.title"
+            [help]="labelSetId ? 'id: ' + labelSetId : ''">
             {{ 'label-set.form.name' | translate }}
           </pa-input>
 
