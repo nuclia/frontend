@@ -5,17 +5,17 @@ import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Driver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
+import { Driver, McpSseDriver, McpStdioDriver, McpHttpDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { switchMap, take } from 'rxjs';
 import { aragUrl } from '../../../../workflow.state';
 
-export type TransportType = 'SSE' | 'STDIO' | '';
+export type TransportType = string;
 
 export interface TransportChangeEvent {
   transport: TransportType;
   hasDrivers: boolean;
-  availableDrivers: (McpSseDriver | McpStdioDriver)[];
+  availableDrivers: (McpHttpDriver | McpSseDriver | McpStdioDriver)[];
 }
 
 @Component({
@@ -45,6 +45,10 @@ export class TransportFieldComponent implements OnInit {
   private transport = signal<TransportType>('');
 
   // Computed properties
+  transportOptions = computed(() => {
+    const property = this.property();
+    return property?.enum || [];
+  });
   transportControl = computed(() => {
     const form = this.form();
     const controlName = this.controlName();
@@ -53,21 +57,44 @@ export class TransportFieldComponent implements OnInit {
 
   driversPath = computed(() => `${aragUrl()}/drivers`);
 
-  mcpList = computed<(McpSseDriver | McpStdioDriver)[]>(() => {
-    switch (this.transport()) {
-      case 'SSE':
-        return this.drivers().filter((driver) => driver.provider === 'mcpsse');
-      case 'STDIO':
-        return this.drivers().filter((driver) => driver.provider === 'mcpstdio');
-      default:
-        return [];
-    }
+  // Helper method to generate provider type from transport type
+  private getProviderType(transport: string): string {
+    return `mcp${transport.toLowerCase()}`;
+  }
+
+  mcpList = computed<(McpHttpDriver | McpSseDriver | McpStdioDriver)[]>(() => {
+    const currentTransport = this.transport();
+    if (!currentTransport) return [];
+
+    const providerType = this.getProviderType(currentTransport);
+    return this.drivers().filter((driver) => driver.provider === providerType) as (
+      | McpHttpDriver
+      | McpSseDriver
+      | McpStdioDriver
+    )[];
   });
 
-  noSseDriver = signal(false);
-  noStdioDriver = signal(false);
+  // Dynamic driver availability signals for each transport type
+  driverAvailability = computed(() => {
+    const drivers = this.drivers();
+    const transportOptions = this.transportOptions();
+    const availability: Record<string, boolean> = {};
 
-  showDriversButton = computed(() => this.noSseDriver() || this.noStdioDriver());
+    transportOptions.forEach((transport: string) => {
+      const providerType = this.getProviderType(transport);
+
+      // Check if there are drivers for this transport type
+      const hasDrivers = drivers.some((driver) => driver.provider === providerType);
+      availability[transport] = hasDrivers;
+    });
+
+    return availability;
+  });
+
+  showDriversButton = computed(() => {
+    const availability = this.driverAvailability();
+    return Object.values(availability).some((hasDriver) => !hasDriver);
+  });
 
   ngOnInit(): void {
     // Initialize transport from form control value
@@ -102,16 +129,18 @@ export class TransportFieldComponent implements OnInit {
   }
 
   private updateDriverAvailability(drivers: Driver[]): void {
-    if (drivers.length === 0) {
-      this.noSseDriver.set(true);
-      this.noStdioDriver.set(true);
-    } else {
-      const sseDrivers = drivers.filter((driver) => driver.provider === 'mcpsse');
-      const stdioDrivers = drivers.filter((driver) => driver.provider === 'mcpstdio');
+    // Driver availability is now handled by the computed signal
+    // This method is kept for backwards compatibility but logic moved to computed
+  }
 
-      this.noSseDriver.set(sseDrivers.length === 0);
-      this.noStdioDriver.set(stdioDrivers.length === 0);
-    }
+  getTransportHelpText(transport: string): string {
+    const availability = this.driverAvailability();
+    return availability[transport] === false ? `retrieval-agents.workflow.node-types.mcp.form.no-source` : '';
+  }
+
+  isTransportDisabled(transport: string): boolean {
+    const availability = this.driverAvailability();
+    return availability[transport] === false;
   }
 
   private emitTransportChange(): void {

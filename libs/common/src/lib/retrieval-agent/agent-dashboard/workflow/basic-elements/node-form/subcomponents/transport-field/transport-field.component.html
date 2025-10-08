@@ -7,26 +7,18 @@
       [id]="controlName()"
       [formControlName]="controlName()"
       (valueChange)="onTransportChange($event)">
-      <pa-radio
-        value="SSE"
-        [disabled]="noSseDriver()"
-        [help]="
-          noSseDriver()
-            ? ('retrieval-agents.workflow.node-types.mcp.form.no-source' | translate: { transport: 'SSE' })
-            : undefined
-        ">
-        SSE
-      </pa-radio>
-      <pa-radio
-        value="STDIO"
-        [disabled]="noStdioDriver()"
-        [help]="
-          noStdioDriver()
-            ? ('retrieval-agents.workflow.node-types.mcp.form.no-source' | translate: { transport: 'STDIO' })
-            : undefined
-        ">
-        STDIO
-      </pa-radio>
+      @for (transport of transportOptions(); track transport) {
+        <pa-radio
+          [value]="transport"
+          [disabled]="isTransportDisabled(transport)"
+          [help]="
+            isTransportDisabled(transport) && getTransportHelpText(transport)
+              ? (getTransportHelpText(transport) | translate: { transport: transport })
+              : undefined
+          ">
+          {{ transport }}
+        </pa-radio>
+      }
     </pa-radio-group>
   </div>
 
