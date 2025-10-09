@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
 import { UserSummary } from '../user.models';
 import { Router } from '@angular/router';
+import { ManagerStore } from '../../manager.store';
 
 @Component({
   templateUrl: './user-list.component.html',
@@ -12,7 +13,9 @@ import { Router } from '@angular/router';
 })
 export class UserListComponent {
   private _allUsers: BehaviorSubject<UserSummary[]> = new BehaviorSubject<UserSummary[]>([]);
-
+  private store = inject(ManagerStore);
+  canDelete = this.store.canDelete;
+  canCreateUser = this.store.canCreateUser;
   filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   users$: Observable<UserSummary[]> = combineLatest([this._allUsers, this.filter$]).pipe(
     map(([users, filter]) =>

@@ -78,7 +78,7 @@
           @for (kb of kbList | async; track kb.id) {
             <li
               class="child-route"
-              [routerLink]="'zone/' + kb.zone.id + '/kb/' + kb.id"
+              [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
               routerLinkActive="active">
               <pa-icon
                 name="knowledge-box"
@@ -99,11 +99,13 @@
             routerLinkActive="active">
             Token consumption
           </li>
-          <li
-            routerLink="users"
-            routerLinkActive="active">
-            Users
-          </li>
+          @if (canSeeUsers | async) {
+            <li
+              routerLink="users"
+              routerLinkActive="active">
+              Users
+            </li>
+          }
           @if (!noStripe) {
             <li
               routerLink="payment-links"

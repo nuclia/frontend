@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable, of } from 'rxjs';
 import { AuthenticatedUser, User, UserSearch, UserSummary } from './user.models';
+import { UserType } from '@nuclia/core';
 
 const USERS_ENDPOINT = '/manage/@users';
 const USER_ENDPOINT = '/manage/@user';
@@ -36,7 +37,7 @@ export class UserService {
     return this.sdk.nuclia.rest.get(`${SEARCH_USERS_ACCOUNT_ENDPOINT}/${accountId}/${term}`);
   }
 
-  createUser(user: { name: string; email: string; type: 'USER' | 'ROOT' }): Observable<User> {
+  createUser(user: { name: string; email: string; type: UserType }): Observable<User> {
     return this.sdk.nuclia.rest.post(`${USERS_ENDPOINT}`, user);
   }
 

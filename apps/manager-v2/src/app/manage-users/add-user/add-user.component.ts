@@ -1,10 +1,10 @@
-
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
+import { UserType } from '@nuclia/core';
 
 @Component({
   templateUrl: 'add-user.component.html',
@@ -16,7 +16,7 @@ export class AddUserComponent {
   form = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    type: new FormControl<'USER' | 'ROOT'>('USER', { nonNullable: true, validators: [Validators.required] }),
+    type: new FormControl<UserType>('USER', { nonNullable: true, validators: [Validators.required] }),
   });
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);

@@ -20,7 +20,7 @@
   @for (kb of kbList | async; track kb.id) {
     <pa-table-row
       clickable
-      [routerLink]="'../zone/' + kb.zone.id + '/kb/' + kb.id">
+      [routerLink]="(canAccessKBs | async) ? '../zone/' + kb.zone.id + '/kb/' + kb.id : undefined">
       <pa-table-cell>
         <div class="id-and-lock">
           @if (kb.private) {

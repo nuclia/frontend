@@ -12,6 +12,7 @@ export class UserService {
   private userInfoSubject = new BehaviorSubject<Welcome | undefined>(undefined);
   readonly userInfo = this.userInfoSubject.asObservable();
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
+  readonly userType = this.userPrefs.pipe(map((pref) => pref?.type));
   readonly hasOwnAccount = this.userInfo.pipe(map((info) => (info?.dependant_accounts.length || 0) > 0));
 
   constructor(

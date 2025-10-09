@@ -18,6 +18,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private accountId?: string;
 
+  canEdit = this.store.canEdit;
   users = this.store.accountUsers;
   hasSeveralManagers = this.users.pipe(map((users) => users.filter((user) => user.isManager).length > 1));
 

@@ -1,24 +1,26 @@
 <h3>Account users</h3>
 
-<div class="add-member">
-  <pa-input
-    icon="search"
-    [paPopup]="potentialMembersList"
-    sameWidth
-    (valueChange)="searchMemberTerm$.next($event)">
-    Search member to add
-  </pa-input>
-  <pa-dropdown #potentialMembersList>
-    @for (member of potentialMembers$ | async; track member) {
-      <pa-option
-        icon="circle-plus"
-        [description]="member.id"
-        (selectOption)="addMember(member)">
-        {{ member.name }} – {{ member.email }}
-      </pa-option>
-    }
-  </pa-dropdown>
-</div>
+@if (canEdit | async) {
+  <div class="add-member">
+    <pa-input
+      icon="search"
+      [paPopup]="potentialMembersList"
+      sameWidth
+      (valueChange)="searchMemberTerm$.next($event)">
+      Search member to add
+    </pa-input>
+    <pa-dropdown #potentialMembersList>
+      @for (member of potentialMembers$ | async; track member) {
+        <pa-option
+          icon="circle-plus"
+          [description]="member.id"
+          (selectOption)="addMember(member)">
+          {{ member.name }} – {{ member.email }}
+        </pa-option>
+      }
+    </pa-dropdown>
+  </div>
+}
 <pa-table
   border
   columns="2fr repeat(2, 1fr) 104px 96px">
@@ -41,13 +43,12 @@
       <pa-table-cell>
         <div class="manager-container">
           @if (user.isManager) {
-            <pa-icon
-            name="shield-check"></pa-icon>
+            <pa-icon name="shield-check"></pa-icon>
           }
         </div>
       </pa-table-cell>
       <pa-table-cell-menu>
-        @if (!user.isManager || (hasSeveralManagers | async) === true) {
+        @if ((canEdit | async) && (!user.isManager || (hasSeveralManagers | async) === true)) {
           <pa-button
             icon="more-vertical"
             aspect="basic"
@@ -56,16 +57,10 @@
           </pa-button>
           <pa-dropdown #menu>
             @if (user.isManager && (hasSeveralManagers | async) === true) {
-              <pa-option
-                (selectOption)="removeFromManagers($event, user)">
-                Remove from managers
-              </pa-option>
+              <pa-option (selectOption)="removeFromManagers($event, user)">Remove from managers</pa-option>
             }
             @if (!user.isManager) {
-              <pa-option
-                (selectOption)="addToManagers($event, user)">
-                Add to managers
-              </pa-option>
+              <pa-option (selectOption)="addToManagers($event, user)">Add to managers</pa-option>
             }
             @if (!user.isManager || (hasSeveralManagers | async) === true) {
               <pa-separator></pa-separator>

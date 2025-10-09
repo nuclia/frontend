@@ -1,5 +1,4 @@
-import { UserType } from './user.model';
-import { Language } from '@nuclia/core';
+import { Language, UserType } from '@nuclia/core';
 
 export interface User {
   id: string;

@@ -7,13 +7,15 @@
         Filter
       </pa-input>
     </div>
-    <pa-button
-      routerLink="./add"
-      kind="primary"
-      icon="plus"
-      iconAndText>
-      Add user
-    </pa-button>
+    @if (canCreateUser | async) {
+      <pa-button
+        routerLink="./add"
+        kind="primary"
+        icon="plus"
+        iconAndText>
+        Add user
+      </pa-button>
+    }
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
@@ -38,17 +40,19 @@
             <pa-datetime
               [datetime]="user.last_login"
               format="numerical"
-            dateOnly></pa-datetime>
+              dateOnly></pa-datetime>
           </pa-table-cell>
           <pa-table-cell-menu>
-            <pa-button
-              icon="trash"
-              aspect="basic"
-              size="small"
-              kind="destructive"
-              (click)="deleteUser($event, user)">
-              Delete account
-            </pa-button>
+            @if (canDelete | async) {
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                kind="destructive"
+                (click)="deleteUser($event, user)">
+                Delete account
+              </pa-button>
+            }
           </pa-table-cell-menu>
         </pa-table-row>
       }

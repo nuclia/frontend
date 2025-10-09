@@ -1,4 +1,5 @@
-import { Language, UserType } from '@flaps/core';
+import { Language } from '@flaps/core';
+import { UserType } from '@nuclia/core';
 
 export type LoginProvider = 'GOOGLE' | 'APPLE' | 'LOCAL' | 'SAML';
 

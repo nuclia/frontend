@@ -19,6 +19,8 @@ import { AccountDetails, KbDetails, KbSummary, KbUser } from '../../account-ui.m
 export class KbDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
+  canEdit = this.store.canEdit;
+  canSeeUsers = this.store.canSeeUsers;
   kbForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),

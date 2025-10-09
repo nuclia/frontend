@@ -19,6 +19,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private accountBackup?: AccountDetails;
 
+  canFullyEditAccount = this.store.canFullyEditAccount;
+  canEdit = this.store.canEdit;
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),

@@ -12,6 +12,7 @@ import { AccountService } from '../../account.service';
 })
 export class KnowledgeBoxesComponent {
   kbList: Observable<KbSummary[]> = this.store.kbList;
+  canAccessKBs = this.store.canAccessKBs;
   counters: Observable<KbCounters> = this.kbList.pipe(
     filter((kbs) => kbs.length > 0),
     switchMap((kbs) => this.accountService.loadKbCounters(kbs)),

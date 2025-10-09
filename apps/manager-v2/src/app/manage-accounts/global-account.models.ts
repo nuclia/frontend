@@ -1,10 +1,11 @@
-import { Language, UserType } from '@flaps/core';
+import { Language } from '@flaps/core';
 import {
   Account,
   AccountBlockingState,
   AccountConfig,
   AccountLimitsPatchPayload,
   AccountTypes,
+  UserType,
   WelcomeUser,
 } from '@nuclia/core';
 import { DedicatedProcessorsState } from './regional-account.models';
