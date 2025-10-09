@@ -3,14 +3,14 @@
     <pa-button
       aspect="basic"
       kind="primary"
-      [disabled]="isSaving"
+      [disabled]="isSaving || !(canEdit | async)"
       (click)="resetAllToDefault()">
       Reset all to default
     </pa-button>
     <pa-button
       aspect="basic"
       kind="destructive"
-      [disabled]="isSaving"
+      [disabled]="isSaving || !(canEdit | async)"
       (click)="removeLimits()">
       Remove limits
     </pa-button>
@@ -21,13 +21,10 @@
     (ngSubmit)="save()">
     @for (group of limitsForm.controls | keyvalue; track group) {
       @if ((group.value.controls | keyvalue).length > 0) {
-        <section
-          [formGroupName]="group.key"
-          >
+        <section [formGroupName]="group.key">
           <h3 style="text-transform: capitalize">{{ group.key }} limits</h3>
           @for (limit of group.value.controls | keyvalue; track limit) {
-            <div
-              [formGroupName]="limit.key">
+            <div [formGroupName]="limit.key">
               <label
                 class="title-xxs"
                 [for]="'limit-group-' + limit.key">
@@ -41,12 +38,11 @@
                   <pa-radio value="limit">Limit</pa-radio>
                 </pa-radio-group>
                 @if (getRadioValue(group.key, limit.key) === 'limit') {
-                  <div
-                    class="limit-container">
+                  <div class="limit-container">
                     <pa-input
                       type="number"
                       externalLabel
-                    formControlName="limit"></pa-input>
+                      formControlName="limit"></pa-input>
                     <pa-button
                       icon="reload"
                       paTooltip="Reset to default"
@@ -65,6 +61,6 @@
 
     <nma-form-footer
       [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
-    (cancel)="cancel()"></nma-form-footer>
+      (cancel)="cancel()"></nma-form-footer>
   </form>
 </div>

@@ -74,7 +74,7 @@ export class AccountService {
    * Update account configuration and update the store accordingly
    * Stays global
    */
-  updateAccount(accountId: string, data: AccountConfigurationPayload): Observable<AccountDetails> {
+  updateAccount(accountId: string, data: Partial<AccountConfigurationPayload>): Observable<AccountDetails> {
     return this.globalService.updateAccount(accountId, data).pipe(switchMap(() => this.loadAccountDetails(accountId)));
   }
 

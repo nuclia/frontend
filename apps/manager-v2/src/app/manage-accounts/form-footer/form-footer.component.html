@@ -2,7 +2,7 @@
   <pa-button
     type="submit"
     [kind]="secondary ? 'secondary' : 'primary'"
-    [disabled]="disabled">
+    [disabled]="disabled || !(canEdit | async)">
     Save
   </pa-button>
   <pa-button

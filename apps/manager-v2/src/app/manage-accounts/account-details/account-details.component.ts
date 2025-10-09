@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AccountService } from '../account.service';
 import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
@@ -15,6 +15,8 @@ import { BackendConfigurationService, FeaturesService } from '@flaps/core';
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
+  canSeeUsers = this.store.canSeeUsers;
+  canAccessKBs = this.store.canAccessKBs;
   account = this.store.accountDetails;
   kbList = this.store.kbList;
   currentState = this.store.currentState;

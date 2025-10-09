@@ -4,9 +4,9 @@ import { UserService } from '../user.service';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Location } from '@angular/common';
 import { User } from '../user.models';
-import { UserType } from '@flaps/core';
+import { UserType } from '@nuclia/core';
+import { ManagerStore } from '../../manager.store';
 
 @Component({
   templateUrl: './user-details.component.html',
@@ -18,7 +18,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private router = inject(Router);
   private toaster = inject(SisToastService);
-
+  private store = inject(ManagerStore);
+  canEdit = this.store.canEdit;
   userEmail = '';
   userId = '';
   userForm = new FormGroup({

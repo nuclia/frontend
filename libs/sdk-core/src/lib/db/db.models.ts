@@ -218,7 +218,7 @@ export interface WelcomeUser {
   language?: Language;
 }
 
-export type UserType = 'ROOT' | 'DEALER' | 'USER';
+export type UserType = 'ROOT' | 'DEALER' | 'MANAGER' | 'SALES' | 'READONLY' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
 
 export interface NUAClientPayload {

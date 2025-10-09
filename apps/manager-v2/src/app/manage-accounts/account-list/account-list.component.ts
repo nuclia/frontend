@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { AccountSummary } from '../account-ui.models';
 import { AccountService } from '../account.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { ManagerStore } from '../../manager.store';
 
 @Component({
   templateUrl: './account-list.component.html',
@@ -11,7 +12,9 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 })
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);
-
+  private store = inject(ManagerStore);
+  canDelete = this.store.canDelete;
+  canCreateAccount = this.store.canCreateAccount;
   filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   accounts$: Observable<AccountSummary[]> = combineLatest([this._allAccounts, this.filter$]).pipe(
     map(([accounts, filter]) =>

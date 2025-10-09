@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { GlobalAccountService } from '../../global-account.service';
 import { of } from 'rxjs';
+import { ManagerStore } from '../../../manager.store';
 
 describe('PaymentLinksComponent', () => {
   let component: PaymentLinksComponent;
@@ -23,6 +24,9 @@ describe('PaymentLinksComponent', () => {
         MockProvider(GlobalAccountService, {
           getSearchPrice: () => of([]),
           getBillingFormulas: () => of([]),
+        }),
+        MockProvider(ManagerStore, {
+          getAccountId: () => '123abc',
         }),
       ],
     }).compileComponents();

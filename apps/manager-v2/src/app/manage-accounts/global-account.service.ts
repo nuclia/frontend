@@ -32,7 +32,7 @@ export class GlobalAccountService {
     return this.sdk.nuclia.rest.get<ExtendedAccount>(`${ACCOUNT_ENDPOINT}/${id}`);
   }
 
-  updateAccount(id: string, data: AccountConfigurationPayload): Observable<void> {
+  updateAccount(id: string, data: Partial<AccountConfigurationPayload>): Observable<void> {
     const payload: AccountPatchPayload = {
       slug: data.slug,
       email: data.email,

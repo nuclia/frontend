@@ -4,33 +4,35 @@
     [src]="assetsPath + '/logos/logo-white.svg'"
     [alt]="brandName + ' Manager'" />
 
-  @if (isRoot) {
-    <nav
-      class="title-m"
-      >
+  @if (canUseManager | async) {
+    <nav class="title-m">
       <ul>
         <li
           routerLink="accounts"
           routerLinkActive="active">
           Accounts
         </li>
-        <li
-          routerLink="users"
-          routerLinkActive="active">
-          Users
-        </li>
-        <li
-          routerLink="zones"
-          routerLinkActive="active">
-          Zones
-        </li>
+        @if (canSeeUsers | async) {
+          <li
+            routerLink="users"
+            routerLinkActive="active">
+            Users
+          </li>
+        }
+        @if (canManageZones | async) {
+          <li
+            routerLink="zones"
+            routerLinkActive="active">
+            Zones
+          </li>
+        }
       </ul>
     </nav>
   }
   <pa-avatar
     size="small"
     [avatar]="avatar | async"
-  [paPopup]="userMenu"></pa-avatar>
+    [paPopup]="userMenu"></pa-avatar>
 </header>
 
 <pa-dropdown #userMenu>
@@ -41,14 +43,11 @@
   </pa-option>
 </pa-dropdown>
 <div class="page-container">
-  @if (!isRoot) {
-    <div
-      class="forbidden-message">
-      You don't have enough permissions to use the manager.
-    </div>
+  @if (!(canUseManager | async)) {
+    <div class="forbidden-message">You don't have enough permissions to use the manager.</div>
   }
 
-  @if (isRoot) {
+  @if (canUseManager | async) {
     <router-outlet></router-outlet>
   }
 </div>

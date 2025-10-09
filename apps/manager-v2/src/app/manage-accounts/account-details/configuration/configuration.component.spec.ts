@@ -6,9 +6,17 @@ import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { of } from 'rxjs';
 import { ExtendedAccount } from '../../global-account.models';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDatePickerModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
+import { ManagerStore } from '../../../manager.store';
+import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
+import { ACCOUNT_DETAILS } from '../../test-utils';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -21,11 +29,21 @@ describe('ConfigurationComponent', () => {
         MockModule(ReactiveFormsModule),
         MockModule(PaTextFieldModule),
         MockModule(PaTogglesModule),
+        MockModule(PaDatePickerModule),
       ],
-      declarations: [ConfigurationComponent, MockComponent(FormFooterComponent)],
+      declarations: [
+        ConfigurationComponent,
+        MockComponent(FormFooterComponent),
+        MockComponent(BlockedFeaturesComponent),
+      ],
       providers: [
         MockProvider(AccountDetailsStore, {
           getAccount: jest.fn(() => of({} as ExtendedAccount)),
+        }),
+        MockProvider(ManagerStore, {
+          canFullyEditAccount: of(true),
+          canEdit: of(true),
+          accountDetails: of(ACCOUNT_DETAILS),
         }),
         MockProvider(AccountService),
         MockProvider(SisToastService),

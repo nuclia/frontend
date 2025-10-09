@@ -6,6 +6,9 @@ import { UserService } from '../../../manage-users/user.service';
 import { AccountService } from '../../account.service';
 import { AccountDetailsStore } from '../account-details.store';
 import { KbDetailsComponent } from './kb-details.component';
+import { ManagerStore } from '../../../manager.store';
+import { of } from 'rxjs';
+import { ACCOUNT_DETAILS } from '../../test-utils';
 
 describe('KbDetailsComponent', () => {
   let component: KbDetailsComponent;
@@ -20,6 +23,11 @@ describe('KbDetailsComponent', () => {
         MockProvider(UserService),
         MockProvider(AccountDetailsStore),
         MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canEdit: of(true),
+          canSeeUsers: of(true),
+          accountDetails: of(ACCOUNT_DETAILS),
+        }),
       ],
     }).compileComponents();
 

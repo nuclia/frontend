@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { AccountBlockingState, BlockedFeature } from '@nuclia/core';
 import { AccountDetails, AccountUser, KbDetails, KbSummary } from './manage-accounts/account-ui.models';
 import { ZoneModels } from './manage-accounts/regional-account.models';
+import { UserService } from '@flaps/core';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',
@@ -12,6 +13,20 @@ const BLOCKING_STATE_LABEL = {
 
 @Injectable({ providedIn: 'root' })
 export class ManagerStore {
+  private userService = inject(UserService);
+  readonly canUseManager = this.userService.userType.pipe(map((t) => !!t && t !== 'USER'));
+  readonly canDelete = this.userService.userType.pipe(map((t) => t == 'ROOT'));
+  readonly canEdit = this.userService.userType.pipe(map((t) => !!t && t !== 'USER' && t !== 'READONLY'));
+  readonly canManageZones = this.userService.userType.pipe(map((t) => t == 'ROOT'));
+  readonly canSeeUsers = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'READONLY' || t === 'MANAGER'));
+  readonly canManageModels = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
+  readonly canCreateAccount = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
+  readonly canCreateUser = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
+  readonly canFullyEditAccount = this.userService.userType.pipe(map((t) => t == 'ROOT' || t === 'MANAGER'));
+  readonly canAccessKBs = this.userService.userType.pipe(
+    map((t) => t == 'ROOT' || t === 'MANAGER' || t === 'READONLY'),
+  );
+
   private _accountDetails: BehaviorSubject<AccountDetails | null> = new BehaviorSubject<AccountDetails | null>(null);
   private _kbList: BehaviorSubject<KbSummary[]> = new BehaviorSubject<KbSummary[]>([]);
   private _kbDetails: BehaviorSubject<KbDetails | null> = new BehaviorSubject<KbDetails | null>(null);

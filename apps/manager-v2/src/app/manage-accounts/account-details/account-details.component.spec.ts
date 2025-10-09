@@ -8,6 +8,7 @@ import { ZoneService } from '../../manage-zones/zone.service';
 import { AccountService } from '../account.service';
 import { AccountDetailsComponent } from './account-details.component';
 import { AccountDetailsStore } from './account-details.store';
+import { ManagerStore } from '../../manager.store';
 
 describe('AccountDetailsComponent', () => {
   let component: AccountDetailsComponent;
@@ -27,6 +28,10 @@ describe('AccountDetailsComponent', () => {
           isTrial: of(false),
         }),
         MockProvider(BackendConfigurationService),
+        MockProvider(ManagerStore, {
+          canSeeUsers: of(true),
+          canAccessKBs: of(true),
+        }),
       ],
     }).compileComponents();
 

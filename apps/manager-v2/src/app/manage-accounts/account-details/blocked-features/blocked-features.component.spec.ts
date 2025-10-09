@@ -9,6 +9,7 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FeatureNamePipe } from './feature-name.pipe';
+import { ManagerStore } from '../../../manager.store';
 
 describe('BlockedFeaturesComponent', () => {
   let component: BlockedFeaturesComponent;
@@ -23,6 +24,9 @@ describe('BlockedFeaturesComponent', () => {
           getAccount: jest.fn(() => of({} as ExtendedAccount)),
         }),
         MockProvider(AccountService),
+        MockProvider(ManagerStore, {
+          blockedFeatures: of([]),
+        }),
       ],
     }).compileComponents();
 

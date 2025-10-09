@@ -15,6 +15,9 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ManagerStore } from '../../../manager.store';
+import { ACCOUNT_DETAILS } from '../../test-utils';
+import { Router, RouterModule } from '@angular/router';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;
@@ -30,6 +33,8 @@ describe('UsersComponent', () => {
         MockModule(PaTableModule),
         MockModule(PaTextFieldModule),
         MockModule(ReactiveFormsModule),
+        MockModule(PaTableModule),
+        MockModule(RouterModule),
       ],
       declarations: [UsersComponent],
       providers: [
@@ -39,6 +44,17 @@ describe('UsersComponent', () => {
         MockProvider(AccountService),
         MockProvider(UserService),
         MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canEdit: of(true),
+          accountDetails: of(ACCOUNT_DETAILS),
+          accountUsers: of([
+            {
+              id: '34f005d3-3cc1-41e4-8392-0dfd70e122df',
+              email: 'catwoman+new@nuclia.com',
+              name: 'catwoman',
+            },
+          ]),
+        }),
       ],
     }).compileComponents();
 

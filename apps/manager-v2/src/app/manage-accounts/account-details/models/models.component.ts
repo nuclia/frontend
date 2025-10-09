@@ -17,6 +17,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 })
 export class ModelsComponent {
   models = this.store.accountModels.pipe(map((models) => models.filter((zone) => zone.models.length > 0)));
+  canManageModels = this.store.canManageModels;
 
   constructor(
     private store: ManagerStore,
