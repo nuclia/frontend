@@ -9,6 +9,8 @@ import { ExtendedAccount } from '../../global-account.models';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ManagerStore } from '../../../manager.store';
+import { ACCOUNT_DETAILS } from '../../test-utils';
 
 describe('LimitsComponent', () => {
   let component: LimitsComponent;
@@ -29,6 +31,10 @@ describe('LimitsComponent', () => {
         }),
         MockProvider(AccountService),
         MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canEdit: of(true),
+          accountDetails: of(ACCOUNT_DETAILS),
+        }),
       ],
     }).compileComponents();
 

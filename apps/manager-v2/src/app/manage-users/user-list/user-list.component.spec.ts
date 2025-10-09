@@ -12,6 +12,7 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { UserService } from '../user.service';
 import { UserListComponent } from './user-list.component';
+import { ManagerStore } from '../../manager.store';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -34,6 +35,10 @@ describe('UserListComponent', () => {
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canDelete: of(true),
+          canCreateUser: of(true),
+        }),
       ],
     }).compileComponents();
 

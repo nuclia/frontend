@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AppLayoutComponent } from './app-layout.component';
+import { ManagerStore } from '../manager.store';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
@@ -31,6 +32,11 @@ describe('AppLayoutComponent', () => {
         } as unknown as SDKService),
         MockProvider(UserService, { userInfo: of(undefined) }),
         MockProvider(BackendConfigurationService),
+        MockProvider(ManagerStore, {
+          canUseManager: of(true),
+          canManageZones: of(true),
+          canSeeUsers: of(true),
+        }),
       ],
     }).compileComponents();
 

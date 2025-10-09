@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListComponent } from './account-list.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaScrollModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { AccountService } from '../account.service';
 import { of } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { ManagerStore } from '../../manager.store';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;
@@ -12,7 +13,12 @@ describe('AccountListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaScrollModule), MockModule(PaTableModule), MockModule(PaTextFieldModule)],
+      imports: [
+        MockModule(PaScrollModule),
+        MockModule(PaTableModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaButtonModule),
+      ],
       declarations: [AccountListComponent],
       providers: [
         MockProvider(AccountService, {
@@ -20,6 +26,10 @@ describe('AccountListComponent', () => {
         }),
         MockProvider(SisModalService),
         MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canDelete: of(true),
+          canCreateAccount: of(true),
+        }),
       ],
     }).compileComponents();
 

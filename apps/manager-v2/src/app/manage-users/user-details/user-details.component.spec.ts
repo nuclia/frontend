@@ -6,6 +6,8 @@ import { SisToastService } from '@nuclia/sistema';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { UserService } from '../user.service';
 import { UserDetailsComponent } from './user-details.component';
+import { ManagerStore } from '../../manager.store';
+import { of } from 'rxjs';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
@@ -20,7 +22,13 @@ describe('UserDetailsComponent', () => {
         MockModule(ReactiveFormsModule),
       ],
       declarations: [UserDetailsComponent],
-      providers: [MockProvider(UserService), MockProvider(SisToastService)],
+      providers: [
+        MockProvider(UserService),
+        MockProvider(SisToastService),
+        MockProvider(ManagerStore, {
+          canEdit: of(true),
+        }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserDetailsComponent);
