@@ -4,7 +4,7 @@ import { AccountTypeDefaults } from '@flaps/core';
 import { AccountTypes } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, map, Subject, switchMap, tap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
@@ -80,28 +80,41 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    if (this.configForm.valid && this.accountBackup) {
+    const accountBackup = this.accountBackup;
+    if (this.configForm.valid && accountBackup) {
       this.isSaving = true;
       const { trialExpirationDate, kbs, arags, ...rawValue } = this.configForm.getRawValue();
-      const payload: AccountConfigurationPayload = {
-        ...rawValue,
-        maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
-        maxArags: arags.arags_radio === 'limit' ? arags.maxArags : -1,
-      };
-      payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
-      this.accountService.updateAccount(this.accountBackup.id, payload).subscribe({
-        next: (updatedAccount) => {
-          this.isSaving = false;
-          this.accountBackup = { ...updatedAccount };
-          this.configForm.markAsPristine();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isSaving = false;
-          this.cdr.markForCheck();
-          this.toast.error('Updating account failed');
-        },
-      });
+      this.canFullyEditAccount
+        .pipe(
+          take(1),
+          switchMap((canFullyEditAccount) => {
+            const payload: Partial<AccountConfigurationPayload> = canFullyEditAccount
+              ? {
+                  ...rawValue,
+                  maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
+                  maxArags: arags.arags_radio === 'limit' ? arags.maxArags : -1,
+                }
+              : {
+                  trialExpirationDate,
+                  type: rawValue.type,
+                };
+            payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
+            return this.accountService.updateAccount(accountBackup.id, payload);
+          }),
+        )
+        .subscribe({
+          next: (updatedAccount) => {
+            this.isSaving = false;
+            this.accountBackup = { ...updatedAccount };
+            this.configForm.markAsPristine();
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.isSaving = false;
+            this.cdr.markForCheck();
+            this.toast.error('Updating account failed');
+          },
+        });
     }
   }
 
