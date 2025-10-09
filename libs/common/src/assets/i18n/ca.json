@@ -524,7 +524,7 @@
 	"generic.pagination": "{{current}} de {{total}}",
 	"generic.preferences": "Preferències",
 	"generic.presence": "Presència",
-	"generic.previous": "Pàgina anterior",
+	"generic.previous": "Anterior",
 	"generic.profile": "Perfil",
 	"generic.refresh": "Actualitzar",
 	"generic.reindexing": "Reprocessant els recursos",

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
 import { unparse } from 'papaparse';
 import { ActivityLogTableModalComponent } from './log-table-modal.component';
+import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -39,44 +40,50 @@ import { ActivityLogTableModalComponent } from './log-table-modal.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivityLogTableComponent {
-  private cdr = inject(ChangeDetectorRef);
   private modalService = inject(SisModalService);
 
   dateColumn = 'Date (UTC)';
   idColumn = 'ID';
+  pageSize = 200;
+
+  data = new BehaviorSubject<LogEntry[]>([]);
+  hiddenHeaders = new BehaviorSubject<string[]>([]);
+  term = new BehaviorSubject<string>('');
+  page = new BehaviorSubject<number>(0);
+
+  @ViewChild('container') container?: ElementRef;
+
+  headers = this.data.pipe(
+    map((data) =>
+      data.length > 0 ? [this.dateColumn, this.idColumn].concat(data[0].data.map(([key, _]) => key)) : [],
+    ),
+  );
+  displayedHeaders = combineLatest([this.headers, this.hiddenHeaders]).pipe(
+    map(([headers, hiddenHeaders]) => headers.filter((header) => !hiddenHeaders.includes(header))),
+  );
+  filteredRows = combineLatest([this.data, this.term]).pipe(
+    map(([data, term]) => this.search(data, term)),
+    shareReplay(1),
+  );
+  pageRows = combineLatest([this.filteredRows, this.page]).pipe(
+    map(([rows, page]) => rows.slice(page * this.pageSize, (page + 1) * this.pageSize)),
+  );
+  totalPages = this.filteredRows.pipe(map((rows) => Math.ceil(rows.length / this.pageSize)));
 
   @Input() month: string = '';
   @Input() event: string = '';
   @Input() url: string | undefined;
   @Input()
   set rows(v: LogEntry[]) {
-    this._rows = v;
-    this.displayedRows = v;
-    if (this._rows.length > 0) {
-      this.headers = [this.dateColumn, this.idColumn].concat(this._rows[0].data.map(([key, _]) => key));
-    }
-  }
-  get rows(): LogEntry[] {
-    return this._rows;
-  }
-  private _rows: LogEntry[] = [];
-
-  displayedRows: LogEntry[] = [];
-  headers: string[] = [];
-  hiddenHeaders: string[] = [];
-  maxLines = 6;
-  maxCharacters = 300;
-
-  get displayedHeaders() {
-    return this.headers.filter((header) => !this.hiddenHeaders.includes(header));
+    this.data.next(v);
   }
 
-  search(term: string) {
+  search(rows: LogEntry[], term: string) {
     term = term.toLocaleLowerCase();
     if (!term) {
-      this.displayedRows = this._rows;
+      return rows;
     } else {
-      this.displayedRows = this._rows.filter((row) => {
+      return rows.filter((row) => {
         return (
           row.date.includes(term) ||
           row.data.some(([_, value]) => {
@@ -88,7 +95,6 @@ export class ActivityLogTableComponent {
         );
       });
     }
-    this.cdr.detectChanges();
   }
 
   selectHeader(header: string, event: MouseEvent | KeyboardEvent) {
@@ -98,36 +104,45 @@ export class ActivityLogTableComponent {
   }
 
   toggleHeader(header: string) {
-    this.hiddenHeaders = this.hiddenHeaders.includes(header)
-      ? this.hiddenHeaders.filter((item) => item !== header)
-      : this.hiddenHeaders.concat(header);
+    this.hiddenHeaders.next(
+      this.hiddenHeaders.value.includes(header)
+        ? this.hiddenHeaders.value.filter((item) => item !== header)
+        : this.hiddenHeaders.value.concat(header),
+    );
   }
 
   clearHeaders(event: Event) {
     event.stopPropagation();
-    this.hiddenHeaders = this.headers;
+    this.headers.pipe(take(1)).subscribe((headers) => {
+      this.hiddenHeaders.next(headers);
+    });
   }
 
   downloadCSV() {
-    const headers = this.displayedHeaders;
-    const rows = this.rows.map((row) => [
-      ...(this.displayedHeaders.includes(this.dateColumn) ? [row.date] : []),
-      ...(this.displayedHeaders.includes(this.idColumn) ? [row.id] : []),
-      ...row.data
-        .filter((column) => this.displayedHeaders.includes(column[0]))
-        .map((column) => (column[1].type === 'object' ? JSON.stringify(column[1].value, null, 2) : column[1].value)),
-    ]);
-    const csv = unparse([headers, ...rows]);
-    const filename = `Nuclia_Activity_${this.event}_${this.month}.csv`;
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const link = document.createElement('a');
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', filename);
-      link.click();
-      URL.revokeObjectURL(url);
-    }
+    forkJoin([this.filteredRows.pipe(take(1)), this.displayedHeaders.pipe(take(1))]).subscribe(
+      ([filteredRows, displayedHeaders]) => {
+        const rows = filteredRows.map((row) => [
+          ...(displayedHeaders.includes(this.dateColumn) ? [row.date] : []),
+          ...(displayedHeaders.includes(this.idColumn) ? [row.id] : []),
+          ...row.data
+            .filter((column) => displayedHeaders.includes(column[0]))
+            .map((column) =>
+              column[1].type === 'object' ? JSON.stringify(column[1].value, null, 2) : column[1].value,
+            ),
+        ]);
+        const csv = unparse([displayedHeaders, ...rows]);
+        const filename = `Agentic_RAG_Activity_${this.event}_${this.month}.csv`;
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+          const url = URL.createObjectURL(blob);
+          link.setAttribute('href', url);
+          link.setAttribute('download', filename);
+          link.click();
+          URL.revokeObjectURL(url);
+        }
+      },
+    );
   }
 
   downloadJSON() {
@@ -144,5 +159,17 @@ export class ActivityLogTableComponent {
       ActivityLogTableModalComponent,
       new ModalConfig({ data: { title: cell[0], value: cell[1].value, json: cell[1].type === 'object' } }),
     );
+  }
+
+  updateTerm(term: string) {
+    this.term.next(term);
+    this.page.next(0);
+  }
+
+  updatePage(offset: number) {
+    this.page.next(this.page.value + offset);
+    if (this.container) {
+      this.container.nativeElement.scrollTop = 0;
+    }
   }
 }
