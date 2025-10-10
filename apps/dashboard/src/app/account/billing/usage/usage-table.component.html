@@ -1,67 +1,71 @@
-@if (usageData | async; as usage) {
-  <header>
-    <div>
-      <h2>{{ 'billing.usage.title' | translate }}</h2>
+<div class="container">
+  @if (usageData | async; as usage) {
+    <header>
       <div>
-        <div>{{ 'billing.usage.description' | translate }}</div>
-        <em>{{ 'billing.usage.interval' | translate: { to: usage.end_billing_date | date: 'YYYY-MM-dd' } }}</em>
+        <h2>{{ 'billing.usage.title' | translate }}</h2>
+        <div>
+          <div>{{ 'billing.usage.description' | translate }}</div>
+          <em>{{ 'billing.usage.interval' | translate: { to: usage.end_billing_date | date: 'YYYY-MM-dd' } }}</em>
+        </div>
       </div>
-    </div>
-    @if (isDeprecatedAccount | async) {
-      <div class="total title-l">
-        {{ total | async | currency: usage.currency }}
-      </div>
-    }
-  </header>
+      @if (isDeprecatedAccount | async) {
+        <div class="total title-l">
+          {{ total | async | currency: usage.currency }}
+        </div>
+      }
+    </header>
 
-  @if (isDeprecatedAccount | async) {
-    <pa-table
-      border
-      columns="300px auto auto auto auto">
-      <pa-table-header>
-        <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.tier_included' | translate }}</pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.over_consume' | translate }}</pa-table-cell>
-        <pa-table-cell header>
-          <div class="cost">{{ 'billing.usage.cost' | translate }}</div>
-        </pa-table-cell>
-      </pa-table-header>
-      @for (item of invoiceItems | async; track item) {
-        <pa-table-row>
-          <pa-table-cell>{{ 'billing.parameter.' + item[0] | translate }}</pa-table-cell>
-          <pa-table-cell>{{ item[1].threshold | number }}</pa-table-cell>
-          <pa-table-cell>{{ item[1].current_usage | number }}</pa-table-cell>
-          <pa-table-cell>{{ item[1].over_usage | number }}</pa-table-cell>
-          <pa-table-cell>
-            <div class="cost">{{ item[1].over_cost | currency: usage.currency }}</div>
+    @if (isDeprecatedAccount | async) {
+      <pa-table
+        border
+        columns="300px auto auto auto auto">
+        <pa-table-header>
+          <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.tier_included' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.over_consume' | translate }}</pa-table-cell>
+          <pa-table-cell header>
+            <div class="cost">{{ 'billing.usage.cost' | translate }}</div>
           </pa-table-cell>
-        </pa-table-row>
-      }
-    </pa-table>
-  } @else {
-    <pa-table
-      border
-      columns="auto auto auto auto">
-      <pa-table-header>
-        <pa-table-cell header></pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.cost' | translate }}</pa-table-cell>
-        <pa-table-cell header>
-          <div class="cost">{{ 'billing.usage.total' | translate }}</div>
-        </pa-table-cell>
-      </pa-table-header>
-      @if (usage.invoice_items['nuclia-tokens'] || usage.invoice_items['ai-tokens-used']; as nucliaTokens) {
-        <pa-table-row last>
-          <pa-table-cell>{{ 'billing.tokens' | translate }}*</pa-table-cell>
-          <pa-table-cell>{{ nucliaTokens.current_usage | number: '1.0-0' }}</pa-table-cell>
-          <pa-table-cell>{{ nucliaTokens.price | currency: usage.currency : 'symbol' : '1.2-6' }}/ token</pa-table-cell>
-          <pa-table-cell>
-            <div class="cost">{{ nucliaTokens.over_cost | currency: usage.currency }}</div>
+        </pa-table-header>
+        @for (item of invoiceItems | async; track item) {
+          <pa-table-row>
+            <pa-table-cell>{{ 'billing.parameter.' + item[0] | translate }}</pa-table-cell>
+            <pa-table-cell>{{ item[1].threshold | number }}</pa-table-cell>
+            <pa-table-cell>{{ item[1].current_usage | number }}</pa-table-cell>
+            <pa-table-cell>{{ item[1].over_usage | number }}</pa-table-cell>
+            <pa-table-cell>
+              <div class="cost">{{ item[1].over_cost | currency: usage.currency }}</div>
+            </pa-table-cell>
+          </pa-table-row>
+        }
+      </pa-table>
+    } @else {
+      <pa-table
+        border
+        columns="auto auto auto auto">
+        <pa-table-header>
+          <pa-table-cell header></pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.cost' | translate }}</pa-table-cell>
+          <pa-table-cell header>
+            <div class="cost">{{ 'billing.usage.total' | translate }}</div>
           </pa-table-cell>
-        </pa-table-row>
-      }
-    </pa-table>
-    <div class="notes body-xs">* {{ 'billing.token-help' | translate }}</div>
+        </pa-table-header>
+        @if (usage.invoice_items['nuclia-tokens'] || usage.invoice_items['ai-tokens-used']; as nucliaTokens) {
+          <pa-table-row last>
+            <pa-table-cell>{{ 'billing.tokens' | translate }}*</pa-table-cell>
+            <pa-table-cell>{{ nucliaTokens.current_usage | number: '1.0-0' }}</pa-table-cell>
+            <pa-table-cell>
+              {{ nucliaTokens.price | currency: usage.currency : 'symbol' : '1.2-6' }}/ token
+            </pa-table-cell>
+            <pa-table-cell>
+              <div class="cost">{{ nucliaTokens.over_cost | currency: usage.currency }}</div>
+            </pa-table-cell>
+          </pa-table-row>
+        }
+      </pa-table>
+      <div class="notes body-xs">* {{ 'billing.token-help' | translate }}</div>
+    }
   }
-}
+</div>

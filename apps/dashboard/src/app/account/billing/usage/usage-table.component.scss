@@ -1,5 +1,9 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.container {
+  max-width: calc(rhythm(90) + rhythm(6));
+}
+
 header {
   display: flex;
   justify-content: space-between;

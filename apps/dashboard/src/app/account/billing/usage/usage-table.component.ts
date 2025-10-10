@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AccountUsage, BillingService, BillingUsageType, InvoiceItem } from '@flaps/core';
-import { map, Observable, ReplaySubject } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BillingService, BillingUsageType, InvoiceItem } from '@flaps/core';
+import { map, Observable, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'app-usage-table',
@@ -12,14 +12,7 @@ import { map, Observable, ReplaySubject } from 'rxjs';
 export class UsageTableComponent {
   paramsToShow = ['media', 'paragraphs_processed', 'searches', 'predict', 'generative', 'paragraphs', 'training'];
 
-  @Input()
-  set usage(value: AccountUsage | undefined | null) {
-    if (value) {
-      this.usageData.next(value);
-    }
-  }
-
-  usageData = new ReplaySubject<AccountUsage>();
+  usageData = this.billing.getAccountUsage().pipe(shareReplay(1));
   total = this.usageData.pipe(map((usage) => usage.over_cost));
   invoiceItems: Observable<[string, InvoiceItem][]> = this.usageData.pipe(
     map((usage) => {
