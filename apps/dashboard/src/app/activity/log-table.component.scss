@@ -19,6 +19,14 @@
   z-index: 1;
 }
 
+.pagination {
+  margin-left: auto;
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: rhythm(2);
+}
+
 .container {
   overflow: auto;
   margin: rhythm(0.5) 0;

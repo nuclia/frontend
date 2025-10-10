@@ -524,7 +524,7 @@
 	"generic.pagination": " {{current}} sur {{total}}",
 	"generic.preferences": "Préférences",
 	"generic.presence": "Présence",
-	"generic.previous": "Page précédente",
+	"generic.previous": "Précédente",
 	"generic.profile": "Profil",
 	"generic.refresh": "Rafraîchir",
 	"generic.reindexing": "Ressources de retraitement",
