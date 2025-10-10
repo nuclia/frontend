@@ -21,7 +21,6 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 import { HistoryComponent } from './history/history.component';
-import { UsageComponent } from './usage/usage.component';
 import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
@@ -56,13 +55,11 @@ import { BudgetComponent } from './usage/budget.component';
     FeaturesComponent,
     HistoryComponent,
     RedirectComponent,
-    UsageComponent,
     UsageTableComponent,
     MySubscriptionComponent,
     UnsubscribeComponent,
     AwsSubscriptionComponent,
     ManualSubscriptionComponent,
   ],
-  exports: [UsageTableComponent],
 })
 export class BillingModule {}

@@ -52,7 +52,7 @@ import { HistoryComponent } from './billing/history/history.component';
 import { MySubscriptionComponent } from './billing/my-subscription/my-subscription.component';
 import { RedirectComponent } from './billing/redirect.component';
 import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
-import { UsageComponent } from './billing/usage/usage.component';
+import { UsageTableComponent } from './billing/usage/usage-table.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
 import { AccountModelsComponent } from './account-models/account-models.component';
 
@@ -136,7 +136,7 @@ const routes: Routes = [
       },
       {
         path: 'usage',
-        component: UsageComponent,
+        component: UsageTableComponent,
       },
       {
         path: 'history',
