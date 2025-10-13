@@ -20,6 +20,7 @@ export interface IResource {
   last_account_seq?: number;
   queue?: 'private' | 'shared';
   hidden?: boolean;
+  relations?: Relation[] | null;
 
   data?: ResourceData;
 }
@@ -29,6 +30,7 @@ export type ResourceData = {
   links?: { [key: string]: LinkFieldData };
   texts?: { [key: string]: TextFieldData };
   conversations?: { [key: string]: ConversationFieldData };
+  generics?: { [key: string]: GenericFieldData };
 };
 
 export interface ICreateResource {
@@ -66,6 +68,7 @@ export enum RESOURCE_STATUS {
 }
 
 export interface Metadata {
+  metadata?: object;
   language?: string;
   languages?: string[];
   status?: RESOURCE_STATUS;
@@ -141,11 +144,15 @@ export enum SEVERITY {
   WARNING = 'WARNING',
 }
 
-export interface IFieldData {
-  value?: TextField | FileField | LinkField | ConversationField | ConversationFieldPages;
+export interface IFieldDataBase {
   extracted?: ExtractedData;
   error?: IError;
   errors?: IError[];
+  status?: string | null;
+}
+
+export interface IFieldData extends IFieldDataBase {
+  value?: TextField | FileField | LinkField | ConversationField | ConversationFieldPages;
 }
 
 export interface FieldId {
@@ -164,6 +171,7 @@ export class FileFieldData implements IFieldData {
   extracted?: FileFieldExtractedData;
   error?: IError;
   errors?: IError[];
+  status?: string | null;
 }
 
 export interface FileField {
@@ -274,6 +282,7 @@ export class TextFieldData implements IFieldData {
   extracted?: ExtractedData;
   error?: IError;
   errors?: IError[];
+  status?: string | null;
 }
 
 export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'KEEP_MARKDOWN' | 'HTML' | 'RST';
@@ -283,6 +292,7 @@ export type TextFieldFormat = TextFormat | 'JSON' | 'JSONL';
 export interface TextField {
   body: string;
   format?: TextFieldFormat;
+  md5?: string;
   extract_strategy?: string;
   split_strategy?: string;
 }
@@ -444,6 +454,7 @@ export class LinkFieldData implements IFieldData {
   extracted?: LinkFieldExtractedData;
   error?: IError;
   errors?: IError[];
+  status?: string | null;
 }
 
 export interface LinkFieldExtractedData extends ExtractedData {
@@ -485,7 +496,14 @@ export class ConversationFieldData implements IFieldData {
   extracted?: ExtractedData;
   error?: IError;
   errors?: IError[];
+  status?: string | null;
 }
+
+export interface GenericFieldData extends IFieldDataBase {
+  value?: string;
+}
+
+export type AnyFieldData = FileFieldData | TextFieldData | LinkFieldData | ConversationFieldData | GenericFieldData;
 
 export interface ConversationField {
   messages: Message[];
@@ -495,6 +513,8 @@ export interface ConversationFieldPages {
   pages?: number;
   size?: number;
   total?: number;
+  extract_strategy?: string;
+  split_strategy?: string;
 }
 
 export interface Message {

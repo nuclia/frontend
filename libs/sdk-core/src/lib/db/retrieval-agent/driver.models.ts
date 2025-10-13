@@ -36,6 +36,7 @@ export type Driver =
   | SqlDriver
   | McpSseDriver
   | McpStdioDriver
+  | McpHttpDriver
   | AliniaDriver;
 export type InternetDriver = BraveDriver | PerplexityDriver | TavilyDriver | GoogleDriver;
 

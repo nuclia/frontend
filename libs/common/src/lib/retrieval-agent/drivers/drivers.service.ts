@@ -297,6 +297,7 @@ export class DriversService {
       google: 'GoogleDriverConfig',
       mcpstdio: 'MCPStdioDriverConfig',
       mcpsse: 'MCPSSEDriverConfig',
+      mcphttp: 'MCPHTTPDriverConfig',
       alinia: 'AliniaDriverConfig',
     };
 
