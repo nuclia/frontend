@@ -77,10 +77,20 @@
           </th>
           <th class="plan">
             <div class="plan-name">Growth</div>
-            <div class="price">
-              <span class="unit">-</span>
-            </div>
-            @if ((accountType | async) === 'v3growth') {
+            @if ((prices | async)?.['v3growth']; as growth) {
+              <div class="price">
+                <span>{{ growth?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                <span class="unit">/{{ 'billing.month' | translate }}</span>
+              </div>
+            }
+            @if (!!(isTrial | async)) {
+              <pa-button
+                kind="primary"
+                routerLink="../checkout"
+                [queryParams]="{ type: 'v3growth' }">
+                {{ 'billing.upgrade' | translate }}
+              </pa-button>
+            } @else if ((accountType | async) === 'v3growth') {
               <ng-container *ngTemplateOutlet="subscribed"></ng-container>
             } @else {
               <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>

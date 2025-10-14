@@ -21,7 +21,7 @@ export class SubscriptionsComponent implements OnDestroy {
     switchMap((currency) => this.billing.getPrices(currency)),
     shareReplay(1),
   );
-  accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
+  accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay(1));
   customerCurrency = this.billing
     .getCustomer()
     .pipe(
