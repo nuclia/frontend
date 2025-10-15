@@ -14,7 +14,6 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { HintModule } from '../hint';
-import { CsvSelectComponent } from '../upload';
 import { SisProgressModule } from '@nuclia/sistema';
 
 @NgModule({
@@ -28,7 +27,6 @@ import { SisProgressModule } from '@nuclia/sistema';
     PaIconModule,
     PaTooltipModule,
     HintModule,
-    CsvSelectComponent,
     SisProgressModule,
     PaTableModule,
   ],

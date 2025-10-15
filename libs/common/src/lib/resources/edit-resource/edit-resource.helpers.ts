@@ -18,7 +18,7 @@ import {
   FIELD_TYPE,
   ConversationFieldPages,
   longToShortFieldType,
-  IFieldData,
+  LabelSets,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { forkJoin, map, Observable, of } from 'rxjs';
@@ -464,4 +464,33 @@ export function getMessages(fieldId: FieldId, resource: Resource, pageStart: num
         ),
       ).pipe(map((data) => data.reduce((acc, curr) => acc.concat(curr), [] as Message[])))
     : of(null);
+}
+
+export function mergeExistingAndNewLabels(
+  resource: Resource,
+  labelSets: LabelSets,
+  labels: Classification[],
+): Classification[] {
+  const exclusiveLabelSets = Object.entries(labelSets)
+    .filter(([, labelSet]) => !labelSet.multiple)
+    .filter(([id]) => labels.some((label) => label.labelset === id))
+    .map(([id]) => id);
+
+  const resourceLabels = resource.getClassifications().filter((label) => !exclusiveLabelSets.includes(label.labelset));
+
+  return getClassificationsPayload(
+    resource,
+    deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
+  );
+}
+
+export function removeLabels(resource: Resource, labels: Classification[]): Classification[] {
+  const resourceLabels = resource
+    .getClassifications()
+    .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label));
+
+  return getClassificationsPayload(
+    resource,
+    resourceLabels.map((label) => ({ ...label, cancelled_by_user: false })),
+  );
 }

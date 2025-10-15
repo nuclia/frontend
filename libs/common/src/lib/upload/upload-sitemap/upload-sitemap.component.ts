@@ -11,6 +11,7 @@ import {
   PaModalModule,
   PaPopupModule,
   PaTextFieldModule,
+  PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
@@ -34,6 +35,7 @@ import { StandaloneService } from '../../services';
     PaModalModule,
     PaPopupModule,
     PaTextFieldModule,
+    PaTogglesModule,
     ParametersTableComponent,
     ReactiveFormsModule,
     SisProgressModule,
@@ -64,6 +66,7 @@ export class UploadSitemapComponent {
   splitConfigEnabled = this.features.authorized.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
+  updateExisting = false;
 
   constructor(
     public modal: ModalRef,
@@ -91,28 +94,48 @@ export class UploadSitemapComponent {
               defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
                 map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
                 catchError(() => of('text/html')),
-                switchMap((mime) =>
-                  mime.startsWith('text/html')
-                    ? this.uploadService.createLinkResource(
-                        kb,
-                        link,
-                        this.selectedLabels,
-                        values.css_selector,
-                        values.xpath,
-                        this.cleanParameters(this.headers),
-                        this.cleanParameters(this.cookies),
-                        this.cleanParameters(this.localstorage),
-                        this.extractStrategy,
-                        this.splitStrategy,
+                switchMap((mime) => {
+                  const linkField = {
+                    css_selector: values.css_selector,
+                    xpath: values.xpath,
+                    headers: this.cleanParameters(this.headers),
+                    cookies: this.cleanParameters(this.cookies),
+                    localstorage: this.cleanParameters(this.localstorage),
+                    extract_strategy: this.extractStrategy,
+                    split_strategy: this.splitStrategy,
+                  };
+                  return mime.startsWith('text/html')
+                    ? this.uploadService.createLinkResource(kb, link, this.selectedLabels, linkField).pipe(
+                        catchError((error) => {
+                          if (error?.status === 409 && this.updateExisting) {
+                            return this.uploadService.updateLinkResource(kb, link, this.selectedLabels, linkField);
+                          }
+                          throw error;
+                        }),
                       )
-                    : this.uploadService.createCloudFileResource(
-                        kb,
-                        link,
-                        this.selectedLabels,
-                        this.extractStrategy,
-                        this.splitStrategy,
-                      ),
-                ),
+                    : this.uploadService
+                        .createCloudFileResource(
+                          kb,
+                          link,
+                          this.selectedLabels,
+                          this.extractStrategy,
+                          this.splitStrategy,
+                        )
+                        .pipe(
+                          catchError((error) => {
+                            if (error?.status === 409 && this.updateExisting) {
+                              return this.uploadService.updateCloudFileResource(
+                                kb,
+                                link,
+                                this.selectedLabels,
+                                this.extractStrategy,
+                                this.splitStrategy,
+                              );
+                            }
+                            throw error;
+                          }),
+                        );
+                }),
               ),
             ),
           ),

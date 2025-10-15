@@ -98,28 +98,35 @@
             [expanded]="false">
             <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
             <pa-expander-body>
-              <div class="language-detection">
+              <div class="options">
+                <div>
+                  <pa-toggle
+                    labelOnRight
+                    [(value)]="automaticLanguageDetection">
+                    {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
+                  </pa-toggle>
+
+                  @if (!automaticLanguageDetection) {
+                    <pa-input
+                      minlength="2"
+                      maxlength="2"
+                      help="upload.advanced.language-detection.input-help"
+                      [formControl]="langCode">
+                      {{ 'upload.advanced.language-detection.input-label' | translate }}
+                    </pa-input>
+                  }
+                </div>
                 <pa-toggle
                   labelOnRight
-                  [(value)]="automaticLanguageDetection">
-                  {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
+                  [(value)]="updateExisting">
+                  {{ 'upload.advanced.update-existing.label' | translate }}
                 </pa-toggle>
-
-                @if (!automaticLanguageDetection) {
-                  <pa-input
-                    minlength="2"
-                    maxlength="2"
-                    help="upload.advanced.language-detection.input-help"
-                    [formControl]="langCode">
-                    {{ 'upload.advanced.language-detection.input-label' | translate }}
-                  </pa-input>
-                }
+                <app-extraction-select
+                  [(extractConfig)]="extractStrategy"
+                  [(splitConfig)]="splitStrategy"
+                  [onlyExtract]="!(splitConfigEnabled | async)"
+                  (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"></app-extraction-select>
               </div>
-              <app-extraction-select
-                [(extractConfig)]="extractStrategy"
-                [(splitConfig)]="splitStrategy"
-                [onlyExtract]="!(splitConfigEnabled | async)"
-                (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"></app-extraction-select>
             </pa-expander-body>
           </pa-expander>
         }

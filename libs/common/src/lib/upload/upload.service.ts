@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, NavigationService, NotificationService, SDKService } from '@flaps/core';
+import { LabelsService, md5, NotificationService, SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
+  FIELD_TYPE,
   FileWithMetadata,
   ICreateResource,
   LabelSet,
   LabelSetKind,
+  LinkField,
   Message,
+  Resource,
+  ResourceProperties,
   Search,
   TextFieldFormat,
   TextFormat,
@@ -31,6 +35,7 @@ import {
   Subject,
   switchMap,
   take,
+  throwError,
   timer,
   toArray,
 } from 'rxjs';
@@ -40,6 +45,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 import SparkMD5 from 'spark-md5';
+import { mergeExistingAndNewLabels } from '../resources/edit-resource';
 
 export const SPREADSHEET_MIMES = [
   'text/csv',
@@ -243,32 +249,9 @@ export class UploadService {
     kb: WritableKnowledgeBox,
     uri: string,
     classifications: Classification[],
-    css_selector?: string | null,
-    xpath?: string | null,
-    headers?: { [id: string]: string },
-    cookies?: { [id: string]: string },
-    localstorage?: { [id: string]: string },
-    extract_strategy?: string,
-    split_strategy?: string,
-    language?: string,
+    linkField: LinkField = {},
   ) {
-    return kb.createLinkResource(
-      {
-        uri,
-        css_selector: css_selector || null,
-        xpath: xpath || null,
-        headers,
-        cookies,
-        localstorage,
-        extract_strategy,
-        split_strategy,
-        language,
-      },
-      { classifications },
-      true,
-      { url: uri },
-      SparkMD5.hash(uri),
-    );
+    return kb.createLinkResource({ uri, ...linkField }, { classifications }, true, { url: uri }, SparkMD5.hash(uri));
   }
 
   createCloudFileResource(
@@ -292,6 +275,72 @@ export class UploadService {
         },
       },
     });
+  }
+
+  updateLinkResource(
+    kb: WritableKnowledgeBox,
+    uri: string,
+    classifications: Classification[],
+    linkField: LinkField = {},
+  ) {
+    return kb.getResourceBySlug(SparkMD5.hash(uri), [ResourceProperties.BASIC, ResourceProperties.VALUES]).pipe(
+      switchMap((resource) =>
+        this.addLabels(resource, classifications).pipe(
+          switchMap(() => {
+            const fieldId = Object.entries(resource.data.links || {}).find(
+              ([, field]) => field.value?.uri === uri,
+            )?.[0];
+            return fieldId
+              ? resource.setField(FIELD_TYPE.link, fieldId, { uri, ...linkField })
+              : throwError(() => new Error());
+          }),
+        ),
+      ),
+    );
+  }
+
+  updateCloudFileResource(
+    kb: WritableKnowledgeBox,
+    uri: string,
+    classifications: Classification[],
+    extract_strategy?: string,
+    split_strategy?: string,
+    language?: string,
+  ) {
+    return kb.getResourceBySlug(SparkMD5.hash(uri), [ResourceProperties.BASIC, ResourceProperties.VALUES]).pipe(
+      switchMap((resource) =>
+        this.addLabels(resource, classifications).pipe(
+          switchMap(() => {
+            const fieldId = Object.entries(resource.data.files || {}).find(
+              ([, field]) => field.value?.file?.uri === uri,
+            )?.[0];
+            return fieldId
+              ? resource.setField(FIELD_TYPE.file, fieldId, {
+                  file: { uri },
+                  extract_strategy,
+                  split_strategy,
+                  language,
+                })
+              : throwError(() => new Error());
+          }),
+        ),
+      ),
+    );
+  }
+
+  private addLabels(resource: Resource, classifications: Classification[]) {
+    return this.labelsService.resourceLabelSets.pipe(take(1)).pipe(
+      switchMap((labelsets) =>
+        classifications.length === 0
+          ? of(undefined)
+          : resource.modify({
+              usermetadata: {
+                ...resource.usermetadata,
+                classifications: mergeExistingAndNewLabels(resource, labelsets || {}, classifications),
+              },
+            }),
+      ),
+    );
   }
 
   uploadTextResource(

@@ -46,10 +46,9 @@ pa-expander-body pa-input {
   display: block;
 }
 
-app-extraction-select {
-  display: block;
-  padding: rhythm(2) 0;
-}
-.language-detection {
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
   margin-top: rhythm(2);
 }

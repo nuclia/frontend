@@ -2212,6 +2212,7 @@
 	"upload.advanced.language-detection.input-help": "Utilice el lenguaje especificado al procesar los archivos cargados",
 	"upload.advanced.language-detection.input-label": "Código de idioma (formato ISO de 2 letras)",
 	"upload.advanced.title": "Opciones",
+	"upload.advanced.update-existing.label": "Actualizar existentes",
 	"upload.answer_format": "Formato de respuesta",
 	"upload.check_files": "Comprueba el estado de los ficheros",
 	"upload.completed": "completado",
