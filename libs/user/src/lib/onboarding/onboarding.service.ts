@@ -107,13 +107,6 @@ export class OnboardingService {
       kbCreated: false,
       creationFailed: false,
     });
-    const kbCreationEvent: { [key: string]: string } = {
-      region: zone,
-      learningConfiguration: kbConfig.learning_configuration?.['semantic_models']?.join(',') || '',
-    };
-    if (kbConfig.external_index_provider) {
-      kbCreationEvent['externalIndexProvider'] = kbConfig.external_index_provider.type;
-    }
     return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
       map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
       catchError((error) => {

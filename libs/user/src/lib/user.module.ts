@@ -28,7 +28,6 @@ import {
   OnboardingComponent,
   SettingUpComponent,
   Step1Component,
-  VectorDatabaseStepComponent,
   ZoneStepComponent,
 } from './onboarding';
 import { ProfileComponent } from './profile/profile.component';
@@ -122,7 +121,6 @@ export const userRoutes: Routes = [
     PaButtonModule,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
-    VectorDatabaseStepComponent,
     LowerCaseInputDirective,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],

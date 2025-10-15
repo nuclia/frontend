@@ -5,18 +5,16 @@ import {
   KbNameStepComponent,
   LearningConfigurationForm,
   UserContainerModule,
-  VectorDatabaseStepComponent,
   ZoneStepComponent,
 } from '@nuclia/user';
-import { AccountBudget, BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { filter, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
-import { PasswordFormComponent } from '../invite/password-form.component';
 
 @Component({
   imports: [
@@ -27,10 +25,8 @@ import { PasswordFormComponent } from '../invite/password-form.component';
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     TranslateModule,
-    VectorDatabaseStepComponent,
     SisProgressModule,
     AwsSetupAccountComponent,
-    PasswordFormComponent,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -46,9 +42,6 @@ export class AwsOnboardingComponent {
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
   learningConfig?: LearningConfigurationForm;
-  externalIndexProvider?: ExternalIndexProvider | null;
-
-  isExternalIndexEnabled = this.featureService.unstable.externalIndex;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -57,7 +50,6 @@ export class AwsOnboardingComponent {
     private toast: SisToastService,
     private router: Router,
     private navigation: NavigationService,
-    private featureService: FeaturesService,
   ) {}
 
   goBack() {
@@ -113,19 +105,6 @@ export class AwsOnboardingComponent {
   storeLearningConfigAndGoNext(config: LearningConfigurationForm) {
     this.learningConfig = config;
     this.step++;
-
-    // there is one more step only if external index is enabled
-    this.isExternalIndexEnabled
-      .pipe(
-        take(1),
-        filter((isEnabled) => !isEnabled),
-      )
-      .subscribe(() => this.finalStepDone());
-  }
-
-  storeVectorDbStep(indexProvider: ExternalIndexProvider | null) {
-    this.externalIndexProvider = indexProvider;
-    this.step++;
     this.finalStepDone();
   }
 
@@ -142,9 +121,6 @@ export class AwsOnboardingComponent {
             title: this.kbName,
             learning_configuration: this.learningConfig,
           };
-          if (this.externalIndexProvider) {
-            kbConfig.external_index_provider = this.externalIndexProvider;
-          }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
             tap(() => {
               this.sdk.refreshKbList();

@@ -28,6 +28,7 @@ export interface IKnowledgeBoxBase {
   search_configs?: { [key: string]: any };
   hidden_resources_enabled?: boolean;
   hidden_resources_hide_on_creation?: boolean;
+  external_index_provider?: string;
 }
 
 export interface IKnowledgeBoxStandalone {
@@ -81,7 +82,6 @@ export interface KbInvite {
 }
 
 export interface IKnowledgeBox extends IKnowledgeBoxBase {
-  external_index_provider?: 'pinecone';
 
   get path(): string;
 
@@ -270,26 +270,13 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   deleteSearchConfig(id: string): Observable<void>;
 }
 
-export type PINECONE_REGIONS =
-  | 'aws_us_east_1'
-  | 'aws_us_west_2'
-  | 'aws_eu_west_1'
-  | 'gcp_us_central1'
-  | 'azure_eastus2';
-
-export interface ExternalIndexProvider {
-  type: 'pinecone';
-  api_key: string;
-  serverless_cloud: PINECONE_REGIONS;
-}
-
 export interface KnowledgeBoxCreation {
   slug: string;
   title: string;
   zone?: string;
   description?: string;
   learning_configuration?: { [configId: string]: any };
-  external_index_provider?: ExternalIndexProvider;
+  external_index_provider?: any;
 }
 
 export interface Entities {

@@ -2,17 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FeaturesService,
-  NavigationService,
-  SDKService,
-  standaloneSimpleAccount,
-  STFUtils,
-  ZoneService,
-} from '@flaps/core';
+import { NavigationService, SDKService, standaloneSimpleAccount, STFUtils, ZoneService } from '@flaps/core';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
   SisModalService,
@@ -21,13 +14,8 @@ import {
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import {
-  EmbeddingsModelFormComponent,
-  LearningConfigurationForm,
-  VectorDatabaseFormComponent,
-  VectorDbModel,
-} from '@nuclia/user';
-import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
+import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '@nuclia/user';
+import { filter, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -44,7 +32,6 @@ import { catchError, takeUntil } from 'rxjs/operators';
     PaTogglesModule,
     EmbeddingsModelFormComponent,
     SisProgressModule,
-    VectorDatabaseFormComponent,
   ],
   templateUrl: './kb-creation.component.html',
   styleUrl: './kb-creation.component.scss',
@@ -59,7 +46,6 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
-  private featureService = inject(FeaturesService);
   private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
@@ -98,18 +84,6 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
-
-  isExternalIndexEnabled = this.featureService.unstable.externalIndex;
-  vectorDbModel: VectorDbModel = {
-    external: false,
-    type: 'pinecone',
-    apiKey: '',
-    pinecone: {
-      cloud: 'gcp_us_central1',
-      awsRegion: 'aws_us_east_1',
-    },
-  };
-  externalIndexProvider: ExternalIndexProvider | null = null;
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
@@ -179,8 +153,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() => forkJoin([this.account.pipe(take(1)), this.isExternalIndexEnabled.pipe(take(1))])),
-        switchMap(([account, isExternalIndexEnabled]) => {
+        switchMap(() => this.account.pipe(take(1))),
+        switchMap((account) => {
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
@@ -194,9 +168,6 @@ export class KbCreationComponent implements OnInit, OnDestroy {
               user_keys,
             },
           };
-          if (isExternalIndexEnabled && this.externalIndexProvider) {
-            kb.external_index_provider = this.externalIndexProvider;
-          }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
             catchError((error) => {
               if (error.status === 409) {
@@ -234,26 +205,5 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.router.navigate([this.backPath], { relativeTo: this.route });
-  }
-
-  updatePineconeCloud(zone: string) {
-    if (zone.startsWith('europe')) {
-      this.vectorDbModel = {
-        ...this.vectorDbModel,
-        pinecone: {
-          ...this.vectorDbModel.pinecone,
-          cloud: 'gcp_us_central1',
-        },
-      };
-    } else if (zone.startsWith('aws')) {
-      this.vectorDbModel = {
-        ...this.vectorDbModel,
-        pinecone: {
-          ...this.vectorDbModel.pinecone,
-          cloud: 'aws',
-          awsRegion: 'aws_us_east_1',
-        },
-      };
-    }
   }
 }
