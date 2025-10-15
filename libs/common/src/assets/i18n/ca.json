@@ -2212,6 +2212,7 @@
 	"upload.advanced.language-detection.input-help": "Utilitzeu l’idioma especificat quan processeu els fitxers penjats",
 	"upload.advanced.language-detection.input-label": "Codi d’idioma (format ISO de 2 lletres)",
 	"upload.advanced.title": "Opcions",
+	"upload.advanced.update-existing.label": "Actualitzar existents",
 	"upload.answer_format": "Format de resposta",
 	"upload.check_files": "Comprova l’estat dels fitxers",
 	"upload.completed": "completat",

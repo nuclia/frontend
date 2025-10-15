@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { Classification, WritableKnowledgeBox } from '@nuclia/core';
-import { Observable, switchMap, take } from 'rxjs';
+import { catchError, Observable, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -60,6 +60,7 @@ export class CreateLinkComponent {
   splitConfigEnabled = this.features.authorized.splitConfig;
   extractStrategy?: string;
   splitStrategy?: string;
+  updateExisting = false;
   updateOptionsExpander = 0;
 
   get invalid() {
@@ -107,6 +108,7 @@ export class CreateLinkComponent {
                     this.extractStrategy,
                     this.splitStrategy,
                     this.langCode.value,
+                    this.updateExisting,
                   ),
                 ),
               ),
@@ -128,6 +130,7 @@ export class CreateLinkComponent {
                   this.extractStrategy,
                   this.splitStrategy,
                   this.langCode.value,
+                  this.updateExisting,
                 ),
               ]),
             ),
@@ -150,6 +153,7 @@ export class CreateLinkComponent {
                     this.extractStrategy,
                     this.splitStrategy,
                     this.langCode.value,
+                    this.updateExisting,
                   ),
                 ),
               ),
@@ -199,21 +203,39 @@ export class CreateLinkComponent {
     extract_strategy?: string,
     split_strategy?: string,
     language?: string,
-  ): Observable<{ uuid: string }> {
+    updateExisting?: boolean,
+  ) {
+    const linkField = {
+      uri: link,
+      css_selector: css_selector || null,
+      xpath: xpath || null,
+      extract_strategy,
+      split_strategy,
+      language,
+    };
     return isCloudFile
-      ? this.uploadService.createCloudFileResource(kb, link, labels, extract_strategy, language)
-      : this.uploadService.createLinkResource(
-          kb,
-          link,
-          labels,
-          css_selector,
-          xpath,
-          undefined,
-          undefined,
-          undefined,
-          extract_strategy,
-          split_strategy,
-          language,
+      ? this.uploadService.createCloudFileResource(kb, link, labels, extract_strategy, split_strategy, language).pipe(
+          catchError((error) => {
+            if (error?.status === 409 && updateExisting) {
+              return this.uploadService.updateCloudFileResource(
+                kb,
+                link,
+                labels,
+                extract_strategy,
+                split_strategy,
+                language,
+              );
+            }
+            throw error;
+          }),
+        )
+      : this.uploadService.createLinkResource(kb, link, labels, linkField).pipe(
+          catchError((error) => {
+            if (error?.status === 409 && updateExisting) {
+              return this.uploadService.updateLinkResource(kb, link, labels, linkField);
+            }
+            throw error;
+          }),
         );
   }
 }

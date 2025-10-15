@@ -3,12 +3,12 @@ import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFEREN
 import { delay, filter, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, catchError, combineLatest, defer, from, Observable, of, skip, take, toArray } from 'rxjs';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
-import { Classification, deDuplicateList, LabelSets, Resource, UserClassification } from '@nuclia/core';
+import { Classification, Resource, UserClassification } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import { UploadService } from '../../../upload/upload.service';
-import { getClassificationsPayload } from '../../edit-resource';
+import { mergeExistingAndNewLabels, removeLabels } from '../../edit-resource';
 
 @Component({
   selector: 'stf-resources-table',
@@ -250,8 +250,8 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
                             usermetadata: {
                               ...resource.usermetadata,
                               classifications: remove
-                                ? this.removeLabels(resource, labels)
-                                : this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
+                                ? removeLabels(resource, labels)
+                                : mergeExistingAndNewLabels(resource, labelSets, labels),
                             },
                           })
                           .pipe(delay(1000)),
@@ -280,36 +280,5 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       column.visible = !column.visible;
       this.columnVisibilityUpdate.next(!column.visible);
     }
-  }
-
-  private mergeExistingAndSelectedLabels(
-    resource: Resource,
-    labelSets: LabelSets,
-    labels: Classification[],
-  ): Classification[] {
-    const exclusiveLabelSets = Object.entries(labelSets)
-      .filter(([, labelSet]) => !labelSet.multiple)
-      .filter(([id]) => labels.some((label) => label.labelset === id))
-      .map(([id]) => id);
-
-    const resourceLabels = resource
-      .getClassifications()
-      .filter((label) => !exclusiveLabelSets.includes(label.labelset));
-
-    return getClassificationsPayload(
-      resource,
-      deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
-    );
-  }
-
-  private removeLabels(resource: Resource, labels: Classification[]): Classification[] {
-    const resourceLabels = resource
-      .getClassifications()
-      .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label));
-
-    return getClassificationsPayload(
-      resource,
-      resourceLabels.map((label) => ({ ...label, cancelled_by_user: false })),
-    );
   }
 }

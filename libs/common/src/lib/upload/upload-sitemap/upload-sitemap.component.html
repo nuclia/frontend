@@ -55,6 +55,11 @@
         </pa-expander-header>
         <pa-expander-body>
           <div class="options">
+            <pa-toggle
+              labelOnRight
+              [(value)]="updateExisting">
+              {{ 'upload.advanced.update-existing.label' | translate }}
+            </pa-toggle>
             @if ((extractConfigEnabled | async) && !standalone) {
               <app-extraction-select
                 [(extractConfig)]="extractStrategy"
