@@ -36,6 +36,7 @@ export class FieldConfigService {
     generative_model: { component: 'model-select', type: 'custom' },
     summarize_model: { component: 'model-select', type: 'custom' },
     tool_choice_model: { component: 'model-select', type: 'custom' },
+    sampling_model: { component: 'model-select', type: 'custom' },
     // Basic fields
     code: {
       component: 'code-editor',
@@ -191,7 +192,8 @@ export class FieldConfigService {
     return (
       ignoredFields.has(key) ||
       // Ignore fields that are pointers to new agents.
-      !!property?.title?.includes?.('agent') ||
+      !!property?.title?.includes?.('IF agents') ||
+      !!property?.title?.includes?.('Else agents') ||
       // Ignore fields that are pointers to new agents.
       !!(property?.items as any)?.discriminator
     );
