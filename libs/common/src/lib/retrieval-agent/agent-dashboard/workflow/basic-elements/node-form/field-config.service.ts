@@ -36,6 +36,7 @@ export class FieldConfigService {
     generative_model: { component: 'model-select', type: 'custom' },
     summarize_model: { component: 'model-select', type: 'custom' },
     tool_choice_model: { component: 'model-select', type: 'custom' },
+    sampling_model: { component: 'model-select', type: 'custom' },
     // Basic fields
     code: {
       component: 'code-editor',

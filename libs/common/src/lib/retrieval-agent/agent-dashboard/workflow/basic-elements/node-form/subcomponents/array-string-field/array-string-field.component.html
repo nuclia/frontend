@@ -7,7 +7,7 @@
   </label>
   <div [formGroup]="form">
     <div [formArrayName]="arrayName">
-      @for (ctrl of array.controls; track $index) {
+      @for (ctrl of array.controls; track ctrl) {
         <div class="array-item">
           <pa-input
             [formControlName]="$index"
