@@ -191,7 +191,8 @@ export class FieldConfigService {
     return (
       ignoredFields.has(key) ||
       // Ignore fields that are pointers to new agents.
-      !!property?.title?.includes?.('agent') ||
+      !!property?.title?.includes?.('IF agents') ||
+      !!property?.title?.includes?.('Else agents') ||
       // Ignore fields that are pointers to new agents.
       !!(property?.items as any)?.discriminator
     );
