@@ -1,59 +1,48 @@
 <nus-user-container>
   <div class="onboarding-container">
     @if (onboardingStep | async; as step) {
-      @if (lastStep | async; as lastStep) {
-        <header>
-          @if (step < lastStep) {
-            <h1>{{ 'onboarding.step' + step + '.title' | translate }}</h1>
-            <p
-              class="page-description"
-              [innerHTML]="'onboarding.step' + step + '.subtitle' | translate"></p>
-          } @else {
-            <h1>{{ 'onboarding.setting-up.title' | translate }}</h1>
-            <p class="page-description">{{ 'onboarding.setting-up.subtitle' | translate }}</p>
-          }
-        </header>
+      <header>
+        @if (step < lastStep) {
+          <h1>{{ 'onboarding.step' + step + '.title' | translate }}</h1>
+          <p
+            class="page-description"
+            [innerHTML]="'onboarding.step' + step + '.subtitle' | translate"></p>
+        } @else {
+          <h1>{{ 'onboarding.setting-up.title' | translate }}</h1>
+          <p class="page-description">{{ 'onboarding.setting-up.subtitle' | translate }}</p>
+        }
+      </header>
 
-        @switch (step) {
-          @case (1) {
-            @if (!creatingAccount) {
-              <nus-onboarding-step1
-                [data]="onboardingInquiryPayload"
-                (submitStep1)="createAccountAndInquiry($event)"></nus-onboarding-step1>
-            } @else {
-              <nus-onboarding-setting-up></nus-onboarding-setting-up>
-            }
-          }
-          @case (2) {
-            <nus-kb-name-step
-              [data]="kbName"
-              (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
-          }
-          @case (3) {
-            <nus-zone-step
-              [data]="zone"
-              (back)="goBack()"
-              (next)="storeZoneAndGoNext($event)"></nus-zone-step>
-          }
-          @case (4) {
-            <nus-embedding-model-step
-              [schema]="learningSchema | async"
-              [isLastStep]="lastStep === 5"
-              (back)="goBack()"
-              (next)="storeLearningConfigAndGoNext($event)"></nus-embedding-model-step>
-          }
-          @case (5) {
-            @if (isExternalIndexEnabled | async) {
-              <nus-vector-database-step
-                (back)="goBack()"
-                (next)="storeVectorDbStep($event)"></nus-vector-database-step>
-            } @else {
-              <nus-onboarding-setting-up></nus-onboarding-setting-up>
-            }
-          }
-          @case (6) {
+      @switch (step) {
+        @case (1) {
+          @if (!creatingAccount) {
+            <nus-onboarding-step1
+              [data]="onboardingInquiryPayload"
+              (submitStep1)="createAccountAndInquiry($event)"></nus-onboarding-step1>
+          } @else {
             <nus-onboarding-setting-up></nus-onboarding-setting-up>
           }
+        }
+        @case (2) {
+          <nus-kb-name-step
+            [data]="kbName"
+            (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
+        }
+        @case (3) {
+          <nus-zone-step
+            [data]="zone"
+            (back)="goBack()"
+            (next)="storeZoneAndGoNext($event)"></nus-zone-step>
+        }
+        @case (4) {
+          <nus-embedding-model-step
+            [schema]="learningSchema | async"
+            [isLastStep]="true"
+            (back)="goBack()"
+            (next)="storeLearningConfigAndGoNext($event)"></nus-embedding-model-step>
+        }
+        @case (5) {
+          <nus-onboarding-setting-up></nus-onboarding-setting-up>
         }
       }
     }

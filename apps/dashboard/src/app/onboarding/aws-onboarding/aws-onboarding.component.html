@@ -4,8 +4,7 @@
       <app-aws-setup-account (next)="goToBudget()"></app-aws-setup-account>
     }
     @case (1) {
-      <app-step1-budget
-        (next)="setupBudget($event)"></app-step1-budget>
+      <app-step1-budget (next)="setupBudget($event)"></app-step1-budget>
     }
     @case (3) {
       <div class="main-container">
@@ -41,23 +40,6 @@
       </div>
     }
     @case (6) {
-      @if (isExternalIndexEnabled | async) {
-        <div class="main-container">
-          <h1>{{ 'onboarding.step5.title' | translate }}</h1>
-          <p
-            class="page-description"
-            [innerHTML]="'onboarding.step5.subtitle' | translate"></p>
-          <nus-vector-database-step
-            (back)="goBack()"
-            (next)="storeVectorDbStep($event)"></nus-vector-database-step>
-        </div>
-      } @else {
-        <div class="main-container">
-          <nsi-spinner></nsi-spinner>
-        </div>
-      }
-    }
-    @case (7) {
       <div class="main-container">
         <nsi-spinner></nsi-spinner>
       </div>

@@ -45,9 +45,7 @@
         <nsi-two-columns-configuration-item
           itemTitle="user.kb.creation-form.zone.title"
           description="user.kb.creation-form.zone.description">
-          <pa-radio-group
-            formControlName="zone"
-            (valueChange)="updatePineconeCloud($event)">
+          <pa-radio-group formControlName="zone">
             @for (zone of zones | async; track zone.slug) {
               <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
             }
@@ -78,16 +76,6 @@
           </pa-toggle>
         </div>
       </nsi-two-columns-configuration-item>
-
-      @if (!standalone && (isExternalIndexEnabled | async)) {
-        <nsi-two-columns-configuration-item
-          itemTitle="account.kb.creation-form.vector-database.title"
-          description="account.kb.creation-form.vector-database.description">
-          <nus-vector-database-form
-            [(vectorDb)]="vectorDbModel"
-            (indexProviderUpdated)="externalIndexProvider = $event"></nus-vector-database-form>
-        </nsi-two-columns-configuration-item>
-      }
 
       <nsi-sticky-footer>
         <pa-button
