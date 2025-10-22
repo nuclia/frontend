@@ -63,14 +63,9 @@ export class ActivityLogTableComponent {
   rowHeight = 148;
   viewportOffset = 0;
 
-  pageSize = 200;
-
   data = new BehaviorSubject<LogEntry[]>([]);
   hiddenHeaders = new BehaviorSubject<string[]>([]);
   term = new BehaviorSubject<string>('');
-  page = new BehaviorSubject<number>(0);
-
-  @ViewChild('container') container?: ElementRef;
 
   headers = this.data.pipe(
     map((data) =>
@@ -84,10 +79,6 @@ export class ActivityLogTableComponent {
     map(([data, term]) => this.search(data, term)),
     shareReplay(1),
   );
-  pageRows = combineLatest([this.filteredRows, this.page]).pipe(
-    map(([rows, page]) => rows.slice(page * this.pageSize, (page + 1) * this.pageSize)),
-  );
-  totalPages = this.filteredRows.pipe(map((rows) => Math.ceil(rows.length / this.pageSize)));
 
   // Columns width must be fixed when using virtual scroll
   gridLayout = this.displayedHeaders.pipe(
@@ -183,17 +174,5 @@ export class ActivityLogTableComponent {
       ActivityLogTableModalComponent,
       new ModalConfig({ data: { title: cell[0], value: cell[1].value, json: cell[1].type === 'object' } }),
     );
-  }
-
-  updateTerm(term: string) {
-    this.term.next(term);
-    this.page.next(0);
-  }
-
-  updatePage(offset: number) {
-    this.page.next(this.page.value + offset);
-    if (this.container) {
-      this.container.nativeElement.scrollTop = 0;
-    }
   }
 }

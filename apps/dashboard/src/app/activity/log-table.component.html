@@ -1,5 +1,5 @@
 <div class="filters">
-  <pa-input (valueChange)="updateTerm($event)">{{ 'activity.filter' | translate }}</pa-input>
+  <pa-input (valueChange)="term.next($event)">{{ 'activity.filter' | translate }}</pa-input>
   <div>
     <nsi-dropdown-button
       aspect="basic"
@@ -46,30 +46,9 @@
       {{ 'activity.original-link' | translate }}
     </pa-button>
   }
-  @if (((totalPages | async) || 1) > 1) {
-    <div class="pagination">
-      <pa-button
-        aspect="basic"
-        (click)="updatePage(-1)"
-        [disabled]="(page | async) === 0">
-        {{ 'generic.previous' | translate }}
-      </pa-button>
-      <span class="body-m">
-        {{ 'generic.page' | translate }} {{ ((page | async) || 0) + 1 }}/{{ totalPages | async }}
-      </span>
-      <pa-button
-        aspect="basic"
-        (click)="updatePage(1)"
-        [disabled]="(totalPages | async) === ((page | async) || 0) + 1">
-        {{ 'generic.next' | translate }}
-      </pa-button>
-    </div>
-  }
 </div>
 
-<div
-  #container
-  class="container">
+<div class="container">
   <cdk-virtual-scroll-viewport
     tableVirtualScroll
     class="viewport"
@@ -96,9 +75,9 @@
           </pa-table-row>
         </pa-table-header>
       }
-      <pa-table-row *cdkVirtualFor="let row of pageRows | async; let index = index">
+      <pa-table-row *cdkVirtualFor="let row of filteredRows | async; let index = index">
         <pa-table-cell borderRight>
-          <div class="body-s">{{ ((page | async) || 0) * pageSize + index + 1 }}</div>
+          <div class="body-s">{{ index + 1 }}</div>
         </pa-table-cell>
         @if ((displayedHeaders | async)?.includes(dateColumn)) {
           <pa-table-cell>
