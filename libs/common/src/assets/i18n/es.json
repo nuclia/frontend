@@ -1674,6 +1674,7 @@
 	"search.configuration.routing.prompt-placeholder": "Eligir esta configuración cuando la pregunta se refiera a un documento específico. El documento debe tener un nombre explícito.\n\nPor ejemplo:\n\"Indíqueme los temas principales del acta de la reunión de equipo del 25 de septiembre\".\n\"¿Qué explica el Artículo L.123?\"\n\"¿Quiénes son los clientes involucrados en el contrato ABC.123?\"",
 	"search.configuration.routing.rule": "Regla",
 	"search.configuration.routing.search-config": "Configuración de búsqueda",
+	"search.configuration.routing.search-config-help": "Solo puedes seleccionar configuraciones alineadas con el tipo de configuración actual.",
 	"search.configuration.routing.section-description": "Aplicar dinámicamente una configuración de búsqueda determinada",
 	"search.configuration.routing.section-title": "Enrutamiento según la intención del usuario",
 	"search.configuration.routing.use-routing.toggle-description": "Proporciona prompts que permitirán al modelo definir la configuración de búsqueda a aplicar dependiendo de la intención del usuario detectada en la pregunta.",
