@@ -107,6 +107,7 @@ export interface ISyncEntity {
   connector: Connector;
   kb?: NucliaOptions;
   labels?: ColoredLabel[];
+  preserveLabels?: boolean;
   title: string;
   id: string;
   foldersToSync?: SyncItem[];
