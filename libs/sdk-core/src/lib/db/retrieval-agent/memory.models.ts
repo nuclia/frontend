@@ -92,18 +92,18 @@ export namespace Memory {
   }
 
   export interface Context {
-    original_question_uuid?: string | null;
     actual_question_uuid?: string | null;
-    question: string;
-    chunks: Chunk[];
-    images: Record<string, any>; // Image type - TODO: Define this type when available
-    structured: string[];
-    source: string;
     agent: string;
+    chunks: Chunk[];
+    citations?: Record<string, any> | null;
+    images: Record<string, any>; // Image type - TODO: Define this type when available
+    missing?: string | null;
+    original_question_uuid?: string | null;
+    question: string;
+    source: string;
+    structured: string[];
     summary: string;
     title?: string | null;
-    missing?: string | null;
-    citations?: Record<string, any> | null;
   }
 
   export interface HistoryQuestionAnswer {

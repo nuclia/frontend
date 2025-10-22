@@ -55,53 +55,14 @@ export interface AragAnswer {
   answer: string | null;
   agent_request: string | null;
   generated_text: string | null;
-  step: AragAnswerStep | null;
+  step: Memory.Step | null;
   possible_answer: Memory.Answer | null;
-  context: AragAnswerContext | null;
+  context: Memory.Context | null;
   operation: AnswerOperation;
   seqid: number | null;
   original_question_uuid: string | null;
   actual_question_uuid: string | null;
   feedback: Feedback | null;
-}
-
-export interface AragAnswerStep {
-  original_question_uuid?: string | null;
-  actual_question_uuid?: string | null;
-  module: string;
-  title: string;
-  value?: string | null;
-  agent_path: string;
-  reason?: string | null;
-  timeit: number;
-  input_nuclia_tokens?: number | null;
-  output_nuclia_tokens?: number | null;
-  error?: string | null;
-}
-
-// Legacy interfaces - kept for backwards compatibility
-export interface AragAnswerChunk {
-  chunk_id: string;
-  title?: string | null;
-  source?: string | null;
-  text: string;
-  labels: string[];
-  url: string[];
-}
-
-export interface AragAnswerContext {
-  original_question_uuid?: string | null;
-  actual_question_uuid?: string | null;
-  question: string;
-  chunks: AragAnswerChunk[];
-  images: Record<string, any>; // Image type - TODO: Define this type
-  structured: string[];
-  source: string;
-  agent: string;
-  summary: string;
-  title?: string | null;
-  missing?: string | null;
-  citations?: Record<string, any> | null;
 }
 
 export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {
