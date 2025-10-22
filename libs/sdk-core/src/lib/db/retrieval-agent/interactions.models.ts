@@ -1,10 +1,5 @@
 import { IErrorResponse } from '../../models';
-import { AragModule } from './retrieval-agent.types';
-
-export enum Operation {
-  start = 0,
-  stop = 1,
-}
+import { Memory } from './memory.models';
 
 export enum InteractionOperation {
   question = 0,
@@ -13,6 +8,7 @@ export enum InteractionOperation {
 
 export enum AnswerOperation {
   answer = 0,
+  quit = 1,
   start = 2,
   done = 3,
   error = 4,
@@ -59,79 +55,14 @@ export interface AragAnswer {
   answer: string | null;
   agent_request: string | null;
   generated_text: string | null;
-  step: Step | null;
-  possible_answer: Answer | null;
-  context: Context | null;
+  step: AragAnswerStep | null;
+  possible_answer: Memory.Answer | null;
+  context: AragAnswerContext | null;
   operation: AnswerOperation;
   seqid: number | null;
   original_question_uuid: string | null;
   actual_question_uuid: string | null;
   feedback: Feedback | null;
-}
-
-// Memory Models
-export interface Metadata {
-  // TODO: Define based on actual usage
-}
-
-export interface KnowledgeGraph {
-  // TODO: Define based on actual usage
-}
-
-export interface Reason {
-  // TODO: Define based on actual usage
-}
-
-export interface NucliaDBMemoryConfig {
-  key?: string | null;
-  url: string;
-  kbid: string;
-  internal: boolean;
-}
-
-export interface MemoryConfig {
-  nucliadb?: NucliaDBMemoryConfig | null;
-}
-
-export interface Rule {
-  prompt?: string | null;
-}
-
-export interface Rules {
-  rules: (Rule | string)[];
-}
-
-export interface Facets {
-  chunks: Record<string, number>;
-  fields: Record<string, number>;
-}
-
-export interface Source {
-  id: string;
-  description: string;
-  labels: Record<string, string[]>;
-  facets_native: any; // CatalogFacetsResponse - TODO: Define this type
-  paragraph_facets: Record<string, number>;
-  learning_configuration: any; // StoredLearningConfiguration - TODO: Define this type
-}
-
-export interface Answer {
-  answer: string;
-  original_question_uuid?: string | null;
-  actual_question_uuid?: string | null;
-  module: string;
-  agent_path: string;
-}
-
-export interface ChunkImages {
-  table?: string | null;
-  chunk?: string | null;
-  page?: string | null;
-}
-
-export interface HistoryQuestionAnswer {
-  question: string;
-  answer: string;
 }
 
 export interface AragAnswerStep {
@@ -162,7 +93,7 @@ export interface AragAnswerContext {
   original_question_uuid?: string | null;
   actual_question_uuid?: string | null;
   question: string;
-  chunks: Chunk[];
+  chunks: AragAnswerChunk[];
   images: Record<string, any>; // Image type - TODO: Define this type
   structured: string[];
   source: string;

@@ -20,12 +20,12 @@ import {
   PostprocessAgentCreation,
   PreprocessAgent,
   PreprocessAgentCreation,
-  Rule,
   SessionCreation,
   SessionCreationResponse,
   SessionList,
   SessionPagination,
 } from './retrieval-agent.models';
+import { Memory } from './memory.models';
 import { ProviderType } from './retrieval-agent.types';
 import { Session } from './session';
 import { ISession } from './session.models';
@@ -303,9 +303,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   /**
    * Get the list of rules of the Retrieval Agent
    */
-  getRules(): Observable<(Rule | string)[]> {
+  getRules(): Observable<(Memory.Rule | string)[]> {
     return this.nuclia.rest
-      .get<{ rules: (Rule | string)[] }>(`${this.path}/rules`)
+      .get<{ rules: (Memory.Rule | string)[] }>(`${this.path}/rules`)
       .pipe(map((response) => response.rules));
   }
 

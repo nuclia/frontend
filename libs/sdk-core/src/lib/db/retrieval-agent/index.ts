@@ -1,5 +1,6 @@
 export * from './driver.models';
 export * from './interactions.models';
+export * from './memory.models';
 export * from './retrieval-agent';
 export * from './retrieval-agent.models';
 export * from './retrieval-agent.types';

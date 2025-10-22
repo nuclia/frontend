@@ -196,9 +196,9 @@ function addAnswerToCategory(categories: RawAnswersByCategory, data: AragAnswer)
   if (data.step) {
     // FIXME: backend is not consitent in term of step modules for now.
     // Clean up this temporary fix once it become consisten
-    module = data.step.module === 'router' ? 'ask' : data.step.module;
+    module = data.step.module === 'router' ? ('ask' as AragModule) : (data.step.module as AragModule);
   } else if (data.context) {
-    module = data.context.agent;
+    module = data.context.agent as AragModule;
   }
   if (module) {
     const category = getCategoryFromModule(module);
