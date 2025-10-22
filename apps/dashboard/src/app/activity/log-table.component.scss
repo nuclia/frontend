@@ -28,16 +28,30 @@
 }
 
 .container {
-  overflow: auto;
   margin: rhythm(0.5) 0;
 }
 
-.table {
-  max-height: 60vh;
+.viewport {
+  height: 60vh;
+  overflow: auto;
+}
+
+pa-table {
+  display: block;
   width: max-content;
+
+  // This hack is required to keep sticky headers in the correct position when using virtual scroll
+  ::ng-deep .pa-table-grid--header {
+    top: var(--table-header-top);
+  }
+  
+  ::ng-deep .pa-table-grid--cell {
+    height: var(--table-row-height);
+  }
+
   pre {
     margin: 0;
-    max-width: rhythm(60);
+    max-width: rhythm(40);
     overflow: hidden;
     text-overflow: ellipsis;
   }

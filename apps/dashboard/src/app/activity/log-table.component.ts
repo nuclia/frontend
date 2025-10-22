@@ -17,6 +17,8 @@ import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@
 import { unparse } from 'papaparse';
 import { ActivityLogTableModalComponent } from './log-table-modal.component';
 import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { TableVirtualScrollDirective } from '@flaps/core';
 
 @Component({
   standalone: true,
@@ -32,6 +34,8 @@ import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from
     PaButtonModule,
     PaModalModule,
     PaTooltipModule,
+    ScrollingModule,
+    TableVirtualScrollDirective,
     TranslateModule,
   ],
   selector: 'app-log-table',
@@ -42,8 +46,23 @@ import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from
 export class ActivityLogTableComponent {
   private modalService = inject(SisModalService);
 
+  wideColumns = [
+    'answer',
+    'filter',
+    'learning_id',
+    'question',
+    'rag_strategies',
+    'remi_scores',
+    'resource_id',
+    'retrieved_context',
+    'token_details',
+    'user_request',
+  ];
   dateColumn = 'Date (UTC)';
   idColumn = 'ID';
+  rowHeight = 148;
+  viewportOffset = 0;
+
   pageSize = 200;
 
   data = new BehaviorSubject<LogEntry[]>([]);
@@ -69,6 +88,11 @@ export class ActivityLogTableComponent {
     map(([rows, page]) => rows.slice(page * this.pageSize, (page + 1) * this.pageSize)),
   );
   totalPages = this.filteredRows.pipe(map((rows) => Math.ceil(rows.length / this.pageSize)));
+
+  // Columns width must be fixed when using virtual scroll
+  gridLayout = this.displayedHeaders.pipe(
+    map((headers) => headers.map((header) => (this.wideColumns.includes(header) ? '400px' : '180px')).join(' ')),
+  );
 
   @Input() month: string = '';
   @Input() event: string = '';
