@@ -1,5 +1,5 @@
 <div class="filters">
-  <pa-input (valueChange)="updateTerm($event)">{{ 'activity.filter' | translate }}</pa-input>
+  <pa-input (valueChange)="term.next($event)">{{ 'activity.filter' | translate }}</pa-input>
   <div>
     <nsi-dropdown-button
       aspect="basic"
@@ -46,39 +46,19 @@
       {{ 'activity.original-link' | translate }}
     </pa-button>
   }
-  @if (((totalPages | async) || 1) > 1) {
-    <div class="pagination">
-      <pa-button
-        aspect="basic"
-        (click)="updatePage(-1)"
-        [disabled]="(page | async) === 0">
-        {{ 'generic.previous' | translate }}
-      </pa-button>
-      <span class="body-m">
-        {{ 'generic.page' | translate }} {{ ((page | async) || 0) + 1 }}/{{ totalPages | async }}
-      </span>
-      <pa-button
-        aspect="basic"
-        (click)="updatePage(1)"
-        [disabled]="(totalPages | async) === ((page | async) || 0) + 1">
-        {{ 'generic.next' | translate }}
-      </pa-button>
-    </div>
-  }
 </div>
 
-<div
-  #container
-  class="container">
-  <div class="table">
+<div class="container">
+  <cdk-virtual-scroll-viewport
+    tableVirtualScroll
+    class="viewport"
+    [itemSize]="rowHeight"
+    (offsetChange)="viewportOffset = $event">
     <pa-table
       border
-      [columns]="
-        'fit-content(400px)' +
-        ((displayedHeaders | async)?.length
-          ? ' repeat(' + (displayedHeaders | async)?.length + ', fit-content(400px))'
-          : '')
-      ">
+      [style.--table-row-height]="rowHeight + 'px'"
+      [style.--table-header-top]="-1 * viewportOffset + 'px'"
+      [columns]="'fit-content(400px) ' + (gridLayout | async)">
       @if ((filteredRows | async)?.length === 0) {
         <pa-table-row>
           <pa-table-cell>N/A</pa-table-cell>
@@ -95,51 +75,47 @@
           </pa-table-row>
         </pa-table-header>
       }
-      @for (row of pageRows | async; track row.id; let index = $index) {
-        <pa-table-row>
-          <pa-table-cell borderRight>
-            <div class="body-s">{{ ((page | async) || 0) * pageSize + index + 1 }}</div>
+      <pa-table-row *cdkVirtualFor="let row of filteredRows | async; let index = index">
+        <pa-table-cell borderRight>
+          <div class="body-s">{{ index + 1 }}</div>
+        </pa-table-cell>
+        @if ((displayedHeaders | async)?.includes(dateColumn)) {
+          <pa-table-cell>
+            <div
+              class="body-s"
+              [paTooltip]="(row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'">
+              {{ row.date | date: 'MMM d, h:mm a' }}
+            </div>
           </pa-table-cell>
-          @if ((displayedHeaders | async)?.includes(dateColumn)) {
-            <pa-table-cell>
-              <div
-                class="body-s"
-                [paTooltip]="
-                  (row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'
-                ">
-                {{ row.date | date: 'MMM d, h:mm a' }}
-              </div>
-            </pa-table-cell>
-          }
-          @if ((displayedHeaders | async)?.includes(idColumn)) {
+        }
+        @if ((displayedHeaders | async)?.includes(idColumn)) {
+          <pa-table-cell>
+            <div class="body-s">
+              {{ row.id }}
+            </div>
+          </pa-table-cell>
+        }
+        @for (cell of row.data; track cell[0]) {
+          @if ((displayedHeaders | async)?.includes(cell[0])) {
             <pa-table-cell>
               <div class="body-s">
-                {{ row.id }}
+                @if (cell[1].type === 'object') {
+                  <pre>{{ cell[1].displayedValue }}</pre>
+                } @else {
+                  {{ cell[1].displayedValue }}
+                }
+                @if (cell[1].showMore) {
+                  <span
+                    class="show-more"
+                    (click)="showMore(cell)">
+                    {{ 'generic.show_more' | translate }}
+                  </span>
+                }
               </div>
             </pa-table-cell>
           }
-          @for (cell of row.data; track cell[0]) {
-            @if ((displayedHeaders | async)?.includes(cell[0])) {
-              <pa-table-cell>
-                <div class="body-s">
-                  @if (cell[1].type === 'object') {
-                    <pre>{{ cell[1].displayedValue }}</pre>
-                  } @else {
-                    {{ cell[1].displayedValue }}
-                  }
-                  @if (cell[1].showMore) {
-                    <span
-                      class="show-more"
-                      (click)="showMore(cell)">
-                      {{ 'generic.show_more' | translate }}
-                    </span>
-                  }
-                </div>
-              </pa-table-cell>
-            }
-          }
-        </pa-table-row>
-      }
+        }
+      </pa-table-row>
     </pa-table>
-  </div>
+  </cdk-virtual-scroll-viewport>
 </div>

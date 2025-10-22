@@ -17,6 +17,8 @@ import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@
 import { unparse } from 'papaparse';
 import { ActivityLogTableModalComponent } from './log-table-modal.component';
 import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from 'rxjs';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { TableVirtualScrollDirective } from '@flaps/core';
 
 @Component({
   standalone: true,
@@ -32,6 +34,8 @@ import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from
     PaButtonModule,
     PaModalModule,
     PaTooltipModule,
+    ScrollingModule,
+    TableVirtualScrollDirective,
     TranslateModule,
   ],
   selector: 'app-log-table',
@@ -42,16 +46,26 @@ import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from
 export class ActivityLogTableComponent {
   private modalService = inject(SisModalService);
 
+  wideColumns = [
+    'answer',
+    'filter',
+    'learning_id',
+    'question',
+    'rag_strategies',
+    'remi_scores',
+    'resource_id',
+    'retrieved_context',
+    'token_details',
+    'user_request',
+  ];
   dateColumn = 'Date (UTC)';
   idColumn = 'ID';
-  pageSize = 200;
+  rowHeight = 148;
+  viewportOffset = 0;
 
   data = new BehaviorSubject<LogEntry[]>([]);
   hiddenHeaders = new BehaviorSubject<string[]>([]);
   term = new BehaviorSubject<string>('');
-  page = new BehaviorSubject<number>(0);
-
-  @ViewChild('container') container?: ElementRef;
 
   headers = this.data.pipe(
     map((data) =>
@@ -65,10 +79,11 @@ export class ActivityLogTableComponent {
     map(([data, term]) => this.search(data, term)),
     shareReplay(1),
   );
-  pageRows = combineLatest([this.filteredRows, this.page]).pipe(
-    map(([rows, page]) => rows.slice(page * this.pageSize, (page + 1) * this.pageSize)),
+
+  // Columns width must be fixed when using virtual scroll
+  gridLayout = this.displayedHeaders.pipe(
+    map((headers) => headers.map((header) => (this.wideColumns.includes(header) ? '400px' : '180px')).join(' ')),
   );
-  totalPages = this.filteredRows.pipe(map((rows) => Math.ceil(rows.length / this.pageSize)));
 
   @Input() month: string = '';
   @Input() event: string = '';
@@ -159,17 +174,5 @@ export class ActivityLogTableComponent {
       ActivityLogTableModalComponent,
       new ModalConfig({ data: { title: cell[0], value: cell[1].value, json: cell[1].type === 'object' } }),
     );
-  }
-
-  updateTerm(term: string) {
-    this.term.next(term);
-    this.page.next(0);
-  }
-
-  updatePage(offset: number) {
-    this.page.next(this.page.value + offset);
-    if (this.container) {
-      this.container.nativeElement.scrollTop = 0;
-    }
   }
 }
