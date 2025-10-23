@@ -59,14 +59,20 @@ export class TestPanelService {
     }
   }
 
-  runTest(question: string, userSessionId: string, useWS = true, fromCursor?: number) {
+  runTest(
+    question: string,
+    userSessionId: string,
+    useWS = true,
+    fromCursor?: number,
+    headers?: { [key: string]: string },
+  ) {
     // update the state and keep the existing answers only when a cursor is provided
     testAgentRun(question, typeof fromCursor === 'number');
 
     this.getOrCreateSession(userSessionId, question)
       .pipe(
         tap(({ sessionId }) => (this.currentSessionId = sessionId)),
-        switchMap(({ sessionId, arag }) => arag.interact(sessionId, question, useWS ? 'WS' : 'POST')),
+        switchMap(({ sessionId, arag }) => arag.interact(sessionId, question, useWS ? 'WS' : 'POST', headers)),
       )
       .subscribe({
         next: (data) => {

@@ -93,12 +93,13 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     sessionId: string,
     question: string,
     method: 'POST' | 'WS' = 'WS',
+    headers?: { [key: string]: string },
   ): Observable<AragResponse | IErrorResponse> {
     switch (method) {
       case 'POST':
-        return this._interactThroughPost(sessionId, question);
+        return this._interactThroughPost(sessionId, question, headers);
       case 'WS':
-        return this._interactThroughWs(sessionId, question);
+        return this._interactThroughWs(sessionId, question, headers);
     }
   }
 
@@ -111,10 +112,14 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
 
   wsOpeningCount = 0;
-  private _interactThroughWs(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
+  private _interactThroughWs(
+    sessionId: string,
+    question: string,
+    headers?: { [key: string]: string },
+  ): Observable<AragResponse | IErrorResponse> {
     const answerSubject = new Subject<AragResponse | IErrorResponse>();
     this.wsOpeningCount = 0;
-    this.openWebSocket(sessionId, question, answerSubject);
+    this.openWebSocket(sessionId, question, answerSubject, undefined, headers);
 
     return answerSubject.asObservable();
   }
@@ -124,6 +129,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     question: string,
     answerSubject: Subject<AragResponse | IErrorResponse>,
     fromCursor?: number,
+    headers?: { [key: string]: string },
   ) {
     let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, fromCursor).subscribe({
@@ -131,7 +137,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         const ws = new WebSocket(wsUrl);
         this.wsConnections[sessionId] = ws;
         ws.onopen = () => {
-          const message = { question, operation: InteractionOperation.question };
+          const message = { question, operation: InteractionOperation.question, headers };
           // and send the question
           ws.send(JSON.stringify(message));
         };
@@ -163,11 +169,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             // If not we reopen a connection from the last seqId
             const lastSeqId = lastMessage?.seqid || null;
             if (lastSeqId !== null) {
-              this.openWebSocket(sessionId, question, answerSubject, lastSeqId + 1);
+              this.openWebSocket(sessionId, question, answerSubject, lastSeqId + 1, headers);
             } else if (this.wsOpeningCount < 2) {
               // if we got no message, we retry only 3 times
               this.wsOpeningCount++;
-              this.openWebSocket(sessionId, question, answerSubject);
+              this.openWebSocket(sessionId, question, answerSubject, undefined, headers);
             } else {
               answerSubject.next({
                 type: 'error',
@@ -193,13 +199,18 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @param question Question to send to the agent
    * @returns
    */
-  private _interactThroughPost(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
+  private _interactThroughPost(
+    sessionId: string,
+    question: string,
+    headers?: { [key: string]: string },
+  ): Observable<AragResponse | IErrorResponse> {
     const fullPath = this.getInteractionPath(sessionId);
     let lastMessage: AragAnswer | undefined;
     return this.nuclia.rest
       .getStreamedResponse(fullPath, {
         question,
         operation: InteractionOperation.question,
+        headers,
       })
       .pipe(
         switchMap(({ data }) => {

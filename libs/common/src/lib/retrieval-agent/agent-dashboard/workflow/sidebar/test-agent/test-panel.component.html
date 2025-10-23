@@ -35,6 +35,12 @@
     <div class="form-entry">
       <pa-checkbox formControlName="useWs">Use WebSocket (uncheck to use POST interaction instead)</pa-checkbox>
     </div>
+    <div class="form-entry">
+      <label>HTTP headers</label>
+      <app-parameters-table
+        secretDisabled
+        [(values)]="headers"></app-parameters-table>
+    </div>
     <pa-button
       size="small"
       type="submit"

@@ -17,6 +17,7 @@ import { ProgressBarComponent } from '@nuclia/sistema';
 import { resetTestAgent, testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
+import { ParametersTableComponent } from '@flaps/core';
 
 @Component({
   selector: 'app-test-panel',
@@ -29,6 +30,7 @@ import { TestPanelService } from './test-panel.service';
     TranslateModule,
     ProgressBarComponent,
     PaTogglesModule,
+    ParametersTableComponent,
   ],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
@@ -41,6 +43,7 @@ export class TestPanelComponent implements OnInit, OnDestroy {
     session: new FormControl('new', { nonNullable: true, validators: [Validators.required] }),
     useWs: new FormControl(true, { nonNullable: true }),
   });
+  headers: { key: string; value: string }[] = [];
 
   get question() {
     return this.form.controls.question;
@@ -87,7 +90,19 @@ export class TestPanelComponent implements OnInit, OnDestroy {
   triggerRun() {
     if (this.question.valid) {
       const question = this.question.getRawValue().trim();
-      this.service.runTest(question, this.session.getRawValue(), this.useWs);
+      this.service.runTest(
+        question,
+        this.session.getRawValue(),
+        this.useWs,
+        undefined,
+        this.headers.reduce(
+          (all, current) => {
+            all[current.key] = current.value;
+            return all;
+          },
+          {} as { [key: string]: string },
+        ),
+      );
     }
   }
 
