@@ -52,7 +52,7 @@
                   @for (searchConfig of (searchConfigs | async) || []; track searchConfig.id) {
                     <pa-option
                       [value]="searchConfig.id"
-                      [disabled]="searchConfig.kind === kind">
+                      [disabled]="searchConfig.kind !== kind">
                       {{ searchConfig.id }}
                     </pa-option>
                   }
