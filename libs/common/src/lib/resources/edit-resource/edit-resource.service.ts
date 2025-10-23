@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  AnyFieldData,
   Classification,
   CloudLink,
   FIELD_TYPE,
@@ -154,7 +155,7 @@ export class EditResourceService {
     );
   }
 
-  getField(fieldType: keyof ResourceData, fieldId: string): Observable<IFieldData> {
+  getField(fieldType: keyof ResourceData, fieldId: string): Observable<AnyFieldData> {
     return this.resource.pipe(
       filter((resource) => !!resource),
       map((resource) => resource as Resource),

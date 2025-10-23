@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, computed, effect, input, viewChildren } from '@angular/core';
 import { AccordionBodyDirective, AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,8 +21,8 @@ import { ChipComponent } from '../chip';
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
-    TranslateModule
-],
+    TranslateModule,
+  ],
   templateUrl: './agent-block.component.html',
   styleUrl: './agent-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,8 +38,8 @@ export class AgentBlockComponent {
       (cost, step) => {
         return {
           timing: cost.timing + step.timeit,
-          input: cost.input + step.input_nuclia_tokens,
-          output: cost.output + step.output_nuclia_tokens,
+          input: cost.input + (step.input_nuclia_tokens ?? 0),
+          output: cost.output + (step.output_nuclia_tokens ?? 0),
         };
       },
       { timing: 0, input: 0, output: 0 },

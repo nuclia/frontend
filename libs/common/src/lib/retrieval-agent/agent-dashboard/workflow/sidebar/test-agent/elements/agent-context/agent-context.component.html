@@ -5,12 +5,6 @@
       <span [innerHTML]="summary | lineBreakFormatter"></span>
     </div>
   }
-  @if (context().answer; as answer) {
-    <div class="config">
-      <span class="config-title">Answer:</span>
-      <span [innerHTML]="answer | lineBreakFormatter"></span>
-    </div>
-  }
 
   @if (context().chunks.length > 0) {
     <pa-expander

@@ -1,17 +1,5 @@
 <stf-blockquote>
   <stf-chip>{{ step().title }}</stf-chip>
-  @if (step().prompt; as prompt) {
-    <pa-expander
-      [expanded]="false"
-      (toggleExpander)="heightUpdated.emit()">
-      <pa-expander-header>Prompt</pa-expander-header>
-      <pa-expander-body>
-        <div class="config">
-          <span [innerHTML]="prompt | lineBreakFormatter"></span>
-        </div>
-      </pa-expander-body>
-    </pa-expander>
-  }
   @if (step().reason; as reason) {
     <div class="config">
       <span class="config-title">Reason:</span>

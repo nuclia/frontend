@@ -1,8 +1,6 @@
 import { ComponentRef } from '@angular/core';
 import {
   AnswerOperation,
-  AragAnswerContext,
-  AragAnswerStep,
   AragModule,
   AskAgent,
   AskAgentCreation,
@@ -24,6 +22,7 @@ import {
   GuardrailsProviderType,
   InternetProviderType,
   McpAgentCreation,
+  Memory,
   PerplexityAgent,
   PerplexityAgentCreation,
   PostprocessAliniaAgent as PostAliniaAgent,
@@ -154,8 +153,8 @@ export interface AragAnswerUi {
   module: AragModule;
   answer: string | null;
   generated_text: string | null;
-  steps: AragAnswerStep[];
-  context: AragAnswerContext | null;
+  steps: Memory.Step[];
+  context: Memory.Context | null;
   operation: AnswerOperation;
   seqid: number | null;
 }

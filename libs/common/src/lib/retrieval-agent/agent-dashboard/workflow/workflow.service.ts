@@ -152,7 +152,7 @@ export class WorkflowService {
 
   private _workflowRoot?: WorkflowRoot;
   private _columnContainer?: ElementRef;
-  private _currentPanel?: ComponentRef<RulesPanelComponent | FormDirective>;
+  private _currentPanel?: ComponentRef<RulesPanelComponent | FormDirective | TestPanelComponent>;
 
   set workflowRoot(root: WorkflowRoot) {
     this._workflowRoot = root;
@@ -536,6 +536,7 @@ export class WorkflowService {
       container.appendChild(panelRef.location.nativeElement);
       panelRef.changeDetectorRef.detectChanges();
       panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+      this._currentPanel = panelRef;
     }, 10);
   }
 

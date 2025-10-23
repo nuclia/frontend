@@ -5,6 +5,7 @@ import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeB
 import { ExtractedDataTypes } from '../resource';
 import { Driver, DriverCreation } from './driver.models';
 import { AragAnswer } from './interactions.models';
+import { Memory } from './memory.models';
 import {
   AragModule,
   ContextModule,
@@ -78,7 +79,7 @@ export interface IRetrievalAgent
   patchDriver(driver: Driver): Observable<void>;
   deleteDriver(driverId: string): Observable<void>;
 
-  getRules(): Observable<(Rule | string)[]>;
+  getRules(): Observable<(Memory.Rule | string)[]>;
   setRules(rules: string[]): Observable<void>;
 
   getPreprocess(): Observable<PreprocessAgent[]>;
@@ -102,10 +103,6 @@ export interface IRetrievalAgent
   deletePostprocess(agentId: string): Observable<void>;
 
   getSchemas(): Observable<ARAGSchemas>;
-}
-
-export interface Rule {
-  prompt: string;
 }
 
 export interface BaseAgent {

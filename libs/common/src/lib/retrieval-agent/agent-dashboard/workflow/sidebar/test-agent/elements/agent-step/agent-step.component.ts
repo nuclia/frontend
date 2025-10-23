@@ -1,7 +1,6 @@
-
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
-import { AragAnswerStep } from '@nuclia/core';
+import { Memory } from '@nuclia/core';
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
 import { getFormattedCost } from '../../../../../../arag.utils';
 import { BlockquoteComponent } from '../blockquote';
@@ -15,13 +14,13 @@ import { ChipComponent } from '../chip';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentStepComponent {
-  step = input.required<AragAnswerStep>();
+  step = input.required<Memory.Step>();
   heightUpdated = output();
 
   formattedCost = computed(() => {
-    const input = this.step().input_nuclia_tokens;
-    const output = this.step().output_nuclia_tokens;
-    const timing = this.step().timeit;
+    const input = this.step().input_nuclia_tokens ?? undefined;
+    const output = this.step().output_nuclia_tokens ?? undefined;
+    const timing = this.step().timeit ?? undefined;
     return getFormattedCost(timing, input, output);
   });
 }

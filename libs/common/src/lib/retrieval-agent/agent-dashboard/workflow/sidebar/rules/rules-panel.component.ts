@@ -1,4 +1,3 @@
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -25,8 +24,8 @@ import { ConfigurationFormComponent } from '../../basic-elements';
     PaTextFieldModule,
     ReactiveFormsModule,
     TranslateModule,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   templateUrl: './rules-panel.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -84,7 +83,7 @@ export class RulesPanelComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  addRule(rule?: string) {
+  addRule(rule?: string | null) {
     this.rulesArray.push(new FormControl<string>(rule || '', { nonNullable: true }));
   }
   removeRule(index: number) {

@@ -1,11 +1,20 @@
-
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
-import { testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
+import { resetTestAgent, testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
 
@@ -19,13 +28,13 @@ import { TestPanelService } from './test-panel.service';
     AgentBlockComponent,
     TranslateModule,
     ProgressBarComponent,
-    PaTogglesModule
-],
+    PaTogglesModule,
+  ],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TestPanelComponent implements OnInit {
+export class TestPanelComponent implements OnInit, OnDestroy {
   private service = inject(TestPanelService);
   form = new FormGroup({
     question: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -44,6 +53,15 @@ export class TestPanelComponent implements OnInit {
   }
 
   cancel = output();
+
+  // Method for parent to call when closing the panel
+  onPanelClose() {
+    if (this.runningTest()) {
+      this.triggerStop();
+    }
+    this.resetTestState();
+    this.cancel.emit();
+  }
 
   sessions = signal<Session[]>([]);
   runningTest = testAgentRunning;
@@ -75,5 +93,23 @@ export class TestPanelComponent implements OnInit {
 
   triggerStop() {
     this.service.stopTest();
+  }
+
+  ngOnDestroy() {
+    // Stop the test and reset all state when component is destroyed
+    if (this.runningTest()) {
+      this.triggerStop();
+    }
+    this.resetTestState();
+  }
+
+  private resetTestState() {
+    // Reset the test agent state and form
+    resetTestAgent();
+    this.form.reset({
+      question: '',
+      session: 'new',
+      useWs: true,
+    });
   }
 }
