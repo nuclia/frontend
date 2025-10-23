@@ -10,6 +10,7 @@ export interface FiltersResources {
 export interface ConfigurationForm {
   name: string;
   syncSecurityGroups: boolean | null;
+  preserveLabels: boolean | null;
   filterResources: FiltersResources;
   extra: {
     [fieldId: string]: string;

@@ -80,6 +80,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         name: value.title,
         syncSecurityGroups: value.syncSecurityGroups,
         filterResources,
+        preserveLabels: value.preserveLabels,
       });
       this.labelSelection = value.labels || [];
       this.extensionList = this.formatExtensionList(filterResources.extensions);
@@ -106,6 +107,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     syncSecurityGroups: new FormControl<boolean | null>(null),
+    preserveLabels: new FormControl<boolean | null>(null),
     filterResources: new FormGroup({
       extensions: new FormControl<string>('', { updateOn: 'blur' }),
       extensionUsage: new FormControl<'include' | 'exclude'>('include', { nonNullable: true }),
@@ -259,6 +261,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       id,
       title,
       labels: this.labelSelection,
+      preserveLabels: config.preserveLabels || false,
       filters,
       connector: {
         name: this.connectorId,
