@@ -47,10 +47,13 @@
               <div class="rule-container">
                 <pa-select
                   formControlName="search_config"
-                  [label]="'search.configuration.routing.search-config' | translate">
-                  @for (searchConfig of (searchConfigs | async) || []; track searchConfig) {
-                    <pa-option [value]="searchConfig">
-                      {{ searchConfig }}
+                  [label]="'search.configuration.routing.search-config' | translate"
+                  [help]="'search.configuration.routing.search-config-help' | translate">
+                  @for (searchConfig of (searchConfigs | async) || []; track searchConfig.id) {
+                    <pa-option
+                      [value]="searchConfig.id"
+                      [disabled]="searchConfig.kind !== kind">
+                      {{ searchConfig.id }}
                     </pa-option>
                   }
                 </pa-select>

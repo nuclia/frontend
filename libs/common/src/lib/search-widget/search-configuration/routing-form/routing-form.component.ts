@@ -48,11 +48,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   private searchWidgetStorage = inject(SearchWidgetStorageService);
   private cdr = inject(ChangeDetectorRef);
   searchConfigs = this.searchWidgetStorage.searchAPIConfigs.pipe(
-    map((configs) =>
-      Object.entries(configs)
-        .filter(([id, config]) => config.kind === this.kind)
-        .map(([id]) => id),
-    ),
+    map((configs) => Object.entries(configs).map(([id, config]) => ({ id, kind: config.kind }))),
   );
 
   @Input() set config(value: Widget.RoutingConfig | undefined) {
