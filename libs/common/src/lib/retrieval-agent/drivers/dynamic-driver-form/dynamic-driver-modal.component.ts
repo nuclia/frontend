@@ -80,6 +80,7 @@ export class DynamicDriverModalComponent implements OnInit {
 
       // Validate the form data
       if (!this.validateFormData(formValue)) {
+        this.isLoading.set(false);
         return;
       }
 
@@ -88,7 +89,6 @@ export class DynamicDriverModalComponent implements OnInit {
     } catch (error) {
       console.error('Error saving driver:', error);
       this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.save'));
-    } finally {
       this.isLoading.set(false);
     }
   }

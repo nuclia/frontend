@@ -60,7 +60,10 @@ export class ApiHeadersFieldComponent implements OnInit {
 
   addHeader() {
     const currentEntries = this.headerEntries();
-    this.headerEntries.set([...currentEntries, { key: '', value: '' }]);
+    const newEntries = [...currentEntries, { key: '', value: '' }];
+    this.headerEntries.set(newEntries);
+    // Ensure form is updated when headers are added
+    this.updateFormValue(newEntries);
   }
 
   removeHeader(index: number) {
@@ -93,6 +96,7 @@ export class ApiHeadersFieldComponent implements OnInit {
     const headersObject: { [key: string]: string } = {};
 
     entries.forEach((entry) => {
+      // Only include entries that have both key and value filled
       if (entry.key.trim() && entry.value.trim()) {
         headersObject[entry.key.trim()] = entry.value.trim();
       }

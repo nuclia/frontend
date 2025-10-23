@@ -44,11 +44,11 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private _unsubscribeAll = new Subject<void>();
+  private editInProgress = false;
+  private addInProgress = false;
+  private deleteInProgress = false;
 
   @ViewChild('driverTypes') driverTypesDropdown!: DropdownComponent;
-
-  // Force re-render flag
-  showDropdown = true;
 
   // Expose service properties to template
   drivers = this.driversService.drivers;
@@ -83,131 +83,142 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   }
 
   addDriver(driverTitle: string): void {
+    // Prevent multiple add operations from running simultaneously
+    if (this.addInProgress) {
+      return;
+    }
+
+    this.addInProgress = true;
+
     this.driversService
       .addDriver(driverTitle)
       .pipe(
         takeUntil(this._unsubscribeAll),
         finalize(() => {
-          // Force complete change detection cycle and refresh components
-          setTimeout(() => {
-            // Force cleanup of any lingering modal state
-            this.forceModalCleanup();
-            // Force dropdown recreation by toggling visibility
-            this.showDropdown = false;
-            this.cdr.detectChanges();
-            setTimeout(() => {
-              this.showDropdown = true;
-              this.cdr.detectChanges();
-              // Additional check - refresh the service to ensure state consistency
-              this.driversService.refreshAll();
-            }, 50);
-          }, 200); // Increased delay to ensure modal is fully closed
+          this.addInProgress = false;
         }),
       )
       .subscribe({
         next: (result) => {
-          // Success - data is already updated through the service
           if (result) {
-            console.log('Driver added successfully');
-          } else {
-            console.log('Driver add operation cancelled');
+            // Trigger change detection after successful add
+            this.cdr.markForCheck();
           }
         },
         error: (error) => {
           console.error('Error adding driver:', error);
+          // Ensure UI is still responsive after error
+          this.cdr.markForCheck();
+        },
+        complete: () => {
+          // Clean up any lingering modal elements
+          setTimeout(() => {
+            this.checkForLingeringModals();
+          }, 500);
         },
       });
   }
 
   edit(driver: Driver): void {
+    // Prevent multiple edit operations from running simultaneously
+    if (this.editInProgress) {
+      return;
+    }
+
+    this.editInProgress = true;
+
     this.driversService
       .editDriver(driver)
       .pipe(
         takeUntil(this._unsubscribeAll),
         finalize(() => {
-          // Force complete change detection cycle
-          setTimeout(() => {
-            this.cdr.detectChanges();
-            // Refresh service state to ensure consistency
-            this.driversService.refreshAll();
-          }, 100);
+          this.editInProgress = false;
         }),
       )
       .subscribe({
         next: (result) => {
           if (result) {
-            console.log('Driver edited successfully');
-          } else {
-            console.log('Driver edit operation cancelled');
+            // Only trigger change detection after successful edit
+            this.cdr.markForCheck();
           }
         },
         error: (error) => {
           console.error('Error editing driver:', error);
+          // Ensure UI is still responsive after error
+          this.cdr.markForCheck();
+        },
+        complete: () => {
+          // Clean up any lingering modal elements
+          setTimeout(() => {
+            this.checkForLingeringModals();
+          }, 500);
         },
       });
   }
 
+  /**
+   * Check for lingering modal elements and clean them up
+   */
+  private checkForLingeringModals(): void {
+    const modals = document.querySelectorAll('pa-modal-advanced, .pa-modal, .modal');
+    const backdrops = document.querySelectorAll('.pa-modal-backdrop, .modal-backdrop');
+
+    if (modals.length > 0 || backdrops.length > 0) {
+      // Clean up lingering modal elements
+      modals.forEach((modal) => modal.remove());
+      backdrops.forEach((backdrop) => backdrop.remove());
+
+      // Reset body styles that might be left over from modal
+      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open', 'pa-modal-open');
+    }
+  }
+
+  onEditClick(driver: Driver, event: any): void {
+    event?.stopPropagation?.();
+    this.edit(driver);
+  }
+
+  onDeleteClick(driver: Driver, event: any): void {
+    event?.stopPropagation?.();
+    this.deleteDriver(driver);
+  }
+
   deleteDriver(driver: Driver): void {
+    // Prevent multiple delete operations from running simultaneously
+    if (this.deleteInProgress) {
+      return;
+    }
+
+    this.deleteInProgress = true;
+
     this.driversService
       .deleteDriver(driver)
       .pipe(
         takeUntil(this._unsubscribeAll),
         finalize(() => {
-          // Force complete change detection cycle
-          setTimeout(() => {
-            this.cdr.detectChanges();
-            // Refresh service state to ensure consistency
-            this.driversService.refreshAll();
-          }, 100);
+          this.deleteInProgress = false;
         }),
       )
       .subscribe({
         next: (result) => {
           if (result) {
-            console.log('Driver deleted successfully');
-          } else {
-            console.log('Driver delete operation cancelled');
+            // Only trigger change detection after successful deletion
+            this.cdr.markForCheck();
           }
         },
         error: (error) => {
           console.error('Error deleting driver:', error);
+          // Ensure UI is still responsive after error
+          this.cdr.markForCheck();
+        },
+        complete: () => {
+          // Clean up any lingering modal elements
+          setTimeout(() => {
+            this.checkForLingeringModals();
+          }, 500);
         },
       });
-  }
-
-  /**
-   * Debug method to check dropdown state
-   */
-  onDropdownClick(): void {
-    console.log('Dropdown clicked');
-    console.log('Dropdown component:', this.driverTypesDropdown);
-    if (this.driverTypesDropdown) {
-      console.log('Dropdown state - isOpen:', (this.driverTypesDropdown as any).isOpen);
-      console.log('Dropdown state - disabled:', (this.driverTypesDropdown as any).disabled);
-    }
-  }
-
-  /**
-   * Force cleanup of any lingering modal state
-   */
-  private forceModalCleanup(): void {
-    // Remove any lingering modal backdrops
-    const backdrops = document.querySelectorAll('.pa-modal-backdrop, .modal-backdrop, [data-modal-backdrop]');
-    backdrops.forEach((backdrop) => {
-      console.log('Removing lingering modal backdrop:', backdrop);
-      backdrop.remove();
-    });
-
-    // Remove any lingering modal containers
-    const modals = document.querySelectorAll('.pa-modal-container, .modal, [data-modal-container]');
-    modals.forEach((modal) => {
-      console.log('Removing lingering modal container:', modal);
-      modal.remove();
-    });
-
-    // Reset document body styles that might be left over from modal
-    document.body.style.overflow = '';
-    document.body.classList.remove('modal-open');
   }
 
   /**
