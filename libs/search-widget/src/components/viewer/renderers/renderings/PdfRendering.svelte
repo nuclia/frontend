@@ -31,6 +31,8 @@
   let totalPage = $state(1);
   let zoom: number = $state(1);
   let pdfInitialized = $state(false);
+  let dragMode = $state(false);
+  let isDragging = $state(false);
 
   const updateTextLayerMatch$: Subject<{ paragraphFound: boolean; page: number }> = new Subject<{
     paragraphFound: boolean;
@@ -152,6 +154,28 @@
     }
   };
 
+  const toggleDragMode = () => {
+    dragMode = !dragMode;
+  };
+
+  const handleMouseDown = (event: MouseEvent) => {
+    if (dragMode) {
+      isDragging = true;
+    }
+  };
+
+  const endDragging = () => {
+    isDragging = false;
+  };
+
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!dragMode || !isDragging) return;
+    event.preventDefault();
+    event.stopPropagation();
+    pdfContainerElement.scrollTop -= event.movementY;
+    pdfContainerElement.scrollLeft -= event.movementX;
+  };
+
   function resize() {
     if (!!pdfViewer && pdfInitialized) {
       pdfViewer.currentScaleValue = scale;
@@ -175,12 +199,19 @@
 <svelte:window
   bind:innerWidth
   onresize={resize} />
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="pdf-container"
   bind:this={pdfContainerElement}
   bind:offsetWidth={containerOffsetWidth}
   style:--container-width="{containerOffsetWidth}px"
-  style:position="absolute">
+  style:position="absolute"
+  class:drag-mode={dragMode}
+  class:dragging={isDragging}
+  onmousedown={handleMouseDown}
+  onmouseleave={endDragging}
+  onmouseup={endDragging}
+  onmousemove={handleMouseMove}>
   <div class="pdfViewer"></div>
   {#if !src || !pdfInitialized}
     <div class="loading-container">
@@ -218,6 +249,15 @@
           on:click={zoomIn} />
       </div>
       <span>{Math.round(zoom * 100)}%</span>
+
+      <div class="pdf-drag">
+        <IconButton
+          icon="fullscreen"
+          aspect="basic"
+          size="small"
+          active={dragMode}
+          on:click={toggleDragMode} />
+      </div>
     </div>
   {/if}
 </div>

@@ -5,6 +5,19 @@
   right: 0;
   top: 0;
 
+  &.drag-mode {
+    cursor: grab;
+    :global(.textLayer),
+    :global(.textLayer *) {
+      cursor: inherit !important;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    &.dragging {
+      cursor: grabbing;
+    }
+  }
+
   .loading-container {
     left: 50%;
     position: absolute;
@@ -26,6 +39,10 @@
 
     .pdf-zoom-container {
       margin-left: var(--rhythm-2);
+    }
+    .pdf-drag {
+      margin-left: var(--rhythm-2);
+      transform: rotate(45deg);
     }
   }
 }
