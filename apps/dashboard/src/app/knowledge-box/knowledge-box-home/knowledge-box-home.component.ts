@@ -4,7 +4,7 @@ import { FeaturesService, NavigationService, SDKService, ZoneService } from '@fl
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, Observable, ReplaySubject, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
@@ -150,6 +150,16 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   );
   generativeBlocked = this.account.pipe(map((account) => account.blocked_features.includes(BlockedFeature.GENERATIVE)));
 
+  selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
+  usage = combineLatest([this.account, this.currentKb, this.selectedPeriod]).pipe(
+    switchMap(([account, kb, period]) =>
+      this.sdk.nuclia.db
+        .getUsage(account.id, period.start.toISOString(), period.end.toISOString(), kb.id)
+        .pipe(map((data) => ({ [kb.id]: data }))),
+    ),
+    shareReplay(1),
+  );
+
   constructor(
     private app: AppService,
     private sdk: SDKService,
@@ -165,6 +175,10 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // We want the health status on the last 7 days
     this.remiMetrics.updatePeriod('7d');
+
+    this.metrics.period.pipe(take(1)).subscribe((period) => {
+      this.selectedPeriod.next(period);
+    });
   }
 
   ngOnDestroy() {

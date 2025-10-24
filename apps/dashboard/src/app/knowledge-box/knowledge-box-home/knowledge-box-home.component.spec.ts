@@ -112,6 +112,7 @@ describe('KnowledgeBoxHomeComponent', () => {
               getUsageCount: () => of(0),
               getSearchCount: () => of(0),
               isSubscribedToStripe: of(false),
+              period: of({ start: new Date(), end: new Date() }),
             },
           },
           MockProvider(SisModalService),
