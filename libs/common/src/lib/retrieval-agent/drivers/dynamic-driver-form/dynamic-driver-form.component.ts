@@ -172,6 +172,11 @@ export class DynamicDriverFormComponent implements OnInit {
       // Nested subform
       return this.createNestedFormGroup(property);
     } else if (type === 'object' && property.additionalProperties) {
+      // For the headers field specifically, we need a FormControl with an object value
+      // not a FormGroup, because the ApiHeadersFieldComponent expects to work with a FormControl
+      if (key === 'headers') {
+        return new FormControl(defaultValue || {});
+      }
       // Object with additionalProperties should be a FormGroup for key-value pairs
       return new FormGroup({});
     } else if (type === 'array' || property.items) {

@@ -2,14 +2,13 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { SDKService, FeaturesService, STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { Driver, DriverCreation, ARAGSchemas } from '@nuclia/core';
+import { Driver, ARAGSchemas } from '@nuclia/core';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import {
   BehaviorSubject,
   Observable,
   catchError,
   combineLatest,
-  filter,
   map,
   of,
   switchMap,
@@ -21,12 +20,7 @@ import {
 } from 'rxjs';
 
 // Import modal components
-import { CypherDriverModalComponent } from './cypher-driver';
-import { GuardrailsDriverModalComponent } from './guardrails-driver';
-import { InternetDriverModalComponent } from './internet-driver';
-import { McpSseDriverModalComponent, McpStdioDriverModalComponent } from './mcp-driver';
 import { NucliaDriverModalComponent } from './nuclia-driver';
-import { SqlDriverModalComponent } from './sql-driver';
 import { DynamicDriverModalComponent } from './dynamic-driver-form';
 
 export type DriverType = string; // Now accepts any string (driver title from schema)
@@ -234,6 +228,7 @@ export class DriversService {
               switchMap(() => this.sdk.refreshCurrentArag()),
               tap(() => this.refreshDrivers()),
               catchError((error) => {
+                console.error('Error in driver update:', error);
                 this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.edition'));
                 return throwError(() => error);
               }),
