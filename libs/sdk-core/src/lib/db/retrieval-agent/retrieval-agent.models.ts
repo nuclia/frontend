@@ -69,6 +69,7 @@ export interface IRetrievalAgent
     sessionId: string,
     question: string,
     method: 'POST' | 'WS',
+    headers?: { [key: string]: string },
   ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse>;
   stopInteraction(sessionId: string): void;
 
