@@ -5,9 +5,13 @@ import {
   inject,
   Input,
   OnInit,
+  OnDestroy,
   Output,
   Injector,
+  signal,
+  computed,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { ConfigurationFormComponent } from '../configuration-form/configuration-form.component';
@@ -34,7 +38,7 @@ export interface RenderableField {
   standalone: true,
   imports: [ReactiveFormsModule, TranslateModule, ConfigurationFormComponent, CommonModule, FieldRendererComponent],
 })
-export class NodeFormComponent extends FormDirective implements OnInit {
+export class NodeFormComponent extends FormDirective implements OnInit, OnDestroy {
   @Input() agentType!: keyof ARAGSchemas['agents'];
   @Input() agentName!: string;
   @Input() formGroupName!: string;
@@ -55,6 +59,76 @@ export class NodeFormComponent extends FormDirective implements OnInit {
   schema: JSONSchema4 = {};
   renderableFields: RenderableField[] = [];
 
+  // Signal to track form validation state changes
+  private formValidationTrigger = signal(0);
+
+  // Subscriptions to clean up on destroy
+  private subscriptions = new Subscription();
+
+  // Computed property to determine if submit should be disabled
+  isSubmitDisabled = computed(() => {
+    // Access the trigger to make this reactive
+    this.formValidationTrigger();
+
+    if (!this.configForm) {
+      return true;
+    }
+
+    // Check if form has actual validation errors or is just empty
+    const hasValidationErrors = this.hasActualValidationErrors();
+    const allRequiredFieldsPopulated = this.areAllRequiredFieldsPopulated();
+
+    // Enhanced logic: Allow save if:
+    // 1. Form has no actual validation errors AND
+    // 2. All required fields are populated (even with defaults)
+    if (hasValidationErrors) {
+      return true;
+    }
+
+    if (!allRequiredFieldsPopulated) {
+      return true;
+    }
+
+    return false;
+  });
+
+  // Check if form has actual validation errors (not just empty values)
+  private hasActualValidationErrors(): boolean {
+    if (!this.configForm) {
+      return true;
+    }
+
+    // Recursively check all controls for actual validation errors
+    return this.checkControlForErrors(this.configForm);
+  }
+
+  private checkControlForErrors(control: any): boolean {
+    if (control.errors) {
+      // Check if errors are meaningful validation errors (not just 'required' for empty forms)
+      const errorKeys = Object.keys(control.errors);
+
+      // For now, let's be permissive and only block on certain error types
+      const blockingErrors = errorKeys.filter(
+        (key) => key !== 'required' || (control.value !== null && control.value !== undefined && control.value !== ''),
+      );
+
+      if (blockingErrors.length > 0) {
+        return true;
+      }
+    }
+
+    // Check child controls
+    if (control.controls) {
+      for (const childControl of Object.values(control.controls)) {
+        if (this.checkControlForErrors(childControl)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   ngOnInit() {
     if (this.isNested && this.nestedSchema && this.parentForm) {
       // When used as nested component, use provided schema and parent form
@@ -63,6 +137,7 @@ export class NodeFormComponent extends FormDirective implements OnInit {
       this.setupRenderableFields();
       this.isFormReady = true;
       this.formReady.emit(this.configForm);
+      this.setupFormValidationListener();
     } else if (this.schemas) {
       const formConfig = this.buildFormFromSchema(this.schemas, this.agentType, this.agentName);
       this.schema = formConfig.schema || {};
@@ -74,12 +149,14 @@ export class NodeFormComponent extends FormDirective implements OnInit {
       // Emit the configForm (nested form group) not the root form
       this.formReady.emit(this.configForm);
       this.isFormReady = true;
+      this.setupFormValidationListener();
+
+      // Trigger initial validation check to handle forms with default values
+      this.formValidationTrigger.update((val) => val + 1);
     } else {
       console.warn('NodeFormComponent: No schemas provided and not in nested mode');
     }
-  }
-
-  // Getter for the config form
+  } // Getter for the config form
   override get configForm(): FormGroup {
     return this.form.controls[this.formGroupName] as FormGroup;
   }
@@ -209,5 +286,65 @@ export class NodeFormComponent extends FormDirective implements OnInit {
     }
 
     return new FormGroup(group);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  // Set up listener for form changes to trigger validation updates
+  private setupFormValidationListener(): void {
+    if (this.configForm) {
+      // Listen to both valueChanges and statusChanges to catch validation state changes
+      this.subscriptions.add(
+        this.configForm.valueChanges.subscribe(() => {
+          this.formValidationTrigger.update((val) => val + 1);
+        }),
+      );
+
+      this.subscriptions.add(
+        this.configForm.statusChanges.subscribe(() => {
+          this.formValidationTrigger.update((val) => val + 1);
+        }),
+      );
+    }
+  }
+
+  // Check if all required fields are populated (even with default values)
+  areAllRequiredFieldsPopulated(): boolean {
+    if (!this.schema || !this.schema.properties || !this.configForm) {
+      return true; // No requirements to check
+    }
+
+    const requiredFields = new Set(
+      this.schema.required && Array.isArray(this.schema.required) ? this.schema.required : [],
+    );
+
+    // If no required fields are defined in the schema, allow submission
+    if (requiredFields.size === 0) {
+      return true;
+    }
+
+    // Check each required field has a non-empty value
+    for (const fieldKey of requiredFields) {
+      const control = this.configForm.get(fieldKey);
+      if (!control) {
+        continue; // Field doesn't exist in form, skip
+      }
+
+      const value = control.value;
+
+      // Check if field is empty/null/undefined
+      if (value === null || value === undefined || value === '') {
+        return false;
+      }
+
+      // For arrays, check if they have at least one item
+      if (Array.isArray(value) && value.length === 0) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

@@ -7,6 +7,7 @@
     <!-- Full form wrapper for non-nested usage -->
     <app-configuration-form
       [form]="form"
+      [submitDisabled]="isSubmitDisabled()"
       (cancel)="cancel.emit()"
       (triggerSubmit)="submit()">
       @if (configForm) {
