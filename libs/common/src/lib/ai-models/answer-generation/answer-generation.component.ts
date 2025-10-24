@@ -11,7 +11,7 @@ import {
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import { filter, of, Subject, take } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { convertEnumProperties, keyProviders } from '../ai-models.utils';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
@@ -78,6 +78,16 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     return this.generativeModelValue.includes('/');
   }
 
+  constructor() {
+    super();
+    this.configForm.controls.generative_model.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      // Wait for the user key form to update before setting their values
+      setTimeout(() => {
+        this.resetUserKeys();
+      });
+    });
+  }
+
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
@@ -115,27 +125,29 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
 
     if (kbConfig) {
       this.configForm.patchValue(kbConfig);
+      this.configForm.markAsPristine();
       this.updateCurrentGenerativeModel();
-      // Wait for the user key form to update before setting their values
-      setTimeout(() => {
-        const userKeyId = this.currentGenerativeModel?.user_key;
-        if (userKeyId) {
-          if (kbConfig['user_keys']) {
-            const ownKey = !!kbConfig['user_keys'][userKeyId];
-            let userKeys = kbConfig['user_keys'][userKeyId];
-            const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
-            if (userKeys && schema) {
-              userKeys = convertEnumProperties(userKeys, schema);
-            }
-            this.userKeyToggle?.patchValue(ownKey);
-            this.userKeysGroup?.patchValue(userKeys);
-          }
-        }
-        this.configForm.markAsPristine();
-        this.userKeysForm?.markAsPristine();
-        this.cdr.markForCheck();
-      });
+      this.cdr.markForCheck();
     }
+  }
+
+  resetUserKeys() {
+    const kbConfig = this.kbConfigBackup;
+    const userKeyId = this.currentGenerativeModel?.user_key;
+    if (kbConfig && userKeyId) {
+      if (kbConfig['user_keys']) {
+        const ownKey = !!kbConfig['user_keys'][userKeyId];
+        let userKeys = kbConfig['user_keys'][userKeyId];
+        const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
+        if (userKeys && schema) {
+          userKeys = convertEnumProperties(userKeys, schema);
+        }
+        this.userKeyToggle?.patchValue(ownKey);
+        this.userKeysGroup?.patchValue(userKeys);
+      }
+    }
+    this.userKeysForm?.markAsPristine();
+    this.cdr.markForCheck();
   }
 
   protected save() {
@@ -146,10 +158,11 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     this.saving = true;
     const kbBackup = this.kb;
     const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
-    kbConfig['user_keys'] =
-      this.currentGenerativeModel?.user_key && this.hasOwnKey
-        ? { [this.currentGenerativeModel?.user_key]: this.userKeysGroup?.value }
-        : {};
+    if (this.currentGenerativeModel?.user_key) {
+      kbConfig['user_keys'] = {
+        [this.currentGenerativeModel.user_key]: this.hasOwnKey ? this.userKeysGroup?.value : null,
+      };
+    }
 
     kbConfig['user_prompts'] = Object.entries(kbConfig['user_prompts']).reduce(
       (acc, curr: [string, any]) => {
