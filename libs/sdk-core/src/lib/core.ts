@@ -89,7 +89,7 @@ export class Nuclia implements INuclia {
 
     ```ts
     const nuclia = new Nuclia({
-      backend: 'https://nuclia.cloud/api',
+      backend: 'https://rag.progress.cloud/api',
       knowledgeBox: '17815eb2-06a5-40ee-a5aa-b2f9dbc5da70',
       zone: 'europe-1',
     });

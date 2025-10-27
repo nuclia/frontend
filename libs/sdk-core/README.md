@@ -18,7 +18,7 @@ The full documentation is available at [https://docs.nuclia.dev/docs/develop/js-
 import { Nuclia } from '@nuclia/core';
 
 const nuclia = new Nuclia({
-  backend: 'https://nuclia.cloud/api',
+  backend: 'https://rag.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
@@ -37,7 +37,7 @@ require('localstorage-polyfill');
 require('isomorphic-unfetch');
 
 const nuclia = new Nuclia({
-  backend: 'https://nuclia.cloud/api',
+  backend: 'https://rag.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
@@ -48,14 +48,14 @@ const nuclia = new Nuclia({
 The Nuclia SDK is also provided via a CDN for direct browser usage:
 
 ```html
-<script src="https://cdn.stashify.cloud/nuclia-sdk.umd.js"></script>
+<script src="https://cdn.rag.progress.cloud/nuclia-sdk.umd.js"></script>
 ```
 
 It will expose a global variable `NucliaSDK` containing the `Nuclia` class:
 
 ```js
 const nuclia = new NucliaSDK.Nuclia({
-  backend: 'https://nuclia.cloud/api',
+  backend: 'https://rag.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
