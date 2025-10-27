@@ -268,6 +268,11 @@ export abstract class FormDirective {
         }
       }
 
+      // Remove null id fields from the submitted data
+      if (processedValue.id === null) {
+        delete processedValue.id;
+      }
+
       this.submitForm.emit(processedValue);
     }
   }
