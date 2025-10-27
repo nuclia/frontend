@@ -16,12 +16,7 @@ import {
 } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { ABORT_STREAMING_REASON } from '../../rest';
-import {
-  improveSchemaNames,
-  LearningConfigurations,
-  normalizeSchemaProperty,
-  ResourceProperties,
-} from '../db.models';
+import { improveSchemaNames, LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import {
   ExtractedDataTypes,
@@ -140,7 +135,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   /**
    * The Knowledge Box fullpath on the regional API.
    *
-   * Example: `https://europe-1.nuclia.cloud/api/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
+   * Example: `https://europe-1.rag.progress.cloud/api/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
    */
   get fullpath(): string {
     return `${this.nuclia.regionalBackend}/v1/kb/${this.id}`;

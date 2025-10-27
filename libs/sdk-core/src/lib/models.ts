@@ -224,7 +224,7 @@ export interface NucliaOptions {
   /**
    * The Nuclia backend to use.
    *
-   * Example: `https://nuclia.cloud/api` */
+   * Example: `https://rag.progress.cloud/api` */
   backend: string;
   /**
    * The geographical zone for the regional API calls.
