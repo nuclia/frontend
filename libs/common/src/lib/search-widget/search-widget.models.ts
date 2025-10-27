@@ -65,7 +65,6 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
     vectorset: searchConfig.searchBox.vectorset || undefined,
     highlight: searchConfig.searchBox.highlight,
     rephrase: searchConfig.searchBox.rephraseQuery,
-    autofilter: searchConfig.searchBox.autofilter,
     show_hidden: searchConfig.searchBox.showHiddenResources,
   };
   if (!searchConfig.searchBox.semanticReranking) {

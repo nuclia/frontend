@@ -1,5 +1,9 @@
 # 1.29.1 (unreleased)
 
+### Breaking changes
+
+- Remove support for automatic filters
+
 ### Improvements
 
 - Support model configurations

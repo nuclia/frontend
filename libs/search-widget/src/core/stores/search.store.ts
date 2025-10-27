@@ -1,7 +1,6 @@
 import {
   Search,
   type Ask,
-  type ChatOptions,
   type Classification,
   type FieldId,
   type Filter,
@@ -60,7 +59,6 @@ interface SearchFilters {
   labels?: LabelFilter[];
   labelSets?: LabelSetFilter[];
   entities?: EntityFilter[];
-  autofilters?: EntityFilter[];
   mimeTypes?: MimeFilter[];
   path?: string;
 }
@@ -103,7 +101,6 @@ interface SearchState {
   results: FindResultsAsList;
   error?: IErrorResponse;
   pending: boolean;
-  autofilerDisabled?: boolean;
   showResults: boolean;
   showAttachedImages: boolean;
   tracking: {
@@ -164,7 +161,6 @@ export const searchQuery = searchState.writer<string>(
         ...state,
         query: trimmedQuery,
         error: undefined,
-        autofilerDisabled: false,
       };
     }
     return state;
@@ -193,12 +189,6 @@ export const searchResults = searchState.writer<
       pending: false,
       showResults: true,
       resultsOrder: params.append ? state.resultsOrder : 'relevance',
-      filters: {
-        ...state.filters,
-        autofilters: params.append
-          ? state.filters.autofilters
-          : (params.results.autofilters || []).map((filter) => getEntityFromFilter(filter)),
-      },
     };
   },
 );
@@ -514,17 +504,6 @@ export const entityFilters = searchState.writer<EntityFilter[]>(
   }),
 );
 
-export const autofilters = searchState.writer<EntityFilter[]>(
-  (state) => state.filters.autofilters || [],
-  (state, entityFilters) => ({
-    ...state,
-    filters: {
-      ...state.filters,
-      autofilters: entityFilters,
-    },
-  }),
-);
-
 export const mimeTypesfilters = searchState.writer<MimeFilter[]>(
   (state) => state.filters.mimeTypes || [],
   (state, mimeTypesfilters) => ({
@@ -544,14 +523,6 @@ export const pathFilter = searchState.writer<string | undefined>(
       ...state.filters,
       path: pathFilter,
     },
-  }),
-);
-
-export const autofilerDisabled = searchState.writer<boolean | undefined>(
-  (state) => state.autofilerDisabled,
-  (state, autofilerDisabled) => ({
-    ...state,
-    autofilerDisabled,
   }),
 );
 
@@ -855,14 +826,6 @@ export const addMimeFilter = (mimeFacet: MimeFacet) => {
 export const removeMimeFilter = (mimeKey: string) => {
   const currentFilters = mimeTypesfilters.getValue();
   mimeTypesfilters.set(currentFilters.filter((filter) => filter.key !== mimeKey));
-};
-
-export const removeAutofilter = (entity: EntityFilter) => {
-  const currentFilters = autofilters.getValue();
-  autofilters.set(
-    currentFilters.filter((filter) => filter.family !== entity.family || filter.entity !== entity.entity),
-  );
-  autofilerDisabled.set(true);
 };
 
 export function getFirstResourceField(resource: IResource): ResourceField | undefined {

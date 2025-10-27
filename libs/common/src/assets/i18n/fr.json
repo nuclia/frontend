@@ -1685,8 +1685,6 @@
 	"search.configuration.save-config-modal.title": "Enregistrer votre configuration",
 	"search.configuration.save-error": "Une erreur s'est produite lors de l'enregistrement des configurations de recherche",
 	"search.configuration.saved-config-title": "Configuration enregistrée",
-	"search.configuration.search-box.automatic-filtering.toggle-description": "Détecte les entités mentionnées dans la requête de l’utilisateur et les transforme automatiquement en filtres. ",
-	"search.configuration.search-box.automatic-filtering.toggle-label": "Filtrage automatique",
 	"search.configuration.search-box.filter-logic.and-logic": "Renvoie les résultats correspondant à tous les filtres sélectionnés",
 	"search.configuration.search-box.filter-logic.or-logic": "Renvoyer les résultats qui correspondent à au moins un des filtres sélectionnés",
 	"search.configuration.search-box.filter-logic.title": "Type de logique de filtrage",

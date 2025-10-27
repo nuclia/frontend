@@ -64,9 +64,6 @@ export class RagLabComponent implements OnChanges {
           if (config.searchBox.rephraseQuery) {
             features.push(this.translate.instant('search.configuration.search-box.rephrase.toggle-label'));
           }
-          if (config.searchBox.autofilter) {
-            features.push(this.translate.instant('search.configuration.search-box.automatic-filtering.toggle-label'));
-          }
           if (config.searchBox.setPreselectedFilters && config.searchBox.preselectedFilters) {
             features.push(this.translate.instant('search.configuration.search-box.preselected-filters.toggle-label'));
           }

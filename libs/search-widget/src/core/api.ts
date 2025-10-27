@@ -162,7 +162,6 @@ export const initNuclia = (
 
   searchOptions.set({
     highlight: HIGHLIGHT,
-    autofilter: !!widgetOptions.features?.autofilter,
     rephrase: REPHRASE,
   });
   prompt = widgetOptions.prompt;

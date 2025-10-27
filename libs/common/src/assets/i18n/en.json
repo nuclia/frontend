@@ -1709,8 +1709,6 @@
 	"search.configuration.save-config-modal.title": "Save your configuration",
 	"search.configuration.save-error": "An error occurred while saving the search configurations",
 	"search.configuration.saved-config-title": "Saved configuration",
-	"search.configuration.search-box.automatic-filtering.toggle-description": "Detects entities mentioned in the user query and turns them automatically into filters.",
-	"search.configuration.search-box.automatic-filtering.toggle-label": "Automatic filtering",
 	"search.configuration.search-box.filter-logic.and-logic": "Return results that match all of the selected filters",
 	"search.configuration.search-box.filter-logic.or-logic": "Return results that match at least one of the selected filters",
 	"search.configuration.search-box.filter-logic.title": "Type of filter logic",

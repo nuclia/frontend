@@ -56,7 +56,6 @@ import {
   getFindParagraphs,
   getPreviewParam,
   getUrlParams,
-  hasNoResultsWithAutofilter,
   markdownToTxt,
   paragraphKey,
   previewKey,
@@ -585,11 +584,6 @@ export function askQuestion(
         pendingResults.set(false);
       } else {
         if (result.incomplete) {
-          if (hasNoResultsWithAutofilter(result.sources, options)) {
-            // when no results with autofilter on, a secondary call is made with autofilter off,
-            // meanwhile, we do not want to display the 'Not enough data' message
-            result.text = '';
-          }
           currentAnswer.set(result);
         } else {
           appendChatEntry.set({ question, answer: result });

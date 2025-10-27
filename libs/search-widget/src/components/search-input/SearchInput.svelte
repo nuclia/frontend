@@ -1,7 +1,7 @@
 <script lang="ts">
   import { PATH_FILTER_PREFIX, type Classification } from '@nuclia/core';
   import type { Observable } from 'rxjs';
-  import { combineLatest, map, take } from 'rxjs';
+  import { combineLatest, map } from 'rxjs';
   import { tap } from 'rxjs/operators';
   import { createEventDispatcher } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
@@ -13,10 +13,8 @@
   import Textarea from '../../common/textarea/Textarea.svelte';
   import {
     _,
-    addEntityFilter,
     addImage,
     autocomplete,
-    autofilters,
     creationEnd,
     creationStart,
     entities,
@@ -36,12 +34,10 @@
     mimeTypesfilters,
     pathFilter,
     rangeCreation,
-    removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
     removeMimeFilter,
-    searchOptions,
     searchQuery,
     selectedEntity,
     selectNextEntity,
@@ -81,7 +77,6 @@
     type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end' | 'mimetype' | 'path';
     key: string;
     value: Classification | EntityFilter | string;
-    autofilter?: boolean;
   }
 
   const filters: Observable<Filter[]> = combineLatest([
@@ -89,11 +84,10 @@
     labelFilters,
     labelSetFilters,
     entityFilters,
-    autofilters,
     mimeTypesfilters,
     pathFilter,
   ]).pipe(
-    map(([rangeCreation, labels, labelSets, entities, autofilters, mimeTypesfilters, pathFilter]) => [
+    map(([rangeCreation, labels, labelSets, entities, mimeTypesfilters, pathFilter]) => [
       ...Object.entries(rangeCreation)
         .filter(([, value]) => !!value)
         .map(([key, value]) => ({
@@ -115,12 +109,6 @@
         type: 'entity',
         key: value.family + value.entity,
         value,
-      })),
-      ...autofilters.map((value) => ({
-        type: 'entity',
-        key: value.family + value.entity,
-        value,
-        autofilter: true,
       })),
       ...mimeTypesfilters.map((value) => ({
         type: 'mimetype',
@@ -164,9 +152,7 @@
     } else if (filter.type === 'labelset') {
       removeLabelSetFilter(filter.value as string);
     } else if (filter.type === 'entity') {
-      filter.autofilter
-        ? removeAutofilter(filter.value as EntityFilter)
-        : removeEntityFilter(filter.value as EntityFilter);
+      removeEntityFilter(filter.value as EntityFilter);
     } else if (filter.type === 'mimetype') {
       removeMimeFilter(filter.key);
     } else if (filter.type === 'path') {
@@ -208,14 +194,8 @@
   };
 
   const autocompleteEntity = (entity: { family: string; value: string }) => {
-    searchOptions.pipe(take(1)).subscribe((options) => {
-      autocomplete(entity.value);
-      if (options.autofilter) {
-        // The filter is added manually because autofilter option is not always reliable detecting it
-        addEntityFilter({ family: entity.family, entity: entity.value });
-      }
-      search();
-    });
+    autocomplete(entity.value);
+    search();
   };
 
   const closeSuggestions = () => {

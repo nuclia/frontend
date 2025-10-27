@@ -75,7 +75,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     labelSetsExcludedFromFilters: new FormControl<string>('', { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
-    autofilter: new FormControl<boolean>(false, { nonNullable: true }),
     filters: new FormGroup({
       mime: new FormControl<boolean>(false, { nonNullable: true }),
       labels: new FormControl<boolean>(false, { nonNullable: true }),
