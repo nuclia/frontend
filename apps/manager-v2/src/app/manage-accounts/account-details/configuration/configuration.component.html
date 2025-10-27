@@ -17,7 +17,7 @@
     readonly>
     Creation date
   </pa-input>
-  <div class="account-type-container">
+  <div class="field-button-container">
     <pa-select
       readonly
       label="Account type"
@@ -65,6 +65,16 @@
     formControlName="trialExpirationDate"></pa-date-picker>
 
   @if (canFullyEditAccount | async) {
+    <div class="field-button-container">
+      <pa-input
+        id="free-tokens"
+        type="number"
+        help="Free tokens per billing cycle"
+        [(value)]="free_tokens_per_billing_cycle">
+        Free tokens
+      </pa-input>
+      <pa-button (click)="updateFreeTokens()">Update free tokens</pa-button>
+    </div>
     <div>
       <label
         class="title-xxs"

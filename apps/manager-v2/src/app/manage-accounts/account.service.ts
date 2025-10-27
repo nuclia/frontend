@@ -1,5 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountTypeDefaults, AccountService as CoreAccountService, SDKService } from '@flaps/core';
+import {
+  AccountSubscription,
+  AccountTypeDefaults,
+  AccountService as CoreAccountService,
+  SDKService,
+  SubscriptionProvider,
+} from '@flaps/core';
 import { AccountLimitsPatchPayload, AccountTypes, NucliaTokensMetric } from '@nuclia/core';
 import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
 import { ManagerStore } from '../manager.store';
@@ -243,5 +249,28 @@ export class AccountService {
         return models;
       }),
     );
+  }
+
+  getSubscription(accountId: string): Observable<AccountSubscription> {
+    return this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${accountId}/subscription`);
+  }
+
+  setFreeTokens(
+    accountId: string,
+    provider: SubscriptionProvider,
+    free_tokens_per_billing_cycle: number,
+  ): Observable<void> {
+    let providerStr = '';
+    if (provider === 'STRIPE') {
+      providerStr = 'stripe';
+    } else if (provider === 'AWS_MARKETPLACE') {
+      providerStr = 'aws';
+    } else if (provider === 'MANUAL') {
+      providerStr = 'manual';
+    } else {
+      throw new Error('Invalid provider for setting free tokens');
+    }
+    const endpoint = `/billing/account/${accountId}/${providerStr}/subscription`;
+    return this.sdk.nuclia.rest.patch<void>(endpoint, { free_tokens_per_billing_cycle });
   }
 }

@@ -39,6 +39,7 @@ node_modules
 # config
 environment.dev.ts
 apps/**/local-stage/*.json
+apps/manager-v2/src/environments_config/local-prod/*.json
 apps/**/local-dev/*.json
 
 # IDE - VSCode

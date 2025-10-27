@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AccountTypeDefaults } from '@flaps/core';
+import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { filter, map, Subject, switchMap, tap } from 'rxjs';
+import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
@@ -43,6 +43,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
   });
+  free_tokens_per_billing_cycle = 0;
+  provider?: SubscriptionProvider;
   isSaving = false;
 
   defaultLimits?: AccountTypeDefaults;
@@ -65,13 +67,28 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
           this.accountBackup = { ...accountDetails };
           this.patchConfigForm(accountDetails);
         }),
-        switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
+        switchMap((accountDetails) =>
+          forkJoin([
+            this.accountService.getDefaultLimits(accountDetails.type).pipe(
+              tap((defaultLimits) => {
+                this.defaultLimits = defaultLimits;
+                this.cdr.markForCheck();
+              }),
+              take(1),
+            ),
+            this.accountService.getSubscription(accountDetails.id).pipe(
+              tap((sub) => {
+                this.provider = sub.provider;
+                this.free_tokens_per_billing_cycle = sub.subscription.free_tokens_per_billing_cycle || 0;
+                this.cdr.markForCheck();
+              }),
+              take(1),
+            ),
+          ]),
+        ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((defaultLimits) => {
-        this.defaultLimits = defaultLimits;
-        this.cdr.markForCheck();
-      });
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -158,5 +175,20 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     );
     this.configForm.controls.arags.controls.maxArags.patchValue(accountDetails.maxArags);
     this.cdr.markForCheck();
+  }
+
+  updateFreeTokens() {
+    if (this.accountBackup?.id && this.provider) {
+      this.accountService
+        .setFreeTokens(this.accountBackup.id, this.provider, this.free_tokens_per_billing_cycle)
+        .pipe(map(() => true))
+        .subscribe((success) => {
+          if (success) {
+            this.toast.success('Free tokens updated successfully');
+          } else {
+            this.toast.error('Failed to update free tokens');
+          }
+        });
+    }
   }
 }

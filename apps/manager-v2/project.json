@@ -144,6 +144,43 @@
               "output": "assets"
             }
           ]
+        },
+        "local-prod": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/manager-v2/src/favicon.ico",
+            "apps/manager-v2/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/manager-v2/src/environments_config/local-prod",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production"
@@ -156,6 +193,9 @@
         },
         "local-stage": {
           "buildTarget": "manager-v2:build:local-stage"
+        },
+        "local-prod": {
+          "buildTarget": "manager-v2:build:local-prod"
         }
       },
       "defaultConfiguration": "local-stage",
