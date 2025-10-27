@@ -1685,8 +1685,6 @@
 	"search.configuration.save-config-modal.title": "Desar la configuració",
 	"search.configuration.save-error": "S'ha produït un error al desar les configuracions de cerca",
 	"search.configuration.saved-config-title": "Configuració desada",
-	"search.configuration.search-box.automatic-filtering.toggle-description": "Detecta les entitats esmentades a la consulta de l’usuari i les converteix automàticament en filtres.",
-	"search.configuration.search-box.automatic-filtering.toggle-label": "Filtrat automàtic",
 	"search.configuration.search-box.filter-logic.and-logic": "Retorna resultats que coincideixen amb tots els filtres seleccionats",
 	"search.configuration.search-box.filter-logic.or-logic": "Retorna resultats que coincideixen com a mínim amb un dels filtres seleccionats",
 	"search.configuration.search-box.filter-logic.title": "Tipus de lògica de filtratge",

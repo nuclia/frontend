@@ -73,7 +73,6 @@ export interface BaseSearchOptions {
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   resource_filters?: string[];
-  autofilter?: boolean;
   highlight?: boolean;
   rephrase?: boolean;
   vectorset?: string;
@@ -340,7 +339,6 @@ export namespace Search {
     query: string;
     total: number;
     relations?: Relations;
-    autofilters?: string[];
     searchId?: string;
     rephrased_query?: string;
   }

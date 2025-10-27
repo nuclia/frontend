@@ -4,7 +4,6 @@ import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
-  autofilerDisabled,
   combinedFilterExpression,
   combinedFilters,
   disableAnswers,
@@ -33,7 +32,6 @@ import {
   widgetRagStrategies,
 } from './stores';
 import { NO_RESULT_LIST } from './models';
-import { hasNoResultsWithAutofilter } from './utils';
 
 const subscriptions: Subscription[] = [];
 
@@ -69,7 +67,6 @@ export const setupTriggerSearch = (
                 combinedFilterExpression.pipe(take(1)),
                 filterExpression.pipe(take(1)),
                 rangeCreationISO.pipe(take(1)),
-                autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
                 widgetImageRagStrategies.pipe(take(1)),
@@ -90,7 +87,6 @@ export const setupTriggerSearch = (
                     combinedFilterExpression,
                     filterExpression,
                     rangeCreation,
-                    autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
                     ragImageStrategies,
@@ -106,7 +102,6 @@ export const setupTriggerSearch = (
                       filter_expression: filterExpression ? combinedFilterExpression : undefined,
                       range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
                       range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
-                      ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {
                       const chatOptions: ChatOptions = currentOptions;
@@ -142,7 +137,6 @@ export const setupTriggerSearch = (
                           append: false,
                           hideResults,
                           loadingMore: false,
-                          options: currentOptions,
                         })),
                       );
                     } else if (isAnswerEnabled && searchConfigId && trigger?.more) {
@@ -160,7 +154,6 @@ export const setupTriggerSearch = (
                           append: true,
                           hideResults,
                           loadingMore: true,
-                          options: chatOptions,
                         })),
                       );
                     } else {
@@ -170,7 +163,6 @@ export const setupTriggerSearch = (
                           append: !!trigger?.more,
                           hideResults,
                           loadingMore: trigger?.more,
-                          options: currentOptions,
                         })),
                       );
                     }
@@ -183,12 +175,8 @@ export const setupTriggerSearch = (
           ),
         ),
       )
-      .subscribe(({ results, append, hideResults, loadingMore, options }) => {
-        if (hasNoResultsWithAutofilter(results, options)) {
-          // If autofilter is enabled and no results are found, retry without autofilters
-          autofilerDisabled.set(true);
-          triggerSearch.next(loadingMore ? { more: true } : undefined);
-        } else if (results) {
+      .subscribe(({ results, append, hideResults, loadingMore }) => {
+        if (results) {
           if (isAnswerEnabled && !loadingMore) {
             if (!hideResults) {
               trackingSearchId.set(results.searchId);

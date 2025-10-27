@@ -1,5 +1,4 @@
 import {
-  type BaseSearchOptions,
   FIELD_TYPE,
   type FieldFullId,
   type FieldId,
@@ -384,13 +383,6 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
         element.getRootNode().appendChild(style);
       });
   }
-}
-
-export function hasNoResultsWithAutofilter(
-  results: Search.FindResults | undefined,
-  options: BaseSearchOptions,
-): boolean {
-  return !!results && results.total === 0 && !!options.autofilter && (results.autofilters || []).length > 0;
 }
 
 export function downloadAsJSON(data: any) {
