@@ -1,140 +1,129 @@
 <h3>Configuration</h3>
-<form
-  [formGroup]="configForm"
-  (ngSubmit)="save()">
-  <pa-input
-    formControlName="email"
-    [readonly]="!(canFullyEditAccount | async)">
-    Email
-  </pa-input>
-  <pa-input
-    formControlName="slug"
-    [readonly]="!(canFullyEditAccount | async)">
-    Slug
-  </pa-input>
-  <pa-input
-    formControlName="created"
-    readonly>
-    Creation date
-  </pa-input>
-  <div class="account-type-container">
-    <pa-select
-      readonly
-      label="Account type"
-      formControlName="type">
-      <pa-option value="stash-trial">Trial</pa-option>
-      <pa-option value="stash-enterprise">Enterprise</pa-option>
-      <pa-option value="stash-business">Business</pa-option>
-      <pa-option value="stash-developer">Developer</pa-option>
-      <pa-option value="stash-startup">Startup</pa-option>
-      <pa-option value="stash-starter">Starter</pa-option>
-      <pa-option value="stash-growth">Growth</pa-option>
-      <pa-option value="v3starter">Starter v3</pa-option>
-      <pa-option value="v3fly">Fly v3</pa-option>
-      <pa-option value="v3growth">Growth v3</pa-option>
-      <pa-option value="v3enterprise">Enterprise v3</pa-option>
-    </pa-select>
+<form [formGroup]="configForm"
+      (ngSubmit)="save()">
+    <pa-input formControlName="email"
+              [readonly]="!(canFullyEditAccount | async)">
+        Email
+    </pa-input>
+    <pa-input formControlName="slug"
+              [readonly]="!(canFullyEditAccount | async)">
+        Slug
+    </pa-input>
+    <pa-input formControlName="created"
+              readonly>
+        Creation date
+    </pa-input>
+    <div class="field-button-container">
+        <pa-select readonly
+                   label="Account type"
+                   formControlName="type">
+            <pa-option value="stash-trial">Trial</pa-option>
+            <pa-option value="stash-enterprise">Enterprise</pa-option>
+            <pa-option value="stash-business">Business</pa-option>
+            <pa-option value="stash-developer">Developer</pa-option>
+            <pa-option value="stash-startup">Startup</pa-option>
+            <pa-option value="stash-starter">Starter</pa-option>
+            <pa-option value="stash-growth">Growth</pa-option>
+            <pa-option value="v3starter">Starter v3</pa-option>
+            <pa-option value="v3fly">Fly v3</pa-option>
+            <pa-option value="v3growth">Growth v3</pa-option>
+            <pa-option value="v3enterprise">Enterprise v3</pa-option>
+        </pa-select>
 
-    @if (configForm.controls.type.value === 'stash-trial') {
-      <pa-button
-        (click)="toggleAccountType('v3growth')"
-        [disabled]="!(canEdit | async)">
-        Upgrade to Growth
-      </pa-button>
-      <pa-button
-        (click)="toggleAccountType('v3enterprise')"
-        [disabled]="!(canEdit | async)">
-        Upgrade to Enterprise
-      </pa-button>
-    } @else if (
-      configForm.controls.type.value === 'stash-enterprise' ||
-      configForm.controls.type.value === 'v3enterprise' ||
-      configForm.controls.type.value === 'v3growth'
-    ) {
-      <pa-button
-        (click)="toggleAccountType('stash-trial')"
-        [disabled]="!(canEdit | async)">
-        Downgrade to Trial
-      </pa-button>
+        @if (configForm.controls.type.value === 'stash-trial') {
+        <pa-button (click)="toggleAccountType('v3growth')"
+                   [disabled]="!(canEdit | async)">
+            Upgrade to Growth
+        </pa-button>
+        <pa-button (click)="toggleAccountType('v3enterprise')"
+                   [disabled]="!(canEdit | async)">
+            Upgrade to Enterprise
+        </pa-button>
+        } @else if (
+        configForm.controls.type.value === 'stash-enterprise' ||
+        configForm.controls.type.value === 'v3enterprise' ||
+        configForm.controls.type.value === 'v3growth'
+        ) {
+        <pa-button (click)="toggleAccountType('stash-trial')"
+                   [disabled]="!(canEdit | async)">
+            Downgrade to Trial
+        </pa-button>
+        }
+    </div>
+
+    <pa-date-picker label="Trial expiration date"
+                    [readonly]="!(canEdit | async)"
+                    formControlName="trialExpirationDate"></pa-date-picker>
+
+    @if (canFullyEditAccount | async) {
+    <div class="field-button-container">
+        <pa-input id="free-tokens"
+                  type="number"
+                  help="Free tokens per billing cycle"
+                  [(value)]="free_tokens_per_billing_cycle">Free tokens</pa-input>
+        <pa-button (click)="updateFreeTokens()">
+            Update free tokens
+        </pa-button>
+    </div>
+    <div>
+        <label class="title-xxs"
+               for="max-kbs">
+            Max knowledge boxes available
+        </label>
+        <div class="radio-limit-container"
+             formGroupName="kbs">
+            <pa-radio-group id="max-kbs"
+                            formControlName="kbs_radio">
+                <pa-radio value="unlimited">Unlimited</pa-radio>
+                <pa-radio value="limit">Limit</pa-radio>
+            </pa-radio-group>
+            @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
+            <div class="limit-container">
+                <pa-input type="number"
+                          externalLabel
+                          formControlName="maxKbs"></pa-input>
+                <pa-button icon="reload"
+                           paTooltip="Reset to default"
+                           aspect="basic"
+                           (click)="resetMaxKbsToDefault()">
+                    Reset to default
+                </pa-button>
+            </div>
+            }
+        </div>
+    </div>
     }
-  </div>
-
-  <pa-date-picker
-    label="Trial expiration date"
-    [readonly]="!(canEdit | async)"
-    formControlName="trialExpirationDate"></pa-date-picker>
-
-  @if (canFullyEditAccount | async) {
+    @if (canFullyEditAccount | async) {
     <div>
-      <label
-        class="title-xxs"
-        for="max-kbs">
-        Max knowledge boxes available
-      </label>
-      <div
-        class="radio-limit-container"
-        formGroupName="kbs">
-        <pa-radio-group
-          id="max-kbs"
-          formControlName="kbs_radio">
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
-          <div class="limit-container">
-            <pa-input
-              type="number"
-              externalLabel
-              formControlName="maxKbs"></pa-input>
-            <pa-button
-              icon="reload"
-              paTooltip="Reset to default"
-              aspect="basic"
-              (click)="resetMaxKbsToDefault()">
-              Reset to default
-            </pa-button>
-          </div>
-        }
-      </div>
+        <label class="title-xxs"
+               for="max-arags">
+            Max retrieval agents available
+        </label>
+        <div class="radio-limit-container"
+             formGroupName="arags">
+            <pa-radio-group id="arags"
+                            formControlName="arags_radio">
+                <pa-radio value="unlimited">Unlimited</pa-radio>
+                <pa-radio value="limit">Limit</pa-radio>
+            </pa-radio-group>
+            @if (configForm.controls.arags.controls.arags_radio.value === 'limit') {
+            <div class="limit-container">
+                <pa-input type="number"
+                          externalLabel
+                          formControlName="maxArags"></pa-input>
+                <pa-button icon="reload"
+                           paTooltip="Reset to default"
+                           aspect="basic"
+                           (click)="resetMaxAragsToDefault()">
+                    Reset to default
+                </pa-button>
+            </div>
+            }
+        </div>
     </div>
-  }
-  @if (canFullyEditAccount | async) {
-    <div>
-      <label
-        class="title-xxs"
-        for="max-arags">
-        Max retrieval agents available
-      </label>
-      <div
-        class="radio-limit-container"
-        formGroupName="arags">
-        <pa-radio-group
-          id="arags"
-          formControlName="arags_radio">
-          <pa-radio value="unlimited">Unlimited</pa-radio>
-          <pa-radio value="limit">Limit</pa-radio>
-        </pa-radio-group>
-        @if (configForm.controls.arags.controls.arags_radio.value === 'limit') {
-          <div class="limit-container">
-            <pa-input
-              type="number"
-              externalLabel
-              formControlName="maxArags"></pa-input>
-            <pa-button
-              icon="reload"
-              paTooltip="Reset to default"
-              aspect="basic"
-              (click)="resetMaxAragsToDefault()">
-              Reset to default
-            </pa-button>
-          </div>
-        }
-      </div>
-    </div>
-  }
-  <nma-form-footer
-    [disabled]="configForm.pristine || configForm.invalid || isSaving"
-    (cancel)="reset()"></nma-form-footer>
+    }
+    <nma-form-footer [disabled]="configForm.pristine || configForm.invalid || isSaving"
+                     (cancel)="reset()"></nma-form-footer>
 </form>
 
 <nma-blocked-features></nma-blocked-features>

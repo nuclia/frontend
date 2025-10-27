@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { BackendConfigurationService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -23,9 +23,13 @@ export class AppComponent implements OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
+    private sdk: SDKService,
   ) {
     const userLocale = localStorage.getItem(userLocaleKey);
     this.initTranslate(userLocale);
+    if (this.config.useRemoteLogin()) {
+      this.remoteLogin();
+    }
   }
 
   ngOnInit(): void {
@@ -55,5 +59,19 @@ export class AppComponent implements OnInit, OnDestroy {
       localStorage.setItem(userLocaleKey, event.lang);
       this.paTranslate.initTranslationsAndUse(event.lang, event.translations);
     });
+  }
+
+  private remoteLogin() {
+    const params = location.search;
+    if (params.includes('access_token')) {
+      const querystring = new URLSearchParams(params.split('?')[1]);
+      const access_token = querystring.get('access_token');
+      if (access_token) {
+        this.sdk.nuclia.auth.authenticate({
+          access_token,
+          refresh_token: querystring.get('refresh_token') || '',
+        });
+      }
+    }
   }
 }
