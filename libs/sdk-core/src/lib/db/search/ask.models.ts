@@ -154,7 +154,11 @@ export namespace Ask {
   }
 
   export interface PredictAnswerResponseItem {
-    chunk: TextPredictAnswerResponseItem | StatusPredictAnswerResponseItem | JsonPredictAnswerResponseItem;
+    chunk:
+      | TextPredictAnswerResponseItem
+      | StatusPredictAnswerResponseItem
+      | JsonPredictAnswerResponseItem
+      | ReasoningAskResponseItem;
   }
 
   export interface TextPredictAnswerResponseItem {

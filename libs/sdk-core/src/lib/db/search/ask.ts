@@ -282,6 +282,10 @@ export function predictAnswer(
               .filter((item) => item.chunk.type === 'text')
               .map((item) => (item.chunk as Ask.TextPredictAnswerResponseItem).text)
               .join('');
+            let reasoning = items
+              .filter((item) => item.chunk.type === 'reasoning')
+              .map((item) => (item.chunk as Ask.ReasoningAskResponseItem).text)
+              .join('');
             return {
               type: 'answer',
               id,
@@ -289,6 +293,7 @@ export function predictAnswer(
               jsonAnswer,
               incomplete,
               inError: false,
+              reasoning,
             } as Ask.Answer;
           }),
         )
