@@ -112,11 +112,9 @@ export class DriversService {
   private handleAddDriverResult(driver: any): Observable<any> {
     if (!driver) {
       // Modal was cancelled - return empty observable that completes immediately
-      console.log('Modal was cancelled or closed without data');
       return of(null);
     }
 
-    console.log('Processing driver creation with data:', driver);
     // Process the driver creation
     const driverWithId = {
       ...driver,
@@ -194,35 +192,21 @@ export class DriversService {
               };
 
               // Handle normal close (Cancel/Save buttons)
-              const closeSub = modalRef.onClose
-                .pipe(
-                  timeout(300000),
-                  tap((result) => {
-                    console.log('Modal onClose result:', result);
-                  }),
-                )
-                .subscribe({
-                  next: (result) => complete(result),
-                  error: (error) => {
-                    console.error('Modal onClose error or timeout:', error);
-                    complete(null);
-                  },
-                });
+              const closeSub = modalRef.onClose.pipe(timeout(300000)).subscribe({
+                next: (result) => complete(result),
+                error: (error) => {
+                  complete(null);
+                },
+              });
 
               // Handle dismiss (X button, ESC key, etc.)
-              const dismissSub = modalRef.onDismiss
-                .pipe(
-                  tap(() => {
-                    console.log('Modal onDismiss triggered');
-                  }),
-                )
-                .subscribe({
-                  next: () => complete(null), // Treat dismiss as cancel
-                  error: (error) => {
-                    console.error('Modal onDismiss error:', error);
-                    complete(null);
-                  },
-                });
+              const dismissSub = modalRef.onDismiss.subscribe({
+                next: () => complete(null), // Treat dismiss as cancel
+                error: (error) => {
+                  console.error('Modal onDismiss error:', error);
+                  complete(null);
+                },
+              });
 
               // Cleanup function
               return () => {
@@ -316,19 +300,12 @@ export class DriversService {
           });
 
           // Handle dismiss (X button, ESC key, etc.)
-          const dismissSub = modalRef.onDismiss
-            .pipe(
-              tap(() => {
-                console.log('Modal onDismiss triggered');
-              }),
-            )
-            .subscribe({
-              next: () => complete(null), // Treat dismiss as cancel
-              error: (error) => {
-                console.error('Modal onDismiss error:', error);
-                complete(null);
-              },
-            });
+          const dismissSub = modalRef.onDismiss.subscribe({
+            next: () => complete(null), // Treat dismiss as cancel
+            error: (error) => {
+              complete(null);
+            },
+          });
 
           // Cleanup function
           return () => {
