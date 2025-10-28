@@ -157,14 +157,16 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
 
     this.saving = true;
     const kbBackup = this.kb;
-    const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
+    const { user_prompts, ...kbConfig }: { [key: string]: any } = this.configForm.getRawValue();
+
     if (this.currentGenerativeModel?.user_key) {
       kbConfig['user_keys'] = {
         [this.currentGenerativeModel.user_key]: this.hasOwnKey ? this.userKeysGroup?.value : null,
       };
     }
 
-    kbConfig['user_prompts'] = Object.entries(kbConfig['user_prompts']).reduce(
+    // TODO: remove this block once "PATCH /configuration" endpoint no longer requires passing all the prompts
+    kbConfig['user_prompts'] = Object.entries(user_prompts).reduce(
       (acc, curr: [string, any]) => {
         const prompts = {
           prompt: curr[1].prompt?.trim(),
@@ -175,6 +177,19 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       },
       {} as { [key: string]: any },
     );
+    // End of the block to remove
+
+    if (this.currentGenerativeModel?.user_prompt) {
+      const userPromptKey = this.currentGenerativeModel.user_prompt;
+      const prompts = {
+        prompt: user_prompts[userPromptKey].prompt?.trim() || '',
+        system: user_prompts[userPromptKey].system?.trim() || '',
+      };
+      const promptPayload = { [userPromptKey]: prompts.prompt || prompts.system ? prompts : null };
+      kbConfig['user_prompts'] = kbConfig['user_prompts']
+        ? { ...kbConfig['user_prompts'], ...promptPayload }
+        : promptPayload;
+    }
 
     this.kb
       .setConfiguration(kbConfig)
