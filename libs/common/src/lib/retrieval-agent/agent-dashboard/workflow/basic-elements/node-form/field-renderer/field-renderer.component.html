@@ -107,6 +107,24 @@
       </span>
     </pa-input>
 
+    <!-- Expandable Textarea -->
+    <nsi-expandable-textarea
+      *ngSwitchCase="'expandable-textarea'"
+      [id]="controlName"
+      [formControlName]="controlName"
+      [rows]="fieldConfig.additionalProps?.['rows'] || 3"
+      [resizable]="fieldConfig.additionalProps?.['resizable'] || false"
+      [modalTitle]="label"
+      [placeholder]="property.description || ''"
+      [required]="required">
+      {{ label }}
+      <span
+        *ngIf="required"
+        style="color: red">
+        *
+      </span>
+    </nsi-expandable-textarea>
+
     <!-- Boolean toggle -->
     <pa-toggle
       *ngSwitchCase="'pa-toggle'"

@@ -47,6 +47,14 @@ export class FieldConfigService {
         showLanguageSelector: true,
       },
     },
+    prompt: {
+      component: 'expandable-textarea',
+      type: 'custom',
+      additionalProps: {
+        rows: 2,
+        resizable: true,
+      },
+    },
   };
 
   // Source mappings
