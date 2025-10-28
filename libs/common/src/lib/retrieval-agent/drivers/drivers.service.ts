@@ -107,6 +107,35 @@ export class DriversService {
   }
 
   /**
+   * Handle driver addition result from modal
+   */
+  private handleAddDriverResult(driver: any): Observable<any> {
+    if (!driver) {
+      // Modal was cancelled - return empty observable that completes immediately
+      console.log('Modal was cancelled or closed without data');
+      return of(null);
+    }
+
+    console.log('Processing driver creation with data:', driver);
+    // Process the driver creation
+    const driverWithId = {
+      ...driver,
+      identifier: `${driver.provider}-${STFUtils.generateRandomSlugSuffix()}`,
+    };
+
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) => arag.addDriver(driverWithId)),
+      switchMap(() => this.sdk.refreshCurrentArag()),
+      tap(() => this.refreshDrivers()),
+      catchError((error) => {
+        this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.creation'));
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  /**
    * Add a new driver using dynamic form based on schema
    */
   addDriver(driverTitle: string): Observable<any> {
@@ -118,7 +147,15 @@ export class DriversService {
           case 'NucliaDBConfig':
             modalRef$ = this.sdk.kbList.pipe(
               take(1),
-              map((kbList) => this.modal.openModal(NucliaDriverModalComponent, new ModalConfig({ data: { kbList } }))),
+              map((kbList) =>
+                this.modal.openModal(
+                  NucliaDriverModalComponent,
+                  new ModalConfig({
+                    data: { kbList },
+                    dismissable: false,
+                  }),
+                ),
+              ),
             );
             break;
           default:
@@ -130,6 +167,7 @@ export class DriversService {
                     driverTitle,
                     existingDrivers,
                   },
+                  dismissable: false,
                 }),
               ),
             );
@@ -137,50 +175,86 @@ export class DriversService {
         }
 
         return modalRef$.pipe(
-          switchMap((modalRef) =>
-            modalRef.onClose.pipe(
-              timeout(300000), // 5 minute timeout to prevent hanging
-              tap((result) => {
-                console.log('Modal onClose result:', result);
-              }),
-              switchMap((driver) => {
-                if (!driver) {
-                  // Modal was cancelled - return empty observable that completes immediately
-                  console.log('Modal was cancelled or closed without data');
-                  return of(null);
+          switchMap((modalRef) => {
+            const handleResult = (driver: any) => this.handleAddDriverResult(driver);
+
+            // Use merge to handle both onClose and onDismiss simultaneously
+            return new Observable((observer) => {
+              let completed = false;
+
+              const complete = (result: any) => {
+                if (!completed) {
+                  completed = true;
+                  handleResult(result).subscribe({
+                    next: (value) => observer.next(value),
+                    error: (err) => observer.error(err),
+                    complete: () => observer.complete(),
+                  });
                 }
+              };
 
-                console.log('Processing driver creation with data:', driver);
-                // Process the driver creation
-                const driverWithId = {
-                  ...driver,
-                  identifier: `${driver.provider}-${STFUtils.generateRandomSlugSuffix()}`,
-                };
-
-                return this.sdk.currentArag.pipe(
-                  take(1),
-                  switchMap((arag) => arag.addDriver(driverWithId)),
-                  switchMap(() => this.sdk.refreshCurrentArag()),
-                  tap(() => this.refreshDrivers()),
-                  catchError((error) => {
-                    this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.creation'));
-                    return throwError(() => error);
+              // Handle normal close (Cancel/Save buttons)
+              const closeSub = modalRef.onClose
+                .pipe(
+                  timeout(300000),
+                  tap((result) => {
+                    console.log('Modal onClose result:', result);
                   }),
-                );
-              }),
-              catchError((error) => {
-                console.error('Modal operation error or timeout:', error);
-                // Ensure modal is dismissed on error
-                try {
-                  modalRef.dismiss();
-                } catch (dismissError) {
-                  console.error('Error dismissing modal after timeout:', dismissError);
-                }
-                return of(null);
-              }),
-            ),
-          ),
+                )
+                .subscribe({
+                  next: (result) => complete(result),
+                  error: (error) => {
+                    console.error('Modal onClose error or timeout:', error);
+                    complete(null);
+                  },
+                });
+
+              // Handle dismiss (X button, ESC key, etc.)
+              const dismissSub = modalRef.onDismiss
+                .pipe(
+                  tap(() => {
+                    console.log('Modal onDismiss triggered');
+                  }),
+                )
+                .subscribe({
+                  next: () => complete(null), // Treat dismiss as cancel
+                  error: (error) => {
+                    console.error('Modal onDismiss error:', error);
+                    complete(null);
+                  },
+                });
+
+              // Cleanup function
+              return () => {
+                closeSub.unsubscribe();
+                dismissSub.unsubscribe();
+              };
+            });
+          }),
         );
+      }),
+    );
+  }
+
+  /**
+   * Handle driver edit result from modal
+   */
+  private handleEditDriverResult(driver: any, driverToEdit: Driver): Observable<any> {
+    if (!driver) {
+      // Modal was cancelled - return empty observable that completes immediately
+      return of(null);
+    }
+
+    return this.sdk.currentArag.pipe(
+      take(1),
+      // Edition modal doesn't return identifier properties, but they are present in driverToEdit
+      switchMap((arag) => arag.patchDriver({ ...driverToEdit, ...driver })),
+      switchMap(() => this.sdk.refreshCurrentArag()),
+      tap(() => this.refreshDrivers()),
+      catchError((error) => {
+        console.error('Error in driver update:', error);
+        this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.edition'));
+        return throwError(() => error);
       }),
     );
   }
@@ -211,30 +285,57 @@ export class DriversService {
               existingDriver: driverToEdit,
               existingDrivers,
             },
+            dismissable: false,
           }),
         );
 
-        return modalRef.onClose.pipe(
-          switchMap((driver) => {
-            if (!driver) {
-              // Modal was cancelled - return empty observable that completes immediately
-              return of(null);
+        const handleResult = (driver: any) => this.handleEditDriverResult(driver, driverToEdit);
+
+        // Use merge to handle both onClose and onDismiss simultaneously
+        return new Observable((observer) => {
+          let completed = false;
+
+          const complete = (result: any) => {
+            if (!completed) {
+              completed = true;
+              handleResult(result).subscribe({
+                next: (value) => observer.next(value),
+                error: (err) => observer.error(err),
+                complete: () => observer.complete(),
+              });
             }
+          };
 
-            return this.sdk.currentArag.pipe(
-              take(1),
-              // Edition modal doesn't return identifier properties, but they are present in driverToEdit
-              switchMap((arag) => arag.patchDriver({ ...driverToEdit, ...driver })),
-              switchMap(() => this.sdk.refreshCurrentArag()),
-              tap(() => this.refreshDrivers()),
-              catchError((error) => {
-                console.error('Error in driver update:', error);
-                this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.edition'));
-                return throwError(() => error);
+          // Handle normal close (Cancel/Save buttons)
+          const closeSub = modalRef.onClose.subscribe({
+            next: (result) => complete(result),
+            error: (error) => {
+              console.error('Modal onClose error:', error);
+              complete(null);
+            },
+          });
+
+          // Handle dismiss (X button, ESC key, etc.)
+          const dismissSub = modalRef.onDismiss
+            .pipe(
+              tap(() => {
+                console.log('Modal onDismiss triggered');
               }),
-            );
-          }),
-        );
+            )
+            .subscribe({
+              next: () => complete(null), // Treat dismiss as cancel
+              error: (error) => {
+                console.error('Modal onDismiss error:', error);
+                complete(null);
+              },
+            });
+
+          // Cleanup function
+          return () => {
+            closeSub.unsubscribe();
+            dismissSub.unsubscribe();
+          };
+        });
       }),
     );
   }
