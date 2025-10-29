@@ -17,26 +17,28 @@ import { ModelSelectComponent } from '../subcomponents/model-select/model-select
 import { SubformFieldComponent } from '../subcomponents/subform-field/subform-field.component';
 import { McpSourceSelectComponent } from '../subcomponents/mcp-source-select/mcp-source-select.component';
 import { RulesFieldComponent } from '../../rules-field/rules-field.component';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-field-renderer',
   templateUrl: './field-renderer.component.html',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    PaTextFieldModule,
-    PaTogglesModule,
-    ModelSelectComponent,
-    DriverSelectComponent,
     ArrayStringFieldComponent,
     CodeEditorComponent,
+    CommonModule,
+    DriverSelectComponent,
     EnumSelectComponent,
-    SubformFieldComponent,
-    McpSourceSelectComponent,
-    RulesFieldComponent,
-    TransportFieldComponent,
+    ExpandableTextareaComponent,
     KeyValueFieldComponent,
+    McpSourceSelectComponent,
+    ModelSelectComponent,
+    PaTextFieldModule,
+    PaTogglesModule,
+    ReactiveFormsModule,
+    RulesFieldComponent,
+    SubformFieldComponent,
+    TransportFieldComponent,
   ],
 })
 export class FieldRendererComponent {
