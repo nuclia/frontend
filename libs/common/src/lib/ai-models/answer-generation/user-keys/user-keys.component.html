@@ -16,8 +16,6 @@
         } @else {
           <pa-toggle
             labelOnRight
-            [stfUnauthorizedFeature]="(isUserPromptsAuthorized | async) === false"
-            fullProBadge
             [formControl]="userKeysToggle"
             (valueChange)="onOwnKeyToggle()">
             {{

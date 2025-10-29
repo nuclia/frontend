@@ -54,7 +54,6 @@
                   | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
               "
               description="kb.ai-models.answer-generation.prompt.description"
-              [unauthorized]="(isUserPromptsAuthorized | async) === false"
               (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
               <div class="form-container small-gap">
                 <nsi-info-card>{{ prompt.info }}</nsi-info-card>
@@ -94,7 +93,6 @@
                   | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
               "
               description="kb.ai-models.answer-generation.behavior.description"
-              [unauthorized]="(isUserPromptsAuthorized | async) === false"
               (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
               <div class="form-container small-gap">
                 <pa-select
