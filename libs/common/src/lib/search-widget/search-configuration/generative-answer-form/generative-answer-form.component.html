@@ -33,10 +33,7 @@
         withBackground
         spaceBetweenLabelAndToggle
         (valueChange)="heightChanged.emit()">
-        <span
-          class="toggle-label"
-          [stfUnauthorizedFeature]="(userPromptsAuthorized | async) === false"
-          fullProBadge>
+        <span class="toggle-label">
           {{ 'search.configuration.generative-answer.prompt.toggle-label' | translate }}
         </span>
       </pa-toggle>
@@ -71,10 +68,7 @@
         withBackground
         spaceBetweenLabelAndToggle
         (valueChange)="heightChanged.emit()">
-        <span
-          class="toggle-label"
-          [stfUnauthorizedFeature]="(userPromptsAuthorized | async) === false"
-          fullProBadge>
+        <span class="toggle-label">
           {{ 'search.configuration.generative-answer.system-prompt.toggle-label' | translate }}
         </span>
       </pa-toggle>

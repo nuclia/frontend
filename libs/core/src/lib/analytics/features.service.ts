@@ -83,9 +83,6 @@ export class FeaturesService {
       this.isEnterpriseOrGrowth,
       this.featureFlag.isFeatureAuthorized('summarization'),
     ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
-    userPrompts: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('user-prompts')]).pipe(
-      map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized),
-    ),
     allowKbManagementFromNuaKey: combineLatest([
       this.isEnterpriseOrGrowth,
       this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),

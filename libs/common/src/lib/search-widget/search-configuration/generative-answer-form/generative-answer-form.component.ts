@@ -131,17 +131,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     }),
   });
 
-  userPromptsAuthorized = this.featuresService.authorized.userPrompts.pipe(
-    tap((authorized) => {
-      if (authorized) {
-        this.form.controls.usePrompt.enable();
-        this.form.controls.useSystemPrompt.enable();
-      } else {
-        this.form.controls.usePrompt.disable();
-        this.form.controls.useSystemPrompt.disable();
-      }
-    }),
-  );
   userPromptInfo = '';
   userPromptOverridden = false;
   systemPromptOverridden = false;

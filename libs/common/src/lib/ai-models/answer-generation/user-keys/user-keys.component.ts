@@ -75,7 +75,6 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   });
 
   required = this.translate.instant('kb.ai-models.common.required');
-  isUserPromptsAuthorized = this.features.authorized.userPrompts;
   unsubscribeAll = new Subject<void>();
 
   get userKeysToggle() {
@@ -100,7 +99,7 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       return acc;
     }, {} as UserKeysProperties);
   }
-  
+
   get userKeysPropertiesEntries() {
     return Object.entries(this.userKeysProperties).map(([key, value]) => ({
       key,
@@ -114,11 +113,6 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   ) {
     this.userKeysToggle.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.updateValidators();
-    });
-    this.isUserPromptsAuthorized.pipe(take(1)).subscribe((authorized) => {
-      if (!authorized) {
-        this.form.disable();
-      }
     });
   }
 
