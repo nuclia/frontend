@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
-import { BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { FeaturesService } from '@flaps/core';
 import {
   PaButtonModule,
@@ -21,7 +20,6 @@ import { TASK_ICONS } from '../tasks-automation.models';
 @Component({
   selector: 'app-task-list',
   imports: [
-    BadgeComponent,
     CommonModule,
     PaButtonModule,
     PaCardModule,
