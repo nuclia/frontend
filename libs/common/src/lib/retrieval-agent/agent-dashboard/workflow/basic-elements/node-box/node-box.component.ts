@@ -1,5 +1,6 @@
-
 import {
+  AfterContentChecked,
+  AfterContentInit,
   AfterViewInit,
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -32,11 +33,12 @@ let boxIndex = 0;
   styleUrl: './node-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NodeBoxComponent implements AfterViewInit {
+export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, AfterViewInit {
   protected linkService = inject(LinkService);
   protected unsubscribeAll = new Subject<void>();
   readonly id = `box-${boxIndex++}`;
   linkRef?: ComponentRef<LinkComponent>;
+  private subscribedEntries = new Set<string>();
 
   root = input(false, { transform: booleanAttribute });
   nodeTitle = input('');
@@ -79,9 +81,27 @@ export class NodeBoxComponent implements AfterViewInit {
   }
 
   ngAfterContentInit(): void {
-    this.connectableEntries?.forEach((entry: ConnectableEntryComponent) => {
-      entry.clickOutput.subscribe(() => this.outputClick.emit(entry));
-    });
+    this.subscribeToEntries();
+  }
+
+  ngAfterContentChecked(): void {
+    // Re-subscribe to entries in case they were created dynamically
+    this.subscribeToEntries();
+  }
+
+  private subscribeToEntries(): void {
+    if (this.connectableEntries) {
+      this.connectableEntries.forEach((entry: ConnectableEntryComponent) => {
+        const entryId = entry.id();
+        // Check if this entry is already subscribed to avoid duplicate subscriptions
+        if (!this.subscribedEntries.has(entryId)) {
+          this.subscribedEntries.add(entryId);
+          entry.clickOutput.subscribe(() => {
+            this.outputClick.emit(entry);
+          });
+        }
+      });
+    }
   }
 
   ngAfterViewInit(): void {

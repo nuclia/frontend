@@ -11,3 +11,4 @@ export * from './arrow-down.component';
 export * from './form.directive';
 export * from './node.directive';
 export * from './node-form';
+export * from './dynamic-node';

@@ -6,6 +6,7 @@ import {
   EventEmitter,
   inject,
   Injectable,
+  QueryList,
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
@@ -52,34 +53,23 @@ import {
 } from './basic-elements';
 import { AskFormComponent } from './nodes/ask/ask-form.component';
 import { AskNodeComponent } from './nodes/ask/ask-node.component';
-import { BasicAskFormComponent } from './nodes/ask/basic-ask-form.component';
-import { ConditionalFormComponent } from './nodes/conditional/conditional-form.component';
 import { ConditionalNodeComponent } from './nodes/conditional/conditional-node.component';
-import { CypherFormComponent } from './nodes/cypher/cypher-form.component';
 import { CypherNodeComponent } from './nodes/cypher/cypher-node.component';
 import { ExternalFormComponent } from './nodes/external/external-form.component';
 import { ExternalNodeComponent } from './nodes/external/external-node.component';
-import { GenerateFormComponent } from './nodes/generate/generate-form.component';
 import { GenerateNodeComponent } from './nodes/generate/generate-node.component';
-import { HistoricalFormComponent } from './nodes/historical/historical-form.component';
 import { HistoricalNodeComponent } from './nodes/historical/historical-node.component';
 import { InternetFormComponent } from './nodes/internet/internet-form.component';
 import { InternetNodeComponent } from './nodes/internet/internet-node.component';
-import { McpFormComponent } from './nodes/mcp/mcp-form.component';
 import { McpNodeComponent } from './nodes/mcp/mcp-node.component';
-import { RemiFormComponent } from './nodes/remi/remi-form.component';
 import { RemiNodeComponent } from './nodes/remi/remi-node.component';
 import { RephraseFormComponent } from './nodes/rephrase/rephrase-form.component';
 import { RephraseNodeComponent } from './nodes/rephrase/rephrase-node.component';
-import { RestartFormComponent } from './nodes/restart/restart-form.component';
 import { RestartNodeComponent } from './nodes/restart/restart-node.component';
-import { RestrictedFormComponent } from './nodes/restricted/restricted-form.component';
 import { RestrictedNodeComponent } from './nodes/restricted/restricted-node.component';
-import { SqlFormComponent } from './nodes/sql/sql-form.component';
 import { SqlNodeComponent } from './nodes/sql/sql-node.component';
-import { SummarizeFormComponent } from './nodes/summarize/summarize-form.component';
 import { SummarizeNodeComponent } from './nodes/summarize/summarize-node.component';
-import { GuardrailsFormComponent, GuardrailsNodeComponent } from './nodes/guardrails';
+import { GuardrailsNodeComponent } from './nodes/guardrails';
 import { RulesPanelComponent, TestPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
@@ -114,6 +104,7 @@ import {
   updateNode,
 } from './workflow.state';
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
+import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 const COLUMN_CLASS = 'workflow-col';
@@ -267,29 +258,199 @@ export class WorkflowService {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
     const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true, childIndex);
-    if (agent.module === 'ask' || agent.module === 'basic_ask') {
-      const askAgent = agent as AskAgent | BasicAskAgent;
-      if (askAgent.fallback) {
-        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
-        if (!entry) {
-          throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
-        }
-        this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
-      }
-    } else if (agent.module === 'mcp') {
-      const mcpAgent = agent as McpAgent;
-      if (mcpAgent.fallback) {
-        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
-        if (!entry) {
-          throw new Error(`No 'fallback' entry found on MCP node ${nodeRef.instance.id}`);
-        }
-        this.createNodeFromSavedWorkflow(entry, nodeCategory, mcpAgent.fallback, columnIndex + 1);
-      }
-    } else if (isCondionalNode(agent.module)) {
-      const conditionalAgent = agent as unknown as BaseConditionalAgentCreation;
-      this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
-      this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
+
+    // Ensure the node is fully rendered before attempting to create child nodes
+    nodeRef.changeDetectorRef.detectChanges();
+
+    // Use requestAnimationFrame to ensure DOM is fully updated
+    requestAnimationFrame(() => {
+      // Generic child node creation based on agent properties
+      this.createChildNodesGeneric(nodeRef, agent, nodeCategory, columnIndex);
+    });
+  }
+
+  /**
+   * Generic method to create child nodes for any agent type based on actual connectable entries
+   */
+  private createChildNodesGeneric(
+    nodeRef: ComponentRef<NodeDirective>,
+    agent: any,
+    nodeCategory: NodeCategory,
+    columnIndex: number,
+  ) {
+    // Use a more robust polling approach to ensure connectable entries are available
+    this.waitForConnectableEntries(nodeRef, agent, nodeCategory, columnIndex, 0);
+  }
+
+  /**
+   * Poll for connectable entries with exponential backoff and maximum attempts
+   */
+  private waitForConnectableEntries(
+    nodeRef: ComponentRef<NodeDirective>,
+    agent: any,
+    nodeCategory: NodeCategory,
+    columnIndex: number,
+    attempt: number,
+  ) {
+    const maxAttempts = 10;
+    const baseDelay = 50;
+    const maxDelay = 500;
+
+    if (attempt >= maxAttempts) {
+      console.warn(`Failed to find connectable entries after ${maxAttempts} attempts for agent:`, agent.module);
+      // Fallback: try to create child nodes based on configuration alone
+      this.createChildNodesFromConfig(nodeRef, agent, nodeCategory, columnIndex);
+      return;
     }
+
+    const boxComponent = nodeRef.instance.boxComponent;
+    const connectableEntries = boxComponent?.connectableEntries;
+
+    // Check multiple conditions to ensure the component is fully ready
+    const isReady =
+      boxComponent && connectableEntries && connectableEntries.length > 0 && nodeRef.location.nativeElement.isConnected; // Ensure DOM is connected
+
+    if (isReady) {
+      // Success! Process the entries
+      this.processConnectableEntries(connectableEntries, agent, nodeCategory, columnIndex);
+      return;
+    }
+
+    // Calculate delay with exponential backoff, capped at maxDelay
+    const delay = Math.min(baseDelay * Math.pow(1.5, attempt), maxDelay);
+
+    setTimeout(() => {
+      this.waitForConnectableEntries(nodeRef, agent, nodeCategory, columnIndex, attempt + 1);
+    }, delay);
+  }
+
+  /**
+   * Process connectable entries and create child nodes
+   */
+  private processConnectableEntries(
+    connectableEntries: QueryList<ConnectableEntryComponent>,
+    agent: any,
+    nodeCategory: NodeCategory,
+    columnIndex: number,
+  ) {
+    // For each connectable entry that exists on the node, check if the agent has corresponding child data
+    connectableEntries.forEach((entry) => {
+      const entryId = entry.id();
+
+      // Check if the agent has data for this connectable entry
+      const childAgents = this.getChildAgentsForEntry(agent, entryId);
+
+      if (childAgents) {
+        // Handle both single child and array of children
+        const children = Array.isArray(childAgents) ? childAgents : [childAgents];
+        children.forEach((child, index) => {
+          this.createNodeFromSavedWorkflow(
+            entry,
+            nodeCategory,
+            child,
+            columnIndex + 1,
+            Array.isArray(childAgents) ? index : undefined,
+          );
+        });
+      }
+    });
+  }
+
+  /**
+   * Fallback method to create child nodes when connectable entries are not available
+   * This method works directly with the agent configuration
+   */
+  private createChildNodesFromConfig(
+    nodeRef: ComponentRef<NodeDirective>,
+    agent: any,
+    nodeCategory: NodeCategory,
+    columnIndex: number,
+  ) {
+    // Common connectable properties that typically contain child agents
+    const connectableProperties = ['fallback', 'then', 'else_', 'else'];
+
+    connectableProperties.forEach((propertyName) => {
+      const childAgents = this.getChildAgentsForEntry(agent, propertyName);
+      if (childAgents) {
+        // We need to simulate a connectable entry for the child creation
+        // This is a fallback, so we create a minimal entry object
+        const mockEntry = {
+          id: () => propertyName,
+          category: () => nodeCategory,
+          nodeId: () => nodeRef.instance.id,
+        } as ConnectableEntryComponent;
+
+        const children = Array.isArray(childAgents) ? childAgents : [childAgents];
+        children.forEach((child, index) => {
+          this.createNodeFromSavedWorkflow(
+            mockEntry,
+            nodeCategory,
+            child,
+            columnIndex + 1,
+            Array.isArray(childAgents) ? index : undefined,
+          );
+        });
+      }
+    });
+  }
+
+  /**
+   * Get child agents for a specific connectable entry by examining the agent's configuration
+   * This method is completely generic and works with any agent structure
+   */
+  private getChildAgentsForEntry(agent: any, entryId: string): any[] | any | null {
+    // Direct property match (e.g., 'fallback' entry maps to agent.fallback)
+    if (agent[entryId] && this.isValidChildAgent(agent[entryId])) {
+      return agent[entryId];
+    }
+
+    // Handle common entry ID transformations
+    const possiblePropertyNames = [
+      entryId, // Direct match
+      entryId + '_', // Add underscore (e.g., 'else' -> 'else_')
+      entryId.replace(/[_-]/g, ''), // Remove separators
+      entryId.toLowerCase(),
+      entryId.toUpperCase(),
+    ];
+
+    // Check each possible property name
+    for (const propName of possiblePropertyNames) {
+      if (agent[propName] && this.isValidChildAgent(agent[propName])) {
+        return agent[propName];
+      }
+    }
+
+    // If no direct match, check nested objects that might contain the entry data
+    for (const [key, value] of Object.entries(agent)) {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // Check if this nested object has the entry we're looking for
+        const nestedValue = value as any;
+        if (nestedValue[entryId] && this.isValidChildAgent(nestedValue[entryId])) {
+          return nestedValue[entryId];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Validate if a value represents valid child agent(s)
+   */
+  private isValidChildAgent(value: any): boolean {
+    if (!value) return false;
+
+    // Single agent object
+    if (typeof value === 'object' && !Array.isArray(value) && value.module) {
+      return true;
+    }
+
+    // Array of agents
+    if (Array.isArray(value) && value.length > 0) {
+      return value.every((item) => item && typeof item === 'object' && item.module);
+    }
+
+    return false;
   }
 
   private createChildNodes(
@@ -370,11 +531,239 @@ export class WorkflowService {
 
     setCurrentOrigin(origin);
     const originCategory = origin.category();
+
+    // Check if this connectable entry has discriminator options
+    const discriminatorOptions = this.getDiscriminatorOptions(origin);
+
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.sidebar.node-creation.${originCategory}`,
     );
     container.classList.add('no-form');
-    this.displayPossibleNodes(originCategory, container, origin, columnIndex);
+
+    if (discriminatorOptions.length > 0) {
+      // Display discriminator-specific options
+      this.displayDiscriminatorNodes(discriminatorOptions, container, origin, columnIndex, originCategory);
+    } else {
+      // Fall back to category-based options
+      this.displayPossibleNodes(originCategory, container, origin, columnIndex);
+    }
+  }
+
+  /**
+   * Get discriminator options for a connectable entry by examining the parent node's schema
+   */
+  private getDiscriminatorOptions(origin: ConnectableEntryComponent): string[] {
+    const nodeId = origin.nodeId();
+    const entryId = origin.id();
+
+    if (!nodeId) {
+      return [];
+    }
+
+    // Find the parent node
+    const allNodes = getAllNodes(true);
+    const parentNode = allNodes.find((node) => node.nodeRef.instance.id === nodeId);
+    if (!parentNode) {
+      return [];
+    }
+
+    // Get the schemas
+    const schemas = this._schemasSubject.getValue();
+    if (!schemas) {
+      return [];
+    }
+
+    // Get the node type and category
+    const nodeType = parentNode.nodeType;
+    const nodeCategory = parentNode.nodeCategory;
+
+    // Find the schema for this node type
+    const categorySchemas = schemas.agents[nodeCategory];
+    if (!Array.isArray(categorySchemas)) {
+      return [];
+    }
+
+    // Find the matching schema
+    let matchingSchema: any = null;
+    for (const schema of categorySchemas) {
+      if (this.schemaMatchesNodeType(schema, nodeType)) {
+        if (schema['$ref']) {
+          matchingSchema = this.resolveSchemaRef(schema, schema['$ref'], schemas);
+        } else {
+          matchingSchema = schema;
+        }
+        break;
+      }
+    }
+
+    if (!matchingSchema?.properties) {
+      return [];
+    }
+
+    // Look for the property that matches this connectable entry
+    const property = matchingSchema.properties[entryId];
+    if (!property) {
+      return [];
+    }
+
+    // Extract discriminator mapping from the property
+    return this.extractDiscriminatorMapping(property);
+  }
+
+  /**
+   * Extract discriminator mapping from a schema property
+   */
+  private extractDiscriminatorMapping(property: any): string[] {
+    // Check direct discriminator
+    if (property.discriminator?.mapping) {
+      return Object.keys(property.discriminator.mapping);
+    }
+
+    // Check anyOf for discriminator
+    if (property.anyOf && Array.isArray(property.anyOf)) {
+      for (const item of property.anyOf) {
+        if (item.discriminator?.mapping) {
+          return Object.keys(item.discriminator.mapping);
+        }
+      }
+    }
+
+    // Check oneOf for discriminator
+    if (property.oneOf && Array.isArray(property.oneOf)) {
+      for (const item of property.oneOf) {
+        if (item.discriminator?.mapping) {
+          return Object.keys(item.discriminator.mapping);
+        }
+      }
+    }
+
+    // Check if it's an array type with items that have discriminators
+    if (property.type === 'array' && property.items) {
+      const items = property.items;
+
+      // Check direct discriminator on items
+      if (items.discriminator?.mapping) {
+        return Object.keys(items.discriminator.mapping);
+      }
+
+      // Check discriminators in items' anyOf/oneOf
+      if (items.anyOf && Array.isArray(items.anyOf)) {
+        for (const item of items.anyOf) {
+          if (item.discriminator?.mapping) {
+            return Object.keys(item.discriminator.mapping);
+          }
+        }
+      }
+
+      if (items.oneOf && Array.isArray(items.oneOf)) {
+        for (const item of items.oneOf) {
+          if (item.discriminator?.mapping) {
+            return Object.keys(item.discriminator.mapping);
+          }
+        }
+      }
+    }
+
+    return [];
+  }
+
+  /**
+   * Display discriminator-specific node options
+   */
+  private displayDiscriminatorNodes(
+    discriminatorOptions: string[],
+    container: HTMLElement,
+    origin: ConnectableEntryComponent,
+    columnIndex: number,
+    originCategory: NodeCategory,
+  ) {
+    discriminatorOptions.forEach((nodeType, index) => {
+      const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
+      const nodeTypeKey = this.getNodeTypeKey(nodeType as NodeType);
+      selectorRef.setInput(
+        'nodeTitle',
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
+      );
+      selectorRef.setInput(
+        'description',
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
+      );
+      selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType as NodeType]);
+      this.applicationRef.attachView(selectorRef.hostView);
+      container.appendChild(selectorRef.location.nativeElement);
+      selectorRef.changeDetectorRef.detectChanges();
+      selectorRef.instance.select.subscribe(() => {
+        const nodeRef = this.addNode(origin, columnIndex, nodeType as NodeType, originCategory);
+        nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        this.selectNode(nodeRef.instance.id, originCategory);
+      });
+
+      if (index === discriminatorOptions.length - 1) {
+        selectorRef.location.nativeElement.classList.add('last-of-section');
+      }
+    });
+  }
+
+  /**
+   * Check if schema matches node type (helper method)
+   */
+  private schemaMatchesNodeType(schema: any, nodeType: string): boolean {
+    // Check if the schema title matches the node type
+    if (schema.title?.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
+      return true;
+    }
+
+    // Check if properties contain identifiers that match the node type
+    if (schema.properties?.['module']) {
+      const moduleProperty = schema.properties['module'];
+      if (moduleProperty['const'] === nodeType || moduleProperty['default'] === nodeType) {
+        return true;
+      }
+    }
+
+    // Handle conditional nodes
+    if (nodeType.includes('conditional') && schema.title?.toLowerCase().includes('conditional')) {
+      return true;
+    }
+
+    // Handle exact module matches in $ref
+    if (schema['$ref']) {
+      const ref = schema['$ref'] as string;
+      if (ref.startsWith('#/$defs/')) {
+        const defName = ref.replace('#/$defs/', '');
+        if (defName.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Resolve schema $ref (helper method)
+   */
+  private resolveSchemaRef(rootSchema: any, ref: string, schemas: any): any {
+    if (ref.startsWith('#/$defs/')) {
+      const defName = ref.replace('#/$defs/', '');
+
+      // Try to find the definition in the root schema's $defs first
+      if (rootSchema['$defs'] && rootSchema['$defs'][defName]) {
+        return rootSchema['$defs'][defName];
+      }
+
+      // If not found, search through all categories
+      for (const [categoryName, category] of Object.entries(schemas.agents)) {
+        if (Array.isArray(category)) {
+          for (const schema of category) {
+            if (schema['$defs'] && schema['$defs'][defName]) {
+              return schema['$defs'][defName];
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -390,33 +779,118 @@ export class WorkflowService {
     origin: ConnectableEntryComponent,
     columnIndex: number,
   ) {
-    this.getPossibleNodes(nodeCategory).subscribe((possibleNodes) => {
-      possibleNodes.forEach((nodeType, index) => {
-        const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
-        const nodeTypeKey = this.getNodeTypeKey(nodeType);
-        selectorRef.setInput(
-          'nodeTitle',
-          this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
-        );
-        selectorRef.setInput(
-          'description',
-          this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
-        );
-        selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
-        this.applicationRef.attachView(selectorRef.hostView);
-        container.appendChild(selectorRef.location.nativeElement);
-        selectorRef.changeDetectorRef.detectChanges();
-        selectorRef.instance.select.subscribe(() => {
-          const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
-          nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-          this.selectNode(nodeRef.instance.id, nodeCategory);
-        });
+    // Get configurations directly from schemas for this category
+    const categoryConfigs = this.getCategoryConfigurations(nodeCategory);
 
-        if (index === possibleNodes.length - 1) {
-          selectorRef.location.nativeElement.classList.add('last-of-section');
-        }
+    categoryConfigs.forEach((nodeType, index) => {
+      const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
+      const nodeTypeKey = this.getNodeTypeKey(nodeType);
+      selectorRef.setInput(
+        'nodeTitle',
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
+      );
+      selectorRef.setInput(
+        'description',
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
+      );
+      selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
+      this.applicationRef.attachView(selectorRef.hostView);
+      container.appendChild(selectorRef.location.nativeElement);
+      selectorRef.changeDetectorRef.detectChanges();
+      selectorRef.instance.select.subscribe(() => {
+        const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
+        nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        this.selectNode(nodeRef.instance.id, nodeCategory);
       });
+
+      if (index === categoryConfigs.length - 1) {
+        selectorRef.location.nativeElement.classList.add('last-of-section');
+      }
     });
+  }
+
+  /**
+   * Convert configuration title to node type using a mapping approach
+   */
+  private convertConfigTitleToNodeType(configTitle: string): string {
+    // Define mapping from config title patterns to node types
+    const titleToNodeTypeMap: { [key: string]: string } = {
+      SQL: 'sql',
+      SPARQL: 'sparql',
+      Cypher: 'cypher',
+      MCP: 'mcp',
+      Brave: 'brave',
+      Google: 'google',
+      Perplexity: 'perplexity',
+      Tavily: 'tavily',
+      Python: 'restricted',
+      BasicAsk: 'basic_ask',
+      ContextConditional: 'context_conditional',
+      ExternalCall: 'external_call',
+      Historical: 'historical',
+      Rephrase: 'rephrase',
+      PreprocessConditional: 'preprocess_conditional',
+      PreprocessAlinia: 'preprocess_alinia',
+      PostprocessConditional: 'postprocess_conditional',
+      PostprocessAlinia: 'postprocess_alinia',
+      Restart: 'restart',
+      Remi: 'remi',
+    };
+
+    // Check for special case mappings first
+    for (const [pattern, nodeType] of Object.entries(titleToNodeTypeMap)) {
+      if (configTitle.includes(pattern)) {
+        return nodeType;
+      }
+    }
+
+    // Default conversion: remove "AgentConfig" suffix and convert to lowercase
+    // e.g., "SummarizeAgentConfig" -> "summarize", "GenerateAgentConfig" -> "generate"
+    return configTitle.replace(/AgentConfig$/, '').toLowerCase();
+  }
+
+  /**
+   * Get all node configurations directly from schemas for a specific category
+   */
+  private getCategoryConfigurations(nodeCategory: NodeCategory): NodeType[] {
+    const schemas = this._schemasSubject.getValue();
+    if (!schemas?.agents?.[nodeCategory]) {
+      return [];
+    }
+
+    const categorySchemas = schemas.agents[nodeCategory];
+    if (!Array.isArray(categorySchemas)) {
+      return [];
+    }
+
+    const nodeTypes: NodeType[] = [];
+
+    for (const schema of categorySchemas) {
+      let configTitle = '';
+
+      // Handle $ref schemas
+      if (schema['$ref']) {
+        const resolved = this.resolveSchemaRef(schema, schema['$ref'], schemas);
+        if (resolved?.title) {
+          configTitle = resolved.title;
+        }
+      } else if (schema.title) {
+        // Direct schema with title
+        configTitle = schema.title;
+      }
+
+      if (configTitle) {
+        // Convert schema title to node type using mapping
+        const nodeType = this.convertConfigTitleToNodeType(configTitle);
+
+        // Add the node type if it's valid (not empty)
+        if (nodeType && nodeType.trim() !== '') {
+          nodeTypes.push(nodeType as NodeType);
+        }
+      }
+    }
+
+    return nodeTypes;
   }
 
   /**
@@ -766,6 +1240,12 @@ export class WorkflowService {
    * @returns ComponentRef<NodeDirective> corresponding to the node type.
    */
   private getNodeRef(nodeType: NodeType): ComponentRef<NodeDirective> {
+    // If schemas are available, use the dynamic node component
+    return createComponent(DynamicNodeComponent, {
+      environmentInjector: this.environmentInjector,
+    });
+
+    // Fallback to hardcoded components for backward compatibility
     switch (nodeType) {
       case 'historical':
         return createComponent(HistoricalNodeComponent, {
@@ -838,7 +1318,10 @@ export class WorkflowService {
           environmentInjector: this.environmentInjector,
         });
       default:
-        throw new Error(`No node component for type ${nodeType}`);
+        // If no hardcoded component exists, try the dynamic component even without schemas
+        return createComponent(DynamicNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
     }
   }
 
