@@ -297,7 +297,6 @@ export class WorkflowService {
     const maxDelay = 500;
 
     if (attempt >= maxAttempts) {
-      console.warn(`Failed to find connectable entries after ${maxAttempts} attempts for agent:`, agent.module);
       // Fallback: try to create child nodes based on configuration alone
       this.createChildNodesFromConfig(nodeRef, agent, nodeCategory, columnIndex);
       return;
@@ -1471,13 +1470,6 @@ export class WorkflowService {
 
         // Don't include in patchData since we handled it directly
       } else if (Array.isArray(value)) {
-        // If value is an array but control is not a FormArray, skip it or convert it
-        console.warn('Field has array value but control is not FormArray:', key, {
-          key,
-          value,
-          control: control ? control.constructor.name : 'null',
-          controlValue: control?.value,
-        });
         // Skip this field to prevent forEach error in patchValue
       } else {
         // For other controls, include in regular patch
