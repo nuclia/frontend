@@ -25,6 +25,7 @@ export namespace Ask {
     jsonAnswer?: any;
     incomplete?: boolean;
     inError?: boolean;
+    error?: string;
     metadata?: { tokens?: AskTokens; timings?: AskTimings };
     promptContext?: string[];
     augmentedContext?: AugmentedContext;

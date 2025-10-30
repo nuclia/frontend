@@ -21,7 +21,10 @@
     margin-left: calc(var(--rhythm-4) + var(--rhythm-0_5));
   }
   .error {
+    align-items: center;
+    display: inline-flex;
     color: var(--color-neutral-light);
+    gap: var(--rhythm-0_5);
   }
   .actions {
     align-items: center;

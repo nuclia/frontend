@@ -556,32 +556,35 @@ export function askQuestion(
     tap((result) => {
       hasNotEnoughData.set(result.type === 'error' && result.status === -2);
       if (result.type === 'error') {
-        if ([-3, -2, -1, 412, 529].includes(result.status)) {
-          const messages: { [key: string]: string } = {
-            '-3': 'answer.error.no_retrieval_data',
-            '-2': 'answer.error.llm_cannot_answer',
-            '-1': 'answer.error.llm_error',
-            '412': 'answer.error.rephrasing',
-            '529': 'answer.error.rephrasing',
-          };
-          if (!hasError) {
-            // error is set only once
-            hasError = true;
-            const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-            appendChatEntry.set({
-              question,
-              answer: {
-                inError: true,
-                text: translateInstant(text),
-                type: 'answer',
-                id: '',
-              },
-            });
-          }
-        } else {
+        const messages: { [key: string]: string } = {
+          '-3': 'answer.error.no_retrieval_data',
+          '-2': 'answer.error.llm_cannot_answer',
+          '-1': 'answer.error.llm_error',
+          '402': 'anwer.error.feature-blocked',
+          '412': 'answer.error.rephrasing',
+          '529': 'answer.error.service-overloaded',
+        };
+        if (!hasError) {
+          // error is set only once
+          hasError = true;
+          const error = translateInstant(
+            result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`] || 'error.search',
+          );
+          const answer = currentAnswer.getValue();
+          appendChatEntry.set({
+            question,
+            answer: {
+              ...answer,
+              // When error code is -2, the text is omitted as it is redundant with the error message.
+              text: result.status === -2 ? '' : answer.text,
+              incomplete: false,
+              inError: true,
+              error,
+            },
+          });
           chatError.set(result);
+          pendingResults.set(false);
         }
-        pendingResults.set(false);
       } else {
         if (result.incomplete) {
           currentAnswer.set(result);
