@@ -83,6 +83,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     useRouting: new FormControl<boolean>(false, { nonNullable: true }),
     routing: new FormGroup({
       generative_model: new FormControl<string>('', { nonNullable: true }),
+      direct_answer: new FormControl<string>('', { nonNullable: true }),
       rules: new FormArray<
         FormGroup<{
           search_config: FormControl<string>;
