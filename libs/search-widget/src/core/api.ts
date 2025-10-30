@@ -601,7 +601,7 @@ export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
 }
 
-export function getRouting(question: string, routing: Routing): Observable<string> {
+export function getRouting(question: string, routing: Routing): Observable<{ config: string; answer?: string }> {
   const configs = routing.rules.map((rule) => rule.search_config);
   const rules = routing.rules
     .map(
@@ -633,6 +633,12 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
           type: 'string',
           description: fullPrompt,
         },
+        direct_answer: routing.direct_answer
+          ? {
+              type: 'string',
+              description: routing.direct_answer,
+            }
+          : undefined,
       },
       required: ['category'],
     },
@@ -645,13 +651,15 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
   }).pipe(
     map((res) => {
       if (res.type === 'error') {
-        return 'FALLBACK';
+        return { config: 'FALLBACK' };
+      } else if (res.jsonAnswer?.category === 'FALLBACK' && res.jsonAnswer?.direct_answer) {
+        return { config: 'FALLBACK', answer: res.jsonAnswer.direct_answer as string };
       } else {
         return res.jsonAnswer?.category && configs.includes(res.jsonAnswer?.category)
-          ? res.jsonAnswer?.category
-          : 'FALLBACK';
+          ? { config: (res.jsonAnswer?.category as string) || '' }
+          : { config: 'FALLBACK' };
       }
     }),
-    tap((config) => routedConfig.set(config)),
+    tap((config) => routedConfig.set(config.config)),
   );
 }
