@@ -117,7 +117,7 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
     {
       id: 'created',
       label: 'generic.date',
-      size: '128px',
+      size: '180px',
       sortable: true,
     },
     { id: 'menu', label: 'generic.actions', size: '96px' },
