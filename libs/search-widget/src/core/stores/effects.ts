@@ -515,7 +515,7 @@ export function askQuestion(
         searchConfigId.pipe(take(1)),
         routingParam.pipe(
           take(1),
-          switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of('FALLBACK'))),
+          switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of(undefined))),
         ),
       ]),
     ),
@@ -533,8 +533,16 @@ export function askQuestion(
         search_configuration,
         routedConfig,
       ]) => {
-        if (routedConfig && routedConfig !== 'FALLBACK') {
-          return getAnswer(question, entries, { search_configuration: routedConfig });
+        if (routedConfig?.config && routedConfig.config !== 'FALLBACK') {
+          return getAnswer(question, entries, { search_configuration: routedConfig.config });
+        } else if (routedConfig?.config === 'FALLBACK' && routedConfig?.answer) {
+          return of({
+            type: 'answer',
+            id: '',
+            text: routedConfig.answer,
+            incomplete: false,
+            inError: false,
+          } as Ask.Answer);
         } else {
           const chatOptions = { ...options, reasoning: reasoning || undefined };
           return disableRAG
@@ -606,13 +614,18 @@ export function getSearchResults(
     take(1),
     switchMap((routing) => {
       if (loadMore) {
-        return routedConfig.pipe(take(1));
+        return routedConfig.pipe(
+          take(1),
+          map((conf) => ({ config: conf, answer: '' })),
+        );
       } else {
-        return routing ? getRouting(query, routing).pipe(take(1)) : of('FALLBACK');
+        return routing ? getRouting(query, routing).pipe(take(1)) : of({ config: 'FALLBACK', answer: '' });
       }
     }),
     switchMap((config) =>
-      config && config !== 'FALLBACK' ? find(query, { search_configuration: config }) : find(query, options),
+      config && config.config !== 'FALLBACK'
+        ? find(query, { search_configuration: config.config })
+        : find(query, options),
     ),
   );
 }

@@ -80,6 +80,18 @@
             </pa-button>
           </div>
         </div>
+        <div class="extra-fields visible">
+          <nsi-expandable-textarea
+            formControlName="direct_answer"
+            resizable
+            rows="7"
+            [placeholder]="'search.configuration.routing.direct-answer-placeholder' | translate"
+            help="search.configuration.routing.direct-answer-help"
+            modalTitle="search.configuration.routing.direct-answer-label"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.routing.direct-answer-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
       </div>
     </div>
   </div>

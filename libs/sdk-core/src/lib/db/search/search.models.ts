@@ -94,6 +94,7 @@ export interface Routing {
     search_config: string;
     prompt: string;
   }[];
+  direct_answer?: string;
 }
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
