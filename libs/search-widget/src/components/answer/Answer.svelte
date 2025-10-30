@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { Ask, Citations, FieldId } from '@nuclia/core';
-  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, sliceUnicode } from '@nuclia/core';
+  import type { Ask } from '@nuclia/core';
   import { take } from 'rxjs';
   import { createEventDispatcher } from 'svelte';
-  import { Button, Expander, IconButton, Tooltip } from '../../common';
+  import { Button, Expander, Icon, IconButton, Tooltip } from '../../common';
   import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
   import {
     chat,
@@ -139,13 +138,19 @@
     </div>
   {/if}
   {#if !$hideAnswer || answer.inError}
-    <div
-      class="answer-text"
-      class:error={answer.inError}>
-      <MarkdownRendering
-        {text}
-        markers={true} />
-    </div>
+    {#if answer.text}
+      <div class="answer-text">
+        <MarkdownRendering
+          {text}
+          markers={true} />
+      </div>
+    {/if}
+    {#if answer.inError}
+      <div class="answer-text error">
+        <Icon name="warning" />
+        {answer.error}
+      </div>
+    {/if}
     {#if $showAttachedImages && images.length > 0}
       <div class="images">
         {#each images as image}
@@ -170,33 +175,31 @@
     {#if !$hideAnswer}
       <div class="actions">
         {#if !$chat[rank]?.answer.incomplete}
-          {#if !$hasNotEnoughData}
-            <div class="copy smaller">
-              <IconButton
-                aspect="basic"
-                icon={copied ? 'check' : 'copy'}
-                size="small"
-                kind="secondary"
-                on:click={() => copyAnswer()} />
-              <Tooltip
-                visible={copied}
-                title={$_('answer.copied')}
-                x="0"
-                y="34" />
+          <div class="copy smaller">
+            <IconButton
+              aspect="basic"
+              icon={copied ? 'check' : 'copy'}
+              size="small"
+              kind="secondary"
+              on:click={() => copyAnswer()} />
+            <Tooltip
+              visible={copied}
+              title={$_('answer.copied')}
+              x="0"
+              y="34" />
+          </div>
+          {#if $feedbackOnAnswer}
+            <div>
+              <Feedback {rank} />
             </div>
-            {#if $feedbackOnAnswer}
-              <div>
-                <Feedback {rank} />
-              </div>
-            {/if}
-            {#if initialAnswer}
-              <Button
-                aspect="basic"
-                size="small"
-                on:click={() => dispatch('openChat')}>
-                <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
-              </Button>
-            {/if}
+          {/if}
+          {#if initialAnswer}
+            <Button
+              aspect="basic"
+              size="small"
+              on:click={() => dispatch('openChat')}>
+              <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+            </Button>
           {/if}
         {/if}
       </div>

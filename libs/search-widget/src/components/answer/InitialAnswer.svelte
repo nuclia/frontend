@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
-  import { chatError, firstAnswer, hideAnswer, isServiceOverloaded, reinitChat } from '../../core/stores/answers.store';
+  import { firstAnswer, hideAnswer, reinitChat } from '../../core/stores/answers.store';
   import { trackingEngagement } from '../../core/stores/search.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
@@ -17,30 +17,16 @@
   }
 </script>
 
-{#if $firstAnswer.text || $firstAnswer.reasoning || $chatError}
+{#if $firstAnswer.text || $firstAnswer.reasoning || $firstAnswer.inError}
   <div class="sw-initial-answer">
-    {#if $chatError}
-      <strong>
-        {#if $isServiceOverloaded}
-          {$_('error.service-overloaded')}
-        {:else if $chatError.status === 402}
-          {$_('error.answer-feature-blocked')}
-        {:else if $chatError?.status === -1}
-          {$_('error.llm-blocked')}
-        {:else}
-          {$_('error.search')}
-        {/if}
-      </strong>
-    {:else}
-      {#if !$hideAnswer}
-        <h3 class="title-s">{$_('answer.title')}</h3>
-      {/if}
-      <Answer
-        answer={$firstAnswer}
-        rank={0}
-        initialAnswer={true}
-        on:openChat={openChat} />
+    {#if !$hideAnswer}
+      <h3 class="title-s">{$_('answer.title')}</h3>
     {/if}
+    <Answer
+      answer={$firstAnswer}
+      rank={0}
+      initialAnswer={true}
+      on:openChat={openChat} />
   </div>
 {/if}
 

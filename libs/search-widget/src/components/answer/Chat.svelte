@@ -99,7 +99,7 @@
               <div class="title-m">{entry.question}</div>
             </div>
             <div class="answer">
-              {#if entry.answer.text || entry.answer.reasoning}
+              {#if entry.answer.text || entry.answer.reasoning || entry.answer.inError}
                 <Answer
                   answer={entry.answer}
                   rank={i}

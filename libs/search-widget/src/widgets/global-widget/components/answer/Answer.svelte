@@ -19,7 +19,12 @@
 <svelte:window bind:innerWidth />
 <div class="sw-answer">
   <div class="answer-container">
-    <div class="text"><MarkdownRendering {text} /></div>
+    <div class="text">
+      <MarkdownRendering {text} />
+      {#if answer.error}
+        <div class="error">{answer.error}</div>
+      {/if}
+    </div>
     {#if !isMobile && !hideFeedback}
       <Feedback {rank} />
     {/if}
