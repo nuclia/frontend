@@ -14,7 +14,7 @@ import {
   TransportFieldComponent,
 } from '../';
 import { ModelSelectComponent } from '../model-select/model-select.component';
-import { McpSourceSelectComponent } from '../mcp-source-select/mcp-source-select.component';
+import { FilteredSourceSelectComponent } from '../filtered-source-select/filtered-source-select.component';
 import { RulesFieldComponent } from '../../../rules-field/rules-field.component';
 
 export interface RenderableField {
@@ -41,7 +41,7 @@ export interface RenderableField {
     ArrayStringFieldComponent,
     CodeEditorComponent,
     EnumSelectComponent,
-    McpSourceSelectComponent,
+    FilteredSourceSelectComponent,
     RulesFieldComponent,
     TransportFieldComponent,
   ],
