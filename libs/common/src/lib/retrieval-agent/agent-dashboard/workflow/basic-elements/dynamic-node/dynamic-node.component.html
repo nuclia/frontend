@@ -4,7 +4,9 @@
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
-  <app-config-block [config]="nodeConfig()"></app-config-block>
+  @if (nodeConfig().length > 0) {
+    <app-config-block [config]="nodeConfig()"></app-config-block>
+  }
 
   @for (entry of fallbackEntries(); track entry.id) {
     <app-connectable-entry

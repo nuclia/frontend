@@ -14,36 +14,21 @@ import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  AskAgent,
   BaseConditionalAgentCreation,
   BaseContextAgent,
   BaseGenerationAgent,
   BasePostprocessAgent,
   BasePreprocessAgent,
-  BasicAskAgent,
   ContextAgent,
   GenerateAgent,
   PostprocessAgent,
   PreprocessAgent,
-  McpAgent,
   ARAGSchemas,
   LearningConfigurationOption,
   Driver,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, of, switchMap, take, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -52,25 +37,9 @@ import {
   NodeSelectorComponent,
 } from './basic-elements';
 import { AskFormComponent } from './nodes/ask/ask-form.component';
-import { AskNodeComponent } from './nodes/ask/ask-node.component';
-import { ConditionalNodeComponent } from './nodes/conditional/conditional-node.component';
-import { CypherNodeComponent } from './nodes/cypher/cypher-node.component';
 import { ExternalFormComponent } from './nodes/external/external-form.component';
-import { ExternalNodeComponent } from './nodes/external/external-node.component';
 import { GuardrailsFormComponent } from './nodes/guardrails/guardrails-form.component';
-import { GenerateNodeComponent } from './nodes/generate/generate-node.component';
-import { HistoricalNodeComponent } from './nodes/historical/historical-node.component';
-import { InternetFormComponent } from './nodes/internet/internet-form.component';
-import { InternetNodeComponent } from './nodes/internet/internet-node.component';
-import { McpNodeComponent } from './nodes/mcp/mcp-node.component';
-import { RemiNodeComponent } from './nodes/remi/remi-node.component';
 import { RephraseFormComponent } from './nodes/rephrase/rephrase-form.component';
-import { RephraseNodeComponent } from './nodes/rephrase/rephrase-node.component';
-import { RestartNodeComponent } from './nodes/restart/restart-node.component';
-import { RestrictedNodeComponent } from './nodes/restricted/restricted-node.component';
-import { SqlNodeComponent } from './nodes/sql/sql-node.component';
-import { SummarizeNodeComponent } from './nodes/summarize/summarize-node.component';
-import { GuardrailsNodeComponent } from './nodes/guardrails';
 import { RulesPanelComponent, TestPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
@@ -79,8 +48,6 @@ import {
   NODE_SELECTOR_ICONS,
   NodeCategory,
   NodeConfig,
-  NODES_BY_ENTRY_TYPE,
-  FF_NODE_TYPES,
   NodeType,
   WorkflowRoot,
 } from './workflow.models';
@@ -1272,8 +1239,6 @@ export class WorkflowService {
 
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
-      case 'internet':
-        return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
         return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
       case 'preprocess_alinia':
