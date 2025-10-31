@@ -84,7 +84,7 @@
               </div>
             </pa-table-cell>
             <pa-table-cell>
-              <span class="body-s">{{ session.created | date: 'mediumDate' }}</span>
+              <pa-datetime [datetime]="session.created"></pa-datetime>
             </pa-table-cell>
             <pa-table-cell-menu>
               <div>
