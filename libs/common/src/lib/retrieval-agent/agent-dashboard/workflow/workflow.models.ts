@@ -473,55 +473,7 @@ export function guardrailsAgentToUi(agent: GuardrailsAgent): GuardrailsAgentUI {
   };
 }
 
-export type InternetAgentCreation =
-  | BraveAgentCreation
-  | PerplexityAgentCreation
-  | TavilyAgentCreation
-  | GoogleAgentCreation;
 export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleAgent;
-export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
-  const baseConfig = {
-    rules: config.rules,
-    source: config.source,
-  };
-  switch (config.provider) {
-    case 'brave':
-      return {
-        module: config.provider,
-        ...baseConfig,
-        ...config.brave,
-      };
-    case 'perplexity':
-      return {
-        module: config.provider,
-        ...baseConfig,
-        ...config.perplexity,
-      };
-    case 'tavily':
-    case 'google':
-      return {
-        module: config.provider,
-        ...baseConfig,
-      };
-  }
-}
-export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
-  return {
-    provider: agent.module,
-    rules: agent.rules || null,
-    source: agent.source,
-    brave: {
-      country: agent.module === 'brave' ? agent.country : '',
-      domain: agent.module === 'brave' ? agent.domain : '',
-    },
-    perplexity: {
-      domain: agent.module === 'perplexity' ? agent.domain : [''],
-      top_k: agent.module === 'perplexity' ? agent.top_k : 0,
-      related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
-      images: agent.module === 'perplexity' ? agent.images : false,
-    },
-  };
-}
 export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
@@ -530,8 +482,6 @@ export function getAgentFromConfig(
   switch (nodeType) {
     case 'rephrase':
       return rephraseUiToCreation(cleanConfig);
-    case 'internet':
-      return internetUiToCreation(cleanConfig);
     case 'sql':
       return sqlUiToCreation(cleanConfig);
     case 'ask':
@@ -545,17 +495,7 @@ export function getAgentFromConfig(
     case 'preprocess_alinia':
     case 'postprocess_alinia':
       return guardrailsUiToCreation(cleanConfig);
-    case 'historical':
-    case 'cypher':
-    case 'pre_conditional':
-    case 'context_conditional':
-    case 'post_conditional':
-    case 'summarize':
-    case 'generate':
-    case 'restart':
-    case 'remi':
-    case 'restricted':
-    case 'mcp':
+    default:
       return { module: nodeType, ...cleanConfig };
   }
 }
@@ -584,11 +524,6 @@ export function getConfigFromAgent(
   switch (agent.module) {
     case 'rephrase':
       return rephraseAgentToUi(agent as RephraseAgent);
-    case 'brave':
-    case 'perplexity':
-    case 'tavily':
-    case 'google':
-      return internetAgentToUi(agent as InternetAgent);
     case 'sql':
       return sqlAgentToUi(agent as SqlAgent);
     case 'ask':
@@ -600,18 +535,7 @@ export function getConfigFromAgent(
     case 'preprocess_alinia':
     case 'postprocess_alinia':
       return guardrailsAgentToUi(agent as GuardrailsAgent);
-    case 'historical':
-    case 'cypher':
-    case 'mcp':
-    case 'pre_conditional':
-    case 'context_conditional':
-    case 'post_conditional':
-    case 'restricted':
-    case 'sparql':
-    case 'summarize':
-    case 'generate':
-    case 'restart':
-    case 'remi':
+    default:
       return { ...agent } as any as NodeConfig;
   }
 }

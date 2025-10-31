@@ -57,6 +57,7 @@ import { ConditionalNodeComponent } from './nodes/conditional/conditional-node.c
 import { CypherNodeComponent } from './nodes/cypher/cypher-node.component';
 import { ExternalFormComponent } from './nodes/external/external-form.component';
 import { ExternalNodeComponent } from './nodes/external/external-node.component';
+import { GuardrailsFormComponent } from './nodes/guardrails/guardrails-form.component';
 import { GenerateNodeComponent } from './nodes/generate/generate-node.component';
 import { HistoricalNodeComponent } from './nodes/historical/historical-node.component';
 import { InternetFormComponent } from './nodes/internet/internet-form.component';
@@ -1243,85 +1244,6 @@ export class WorkflowService {
     return createComponent(DynamicNodeComponent, {
       environmentInjector: this.environmentInjector,
     });
-
-    // Fallback to hardcoded components for backward compatibility
-    switch (nodeType) {
-      case 'historical':
-        return createComponent(HistoricalNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'rephrase':
-        return createComponent(RephraseNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'pre_conditional':
-        return createComponent(ConditionalNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'context_conditional':
-        return createComponent(ConditionalNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'post_conditional':
-        return createComponent(ConditionalNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'summarize':
-        return createComponent(SummarizeNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'restart':
-        return createComponent(RestartNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'ask':
-      case 'basic_ask':
-        return createComponent(AskNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'internet':
-        return createComponent(InternetNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'sql':
-        return createComponent(SqlNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'cypher':
-        return createComponent(CypherNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'remi':
-        return createComponent(RemiNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'external':
-        return createComponent(ExternalNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'restricted':
-        return createComponent(RestrictedNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'mcp':
-        return createComponent(McpNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'generate':
-        return createComponent(GenerateNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      case 'preprocess_alinia':
-      case 'postprocess_alinia':
-        return createComponent(GuardrailsNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-      default:
-        // If no hardcoded component exists, try the dynamic component even without schemas
-        return createComponent(DynamicNodeComponent, {
-          environmentInjector: this.environmentInjector,
-        });
-    }
   }
 
   /**
@@ -1343,10 +1265,10 @@ export class WorkflowService {
       case 'restricted':
         nodeTypeOverride = 'python';
         break;
-      case 'preprocess_alinia':
-      case 'postprocess_alinia':
-        nodeTypeOverride = 'alinia';
-        break;
+      // case 'preprocess_alinia':
+      // case 'postprocess_alinia':
+      //   nodeTypeOverride = 'alinia';
+      //   break;
 
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
@@ -1354,6 +1276,9 @@ export class WorkflowService {
         return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
         return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
+      case 'preprocess_alinia':
+      case 'postprocess_alinia':
+        return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
       case 'rephrase':
         return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
     }
@@ -1364,74 +1289,6 @@ export class WorkflowService {
     defaultRef.setInput('formGroupName', nodeTypeOverride); // ex: 'historical', 'rephrase', 'sql'...
     defaultRef.setInput('schemas', this._schemasSubject.getValue()); // Provide current schemas
     return defaultRef;
-  }
-
-  private getPossibleNodes(nodeCategory: NodeCategory): Observable<NodeType[]> {
-    return forkJoin([
-      this.featureService.unstable.aragAlinia.pipe(take(1)),
-      this.featureService.unstable.aragCondition.pipe(take(1)),
-      this.featureService.unstable.aragSql.pipe(take(1)),
-      this.featureService.unstable.aragCypher.pipe(take(1)),
-      this.featureService.unstable.aragRestrictedPython.pipe(take(1)),
-      this.featureService.unstable.aragMcp.pipe(take(1)),
-    ]).pipe(
-      map(([aragAlinia, aragCondition, aragSql, aragCypher, aragRestrictedPython, aragMcp]) => {
-        return (NODES_BY_ENTRY_TYPE[nodeCategory] || []).filter((nodeType) => {
-          if (!FF_NODE_TYPES.includes(nodeType)) {
-            return true;
-          } else {
-            if ((nodeType === 'preprocess_alinia' || nodeType === 'postprocess_alinia') && aragAlinia) {
-              return true;
-            }
-            if (
-              (nodeType === 'pre_conditional' ||
-                nodeType === 'context_conditional' ||
-                nodeType === 'post_conditional') &&
-              aragCondition
-            ) {
-              return true;
-            }
-            if (nodeType === 'sql' && aragSql) {
-              return true;
-            }
-            if (nodeType === 'cypher' && aragCypher) {
-              return true;
-            }
-            if (nodeType === 'restricted' && aragRestrictedPython) {
-              return true;
-            }
-            if (nodeType === 'mcp' && aragMcp) {
-              return true;
-            }
-            return false;
-          }
-        });
-      }),
-    );
-  }
-
-  getModels() {
-    const unsupportedModels = ['generative-multilingual-2023'];
-    return this.sdk.currentArag.pipe(
-      take(1),
-      switchMap((arag) => arag.getLearningSchema()),
-      map((schema) =>
-        (schema?.['generative_model'].options || []).filter((model) => !unsupportedModels.includes(model.value)),
-      ),
-    );
-  }
-
-  /**
-   * Fetch models and update shared state
-   */
-  fetchModels() {
-    this.getModels().subscribe((models) => {
-      this._modelsSubject.next(models);
-    });
-  }
-
-  getSchemas() {
-    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
   }
 
   /**
@@ -1503,6 +1360,30 @@ export class WorkflowService {
         throw error;
       }
     }
+  }
+
+  getModels() {
+    const unsupportedModels = ['generative-multilingual-2023'];
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) => arag.getLearningSchema()),
+      map((schema) =>
+        (schema?.['generative_model'].options || []).filter((model) => !unsupportedModels.includes(model.value)),
+      ),
+    );
+  }
+
+  /**
+   * Fetch models and update shared state
+   */
+  fetchModels() {
+    this.getModels().subscribe((models) => {
+      this._modelsSubject.next(models);
+    });
+  }
+
+  getSchemas() {
+    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
   }
 
   /**

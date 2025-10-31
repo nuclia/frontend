@@ -66,14 +66,14 @@
             [property]="field.property"
             [required]="field.required"></app-enum-select>
 
-          <!-- MCP Source Select -->
-          <app-mcp-source-select
-            *ngSwitchCase="'mcp-source-select'"
+          <!-- Filtered Source Select -->
+          <app-filtered-source-select
+            *ngSwitchCase="'filtered-source-select'"
             [form]="subFormGroup"
             [controlName]="field.key"
             [label]="field.label"
             [property]="field.property"
-            [required]="field.required"></app-mcp-source-select>
+            [required]="field.required"></app-filtered-source-select>
 
           <!-- Model select fields -->
           <app-model-select

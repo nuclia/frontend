@@ -1,21 +1,31 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { SDKService } from '@flaps/core';
-import { McpHttpDriver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { WorkflowService } from '../../../../workflow.service';
+import { aragUrl } from '../../../../workflow.state';
 
 @Component({
-  selector: 'app-mcp-source-select',
-  templateUrl: './mcp-source-select.component.html',
+  selector: 'app-filtered-source-select',
+  templateUrl: './filtered-source-select.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    RouterLink,
+    TranslateModule,
+    InfoCardComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class McpSourceSelectComponent implements OnInit {
+export class FilteredSourceSelectComponent implements OnInit {
   @Input() label: string = '';
   @Input() required: boolean = false;
   @Input() form?: FormGroup;
@@ -25,11 +35,11 @@ export class McpSourceSelectComponent implements OnInit {
   private sdk = inject(SDKService);
   private workflowService = inject(WorkflowService);
   private toaster = inject(SisToastService);
-  private drivers = signal<(McpHttpDriver | McpSseDriver | McpStdioDriver)[]>([]);
-  private transportType = signal<string | null>(null);
+  private drivers = signal<any[]>([]);
+  transportType = signal<string | null>(null);
 
   // Computed properties
-  mcpList = computed(() => {
+  filteredList = computed(() => {
     const transport = this.transportType();
     const allDrivers = this.drivers();
 
@@ -40,26 +50,36 @@ export class McpSourceSelectComponent implements OnInit {
     return allDrivers.filter((driver) => driver.provider.includes(transport.toLowerCase()));
   });
 
+  driversPath = computed(() => `${aragUrl()}/drivers`);
+
+  // Computed property to check if there are no valid driver options
+  hasNoValidOptions = computed(() => {
+    const filteredDrivers = this.filteredList();
+    return filteredDrivers !== null && filteredDrivers.length === 0;
+  });
+
   ngOnInit(): void {
     this.workflowService.driverModels$.subscribe((drivers) => {
-      const mcpDrivers =
-        (drivers?.filter((driver) => driver.provider.includes('mcp')) as (
-          | McpSseDriver
-          | McpStdioDriver
-          | McpHttpDriver
-        )[]) || [];
-      this.drivers.set(mcpDrivers);
+      const filteredDrivers = drivers || [];
+      this.drivers.set(filteredDrivers);
     });
 
     // Listen for transport changes in the form
     if (this.form) {
       const transportControl = this.form.get('transport');
+      const moduleControl = this.form.get('module');
       if (transportControl) {
         // Set initial value
         this.transportType.set(transportControl.value);
 
         // Listen for changes
         transportControl.valueChanges.subscribe((value) => {
+          this.transportType.set(value);
+        });
+      } else if (moduleControl) {
+        // Fallback to module control if transport is not available
+        this.transportType.set(moduleControl.value);
+        moduleControl.valueChanges.subscribe((value) => {
           this.transportType.set(value);
         });
       }

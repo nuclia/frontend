@@ -15,7 +15,7 @@ import {
 } from '../subcomponents';
 import { ModelSelectComponent } from '../subcomponents/model-select/model-select.component';
 import { SubformFieldComponent } from '../subcomponents/subform-field/subform-field.component';
-import { McpSourceSelectComponent } from '../subcomponents/mcp-source-select/mcp-source-select.component';
+import { FilteredSourceSelectComponent } from '../subcomponents/filtered-source-select/filtered-source-select.component';
 import { RulesFieldComponent } from '../../rules-field/rules-field.component';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
@@ -31,7 +31,7 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
     EnumSelectComponent,
     ExpandableTextareaComponent,
     KeyValueFieldComponent,
-    McpSourceSelectComponent,
+    FilteredSourceSelectComponent,
     ModelSelectComponent,
     PaTextFieldModule,
     PaTogglesModule,

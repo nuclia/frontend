@@ -1,0 +1,30 @@
+<div class="form-entry">
+  <label [for]="controlName">
+    {{ label }}
+    @if (required) {
+      <span style="color: red">*</span>
+    }
+  </label>
+  <div [formGroup]="form!">
+    <pa-select
+      [id]="controlName"
+      [formControlName]="controlName!"
+      [required]="required">
+      @for (source of filteredList(); track source.identifier) {
+        <pa-option [value]="source.identifier">{{ source.name }}</pa-option>
+      }
+    </pa-select>
+  </div>
+
+  @if (hasNoValidOptions()) {
+    <nsi-info-card type="warning">
+      {{ 'retrieval-agents.workflow.node-types.' + transportType() + '.form.no-source' | translate }}
+    </nsi-info-card>
+    <pa-button
+      aspect="basic"
+      size="small"
+      [routerLink]="driversPath()">
+      {{ 'retrieval-agents.workflow.node-types.' + transportType() + '.form.go-to-drivers' | translate }}
+    </pa-button>
+  }
+</div>

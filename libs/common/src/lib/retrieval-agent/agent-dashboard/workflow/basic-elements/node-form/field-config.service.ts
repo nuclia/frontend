@@ -22,7 +22,7 @@ export class FieldConfigService {
     rids: { component: 'custom-placeholder', type: 'custom' },
     detection_config: { component: 'custom-placeholder', type: 'custom' },
     // Driver selection fields
-    source: { component: 'mcp-source-select', type: 'custom' },
+    source: { component: 'filtered-source-select', type: 'custom' },
     cypher: { component: 'driver-select', type: 'custom', additionalProps: { provider: 'cypher' } },
     kb: { component: 'driver-select', type: 'custom', additionalProps: { provider: 'nucliadb' } },
     provider: { component: 'driver-select', type: 'custom', additionalProps: { provider: 'alinia' } },
