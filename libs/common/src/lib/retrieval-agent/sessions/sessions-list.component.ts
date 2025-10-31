@@ -23,6 +23,7 @@ import {
   PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
+  PaDateTimeModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { getFilterFromDate, getFilterFromVisibility, Session, SortField, SortOption } from '@nuclia/core';
@@ -67,6 +68,7 @@ import {
     TablePaginationComponent,
     StickyFooterComponent,
     RouterLink,
+    PaDateTimeModule,
   ],
   templateUrl: './sessions-list.component.html',
   styleUrls: ['./sessions-list.component.scss'],
