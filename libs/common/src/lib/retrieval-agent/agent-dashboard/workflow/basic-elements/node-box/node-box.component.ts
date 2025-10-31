@@ -38,6 +38,8 @@ export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, 
   protected unsubscribeAll = new Subject<void>();
   readonly id = `box-${boxIndex++}`;
   linkRef?: ComponentRef<LinkComponent>;
+  private pendingFrame?: number;
+  private pendingTimeout?: ReturnType<typeof setTimeout>;
   private subscribedEntries = new Set<string>();
 
   root = input(false, { transform: booleanAttribute });
@@ -105,13 +107,16 @@ export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, 
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.visible.set(true));
-    this.addLink();
+    setTimeout(() => {
+      this.visible.set(true);
+      this.addLink();
+    });
   }
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.cancelScheduledLink();
   }
 
   updateLink() {
@@ -129,13 +134,47 @@ export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, 
 
   private addLink() {
     const entry = this.origin();
-    if (entry && this.inputElement) {
-      const leftBox = entry.outputElement.nativeElement.getBoundingClientRect();
-      const rightBox = this.inputElement.nativeElement.getBoundingClientRect();
-      this.linkRef = this.linkService.drawLink(leftBox, rightBox);
+    const inputElement = this.inputElement?.nativeElement as HTMLElement | undefined;
+    const outputElement = entry?.outputElement.nativeElement as HTMLElement | undefined;
+
+    if (!inputElement || !outputElement) {
+      return;
+    }
+
+    this.scheduleLinkCreation(() => {
+      this.linkRef = this.linkService.drawLink(outputElement, inputElement);
       if (this.linkRef) {
         this.linkRef.setInput('state', this.state());
       }
+    });
+  }
+
+  private scheduleLinkCreation(callback: () => void) {
+    this.cancelScheduledLink();
+
+    if (typeof requestAnimationFrame === 'function') {
+      this.pendingFrame = requestAnimationFrame(() => {
+        this.pendingFrame = requestAnimationFrame(() => {
+          this.pendingFrame = undefined;
+          callback();
+        });
+      });
+    } else {
+      this.pendingTimeout = setTimeout(() => {
+        this.pendingTimeout = undefined;
+        callback();
+      });
+    }
+  }
+
+  private cancelScheduledLink() {
+    if (this.pendingFrame !== undefined) {
+      cancelAnimationFrame(this.pendingFrame);
+      this.pendingFrame = undefined;
+    }
+    if (this.pendingTimeout !== undefined) {
+      clearTimeout(this.pendingTimeout);
+      this.pendingTimeout = undefined;
     }
   }
 }

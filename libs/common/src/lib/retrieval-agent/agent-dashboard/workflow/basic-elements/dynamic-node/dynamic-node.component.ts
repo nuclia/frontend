@@ -11,6 +11,11 @@ import {
 import { WorkflowService } from '../../workflow.service';
 import { ARAGSchemas } from '@nuclia/core';
 
+// Extend JSONSchema4 to include show_in_node property
+interface ExtendedJSONSchema4 extends JSONSchema4 {
+  show_in_node?: boolean;
+}
+
 interface SchemaEntry {
   schema: JSONSchema4;
   title: string;
@@ -37,17 +42,33 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       return [];
     }
 
-    // Filter out internal/system properties and get the first 3 meaningful properties
-    const meaningfulProperties = Object.entries(config)
-      .filter(
-        ([key, value]) =>
-          !['id', 'module', 'rules'].includes(key) && // Skip system properties
-          value !== null &&
-          value !== undefined &&
-          value !== '' &&
-          (typeof value !== 'object' || (Array.isArray(value) && value.length > 0)),
-      )
-      .slice(0, 3);
+    // Get the current schema to check for show_in_node property
+    const schemaEntry = this.schemaEntry();
+    const schema = schemaEntry?.schema;
+
+    // Filter properties based on schema's show_in_node flag and other criteria
+    const meaningfulProperties = Object.entries(config).filter(([key, value]) => {
+      // Check if value is meaningful
+      if (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (typeof value === 'object' && !Array.isArray(value)) ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
+        return false;
+      }
+
+      // Check schema for show_in_node property
+      if (schema?.properties?.[key]) {
+        const propertySchema = schema.properties[key] as ExtendedJSONSchema4;
+        // Only show if show_in_node is explicitly set to true
+        return propertySchema.show_in_node === true;
+      }
+
+      // If no schema available or property not found in schema, don't show
+      return false;
+    });
 
     return meaningfulProperties.map(([key, value]) => ({
       title: this.formatPropertyName(key),
