@@ -19,6 +19,9 @@ import {
   ConversationFieldPages,
   longToShortFieldType,
   LabelSets,
+  LinkFieldData,
+  CloudLink,
+  NestedPosition,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { forkJoin, map, Observable, of } from 'rxjs';
@@ -326,11 +329,19 @@ export const getClassificationsPayload = (resource: Resource, labels: Classifica
 
 export function getParagraphsWithImages(
   paragraphs: ParagraphWithTextAndClassifications[],
-  fieldData: FileFieldData,
+  fieldData: FileFieldData | LinkFieldData,
 ): ParagraphWithTextAndImage[] {
-  const extractedData = (fieldData as FileFieldData)?.extracted?.file;
-  const imagePositions = Object.entries(extractedData?.nested_list_position || {}).filter(
-    ([filename]) => extractedData?.file_generated?.[filename]?.content_type?.startsWith('image/'),
+  const generatedFiles =
+    fieldData.extracted && 'file' in fieldData.extracted
+      ? (fieldData as FileFieldData).extracted?.file?.file_generated || {}
+      : (fieldData as LinkFieldData).extracted?.link?.file_generated || {};
+  const nestedListPosition =
+    fieldData.extracted && 'file' in fieldData.extracted
+      ? fieldData.extracted?.file?.nested_list_position
+      : getLinkFilesPositions(paragraphs, generatedFiles);
+
+  const imagePositions = Object.entries(nestedListPosition || {}).filter(
+    ([filename]) => generatedFiles?.[filename]?.content_type?.startsWith('image/'),
   );
   if (imagePositions.length === 0) {
     return paragraphs;
@@ -342,7 +353,7 @@ export function getParagraphsWithImages(
           acc.push({
             text: '',
             paragraphId: `${filename}-${position.start}-${position.end}`,
-            imagePath: extractedData?.file_generated?.[filename]?.uri || '',
+            imagePath: generatedFiles?.[filename]?.uri || '',
             userClassifications: [],
             generatedClassifications: [],
             activeClassifications: [],
@@ -353,6 +364,19 @@ export function getParagraphsWithImages(
     acc.push(paragraph);
     return acc;
   }, [] as ParagraphWithTextAndImage[]);
+}
+
+function getLinkFilesPositions(paragraphs: Paragraph[], files: { [id: string]: CloudLink }) {
+  return paragraphs.reduce(
+    (acc, curr) => {
+      const filename = curr.representation?.reference_file;
+      if (filename && files[filename] && !acc[filename] && curr.start) {
+        acc[filename] = { positions: [{ start: curr.start + 1, end: curr.start + 1 }] };
+      }
+      return acc;
+    },
+    {} as { [id: string]: { positions: NestedPosition[] } },
+  );
 }
 
 export function getCustomEntities(resource: Resource): { [key: string]: string[] } {
