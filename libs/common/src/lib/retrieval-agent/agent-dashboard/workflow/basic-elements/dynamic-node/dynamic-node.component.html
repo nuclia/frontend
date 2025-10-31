@@ -1,0 +1,17 @@
+<app-node-box
+  [state]="state()"
+  [nodeTitle]="nodeTitle()"
+  [origin]="origin()"
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
+  <app-config-block [config]="nodeConfig()"></app-config-block>
+
+  @for (entry of fallbackEntries(); track entry.id) {
+    <app-connectable-entry
+      [id]="entry.id"
+      [category]="category()"
+      [nodeId]="id">
+      {{ entry.title }}
+    </app-connectable-entry>
+  }
+</app-node-box>
