@@ -473,6 +473,7 @@ export interface LinkExtractedData {
   description?: string;
   type?: string;
   embed?: string;
+  file_generated?: { [id: string]: CloudLink };
 }
 
 export interface PositionedNER {

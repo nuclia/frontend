@@ -11,6 +11,7 @@ import {
   FileField,
   FileFieldData,
   IError,
+  LinkFieldData,
   Message,
   MessageAttachment,
   Resource,
@@ -152,10 +153,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
   ]).pipe(
     map(([paragraphs, fieldType, fieldData]) => {
       paragraphs = paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
-      if (fieldType.field_type !== FIELD_TYPE.file) {
-        return paragraphs;
+      if ([FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
+        return getParagraphsWithImages(paragraphs, fieldData as FileFieldData | LinkFieldData);
       } else {
-        return getParagraphsWithImages(paragraphs, fieldData as FileFieldData);
+        return paragraphs;
       }
     }),
     map((paragraphs) => {
