@@ -15,6 +15,15 @@
     gap: rhythm(2);
   }
 
+  .allowed-ips {
+    align-items: flex-start;
+    display: flex;
+    gap: rhythm(1);
+    pa-textarea {
+      width: 100%;
+    }
+  }
+
   .kb-status {
     h3 {
       margin-bottom: rhythm(1);
