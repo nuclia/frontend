@@ -25,6 +25,7 @@ export interface IKnowledgeBoxBase {
   description?: string;
   zone: string;
   allowed_origins?: string[] | null;
+  allowed_ip_addresses?: string[] | null;
   search_configs?: { [key: string]: any };
   hidden_resources_enabled?: boolean;
   hidden_resources_hide_on_creation?: boolean;

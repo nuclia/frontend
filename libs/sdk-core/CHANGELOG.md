@@ -7,6 +7,7 @@
 ### Improvements
 
 - Support model configurations
+- Add `allowed_ip_addresses` property to Knowledge Box
 
 # 1.29.0 (2025-10-01)
 

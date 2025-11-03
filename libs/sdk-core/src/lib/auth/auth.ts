@@ -4,7 +4,7 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import type { AuthTokens, NucliaDBRole } from './auth.models';
+import type { AuthInfo, AuthTokens, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -250,6 +250,11 @@ export class Authentication implements IAuthentication {
    */
   deleteAuthenticatedUser(): Observable<void> {
     return this.nuclia.rest.delete('/user').pipe(tap(() => this.storeTokens({ access_token: '', refresh_token: '' })));
+  }
+
+  /** Returns authentication information */
+  getAuthInfo(includeIP = false): Observable<AuthInfo> {
+    return this.nuclia.rest.get(`/authorizer/info${includeIP ? '?ip_info=1' : ''}`);
   }
 
   /**
