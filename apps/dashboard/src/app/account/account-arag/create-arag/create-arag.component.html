@@ -10,6 +10,7 @@
         <pa-input
           externalLabel
           id="name"
+          data-cy="new-arag-name-input"
           [placeholder]="'account.retrieval-agents.create-dialog.name-placeholder' | translate"
           formControlName="name"></pa-input>
       </div>
@@ -28,6 +29,7 @@
     <pa-button
       kind="primary"
       [disabled]="form.invalid"
+      data-cy="new-arag-save-button"
       (click)="create()">
       {{ 'generic.save' | translate }}
     </pa-button>

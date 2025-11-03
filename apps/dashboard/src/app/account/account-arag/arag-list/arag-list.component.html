@@ -42,6 +42,7 @@
               <pa-table-cell>
                 <a
                   class="go-to-arag"
+                  [attr.data-cy]="arag.title + '-link'"
                   (click)="goToArag(arag)">
                   {{ arag.title }}
                 </a>
