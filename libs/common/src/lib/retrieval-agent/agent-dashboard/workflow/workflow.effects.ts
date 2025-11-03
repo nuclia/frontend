@@ -231,7 +231,12 @@ export class WorkflowEffectService {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
       } else if (parentNode[key as keyof ParentNode] === childId) {
         const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
-        (parentNode.nodeConfig as any)[key] = childConfig;
+        const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || key;
+        const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
+        parentConfig[configKey] = childConfig;
+        if (configKey !== key && key in parentConfig) {
+          delete parentConfig[key];
+        }
         updatedChildren.push({ id: childId });
       }
     });

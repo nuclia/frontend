@@ -521,6 +521,10 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
         if (defName.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
           return true;
         }
+
+        if (nodeType === 'restricted' && defName.toLowerCase().includes('python')) {
+          return true;
+        }
       }
     }
 
