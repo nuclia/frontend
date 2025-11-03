@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, merge, Observable, of, Subject } from 'rxjs';
-import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { StandaloneService } from '../services';
 import { Sluggable } from '../validators';
 
@@ -28,6 +28,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
     allowed_origins: new FormControl<string | null>(null),
+    allowed_ip_addresses: new FormControl<string | null>(null),
     hidden_resources_enabled: new FormControl<boolean>(false, { nonNullable: true }),
     hidden_resources_hide_on_creation: new FormControl<boolean>(false, { nonNullable: true }),
   });
@@ -48,6 +49,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
 
   saving = false;
   standalone = this.standaloneService.standalone;
+  ipAddress = this.sdk.nuclia.auth.getAuthInfo(true).pipe(
+    map((info) => info.ip_info?.client),
+    shareReplay(1),
+  );
 
   constructor(
     private sdk: SDKService,
@@ -82,6 +87,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         title: this.kb.title,
         description: this.kb.description || '',
         allowed_origins: (this.kb.allowed_origins || []).join('\n'),
+        allowed_ip_addresses: (this.kb.allowed_ip_addresses || []).join('\n'),
         hidden_resources_enabled: this.kb.hidden_resources_enabled || false,
         hidden_resources_hide_on_creation: this.kb.hidden_resources_hide_on_creation || false,
       });
@@ -106,6 +112,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       ?.split('\n')
       .map((origin) => origin.trim())
       .filter((origin) => !!origin);
+    const ipAddresses = kbDetails.allowed_ip_addresses
+      ?.split('\n')
+      .map((origin) => origin.trim())
+      .filter((origin) => !!origin);
 
     kbBackup
       .modify({
@@ -113,6 +123,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         description: kbDetails.description,
         slug: newSlug,
         allowed_origins: !!origins && origins.length > 0 ? origins : null,
+        allowed_ip_addresses: !!ipAddresses && ipAddresses.length > 0 ? ipAddresses : null,
         hidden_resources_enabled: kbDetails.hidden_resources_enabled,
         hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
           ? kbDetails.hidden_resources_hide_on_creation
@@ -120,7 +131,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),
-        catchError(() => {
+        catchError((error) => {
+          const invalidIPs = error?.body?.detail?.some((item: any) => item?.loc?.includes('allowed_ip_addresses'));
+          if (invalidIPs) {
+            this.toast.error(this.translate.instant('kb.settings.toasts.invalid-ips'));
+          }
           this.toast.error(this.translate.instant('kb.settings.toasts.failure'));
           return of(undefined);
         }),

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { KnowledgeBoxSettingsComponent } from './knowledge-box-settings.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PaButtonModule, PaExpanderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaExpanderModule, PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
@@ -13,6 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,
+    PaIconModule,
+    PaPopupModule,
     PaTextFieldModule,
     PaTogglesModule,
     PaExpanderModule,

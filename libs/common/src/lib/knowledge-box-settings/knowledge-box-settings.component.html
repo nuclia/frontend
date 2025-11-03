@@ -61,6 +61,24 @@
               resizable>
               {{ 'kb.form.allowed_origins.label' | translate }}
             </pa-textarea>
+            <div class="allowed-ips">
+              <pa-textarea
+                formControlName="allowed_ip_addresses"
+                [placeholder]="'kb.form.allowed-ips.placeholder' | translate: { ip: ipAddress | async }"
+                help="kb.form.allowed-ips.help"
+                rows="3"
+                resizable>
+                {{ 'kb.form.allowed-ips.label' | translate }}
+              </pa-textarea>
+              <div>
+                <pa-icon
+                  name="info"
+                  [paPopover]="warning"></pa-icon>
+                <pa-popover #warning>
+                  {{ 'kb.form.allowed-ips.warning' | translate: { ip: ipAddress | async } }}
+                </pa-popover>
+              </div>
+            </div>
           }
 
           @if (kb.state?.toLowerCase(); as state) {
