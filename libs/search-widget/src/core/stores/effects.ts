@@ -623,7 +623,7 @@ export function getSearchResults(
       }
     }),
     switchMap((config) =>
-      config && config.config !== 'FALLBACK'
+      config.config && config.config !== 'FALLBACK'
         ? find(query, { search_configuration: config.config })
         : find(query, options),
     ),
