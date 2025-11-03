@@ -196,11 +196,10 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
 
     // For saved workflows, we can create entries based on configuration alone
     // Check for common connectable properties in the config first
-    const commonConnectableProperties = ['fallback', 'then', 'else_'];
-    commonConnectableProperties.forEach((prop) => {
-      if ((config as any)[prop]) {
-        const title = this.formatPropertyName(prop);
-        entries.push({ id: prop, title });
+    Object.entries(config).forEach(([key, value]) => {
+      if (value && typeof value === 'object' && value?.module) {
+        const title = this.formatPropertyName(key);
+        entries.push({ id: key, title });
       }
     });
 
@@ -571,6 +570,8 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
         fallbackEntries.push(...newEntries);
       } else if (
         key.toLowerCase().includes('fallback') ||
+        key.toLowerCase().includes('next_agent') ||
+        key.toLowerCase().includes('nextagent') ||
         key.toLowerCase().includes('else') ||
         key.toLowerCase().includes('alternative')
       ) {

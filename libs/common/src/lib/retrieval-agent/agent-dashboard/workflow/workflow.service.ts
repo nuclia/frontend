@@ -334,7 +334,7 @@ export class WorkflowService {
     columnIndex: number,
   ) {
     // Common connectable properties that typically contain child agents
-    const connectableProperties = ['fallback', 'then', 'else_', 'else'];
+    const connectableProperties = ['fallback', 'next_agent', 'then', 'else_', 'else'];
 
     connectableProperties.forEach((propertyName) => {
       const childAgents = this.getChildAgentsForEntry(agent, propertyName);
@@ -372,12 +372,14 @@ export class WorkflowService {
     }
 
     // Handle common entry ID transformations
+    const camelCaseEntryId = entryId.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
     const possiblePropertyNames = [
       entryId, // Direct match
       entryId + '_', // Add underscore (e.g., 'else' -> 'else_')
       entryId.replace(/[_-]/g, ''), // Remove separators
       entryId.toLowerCase(),
       entryId.toUpperCase(),
+      camelCaseEntryId,
     ];
 
     // Check each possible property name
@@ -796,9 +798,9 @@ export class WorkflowService {
       ExternalCall: 'external_call',
       Historical: 'historical',
       Rephrase: 'rephrase',
-      PreprocessConditional: 'preprocess_conditional',
+      PreprocessConditional: 'pre_conditional',
       PreprocessAlinia: 'preprocess_alinia',
-      PostprocessConditional: 'postprocess_conditional',
+      PostprocessConditional: 'post_conditional',
       PostprocessAlinia: 'postprocess_alinia',
       Restart: 'restart',
       Remi: 'remi',

@@ -97,9 +97,12 @@ export interface ParentNode {
   agentId?: string;
   // properties to store the child nodes’ UI id.
   parentId?: string;
+  parentLinkType?: string;
+  parentLinkConfigProperty?: string;
   then?: string[];
   else?: string[];
   fallback?: string;
+  nextAgent?: string;
   // If node is a child, index in the parent then/else list
   childIndex?: number;
 }
