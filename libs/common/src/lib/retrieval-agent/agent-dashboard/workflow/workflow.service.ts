@@ -1150,9 +1150,13 @@ export class WorkflowService {
   ) {
     updateNode(nodeId, nodeCategory, { nodeConfig: config });
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
+    let childCreated = false;
     if (isCondionalNode(nodeType) && !hasChildInThen(nodeId, nodeCategory)) {
       this.addRequiredNode(nodeId, nodeCategory);
-    } else {
+      childCreated = this.addRequiredNode(nodeId, nodeCategory);
+    }
+
+    if (!childCreated) {
       this.closeSidebar();
     }
   }
@@ -1162,19 +1166,23 @@ export class WorkflowService {
    * @param nodeId Parent node id
    * @param nodeCategory Parent node category
    */
-  private addRequiredNode(nodeId: string, nodeCategory: NodeCategory) {
+  private addRequiredNode(nodeId: string, nodeCategory: NodeCategory): boolean {
     const node = getNode(nodeId, nodeCategory);
     if (!node) {
       throw new Error(`addRequiredNode: Node ${nodeId} not found in the state.`);
     }
     const entries = node.nodeRef.instance.boxComponent.connectableEntries;
     if (!entries) {
-      throw new Error(`addRequiredNode: no entries found for node ${nodeId}.`);
+      return false;
     }
-    const requiredEntry = entries.find((entry) => entry.required());
+
+    const requiredEntry = entries.toArray().find((entry) => entry.required());
     if (requiredEntry) {
       requiredEntry.onOutputClick();
+      return true;
     }
+
+    return false;
   }
 
   /**

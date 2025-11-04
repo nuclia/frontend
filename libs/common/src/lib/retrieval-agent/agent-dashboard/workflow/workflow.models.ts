@@ -70,11 +70,8 @@ export type NodeType =
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
-export function isInternetProvider(x: any): x is InternetProvider {
-  return INTERNET_PROVIDERS.includes(x);
-}
 
-const CONDITIONAL_NODES: NodeType[] = ['pre_conditional', 'context_conditional', 'post_conditional', 'remi'];
+const CONDITIONAL_NODES: NodeType[] = ['pre_conditional', 'context_conditional', 'post_conditional'];
 export type CondionalNodeType = (typeof CONDITIONAL_NODES)[number];
 export function isCondionalNode(x: any): x is CondionalNodeType {
   return CONDITIONAL_NODES.includes(x);
@@ -308,7 +305,7 @@ export interface RestrictedAgentUI extends CommonAgentConfig {
 export function getNodeTypeFromAgent(
   agent: BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent,
 ): NodeType {
-  return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
+  return agent.module as NodeType;
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
   const { userInfo, model, ...agentConfig } = config;

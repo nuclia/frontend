@@ -489,15 +489,6 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       }
     }
 
-    // Special handling for internet providers (brave, perplexity, tavily, google)
-    if (nodeType === 'internet' && schema.properties?.['module']) {
-      const moduleProperty = schema.properties['module'] as JSONSchema4;
-      const internetProviders = ['brave', 'perplexity', 'tavily', 'google'];
-      if (internetProviders.includes(moduleProperty['const'] || moduleProperty['default'] || '')) {
-        return true;
-      }
-    }
-
     // Handle conditional nodes
     if (nodeType.includes('conditional') && schema.title?.toLowerCase().includes('conditional')) {
       return true;
