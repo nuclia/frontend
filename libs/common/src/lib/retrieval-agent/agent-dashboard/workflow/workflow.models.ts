@@ -71,7 +71,7 @@ export type NodeType =
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 
-const CONDITIONAL_NODES: NodeType[] = ['pre_conditional', 'context_conditional', 'post_conditional', 'remi'];
+const CONDITIONAL_NODES: NodeType[] = ['pre_conditional', 'context_conditional', 'post_conditional'];
 export type CondionalNodeType = (typeof CONDITIONAL_NODES)[number];
 export function isCondionalNode(x: any): x is CondionalNodeType {
   return CONDITIONAL_NODES.includes(x);

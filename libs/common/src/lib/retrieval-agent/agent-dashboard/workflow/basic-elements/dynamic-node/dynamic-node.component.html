@@ -12,7 +12,8 @@
     <app-connectable-entry
       [id]="entry.id"
       [category]="category()"
-      [nodeId]="id">
+      [nodeId]="id"
+      [required]="entry.id === 'then'">
       {{ entry.title }}
     </app-connectable-entry>
   }

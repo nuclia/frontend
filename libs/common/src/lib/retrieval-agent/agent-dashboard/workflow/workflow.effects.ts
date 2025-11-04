@@ -16,6 +16,7 @@ import {
   getAgentFromConfig,
   isCondionalNode,
   NodeCategory,
+  NodeType,
   ParentNode,
 } from './workflow.models';
 import {
@@ -120,13 +121,27 @@ export class WorkflowEffectService {
   private isFullyConfigured(node: ParentNode): boolean {
     if (!node.nodeConfig) {
       return false;
-    } else if (isCondionalNode(node.nodeType)) {
+    }
+
+    if (isCondionalNode(node.nodeType) && this.requiresChildNodes(node.nodeType)) {
       const config = node.nodeConfig as BaseConditionalAgentUI;
-      if (!config.then || config.then.length < 1) {
+      if (!Array.isArray(config.then) || config.then.length < 1) {
         return false;
       }
     }
+
     return true;
+  }
+
+  private requiresChildNodes(nodeType: NodeType): boolean {
+    switch (nodeType) {
+      case 'pre_conditional':
+      case 'context_conditional':
+      case 'post_conditional':
+        return true;
+      default:
+        return false;
+    }
   }
 
   private checkForUpdates(node: ParentNode): { request: Observable<void>; nodeId: string; log: string } | undefined {
