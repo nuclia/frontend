@@ -2047,6 +2047,7 @@
 	"tasks-automation.form.filter.excluded-fields.button-label": "Types de champs exclus",
 	"tasks-automation.form.filter.fields.all-types": "Tous types de champs",
 	"tasks-automation.form.filter.fields.button-label": "Types de champs",
+	"tasks-automation.form.filter.filter-expression.help": "Rappel: Filtrez les champs génériques si vous ne souhaitez pas que l’agent s’applique aux titres des ressources.",
 	"tasks-automation.form.filter.filter-expression.title": "Expression de filtre",
 	"tasks-automation.form.filter.filter-expression.use-assistant": "Utiliser l'assistant",
 	"tasks-automation.form.filter.operator": "Utiliser l'opérateur OU pour faire trouver les ressources",

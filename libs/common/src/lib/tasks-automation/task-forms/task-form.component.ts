@@ -411,7 +411,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       .openModal(
         FilterExpressionModalComponent,
         new ModalConfig({
-          data: { filterExpression: this.filterExpression, dataAugmentation: true },
+          data: {
+            filterExpression: this.filterExpression,
+            dataAugmentation: true,
+            help: 'tasks-automation.form.filter.filter-expression.help',
+          },
         }),
       )
       .onClose.pipe(filter((filters) => !!filters))
