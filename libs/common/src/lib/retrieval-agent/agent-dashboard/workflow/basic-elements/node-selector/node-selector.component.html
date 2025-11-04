@@ -1,4 +1,6 @@
-<div class="title-xs">
+<div
+  class="title-xs"
+  [attr.data-cy]="nodeType()">
   {{ nodeTitle() }}
 
   @if (icon(); as icon) {
