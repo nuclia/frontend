@@ -1,16 +1,27 @@
 import { Injectable } from '@angular/core';
 import { JSONSchema4 } from 'json-schema';
 
+export enum WidgetType {
+  ARRAY_STRING_FIELD = 'array_string_field',
+  CODE_EDITOR = 'code_editor',
+  DRIVER_SELECT = 'driver_select',
+  ENUM_SELECT = 'enum_select',
+  EXPANDABLE_TEXTAREA = 'expandable_textarea',
+  FILTERED_SOURCE_SELECT = 'filtered_source_select',
+  KEY_VALUE_FIELD = 'key_value_field',
+  LLM_SELECT = 'llm_select', // Temporary alias
+  MODEL_SELECT = 'model_select',
+  RULES_FIELD = 'rules_field',
+  TRANSPORT_FIELD = 'transport_field',
+  NOT_SHOW = 'not_show', // Used to hide fields
+}
+
 // Extend JSONSchema4 to include the widget property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
   /**
    * Override to specify a custom widget/component for rendering this field.
    */
-  widget?: string;
-  /**
-   * Indicates if the field should be ignored in the form rendering.
-   */
-  isFieldIgnored?: boolean;
+  widget?: WidgetType;
 }
 
 export interface FieldConfig {
@@ -266,8 +277,8 @@ export class FieldConfigService {
   }
 
   isFieldIgnored(key: string, property: ExtendedJSONSchema4): boolean {
-    if (property?.isFieldIgnored) {
-      return property.isFieldIgnored === true;
+    if (property?.widget === WidgetType.NOT_SHOW) {
+      return true;
     }
 
     // @deprecated -> {isFieldIgnored} Used in property schema to define visibility.
