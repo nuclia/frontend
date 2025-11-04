@@ -451,22 +451,49 @@ export function addNode(
   if (!parentId) {
     _addNode(nodeId, nodeCategory, node);
   } else {
+    const property = origin.id();
+    const propertyConfigKey = getConfigPropertyKey(property);
+    const propertyStateKey = toStatePropertyKey(propertyConfigKey);
+
     node.parentId = parentId;
-    childNodes.update((children) => ({ ...children, [nodeRef.instance.id]: node }));
-    // Reference child in parent
+    node.parentLinkType = property;
+    node.parentLinkConfigProperty = propertyConfigKey;
     const parent = getNode(parentId, nodeCategory);
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
     }
-    const property = origin.id();
-    if (property === 'then' || property === 'else') {
-      const childIds = parent[property] || [];
-      childIds.push(nodeId);
-      updateNode(parentId, nodeCategory, { [property]: childIds, isSaved });
-    } else if (property === 'fallback') {
-      updateNode(parentId, nodeCategory, { fallback: nodeId, isSaved });
+    if (propertyStateKey === 'then' || propertyStateKey === 'else') {
+      const existing = (parent as any)?.[propertyStateKey];
+      const childIds = Array.isArray(existing) ? [...existing] : [];
+      const currentIndex = childIds.indexOf(nodeId);
+      if (currentIndex !== -1) {
+        childIds.splice(currentIndex, 1);
+      }
+      const insertionIndex =
+        typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
+          ? childIndex
+          : childIds.length;
+      childIds.splice(insertionIndex, 0, nodeId);
+      node.childIndex = insertionIndex;
+      childNodes.update((children) => ({ ...children, [nodeId]: { ...node } }));
+      updateNode(parentId, nodeCategory, { [propertyStateKey]: childIds, isSaved });
+    } else {
+      childNodes.update((children) => ({ ...children, [nodeId]: node }));
+      updateNode(parentId, nodeCategory, { [propertyStateKey]: nodeId, isSaved });
     }
   }
+}
+
+function getConfigPropertyKey(property: string): string {
+  return property;
+}
+
+function toStatePropertyKey(property: string): string {
+  if (!property) {
+    return property;
+  }
+  const trimmed = property.replace(/[_-]+$/g, '');
+  return trimmed.replace(/[_-]+([a-zA-Z0-9])/g, (_match, char: string) => char.toUpperCase());
 }
 
 function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
@@ -509,6 +536,14 @@ export function deleteNode(
         const nodeConfig = parentNode.nodeConfig as AskAgentUI;
         nodeConfig.fallback = null;
         updateNode(parentId, nodeCategory, { fallback: undefined, nodeConfig });
+      } else if (parentNode.nextAgent === id) {
+        const partial: Partial<ParentNode> = { nextAgent: undefined };
+        if (parentNode.nodeConfig) {
+          const nodeConfig = { ...parentNode.nodeConfig } as any;
+          nodeConfig.next_agent = null;
+          partial.nodeConfig = nodeConfig;
+        }
+        updateNode(parentId, nodeCategory, partial);
       } else if ((parentNode.then || []).includes(id)) {
         const childIds = (parentNode.then || []).filter((childId) => childId !== id);
         updateNode(parentId, nodeCategory, { then: childIds });
@@ -590,6 +625,29 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
 
   const isChild = _isChildNode(id);
   const updatedNode = { ...node, ...partialNode, isSaved: partialNode.isSaved || false };
+
+  if (partialNode.nodeConfig) {
+    const childIdsToMark = [updatedNode.fallback, updatedNode.nextAgent].filter(
+      (childId): childId is string => typeof childId === 'string' && childId.length > 0,
+    );
+
+    if (childIdsToMark.length > 0) {
+      childNodes.update((_nodes) => {
+        let workingNodes = _nodes;
+
+        childIdsToMark.forEach((childId) => {
+          const childNode = workingNodes[childId];
+          if (!childNode || childNode.isSaved === false) {
+            return;
+          }
+          workingNodes = { ...workingNodes, [childId]: { ...childNode, isSaved: false } };
+        });
+
+        return workingNodes;
+      });
+    }
+  }
+
   if (isChild) {
     childNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
   } else {

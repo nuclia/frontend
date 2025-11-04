@@ -103,11 +103,15 @@ export class WorkflowEffectService {
     }
 
     // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
-    const fallbackEntry = node.nodeRef.instance.boxComponent.connectableEntries?.find(
-      (entry) => entry.id() === 'fallback',
-    );
-    if (fallbackEntry) {
-      fallbackEntry.disabledState.set(!!node.fallback);
+    const singleFallbackLinked = ['fallback', 'next_agent'];
+    const fallbackEntries = node.nodeRef.instance.boxComponent.connectableEntries?.filter((entry) => {
+      const hasContent = !!(node.nodeConfig as any)?.[entry.id()]?.module;
+      return hasContent && singleFallbackLinked.includes(entry.id());
+    });
+    if (fallbackEntries?.length) {
+      fallbackEntries.forEach((fallbackEntry) => {
+        fallbackEntry.disabledState.set(!!node.fallback);
+      });
     }
 
     return fullyConfigured;
@@ -219,17 +223,23 @@ export class WorkflowEffectService {
       return;
     }
     const childId = childNode.nodeRef.instance.id;
-    if (parentNode.fallback === childId) {
-      const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig) as BaseContextAgent;
-      (parentNode.nodeConfig as AskAgentUI).fallback = childConfig;
-      updatedChildren.push({ id: childId });
-    } else if (parentNode.then || parentNode.else) {
+
+    Object.keys(parentNode).forEach((key) => {
       if ((parentNode.then || []).includes(childId)) {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
       } else if ((parentNode.else || []).includes(childId)) {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
+      } else if (parentNode[key as keyof ParentNode] === childId) {
+        const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
+        const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || key;
+        const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
+        parentConfig[configKey] = childConfig;
+        if (configKey !== key && key in parentConfig) {
+          delete parentConfig[key];
+        }
+        updatedChildren.push({ id: childId });
       }
-    }
+    });
 
     if (parentNode.parentId) {
       const levelUp = this.getFullyConfiguredRootNode(parentNode);

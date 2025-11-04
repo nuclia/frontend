@@ -1,6 +1,18 @@
 import { Injectable } from '@angular/core';
 import { JSONSchema4 } from 'json-schema';
 
+// Extend JSONSchema4 to include the widget property
+interface ExtendedJSONSchema4 extends JSONSchema4 {
+  /**
+   * Override to specify a custom widget/component for rendering this field.
+   */
+  widget?: string;
+  /**
+   * Indicates if the field should be ignored in the form rendering.
+   */
+  isFieldIgnored?: boolean;
+}
+
 export interface FieldConfig {
   component: string;
   type: string;
@@ -13,6 +25,7 @@ export interface FieldConfig {
 })
 export class FieldConfigService {
   // Special field mappings by key name
+  // @deprecated -> {getConfigFromWidget} Property `widget` in schema should be used instead
   private readonly specialFieldMappings: Record<string, FieldConfig> = {
     rules: { component: 'rules-field', type: 'custom' },
     transport: { component: 'transport-field', type: 'custom' },
@@ -32,11 +45,13 @@ export class FieldConfigService {
       additionalProps: { provider: 'nucliadb', multiselect: true },
     },
     // Model selection fields
-    model: { component: 'model-select', type: 'custom' },
+    conversion_model: { component: 'model-select', type: 'custom' },
     generative_model: { component: 'model-select', type: 'custom' },
+    model: { component: 'model-select', type: 'custom' },
+    rephrase_model: { component: 'model-select', type: 'custom' },
+    sampling_model: { component: 'model-select', type: 'custom' },
     summarize_model: { component: 'model-select', type: 'custom' },
     tool_choice_model: { component: 'model-select', type: 'custom' },
-    sampling_model: { component: 'model-select', type: 'custom' },
     // Basic fields
     code: {
       component: 'code-editor',
@@ -87,8 +102,24 @@ export class FieldConfigService {
     ref: { component: 'subform-field', type: 'subform' },
   };
 
-  getFieldConfig(key: string, property: JSONSchema4, schema?: JSONSchema4): FieldConfig {
-    // Check for special field mappings first
+  /**
+   * Gets the field configuration for rendering a form field.
+   * Priority order:
+   * 1. Widget property in schema (highest priority)
+   * 2. Special field mappings by key name
+   * 3. Source component overrides
+   * 4. Type-based mappings (default)
+   */
+  getFieldConfig(key: string, property: ExtendedJSONSchema4, schema?: JSONSchema4): FieldConfig {
+    // Check for widget property in schema first - this takes highest priority
+    if (property.widget) {
+      const widgetConfig = this.getConfigFromWidget(property.widget);
+      if (widgetConfig) {
+        return { ...widgetConfig, customKey: key };
+      }
+    }
+
+    // Check for special field mappings
     if (this.specialFieldMappings[key]) {
       return { ...this.specialFieldMappings[key], customKey: key };
     }
@@ -103,7 +134,46 @@ export class FieldConfigService {
     return this.typeComponentMappings[type] || this.typeComponentMappings['string'];
   }
 
-  private determineFieldType(property: JSONSchema4, schema?: JSONSchema4): string {
+  /**
+   * Maps widget names from schema to field configurations.
+   * This allows schemas to specify which component to use via the 'widget' property.
+   */
+  private getConfigFromWidget(widget: string): FieldConfig | null {
+    // Map widget names to their corresponding field configurations
+    const widgetMappings: Record<string, FieldConfig> = {
+      // Temporary alias for `model_select`
+      llm_select: { component: 'model-select', type: 'custom' },
+      model_select: { component: 'model-select', type: 'custom' },
+      driver_select: { component: 'driver-select', type: 'custom' },
+      filtered_source_select: { component: 'filtered-source-select', type: 'custom' },
+      code_editor: {
+        component: 'code-editor',
+        type: 'custom',
+        additionalProps: {
+          initialLanguage: 'python',
+          availableLanguages: ['python'],
+          showLanguageSelector: true,
+        },
+      },
+      expandable_textarea: {
+        component: 'expandable-textarea',
+        type: 'custom',
+        additionalProps: {
+          rows: 2,
+          resizable: true,
+        },
+      },
+      transport_field: { component: 'transport-field', type: 'custom' },
+      rules_field: { component: 'rules-field', type: 'custom' },
+      key_value_field: { component: 'key-value-field', type: 'custom' },
+      array_string_field: { component: 'array-string-field', type: 'array' },
+      enum_select: { component: 'enum-select', type: 'enum' },
+    };
+
+    return widgetMappings[widget] || null;
+  }
+
+  private determineFieldType(property: ExtendedJSONSchema4, schema?: JSONSchema4): string {
     if (property['const']) return 'const';
     if (property.enum) return 'enum';
     if (property.$ref && schema) {
@@ -178,7 +248,7 @@ export class FieldConfigService {
     return null;
   }
 
-  private resolvePropertyRef(property: JSONSchema4, schema: JSONSchema4): JSONSchema4 | null {
+  private resolvePropertyRef(property: ExtendedJSONSchema4, schema: JSONSchema4): JSONSchema4 | null {
     // Direct $ref
     if (property.$ref) {
       return this.resolveRef(property.$ref, schema);
@@ -195,8 +265,13 @@ export class FieldConfigService {
     return null;
   }
 
-  isFieldIgnored(key: string, property: JSONSchema4): boolean {
-    const ignoredFields = new Set(['type', 'id', 'module', 'title', 'fallback']);
+  isFieldIgnored(key: string, property: ExtendedJSONSchema4): boolean {
+    if (property?.isFieldIgnored) {
+      return property.isFieldIgnored === true;
+    }
+
+    // @deprecated -> {isFieldIgnored} Used in property schema to define visibility.
+    const ignoredFields = new Set(['type', 'id', 'module', 'title', 'fallback', 'next_agent']);
     return (
       ignoredFields.has(key) ||
       // Ignore fields that are pointers to new agents.
@@ -207,7 +282,7 @@ export class FieldConfigService {
     );
   }
 
-  isSubformField(property: JSONSchema4, schema?: JSONSchema4): boolean {
+  isSubformField(property: ExtendedJSONSchema4, schema?: JSONSchema4): boolean {
     // If we can resolve the $ref, check what it actually points to
     if (schema) {
       const resolvedProperty = this.resolvePropertyRef(property, schema);
@@ -238,7 +313,7 @@ export class FieldConfigService {
     return false;
   }
 
-  getRefFromProperty(property: JSONSchema4): string | null {
+  getRefFromProperty(property: ExtendedJSONSchema4): string | null {
     // Direct $ref
     if (property.$ref) return property.$ref;
 

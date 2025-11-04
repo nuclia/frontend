@@ -68,18 +68,6 @@ export type NodeType =
   | 'restart'
   | 'postprocess_alinia';
 
-export const FF_NODE_TYPES: NodeType[] = [
-  'pre_conditional',
-  'preprocess_alinia',
-  'context_conditional',
-  'sql',
-  'cypher',
-  'mcp',
-  'restricted',
-  'post_conditional',
-  'postprocess_alinia',
-];
-
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
@@ -109,19 +97,15 @@ export interface ParentNode {
   agentId?: string;
   // properties to store the child nodes’ UI id.
   parentId?: string;
+  parentLinkType?: string;
+  parentLinkConfigProperty?: string;
   then?: string[];
   else?: string[];
   fallback?: string;
+  nextAgent?: string;
   // If node is a child, index in the parent then/else list
   childIndex?: number;
 }
-
-export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase', 'pre_conditional', 'preprocess_alinia'],
-  context: ['context_conditional', 'basic_ask', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
-  generation: ['summarize', 'generate'],
-  postprocess: ['restart', 'post_conditional', 'remi', 'external', 'postprocess_alinia'],
-};
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   ask: 'database',
