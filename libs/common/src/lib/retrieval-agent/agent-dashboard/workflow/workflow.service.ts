@@ -754,6 +754,7 @@ export class WorkflowService {
     categoryConfigs.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType);
+      selectorRef.setInput('nodeType', nodeTypeKey);
       selectorRef.setInput(
         'nodeTitle',
         this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),

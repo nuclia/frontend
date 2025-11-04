@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -10,6 +9,7 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NodeSelectorComponent {
+  nodeType = input.required<string>();
   nodeTitle = input.required<string>();
   description = input.required<string>();
   icon = input<string>();
