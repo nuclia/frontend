@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { SDKService, STFUtils } from '@flaps/core';
+import { AnalyticsService, SDKService, STFUtils } from '@flaps/core';
 import { Observable, of, ReplaySubject, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
@@ -32,6 +32,7 @@ export class OnboardingComponent {
     private onboardingService: OnboardingService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
+    private analytics: AnalyticsService,
   ) {}
 
   goBack(): void {
@@ -88,6 +89,8 @@ export class OnboardingComponent {
       zone: this.zone,
     };
 
-    this.onboardingService.createKb(this.account.slug, this.account.id, kbConfig, this.zone).subscribe();
+    this.onboardingService
+      .createKb(this.account.slug, this.account.id, kbConfig, this.zone)
+      .subscribe(() => this.analytics.logTrialActivation());
   }
 }

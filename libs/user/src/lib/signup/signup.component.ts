@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, FeaturesService, LoginService } from '@flaps/core';
+import { AnalyticsService, BackendConfigurationService, FeaturesService, LoginService } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { Subject } from 'rxjs';
@@ -52,6 +52,7 @@ export class SignupComponent implements OnInit {
     private loginService: LoginService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +82,7 @@ export class SignupComponent implements OnInit {
     const formValue = this.signupForm.getRawValue();
     this.loginService.signup(formValue, token).subscribe({
       next: (response) => {
+        this.analytics.logTrialSignup();
         if (response.action === 'check-mail') {
           this.router.navigate(['../check-mail'], {
             relativeTo: this.route,
