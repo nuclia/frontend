@@ -15,7 +15,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { SisModalService } from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { And, FieldFilterExpression, FilterExpression, Not, Or, ParagraphFilterExpression } from '@nuclia/core';
 import { AddFilterModalComponent } from './add-filter-modal/add-filter-modal.component';
 import { filter } from 'rxjs';
@@ -42,6 +42,7 @@ export type FilterTarget = 'field' | 'paragraph';
     AccordionItemComponent,
     CommonModule,
     FilterValueComponent,
+    InfoCardComponent,
     PaButtonModule,
     PaDateTimeModule,
     PaDropdownModule,
@@ -58,17 +59,19 @@ export type FilterTarget = 'field' | 'paragraph';
 export class FilterExpressionModalComponent {
   filterExpression: FilterExpression = {};
   dataAugmentation = false;
+  help?: string;
 
   @ViewChildren(AccordionItemComponent) accordionItems: AccordionItemComponent[] = [];
 
   constructor(
-    public modal: ModalRef<{ filterExpression: string; dataAugmentation?: boolean }, string>,
+    public modal: ModalRef<{ filterExpression: string; dataAugmentation?: boolean; help?: string }, string>,
     private modalService: SisModalService,
     private cdr: ChangeDetectorRef,
   ) {
     try {
       this.filterExpression = JSON.parse(this.modal.config.data?.filterExpression || '{}');
       this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
+      this.help = this.modal.config.data?.help;
     } catch {
       // Invalid filter expression
     }

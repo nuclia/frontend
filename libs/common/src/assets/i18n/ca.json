@@ -2047,6 +2047,7 @@
 	"tasks-automation.form.filter.excluded-fields.button-label": "Tipus de camps exclosos",
 	"tasks-automation.form.filter.fields.all-types": "Tots els tipus de camp",
 	"tasks-automation.form.filter.fields.button-label": "Tipus de camp",
+	"tasks-automation.form.filter.filter-expression.help": "Recordatori: Filtra els camps genèrics si no vols que l'agent s'apliqui als títols dels recursos.",
 	"tasks-automation.form.filter.filter-expression.title": "Expressió de filtre",
 	"tasks-automation.form.filter.filter-expression.use-assistant": "Utilitza l'assistent",
 	"tasks-automation.form.filter.operator": "Utilitzar l'operador OR per fer trobar els recursos",

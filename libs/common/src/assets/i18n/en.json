@@ -2071,6 +2071,7 @@
 	"tasks-automation.form.filter.excluded-fields.button-label": "Excluded field types",
 	"tasks-automation.form.filter.fields.all-types": "All field types",
 	"tasks-automation.form.filter.fields.button-label": "Field types",
+	"tasks-automation.form.filter.filter-expression.help": "Reminder: Filter out generic fields if you don't want the agent to apply to resource titles.",
 	"tasks-automation.form.filter.filter-expression.title": "Filter expression",
 	"tasks-automation.form.filter.filter-expression.use-assistant": "Use assistant",
 	"tasks-automation.form.filter.operator": "Use OR operator to find resources",

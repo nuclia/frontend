@@ -7,6 +7,9 @@
 
   <pa-modal-content>
     <div class="filters-container">
+      @if (help) {
+        <nsi-info-card>{{ help | translate }}</nsi-info-card>
+      }
       <pa-accordion>
         <pa-accordion-item
           id="field"
