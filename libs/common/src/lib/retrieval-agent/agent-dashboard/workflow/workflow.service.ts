@@ -649,6 +649,7 @@ export class WorkflowService {
     discriminatorOptions.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType as NodeType);
+      selectorRef.setInput('nodeType', nodeTypeKey);
       selectorRef.setInput(
         'nodeTitle',
         this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
