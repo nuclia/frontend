@@ -13,7 +13,7 @@ data:
   CDN: "{{ .Values.cdn }}"
   BRAND_NAME: "{{ .Values.brand_name }}"
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
-  GOOGLE_ANALYTICS: "{{ .Values.google_analytics }}""
+  GOOGLE_ANALYTICS: "{{ .Values.google_analytics }}"
   ASSETS_PATH: "{{ .Values.assets_path }}"
   NO_STRIPE: "{{ .Values.no_stripe }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
