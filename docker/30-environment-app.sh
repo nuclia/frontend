@@ -54,6 +54,9 @@ function apply_path {
 
     echo "Configuring NO_STRIPE vars"
     sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
+
+    echo "Configuring STF_DOCKER_CONFIG_GOOGLE_ANALYTICS vars"
+    sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html
     
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"

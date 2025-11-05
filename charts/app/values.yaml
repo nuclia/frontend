@@ -9,7 +9,8 @@ containerRegistry: CONTAINER_REGISTRY_TO_REPLACE
 image: IMAGE_TO_REPLACE
 hash: HASH_VERSION_TO_REPLACE
 
-resources: {}
+resources:
+  {}
   # limits:
   #   memory: '50Mi'
   #   cpu: '50m'
@@ -20,6 +21,7 @@ service:
 
 app_name: app
 no_stripe: false
+google_analytics: XXX
 cdn: XXX
 brand_name: XXX
 brand_domain: XXX
@@ -69,7 +71,6 @@ podDisruptionBudget:
 envFrom:
   - configMapRef:
       name: app-config
-
 ## Intended to be used with secret
 # env:
 #   SITE_KEY: XXX
