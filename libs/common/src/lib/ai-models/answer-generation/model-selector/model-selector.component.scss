@@ -1,0 +1,58 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.selected-model {
+  align-items: center;
+  border: $border-width-regular solid $border-color-field-regular;
+  border-radius: $border-radius-field;
+  display: flex;
+  justify-content: space-between;
+  height: calc($height-field-control + $border-width-regular * 2);
+  padding: $padding-field-control-top $padding-field-control-left;
+  &.disabled {
+    color: $color-text-field-control-disabled;
+  }
+}
+
+.model-name {
+  width: calc(100% - rhythm(4));
+}
+
+.description {
+  color: $color-neutral-regular;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1);
+  padding: rhythm(1);
+}
+
+pa-option-header {
+  border-top: 1px solid $color-neutral-lighter;
+  display: block;
+}
+
+.disclaimer {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-default;
+  padding: rhythm(1);
+}
+
+.disclaimer-body {
+  padding: rhythm(2) rhythm(2);
+  ::ng-deep h3 {
+    @include title-s();
+    margin-bottom: rhythm(1);
+  }
+  ::ng-deep p {
+    @include body-m();
+    color: $color-neutral-regular;
+  }
+}

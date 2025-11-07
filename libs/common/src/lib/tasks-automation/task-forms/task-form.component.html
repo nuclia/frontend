@@ -151,9 +151,10 @@
         <div
           class="form-container"
           formGroupName="llm">
-          <pa-select
+          <stf-model-selector
             formControlName="model"
-            [options]="availableLLMs"></pa-select>
+            [options]="availableLLMs"
+            [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
           <stf-user-keys
             [learningConfigurations]="learningConfigurations"
             [generativeModel]="generativeModel"

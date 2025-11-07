@@ -264,6 +264,7 @@ export interface LearningConfigurationOption {
   user_key?: string;
   user_prompt?: string;
   provider?: string;
+  description?: string;
 }
 
 export interface LearningConfiguration {

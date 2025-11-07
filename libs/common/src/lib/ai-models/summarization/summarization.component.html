@@ -7,15 +7,11 @@
       itemTitle="kb.ai-models.summarization.select-llm.title"
       description="kb.ai-models.summarization.select-llm.description">
       @if (learningConfig['summary_model'].options; as options) {
-        <pa-radio-group
+        <stf-model-selector
           formControlName="summary_model"
-          id="summary_model">
-          @for (option of options; track option.value) {
-            <pa-radio [value]="option.value">
-              {{ option.name }}
-            </pa-radio>
-          }
-        </pa-radio-group>
+          [options]="options"
+          [disclaimerExpanded]="true"
+          [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
       }
     </nsi-two-columns-configuration-item>
 

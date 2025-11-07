@@ -12,12 +12,13 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
-import { RAG_METADATAS, Widget } from '@nuclia/core';
+import { LearningConfigurationOption, RAG_METADATAS, Widget } from '@nuclia/core';
 import { FindResourceModalComponent } from '../find-resource-modal';
+import { ModelSelectorComponent } from '../../../ai-models';
 
 @Component({
   selector: 'stf-generative-answer-form',
@@ -33,6 +34,7 @@ import { FindResourceModalComponent } from '../find-resource-modal';
     PaTextFieldModule,
     BadgeComponent,
     ExpandableTextareaComponent,
+    ModelSelectorComponent,
   ],
   templateUrl: './generative-answer-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +53,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       this.form.patchValue(value);
     }
   }
-  @Input({ required: true }) generativeModels: OptionModel[] = [];
+  @Input({ required: true }) generativeModels: LearningConfigurationOption[] = [];
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
   @Input() defaultSystemPrompt = '';
@@ -137,6 +139,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   isRagImagesEnabled = this.featuresService.authorized.ragImages;
   metadataIds = Object.values(RAG_METADATAS);
   isGraphSearchEnabled = this.featuresService.authorized.graphSearch;
+  modelsDisclaimer = this.featuresService.unstable.modelsDisclaimer;
 
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
