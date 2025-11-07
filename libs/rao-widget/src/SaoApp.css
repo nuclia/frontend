@@ -1,0 +1,309 @@
+.sao-react {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10rem;
+  height: 100%;
+  padding: 2.5rem 3rem;
+  color: #1f1f1f;
+  font-family: var(--nuclia-font, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 60rem);
+  margin: 0 auto;
+}
+
+.sao-react__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.sao-react__brand {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sao-react__icon-button {
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.12);
+  cursor: pointer;
+}
+
+.sao-react__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rhythm-4);
+  text-align: center;
+}
+
+.sao-react__greeting {
+  font-size: clamp(2.5rem, 5vw, 3.25rem);
+  font-weight: 600;
+  margin: 0;
+}
+
+.sao-react__cards {
+  display: flex;
+  flex-direction: row;
+  gap: var(--rhythm-1);
+  width: 100%;
+}
+
+.sao-react__card {
+  flex: 1;
+  appearance: none;
+  background: #f5f6f8;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem 1.25rem;
+  font-size: 0.95rem;
+  color: #4b5563;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.sao-react__card:hover,
+.sao-react__card:focus-visible {
+  background: #ffffff;
+  border-color: #cbd5f5;
+  color: #1f1f1f;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.18);
+  outline: none;
+}
+
+.sao-react__form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.sao-react__square-button {
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  height: var(--rhythm-5);
+  width: var(--rhythm-5);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sao-react__query {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  height: var(--rhythm-5);
+  line-height: 1.5rem;
+  padding: 0 0.5rem;
+  color: #1f2937;
+}
+
+.sao-react__query:focus {
+  outline: none;
+}
+
+.sao-react__ghost-button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: absolute;
+  right: 85px;
+}
+
+.sao-react__submit-button {
+  appearance: none;
+  background: #111827;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 0.55rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  height: var(--rhythm-5);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sao-react__submit-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.sao-react__submit-button:not(:disabled):hover,
+.sao-react__submit-button:not(:disabled):focus-visible {
+  background: #1f2937;
+}
+
+.sao-react__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 5;
+}
+
+.sao-react__backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sao-react__drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(22rem, 85vw);
+  background: var(--container-background-color, #ffffff);
+  box-shadow: -12px 0 32px rgba(var(--color-dark-stronger-rgb), 0.18);
+  transform: translateX(100%);
+  transition: transform var(--transition-fast);
+  z-index: 6;
+  padding: var(--rhythm-3) var(--rhythm-2_5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-2);
+  overflow: hidden;
+  outline: none;
+  font-size: var(--font-size-base);
+}
+
+.sao-react__drawer--open {
+  transform: translateX(0);
+}
+
+.sao-react__drawer--close {
+  display: none;
+}
+
+.sao-react__drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rhythm-1_5);
+}
+
+.sao-react__drawer-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-0_5);
+}
+
+.sao-react__drawer-title {
+  margin: 0;
+  font-size: calc(var(--font-size-base) * 1.05);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--text-color, #111827);
+}
+
+.sao-react__drawer-description {
+  font-size: var(--font-size-medium);
+  color: var(--color-neutral-regular);
+}
+
+.sao-react__drawer-close {
+  appearance: none;
+  background: #f3f4f6;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: var(--rhythm-4);
+  height: var(--rhythm-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-neutral-regular);
+}
+
+.sao-react__drawer-close:hover,
+.sao-react__drawer-close:focus-visible {
+  background: #e5e7eb;
+  outline: none;
+}
+
+.sao-react__drawer-new-chat {
+  appearance: none;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--rhythm-1) var(--rhythm-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rhythm-0_5);
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semi-bold);
+  cursor: pointer;
+}
+
+.sao-react__drawer-new-chat:hover,
+.sao-react__drawer-new-chat:focus-visible {
+  background: #1f2937;
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .sao-react {
+    padding: 2rem;
+    border-radius: var(--border-radius);
+  }
+
+  .sao-react__cards {
+    display: flex;
+    flex-direction: row;
+    gap: var(--rhythm-1);
+  }
+
+  .sao-react__form {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sao-react__query {
+    flex-basis: 100%;
+  }
+
+  .sao-react__ghost-button,
+  .sao-react__submit-button {
+    width: 100%;
+  }
+
+  .sao-react__drawer {
+    width: min(100%, 22rem);
+    padding: 1.25rem;
+  }
+}
