@@ -6,11 +6,18 @@ import { defineConfig } from 'vite';
 const widgetFolder = process.argv[5] || 'search-widget';
 const fileName = process.argv[6] || 'nuclia-widget';
 
+const sdkCoreEntry = path.resolve(__dirname, '../sdk-core/src/index.ts');
+const raoWidgetSrc = path.resolve(__dirname, '../rao-widget/src');
+
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
     conditions: process.env.VITEST ? ['browser'] : undefined,
-    alias: [{ find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') }],
+    alias: [
+      { find: '@nuclia/core', replacement: sdkCoreEntry },
+      { find: 'rao-widget', replacement: raoWidgetSrc },
+      { find: /^rao-widget\/(.*)/, replacement: `${raoWidgetSrc}/$1` },
+    ],
   },
   build: {
     outDir: `dist/libs/${widgetFolder}`,
@@ -28,6 +35,9 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    exclude: ['rao-widget'],
+  },
   test: {
     // Jest like globals
     globals: true,

@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets';
+  import { NucliaSearchBar, NucliaSearchResults, ProgressSaoWidget } from '../../../libs/search-widget/src/widgets';
 
   const arag = 'f1c0a434-4419-4816-a265-8b43505cbd3e'; // Agent dragon
+  const aragId = arag;
   const account = 'fc1ebf90-632b-4ca5-a406-ca93ccf1920d'; // mat-testing
+  const accountId = account;
   const session = 'da7bb69f67864275b8bd1e07f312957c';
   // WARNING: don't commit API key
-  const apikey = '';
+  const apiKey = '';
   const kb = 'c20b1516-d47a-4b36-9e89-7e0604ef49bb'; // eric2
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '16f09da3-6637-4e8a-963a-0a5c18f3eb3f'; // movies / knowledge graph
@@ -46,7 +48,7 @@
     {account}
     {apikey}
     {session}></NucliaAragWidget> -->
-  <NucliaSearchBar
+  <!-- <NucliaSearchBar
     zone="europe-1"
     {backend}
     cdn="/"
@@ -57,7 +59,21 @@
     {filters}
     labelsets_excluded_from_filters="taste,kind"
     metadata="origin:created:date:Date de sortie" />
-  <NucliaSearchResults no_tracking />
+  <NucliaSearchResults no_tracking /> -->
+
+  <ProgressSaoWidget 
+    {backend}
+    {aragId}
+    lang="en"
+    zone="europe-1"
+    {account}
+    {apiKey}
+
+    cards={[]} 
+    inputPlaceholder="Ask Agentic RAG a question or make a request ..." 
+    title="Agentic RAG" 
+    userName={"Test"} 
+  />
 
   <!-- <NucliaChat
     zone="europe-1"

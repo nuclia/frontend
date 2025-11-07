@@ -1,0 +1,9 @@
+{
+  "name": "rao-widget",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/rao-widget/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project rao-widget --web",
+  "targets": {}
+}
