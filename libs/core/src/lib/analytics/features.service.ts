@@ -64,6 +64,7 @@ export class FeaturesService {
     aragRestrictedPython: this.featureFlag.isFeatureEnabled('arag-restricted-python'),
     aragMcp: this.featureFlag.isFeatureEnabled('arag-mcp'),
     routing: this.featureFlag.isFeatureEnabled('routing'),
+    modelsDisclaimer: this.featureFlag.isFeatureEnabled('models-disclaimer'),
   };
 
   /**
