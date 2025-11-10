@@ -1129,7 +1129,7 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
             ranks: [index + 1],
           });
         } else {
-          existing.ranks!.push(index + 1);
+          existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
         }
       }
     }

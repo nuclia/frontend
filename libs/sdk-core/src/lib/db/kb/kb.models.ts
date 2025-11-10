@@ -345,7 +345,8 @@ export interface Prequery {
 
 export interface FieldExtensionStrategy {
   name: RagStrategyName.FIELD_EXTENSION;
-  fields: string[];
+  fields?: string[];
+  data_augmentation_field_prefixes?: string[];
 }
 export interface FullResourceStrategy {
   name: RagStrategyName.FULL_RESOURCE;
