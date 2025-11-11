@@ -9,6 +9,7 @@ import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/bas
 import { EnumSelectComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/enum-select/enum-select.component';
 import { DriverSubformFieldComponent } from '../driver-subform-field/driver-subform-field.component';
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
+import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
 
 // Driver-specific field components
 @Component({
@@ -97,6 +98,7 @@ export class KeyValueFieldComponent {
     ApiHeadersFieldComponent,
     KbSelectComponent,
     KeyValueFieldComponent,
+    DriverExpandableTextareaComponent,
   ],
 })
 export class DriverFieldRendererComponent implements OnInit {

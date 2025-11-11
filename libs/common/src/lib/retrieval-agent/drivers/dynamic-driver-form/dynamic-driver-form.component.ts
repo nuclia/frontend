@@ -341,7 +341,10 @@ export class DynamicDriverFormComponent implements OnInit {
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');
-      return typeObj || property;
+      if (typeObj) {
+        return { ...property, ...typeObj, anyOf: undefined };
+      }
+      return property;
     }
     return property;
   }

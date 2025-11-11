@@ -16,6 +16,7 @@ import { DriversService } from '../../drivers.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
 import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
+import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -40,6 +41,7 @@ export interface RenderableDriverSubfield {
     PaTogglesModule,
     ApiHeadersFieldComponent,
     KeyValueFieldComponent,
+    DriverExpandableTextareaComponent,
   ],
 })
 export class DriverSubformFieldComponent implements OnInit, OnDestroy {
@@ -215,7 +217,10 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
       }
 
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');
-      return typeObj || property;
+      if (typeObj) {
+        return { ...property, ...typeObj, anyOf: undefined };
+      }
+      return property;
     }
 
     return property;

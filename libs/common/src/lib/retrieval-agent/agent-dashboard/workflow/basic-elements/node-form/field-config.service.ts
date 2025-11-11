@@ -7,6 +7,7 @@ export enum WidgetType {
   DRIVER_SELECT = 'driver_select',
   ENUM_SELECT = 'enum_select',
   EXPANDABLE_TEXTAREA = 'expandable_textarea',
+  API_HEADERS_FIELD = 'api_headers_field',
   FILTERED_SOURCE_SELECT = 'filtered_source_select',
   KEY_VALUE_FIELD = 'key_value_field',
   LLM_SELECT = 'llm_select', // Temporary alias
@@ -157,6 +158,7 @@ export class FieldConfigService {
       model_select: { component: 'model-select', type: 'custom' },
       driver_select: { component: 'driver-select', type: 'custom' },
       filtered_source_select: { component: 'filtered-source-select', type: 'custom' },
+  api_headers_field: { component: 'api-headers-field', type: 'custom' },
       code_editor: {
         component: 'code-editor',
         type: 'custom',

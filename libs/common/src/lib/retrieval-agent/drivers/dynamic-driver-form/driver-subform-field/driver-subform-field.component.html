@@ -40,6 +40,16 @@
                     [property]="field.property"
                     [required]="field.required"></app-key-value-field>
                 }
+                @case ('expandable-textarea') {
+                  <driver-expandable-textarea
+                    [form]="getSafeSubform()"
+                    [controlName]="field.key"
+                    [label]="field.label"
+                    [placeholder]="field.property.description || ''"
+                    [required]="field.required"
+                    [rows]="field.config.additionalProps?.['rows'] || 3"
+                    [resizable]="field.config.additionalProps?.['resizable'] || false"></driver-expandable-textarea>
+                }
                 @case ('pa-input') {
                   <pa-input
                     [id]="controlName + '_' + field.key"

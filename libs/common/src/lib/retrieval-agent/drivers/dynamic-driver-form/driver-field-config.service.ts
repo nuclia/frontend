@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
 import { JSONSchema4 } from 'json-schema';
+import { WidgetType } from '../../agent-dashboard/workflow/basic-elements/node-form/field-config.service';
+
+interface ExtendedJSONSchema4 extends JSONSchema4 {
+  widget?: WidgetType;
+}
 
 export interface DriverFieldConfig {
   component: string;
@@ -75,7 +80,14 @@ export class DriverFieldConfigService {
     ref: { component: 'driver-subform-field', type: 'subform' },
   };
 
-  getFieldConfig(key: string, property: JSONSchema4, schema?: JSONSchema4): DriverFieldConfig {
+  getFieldConfig(key: string, property: ExtendedJSONSchema4, schema?: JSONSchema4): DriverFieldConfig {
+    if (property.widget) {
+      const widgetConfig = this.getConfigFromWidget(property.widget);
+      if (widgetConfig) {
+        return { ...widgetConfig, customKey: key };
+      }
+    }
+
     // Special handling for config field - always treat as subform
     if (key === 'config') {
       return { component: 'subform-field', type: 'subform', customKey: key };
@@ -106,10 +118,11 @@ export class DriverFieldConfigService {
 
     // Determine type and get appropriate component
     const type = this.determineFieldType(property, schema);
-    return this.typeComponentMappings[type] || this.typeComponentMappings['string'];
+    const baseConfig = this.typeComponentMappings[type] || this.typeComponentMappings['string'];
+    return { ...baseConfig, customKey: key };
   }
 
-  private determineFieldType(property: JSONSchema4, schema?: JSONSchema4): string {
+  private determineFieldType(property: ExtendedJSONSchema4, schema?: JSONSchema4): string {
     if (property['const']) return 'const';
     if (property.enum) return 'enum';
 
@@ -184,7 +197,7 @@ export class DriverFieldConfigService {
     return null;
   }
 
-  private resolvePropertyRef(property: JSONSchema4, schema: JSONSchema4): JSONSchema4 | null {
+  private resolvePropertyRef(property: ExtendedJSONSchema4, schema: JSONSchema4): JSONSchema4 | null {
     // Direct $ref
     if (property.$ref) {
       return this.resolveRef(property.$ref, schema);
@@ -201,7 +214,11 @@ export class DriverFieldConfigService {
     return null;
   }
 
-  isFieldIgnored(key: string, property: JSONSchema4): boolean {
+  isFieldIgnored(key: string, property: ExtendedJSONSchema4): boolean {
+    if (property?.widget === WidgetType.NOT_SHOW) {
+      return true;
+    }
+
     // Hide id and identifier fields as requested
     const ignoredFields = new Set([
       'id', // Hide id field
@@ -212,7 +229,7 @@ export class DriverFieldConfigService {
     return ignoredFields.has(key);
   }
 
-  isSubformField(property: JSONSchema4, schema?: JSONSchema4): boolean {
+  isSubformField(property: ExtendedJSONSchema4, schema?: JSONSchema4): boolean {
     // If we can resolve the $ref, check what it actually points to
     if (schema) {
       const resolvedProperty = this.resolvePropertyRef(property, schema);
@@ -243,7 +260,7 @@ export class DriverFieldConfigService {
     return false;
   }
 
-  getRefFromProperty(property: JSONSchema4): string | null {
+  getRefFromProperty(property: ExtendedJSONSchema4): string | null {
     // Direct $ref
     if (property.$ref) return property.$ref;
 
@@ -254,5 +271,25 @@ export class DriverFieldConfigService {
     }
 
     return null;
+  }
+
+  private getConfigFromWidget(widget: WidgetType | string): DriverFieldConfig | null {
+    const widgetMappings: Partial<Record<WidgetType, DriverFieldConfig>> = {
+      [WidgetType.ARRAY_STRING_FIELD]: { component: 'array-string-field', type: 'array' },
+      [WidgetType.ENUM_SELECT]: { component: 'enum-select', type: 'enum' },
+      [WidgetType.EXPANDABLE_TEXTAREA]: {
+        component: 'expandable-textarea',
+        type: 'custom',
+        additionalProps: {
+          rows: 2,
+          resizable: true,
+        },
+      },
+      [WidgetType.KEY_VALUE_FIELD]: { component: 'key-value-field', type: 'object' },
+      [WidgetType.API_HEADERS_FIELD]: { component: 'api-headers-field', type: 'object' },
+    };
+
+    const widgetKey = widget as WidgetType;
+    return widgetMappings[widgetKey] ?? null;
   }
 }
