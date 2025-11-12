@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="5.5.0" version="1.3">
+<babeledit_project be_version="5.5.1" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -16468,6 +16468,29 @@
 									<folder_node>
 										<name>allowed-ips</name>
 										<children>
+											<concept_node>
+												<name>blocked</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
 											<concept_node>
 												<name>help</name>
 												<description/>
