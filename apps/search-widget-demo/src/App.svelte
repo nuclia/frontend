@@ -10,7 +10,7 @@
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '16f09da3-6637-4e8a-963a-0a5c18f3eb3f'; // movies / knowledge graph
   // const kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
-  // const kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
+  // const kb = 'baa24d32-9240-4d90-bd00-2e6f25b13668'; // e2e permanent
 
   // KB in prod
   // const kb = '16375869-1037-460d-8648-b3ee9c9206c0' // market outlook reports
