@@ -2,7 +2,18 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
-import { distinctUntilKeyChanged, filter, forkJoin, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+import {
+  catchError,
+  distinctUntilKeyChanged,
+  filter,
+  forkJoin,
+  map,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
 import { WelcomeInExistingKBComponent } from '../../onboarding/welcome-in-existing-kb/welcome-in-existing-kb.component';
 import { addDays } from 'date-fns';
@@ -60,6 +71,25 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.toaster.warning('api-key-management.expiration-warning');
       });
+
+    this.sdk.currentKb
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        distinctUntilKeyChanged('id'),
+        filter((kb) => !!kb.allowed_ip_addresses),
+        switchMap((kb) =>
+          // Make an arbitrary request to check if the current IP is blocked
+          kb.counters().pipe(
+            catchError((error) => {
+              if (error?.body?.detail?.startsWith('Access denied due to Knowledgebox IP whitelisting rules')) {
+                this.toaster.error('kb.form.allowed-ips.blocked');
+              }
+              return of(undefined);
+            }),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
