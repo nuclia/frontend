@@ -67,6 +67,18 @@
         [required]="required"></app-driver-subform-field>
     }
 
+    <!-- Expandable Textarea -->
+    @case ('expandable-textarea') {
+      <driver-expandable-textarea
+        [form]="form"
+        [controlName]="controlName"
+        [label]="label"
+        [placeholder]="property.description || ''"
+        [required]="required"
+        [rows]="fieldConfig.additionalProps?.['rows'] || 3"
+        [resizable]="fieldConfig.additionalProps?.['resizable'] || false"></driver-expandable-textarea>
+    }
+
     <!-- Boolean toggle -->
     @case ('pa-toggle') {
       <pa-toggle
