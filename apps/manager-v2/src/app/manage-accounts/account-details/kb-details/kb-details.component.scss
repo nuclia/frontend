@@ -5,6 +5,15 @@
     margin-bottom: rhythm(4);
   }
 
+  .input-with-copy {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    pa-input {
+      width: 100%;
+    }
+  }
+
   .add-member {
     margin-bottom: rhythm(3);
     max-width: rhythm(40);

@@ -5,11 +5,26 @@
   <form
     [formGroup]="kbForm"
     (ngSubmit)="save()">
-    <pa-input
-      readonly
-      [value]="kb.id">
-      Id
-    </pa-input>
+    <div class="input-with-copy">
+      <pa-input
+        readonly
+        [value]="kb.id">
+        Id
+      </pa-input>
+      <div>
+        <pa-button
+          size="small"
+          aspect="basic"
+          [icon]="copied ? 'check' : 'copy'"
+          [paPopup]="menu"></pa-button>
+        <pa-dropdown #menu>
+          <pa-option-header>Copy</pa-option-header>
+          <pa-separator></pa-separator>
+          <pa-option (selectOption)="copy(false)">KB Id</pa-option>
+          <pa-option (selectOption)="copy(true)">Account + Zone + KB</pa-option>
+        </pa-dropdown>
+      </div>
+    </div>
     <pa-input
       readonly
       [value]="kb.created">
