@@ -125,6 +125,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       excludeFilter: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
       fieldsAsContext: new FormControl<boolean>(false, { nonNullable: true }),
       fieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+      dataAugmentationFieldPrefixes: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
       includePageImages: new FormControl<boolean>(false, { nonNullable: true }),
       maxNumberOfImages: new FormControl<number | null>(null),
       includeParagraphImages: new FormControl<boolean>(false, { nonNullable: true }),

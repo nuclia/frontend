@@ -8,6 +8,7 @@
 
 - Support model configurations
 - Add `allowed_ip_addresses` property to Knowledge Box
+- Add `data_augmentation_field_prefixes` option to field extension RAG strategy
 
 # 1.29.0 (2025-10-01)
 

@@ -76,6 +76,7 @@ export namespace Widget {
     includeRemaining: boolean;
     fieldsAsContext: boolean;
     fieldIds: string;
+    dataAugmentationFieldPrefixes: string;
     conversationalRagStrategy: boolean;
     conversationOptions: {
       attachmentsText: boolean;
@@ -316,6 +317,7 @@ const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
     excludeFilter: '',
     fieldsAsContext: false,
     fieldIds: '',
+    dataAugmentationFieldPrefixes: '',
     conversationalRagStrategy: false,
     conversationOptions: {
       attachmentsText: false,
@@ -396,7 +398,13 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
         }
         return hierarchyStartegy;
       } else if (name === RagStrategyName.FIELD_EXTENSION) {
-        return { name, fields: rest };
+        const fieldIds = rest.filter((item) => item.includes('/'));
+        const prefixes = rest.filter((item) => item.startsWith('prefix:')).map((item) => item.slice(7));
+        return {
+          name,
+          fields: fieldIds.length ? fieldIds : undefined,
+          data_augmentation_field_prefixes: prefixes.length ? prefixes : undefined,
+        };
       } else if (name === RagStrategyName.METADATAS) {
         return { name, types: rest };
       } else if (name === RagStrategyName.NEIGHBOURING_PARAGRAPHS) {
@@ -685,12 +693,23 @@ export function getRagStrategies(ragStrategiesConfig: Widget.RagStrategiesConfig
     }
     ragStrategies.push(entireResourceAsContext);
   } else {
-    if (ragStrategiesConfig.fieldsAsContext && ragStrategiesConfig.fieldIds) {
+    if (
+      ragStrategiesConfig.fieldsAsContext &&
+      (ragStrategiesConfig.fieldIds || ragStrategiesConfig.dataAugmentationFieldPrefixes)
+    ) {
       const fieldIds = ragStrategiesConfig.fieldIds
         .split(`\n`)
         .map((id) => id.trim())
         .join('|');
-      ragStrategies.push(`${RagStrategyName.FIELD_EXTENSION}|${fieldIds}`);
+      const prefixes = ragStrategiesConfig.dataAugmentationFieldPrefixes
+        .split(`\n`)
+        .map((id) => 'prefix:' + id.trim())
+        .join('|');
+      ragStrategies.push(
+        `${RagStrategyName.FIELD_EXTENSION}${fieldIds.length ? '|' + fieldIds : ''}${
+          prefixes.length ? '|' + prefixes : ''
+        }`,
+      );
     }
     if (ragStrategiesConfig.includeTextualHierarchy) {
       ragStrategies.push(RagStrategyName.HIERARCHY);
