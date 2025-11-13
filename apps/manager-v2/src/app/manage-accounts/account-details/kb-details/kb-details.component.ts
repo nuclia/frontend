@@ -28,6 +28,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
   });
   kb$ = this.store.kbDetails;
   isSaving = false;
+  copied = false;
 
   searchMemberTerm$ = new Subject<string>();
   potentialMembers$ = this.searchMemberTerm$.pipe(
@@ -144,6 +145,21 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       this.accountService.updateKbUser(this.backupKb, userId, newRole).subscribe({
         error: () => this.toast.error('Updating user role failed'),
       });
+    }
+  }
+
+  copy(fullInfo: boolean) {
+    if (this.backupKb) {
+      const text = fullInfo
+        ? `Account: ${this.backupKb.accountId}\nZone: ${this.backupKb.zone.slug}\nKB: ${this.backupKb.id}`
+        : this.backupKb.id;
+      navigator.clipboard.writeText(text);
+      this.copied = true;
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copied = false;
+        this.cdr.markForCheck();
+      }, 1000);
     }
   }
 }
