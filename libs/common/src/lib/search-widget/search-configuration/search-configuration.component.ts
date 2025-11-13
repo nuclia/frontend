@@ -146,6 +146,7 @@ export class SearchConfigurationComponent {
   isConfigModified = false;
   isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
+  ignoreChanges = false;
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
@@ -325,6 +326,11 @@ export class SearchConfigurationComponent {
         this.currentJsonConfig = this.originalJsonConfig;
         this.updateWidget();
         this.cdr.markForCheck();
+        // after selecting a config, all the forms trigger a value change, and as old config might not be aligned
+        // with the latest supported properties, it may display a warning message to the user saying the config has changed
+        // so for 200ms we just ignore any changes
+        this.ignoreChanges = true;
+        setTimeout(() => (this.ignoreChanges = false), 200);
       },
     );
   }
@@ -438,7 +444,7 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, searchBox: config };
-    this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
   updateGenerativeAnswerConfig(config: Widget.GenerativeAnswerConfig) {
@@ -447,7 +453,7 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, generativeAnswer: config };
-    this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.useGenerativeAnswer = config.generateAnswer;
     this.updateWidget();
   }
@@ -457,7 +463,7 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, resultDisplay: config };
-    this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
   updateRoutingConfig(config: Widget.RoutingConfig) {
@@ -466,7 +472,7 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, routing: config };
-    this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
 
