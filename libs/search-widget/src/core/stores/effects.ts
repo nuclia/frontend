@@ -534,7 +534,7 @@ export function askQuestion(
         routedConfig,
       ]) => {
         if (routedConfig?.config && routedConfig.config !== 'FALLBACK') {
-          return getAnswer(question, entries, { search_configuration: routedConfig.config });
+          return getAnswer(question, entries, {}, routedConfig.config);
         } else if (routedConfig?.config === 'FALLBACK' && routedConfig?.answer) {
           return of({
             type: 'answer',

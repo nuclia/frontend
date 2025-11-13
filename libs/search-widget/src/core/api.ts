@@ -249,6 +249,7 @@ export const getAnswer = (
   query: string,
   chat?: Ask.Entry[],
   options?: ChatOptions,
+  searchConfigOverride?: string,
 ): Observable<Ask.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -288,7 +289,11 @@ export const getAnswer = (
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }
-  options = options ? { ...defaultOptions, ...options } : defaultOptions;
+  if (searchConfigOverride) {
+    options = { search_configuration: searchConfigOverride };
+  } else {
+    options = options ? { ...defaultOptions, ...options } : defaultOptions;
+  }
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
@@ -302,6 +307,7 @@ export const getAnswerWithoutRAG = (
   question: string,
   chat?: Ask.Entry[],
   options?: ChatOptions,
+  forcePrompt?: string,
 ): Observable<Ask.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -318,7 +324,7 @@ export const getAnswerWithoutRAG = (
   const defaultPrompt = '{question}';
   const predictOptions: PredictAnswerOptions = {
     generative_model: options?.generative_model || generative_model || undefined,
-    user_prompt: { prompt: prompt || defaultPrompt },
+    user_prompt: { prompt: forcePrompt || prompt || defaultPrompt },
     system: systemPrompt || undefined,
     retrieval: false,
     chat_history: context && context.length > 0 ? context : undefined,
@@ -644,11 +650,16 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
     },
   };
 
-  return getAnswerWithoutRAG(question, undefined, {
-    answer_json_schema,
-    generative_model: routing.generative_model,
-    synchronous: true,
-  }).pipe(
+  return getAnswerWithoutRAG(
+    question,
+    undefined,
+    {
+      answer_json_schema,
+      generative_model: routing.generative_model,
+      synchronous: true,
+    },
+    '{question}',
+  ).pipe(
     map((res) => {
       if (res.type === 'error') {
         return { config: 'FALLBACK' };
