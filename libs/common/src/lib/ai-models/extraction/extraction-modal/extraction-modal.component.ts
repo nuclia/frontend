@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import {
   ModalRef,
@@ -42,7 +42,10 @@ export class ExtractionModalComponent implements OnInit {
   visualLLMEnabled = this.features.authorized.visualLLMProcessing;
 
   vllmConfig?: ExtractVLLMConfig;
+  vllmConfigStatus?: FormControlStatus;
+
   aiTables?: ExtractVLLMConfig;
+  aiTablesStatus?: FormControlStatus;
 
   configForm = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
@@ -60,6 +63,14 @@ export class ExtractionModalComponent implements OnInit {
 
   get ai_tables() {
     return this.configForm.controls.ai_tables.value;
+  }
+
+  get invalid() {
+    return (
+      this.configForm.invalid ||
+      (this.vllm_config && this.vllmConfigStatus !== 'VALID') ||
+      (this.ai_tables && this.aiTablesStatus !== 'VALID')
+    );
   }
 
   constructor(

@@ -1,6 +1,6 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -12,10 +12,12 @@ import {
 import { filter, of } from 'rxjs';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
+import { ModelSelectorComponent } from '../answer-generation';
 
 @Component({
   selector: 'stf-summarization',
   imports: [
+    CommonModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
@@ -25,15 +27,16 @@ import { LearningConfigurationDirective } from '../learning-configuration.direct
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+    ModelSelectorComponent,
+  ],
   templateUrl: './summarization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummarizationComponent extends LearningConfigurationDirective {
   configForm = new FormGroup({
     summary: new FormControl<'simple' | 'extended'>('simple'),
-    summary_model: new FormControl<string>(''),
+    summary_model: new FormControl<string>('', { validators: [Validators.required] }),
     summary_prompt: new FormGroup({
       prompt: new FormControl<string>(''),
       prompt_examples: new FormControl<string>(''),

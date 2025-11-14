@@ -1,14 +1,28 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
+import { ModelSelectorComponent } from '../../answer-generation';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   imports: [
     ButtonMiniComponent,
+    CommonModule,
+    ModelSelectorComponent,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -23,6 +37,8 @@ import { startWith, Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
+  features = inject(FeaturesService);
+
   @Input() generativeModels: LearningConfigurationOption[] = [];
   @Input() createMode: boolean = true;
   @Input() vllmOnly: boolean = false;
@@ -32,6 +48,8 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   @Input() rulesPlaceholder: string | undefined;
 
   @Output() valueChange = new EventEmitter<ExtractVLLMConfig>();
+  @Output() statusChange = new EventEmitter<FormControlStatus>();
+  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
   private unsubscribeAll = new Subject<void>();
 
   configForm = new FormGroup({
@@ -47,6 +65,9 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   get useCustomModel() {
     return this.configForm.controls.customLLM.value;
+  }
+  get generativeModelControl() {
+    return this.configForm.controls.llm.controls.generative_model;
   }
   get rules() {
     return this.configForm.controls.rules;
@@ -88,6 +109,14 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
           max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
         });
+        this.generativeModelControl.setValidators(values.customLLM ? [Validators.required] : []);
+        this.generativeModelControl.updateValueAndValidity({ emitEvent: false });
+      });
+
+    this.configForm.statusChanges
+      .pipe(startWith(this.configForm.status), takeUntil(this.unsubscribeAll))
+      .subscribe((status) => {
+        this.statusChange.emit(status);
       });
   }
 
