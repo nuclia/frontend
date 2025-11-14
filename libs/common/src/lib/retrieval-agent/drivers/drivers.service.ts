@@ -248,9 +248,9 @@ export class DriversService {
    */
   editDriver(driverToEdit: Driver): Observable<any> {
     // Find the driver schema based on the provider
-    return combineLatest([of(this._schemas()), of(this._drivers())]).pipe(
+    return combineLatest([of(this._schemas()), of(this._drivers()), this.sdk.kbList.pipe(take(1))]).pipe(
       take(1),
-      switchMap(([schemas, existingDrivers]) => {
+      switchMap(([schemas, existingDrivers, kbList]) => {
         if (!schemas) {
           throw new Error('Schemas not available');
         }
@@ -261,17 +261,26 @@ export class DriversService {
           throw new Error(`Unknown driver provider: ${driverToEdit.provider}`);
         }
 
-        const modalRef = this.modal.openModal(
-          DynamicDriverModalComponent,
-          new ModalConfig({
-            data: {
-              driverTitle,
-              existingDriver: driverToEdit,
-              existingDrivers,
-            },
-            dismissable: false,
-          }),
-        );
+        const modalRef =
+          driverTitle === 'NucliaDBConfig'
+            ? this.modal.openModal(
+                NucliaDriverModalComponent,
+                new ModalConfig({
+                  data: { kbList, driver: driverToEdit },
+                  dismissable: false,
+                }),
+              )
+            : this.modal.openModal(
+                DynamicDriverModalComponent,
+                new ModalConfig({
+                  data: {
+                    driverTitle,
+                    existingDriver: driverToEdit,
+                    existingDrivers,
+                  },
+                  dismissable: false,
+                }),
+              );
 
         const handleResult = (driver: any) => this.handleEditDriverResult(driver, driverToEdit);
 
