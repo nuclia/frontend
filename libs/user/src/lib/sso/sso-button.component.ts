@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
-import { SsoService } from '@flaps/core';
+import { AnalyticsService, SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { TranslateService } from '@ngx-translate/core';
@@ -53,9 +53,13 @@ export class SsoButtonComponent {
     private ssoService: SsoService,
     @Inject(WINDOW) private window: Window,
     private translate: TranslateService,
+    private analytics: AnalyticsService,
   ) {}
 
   onClick() {
+    if (this._signup) {
+      this.analytics.logTrialSignup();
+    }
     this.window.location.href = this.ssoService.getSsoLoginUrl(this.provider);
   }
 }
