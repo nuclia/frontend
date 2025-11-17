@@ -15,6 +15,15 @@
           formControlName="name"></pa-input>
       </div>
       <div>
+        <label for="hasMemory">{{ 'account.retrieval-agents.create-dialog.memory' | translate }}</label>
+        <pa-toggle
+          formControlName="hasMemory"
+          id="hasMemory"
+          [disabled]="!(isAragWithMemoryEnabled | async)">
+          {{ 'account.retrieval-agents.create-dialog.memory-help' | translate }}
+        </pa-toggle>
+      </div>
+      <div>
         <label for="zone">{{ 'account.retrieval-agents.create-dialog.zone' | translate }}</label>
         <pa-radio-group formControlName="zone">
           @for (zone of zones | async; track zone.slug) {

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountTypes } from '@nuclia/core';
-import { combineLatest, map, Observable } from 'rxjs';
+import { combineLatest, map, Observable, of } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
@@ -64,6 +64,7 @@ export class FeaturesService {
     aragRestrictedPython: this.featureFlag.isFeatureEnabled('arag-restricted-python'),
     aragMcp: this.featureFlag.isFeatureEnabled('arag-mcp'),
     routing: this.featureFlag.isFeatureEnabled('routing'),
+    aragWithMemory: of(false), //this.featureFlag.isFeatureEnabled('arag-with-memory'),
   };
 
   /**

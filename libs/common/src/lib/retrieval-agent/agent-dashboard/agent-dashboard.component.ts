@@ -1,4 +1,3 @@
-
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -30,9 +29,11 @@ import {
   WorkflowRootComponent,
   WorkflowService,
 } from './workflow';
+import { FeaturesService } from '@flaps/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink],
+  imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +44,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
   private workflowEffects = inject(WorkflowEffectService);
+  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -58,6 +60,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   sideBarClosing = sideBarClosing;
   sideBarLarge = sideBarLarge;
   activeSideBar = activeSideBar;
+  isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());
