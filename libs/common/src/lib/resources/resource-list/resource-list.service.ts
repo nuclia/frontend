@@ -44,6 +44,7 @@ import {
   LabelsLogic,
   ResourceListParams,
   ResourceWithLabels,
+  SearchModes,
   searchResources,
 } from './resource-list.model';
 
@@ -73,7 +74,7 @@ export class ResourceListService {
   data = this._data.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
-  private _searchMode = new BehaviorSubject<'title' | 'uid' | 'slug'>('title');
+  private _searchMode = new BehaviorSubject<SearchModes>('title');
   searchMode = this._searchMode.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
   headerHeight = this._headerHeight.asObservable();
@@ -185,7 +186,7 @@ export class ResourceListService {
     this._query.next(query);
   }
 
-  setSearchMode(mode: 'title' | 'uid' | 'slug') {
+  setSearchMode(mode: SearchModes) {
     this._searchMode.next(mode);
   }
 
@@ -255,16 +256,20 @@ export class ResourceListService {
   }
 
   private loadResourcesFromCatalog(replaceData: boolean): Observable<void> {
+    const query = formatQuery(this._query.value);
     const resourceListParams: ResourceListParams = {
       status: this.status,
       page: this._page.value,
       pageSize: this._pageSize.value,
       sort: this._sort,
-      query: formatQuery(this._query.value),
+      query,
       filters: this._filters.value,
       labelsLogic: this._labelsLogic.value,
     };
     const searchMode = this._searchMode.value;
+    if (searchMode === 'startswith') {
+      resourceListParams.query = { field: 'title', match: 'starts_with', query };
+    }
     return forkJoin([
       this.labelSets.pipe(take(1)),
       this.sdk.currentKb.pipe(

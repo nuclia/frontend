@@ -144,6 +144,12 @@ export interface SearchOptions extends BaseSearchOptions {
   features?: Search.Features[];
 }
 
+export interface CatalogQuery {
+  field: 'title' | 'slug';
+  match: 'exact' | 'words' | 'fuzzy' | 'starts_with' | 'ends_with' | 'contains';
+  query: string;
+}
+
 export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'> {
   hidden?: boolean;
   page_number?: number;

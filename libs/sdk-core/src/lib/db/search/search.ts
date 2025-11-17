@@ -1,6 +1,6 @@
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import type { CatalogOptions, SearchOptions } from './search.models';
+import type { CatalogOptions, CatalogQuery, SearchOptions } from './search.models';
 import { Search } from './search.models';
 
 export const find = (
@@ -104,13 +104,22 @@ export const search = (
   return manageSearchRequest(nuclia, kbid, searchMethod).pipe(tap((res) => nuclia.events?.log('lastResults', res)));
 };
 
-export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: CatalogOptions, useGet?: boolean) => {
-  const params: { [key: string]: string | string[] } = {};
-  params['query'] = query || '';
+export const catalog = (
+  nuclia: INuclia,
+  kbid: string,
+  query: string | CatalogQuery,
+  options?: CatalogOptions,
+  useGet?: boolean,
+) => {
+  if (useGet && typeof query !== 'string') {
+    throw new Error('Advanced catahog query is not supported with GET');
+  }
   const path = `/kb/${kbid}`;
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${options ? serialize(params, options) : ''}`)
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...params, ...options });
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(
+        `${path}/catalog?${options ? serialize({ query: (query as string) || '' }, options) : ''}`,
+      )
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...{ query: query || '' }, ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 

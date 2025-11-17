@@ -1,6 +1,7 @@
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import {
   CatalogOptions,
+  CatalogQuery,
   Classification,
   CREATION_END_PREFIX,
   CREATION_START_PREFIX,
@@ -40,6 +41,8 @@ export interface ColumnHeader extends IHeaderCell {
 
 export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize' | 'hide' | 'unhide';
 
+export type SearchModes = 'title' | 'startswith' | 'uid' | 'slug';
+
 export const DEFAULT_PREFERENCES = {
   columns: ['modification', 'language'],
 };
@@ -65,7 +68,7 @@ export interface ResourceListParams {
   page: number;
   pageSize: number;
   sort: SortOption;
-  query: string;
+  query: string | CatalogQuery;
   filters: string[];
   labelsLogic?: LabelsLogic;
 }

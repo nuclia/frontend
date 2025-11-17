@@ -1,4 +1,4 @@
-# 1.29.1 (unreleased)
+# 1.30.0 (2025-11-17)
 
 ### Breaking changes
 
@@ -6,6 +6,7 @@
 
 ### Improvements
 
+- Support advanced query on `/catalog`
 - Support model configurations
 - Add `allowed_ip_addresses` property to Knowledge Box
 - Add `data_augmentation_field_prefixes` option to field extension RAG strategy
