@@ -128,6 +128,16 @@ export interface BasePostprocessAgent extends BaseAgent {
   module: PostprocessModule;
 }
 
+export type SomeAgent =
+  | BasePreprocessAgent
+  | BaseContextAgent
+  | BaseGenerationAgent
+  | BasePostprocessAgent
+  | PreprocessAgent
+  | ContextAgent
+  | GenerateAgent
+  | PostprocessAgent;
+
 // Agents with ids (stored)
 export interface PreprocessAgent extends BaseAgent {
   id: string;

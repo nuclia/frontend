@@ -13,20 +13,7 @@ import {
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BaseConditionalAgentCreation,
-  BaseContextAgent,
-  BaseGenerationAgent,
-  BasePostprocessAgent,
-  BasePreprocessAgent,
-  ContextAgent,
-  GenerateAgent,
-  PostprocessAgent,
-  PreprocessAgent,
-  ARAGSchemas,
-  LearningConfigurationOption,
-  Driver,
-} from '@nuclia/core';
+import { ARAGSchemas, LearningConfigurationOption, Driver, SomeAgent } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, of, switchMap, take, tap } from 'rxjs';
 import {
@@ -211,15 +198,7 @@ export class WorkflowService {
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
     nodeCategory: NodeCategory,
-    agent:
-      | BasePreprocessAgent
-      | BaseContextAgent
-      | BaseGenerationAgent
-      | BasePostprocessAgent
-      | PreprocessAgent
-      | ContextAgent
-      | GenerateAgent
-      | PostprocessAgent,
+    agent: SomeAgent,
     columnIndex = 1,
     childIndex?: number,
   ) {
@@ -242,7 +221,7 @@ export class WorkflowService {
    */
   private createChildNodesGeneric(
     nodeRef: ComponentRef<NodeDirective>,
-    agent: any,
+    agent: SomeAgent,
     nodeCategory: NodeCategory,
     columnIndex: number,
   ) {
@@ -255,7 +234,7 @@ export class WorkflowService {
    */
   private waitForConnectableEntries(
     nodeRef: ComponentRef<NodeDirective>,
-    agent: any,
+    agent: SomeAgent,
     nodeCategory: NodeCategory,
     columnIndex: number,
     attempt: number,
@@ -296,7 +275,7 @@ export class WorkflowService {
    */
   private processConnectableEntries(
     connectableEntries: QueryList<ConnectableEntryComponent>,
-    agent: any,
+    agent: SomeAgent,
     nodeCategory: NodeCategory,
     columnIndex: number,
   ) {
@@ -329,7 +308,7 @@ export class WorkflowService {
    */
   private createChildNodesFromConfig(
     nodeRef: ComponentRef<NodeDirective>,
-    agent: any,
+    agent: SomeAgent,
     nodeCategory: NodeCategory,
     columnIndex: number,
   ) {
@@ -365,41 +344,12 @@ export class WorkflowService {
    * Get child agents for a specific connectable entry by examining the agent's configuration
    * This method is completely generic and works with any agent structure
    */
-  private getChildAgentsForEntry(agent: any, entryId: string): any[] | any | null {
+  private getChildAgentsForEntry(agent: SomeAgent, entryId: string): any[] | any | null {
     // Direct property match (e.g., 'fallback' entry maps to agent.fallback)
-    if (agent[entryId] && this.isValidChildAgent(agent[entryId])) {
-      return agent[entryId];
+    const child = (agent as unknown as any)[entryId];
+    if (child && this.isValidChildAgent(child)) {
+      return child;
     }
-
-    // Handle common entry ID transformations
-    const camelCaseEntryId = entryId.replace(/_([a-z])/g, (_, char: string) => char.toUpperCase());
-    const possiblePropertyNames = [
-      entryId, // Direct match
-      entryId + '_', // Add underscore (e.g., 'else' -> 'else_')
-      entryId.replace(/[_-]/g, ''), // Remove separators
-      entryId.toLowerCase(),
-      entryId.toUpperCase(),
-      camelCaseEntryId,
-    ];
-
-    // Check each possible property name
-    for (const propName of possiblePropertyNames) {
-      if (agent[propName] && this.isValidChildAgent(agent[propName])) {
-        return agent[propName];
-      }
-    }
-
-    // If no direct match, check nested objects that might contain the entry data
-    for (const [key, value] of Object.entries(agent)) {
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        // Check if this nested object has the entry we're looking for
-        const nestedValue = value as any;
-        if (nestedValue[entryId] && this.isValidChildAgent(nestedValue[entryId])) {
-          return nestedValue[entryId];
-        }
-      }
-    }
-
     return null;
   }
 
@@ -420,31 +370,6 @@ export class WorkflowService {
     }
 
     return false;
-  }
-
-  private createChildNodes(
-    nodeRef: ComponentRef<NodeDirective>,
-    property: 'then' | 'else_',
-    nodeCategory: NodeCategory,
-    columnIndex: number,
-    agent: BaseConditionalAgentCreation,
-  ) {
-    if (agent[property] && agent[property].length > 0) {
-      const prop = property.replace('_', '');
-      const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
-      if (!entry) {
-        throw new Error(`No '${prop}' entry found on conditional node ${nodeRef.instance.id}`);
-      }
-      agent[property].forEach((child, index) =>
-        this.createNodeFromSavedWorkflow(
-          entry,
-          nodeCategory,
-          child as PreprocessAgent | ContextAgent | PostprocessAgent,
-          columnIndex + 1,
-          index,
-        ),
-      );
-    }
   }
 
   /**
