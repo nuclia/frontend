@@ -21,6 +21,7 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
 import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { ResourceListService } from './resource-list.service';
+import { SearchModes } from './resource-list.model';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -52,10 +53,11 @@ export class ResourceListComponent implements OnDestroy {
   displayedLabelSets: LabelSets = {};
   searchModes = [
     new ControlModel({ id: 'title', value: 'title', label: 'stash.search-modes.title' }),
+    new ControlModel({ id: 'startswith', value: 'startswith', label: 'stash.search-modes.startswith' }),
     new ControlModel({ id: 'uid', value: 'uid', label: 'stash.search-modes.uid' }),
     new ControlModel({ id: 'slug', value: 'slug', label: 'stash.search-modes.slug' }),
   ];
-  searchMode: 'title' | 'uid' | 'slug' = 'title';
+  searchMode: SearchModes = 'title';
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -309,7 +311,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   onModeChange(mode: string) {
-    this.searchMode = mode as 'title' | 'uid' | 'slug';
+    this.searchMode = mode as SearchModes;
     this.resourceListService.setSearchMode(this.searchMode);
     this.query.pipe(take(1)).subscribe((query) => {
       if (query) {

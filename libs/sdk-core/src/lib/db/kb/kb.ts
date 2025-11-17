@@ -32,6 +32,7 @@ import {
   ask,
   catalog,
   CatalogOptions,
+  CatalogQuery,
   ChatOptions,
   find,
   MAX_FACETS_PER_REQUEST,
@@ -629,7 +630,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
   }
 
-  catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse> {
+  catalog(query: string | CatalogQuery, options?: CatalogOptions): Observable<Search.Results | IErrorResponse> {
     return catalog(this.nuclia, this.id, query, options);
   }
 
