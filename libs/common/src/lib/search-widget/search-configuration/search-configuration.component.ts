@@ -147,6 +147,7 @@ export class SearchConfigurationComponent {
   isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
   ignoreChanges = false;
+  ignoreNextRoutingRefresh = false;
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
@@ -330,7 +331,9 @@ export class SearchConfigurationComponent {
         // with the latest supported properties, it may display a warning message to the user saying the config has changed
         // so for 200ms we just ignore any changes
         this.ignoreChanges = true;
+        this.ignoreNextRoutingRefresh = true;
         setTimeout(() => (this.ignoreChanges = false), 200);
+        setTimeout(() => (this.ignoreNextRoutingRefresh = false), 1000);
       },
     );
   }
@@ -472,7 +475,8 @@ export class SearchConfigurationComponent {
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
     this.currentConfig = { ...currentConfig, routing: config };
-    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.isConfigModified =
+      !this.ignoreNextRoutingRefresh && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
 
