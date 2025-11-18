@@ -19,10 +19,10 @@
                 (selectOption)="selectPeriod.emit(period); loading = true"
                 >
                 @if (isSubscribedToStripe | async) {
-                  {{ period.start | date: 'MMM d, y' }} - {{ period.end | date: 'MMM d, y' }}
+                  {{ period.start | date: 'MMM d, y': 'UTC' }} - {{ period.end | date: 'MMM d, y': 'UTC' }}
                 }
                 @else {
-                  {{ period.start | date: 'MMMM y' }} 
+                  {{ period.start | date: 'MMMM y': 'UTC' }} 
                 }
               </pa-option>
             }
