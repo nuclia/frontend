@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ZoneService } from '@flaps/core';
+import { FeaturesService, ZoneService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -28,11 +28,14 @@ import { tap } from 'rxjs';
 })
 export class CreateAragComponent {
   private zoneService: ZoneService = inject(ZoneService);
+  private features = inject(FeaturesService);
 
   form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    hasMemory: new FormControl<boolean>(false, { nonNullable: true }),
   });
+  isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
 
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {

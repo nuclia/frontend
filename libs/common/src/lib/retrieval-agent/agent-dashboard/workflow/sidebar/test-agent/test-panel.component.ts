@@ -17,7 +17,8 @@ import { ProgressBarComponent } from '@nuclia/sistema';
 import { resetTestAgent, testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
-import { ParametersTableComponent } from '@flaps/core';
+import { FeaturesService, ParametersTableComponent } from '@flaps/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-test-panel',
@@ -31,6 +32,7 @@ import { ParametersTableComponent } from '@flaps/core';
     ProgressBarComponent,
     PaTogglesModule,
     ParametersTableComponent,
+    CommonModule,
   ],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
@@ -38,12 +40,15 @@ import { ParametersTableComponent } from '@flaps/core';
 })
 export class TestPanelComponent implements OnInit, OnDestroy {
   private service = inject(TestPanelService);
+  private features = inject(FeaturesService);
   form = new FormGroup({
     question: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    session: new FormControl('new', { nonNullable: true, validators: [Validators.required] }),
+    session: new FormControl('ephemeral', { nonNullable: true, validators: [Validators.required] }),
     useWs: new FormControl(true, { nonNullable: true }),
   });
   headers: { key: string; value: string }[] = [];
+
+  isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
 
   get question() {
     return this.form.controls.question;
@@ -123,7 +128,7 @@ export class TestPanelComponent implements OnInit, OnDestroy {
     resetTestAgent();
     this.form.reset({
       question: '',
-      session: 'new',
+      session: 'ephemeral',
       useWs: true,
     });
   }

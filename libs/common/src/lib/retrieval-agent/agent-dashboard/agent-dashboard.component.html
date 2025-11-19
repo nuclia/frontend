@@ -36,12 +36,14 @@
         (click)="openTest()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.test-agent' | translate }}
       </pa-button>
-      <pa-button
-        size="small"
-        kind="primary"
-        [routerLink]="aragUrl() + '/sessions'">
-        {{ 'retrieval-agents.workflow.toolbar-buttons.manage-sessions' | translate }}
-      </pa-button>
+      @if (isAragWithMemoryEnabled | async) {
+        <pa-button
+          size="small"
+          kind="primary"
+          [routerLink]="aragUrl() + '/sessions'">
+          {{ 'retrieval-agents.workflow.toolbar-buttons.manage-sessions' | translate }}
+        </pa-button>
+      }
     </div>
   </div>
 

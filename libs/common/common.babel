@@ -3147,6 +3147,52 @@
 												</translations>
 											</concept_node>
 											<concept_node>
+												<name>memory</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>memory-help</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
 												<name>name-placeholder</name>
 												<description/>
 												<comment/>
@@ -36015,6 +36061,29 @@
 															<folder_node>
 																<name>session-select</name>
 																<children>
+																	<concept_node>
+																		<name>ephemeral</name>
+																		<description/>
+																		<comment/>
+																		<translations>
+																			<translation>
+																				<language>ca-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>en-US</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>es-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>fr-FR</language>
+																				<approved>false</approved>
+																			</translation>
+																		</translations>
+																	</concept_node>
 																	<concept_node>
 																		<name>label</name>
 																		<description/>
