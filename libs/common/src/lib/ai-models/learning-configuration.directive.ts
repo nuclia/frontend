@@ -24,6 +24,7 @@ export abstract class LearningConfigurationDirective implements OnChanges {
   // permissions
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
   isSummarizationAuthorized = this.features.authorized.summarization;
+  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
 
   protected saving = false;
 

@@ -11,19 +11,15 @@ import {
   Output,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  OptionModel,
-  PaButtonModule,
-  PaSliderModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Widget } from '@nuclia/core';
+import { LearningConfigurationOption, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SearchWidgetStorageService } from '../../search-widget-storage.service';
+import { ModelSelectorComponent } from '../../../ai-models';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'stf-routing-form',
@@ -38,6 +34,7 @@ import { SearchWidgetStorageService } from '../../search-widget-storage.service'
     PaSliderModule,
     PaButtonModule,
     ExpandableTextareaComponent,
+    ModelSelectorComponent,
   ],
   templateUrl: './routing-form.component.html',
   styleUrls: ['./routing-form.component.scss'],
@@ -47,9 +44,11 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private searchWidgetStorage = inject(SearchWidgetStorageService);
   private cdr = inject(ChangeDetectorRef);
+  private features = inject(FeaturesService);
   searchConfigs = this.searchWidgetStorage.searchAPIConfigs.pipe(
     map((configs) => Object.entries(configs).map(([id, config]) => ({ id, kind: config.kind }))),
   );
+  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
 
   @Input() set config(value: Widget.RoutingConfig | undefined) {
     if (value) {
@@ -74,7 +73,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this._kind = value;
   }
 
-  @Input({ required: true }) generativeModels: OptionModel[] = [];
+  @Input({ required: true }) generativeModels: LearningConfigurationOption[] = [];
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<Widget.RoutingConfig>();

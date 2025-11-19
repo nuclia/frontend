@@ -31,7 +31,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurations, SearchConfig, Widget } from '@nuclia/core';
+import { LearningConfigurationOption, LearningConfigurations, SearchConfig, Widget } from '@nuclia/core';
 import {
   ButtonMiniComponent,
   ExpandableTextareaComponent,
@@ -134,7 +134,7 @@ export class SearchConfigurationComponent {
   generativeModelFromSettings = '';
   semanticModelFromSettings = '';
   generativeModelNames: { [key: string]: string } = {};
-  generativeModels: OptionModel[] = [];
+  generativeModels: LearningConfigurationOption[] = [];
   semanticModels: OptionModel[] = [];
   promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
@@ -250,18 +250,7 @@ export class SearchConfigurationComponent {
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
     const generativeModels = schema['generative_model']?.options || [];
-    this.generativeModels = generativeModels.map(
-      (model) =>
-        new OptionModel({
-          id: model.value,
-          value: model.value,
-          label: model.name,
-          help:
-            this.generativeModelFromSettings === model.value
-              ? this.translate.instant('search.configuration.generative-answer.generative-model.kb-settings')
-              : null,
-        }),
-    );
+    this.generativeModels = generativeModels;
     const semanticModelsName = (schema['semantic_models'].options || []).reduce(
       (names, model) => {
         names[model.value] = model.name;

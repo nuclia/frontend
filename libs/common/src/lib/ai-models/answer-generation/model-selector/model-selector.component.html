@@ -1,0 +1,99 @@
+@if (options().length > 0) {
+  @if (selectedModel()) {
+    <div class="container">
+      <div
+        class="selected-model"
+        [class.disabled]="disabled()">
+        <div class="model-name">
+          <div
+            class="body-m"
+            paEllipsisTooltip>
+            {{ selectedOption()?.name || selectedModel() }}
+          </div>
+          @if (selectedOption()?.description) {
+            <div
+              class="body-xs description"
+              paEllipsisTooltip>
+              {{ selectedOption()?.description }}
+            </div>
+          }
+        </div>
+        <pa-button
+          icon="cross"
+          aspect="basic"
+          size="small"
+          [disabled]="disabled()"
+          (click)="selectOption('')">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
+      </div>
+      @if (disclaimerRequired() && showDisclaimer()) {
+        <div class="disclaimer">
+          <pa-expander [expanded]="disclaimerExpanded()">
+            <pa-expander-header>
+              <div class="title-s">{{ 'kb.ai-models.model-selector.disclaimer.title' | translate }}</div>
+            </pa-expander-header>
+            <pa-expander-body>
+              <div class="disclaimer-body">
+                <p class="body-m">
+                  {{
+                    'kb.ai-models.model-selector.disclaimer.description'
+                      | translate: { model: selectedOption()?.name || '' }
+                  }}
+                </p>
+                <div [innerHTML]="'kb.ai-models.model-selector.disclaimer.text' | translate"></div>
+              </div>
+            </pa-expander-body>
+          </pa-expander>
+        </div>
+        <pa-checkbox
+          [value]="accepted()"
+          (valueChange)="updateAccepted($event)"
+          noEllipsis>
+          {{ 'kb.ai-models.model-selector.disclaimer.label' | translate: { model: selectedOption()?.name || '' } }}
+        </pa-checkbox>
+      }
+    </div>
+  } @else {
+    <pa-input
+      icon="search"
+      [value]="term()"
+      (valueChange)="updateTerm($event)"
+      [paPopup]="dropdown"
+      #popup="paPopupRef"
+      (keyUp)="openDropdown()"
+      sameWidth>
+      {{ 'kb.ai-models.model-selector.search' | translate }}
+    </pa-input>
+    <pa-dropdown #dropdown>
+      @if (providers().length > 1) {
+        <div class="filters">
+          @for (provider of providers(); track provider) {
+            <pa-button
+              aspect="basic"
+              size="small"
+              [active]="filter() === provider"
+              (click)="toggleFilter(provider)">
+              {{ providerNames[provider] || provider }}
+            </pa-button>
+          }
+        </div>
+      }
+      @for (group of optionsGroups(); track group[0]) {
+        <pa-option-header>
+          {{ providerNames[group[0]] || group[0] }}
+        </pa-option-header>
+        @for (option of group[1]; track option.value) {
+          <pa-option
+            [description]="option.description"
+            [disabled]="disabled()"
+            (selectOption)="selectOption(option.value)">
+            {{ option.name }}
+          </pa-option>
+        }
+      } @empty {
+        <pa-option readonly>{{ 'generic.no-results' | translate }}</pa-option>
+      }
+    </pa-dropdown>
+  }
+}
