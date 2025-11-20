@@ -42,7 +42,7 @@ export class DynamicDriverModalComponent implements OnInit {
     const isEditing = !!this.existingDriver;
     const driverName = this.getDriverDisplayName();
     return isEditing
-      ? this.translate.instant('retrieval-agents.drivers.edit.title', { name: driverName })
+      ? this.translate.instant('retrieval-agents.drivers.edit-modal-title', { name: driverName })
       : this.translate.instant('retrieval-agents.drivers.add.title', { name: driverName });
   });
 
@@ -150,12 +150,7 @@ export class DynamicDriverModalComponent implements OnInit {
       return 'Driver';
     }
 
-    // Convert driver title to display name
-    const titleLower = this.driverTitle.toLowerCase();
-
     // Fallback to the original title
-    return !!this.translate.instant(`retrieval-agents.drivers.types.${titleLower}`)
-      ? this.translate.instant(`retrieval-agents.drivers.types.${titleLower}`)
-      : this.driverTitle;
+    return this.driverTitle;
   }
 }
