@@ -11,13 +11,13 @@
           {{ 'retrieval-agents.drivers.add.button' | translate }}
         </nsi-dropdown-button>
         <pa-dropdown #driverTypes>
-          @for (driver of schemas()?.drivers; track driver.title) {
-            @if (driver.title && shouldShowDriver(driver.title)) {
+          @for (driver of titles() || {}; track driver) {
+            @if (driver && shouldShowDriver(driver)) {
               <pa-option
-                (selectOption)="addDriver(driver.title)"
-                [description]="getDriverDescription(driver.title)"
-                [disabled]="isDriverDisabled(driver.title)">
-                {{ getDriverDisplayName(driver.title) }}
+                (selectOption)="addDriver(driver)"
+                [description]="getDriverDescription(driver)"
+                [disabled]="isDriverDisabled(driver)">
+                {{ getDriverDisplayName(driver) }}
               </pa-option>
             }
           }

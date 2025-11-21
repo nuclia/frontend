@@ -22,6 +22,7 @@ import { Subject, takeUntil, finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { DriversService, DriverType } from './drivers.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { JSONSchema4, JSONSchema7 } from 'json-schema';
 
 @Component({
   selector: 'app-drivers-panel',
@@ -52,7 +53,18 @@ export class DriversPageComponent implements OnInit, OnDestroy {
 
   // Expose service properties to template
   drivers = this.driversService.drivers;
-  schemas = this.driversService.schemas;
+  titles = computed(() => {
+    const schemas = this.driversService.schemas();
+    if (schemas === null) {
+      return [];
+    } else {
+      const driverSchemaIds = ((schemas.properties?.['drivers'].items as JSONSchema4)?.oneOf || []).map(
+        (ref) => ref.$ref?.split('/').slice(-1)[0],
+      );
+      const titles = Object.keys((schemas as JSONSchema7).$defs || {}).filter((id) => driverSchemaIds.includes(id));
+      return titles;
+    }
+  });
   hasAllInternetDrivers = this.driversService.hasAllInternetDrivers;
 
   // Convert observables to signals for synchronous access

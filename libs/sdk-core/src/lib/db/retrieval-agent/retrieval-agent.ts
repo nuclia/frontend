@@ -29,6 +29,7 @@ import { Memory } from './memory.models';
 import { ProviderType } from './retrieval-agent.types';
 import { Session } from './session';
 import { ISession } from './session.models';
+import { JSONSchema4 } from 'json-schema';
 
 /**
  * Provides access to all the Retrieval Agent contents and services.
@@ -465,5 +466,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   getSchemas(): Observable<ARAGSchemas> {
     return this.nuclia.rest.get<ARAGSchemas>(`${this.path}/schema`);
+  }
+
+  /**
+   * Get the agents and drivers schemas
+   */
+  getFullSchemas(): Observable<JSONSchema4> {
+    return this.nuclia.rest.get<JSONSchema4>(`${this.path}/fullschema`);
   }
 }
