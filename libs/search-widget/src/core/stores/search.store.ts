@@ -567,6 +567,10 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     !state.creation?.range_creation_end,
 );
 
+export const hasFilters = combineLatest([searchFilters, hasRangeCreation]).pipe(
+  map(([searchFilters, hasRangeCreation]) => searchFilters.length > 0 || hasRangeCreation),
+);
+
 export const hasMore = searchState.reader<boolean>((state) => state.options.top_k !== EXTENDED_RESULTS);
 export const loadMore = searchState.writer<number, void>(
   (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),

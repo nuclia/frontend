@@ -39,8 +39,10 @@
     searchConfigId,
     widgetFeatures,
     widgetFeedback,
+    widgetFilters,
     widgetImageRagStrategies,
     widgetRagStrategies,
+    type WidgetFilters,
   } from '../../core';
   import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { setLang } from '../../core/i18n';
@@ -48,6 +50,10 @@
     askQuestion,
     initAnswer,
     initChatHistoryPersistence,
+    initEntitiesStore,
+    initLabelStore,
+    initMimeTypeStore,
+    initPathsStore,
     initUsageTracking,
     initViewer,
   } from '../../core/stores/effects';
@@ -72,6 +78,8 @@
     system_prompt?: string;
     rephrase_prompt?: string;
     generativemodel?: string;
+    filters?: string;
+    labelsets_excluded_from_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     no_tracking = false;
@@ -120,6 +128,10 @@
   let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
   let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
   let generativemodel = $derived(componentProps.generativemodel || config.generativemodel);
+  let filters = $derived(componentProps.filters || config.filters);
+  let labelsets_excluded_from_filters = $derived(
+    componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
+  );
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
@@ -204,6 +216,7 @@
 
   let _features: Widget.WidgetFeatures = {};
   let _securityGroups: string[] | undefined;
+  let _filters: WidgetFilters = {};
   let _filter_expression: FilterExpression | undefined;
 
   const dispatch = createEventDispatcher();
@@ -217,6 +230,20 @@
   ready.pipe(delay(200)).subscribe(() => {
     initHook(nucliaAPI);
     // any feature that calls the Nuclia API immediately at init time must be done here
+    if (_features.filter) {
+      if (_filters.labels || _filters.labelFamilies) {
+        initLabelStore(labelsets_excluded_from_filters);
+      }
+      if (_filters.entities) {
+        initEntitiesStore();
+      }
+      if (_filters.mime) {
+        initMimeTypeStore();
+      }
+      if (_filters.path) {
+        initPathsStore();
+      }
+    }
     if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
@@ -246,6 +273,13 @@
         (acc, current) => ({ ...acc, [current as keyof Widget.WidgetFeatures]: true }),
         {},
       );
+      _filters = (filters ? filters.split(',').filter((filter) => !!filter) : []).reduce(
+        (acc, current) => ({ ...acc, [current]: true }),
+        {},
+      );
+      if (Object.keys(_filters).length === 0) {
+        _filters.labels = true;
+      }      
       _securityGroups = security_groups?.split(',').filter((group) => !!group);
       _ragStrategies = parseRAGStrategies(rag_strategies);
       _ragImageStrategies = parseRAGImageStrategies(rag_images_strategies);
@@ -300,6 +334,7 @@
 
       // Setup widget in the store
       widgetFeatures.set(_features);
+      widgetFilters.set(_filters);
       widgetRagStrategies.set(_ragStrategies);
       widgetImageRagStrategies.set(_ragImageStrategies);
       widgetFeedback.set(feedback);

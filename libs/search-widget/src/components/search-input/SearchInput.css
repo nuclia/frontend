@@ -83,13 +83,6 @@
   }
 
   .filters-container {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--rhythm-1);
-  }
-
-  &.has-filters .filters-container {
     padding: var(--rhythm-1) 0;
     margin: 0 var(--rhythm-1);
     border-top: 1px solid var(--color-neutral-light);
