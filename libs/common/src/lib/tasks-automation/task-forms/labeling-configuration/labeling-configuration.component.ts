@@ -23,14 +23,14 @@ import {
   PaIconModule,
   OptionModel,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
-import { combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
+import { Classification, LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
+import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
 
 export interface LabelingConfiguration {
-  label: LabelOperation;
+  operations: LabelOperation[];
   valid: boolean;
   on: TaskApplyTo;
 }
@@ -80,48 +80,84 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
 
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
-  labelSets: LabelSets | null = null;
-  labelSetOptions: OptionModel[] = [];
-  hasLabelSet = false;
+  labelSets = new BehaviorSubject<LabelSets | null>(null);
+  hasLabelSet = new BehaviorSubject<boolean>(false);
 
   labelingForm = new FormGroup({
     on: new FormControl('resources', { nonNullable: true }),
-    ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    description: new FormControl('', { nonNullable: true }),
-    multiple: new FormControl<boolean>(false, { nonNullable: true }),
-    labels: new FormArray([
-      new FormGroup({
-        label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-        description: new FormControl('', { nonNullable: true }),
-        examples: new FormArray<FormControl<string>>([]),
-      }),
-    ]),
+    operations: new FormArray<
+      FormGroup<{
+        ident: FormControl<string>;
+        description: FormControl<string>;
+        multiple: FormControl<boolean>;
+        labels: FormArray<
+          FormGroup<{
+            label: FormControl<string>;
+            description: FormControl<string>;
+            examples: FormArray<FormControl<string>>;
+          }>
+        >;
+      }>
+    >([]),
   });
 
-  get labelsControls() {
-    return this.labelingForm.controls.labels.controls;
+  get operationControls() {
+    return this.labelingForm.controls.operations.controls;
   }
 
-  get selectedLabelset() {
-    return this.labelingForm.value.ident;
-  }
+  selectedLabels = this.labelingForm.valueChanges.pipe(
+    startWith(this.labelingForm.value),
+    map((value) =>
+      (value.operations || []).reduce((acc, curr) => {
+        const ident = curr.ident;
+        return acc.concat((curr.labels || []).map((label) => ({ labelset: ident || '', label: label.label || '' })));
+      }, [] as Classification[]),
+    ),
+  );
 
-  labelOptions = combineLatest([
-    this.labelService.labelSets,
-    this.labelingForm.controls.ident.valueChanges.pipe(startWith(this.selectedLabelset)),
-  ]).pipe(
-    map(([labelSets, selectedLabelset]) =>
-      (labelSets?.[selectedLabelset || '']?.labels || []).map(
-        (label) => new OptionModel({ id: label.title, value: label.title, label: label.title }),
+  labelOptions = combineLatest([this.labelService.labelSets, this.selectedLabels]).pipe(
+    map(([labelsets, selectedLabels]) =>
+      Object.fromEntries(
+        Object.entries(labelsets || {}).map(([key, labelset]) => [
+          key,
+          labelset.labels.map(
+            (label) =>
+              new OptionModel({
+                id: label.title,
+                value: label.title,
+                label: label.title,
+                filtered: selectedLabels.some((item) => item.labelset === key && item.label === label.title),
+              }),
+          ),
+        ]),
       ),
     ),
     shareReplay(1),
   );
 
+  selectedLabelSets = this.labelingForm.valueChanges.pipe(
+    startWith(this.labelingForm.value),
+    map((value) => (value.operations || []).map((operation) => operation.ident || '')),
+  );
+
+  labelSetOptions = combineLatest([this.labelSets, this.selectedLabelSets]).pipe(
+    map(([labelSets, selectedLabelSets]) =>
+      Object.entries(labelSets || {}).map(
+        ([key, labelSet]) =>
+          new OptionModel({ id: key, value: key, label: labelSet.title, filtered: selectedLabelSets.includes(key) }),
+      ),
+    ),
+    shareReplay(1),
+  );
+
+  constructor() {
+    this.addOperation(1);
+  }
+
   ngOnInit() {
     this.labelingForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.configurationChange.emit({
-        label: this.labelingForm.getRawValue(),
+        operations: this.labelingForm.controls.operations.getRawValue(),
         valid: this.labelingForm.valid,
         on: this.type === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
       });
@@ -130,51 +166,78 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
 
   initForm(task: DataAugmentationTaskOnGoing) {
-    const labelOperation = task.parameters?.operations?.find((operation) => operation.label)?.label;
-    if (labelOperation) {
-      const { labels, ...rest } = labelOperation;
-      this.labelingForm.patchValue({
-        ...rest,
-        on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
-      });
-      this.labelingForm.controls.labels.clear();
-      labelOperation.labels?.forEach(() => {
-        this.addLabel();
-      });
-      if (labels) {
-        this.labelingForm.controls.labels.patchValue(labels);
-      }
-    }
-    this.cdr.markForCheck();
-  }
-
-  addLabel() {
-    this.labelingForm.controls.labels.push(
-      new FormGroup({
-        label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-        description: new FormControl('', { nonNullable: true }),
-        examples: new FormArray<FormControl<string>>([]),
-      }),
+    this.labelingForm.controls.on.patchValue(
+      task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
     );
-  }
+    const operations = task.parameters?.operations
+      ?.filter((operation) => operation.label)
+      ?.map((operation) => operation.label as LabelOperation);
 
-  removeLabel(index: number) {
-    this.labelingForm.controls.labels.removeAt(index);
-  }
-
-  clearLabels() {
-    const currentLabelset = this.labelSets?.[this.labelingForm.controls.ident.value];
-    if (currentLabelset?.multiple) {
-      this.labelingForm.controls.multiple.enable();
-      this.labelingForm.controls.multiple.setValue(true);
-    } else {
-      this.labelingForm.controls.multiple.disable();
-      this.labelingForm.controls.multiple.setValue(false);
+    if (operations && operations.length > 0) {
+      this.labelingForm.controls.operations.clear();
+      operations.forEach((operation, index) => {
+        this.addOperation(operation.labels?.length || 0);
+        this.operationControls[index].patchValue(operation);
+      });
     }
-    this.labelingForm.controls.labels.clear();
-    this.labelingForm.controls.description.setValue('');
-    this.addLabel();
     this.cdr.markForCheck();
+  }
+
+  addOperation(numLabels: number) {
+    const formGroup = new FormGroup({
+      ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      description: new FormControl('', { nonNullable: true }),
+      multiple: new FormControl<boolean>(false, { nonNullable: true }),
+      labels: new FormArray<
+        FormGroup<{
+          label: FormControl<string>;
+          description: FormControl<string>;
+          examples: FormArray<FormControl<string>>;
+        }>
+      >([]),
+    });
+    for (let i = 0; i < numLabels; i++) {
+      formGroup.controls.labels.push(this.newLabelControl());
+    }
+    this.labelingForm.controls.operations.push(formGroup);
+  }
+
+  removeOperation(index: number) {
+    this.labelingForm.controls.operations.removeAt(index);
+  }
+
+  newLabelControl() {
+    return new FormGroup({
+      label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      description: new FormControl('', { nonNullable: true }),
+      examples: new FormArray<FormControl<string>>([]),
+    });
+  }
+
+  addLabel(index: number) {
+    this.operationControls[index].controls.labels.push(this.newLabelControl());
+  }
+
+  removeLabel(operationIndex: number, labelIndex: number) {
+    this.operationControls[operationIndex].controls.labels.removeAt(labelIndex);
+  }
+
+  clearLabels(index: number) {
+    this.labelSets.pipe(take(1)).subscribe((labelSets) => {
+      const formGroup = this.operationControls[index];
+      const currentLabelset = labelSets?.[formGroup.controls.ident.value];
+      if (currentLabelset?.multiple) {
+        formGroup.controls.multiple.enable();
+        formGroup.controls.multiple.setValue(true);
+      } else {
+        formGroup.controls.multiple.disable();
+        formGroup.controls.multiple.setValue(false);
+      }
+      formGroup.controls.labels.clear();
+      formGroup.controls.description.setValue('');
+      formGroup.controls.labels.push(this.newLabelControl());
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy() {
@@ -182,7 +245,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  createLabelSet() {
+  createLabelSet(index: number) {
     this.modalService
       .openModal(
         LabelSetFormModalComponent,
@@ -200,7 +263,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
           (data.labelSet.kind[0] === LabelSetKind.RESOURCES && this.type === 'resources') ||
           (data.labelSet.kind[0] === LabelSetKind.PARAGRAPHS && this.type === 'text-blocks')
         ) {
-          this.labelingForm.controls.ident.setValue(data.id);
+          this.operationControls[index].controls.ident.setValue(data.id);
         }
       });
   }
@@ -215,9 +278,8 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         this.labelService.hasResourceLabelSets.pipe(take(1)),
       ]).pipe(
         map(([labelSets, hasLabelSet]) => {
-          this.labelSets = labelSets;
-          this.hasLabelSet = hasLabelSet;
-          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
+          this.labelSets.next(labelSets);
+          this.hasLabelSet.next(hasLabelSet);
           return undefined;
         }),
       );
@@ -227,9 +289,8 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         this.labelService.hasTextBlockLabelSets.pipe(take(1)),
       ]).pipe(
         map(([labelSets, hasLabelSet]) => {
-          this.labelSets = labelSets;
-          this.hasLabelSet = hasLabelSet;
-          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
+          this.labelSets.next(labelSets);
+          this.hasLabelSet.next(hasLabelSet);
           return undefined;
         }),
       );
@@ -237,10 +298,5 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
   updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
     this._updateLabelsets(type).subscribe(() => this.cdr.markForCheck());
-  }
-  getLabelsetOptions(labelSets: LabelSets) {
-    return Object.entries(labelSets).map(
-      ([key, labelSet]) => new OptionModel({ id: key, value: key, label: labelSet.title }),
-    );
   }
 }

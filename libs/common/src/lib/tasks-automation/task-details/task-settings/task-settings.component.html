@@ -125,64 +125,63 @@
     </nsi-two-columns-configuration-item>
   }
 
-  @if (labelOperation) {
-    <nsi-two-columns-configuration-item
-      noTopBorder
-      itemTitle="tasks-automation.form.labels-selection.title"
-      description="tasks-automation.form.labels-selection.description">
-      <div class="settings-container">
-        <div class="setting">
-          <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
-          <div>{{ labelOperation?.ident }}</div>
-        </div>
-        @if (labelOperation?.multiple) {
-          <div class="separator-line"></div>
+  @if (labelOperations) {
+    @for (labelOperation of labelOperations; track labelOperation.ident) {
+      <nsi-two-columns-configuration-item
+        noTopBorder
+        itemTitle="tasks-automation.form.labels-selection.label-list.title"
+        [description]="
+          task.parameters.on === TaskApplyTo.FULL_FIELD
+            ? 'tasks-automation.form.on.resources'
+            : 'tasks-automation.form.on.text-blocks'
+        ">
+        <div class="settings-container">
           <div class="setting">
-            <label>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</label>
+            <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
+            <div>{{ labelOperation?.ident }}</div>
           </div>
-        }
-        @if (labelOperation?.description) {
-          <div class="separator-line"></div>
-          <div class="setting">
-            <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
-            <div>{{ labelOperation.description }}</div>
-          </div>
-        }
-        <div class="separator-line"></div>
-        <div class="setting">
-          <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
-          <pa-table
-            border
-            columns="1fr 2fr">
-            <pa-table-header>
-              <pa-table-cell header>
-                {{ 'tasks-automation.form.labels-selection.label-list.label' | translate }}
-              </pa-table-cell>
-              <pa-table-cell header>
-                {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
-              </pa-table-cell>
-            </pa-table-header>
-            @for (label of labelOperation.labels; track label) {
-              <pa-table-row>
-                <pa-table-cell>
-                  <span class="body-s">{{ label.label }}</span>
-                </pa-table-cell>
-                <pa-table-cell>
-                  <span class="body-s">{{ label.description || '-' }}</span>
-                </pa-table-cell>
-              </pa-table-row>
-            }
-          </pa-table>
-        </div>
-        <nsi-info-card>
-          @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
-            {{ 'tasks-automation.form.on.resources' | translate }}
-          } @else {
-            {{ 'tasks-automation.form.on.text-blocks' | translate }}
+          @if (labelOperation?.multiple) {
+            <div class="separator-line"></div>
+            <div class="setting">
+              <label>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</label>
+            </div>
           }
-        </nsi-info-card>
-      </div>
-    </nsi-two-columns-configuration-item>
+          @if (labelOperation?.description) {
+            <div class="separator-line"></div>
+            <div class="setting">
+              <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
+              <div>{{ labelOperation.description }}</div>
+            </div>
+          }
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
+            <pa-table
+              border
+              columns="1fr 2fr">
+              <pa-table-header>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.form.labels-selection.label-list.label' | translate }}
+                </pa-table-cell>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
+                </pa-table-cell>
+              </pa-table-header>
+              @for (label of labelOperation.labels; track label) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <span class="body-s">{{ label.label }}</span>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <span class="body-s">{{ label.description || '-' }}</span>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          </div>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
   }
 
   @if (graphOperation) {

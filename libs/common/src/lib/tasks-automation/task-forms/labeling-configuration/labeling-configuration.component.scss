@@ -1,11 +1,24 @@
 @use 'apps/dashboard/src/variables' as *;
 @use '../../task.common';
 
-.labelset,
-.labels-list {
-  display: flex;
-  flex-direction: column;
+.form-container {
   gap: rhythm(2);
+}
+
+.operation-header {
+  align-items: center;
+  background-color: $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 rhythm(2);
+}
+
+.operation {
+  border: 1px solid $color-neutral-lighter;
+  padding: rhythm(2);
+  .title-s {
+    margin-top: rhythm(2);
+  }
 }
 
 .input-with-help {
@@ -15,10 +28,6 @@
   pa-input {
     flex-grow: 1;
   }
-}
-
-.title-s {
-  margin-top: rhythm(2);
 }
 
 .label {

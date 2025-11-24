@@ -43,8 +43,11 @@ export class LabelerResultsComponent {
 
   fieldsWithLabels = this.resultsSubject.pipe(
     map((results) => {
-      const labelOperation = this.task?.parameters.operations?.[0].label;
-      const taskLabels = (labelOperation?.labels || []).map((label) => `${labelOperation?.ident || ''}/${label.label}`);
+      const taskLabels = (this.task?.parameters.operations || []).reduce(
+        (acc, curr) =>
+          acc.concat((curr?.label?.labels || []).map((label) => `${curr?.label?.ident || ''}/${label.label}`)),
+        [] as string[],
+      );
       return Object.entries(results.results)
         .filter(([key]) => this.getFieldId(key).fieldType !== FIELD_TYPE.generic)
         .map(([key, field]) => ({

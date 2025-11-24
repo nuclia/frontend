@@ -2017,6 +2017,7 @@
 	"tasks-automation.form.filter.search-in.title-or-content": "Title or content contains",
 	"tasks-automation.form.filter.search-input-label": "Comma-separated keywords",
 	"tasks-automation.form.filter.title": "Filter the resources",
+	"tasks-automation.form.labels-selection.add-labelset": "Add label set",
 	"tasks-automation.form.labels-selection.create-label-set-button": "Create new label set",
 	"tasks-automation.form.labels-selection.description": "Select the labels that you want to use and where you want them assigned.",
 	"tasks-automation.form.labels-selection.label-list.add-label": "Add label",
