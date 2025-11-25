@@ -1,6 +1,9 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>
     <h2>{{ createMode ? ('kb.ai-models.extraction.create' | translate) : config?.name || id }}</h2>
+    @if (!!id) {
+      <span class="title-xxs">({{ id }})</span>
+    }
   </pa-modal-title>
 
   <pa-modal-content>
