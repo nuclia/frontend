@@ -17,7 +17,7 @@
     "help": "nx help",
     "missdev": "npx missdev --output=../libs --https --default-to-master",
     "sdk-build": "run-script-os",
-    "sdk-build:win32": "echo 'NO WIN32 BUILD AVAILABLE'",
+    "sdk-build:win32": "echo 'NO WIN32 BUILD'",
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist"
   },

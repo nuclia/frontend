@@ -47,6 +47,5 @@ jobs:
           blackducksca_scan_full: ${{ github.event_name == 'pull_request' && 'false' || 'true' }}
           project_directory: '.'
           blackducksca_scan_failure_severities: 'BLOCKER,CRITICAL,MAJOR'
-          detect_search_depth: 1
           detect_args: ${{ steps.calculate-detect-args.outputs.DETECT_ARGS }}
           include_diagnostics: false
