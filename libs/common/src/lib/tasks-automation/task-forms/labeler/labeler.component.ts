@@ -9,7 +9,7 @@ import {
   LabelingConfiguration,
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
-import { LabelOperation, TaskApplyTo, TaskName } from '@nuclia/core';
+import { Operation, TaskApplyTo, TaskName } from '@nuclia/core';
 
 @Component({
   imports: [
@@ -36,16 +36,18 @@ export class LabelerComponent extends TaskRouteDirective {
   }
 
   onSave(commonConfig: TaskFormCommonConfig) {
-    const labelOperation: LabelOperation = {
-      ...this.labelingConfig?.label,
-      triggers: commonConfig.webhook && [commonConfig.webhook],
-    };
+    const labelOperations: Operation[] = (this.labelingConfig?.operations || []).map((operation) => ({
+      label: {
+        ...operation,
+        triggers: commonConfig.webhook && [commonConfig.webhook],
+      },
+    }));
     const parameters = {
       name: commonConfig.name,
       filter: commonConfig.filter,
       filter_expression_json: commonConfig.filter_expression_json,
       llm: commonConfig.llm,
-      operations: [{ label: labelOperation }],
+      operations: labelOperations,
       on: this.labelingConfig?.on !== undefined ? this.labelingConfig.on : TaskApplyTo.FULL_FIELD,
     };
     this.saveTask(this.type, parameters);

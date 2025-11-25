@@ -2006,6 +2006,7 @@
 	"tasks-automation.form.filter.search-in.title-or-content": "El títol o el contingut conté",
 	"tasks-automation.form.filter.search-input-label": "Paraules clau separades per comes",
 	"tasks-automation.form.filter.title": "Filtreu els recursos",
+	"tasks-automation.form.labels-selection.add-labelset": "Afegir conjunt d'etiquetes",
 	"tasks-automation.form.labels-selection.create-label-set-button": "Crea nou conjunt d’etiquetes",
 	"tasks-automation.form.labels-selection.description": "Seleccioneu les etiquetes que voleu utilitzar i on voleu assignar-les.",
 	"tasks-automation.form.labels-selection.label-list.add-label": "Afegeir etiqueta",

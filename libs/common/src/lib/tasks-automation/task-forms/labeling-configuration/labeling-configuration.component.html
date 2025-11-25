@@ -17,70 +17,102 @@
         </pa-radio>
       </pa-radio-group>
     </div>
-    @if (hasLabelSet) {
-      <div class="labelset">
-        <pa-select
-          formControlName="ident"
-          [label]="'tasks-automation.form.labels-selection.labelset' | translate"
-          [options]="labelSetOptions"
-          (valueChange)="clearLabels()"></pa-select>
-        <div class="input-with-help">
-          <pa-input formControlName="description">
-            {{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}
-          </pa-input>
-          <pa-icon
-            name="info"
-            [paPopover]="inputHelp"></pa-icon>
-          <pa-popover #inputHelp>
-            <div>{{ 'tasks-automation.form.labels-selection.labelset-description-help' | translate }}</div>
-          </pa-popover>
-        </div>
-        <pa-toggle formControlName="multiple">
-          {{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}
-        </pa-toggle>
-      </div>
-    } @else {
-      <pa-button
-        class="full-width"
-        icon="circle-plus"
-        iconAndText
-        aspect="basic"
-        (click)="createLabelSet()">
-        {{ 'tasks-automation.form.labels-selection.create-label-set-button' | translate }}
-      </pa-button>
-    }
-    <div class="title-s">{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}:</div>
-    <nsi-info-card>{{ 'tasks-automation.form.labels-selection.label-list.help' | translate }}</nsi-info-card>
-    <div
-      class="labels-list"
-      formArrayName="labels">
-      @for (label of labelsControls; track label) {
-        <div
-          class="label"
-          [formGroup]="label">
-          <pa-select
-            formControlName="label"
-            [options]="(labelOptions | async) || []"
-            [label]="'tasks-automation.form.labels-selection.label-list.label' | translate"></pa-select>
-          <pa-input formControlName="description">
-            {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
-          </pa-input>
+
+    @for (operation of operationControls; track operation; let index = $index; let count = $count) {
+      <div>
+        <div class="operation-header">
+          <span class="title-s">{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</span>
           <pa-button
-            kind="destructive"
-            aspect="basic"
             icon="trash"
-            [disabled]="labelsControls.length < 2"
-            (click)="removeLabel($index)"></pa-button>
+            size="small"
+            iconSize="small"
+            aspect="basic"
+            [disabled]="count < 2"
+            (click)="removeOperation(index)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
         </div>
-      }
-      <pa-button
-        size="small"
-        icon="plus"
-        iconAndText
-        [disabled]="!selectedLabelset"
-        (click)="addLabel()">
-        {{ 'tasks-automation.form.labels-selection.label-list.add-label' | translate }}
-      </pa-button>
-    </div>
+        <div
+          class="form-container operation"
+          [formGroup]="operation">
+          @if (hasLabelSet | async) {
+            <pa-select
+              formControlName="ident"
+              [label]="'tasks-automation.form.labels-selection.labelset' | translate"
+              [options]="(labelSetOptions | async) || []"
+              (valueChange)="$event !== operation.value.ident && clearLabels(index)"></pa-select>
+            <div class="input-with-help">
+              <pa-input formControlName="description">
+                {{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}
+              </pa-input>
+              <pa-icon
+                name="info"
+                [paPopover]="inputHelp"></pa-icon>
+              <pa-popover #inputHelp>
+                <div>{{ 'tasks-automation.form.labels-selection.labelset-description-help' | translate }}</div>
+              </pa-popover>
+            </div>
+            <pa-toggle formControlName="multiple">
+              {{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}
+            </pa-toggle>
+          } @else {
+            <pa-button
+              class="full-width"
+              icon="circle-plus"
+              iconAndText
+              aspect="basic"
+              (click)="createLabelSet(index)">
+              {{ 'tasks-automation.form.labels-selection.create-label-set-button' | translate }}
+            </pa-button>
+          }
+          <div class="title-s">{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}:</div>
+          <nsi-info-card>{{ 'tasks-automation.form.labels-selection.label-list.help' | translate }}</nsi-info-card>
+          <div
+            class="form-container"
+            formArrayName="labels">
+            @for (
+              label of operation.controls.labels.controls;
+              track label;
+              let count = $count;
+              let labelIndex = $index
+            ) {
+              <div
+                class="label"
+                [formGroup]="label">
+                <pa-select
+                  formControlName="label"
+                  [options]="(labelOptions | async)?.[operation.controls.ident.value] || []"
+                  [label]="'tasks-automation.form.labels-selection.label-list.label' | translate"></pa-select>
+                <pa-input formControlName="description">
+                  {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
+                </pa-input>
+                <pa-button
+                  kind="destructive"
+                  aspect="basic"
+                  icon="trash"
+                  [disabled]="count < 2"
+                  (click)="removeLabel(index, labelIndex)"></pa-button>
+              </div>
+            }
+            <pa-button
+              size="small"
+              icon="plus"
+              aspect="basic"
+              iconAndText
+              [disabled]="!operation.controls.ident.value"
+              (click)="addLabel(index)">
+              {{ 'tasks-automation.form.labels-selection.label-list.add-label' | translate }}
+            </pa-button>
+          </div>
+        </div>
+      </div>
+    }
+    <pa-button
+      size="small"
+      icon="plus"
+      iconAndText
+      (click)="addOperation(1)">
+      {{ 'tasks-automation.form.labels-selection.add-labelset' | translate }}
+    </pa-button>
   </div>
 </nsi-two-columns-configuration-item>

@@ -65,7 +65,7 @@ export class TaskSettingsComponent {
   TaskApplyTo = TaskApplyTo;
 
   askOperation?: AskOperation;
-  labelOperation?: LabelOperation;
+  labelOperations?: LabelOperation[];
   graphOperation?: GraphOperation;
   qaOperation?: QAOperation;
 
@@ -87,7 +87,9 @@ export class TaskSettingsComponent {
       this.hasFilters = hasFilters(value.parameters);
     }
     this.askOperation = this.task?.parameters?.operations?.find((operation) => operation.ask)?.ask;
-    this.labelOperation = this.task?.parameters?.operations?.find((operation) => operation.label)?.label;
+    this.labelOperations = this.task?.parameters?.operations
+      ?.filter((operation) => operation.label)
+      .map((operation) => operation.label as LabelOperation);
     this.graphOperation = this.task?.parameters?.operations?.find((operation) => operation.graph)?.graph;
     this.qaOperation = this.task?.parameters?.operations?.find((operation) => operation.qa)?.qa;
   }
