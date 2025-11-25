@@ -290,7 +290,7 @@ export const getAnswer = (
     query = QUERY_PREPEND + ' ' + query;
   }
   if (searchConfigOverride) {
-    options = { search_configuration: searchConfigOverride };
+    options = { show: ASK_SHOW, search_configuration: searchConfigOverride };
   } else {
     options = options ? { ...defaultOptions, ...options } : defaultOptions;
   }
