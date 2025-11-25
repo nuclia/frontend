@@ -61,6 +61,8 @@ import {
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
 import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { JSONSchema4 } from 'json-schema';
+import { convertNodeTypeToConfigTitle } from './workflow.utils';
 
 const COLUMN_CLASS = 'workflow-col';
 const COLUMN_SECTION_CLASS = 'column-section';
@@ -80,10 +82,9 @@ export class WorkflowService {
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
-  private featureService = inject(FeaturesService);
 
   // Shared schemas state
-  private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
+  private _schemasSubject = new BehaviorSubject<JSONSchema4 | null>(null);
   schemas$ = this._schemasSubject.asObservable();
 
   // Shared Models state
@@ -472,23 +473,13 @@ export class WorkflowService {
     const nodeCategory = parentNode.nodeCategory;
 
     // Find the schema for this node type
-    const categorySchemas = schemas.agents[nodeCategory];
-    if (!Array.isArray(categorySchemas)) {
+    const categorySchemas = schemas.properties?.[nodeCategory];
+    if (!categorySchemas) {
       return [];
     }
 
-    // Find the matching schema
-    let matchingSchema: any = null;
-    for (const schema of categorySchemas) {
-      if (this.schemaMatchesNodeType(schema, nodeType)) {
-        if (schema['$ref']) {
-          matchingSchema = this.resolveSchemaRef(schema, schema['$ref'], schemas);
-        } else {
-          matchingSchema = schema;
-        }
-        break;
-      }
-    }
+    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
+    const matchingSchema = schemas['$defs'][schemaTitle];
 
     if (!matchingSchema?.properties) {
       return [];
@@ -706,87 +697,13 @@ export class WorkflowService {
   }
 
   /**
-   * Convert configuration title to node type using a mapping approach
-   */
-  private convertConfigTitleToNodeType(configTitle: string): string {
-    // Define mapping from config title patterns to node types
-    const titleToNodeTypeMap: { [key: string]: string } = {
-      SQL: 'sql',
-      SPARQL: 'sparql',
-      Cypher: 'cypher',
-      MCP: 'mcp',
-      Brave: 'brave',
-      Google: 'google',
-      Perplexity: 'perplexity',
-      Tavily: 'tavily',
-      Python: 'restricted',
-      BasicAsk: 'basic_ask',
-      ContextConditional: 'context_conditional',
-      ExternalCall: 'external_call',
-      Historical: 'historical',
-      Rephrase: 'rephrase',
-      PreprocessConditional: 'pre_conditional',
-      PreprocessAlinia: 'preprocess_alinia',
-      PostprocessConditional: 'post_conditional',
-      PostprocessAlinia: 'postprocess_alinia',
-      Restart: 'restart',
-      Remi: 'remi',
-    };
-
-    // Check for special case mappings first
-    for (const [pattern, nodeType] of Object.entries(titleToNodeTypeMap)) {
-      if (configTitle.includes(pattern)) {
-        return nodeType;
-      }
-    }
-
-    // Default conversion: remove "AgentConfig" suffix and convert to lowercase
-    // e.g., "SummarizeAgentConfig" -> "summarize", "GenerateAgentConfig" -> "generate"
-    return configTitle.replace(/AgentConfig$/, '').toLowerCase();
-  }
-
-  /**
    * Get all node configurations directly from schemas for a specific category
    */
   private getCategoryConfigurations(nodeCategory: NodeCategory): NodeType[] {
-    const schemas = this._schemasSubject.getValue();
-    if (!schemas?.agents?.[nodeCategory]) {
-      return [];
-    }
-
-    const categorySchemas = schemas.agents[nodeCategory];
-    if (!Array.isArray(categorySchemas)) {
-      return [];
-    }
-
-    const nodeTypes: NodeType[] = [];
-
-    for (const schema of categorySchemas) {
-      let configTitle = '';
-
-      // Handle $ref schemas
-      if (schema['$ref']) {
-        const resolved = this.resolveSchemaRef(schema, schema['$ref'], schemas);
-        if (resolved?.title) {
-          configTitle = resolved.title;
-        }
-      } else if (schema.title) {
-        // Direct schema with title
-        configTitle = schema.title;
-      }
-
-      if (configTitle) {
-        // Convert schema title to node type using mapping
-        const nodeType = this.convertConfigTitleToNodeType(configTitle);
-
-        // Add the node type if it's valid (not empty)
-        if (nodeType && nodeType.trim() !== '') {
-          nodeTypes.push(nodeType as NodeType);
-        }
-      }
-    }
-
-    return nodeTypes;
+    return Object.keys(
+      (this._schemasSubject.getValue()?.properties?.[nodeCategory].items as JSONSchema4)?.['discriminator'].mapping ||
+        {},
+    ).map((k) => k as NodeType);
   }
 
   /**
@@ -1285,7 +1202,7 @@ export class WorkflowService {
   }
 
   getSchemas() {
-    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
+    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getFullSchemas()));
   }
 
   /**

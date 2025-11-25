@@ -9,7 +9,8 @@ import {
   NodeDirective,
 } from '../index';
 import { WorkflowService } from '../../workflow.service';
-import { ARAGSchemas } from '@nuclia/core';
+import { NodeCategory, NodeType } from '../../workflow.models';
+import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
 
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
@@ -33,7 +34,7 @@ interface SchemaEntry {
 export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private workflowService = inject(WorkflowService);
 
-  private schemas = signal<ARAGSchemas | null>(null);
+  private schemas = signal<JSONSchema4 | null>(null);
   private schemaEntry = signal<SchemaEntry | null>(null);
 
   nodeConfig = computed<ConfigBlockItem[]>(() => {
@@ -115,7 +116,11 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     this.workflowService.schemas$.subscribe((schemas) => {
       if (schemas) {
         this.schemas.set(schemas);
-        this.analyzeSchema();
+        const matchingSchema = this.getMatchingSchema(this.type(), this.category(), schemas);
+        if (matchingSchema) {
+          const entry = this.createSchemaEntry(matchingSchema, matchingSchema?.title || this.type() || '');
+          this.schemaEntry.set(entry);
+        }
       }
     });
 
@@ -140,50 +145,27 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     });
   }
 
-  private analyzeSchema(): void {
-    const schemas = this.schemas();
-    const nodeType = this.type();
-    const category = this.category();
-
+  private getMatchingSchema(
+    nodeType: NodeType | undefined,
+    category: NodeCategory | undefined,
+    schemas: JSONSchema4 | null,
+  ): JSONSchema4 | undefined {
     if (!schemas || !nodeType || !category) {
-      // Create a basic fallback entry even without schemas
-      this.createFallbackEntry();
       return;
     }
-
-    // Find the schema for this node type
-    const categorySchemas = schemas.agents[category];
-    if (!Array.isArray(categorySchemas)) {
-      this.createFallbackEntry();
+    const categorySchemas = schemas.properties?.[category];
+    if (!categorySchemas) {
       return;
     }
-
-    // Find the matching schema
-    let matchingSchema: JSONSchema4 | null = null;
-    let schemaTitle = '';
-
-    for (const schema of categorySchemas) {
-      // Check if this schema matches our node type
-      if (this.schemaMatchesNodeType(schema, nodeType)) {
-        // If the schema has a $ref, resolve it from $defs
-        if (schema['$ref']) {
-          matchingSchema = this.resolveSchemaRef(schema, schema['$ref']);
-          schemaTitle = matchingSchema?.title || schema.title || nodeType;
-        } else {
-          matchingSchema = schema;
-          schemaTitle = schema.title || nodeType;
-        }
-        break;
-      }
+    const mapping = (categorySchemas.items as any)?.discriminator?.mapping;
+    if (!mapping) {
+      return;
     }
-
-    if (matchingSchema) {
-      const entry = this.createSchemaEntry(matchingSchema, schemaTitle);
-      this.schemaEntry.set(entry);
-    } else {
-      // Create fallback entry if no schema matches
-      this.createFallbackEntry();
+    if (!mapping[nodeType]) {
+      console.log(mapping, nodeType);
     }
+    const key = mapping[nodeType].split('/').slice(-1)[0];
+    return schemas['$defs'][key] as JSONSchema4;
   }
 
   private createEntriesFromConfig(): Array<{ id: string; title: string }> {
@@ -218,22 +200,13 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     }
 
     // Find the schema for this node type
-    const categorySchemas = schemas.agents[category];
-    if (!Array.isArray(categorySchemas)) {
+    const categorySchemas = schemas.properties?.[category];
+    if (!categorySchemas) {
       return entries;
     }
 
-    let matchingSchema: JSONSchema4 | null = null;
-    for (const schema of categorySchemas) {
-      if (this.schemaMatchesNodeType(schema, nodeType)) {
-        if (schema['$ref']) {
-          matchingSchema = this.resolveSchemaRef(schema, schema['$ref']);
-        } else {
-          matchingSchema = schema;
-        }
-        break;
-      }
-    }
+    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, schemas);
+    const matchingSchema = schemas['$defs'][schemaTitle];
 
     if (!matchingSchema?.properties) {
       return entries;
@@ -242,7 +215,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     // Check each property in the config against the schema to see if it should create a connectable entry
     Object.entries(config as any).forEach(([key, value]) => {
       if (value && typeof value === 'object' && matchingSchema.properties?.[key]) {
-        const propertySchema = matchingSchema.properties[key] as JSONSchema4;
+        const propertySchema = matchingSchema.properties[key];
 
         // Check if this property has discriminators that would make it connectable
         if (this.hasDiscriminatorProperty(propertySchema)) {
@@ -263,76 +236,6 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
 
     // Default to formatted property name
     return this.formatPropertyName(propertyKey);
-  }
-
-  private createFallbackEntry(): void {
-    const nodeType = this.type();
-    const category = this.category();
-    const schemas = this.schemas();
-
-    // Start with config-based entries
-    const fallbackEntries = this.createEntriesFromConfig();
-
-    // Try to find schema even when not matched in analyzeSchema
-    let schemaToAnalyze: JSONSchema4 | null = null;
-
-    if (schemas && category) {
-      const categorySchemas = schemas.agents[category];
-      if (Array.isArray(categorySchemas)) {
-        // Find any schema that might be relevant for this node type
-        const foundSchema = categorySchemas.find(
-          (schema) =>
-            this.schemaMatchesNodeType(schema, nodeType || '') ||
-            schema.title?.toLowerCase().includes((nodeType || '').toLowerCase().replace('_', '')),
-        );
-
-        if (foundSchema) {
-          // If the schema has a $ref, resolve it from $defs
-          if (foundSchema['$ref']) {
-            schemaToAnalyze = this.resolveSchemaRef(foundSchema, foundSchema['$ref']);
-          } else {
-            schemaToAnalyze = foundSchema;
-          }
-        }
-      }
-    }
-
-    // Also analyze the schema for discriminator properties (but avoid duplicates)
-    const schemaEntries = this.createFallbackEntriesFromSchema(schemaToAnalyze, nodeType, category);
-    const newEntries = schemaEntries.filter((entry) => !fallbackEntries.some((existing) => existing.id === entry.id));
-    fallbackEntries.push(...newEntries);
-
-    this.schemaEntry.set({
-      schema: schemaToAnalyze || {},
-      title: this.formatNodeType(nodeType || 'Node'),
-      hasDiscriminator: fallbackEntries.length > 0,
-      discriminatorProperties: [],
-      fallbackEntries,
-    });
-  }
-
-  private createFallbackEntriesFromSchema(
-    schema: JSONSchema4 | null,
-    nodeType: string | undefined,
-    category: string,
-  ): Array<{ id: string; title: string }> {
-    const fallbackEntries: Array<{ id: string; title: string }> = [];
-
-    if (schema?.properties) {
-      // Look for properties that contain discriminators
-      Object.entries(schema.properties).forEach(([key, property]) => {
-        const prop = property as JSONSchema4;
-
-        // Check if this property has a discriminator in its anyOf/oneOf
-        if (this.hasDiscriminatorProperty(prop)) {
-          // Extract discriminator entries dynamically from the schema
-          const discriminatorEntries = this.extractDiscriminatorEntries(prop, key);
-          fallbackEntries.push(...discriminatorEntries);
-        }
-      });
-    }
-
-    return fallbackEntries;
   }
 
   private hasDiscriminatorProperty(property: JSONSchema4): boolean {

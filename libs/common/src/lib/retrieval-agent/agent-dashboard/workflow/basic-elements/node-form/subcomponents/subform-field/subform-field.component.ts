@@ -58,7 +58,6 @@ export class SubformFieldComponent implements OnInit {
   private fieldConfigService = inject(FieldConfigService);
 
   resolvedSchema: JSONSchema4 | null = null;
-  schemas: ARAGSchemas | null = null;
   renderableFields: RenderableField[] = [];
 
   ngOnInit() {
@@ -69,26 +68,14 @@ export class SubformFieldComponent implements OnInit {
     if (!this.property) return;
 
     // Get the schemas from WorkflowService
-    this.workflowService.schemas$.subscribe((schemas: ARAGSchemas | null) => {
+    this.workflowService.schemas$.subscribe((schemas: JSONSchema4 | null) => {
       if (schemas) {
-        this.schemas = schemas;
-
-        // Get the root schema if not provided
+        // Set the root schema if not provided
         if (!this.rootSchema) {
-          // Try to find any schema that contains $defs
-          for (const [agentType, agentSchemas] of Object.entries(schemas.agents)) {
-            for (const schema of agentSchemas as JSONSchema4[]) {
-              if (schema['$defs']) {
-                this.rootSchema = schema;
-                this.performResolution();
-                break;
-              }
-            }
-            if (this.rootSchema) break;
-          }
-        } else {
-          this.performResolution();
+          this.rootSchema = schemas;
         }
+
+        this.performResolution();
       }
     });
   }
@@ -172,22 +159,8 @@ export class SubformFieldComponent implements OnInit {
     if (ref.startsWith('#/$defs/')) {
       const defName = ref.replace('#/$defs/', '');
 
-      // First try the current schema
       if (this.rootSchema?.['$defs']?.[defName]) {
         return this.rootSchema['$defs'][defName];
-      }
-
-      // If not found and we have access to all schemas, search through them
-      if (this.schemas) {
-        for (const [agentType, agentSchemas] of Object.entries(this.schemas.agents)) {
-          if (Array.isArray(agentSchemas)) {
-            for (const schema of agentSchemas) {
-              if (schema['$defs']?.[defName]) {
-                return schema['$defs'][defName];
-              }
-            }
-          }
-        }
       }
 
       return {};
@@ -204,7 +177,11 @@ export class SubformFieldComponent implements OnInit {
   }
 
   getSchemasAsNodeConfig(): any {
-    return this.schemas as any;
+    // A schema cannot be used as a NodeConfig, so it was not working anyway.
+    // I am not even sure this component is ever called anyway given the current schema.
+
+    // return this.schemas as any;
+    return {};
   }
 
   onSubformReady(subform: FormGroup) {
