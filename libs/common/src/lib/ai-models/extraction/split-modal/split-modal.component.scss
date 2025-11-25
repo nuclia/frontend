@@ -2,6 +2,11 @@
 
 h2 {
   margin: 0;
+  display: inline-block;
+}
+.title-xxs {
+  padding-left: rhythm(1);
+  color: $color-neutral-regular;
 }
 
 h4 {
