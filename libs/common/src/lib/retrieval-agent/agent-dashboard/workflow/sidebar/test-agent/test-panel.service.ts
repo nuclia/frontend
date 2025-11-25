@@ -51,6 +51,8 @@ export class TestPanelService {
             ),
         ),
       );
+    } else if (sessionId === 'ephemeral') {
+      return this.sdk.currentArag.pipe(map((arag) => ({ sessionId: 'ephemeral', arag })));
     } else {
       return this.sdk.currentArag.pipe(
         take(1),
