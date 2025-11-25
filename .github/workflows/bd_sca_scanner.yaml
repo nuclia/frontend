@@ -28,9 +28,9 @@ jobs:
         id: calculate-detect-args
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "DETECT_ARGS=--detect.timeout=600 --detect.blackduck.rapid.compare.mode=BOM_COMPARE_STRICT" >> $GITHUB_OUTPUT
+            echo "DETECT_ARGS=--detect.timeout=600 --detect.yarn.dependency.types.excluded=NONE,NON_PRODUCTION --detect.blackduck.rapid.compare.mode=BOM_COMPARE_STRICT" >> $GITHUB_OUTPUT
           else
-            echo "DETECT_ARGS=--detect.timeout=600" >> $GITHUB_OUTPUT
+            echo "DETECT_ARGS=--detect.timeout=600 --detect.yarn.dependency.types.excluded=NONE,NON_PRODUCTION" >> $GITHUB_OUTPUT
           fi
 
       - name: Run Black Duck SCA PR Scan
