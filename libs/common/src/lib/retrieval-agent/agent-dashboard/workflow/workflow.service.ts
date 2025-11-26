@@ -1080,9 +1080,6 @@ export class WorkflowService {
       case 'post_conditional':
         nodeTypeOverride = 'conditional';
         break;
-      case 'basic_ask':
-        nodeTypeOverride = 'basicask';
-        break;
       case 'restricted':
         nodeTypeOverride = 'python';
         break;
