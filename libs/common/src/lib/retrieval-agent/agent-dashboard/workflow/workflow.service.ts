@@ -1075,19 +1075,6 @@ export class WorkflowService {
   private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
     let nodeTypeOverride: string = nodeType;
     switch (nodeType) {
-      case 'pre_conditional':
-      case 'context_conditional':
-      case 'post_conditional':
-        nodeTypeOverride = 'conditional';
-        break;
-      case 'restricted':
-        nodeTypeOverride = 'python';
-        break;
-      // case 'preprocess_alinia':
-      // case 'postprocess_alinia':
-      //   nodeTypeOverride = 'alinia';
-      //   break;
-
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
