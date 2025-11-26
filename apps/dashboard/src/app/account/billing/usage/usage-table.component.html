@@ -5,7 +5,7 @@
         <h2>{{ 'billing.usage.title' | translate }}</h2>
         <div>
           <div>{{ 'billing.usage.description' | translate }}</div>
-          <em>{{ 'billing.usage.interval' | translate: { to: usage.end_billing_date | date: 'YYYY-MM-dd' } }}</em>
+          <em>{{ 'billing.usage.interval' | translate: { to: usage.end_billing_date | date: 'yyyy-MM-dd' } }}</em>
         </div>
       </div>
       @if (isDeprecatedAccount | async) {
@@ -43,10 +43,11 @@
     } @else {
       <pa-table
         border
-        columns="auto auto auto auto">
+        columns="auto auto auto auto auto">
         <pa-table-header>
           <pa-table-cell header></pa-table-cell>
           <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'billing.usage.billable' | translate }}</pa-table-cell>
           <pa-table-cell header>{{ 'billing.usage.cost' | translate }}</pa-table-cell>
           <pa-table-cell header>
             <div class="cost">{{ 'billing.usage.total' | translate }}</div>
@@ -55,6 +56,11 @@
         @if (usage.invoice_items['nuclia-tokens'] || usage.invoice_items['ai-tokens-used']; as nucliaTokens) {
           <pa-table-row last>
             <pa-table-cell>{{ 'billing.tokens' | translate }}*</pa-table-cell>
+            <pa-table-cell>
+              @if (usage.consumption) {
+                {{ usage.consumption | number: '1.0-0' }}
+              }
+            </pa-table-cell>
             <pa-table-cell>{{ nucliaTokens.current_usage | number: '1.0-0' }}</pa-table-cell>
             <pa-table-cell>
               {{ nucliaTokens.price | currency: usage.currency : 'symbol' : '1.2-6' }}/ token
