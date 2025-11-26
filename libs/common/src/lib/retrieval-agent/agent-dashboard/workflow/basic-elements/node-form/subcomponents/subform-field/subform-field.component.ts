@@ -176,14 +176,6 @@ export class SubformFieldComponent implements OnInit {
     return field.config.type || 'text';
   }
 
-  getSchemasAsNodeConfig(): any {
-    // A schema cannot be used as a NodeConfig, so it was not working anyway.
-    // I am not even sure this component is ever called anyway given the current schema.
-
-    // return this.schemas as any;
-    return {};
-  }
-
   onSubformReady(subform: FormGroup) {
     // The subform is ready, we can perform any additional setup if needed
     console.log('Subform ready for control:', this.controlName, subform);
