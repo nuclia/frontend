@@ -15,7 +15,7 @@ import { NodeConfig } from '../../../../workflow.models';
 export class ArrayStringFieldComponent {
   @Input() form!: FormGroup;
   @Input() arrayName!: string;
-  @Input() config!: NodeConfig;
+  @Input() config?: NodeConfig | undefined;
   @Input() label: string = '';
   @Input() required: boolean = false;
 

@@ -104,6 +104,7 @@ export interface IRetrievalAgent
   deletePostprocess(agentId: string): Observable<void>;
 
   getSchemas(): Observable<ARAGSchemas>;
+  getFullSchemas(): Observable<JSONSchema4>;
 }
 
 export interface BaseAgent {

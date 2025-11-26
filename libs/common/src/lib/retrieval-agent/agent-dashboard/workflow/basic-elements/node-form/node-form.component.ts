@@ -47,7 +47,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
   @Input() parentForm?: FormGroup; // When used as a nested component
   @Input() nestedSchema?: JSONSchema4; // When rendering a specific sub-schema
   @Input() isNested?: boolean = false; // Flag to indicate nested usage
-  @Input() schemas?: ARAGSchemas | null; // Provide schemas directly to avoid circular dependency
+  @Input() schemas?: JSONSchema4 | null; // Provide schemas directly to avoid circular dependency
 
   @Output() formReady = new EventEmitter<FormGroup>();
 
@@ -139,7 +139,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       this.formReady.emit(this.configForm);
       this.setupFormValidationListener();
     } else if (this.schemas) {
-      const formConfig = this.buildFormFromSchema(this.schemas, this.agentType, this.agentName);
+      const formConfig = this.buildFormFromSchema(this.schemas, this.agentName);
       this.schema = formConfig.schema || {};
       this.form = new FormGroup({
         [this.formGroupName as unknown as string]: formConfig.formGroup,
@@ -217,31 +217,11 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       const defName = ref.replace('#/$defs/', '');
 
       // First try the current schema
-      if (this.schema['$defs']?.[defName]) {
-        return this.schema['$defs'][defName];
+      if (this.schemas?.['$defs']?.[defName]) {
+        return this.schemas['$defs'][defName];
       }
-
-      // If not found and we have access to all schemas, search through them
-      if (this.schemas) {
-        for (const [agentType, agentSchemas] of Object.entries(this.schemas.agents)) {
-          if (Array.isArray(agentSchemas)) {
-            for (const schema of agentSchemas) {
-              if (schema['$defs']?.[defName]) {
-                return schema['$defs'][defName];
-              }
-            }
-          }
-        }
-      }
-
-      return {};
     }
     return {};
-  }
-
-  // Enhanced method to get the root schema with $defs for nested components
-  getRootSchemaWithDefs(): JSONSchema4 {
-    return this.schema;
   }
 
   // Helper method to create a nested FormGroup for subform fields

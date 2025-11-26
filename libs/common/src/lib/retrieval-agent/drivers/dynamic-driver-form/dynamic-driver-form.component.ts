@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
+import { JSONSchema4, JSONSchema7 } from 'json-schema';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { ARAGSchemas, Driver, DriverCreation } from '@nuclia/core';
@@ -76,18 +76,29 @@ export class DynamicDriverFormComponent implements OnInit {
     this.setupForm();
   }
 
-  private setupForm(): void {
+  private getSchema(schemaId: string): JSONSchema4 | undefined {
     // Get schemas from the service
     const schemas = this.driversService.schemas();
 
     // Check if schemas is available
-    if (!schemas || !schemas.drivers) {
+    if (!schemas) {
       console.error('Schemas not available or drivers array missing');
       return;
     }
 
     // Find the driver schema by title
-    const driverSchema = schemas.drivers.find((driver) => driver.title === this.driverTitle) as JSONSchema4;
+    const driverSchema = (schemas as JSONSchema7).$defs?.[schemaId] as JSONSchema4;
+
+    if (!driverSchema) {
+      console.error(`Schema not found for: ${schemaId}`);
+      return;
+    }
+    return driverSchema;
+  }
+
+  private setupForm(): void {
+    // Find the driver schema by title
+    const driverSchema = this.getSchema(this.driverTitle);
 
     if (!driverSchema) {
       console.error(`Driver schema not found for title: ${this.driverTitle}`);
@@ -302,7 +313,7 @@ export class DynamicDriverFormComponent implements OnInit {
 
     // Populate form with existing driver data
     Object.keys(this.form.controls).forEach((key) => {
-      if (this.existingDriver && key in this.existingDriver) {
+      if (this.existingDriver && key !== 'config' && key in this.existingDriver) {
         const control = this.form.get(key);
         if (control) {
           control.setValue((this.existingDriver as any)[key]);
@@ -354,24 +365,13 @@ export class DynamicDriverFormComponent implements OnInit {
     // Handle #/$defs/SomeName references
     if (ref.startsWith('#/$defs/')) {
       const defName = ref.replace('#/$defs/', '');
-
-      // First try the current schema
-      if (this.schema['$defs']?.[defName]) {
-        return this.schema['$defs'][defName];
+      const schema = this.getSchema(defName);
+      if (schema) {
+        return schema;
+      } else {
+        console.warn(`Could not resolve $ref: ${ref} (looking for ${defName})`);
+        return {};
       }
-
-      // If not found, search through all driver schemas from the service
-      const schemas = this.driversService.schemas();
-      if (schemas?.drivers) {
-        for (const driverSchema of schemas.drivers) {
-          if (driverSchema['$defs']?.[defName]) {
-            return driverSchema['$defs'][defName];
-          }
-        }
-      }
-
-      console.warn(`Could not resolve $ref: ${ref} (looking for ${defName})`);
-      return {};
     }
     return {};
   }

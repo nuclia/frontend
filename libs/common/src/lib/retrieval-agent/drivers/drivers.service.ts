@@ -22,6 +22,7 @@ import {
 // Import modal components
 import { NucliaDriverModalComponent } from './nuclia-driver';
 import { DynamicDriverModalComponent } from './dynamic-driver-form';
+import { JSONSchema4, JSONSchema7 } from 'json-schema';
 
 export type DriverType = string; // Now accepts any string (driver title from schema)
 
@@ -43,7 +44,7 @@ export class DriversService {
 
   // Reactive state management
   private _drivers = signal<Driver[]>([]);
-  private _schemas = signal<ARAGSchemas | null>(null);
+  private _schemas = signal<JSONSchema4 | null>(null);
   private _refreshTrigger = new BehaviorSubject<void>(undefined);
 
   // Public observables
@@ -63,7 +64,7 @@ export class DriversService {
 
   schemas$ = this._refreshTrigger.pipe(
     switchMap(() => this.sdk.currentArag),
-    switchMap((arag) => arag.getSchemas()),
+    switchMap((arag) => arag.getFullSchemas()),
     catchError((error) => {
       console.error('Error fetching schemas:', error);
       this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.schemas'));
@@ -76,6 +77,7 @@ export class DriversService {
   // Computed properties (accessible as signals)
   drivers = this._drivers.asReadonly();
   schemas = this._schemas.asReadonly();
+
   hasAllInternetDrivers = computed(
     () =>
       this._drivers().some((driver) => driver.provider === 'brave') &&
@@ -101,7 +103,7 @@ export class DriversService {
    * Initialize service by subscribing to data streams
    * Call this once in your main component's ngOnInit
    */
-  initialize(): Observable<[Driver[], ARAGSchemas | null]> {
+  initialize(): Observable<[Driver[], JSONSchema4 | null]> {
     this._refreshTrigger.next();
     return combineLatest([this.drivers$, this.schemas$]);
   }
@@ -367,29 +369,10 @@ export class DriversService {
   /**
    * Get driver schema title by provider name
    */
-  private getDriverTitleByProvider(provider: string, schemas: ARAGSchemas): string | null {
-    // Map provider names to schema titles
-    const providerToTitleMap: Record<string, string> = {
-      brave: 'BraveDriverConfig',
-      cypher: 'CypherDriverConfig',
-      nucliadb: 'NucliaDBConfig',
-      perplexity: 'PerplexityDriverConfig',
-      tavily: 'TavilyDriverConfig',
-      sql: 'SQLDriverConfig',
-      google: 'GoogleDriverConfig',
-      mcpstdio: 'MCPStdioDriverConfig',
-      mcpsse: 'MCPSSEDriverConfig',
-      mcphttp: 'MCPHTTPDriverConfig',
-      alinia: 'AliniaDriverConfig',
-    };
-
-    const title = providerToTitleMap[provider];
-    if (title) {
-      // Verify the schema exists
-      const driverSchema = schemas.drivers.find((d) => d.title === title);
-      return driverSchema ? title : null;
-    }
-
-    return null;
+  private getDriverTitleByProvider(provider: string, schemas: JSONSchema4): string | null {
+    const driver = Object.values((schemas as JSONSchema7).$defs || []).find(
+      (schema) => ((schema as JSONSchema4).properties?.['provider'] as JSONSchema7)?.const === provider,
+    );
+    return (driver as JSONSchema4)?.title || null;
   }
 }

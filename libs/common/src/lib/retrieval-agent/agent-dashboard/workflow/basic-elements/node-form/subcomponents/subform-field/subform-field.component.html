@@ -32,8 +32,7 @@
             [form]="subFormGroup"
             [arrayName]="field.key"
             [label]="field.label"
-            [required]="field.required"
-            [config]="getSchemasAsNodeConfig()"></app-array-string-field>
+            [required]="field.required"></app-array-string-field>
 
           <!-- Code editor -->
           <app-code-editor
@@ -86,8 +85,7 @@
           <!-- Rules field -->
           <app-rules-field
             *ngSwitchCase="'rules-field'"
-            [form]="subFormGroup"
-            [config]="getSchemasAsNodeConfig()"></app-rules-field>
+            [form]="subFormGroup"></app-rules-field>
 
           <!-- Transport field -->
           <app-transport-field

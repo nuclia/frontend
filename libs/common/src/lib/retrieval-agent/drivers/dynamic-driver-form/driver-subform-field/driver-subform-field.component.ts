@@ -9,7 +9,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
+import { JSONSchema4, JSONSchema7 } from 'json-schema';
 import { CommonModule } from '@angular/common';
 import { DriverFieldConfigService, DriverFieldConfig } from '../driver-field-config.service';
 import { DriversService } from '../../drivers.service';
@@ -157,16 +157,13 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
 
     // Search through all driver schemas from the service
     const schemas = this.driversService.schemas();
-    if (schemas?.drivers) {
-      for (const driverSchema of schemas.drivers) {
-        if (driverSchema['$defs']?.[defName]) {
-          return driverSchema['$defs'][defName] as JSONSchema4;
-        }
-      }
+    const schema = (schemas as JSONSchema7).$defs?.[defName];
+    if (schema) {
+      return schema as JSONSchema4;
+    } else {
+      console.warn(`Could not find definition for ${defName} in any driver schema`);
+      return null;
     }
-
-    console.warn(`Could not find definition for ${defName} in any driver schema`);
-    return null;
   }
 
   private setupRenderableFields(): void {

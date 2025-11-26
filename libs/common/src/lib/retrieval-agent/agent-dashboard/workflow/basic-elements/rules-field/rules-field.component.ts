@@ -21,7 +21,7 @@ export class RulesFieldComponent implements OnInit {
   /**
    * Saved config to properly initialise rules
    */
-  config = input<NodeConfig>();
+  config = input<NodeConfig | undefined>();
 
   get rules(): FormArray<FormControl<string>> {
     return this.form().controls['rules'] as FormArray<FormControl<string>>;

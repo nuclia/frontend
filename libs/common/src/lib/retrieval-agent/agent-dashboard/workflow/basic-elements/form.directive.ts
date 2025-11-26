@@ -1,9 +1,9 @@
 import { Directive, input, output, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NodeCategory, NodeConfig } from '../workflow.models';
-import { ARAGSchemas } from '@nuclia/core';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfigService } from './node-form/field-config.service';
+import { convertNodeTypeToConfigTitle } from '../workflow.utils';
 
 /**
    * FormDirective contains 2 abstract FormGroup and an abstract method, as well as two outputs.
@@ -39,8 +39,7 @@ export abstract class FormDirective {
   config?: NodeConfig;
 
   public buildFormFromSchema(
-    aragsSchema: ARAGSchemas | null,
-    agent: keyof ARAGSchemas['agents'],
+    aragsSchema: JSONSchema4 | null,
     key: string,
   ): {
     formGroup: FormGroup;
@@ -53,29 +52,8 @@ export abstract class FormDirective {
       };
     }
 
-    // Find the root schema that contains $defs for this agent type
-    let rootSchemaWithDefs: JSONSchema4 | null = null;
-    for (const schemaOption of aragsSchema.agents[agent] || []) {
-      if (schemaOption['$defs']) {
-        rootSchemaWithDefs = schemaOption;
-        break;
-      }
-    }
-
-    // Try to find the schema by exact title match
-    let schema = aragsSchema.agents[agent]?.find((s: JSONSchema4) => s.title?.toLowerCase() === key?.toLowerCase());
-
-    // Fallback: some schemas have titles that include the key as a substring
-    if (!schema || !schema.properties) {
-      schema = aragsSchema.agents[agent]?.find(
-        (s: JSONSchema4) => s.title?.toLowerCase()?.includes(key?.toLowerCase()),
-      );
-    }
-
-    // Another fallback: some schemas might be identified by $ref containing the key
-    if (!schema || !schema.properties) {
-      schema = aragsSchema.agents[agent]?.find((s: JSONSchema4) => s.$ref?.toLowerCase()?.includes(key?.toLowerCase()));
-    }
+    const schemaTitle = convertNodeTypeToConfigTitle(key, aragsSchema);
+    let schema = aragsSchema['$defs'][schemaTitle];
 
     // If schema has $ref, resolve it from $defs
     if (schema && schema.$ref && schema['$defs']) {
@@ -121,9 +99,9 @@ export abstract class FormDirective {
       const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
       // Check if this is a subform field (contains $ref)
-      if (this.fieldConfigService.isSubformField(property, rootSchemaWithDefs || schema)) {
+      if (this.fieldConfigService.isSubformField(property, aragsSchema || schema)) {
         // Create a nested FormGroup for subform fields
-        group[propKey] = this.createNestedFormGroupForRef(property, rootSchemaWithDefs || schema);
+        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema || schema);
       } else if (type === 'array' || property.items || isMultiselect) {
         // Prefer config value over default for array fields
         let initialArrayValues: any[] = [];
