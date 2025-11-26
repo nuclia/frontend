@@ -339,6 +339,7 @@
 	"billing.update_payment_method": "Actualitzar mètode de pagament",
 	"billing.upgrade": "Actualitzar",
 	"billing.upgrade_now": "Actualitzar ara",
+	"billing.usage.billable": "Facturable",
 	"billing.usage.consumables": "Consumibles",
 	"billing.usage.consumption": "Consum",
 	"billing.usage.cost": "Cost",

@@ -248,10 +248,23 @@ export class BillingService {
   getAccountUsage(): Observable<AccountUsage> {
     return this.sdk.currentAccount.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.rest.get<AccountUsage>(`/billing/account/${account.id}/current_usage`)),
-      map((usage) => ({
+      switchMap((account) =>
+        this.sdk.nuclia.rest.get<AccountUsage>(`/billing/account/${account.id}/current_usage`).pipe(
+          switchMap((usage) =>
+            this.sdk.nuclia.db.getUsage(account.id, usage.start_billing_date, usage.end_billing_date).pipe(
+              map((consumption) => ({
+                usage,
+                consumption:
+                  consumption[0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0,
+              })),
+            ),
+          ),
+        ),
+      ),
+      map(({ usage, consumption }) => ({
         ...usage,
         currency: usage.currency.toUpperCase() as Currency,
+        consumption,
         invoice_items: {
           ...usage.invoice_items,
           ...(usage.invoice_items.media && usage.invoice_items.training

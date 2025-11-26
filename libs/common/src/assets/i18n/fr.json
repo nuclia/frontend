@@ -339,6 +339,7 @@
 	"billing.update_payment_method": "Mettre à jour le mode de paiement",
 	"billing.upgrade": "Améliorer",
 	"billing.upgrade_now": "Mettre à jour maintenant",
+	"billing.usage.billable": "Facturable",
 	"billing.usage.consumables": "Consommables",
 	"billing.usage.consumption": "Consommation",
 	"billing.usage.cost": "Coût",

@@ -1,4 +1,4 @@
-import { AccountTypes } from '@nuclia/core';
+import { AccountTypes, UsageMetric, NucliaTokensMetric } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
 export type BillingUsageType =
@@ -151,6 +151,7 @@ export interface AccountUsage {
   start_billing_date: string;
   end_billing_date: string;
   over_cost: number;
+  consumption?: number;
 }
 
 export interface ManualAccountUsage {
