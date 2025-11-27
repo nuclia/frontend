@@ -16,7 +16,7 @@ const DATE_FORMATS: { [locale: string]: string } = {
 
 const INJECTED: string[] = [];
 
-export function injectScript(url: string) {
+export function injectScript(url: string, attributes?: { key: string; value: string }[]) {
   if (INJECTED.includes(url)) {
     return of(true);
   } else {
@@ -26,6 +26,11 @@ export function injectScript(url: string) {
     script.async = true;
     script.defer = true;
     script.src = url;
+    if (attributes) {
+      attributes.forEach((attr) => {
+        script.setAttribute(attr.key, attr.value);
+      });
+    }
     script.onload = () => {
       INJECTED.push(url);
       isInit.next(true);

@@ -57,11 +57,7 @@ function apply_path {
 
     echo "Configuring STF_DOCKER_CONFIG_GOOGLE_ANALYTICS vars"
     sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html
-
-    echo "Injecting cookie consent snippet for prod"
-    COOKIE_CONSENT='<script src="https://cdn.cookielaw.org/consent/f9397248-1dbe-47fc-9dbf-c50e7dd51096-test/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="f9397248-1dbe-47fc-9dbf-c50e7dd51096-test" ></script><script type="text/javascript">function OptanonWrapper() { }</script>'
-    sed -i "s#<\!-- COOKIE_CONSENT_SNIPPET -->#${COOKIE_CONSENT}#g" /dist/index.html
-    
+ 
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"
     sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
