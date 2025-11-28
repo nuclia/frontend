@@ -228,29 +228,31 @@ export abstract class FormDirective {
     return {};
   }
 
-  submit() {
-    if (this.form.valid) {
-      const rawValue = this.configForm.getRawValue();
+  protected processFormValue(formValue: any) {
+    // Process FormArray values to ensure clean arrays
+    const processedValue = { ...formValue };
 
-      // Process FormArray values to ensure clean arrays
-      const processedValue = { ...rawValue };
-
-      for (const [key, value] of Object.entries(rawValue)) {
-        if (Array.isArray(value)) {
-          // Check if this field is configured as FormArray
-          const control = this.configForm.get(key);
-          if (control instanceof FormArray) {
-            // Keep as array, but filter out empty values
-            processedValue[key] = value.filter((v: any) => v !== null && v !== undefined && String(v).trim() !== '');
-          }
+    for (const [key, value] of Object.entries(formValue)) {
+      if (Array.isArray(value)) {
+        // Check if this field is configured as FormArray
+        const control = this.configForm.get(key);
+        if (control instanceof FormArray) {
+          // Keep as array, but filter out empty values
+          processedValue[key] = value.filter((v: any) => v !== null && v !== undefined && String(v).trim() !== '');
         }
       }
+    }
 
-      // Remove null id fields from the submitted data
-      if (processedValue.id === null) {
-        delete processedValue.id;
-      }
+    // Remove null id fields from the submitted data
+    if (processedValue.id === null) {
+      delete processedValue.id;
+    }
+    return processedValue;
+  }
 
+  submit() {
+    if (this.form.valid) {
+      const processedValue = this.processFormValue(this.configForm.getRawValue());
       this.submitForm.emit(processedValue);
     }
   }

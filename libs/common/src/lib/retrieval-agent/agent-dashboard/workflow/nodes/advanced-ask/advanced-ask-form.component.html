@@ -1,0 +1,48 @@
+<app-configuration-form
+  [form]="form"
+  [submitDisabled]="form.invalid"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <app-driver-select
+      [label]="schema?.properties?.['sources']?.title || ''"
+      [required]="true"
+      [form]="configForm"
+      controlName="sources"
+      provider="nucliadb"
+      [multiselect]="true"></app-driver-select>
+
+    <app-model-select
+      [label]="schema?.properties?.['generative_model']?.title || ''"
+      [required]="true"
+      [form]="configForm"
+      controlName="generative_model"></app-model-select>
+
+    <app-model-select
+      [label]="schema?.properties?.['rephrase_model']?.title || ''"
+      [required]="true"
+      [form]="configForm"
+      controlName="rephrase_model"></app-model-select>
+
+    <app-model-select
+      [label]="schema?.properties?.['summarize_model']?.title || ''"
+      [required]="true"
+      [form]="configForm"
+      controlName="summarize_model"></app-model-select>
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+
+    <pa-input
+      id="max_retries"
+      formControlName="max_retries"
+      type="number"
+      [required]="false">
+      {{ schema?.properties?.['max_retries']?.title || '' }}
+    </pa-input>
+  </ng-container>
+  <app-ask-configuration
+    [config]="initialSearchConfig"
+    (configChanged)="updateConfig($event)"></app-ask-configuration>
+</app-configuration-form>
