@@ -65,6 +65,7 @@ export class FeaturesService {
     aragMcp: this.featureFlag.isFeatureEnabled('arag-mcp'),
     routing: this.featureFlag.isFeatureEnabled('routing'),
     aragWithMemory: this.featureFlag.isFeatureEnabled('arag-with-memory'),
+    sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),
   };
 
   /**

@@ -9,7 +9,7 @@ import {
   SearchResults,
   SyncBasicData,
 } from './models';
-import { BackendConfigurationService, NotificationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './connectors/sitemap';
 import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
@@ -19,6 +19,7 @@ import { ConfluenceConnector } from './connectors/confluence';
 import { RSSConnector } from './connectors/rss';
 import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
+import { SitefinityConnector } from './connectors/sitefinity';
 
 export type SyncServerType = 'desktop' | 'server';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -81,12 +82,21 @@ export class SyncService {
     sitemap: { definition: SitemapConnector },
     confluence: { definition: ConfluenceConnector },
     rss: { definition: RSSConnector },
+    sitefinity: { definition: SitefinityConnector },
   };
 
   connectorsObs = new BehaviorSubject(
     Object.values(this.connectors)
       .map((obj) => obj.definition)
       .filter((def) => !def.deprecated),
+  ).pipe(
+    switchMap((connectors) =>
+      this.features.unstable.sitefinityConnector.pipe(
+        map((hasSitefinityConnector) =>
+          connectors.filter((connector) => hasSitefinityConnector || connector.id !== 'sitefinity'),
+        ),
+      ),
+    ),
   );
   private _syncServer = new BehaviorSubject<{ serverUrl: string; type: SyncServerType }>({
     serverUrl: localStorage.getItem(SYNC_SERVER_KEY) || LOCAL_SYNC_SERVER,
@@ -113,6 +123,7 @@ export class SyncService {
     private http: HttpClient,
     private config: BackendConfigurationService,
     private notificationService: NotificationService,
+    private features: FeaturesService,
   ) {}
 
   getConnectorDefinition(connectorId: string): ConnectorDefinition {
