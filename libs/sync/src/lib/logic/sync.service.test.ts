@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { SyncService } from './sync.service';
 import { MockProvider } from 'ng-mocks';
-import { BackendConfigurationService, NotificationService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, NotificationService } from '@flaps/core';
 
 describe('SyncService', () => {
   let service: SyncService;
@@ -20,6 +20,7 @@ describe('SyncService', () => {
           },
         },
         MockProvider(NotificationService),
+        MockProvider(FeaturesService),
         SyncService,
       ],
     });
