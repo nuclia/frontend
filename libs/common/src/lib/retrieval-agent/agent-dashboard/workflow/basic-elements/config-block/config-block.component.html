@@ -9,7 +9,10 @@
         @if (block.title) {
           <div class="title">{{ block.title }}</div>
         }
-        <div [innerHTML]="block.content"></div>
+        <div
+          [innerHTML]="
+            labels()?.[block.key] ? labels()[block.key][block.content] || block.content : block.content
+          "></div>
       </div>
     }
   </div>

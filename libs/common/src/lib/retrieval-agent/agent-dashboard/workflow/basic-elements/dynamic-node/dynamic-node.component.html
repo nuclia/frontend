@@ -5,7 +5,9 @@
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   @if (nodeConfig().length > 0) {
-    <app-config-block [config]="nodeConfig()"></app-config-block>
+    <app-config-block
+      [config]="nodeConfig()"
+      [labels]="labels()"></app-config-block>
   }
 
   @for (entry of fallbackEntries(); track entry.id) {

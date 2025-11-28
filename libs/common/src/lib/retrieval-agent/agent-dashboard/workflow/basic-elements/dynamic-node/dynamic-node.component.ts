@@ -36,6 +36,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
 
   private schemas = signal<JSONSchema4 | null>(null);
   private schemaEntry = signal<SchemaEntry | null>(null);
+  labels = signal<{ [field: string]: { [key: string]: string } }>({});
 
   nodeConfig = computed<ConfigBlockItem[]>(() => {
     const config = this.config();
@@ -72,6 +73,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     });
 
     return meaningfulProperties.map(([key, value]) => ({
+      key,
       title: this.formatPropertyName(key),
       content: this.formatPropertyValue(value),
     }));
@@ -124,6 +126,19 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       }
     });
 
+    this.workflowService.driverModels$.subscribe((drivers) => {
+      const driversLabels = drivers?.reduce(
+        (all, curr) => {
+          all[curr.identifier] = curr.name;
+          return all;
+        },
+        {} as { [key: string]: string },
+      );
+      if (driversLabels) {
+        this.labels.set({ sources: driversLabels });
+      }
+    });
+
     // If schemas are not available, fetch them
     if (!this.schemas()) {
       this.workflowService.fetchSchemas();
@@ -161,11 +176,11 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     if (!mapping) {
       return;
     }
-    if (!mapping[nodeType]) {
-      console.log(mapping, nodeType);
+    const key = mapping[nodeType]?.split('/').slice(-1)[0];
+    if (key) {
+      return schemas['$defs'][key] as JSONSchema4;
     }
-    const key = mapping[nodeType].split('/').slice(-1)[0];
-    return schemas['$defs'][key] as JSONSchema4;
+    return;
   }
 
   private createEntriesFromConfig(): Array<{ id: string; title: string }> {
