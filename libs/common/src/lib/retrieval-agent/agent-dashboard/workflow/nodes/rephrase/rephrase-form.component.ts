@@ -78,7 +78,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
     this.workflowService.getModels().subscribe((models) => {
       this.modelOptions.set(
-        models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+        models.models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
       );
     });
   }

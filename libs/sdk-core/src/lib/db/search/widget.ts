@@ -279,7 +279,7 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   useSecurityGroups: false,
   securityGroups: '',
 };
-const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
+export const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   generateAnswer: false,
   generativeModel: '',
   usePrompt: false,

@@ -55,6 +55,7 @@ export type NodeType =
   | 'context_conditional'
   | 'basic_ask'
   | 'ask'
+  | 'advanced_ask'
   | 'internet'
   | 'sql'
   | 'cypher'
