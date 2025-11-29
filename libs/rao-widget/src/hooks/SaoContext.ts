@@ -3,8 +3,16 @@ import { ISaoContext } from './SaoContext.interface';
 
 const defaultContext: ISaoContext = {
   nuclia: null,
+  sessionId: null,
   sessions: {},
-  getSession: () => undefined,
+  getSessionsAPI: async () => {},
+  getSessions: () => undefined,
+  fetcher: undefined,
+  sessionsApi: undefined,
+  authToken: null,
+  activeView: 'conversation',
+  conversation: null,
+  onChat: () => {},
 };
 
 export const SaoContext = React.createContext<ISaoContext>(defaultContext);

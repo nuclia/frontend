@@ -1,22 +1,21 @@
 import { FC } from 'react';
 import { SaoProvider } from './hooks';
-import { SaoWidget } from './components/SaoWidget/SaoWidget';
+import { SaoWidget, ISaoWidget } from './components/SaoWidget';
 import type { INuclia } from './interfaces';
 
 import './progress.css';
 import './SaoApp.css';
 
-export interface SaoAppProps {
+export interface SaoAppProps extends ISaoWidget {
   nuclia: INuclia | null;
-  title: string;
-  userName: string;
-  cards: string[];
-  inputPlaceholder: string;
+  sessionId?: string;
 }
 
-export const SaoApp: FC<SaoAppProps> = ({ nuclia, ...widgetProps }) => {
+export const SaoApp: FC<SaoAppProps> = ({ nuclia, sessionId, ...widgetProps }) => {
   return (
-    <SaoProvider nuclia={nuclia}>
+    <SaoProvider
+      nuclia={nuclia}
+      sessionId={sessionId}>
       <SaoWidget {...widgetProps} />
     </SaoProvider>
   );

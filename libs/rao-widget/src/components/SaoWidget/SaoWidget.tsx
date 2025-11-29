@@ -1,18 +1,10 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-  type FC,
-  type FormEvent,
-  type MouseEvent,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FC, type FormEvent, type MouseEvent } from 'react';
 import { Icon } from '../Icon';
 import { SessionHistory } from '../SessionHistory';
-import { useSaoContext } from '../../hooks';
+import { useSaoContext, useVoiceRecorder } from '../../hooks';
 import { ISaoWidget } from './SaoWidget.interface';
+import { SessionDrawer } from '../SessionDrawer';
+import { Conversation } from '../Conversation';
 
 const fallbackCards = [
   'Prompt Placeholder',
@@ -21,14 +13,30 @@ const fallbackCards = [
   'Recent Chat Placeholder',
 ];
 
-export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceholder }) => {
-  const context = useSaoContext();
+const features = {
+  addOns: false,
+  sessionHistory: false,
+};
+
+export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceholder, viewType = 'conversation' }) => {
+  const { activeView, onChat } = useSaoContext();
+  const { hasSupport: canUseVoice, isRecording, stopRecording, toggleRecording, transcript } = useVoiceRecorder();
 
   const [query, setQuery] = useState('');
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const drawerRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const drawerHeadingId = useId();
+
+  const isFloating = viewType === 'floating';
+  const useFloatingStyles = isFloating && !isExpanded;
+
+  useEffect(() => {
+    if (!isFloating) {
+      setIsExpanded(false);
+    }
+  }, [isFloating]);
 
   const openDrawer = useCallback(() => {
     setDrawerOpen(true);
@@ -64,6 +72,14 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
     }
   }, [isDrawerOpen]);
 
+  useEffect(() => {
+    if (!transcript) {
+      return;
+    }
+
+    setQuery(transcript);
+  }, [transcript]);
+
   const displayCards = useMemo(() => {
     if (cards.length === 0) {
       return fallbackCards;
@@ -87,68 +103,132 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
     }
     console.info('SAO widget demo submission', trimmed);
     setQuery('');
+    stopRecording();
+
+    onChat(trimmed);
   };
 
+  const isConversationActive = useMemo(() => activeView === 'conversation', [activeView]);
+
+  const containerClassName = useMemo(() => {
+    const classes = ['sao-react'];
+    if (isFloating) {
+      classes.push(isExpanded ? 'sao-react--floating-expanded' : 'sao-react--floating');
+    }
+    return classes.join(' ');
+  }, [isFloating, isExpanded]);
+
+  const formClassName = useMemo(() => {
+    const base = ['sao-react__form'];
+    if (useFloatingStyles) {
+      base.push('sao-react__form--floating');
+    }
+    return base.join(' ');
+  }, [useFloatingStyles]);
+
   return (
-    <div className="sao-react">
+    <div className={containerClassName}>
       <header className="sao-react__header">
         <span className="sao-react__brand">{title}</span>
-        <button
-          type="button"
-          className="sao-react__icon-button"
-          aria-label="Open chat history"
-          aria-expanded={isDrawerOpen}
-          onClick={openDrawer}
-          ref={triggerRef}>
-          <Icon
-            icon="submenu"
-            size={'sm'}
-          />
-        </button>
+
+        <div className="sao-react__header-actions">
+          {isFloating && (
+            <button
+              type="button"
+              className="sao-react__icon-button"
+              aria-label={isExpanded ? 'Collapse chat' : 'Expand chat'}
+              onClick={() => setIsExpanded((expanded) => !expanded)}>
+              <Icon
+                icon={isExpanded ? 'collapse' : 'expand'}
+                size={'sm'}
+              />
+            </button>
+          )}
+
+          {features.sessionHistory && (
+            <button
+              type="button"
+              className="sao-react__icon-button"
+              aria-label="Open chat history"
+              aria-expanded={isDrawerOpen}
+              onClick={openDrawer}
+              ref={triggerRef}>
+              <Icon
+                icon="submenu"
+                size={'sm'}
+              />
+            </button>
+          )}
+        </div>
       </header>
 
-      <main className="sao-react__main">
-        <h1 className="sao-react__greeting">Hello{userName ? `, ${userName}!` : '!'}</h1>
-        <section
-          className="sao-react__cards"
-          aria-label="Suggested prompts">
-          {displayCards.map((card, index) => (
-            <button
-              key={`${card}-${index}`}
-              type="button"
-              className="sao-react__card"
-              data-value={card}
-              onClick={handleCardClick}>
-              {card}
-            </button>
-          ))}
-        </section>
+      <main className={`sao-react__main sao-react__main--${activeView}`}>
+        {isConversationActive ? (
+          <Conversation />
+        ) : (
+          <>
+            <h1 className="sao-react__greeting">Hello{userName ? `, ${userName}!` : '!'}</h1>
+            <section
+              className="sao-react__cards"
+              aria-label="Suggested prompts">
+              {displayCards.map((card, index) => (
+                <button
+                  key={`${card}-${index}`}
+                  type="button"
+                  className="sao-react__card"
+                  data-value={card}
+                  onClick={handleCardClick}>
+                  {card}
+                </button>
+              ))}
+            </section>
+          </>
+        )}
 
         <form
-          className="sao-react__form"
+          className={formClassName}
           onSubmit={handleSubmit}>
-          <button
-            type="button"
-            className="sao-react__square-button"
-            aria-label="Add prompt">
-            <Icon icon="plus" />
-          </button>
+          {features.addOns && (
+            <button
+              type="button"
+              className="sao-react__square-button"
+              aria-label="Add prompt">
+              <Icon icon="plus" />
+            </button>
+          )}
+
           <input
             className="sao-react__query"
-            placeholder={inputPlaceholder}
+            placeholder={isConversationActive ? 'Ask a follow-up' : inputPlaceholder}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
+
           <button
             type="button"
-            className="sao-react__ghost-button"
-            aria-label="Toggle microphone"
-            title="Toggle microphone">
+            className={`sao-react__ghost-button${isRecording ? ' sao-react__ghost-button--recording' : ''}`}
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+            title={
+              canUseVoice
+                ? isRecording
+                  ? 'Stop recording'
+                  : 'Start recording'
+                : 'Speech recognition is not supported in this browser'
+            }
+            onClick={toggleRecording}
+            aria-pressed={isRecording}
+            disabled={!canUseVoice}>
             <Icon
               icon="microphone"
               size={'sm'}
+              className={
+                isRecording
+                  ? 'sao-react__microphone-icon sao-react__microphone-icon--recording'
+                  : 'sao-react__microphone-icon'
+              }
             />
           </button>
+
           <button
             type="submit"
             className="sao-react__submit-button"
@@ -158,46 +238,12 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
         </form>
       </main>
 
-      <aside
-        ref={drawerRef}
-        className={`sao-react__drawer ${isDrawerOpen ? 'sao-react__drawer--open' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={drawerHeadingId}
-        tabIndex={-1}>
-        <div className="sao-react__drawer-header">
-          <div className="sao-react__drawer-title-wrapper">
-            <h2
-              id={drawerHeadingId}
-              className="sao-react__drawer-title">
-              Chat History
-            </h2>
-            <span className="sao-react__drawer-description">Review and jump back into recent conversations.</span>
-          </div>
-          <button
-            type="button"
-            className="sao-react__drawer-close"
-            aria-label="Close chat history"
-            onClick={closeDrawer}>
-            <Icon
-              icon="chevrons-right"
-              size="sm"
-            />
-          </button>
-        </div>
-
-        <button
-          type="button"
-          className="sao-react__drawer-new-chat">
-          <Icon
-            icon="plus"
-            size="sm"
-          />
-          <span>New Chat</span>
-        </button>
-
-        <SessionHistory />
-      </aside>
+      {features.sessionHistory && (
+        <SessionDrawer
+          isOpen={isDrawerOpen}
+          onClose={closeDrawer}
+        />
+      )}
     </div>
   );
 };

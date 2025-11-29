@@ -1,17 +1,23 @@
-import type { NucliaFetcher, SessionsApi } from '../fetch';
-import type { ICallState, INuclia, ISessions } from '../interfaces';
+import type { NucliaFetcher, SessionsApi } from '../repository';
+import type { ICallState, IMessage, INuclia, ISessions } from '../interfaces';
 
 type SessionState = ICallState<ISessions>[string];
 
-export interface ISaoContext {
+export interface ISaoProvider {
   nuclia: INuclia | null;
+  sessionId?: string | null;
+}
+
+export interface ISaoContext extends Omit<ISaoProvider, 'sessionId'> {
+  sessionId: string | null;
   sessions: ICallState<ISessions>;
-  fetchSessions: (key?: string) => Promise<void>;
+  getSessionsAPI: (key?: string) => Promise<void>;
   getSessions: (key?: string) => SessionState | undefined;
   fetcher?: NucliaFetcher;
   sessionsApi?: SessionsApi;
-}
+  authToken: string | null;
 
-export interface ISaoProvider {
-  nuclia: INuclia | null;
+  activeView: 'main' | 'conversation';
+  conversation: IMessage[] | null;
+  onChat: (message: string) => void;
 }
