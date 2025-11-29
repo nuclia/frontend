@@ -243,6 +243,8 @@ export abstract class FormDirective {
             // Keep as array, but filter out empty values
             processedValue[key] = value.filter((v: any) => v !== null && v !== undefined && String(v).trim() !== '');
           }
+        } else if (typeof value === 'string' && value === 'null') {
+          processedValue[key] = null;
         }
       }
 
