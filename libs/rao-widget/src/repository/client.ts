@@ -32,6 +32,9 @@ export interface NucliaFetcher {
     path: string,
     options?: Omit<NucliaRequestOptions<TBody>, 'method'>,
   ) => Promise<TResponse>;
+
+  setBearerToken: (token: string | null) => void;
+  setEphemeralToken: (token: string | null) => void;
 }
 
 const buildUrl = (baseUrl: string, path: string, searchParams?: NucliaRequestOptions['searchParams']) => {
@@ -66,13 +69,11 @@ const normalizeError = async (response: Response): Promise<INucliaApiError> => {
 
 export const createNucliaFetcher = (config: NucliaFetchConfig): NucliaFetcher => {
   const defaultHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
+    Accept: 'application/json',
     ...config.headers,
   };
 
-  if (config.apiKey) {
-    defaultHeaders.Authorization = `Bearer ${config.apiKey}`;
-  }
+  let authorizationHeader: string | undefined = config.apiKey ? `Bearer ${config.apiKey}` : undefined;
 
   const request = async <TResponse = unknown, TBody = unknown>(
     path: string,
@@ -81,12 +82,22 @@ export const createNucliaFetcher = (config: NucliaFetchConfig): NucliaFetcher =>
     const { method = 'GET', body, headers, searchParams, signal } = options ?? {};
     const url = buildUrl(config.baseUrl, path, searchParams);
 
+    const finalHeaders: Record<string, string> = {
+      ...defaultHeaders,
+      ...headers,
+    };
+
+    if (authorizationHeader && !finalHeaders.Authorization) {
+      finalHeaders.Authorization = authorizationHeader;
+    }
+
+    if (body !== undefined) {
+      finalHeaders['Content-Type'] = finalHeaders['Content-Type'] ?? 'application/json';
+    }
+
     const response = await fetch(url, {
       method,
-      headers: {
-        ...defaultHeaders,
-        ...headers,
-      },
+      headers: finalHeaders,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       signal,
     });
@@ -111,5 +122,11 @@ export const createNucliaFetcher = (config: NucliaFetchConfig): NucliaFetcher =>
       request<TResponse>(path, { ...options, method: 'GET' }),
     post: <TResponse = unknown, TBody = unknown>(path: string, options?: Omit<NucliaRequestOptions<TBody>, 'method'>) =>
       request<TResponse, TBody>(path, { ...options, method: 'POST' }),
+    setBearerToken: (token: string | null) => {
+      authorizationHeader = token ? `Bearer ${token}` : undefined;
+    },
+    setEphemeralToken: (token: string | null) => {
+      authorizationHeader = token ? `Bearer ${token}` : undefined;
+    },
   };
 };

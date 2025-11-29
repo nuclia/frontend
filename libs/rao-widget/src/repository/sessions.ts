@@ -8,15 +8,18 @@ export interface ListSessionsParams {
 }
 
 export const createSessionsApi = (fetcher: NucliaFetcher, retrievalAgentId: string) => {
-  const basePath = `/v1/retrieval-agents/${encodeURIComponent(retrievalAgentId)}/sessions`;
+  const basePath = `/api/v1/kb/${encodeURIComponent(retrievalAgentId)}/catalog`;
 
   const list = async (params?: ListSessionsParams): Promise<ISessions> => {
     const { page, size, signal } = params ?? {};
-    return fetcher.get<ISessions>(basePath, {
-      searchParams: {
-        page,
-        size,
-      },
+    return fetcher.post<ISessions, ListSessionsParams | undefined>(basePath, {
+      body:
+        page !== undefined || size !== undefined
+          ? {
+              page,
+              size,
+            }
+          : undefined,
       signal,
     });
   };
@@ -25,6 +28,7 @@ export const createSessionsApi = (fetcher: NucliaFetcher, retrievalAgentId: stri
     return fetcher.get<ISession>(`${basePath}/${encodeURIComponent(sessionId)}`, { signal });
   };
 
+  // TODO: Will not work until the user is authenticated
   const create = async (payload: ISessionCreatePayload, signal?: AbortSignal): Promise<ISession> => {
     return fetcher.post<ISession, ISessionCreatePayload>(basePath, {
       body: payload,

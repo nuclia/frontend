@@ -5,14 +5,20 @@
 
 <script lang="ts">
   import { Nuclia, type NucliaOptions } from '@nuclia/core';
-  import { BehaviorSubject, Subscription, filter, firstValueFrom } from 'rxjs';
+  import { BehaviorSubject, Subscription, filter, firstValueFrom, switchMap, take, tap } from 'rxjs';
   import { onMount, onDestroy } from 'svelte';
   import {
+  addAragAnswer,
     getApiErrors,
+    isEmptySearchQuery,
     loadFonts,
     loadSvgSprite,
     resetNuclia,
+    searchQuery,
+    setAragError,
+    setAragQuestion,
     setLang,
+    triggerSearch,
   } from '../../core';
   import { createElement } from 'react';
   import { createRoot, type Root } from 'react-dom/client';
@@ -32,19 +38,24 @@
   let hasMounted = false;
   let lastInitKey: string | null = null;
 
+  const session: string = 'ephemeral';
+
   interface SaoWidgetProps {
     backend?: string;
     aragId?: string;
     arag?: string;
+    session?: string;
     zone?: string;
     lang?: string;
     apiKey?: string;
     account?: string;
     client?: string;
+    
     title?: string;
     userName?: string;
     cards?: string[];
     inputPlaceholder?: string;
+    viewType?: 'conversation' | 'floating';
   }
 
   let {
@@ -56,6 +67,7 @@
     apiKey,
     account,
     client = 'widget',
+    
     title = 'Progress SAO',
     userName = '',
     cards = [],
@@ -69,9 +81,10 @@
     userName: string;
     cards: string[];
     inputPlaceholder: string;
+    sessionId?: string;
   }
 
-  const renderReactApp = (reactProps: SaoAppProps) => {
+  const renderReactApp = () => {
     if (!reactHost || !nucliaAPI) {
       return;
     }
@@ -80,9 +93,17 @@
       reactRoot = createRoot(reactHost);
     }
 
+    const reactProps: SaoAppProps = {
+      title,
+      userName,
+      cards: Array.isArray(cards) ? cards : [],
+      inputPlaceholder,
+    };
+
     reactRoot.render(
       createElement(SaoApp, {
-        nuclia: nucliaAPI,
+        nuclia: nucliaAPI as any,
+        sessionId: session,
         ...reactProps,
       }),
     );
@@ -131,17 +152,48 @@
 
     nucliaAPI = new Nuclia(nucliaOptions);
     initializationError = null;
+
+    triggerSearch
+      .pipe(
+        filter(() => !!session),
+        switchMap(() =>
+          isEmptySearchQuery.pipe(
+            take(1),
+            filter((isEmptySearchQuery) => !isEmptySearchQuery),
+            switchMap(() => searchQuery.pipe(take(1))),
+            tap((question) => setAragQuestion(question)),
+            switchMap((question) => {
+              if (nucliaAPI && nucliaAPI.arag && session) {
+                return nucliaAPI.arag.interact(session, question);
+              }
+              // Return an empty observable if not available
+              return [];
+            }),
+          ),
+        ),
+      )
+      .subscribe({
+        next: (data) => {
+          if (data.type === 'answer') {
+            addAragAnswer(data.answer);
+          } else {
+            setAragError(data);
+          }
+        },
+        error: (error) =>
+          setAragError({
+            type: 'error',
+            body: error,
+            status: -1,
+            detail: 'Unexpected error while interacting with the Retrieval Agent.',
+          }),
+      });
+
     _ready.next(true);
 
     // Ensure React tree is mounted with the latest props once the host is ready.
     if (reactHost) {
-      const reactProps: SaoAppProps = {
-        title,
-        userName,
-        cards: Array.isArray(cards) ? cards : [],
-        inputPlaceholder,
-      };
-      renderReactApp(reactProps);
+      renderReactApp();
     }
   };
 
@@ -165,14 +217,7 @@
       return;
     }
 
-    const reactProps: SaoAppProps = {
-      title,
-      userName,
-      cards: Array.isArray(cards) ? cards : [],
-      inputPlaceholder,
-    };
-
-    renderReactApp(reactProps);
+    renderReactApp();
   });
 
   $effect(() => {

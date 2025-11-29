@@ -3,4 +3,6 @@ export interface ISaoWidget {
   userName: string;
   cards: string[];
   inputPlaceholder: string;
+
+  viewType?: 'conversation' | 'floating';
 }

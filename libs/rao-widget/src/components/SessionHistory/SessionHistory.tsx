@@ -87,7 +87,7 @@ export const SessionHistory: React.FC<ISessionHistory> = ({ ...rest }) => {
   }, [contextHistory]);
 
   useEffect(() => {
-    context.fetchSessions('history');
+    context.getSessionsAPI('history');
   }, []);
 
   return (

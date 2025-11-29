@@ -1,3 +1,3 @@
 export * from './SaoApp';
-export * from './fetch';
+export * from './repository';
 export * from './interfaces';

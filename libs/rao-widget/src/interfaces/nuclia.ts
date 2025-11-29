@@ -1,3 +1,5 @@
+import type { AragAnswer } from '@nuclia/core';
+
 export interface INuclia {
   auth?: {
     name?: string;
@@ -48,4 +50,19 @@ export interface ISessionCreatePayload {
   summary?: string;
   data?: string;
   format?: 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN' | 'JSON' | 'KEEP_MARKDOWN' | 'JSONL' | 'PLAIN_BLANKLINE_SPLIT';
+}
+
+export type SaoMessageRole = 'user' | 'assistant';
+
+export type SaoMessageVariant = 'chip';
+
+export interface IMessage {
+  id: string;
+  role: SaoMessageRole;
+  content: string;
+  meta?: string;
+  title?: string;
+  list?: string[];
+  variant?: SaoMessageVariant;
+  debug?: AragAnswer[];
 }
