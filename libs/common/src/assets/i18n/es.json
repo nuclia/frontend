@@ -1401,6 +1401,7 @@
 	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "Se ha producido un error al guardar las reglas.",
 	"retrieval-agents.workflow.sidebar.rules.rule-label": "Regla",
 	"retrieval-agents.workflow.sidebar.rules.title": "Normas",
+	"retrieval-agents.workflow.sidebar.test.description.advanced_ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.basic_ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Evaluando la condición según el prompt…",

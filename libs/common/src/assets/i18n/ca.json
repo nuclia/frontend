@@ -1401,6 +1401,7 @@
 	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "S'ha produït un error en desar les regles.",
 	"retrieval-agents.workflow.sidebar.rules.rule-label": "Regla",
 	"retrieval-agents.workflow.sidebar.rules.title": "Normes",
+	"retrieval-agents.workflow.sidebar.test.description.advanced_ask": "Recuperant dades de la(es) font(s) seleccionada(es)...",
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Recuperant dades de la(es) font(s) seleccionada(es)...",
 	"retrieval-agents.workflow.sidebar.test.description.basic_ask": "Recuperant dades de la(es) font(s) seleccionada(es)...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Avaluació de la condició en funció del prompt…",

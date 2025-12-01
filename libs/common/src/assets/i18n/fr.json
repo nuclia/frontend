@@ -1401,6 +1401,7 @@
 	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "Une erreur s'est produite lors de l'enregistrement des règles.",
 	"retrieval-agents.workflow.sidebar.rules.rule-label": "Règle",
 	"retrieval-agents.workflow.sidebar.rules.title": "Règles",
+	"retrieval-agents.workflow.sidebar.test.description.advanced_ask": "Récupération des données à partir des sources sélectionnées...",
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Récupération des données à partir des sources sélectionnées...",
 	"retrieval-agents.workflow.sidebar.test.description.basic_ask": "Récupération des données à partir des sources sélectionnées...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Évaluation de la condition en fonction du prompt…",

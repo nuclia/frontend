@@ -465,7 +465,9 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
         const newEntries = discriminatorEntries.filter(
           (entry) => !fallbackEntries.some((existing) => existing.id === entry.id),
         );
-        fallbackEntries.push(...newEntries);
+        // "rank_fusion" property (from advanced_ask) is not a fallback entry even if it has a discriminator
+        const validEntries = newEntries.filter((entry) => entry.id !== 'rank_fusion');
+        fallbackEntries.push(...validEntries);
       } else if (
         key.toLowerCase().includes('fallback') ||
         key.toLowerCase().includes('next_agent') ||
