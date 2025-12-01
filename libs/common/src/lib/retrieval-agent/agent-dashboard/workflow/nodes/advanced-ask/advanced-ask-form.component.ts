@@ -18,7 +18,7 @@ import { DriverSelectComponent } from '../../basic-elements/node-form/subcompone
 import { JSONSchema4 } from 'json-schema';
 import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select/model-select.component';
 import { AskConfigurationComponent } from './ask-configuration.component';
-import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from 'libs/common/src/lib/search-widget';
+import { getSearchConfigFromSearchOptions } from '../../../../../search-widget';
 
 @Component({
   selector: 'app-advanced-ask-form',
