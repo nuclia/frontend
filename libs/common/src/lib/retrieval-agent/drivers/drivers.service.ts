@@ -74,6 +74,10 @@ export class DriversService {
     shareReplay(1),
   );
 
+  kbList$ = combineLatest([this.sdk.currentArag, this.sdk.kbList]).pipe(
+    map(([arag, kbList]) => kbList.filter((kb) => kb.zone === arag.zone)),
+  );
+
   // Computed properties (accessible as signals)
   drivers = this._drivers.asReadonly();
   schemas = this._schemas.asReadonly();
@@ -145,7 +149,7 @@ export class DriversService {
         let modalRef$: Observable<ModalRef<any>>;
         switch (driverTitle) {
           case 'NucliaDBConfig':
-            modalRef$ = this.sdk.kbList.pipe(
+            modalRef$ = this.kbList$.pipe(
               take(1),
               map((kbList) =>
                 this.modal.openModal(
@@ -250,7 +254,7 @@ export class DriversService {
    */
   editDriver(driverToEdit: Driver): Observable<any> {
     // Find the driver schema based on the provider
-    return combineLatest([of(this._schemas()), of(this._drivers()), this.sdk.kbList.pipe(take(1))]).pipe(
+    return combineLatest([of(this._schemas()), of(this._drivers()), this.kbList$.pipe(take(1))]).pipe(
       take(1),
       switchMap(([schemas, existingDrivers, kbList]) => {
         if (!schemas) {
