@@ -81,7 +81,9 @@
                     resizable
                     [formControlName]="field.key"
                     [rows]="2"
-                    [help]="(userKeys.required?.includes(field.key) ? required + ' ' : '') + (field.value.info || '')"
+                    [help]="
+                      (userKeys.required?.includes(field.key) ? required + ' ' : '') + (field.value.description || '')
+                    "
                     [modalTitle]="field.value.title">
                     {{ field.value.title }}
                   </nsi-expandable-textarea>
@@ -100,7 +102,9 @@
                 } @else {
                   <pa-input
                     [formControlName]="field.key"
-                    [help]="(userKeys.required?.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                    [help]="
+                      (userKeys.required?.includes(field.key) ? required + ' ' : '') + (field.value.description || '')
+                    ">
                     {{ field.value.title }}
                   </pa-input>
                 }
