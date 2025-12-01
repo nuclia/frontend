@@ -63,6 +63,7 @@ import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { convertNodeTypeToConfigTitle } from './workflow.utils';
+import { AdvancedAskFormComponent } from './nodes/advanced-ask';
 
 const COLUMN_CLASS = 'workflow-col';
 const COLUMN_SECTION_CLASS = 'column-section';
@@ -90,6 +91,9 @@ export class WorkflowService {
   // Shared Models state
   private _modelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
   models$ = this._modelsSubject.asObservable();
+
+  private _semanticModelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
+  semanticModels$ = this._semanticModelsSubject.asObservable();
 
   // Driver Model state
   private _driverModelsSubject = new BehaviorSubject<Driver[] | null>(null);
@@ -1075,6 +1079,10 @@ export class WorkflowService {
   private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
     let nodeTypeOverride: string = nodeType;
     switch (nodeType) {
+      case 'advanced_ask':
+        const ref = createComponent(AdvancedAskFormComponent, { environmentInjector: this.environmentInjector });
+        ref.setInput('schemas', this._schemasSubject.getValue());
+        return ref;
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
@@ -1170,9 +1178,12 @@ export class WorkflowService {
     return this.sdk.currentArag.pipe(
       take(1),
       switchMap((arag) => arag.getLearningSchema()),
-      map((schema) =>
-        (schema?.['generative_model'].options || []).filter((model) => !unsupportedModels.includes(model.value)),
-      ),
+      map((schema) => ({
+        models: (schema?.['generative_model'].options || []).filter(
+          (model) => !unsupportedModels.includes(model.value),
+        ),
+        semanticModels: schema?.['semantic_models'].options || [],
+      })),
     );
   }
 
@@ -1181,7 +1192,8 @@ export class WorkflowService {
    */
   fetchModels() {
     this.getModels().subscribe((models) => {
-      this._modelsSubject.next(models);
+      this._modelsSubject.next(models.models);
+      this._semanticModelsSubject.next(models.semanticModels);
     });
   }
 

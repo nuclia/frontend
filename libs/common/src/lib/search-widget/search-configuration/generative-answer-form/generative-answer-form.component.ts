@@ -35,7 +35,6 @@ import { FindResourceModalComponent } from '../find-resource-modal';
     ExpandableTextareaComponent,
   ],
   templateUrl: './generative-answer-form.component.html',
-  styleUrl: './generative-answer-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {

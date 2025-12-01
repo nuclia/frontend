@@ -18,6 +18,7 @@ export type AragModule =
   | 'context_conditional'
   | 'basic_ask'
   | 'ask'
+  | 'advanced_ask'
   | 'brave'
   | 'perplexity'
   | 'tavily'
@@ -68,6 +69,7 @@ const CONTEXT_MODULE: AragModule[] = [
   'cypher',
   'basic_ask',
   'ask',
+  'advanced_ask',
   'context_conditional',
   'restricted',
   'sparql',

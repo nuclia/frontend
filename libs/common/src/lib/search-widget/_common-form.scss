@@ -86,6 +86,11 @@
   }
 }
 
+.subsection-title {
+  @include title-m();
+  padding-top: rhythm(2);
+}
+
 .toggle-and-help {
   align-items: center;
   display: flex;
