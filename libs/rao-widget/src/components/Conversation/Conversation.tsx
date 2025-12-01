@@ -1,4 +1,4 @@
-import { useSaoContext } from 'rao-widget/hooks';
+import { useRaoContext } from 'rao-widget/hooks';
 import type { AragAnswer } from '@nuclia/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Icon } from '../Icon/Icon';
@@ -404,7 +404,7 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
 };
 
 export const Conversation: React.FC<IConversation> = () => {
-  const { conversation, nuclia } = useSaoContext();
+  const { conversation, nuclia } = useRaoContext();
   const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 
@@ -434,15 +434,15 @@ export const Conversation: React.FC<IConversation> = () => {
 
   return (
     <section
-      className="sao-react__conversation"
+      className="rao-react__conversation"
       aria-live="polite">
       {conversation?.map((message) => {
         const isChip = message.variant === 'chip';
         const isAssistant = message.role === 'assistant' && !isChip;
-        const articleClass = `sao-react__message sao-react__message--${message.role}`;
+        const articleClass = `rao-react__message rao-react__message--${message.role}`;
 
         if (isChip) {
-          const bubbleClass = ['sao-react__message-bubble', 'sao-react__message-bubble--chip'];
+          const bubbleClass = ['rao-react__message-bubble', 'rao-react__message-bubble--chip'];
           return (
             <article
               key={message.id}
@@ -450,7 +450,7 @@ export const Conversation: React.FC<IConversation> = () => {
               <div
                 className={bubbleClass.join(' ')}
                 data-testid={message.id}>
-                <span className="sao-react__message-chip">{message.content}</span>
+                <span className="rao-react__message-chip">{message.content}</span>
               </div>
             </article>
           );
@@ -460,7 +460,7 @@ export const Conversation: React.FC<IConversation> = () => {
           const normalizedMeta = message.meta?.toLowerCase() ?? '';
           const canToggleReasoning = normalizedMeta === 'response generated';
           const isExpanded = canToggleReasoning && Boolean(expandedMessages[message.id]);
-          const cardClassNames = ['sao-react__message-card'];
+          const cardClassNames = ['rao-react__message-card'];
           if (isExpanded) {
             cardClassNames.push('is-expanded');
           }
@@ -499,38 +499,38 @@ export const Conversation: React.FC<IConversation> = () => {
                   (canToggleReasoning ? (
                     <button
                       type="button"
-                      className="sao-react__message-card-toggle"
+                      className="rao-react__message-card-toggle"
                       onClick={() => toggleReasoning(message.id)}
                       aria-expanded={isExpanded}>
                       <span>{message.meta}</span>
                       <Icon
                         icon={isExpanded ? 'chevron-up' : 'chevron-down'}
                         size="sm"
-                        className="sao-react__message-card-chevron"
+                        className="rao-react__message-card-chevron"
                       />
                     </button>
                   ) : (
-                    <span className="sao-react__message-card-label">{message.meta}</span>
+                    <span className="rao-react__message-card-label">{message.meta}</span>
                   ))}
 
                 {canToggleReasoning && isExpanded && (
-                  <div className="sao-react__message-reasoning">
-                    <span className="sao-react__message-reasoning-title">Reasoning</span>
+                  <div className="rao-react__message-reasoning">
+                    <span className="rao-react__message-reasoning-title">Reasoning</span>
                     {reasoningItems.length > 0 ? (
-                      <ol className="sao-react__message-reasoning-steps">
+                      <ol className="rao-react__message-reasoning-steps">
                         {reasoningItems.map((item) => (
                           <li
                             key={item.id}
-                            className={`sao-react__message-reasoning-item sao-react__message-reasoning-item--${item.type}`}>
-                            <div className="sao-react__message-reasoning-header">
-                              <span className="sao-react__message-reasoning-badge">{item.badge}</span>
-                              <span className="sao-react__message-reasoning-item-title">{item.title}</span>
+                            className={`rao-react__message-reasoning-item rao-react__message-reasoning-item--${item.type}`}>
+                            <div className="rao-react__message-reasoning-header">
+                              <span className="rao-react__message-reasoning-badge">{item.badge}</span>
+                              <span className="rao-react__message-reasoning-item-title">{item.title}</span>
                             </div>
                             {item.description && (
-                              <p className="sao-react__message-reasoning-description">{item.description}</p>
+                              <p className="rao-react__message-reasoning-description">{item.description}</p>
                             )}
                             {item.notes && item.notes.length > 0 && (
-                              <ul className="sao-react__message-reasoning-notes">
+                              <ul className="rao-react__message-reasoning-notes">
                                 {item.notes.map((note, noteIndex) => (
                                   <li key={`${item.id}-note-${noteIndex}`}>{note}</li>
                                 ))}
@@ -540,59 +540,59 @@ export const Conversation: React.FC<IConversation> = () => {
                         ))}
                       </ol>
                     ) : message.list && message.list.length > 0 ? (
-                      <ol className="sao-react__message-reasoning-list">
+                      <ol className="rao-react__message-reasoning-list">
                         {message.list.map((item, index) => (
                           <li key={`${message.id}-reason-${index}`}>{item}</li>
                         ))}
                       </ol>
                     ) : (
                       <div
-                        className="sao-react__reasoning-skeleton"
+                        className="rao-react__reasoning-skeleton"
                         aria-hidden="true">
-                        <span className="sao-react__reasoning-skeleton-line" />
-                        <span className="sao-react__reasoning-skeleton-line" />
-                        <span className="sao-react__reasoning-skeleton-line" />
+                        <span className="rao-react__reasoning-skeleton-line" />
+                        <span className="rao-react__reasoning-skeleton-line" />
+                        <span className="rao-react__reasoning-skeleton-line" />
                       </div>
                     )}
                   </div>
                 )}
 
-                <div className="sao-react__message-card-inner">
-                  <header className="sao-react__message-card-author">
+                <div className="rao-react__message-card-inner">
+                  <header className="rao-react__message-card-author">
                     <span
                       aria-hidden="true"
-                      className="sao-react__message-card-avatar">
+                      className="rao-react__message-card-avatar">
                       {avatarInitials}
                     </span>
-                    <div className="sao-react__message-card-author-details">
-                      <p className="sao-react__message-card-author-name">{nameForMessage}</p>
+                    <div className="rao-react__message-card-author-details">
+                      <p className="rao-react__message-card-author-name">{nameForMessage}</p>
                       {assistantDescription && (
-                        <p className="sao-react__message-card-author-description">{assistantDescription}</p>
+                        <p className="rao-react__message-card-author-description">{assistantDescription}</p>
                       )}
                     </div>
                   </header>
 
                   <div
-                    className="sao-react__message-card-body"
+                    className="rao-react__message-card-body"
                     data-testid={message.id}>
                     {contentParagraphs.length > 0 ? (
                       contentParagraphs.map((paragraph, index) => (
                         <p
                           key={`${message.id}-paragraph-${index}`}
-                          className="sao-react__message-content">
+                          className="rao-react__message-content">
                           {paragraph}
                         </p>
                       ))
                     ) : (
                       <p
-                        className="sao-react__message-content sao-react__message-content--placeholder"
+                        className="rao-react__message-content rao-react__message-content--placeholder"
                         aria-live="polite">
                         {message.meta ?? '...'}
                       </p>
                     )}
 
                     {shouldRenderListInBody && (
-                      <ol className="sao-react__message-list">
+                      <ol className="rao-react__message-list">
                         {message.list!.map((item, index) => (
                           <li key={`${message.id}-item-${index}`}>{item}</li>
                         ))}
@@ -601,47 +601,47 @@ export const Conversation: React.FC<IConversation> = () => {
                   </div>
 
                   {hasSources && (
-                    <div className={`sao-react__message-sources${isSourcesExpanded ? ' is-expanded' : ''}`}>
+                    <div className={`rao-react__message-sources${isSourcesExpanded ? ' is-expanded' : ''}`}>
                       <button
                         type="button"
-                        className="sao-react__message-sources-toggle"
+                        className="rao-react__message-sources-toggle"
                         onClick={() => toggleSources(message.id)}
                         aria-expanded={isSourcesExpanded}>
-                        <span className="sao-react__message-sources-label">Sources</span>
-                        <span className="sao-react__message-sources-count">{sources.length}</span>
+                        <span className="rao-react__message-sources-label">Sources</span>
+                        <span className="rao-react__message-sources-count">{sources.length}</span>
                         <Icon
                           icon={isSourcesExpanded ? 'chevron-up' : 'chevron-down'}
                           size="sm"
-                          className="sao-react__message-sources-chevron"
+                          className="rao-react__message-sources-chevron"
                         />
                       </button>
 
                       {isSourcesExpanded && (
-                        <ol className="sao-react__message-sources-list">
+                        <ol className="rao-react__message-sources-list">
                           {sources.map((source) => (
                             <li
                               key={source.id}
-                              className="sao-react__message-sources-item">
-                              <div className="sao-react__message-sources-leading">
+                              className="rao-react__message-sources-item">
+                              <div className="rao-react__message-sources-leading">
                                 <Icon
                                   icon={source.icon}
                                   size="sm"
-                                  className="sao-react__message-sources-icon"
+                                  className="rao-react__message-sources-icon"
                                 />
                               </div>
-                              <div className="sao-react__message-sources-body">
-                                <div className="sao-react__message-sources-header">
-                                  <span className="sao-react__message-sources-title">{source.title}</span>
+                              <div className="rao-react__message-sources-body">
+                                <div className="rao-react__message-sources-header">
+                                  <span className="rao-react__message-sources-title">{source.title}</span>
                                   {source.meta && (
-                                    <span className="sao-react__message-sources-meta">{source.meta}</span>
+                                    <span className="rao-react__message-sources-meta">{source.meta}</span>
                                   )}
                                 </div>
                                 {source.description && (
-                                  <p className="sao-react__message-sources-description">{source.description}</p>
+                                  <p className="rao-react__message-sources-description">{source.description}</p>
                                 )}
                                 {source.url && (
                                   <a
-                                    className="sao-react__message-sources-link"
+                                    className="rao-react__message-sources-link"
                                     href={source.url}
                                     target="_blank"
                                     rel="noopener noreferrer">
@@ -651,7 +651,7 @@ export const Conversation: React.FC<IConversation> = () => {
                               </div>
                               {source.thumbnail && (
                                 <img
-                                  className="sao-react__message-sources-thumbnail"
+                                  className="rao-react__message-sources-thumbnail"
                                   src={source.thumbnail}
                                   alt=""
                                   aria-hidden="true"
@@ -669,7 +669,7 @@ export const Conversation: React.FC<IConversation> = () => {
           );
         }
 
-        const bubbleClass = ['sao-react__message-bubble'];
+        const bubbleClass = ['rao-react__message-bubble'];
         const contentParagraphs = message.content
           ? message.content
               .split(/\r?\n+/)
@@ -680,7 +680,7 @@ export const Conversation: React.FC<IConversation> = () => {
           <article
             key={message.id}
             className={articleClass}>
-            {message.meta && <span className="sao-react__message-meta">{message.meta}</span>}
+            {message.meta && <span className="rao-react__message-meta">{message.meta}</span>}
             <div
               className={bubbleClass.join(' ')}
               data-testid={message.id}>
@@ -688,12 +688,12 @@ export const Conversation: React.FC<IConversation> = () => {
                 contentParagraphs.map((paragraph, index) => (
                   <p
                     key={`${message.id}-paragraph-${index}`}
-                    className="sao-react__message-content">
+                    className="rao-react__message-content">
                     {paragraph}
                   </p>
                 ))
               ) : (
-                <p className="sao-react__message-content">{message.content}</p>
+                <p className="rao-react__message-content">{message.content}</p>
               )}
             </div>
           </article>

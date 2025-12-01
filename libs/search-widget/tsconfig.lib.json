@@ -6,6 +6,6 @@
     "jsx": "react-jsx"
   },
 
-  "include": ["src/**/*", "../rao-widget/src/SaoApp.tsx"],
+  "include": ["src/**/*", "../rao-widget/src/RaoApp.tsx"],
   "exclude": ["**/*.spec.ts", "**/*_spec.ts", "public/*"]
 }

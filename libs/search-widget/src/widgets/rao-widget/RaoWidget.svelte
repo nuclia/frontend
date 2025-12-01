@@ -1,6 +1,6 @@
 <svelte:options
   customElement={{
-    tag: 'progress-sao-widget',
+    tag: 'progress-rao-widget',
   }} />
 
 <script lang="ts">
@@ -22,7 +22,7 @@
   } from '../../core';
   import { createElement } from 'react';
   import { createRoot, type Root } from 'react-dom/client';
-  import { SaoApp } from 'rao-widget';
+  import { RaoApp } from 'rao-widget';
   import 'rao-widget/progress.css';
 
   const _ready = new BehaviorSubject(false);
@@ -76,7 +76,7 @@
   let reactHost: HTMLDivElement | null = null;
   let reactRoot: Root | null = null;
 
-  interface SaoAppProps {
+  interface RaoAppProps {
     title: string;
     userName: string;
     cards: string[];
@@ -93,7 +93,7 @@
       reactRoot = createRoot(reactHost);
     }
 
-    const reactProps: SaoAppProps = {
+    const reactProps: RaoAppProps = {
       title,
       userName,
       cards: Array.isArray(cards) ? cards : [],
@@ -101,7 +101,7 @@
     };
 
     reactRoot.render(
-      createElement(SaoApp, {
+      createElement(RaoApp, {
         nuclia: nucliaAPI as any,
         sessionId: session,
         ...reactProps,

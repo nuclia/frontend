@@ -11,6 +11,9 @@ const raoWidgetSrc = path.resolve(__dirname, '../rao-widget/src');
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+  },
   resolve: {
     conditions: process.env.VITEST ? ['browser'] : undefined,
     alias: [

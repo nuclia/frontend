@@ -1,7 +1,7 @@
 import React from 'react';
-import { ISaoContext } from './SaoContext.interface';
+import { IRaoContext } from './RaoContext.interface';
 
-const defaultContext: ISaoContext = {
+const defaultContext: IRaoContext = {
   nuclia: null,
   sessionId: null,
   sessions: {},
@@ -15,12 +15,12 @@ const defaultContext: ISaoContext = {
   onChat: () => {},
 };
 
-export const SaoContext = React.createContext<ISaoContext>(defaultContext);
+export const RaoContext = React.createContext<IRaoContext>(defaultContext);
 
-export const useSaoContext = () => {
-  const context = React.useContext(SaoContext);
+export const useRaoContext = () => {
+  const context = React.useContext(RaoContext);
   if (!context) {
-    throw new Error('useSaoContext must be used within a SaoProvider');
+    throw new Error('useRaoContext must be used within a RaoProvider');
   }
   return context;
 };

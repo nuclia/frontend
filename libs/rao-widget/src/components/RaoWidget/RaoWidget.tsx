@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FC, type FormEvent, type MouseEvent } from 'react';
 import { Icon } from '../Icon';
 import { SessionHistory } from '../SessionHistory';
-import { useSaoContext, useVoiceRecorder } from '../../hooks';
-import { ISaoWidget } from './SaoWidget.interface';
+import { useRaoContext, useVoiceRecorder } from '../../hooks';
+import { IRaoWidget } from './RaoWidget.interface';
 import { SessionDrawer } from '../SessionDrawer';
 import { Conversation } from '../Conversation';
 
@@ -18,8 +18,8 @@ const features = {
   sessionHistory: false,
 };
 
-export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceholder, viewType = 'conversation' }) => {
-  const { activeView, onChat } = useSaoContext();
+export const RaoWidget: FC<IRaoWidget> = ({ title, userName, cards, inputPlaceholder, viewType = 'conversation' }) => {
+  const { activeView, onChat } = useRaoContext();
   const { hasSupport: canUseVoice, isRecording, stopRecording, toggleRecording, transcript } = useVoiceRecorder();
 
   const [query, setQuery] = useState('');
@@ -101,7 +101,6 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
     if (!trimmed) {
       return;
     }
-    console.info('SAO widget demo submission', trimmed);
     setQuery('');
     stopRecording();
 
@@ -111,31 +110,31 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
   const isConversationActive = useMemo(() => activeView === 'conversation', [activeView]);
 
   const containerClassName = useMemo(() => {
-    const classes = ['sao-react'];
+    const classes = ['rao-react'];
     if (isFloating) {
-      classes.push(isExpanded ? 'sao-react--floating-expanded' : 'sao-react--floating');
+      classes.push(isExpanded ? 'rao-react--floating-expanded' : 'rao-react--floating');
     }
     return classes.join(' ');
   }, [isFloating, isExpanded]);
 
   const formClassName = useMemo(() => {
-    const base = ['sao-react__form'];
+    const base = ['rao-react__form'];
     if (useFloatingStyles) {
-      base.push('sao-react__form--floating');
+      base.push('rao-react__form--floating');
     }
     return base.join(' ');
   }, [useFloatingStyles]);
 
   return (
     <div className={containerClassName}>
-      <header className="sao-react__header">
-        <span className="sao-react__brand">{title}</span>
+      <header className="rao-react__header">
+        <span className="rao-react__brand">{title}</span>
 
-        <div className="sao-react__header-actions">
+        <div className="rao-react__header-actions">
           {isFloating && (
             <button
               type="button"
-              className="sao-react__icon-button"
+              className="rao-react__icon-button"
               aria-label={isExpanded ? 'Collapse chat' : 'Expand chat'}
               onClick={() => setIsExpanded((expanded) => !expanded)}>
               <Icon
@@ -148,7 +147,7 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
           {features.sessionHistory && (
             <button
               type="button"
-              className="sao-react__icon-button"
+              className="rao-react__icon-button"
               aria-label="Open chat history"
               aria-expanded={isDrawerOpen}
               onClick={openDrawer}
@@ -162,20 +161,20 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
         </div>
       </header>
 
-      <main className={`sao-react__main sao-react__main--${activeView}`}>
+      <main className={`rao-react__main rao-react__main--${activeView}`}>
         {isConversationActive ? (
           <Conversation />
         ) : (
           <>
-            <h1 className="sao-react__greeting">Hello{userName ? `, ${userName}!` : '!'}</h1>
+            <h1 className="rao-react__greeting">Hello{userName ? `, ${userName}!` : '!'}</h1>
             <section
-              className="sao-react__cards"
+              className="rao-react__cards"
               aria-label="Suggested prompts">
               {displayCards.map((card, index) => (
                 <button
                   key={`${card}-${index}`}
                   type="button"
-                  className="sao-react__card"
+                  className="rao-react__card"
                   data-value={card}
                   onClick={handleCardClick}>
                   {card}
@@ -191,14 +190,14 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
           {features.addOns && (
             <button
               type="button"
-              className="sao-react__square-button"
+              className="rao-react__square-button"
               aria-label="Add prompt">
               <Icon icon="plus" />
             </button>
           )}
 
           <input
-            className="sao-react__query"
+            className="rao-react__query"
             placeholder={isConversationActive ? 'Ask a follow-up' : inputPlaceholder}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -206,7 +205,7 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
 
           <button
             type="button"
-            className={`sao-react__ghost-button${isRecording ? ' sao-react__ghost-button--recording' : ''}`}
+            className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
             aria-label={isRecording ? 'Stop recording' : 'Start recording'}
             title={
               canUseVoice
@@ -223,15 +222,15 @@ export const SaoWidget: FC<ISaoWidget> = ({ title, userName, cards, inputPlaceho
               size={'sm'}
               className={
                 isRecording
-                  ? 'sao-react__microphone-icon sao-react__microphone-icon--recording'
-                  : 'sao-react__microphone-icon'
+                  ? 'rao-react__microphone-icon rao-react__microphone-icon--recording'
+                  : 'rao-react__microphone-icon'
               }
             />
           </button>
 
           <button
             type="submit"
-            className="sao-react__submit-button"
+            className="rao-react__submit-button"
             disabled={!query.trim()}>
             Send
           </button>

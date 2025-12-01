@@ -3,12 +3,12 @@ import type { ICallState, IMessage, INuclia, ISessions } from '../interfaces';
 
 type SessionState = ICallState<ISessions>[string];
 
-export interface ISaoProvider {
+export interface IRaoProvider {
   nuclia: INuclia | null;
   sessionId?: string | null;
 }
 
-export interface ISaoContext extends Omit<ISaoProvider, 'sessionId'> {
+export interface IRaoContext extends Omit<IRaoProvider, 'sessionId'> {
   sessionId: string | null;
   sessions: ICallState<ISessions>;
   getSessionsAPI: (key?: string) => Promise<void>;

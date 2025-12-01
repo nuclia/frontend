@@ -1,4 +1,4 @@
-.sao-react__history {
+.rao-react__history {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-3);
@@ -8,13 +8,13 @@
   color: var(--text-color, var(--color-dark-stronger));
 }
 
-.sao-react__history-section {
+.rao-react__history-section {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-1_5);
 }
 
-.sao-react__history-section-title {
+.rao-react__history-section-title {
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-semi-bold);
   letter-spacing: 0.08em;
@@ -23,7 +23,7 @@
   margin: 0;
 }
 
-.sao-react__history-list {
+.rao-react__history-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -32,7 +32,7 @@
   gap: var(--rhythm-1);
 }
 
-.sao-react__history-item {
+.rao-react__history-item {
   width: 100%;
   display: flex;
   align-items: center;
@@ -51,52 +51,52 @@
     transform var(--transition-fast);
 }
 
-.sao-react__history-item:hover {
+.rao-react__history-item:hover {
   border-color: var(--border-hover-color);
   box-shadow: 0 var(--rhythm-1) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.08);
   transform: translateY(-1px);
 }
 
-.sao-react__history-item:focus-visible {
+.rao-react__history-item:focus-visible {
   outline: var(--focus-shadow);
   outline-offset: var(--rhythm-0_25);
 }
 
-.sao-react__history-item-text {
+.rao-react__history-item-text {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_5);
   flex: 1;
 }
 
-.sao-react__history-item-title {
+.rao-react__history-item-title {
   font-size: calc(var(--font-size-base) * 0.95);
   font-weight: var(--font-weight-semi-bold);
   color: inherit;
 }
 
-.sao-react__history-item-description {
+.rao-react__history-item-description {
   font-size: calc(var(--font-size-base) * 0.8);
   color: var(--color-neutral-regular);
 }
 
-.sao-react__history svg {
+.rao-react__history svg {
   flex-shrink: 0;
   color: var(--color-neutral-light);
 }
 
 @media (max-width: 640px) {
-  .sao-react__history {
+  .rao-react__history {
     padding: var(--rhythm-2_5);
     gap: var(--rhythm-2);
   }
 
-  .sao-react__history-item {
+  .rao-react__history-item {
     border-radius: var(--rhythm-1);
     padding: var(--rhythm-1) var(--rhythm-1_5);
   }
 
-  .sao-react__history-item-title {
+  .rao-react__history-item-title {
     font-size: calc(var(--font-size-base) * 0.9);
   }
 }

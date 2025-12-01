@@ -1,4 +1,4 @@
-export interface ISaoWidget {
+export interface IRaoWidget {
   title: string;
   userName: string;
   cards: string[];

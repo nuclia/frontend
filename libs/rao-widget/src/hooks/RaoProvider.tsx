@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SaoContext } from './SaoContext';
-import { ISaoContext, type ISaoProvider } from './SaoContext.interface';
+import { RaoContext } from './RaoContext';
+import { IRaoContext, type IRaoProvider } from './RaoContext.interface';
 import type { ICallState, IMessage, ISessions } from '../interfaces';
 import {
   createAuthApi,
@@ -59,7 +59,7 @@ const injectZoneIntoBackend = (backend: string, zone?: string): string => {
   }
 };
 
-export const SaoProvider: FC<PropsWithChildren<ISaoProvider>> = ({ children, nuclia, sessionId: sessionIdProp }) => {
+export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuclia, sessionId: sessionIdProp }) => {
   const [sessionsState, _setSessionsState] = useState<ICallState<ISessions>>({});
   const [conversation, setConversation] = useState<IMessage[] | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -714,7 +714,7 @@ export const SaoProvider: FC<PropsWithChildren<ISaoProvider>> = ({ children, nuc
     ],
   );
 
-  const value: ISaoContext = useMemo(
+  const value: IRaoContext = useMemo(
     () => ({
       nuclia: nuclia ?? null,
       sessionId: activeSessionId,
@@ -743,5 +743,5 @@ export const SaoProvider: FC<PropsWithChildren<ISaoProvider>> = ({ children, nuc
     ],
   );
 
-  return <SaoContext.Provider value={value}>{children}</SaoContext.Provider>;
+  return <RaoContext.Provider value={value}>{children}</RaoContext.Provider>;
 };

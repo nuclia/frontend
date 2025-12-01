@@ -1,80 +1,80 @@
-.sao-react__main--conversation {
+.rao-react__main--conversation {
   align-items: stretch;
   text-align: left;
   gap: var(--rhythm-3);
 }
 
-.sao-react__conversation {
+.rao-react__conversation {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-2);
   width: 100%;
 }
 
-.sao-react__message {
+.rao-react__message {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_5);
 }
 
-.sao-react__message--user {
+.rao-react__message--user {
   align-items: flex-end;
 }
 
-.sao-react__message--assistant {
+.rao-react__message--assistant {
   align-items: flex-start;
 }
 
-.sao-react__message-meta {
+.rao-react__message-meta {
   font-size: 0.75rem;
   color: #6b7280;
 }
 
-.sao-react__message-bubble {
+.rao-react__message-bubble {
   background: #e1e1e1;
   border-radius: 3px;
   padding: var(--rhythm-1_5);
   max-width: min(100%, 40rem);
 }
 
-.sao-react__message--user .sao-react__message-bubble {
+.rao-react__message--user .rao-react__message-bubble {
   background: #e1e1e1;
 }
 
-.sao-react__message-bubble--chip {
+.rao-react__message-bubble--chip {
   border-radius: 999px;
   padding: 0.5rem 1rem;
   box-shadow: none;
 }
 
-.sao-react__message--user .sao-react__message-bubble--chip {
+.rao-react__message--user .rao-react__message-bubble--chip {
   background: #f3f4f6;
   color: #1f2937;
   border-color: #d1d5db;
 }
 
-.sao-react__message-chip {
+.rao-react__message-chip {
   font-weight: 600;
 }
 
-.sao-react__message-content {
+.rao-react__message-content {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.6;
 }
 
-.sao-react__message-list {
+.rao-react__message-list {
   margin: var(--rhythm-1) 0 0;
   padding-left: var(--rhythm-3);
   font-size: 0.95rem;
   line-height: 1.6;
 }
 
-.sao-react__main--conversation .sao-react__form {
+.rao-react__main--conversation .rao-react__form {
   margin-top: auto;
 }
 
-.sao-react__message-card {
+.rao-react__message-card {
   max-width: min(100%, 44rem);
   display: flex;
   flex-direction: column;
@@ -85,13 +85,13 @@
     border-color 0.2s ease;
 }
 
-.sao-react__message-card.is-expanded {
+.rao-react__message-card.is-expanded {
   border: 1px solid var(--border-color);
   border-color: rgba(59, 130, 246, 0.45);
 }
 
-.sao-react__message-card-toggle,
-.sao-react__message-card-label {
+.rao-react__message-card-toggle,
+.rao-react__message-card-label {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
@@ -108,11 +108,11 @@
   border: none;
 }
 
-.sao-react__message-card-label {
+.rao-react__message-card-label {
   cursor: default;
 }
 
-.sao-react__message-card-toggle {
+.rao-react__message-card-toggle {
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -120,36 +120,36 @@
     color 0.2s ease;
 }
 
-.sao-react__message-card-toggle:hover {
+.rao-react__message-card-toggle:hover {
   background: rgba(148, 163, 184, 0.2);
 }
 
-.sao-react__message-card-toggle:focus-visible {
+.rao-react__message-card-toggle:focus-visible {
   outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }
 
-.sao-react__message-card-toggle[aria-expanded='true'] {
+.rao-react__message-card-toggle[aria-expanded='true'] {
   color: #1e293b;
 }
 
-.sao-react__message-card-chevron {
+.rao-react__message-card-chevron {
   color: inherit;
 }
 
-.sao-react__message-card-inner {
+.rao-react__message-card-inner {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-1_5);
 }
 
-.sao-react__message-card-author {
+.rao-react__message-card-author {
   display: flex;
   align-items: flex-start;
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-card-avatar {
+.rao-react__message-card-avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -163,43 +163,43 @@
   letter-spacing: 0.08em;
 }
 
-.sao-react__message-card-author-details {
+.rao-react__message-card-author-details {
   display: flex;
   flex-direction: column;
 }
 
-.sao-react__message-card-author-name {
+.rao-react__message-card-author-name {
   margin: 0;
   font-weight: 600;
   color: #0f172a;
 }
 
-.sao-react__message-card-author-description {
+.rao-react__message-card-author-description {
   margin: var(--rhythm-0_5) 0 0;
   font-size: 0.875rem;
   color: #64748b;
 }
 
-.sao-react__message-card-body {
+.rao-react__message-card-body {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-card-body .sao-react__message-content {
+.rao-react__message-card-body .rao-react__message-content {
   color: #111827;
 }
 
-.sao-react__message-content + .sao-react__message-content {
+.rao-react__message-content + .rao-react__message-content {
   margin-top: var(--rhythm-0_75);
 }
 
-.sao-react__message-content--placeholder {
+.rao-react__message-content--placeholder {
   color: #94a3b8;
   font-style: italic;
 }
 
-.sao-react__message-reasoning {
+.rao-react__message-reasoning {
   border-top: 1px solid rgba(148, 163, 184, 0.3);
   padding-top: var(--rhythm-1_5);
   display: flex;
@@ -207,7 +207,7 @@
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-reasoning-title {
+.rao-react__message-reasoning-title {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -215,7 +215,7 @@
   color: #475569;
 }
 
-.sao-react__message-reasoning-list {
+.rao-react__message-reasoning-list {
   margin: 0;
   padding-left: var(--rhythm-3);
   font-size: 0.875rem;
@@ -223,11 +223,11 @@
   color: #334155;
 }
 
-.sao-react__message-reasoning-list li + li {
+.rao-react__message-reasoning-list li + li {
   margin-top: var(--rhythm-0_5);
 }
 
-.sao-react__message-reasoning-steps {
+.rao-react__message-reasoning-steps {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -236,7 +236,7 @@
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-reasoning-item {
+.rao-react__message-reasoning-item {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_75, 10px);
@@ -244,13 +244,13 @@
   background: #f8fafc;
 }
 
-.sao-react__message-reasoning-header {
+.rao-react__message-reasoning-header {
   display: flex;
   align-items: center;
   gap: var(--rhythm-0_75, 10px);
 }
 
-.sao-react__message-reasoning-badge {
+.rao-react__message-reasoning-badge {
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -261,86 +261,86 @@
   color: #1d4ed8;
 }
 
-.sao-react__message-reasoning-item-title {
+.rao-react__message-reasoning-item-title {
   font-weight: 600;
   color: #0f172a;
 }
 
-.sao-react__message-reasoning-description {
+.rao-react__message-reasoning-description {
   margin: 0;
   color: #1f2937;
   line-height: 1.6;
 }
 
-.sao-react__message-reasoning-notes {
+.rao-react__message-reasoning-notes {
   margin: 0;
   padding-left: var(--rhythm-3);
   color: #475569;
   line-height: 1.6;
 }
 
-.sao-react__message-reasoning-notes li + li {
+.rao-react__message-reasoning-notes li + li {
   margin-top: var(--rhythm-0_5);
 }
 
-.sao-react__message-reasoning-item--context {
+.rao-react__message-reasoning-item--context {
   background: rgba(16, 185, 129, 0.08);
   border-color: rgba(16, 185, 129, 0.25);
 }
 
-.sao-react__message-reasoning-item--context .sao-react__message-reasoning-badge {
+.rao-react__message-reasoning-item--context .rao-react__message-reasoning-badge {
   background: rgba(16, 185, 129, 0.2);
   color: #047857;
 }
 
-.sao-react__message-reasoning-item--step {
+.rao-react__message-reasoning-item--step {
 }
 
-.sao-react__message-reasoning-item--answer {
+.rao-react__message-reasoning-item--answer {
   background: rgba(124, 58, 237, 0.08);
   border-color: rgba(124, 58, 237, 0.25);
 }
 
-.sao-react__message-reasoning-item--answer .sao-react__message-reasoning-badge {
+.rao-react__message-reasoning-item--answer .rao-react__message-reasoning-badge {
   background: rgba(124, 58, 237, 0.25);
   color: #5b21b6;
 }
 
-.sao-react__message-reasoning-item--error {
+.rao-react__message-reasoning-item--error {
   background: rgba(248, 113, 113, 0.12);
   border-color: rgba(220, 38, 38, 0.35);
 }
 
-.sao-react__message-reasoning-item--error .sao-react__message-reasoning-badge {
+.rao-react__message-reasoning-item--error .rao-react__message-reasoning-badge {
   background: rgba(248, 113, 113, 0.3);
   color: #b91c1c;
 }
 
-.sao-react__message-reasoning-item--info {
+.rao-react__message-reasoning-item--info {
   background: rgba(148, 163, 184, 0.12);
   border-color: rgba(148, 163, 184, 0.3);
 }
 
-.sao-react__message-reasoning-item--info .sao-react__message-reasoning-badge {
+.rao-react__message-reasoning-item--info .rao-react__message-reasoning-badge {
   background: rgba(148, 163, 184, 0.25);
   color: #475569;
 }
 
-.sao-react__reasoning-skeleton {
+.rao-react__reasoning-skeleton {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_75);
 }
 
-.sao-react__reasoning-skeleton-line {
+.rao-react__reasoning-skeleton-line {
   height: var(--rhythm-1);
   border-radius: 999px;
   background: linear-gradient(90deg, #e2e8f0 0%, #f8fafc 50%, #e2e8f0 100%);
   background-size: 200% 100%;
-  animation: sao-react__reasoning-skeleton-pulse 1.8s ease-in-out infinite;
+  animation: rao-react__reasoning-skeleton-pulse 1.8s ease-in-out infinite;
 }
 
-@keyframes sao-react__reasoning-skeleton-pulse {
+@keyframes rao-react__reasoning-skeleton-pulse {
   0% {
     background-position: 200% 0;
   }
@@ -349,7 +349,7 @@
   }
 }
 
-.sao-react__message-sources {
+.rao-react__message-sources {
   margin-top: var(--rhythm-1_5);
   border: 1px solid rgba(148, 163, 184, 0.32);
   border-radius: 3px;
@@ -359,10 +359,10 @@
   flex-direction: column;
 }
 
-.sao-react__message-sources.is-expanded {
+.rao-react__message-sources.is-expanded {
 }
 
-.sao-react__message-sources-toggle {
+.rao-react__message-sources-toggle {
   appearance: none;
   border: none;
   background: transparent;
@@ -375,13 +375,13 @@
   font-weight: 600;
 }
 
-.sao-react__message-sources-label {
+.rao-react__message-sources-label {
   flex: 1;
   text-align: left;
   font-size: 0.95rem;
 }
 
-.sao-react__message-sources-count {
+.rao-react__message-sources-count {
   color: #666;
   font-size: 0.75rem;
   font-weight: 600;
@@ -389,11 +389,11 @@
   text-align: center;
 }
 
-.sao-react__message-sources-chevron {
+.rao-react__message-sources-chevron {
   color: #334155;
 }
 
-.sao-react__message-sources-list {
+.rao-react__message-sources-list {
   list-style: none;
   margin: 0;
   padding: var(--rhythm-1_25, 20px) var(--rhythm-1_5, 24px) var(--rhythm-1_5, 20px);
@@ -403,13 +403,13 @@
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-sources-item {
+.rao-react__message-sources-item {
   display: flex;
   align-items: flex-start;
   gap: var(--rhythm-1);
 }
 
-.sao-react__message-sources-leading {
+.rao-react__message-sources-leading {
   flex-shrink: 0;
   width: var(--rhythm-3);
   height: var(--rhythm-3);
@@ -421,51 +421,51 @@
   color: #1d4ed8;
 }
 
-.sao-react__message-sources-icon {
+.rao-react__message-sources-icon {
   color: inherit;
 }
 
-.sao-react__message-sources-body {
+.rao-react__message-sources-body {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_5);
 }
 
-.sao-react__message-sources-header {
+.rao-react__message-sources-header {
   display: flex;
   align-items: baseline;
   gap: var(--rhythm-0_5);
 }
 
-.sao-react__message-sources-title {
+.rao-react__message-sources-title {
   font-weight: 600;
   color: #0f172a;
 }
 
-.sao-react__message-sources-meta {
+.rao-react__message-sources-meta {
   font-size: 0.75rem;
   color: #64748b;
   font-weight: 600;
 }
 
-.sao-react__message-sources-description {
+.rao-react__message-sources-description {
   margin: 0;
   color: #1f2937;
   line-height: 1.5;
 }
 
-.sao-react__message-sources-link {
+.rao-react__message-sources-link {
   color: #2563eb;
   font-weight: 600;
   text-decoration: none;
 }
 
-.sao-react__message-sources-link:hover {
+.rao-react__message-sources-link:hover {
   text-decoration: underline;
 }
 
-.sao-react__message-sources-thumbnail {
+.rao-react__message-sources-thumbnail {
   width: var(--rhythm-4);
   height: var(--rhythm-4);
   object-fit: cover;

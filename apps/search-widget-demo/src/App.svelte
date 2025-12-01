@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NucliaAragWidget, NucliaSearchBar, NucliaSearchResults, ProgressSaoWidget } from '../../../libs/search-widget/src/widgets';
+  import { NucliaAragWidget, NucliaSearchBar, NucliaSearchResults, ProgressRaoWidget } from '../../../libs/search-widget/src/widgets';
 
   // const arag = 'f1c0a434-4419-4816-a265-8b43505cbd3e'; // Agent dragon
   // const aragId = arag;
@@ -67,7 +67,7 @@
     metadata="origin:created:date:Date de sortie" />
   <NucliaSearchResults no_tracking /> -->
 
-  <ProgressSaoWidget 
+  <ProgressRaoWidget 
     {backend}
     aragId={kb}
     lang="en"

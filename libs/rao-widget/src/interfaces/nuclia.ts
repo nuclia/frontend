@@ -52,17 +52,17 @@ export interface ISessionCreatePayload {
   format?: 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN' | 'JSON' | 'KEEP_MARKDOWN' | 'JSONL' | 'PLAIN_BLANKLINE_SPLIT';
 }
 
-export type SaoMessageRole = 'user' | 'assistant';
+export type RaoMessageRole = 'user' | 'assistant';
 
-export type SaoMessageVariant = 'chip';
+export type RaoMessageVariant = 'chip';
 
 export interface IMessage {
   id: string;
-  role: SaoMessageRole;
+  role: RaoMessageRole;
   content: string;
   meta?: string;
   title?: string;
   list?: string[];
-  variant?: SaoMessageVariant;
+  variant?: RaoMessageVariant;
   debug?: AragAnswer[];
 }

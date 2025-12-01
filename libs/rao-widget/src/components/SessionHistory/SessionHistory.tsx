@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import type { ISessionHistory, ISessionHistoryGroup } from './SessionHistory.interface';
 import './SessionHistory.css';
-import { useSaoContext } from '../../hooks';
+import { useRaoContext } from '../../hooks';
 import { Icon } from '../Icon';
 
 const SAMPLE_HISTORY: ISessionHistoryGroup[] = [
@@ -75,7 +75,7 @@ const SAMPLE_HISTORY: ISessionHistoryGroup[] = [
 ];
 
 export const SessionHistory: React.FC<ISessionHistory> = ({ ...rest }) => {
-  const context = useSaoContext();
+  const context = useRaoContext();
 
   const contextHistory = (context as { history?: ISessionHistoryGroup[] } | undefined)?.history;
 
@@ -92,23 +92,23 @@ export const SessionHistory: React.FC<ISessionHistory> = ({ ...rest }) => {
 
   return (
     <div
-      className="sao-react__history"
+      className="rao-react__history"
       role="list">
       {historyGroups.map((group) => (
         <section
           key={group.label}
-          className="sao-react__history-section">
-          <h3 className="sao-react__history-section-title">{group.label}</h3>
-          <ul className="sao-react__history-list">
+          className="rao-react__history-section">
+          <h3 className="rao-react__history-section-title">{group.label}</h3>
+          <ul className="rao-react__history-list">
             {group.items.map((item) => (
               <li key={item.id}>
                 <button
                   type="button"
-                  className="sao-react__history-item">
-                  <div className="sao-react__history-item-text">
-                    <span className="sao-react__history-item-title">{item.title}</span>
+                  className="rao-react__history-item">
+                  <div className="rao-react__history-item-text">
+                    <span className="rao-react__history-item-title">{item.title}</span>
                     {item.description ? (
-                      <span className="sao-react__history-item-description">{item.description}</span>
+                      <span className="rao-react__history-item-description">{item.description}</span>
                     ) : null}
                   </div>
                   {item.meta ? (
