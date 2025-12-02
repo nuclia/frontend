@@ -14,19 +14,16 @@
 
     <app-model-select
       [label]="schema?.properties?.['generative_model']?.title || ''"
-      [required]="true"
       [form]="configForm"
       controlName="generative_model"></app-model-select>
 
     <app-model-select
       [label]="schema?.properties?.['rephrase_model']?.title || ''"
-      [required]="true"
       [form]="configForm"
       controlName="rephrase_model"></app-model-select>
 
     <app-model-select
       [label]="schema?.properties?.['summarize_model']?.title || ''"
-      [required]="true"
       [form]="configForm"
       controlName="summarize_model"></app-model-select>
 
@@ -44,5 +41,6 @@
   </ng-container>
   <app-ask-configuration
     [config]="initialSearchConfig"
+    [sources]="sources"
     (configChanged)="updateConfig($event)"></app-ask-configuration>
 </app-configuration-form>

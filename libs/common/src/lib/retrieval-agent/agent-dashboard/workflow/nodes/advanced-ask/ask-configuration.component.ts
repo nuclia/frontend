@@ -21,13 +21,20 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { INITIAL_CITATION_THRESHOLD, RAG_METADATAS, Widget } from '@nuclia/core';
+import {
+  INITIAL_CITATION_THRESHOLD,
+  KnowledgeBox,
+  LearningConfigurationOption,
+  NucliaDBDriver,
+  RAG_METADATAS,
+  Widget,
+} from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { JsonValidator } from 'libs/common/src/lib/validators';
 import { WorkflowService } from '../../workflow.service';
 import { CommonModule } from '@angular/common';
-import { map, Subject, takeUntil } from 'rxjs';
-import { FeaturesService } from '@flaps/core';
+import { catchError, filter, forkJoin, map, of, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { FeaturesService, SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-ask-configuration',
@@ -51,6 +58,7 @@ import { FeaturesService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AskConfigurationComponent implements OnDestroy, OnInit {
+  private sdk = inject(SDKService);
   private workflowService = inject(WorkflowService);
   private features = inject(FeaturesService);
 
@@ -63,6 +71,10 @@ export class AskConfigurationComponent implements OnDestroy, OnInit {
       });
     }
   }
+  @Input() set sources(value: string[] | undefined) {
+    this.updateSemanticModels.next(value || []);
+  }
+  _semanticModels: OptionModel[] = [];
   @Output() configChanged = new EventEmitter<any>();
 
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
@@ -70,12 +82,52 @@ export class AskConfigurationComponent implements OnDestroy, OnInit {
   @ViewChild('resultDisplay', { read: AccordionItemComponent }) resultDisplayItem?: AccordionItemComponent;
 
   unsubscribeAll = new Subject<void>();
-  semanticModels = this.workflowService.semanticModels$.pipe(
-    map((models) =>
-      (models || []).map(
-        (model) => new OptionModel({ id: model.value, value: model.value, label: model.name, help: model.value }),
-      ),
+  updateSemanticModels = new Subject<string[]>();
+  semanticModels = this.updateSemanticModels.pipe(
+    switchMap((sources) =>
+      sources.length === 0
+        ? of([])
+        : forkJoin([
+            this.sdk.currentArag.pipe(take(1)),
+            this.workflowService.semanticModels$.pipe(
+              filter((models) => !!models),
+              take(1),
+            ),
+          ]).pipe(
+            switchMap(([arag, semanticModels]) =>
+              arag.getDrivers('nucliadb').pipe(
+                map((drivers) => drivers as NucliaDBDriver[]),
+                switchMap((drivers) =>
+                  forkJoin(
+                    drivers
+                      .filter((driver) => sources.includes(driver.identifier))
+                      .map((driver) =>
+                        new KnowledgeBox(this.sdk.nuclia, '', {
+                          id: driver.config.kbid,
+                          slug: '',
+                          title: '',
+                          zone: this.sdk.nuclia.options.zone || '',
+                        }).getConfiguration(),
+                      ),
+                  ).pipe(
+                    catchError(() => {
+                      // It will fail if any driver points to an external kb not owned by the user
+                      return of([]);
+                    }),
+                  ),
+                ),
+                map((kbConfigs) => this.getAvailableSemanticModels(kbConfigs, semanticModels)),
+                tap((models) => {
+                  const vectorset = this.searchBoxForm.controls.vectorset;
+                  if (vectorset && !models.find((model) => model.value === vectorset.value)) {
+                    vectorset.patchValue('');
+                  }
+                }),
+              ),
+            ),
+          ),
     ),
+    shareReplay(1),
   );
   isRagImagesEnabled = this.features.authorized.ragImages;
   metadataIds = Object.values(RAG_METADATAS);
@@ -283,5 +335,24 @@ export class AskConfigurationComponent implements OnDestroy, OnInit {
     } else if (this.showResultTypeControl.disabled) {
       this.showResultTypeControl.enable();
     }
+  }
+
+  getAvailableSemanticModels(kbConfigs: { [id: string]: any }[], models: LearningConfigurationOption[]) {
+    const counters = kbConfigs.reduce(
+      (acc, curr) => {
+        (curr['semantic_models'] || []).forEach((modelId: string) => {
+          acc[modelId] = acc[modelId] ? acc[modelId] + 1 : 1;
+        });
+        return acc;
+      },
+      {} as { [model: string]: number },
+    );
+    // Get only semantic models that exist in all selected kbs
+    const modelIds = Object.entries(counters)
+      .filter(([, value]) => value === kbConfigs.length)
+      .map(([key]) => key);
+    return models
+      .filter((model) => modelIds.includes(model.value))
+      .map((model) => new OptionModel({ id: model.value, value: model.value, label: model.name, help: model.value }));
   }
 }
