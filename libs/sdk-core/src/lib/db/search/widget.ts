@@ -190,6 +190,18 @@ export namespace Widget {
     widgetConfig: WidgetConfiguration;
   }
 
+  export interface RaoWidgetConfiguration {
+    username?: string;
+    title?: string;
+  }
+
+  export interface RaoWidget {
+    slug: string;
+    name: string;
+    creationDate: string;
+    widgetConfig: RaoWidgetConfiguration;
+  }
+
   export interface WidgetFeatures {
     filter?: boolean;
     highlight?: boolean;

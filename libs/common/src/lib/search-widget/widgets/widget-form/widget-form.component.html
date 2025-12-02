@@ -52,366 +52,387 @@
         [itemTitle]="'search.widgets.form.widget-options.section-title' | translate"
         [description]="'search.widgets.form.widget-options.section-description' | translate">
         <pa-accordion-item-body>
-          <form [formGroup]="form">
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="customizePlaceholder"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.placeholder.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.placeholder.toggle-description' | translate }}
-              </div>
-              <div
-                class="extra-fields"
-                [class.visible]="customizePlaceholderEnabled">
-                <pa-input formControlName="placeholder">
-                  {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
-                </pa-input>
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="customizeChatPlaceholder"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-description' | translate }}
-              </div>
-              <div
-                class="extra-fields"
-                [class.visible]="customizeChatPlaceholderEnabled">
-                <pa-input
-                  formControlName="chatPlaceholder"
-                  help="search.widgets.form.widget-options.chat-placeholder.input-help">
-                  {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
-                </pa-input>
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="customizeNotEnoughDataMessage"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-description' | translate }}
-              </div>
-              <div
-                class="extra-fields"
-                [class.visible]="customizeNotEnoughDataEnabled">
-                <pa-textarea
-                  externalLabel
-                  acceptHtmlTags
-                  resizable
-                  formControlName="notEnoughDataMessage"
-                  (resizing)="updateWidgetOptionsHeight()">
-                  {{ 'search.widgets.form.widget-options.customize-insufficient-data.input-label' | translate }}
-                </pa-textarea>
-              </div>
-            </div>
-            <div class="config-form-field">
-              <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
-              <pa-radio-group
-                formControlName="widgetMode"
-                (valueChange)="onWidgetModeChange($event)">
-                <pa-radio value="page">
-                  {{ 'search.widgets.form.widget-options.style.page' | translate }}
-                </pa-radio>
-                <pa-radio value="chat">
-                  {{ 'search.widgets.form.widget-options.style.chat' | translate }}
-                </pa-radio>
-                <pa-radio value="popup">
-                  {{ 'search.widgets.form.widget-options.style.popup' | translate }}
-                </pa-radio>
-              </pa-radio-group>
-            </div>
-            <div class="config-form-field">
-              <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
-              <pa-radio-group formControlName="darkMode">
-                <pa-radio value="light">
-                  {{ 'search.widgets.form.widget-options.theme.light' | translate }}
-                </pa-radio>
-                <pa-radio
-                  value="dark"
-                  [hidden]="popupStyleEnabled">
-                  {{ 'search.widgets.form.widget-options.theme.dark' | translate }}
-                </pa-radio>
-              </pa-radio-group>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="noChatHistory"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.no-chat-history.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.no-chat-history.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="persistChatHistory"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="hideLogo"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.hide-logo.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.hide-logo.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="permalink"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="onNavigationChange({ permalink: $event })">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.permalinks.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.permalinks.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="displaySearchButton"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.displaySearchButton.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="navigateToLink"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="onNavigationChange({ navigateToLink: $event })">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="navigateToFile"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="onNavigationChange({ navigateToFile: $event })">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="navigateToOriginURL"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="onNavigationChange({ navigateToOriginURL: $event })">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="openNewTab"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.open-new-tab.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.open-new-tab.toggle-description' | translate }}
-                @if (openNewTabDisabled) {
-                  <div>{{ 'search.widgets.form.widget-options.open-new-tab.toggle-disabled' | translate }}</div>
-                }
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="hideDownload"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.hide-download.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-            </div>
-            <div class="config-form-field">
-              <pa-input
-                formControlName="lang"
-                [help]="'search.widgets.form.widget-options.lang.help' | translate">
-                {{ 'search.widgets.form.widget-options.lang.label' | translate }}
-              </pa-input>
-            </div>
-            @if (isSpeechEnabled | async) {
+          @if (!(inArag | async)) {
+            <form [formGroup]="form">
               <div class="config-form-field">
                 <pa-toggle
-                  formControlName="speech"
+                  formControlName="customizePlaceholder"
                   withBackground
                   spaceBetweenLabelAndToggle
-                  (valueChange)="updateSpeechSynthesis($event)">
+                  (valueChange)="updateWidgetOptionsHeight()">
                   <span class="toggle-label">
-                    {{ 'search.widgets.form.widget-options.speech.toggle-label' | translate }}
-                    <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>
+                    {{ 'search.widgets.form.widget-options.placeholder.toggle-label' | translate }}
                   </span>
                 </pa-toggle>
                 <div class="config-form-help">
-                  {{ 'search.widgets.form.widget-options.speech.toggle-description' | translate }}
+                  {{ 'search.widgets.form.widget-options.placeholder.toggle-description' | translate }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizePlaceholderEnabled">
+                  <pa-input formControlName="placeholder">
+                    {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
+                  </pa-input>
                 </div>
               </div>
               <div class="config-form-field">
                 <pa-toggle
-                  formControlName="speechSynthesis"
+                  formControlName="customizeChatPlaceholder"
                   withBackground
-                  spaceBetweenLabelAndToggle>
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
                   <span class="toggle-label">
-                    {{ 'search.widgets.form.widget-options.speech-synthesis.toggle-label' | translate }}
-                    <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>
+                    {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-label' | translate }}
                   </span>
                 </pa-toggle>
                 <div class="config-form-help">
-                  {{ 'search.widgets.form.widget-options.speech-synthesis.toggle-description' | translate }}
+                  {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-description' | translate }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizeChatPlaceholderEnabled">
+                  <pa-input
+                    formControlName="chatPlaceholder"
+                    help="search.widgets.form.widget-options.chat-placeholder.input-help">
+                    {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
+                  </pa-input>
                 </div>
               </div>
-            }
-            <div class="config-form-field">
-              <div class="title-xs">{{ 'search.widgets.form.widget-options.feedback.title' | translate }}</div>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.feedback.description' | translate }}
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="customizeNotEnoughDataMessage"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-description' | translate }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizeNotEnoughDataEnabled">
+                  <pa-textarea
+                    externalLabel
+                    acceptHtmlTags
+                    resizable
+                    formControlName="notEnoughDataMessage"
+                    (resizing)="updateWidgetOptionsHeight()">
+                    {{ 'search.widgets.form.widget-options.customize-insufficient-data.input-label' | translate }}
+                  </pa-textarea>
+                </div>
               </div>
-              <pa-radio-group formControlName="feedback">
-                <pa-radio value="none">
-                  {{ 'search.widgets.form.widget-options.feedback.none' | translate }}
-                </pa-radio>
-                <pa-radio
-                  value="answer"
-                  noEllipsis="true">
-                  {{ 'search.widgets.form.widget-options.feedback.answer' | translate }}
-                </pa-radio>
-                <pa-radio
-                  value="answerAndResults"
-                  noEllipsis="true">
-                  {{ 'search.widgets.form.widget-options.feedback.answer-and-results' | translate }}
-                </pa-radio>
-              </pa-radio-group>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="customizeCopyDisclaimer"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-description' | translate }}
-              </div>
-              <div
-                class="extra-fields"
-                [class.visible]="customizeCopyDisclaimerEnabled">
-                <pa-input formControlName="copyDisclaimer">
-                  {{ 'search.widgets.form.widget-options.copy-disclaimer.input-label' | translate }}
-                </pa-input>
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="collapseTextBlocks"
-                withBackground
-                spaceBetweenLabelAndToggle>
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-description' | translate }}
-              </div>
-            </div>
-            <div class="config-form-field">
-              <pa-toggle
-                formControlName="customizeCitationVisibility"
-                withBackground
-                spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
-                <span class="toggle-label">
-                  {{ 'search.widgets.form.widget-options.customize-citation-visibility.toggle-label' | translate }}
-                </span>
-              </pa-toggle>
-              <div class="config-form-help">
-                {{ 'search.widgets.form.widget-options.customize-citation-visibility.toggle-description' | translate }}
-              </div>
-              <div
-                class="extra-fields"
-                [class.visible]="customizeCitationVisibilityEnabled">
-                <pa-radio-group formControlName="citationVisibility">
-                  <pa-radio value="expanded">
-                    {{ 'search.widgets.form.widget-options.customize-citation-visibility.expanded' | translate }}
+              <div class="config-form-field">
+                <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
+                <pa-radio-group
+                  formControlName="widgetMode"
+                  (valueChange)="onWidgetModeChange($event)">
+                  <pa-radio value="page">
+                    {{ 'search.widgets.form.widget-options.style.page' | translate }}
                   </pa-radio>
-                  <pa-radio value="collapsed">
-                    {{ 'search.widgets.form.widget-options.customize-citation-visibility.collapsed' | translate }}
+                  <pa-radio value="chat">
+                    {{ 'search.widgets.form.widget-options.style.chat' | translate }}
+                  </pa-radio>
+                  <pa-radio value="popup">
+                    {{ 'search.widgets.form.widget-options.style.popup' | translate }}
                   </pa-radio>
                 </pa-radio-group>
               </div>
-            </div>
-          </form>
+              <div class="config-form-field">
+                <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
+                <pa-radio-group formControlName="darkMode">
+                  <pa-radio value="light">
+                    {{ 'search.widgets.form.widget-options.theme.light' | translate }}
+                  </pa-radio>
+                  <pa-radio
+                    value="dark"
+                    [hidden]="popupStyleEnabled">
+                    {{ 'search.widgets.form.widget-options.theme.dark' | translate }}
+                  </pa-radio>
+                </pa-radio-group>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="noChatHistory"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.no-chat-history.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.no-chat-history.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="persistChatHistory"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="hideLogo"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.hide-logo.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.hide-logo.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="permalink"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="onNavigationChange({ permalink: $event })">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.permalinks.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.permalinks.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="displaySearchButton"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.displaySearchButton.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="navigateToLink"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="onNavigationChange({ navigateToLink: $event })">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="navigateToFile"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="onNavigationChange({ navigateToFile: $event })">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="navigateToOriginURL"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="onNavigationChange({ navigateToOriginURL: $event })">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="openNewTab"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.open-new-tab.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.open-new-tab.toggle-description' | translate }}
+                  @if (openNewTabDisabled) {
+                    <div>{{ 'search.widgets.form.widget-options.open-new-tab.toggle-disabled' | translate }}</div>
+                  }
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="hideDownload"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.hide-download.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+              </div>
+              <div class="config-form-field">
+                <pa-input
+                  formControlName="lang"
+                  [help]="'search.widgets.form.widget-options.lang.help' | translate">
+                  {{ 'search.widgets.form.widget-options.lang.label' | translate }}
+                </pa-input>
+              </div>
+              @if (isSpeechEnabled | async) {
+                <div class="config-form-field">
+                  <pa-toggle
+                    formControlName="speech"
+                    withBackground
+                    spaceBetweenLabelAndToggle
+                    (valueChange)="updateSpeechSynthesis($event)">
+                    <span class="toggle-label">
+                      {{ 'search.widgets.form.widget-options.speech.toggle-label' | translate }}
+                      <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>
+                    </span>
+                  </pa-toggle>
+                  <div class="config-form-help">
+                    {{ 'search.widgets.form.widget-options.speech.toggle-description' | translate }}
+                  </div>
+                </div>
+                <div class="config-form-field">
+                  <pa-toggle
+                    formControlName="speechSynthesis"
+                    withBackground
+                    spaceBetweenLabelAndToggle>
+                    <span class="toggle-label">
+                      {{ 'search.widgets.form.widget-options.speech-synthesis.toggle-label' | translate }}
+                      <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>
+                    </span>
+                  </pa-toggle>
+                  <div class="config-form-help">
+                    {{ 'search.widgets.form.widget-options.speech-synthesis.toggle-description' | translate }}
+                  </div>
+                </div>
+              }
+              <div class="config-form-field">
+                <div class="title-xs">{{ 'search.widgets.form.widget-options.feedback.title' | translate }}</div>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.feedback.description' | translate }}
+                </div>
+                <pa-radio-group formControlName="feedback">
+                  <pa-radio value="none">
+                    {{ 'search.widgets.form.widget-options.feedback.none' | translate }}
+                  </pa-radio>
+                  <pa-radio
+                    value="answer"
+                    noEllipsis="true">
+                    {{ 'search.widgets.form.widget-options.feedback.answer' | translate }}
+                  </pa-radio>
+                  <pa-radio
+                    value="answerAndResults"
+                    noEllipsis="true">
+                    {{ 'search.widgets.form.widget-options.feedback.answer-and-results' | translate }}
+                  </pa-radio>
+                </pa-radio-group>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="customizeCopyDisclaimer"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-description' | translate }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizeCopyDisclaimerEnabled">
+                  <pa-input formControlName="copyDisclaimer">
+                    {{ 'search.widgets.form.widget-options.copy-disclaimer.input-label' | translate }}
+                  </pa-input>
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="collapseTextBlocks"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-description' | translate }}
+                </div>
+              </div>
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="customizeCitationVisibility"
+                  withBackground
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.customize-citation-visibility.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{
+                    'search.widgets.form.widget-options.customize-citation-visibility.toggle-description' | translate
+                  }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizeCitationVisibilityEnabled">
+                  <pa-radio-group formControlName="citationVisibility">
+                    <pa-radio value="expanded">
+                      {{ 'search.widgets.form.widget-options.customize-citation-visibility.expanded' | translate }}
+                    </pa-radio>
+                    <pa-radio value="collapsed">
+                      {{ 'search.widgets.form.widget-options.customize-citation-visibility.collapsed' | translate }}
+                    </pa-radio>
+                  </pa-radio-group>
+                </div>
+              </div>
+            </form>
+          } @else {
+            <form [formGroup]="raoForm">
+              <div class="config-form-field">
+                <pa-input formControlName="title">
+                  {{ 'search.widgets.form.rao-widget-options.title.label' | translate }}
+                </pa-input>
+              </div>
+              <div class="config-form-field">
+                <pa-input
+                  formControlName="username"
+                  [help]="'search.widgets.form.rao-widget-options.username.help' | translate">
+                  {{ 'search.widgets.form.rao-widget-options.username.label' | translate }}
+                </pa-input>
+              </div>
+            </form>
+          }
         </pa-accordion-item-body>
       </pa-accordion-item>
 
-      <stf-search-configuration
-        mainTitle="search.widgets.form.search-config-title"
-        bottomSectionStyle="padding-bottom:var(--app-layout-padding-bottom)"
-        [onlySupportedConfigs]="true"
-        (configUpdate)="updateSearchConfig($event)"></stf-search-configuration>
+      @if (!(inArag | async)) {
+        <stf-search-configuration
+          mainTitle="search.widgets.form.search-config-title"
+          bottomSectionStyle="padding-bottom:var(--app-layout-padding-bottom)"
+          [onlySupportedConfigs]="true"
+          (configUpdate)="updateSearchConfig($event)"></stf-search-configuration>
+      }
     </div>
 
     <div

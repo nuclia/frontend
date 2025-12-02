@@ -39,6 +39,10 @@ export class SearchWidgetService {
     widgetId?: string;
     scrollContainer?: string;
   }>();
+  private _generateRaoWidgetSnippetSubject = new Subject<{
+    widgetOptions: Widget.RaoWidgetConfiguration;
+    widgetId?: string;
+  }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
   supportedSearchConfigurations = this.searchConfigurations.pipe(
     map((configs) => configs.filter((config) => config.type === 'config')),
@@ -52,6 +56,14 @@ export class SearchWidgetService {
         switchMap(({ currentConfig, widgetOptions, widgetId, scrollContainer }) =>
           this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer),
         ),
+        delay(100), // wait for the widget to render
+        tap(() => this.reinitWidgetPreview()),
+      )
+      .subscribe();
+    this._generateRaoWidgetSnippetSubject
+      .pipe(
+        debounceTime(300),
+        switchMap(({ widgetOptions, widgetId }) => this._generateRaoWidgetSnippet(widgetOptions, widgetId)),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
       )
@@ -196,6 +208,59 @@ export class SearchWidgetService {
     );
   }
 
+  generateRaoWidgetSnippet(
+    widgetOptions: Widget.RaoWidgetConfiguration = {} as Widget.RaoWidgetConfiguration,
+    widgetId?: string,
+  ) {
+    this._generateRaoWidgetSnippetSubject.next({ widgetOptions, widgetId });
+  }
+
+  private _generateRaoWidgetSnippet(
+    widgetOptions: Widget.RaoWidgetConfiguration,
+    widgetId?: string,
+  ): Observable<{ preview: SafeHtml; snippet: string }> {
+    this.deleteWidgetPreview();
+
+    const tagName = 'progress-sao-widget';
+    const scriptSrc = `${this.backendConfig.getCDN()}/progress-sao-widget.umd.js`;
+    const parameters = Object.entries(widgetOptions || {})
+      .filter(([, value]) => !!value)
+      .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
+      .join('');
+
+    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
+      map(([kb, account]) => {
+        const zone = this.sdk.nuclia.options.standalone
+          ? `standalone="true"`
+          : `zone="${this.sdk.nuclia.options.zone}"`;
+        const apiKey = `apikey="YOUR_API_TOKEN"`;
+        // TODO: to be confirmed later, for now always include private details
+        const privateDetails = `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`;
+        let backend = '';
+        if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
+          backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
+        }
+        let cdn = '';
+        if (!this.backendConfig.getCDN().includes('rag.progress.cloud')) {
+          cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
+        }
+        let baseSnippet = `<${tagName}\n  aragId="${kb.id}"`;
+        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
+        baseSnippet += `\n inputPlaceholder="Ask Agentic RAG a question or make a request."`;
+        baseSnippet += `></${tagName}>\n`;
+
+        let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
+
+        const preview = this.sanitizer.bypassSecurityTrustHtml(
+          baseSnippet.replace('zone=', `client="dashboard" zone=`).replace(apiKey, ''),
+        );
+
+        this._widgetPreview.next({ snippet, preview });
+        return { snippet, preview };
+      }),
+    );
+  }
+
   escapeParameter(prompt: string) {
     return prompt.trim().replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
   }
@@ -226,21 +291,16 @@ export class SearchWidgetService {
   }
 
   private deleteWidgetPreview() {
-    const searchWidgetElement = document.querySelector('nuclia-search') as any;
-    const searchBarElement = document.querySelector('nuclia-search-bar') as any;
-    const searchResultsElement = document.querySelector('nuclia-search-results') as any;
-    if (typeof searchWidgetElement?.$$c?.$destroy === 'function') {
-      searchWidgetElement.$$c?.$destroy();
-    }
-    if (typeof searchBarElement?.$$c?.$destroy === 'function') {
-      searchBarElement.$$c?.$destroy();
-    }
-    if (typeof searchResultsElement?.$$c?.$destroy === 'function') {
-      searchResultsElement.$$c?.$destroy();
-    }
-    searchWidgetElement?.remove();
-    searchBarElement?.remove();
-    searchResultsElement?.remove();
+    const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'progress-sao-widget'];
+    tags.forEach((tag) => {
+      const elements = document.getElementsByTagName(tag) as unknown as any;
+      Array.from(elements).forEach((element: any) => {
+        if (typeof element?.$$c?.$destroy === 'function') {
+          element.$$c?.$destroy();
+        }
+        element.remove();
+      });
+    });
   }
 
   /**
