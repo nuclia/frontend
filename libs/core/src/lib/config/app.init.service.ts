@@ -75,7 +75,8 @@ export class AppInitService {
           config.backend.api = apiOrigin + config.backend.apiPath;
           config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
-            injectWidget(config.backend.cdn);
+            injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);
+            injectWidget(`${config.backend.cdn}/progress-sao-widget.umd.js`);
           }
           window.config = config;
         }),
@@ -89,12 +90,12 @@ export class AppInitService {
 }
 
 let JS_INJECTED = false;
-function injectWidget(cdnUrl: string) {
+function injectWidget(url: string) {
   const searchWidget = window.document.createElement('script');
   searchWidget.type = 'text/javascript';
   searchWidget.async = true;
   searchWidget.defer = true;
-  searchWidget.src = `${cdnUrl}/nuclia-widget.umd.js`;
+  searchWidget.src = url;
   searchWidget.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(searchWidget);
 }

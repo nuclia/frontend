@@ -10,8 +10,8 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { deepEqual, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
@@ -25,7 +25,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, merge, Observable, of, startWith, Subject, switchMap, take } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';
@@ -62,6 +62,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   private toaster = inject(SisToastService);
   private modalService = inject(SisModalService);
   private featureService = inject(FeaturesService);
+  private navigationService = inject(NavigationService);
 
   isSpeechEnabled = this.featureService.unstable.speech;
 
@@ -71,6 +72,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   savedWidget?: Widget.Widget;
   currentWidget?: Widget.Widget;
+  currentRaoWidget?: Widget.RaoWidget;
   isNotModified = true;
 
   form = new FormGroup({
@@ -103,6 +105,11 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
   });
 
+  raoForm = new FormGroup({
+    title: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    username: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+  });
+
   widgetFormExpanded = true;
 
   snippets?: { snippet: string; synchSnippet?: string };
@@ -113,6 +120,15 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     }),
   );
   configChanges = new Subject<Widget.SearchConfiguration>();
+
+  inArag: Observable<boolean> = merge(
+    of(this.navigationService.inAragSpace(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
+      takeUntil(this.unsubscribeAll),
+    ),
+  );
 
   get customizePlaceholderEnabled() {
     return this.form.controls.customizePlaceholder.value;
@@ -147,7 +163,6 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   get openNewTabDisabled() {
     return this.openNewTabControl.disabled;
   }
-
   ngOnInit() {
     this.route.params
       .pipe(
@@ -195,6 +210,16 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         );
       });
 
+    this.raoForm.valueChanges
+      .pipe(startWith(this.raoForm.getRawValue()), takeUntil(this.unsubscribeAll))
+      .subscribe((widgetConfig) => {
+        if (this.currentRaoWidget) {
+          this.currentRaoWidget.widgetConfig = this.raoForm.getRawValue();
+        }
+        this.checkIsModified();
+        this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig, this.currentWidget?.slug);
+      });
+
     this.updateSpeechSynthesis(this.speechOn);
   }
 
@@ -234,7 +259,14 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   embedWidget() {
     if (this.snippets) {
-      this.modalService.openModal(EmbedWidgetDialogComponent, new ModalConfig({ data: { code: this.snippets } }));
+      this.inArag
+        .pipe(take(1))
+        .subscribe((inArag) =>
+          this.modalService.openModal(
+            EmbedWidgetDialogComponent,
+            new ModalConfig({ data: { code: this.snippets, hideSync: inArag } }),
+          ),
+        );
     }
   }
 

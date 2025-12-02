@@ -4,13 +4,15 @@
   <pa-modal-content>
     <pre><code>{{synchronize ? synchSnippet : snippet}}</code></pre>
     @if (!standalone) {
-      <div>
-        <pa-toggle
-          [(value)]="synchronize"
-          labelOnRight>
-          {{ 'search.widgets.dialog.code-snippet.synchronized-config' | translate }}
-        </pa-toggle>
-      </div>
+      @if (!hideSync) {
+        <div>
+          <pa-toggle
+            [(value)]="synchronize"
+            labelOnRight>
+            {{ 'search.widgets.dialog.code-snippet.synchronized-config' | translate }}
+          </pa-toggle>
+        </div>
+      }
       @if (synchronize) {
         <nsi-info-card
           type="warning"

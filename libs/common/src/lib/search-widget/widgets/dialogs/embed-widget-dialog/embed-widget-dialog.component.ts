@@ -15,11 +15,12 @@ import { StandaloneService } from 'libs/common/src/lib/services';
 export class EmbedWidgetDialogComponent {
   synchronize = false;
   snippet = this.modal.config?.data?.code.snippet;
+  hideSync = this.modal.config?.data?.hideSync;
   synchSnippet = this.modal.config?.data?.code.synchSnippet;
   standalone = this.standaloneService.standalone;
 
   constructor(
-    public modal: ModalRef<{ code: { snippet: string; synchSnippet?: string } }>,
+    public modal: ModalRef<{ code: { snippet: string; synchSnippet?: string }; hideSync?: boolean }>,
     private standaloneService: StandaloneService,
   ) {}
 
