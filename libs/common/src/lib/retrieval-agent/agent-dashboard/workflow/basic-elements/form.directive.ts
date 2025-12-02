@@ -128,7 +128,7 @@ export abstract class FormDirective {
       } else if (type === 'boolean') {
         group[propKey] = new FormControl(defaultValue ?? false);
       } else if (type === 'integer') {
-        group[propKey] = new FormControl(defaultValue ?? 0);
+        group[propKey] = new FormControl(defaultValue ?? null);
       } else {
         group[propKey] = new FormControl(defaultValue);
       }
@@ -187,7 +187,7 @@ export abstract class FormDirective {
       } else if (type === 'boolean') {
         nestedGroup[propKey] = new FormControl(defaultValue ?? false);
       } else if (type === 'integer') {
-        nestedGroup[propKey] = new FormControl(defaultValue ?? 0);
+        nestedGroup[propKey] = new FormControl(defaultValue ?? null);
       } else {
         nestedGroup[propKey] = new FormControl(defaultValue);
       }

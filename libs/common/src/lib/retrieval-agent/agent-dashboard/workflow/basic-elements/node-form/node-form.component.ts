@@ -259,7 +259,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       } else if (type === 'boolean') {
         group[propKey] = new FormControl(defaultValue ?? false);
       } else if (type === 'integer') {
-        group[propKey] = new FormControl(defaultValue ?? 0);
+        group[propKey] = new FormControl(defaultValue ?? null);
       } else {
         group[propKey] = new FormControl(defaultValue);
       }
