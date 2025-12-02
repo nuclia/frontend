@@ -62,6 +62,9 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
   override get configForm() {
     return this.form.controls.advanced_ask;
   }
+  get sources() {
+    return this.configForm.controls.sources.value;
+  }
 
   override submit(): void {
     const value = {
