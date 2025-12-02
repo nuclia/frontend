@@ -234,10 +234,8 @@ export class SearchWidgetService {
           ? `standalone="true"`
           : `zone="${this.sdk.nuclia.options.zone}"`;
         const apiKey = `apikey="YOUR_API_TOKEN"`;
-        const privateDetails =
-          kb.state === 'PRIVATE'
-            ? `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`
-            : '';
+        // TODO: to be confirmed later, for now always include private details
+        const privateDetails = `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`;
         let backend = '';
         if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
           backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
