@@ -67,7 +67,7 @@ class SitefinityImpl implements IConnector {
             id: 'extraContentTypes',
             label: 'sync.connectors.sitefinity.extra.label',
             type: 'text',
-            required: true,
+            required: false,
             help: 'sync.connectors.sitefinity.extra.help',
           },
         ],
