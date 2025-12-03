@@ -67,6 +67,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) connector?: IConnector | null;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
+  @Input() isCloud?: boolean = false;
   @Input() set sync(value: ISyncEntity | undefined | null) {
     if (value) {
       this.connectorParametersBackup = value.connector.parameters;

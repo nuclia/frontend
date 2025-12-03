@@ -15,6 +15,16 @@
       [formGroup]="syncAgentForm"
       (ngSubmit)="saveSyncServer()">
       <pa-radio-group formControlName="type">
+        @if (hasCloudSync | async) {
+          <div class="radio-config-row">
+            <pa-radio
+              [help]="'sync.home-page.setup-server.on-cloud.radio-help' | translate"
+              value="cloud">
+              <span class="title-m">{{ 'sync.home-page.setup-server.on-cloud.radio-label' | translate }}</span>
+            </pa-radio>
+          </div>
+          <div class="separator-line"></div>
+        }
         <div class="radio-config-row">
           <pa-radio
             [help]="'sync.home-page.setup-server.on-desktop.radio-help' | translate"
@@ -76,12 +86,18 @@
       <div class="page-description">{{ 'sync.home-page.add-sources.description' | translate }}</div>
     </div>
     <div class="connector-list">
-      @for (connector of connectorList | async; track connector.id) {
+      @for (
+        connector of syncAgentTypeControl.value !== 'cloud' ? (connectorList | async) : (cloudConnectorList | async);
+        track connector.id
+      ) {
         <nsy-connector
           [paTooltip]="
-            ((inactiveServer | async) ? 'sync.home-page.add-sources.disabled-source-tooltip' : '') | translate
+            (syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)
+              ? 'sync.home-page.add-sources.disabled-source-tooltip'
+              : ''
+            ) | translate
           "
-          [disabled]="inactiveServer | async"
+          [disabled]="syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)"
           [title]="connector.title"
           [logo]="connector.logo"
           (selectConnector)="onSelectConnector(connector)"></nsy-connector>
@@ -127,12 +143,14 @@
                 <div class="body-s">{{ sync.totalSyncedResources }}</div>
               </pa-table-cell>
               <pa-table-cell>
-                <pa-toggle
-                  labelOnRight
-                  [value]="!sync.disabled"
-                  (valueChange)="toggleSync(sync.id, $event)">
-                  {{ sync.disabled ? 'Off' : 'On' }}
-                </pa-toggle>
+                @if (!(useCloudSync | async)) {
+                  <pa-toggle
+                    labelOnRight
+                    [value]="!sync.disabled"
+                    (valueChange)="toggleSync(sync.id, $event)">
+                    {{ sync.disabled ? 'Off' : 'On' }}
+                  </pa-toggle>
+                }
               </pa-table-cell>
               <pa-table-cell>
                 <div class="body-s">
@@ -160,11 +178,13 @@
                       {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
                     </pa-option>
                   }
-                  <pa-option
-                    [routerLink]="'./' + sync.id"
-                    [queryParams]="{ section: 'activity' }">
-                    {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
-                  </pa-option>
+                  @if (!(useCloudSync | async)) {
+                    <pa-option
+                      [routerLink]="'./' + sync.id"
+                      [queryParams]="{ section: 'activity' }">
+                      {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
+                    </pa-option>
+                  }
                   <pa-option
                     destructive
                     (selectOption)="deleteSync(sync)">

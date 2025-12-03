@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
   baseLogoPath,
   ConnectorDefinition,
@@ -20,8 +20,9 @@ import { RSSConnector } from './connectors/rss';
 import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
 import { SitefinityConnector } from './connectors/sitefinity';
+import { SyncConfiguration } from 'libs/sdk-core/src/lib/db/sync/sync.models';
 
-export type SyncServerType = 'desktop' | 'server';
+export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 export const SYNC_SERVER_TYPE_KEY = 'NUCLIA_SYNC_SERVER_TYPE';
@@ -34,15 +35,15 @@ export class SyncService {
       instances?: { [key: string]: IConnector };
     };
   } = {
-    gdrive: {
+    google: {
       definition: {
-        id: 'gdrive',
+        id: 'google',
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
-        deprecated: true,
-        factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer()),
+        cloud: true,
+        factory: (settings) => new OAuthConnector('google', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     onedrive: {
@@ -117,6 +118,8 @@ export class SyncService {
   };
   cacheUpdated = this._cacheUpdated.asObservable();
   isSyncing = this._isSyncing.asObservable();
+  private _useCloudSync = new BehaviorSubject<boolean>(false);
+  useCloudSync = this._useCloudSync.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -124,7 +127,15 @@ export class SyncService {
     private config: BackendConfigurationService,
     private notificationService: NotificationService,
     private features: FeaturesService,
-  ) {}
+  ) {
+    forkJoin([this.syncServer.pipe(take(1)), this.features.unstable.cloudSyncService.pipe(take(1))]).subscribe(
+      ([server, enabled]) => {
+        if (server.type === 'cloud' && enabled) {
+          this._useCloudSync.next(true);
+        }
+      },
+    );
+  }
 
   getConnectorDefinition(connectorId: string): ConnectorDefinition {
     return this.connectors[connectorId]?.definition;
@@ -205,6 +216,19 @@ export class SyncService {
     );
   }
 
+  addCloudSync(sync: ISyncEntity): Observable<SyncConfiguration> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.syncManager.createConfig({
+          name: sync.title,
+          sync_root_path: '/',
+          provider: sync.connector.name,
+        }),
+      ),
+    );
+  }
+
   updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
     return this.http
       .patch<void>(
@@ -225,18 +249,20 @@ export class SyncService {
   }
 
   deleteSync(syncId: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
-        headers: this.serverHeaders,
-      })
-      .pipe(
-        tap(() => {
-          const syncs = this._syncCache.getValue();
-          delete syncs[syncId];
-          this._syncCache.next(syncs);
-          this._cacheUpdated.next(new Date().toISOString());
-        }),
-      );
+    return (
+      this._useCloudSync.getValue()
+        ? this.sdk.currentKb.pipe(switchMap((kb) => kb.syncManager.deleteConfig(syncId)))
+        : this.http.delete<void>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
+            headers: this.serverHeaders,
+          })
+    ).pipe(
+      tap(() => {
+        const syncs = this._syncCache.getValue();
+        delete syncs[syncId];
+        this._syncCache.next(syncs);
+        this._cacheUpdated.next(new Date().toISOString());
+      }),
+    );
   }
 
   hasCurrentSourceAuth(): Observable<boolean> {
@@ -250,33 +276,54 @@ export class SyncService {
     }
   }
 
-  getSyncsForKB(kbId: string): Observable<SyncBasicData[]> {
-    return this.isServerDown.pipe(
-      switchMap((isDown) =>
-        isDown
-          ? of([])
-          : this.http
-              .get<
-                {
-                  id: string;
-                  title: string;
-                  connector: string;
-                }[]
-              >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
-              .pipe(
-                map((syncs) =>
-                  syncs
-                    .map((sync) => ({
-                      ...sync,
-                      kbId,
-                      connectorId: sync.connector,
-                      connector: this.getConnector(sync.connector, ''),
-                    }))
-                    .filter((sync) => sync.kbId === kbId),
+  getSyncsForKB(kbId: string, useCloud: boolean): Observable<SyncBasicData[]> {
+    if (useCloud) {
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.syncManager.getConfigs().pipe(
+            map((configs) =>
+              configs.map((config) => ({
+                id: config.id,
+                kbId: config.kb_id,
+                title: config.name,
+                connectorId: config.provider,
+                connector: this.getConnector(config.provider, config.id),
+                lastSyncGMT: undefined,
+                disabled: false,
+              })),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return this.isServerDown.pipe(
+        switchMap((isDown) =>
+          isDown
+            ? of([])
+            : this.http
+                .get<
+                  {
+                    id: string;
+                    title: string;
+                    connector: string;
+                  }[]
+                >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
+                .pipe(
+                  map((syncs) =>
+                    syncs
+                      .map((sync) => ({
+                        ...sync,
+                        kbId,
+                        connectorId: sync.connector,
+                        connector: this.getConnector(sync.connector, ''),
+                      }))
+                      .filter((sync) => sync.kbId === kbId),
+                  ),
                 ),
-              ),
-      ),
-    );
+        ),
+      );
+    }
   }
 
   getFiles(query?: string): Observable<SearchResults> {
@@ -324,16 +371,22 @@ export class SyncService {
   }
 
   serverStatus(server: string): Observable<{ running: boolean }> {
-    return this.http.get<{ running: boolean; logs?: string[] }>(`${server}/status`).pipe(
-      catchError(() => of({ running: false, logs: ['Server down'] })),
-      map((res) => {
-        (res.logs || []).forEach((log) => console.log('[SERVER]', log));
-        return { running: res.running };
-      }),
+    return this.useCloudSync.pipe(
+      switchMap((useCloud) =>
+        useCloud
+          ? of({ running: true })
+          : this.http.get<{ running: boolean; logs?: string[] }>(`${server}/status`).pipe(
+              catchError(() => of({ running: false, logs: ['Server down'] })),
+              map((res) => {
+                (res.logs || []).forEach((log) => console.log('[SERVER]', log));
+                return { running: res.running };
+              }),
+            ),
+      ),
     );
   }
 
-  setSyncServer(serverUrl: string, type: 'desktop' | 'server') {
+  setSyncServer(serverUrl: string, type: 'desktop' | 'server' | 'cloud') {
     localStorage.setItem(SYNC_SERVER_KEY, serverUrl || '');
     localStorage.setItem(SYNC_SERVER_TYPE_KEY, type);
     this._syncServer.next({ serverUrl: serverUrl || '', type });
@@ -427,5 +480,9 @@ export class SyncService {
         return of();
       }),
     );
+  }
+
+  updateUseCloudSync(use: boolean) {
+    this._useCloudSync.next(use);
   }
 }

@@ -146,7 +146,7 @@ export class AddSyncPageComponent implements OnInit {
           ),
           filter((confirmed) => !!confirmed),
           switchMap(() => this._createSync(syncEntity)),
-          switchMap((connector) => this._onSuccessfulCreation(connector, syncEntity)),
+          switchMap(({ connector, authorize_url }) => this._onSuccessfulCreation(connector, syncEntity, authorize_url)),
         )
         .subscribe({
           error: (error) => {
@@ -189,7 +189,9 @@ export class AddSyncPageComponent implements OnInit {
     const syncEntity = this.configuration;
     if (!this.syncId) {
       this._createSync(syncEntity)
-        .pipe(switchMap((connector) => this._onSuccessfulCreation(connector, syncEntity)))
+        .pipe(
+          switchMap(({ connector, authorize_url }) => this._onSuccessfulCreation(connector, syncEntity, authorize_url)),
+        )
         .subscribe({
           error: (error) => this._errorHandler(error),
         });
@@ -220,13 +222,17 @@ export class AddSyncPageComponent implements OnInit {
     });
   }
 
-  private _createSync(syncEntity: ISyncEntity) {
-    return this.syncService.addSync(syncEntity).pipe(
+  private _createSync(syncEntity: ISyncEntity): Observable<{ connector: IConnector; authorize_url?: string }> {
+    const isCloud = syncEntity.connector.name === 'google';
+    const create = isCloud
+      ? this.syncService.addCloudSync(syncEntity).pipe(map((config) => config.authorize_url))
+      : this.syncService.addSync(syncEntity).pipe(map(() => ''));
+    return create.pipe(
       tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),
-      map(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id)),
-      switchMap((connector: IConnector) => {
+      switchMap((authorize_url) => {
+        const connector = this.syncService.getConnector(syncEntity.connector.name, syncEntity.id);
         // Setup sync items from the connector itself if the source doesn't allow to select folders
-        if (!connector.allowToSelectFolders) {
+        if (!connector.allowToSelectFolders && !isCloud) {
           if (typeof connector.handleParameters === 'function') {
             connector.handleParameters(syncEntity.connector.parameters);
           }
@@ -234,28 +240,37 @@ export class AddSyncPageComponent implements OnInit {
             .updateSync(syncEntity.id, {
               foldersToSync: connector.getStaticFolders(),
             })
-            .pipe(map(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id)));
+            .pipe(
+              map(() => ({
+                connector: this.syncService.getConnector(syncEntity.connector.name, syncEntity.id),
+                authorize_url,
+              })),
+            );
         } else {
-          return of(connector);
+          return of({ connector, authorize_url });
         }
       }),
     );
   }
 
-  private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity): Observable<void> {
+  private _onSuccessfulCreation(
+    connector: IConnector,
+    syncEntity: ISyncEntity,
+    authorize_url?: string,
+  ): Observable<void> {
     if (!connector.hasServerSideAuth) {
       return this._syncCreationDone(syncEntity.id);
     } else {
-      let basePath = location.href.split('/sync/add/')[0];
-      if (this.sdk.nuclia.options.standalone) {
-        // NucliaDB admin uses hash routing but the oauth flow does not support it
-        // so we remove '#/' from the path and we will restore it in app.component after
-        // the oauth flow is completed
-        basePath = basePath.replace('#/', '');
-      }
-      connector.goToOAuth(`${basePath}/sync/add/${syncEntity.connector.name}/${syncEntity.id}`, true);
+      this.performOAuth(authorize_url);
       return of();
     }
+  }
+
+  private performOAuth(authorize_url?: string) {
+    if (!authorize_url) {
+      return;
+    }
+    window.location.href = authorize_url;
   }
 
   private _syncCreationDone(syncId: string): Observable<void> {

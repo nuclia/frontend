@@ -127,10 +127,6 @@ class RSSImpl implements IConnector {
     return {};
   }
 
-  goToOAuth() {
-    // eslint-disable-next-line no-empty-function
-  }
-
   authenticate(): Observable<boolean> {
     return of(true);
   }

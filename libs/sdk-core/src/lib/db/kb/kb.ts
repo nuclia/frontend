@@ -80,6 +80,8 @@ import {
   Synonyms,
   SynonymsPayload,
 } from './kb.models';
+import { SyncManager } from '../sync/sync';
+import { ISyncManager } from '../sync/sync.models';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -917,6 +919,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   private _training?: Training;
   private _activityMonitor?: ActivityMonitor;
   private _taskManager?: TaskManager;
+  private _syncManager?: ISyncManager;
 
   /**
    * Entry point to task manager
@@ -926,6 +929,13 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
       this._taskManager = new TaskManager(this, this.nuclia);
     }
     return this._taskManager;
+  }
+
+  get syncManager(): ISyncManager {
+    if (!this._syncManager) {
+      this._syncManager = new SyncManager(this, this.nuclia);
+    }
+    return this._syncManager;
   }
 
   /**
