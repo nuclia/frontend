@@ -28,6 +28,7 @@
               [kbId]="kbId | async"
               [connector]="connector"
               [connectorId]="connectorId | async"
+              [isCloud]="(connectorDefinition | async)?.cloud"
               (configurationChange)="updateConfiguration($event)"
               (validForm)="validForm = $event"></nsy-configuration-form>
           }

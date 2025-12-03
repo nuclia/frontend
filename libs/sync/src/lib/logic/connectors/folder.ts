@@ -60,9 +60,6 @@ class FolderImpl implements IConnector {
     ]);
   }
 
-  // eslint-disable-next-line no-empty-function
-  goToOAuth() {}
-
   cleanAuthData() {
     throw new Error('Method not implemented.');
   }

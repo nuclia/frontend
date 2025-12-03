@@ -60,10 +60,6 @@ class ConfluenceImpl implements IConnector {
     };
   }
 
-  goToOAuth(redirect: string, reset?: boolean) {
-    return of(true);
-  }
-
   cleanAuthData() {
     throw new Error('Method not implemented.');
   }

@@ -11,7 +11,7 @@ export class OAuthConnector implements IConnector {
   path: string;
   hasServerSideAuth = true;
   isExternal = true;
-  allowToSelectFolders = true;
+  allowToSelectFolders = false;
   resumable = false;
   canSyncSecurityGroups: boolean;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -43,24 +43,6 @@ export class OAuthConnector implements IConnector {
   cleanAuthData() {
     localStorage.removeItem(this.prefixStorageKey(TOKEN));
     localStorage.removeItem(this.prefixStorageKey(REFRESH));
-  }
-
-  goToOAuth(redirect: string, reset?: boolean) {
-    if (reset) {
-      this.cleanAuthData();
-    }
-    const token = localStorage.getItem(this.prefixStorageKey(TOKEN));
-    if (!token) {
-      const authorizeEndpoint = `${this.path}/api/external_auth/${this.name}/authorize`;
-
-      if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal(`${authorizeEndpoint}?redirect=nuclia-desktop://index.html`);
-      } else {
-        location.href = `${authorizeEndpoint}?redirect=${redirect}`;
-      }
-    } else {
-      this.isAuthenticated.next(true);
-    }
   }
 
   authenticate(): Observable<boolean> {

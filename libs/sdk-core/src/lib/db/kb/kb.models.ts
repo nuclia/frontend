@@ -8,6 +8,7 @@ import { Agentic } from '../search/agentic';
 import { TaskManager } from '../task';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import { ActivityMonitor } from './activity';
+import { SyncManager } from '../sync/sync';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -83,7 +84,6 @@ export interface KbInvite {
 }
 
 export interface IKnowledgeBox extends IKnowledgeBoxBase {
-
   get path(): string;
 
   get fullpath(): string;
@@ -194,6 +194,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   contrib?: boolean;
   activityMonitor?: ActivityMonitor;
   taskManager: TaskManager;
+  syncManager: SyncManager;
 
   modify(data: Partial<IKnowledgeBox>): Observable<void>;
 
