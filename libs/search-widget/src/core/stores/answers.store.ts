@@ -1,13 +1,8 @@
-import {
-  Search,
-  sliceUnicode,
-  type Ask,
-  type CitationFootnotes,
-  type Citations,
-  type IErrorResponse,
-} from '@nuclia/core';
+import { sliceUnicode, type Ask, type Citations, type IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
+import DOMPurify from 'dompurify';
+import { unscapeMarkers } from '../../components';
 
 interface AnswerState {
   chat: Ask.Entry[];
@@ -166,19 +161,29 @@ export const hideAnswer = answerState.writer<boolean, boolean>(
   (state, param) => ({ ...state, hideAnswer: param }),
 );
 
+export function markdownToHTML(markdown: string, markers: boolean) {
+  let html = marked.parse(markdown.trim(), { mangle: false, headerIds: false });
+  if (markers) {
+    // marked.js escapes citation markers within <code> elements by default.
+    // This behavior is reverted to correctly display the markers.
+    html = unscapeMarkers(html);
+  }
+  return DOMPurify.sanitize(html);
+}
+
 const TABLE_BORDER = new RegExp(/^[-|]+$/);
 
-export function addReferences(answer: Partial<Ask.Answer>) {
+export function addReferences(answer: Partial<Ask.Answer>, html: boolean) {
   if (answer.citations) {
-    return addCitationReferences(answer.text || '', answer.citations);
+    return addCitationReferences(answer.text || '', answer.citations, html);
   } else if (answer.citation_footnote_to_context) {
-    return addLLMCitationReferences(answer.text || '', answer.citation_footnote_to_context);
+    return addLLMCitationReferences(answer.text || '', html);
   } else {
     return answer.text || '';
   }
 }
 
-function addCitationReferences(rawText: string, citations: Citations) {
+function addCitationReferences(rawText: string, citations: Citations, html: boolean) {
   Object.values(citations)
     .reduce(
       (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
@@ -205,19 +210,23 @@ function addCitationReferences(rawText: string, citations: Citations) {
         before = before.slice(0, -1);
         after = `${lastChar}${after}`;
       }
-      rawText = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
+      rawText = html
+        ? `${before}<span class="ref">${ref.index + 1}</span>${after}`
+        : `${before}[${ref.index + 1}]${after}`;
     });
   return rawText;
 }
 
 const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\sblock-[A-Z]{2}/g);
 
-function addLLMCitationReferences(rawText: string, footnotes: CitationFootnotes) {
+function addLLMCitationReferences(rawText: string, html: boolean) {
   const references = rawText.matchAll(FOOTNOTES_REF);
   for (const match of references) {
     const footnoteIndex = match[1];
     rawText = rawText.replace(match[0], '');
-    rawText = rawText.replaceAll(`[${footnoteIndex}]`, `<span class="ref">${footnoteIndex}</span>`);
+    if (html) {
+      rawText = rawText.replaceAll(`[${footnoteIndex}]`, `<span class="ref">${footnoteIndex}</span>`);
+    }
   }
   return rawText;
 }

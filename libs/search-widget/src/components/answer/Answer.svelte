@@ -19,6 +19,7 @@
     showAttachedImages,
     getSourcesResults,
     addReferences,
+    markdownToHTML,
   } from '../../core';
   import { _ } from '../../core/i18n';
   import Image from '../image/Image.svelte';
@@ -26,6 +27,7 @@
   import DebugInfo from './DebugInfo.svelte';
   import Feedback from './Feedback.svelte';
   import Sources from './Sources.svelte';
+  import DOMPurify from 'dompurify';
 
   interface Props {
     answer: Partial<Ask.Answer>;
@@ -34,7 +36,7 @@
   }
 
   let { answer, rank = 0, initialAnswer = false }: Props = $props();
-  let text = $derived(addReferences(answer));
+  let text = $derived(addReferences(answer, true));
   let reasoning = $derived(answer.reasoning);
   let sources = $derived(getSourcesResults(answer));
   let selectedCitation: number | undefined = $state();
@@ -72,15 +74,27 @@
   }
 
   function _copyAnswer() {
-    let copy = answer.text || '';
+    let text = addReferences(answer, false);
+    text = markdownToHTML(text, true);
     const paragraphs = sources.reduce(
-      (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
+      (acc, result) =>
+        acc.concat(
+          result.paragraphs.map((paragraph) => {
+            const title = DOMPurify.sanitize(`<h3>[${paragraph.rank}] ${result.title}</h3>\n`);
+            return `${title} ${markdownToHTML(paragraph.text, false)}`;
+          }),
+        ),
       [] as string[],
     );
     if (paragraphs.length > 0) {
-      copy += `\n\n${$_('answer.sources')}:\n` + paragraphs.join('\n\n');
+      text = `${text}
+<h2>${$_('answer.sources')}:</h2>
+${paragraphs.join('\n<hr>\n')}`;
     }
-    navigator.clipboard.writeText(copy).then(() => {
+    const clipboardItem = new ClipboardItem({
+      'text/html': new Blob([text], { type: 'text/html' }),
+    });
+    navigator.clipboard.write([clipboardItem]).then(() => {
       copied = true;
       setTimeout(() => {
         copied = false;
