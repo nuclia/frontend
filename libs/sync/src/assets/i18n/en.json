@@ -77,6 +77,8 @@
 	"sync.connectors.sharepoint.site.label": "Site name",
 	"sync.connectors.sitefinity.apikey.help": "Go to the Sitefinity administration interface, select a user and generate an access key.",
 	"sync.connectors.sitefinity.apikey.label": "API key",
+	"sync.connectors.sitefinity.site-id.help": "The Sitefinity internal site id",
+	"sync.connectors.sitefinity.site-id.label": "Site ID",
 	"sync.connectors.sitefinity.url.label": "URL of the Sitefinity website",
 	"sync.connectors.sitefinity.url.section-title": "Base URL",
 	"sync.connectors.sitemap.url.label": "Sitemap URL",
