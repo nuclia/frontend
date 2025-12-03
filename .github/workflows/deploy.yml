@@ -147,10 +147,10 @@ jobs:
 
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: ./dist/sdk-core/package.json
+        run: |-
+          cd ./dist/sdk-core
+          npm publish
+          cd -
 
       - name: Push SDK to GCP CDN
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
