@@ -73,7 +73,9 @@ export const createNucliaFetcher = (config: NucliaFetchConfig): NucliaFetcher =>
     ...config.headers,
   };
 
-  let authorizationHeader: string | undefined = config.apiKey ? `Bearer ${config.apiKey}` : undefined;
+  const apiKey = config.apiKey || localStorage.getItem('JWT_KEY');
+
+  let authorizationHeader: string | undefined = apiKey ? `Bearer ${apiKey}` : undefined;
 
   const request = async <TResponse = unknown, TBody = unknown>(
     path: string,

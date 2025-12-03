@@ -1,4 +1,4 @@
-import { useRaoContext } from 'rao-widget/hooks';
+import { useRaoContext } from '../../hooks/RaoContext';
 import type { AragAnswer } from '@nuclia/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Icon } from '../Icon/Icon';

@@ -190,10 +190,10 @@
     "vitest": "^3.1.4"
   },
   "resolutions": {
-    "stylus": "0.0.1-security"
+    "stylus": "0.59.0"
   },
   "overrides": {
-    "stylus": "0.0.1-security"
+    "stylus": "0.59.0"
   },
   "packageManager": "yarn@3.3.1"
 }

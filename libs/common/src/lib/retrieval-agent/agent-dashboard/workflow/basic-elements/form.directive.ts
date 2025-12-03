@@ -232,18 +232,6 @@ export abstract class FormDirective {
     // Process FormArray values to ensure clean arrays
     const processedValue = { ...formValue };
 
-    for (const [key, value] of Object.entries(rawValue)) {
-      if (Array.isArray(value)) {
-        // Check if this field is configured as FormArray
-        const control = this.configForm.get(key);
-        if (control instanceof FormArray) {
-          // Keep as array, but filter out empty values
-          processedValue[key] = value.filter((v: any) => v !== null && v !== undefined && String(v).trim() !== '');
-        }
-      } else if (typeof value === 'string' && value === 'null') {
-        processedValue[key] = null;
-      }
-    }
     for (const [key, value] of Object.entries(formValue)) {
       if (Array.isArray(value)) {
         // Check if this field is configured as FormArray

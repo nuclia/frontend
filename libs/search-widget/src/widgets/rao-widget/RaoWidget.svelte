@@ -40,7 +40,7 @@
 
   const session: string = 'ephemeral';
 
-  interface SaoWidgetProps {
+  interface RaoWidgetProps {
     backend?: string;
     aragId?: string;
     arag?: string;
@@ -68,11 +68,11 @@
     account,
     client = 'widget',
     
-    title = 'Progress SAO',
+    title = 'Progress RAO',
     userName = '',
     cards = [],
     inputPlaceholder = 'Ask your assistant...'
-  }: SaoWidgetProps = $props();
+  }: RaoWidgetProps = $props();
   let reactHost: HTMLDivElement | null = null;
   let reactRoot: Root | null = null;
 

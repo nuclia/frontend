@@ -3,8 +3,17 @@ import * as path from 'path';
 import { sveltePreprocess } from 'svelte-preprocess';
 import { defineConfig } from 'vite';
 
-const widgetFolder = process.argv[5] || 'search-widget';
-const fileName = process.argv[6] || 'nuclia-widget';
+const markerIndex = process.argv.indexOf('--');
+let widgetFolder = 'search-widget';
+let fileName = 'nuclia-widget';
+
+if (markerIndex !== -1) {
+  widgetFolder = process.argv[markerIndex + 1] || widgetFolder;
+  fileName = process.argv[markerIndex + 2] || fileName;
+} else {
+  widgetFolder = process.argv[5] || widgetFolder;
+  fileName = process.argv[6] || fileName;
+}
 
 const sdkCoreEntry = path.resolve(__dirname, '../sdk-core/src/index.ts');
 const raoWidgetSrc = path.resolve(__dirname, '../rao-widget/src');

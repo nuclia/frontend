@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import type { ReactElement, SVGAttributes } from 'react';
+import type { SVGAttributes } from 'react';
 import './Icon.css';
 
 export type IconSize = 'sm' | 'md' | 'lg';

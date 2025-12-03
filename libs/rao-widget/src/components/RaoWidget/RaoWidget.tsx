@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FC, type FormEvent, type MouseEvent } from 'react';
 import { Icon } from '../Icon';
-import { SessionHistory } from '../SessionHistory';
 import { useRaoContext, useVoiceRecorder } from '../../hooks';
 import { IRaoWidget } from './RaoWidget.interface';
 import { SessionDrawer } from '../SessionDrawer';
