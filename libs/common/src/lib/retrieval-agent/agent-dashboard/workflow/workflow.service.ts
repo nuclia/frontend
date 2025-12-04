@@ -13,7 +13,7 @@ import {
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ARAGSchemas, LearningConfigurationOption, Driver, SomeAgent } from '@nuclia/core';
+import { LearningConfigurationOption, Driver, SomeAgent, NucliaDBDriver, KnowledgeBox } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, catchError, combineLatest, filter, forkJoin, map, of, switchMap, take, tap } from 'rxjs';
 import {
@@ -1223,5 +1223,43 @@ export class WorkflowService {
         next: (drivers) => this._driverModelsSubject.next(drivers),
         error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.load-drivers')),
       });
+  }
+
+  /**
+   * Fetch semantic models supported by a NucliaDB driver
+   */
+  fetchDriverSemanticModels(driverIdentifier: string) {
+    return forkJoin([
+      this.sdk.currentArag.pipe(take(1)),
+      this.semanticModels$.pipe(
+        filter((models) => !!models),
+        take(1),
+      ),
+    ]).pipe(
+      switchMap(([arag, semanticModelsData]) =>
+        arag.getDrivers('nucliadb').pipe(
+          map((drivers) => drivers as NucliaDBDriver[]),
+          switchMap((drivers) => {
+            const driver = drivers.find((driver) => driverIdentifier === driver.identifier);
+            return !driver
+              ? of({ semantic_models: [] })
+              : new KnowledgeBox(this.sdk.nuclia, '', {
+                  id: driver.config.kbid,
+                  slug: '',
+                  title: '',
+                  zone: this.sdk.nuclia.options.zone || '',
+                })
+                  .getConfiguration()
+                  .pipe(
+                    catchError(() => {
+                      // It will fail if the driver points to an external kb not owned by the user
+                      return of({ semantic_models: [] });
+                    }),
+                  );
+          }),
+          map((kbConfig) => semanticModelsData.filter((model) => kbConfig['semantic_models']?.includes(model.value))),
+        ),
+      ),
+    );
   }
 }
