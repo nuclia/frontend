@@ -21,7 +21,7 @@ export function ask(
   features: Ask.Features[] = [Ask.Features.SEMANTIC, Ask.Features.KEYWORD],
   options: ChatOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
-  const { synchronous, ...searchOptions } = options;
+  const { synchronous, show_consumption, ...searchOptions } = options;
   const noEmptyValues = Object.entries(searchOptions).reduce((acc, [key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,14 +37,18 @@ export function ask(
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };
+  const extraHeaders = show_consumption ? { 'x-show-consumption': 'true' } : undefined;
   nuclia.events?.log('lastQuery', {
     endpoint,
     params: body,
-    headers: nuclia.rest.getHeaders('POST', endpoint, {}, synchronous),
+    headers: {
+      ...nuclia.rest.getHeaders('POST', endpoint, {}, synchronous),
+      ...extraHeaders,
+    },
     nucliaOptions: nuclia.options,
   });
   return synchronous
-    ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
+    ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, extraHeaders, undefined, true).pipe(
         map(
           ({
             answer,
@@ -60,6 +64,7 @@ export function ask(
             prompt_context,
             augmented_context,
             reasoning,
+            consumption,
           }) => {
             if (status !== 'success' && !canIgnoreStatus(status, body, !!retrieval_results)) {
               return {
@@ -81,12 +86,13 @@ export function ask(
               promptContext: prompt_context,
               augmentedContext: augmented_context,
               reasoning,
+              consumption,
             } as Ask.Answer;
           },
         ),
         tap((res) => nuclia.events?.log('lastResults', res)),
       )
-    : nuclia.rest.getStreamedResponse(endpoint, body).pipe(
+    : nuclia.rest.getStreamedResponse(endpoint, body, extraHeaders).pipe(
         map(({ data, incomplete, headers }) => {
           const searchId = headers.get('X-Nuclia-Trace-Id') || '';
           const id = headers.get('NUCLIA-LEARNING-ID') || '';
@@ -155,6 +161,13 @@ export function ask(
                 tokens: (metadataItem.item as Ask.MetadataAskResponseItem).tokens,
               }
             : undefined;
+          const consumptionItem = items.find((item) => item.item.type === 'consumption');
+          const consumption = consumptionItem
+            ? {
+                customer_key_tokens: (consumptionItem.item as Ask.ConsumptionAskResponseItem).customer_key_tokens,
+                normalized_tokens: (consumptionItem.item as Ask.ConsumptionAskResponseItem).normalized_tokens,
+              }
+            : undefined;
           const debugItem = items.find((item) => item.item.type === 'debug');
           const promptContext = debugItem
             ? (debugItem.item as Ask.DebugAskResponseItem).metadata?.['prompt_context']
@@ -178,6 +191,7 @@ export function ask(
             promptContext,
             augmentedContext,
             reasoning,
+            consumption,
           } as Ask.Answer;
         }),
         catchError((error) =>

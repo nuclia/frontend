@@ -26,10 +26,15 @@ export namespace Ask {
     incomplete?: boolean;
     inError?: boolean;
     error?: string;
-    metadata?: { tokens?: AskTokens; timings?: AskTimings };
+    metadata?: {
+      /** @deprecated */
+      tokens?: AskTokens;
+      timings?: AskTimings;
+    };
     promptContext?: string[];
     augmentedContext?: AugmentedContext;
     reasoning?: string;
+    consumption?: Consumption;
   }
 
   export enum Author {
@@ -55,7 +60,8 @@ export namespace Ask {
       | RelationsAskResponseItem
       | DebugAskResponseItem
       | AugmentedContextAskResponseItem
-      | ReasoningAskResponseItem;
+      | ReasoningAskResponseItem
+      | ConsumptionAskResponseItem;
   }
 
   export interface RetrievalAskResponseItem {
@@ -79,6 +85,7 @@ export namespace Ask {
 
   export interface MetadataAskResponseItem {
     type: 'metadata';
+    /** @deprecated */
     tokens: AskTokens;
     timings: AskTimings;
   }
@@ -112,6 +119,12 @@ export namespace Ask {
   export interface RelationsAskResponseItem {
     type: 'relations';
     relations: Search.Relations;
+  }
+
+  export interface ConsumptionAskResponseItem {
+    type: 'consumption';
+    normalized_tokens: TokenConsumption;
+    customer_key_tokens: TokenConsumption;
   }
 
   export interface DebugAskResponseItem {
@@ -152,6 +165,7 @@ export namespace Ask {
     error_details?: string;
     augmented_context?: AugmentedContext;
     reasoning?: string;
+    consumption?: Consumption;
   }
 
   export interface PredictAnswerResponseItem {
@@ -209,6 +223,17 @@ export interface Citations {
 
 export interface CitationFootnotes {
   [blockId: string]: string;
+}
+
+export interface Consumption {
+  normalized_tokens: TokenConsumption;
+  customer_key_tokens: TokenConsumption;
+}
+
+export interface TokenConsumption {
+  input: number;
+  output: number;
+  image: number;
 }
 
 export interface PredictAnswerOptions {

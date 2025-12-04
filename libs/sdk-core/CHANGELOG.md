@@ -1,3 +1,9 @@
+# 1.31.1 (unreleased)
+
+### Improvements
+
+- Add `show_consumption` option on `/ask`
+
 # 1.31.0 (2025-12-04)
 
 - Support RAO full schema endpoint

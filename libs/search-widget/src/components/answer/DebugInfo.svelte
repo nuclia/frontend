@@ -5,9 +5,19 @@
   import { MarkdownRendering } from '../viewer';
   import { routedConfig, routingParam } from '../../core';
 
-  export let answer: Partial<Ask.Answer> | undefined = undefined;
-  export let rephrasedQuery = '';
-  export let show = false;
+  interface Props {
+    answer?: Partial<Ask.Answer>;
+    rephrasedQuery?: string;
+    show?: boolean;
+  }
+
+  let { answer, rephrasedQuery = '', show = false }: Props = $props();
+  
+  let tokens = $derived(
+    answer?.consumption && answer.consumption.normalized_tokens.input > 0
+      ? answer.consumption.normalized_tokens
+      : answer?.consumption?.customer_key_tokens,
+  );
 </script>
 
 <div class="sw-debug-info">
@@ -58,20 +68,26 @@
         </div>
       {/if}
 
-      {#if answer?.metadata?.tokens || answer?.metadata?.timings}
+      {#if tokens || answer?.metadata?.timings}
         <div>
           <div class="title-m">{$_('answer.debug.title')}</div>
           <table class="body-m">
             <tbody>
-              {#if answer?.metadata?.tokens}
+              {#if tokens}
                 <tr>
-                  <td>Input Nuclia tokens</td>
-                  <td class="title-s">{answer.metadata.tokens.input_nuclia}</td>
+                  <td>Input tokens</td>
+                  <td class="title-s">{tokens.input}</td>
                 </tr>
                 <tr>
-                  <td>Output Nuclia tokens</td>
-                  <td class="title-s">{answer.metadata.tokens.output_nuclia}</td>
+                  <td>Output tokens</td>
+                  <td class="title-s">{tokens.output}</td>
                 </tr>
+                {#if tokens.image > 0}
+                  <tr>
+                    <td>Image tokens</td>
+                    <td class="title-s">{tokens.image}</td>
+                  </tr>
+                {/if}
               {/if}
               {#if answer?.metadata?.timings}
                 <tr>

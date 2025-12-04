@@ -9,6 +9,7 @@ import {
   LearningConfiguration,
   NUCLIA_STANDARD_SEARCH_CONFIG,
   Prompts,
+  TokenConsumption,
   Widget,
 } from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
@@ -141,6 +142,7 @@ export class RagLabService {
                 ...options,
                 synchronous: true,
                 debug: true,
+                show_consumption: true,
               })
               .pipe(
                 switchMap((answer) => {
@@ -166,7 +168,10 @@ export class RagLabService {
                             result: answer,
                             options,
                             rendered,
-                            tokens: answer.metadata?.tokens,
+                            tokens:
+                              answer.consumption && (answer.consumption?.normalized_tokens.input || 0) > 0
+                                ? answer.consumption.normalized_tokens
+                                : answer.consumption?.customer_key_tokens,
                             timings: answer.metadata?.timings,
                           },
                           forTab,
@@ -199,7 +204,7 @@ export class RagLabService {
       result: Ask.Answer | IErrorResponse | string;
       options: RequestConfig;
       rendered?: string;
-      tokens?: Ask.AskTokens;
+      tokens?: TokenConsumption;
       timings?: Ask.AskTimings;
     },
     forTab: 'prompt' | 'rag',
@@ -300,11 +305,12 @@ export class RagLabService {
       .map((result, i) => {
         const tokens = result?.tokens
           ? [
-              `${this.translate.instant('rag-lab.common.results.input-tokens')}: ${result.tokens.input_nuclia}`,
-              `${this.translate.instant('rag-lab.common.results.output-tokens')}: ${result.tokens.output_nuclia}`,
+              `${this.translate.instant('rag-lab.common.results.input-tokens')}: ${result.tokens.input}`,
+              `${this.translate.instant('rag-lab.common.results.output-tokens')}: ${result.tokens.output}`,
+              `${this.translate.instant('rag-lab.common.results.image-tokens')}: ${result.tokens.image}`,
             ]
           : [];
-        const timings = result?.tokens
+        const timings = result?.timings
           ? [
               `${this.translate.instant('rag-lab.common.results.first-word-time')}: ${
                 result.timings?.generative_first_chunk?.toFixed(2) || '-'
