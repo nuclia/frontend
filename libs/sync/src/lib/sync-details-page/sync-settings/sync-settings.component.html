@@ -92,7 +92,11 @@
           <div class="body-s settings-item">
             <label>{{ field.label | translate }}</label>
             @if (field.type !== 'table') {
-              <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+              @if (field.secret) {
+                <div>*****</div>
+              } @else {
+                <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+              }
             } @else if (sync.connector.parameters[field.id]?.length > 0) {
               <app-parameters-table
                 readonly

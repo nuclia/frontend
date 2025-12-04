@@ -55,6 +55,7 @@ class SitefinityImpl implements IConnector {
             type: 'text',
             required: true,
             help: 'sync.connectors.sitefinity.apikey.help',
+            secret: true,
           },
           {
             id: 'siteId',

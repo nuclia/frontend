@@ -22,6 +22,7 @@
                   <pa-input
                     [formControlName]="field.id"
                     [placeholder]="field.placeholder"
+                    [type]="field.secret ? 'password' : 'text'"
                     [help]="field.help">
                     {{ field.label | translate }}
                   </pa-input>
