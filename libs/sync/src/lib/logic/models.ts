@@ -84,6 +84,7 @@ export interface Field {
   required?: boolean;
   pattern?: string | RegExp;
   canBeRefreshed?: boolean;
+  secret?: boolean;
 }
 
 export interface Filters {
