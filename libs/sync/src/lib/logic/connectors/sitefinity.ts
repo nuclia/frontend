@@ -70,6 +70,13 @@ class SitefinityImpl implements IConnector {
             required: false,
             help: 'sync.connectors.sitefinity.extra.help',
           },
+          {
+            id: 'extraContentTypesOnly',
+            label: 'sync.connectors.sitefinity.extra-only.label',
+            type: 'boolean',
+            required: false,
+            help: 'sync.connectors.sitefinity.extra-only.help',
+          },
         ],
       },
     ]);

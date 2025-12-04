@@ -79,6 +79,8 @@
 	"sync.connectors.sitefinity.apikey.label": "API key",
 	"sync.connectors.sitefinity.extra.help": "Please provide a comma-separated list of content-type ids.",
 	"sync.connectors.sitefinity.extra.label": "Extra content types",
+	"sync.connectors.sitefinity.extra-only.help": "Main contents (pages, images, videos and documents) will be ignored.",
+	"sync.connectors.sitefinity.extra-only.label": "Only extra content-types",
 	"sync.connectors.sitefinity.site-id.help": "The Sitefinity internal site id",
 	"sync.connectors.sitefinity.site-id.label": "Site ID",
 	"sync.connectors.sitefinity.url.label": "URL of the Sitefinity website",
