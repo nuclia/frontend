@@ -221,8 +221,8 @@ export class SearchWidgetService {
   ): Observable<{ preview: SafeHtml; snippet: string }> {
     this.deleteWidgetPreview();
 
-    const tagName = 'progress-sao-widget';
-    const scriptSrc = `${this.backendConfig.getCDN()}/progress-sao-widget.umd.js`;
+    const tagName = 'progress-rao-widget';
+    const scriptSrc = `${this.backendConfig.getCDN()}/progress-rao-widget.umd.js`;
     const parameters = Object.entries(widgetOptions || {})
       .filter(([, value]) => !!value)
       .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
@@ -291,7 +291,7 @@ export class SearchWidgetService {
   }
 
   private deleteWidgetPreview() {
-    const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'progress-sao-widget'];
+    const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'progress-rao-widget'];
     tags.forEach((tag) => {
       const elements = document.getElementsByTagName(tag) as unknown as any;
       Array.from(elements).forEach((element: any) => {
