@@ -1,3 +1,7 @@
+# 1.31.0 (2025-12-04)
+
+- Support RAO full schema endpoint
+
 # 1.30.0 (2025-11-17)
 
 ### Breaking changes
