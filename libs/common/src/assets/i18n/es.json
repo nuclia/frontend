@@ -1249,6 +1249,7 @@
 	"retrieval-agents.workflow.node-types.advanced_ask.form.citations-and-json": "Citas y salida JSON",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.llm-citations": "Citas de LLM",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.no-citations": "Sin citas",
+	"retrieval-agents.workflow.node-types.advanced_ask.form.vectorset-warning": "El modelo de embeddings no se puede cambiar cuando se seleccionan varias fuentes.",
 	"retrieval-agents.workflow.node-types.advanced_ask.title": "Preguntar a Agentic RAG KB (avanzado)",
 	"retrieval-agents.workflow.node-types.ask.description": "Agente Agentic RAG ask",
 	"retrieval-agents.workflow.node-types.ask.form.customize-parameters": "Personalizar parámetros",

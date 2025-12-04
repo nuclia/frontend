@@ -80,7 +80,7 @@
             </div>
           </div>
         }
-        @if (((semanticModels | async) || []).length > 1) {
+        @if (((semanticModels | async) || []).length > 2 || multipleSources) {
           <div class="config-form-field">
             <div class="title-xs title-with-badge">
               {{ 'search.configuration.search-box.semantic-model.title' | translate }}
@@ -89,12 +89,18 @@
             <div class="config-form-help">
               {{ 'search.configuration.search-box.semantic-model.description' | translate }}
             </div>
-            <div class="extra-fields visible">
-              <pa-select
-                formControlName="vectorset"
-                [label]="'search.configuration.search-box.semantic-model.select-label' | translate"
-                [options]="(semanticModels | async) || []"></pa-select>
-            </div>
+            @if (multipleSources) {
+              <nsi-info-card type="warning">
+                {{ 'retrieval-agents.workflow.node-types.advanced_ask.form.vectorset-warning' | translate }}
+              </nsi-info-card>
+            } @else {
+              <div class="extra-fields visible">
+                <pa-select
+                  formControlName="vectorset"
+                  [label]="'search.configuration.search-box.semantic-model.select-label' | translate"
+                  [options]="(semanticModels | async) || []"></pa-select>
+              </div>
+            }
           </div>
         }
         <div class="config-form-field">
