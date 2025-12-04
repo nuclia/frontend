@@ -145,12 +145,12 @@ jobs:
           aws s3 cp dist/libs/search-widget/ s3://$S3_WHITELABEL_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
           aws s3 cp libs/search-widget/public/ s3://$S3_WHITELABEL_STORAGE/ --recursive
 
-      # - name: Publish SDK
-      #   if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
-      #   run: |-
-      #     cd ./dist/sdk-core
-      #     npm publish
-      #     cd -
+      - name: Publish SDK
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          cd ./dist/sdk-core
+          npm publish
+          cd -
 
       - name: Push SDK to GCP CDN
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
