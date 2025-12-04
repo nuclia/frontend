@@ -160,6 +160,8 @@ jobs:
 
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        env:
+          NPM_CONFIG_PROVENANCE: false
         run: |-
           cd ./dist/sdk-core
           npm publish
