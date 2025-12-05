@@ -286,6 +286,9 @@ export const getAnswer = (
       rephrase: REPHRASE_PROMPT || undefined,
     };
   }
+  if (DEBUG) {
+    defaultOptions.show_consumption = true;
+  }
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }

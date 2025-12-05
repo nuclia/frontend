@@ -936,6 +936,7 @@
 	"rag-lab.common.results.error": "Se produjo un error al obtener la respuesta, inténtelo nuevamente más tarde.",
 	"rag-lab.common.results.error-llm": "Por el momento, el LLM de terceros no puede dar una respuesta.",
 	"rag-lab.common.results.first-word-time": "Tiempo hasta la primera palabra",
+	"rag-lab.common.results.image-tokens": "Tokens de imagen",
 	"rag-lab.common.results.input-tokens": "Tokens de entrada",
 	"rag-lab.common.results.output-tokens": "Tokens de salida",
 	"rag-lab.common.results.prompt": "Prompt: ",

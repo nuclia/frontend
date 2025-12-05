@@ -124,6 +124,7 @@ export interface ChatOptions extends BaseSearchOptions {
     b64encoded: string;
   };
   reasoning?: ReasoningParam;
+  show_consumption?: boolean;  
 }
 
 export interface SearchOptions extends BaseSearchOptions {

@@ -58,16 +58,24 @@
                             <div class="tokens-container">
                               <div>
                                 <span>{{ 'rag-lab.common.results.input-tokens' | translate }}:</span>
-                                <strong>{{ result.tokens.input_nuclia | number: '1.0-6' }}</strong>
+                                <strong>{{ result.tokens.input | number: '1.0-6' }}</strong>
                               </div>
                               <div>
                                 <span>{{ 'rag-lab.common.results.output-tokens' | translate }}:</span>
-                                <strong>{{ result.tokens.output_nuclia | number: '1.0-6' }}</strong>
+                                <strong>{{ result.tokens.output | number: '1.0-6' }}</strong>
                               </div>
+                              @if (result.tokens.image > 0) {
+                                <div>
+                                  <span>{{ 'rag-lab.common.results.image-tokens' | translate }}:</span>
+                                  <strong>{{ result.tokens.image | number: '1.0-6' }}</strong>
+                                </div>
+                              }
                               <div>
                                 <span>{{ 'generic.total' | translate }}:</span>
                                 <strong>
-                                  {{ result.tokens.input_nuclia + result.tokens.output_nuclia | number: '1.0-6' }}
+                                  {{
+                                    result.tokens.input + result.tokens.output + result.tokens.image | number: '1.0-6'
+                                  }}
                                 </strong>
                               </div>
                             </div>
