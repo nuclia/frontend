@@ -26,18 +26,20 @@ export const createAuthApi = (
 
   const createEphemeralToken = async (options?: CreateEphemeralTokenOptions): Promise<EphemeralTokenResponse> => {
     const jwtKey = localStorage.getItem('JWT_KEY');
-    const useServiceAccountHeader =
-      options?.useServiceAccountHeader ?? config?.defaultUseServiceAccountHeader ?? jwtKey ?? false;
+    const useServiceAccountHeader = options?.useServiceAccountHeader ?? config?.defaultUseServiceAccountHeader ?? false;
 
     const apiKey = jwtKey ?? config?.serviceAccountKey;
     let authorizationHeader: string | undefined = apiKey ? `Bearer ${apiKey}` : undefined;
 
-    const headers =
-      useServiceAccountHeader && authorizationHeader
+    const headers: Record<string, string> | undefined = authorizationHeader
+      ? useServiceAccountHeader
         ? {
             'x-nuclia-serviceaccount': authorizationHeader,
           }
-        : undefined;
+        : {
+            Authorization: authorizationHeader,
+          }
+      : undefined;
 
     const body = options?.payload;
 
