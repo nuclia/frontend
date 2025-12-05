@@ -75,12 +75,11 @@ export class FeaturesService {
    * when true, the feature is visible
    */
   authorized = {
-    promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
-      map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
-    ),
-    activityLog: this._account.pipe(
-      map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
-    ),
+    promptLab: combineLatest([
+      this.isEnterpriseOrGrowth,
+      this.isTrial,
+      this.featureFlag.isFeatureAuthorized('llm-prompt-lab'),
+    ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
     summarization: combineLatest([
       this.isEnterpriseOrGrowth,
       this.featureFlag.isFeatureAuthorized('summarization'),
@@ -89,17 +88,16 @@ export class FeaturesService {
       this.isEnterpriseOrGrowth,
       this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
     ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
-    anonymization: combineLatest([this.isTrial, this.featureFlag.isFeatureAuthorized('anonymization')]).pipe(
-      map(([isTrial, isAuthorized]) => !isTrial || isAuthorized),
-    ),
     hideWidgetLogo: this._account.pipe(
       map((account) =>
         ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
       ),
     ),
-    vectorset: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('vectorset')]).pipe(
-      map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
-    ),
+    vectorset: combineLatest([
+      this.isEnterpriseOrGrowth,
+      this.isTrial,
+      this.featureFlag.isFeatureAuthorized('vectorset'),
+    ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureAuthorized('tasks-automation'),
       this._account.pipe(

@@ -132,14 +132,11 @@
                     </a>
                   }
                   <a
-                    [routerLink]="
-                      (isAdminOrContrib | async) && (isActivityAuthorized | async) ? kbUrl + '/activity/download' : null
-                    "
+                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
                     data-cy="go-to-activity-log"
-                    [class.disabled]="(isAdminOrContrib | async) === false"
-                    [stfUnauthorizedFeature]="(isActivityAuthorized | async) === false">
+                    [class.disabled]="(isAdminOrContrib | async) === false">
                     <pa-icon name="activity-log"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
                   </a>

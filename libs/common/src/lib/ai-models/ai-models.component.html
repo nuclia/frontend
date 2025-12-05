@@ -37,7 +37,6 @@
         </pa-tab>
       }
       <pa-tab
-        [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
         (click)="selectTab('anonymization')"
         [active]="selectedTab === 'anonymization'">
         {{ 'kb.ai-models.tabs.anonymization' | translate }}
