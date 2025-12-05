@@ -60,7 +60,6 @@ export class AiModelsComponent implements OnInit {
 
   isSummarizationAuthorized = this.features.authorized.summarization;
   isVectorsetAuthorized = this.features.authorized.vectorset;
-  isAnonymizationAuthorized = this.features.authorized.anonymization;
   extractConfigEnabled = this.features.authorized.extractConfig;
   standalone = this.standaloneService.standalone;
 
@@ -101,13 +100,6 @@ export class AiModelsComponent implements OnInit {
   selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' | 'extraction'): void {
     if (tab === 'summarization') {
       this.isSummarizationAuthorized
-        .pipe(
-          take(1),
-          filter((authorized) => authorized),
-        )
-        .subscribe(() => (this.selectedTab = tab));
-    } else if (tab === 'anonymization') {
-      this.isAnonymizationAuthorized
         .pipe(
           take(1),
           filter((authorized) => authorized),
