@@ -72,6 +72,8 @@
 	"sync.connectors.folder.local-path.description": "Écrivez le chemin local du dossier que vous souhaitez synchroniser, vous pourrez sélectionner des sous-dossiers à l'étape suivante.",
 	"sync.connectors.folder.local-path.field-label": "Chemin du dossier local",
 	"sync.connectors.folder.local-path.title": "Chemin du dossier local",
+	"sync.connectors.oauth.folder.title": "Dossier",
+	"sync.connectors.oauth.path.label": "Chemin",
 	"sync.connectors.rss.url.label": "URL du flux RSS",
 	"sync.connectors.sharepoint.account.title": "Compte Sharepoint",
 	"sync.connectors.sharepoint.site.label": "Nom du site",

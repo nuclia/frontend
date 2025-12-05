@@ -127,15 +127,7 @@ class SitemapImpl implements IConnector {
     return;
   }
 
-  cleanAuthData() {
-    throw new Error('Method not implemented.');
-  }
-
   getParametersValues(): ConnectorParameters {
     return {};
-  }
-
-  authenticate(): Observable<boolean> {
-    return of(true);
   }
 }

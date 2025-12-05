@@ -31,8 +31,6 @@ export interface IConnector extends IConnectorBase {
   getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
-  cleanAuthData(): void;
-  authenticate(): Observable<boolean>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   getStaticFolders(): SyncItem[];
 }

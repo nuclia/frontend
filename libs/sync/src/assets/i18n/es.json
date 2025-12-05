@@ -72,6 +72,8 @@
 	"sync.connectors.folder.local-path.description": "Escriba la ruta local a la carpeta que desea sincronizar; podrá seleccionar subcarpetas en el siguiente paso.",
 	"sync.connectors.folder.local-path.field-label": "Ruta de la carpeta local",
 	"sync.connectors.folder.local-path.title": "Ruta de la carpeta local",
+	"sync.connectors.oauth.folder.title": "Carpeta",
+	"sync.connectors.oauth.path.label": "Camino",
 	"sync.connectors.rss.url.label": "URL de la fuente RSS",
 	"sync.connectors.sharepoint.account.title": "Cuenta Sharepoint",
 	"sync.connectors.sharepoint.site.label": "Nombre del sitio",

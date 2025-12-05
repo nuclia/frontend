@@ -12,8 +12,8 @@ export class SyncManager implements ISyncManager {
     this.nuclia = nuclia;
   }
 
-  createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
-    return this.nuclia.rest.post<any>(`${this.kb.path}/sync_configs`, config);
+  createConfig(config: SyncConfigurationCreate, params: any): Observable<SyncConfiguration> {
+    return this.nuclia.rest.post<any>(`${this.kb.path}/sync_configs`, { ...config, ...params });
   }
 
   getConfigs(): Observable<SyncConfiguration[]> {

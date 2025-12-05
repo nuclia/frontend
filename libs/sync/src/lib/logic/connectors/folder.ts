@@ -60,10 +60,6 @@ class FolderImpl implements IConnector {
     ]);
   }
 
-  cleanAuthData() {
-    throw new Error('Method not implemented.');
-  }
-
   handleParameters(params: ConnectorParameters) {
     if (params['path']) {
       this.path = params['path'];
@@ -74,9 +70,5 @@ class FolderImpl implements IConnector {
     return {
       path: this.path,
     };
-  }
-
-  authenticate(): Observable<boolean> {
-    return of(true);
   }
 }

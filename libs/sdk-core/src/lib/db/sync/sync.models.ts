@@ -5,7 +5,7 @@ import type { IWritableKnowledgeBox } from '../kb/kb.models';
 export interface ISyncManager {
   kb: IWritableKnowledgeBox;
   nuclia: INuclia;
-  createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration>;
+  createConfig(config: SyncConfigurationCreate, params: any): Observable<SyncConfiguration>;
   getConfigs(): Observable<SyncConfiguration[]>;
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
@@ -28,7 +28,6 @@ export interface SyncConfiguration {
 
 export interface SyncConfigurationCreate {
   name: string;
-  sync_root_path: string;
   provider: string;
 }
 

@@ -92,21 +92,6 @@ export class AddSyncPageComponent implements OnInit {
           this.configuration = sync;
           this.cdr.markForCheck();
         }),
-        switchMap((sync) => {
-          return this.syncService.hasCurrentSourceAuth().pipe(
-            tap((hasAuth) => {
-              if (hasAuth) {
-                this.loading = false;
-                this.cdr.markForCheck();
-              }
-            }),
-            filter((hasAuth) => !hasAuth),
-            map(() => this.syncService.getConnector(sync.connector.name, sync.id)),
-            switchMap((connector) => {
-              return this.syncService.authenticateToConnector(sync.connector.name, connector);
-            }),
-          );
-        }),
       )
       .subscribe({
         next: () => {
@@ -188,6 +173,7 @@ export class AddSyncPageComponent implements OnInit {
     this.saving = true;
     const syncEntity = this.configuration;
     if (!this.syncId) {
+      console.log(syncEntity);
       this._createSync(syncEntity)
         .pipe(
           switchMap(({ connector, authorize_url }) => this._onSuccessfulCreation(connector, syncEntity, authorize_url)),

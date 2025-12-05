@@ -1,6 +1,5 @@
 import { ConnectorParameters, IConnector, Section, SyncItem } from '../models';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { getURLParams } from '../../utils';
+import { Observable, of } from 'rxjs';
 
 const TOKEN = 'token';
 const REFRESH = 'refresh';
@@ -14,7 +13,6 @@ export class OAuthConnector implements IConnector {
   allowToSelectFolders = false;
   resumable = false;
   canSyncSecurityGroups: boolean;
-  private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(name: string, id: string, path: string) {
     this.canSyncSecurityGroups = name === 'gdrive';
@@ -24,51 +22,32 @@ export class OAuthConnector implements IConnector {
   }
 
   getParametersSections(): Observable<Section[]> {
-    return of([]);
+    return of([
+      {
+        id: 'folder',
+        title: 'sync.connectors.oauth.folder.title',
+        fields: [
+          {
+            id: 'sync_root_path',
+            label: 'sync.connectors.oauth.path.label',
+            type: 'text',
+            required: true,
+          },
+        ],
+      },
+    ]);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleParameters(params: ConnectorParameters) {
-    return;
+    if (params['path']) {
+      this.path = params['path'];
+    }
   }
 
   getParametersValues(): ConnectorParameters {
     return {
-      token: localStorage.getItem(this.prefixStorageKey(TOKEN)),
-      refresh: localStorage.getItem(this.prefixStorageKey(REFRESH)),
-      refresh_endpoint: `${this.path}/api/external_auth/${this.name}/refresh`,
+      path: this.path,
     };
-  }
-
-  cleanAuthData() {
-    localStorage.removeItem(this.prefixStorageKey(TOKEN));
-    localStorage.removeItem(this.prefixStorageKey(REFRESH));
-  }
-
-  authenticate(): Observable<boolean> {
-    if (!this.isAuthenticated.getValue()) {
-      const interval = setInterval(() => {
-        const deeplink = getURLParams();
-        if (deeplink && deeplink.includes('?')) {
-          const params = new URLSearchParams(deeplink.split('?')[1]);
-          const token = params.get('token') || '';
-          const refresh = params.get('refresh') || '';
-          clearInterval(interval);
-          if (token) {
-            localStorage.setItem(this.prefixStorageKey(TOKEN), token);
-            localStorage.setItem(this.prefixStorageKey(REFRESH), refresh || '');
-            this.isAuthenticated.next(true);
-          } else {
-            this.isAuthenticated.next(false);
-          }
-        }
-      }, 500);
-    }
-    return this.isAuthenticated.asObservable();
-  }
-
-  private prefixStorageKey(key: string): string {
-    return `${this.name}-${this.id}-${key}`;
   }
 
   getStaticFolders(): SyncItem[] {
