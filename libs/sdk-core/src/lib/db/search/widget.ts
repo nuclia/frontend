@@ -344,7 +344,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
 };
 const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   displayResults: false,
-  showResultType: 'citations',
+  showResultType: 'llmCitations',
   displayMetadata: false,
   hideAnswer: false,
   metadatas: [],
