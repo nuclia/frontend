@@ -220,11 +220,13 @@ export class SyncService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.syncManager.createConfig({
-          name: sync.title,
-          sync_root_path: '/',
-          provider: sync.connector.name,
-        }),
+        kb.syncManager.createConfig(
+          {
+            name: sync.title,
+            provider: sync.connector.name,
+          },
+          sync.connector.parameters,
+        ),
       ),
     );
   }
@@ -263,17 +265,6 @@ export class SyncService {
         this._cacheUpdated.next(new Date().toISOString());
       }),
     );
-  }
-
-  hasCurrentSourceAuth(): Observable<boolean> {
-    const current = this.getCurrentSyncId();
-    if (!current) {
-      return of(false);
-    } else {
-      return this.http
-        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSyncId()}/auth`)
-        .pipe(map((res) => res.hasAuth));
-    }
   }
 
   getSyncsForKB(kbId: string, useCloud: boolean): Observable<SyncBasicData[]> {
@@ -395,22 +386,6 @@ export class SyncService {
         this.setServerStatus(!status.running);
       });
     }
-  }
-
-  authenticateToConnector(connectorId: string, connector: IConnector): Observable<boolean> {
-    return connector.authenticate().pipe(
-      filter((authenticated) => authenticated),
-      take(1),
-      switchMap(() =>
-        this.updateSync(this.getCurrentSyncId() || '', {
-          connector: { name: connectorId, parameters: connector.getParametersValues() },
-        }),
-      ),
-      map(() => {
-        connector.cleanAuthData();
-        return true;
-      }),
-    );
   }
 
   getCurrentSyncId(): string | null {
