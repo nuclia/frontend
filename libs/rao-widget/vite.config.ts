@@ -30,9 +30,9 @@ export default defineConfig(() => ({
     },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/index.ts',
+      entry: './src/index.tsx',
       name: 'rao-widget',
-      fileName: 'index',
+      fileName: (format) => `rao-widget.${format}.js`,
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
       formats: ['es' as const],

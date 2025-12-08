@@ -2,7 +2,7 @@ import { useRaoContext } from '../../hooks/RaoContext';
 import type { AragAnswer } from '@nuclia/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Icon } from '../Icon/Icon';
-import './Conversation.css';
+import styles from './Conversation.css?inline';
 
 interface IConversation {}
 
@@ -433,272 +433,275 @@ export const Conversation: React.FC<IConversation> = () => {
   }, []);
 
   return (
-    <section
-      className="rao-react__conversation"
-      aria-live="polite">
-      {conversation?.map((message) => {
-        const isChip = message.variant === 'chip';
-        const isAssistant = message.role === 'assistant' && !isChip;
-        const articleClass = `rao-react__message rao-react__message--${message.role}`;
+    <>
+      <style>{styles}</style>
+      <section
+        className="rao-react__conversation"
+        aria-live="polite">
+        {conversation?.map((message) => {
+          const isChip = message.variant === 'chip';
+          const isAssistant = message.role === 'assistant' && !isChip;
+          const articleClass = `rao-react__message rao-react__message--${message.role}`;
 
-        if (isChip) {
-          const bubbleClass = ['rao-react__message-bubble', 'rao-react__message-bubble--chip'];
-          return (
-            <article
-              key={message.id}
-              className={articleClass}>
-              <div
-                className={bubbleClass.join(' ')}
-                data-testid={message.id}>
-                <span className="rao-react__message-chip">{message.content}</span>
-              </div>
-            </article>
-          );
-        }
-
-        if (isAssistant) {
-          const normalizedMeta = message.meta?.toLowerCase() ?? '';
-          const canToggleReasoning = normalizedMeta === 'response generated';
-          const isExpanded = canToggleReasoning && Boolean(expandedMessages[message.id]);
-          const cardClassNames = ['rao-react__message-card'];
-          if (isExpanded) {
-            cardClassNames.push('is-expanded');
+          if (isChip) {
+            const bubbleClass = ['rao-react__message-bubble', 'rao-react__message-bubble--chip'];
+            return (
+              <article
+                key={message.id}
+                className={articleClass}>
+                <div
+                  className={bubbleClass.join(' ')}
+                  data-testid={message.id}>
+                  <span className="rao-react__message-chip">{message.content}</span>
+                </div>
+              </article>
+            );
           }
 
-          const nameForMessage = message.title ?? assistantName;
-          const avatarInitials =
-            nameForMessage
-              ?.split(' ')
-              .map((word) => word.charAt(0))
-              .filter(Boolean)
-              .slice(0, 2)
-              .join('')
-              .toUpperCase() || 'AI';
+          if (isAssistant) {
+            const normalizedMeta = message.meta?.toLowerCase() ?? '';
+            const canToggleReasoning = normalizedMeta === 'response generated';
+            const isExpanded = canToggleReasoning && Boolean(expandedMessages[message.id]);
+            const cardClassNames = ['rao-react__message-card'];
+            if (isExpanded) {
+              cardClassNames.push('is-expanded');
+            }
 
+            const nameForMessage = message.title ?? assistantName;
+            const avatarInitials =
+              nameForMessage
+                ?.split(' ')
+                .map((word) => word.charAt(0))
+                .filter(Boolean)
+                .slice(0, 2)
+                .join('')
+                .toUpperCase() || 'AI';
+
+            const contentParagraphs = message.content
+              ? message.content
+                  .split(/\r?\n+/)
+                  .map((paragraph) => paragraph.trim())
+                  .filter(Boolean)
+              : [];
+
+            const debugEntries = Array.isArray(message.debug) ? message.debug : [];
+            const reasoningItems = humanizeDebugEntries(debugEntries, message.id);
+            const shouldRenderListInBody =
+              Boolean(message.list?.length) && (!canToggleReasoning || reasoningItems.length === 0);
+            const sources = extractSources(debugEntries, message.id);
+            const hasSources = sources.length > 0;
+            const isSourcesExpanded = Boolean(expandedSources[message.id]);
+
+            return (
+              <article
+                key={message.id}
+                className={articleClass}>
+                <div className={cardClassNames.join(' ')}>
+                  {message.meta &&
+                    (canToggleReasoning ? (
+                      <button
+                        type="button"
+                        className="rao-react__message-card-toggle"
+                        onClick={() => toggleReasoning(message.id)}
+                        aria-expanded={isExpanded}>
+                        <span>{message.meta}</span>
+                        <Icon
+                          icon={isExpanded ? 'chevron-up' : 'chevron-down'}
+                          size="sm"
+                          className="rao-react__message-card-chevron"
+                        />
+                      </button>
+                    ) : (
+                      <span className="rao-react__message-card-label">{message.meta}</span>
+                    ))}
+
+                  {canToggleReasoning && isExpanded && (
+                    <div className="rao-react__message-reasoning">
+                      <span className="rao-react__message-reasoning-title">Reasoning</span>
+                      {reasoningItems.length > 0 ? (
+                        <ol className="rao-react__message-reasoning-steps">
+                          {reasoningItems.map((item) => (
+                            <li
+                              key={item.id}
+                              className={`rao-react__message-reasoning-item rao-react__message-reasoning-item--${item.type}`}>
+                              <div className="rao-react__message-reasoning-header">
+                                <span className="rao-react__message-reasoning-badge">{item.badge}</span>
+                                <span className="rao-react__message-reasoning-item-title">{item.title}</span>
+                              </div>
+                              {item.description && (
+                                <p className="rao-react__message-reasoning-description">{item.description}</p>
+                              )}
+                              {item.notes && item.notes.length > 0 && (
+                                <ul className="rao-react__message-reasoning-notes">
+                                  {item.notes.map((note, noteIndex) => (
+                                    <li key={`${item.id}-note-${noteIndex}`}>{note}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ol>
+                      ) : message.list && message.list.length > 0 ? (
+                        <ol className="rao-react__message-reasoning-list">
+                          {message.list.map((item, index) => (
+                            <li key={`${message.id}-reason-${index}`}>{item}</li>
+                          ))}
+                        </ol>
+                      ) : (
+                        <div
+                          className="rao-react__reasoning-skeleton"
+                          aria-hidden="true">
+                          <span className="rao-react__reasoning-skeleton-line" />
+                          <span className="rao-react__reasoning-skeleton-line" />
+                          <span className="rao-react__reasoning-skeleton-line" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="rao-react__message-card-inner">
+                    <header className="rao-react__message-card-author">
+                      <span
+                        aria-hidden="true"
+                        className="rao-react__message-card-avatar">
+                        {avatarInitials}
+                      </span>
+                      <div className="rao-react__message-card-author-details">
+                        <p className="rao-react__message-card-author-name">{nameForMessage}</p>
+                        {assistantDescription && (
+                          <p className="rao-react__message-card-author-description">{assistantDescription}</p>
+                        )}
+                      </div>
+                    </header>
+
+                    <div
+                      className="rao-react__message-card-body"
+                      data-testid={message.id}>
+                      {contentParagraphs.length > 0 ? (
+                        contentParagraphs.map((paragraph, index) => (
+                          <p
+                            key={`${message.id}-paragraph-${index}`}
+                            className="rao-react__message-content">
+                            {paragraph}
+                          </p>
+                        ))
+                      ) : (
+                        <p
+                          className="rao-react__message-content rao-react__message-content--placeholder"
+                          aria-live="polite">
+                          {message.meta ?? '...'}
+                        </p>
+                      )}
+
+                      {shouldRenderListInBody && (
+                        <ol className="rao-react__message-list">
+                          {message.list!.map((item, index) => (
+                            <li key={`${message.id}-item-${index}`}>{item}</li>
+                          ))}
+                        </ol>
+                      )}
+                    </div>
+
+                    {hasSources && (
+                      <div className={`rao-react__message-sources${isSourcesExpanded ? ' is-expanded' : ''}`}>
+                        <button
+                          type="button"
+                          className="rao-react__message-sources-toggle"
+                          onClick={() => toggleSources(message.id)}
+                          aria-expanded={isSourcesExpanded}>
+                          <span className="rao-react__message-sources-label">Sources</span>
+                          <span className="rao-react__message-sources-count">{sources.length}</span>
+                          <Icon
+                            icon={isSourcesExpanded ? 'chevron-up' : 'chevron-down'}
+                            size="sm"
+                            className="rao-react__message-sources-chevron"
+                          />
+                        </button>
+
+                        {isSourcesExpanded && (
+                          <ol className="rao-react__message-sources-list">
+                            {sources.map((source) => (
+                              <li
+                                key={source.id}
+                                className="rao-react__message-sources-item">
+                                <div className="rao-react__message-sources-leading">
+                                  <Icon
+                                    icon={source.icon}
+                                    size="sm"
+                                    className="rao-react__message-sources-icon"
+                                  />
+                                </div>
+                                <div className="rao-react__message-sources-body">
+                                  <div className="rao-react__message-sources-header">
+                                    <span className="rao-react__message-sources-title">{source.title}</span>
+                                    {source.meta && (
+                                      <span className="rao-react__message-sources-meta">{source.meta}</span>
+                                    )}
+                                  </div>
+                                  {source.description && (
+                                    <p className="rao-react__message-sources-description">{source.description}</p>
+                                  )}
+                                  {source.url && (
+                                    <a
+                                      className="rao-react__message-sources-link"
+                                      href={source.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer">
+                                      {source.displayUrl ?? source.url}
+                                    </a>
+                                  )}
+                                </div>
+                                {source.thumbnail && (
+                                  <img
+                                    className="rao-react__message-sources-thumbnail"
+                                    src={source.thumbnail}
+                                    alt=""
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          }
+
+          const bubbleClass = ['rao-react__message-bubble'];
           const contentParagraphs = message.content
             ? message.content
                 .split(/\r?\n+/)
                 .map((paragraph) => paragraph.trim())
                 .filter(Boolean)
             : [];
-
-          const debugEntries = Array.isArray(message.debug) ? message.debug : [];
-          const reasoningItems = humanizeDebugEntries(debugEntries, message.id);
-          const shouldRenderListInBody =
-            Boolean(message.list?.length) && (!canToggleReasoning || reasoningItems.length === 0);
-          const sources = extractSources(debugEntries, message.id);
-          const hasSources = sources.length > 0;
-          const isSourcesExpanded = Boolean(expandedSources[message.id]);
-
           return (
             <article
               key={message.id}
               className={articleClass}>
-              <div className={cardClassNames.join(' ')}>
-                {message.meta &&
-                  (canToggleReasoning ? (
-                    <button
-                      type="button"
-                      className="rao-react__message-card-toggle"
-                      onClick={() => toggleReasoning(message.id)}
-                      aria-expanded={isExpanded}>
-                      <span>{message.meta}</span>
-                      <Icon
-                        icon={isExpanded ? 'chevron-up' : 'chevron-down'}
-                        size="sm"
-                        className="rao-react__message-card-chevron"
-                      />
-                    </button>
-                  ) : (
-                    <span className="rao-react__message-card-label">{message.meta}</span>
-                  ))}
-
-                {canToggleReasoning && isExpanded && (
-                  <div className="rao-react__message-reasoning">
-                    <span className="rao-react__message-reasoning-title">Reasoning</span>
-                    {reasoningItems.length > 0 ? (
-                      <ol className="rao-react__message-reasoning-steps">
-                        {reasoningItems.map((item) => (
-                          <li
-                            key={item.id}
-                            className={`rao-react__message-reasoning-item rao-react__message-reasoning-item--${item.type}`}>
-                            <div className="rao-react__message-reasoning-header">
-                              <span className="rao-react__message-reasoning-badge">{item.badge}</span>
-                              <span className="rao-react__message-reasoning-item-title">{item.title}</span>
-                            </div>
-                            {item.description && (
-                              <p className="rao-react__message-reasoning-description">{item.description}</p>
-                            )}
-                            {item.notes && item.notes.length > 0 && (
-                              <ul className="rao-react__message-reasoning-notes">
-                                {item.notes.map((note, noteIndex) => (
-                                  <li key={`${item.id}-note-${noteIndex}`}>{note}</li>
-                                ))}
-                              </ul>
-                            )}
-                          </li>
-                        ))}
-                      </ol>
-                    ) : message.list && message.list.length > 0 ? (
-                      <ol className="rao-react__message-reasoning-list">
-                        {message.list.map((item, index) => (
-                          <li key={`${message.id}-reason-${index}`}>{item}</li>
-                        ))}
-                      </ol>
-                    ) : (
-                      <div
-                        className="rao-react__reasoning-skeleton"
-                        aria-hidden="true">
-                        <span className="rao-react__reasoning-skeleton-line" />
-                        <span className="rao-react__reasoning-skeleton-line" />
-                        <span className="rao-react__reasoning-skeleton-line" />
-                      </div>
-                    )}
-                  </div>
+              {message.meta && <span className="rao-react__message-meta">{message.meta}</span>}
+              <div
+                className={bubbleClass.join(' ')}
+                data-testid={message.id}>
+                {contentParagraphs.length > 0 ? (
+                  contentParagraphs.map((paragraph, index) => (
+                    <p
+                      key={`${message.id}-paragraph-${index}`}
+                      className="rao-react__message-content">
+                      {paragraph}
+                    </p>
+                  ))
+                ) : (
+                  <p className="rao-react__message-content">{message.content}</p>
                 )}
-
-                <div className="rao-react__message-card-inner">
-                  <header className="rao-react__message-card-author">
-                    <span
-                      aria-hidden="true"
-                      className="rao-react__message-card-avatar">
-                      {avatarInitials}
-                    </span>
-                    <div className="rao-react__message-card-author-details">
-                      <p className="rao-react__message-card-author-name">{nameForMessage}</p>
-                      {assistantDescription && (
-                        <p className="rao-react__message-card-author-description">{assistantDescription}</p>
-                      )}
-                    </div>
-                  </header>
-
-                  <div
-                    className="rao-react__message-card-body"
-                    data-testid={message.id}>
-                    {contentParagraphs.length > 0 ? (
-                      contentParagraphs.map((paragraph, index) => (
-                        <p
-                          key={`${message.id}-paragraph-${index}`}
-                          className="rao-react__message-content">
-                          {paragraph}
-                        </p>
-                      ))
-                    ) : (
-                      <p
-                        className="rao-react__message-content rao-react__message-content--placeholder"
-                        aria-live="polite">
-                        {message.meta ?? '...'}
-                      </p>
-                    )}
-
-                    {shouldRenderListInBody && (
-                      <ol className="rao-react__message-list">
-                        {message.list!.map((item, index) => (
-                          <li key={`${message.id}-item-${index}`}>{item}</li>
-                        ))}
-                      </ol>
-                    )}
-                  </div>
-
-                  {hasSources && (
-                    <div className={`rao-react__message-sources${isSourcesExpanded ? ' is-expanded' : ''}`}>
-                      <button
-                        type="button"
-                        className="rao-react__message-sources-toggle"
-                        onClick={() => toggleSources(message.id)}
-                        aria-expanded={isSourcesExpanded}>
-                        <span className="rao-react__message-sources-label">Sources</span>
-                        <span className="rao-react__message-sources-count">{sources.length}</span>
-                        <Icon
-                          icon={isSourcesExpanded ? 'chevron-up' : 'chevron-down'}
-                          size="sm"
-                          className="rao-react__message-sources-chevron"
-                        />
-                      </button>
-
-                      {isSourcesExpanded && (
-                        <ol className="rao-react__message-sources-list">
-                          {sources.map((source) => (
-                            <li
-                              key={source.id}
-                              className="rao-react__message-sources-item">
-                              <div className="rao-react__message-sources-leading">
-                                <Icon
-                                  icon={source.icon}
-                                  size="sm"
-                                  className="rao-react__message-sources-icon"
-                                />
-                              </div>
-                              <div className="rao-react__message-sources-body">
-                                <div className="rao-react__message-sources-header">
-                                  <span className="rao-react__message-sources-title">{source.title}</span>
-                                  {source.meta && (
-                                    <span className="rao-react__message-sources-meta">{source.meta}</span>
-                                  )}
-                                </div>
-                                {source.description && (
-                                  <p className="rao-react__message-sources-description">{source.description}</p>
-                                )}
-                                {source.url && (
-                                  <a
-                                    className="rao-react__message-sources-link"
-                                    href={source.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                    {source.displayUrl ?? source.url}
-                                  </a>
-                                )}
-                              </div>
-                              {source.thumbnail && (
-                                <img
-                                  className="rao-react__message-sources-thumbnail"
-                                  src={source.thumbnail}
-                                  alt=""
-                                  aria-hidden="true"
-                                />
-                              )}
-                            </li>
-                          ))}
-                        </ol>
-                      )}
-                    </div>
-                  )}
-                </div>
               </div>
             </article>
           );
-        }
-
-        const bubbleClass = ['rao-react__message-bubble'];
-        const contentParagraphs = message.content
-          ? message.content
-              .split(/\r?\n+/)
-              .map((paragraph) => paragraph.trim())
-              .filter(Boolean)
-          : [];
-        return (
-          <article
-            key={message.id}
-            className={articleClass}>
-            {message.meta && <span className="rao-react__message-meta">{message.meta}</span>}
-            <div
-              className={bubbleClass.join(' ')}
-              data-testid={message.id}>
-              {contentParagraphs.length > 0 ? (
-                contentParagraphs.map((paragraph, index) => (
-                  <p
-                    key={`${message.id}-paragraph-${index}`}
-                    className="rao-react__message-content">
-                    {paragraph}
-                  </p>
-                ))
-              ) : (
-                <p className="rao-react__message-content">{message.content}</p>
-              )}
-            </div>
-          </article>
-        );
-      })}
-    </section>
+        })}
+      </section>
+    </>
   );
 };

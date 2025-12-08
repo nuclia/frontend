@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SVGAttributes } from 'react';
-import './Icon.css';
+import styles from './Icon.css?inline';
 
 export type IconSize = 'sm' | 'md' | 'lg';
 
@@ -15,17 +15,20 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(({ icon, size = 'md', t
   const role = title ? 'img' : undefined;
 
   return (
-    <svg
-      ref={ref}
-      className={`icon icon-${size} ${className}`}
-      viewBox="0 0 24 24"
-      focusable="false"
-      aria-hidden={ariaHidden}
-      role={role}
-      {...rest}>
-      {title ? <title>{title}</title> : null}
-      <use href={`#${icon}`} />
-    </svg>
+    <>
+      <style>{styles}</style>
+      <svg
+        ref={ref}
+        className={`icon icon-${size} ${className}`}
+        viewBox="0 0 24 24"
+        focusable="false"
+        aria-hidden={ariaHidden}
+        role={role}
+        {...rest}>
+        {title ? <title>{title}</title> : null}
+        <use href={`#${icon}`} />
+      </svg>
+    </>
   );
 });
 

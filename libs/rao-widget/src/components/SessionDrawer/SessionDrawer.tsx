@@ -1,9 +1,9 @@
-import React, { forwardRef, useId, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useId, useImperativeHandle, useRef } from 'react';
 import { ISessionDrawer, RSessionDrawer } from './SessionDrawer.interface';
 import { Icon } from '../Icon';
 import { SessionHistory } from '../SessionHistory';
 
-export const SessionDrawer = forwardRef<RSessionDrawer, ISessionDrawer>(({ isOpen, onClose, ...rest }, ref) => {
+export const SessionDrawer = forwardRef<RSessionDrawer, ISessionDrawer>(({ isOpen, onClose }, ref) => {
   const drawerRef = useRef<HTMLDivElement | null>(null);
 
   const drawerHeadingId = useId();

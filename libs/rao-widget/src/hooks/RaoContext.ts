@@ -1,5 +1,5 @@
 import React from 'react';
-import { IRaoContext } from './RaoContext.interface';
+import { type IRaoContext } from './RaoContext.interface';
 
 const defaultContext: IRaoContext = {
   nuclia: null,

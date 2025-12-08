@@ -1,6 +1,6 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type FC, type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RaoContext } from './RaoContext';
-import { IRaoContext, type IRaoProvider } from './RaoContext.interface';
+import { type IRaoContext, type IRaoProvider } from './RaoContext.interface';
 import type { ICallState, IMessage, ISessions } from '../interfaces';
 import {
   createAuthApi,

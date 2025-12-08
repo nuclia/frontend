@@ -1,8 +1,8 @@
 export interface IRaoWidget {
-  title: string;
-  userName: string;
-  cards: string[];
-  inputPlaceholder: string;
+  title?: string;
+  username?: string;
+  cards?: string[];
+  inputplaceholder?: string;
 
   viewType?: 'conversation' | 'floating';
 }

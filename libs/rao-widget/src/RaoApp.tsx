@@ -3,9 +3,6 @@ import { RaoProvider } from './hooks';
 import { RaoWidget, IRaoWidget } from './components/RaoWidget';
 import type { INuclia } from './interfaces';
 
-import './progress.css';
-import './RaoApp.css';
-
 export interface RaoAppProps extends IRaoWidget {
   nuclia: INuclia | null;
   sessionId?: string;

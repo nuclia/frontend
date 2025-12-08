@@ -1,3 +1,3 @@
-export * from './RaoApp';
-export * from './repository';
-export * from './interfaces';
+import RaoWebComponent from './web-component';
+
+customElements.define('progress-rao-widget', RaoWebComponent);

@@ -65,7 +65,7 @@ export interface IAuthentication {
   setPassword(password: string): Observable<boolean>;
   deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
-  getAuthInfo(includeIP?: boolean): Observable<AuthInfo>
+  getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
 }
 
 export interface IRest {

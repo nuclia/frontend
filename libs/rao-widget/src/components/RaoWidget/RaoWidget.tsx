@@ -17,7 +17,7 @@ const features = {
   sessionHistory: false,
 };
 
-export const RaoWidget: FC<IRaoWidget> = ({ title, userName, cards, inputPlaceholder, viewType = 'conversation' }) => {
+export const RaoWidget: FC<IRaoWidget> = ({ title, username, cards, inputplaceholder, viewType = 'conversation' }) => {
   const { activeView, onChat } = useRaoContext();
   const { hasSupport: canUseVoice, isRecording, stopRecording, toggleRecording, transcript } = useVoiceRecorder();
 
@@ -80,7 +80,7 @@ export const RaoWidget: FC<IRaoWidget> = ({ title, userName, cards, inputPlaceho
   }, [transcript]);
 
   const displayCards = useMemo(() => {
-    if (cards.length === 0) {
+    if (!cards || cards.length === 0) {
       return fallbackCards;
     }
     if (cards.length < 4) {
@@ -165,7 +165,7 @@ export const RaoWidget: FC<IRaoWidget> = ({ title, userName, cards, inputPlaceho
           <Conversation />
         ) : (
           <>
-            <h1 className="rao-react__greeting">Hello{userName ? `, ${userName}!` : '!'}</h1>
+            <h1 className="rao-react__greeting">Hello{username ? `, ${username}!` : '!'}</h1>
             <section
               className="rao-react__cards"
               aria-label="Suggested prompts">
@@ -197,7 +197,7 @@ export const RaoWidget: FC<IRaoWidget> = ({ title, userName, cards, inputPlaceho
 
           <input
             className="rao-react__query"
-            placeholder={isConversationActive ? 'Ask a follow-up' : inputPlaceholder}
+            placeholder={isConversationActive ? 'Ask a follow-up' : inputplaceholder}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
