@@ -21,7 +21,15 @@
     "@nuclia/core": "^1.1.5",
     "date-fns": "^2.29.3",
     "rxjs": "^7.5.2",
-    "svelte": "^3.55.0"
+    "svelte": "^3.55.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.6",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "exports": {
     ".": {
