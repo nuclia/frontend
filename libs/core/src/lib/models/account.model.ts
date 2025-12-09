@@ -10,6 +10,8 @@ export const standaloneSimpleAccount: Account = {
   blocked_features: [] as BlockedFeature[],
   max_kbs: -1,
   max_arags: -1,
+  max_agents: -1,
+  max_memories: -1,
   max_users: null,
   creation_date: '',
 };
@@ -28,7 +30,8 @@ export interface AccountStatus {
 
 export interface AccountTypeDefaults {
   max_kbs: number;
-  max_arags: number;
+  max_memories: number;
+  max_agents: number;
   max_dedicated_processors: number;
   max_trial_days: number;
   monthly_limit_paragraphs_processed: number;

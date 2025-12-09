@@ -13,7 +13,7 @@
       formControlName="question"></pa-textarea>
   </div>
   @if (runningTest() === false) {
-    @if (isAragWithMemoryEnabled | async) {
+    @if (isAragWithMemory | async) {
       <div class="form-entry">
         <label for="session">
           {{ 'retrieval-agents.workflow.sidebar.test.form.session-select.label' | translate }}

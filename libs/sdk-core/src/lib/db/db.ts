@@ -31,6 +31,7 @@ import {
   CustomModelItem,
   improveSchemaNames,
   KbIndex,
+  KnowledgeBoxMode,
   LearningConfigurations,
   ModelConfiguration,
   ModelConfigurationCreation,
@@ -159,7 +160,7 @@ export class Db implements IDb {
   private _getKnowledgeBoxes(
     accountSlug?: string,
     accountId?: string,
-    mode: 'kb' | 'agent' = 'kb',
+    mode: KnowledgeBoxMode = 'kb',
   ): Observable<IKnowledgeBoxItem[]> {
     const slug = accountSlug || this.nuclia.options.account;
     const id = accountId || this.nuclia.options.accountId;
@@ -195,9 +196,9 @@ export class Db implements IDb {
   private _getKnowledgeBoxesForZone(
     accountId: string,
     zone: string,
-    mode: 'kb' | 'agent' = 'kb',
+    mode: KnowledgeBoxMode = 'kb',
   ): Observable<IKnowledgeBoxItem[]> {
-    const modeParam = mode === 'agent' ? `?mode=agent` : '';
+    const modeParam = mode !== 'kb' ? `?mode=${mode}` : '';
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
       `/account/${accountId}/kbs${modeParam}`,
       undefined,
@@ -229,8 +230,12 @@ export class Db implements IDb {
    */
   getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
-  getRetrievalAgents(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
-    return this._getKnowledgeBoxes(accountSlug, accountId, 'agent');
+  getRetrievalAgents(
+    accountSlug?: string,
+    accountId?: string,
+    mode?: KnowledgeBoxMode,
+  ): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId, mode || 'agents');
   }
 
   /**
@@ -238,8 +243,12 @@ export class Db implements IDb {
    * @param accountId
    * @param zone
    */
-  getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]> {
-    return this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
+  getRetrievalAgentsForZone(
+    accountId: string,
+    zone: string,
+    mode?: KnowledgeBoxMode,
+  ): Observable<IRetrievalAgentItem[]> {
+    return this._getKnowledgeBoxesForZone(accountId, zone, mode || 'agents');
   }
 
   /**

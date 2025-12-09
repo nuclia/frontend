@@ -69,7 +69,7 @@ export class AragListComponent implements OnInit, OnDestroy {
           creation = params['create'] === 'true';
           this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
           this.account = account;
-          this.maxRetrievalAgents = account.max_arags;
+          this.maxRetrievalAgents = account.max_agents;
           return this.sdk.aragList;
         }),
       )
@@ -129,7 +129,7 @@ export class AragListComponent implements OnInit, OnDestroy {
           const arag: RetrievalAgentCreation = {
             title: data.name,
             slug: STFUtils.generateSlug(data.name),
-            mode: 'agent',
+            mode: data.hasMemory ? 'agent' : 'agent_no_memory',
           };
           return { arag, zone: data.zone };
         }),

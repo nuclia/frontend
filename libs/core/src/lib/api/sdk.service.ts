@@ -47,6 +47,8 @@ export class SDKService {
   private _currentArag = new ReplaySubject<RetrievalAgent>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
   private _aragList = new ReplaySubject<IRetrievalAgentItem[]>(1);
+  private _aragListWithMemory = new ReplaySubject<IRetrievalAgentItem[]>(1);
+  private _aragListNoMemory = new ReplaySubject<IRetrievalAgentItem[]>(1);
   private _refreshingKbList = new BehaviorSubject<boolean>(false);
   private _refreshingAragList = new BehaviorSubject<boolean>(false);
   private _refreshCounter = new Subject<boolean>();
@@ -64,6 +66,8 @@ export class SDKService {
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
   refreshingKbList: Observable<boolean> = this._refreshingKbList.asObservable();
   aragList: Observable<IRetrievalAgentItem[]> = this._aragList.asObservable();
+  aragListWithMemory: Observable<IRetrievalAgentItem[]> = this._aragListWithMemory.asObservable();
+  aragListNoMemory: Observable<IRetrievalAgentItem[]> = this._aragListNoMemory.asObservable();
   refreshingAragList: Observable<boolean> = this._refreshingAragList.asObservable();
   currentAccount: Observable<Account> = this._account.pipe(
     filter((account) => !!account),
@@ -73,6 +77,9 @@ export class SDKService {
   pendingRefresh = new BehaviorSubject(false);
   isAdminOrContrib = merge(this.currentKb, this.currentArag).pipe(
     map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
+  );
+  isAragWithMemory = combineLatest([this._currentArag, this.aragListWithMemory]).pipe(
+    map(([currentArag, withMemory]) => withMemory.some((arag) => arag.id === currentArag.id)),
   );
 
   get isKbLoaded() {
@@ -332,11 +339,18 @@ export class SDKService {
     this.currentAccount
       .pipe(
         take(1),
-        switchMap((account) => this.nuclia.db.getRetrievalAgents(account.slug, account.id)),
+        switchMap((account) =>
+          forkJoin([
+            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent'),
+            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent_no_memory'),
+          ]),
+        ),
       )
       .subscribe({
-        next: (list) => {
-          this._aragList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+        next: ([withMemory, noMemory]) => {
+          this._aragListWithMemory.next(withMemory.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+          this._aragListNoMemory.next(noMemory.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+          this._aragList.next(withMemory.concat(noMemory).sort((a, b) => (a.title || '').localeCompare(b.title || '')));
           this._refreshingAragList.next(false);
         },
         error: () => this._refreshingAragList.next(false),

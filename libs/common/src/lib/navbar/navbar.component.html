@@ -221,7 +221,7 @@
                 <pa-icon name="workflows"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.agent.workflow' | translate }}</span>
               </a>
-              @if (isAragWithMemoryEnabled | async) {
+              @if (isAragWithMemory | async) {
                 <a
                   [routerLink]="aragUrl + '/sessions'"
                   routerLinkActive="active"

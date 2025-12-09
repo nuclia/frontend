@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, ZoneService } from '@flaps/core';
+import { FeaturesService, SDKService, ZoneService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -10,11 +10,13 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { InfoCardComponent } from '@nuclia/sistema';
+import { combineLatest, map, take, tap } from 'rxjs';
 
 @Component({
   imports: [
     CommonModule,
+    InfoCardComponent,
     PaModalModule,
     PaButtonModule,
     PaTextFieldModule,
@@ -28,6 +30,7 @@ import { tap } from 'rxjs';
 })
 export class CreateAragComponent {
   private zoneService: ZoneService = inject(ZoneService);
+  private sdk = inject(SDKService);
   private features = inject(FeaturesService);
 
   form = new FormGroup({
@@ -37,6 +40,12 @@ export class CreateAragComponent {
   });
   isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
 
+  // TODO: At the moment we can't use account.current_memories because it returns a wrong value
+  numAragsWithMemory = this.sdk.aragListWithMemory.pipe(map((list) => list.length));
+  canAddAragsWithMemory = combineLatest([this.sdk.currentAccount, this.numAragsWithMemory]).pipe(
+    map(([account, numAragsWithMemory]) => account.max_memories === -1 || account.max_memories > numAragsWithMemory),
+  );
+
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {
       if (zones && zones.length > 0) {
@@ -45,7 +54,13 @@ export class CreateAragComponent {
     }),
   );
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef) {
+    this.canAddAragsWithMemory.pipe(take(1)).subscribe((canAdd) => {
+      if (!canAdd) {
+        this.form.controls.hasMemory.disable();
+      }
+    });
+  }
 
   create() {
     if (this.form.valid) {

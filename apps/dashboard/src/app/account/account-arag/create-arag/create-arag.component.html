@@ -14,15 +14,23 @@
           [placeholder]="'account.retrieval-agents.create-dialog.name-placeholder' | translate"
           formControlName="name"></pa-input>
       </div>
-      <div>
-        <label for="hasMemory">{{ 'account.retrieval-agents.create-dialog.memory' | translate }}</label>
-        <pa-toggle
-          formControlName="hasMemory"
-          id="hasMemory"
-          [disabled]="!(isAragWithMemoryEnabled | async)">
-          {{ 'account.retrieval-agents.create-dialog.memory-help' | translate }}
-        </pa-toggle>
-      </div>
+      @if (isAragWithMemoryEnabled | async) {
+        <div>
+          <label for="hasMemory">{{ 'account.retrieval-agents.create-dialog.memory' | translate }}</label>
+          <pa-toggle
+            formControlName="hasMemory"
+            id="hasMemory">
+            {{ 'account.retrieval-agents.create-dialog.memory-help' | translate }}
+          </pa-toggle>
+        </div>
+        @if (!(canAddAragsWithMemory | async)) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'account.retrieval-agents.create-dialog.memory-limit' | translate: { num: numAragsWithMemory | async } }}
+          </nsi-info-card>
+        }
+      }
       <div>
         <label for="zone">{{ 'account.retrieval-agents.create-dialog.zone' | translate }}</label>
         <pa-radio-group formControlName="zone">
