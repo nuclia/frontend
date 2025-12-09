@@ -17,11 +17,12 @@ export default defineConfig({
 
   // 👇 Insert these lines
   build: {
+    outDir: './dist/rao-widget',
     lib: {
       entry: 'libs/rao-widget/src/index.ts',
-      // entry: './src/index.tsx',
       name: 'rao-widget',
       fileName: (format) => `rao-widget.${format}.js`,
+      formats: ['umd'],
     },
     target: 'esnext',
   },

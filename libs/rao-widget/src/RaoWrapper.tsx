@@ -49,7 +49,9 @@ export const RaoWrapper: FC<RaoWidgetProps> = ({
   };
   const nucliaAPI = new Nuclia(nucliaOptions) as INuclia;
   return (
-    <div className="progress-widget">
+    <div
+      className="progress-widget"
+      data-version="__NUCLIA_DEV_VERSION__">
       <style>{progressStyle}</style>
       <style>{raoStyle}</style>
       <RaoApp
