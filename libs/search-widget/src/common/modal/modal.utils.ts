@@ -25,7 +25,10 @@ function scrollBackTo(scrollY: string) {
   window.scrollTo(0, parseInt(scrollY || '0') * -1);
 }
 
-function getFixedRootParent(element: HTMLElement): HTMLElement {
+function getFixedRootParent(element: any): HTMLElement | undefined {
+  if (!(element instanceof HTMLElement)) {
+    return;
+  }
   if (element.tagName === 'BODY') {
     return element;
   }
@@ -57,7 +60,7 @@ function getFixedRootParent(element: HTMLElement): HTMLElement {
 
 export function getFixedRootParentIfAny(element: HTMLElement): HTMLElement | undefined {
   const fixedRoot = getFixedRootParent(element);
-  return fixedRoot.tagName === 'BODY' ? undefined : fixedRoot;
+  return fixedRoot?.tagName === 'BODY' ? undefined : fixedRoot;
 }
 
 export function iOSDevice() {

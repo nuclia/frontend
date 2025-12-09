@@ -76,7 +76,7 @@ export class AppInitService {
           config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);
-            injectWidget(`${config.backend.cdn}/progress-rao-widget.umd.js`);
+            injectWidget(`${config.backend.cdn}/rao-widget.umd.js`);
           }
           window.config = config;
         }),

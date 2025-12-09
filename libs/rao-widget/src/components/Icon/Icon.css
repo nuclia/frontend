@@ -1,0 +1,22 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  fill: currentColor;
+  color: inherit;
+}
+
+.icon-sm {
+  width: var(--rhythm-2_5);
+  height: var(--rhythm-2_5);
+}
+
+.icon-md {
+  width: var(--rhythm-4);
+  height: var(--rhythm-4);
+}
+
+.icon-lg {
+  width: var(--rhythm-5);
+  height: var(--rhythm-5);
+}

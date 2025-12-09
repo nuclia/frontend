@@ -31,6 +31,8 @@ jobs:
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
+      deploy-rao-widget: ${{ steps.check-deploy.outputs.deploy-rao-widget }}
+      deploy-sdk: ${{ steps.check-deploy.outputs.deploy-sdk }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
@@ -121,6 +123,7 @@ jobs:
         id: check-deploy
         run: |-
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
+          (test -d dist/libs/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
@@ -158,6 +161,17 @@ jobs:
           aws s3 cp dist/libs/search-widget/ s3://$S3_WHITELABEL_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
           aws s3 cp libs/search-widget/public/ s3://$S3_WHITELABEL_STORAGE/ --recursive
 
+      - name: Publish RAO widget to GCS
+        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes'
+        run: |-
+          find dist/libs/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
+          gsutil copy dist/libs/rao-widget/*.umd.js gs://$CDN_STORAGE
+
+      - name: Publish widget to S3
+        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          aws s3 cp dist/libs/rao-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         env:
@@ -178,7 +192,7 @@ jobs:
           aws s3 cp dist/sdk-core/umd/index.js s3://$S3_CDN_STORAGE/nuclia-sdk.umd.js
 
       - name: Invalidate CDN cache stage
-        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
+        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-rao-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
         env:
           GCP_PROJECT: ${{ secrets.GCP_STAGE_PROJECT_ID }}
         run: |
