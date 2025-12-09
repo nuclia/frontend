@@ -222,7 +222,7 @@ export class SearchWidgetService {
     this.deleteWidgetPreview();
 
     const tagName = 'progress-rao-widget';
-    const scriptSrc = `${this.backendConfig.getCDN()}/progress-rao-widget.umd.js`;
+    const scriptSrc = `${this.backendConfig.getCDN()}/rao-widget.umd.js`;
     const parameters = Object.entries(widgetOptions || {})
       .filter(([, value]) => !!value)
       .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
