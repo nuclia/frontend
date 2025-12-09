@@ -13,7 +13,6 @@ class RaoWebComponent extends HTMLElement {
 
   connectedCallback() {
     const props = this.getPropsFromAttributes<RaoWidgetProps>();
-    console.log(props);
     const root = ReactDOM.createRoot(this.shadowRoot as ShadowRoot);
     root.render(<RaoWrapper {...props} />);
   }

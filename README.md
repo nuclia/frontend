@@ -9,6 +9,7 @@
 - [Installation](#installation)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
+- [RAO Widget](#rao-widget)
 - [SDK](#sdk)
 - [Sistema](#sistema)
 - [NucliaDB admin](#nucliadb-admin)
@@ -128,6 +129,20 @@ When you have some local changes to the widget you'd like to test on the dashboa
 - build the widget
 - copy the resulting `nuclia-widget.umd.js` to `assets` folder of dashboard app
 - in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');`
+
+## RAO Widget
+
+Run teh demo:
+
+```
+nx run rao-demo:vite:dev
+```
+
+Build the widget:
+
+```
+./tools/build-rao.sh
+```
 
 ## SDK
 

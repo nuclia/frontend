@@ -435,8 +435,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
       return;
     }
 
-    let isActive = true;
-
     const useServiceAccountHeader = Boolean(initialApiKey);
 
     const fetchToken = async (): Promise<string> => {
@@ -447,9 +445,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
         const { token } = await authApi.createEphemeralToken({
           useServiceAccountHeader,
         });
-        if (!isActive) {
-          return token;
-        }
         fetcher.setBearerToken(token);
         cachedTokenRef.current = token;
         setAuthToken(token);
@@ -470,9 +465,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
 
     pendingTokenRequestRef.current = promise;
 
-    return () => {
-      isActive = false;
-    };
+    return () => {};
   }, [fetcher, authApi, initialApiKey, authToken]);
 
   const fetchSessions = useCallback(
@@ -672,7 +665,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
         finalizeAssistantMessage('Error', 'Chat service is not configured.');
         return;
       }
-
       if (!authToken) {
         finalizeAssistantMessage('Info', 'Assistant is still initializing. Please try again in a moment.');
         return;
