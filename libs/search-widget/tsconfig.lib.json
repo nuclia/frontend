@@ -2,10 +2,9 @@
   "extends": "./tsconfig.json",
 
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "jsx": "react-jsx"
+    "outDir": "../../dist/out-tsc"
   },
 
-  "include": ["src/**/*", "../rao-widget/src/RaoApp.tsx"],
+  "include": ["src/**/*"],
   "exclude": ["**/*.spec.ts", "**/*_spec.ts", "public/*"]
 }

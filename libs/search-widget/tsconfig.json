@@ -9,7 +9,7 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "sourceMap": true,
-    "types": ["svelte", "react", "react-dom"],
+    "types": ["svelte"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
