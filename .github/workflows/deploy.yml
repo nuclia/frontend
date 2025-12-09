@@ -164,7 +164,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: false
         run: |-
           cd ./dist/sdk-core
-          npm publish
+          npm publish || true
           cd -
 
       - name: Push SDK to GCP CDN
