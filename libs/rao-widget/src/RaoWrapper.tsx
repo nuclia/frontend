@@ -33,7 +33,6 @@ export const RaoWrapper: FC<RaoWidgetProps> = ({
   ...widgetProps
 }) => {
   const knowledgeBoxId = aragid ?? arag;
-  const configKey = JSON.stringify({ backend, zone, knowledgeBoxId, client, account, apiKey: apikey });
   if (!account || !knowledgeBoxId || !zone) {
     console.error('Account, Retrieval Agent and zone are required to render the widget.');
     return;
