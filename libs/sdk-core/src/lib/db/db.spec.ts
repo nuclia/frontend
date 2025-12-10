@@ -98,7 +98,7 @@ describe('Db', () => {
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc-id/kbs?mode=agent',
+        'http://here/v1/account/dc-id/kbs?mode=agents',
         expect.objectContaining({
           method: 'GET',
         }),

@@ -7,7 +7,8 @@ export const ACCOUNT_DETAILS: AccountDetails = {
   type: 'stash-enterprise',
   email: 'catwoman+new@nuclia.com',
   created: '2023-11-27T13:22:34.267865Z',
-  maxArags: 5,
+  maxAgents: 5,
+  maxMemories: 2,
   maxKbs: 5,
   users: [
     {

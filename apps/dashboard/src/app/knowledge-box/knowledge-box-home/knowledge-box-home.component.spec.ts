@@ -80,6 +80,8 @@ describe('KnowledgeBoxHomeComponent', () => {
               can_manage_account: true,
               blocked_features: [],
               max_kbs: 10,
+              max_agents: 5,
+              max_memories: 5,
               max_arags: 5,
               max_users: 100,
               creation_date: '2023-01-01',
