@@ -164,13 +164,13 @@ jobs:
       - name: Publish RAO widget to GCS
         if: steps.check-deploy.outputs.deploy-rao-widget == 'yes'
         run: |-
-          find dist/libs/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
-          gsutil copy dist/libs/rao-widget/*.umd.js gs://$CDN_STORAGE
+          find dist/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
+          gsutil copy dist/rao-widget/*.umd.js gs://$CDN_STORAGE
 
       - name: Publish widget to S3
         if: steps.check-deploy.outputs.deploy-rao-widget == 'yes' && github.ref == 'refs/heads/main'
         run: |-
-          aws s3 cp dist/libs/rao-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
+          aws s3 cp dist/rao-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
 
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
