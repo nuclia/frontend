@@ -15,8 +15,8 @@ env:
   S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
   S3_WHITELABEL_STORAGE: ${{ secrets.S3_WHITELABEL_STORAGE }}
   S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_DOCS_SYNC_ROLE || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
-  GCP_WORKLOAD_IDENTITY_PROVIDER: "projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider"
-  GCP_SERVICE_ACCOUNT: "github-actions@nuclia-internal.iam.gserviceaccount.com"
+  GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
+  GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
   PROMO_PRODUCTION: false
 
@@ -47,12 +47,12 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Login to Google Artifact Registry
         uses: docker/login-action@v3
@@ -64,7 +64,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}"
+          role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
           aws-region: eu-central-1
 
       - name: Configure AWS client
@@ -77,8 +77,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: "https://registry.npmjs.org"
-          cache: "yarn"
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
 
       - name: Debug NPM version 1
         run: |-
@@ -117,13 +117,13 @@ jobs:
           github_repo: ${{ github.repository }}
           version: ${{ env.PACKAGE_VERSION }}
           git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: "v"
+          git_tag_prefix: 'v'
 
       - name: Check apps to deploy
         id: check-deploy
         run: |-
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
-          (test -d dist/libs/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
+          (test -d dist/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
@@ -314,8 +314,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -359,7 +359,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: "./charts/${{ env.APP_IMAGE_NAME }}"
+          chart-dir: './charts/${{ env.APP_IMAGE_NAME }}'
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -388,8 +388,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -433,7 +433,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: "./charts/${{ env.MANAGER_IMAGE_NAME }}"
+          chart-dir: './charts/${{ env.MANAGER_IMAGE_NAME }}'
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -505,4 +505,4 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/core-apps
           event-type: promotions
-          client-payload: "${{ env.JSON_PROMO_SUMMARY }}"
+          client-payload: '${{ env.JSON_PROMO_SUMMARY }}'
