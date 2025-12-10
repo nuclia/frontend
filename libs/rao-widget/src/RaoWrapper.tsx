@@ -28,8 +28,8 @@ export const RaoWrapper: FC<RaoWidgetProps> = ({
   backend,
   zone,
   client,
-  account,
   apikey,
+  account,
   ...widgetProps
 }) => {
   const knowledgeBoxId = aragid ?? arag;
