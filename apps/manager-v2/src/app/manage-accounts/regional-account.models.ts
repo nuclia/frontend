@@ -29,15 +29,12 @@ export interface Account {
   id: string;
   limits: AccountLimits;
   managers: string[];
+  max_kbs: number;
+  max_agents: number;
+  max_memories: number;
   max_dedicated_processors: number;
   modified: string;
   slug: string;
-  stashes: {
-    max_stashes: number;
-  };
-  arags?: {
-    max_arags: number;
-  };
   title: string;
   trial_expiration_date?: string;
   type: AccountTypes;

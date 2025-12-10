@@ -14,7 +14,8 @@ export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
   limits: AccountLimits;
   maxKbs: number;
-  maxArags: number;
+  maxAgents: number;
+  maxMemories: number;
   trialExpirationDate?: string;
   users: AccountUser[];
 }
@@ -68,7 +69,8 @@ export type BlockedFeatureFormValues = Record<BlockedFeature, boolean>;
 export interface AccountConfigurationPayload {
   email: string;
   maxKbs: number;
-  maxArags: number;
+  maxMemories: number;
+  maxAgents: number;
   slug: string;
   trialExpirationDate?: string | null;
   type: AccountTypes;

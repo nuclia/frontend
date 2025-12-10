@@ -112,29 +112,61 @@
     <div>
       <label
         class="title-xxs"
-        for="max-arags">
+        for="max-agents">
         Max retrieval agents available
       </label>
       <div
         class="radio-limit-container"
-        formGroupName="arags">
+        formGroupName="agents">
         <pa-radio-group
-          id="arags"
-          formControlName="arags_radio">
+          id="max-agents"
+          formControlName="agents_radio">
           <pa-radio value="unlimited">Unlimited</pa-radio>
           <pa-radio value="limit">Limit</pa-radio>
         </pa-radio-group>
-        @if (configForm.controls.arags.controls.arags_radio.value === 'limit') {
+        @if (configForm.controls.agents.controls.agents_radio.value === 'limit') {
           <div class="limit-container">
             <pa-input
               type="number"
               externalLabel
-              formControlName="maxArags"></pa-input>
+              formControlName="maxAgents"></pa-input>
             <pa-button
               icon="reload"
               paTooltip="Reset to default"
               aspect="basic"
               (click)="resetMaxAragsToDefault()">
+              Reset to default
+            </pa-button>
+          </div>
+        }
+      </div>
+    </div>
+    <div>
+      <label
+        class="title-xxs"
+        for="max-memories">
+        Max retrieval agents with memory
+      </label>
+      <div
+        class="radio-limit-container"
+        formGroupName="memories">
+        <pa-radio-group
+          id="max-memories"
+          formControlName="memories_radio">
+          <pa-radio value="unlimited">Unlimited</pa-radio>
+          <pa-radio value="limit">Limit</pa-radio>
+        </pa-radio-group>
+        @if (configForm.controls.memories.controls.memories_radio.value === 'limit') {
+          <div class="limit-container">
+            <pa-input
+              type="number"
+              externalLabel
+              formControlName="maxMemories"></pa-input>
+            <pa-button
+              icon="reload"
+              paTooltip="Reset to default"
+              aspect="basic"
+              (click)="resetMaxAragsWithMemoryToDefault()">
               Reset to default
             </pa-button>
           </div>
