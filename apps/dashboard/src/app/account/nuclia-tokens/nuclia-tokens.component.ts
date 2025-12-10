@@ -98,7 +98,7 @@ export class NucliaTokensComponent implements OnDestroy {
   isSubscribedToStripe = this.metrics.isSubscribedToStripe;
   periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
     map(([isSubscribed, period]) =>
-      isSubscribed ? this.metrics.getLastStripePeriods(period, 6) : this.metrics.getLastMonths(6),
+      isSubscribed ? this.metrics.getLastStripePeriods(period, 12) : this.metrics.getLastMonths(12),
     ),
   );
 
