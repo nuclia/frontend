@@ -67,12 +67,6 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   });
   hasAllInternetDrivers = this.driversService.hasAllInternetDrivers;
 
-  // Convert observables to signals for synchronous access
-  hasSql = toSignal(this.driversService.hasSql, { initialValue: false });
-  hasCypher = toSignal(this.driversService.hasCypher, { initialValue: false });
-  hasAlinia = toSignal(this.driversService.hasAlinia, { initialValue: false });
-  hasMcp = toSignal(this.driversService.hasMcp, { initialValue: false });
-
   ngOnInit(): void {
     // Initialize service - starts both drivers$ and schemas$ streams
     this.driversService
@@ -243,16 +237,6 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     if (titleLower.includes('nuclia') || titleLower.includes('internet')) {
       return true;
     }
-
-    // Check feature flags for specific drivers
-    if (titleLower.includes('sql') && !this.hasSql()) return false;
-    if (titleLower.includes('cypher') && !this.hasCypher()) return false;
-    if (
-      (titleLower.includes('mcp') || titleLower.includes('mcpsse') || titleLower.includes('mcpstdio')) &&
-      !this.hasMcp()
-    )
-      return false;
-    if ((titleLower.includes('guardrails') || titleLower.includes('alinia')) && !this.hasAlinia()) return false;
 
     return true;
   }
