@@ -11,6 +11,8 @@ const defaultContext: IRaoContext = {
   sessionsApi: undefined,
   authToken: null,
   activeView: 'conversation',
+  visibleViewType: 'conversation',
+  setVisibleViewType: () => {},
   conversation: null,
   onChat: () => {},
 };

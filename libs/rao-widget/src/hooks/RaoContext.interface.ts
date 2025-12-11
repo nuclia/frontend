@@ -1,9 +1,10 @@
 import type { NucliaFetcher, SessionsApi } from '../repository';
 import type { ICallState, IMessage, INuclia, ISessions } from '../interfaces';
+import { EViewType, IRaoWidget } from '../components/RaoWidget';
 
 type SessionState = ICallState<ISessions>[string];
 
-export interface IRaoProvider {
+export interface IRaoProvider extends IRaoWidget {
   nuclia: INuclia | null;
   sessionId?: string | null;
 }
@@ -18,6 +19,8 @@ export interface IRaoContext extends Omit<IRaoProvider, 'sessionId'> {
   authToken: string | null;
 
   activeView: 'main' | 'conversation';
+  visibleViewType: EViewType;
+  setVisibleViewType: React.Dispatch<React.SetStateAction<EViewType>>;
   conversation: IMessage[] | null;
   onChat: (message: string) => void;
 }

@@ -12,7 +12,8 @@ export const RaoApp: FC<RaoAppProps> = ({ nuclia, sessionId, ...widgetProps }) =
   return (
     <RaoProvider
       nuclia={nuclia}
-      sessionId={sessionId}>
+      sessionId={sessionId}
+      {...widgetProps}>
       <RaoWidget {...widgetProps} />
     </RaoProvider>
   );
