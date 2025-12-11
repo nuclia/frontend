@@ -1,8 +1,8 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { SDKService, FeaturesService, STFUtils } from '@flaps/core';
+import { SDKService, STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { Driver, ARAGSchemas } from '@nuclia/core';
+import { Driver } from '@nuclia/core';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import {
   BehaviorSubject,
@@ -34,13 +34,6 @@ export class DriversService {
   private modal = inject(SisModalService);
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
-  private featureService = inject(FeaturesService);
-
-  // Feature flags
-  hasSql = this.featureService.unstable.aragSql;
-  hasCypher = this.featureService.unstable.aragCypher;
-  hasAlinia = this.featureService.unstable.aragAlinia;
-  hasMcp = this.featureService.unstable.aragMcp;
 
   // Reactive state management
   private _drivers = signal<Driver[]>([]);
