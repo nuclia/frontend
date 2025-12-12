@@ -1,0 +1,351 @@
+.rao-react {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10rem;
+  height: 100%;
+  padding: 2.5rem 3rem;
+  color: #1f1f1f;
+  font-family: var(--nuclia-font, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 60rem);
+  margin: 0 auto;
+}
+
+.rao-react__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.rao-react__header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rhythm-1);
+}
+
+.rao-react__icon-button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease;
+}
+
+.rao-react__icon-button:hover,
+.rao-react__icon-button:focus-visible {
+  background: rgba(17, 24, 39, 0.08);
+  color: #111827;
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+}
+
+.rao-react__close-symbol {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.rao-react__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rhythm-4, 40px);
+}
+
+.rao-react__greeting {
+  font-size: clamp(2.5rem, 5vw, 3.25rem);
+  font-weight: 600;
+  margin: 0;
+}
+
+.rao-react__cards {
+  display: flex;
+  flex-direction: row;
+  gap: var(--rhythm-1);
+  width: 100%;
+}
+
+.rao-react__card {
+  flex: 1;
+  appearance: none;
+  background: #f5f6f8;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem 1.25rem;
+  font-size: 0.95rem;
+  color: #4b5563;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.rao-react__card:hover,
+.rao-react__card:focus-visible {
+  background: #ffffff;
+  border-color: #cbd5f5;
+  color: #1f1f1f;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.18);
+  outline: none;
+}
+
+.rao-react__form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.rao-react__square-button {
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  height: var(--rhythm-5);
+  width: var(--rhythm-5);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.rao-react__query {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  height: var(--rhythm-5);
+  line-height: 1.5rem;
+  padding: 0 2.75rem 0 0.75rem;
+  color: #1f2937;
+}
+
+.rao-react__query:focus {
+  outline: none;
+}
+
+.rao-react__ghost-button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.rao-react__ghost-button--recording {
+  color: #ef4444;
+}
+
+.rao-react__microphone-icon {
+  font-size: 1.05rem;
+  color: currentColor;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease,
+    filter 0.3s ease;
+}
+
+.rao-react__ghost-button:hover:not(:disabled),
+.rao-react__ghost-button:focus-visible:not(:disabled) {
+  color: #4b5563;
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+}
+
+.rao-react__ghost-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.rao-react__microphone-icon--recording {
+  color: #ef4444;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.45));
+  animation: rao-react__pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes rao-react__pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.rao-react__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 5;
+}
+
+.rao-react__backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.rao-react__drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(22rem, 85vw);
+  background: var(--container-background-color, #ffffff);
+  box-shadow: -12px 0 32px rgba(var(--color-dark-stronger-rgb), 0.18);
+  transform: translateX(100%);
+  transition: transform var(--transition-fast);
+  z-index: 6;
+  padding: var(--rhythm-3) var(--rhythm-2_5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-2);
+  overflow: hidden;
+  outline: none;
+  font-size: var(--font-size-base);
+}
+
+.rao-react__drawer--open {
+  transform: translateX(0);
+}
+
+.rao-react__drawer--close {
+  display: none;
+}
+
+.rao-react__drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rhythm-1_5);
+}
+
+.rao-react__drawer-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-0_5);
+}
+
+.rao-react__drawer-title {
+  margin: 0;
+  font-size: calc(var(--font-size-base) * 1.05);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--text-color, #111827);
+}
+
+.rao-react__drawer-description {
+  font-size: var(--font-size-medium);
+  color: var(--color-neutral-regular);
+}
+
+.rao-react__drawer-close {
+  appearance: none;
+  background: #f3f4f6;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: var(--rhythm-4);
+  height: var(--rhythm-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-neutral-regular);
+}
+
+.rao-react__drawer-close:hover,
+.rao-react__drawer-close:focus-visible {
+  background: #e5e7eb;
+  outline: none;
+}
+
+.rao-react__drawer-new-chat {
+  appearance: none;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--rhythm-1) var(--rhythm-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rhythm-0_5);
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semi-bold);
+  cursor: pointer;
+}
+
+.rao-react__drawer-new-chat:hover,
+.rao-react__drawer-new-chat:focus-visible {
+  background: #1f2937;
+  outline: none;
+}
+
+@media (max-width: 640px) {
+  .rao-react {
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    overflow: visible;
+  }
+
+  .rao-react__cards {
+    display: flex;
+    flex-direction: row;
+    gap: var(--rhythm-1);
+  }
+
+  .rao-react__form {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .rao-react__query {
+    flex-basis: 100%;
+  }
+
+  .rao-react__ghost-button,
+  .rao-react__submit-button {
+    width: 100%;
+  }
+
+  .rao-react__drawer {
+    width: min(100%, 22rem);
+    padding: 1.25rem;
+  }
+}

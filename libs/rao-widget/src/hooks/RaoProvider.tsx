@@ -14,6 +14,7 @@ import {
 } from '../repository';
 import type { AragAnswer } from '@nuclia/core';
 import { AnswerOperation } from '@nuclia/core';
+import { EViewType } from '../components/RaoWidget/RaoWidget.interface';
 
 const DEFAULT_ASSISTANT_TITLE = 'Agentic RAG';
 const EPHEMERAL_SESSION_ID = 'ephemeral';
@@ -59,7 +60,13 @@ const injectZoneIntoBackend = (backend: string, zone?: string): string => {
   }
 };
 
-export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuclia, sessionId: sessionIdProp }) => {
+export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
+  children,
+  nuclia,
+  sessionId: sessionIdProp,
+  ...rest
+}) => {
+  const [visibleViewType, setVisibleViewType] = useState<EViewType>(rest.viewtype ?? 'conversation');
   const [sessionsState, _setSessionsState] = useState<ICallState<ISessions>>({});
   const [conversation, setConversation] = useState<IMessage[] | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -720,6 +727,9 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
       activeView: conversation ? 'conversation' : 'main',
       conversation,
       onChat: handleChat,
+
+      visibleViewType,
+      setVisibleViewType,
     }),
     [
       nuclia,
@@ -732,6 +742,9 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({ children, nuc
       authToken,
       conversation,
       handleChat,
+
+      visibleViewType,
+      setVisibleViewType,
     ],
   );
 
