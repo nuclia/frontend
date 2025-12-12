@@ -26,7 +26,7 @@ export type SessionPagination = ResourcePagination;
 export interface RetrievalAgentCreation {
   slug: string;
   title: string;
-  mode: 'agent';
+  mode: 'agent' | 'agent_no_memory';
 }
 
 export interface SessionList {

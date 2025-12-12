@@ -62,7 +62,8 @@ export interface AccountPatchPayload {
   type?: string;
   dedicated_processors_state?: string;
   kbs?: number;
-  arags?: number;
+  memories?: number;
+  agents?: number;
   max_dedicated_processors?: number;
   data?: object;
   blocking_state?: AccountBlockingState;

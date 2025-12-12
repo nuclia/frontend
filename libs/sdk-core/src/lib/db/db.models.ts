@@ -22,13 +22,18 @@ export interface Account {
   blocking_state?: AccountBlockingState;
   can_manage_account: boolean;
   config?: AccountConfig;
+  current_agents?: number;
   current_kbs?: number;
+  current_memories?: number;
   current_users?: number;
   domain?: string;
   description?: string;
   id: string;
   limits?: AccountLimits;
+  max_agents: number;
   max_kbs: number;
+  max_memories: number;
+  /** @deprecated */  
   max_arags: number;
   max_users: number | null;
   saml_entity_id?: string;
@@ -457,3 +462,5 @@ export interface ModelConfiguration extends ModelConfigurationItem {
 }
 
 export type ModelConfigurationCreation = Omit<ModelConfiguration, 'id'>;
+
+export type KnowledgeBoxMode = 'kb' | 'agent' | 'agent_no_memory' | 'agents';

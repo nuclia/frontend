@@ -221,7 +221,7 @@
                 <pa-icon name="workflows"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.agent.workflow' | translate }}</span>
               </a>
-              @if (isAragWithMemoryEnabled | async) {
+              @if (isAragWithMemory | async) {
                 <a
                   [routerLink]="aragUrl + '/sessions'"
                   routerLinkActive="active"
@@ -240,15 +240,17 @@
                 <pa-icon name="puzzle"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.agent.drivers' | translate }}</span>
               </a>
-              <a
-                class="nav-link"
-                data-cy="go-to-search"
-                routerLinkActive="active"
-                [routerLink]="!(invalidKey | async) ? aragUrl + '/search' : null"
-                [class.disabled]="invalidKey | async">
-                <pa-icon name="search"></pa-icon>
-                <span class="nav-link-title">{{ 'search.title' | translate }}</span>
-              </a>
+              @if (isAragWithMemory | async) {
+                <a
+                  class="nav-link"
+                  data-cy="go-to-search"
+                  routerLinkActive="active"
+                  [routerLink]="!(invalidKey | async) ? aragUrl + '/search' : null"
+                  [class.disabled]="invalidKey | async">
+                  <pa-icon name="search"></pa-icon>
+                  <span class="nav-link-title">{{ 'search.title' | translate }}</span>
+                </a>
+              }
               <a
                 [routerLink]="(isAragAdmin | async) && !(invalidKey | async) ? aragUrl + '/widgets' : null"
                 routerLinkActive="active"

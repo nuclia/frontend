@@ -29,7 +29,7 @@ import {
   WorkflowRootComponent,
   WorkflowService,
 } from './workflow';
-import { FeaturesService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -44,7 +44,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
   private workflowEffects = inject(WorkflowEffectService);
-  private features = inject(FeaturesService);
+  private sdk = inject(SDKService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -60,7 +60,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   sideBarClosing = sideBarClosing;
   sideBarLarge = sideBarLarge;
   activeSideBar = activeSideBar;
-  isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
+  isAragWithMemory = this.sdk.isAragWithMemory;
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());

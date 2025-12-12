@@ -36,7 +36,7 @@
         (click)="openTest()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.test-agent' | translate }}
       </pa-button>
-      @if (isAragWithMemoryEnabled | async) {
+      @if (isAragWithMemory | async) {
         <pa-button
           size="small"
           kind="primary"

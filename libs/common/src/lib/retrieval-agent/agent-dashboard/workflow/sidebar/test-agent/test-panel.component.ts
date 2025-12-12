@@ -17,7 +17,7 @@ import { ProgressBarComponent } from '@nuclia/sistema';
 import { resetTestAgent, testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
-import { FeaturesService, ParametersTableComponent } from '@flaps/core';
+import { ParametersTableComponent, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -40,7 +40,7 @@ import { CommonModule } from '@angular/common';
 })
 export class TestPanelComponent implements OnInit, OnDestroy {
   private service = inject(TestPanelService);
-  private features = inject(FeaturesService);
+  private sdk = inject(SDKService);
   form = new FormGroup({
     question: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     session: new FormControl('ephemeral', { nonNullable: true, validators: [Validators.required] }),
@@ -48,7 +48,7 @@ export class TestPanelComponent implements OnInit, OnDestroy {
   });
   headers: { key: string; value: string }[] = [];
 
-  isAragWithMemoryEnabled = this.features.unstable.aragWithMemory;
+  isAragWithMemory = this.sdk.isAragWithMemory;
 
   get question() {
     return this.form.controls.question;

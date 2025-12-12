@@ -33,12 +33,19 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       }),
       maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
-    arags: new FormGroup({
-      arags_radio: new FormControl<'limit' | 'unlimited'>('limit', {
+    agents: new FormGroup({
+      agents_radio: new FormControl<'limit' | 'unlimited'>('limit', {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      maxArags: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+      maxAgents: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    }),
+    memories: new FormGroup({
+      memories_radio: new FormControl<'limit' | 'unlimited'>('limit', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      maxMemories: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
@@ -100,7 +107,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     const accountBackup = this.accountBackup;
     if (this.configForm.valid && accountBackup) {
       this.isSaving = true;
-      const { trialExpirationDate, kbs, arags, ...rawValue } = this.configForm.getRawValue();
+      const { trialExpirationDate, kbs, agents, memories, ...rawValue } = this.configForm.getRawValue();
       this.canFullyEditAccount
         .pipe(
           take(1),
@@ -109,7 +116,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               ? {
                   ...rawValue,
                   maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
-                  maxArags: arags.arags_radio === 'limit' ? arags.maxArags : -1,
+                  maxAgents: agents.agents_radio === 'limit' ? agents.maxAgents : -1,
+                  maxMemories: memories.memories_radio === 'limit' ? memories.maxMemories : -1,
                 }
               : {
                   trialExpirationDate,
@@ -155,8 +163,16 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     if (!this.defaultLimits) {
       return;
     }
-    this.configForm.controls.arags.controls.maxArags.patchValue(this.defaultLimits.max_arags);
-    this.configForm.controls.arags.markAsDirty();
+    this.configForm.controls.agents.controls.maxAgents.patchValue(this.defaultLimits.max_agents);
+    this.configForm.controls.agents.markAsDirty();
+    this.cdr.markForCheck();
+  }
+  resetMaxAragsWithMemoryToDefault() {
+    if (!this.defaultLimits) {
+      return;
+    }
+    this.configForm.controls.memories.controls.maxMemories.patchValue(this.defaultLimits.max_memories);
+    this.configForm.controls.memories.markAsDirty();
     this.cdr.markForCheck();
   }
 
@@ -170,10 +186,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.configForm.patchValue(accountDetails);
     this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');
     this.configForm.controls.kbs.controls.maxKbs.patchValue(accountDetails.maxKbs);
-    this.configForm.controls.arags.controls.arags_radio.patchValue(
-      accountDetails.maxArags === -1 ? 'unlimited' : 'limit',
+    this.configForm.controls.agents.controls.agents_radio.patchValue(
+      accountDetails.maxAgents === -1 ? 'unlimited' : 'limit',
     );
-    this.configForm.controls.arags.controls.maxArags.patchValue(accountDetails.maxArags);
+    this.configForm.controls.agents.controls.maxAgents.patchValue(accountDetails.maxAgents);
+    this.configForm.controls.memories.controls.memories_radio.patchValue(
+      accountDetails.maxMemories === -1 ? 'unlimited' : 'limit',
+    );
+    this.configForm.controls.memories.controls.maxMemories.patchValue(accountDetails.maxMemories);
     this.cdr.markForCheck();
   }
 

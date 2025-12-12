@@ -39,7 +39,8 @@ export class GlobalAccountService {
       type: data.type,
       trial_expiration_date: data.trialExpirationDate,
       kbs: data.maxKbs,
-      arags: data.maxArags,
+      memories: data.maxMemories,
+      agents: data.maxAgents,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }
