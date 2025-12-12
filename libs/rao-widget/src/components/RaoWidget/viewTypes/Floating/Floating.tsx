@@ -3,7 +3,7 @@ import { Icon } from '../../../Icon';
 import { Standard } from '../Standard/Standard';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
-import './Floating.css';
+import './Floating.css?inline';
 
 export interface FloatingProps extends IRaoWidget {}
 

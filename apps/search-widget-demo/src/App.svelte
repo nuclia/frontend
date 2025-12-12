@@ -1,6 +1,6 @@
 <script lang="ts">
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets';
-  import '../../../libs/rao-widget/src';
+  import 'apps/rao-demo/src/app/app.tsx';
 
   const arag = 'f1c0a434-4419-4816-a265-8b43505cbd3e'; // Agent dragon
   // const account = 'fc1ebf90-632b-4ca5-a406-ca93ccf1920d'; // mat-testing

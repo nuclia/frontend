@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SVGAttributes } from 'react';
-import './Icon.css';
+import './Icon.css?inline';
 
 export type IconSize = 'sm' | 'md' | 'lg';
 

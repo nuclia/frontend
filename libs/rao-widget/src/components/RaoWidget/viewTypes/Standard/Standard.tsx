@@ -5,7 +5,7 @@ import { SessionDrawer } from '../../../SessionDrawer';
 import { Conversation } from '../../../Conversation';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
-import './Standard.css';
+import './Standard.css?inline';
 
 const fallbackCards = [
   'Prompt Placeholder',
