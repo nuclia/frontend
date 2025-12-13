@@ -14,7 +14,8 @@ import {
 } from '../repository';
 import type { AragAnswer } from '@nuclia/core';
 import { AnswerOperation } from '@nuclia/core';
-import { EViewType } from '../components/RaoWidget/RaoWidget.interface';
+import { EViewType, IResources } from '../components/RaoWidget/RaoWidget.interface';
+import { DEFAULT_RESOURCES } from '../interfaces/const';
 
 const DEFAULT_ASSISTANT_TITLE = 'Agentic RAG';
 const EPHEMERAL_SESSION_ID = 'ephemeral';
@@ -88,6 +89,11 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   const knowledgeBoxHeader = nuclia?.options?.knowledgeBox;
   const initialApiKey = nuclia?.options?.apiKey;
   const ndb = nuclia?.options?.client;
+
+  const text: IResources = {
+    ...DEFAULT_RESOURCES,
+    ...rest.resources,
+  };
 
   const assistantTitle = useMemo(
     () => nuclia?.auth?.preview_short ?? nuclia?.auth?.name ?? DEFAULT_ASSISTANT_TITLE,
@@ -730,6 +736,8 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
 
       visibleViewType,
       setVisibleViewType,
+
+      resources: text,
     }),
     [
       nuclia,
@@ -745,6 +753,8 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
 
       visibleViewType,
       setVisibleViewType,
+
+      text,
     ],
   );
 
