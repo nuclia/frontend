@@ -3,7 +3,8 @@ import { Icon } from '../../../Icon';
 import { useRaoContext, useVoiceRecorder } from '../../../../hooks';
 import { SessionDrawer } from '../../../SessionDrawer';
 import { Conversation } from '../../../Conversation';
-import type { IRaoWidget } from '../../RaoWidget.interface';
+import type { IRaoWidget, IResources } from '../../RaoWidget.interface';
+import { DEFAULT_RESOURCES } from '../../../../interfaces/const';
 
 // @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Standard.css?inline';

@@ -6,6 +6,7 @@ import { IResources } from '../RaoWidget';
 
 // @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Conversation.css?inline';
+import { IResources } from '../RaoWidget';
 
 interface IConversation {}
 
