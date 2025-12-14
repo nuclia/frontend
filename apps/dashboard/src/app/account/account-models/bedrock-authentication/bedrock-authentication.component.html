@@ -1,0 +1,149 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    <h2>{{ 'account.models.bedrock.integration' | translate }}</h2>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <div class="modal-content">
+      <pa-accordion [allowMultipleExpanded]="false">
+        <pa-accordion-item
+          id="step-1"
+          [itemTitle]="'account.models.bedrock.step' | translate: { num: 1 }"
+          [description]="'account.models.bedrock.create-role' | translate">
+          <pa-accordion-item-body>
+            <ul class="step-list body-m">
+              <li [innerHTML]="'account.models.bedrock.step-1-1' | translate"></li>
+              <li [innerHTML]="'account.models.bedrock.step-1-2' | translate"></li>
+              <li [innerHTML]="'account.models.bedrock.step-1-3' | translate"></li>
+              <li>
+                <div [innerHTML]="'account.models.bedrock.step-1-4' | translate"></div>
+                <div class="input-container">
+                  <label for="account-id">{{ 'account.models.bedrock.account-id' | translate }}</label>
+                  <pa-input
+                    id="account-id"
+                    [value]="params?.aws_account_id || ''"
+                    externalLabel
+                    readonly></pa-input>
+                  <pa-button
+                    [icon]="copied['accountId'] ? 'check' : 'copy'"
+                    aspect="basic"
+                    size="small"
+                    (click)="copy('accountId', params?.aws_account_id || '')">
+                    {{ 'generic.copy' | translate }}
+                  </pa-button>
+                </div>
+                <div class="input-container">
+                  <label>{{ 'account.models.bedrock.external-id' | translate }}</label>
+                  <pa-input
+                    [value]="params?.external_id || ''"
+                    externalLabel
+                    readonly></pa-input>
+                  <pa-button
+                    [icon]="copied['externalId'] ? 'check' : 'copy'"
+                    aspect="basic"
+                    size="small"
+                    (click)="copy('externalId', params?.external_id || '')">
+                    {{ 'generic.copy' | translate }}
+                  </pa-button>
+                </div>
+              </li>
+              <li [innerHTML]="'account.models.bedrock.step-1-5' | translate"></li>
+              <li class="step-with-inputs">
+                <div>{{ 'account.models.bedrock.step-1-6' | translate }}</div>
+                <div class="input-container">
+                  <label for="role-name">{{ 'account.models.bedrock.role-name' | translate }}</label>
+                  <pa-input
+                    id="role-name"
+                    [value]="params?.role_name || ''"
+                    externalLabel
+                    readonly></pa-input>
+                  <pa-button
+                    [icon]="copied['roleName'] ? 'check' : 'copy'"
+                    aspect="basic"
+                    size="small"
+                    (click)="copy('roleName', params?.role_name || '')">
+                    {{ 'generic.copy' | translate }}
+                  </pa-button>
+                </div>
+              </li>
+              <li [innerHTML]="'account.models.bedrock.step-1-7' | translate"></li>
+            </ul>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          id="step-2"
+          [itemTitle]="'account.models.bedrock.step' | translate: { num: 2 }"
+          [description]="'account.models.bedrock.permissions' | translate">
+          <pa-accordion-item-body>
+            <ul class="step-list body-m">
+              <li>
+                <span [innerHTML]="'account.models.bedrock.step-2-1' | translate"></span>
+                <strong>{{ params?.role_name }}</strong>
+              </li>
+              <li [innerHTML]="'account.models.bedrock.step-2-2' | translate"></li>
+              <li>
+                <div [innerHTML]="'account.models.bedrock.step-2-3' | translate"></div>
+                <div class="input-container">
+                  <pa-textarea
+                    class="full-width"
+                    [value]="policy"
+                    rows="10"
+                    readonly
+                    externalLabel></pa-textarea>
+                  <!-- TODO: a link to the documentation should be added when it's ready -->
+                  <pa-button
+                    [icon]="copied['policy'] ? 'check' : 'copy'"
+                    aspect="basic"
+                    size="small"
+                    (click)="copy('policy', policy)"></pa-button>
+                </div>
+              </li>
+              <li [innerHTML]="'account.models.bedrock.step-2-4' | translate"></li>
+            </ul>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          id="step-3"
+          [itemTitle]="'account.models.bedrock.step' | translate: { num: 3 }"
+          [description]="'account.models.bedrock.role-arn' | translate">
+          <pa-accordion-item-body>
+            <ul class="step-list body-m">
+              <li>
+                <div class="body-m">{{ 'account.models.bedrock.step-3-1' | translate }}</div>
+                <div class="input-container">
+                  <pa-input
+                    class="full-width"
+                    [formControl]="form.controls.arn"
+                    [help]="'Example: arn:aws:iam::123456789:role/role-name' | translate">
+                    {{ 'account.models.bedrock.role-arn' | translate }}
+                  </pa-input>
+                </div>
+              </li>
+            </ul>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      </pa-accordion>
+      @if (saving) {
+        <div class="saving">
+          <nsi-spinner></nsi-spinner>
+        </div>
+      }
+    </div>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()"
+      [disabled]="saving">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="form.invalid || saving"
+      (click)="save()">
+      {{ 'generic.continue' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

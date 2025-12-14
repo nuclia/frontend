@@ -7,13 +7,15 @@
       border>
       <pa-table-header>
         <pa-table-cell header>
-          {{ 'Knowledge Box / ' + ( 'generic.retrieval-agent' | translate) }}
+          {{ 'Knowledge Box / ' + ('generic.retrieval-agent' | translate) }}
         </pa-table-cell>
         <pa-table-cell header>{{ 'account.models.restrictions.allowed-models' | translate }}</pa-table-cell>
       </pa-table-header>
       @for (kb of kbList | async; track kb.id) {
         <pa-table-row>
-          <pa-table-cell>{{ kb.title }}</pa-table-cell>
+          <pa-table-cell>
+            <span class="body-s">{{ kb.title }}</span>
+          </pa-table-cell>
           <pa-table-cell>
             <div>
               <pa-toggle

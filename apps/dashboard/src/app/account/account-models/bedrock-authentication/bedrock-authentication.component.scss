@@ -1,0 +1,48 @@
+@use 'apps/dashboard/src/variables' as *;
+
+h2 {
+  margin: 0;
+}
+
+.modal-content {
+  width: rhythm(90);
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  li::marker {
+    color: $color-primary-regular;
+  }
+  ::ng-deep strong {
+    border: 1px solid $color-neutral-light;
+    border-radius: rhythm(1);
+    margin: 0 rhythm(0.25);
+    padding: rhythm(0.5);
+    white-space: nowrap;
+  }
+}
+
+.input-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  padding-left: rhythm(1);
+  margin: rhythm(2.5) 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.saving {
+  display: flex;
+  justify-content: center;
+  margin-top: rhythm(1);
+}
+
+::ng-deep .pa-close-button {
+  // The cancel button must be the only way to close the modal
+  display: none;
+}
