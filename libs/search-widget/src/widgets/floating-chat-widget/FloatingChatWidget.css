@@ -1,0 +1,108 @@
+.floating-chat-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  /* Transparent backdrop - no overlay */
+  background: transparent;
+}
+
+.floating-chat-panel {
+  --panel-width: 400px;
+  --panel-height: 600px;
+  --panel-border-radius: var(--rhythm-1_5, 12px);
+  --border-color: var(--color-neutral-light, #eee);
+  --panel-shadow: 0 12px 48px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  position: fixed;
+  z-index: 10001;
+  width: var(--panel-width);
+  max-width: calc(100vw - var(--rhythm-4, 32px));
+  height: var(--panel-height);
+  max-height: calc(100vh - var(--rhythm-8, 64px));
+  background: var(--container-background-color, #fff);
+  border-radius: var(--panel-border-radius);
+  box-shadow: var(--panel-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--rhythm-1, 8px) var(--rhythm-2, 16px);
+  border-bottom: 1px solid var(--color-neutral-light, #eee);
+  background: var(--container-background-color, #fff);
+  flex-shrink: 0;
+}
+
+.chat-title {
+  font-size: var(--font-size-m, 16px);
+  font-weight: 600;
+  color: var(--color-neutral-dark, #333);
+}
+
+.floating-chat-panel.bottom-right {
+  transform-origin: bottom right;
+}
+
+.floating-chat-panel.bottom-left {
+  transform-origin: bottom left;
+}
+
+/* Override Chat component styles for floating panel */
+.floating-chat-panel :global(.sw-chat) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.floating-chat-panel :global(.sw-chat .chat-container) {
+  height: 100%;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-chat-panel :global(.sw-chat .entries-container) {
+  flex: 1;
+  min-height: 0;
+}
+
+.floating-chat-panel :global(.sw-chat-input) {
+  background: var(--color-neutral-lightest, #fafafa);
+  border-radius: var(--rhythm-1, 8px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 479px) {
+  .floating-chat-panel {
+    --panel-width: calc(100vw - var(--rhythm-2, 16px));
+    left: var(--rhythm-1, 8px) !important;
+    right: var(--rhythm-1, 8px) !important;
+    bottom: var(--rhythm-1, 8px) !important;
+    max-height: calc(100vh - var(--rhythm-4, 32px));
+  }
+
+  .floating-chat-panel.bottom-right,
+  .floating-chat-panel.bottom-left {
+    transform-origin: bottom center;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 639px) {
+  .floating-chat-panel {
+    --panel-width: min(400px, calc(100vw - var(--rhythm-4, 32px)));
+  }
+}
+
+@media (min-width: 640px) {
+  .floating-chat-panel {
+    --panel-width: 400px;
+  }
+}
