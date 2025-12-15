@@ -32,11 +32,12 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
+import { FeaturesService, LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Classification,
   FIELD_TYPE,
+  LearningConfigurationOption,
   LearningConfigurations,
   LLMConfig,
   longToShortFieldType,
@@ -47,8 +48,7 @@ import {
 import { BehaviorSubject, filter, map, Subject, switchMap } from 'rxjs';
 import { delay, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
-import { UserKeysComponent, UserKeysForm } from '../../ai-models';
+import { ModelSelectorComponent, UserKeysComponent, UserKeysForm } from '../../ai-models';
 import { DataAugmentationTaskOnGoing, getOperationFromTaskName, hasFilters } from '../tasks-automation.models';
 import { RouterModule } from '@angular/router';
 import { FilterExpressionModalComponent } from '../../search-widget/search-configuration/filter-expression-modal';
@@ -91,6 +91,7 @@ export interface TaskFormCommonConfig {
     ExpandableTextareaComponent,
     InfoCardComponent,
     LabelModule,
+    ModelSelectorComponent,
     PaDropdownModule,
     PaExpanderModule,
     PaIconModule,
@@ -117,6 +118,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private tasksAutomation = inject(TasksAutomationService);
   private modalService = inject(SisModalService);
+  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -216,8 +218,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   taskDefinition?: TaskFullDefinition;
   learningConfigurations?: LearningConfigurations;
-  availableLLMs: OptionModel[] = [];
+  availableLLMs: LearningConfigurationOption[] = [];
   unsupportedLLMs = ['generative-multilingual-2023'];
+  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
 
   get properties() {
     return this.taskDefinition?.validation.properties;
@@ -247,10 +250,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((schema) => {
         this.learningConfigurations = schema;
-        const hasCheapLLM = (schema?.['generative_model']?.options || []).some(
-          (option) => option.value === DEFAULT_CHEAP_LLM,
+        this.availableLLMs = (schema?.['generative_model']?.options || []).filter(
+          (option) => !this.unsupportedLLMs.includes(option.value),
         );
-        const hasDefaultLLM = (schema?.['generative_model']?.options || []).some(
+        const hasCheapLLM = this.availableLLMs.some((option) => option.value === DEFAULT_CHEAP_LLM);
+        const hasDefaultLLM = this.availableLLMs.some(
           (option) => option.value === schema?.['generative_model']?.default,
         );
         if (!this.form.controls.llm.controls.model.value) {
@@ -258,9 +262,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
             hasCheapLLM ? DEFAULT_CHEAP_LLM : hasDefaultLLM ? schema?.['generative_model']?.default : '',
           );
         }
-        this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
-          .filter((option) => !this.unsupportedLLMs.includes(option.value))
-          .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
         this.cdr.markForCheck();
       });
 

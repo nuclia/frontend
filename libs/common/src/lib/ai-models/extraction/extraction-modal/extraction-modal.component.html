@@ -37,7 +37,8 @@
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [vllmOnly]="true"
                     [config]="config?.vllm_config"
-                    (valueChange)="vllmConfig = $event"></stf-llm-configuration>
+                    (valueChange)="vllmConfig = $event"
+                    (statusChange)="vllmConfigStatus = $event"></stf-llm-configuration>
                 </div>
               }
             </div>
@@ -62,7 +63,8 @@
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [config]="config?.ai_tables"
                     [isAiTable]="true"
-                    (valueChange)="aiTables = $event"></stf-llm-configuration>
+                    (valueChange)="aiTables = $event"
+                    (statusChange)="aiTablesStatus = $event"></stf-llm-configuration>
                 </div>
               }
             </div>
@@ -82,7 +84,7 @@
       <pa-button
         kind="primary"
         type="submit"
-        [disabled]="configForm.invalid"
+        [disabled]="invalid"
         (click)="save()">
         {{ 'generic.save' | translate }}
       </pa-button>

@@ -22,10 +22,11 @@
           {{ 'search.configuration.generative-answer.generative-model.description' | translate }}
         </div>
         <div class="extra-fields visible">
-          <pa-select
+          <stf-model-selector
             formControlName="generative_model"
-            [label]="'search.configuration.generative-answer.generative-model.select-label' | translate"
-            [options]="generativeModels"></pa-select>
+            [options]="generativeModels"
+            [disclaimerRequired]="!!(modelsDisclaimer | async)"
+            (heightChanged)="heightChanged.emit()"></stf-model-selector>
         </div>
         <div
           class="extra-fields visible"

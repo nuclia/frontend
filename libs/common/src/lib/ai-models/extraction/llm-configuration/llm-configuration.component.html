@@ -68,13 +68,11 @@
             {{ 'kb.ai-models.extraction.extract.processing.vllm_config.custom-model-warning' | translate }}
           </nsi-info-card>
         }
-        <pa-select
+        <div class="title-s">{{ 'kb.ai-models.extraction.llm-configuration.generative-model' | translate }}</div>
+        <stf-model-selector
           formControlName="generative_model"
-          [label]="'kb.ai-models.extraction.llm-configuration.generative-model' | translate">
-          @for (model of generativeModels; track model.value) {
-            <pa-option [value]="model.value">{{ model.name }}</pa-option>
-          }
-        </pa-select>
+          [options]="generativeModels"
+          [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
         <!-- 
         <nsi-expandable-textarea
           formControlName="generative_prompt_id"

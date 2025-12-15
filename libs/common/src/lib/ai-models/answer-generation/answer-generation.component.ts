@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { LearningConfigurationOption } from '@nuclia/core';
 import {
@@ -15,6 +15,7 @@ import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { convertEnumProperties, keyProviders } from '../ai-models.utils';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
+import { ModelSelectorComponent } from './model-selector/model-selector.component';
 
 @Component({
   selector: 'stf-answer-generation',
@@ -23,24 +24,20 @@ import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component
     FormsModule,
     InfoCardComponent,
     PaTextFieldModule,
-    PaTogglesModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
     TranslateModule,
     StickyFooterComponent,
     PaButtonModule,
-    PaButtonModule,
     UserKeysComponent,
     ExpandableTextareaComponent,
+    ModelSelectorComponent,
   ],
   templateUrl: './answer-generation.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerGenerationComponent extends LearningConfigurationDirective implements OnDestroy {
   keyProviders = keyProviders;
-  popoverHelp: { [key: string]: string } = {
-    'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
-  };
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -75,12 +72,13 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     return this.configForm.pristine && this.userKeysForm?.pristine;
   }
   get isModelConfiguration() {
-    return this.generativeModelValue.includes('/');
+    return this.generativeModelValue?.includes('/');
   }
 
   constructor() {
     super();
-    this.configForm.controls.generative_model.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+    this.configForm.controls.generative_model.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
+      this.updateCurrentGenerativeModel(value);
       // Wait for the user key form to update before setting their values
       setTimeout(() => {
         this.resetUserKeys();
