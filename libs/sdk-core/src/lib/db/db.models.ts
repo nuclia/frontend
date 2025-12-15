@@ -432,6 +432,11 @@ export enum ModelType {
   RELATIONS = 'RELATIONS',
 }
 
+export enum AssumeRole {
+  NONE = 0,
+  BEDROCK = 1,
+}
+
 interface BaseCustomModel {
   model_id: string | null;
   account: string | null;
@@ -455,6 +460,7 @@ export interface ModelConfigurationItem {
   id: string;
   default_model_id: string;
   description?: string;
+  assume_role?: AssumeRole;
 }
 
 export interface ModelConfiguration extends ModelConfigurationItem {

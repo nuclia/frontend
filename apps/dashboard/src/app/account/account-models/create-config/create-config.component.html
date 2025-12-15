@@ -15,12 +15,13 @@
         [options]="generativeModelOptions | async"></pa-select>
       <pa-input
         formControlName="description"
-        [errorMessages]="validationMessages.description">
+        [errorMessages]="validationMessages.description"
+        [help]="'generic.required-field' | translate">
         {{ 'generic.description' | translate }}
       </pa-input>
       <pa-select
         formControlName="zone"
-        [label]="'account.models.model-configs.zone' | translate"
+        [label]="'generic.zone' | translate"
         [options]="zoneOptions || []"></pa-select>
       <ng-container [formGroup]="promptsForm">
         @if (userPrompt | async; as prompt) {
@@ -42,6 +43,13 @@
           </nsi-expandable-textarea>
         }
       </ng-container>
+      @if ((isBedrockIntegrationEnabled | async) && (showAssumeRole | async)) {
+        <pa-toggle
+          formControlName="useBedrock"
+          labelOnRight>
+          {{ 'account.models.model-configs.use-bedrock' | translate }}
+        </pa-toggle>
+      }
       @if (schema | async; as schema) {
         @if (generativeModel | async; as generativeModel) {
           <stf-user-keys

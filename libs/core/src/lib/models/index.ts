@@ -1,4 +1,5 @@
 export * from './account.model';
+export * from './bedrock.model';
 export * from './billing.model';
 export * from './local.model';
 export * from './magic.model';

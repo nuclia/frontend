@@ -12,7 +12,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
+import { AssumeRole, ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
 import { combineLatest, defer, filter, forkJoin, map, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
@@ -37,6 +37,7 @@ export class CreateConfigComponent implements OnInit {
   features = inject(FeaturesService);
 
   zones = this.modal.config.data?.zones || [];
+  bedrockZones = this.modal.config.data?.bedrockZones || [];
   config = this.modal.config.data?.config;
   zone = this.modal.config.data?.zone;
   createMode = !this.config;
@@ -45,6 +46,7 @@ export class CreateConfigComponent implements OnInit {
     default_model_id: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
     description: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
     zone: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
+    useBedrock: new FormControl<boolean>(false, { nonNullable: true }),
   });
   promptsForm = new FormGroup({
     prompt: new FormControl<string>('', { nonNullable: true }),
@@ -80,12 +82,23 @@ export class CreateConfigComponent implements OnInit {
     map(([schema, model]) => (schema['generative_model']?.options || []).find((option) => option.value === model)),
     filter((value) => !!value),
   );
+  currentZone = defer(() =>
+    this.configForm.controls.zone.valueChanges.pipe(startWith(this.configForm.controls.zone.value)),
+  );
 
   prompts = combineLatest([this.schema, this.generativeModel]).pipe(
     map(([schema, model]) => schema['user_prompts']?.schemas?.[model.user_prompt || '']),
   );
   userPrompt = this.prompts.pipe(map((prompts) => prompts?.properties?.['prompt']));
   systemPrompt = this.prompts.pipe(map((prompts) => prompts?.properties?.['system']));
+  showAssumeRole = combineLatest([this.generativeModel, this.currentZone]).pipe(
+    map(([model, currentZone]) => {
+      // TODO: use "generative_providers" endpoint to know which are Bedrock models
+      const isBedrockModel = model.provider === 'bedrock' || model.name.toLocaleLowerCase().includes('bedrock');
+      return isBedrockModel && this.bedrockZones.some((zone) => zone.slug === currentZone);
+    }),
+  );
+  isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
 
   zoneOptions = this.zones.map((zone) => new OptionModel({ id: zone.id, value: zone.slug, label: zone.title || '' }));
   generativeModelOptions = this.schema.pipe(
@@ -97,12 +110,19 @@ export class CreateConfigComponent implements OnInit {
   );
 
   constructor(
-    private modal: ModalRef<{ zones: Zone[]; config?: ModelConfiguration; zone?: string }, ModelConfigurationCreation>,
+    private modal: ModalRef<
+      { zones: Zone[]; bedrockZones: Zone[]; config?: ModelConfiguration; zone?: string },
+      ModelConfigurationCreation
+    >,
   ) {}
 
   ngOnInit() {
     if (this.config && this.zone) {
-      this.configForm.patchValue({ ...this.config, zone: this.zone });
+      this.configForm.patchValue({
+        ...this.config,
+        zone: this.zone,
+        useBedrock: this.config.assume_role === AssumeRole.BEDROCK,
+      });
       this.configForm.disable();
 
       this.generativeModel.pipe(take(1)).subscribe((model) => {
@@ -140,7 +160,7 @@ export class CreateConfigComponent implements OnInit {
       this.userPrompt.pipe(take(1)),
       this.systemPrompt.pipe(take(1)),
     ]).subscribe(([model, userPrompt, systemPrompt]) => {
-      const values = this.configForm.getRawValue();
+      const { useBedrock, ...values } = this.configForm.getRawValue();
       const userKeys = this.userKeysForm?.getRawValue();
       const prompts = {
         prompt: !!userPrompt ? this.promptsForm.value.prompt?.trim() : '',
@@ -150,6 +170,7 @@ export class CreateConfigComponent implements OnInit {
         ...values,
         user_keys: userKeys?.enabled ? { [model.user_key || '']: userKeys?.user_keys } : null,
         user_prompts: prompts.prompt || prompts.system ? { [model.user_prompt || '']: prompts } : null,
+        assume_role: useBedrock ? AssumeRole.BEDROCK : undefined,
       });
     });
   }

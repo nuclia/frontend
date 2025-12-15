@@ -42,12 +42,12 @@
       </div>
 
       <div class="zone">
-        <h4>{{ 'generic.zone' | translate }}</h4>
+        <h4>{{ 'generic.processing-zone' | translate }}</h4>
         <p>{{ 'account.nua_key_zone' | translate }}</p>
         <pa-select
           formControlName="zone"
           [readonly]="(zones || []).length <= 1"
-          [label]="'generic.zone' | translate">
+          [label]="'generic.processing-zone' | translate">
           @for (zone of zones; track zone.slug) {
             <pa-option [value]="zone.id">
               {{ zone.title }}
