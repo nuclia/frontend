@@ -92,13 +92,13 @@ export class CreateConfigComponent implements OnInit {
   userPrompt = this.prompts.pipe(map((prompts) => prompts?.properties?.['prompt']));
   systemPrompt = this.prompts.pipe(map((prompts) => prompts?.properties?.['system']));
   showAssumeRole = combineLatest([this.generativeModel, this.currentZone]).pipe(
-    map(
-      ([model, currentZone]) =>
-        model.provider === 'bedrock' && this.bedrockZones.some((zone) => zone.slug === currentZone),
-    ),
+    map(([model, currentZone]) => {
+      // TODO: use "generative_providers" endpoint to know which are Bedrock models
+      const isBedrockModel = model.provider === 'bedrock' || model.name.toLocaleLowerCase().includes('bedrock');
+      return isBedrockModel && this.bedrockZones.some((zone) => zone.slug === currentZone);
+    }),
   );
   isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
-
 
   zoneOptions = this.zones.map((zone) => new OptionModel({ id: zone.id, value: zone.slug, label: zone.title || '' }));
   generativeModelOptions = this.schema.pipe(
