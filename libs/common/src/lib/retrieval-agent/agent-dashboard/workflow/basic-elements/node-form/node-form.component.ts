@@ -190,6 +190,9 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
 
   // Get the actual schema for a property (resolving anyOf and $refs)
   private getPropertySchema(property: any): any {
+    if (property.widget) {
+      return property;
+    }
     if (property.$ref) {
       const resolved = this.resolveRef(property.$ref);
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
