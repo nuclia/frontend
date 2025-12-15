@@ -3,6 +3,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { SyncService } from './sync.service';
 import { MockProvider } from 'ng-mocks';
 import { BackendConfigurationService, FeaturesService, NotificationService } from '@flaps/core';
+import { of } from 'rxjs';
 
 describe('SyncService', () => {
   let service: SyncService;
@@ -20,7 +21,12 @@ describe('SyncService', () => {
           },
         },
         MockProvider(NotificationService),
-        MockProvider(FeaturesService),
+        MockProvider(FeaturesService, {
+          unstable: {
+            cloudSyncService: of(false),
+            sitefinityConnector: of(false),
+          },
+        } as FeaturesService),
         SyncService,
       ],
     });
