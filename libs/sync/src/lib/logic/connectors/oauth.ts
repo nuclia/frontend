@@ -13,6 +13,7 @@ export class OAuthConnector implements IConnector {
   allowToSelectFolders = false;
   resumable = false;
   canSyncSecurityGroups: boolean;
+  isCloud = true;
 
   constructor(name: string, id: string, path: string) {
     this.canSyncSecurityGroups = name === 'gdrive';

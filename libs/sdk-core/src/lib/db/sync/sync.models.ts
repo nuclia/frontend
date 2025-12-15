@@ -5,7 +5,8 @@ import type { IWritableKnowledgeBox } from '../kb/kb.models';
 export interface ISyncManager {
   kb: IWritableKnowledgeBox;
   nuclia: INuclia;
-  createConfig(config: SyncConfigurationCreate, params: any): Observable<SyncConfiguration>;
+  createExternalConnection(provider: string): Observable<{ authorize_url: string }>;
+  createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration>;
   getConfigs(): Observable<SyncConfiguration[]>;
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
@@ -20,15 +21,18 @@ export interface SyncConfiguration {
   updated_at: string;
   sync_root_path: string;
   sync_interval_minutes: number;
-  email: string;
+  created_by: string;
+  external_connection: {
+    id: string;
+    provider: string;
+  };
   provider: string;
-  status: 'pending_authorization' | 'authorized';
-  authorize_url?: string;
 }
 
 export interface SyncConfigurationCreate {
   name: string;
-  provider: string;
+  sync_root_path: string;
+  external_connection_id: string;
 }
 
 export interface Job {
@@ -36,5 +40,5 @@ export interface Job {
   created_at: string;
   finished_at: string | null;
   config_id: string;
-  status: 'pending';
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
 }

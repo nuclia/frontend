@@ -17,6 +17,7 @@ export interface ConnectorDefinition {
   permanentSyncOnly?: boolean;
   deprecated?: boolean;
   cloud?: boolean;
+  provider?: string;
   factory: (data?: ConnectorSettings) => IConnector;
 }
 
@@ -28,6 +29,7 @@ export interface IConnectorBase {
 }
 
 export interface IConnector extends IConnectorBase {
+  isCloud?: boolean;
   getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
@@ -115,6 +117,7 @@ export interface ISyncEntity {
   disabled?: boolean;
   syncSecurityGroups?: boolean;
   extract_strategy?: string;
+  isCloud?: boolean;
 }
 
 export interface SyncBasicData {

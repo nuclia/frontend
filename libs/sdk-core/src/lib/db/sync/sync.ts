@@ -12,8 +12,12 @@ export class SyncManager implements ISyncManager {
     this.nuclia = nuclia;
   }
 
-  createConfig(config: SyncConfigurationCreate, params: any): Observable<SyncConfiguration> {
-    return this.nuclia.rest.post<any>(`${this.kb.path}/sync_configs`, { ...config, ...params });
+  createExternalConnection(provider: string): Observable<{ authorize_url: string }> {
+    return this.nuclia.rest.post<any>(`${this.kb.path}/external_connections`, { provider });
+  }
+
+  createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
+    return this.nuclia.rest.post<any>(`${this.kb.path}/sync_configs`, { ...config });
   }
 
   getConfigs(): Observable<SyncConfiguration[]> {

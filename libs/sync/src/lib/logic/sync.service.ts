@@ -11,7 +11,7 @@ import {
 } from './models';
 import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './connectors/sitemap';
-import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
+import { NucliaOptions, WritableKnowledgeBox, SyncConfiguration, SyncConfigurationCreate } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './connectors/folder';
 import { SharepointImpl } from './connectors/sharepoint';
@@ -20,7 +20,6 @@ import { RSSConnector } from './connectors/rss';
 import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
 import { SitefinityConnector } from './connectors/sitefinity';
-import { SyncConfiguration } from 'libs/sdk-core/src/lib/db/sync/sync.models';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -35,15 +34,16 @@ export class SyncService {
       instances?: { [key: string]: IConnector };
     };
   } = {
-    google: {
+    google_oauth: {
       definition: {
-        id: 'google',
+        id: 'google_oauth',
+        provider: 'google_oauth',
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
         cloud: true,
-        factory: (settings) => new OAuthConnector('google', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new OAuthConnector('google_oauth', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     onedrive: {
@@ -160,21 +160,46 @@ export class SyncService {
     );
   }
 
+  private syncConfigtoISyncEntity(config: SyncConfiguration): ISyncEntity {
+    return {
+      id: config.id,
+      title: config.name,
+      connector: {
+        name: config.external_connection.provider,
+        parameters: config,
+      },
+      lastSyncGMT: undefined,
+      disabled: false,
+      isCloud: true,
+    };
+  }
   getSync(syncId: string): Observable<ISyncEntity> {
     const syncs = this._syncCache.getValue();
     if (syncs[syncId]) {
       return of(syncs[syncId]);
     } else {
-      return this.http
-        .get<ISyncEntity>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
-          headers: this.serverHeaders,
-        })
-        .pipe(
-          tap((sync) => {
-            syncs[syncId] = sync;
-            this._syncCache.next(syncs);
-          }),
+      if (this._useCloudSync.getValue()) {
+        return this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) => kb.syncManager.getConfig(syncId)),
+          map((config) => ({
+            ...this.syncConfigtoISyncEntity(config),
+            kbId: config.kb_id,
+            connectorId: config.external_connection.provider,
+          })),
         );
+      } else {
+        return this.http
+          .get<ISyncEntity>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
+            headers: this.serverHeaders,
+          })
+          .pipe(
+            tap((sync) => {
+              syncs[syncId] = sync;
+              this._syncCache.next(syncs);
+            }),
+          );
+      }
     }
   }
 
@@ -216,18 +241,24 @@ export class SyncService {
     );
   }
 
-  addCloudSync(sync: ISyncEntity): Observable<SyncConfiguration> {
+  getOAuthUrl(provider: string): Observable<string> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) =>
-        kb.syncManager.createConfig(
-          {
-            name: sync.title,
-            provider: sync.connector.name,
-          },
-          sync.connector.parameters,
-        ),
-      ),
+      switchMap((kb) => kb.syncManager.createExternalConnection(provider)),
+      map((res) => res.authorize_url),
+    );
+  }
+
+  addCloudSync(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.createConfig(config)),
+      tap((sync) => {
+        const syncs = this._syncCache.getValue();
+        syncs[sync.id] = this.syncConfigtoISyncEntity(sync);
+        this._syncCache.next(syncs);
+        this._cacheUpdated.next(new Date().toISOString());
+      }),
     );
   }
 
@@ -274,15 +305,17 @@ export class SyncService {
         switchMap((kb) =>
           kb.syncManager.getConfigs().pipe(
             map((configs) =>
-              configs.map((config) => ({
-                id: config.id,
-                kbId: config.kb_id,
-                title: config.name,
-                connectorId: config.provider,
-                connector: this.getConnector(config.provider, config.id),
-                lastSyncGMT: undefined,
-                disabled: false,
-              })),
+              configs
+                .filter((config) => config.kb_id === kbId)
+                .map((config) => ({
+                  id: config.id,
+                  kbId: config.kb_id,
+                  title: config.name,
+                  connectorId: config.external_connection.provider,
+                  connector: this.getConnector(config.external_connection.provider, config.id),
+                  lastSyncGMT: undefined,
+                  disabled: false,
+                })),
             ),
           ),
         ),

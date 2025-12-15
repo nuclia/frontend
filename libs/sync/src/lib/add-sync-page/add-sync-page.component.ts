@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,6 +16,9 @@ import { ConfigurationFormComponent } from '../configuration-form';
 import { FolderSelectionComponent } from '../folder-selection';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 
+// Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
+// to avoid making a dependency
+const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 @Component({
   selector: 'nsy-add-sync-page',
   imports: [
@@ -41,7 +44,6 @@ export class AddSyncPageComponent implements OnInit {
   private modalService = inject(SisModalService);
   private translate = inject(TranslateService);
   private toaster = inject(SisToastService);
-  private cdr = inject(ChangeDetectorRef);
 
   connectorId = this.currentRoute.params.pipe(
     filter((params) => params['connector']),
@@ -77,31 +79,28 @@ export class AddSyncPageComponent implements OnInit {
       .pipe(
         filter((params) => !!params['syncId']),
         take(1),
-        tap((params) => {
-          this.loading = true;
-          this.cdr.markForCheck();
-          this.syncId = params['syncId'] as string;
-          this.syncService.setCurrentSyncId(this.syncId);
-          this.validForm = true;
-        }),
-        switchMap(() => this.syncService.getSync(this.syncId as string)),
-        tap((sync) => {
-          // We keep the distinction between loaded sync and configuration from the form to make sure the configurationForm component
-          // will trigger the sync setter only once
-          this.sync = sync;
-          this.configuration = sync;
-          this.cdr.markForCheck();
+        switchMap((params) => {
+          const pending = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}');
+          if (pending.name && pending.sync_root_path) {
+            return this.syncService
+              .addCloudSync({
+                name: pending.name,
+                sync_root_path: pending.sync_root_path,
+                external_connection_id: params['syncId'],
+              })
+              .pipe(
+                switchMap((sync) => {
+                  localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
+                  this.syncId = sync.id;
+                  return this._syncCreationDone(sync.id);
+                }),
+              );
+          } else {
+            return of(undefined);
+          }
         }),
       )
-      .subscribe({
-        next: () => {
-          this._goNext();
-          this.loading = false;
-          this.cdr.markForCheck();
-          this.router.navigate([], { queryParams: {} });
-        },
-        error: () => this.toaster.error('sync.details.authentication.fail'),
-      });
+      .subscribe();
   }
 
   goBack() {
@@ -173,7 +172,6 @@ export class AddSyncPageComponent implements OnInit {
     this.saving = true;
     const syncEntity = this.configuration;
     if (!this.syncId) {
-      console.log(syncEntity);
       this._createSync(syncEntity)
         .pipe(
           switchMap(({ connector, authorize_url }) => this._onSuccessfulCreation(connector, syncEntity, authorize_url)),
@@ -209,32 +207,48 @@ export class AddSyncPageComponent implements OnInit {
   }
 
   private _createSync(syncEntity: ISyncEntity): Observable<{ connector: IConnector; authorize_url?: string }> {
-    const isCloud = syncEntity.connector.name === 'google';
-    const create = isCloud
-      ? this.syncService.addCloudSync(syncEntity).pipe(map((config) => config.authorize_url))
-      : this.syncService.addSync(syncEntity).pipe(map(() => ''));
-    return create.pipe(
-      tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),
-      switchMap((authorize_url) => {
-        const connector = this.syncService.getConnector(syncEntity.connector.name, syncEntity.id);
-        // Setup sync items from the connector itself if the source doesn't allow to select folders
-        if (!connector.allowToSelectFolders && !isCloud) {
-          if (typeof connector.handleParameters === 'function') {
-            connector.handleParameters(syncEntity.connector.parameters);
-          }
-          return this.syncService
-            .updateSync(syncEntity.id, {
-              foldersToSync: connector.getStaticFolders(),
-            })
-            .pipe(
-              map(() => ({
-                connector: this.syncService.getConnector(syncEntity.connector.name, syncEntity.id),
-                authorize_url,
-              })),
-            );
-        } else {
-          return of({ connector, authorize_url });
-        }
+    return this.connectorDefinition.pipe(
+      take(1),
+      switchMap((connector) => {
+        const isCloud = connector.cloud;
+        const createObs =
+          isCloud && connector.provider
+            ? this.syncService.getOAuthUrl(connector.provider)
+            : this.syncService.addSync(syncEntity).pipe(map(() => ''));
+        return createObs.pipe(
+          tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),
+          switchMap((authorize_url) => {
+            if (isCloud) {
+              localStorage.setItem(
+                PENDING_NEW_CONNECTOR_KEY,
+                JSON.stringify({
+                  redirect: location.href,
+                  name: syncEntity.title,
+                  sync_root_path: syncEntity.connector.parameters['sync_root_path'],
+                }),
+              );
+            }
+            const connector = this.syncService.getConnector(syncEntity.connector.name, syncEntity.id);
+            // Setup sync items from the connector itself if the source doesn't allow to select folders
+            if (!connector.allowToSelectFolders && !isCloud) {
+              if (typeof connector.handleParameters === 'function') {
+                connector.handleParameters(syncEntity.connector.parameters);
+              }
+              return this.syncService
+                .updateSync(syncEntity.id, {
+                  foldersToSync: connector.getStaticFolders(),
+                })
+                .pipe(
+                  map(() => ({
+                    connector: this.syncService.getConnector(syncEntity.connector.name, syncEntity.id),
+                    authorize_url,
+                  })),
+                );
+            } else {
+              return of({ connector, authorize_url });
+            }
+          }),
+        );
       }),
     );
   }
@@ -265,14 +279,19 @@ export class AddSyncPageComponent implements OnInit {
         const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
         this.router.navigate([path], { relativeTo: this.currentRoute });
       }),
-      switchMap(() => {
-        this.toaster.success('sync.details.toast.triggering-sync-success');
-        return this.syncService.triggerSync(syncId).pipe(
-          catchError(() => {
-            this.toaster.error('sync.details.toast.triggering-sync-failed');
-            return of();
-          }),
-        );
+      switchMap(() => this.syncService.useCloudSync),
+      switchMap((useCloud) => {
+        if (useCloud) {
+          return of();
+        } else {
+          this.toaster.success('sync.details.toast.triggering-sync-success');
+          return this.syncService.triggerSync(syncId).pipe(
+            catchError(() => {
+              this.toaster.error('sync.details.toast.triggering-sync-failed');
+              return of();
+            }),
+          );
+        }
       }),
     );
   }

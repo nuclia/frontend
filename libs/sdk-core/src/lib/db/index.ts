@@ -5,6 +5,7 @@ export * from './notifications';
 export * from './resource';
 export * from './retrieval-agent';
 export * from './search';
+export * from './sync';
 export * from './task';
 export * from './training';
 export * from './upload';
