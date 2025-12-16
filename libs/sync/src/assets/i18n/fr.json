@@ -13,7 +13,7 @@
 	"sync.add-page.description.confluence": "Téléchargez et synchronisez le contenu des dossiers Confluence sélectionnés.",
 	"sync.add-page.description.dropbox": "Téléchargez et synchronisez le contenu des dossiers Dropbox sélectionnés.",
 	"sync.add-page.description.folder": "Téléchargez et synchronisez le contenu de vos dossiers de bureau.",
-	"sync.add-page.description.gdrive": "Téléchargez et synchronisez le contenu des dossiers Google Drive sélectionnés.",
+	"sync.add-page.description.google_oauth": "Téléchargez et synchronisez le contenu des dossiers Google Drive sélectionnés.",
 	"sync.add-page.description.onedrive": "Téléchargez et synchronisez le contenu des dossiers Onedrive sélectionnés.",
 	"sync.add-page.description.rss": "Téléchargez et synchronisez le contenu d'une source RSS.",
 	"sync.add-page.description.sharepoint": "Téléchargez et synchronisez le contenu des dossiers Sharepoint sélectionnés.",

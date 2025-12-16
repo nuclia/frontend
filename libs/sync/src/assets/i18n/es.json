@@ -13,7 +13,7 @@
 	"sync.add-page.description.confluence": "Cargue y sincronice contenido de carpetas de Confluence seleccionadas.",
 	"sync.add-page.description.dropbox": "Cargue y sincronice contenido de carpetas seleccionadas de Dropbox.",
 	"sync.add-page.description.folder": "Cargue y sincronice contenido desde las carpetas de su escritorio.",
-	"sync.add-page.description.gdrive": "Cargue y sincronice contenido de carpetas seleccionadas de Google Drive.",
+	"sync.add-page.description.google_oauth": "Cargue y sincronice contenido de carpetas seleccionadas de Google Drive.",
 	"sync.add-page.description.onedrive": "Cargue y sincronice contenido de carpetas seleccionadas de Onedrive.",
 	"sync.add-page.description.rss": "Cargue y sincronice contenido desde una fuente RSS.",
 	"sync.add-page.description.sharepoint": "Cargue y sincronice contenido de carpetas seleccionadas de Sharepoint.",

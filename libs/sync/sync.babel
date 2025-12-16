@@ -366,7 +366,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>gdrive</name>
+												<name>google_oauth</name>
 												<description/>
 												<comment/>
 												<translations>

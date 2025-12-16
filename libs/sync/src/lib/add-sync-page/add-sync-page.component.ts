@@ -280,6 +280,7 @@ export class AddSyncPageComponent implements OnInit {
         this.router.navigate([path], { relativeTo: this.currentRoute });
       }),
       switchMap(() => this.syncService.useCloudSync),
+      take(1),
       switchMap((useCloud) => {
         if (useCloud) {
           return of();

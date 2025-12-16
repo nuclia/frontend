@@ -284,7 +284,10 @@ export class SyncService {
   deleteSync(syncId: string): Observable<void> {
     return (
       this._useCloudSync.getValue()
-        ? this.sdk.currentKb.pipe(switchMap((kb) => kb.syncManager.deleteConfig(syncId)))
+        ? this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) => kb.syncManager.deleteConfig(syncId)),
+          )
         : this.http.delete<void>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
             headers: this.serverHeaders,
           })

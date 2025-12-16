@@ -100,7 +100,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   syncs: Observable<SyncBasicData[]> = combineLatest([
     this.syncService.cacheUpdated,
-    this.syncService.useCloudSync,
+    this.syncService.useCloudSync.pipe(take(1)),
   ]).pipe(
     switchMap(([, useCloud]) => this.sdk.currentKb.pipe(map((kb) => ({ kb, useCloud })))),
     switchMap(({ kb, useCloud }) => this.syncService.getSyncsForKB(kb.id, useCloud)),
