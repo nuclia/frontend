@@ -14,28 +14,31 @@
 
         @if ((editMode | async) === false) {
           <div class="cta-container">
-            <div class="toggle-container">
-              <pa-toggle
-                withBackground
-                [value]="!sync.disabled"
-                data-cy="active-toggle"
-                (valueChange)="toggleSync($event)">
-                {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
-              </pa-toggle>
-            </div>
+            @if (!sync.isCloud) {
+              <div class="toggle-container">
+                <pa-toggle
+                  withBackground
+                  [value]="!sync.disabled"
+                  data-cy="active-toggle"
+                  (valueChange)="toggleSync($event)">
+                  {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
+                </pa-toggle>
+              </div>
 
-            <pa-button
-              aspect="basic"
-              data-cy="sync-now"
-              [disabled]="isSyncing | async"
-              (click)="triggerSync()">
-              {{ 'sync.details.buttons.sync-now' | translate }}
-            </pa-button>
-            <pa-button
-              aspect="basic"
-              routerLink="./edit">
-              {{ 'sync.details.buttons.edit-settings' | translate }}
-            </pa-button>
+              <pa-button
+                aspect="basic"
+                data-cy="sync-now"
+                [disabled]="isSyncing | async"
+                (click)="triggerSync()">
+                {{ 'sync.details.buttons.sync-now' | translate }}
+              </pa-button>
+
+              <pa-button
+                aspect="basic"
+                routerLink="./edit">
+                {{ 'sync.details.buttons.edit-settings' | translate }}
+              </pa-button>
+            }
             <pa-button
               kind="destructive"
               data-cy="delete"

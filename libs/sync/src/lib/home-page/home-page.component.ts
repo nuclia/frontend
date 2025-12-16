@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   HeaderCell,
   PaButtonModule,
@@ -23,7 +23,18 @@ import {
   SisModalService,
   SisToastService,
 } from '@nuclia/sistema';
-import { filter, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
 
@@ -61,26 +72,38 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private toaster = inject(SisToastService);
   private modalService = inject(SisModalService);
   private translate = inject(TranslateService);
+  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
   // TODO: download dropdown is placed in the layout but will be implemented in https://app.shortcut.com/flaps/story/9739/setup-sync-agent-download-dropdown
   downloadSyncAgentFeature = false;
 
+  hasCloudSync = this.features.unstable.cloudSyncService;
+  useCloudSync = this.syncService.useCloudSync;
   inactiveServer = this.syncService.isServerDown;
   syncAgentForm = new FormGroup({
     type: new FormControl<SyncServerType>('desktop', { nonNullable: true }),
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
   connectors = this.syncService.connectors;
-  connectorList: Observable<ConnectorDefinition[]> = this.syncService.connectorsObs.pipe(
+  private _connectorList: Observable<ConnectorDefinition[]> = this.syncService.connectorsObs.pipe(
     map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))),
+  );
+  connectorList: Observable<ConnectorDefinition[]> = this._connectorList.pipe(
+    map((connectors) => connectors.filter((connector) => !connector.cloud)),
+  );
+  cloudConnectorList: Observable<ConnectorDefinition[]> = this._connectorList.pipe(
+    map((connectors) => connectors.filter((connector) => connector.cloud)),
   );
   serverUrlBackup = '';
 
-  syncs: Observable<SyncBasicData[]> = this.syncService.cacheUpdated.pipe(
-    switchMap(() => this.sdk.currentKb),
-    switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
+  syncs: Observable<SyncBasicData[]> = combineLatest([
+    this.syncService.cacheUpdated,
+    this.syncService.useCloudSync.pipe(take(1)),
+  ]).pipe(
+    switchMap(([, useCloud]) => this.sdk.currentKb.pipe(map((kb) => ({ kb, useCloud })))),
+    switchMap(({ kb, useCloud }) => this.syncService.getSyncsForKB(kb.id, useCloud)),
   );
   syncTableHeader: HeaderCell[] = [
     new HeaderCell({ id: 'name', label: 'sync.home-page.sync-list.table-columns.name' }),
@@ -126,6 +149,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   saveSyncServer() {
+    this.syncService.updateUseCloudSync(this.syncAgentTypeControl.value === 'cloud');
     if (this.syncAgentForm.valid) {
       const syncAgentConfig = this.syncAgentForm.getRawValue();
       const serverUrl = syncAgentConfig.type === 'server' ? syncAgentConfig.serverUrl : LOCAL_SYNC_SERVER;

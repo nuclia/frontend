@@ -88,19 +88,7 @@ class SitefinityImpl implements IConnector {
     return;
   }
 
-  cleanAuthData() {
-    throw new Error('Method not implemented.');
-  }
-
   getParametersValues(): ConnectorParameters {
     return {};
-  }
-
-  goToOAuth() {
-    // eslint-disable-next-line no-empty-function
-  }
-
-  authenticate(): Observable<boolean> {
-    return of(true);
   }
 }

@@ -25,6 +25,10 @@ import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent } from '@flaps/common';
 
+// Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
+// to avoid making a dependency
+const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -61,6 +65,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.sdk.cleanAccount();
     });
 
+    this.redirectToSyncCreation();
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
@@ -126,6 +131,18 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           access_token,
           refresh_token: querystring.get('refresh_token') || '',
         });
+      }
+    }
+  }
+
+  private redirectToSyncCreation() {
+    const params = location.search;
+    if (params.includes('external_connection_id')) {
+      const querystring = new URLSearchParams(params.split('?')[1]);
+      const external_connection_id = querystring.get('external_connection_id');
+      const redirect = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}')['redirect'];
+      if (external_connection_id && redirect) {
+        location.href = `${redirect}/${external_connection_id}`;
       }
     }
   }

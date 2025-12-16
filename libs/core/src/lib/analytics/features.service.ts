@@ -61,6 +61,7 @@ export class FeaturesService {
     sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),
     modelsDisclaimer: this.featureFlag.isFeatureEnabled('models-disclaimer'),
     bedrockIntegration: this.featureFlag.isFeatureEnabled('bedrock-integration'),
+    cloudSyncService: this.featureFlag.isFeatureEnabled('cloud-sync-service'),
   };
 
   /**

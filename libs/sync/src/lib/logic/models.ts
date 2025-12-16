@@ -16,6 +16,8 @@ export interface ConnectorDefinition {
   helpUrl?: string;
   permanentSyncOnly?: boolean;
   deprecated?: boolean;
+  cloud?: boolean;
+  provider?: string;
   factory: (data?: ConnectorSettings) => IConnector;
 }
 
@@ -27,12 +29,10 @@ export interface IConnectorBase {
 }
 
 export interface IConnector extends IConnectorBase {
+  isCloud?: boolean;
   getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
-  cleanAuthData(): void;
-  goToOAuth(redirect: string, reset?: boolean): void;
-  authenticate(): Observable<boolean>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   getStaticFolders(): SyncItem[];
 }
@@ -117,6 +117,7 @@ export interface ISyncEntity {
   disabled?: boolean;
   syncSecurityGroups?: boolean;
   extract_strategy?: string;
+  isCloud?: boolean;
 }
 
 export interface SyncBasicData {
