@@ -80,6 +80,33 @@ class SitefinityImpl implements IConnector {
           },
         ],
       },
+      {
+        id: 'scraping',
+        title: 'sync.connectors.sitefinity.web-scraping.label',
+        description: 'sync.connectors.sitefinity.web-scraping.help',
+        fields: [
+          {
+            id: 'webScraping',
+            label: 'sync.connectors.sitefinity.web-scraping.label',
+            type: 'boolean',
+            required: false,
+          },
+          {
+            id: 'webScrapingCssSelector',
+            label: 'sync.connectors.common.css.label',
+            type: 'text',
+            required: false,
+            help: 'sync.connectors.common.css.help',
+          },
+          {
+            id: 'localExtract',
+            label: 'sync.connectors.common.local-extract.label',
+            help: 'sync.connectors.common.local-extract.help',
+            type: 'boolean',
+            required: false,
+          },
+        ],
+      },
     ]);
   }
 
