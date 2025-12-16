@@ -98,26 +98,30 @@ export class DriverFieldConfigService {
       return { ...this.specialFieldMappings[key], customKey: key };
     }
 
+    // Determine type
+    const type = this.determineFieldType(property, schema);
+
     // Special handling for password-like fields
     if (
-      key.toLowerCase().includes('password') ||
-      key.toLowerCase().includes('secret') ||
-      key.toLowerCase().includes('token')
+      (key.toLowerCase().includes('password') ||
+        key.toLowerCase().includes('secret') ||
+        key.toLowerCase().includes('token')) &&
+      type === 'string'
     ) {
       return { component: 'pa-input', type: 'password', customKey: key };
     }
 
     // Special handling for URL-like fields
     if (
-      key.toLowerCase().includes('url') ||
-      key.toLowerCase().includes('endpoint') ||
-      key.toLowerCase().includes('uri')
+      (key.toLowerCase().includes('url') ||
+        key.toLowerCase().includes('endpoint') ||
+        key.toLowerCase().includes('uri')) &&
+      type === 'string'
     ) {
       return { component: 'pa-input', type: 'url', customKey: key };
     }
 
-    // Determine type and get appropriate component
-    const type = this.determineFieldType(property, schema);
+    // Get appropriate component based on type
     const baseConfig = this.typeComponentMappings[type] || this.typeComponentMappings['string'];
     return { ...baseConfig, customKey: key };
   }
