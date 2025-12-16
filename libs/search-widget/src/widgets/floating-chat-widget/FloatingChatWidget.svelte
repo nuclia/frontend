@@ -483,7 +483,7 @@
             show={true}
             standaloneChat={true}
             fullscreen={false}
-            height={panel_height}
+            height={'auto'}
             on:close={closePanel} />
         </div>
       </div>
