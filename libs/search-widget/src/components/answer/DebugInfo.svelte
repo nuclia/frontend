@@ -11,8 +11,8 @@
     show?: boolean;
   }
 
-  let { answer, rephrasedQuery = '', show = false }: Props = $props();
-  
+  let { answer, rephrasedQuery = '', show = $bindable(false) }: Props = $props();
+
   let tokens = $derived(
     answer?.consumption && answer.consumption.normalized_tokens.input > 0
       ? answer.consumption.normalized_tokens
