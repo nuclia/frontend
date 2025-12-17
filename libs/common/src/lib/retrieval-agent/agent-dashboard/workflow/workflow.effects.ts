@@ -187,7 +187,8 @@ export class WorkflowEffectService {
         const { parentNode, children } = data;
         const nodeId = parentNode.nodeRef.instance.id;
         const agentId = parentNode?.agentId;
-        if (parentNode) {
+        const isAlreadyAdded = requests.some((item) => item.nodeId === nodeId);
+        if (parentNode && !isAlreadyAdded) {
           if (agentId) {
             const request = this.updateAgent(parentNode, agentId).pipe(
               tap(() => {
