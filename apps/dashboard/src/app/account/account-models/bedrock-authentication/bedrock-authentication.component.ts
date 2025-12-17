@@ -44,6 +44,7 @@ export class BedrockAuthenticatonComponent {
   });
 
   zone = this.modal.config.data?.zone;
+  awsRegion = this.zone?.split('-').slice(1, -1).join('-') || '';
   params?: BedrockParameters;
   policy = JSON.stringify(DEFAULT_IAM_POLICY, null, 2);
   copied: { [key: string]: boolean } = {};
@@ -81,7 +82,6 @@ export class BedrockAuthenticatonComponent {
           this.bedrockService
             .finishAuthFlow(account.id, this.zone || '', {
               role_arn: this.form.getRawValue().arn,
-              region: this.zone || '',
             })
             .pipe(switchMap(() => this.bedrockService.getStatus(account.id, this.zone || ''))),
         ),

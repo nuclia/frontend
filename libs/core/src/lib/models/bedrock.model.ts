@@ -6,7 +6,6 @@ export interface BedrockParameters {
 
 export interface BedrockPayload {
   role_arn: string;
-  region: string;
 }
 
 export interface BedrockStatus {

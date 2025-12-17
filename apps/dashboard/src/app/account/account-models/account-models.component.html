@@ -83,20 +83,27 @@
         } @else {
           <div>
             @if (bedrockIntegrations | async; as integrations) {
-              @if (integrations.length > 0) {
-                <pa-table
-                  columns="1fr 1fr 1fr"
-                  border>
-                  <pa-table-header>
-                    <pa-table-cell header>{{ 'generic.zone' | translate }}</pa-table-cell>
-                    <pa-table-cell header>{{ 'generic.status' | translate }}</pa-table-cell>
-                    <pa-table-cell header></pa-table-cell>
-                  </pa-table-header>
-                  @for (integration of integrations; track integration.zone.slug) {
-                    <pa-table-row>
-                      <pa-table-cell class="body-s">{{ integration.zone.title }}</pa-table-cell>
-                      <pa-table-cell class="body-m">
-                        <div class="status">
+              <pa-table
+                columns="1fr 1fr 1fr"
+                border>
+                <pa-table-header>
+                  <pa-table-cell header>{{ 'generic.zone' | translate }}</pa-table-cell>
+                  <pa-table-cell header>{{ 'generic.status' | translate }}</pa-table-cell>
+                  <pa-table-cell header></pa-table-cell>
+                </pa-table-header>
+                @for (integration of integrations; track integration.zone.slug) {
+                  <pa-table-row>
+                    <pa-table-cell class="body-m">
+                      <div>
+                        <div>{{ integration.zone.title }}</div>
+                        <div class="body-s secondary">{{ integration.zone.slug }}</div>
+                      </div>
+                    </pa-table-cell>
+                    <pa-table-cell class="body-m">
+                      <div class="status">
+                        @if (integration.status === 'none') {
+                          -
+                        } @else {
                           {{ 'account.models.bedrock.status.' + integration.status | translate }}
                           @if (integration.errorMessage) {
                             <pa-icon
@@ -108,10 +115,21 @@
                               <div class="body-s">{{ integration.errorMessage }}</div>
                             </pa-popover>
                           }
-                        </div>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        <div class="align-right">
+                        }
+                      </div>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <div class="align-right">
+                        @if (integration.status === 'none') {
+                          <pa-button
+                            iconAndText
+                            icon="gear"
+                            aspect="basic"
+                            size="small"
+                            (click)="setupIntegration(integration.zone.slug)">
+                            {{ 'account.models.bedrock.set-up' | translate }}
+                          </pa-button>
+                        } @else {
                           <pa-button
                             icon="trash"
                             kind="destructive"
@@ -120,27 +138,12 @@
                             (click)="deleteIntegration(integration.zone.slug)">
                             {{ 'generic.delete' | translate }}
                           </pa-button>
-                        </div>
-                      </pa-table-cell>
-                    </pa-table-row>
-                  }
-                </pa-table>
-              } @else {
-                <div class="create">
-                  <nsi-dropdown-button
-                    aspect="basic"
-                    icon="gear"
-                    [popupRef]="dropdown">
-                    {{ 'account.models.bedrock.set-up' | translate }}
-                  </nsi-dropdown-button>
-                </div>
-                <pa-dropdown #dropdown>
-                  <pa-option-header>{{ 'generic.zone' | translate }}</pa-option-header>
-                  @for (zone of awsZones | async; track zone) {
-                    <pa-option (selectOption)="setupIntegration(zone.slug)">{{ zone.title }}</pa-option>
-                  }
-                </pa-dropdown>
-              }
+                        }
+                      </div>
+                    </pa-table-cell>
+                  </pa-table-row>
+                }
+              </pa-table>
             }
           </div>
         }
