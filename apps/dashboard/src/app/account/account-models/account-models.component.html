@@ -93,12 +93,7 @@
                 </pa-table-header>
                 @for (integration of integrations; track integration.zone.slug) {
                   <pa-table-row>
-                    <pa-table-cell class="body-m">
-                      <div>
-                        <div>{{ integration.zone.title }}</div>
-                        <div class="body-s secondary">{{ integration.zone.slug }}</div>
-                      </div>
-                    </pa-table-cell>
+                    <pa-table-cell class="body-m">{{ integration.zone.slug }}</pa-table-cell>
                     <pa-table-cell class="body-m">
                       <div class="status">
                         @if (integration.status === 'none') {
