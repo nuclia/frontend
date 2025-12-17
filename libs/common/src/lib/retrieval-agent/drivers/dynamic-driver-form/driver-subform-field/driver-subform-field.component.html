@@ -25,6 +25,13 @@
           @if (getFormControl(field.key)) {
             <div class="subform-field">
               @switch (field.config.component) {
+                @case ('array-string-field') {
+                  <app-array-string-field
+                    [form]="getSafeSubform()"
+                    [arrayName]="field.key"
+                    [label]="field.label"
+                    [required]="field.required"></app-array-string-field>
+                }
                 @case ('api-headers-field') {
                   <app-api-headers-field
                     [form]="getSafeSubform()"

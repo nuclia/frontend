@@ -17,6 +17,7 @@ import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-ang
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
 import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
 import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
+import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -35,6 +36,7 @@ export interface RenderableDriverSubfield {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    ArrayStringFieldComponent,
     CommonModule,
     ReactiveFormsModule,
     PaTextFieldModule,

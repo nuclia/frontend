@@ -327,8 +327,14 @@ export class DynamicDriverFormComponent implements OnInit {
       Object.keys(configControl.controls).forEach((configKey) => {
         if (this.existingDriver?.config && configKey in this.existingDriver.config) {
           const control = configControl.get(configKey);
-          if (control && this.existingDriver?.config) {
-            control.setValue((this.existingDriver.config as any)[configKey]);
+          const value = (this.existingDriver.config as any)[configKey];
+          if (control instanceof FormArray && Array.isArray(value)) {
+            control.clear();
+            value.forEach((item) => {
+              control.push(new FormControl(item));
+            });
+          } else {
+            control?.setValue(value);
           }
         }
       });
