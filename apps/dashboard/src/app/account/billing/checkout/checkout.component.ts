@@ -446,8 +446,8 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     const isProd = location.hostname === 'rag.progress.cloud';
     window.open(
       isProd
-        ? 'https://billing.stripe.com/p/login/3csdRbcYAb0y07u000'
-        : 'https://billing.stripe.com/p/login/test_aEU4k8frDb9w2ModQQ',
+        ? 'https://billing.stripe.com/p/login/28EaEY6Icfkf6Uuek46c000'
+        : 'https://billing.stripe.com/p/login/test_8x2fZhbiE9Xz58c95U6sw00',
       'blank',
       'noreferrer',
     );
