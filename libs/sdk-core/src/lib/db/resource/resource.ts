@@ -23,8 +23,10 @@ import type {
   TextField,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
-import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
-import { ask, find, search } from '../search';
+import type { ChatOptions, Search, SearchOptions } from '../search/search.models';
+import type { Ask } from '../search/ask.models';
+import { ask } from '../search/ask';
+import { find, search } from '../search/search';
 import { retry429Config, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb/kb.models';
 
