@@ -12,7 +12,7 @@
           [description]="'account.models.bedrock.create-role' | translate">
           <pa-accordion-item-body>
             <ul class="step-list body-m">
-              <li [innerHTML]="'account.models.bedrock.step-1-1' | translate"></li>
+              <li [innerHTML]="'account.models.bedrock.step-1-1' | translate: { region: awsRegion }"></li>
               <li [innerHTML]="'account.models.bedrock.step-1-2' | translate"></li>
               <li [innerHTML]="'account.models.bedrock.step-1-3' | translate"></li>
               <li>
@@ -87,7 +87,8 @@
                   <pa-textarea
                     class="full-width"
                     [value]="policy"
-                    rows="10"
+                    [help]="'account.models.bedrock.permissions-help' | translate"
+                    rows="8"
                     readonly
                     externalLabel></pa-textarea>
                   <!-- TODO: a link to the documentation should be added when it's ready -->

@@ -4,7 +4,6 @@ import { BedrockService, BedrockStatus, FeaturesService, SDKService, Zone, ZoneS
 import {
   ModalConfig,
   PaButtonModule,
-  PaDropdownModule,
   PaIconModule,
   PaPopupModule,
   PaTableModule,
@@ -13,12 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModelConfigurationItem } from '@nuclia/core';
-import {
-  DropdownButtonComponent,
-  SisModalService,
-  SisProgressModule,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+import { SisModalService, SisProgressModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { CreateConfigComponent } from './create-config/create-config.component';
@@ -37,10 +31,8 @@ interface BedrockIntegration extends BedrockStatus {
   selector: 'app-account-models',
   imports: [
     CommonModule,
-    DropdownButtonComponent,
     ModelRestrictionsComponent,
     PaButtonModule,
-    PaDropdownModule,
     PaIconModule,
     PaPopupModule,
     PaTableModule,
@@ -75,7 +67,7 @@ export class AccountModelsComponent {
   );
   bedrockIntegrations = new ReplaySubject<BedrockIntegration[]>(1);
   bedrockZones = this.bedrockIntegrations.pipe(
-    map((items) => items.filter((item) => item.status === 'none').map((item) => item.zone)),
+    map((items) => items.filter((item) => item.status === 'active').map((item) => item.zone)),
   );
   isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
   loadingBedrock = false;
@@ -207,7 +199,7 @@ export class AccountModelsComponent {
             ),
       ),
       tap((items) => {
-        this.bedrockIntegrations.next(items.filter((item) => item.status !== 'none'));
+        this.bedrockIntegrations.next(items);
         this.loadingBedrock = false;
         this.cdr.markForCheck();
       }),
