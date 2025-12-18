@@ -80,8 +80,10 @@
       (acc, result) =>
         acc.concat(
           result.paragraphs.map((paragraph) => {
-            const title = DOMPurify.sanitize(`<h3>[${paragraph.rank}] ${result.title}</h3>\n`);
-            return `${title} ${markdownToHTML(paragraph.text, false)}`;
+            const url = result.origin?.url;
+            const link = url ? `<a href="${url}">${result.title}</a>` : result.title;
+            const title = DOMPurify.sanitize(`<h3>[${paragraph.rank}] ${link}</h3>`);
+            return `${title}\n${markdownToHTML(paragraph.text, false)}`;
           }),
         ),
       [] as string[],
