@@ -8,6 +8,9 @@ import { IResources } from '../RaoWidget';
 import styles from './Conversation.css?inline';
 import { IResources } from '../RaoWidget';
 
+// @ts-expect-error - inline CSS imports are handled by the bundler
+import styles from './Conversation.css?inline';
+
 interface IConversation {}
 
 type ReasoningType = 'info' | 'step' | 'context' | 'answer' | 'error';
