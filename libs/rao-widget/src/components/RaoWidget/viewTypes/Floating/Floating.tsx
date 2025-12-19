@@ -3,6 +3,9 @@ import { Icon } from '../../../Icon';
 import { Standard } from '../Standard/Standard';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
+import { useRaoContext } from '../../../../hooks';
+
+// @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Floating.css?inline';
 
 export interface FloatingProps extends IRaoWidget {}
@@ -13,6 +16,8 @@ export const Floating: FC<FloatingProps> = ({
   viewtype: _ignoredViewType,
   ...props
 }) => {
+  const { resources } = useRaoContext();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const openWidget = useCallback(() => {
@@ -60,7 +65,7 @@ export const Floating: FC<FloatingProps> = ({
             className="rao-floating__launcher"
             aria-haspopup="dialog"
             aria-expanded={false}
-            aria-label="Open chat"
+            aria-label={resources.aria_openchat}
             onClick={openWidget}>
             <Icon
               icon="chat"

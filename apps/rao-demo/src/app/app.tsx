@@ -10,9 +10,7 @@ export function App() {
         zone="europe-1"
         viewtype="floating"
         backend="https://stashify.cloud/api"
-        inputplaceholder="Ask Agentic RAG a question or make a request ..."
-        title="Agentic RAG"
-        username="Eric"></RaoWrapper>
+      />
     </div>
   );
 }

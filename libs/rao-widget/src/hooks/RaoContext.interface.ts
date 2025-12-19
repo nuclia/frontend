@@ -1,6 +1,6 @@
 import type { NucliaFetcher, SessionsApi } from '../repository';
 import type { ICallState, IMessage, INuclia, ISessions } from '../interfaces';
-import { EViewType, IRaoWidget } from '../components/RaoWidget';
+import { EViewType, IRaoWidget, IResources } from '../components/RaoWidget';
 
 type SessionState = ICallState<ISessions>[string];
 
@@ -9,7 +9,7 @@ export interface IRaoProvider extends IRaoWidget {
   sessionId?: string | null;
 }
 
-export interface IRaoContext extends Omit<IRaoProvider, 'sessionId'> {
+export interface IRaoContext extends Omit<IRaoProvider, 'sessionId' | 'resources'> {
   sessionId: string | null;
   sessions: ICallState<ISessions>;
   getSessionsAPI: (key?: string) => Promise<void>;
@@ -23,4 +23,6 @@ export interface IRaoContext extends Omit<IRaoProvider, 'sessionId'> {
   setVisibleViewType: React.Dispatch<React.SetStateAction<EViewType>>;
   conversation: IMessage[] | null;
   onChat: (message: string) => void;
+
+  resources: IResources;
 }

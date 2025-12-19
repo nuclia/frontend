@@ -191,8 +191,15 @@ export namespace Widget {
   }
 
   export interface RaoWidgetConfiguration {
-    username?: string;
-    title?: string;
+    promptconfig?: {
+      prompts: string[];
+      usefallbackprompts?: boolean;
+      visibleprompts?: number;
+    };
+    recordingconfing?: {
+      language: string;
+    };
+    viewtype?: 'conversation' | 'floating';
   }
 
   export interface RaoWidget {

@@ -15,6 +15,8 @@ const defaultContext: IRaoContext = {
   setVisibleViewType: () => {},
   conversation: null,
   onChat: () => {},
+  // @ts-expect-error - placeholder default
+  resources: {},
 };
 
 export const RaoContext = React.createContext<IRaoContext>(defaultContext);

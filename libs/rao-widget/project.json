@@ -9,7 +9,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["./tools/build-rao.sh"]
+        "commands": ["yarn vite build -c=libs/rao-widget/vite.config.lib.ts"]
       },
       "configurations": {
         "production": {}

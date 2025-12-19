@@ -5,6 +5,7 @@ import { SessionDrawer } from '../../../SessionDrawer';
 import { Conversation } from '../../../Conversation';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
+// @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Standard.css?inline';
 
 const fallbackCards = [
@@ -24,15 +25,19 @@ export interface StandardProps extends IRaoWidget {
 }
 
 export const Standard: FC<StandardProps> = ({
-  title,
-  username,
-  cards,
-  inputplaceholder,
+  promptconfig,
+  recordingconfing,
   viewtype = 'conversation',
   onCloseFloating,
 }) => {
-  const { activeView, visibleViewType, onChat, setVisibleViewType } = useRaoContext();
-  const { hasSupport: canUseVoice, isRecording, stopRecording, toggleRecording, transcript } = useVoiceRecorder();
+  const { activeView, visibleViewType, onChat, setVisibleViewType, resources } = useRaoContext();
+  const {
+    hasSupport: canUseVoice,
+    isRecording,
+    stopRecording,
+    toggleRecording,
+    transcript,
+  } = useVoiceRecorder(recordingconfing?.language ?? 'en-US');
 
   const [query, setQuery] = useState('');
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -92,14 +97,24 @@ export const Standard: FC<StandardProps> = ({
   }, [transcript]);
 
   const displayCards = useMemo(() => {
-    if (!cards || cards.length === 0) {
-      return fallbackCards;
+    if (!promptconfig?.prompts || promptconfig.prompts.length === 0) {
+      if (promptconfig?.usefallbackprompts) {
+        return fallbackCards;
+      }
+      return [];
     }
-    if (cards.length < 4) {
-      return [...cards, ...fallbackCards.slice(cards.length, 4)];
+
+    if (promptconfig.prompts.length < 4) {
+      if (promptconfig.usefallbackprompts) {
+        return [
+          ...promptconfig.prompts,
+          ...fallbackCards.slice(promptconfig.prompts.length, promptconfig.visibleprompts ?? 4),
+        ];
+      }
     }
-    return cards.slice(0, 4);
-  }, [cards]);
+
+    return promptconfig.prompts.slice(0, promptconfig.visibleprompts ?? 4);
+  }, [promptconfig]);
 
   const handleCardClick = (event: MouseEvent<HTMLButtonElement>) => {
     const value = event.currentTarget.dataset.value ?? '';
@@ -150,14 +165,14 @@ export const Standard: FC<StandardProps> = ({
       <style>{styles}</style>
       <div className={containerClassName}>
         <header className="rao-react__header">
-          <span className="rao-react__brand">{title}</span>
+          <span className="rao-react__brand">{resources.intro_title}</span>
 
           <div className="rao-react__header-actions">
             {features.sessionHistory && (
               <button
                 type="button"
                 className="rao-react__icon-button"
-                aria-label="Open chat history"
+                aria-label={resources.aria_openchat}
                 aria-expanded={isDrawerOpen}
                 onClick={openDrawer}
                 ref={triggerRef}>
@@ -172,7 +187,7 @@ export const Standard: FC<StandardProps> = ({
               <button
                 type="button"
                 className="rao-react__icon-button"
-                aria-label={isExpanded ? 'Collapse chat' : 'Expand chat'}
+                aria-label={isExpanded ? resources.aria_collapsechat : resources.aria_expandchat}
                 onClick={handleFloatingExpand}>
                 <Icon
                   icon={isExpanded ? 'collapse' : 'expand'}
@@ -185,7 +200,7 @@ export const Standard: FC<StandardProps> = ({
               <button
                 type="button"
                 className="rao-react__icon-button"
-                aria-label="Close chat"
+                aria-label={resources.aria_closechat}
                 onClick={handleCloseFloating}>
                 <span
                   aria-hidden="true"
@@ -202,21 +217,24 @@ export const Standard: FC<StandardProps> = ({
             <Conversation />
           ) : (
             <>
-              <h1 className="rao-react__greeting">Hello{username ? `, ${username}!` : '!'}</h1>
-              <section
-                className="rao-react__cards"
-                aria-label="Suggested prompts">
-                {displayCards.map((card, index) => (
-                  <button
-                    key={`${card}-${index}`}
-                    type="button"
-                    className="rao-react__card"
-                    data-value={card}
-                    onClick={handleCardClick}>
-                    {card}
-                  </button>
-                ))}
-              </section>
+              <h1 className="rao-react__greeting">{resources.intro_greetings}</h1>
+
+              {!!promptconfig?.prompts?.length && (
+                <section
+                  className="rao-react__cards"
+                  aria-label={resources.aria_suggestedprompts}>
+                  {displayCards.map((card, index) => (
+                    <button
+                      key={`${card}-${index}`}
+                      type="button"
+                      className="rao-react__card"
+                      data-value={card}
+                      onClick={handleCardClick}>
+                      {card}
+                    </button>
+                  ))}
+                </section>
+              )}
             </>
           )}
 
@@ -227,42 +245,46 @@ export const Standard: FC<StandardProps> = ({
               <button
                 type="button"
                 className="rao-react__square-button"
-                aria-label="Add prompt">
+                aria-label={resources.aria_addprompt}>
                 <Icon icon="plus" />
               </button>
             )}
 
             <input
               className="rao-react__query"
-              placeholder={isConversationActive ? 'Ask a follow-up' : inputplaceholder}
+              placeholder={
+                isConversationActive ? resources.form_placeholder_followup : resources.form_placeholder_defuault
+              }
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
 
-            <button
-              type="button"
-              className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
-              aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-              title={
-                canUseVoice
-                  ? isRecording
-                    ? 'Stop recording'
-                    : 'Start recording'
-                  : 'Speech recognition is not supported in this browser'
-              }
-              onClick={toggleRecording}
-              aria-pressed={isRecording}
-              disabled={!canUseVoice}>
-              <Icon
-                icon="microphone"
-                size={'sm'}
-                className={
-                  isRecording
-                    ? 'rao-react__microphone-icon rao-react__microphone-icon--recording'
-                    : 'rao-react__microphone-icon'
+            {!!recordingconfing?.language && (
+              <button
+                type="button"
+                className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
+                aria-label={isRecording ? resources.aria_stoprecording : resources.aria_startrecording}
+                title={
+                  canUseVoice
+                    ? isRecording
+                      ? resources.aria_stoprecording
+                      : resources.aria_startrecording
+                    : resources.aria_notsupported
                 }
-              />
-            </button>
+                onClick={toggleRecording}
+                aria-pressed={isRecording}
+                disabled={!canUseVoice}>
+                <Icon
+                  icon="microphone"
+                  size={'sm'}
+                  className={
+                    isRecording
+                      ? 'rao-react__microphone-icon rao-react__microphone-icon--recording'
+                      : 'rao-react__microphone-icon'
+                  }
+                />
+              </button>
+            )}
           </form>
         </main>
 

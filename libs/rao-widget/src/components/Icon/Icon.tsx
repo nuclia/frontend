@@ -1,5 +1,7 @@
 import { forwardRef } from 'react';
 import type { SVGAttributes } from 'react';
+
+// @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Icon.css?inline';
 
 export type IconSize = 'sm' | 'md' | 'lg';

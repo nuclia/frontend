@@ -2,6 +2,9 @@ import { useRaoContext } from '../../hooks/RaoContext';
 import type { AragAnswer } from '@nuclia/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Icon } from '../Icon/Icon';
+import { IResources } from '../RaoWidget';
+
+// @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Conversation.css?inline';
 
 interface IConversation {}
@@ -123,7 +126,7 @@ const pickSourceIcon = (url?: string): string => {
   return 'file';
 };
 
-const extractMetaLabel = (metadata: unknown): string | null => {
+const extractMetaLabel = (metadata: unknown, resources: IResources): string | null => {
   if (!metadata || typeof metadata !== 'object') {
     return null;
   }
@@ -131,21 +134,21 @@ const extractMetaLabel = (metadata: unknown): string | null => {
 
   const page = data.page ?? data.Page ?? data.page_number;
   if (isNonEmptyString(page) || typeof page === 'number') {
-    return `Page ${String(page)}`;
+    return `${resources.meta_page} ${String(page)}`;
   }
 
   const timestamp = data.timestamp ?? data.time ?? data.jump_to;
   if (typeof timestamp === 'number' && Number.isFinite(timestamp)) {
-    return `Jump to ${formatTimecode(timestamp * (timestamp < 1000 ? 1 : 1 / 1000))}`;
+    return `${resources.meta_jumpto} ${formatTimecode(timestamp * (timestamp < 1000 ? 1 : 1 / 1000))}`;
   }
   if (isNonEmptyString(timestamp)) {
-    return `Jump to ${timestamp}`;
+    return `${resources.meta_jumpto} ${timestamp}`;
   }
 
   return null;
 };
 
-const extractSources = (entries: AragAnswer[] | undefined, messageId: string): SourceItem[] => {
+const extractSources = (entries: AragAnswer[] | undefined, messageId: string, resources: IResources): SourceItem[] => {
   if (!entries || entries.length === 0) {
     return [];
   }
@@ -178,14 +181,14 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string): S
 
       const urls = Array.isArray(chunk.url) ? chunk.url.filter(isNonEmptyString) : [];
       const primaryUrl = urls[0];
-      let metadataLabel = extractMetaLabel(chunk.metadata);
+      let metadataLabel = extractMetaLabel(chunk.metadata, resources);
 
       if (!metadataLabel && Array.isArray(contextData.citations) && contextData.citations.length > 0) {
         const citationCandidate = contextData.citations[chunkIndex] ?? contextData.citations[0];
         if (isNonEmptyString(citationCandidate) || typeof citationCandidate === 'number') {
-          metadataLabel = `Citation ${String(citationCandidate)}`;
+          metadataLabel = `${resources.meta_citation} ${String(citationCandidate)}`;
         } else {
-          metadataLabel = `Reference ${chunkIndex + 1}`;
+          metadataLabel = `${resources.meta_reference} ${chunkIndex + 1}`;
         }
       }
 
@@ -193,7 +196,7 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string): S
         ? chunk.title
         : isNonEmptyString(contextData.title)
           ? contextData.title
-          : deriveTitleFromUrl(primaryUrl) ?? `Source ${sources.size + 1}`;
+          : deriveTitleFromUrl(primaryUrl) ?? `${resources.meta_source} ${sources.size + 1}`;
 
       const description = isNonEmptyString(chunk.text) ? truncateText(chunk.text, 200) : undefined;
       const displayUrl = formatDisplayUrl(primaryUrl);
@@ -220,7 +223,11 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string): S
   return Array.from(sources.values());
 };
 
-const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: string): ReasoningItem[] => {
+const humanizeDebugEntries = (
+  entries: AragAnswer[] | undefined,
+  messageId: string,
+  resources: IResources,
+): ReasoningItem[] => {
   if (!entries || entries.length === 0) {
     return [];
   }
@@ -255,7 +262,7 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
     if (exception) {
       const description = isNonEmptyString((exception as { detail?: unknown }).detail)
         ? String((exception as { detail: unknown }).detail)
-        : 'The assistant hit an unexpected issue.';
+        : resources.meta_unexpectedissue;
       const fallback = isNonEmptyString(answer) ? answer : undefined;
       items.push({
         id,
@@ -268,7 +275,7 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
     }
 
     if (step) {
-      const moduleLabel = isNonEmptyString(step.module) ? step.module.replace(/_/g, ' ') : 'Step';
+      const moduleLabel = isNonEmptyString(step.module) ? step.module.replace(/_/g, ' ') : resources.meta_step;
       const title = isNonEmptyString(step.title) ? step.title : moduleLabel;
       const description = isNonEmptyString(step.reason)
         ? step.reason
@@ -281,19 +288,19 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
         notes.push(step.value);
       }
       if (isNonEmptyString(step.agent_path)) {
-        notes.push(`Agent: ${step.agent_path}`);
+        notes.push(`${resources.meta_agent}: ${step.agent_path}`);
       }
       const duration = formatDuration(step.timeit);
       if (duration) {
-        notes.push(`Duration: ${duration}`);
+        notes.push(`${resources.meta_duration}: ${duration}`);
       }
       const inputTokens = formatNumericValue((step as { input_nuclia_tokens?: unknown }).input_nuclia_tokens);
       if (inputTokens) {
-        notes.push(`Input tokens: ${inputTokens}`);
+        notes.push(`${resources.meta_inputtokens}: ${inputTokens}`);
       }
       const outputTokens = formatNumericValue((step as { output_nuclia_tokens?: unknown }).output_nuclia_tokens);
       if (outputTokens) {
-        notes.push(`Output tokens: ${outputTokens}`);
+        notes.push(`${resources.meta_outputtokens}: ${outputTokens}`);
       }
 
       items.push({
@@ -317,29 +324,28 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
         citations?: unknown[];
       };
 
-      const badge = isNonEmptyString(contextData.agent) ? contextData.agent : 'Context';
-      const title = isNonEmptyString(contextData.title) ? contextData.title : 'Context gathered';
+      const badge = isNonEmptyString(contextData.agent) ? contextData.agent : resources.meta_context;
+      const title = isNonEmptyString(contextData.title) ? contextData.title : resources.meta_contextgathered;
       const description = isNonEmptyString(contextData.summary)
         ? contextData.summary
-        : 'Supporting evidence collected for this response.';
-
+        : resources.meta_supportingevidence;
       const notes: string[] = [];
       if (isNonEmptyString(contextData.question)) {
-        notes.push(`Question analysed: ${contextData.question}`);
+        notes.push(`${resources.meta_questionanalysed}: ${contextData.question}`);
       }
 
       const chunks = Array.isArray(contextData.chunks) ? contextData.chunks : [];
       chunks.slice(0, 2).forEach((chunk) => {
         if (isNonEmptyString(chunk.text)) {
-          notes.push(`Evidence: ${truncateText(chunk.text)}`);
+          notes.push(`${resources.meta_evidence}: ${truncateText(chunk.text)}`);
         }
         if (Array.isArray(chunk.url) && chunk.url.length > 0) {
-          notes.push(`Sources: ${chunk.url.slice(0, 3).join(', ')}`);
+          notes.push(`${resources.meta_sources}: ${chunk.url.slice(0, 3).join(', ')}`);
         }
       });
 
       if (Array.isArray(contextData.citations) && contextData.citations.length > 0) {
-        notes.push(`Citations: ${contextData.citations.join(', ')}`);
+        notes.push(`${resources.meta_citations}: ${contextData.citations.join(', ')}`);
       }
 
       items.push({
@@ -404,7 +410,7 @@ const humanizeDebugEntries = (entries: AragAnswer[] | undefined, messageId: stri
 };
 
 export const Conversation: React.FC<IConversation> = () => {
-  const { conversation, nuclia } = useRaoContext();
+  const { conversation, nuclia, resources } = useRaoContext();
   const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 
@@ -485,10 +491,10 @@ export const Conversation: React.FC<IConversation> = () => {
               : [];
 
             const debugEntries = Array.isArray(message.debug) ? message.debug : [];
-            const reasoningItems = humanizeDebugEntries(debugEntries, message.id);
+            const reasoningItems = humanizeDebugEntries(debugEntries, message.id, resources);
             const shouldRenderListInBody =
               Boolean(message.list?.length) && (!canToggleReasoning || reasoningItems.length === 0);
-            const sources = extractSources(debugEntries, message.id);
+            const sources = extractSources(debugEntries, message.id, resources);
             const hasSources = sources.length > 0;
             const isSourcesExpanded = Boolean(expandedSources[message.id]);
 
@@ -517,7 +523,7 @@ export const Conversation: React.FC<IConversation> = () => {
 
                   {canToggleReasoning && isExpanded && (
                     <div className="rao-react__message-reasoning">
-                      <span className="rao-react__message-reasoning-title">Reasoning</span>
+                      <span className="rao-react__message-reasoning-title">{resources.meta_reasoning}</span>
                       {reasoningItems.length > 0 ? (
                         <ol className="rao-react__message-reasoning-steps">
                           {reasoningItems.map((item) => (
@@ -609,7 +615,7 @@ export const Conversation: React.FC<IConversation> = () => {
                           className="rao-react__message-sources-toggle"
                           onClick={() => toggleSources(message.id)}
                           aria-expanded={isSourcesExpanded}>
-                          <span className="rao-react__message-sources-label">Sources</span>
+                          <span className="rao-react__message-sources-label">{resources.meta_sources}</span>
                           <span className="rao-react__message-sources-count">{sources.length}</span>
                           <Icon
                             icon={isSourcesExpanded ? 'chevron-up' : 'chevron-down'}
