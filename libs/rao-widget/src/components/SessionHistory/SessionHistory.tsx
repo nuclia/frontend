@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import type { ISessionHistory, ISessionHistoryGroup } from './SessionHistory.interface';
-import styles from './SessionHistory.css?inline';
 import { useRaoContext } from '../../hooks';
 import { Icon } from '../Icon';
+
+// @ts-expect-error - inline CSS imports are handled by the bundler
+import styles from './SessionHistory.css?inline';
 
 const SAMPLE_HISTORY: ISessionHistoryGroup[] = [
   {

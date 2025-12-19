@@ -3,7 +3,9 @@ import { Icon } from '../../../Icon';
 import { Standard } from '../Standard/Standard';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
-import { useRaoContext } from 'rao-widget/hooks';
+import { useRaoContext } from '../../../../hooks';
+
+// @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Floating.css?inline';
 
 export interface FloatingProps extends IRaoWidget {}
