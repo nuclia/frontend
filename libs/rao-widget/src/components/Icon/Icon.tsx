@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import type { SVGAttributes } from 'react';
-import './Icon.css?inline';
+import styles from './Icon.css?inline';
 
 export type IconSize = 'sm' | 'md' | 'lg';
 
@@ -16,6 +16,7 @@ export const Icon = forwardRef<SVGSVGElement, IconProps>(({ icon, size = 'md', t
 
   return (
     <>
+      <style>{styles}</style>
       <svg
         ref={ref}
         className={`icon icon-${size} ${className}`}

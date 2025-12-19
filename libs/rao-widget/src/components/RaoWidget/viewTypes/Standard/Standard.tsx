@@ -5,7 +5,7 @@ import { SessionDrawer } from '../../../SessionDrawer';
 import { Conversation } from '../../../Conversation';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
-import './Standard.css?inline';
+import styles from './Standard.css?inline';
 
 const fallbackCards = [
   'Prompt Placeholder',
@@ -146,130 +146,133 @@ export const Standard: FC<StandardProps> = ({
   }, [onCloseFloating, stopRecording]);
 
   return (
-    <div className={containerClassName}>
-      <header className="rao-react__header">
-        <span className="rao-react__brand">{title}</span>
+    <>
+      <style>{styles}</style>
+      <div className={containerClassName}>
+        <header className="rao-react__header">
+          <span className="rao-react__brand">{title}</span>
 
-        <div className="rao-react__header-actions">
-          {features.sessionHistory && (
-            <button
-              type="button"
-              className="rao-react__icon-button"
-              aria-label="Open chat history"
-              aria-expanded={isDrawerOpen}
-              onClick={openDrawer}
-              ref={triggerRef}>
-              <Icon
-                icon="submenu"
-                size={'sm'}
-              />
-            </button>
+          <div className="rao-react__header-actions">
+            {features.sessionHistory && (
+              <button
+                type="button"
+                className="rao-react__icon-button"
+                aria-label="Open chat history"
+                aria-expanded={isDrawerOpen}
+                onClick={openDrawer}
+                ref={triggerRef}>
+                <Icon
+                  icon="submenu"
+                  size={'sm'}
+                />
+              </button>
+            )}
+
+            {isFloating ? (
+              <button
+                type="button"
+                className="rao-react__icon-button"
+                aria-label={isExpanded ? 'Collapse chat' : 'Expand chat'}
+                onClick={handleFloatingExpand}>
+                <Icon
+                  icon={isExpanded ? 'collapse' : 'expand'}
+                  size={'sm'}
+                />
+              </button>
+            ) : null}
+
+            {onCloseFloating ? (
+              <button
+                type="button"
+                className="rao-react__icon-button"
+                aria-label="Close chat"
+                onClick={handleCloseFloating}>
+                <span
+                  aria-hidden="true"
+                  className="rao-react__close-symbol">
+                  &times;
+                </span>
+              </button>
+            ) : null}
+          </div>
+        </header>
+
+        <main className={`rao-react__main rao-react__main--${activeView}`}>
+          {isConversationActive ? (
+            <Conversation />
+          ) : (
+            <>
+              <h1 className="rao-react__greeting">Hello{username ? `, ${username}!` : '!'}</h1>
+              <section
+                className="rao-react__cards"
+                aria-label="Suggested prompts">
+                {displayCards.map((card, index) => (
+                  <button
+                    key={`${card}-${index}`}
+                    type="button"
+                    className="rao-react__card"
+                    data-value={card}
+                    onClick={handleCardClick}>
+                    {card}
+                  </button>
+                ))}
+              </section>
+            </>
           )}
 
-          {isFloating ? (
-            <button
-              type="button"
-              className="rao-react__icon-button"
-              aria-label={isExpanded ? 'Collapse chat' : 'Expand chat'}
-              onClick={handleFloatingExpand}>
-              <Icon
-                icon={isExpanded ? 'collapse' : 'expand'}
-                size={'sm'}
-              />
-            </button>
-          ) : null}
+          <form
+            className={formClassName}
+            onSubmit={handleSubmit}>
+            {showAddOns && (
+              <button
+                type="button"
+                className="rao-react__square-button"
+                aria-label="Add prompt">
+                <Icon icon="plus" />
+              </button>
+            )}
 
-          {onCloseFloating ? (
-            <button
-              type="button"
-              className="rao-react__icon-button"
-              aria-label="Close chat"
-              onClick={handleCloseFloating}>
-              <span
-                aria-hidden="true"
-                className="rao-react__close-symbol">
-                &times;
-              </span>
-            </button>
-          ) : null}
-        </div>
-      </header>
-
-      <main className={`rao-react__main rao-react__main--${activeView}`}>
-        {isConversationActive ? (
-          <Conversation />
-        ) : (
-          <>
-            <h1 className="rao-react__greeting">Hello{username ? `, ${username}!` : '!'}</h1>
-            <section
-              className="rao-react__cards"
-              aria-label="Suggested prompts">
-              {displayCards.map((card, index) => (
-                <button
-                  key={`${card}-${index}`}
-                  type="button"
-                  className="rao-react__card"
-                  data-value={card}
-                  onClick={handleCardClick}>
-                  {card}
-                </button>
-              ))}
-            </section>
-          </>
-        )}
-
-        <form
-          className={formClassName}
-          onSubmit={handleSubmit}>
-          {showAddOns && (
-            <button
-              type="button"
-              className="rao-react__square-button"
-              aria-label="Add prompt">
-              <Icon icon="plus" />
-            </button>
-          )}
-
-          <input
-            className="rao-react__query"
-            placeholder={isConversationActive ? 'Ask a follow-up' : inputplaceholder}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-
-          <button
-            type="button"
-            className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
-            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
-            title={
-              canUseVoice
-                ? isRecording
-                  ? 'Stop recording'
-                  : 'Start recording'
-                : 'Speech recognition is not supported in this browser'
-            }
-            onClick={toggleRecording}
-            aria-pressed={isRecording}
-            disabled={!canUseVoice}>
-            <Icon
-              icon="microphone"
-              size={'sm'}
-              className={
-                isRecording
-                  ? 'rao-react__microphone-icon rao-react__microphone-icon--recording'
-                  : 'rao-react__microphone-icon'
-              }
+            <input
+              className="rao-react__query"
+              placeholder={isConversationActive ? 'Ask a follow-up' : inputplaceholder}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
             />
-          </button>
-        </form>
-      </main>
 
-      {features.sessionHistory && (
-        <SessionDrawer
-          isOpen={isDrawerOpen}
-          onClose={closeDrawer}
-        />
-      )}
-    </div>
+            <button
+              type="button"
+              className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
+              aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+              title={
+                canUseVoice
+                  ? isRecording
+                    ? 'Stop recording'
+                    : 'Start recording'
+                  : 'Speech recognition is not supported in this browser'
+              }
+              onClick={toggleRecording}
+              aria-pressed={isRecording}
+              disabled={!canUseVoice}>
+              <Icon
+                icon="microphone"
+                size={'sm'}
+                className={
+                  isRecording
+                    ? 'rao-react__microphone-icon rao-react__microphone-icon--recording'
+                    : 'rao-react__microphone-icon'
+                }
+              />
+            </button>
+          </form>
+        </main>
+
+        {features.sessionHistory && (
+          <SessionDrawer
+            isOpen={isDrawerOpen}
+            onClose={closeDrawer}
+          />
+        )}
+      </div>
+    </>
   );
 };
