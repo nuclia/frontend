@@ -3,7 +3,7 @@ import { Icon } from '../../../Icon';
 import { Standard } from '../Standard/Standard';
 import type { IRaoWidget } from '../../RaoWidget.interface';
 
-import './Floating.css?inline';
+import styles from './Floating.css?inline';
 
 export interface FloatingProps extends IRaoWidget {}
 
@@ -51,35 +51,38 @@ export const Floating: FC<FloatingProps> = ({
   }, [isOpen, closeWidget]);
 
   return (
-    <div className="rao-floating">
-      {!isOpen ? (
-        <button
-          type="button"
-          className="rao-floating__launcher"
-          aria-haspopup="dialog"
-          aria-expanded={false}
-          aria-label="Open chat"
-          onClick={openWidget}>
-          <Icon
-            icon="chat"
-            size={'md'}
-            className="rao-floating__launcher-icon"
-          />
-        </button>
-      ) : null}
+    <>
+      <style>{styles}</style>
+      <div className="rao-floating">
+        {!isOpen ? (
+          <button
+            type="button"
+            className="rao-floating__launcher"
+            aria-haspopup="dialog"
+            aria-expanded={false}
+            aria-label="Open chat"
+            onClick={openWidget}>
+            <Icon
+              icon="chat"
+              size={'md'}
+              className="rao-floating__launcher-icon"
+            />
+          </button>
+        ) : null}
 
-      {isOpen ? (
-        <div
-          className="rao-floating__panel"
-          role="dialog"
-          aria-modal="false">
-          <Standard
-            {...props}
-            viewtype="floating"
-            onCloseFloating={closeWidget}
-          />
-        </div>
-      ) : null}
-    </div>
+        {isOpen ? (
+          <div
+            className="rao-floating__panel"
+            role="dialog"
+            aria-modal="false">
+            <Standard
+              {...props}
+              viewtype="floating"
+              onCloseFloating={closeWidget}
+            />
+          </div>
+        ) : null}
+      </div>
+    </>
   );
 };
