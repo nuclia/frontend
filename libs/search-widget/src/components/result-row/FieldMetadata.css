@@ -2,7 +2,6 @@
   --expander-width: var(--rhythm-3);
 
   color: var(--color-neutral-regular);
-  cursor: pointer;
   display: flex;
   height: var(--expander-width);
   max-height: var(--expander-width);
@@ -27,6 +26,9 @@
     flex-wrap: wrap;
     column-gap: var(--rhythm-1);
     justify-content: flex-start;
+    &.has-more {
+      cursor: pointer;
+    }
   }
 
   .expander-container {

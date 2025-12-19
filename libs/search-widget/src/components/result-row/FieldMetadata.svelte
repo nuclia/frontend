@@ -33,7 +33,7 @@
   }
 
   function updateMetadataExpander() {
-    hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 1;
+    hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 10;
     expanderLeft = getExpanderLeftPosition(metadataElements);
   }
 
@@ -61,7 +61,8 @@
     <div
       class="metadata-container"
       class:ellipsis={!expanded}
-      onclick={expandMetadata}
+      class:has-more={hasMoreMetadata}
+      onclick={hasMoreMetadata ? expandMetadata : undefined}
       onkeyup={(e) => {
         if (e.key === 'Enter') expandMetadata();
       }}>
