@@ -25,6 +25,28 @@
         (click)="addNode()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.add-node' | translate }}
       </pa-button>
+      @if (isAragAdmin | async) {
+        <pa-button
+          aspect="basic"
+          size="small"
+          icon="download"
+          iconAndText=""
+          iconSize="medium"
+          [active]="activeSideBar() === 'import'"
+          (click)="import()">
+          {{ 'retrieval-agents.workflow.toolbar-buttons.import' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          size="small"
+          icon="upload"
+          iconAndText=""
+          iconSize="medium"
+          [active]="activeSideBar() === 'export'"
+          (click)="export()">
+          {{ 'retrieval-agents.workflow.toolbar-buttons.export' | translate }}
+        </pa-button>
+      }
     </div>
     <div class="button-group">
       <pa-button

@@ -129,6 +129,7 @@ export interface IRest {
     path: string,
     extraHeaders?: { [key: string]: string },
     synchronous?: boolean,
+    formData?: boolean,
   ): {
     [key: string]: string;
   };

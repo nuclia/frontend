@@ -17,6 +17,7 @@ export class ConfigurationFormComponent {
   submitDisabled = input<boolean | undefined>();
 
   headerHeight = input();
+  submitButton = input('');
   triggerSubmit = output();
   cancel = output();
 

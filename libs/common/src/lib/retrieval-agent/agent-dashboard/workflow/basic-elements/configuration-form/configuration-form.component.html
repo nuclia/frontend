@@ -16,7 +16,7 @@
       kind="primary"
       type="submit"
       [disabled]="submitDisabled() !== undefined ? submitDisabled() : form().invalid || form().pristine">
-      {{ 'generic.save' | translate }}
+      {{ submitButton() || 'generic.save' | translate }}
     </pa-button>
   </footer>
 </form>
