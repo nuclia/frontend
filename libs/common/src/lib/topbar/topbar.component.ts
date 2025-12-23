@@ -43,11 +43,7 @@ export class TopbarComponent {
   shouldAccountTypeBeVisible = combineLatest([this.accountType, this.isTypeEnforced, this.isAccountManager]).pipe(
     map(
       ([accountType, isTypeEnforced, isAccountManager]) =>
-        !!accountType &&
-        accountType !== 'stash-enterprise' &&
-        accountType !== 'v3enterprise' &&
-        !isTypeEnforced &&
-        isAccountManager,
+        !!accountType && accountType !== 'v3enterprise' && !isTypeEnforced && isAccountManager,
     ),
   );
   billingUrl = this.sdk.currentAccount.pipe(

@@ -20,6 +20,7 @@
   <div class="field-button-container">
     <pa-select
       label="Account type"
+      [readonly]="!(canEdit | async)"
       formControlName="type">
       <pa-option value="stash-trial">Trial</pa-option>
       <pa-option value="v3starter">Starter v3</pa-option>
