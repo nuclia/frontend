@@ -54,16 +54,18 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
 
     // Tooltip event handlers
     const mousemove = (event: MouseEvent) => {
-      const [mouseX] = d3.pointer(event);
-      let index = Math.round((mouseX - margin.left) / x.step());
-      index = Math.max(Math.min(index, this._data.length - 1), 0);
-      const left = x.step() * index + margin.left;
-      const top = y(this._data[index].average);
-      this.tooltipLeft = left - 4;
-      this.tooltipBottom = this.container?.nativeElement.clientHeight - margin.top - top + 8;
-      this.tooltipContent = this._data[index];
-      this.showTooltip = true;
-      this.cdr.markForCheck();
+      if (this.data.length > 0) {
+        const [mouseX] = d3.pointer(event);
+        let index = Math.round((mouseX - margin.left) / x.step());
+        index = Math.max(Math.min(index, this._data.length - 1), 0);
+        const left = x.step() * index + margin.left;
+        const top = y(this._data[index].average);
+        this.tooltipLeft = left - 4;
+        this.tooltipBottom = this.container?.nativeElement.clientHeight - margin.top - top + 8;
+        this.tooltipContent = this._data[index];
+        this.showTooltip = true;
+        this.cdr.markForCheck();
+      }
     };
 
     const mouseleave = () => {

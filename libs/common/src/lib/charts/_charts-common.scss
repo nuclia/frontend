@@ -28,7 +28,7 @@ $chart-font-size: font-size(xs);
   }
 
   .tooltip {
-    $tooltip-background: rgba(0, 0, 0, 0.1);
+    $tooltip-background: rgba(0, 0, 0, 0.7);
 
     background-color: $tooltip-background;
     border-radius: rhythm(1);
