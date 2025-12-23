@@ -82,6 +82,7 @@ export class FieldConfigService {
         resizable: true,
       },
     },
+    parameters: { component: 'key-value-field', type: 'custom' },
   };
 
   // Source mappings
@@ -158,7 +159,7 @@ export class FieldConfigService {
       model_select: { component: 'model-select', type: 'custom' },
       driver_select: { component: 'driver-select', type: 'custom' },
       filtered_source_select: { component: 'filtered-source-select', type: 'custom' },
-  api_headers_field: { component: 'api-headers-field', type: 'custom' },
+      api_headers_field: { component: 'api-headers-field', type: 'custom' },
       code_editor: {
         component: 'code-editor',
         type: 'custom',
