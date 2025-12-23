@@ -19,44 +19,15 @@
   </pa-input>
   <div class="field-button-container">
     <pa-select
-      readonly
       label="Account type"
       formControlName="type">
       <pa-option value="stash-trial">Trial</pa-option>
-      <pa-option value="stash-enterprise">Enterprise</pa-option>
-      <pa-option value="stash-business">Business</pa-option>
-      <pa-option value="stash-developer">Developer</pa-option>
-      <pa-option value="stash-startup">Startup</pa-option>
-      <pa-option value="stash-starter">Starter</pa-option>
-      <pa-option value="stash-growth">Growth</pa-option>
       <pa-option value="v3starter">Starter v3</pa-option>
       <pa-option value="v3fly">Fly v3</pa-option>
       <pa-option value="v3growth">Growth v3</pa-option>
+      <pa-option value="v3pro">Pro v3</pa-option>
       <pa-option value="v3enterprise">Enterprise v3</pa-option>
     </pa-select>
-
-    @if (configForm.controls.type.value === 'stash-trial') {
-      <pa-button
-        (click)="toggleAccountType('v3growth')"
-        [disabled]="!(canEdit | async)">
-        Upgrade to Growth
-      </pa-button>
-      <pa-button
-        (click)="toggleAccountType('v3enterprise')"
-        [disabled]="!(canEdit | async)">
-        Upgrade to Enterprise
-      </pa-button>
-    } @else if (
-      configForm.controls.type.value === 'stash-enterprise' ||
-      configForm.controls.type.value === 'v3enterprise' ||
-      configForm.controls.type.value === 'v3growth'
-    ) {
-      <pa-button
-        (click)="toggleAccountType('stash-trial')"
-        [disabled]="!(canEdit | async)">
-        Downgrade to Trial
-      </pa-button>
-    }
   </div>
 
   <pa-date-picker

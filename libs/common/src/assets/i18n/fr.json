@@ -206,6 +206,7 @@
 	"account.type.v3enterprise": "Compte Entreprise",
 	"account.type.v3fly": "Compte Fly",
 	"account.type.v3growth": "Compte Growth",
+	"account.type.v3pro": "Compte Pro",
 	"account.type.v3starter": "Compte Starter",
 	"account.users_amount": "Nombre total d’utilisateurs dans le compte",
 	"account.users_left": "Total des licences restantes",
