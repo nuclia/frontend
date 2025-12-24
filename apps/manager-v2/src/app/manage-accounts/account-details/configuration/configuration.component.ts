@@ -176,12 +176,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  toggleAccountType(type: AccountTypes) {
-    this.configForm.controls.type.patchValue(type);
-    this.configForm.controls.type.markAsDirty();
-    this.cdr.markForCheck();
-  }
-
   private patchConfigForm(accountDetails: AccountDetails) {
     this.configForm.patchValue(accountDetails);
     this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');

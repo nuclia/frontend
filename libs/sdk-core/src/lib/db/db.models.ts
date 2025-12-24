@@ -3,17 +3,12 @@ export type AccountTypes =
   | 'v3starter'
   | 'v3fly'
   | 'v3growth'
+  | 'v3pro'
   | 'v3enterprise'
 
   // Deprecated
   | 'stash-basic'
-  | 'stash-team'
-  | 'stash-startup'
-  | 'stash-starter'
-  | 'stash-growth'
-  | 'stash-enterprise'
-  | 'stash-developer'
-  | 'stash-business';
+  | 'stash-team';
 
 export const NUA_KEY = 'NUCLIA_NUA_KEY';
 

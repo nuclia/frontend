@@ -4,7 +4,7 @@ export const ACCOUNT_DETAILS: AccountDetails = {
   id: '187be161-3e95-4ed9-9244-f3c6eae17232',
   slug: 'catwoman',
   title: "catwoman's account",
-  type: 'stash-enterprise',
+  type: 'v3enterprise',
   email: 'catwoman+new@nuclia.com',
   created: '2023-11-27T13:22:34.267865Z',
   maxAgents: 5,

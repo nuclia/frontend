@@ -4,7 +4,7 @@ import { combineLatest, map, Observable, of } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
-const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
+const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'v3starter'];
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class FeaturesService {
   );
   isTrial: Observable<boolean> = this._account.pipe(map((account) => !!account.trial_expiration_date));
   isEnterpriseOrGrowth: Observable<boolean> = this._account.pipe(
-    map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+    map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
   );
   canUpgrade = combineLatest([this.isAccountManager, this._account]).pipe(
     map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
@@ -86,7 +86,7 @@ export class FeaturesService {
     ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
     hideWidgetLogo: this._account.pipe(
       map((account) =>
-        ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
+        ['v3growth', 'v3enterprise'].includes(account.type),
       ),
     ),
     vectorset: combineLatest([
@@ -97,37 +97,37 @@ export class FeaturesService {
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureAuthorized('tasks-automation'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     labelerTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('labeller-task'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     askTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('ask-task'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     graphTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-task'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     questionsTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('questions-task'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     graphSearch: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-search'),
       this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     showDemoButton: this.featureFlag.isFeatureEnabled('demo-button'),
