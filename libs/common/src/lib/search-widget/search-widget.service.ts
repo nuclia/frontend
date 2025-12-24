@@ -223,10 +223,14 @@ export class SearchWidgetService {
 
     const tagName = 'progress-rao-widget';
     const scriptSrc = `${this.backendConfig.getCDN()}/rao-widget.umd.js`;
+    /*
     const parameters = Object.entries(widgetOptions || {})
       .filter(([, value]) => !!value)
       .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
       .join('');
+      */
+     // Provisional fix
+    const parameters = '';
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
