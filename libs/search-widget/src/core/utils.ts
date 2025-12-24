@@ -36,7 +36,7 @@ export const loadFonts = () => {
   if (!document.getElementById(fontLinkId)) {
     const font = document.createElement('link');
     font.id = fontLinkId;
-    font.href = 'https://fonts.googleapis.com/css?family=Inter:300,400,600,700';
+    font.href = 'https://cdn.rag.progress.cloud/fonts/inter.css';
     font.rel = 'stylesheet';
 
     const head = document.head || document.getElementsByTagName('head')[0];
