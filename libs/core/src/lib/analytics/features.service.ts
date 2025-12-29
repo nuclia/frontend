@@ -34,6 +34,9 @@ export class FeaturesService {
   isEnterpriseOrGrowth: Observable<boolean> = this._account.pipe(
     map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
   );
+  isEnterpriseOrGrowthOrFly: Observable<boolean> = this._account.pipe(
+    map((account) => ['v3fly', 'v3growth', 'v3enterprise'].includes(account.type)),
+  );  
   canUpgrade = combineLatest([this.isAccountManager, this._account]).pipe(
     map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
   );
@@ -96,33 +99,23 @@ export class FeaturesService {
     ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureAuthorized('tasks-automation'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
+      this.isEnterpriseOrGrowthOrFly,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     labelerTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('labeller-task'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
+      this.isEnterpriseOrGrowthOrFly,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     askTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('ask-task'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
+      this.isEnterpriseOrGrowthOrFly,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     graphTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-task'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
+      this.isEnterpriseOrGrowthOrFly,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     questionsTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('questions-task'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
+      this.isEnterpriseOrGrowthOrFly,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     graphSearch: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-search'),
