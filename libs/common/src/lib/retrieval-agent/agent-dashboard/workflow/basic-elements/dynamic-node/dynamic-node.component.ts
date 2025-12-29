@@ -488,7 +488,8 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
         key.toLowerCase().includes('next_agent') ||
         key.toLowerCase().includes('nextagent') ||
         key.toLowerCase().includes('else') ||
-        key.toLowerCase().includes('alternative')
+        key.toLowerCase().includes('alternative') ||
+        key.toLowerCase().includes('agents')
       ) {
         // Only add if not already added from config
         if (!fallbackEntries.some((entry) => entry.id === key)) {

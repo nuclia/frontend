@@ -99,6 +99,7 @@ export interface ParentNode {
   parentLinkConfigProperty?: string;
   then?: string[];
   else?: string[];
+  agents?: string[];
   fallback?: string;
   nextAgent?: string;
   // If node is a child, index in the parent then/else list
@@ -301,6 +302,7 @@ export interface ExternalAgentUI extends CommonAgentConfig {
 
 export interface RestrictedAgentUI extends CommonAgentConfig {
   code: string;
+  agents?: BaseContextAgent[];
 }
 
 export function getNodeTypeFromAgent(

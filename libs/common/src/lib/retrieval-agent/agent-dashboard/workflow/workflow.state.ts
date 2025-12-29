@@ -462,7 +462,7 @@ export function addNode(
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
     }
-    if (propertyStateKey === 'then' || propertyStateKey === 'else') {
+    if (propertyStateKey === 'then' || propertyStateKey === 'else' || propertyStateKey === 'agents') {
       const existing = (parent as any)?.[propertyStateKey];
       const childIds = Array.isArray(existing) ? [...existing] : [];
       const currentIndex = childIds.indexOf(nodeId);
@@ -550,6 +550,9 @@ export function deleteNode(
       } else if ((parentNode.else || []).includes(id)) {
         const childIds = (parentNode.else || []).filter((childId) => childId !== id);
         updateNode(parentId, nodeCategory, { else: childIds });
+      } else if ((parentNode.agents || []).includes(id)) {
+        const childIds = (parentNode.agents || []).filter((childId) => childId !== id);
+        updateNode(parentId, nodeCategory, { agents: childIds });
       }
     }
   }
@@ -584,8 +587,8 @@ export function deleteNode(
     // Set agent that should be deleted from the backend
     deletedAgents.update((deleted) => [...deleted, { id, category: nodeCategory }]);
   }
-  if (node && (node.then || node.else || node.fallback)) {
-    const childToDelete = (node.then || []).concat(node.else || []);
+  if (node && (node.then || node.else || node.agents || node.fallback)) {
+    const childToDelete = (node.then || []).concat(node.else || []).concat(node.agents || []);
     if (node.fallback) {
       childToDelete.push(node.fallback);
     }

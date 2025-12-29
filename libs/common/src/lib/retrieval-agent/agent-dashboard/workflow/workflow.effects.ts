@@ -18,6 +18,7 @@ import {
   NodeCategory,
   NodeType,
   ParentNode,
+  RestrictedAgentUI,
 } from './workflow.models';
 import {
   getNode,
@@ -245,6 +246,8 @@ export class WorkflowEffectService {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
       } else if ((parentNode.else || []).includes(childId)) {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
+      } else if ((parentNode.agents || []).includes(childId)) {
+        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'agents'));
       } else if (parentNode[key as keyof ParentNode] === childId) {
         const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
         const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || key;
@@ -277,10 +280,13 @@ export class WorkflowEffectService {
   private updateConditionalChildrenConfig(
     parentNode: ParentNode,
     childNode: ParentNode,
-    property: 'then' | 'else_',
+    property: 'then' | 'else_' | 'agents',
   ): { id: string; childIndex: number } {
-    const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI;
-    const children = parentConfig[property] || [];
+    const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI | RestrictedAgentUI;
+    const children =
+      property === 'agents'
+        ? (parentConfig as RestrictedAgentUI)[property] || []
+        : (parentConfig as BaseConditionalAgentUI)[property] || [];
     const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
     let updatedChild;
     if (typeof childNode.childIndex === 'number') {
@@ -291,7 +297,11 @@ export class WorkflowEffectService {
       const childIndex = children.length - 1;
       updatedChild = { id: childNode.nodeRef.instance.id, childIndex };
     }
-    parentConfig[property] = children;
+    if (property === 'agents') {
+      (parentConfig as RestrictedAgentUI)[property] = children;
+    } else {
+      (parentConfig as BaseConditionalAgentUI)[property] = children;
+    }
     return updatedChild;
   }
 

@@ -318,7 +318,7 @@ export class WorkflowService {
     columnIndex: number,
   ) {
     // Common connectable properties that typically contain child agents
-    const connectableProperties = ['fallback', 'next_agent', 'then', 'else_', 'else'];
+    const connectableProperties = ['fallback', 'next_agent', 'then', 'else_', 'else', 'agents'];
 
     connectableProperties.forEach((propertyName) => {
       const childAgents = this.getChildAgentsForEntry(agent, propertyName);
