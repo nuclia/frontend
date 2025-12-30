@@ -131,6 +131,9 @@ export class SearchWidgetService {
       case 'chat':
         tagName = 'nuclia-chat';
         break;
+      case 'floating-chat':
+        tagName = 'nuclia-floating-chat';
+        break;
       default:
         tagName = 'nuclia-search-bar';
     }
@@ -144,7 +147,12 @@ export class SearchWidgetService {
     const parameters = !!widgetParameters
       ? Object.entries(widgetParameters)
           .filter(([, value]) => !!value)
-          .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
+          .map(([key, value]) => {
+            if (typeof value === 'number') {
+              return `\n  ${key}="${value}"`;
+            }
+            return `\n  ${key}="${this.escapeParameter(value || '')}"`;
+          })
           .join('')
       : '';
 
@@ -226,7 +234,12 @@ export class SearchWidgetService {
     /*
     const parameters = Object.entries(widgetOptions || {})
       .filter(([, value]) => !!value)
-      .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
+      .map(([key, value]) => {
+        if (typeof value === 'number') {
+          return `\n  ${key}="${value}"`;
+        }
+        return `\n  ${key}="${this.escapeParameter(value || '')}"`;
+      })
       .join('');
       */
      // Provisional fix

@@ -138,8 +138,80 @@
                   <pa-radio value="popup">
                     {{ 'search.widgets.form.widget-options.style.popup' | translate }}
                   </pa-radio>
+                  <pa-radio value="floating-chat">
+                    {{ 'search.widgets.form.widget-options.style.floating-chat' | translate }}
+                  </pa-radio>
                 </pa-radio-group>
               </div>
+              @if (floatingChatStyleEnabled) {
+                <div class="config-form-field">
+                  <div class="title-xs">{{ 'search.widgets.form.widget-options.fab.position.title' | translate }}</div>
+                  <div class="fab-option">
+                    <span class="body-s">{{ 'search.widgets.form.widget-options.fab.position.help' | translate }}</span>
+                    <pa-radio-group formControlName="fabPosition">
+                      <pa-radio value="bottom-right">
+                        {{ 'search.widgets.form.widget-options.fab.position-bottom-right' | translate }}
+                      </pa-radio>
+                      <pa-radio value="bottom-left">
+                        {{ 'search.widgets.form.widget-options.fab.position-bottom-left' | translate }}
+                      </pa-radio>
+                    </pa-radio-group>
+                  </div>
+                </div>
+                <div class="config-form-field">
+                  <div class="title-xs">{{ 'search.widgets.form.widget-options.fab.size.title' | translate }}</div>
+                  <div class="fab-option">
+                    <span class="body-s">{{ 'search.widgets.form.widget-options.fab.size.help' | translate }}</span>
+                    <pa-radio-group formControlName="fabSize">
+                      <pa-radio value="small">
+                        {{ 'search.widgets.form.widget-options.fab.size-small' | translate }}
+                      </pa-radio>
+                      <pa-radio value="medium">
+                        {{ 'search.widgets.form.widget-options.fab.size-medium' | translate }}
+                      </pa-radio>
+                      <pa-radio value="large">
+                        {{ 'search.widgets.form.widget-options.fab.size-large' | translate }}
+                      </pa-radio>
+                    </pa-radio-group>
+                  </div>
+                </div>
+                <div class="config-form-field">
+                  <pa-input
+                    type="number"
+                    formControlName="panelWidth"
+                    [help]="'search.widgets.form.widget-options.fab.panel-width.help' | translate"
+                    min="0">
+                    {{ 'search.widgets.form.widget-options.fab.panel-width.label' | translate }}
+                  </pa-input>
+                </div>
+                <div class="config-form-field">
+                  <pa-input
+                    type="number"
+                    formControlName="panelHeight"
+                    [help]="'search.widgets.form.widget-options.fab.panel-height.help' | translate"
+                    min="0">
+                    {{ 'search.widgets.form.widget-options.fab.panel-height.label' | translate }}
+                  </pa-input>
+                </div>
+                <div class="config-form-field">
+                  <pa-input
+                    formControlName="fabOffsetBottom"
+                    type="number"
+                    [help]="'search.widgets.form.widget-options.fab.fab-offset-bottom.help' | translate"
+                    min="0">
+                    {{ 'search.widgets.form.widget-options.fab.fab-offset-bottom.label' | translate }}
+                  </pa-input>
+                </div>
+                <div class="config-form-field">
+                  <pa-input
+                    formControlName="fabOffsetSide"
+                    type="number"
+                    [help]="'search.widgets.form.widget-options.fab.fab-offset-side.help' | translate"
+                    min="0">
+                    {{ 'search.widgets.form.widget-options.fab.fab-offset-side.label' | translate }}
+                  </pa-input>
+                </div>
+              }
               <div class="config-form-field">
                 <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
                 <pa-radio-group formControlName="darkMode">
