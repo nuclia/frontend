@@ -94,6 +94,11 @@ export function resetTestAgent() {
   });
 }
 function aragAnswerToUi(data: AragAnswerWithModule): AragAnswerUi {
+  const agentId =
+    data.step?.agent_path.split('/').at(-1) ||
+    data.context?.agent_id ||
+    data.possible_answer?.agent_path.split('/').at(-1) ||
+    null;
   return {
     module: data.module,
     answer: data.answer,
@@ -102,6 +107,7 @@ function aragAnswerToUi(data: AragAnswerWithModule): AragAnswerUi {
     operation: data.operation,
     seqid: data.seqid,
     steps: data.step ? [data.step] : [],
+    agentId,
   };
 }
 
@@ -155,16 +161,17 @@ export const testAgentAnswersByCategory = computed(() => {
   categories.forEach((category) => {
     let previousAnswer: AragAnswerUi | undefined;
     sortedAnswers[category].forEach((answer) => {
-      if (!previousAnswer || previousAnswer.context || answer.module !== previousAnswer.module) {
-        previousAnswer = aragAnswerToUi(answer);
-        answersByCat[category].push(previousAnswer);
-      } else {
+      const currentAnswer = aragAnswerToUi(answer);
+      if (previousAnswer && currentAnswer.agentId === previousAnswer.agentId) {
         // grouping steps of a same module together
         if (answer.step) {
           previousAnswer.steps.push(answer.step);
         } else if (answer.context) {
           previousAnswer.context = answer.context;
         }
+      } else {
+        previousAnswer = currentAnswer;
+        answersByCat[category].push(previousAnswer);
       }
     });
   });
