@@ -4,6 +4,7 @@
     margin-top: var(--rhythm-1);
     :global(.ref) {
       background-color: var(--citation-number-background-color);
+      cursor: pointer;
       display: inline-block;
       font-size: var(--font-size-medium);
       height: var(--rhythm-3);
