@@ -9,6 +9,7 @@ import {
   QueryList,
   Renderer2,
   RendererFactory2,
+  Type,
 } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
@@ -55,6 +56,7 @@ import {
   setCurrentOrigin,
   setOpenSidebar,
   setSidebarHeader,
+  SidebarType,
   unselectNode,
   updateNode,
 } from './workflow.state';
@@ -829,6 +831,25 @@ export class WorkflowService {
       panelRef.instance.cancel.subscribe(() => this.closeSidebar());
       this._currentPanel = panelRef;
     }, 10);
+  }
+
+  /**
+   * Open sidebar
+   */
+  openSidebar(type: SidebarType, component: Type<any>) {
+    this.resetState(true);
+    setActiveSidebar(type);
+    const container: HTMLElement = this.openSidebarWithTitle(
+      `retrieval-agents.workflow.sidebar.${type}.title`,
+      `retrieval-agents.workflow.sidebar.${type}.description`,
+    );
+    container.classList.remove('no-form');
+    const panelRef = createComponent(component, { environmentInjector: this.environmentInjector });
+    this.applicationRef.attachView(panelRef.hostView);
+    container.appendChild(panelRef.location.nativeElement);
+    panelRef.changeDetectorRef.detectChanges();
+    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    this._currentPanel = panelRef;
   }
 
   /**

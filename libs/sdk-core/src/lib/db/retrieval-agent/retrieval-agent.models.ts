@@ -459,3 +459,13 @@ export interface ARAGSchemas {
   };
   drivers: JSONSchema4[];
 }
+
+export interface ExportOptions {
+  passphrase: string;
+}
+
+export interface ImportOptions {
+  file: File;
+  passphrase: string;
+  overwrite?: boolean;
+}

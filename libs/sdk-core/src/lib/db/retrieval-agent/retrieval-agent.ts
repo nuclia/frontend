@@ -13,8 +13,10 @@ import {
   ARAGSchemas,
   ContextAgent,
   ContextAgentCreation,
+  ExportOptions,
   GenerationAgent,
   GenerationAgentCreation,
+  ImportOptions,
   IRetrievalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
@@ -473,5 +475,26 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   getFullSchemas(): Observable<JSONSchema4> {
     return this.nuclia.rest.get<JSONSchema4>(`${this.path}/fullschema`);
+  }
+
+  /**
+   * Request the export of a Retrieval Agent.
+   * @param options Export options
+   */
+  export(options: ExportOptions): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/export`, options);
+  }
+
+  /**
+   * Import a Retrieval Agent.
+   * @param options Import options
+   */
+  import(options: ImportOptions): Observable<void> {
+    const data = new FormData();
+    Object.entries(options).forEach(([key, value]) => {
+      const validValue = typeof value === 'boolean' || typeof value === 'number' ? value.toString() : value;
+      data.append(key, validValue);
+    });
+    return this.nuclia.rest.post<void>(`${this.path}/import`, data);
   }
 }

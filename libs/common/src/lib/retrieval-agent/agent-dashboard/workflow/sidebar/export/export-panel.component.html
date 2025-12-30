@@ -1,0 +1,16 @@
+<div [formGroup]="form">
+  <app-configuration-form
+    [form]="form"
+    submitButton="retrieval-agents.workflow.toolbar-buttons.export"
+    (cancel)="cancel.emit()"
+    (triggerSubmit)="submit()">
+    <div class="form-entry">
+      <label for="passphrase">{{ 'generic.password' | translate }}</label>
+      <nsi-password-input
+        id="passphrase"
+        formControlName="passphrase"
+        [help]="'retrieval-agents.workflow.sidebar.export.min-length' | translate"></nsi-password-input>
+    </div>
+    <nsi-info-card>{{ 'retrieval-agents.workflow.sidebar.export.warning' | translate }}</nsi-info-card>
+  </app-configuration-form>
+</div>

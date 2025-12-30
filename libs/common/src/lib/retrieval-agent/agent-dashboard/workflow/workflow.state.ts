@@ -21,6 +21,8 @@ export function setAragUrl(url: string) {
 }
 export const aragUrl = computed(() => _aragUrl());
 
+export type SidebarType = 'rules' | 'add' | 'test' | 'import' | 'export';
+
 /**
  * Sidebar state
  */
@@ -29,7 +31,7 @@ const sidebar = signal<{
   description: string;
   open: boolean;
   closing: boolean;
-  active: '' | 'rules' | 'add' | 'test';
+  active: '' | SidebarType;
   large: boolean;
 }>({
   title: '',
@@ -40,7 +42,7 @@ const sidebar = signal<{
   large: false,
 });
 
-export function setActiveSidebar(active: '' | 'rules' | 'add' | 'test') {
+export function setActiveSidebar(active: '' | SidebarType) {
   const large = active === 'test';
   sidebar.update((bar) => ({ ...bar, active, large }));
 }

@@ -1,0 +1,41 @@
+<div [formGroup]="form">
+  <app-configuration-form
+    [form]="form"
+    [submitDisabled]="!selectedFile() || loading() || undefined"
+    submitButton="retrieval-agents.workflow.toolbar-buttons.import"
+    (cancel)="cancel.emit()"
+    (triggerSubmit)="submit()">
+    <div class="form-entry">
+      <pa-button
+        iconAndText
+        icon="add-file"
+        size="small"
+        aspect="basic"
+        (click)="file.click()">
+        {{
+          selectedFile() ? selectedFile()?.name : ('retrieval-agents.workflow.sidebar.import.select-file' | translate)
+        }}
+      </pa-button>
+      <input
+        id="file"
+        type="file"
+        #file
+        hidden
+        (change)="handleFile($event)" />
+    </div>
+    <div class="form-entry">
+      <label for="passphrase">{{ 'generic.password' | translate }}</label>
+      <nsi-password-input
+        id="passphrase"
+        formControlName="passphrase"></nsi-password-input>
+    </div>
+    <div class="form-entry">
+      <pa-toggle
+        id="overwrite"
+        labelOnRight
+        formControlName="overwrite">
+        {{ 'retrieval-agents.workflow.sidebar.import.overwrite' | translate }}
+      </pa-toggle>
+    </div>
+  </app-configuration-form>
+</div>
