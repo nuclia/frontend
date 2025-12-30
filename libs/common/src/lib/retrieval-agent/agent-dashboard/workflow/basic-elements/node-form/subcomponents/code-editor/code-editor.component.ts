@@ -14,13 +14,14 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-code-editor',
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ExpandableTextareaComponent, ReactiveFormsModule, TranslateModule],
 })
 export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() form!: FormGroup;
@@ -33,6 +34,7 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() initialLanguage = 'python';
   @Input() availableLanguages: string[] = ['python', 'javascript', 'typescript', 'json'];
   @Input() showLanguageSelector = true;
+  @Input() highlight = false;
 
   @ViewChild('codeTextarea', { static: false }) codeTextarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('highlightContainer', { static: false }) highlightContainer!: ElementRef<HTMLDivElement>;
@@ -45,12 +47,16 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   currentValue = signal<string>('');
 
   ngOnInit() {
-    this.setupFormValueSubscription();
-    this.loadPrismJS();
+    if (this.highlight) {
+      this.setupFormValueSubscription();
+      this.loadPrismJS();
+    }
   }
 
   ngAfterViewInit() {
-    this.setupTextareaHandlers();
+    if (this.highlight) {
+      this.setupTextareaHandlers();
+    }
   }
 
   ngOnDestroy() {
