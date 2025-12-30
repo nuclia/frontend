@@ -104,6 +104,7 @@ export namespace Memory {
     structured: string[];
     summary: string;
     title?: string | null;
+    agent_id: string;
   }
 
   export interface HistoryQuestionAnswer {
