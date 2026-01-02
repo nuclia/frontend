@@ -31,16 +31,53 @@
       [form]="configForm"
       [config]="config"></app-rules-field>
 
-    <pa-input
-      id="max_retries"
-      formControlName="max_retries"
-      type="number"
-      [required]="false">
-      {{ schema?.properties?.['max_retries']?.title || '' }}
-    </pa-input>
+    <div class="form-entry">
+      <label for="max_retries">{{ schema?.properties?.['max_retries']?.title || '' }}</label>
+      <pa-input
+        id="max_retries"
+        formControlName="max_retries"
+        type="number"
+        [required]="false"
+        externalLabel></pa-input>
+    </div>
+
+    <pa-toggle
+      [(value)]="useExistingConfiguration"
+      (valueChange)="updateValidators($event)"
+      labelOnRight>
+      {{ 'retrieval-agents.workflow.node-types.advanced_ask.form.use-existing-config' | translate }}
+    </pa-toggle>
+
+    @if (useExistingConfiguration) {
+      @let options = (searchConfigurationOptions | async) || [];
+      @if (options.length > 0) {
+        <div class="form-entry">
+          <label for="search_configuration">
+            {{ schema?.properties?.['search_configuration']?.title || '' }}
+          </label>
+          <pa-select
+            id="search_configuration"
+            formControlName="search_configuration"
+            [options]="options"></pa-select>
+        </div>
+      } @else {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{
+            (sources.length > 1
+              ? 'retrieval-agents.workflow.node-types.advanced_ask.form.existing-config-warning'
+              : 'retrieval-agents.workflow.node-types.advanced_ask.form.no-existing-configs'
+            ) | translate
+          }}
+        </nsi-info-card>
+      }
+    }
   </ng-container>
-  <app-ask-configuration
-    [config]="initialSearchConfig"
-    [sources]="sources"
-    (configChanged)="updateConfig($event)"></app-ask-configuration>
+  @if (!useExistingConfiguration) {
+    <app-ask-configuration
+      [config]="initialSearchConfig"
+      [sources]="sources"
+      (configChanged)="updateConfig($event)"></app-ask-configuration>
+  }
 </app-configuration-form>
