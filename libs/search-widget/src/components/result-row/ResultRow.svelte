@@ -40,6 +40,8 @@
   import Image from '../image/Image.svelte';
   import { FieldMetadata } from './';
 
+  const NUM_PARAGRAPHS = 4;
+
   interface Props {
     result: TypedResult;
     selected?: number;
@@ -50,24 +52,27 @@
   let { result, selected = 0, isSource = false, answerRank }: Props = $props();
 
   let thumbnailLoaded = $state(false);
-  let showAllResults = $state($collapseTextBlocks);
 
   let thumbnailInfo = $derived(getThumbnailInfos(result));
   let innerWidth = $state(window.innerWidth);
   let toggledParagraphHeights: { [id: string]: number } = $state({});
-  let nonToggledParagraphCount = $state(4);
+  let nonToggledParagraphCount = $state(NUM_PARAGRAPHS);
   let toggledParagraphTotalHeight = $state(0);
   let metaKeyOn = false;
-  let expanded = $state(!$collapseTextBlocks);
+  let expanded = $derived(!$collapseTextBlocks || selected > 0);
   let isMobile = $derived(isMobileViewport(innerWidth));
   let paragraphs = $derived(result.paragraphs || []);
+  let isSelectedHidden = $derived(
+    paragraphs.findIndex((paragraph) => paragraph.rank === selected) > NUM_PARAGRAPHS - 1,
+  );
+  let showAllResults = $derived($collapseTextBlocks || isSelectedHidden);
 
   $effect(() => {
     if (showAllResults) {
       toggledParagraphTotalHeight = Object.values(toggledParagraphHeights).reduce((acc, height) => acc + height, 0);
       nonToggledParagraphCount = paragraphs.length - Object.keys(toggledParagraphHeights).length;
     } else {
-      const visibleParagraphs = paragraphs.slice(0, 4).map((p) => p.id);
+      const visibleParagraphs = paragraphs.slice(0, NUM_PARAGRAPHS).map((p) => p.id);
       const visibleToggledParagraphs = Object.entries(toggledParagraphHeights).filter(([id]) =>
         visibleParagraphs.includes(id),
       );
@@ -216,7 +221,7 @@
         <ul
           class="sw-paragraphs-container"
           class:expanded={showAllResults}
-          class:can-expand={paragraphs.length > 4}
+          class:can-expand={paragraphs.length > NUM_PARAGRAPHS}
           style:--non-toggled-paragraph-count={nonToggledParagraphCount}
           style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
           {#if isSource && paragraphs.length === 0 && result.ranks}
@@ -224,7 +229,8 @@
               {#each result.ranks as rank}
                 <div
                   class="number body-m"
-                  class:selected={selected === rank}>
+                  class:selected={selected === rank}
+                  data-scroll-ref={rank}>
                   {rank}
                 </div>
               {/each}
@@ -238,7 +244,8 @@
                 {#if isSource && paragraph.rank}
                   <div
                     class="number body-m"
-                    class:selected={selected === paragraph.rank}>
+                    class:selected={selected === paragraph.rank}
+                    data-scroll-ref={paragraph.rank}>
                     {paragraph.rank}
                   </div>
                 {/if}
@@ -270,7 +277,7 @@
           {/each}
         </ul>
 
-        {#if paragraphs.length > 4 && !$collapseTextBlocks}
+        {#if paragraphs.length > NUM_PARAGRAPHS && !$collapseTextBlocks}
           <AllResultsToggle
             {showAllResults}
             on:toggle={() => (showAllResults = !showAllResults)} />

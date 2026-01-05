@@ -20,6 +20,7 @@
     getSourcesResults,
     addReferences,
     markdownToHTML,
+    collapseTextBlocks,
   } from '../../core';
   import { _ } from '../../core/i18n';
   import Image from '../image/Image.svelte';
@@ -44,19 +45,12 @@
   let copied = $state(false);
   let showMetadata = $state(false);
   let showDisclaimer = $state(false);
+  let expandedSources = $derived($expandedCitations === undefined ? initialAnswer : $expandedCitations);
 
   const dispatch = createEventDispatcher();
 
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
-
-  function onMouseEnter(event: Event) {
-    selectedCitation = parseInt((event.target as HTMLElement).textContent || '') - 1;
-  }
-
-  function onMouseLeave() {
-    selectedCitation = undefined;
-  }
 
   function copyAnswer() {
     disclaimer.pipe(take(1)).subscribe((message) => {
@@ -104,14 +98,25 @@ ${paragraphs.join('\n<hr>\n')}`;
     });
   }
 
-  $effect(() => {
-    if (sources) {
-      (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
-        ref.addEventListener('mouseenter', onMouseEnter);
-        ref.addEventListener('mouseleave', onMouseLeave);
-      });
+  function onAnswerClick(event: Event) {
+    const target = event.target as HTMLElement | null;
+    if (target?.classList?.contains('ref')) {
+      scrollToReference(parseInt(target.textContent));
     }
-  });
+  }
+
+  function scrollToReference(ref: number) {
+    const delay = !expandedSources || $collapseTextBlocks ? 300 : 10;
+    expandedSources = true;
+    selectedCitation = ref - 1;
+
+    // Wait until all expanders are expanded
+    setTimeout(() => {
+      const paragraph = element?.querySelector(`[data-scroll-ref="${ref}"]`);
+      paragraph?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, delay);
+  }
+
   let images = $derived(
     answer.citations && sources
       ? sources.reduce(
@@ -155,7 +160,9 @@ ${paragraphs.join('\n<hr>\n')}`;
   {/if}
   {#if !$hideAnswer || answer.inError}
     {#if answer.text}
-      <div class="answer-text">
+      <div
+        class="answer-text"
+        on:click={onAnswerClick}>
         <MarkdownRendering
           {text}
           markers={true} />
@@ -231,7 +238,7 @@ ${paragraphs.join('\n<hr>\n')}`;
                 selected={selectedCitation} />
             </div>
           {:else}
-            <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
+            <Expander bind:expanded={expandedSources}>
               {#snippet header()}
                 <div class="title-s">
                   {$_('answer.sources')}
