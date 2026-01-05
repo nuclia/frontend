@@ -144,6 +144,7 @@ export interface AragAnswerUi {
   context: Memory.Context | null;
   operation: AnswerOperation;
   seqid: number | null;
+  agentId: string | null;
 }
 
 export type NodeConfig =
