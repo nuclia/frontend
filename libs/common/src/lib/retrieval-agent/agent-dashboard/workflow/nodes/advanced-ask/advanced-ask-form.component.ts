@@ -9,8 +9,9 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseContextAgent, ChatOptions, SearchOptions, Widget } from '@nuclia/core';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -19,13 +20,18 @@ import { JSONSchema4 } from 'json-schema';
 import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select/model-select.component';
 import { AskConfigurationComponent } from './ask-configuration.component';
 import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from '../../../../../search-widget';
+import { debounceTime, defer, map, of, shareReplay, startWith, switchMap, tap } from 'rxjs';
+import { WorkflowService } from '../../workflow.service';
+import { InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-advanced-ask-form',
   imports: [
     AskConfigurationComponent,
+    CommonModule,
     ConfigurationFormComponent,
     DriverSelectComponent,
+    InfoCardComponent,
     forwardRef(() => ModelSelectComponent), // Avoid circular dependency
     PaButtonModule,
     PaTextFieldModule,
@@ -38,6 +44,7 @@ import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedAskFormComponent extends FormDirective implements OnInit {
+  private workflowService = inject(WorkflowService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input() schemas?: JSONSchema4 | null;
@@ -47,6 +54,7 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
   kind?: 'find' | 'ask' = 'ask';
   searchOptions: SearchOptions | ChatOptions = {};
   initialSearchConfig?: Widget.SearchConfiguration;
+  useExistingConfiguration = false;
 
   override form = new FormGroup({
     advanced_ask: new FormGroup({
@@ -57,8 +65,34 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
       summarize_model: new FormControl<string>('', { nonNullable: true }),
       max_retries: new FormControl<number | null>(1),
       rules: new FormArray<FormControl<string>>([]),
+      search_configuration: new FormControl<string>('', { nonNullable: true }),
     }),
   });
+
+  searchConfigurationOptions = defer(() =>
+    this.configForm.controls.sources.valueChanges.pipe(startWith(this.sources)),
+  ).pipe(
+    debounceTime(10), // Wait until the sources values is stable
+    switchMap((sources) =>
+      sources.length === 1
+        ? this.workflowService.fetchDriverSearchConfigurations(sources[0]).pipe(
+            map((configs) =>
+              Object.entries(configs)
+                .filter(([, config]) => config.kind === 'ask')
+                .map(([key]) => new OptionModel({ id: key, value: key, label: key })),
+            ),
+          )
+        : of([]),
+    ),
+    tap((options) => {
+      if (!options.some((option) => option.value === this.searchConfiguration)) {
+        this.configForm.controls.search_configuration.reset();
+        this.cdr.markForCheck();
+      }
+    }),
+    shareReplay(1),
+  );
+
   override get configForm() {
     return this.form.controls.advanced_ask;
   }
@@ -66,11 +100,20 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
     return this.configForm.controls.sources.value;
   }
 
+  get searchConfigurationControl() {
+    return this.configForm.controls.search_configuration;
+  }
+
+  get searchConfiguration() {
+    return this.searchConfigurationControl.value;
+  }
+
   override submit(): void {
+    const { search_configuration, ...formValues } = this.configForm.getRawValue();
     const value = {
-      generate_answer: this.kind === 'ask',
-      ...this.searchOptions,
-      ...this.processFormValue(this.configForm.getRawValue()),
+      generate_answer: this.useExistingConfiguration ? true : this.kind === 'ask',
+      ...(this.useExistingConfiguration ? { search_configuration } : this.searchOptions),
+      ...this.processFormValue(formValues),
     };
     this.submitForm.emit(value);
   }
@@ -82,18 +125,19 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
       if (schema.properties?.[field]?.default) {
         this.configForm.get(field)?.patchValue(schema.properties?.[field].default);
       }
-      this.cdr.markForCheck();
     });
     this.formReady.emit(this.configForm);
 
     if (this.config) {
-      const { generate_answer, generative_model, ...rest } = this.config as any;
+      const { generate_answer, generative_model, search_configuration, ...rest } = this.config as any;
+      this.useExistingConfiguration = !!search_configuration;
       this.initialSearchConfig = getSearchConfigFromSearchOptions('', {
         kind: generate_answer ? 'ask' : 'find',
         config: rest as ChatOptions,
       });
-      this.cdr.markForCheck();
     }
+    this.updateValidators(this.useExistingConfiguration);
+    this.cdr.markForCheck();
   }
 
   updateConfig(config: any) {
@@ -106,5 +150,10 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
     };
     this.kind = config.generativeAnswer.generateAnswer ? 'ask' : 'find';
     this.searchOptions = this.kind === 'ask' ? getChatOptions(searchConfig) : getFindOptions(searchConfig);
+  }
+
+  updateValidators(useExistingConfiguration: boolean) {
+    this.searchConfigurationControl.setValidators(useExistingConfiguration ? [Validators.required] : []);
+    this.searchConfigurationControl.updateValueAndValidity();
   }
 }
