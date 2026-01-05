@@ -29,8 +29,10 @@ import {
   WorkflowRootComponent,
   WorkflowService,
 } from './workflow';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
+import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
+import { ImportPanelComponent } from './workflow/sidebar/import';
 
 @Component({
   imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
@@ -45,6 +47,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private layoutService = inject(DashboardLayoutService);
   private workflowEffects = inject(WorkflowEffectService);
   private sdk = inject(SDKService);
+  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -61,6 +64,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   sideBarLarge = sideBarLarge;
   activeSideBar = activeSideBar;
   isAragWithMemory = this.sdk.isAragWithMemory;
+  isAragAdmin = this.features.isAragAdmin;
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());
@@ -118,5 +122,13 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   toggleMainNav() {
     this.layoutService.toggleNav();
+  }
+
+  import() {
+    this.workflowService.openSidebar('import', ImportPanelComponent);
+  }
+
+  export() {
+    this.workflowService.openSidebar('export', ExportPanelComponent);
   }
 }
