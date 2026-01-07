@@ -14,7 +14,7 @@ export const DEFAULT_RESOURCES: IResources = {
   intro_title: 'RAO Assistant',
   intro_greetings: 'Hello! How can I assist you today?',
 
-  form_placeholder_defuault: 'Type your message here...',
+  form_placeholder_default: 'Type your message here...',
   form_placeholder_followup: 'Ask a follow-up',
 
   meta_page: 'Page',
@@ -36,4 +36,10 @@ export const DEFAULT_RESOURCES: IResources = {
   meta_sources: 'Sources',
   meta_citations: 'Citations',
   meta_reasoning: 'Reasoning',
+  meta_agentrequest: 'Assistant request',
+  feedback_choose: 'Choose one of the options below.',
+  feedback_sending: 'Sending your selection…',
+  feedback_sent: 'Selection sent',
+  feedback_error: 'Unable to send your selection. Please try again.',
+  feedback_selected: 'Selected',
 };

@@ -14,7 +14,7 @@ export interface IResources {
   intro_title: string;
   intro_greetings: string;
 
-  form_placeholder_defuault: string;
+  form_placeholder_default: string;
   form_placeholder_followup: string;
 
   meta_page: string;
@@ -36,6 +36,12 @@ export interface IResources {
   meta_sources: string;
   meta_citations: string;
   meta_reasoning: string;
+  meta_agentrequest: string;
+  feedback_choose: string;
+  feedback_sending: string;
+  feedback_sent: string;
+  feedback_error: string;
+  feedback_selected: string;
 }
 
 export interface IRaoWidget {
@@ -62,7 +68,7 @@ export interface IRaoWidget {
   /**
    * Configuration for voice recording capabilities.
    */
-  recordingconfing?: {
+  recordingconfig?: {
     /**
      * Locale/language for speech recognition.
      */

@@ -1,6 +1,10 @@
 import { useRaoContext } from '../../hooks/RaoContext';
 import type { AragAnswer } from '@nuclia/core';
 import React, { useCallback, useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { Icon } from '../Icon/Icon';
 import { IResources } from '../RaoWidget';
 
@@ -413,8 +417,53 @@ const humanizeDebugEntries = (
   return items;
 };
 
+const createParagraphRenderer = (baseClass: string) => {
+  const Renderer: NonNullable<Components['p']> = ({ node: _node, ...props }) => {
+    const className = props.className ? `${baseClass} ${props.className}` : baseClass;
+    return (
+      <p
+        {...props}
+        className={className}
+      />
+    );
+  };
+  return Renderer;
+};
+
+const markdownSanitizeSchema = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    a: [...(defaultSchema.attributes?.a ?? []), ['target', ['_blank']], ['rel', ['noopener', 'noreferrer']]],
+  },
+};
+
+const markdownSanitizeOptions = { schema: markdownSanitizeSchema };
+
+const markdownComponents: Components = {
+  p: createParagraphRenderer('rao-react__message-content'),
+  a: ({ node: _node, ...props }) => (
+    <a
+      {...props}
+      target="_blank"
+      rel="noopener noreferrer"
+    />
+  ),
+};
+
+const feedbackMarkdownComponents: Components = {
+  p: createParagraphRenderer('rao-react__feedback-option-description'),
+  a: ({ node: _node, ...props }) => (
+    <a
+      {...props}
+      target="_blank"
+      rel="noopener noreferrer"
+    />
+  ),
+};
+
 export const Conversation: React.FC<IConversation> = () => {
-  const { conversation, nuclia, resources } = useRaoContext();
+  const { conversation, nuclia, resources, onFeedbackResponse } = useRaoContext();
   const [expandedMessages, setExpandedMessages] = useState<Record<string, boolean>>({});
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
 
@@ -442,6 +491,13 @@ export const Conversation: React.FC<IConversation> = () => {
     }));
   }, []);
 
+  const handleOptionSelect = useCallback(
+    (messageId: string, optionId: string) => {
+      onFeedbackResponse(messageId, optionId);
+    },
+    [onFeedbackResponse],
+  );
+
   return (
     <>
       <style>{styles}</style>
@@ -452,6 +508,118 @@ export const Conversation: React.FC<IConversation> = () => {
           const isChip = message.variant === 'chip';
           const isAssistant = message.role === 'assistant' && !isChip;
           const articleClass = `rao-react__message rao-react__message--${message.role}`;
+
+          if (message.feedback) {
+            const { question, options, status, selectedOptionId, error } = message.feedback;
+            const questionContent = isNonEmptyString(question) ? question : null;
+            const isSubmitting = status === 'submitting';
+            const isCompleted = status === 'completed';
+            const statusLabel =
+              status === 'completed'
+                ? resources.feedback_sent
+                : status === 'submitting'
+                  ? resources.feedback_sending
+                  : status === 'error'
+                    ? resources.feedback_error
+                    : '';
+
+            const nameForMessage = message.title ?? assistantName;
+            const avatarInitials =
+              nameForMessage
+                ?.split(' ')
+                .map((word) => word.charAt(0))
+                .filter(Boolean)
+                .slice(0, 2)
+                .join('')
+                .toUpperCase() || 'AI';
+
+            return (
+              <article
+                key={message.id}
+                className={articleClass}>
+                <div className="rao-react__message-card rao-react__message-card--feedback">
+                  <span className="rao-react__message-card-label">{message.meta ?? resources.meta_agentrequest}</span>
+                  <div className="rao-react__message-card-inner">
+                    <header className="rao-react__message-card-author">
+                      <span
+                        aria-hidden="true"
+                        className="rao-react__message-card-avatar">
+                        {avatarInitials}
+                      </span>
+                      <div className="rao-react__message-card-author-details">
+                        <p className="rao-react__message-card-author-name">{nameForMessage}</p>
+                        {assistantDescription && (
+                          <p className="rao-react__message-card-author-description">{assistantDescription}</p>
+                        )}
+                      </div>
+                    </header>
+
+                    <div
+                      className="rao-react__message-card-body"
+                      data-testid={message.id}>
+                      {questionContent ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[[rehypeSanitize, markdownSanitizeOptions]]}
+                          components={markdownComponents}>
+                          {questionContent}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="rao-react__message-content">{resources.feedback_choose}</p>
+                      )}
+
+                      {options.length > 0 ? (
+                        <ul className="rao-react__feedback-options">
+                          {options.map((option) => {
+                            const optionDescription = isNonEmptyString(option.description) ? option.description : null;
+                            const isSelected = selectedOptionId === option.id;
+                            return (
+                              <li
+                                key={option.id}
+                                className={`rao-react__feedback-option${isSelected ? ' is-selected' : ''}`}>
+                                <button
+                                  type="button"
+                                  className="rao-react__feedback-option-button"
+                                  onClick={() => handleOptionSelect(message.id, option.id)}
+                                  disabled={isSubmitting || isCompleted}>
+                                  <span className="rao-react__feedback-option-title">{option.title}</span>
+                                </button>
+
+                                {optionDescription && (
+                                  <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    rehypePlugins={[[rehypeSanitize, markdownSanitizeOptions]]}
+                                    components={feedbackMarkdownComponents}>
+                                    {optionDescription}
+                                  </ReactMarkdown>
+                                )}
+                                {isSelected && isCompleted && (
+                                  <span className="rao-react__feedback-option-pill">{resources.feedback_selected}</span>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : (
+                        <p className="rao-react__message-content rao-react__message-content--placeholder">
+                          {resources.feedback_error}
+                        </p>
+                      )}
+
+                      {status !== 'error' && <p className="rao-react__feedback-status">{statusLabel}</p>}
+                      {status === 'error' && error && (
+                        <p
+                          className="rao-react__feedback-error"
+                          role="alert">
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          }
 
           if (isChip) {
             const bubbleClass = ['rao-react__message-bubble', 'rao-react__message-bubble--chip'];
@@ -487,13 +655,6 @@ export const Conversation: React.FC<IConversation> = () => {
                 .join('')
                 .toUpperCase() || 'AI';
 
-            const contentParagraphs = message.content
-              ? message.content
-                  .split(/\r?\n+/)
-                  .map((paragraph) => paragraph.trim())
-                  .filter(Boolean)
-              : [];
-
             const debugEntries = Array.isArray(message.debug) ? message.debug : [];
             const reasoningItems = humanizeDebugEntries(debugEntries, message.id, resources);
             const shouldRenderListInBody =
@@ -501,6 +662,7 @@ export const Conversation: React.FC<IConversation> = () => {
             const sources = extractSources(debugEntries, message.id, resources);
             const hasSources = sources.length > 0;
             const isSourcesExpanded = Boolean(expandedSources[message.id]);
+            const messageContent = isNonEmptyString(message.content) ? message.content : null;
 
             return (
               <article
@@ -587,14 +749,13 @@ export const Conversation: React.FC<IConversation> = () => {
                     <div
                       className="rao-react__message-card-body"
                       data-testid={message.id}>
-                      {contentParagraphs.length > 0 ? (
-                        contentParagraphs.map((paragraph, index) => (
-                          <p
-                            key={`${message.id}-paragraph-${index}`}
-                            className="rao-react__message-content">
-                            {paragraph}
-                          </p>
-                        ))
+                      {messageContent ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[[rehypeSanitize, markdownSanitizeOptions]]}
+                          components={markdownComponents}>
+                          {messageContent}
+                        </ReactMarkdown>
                       ) : (
                         <p
                           className="rao-react__message-content rao-react__message-content--placeholder"

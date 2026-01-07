@@ -196,7 +196,7 @@ export namespace Widget {
       usefallbackprompts?: boolean;
       visibleprompts?: number;
     };
-    recordingconfing?: {
+    recordingconfig?: {
       language: string;
     };
     viewtype?: 'conversation' | 'floating';

@@ -4,11 +4,10 @@ export function App() {
   return (
     <div>
       <RaoWrapper
-        aragid="b4fe9f16-d6b9-444c-a60a-6c4ae8a29d45"
-        account="6787bcbe-cc1c-4134-85f6-324104d9e1a3"
+        aragid="cc3a6f24-bb9f-4009-b610-39df8a83b214"
+        account="90288af7-5755-47bf-9700-d1ade78f7294"
         apikey={import.meta.env.VITE_API_KEY}
         zone="europe-1"
-        viewtype="floating"
         backend="https://stashify.cloud/api"
       />
     </div>
