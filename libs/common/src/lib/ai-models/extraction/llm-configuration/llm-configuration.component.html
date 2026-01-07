@@ -71,7 +71,7 @@
         <div class="title-s">{{ 'kb.ai-models.extraction.llm-configuration.generative-model' | translate }}</div>
         <stf-model-selector
           formControlName="generative_model"
-          [options]="generativeModels"
+          [providers]="providers"
           [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
         <!-- 
         <nsi-expandable-textarea

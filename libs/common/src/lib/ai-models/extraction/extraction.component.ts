@@ -4,7 +4,7 @@ import { SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/s
 import { ModalConfig, PaButtonModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, filter, switchMap, take, tap } from 'rxjs';
-import { ExtractConfig, ExtractStrategies, LearningConfigurations, SplitStrategies, SplitStrategy } from '@nuclia/core';
+import { ExtractConfig, ExtractStrategies, GenerativeProviders, SplitStrategies, SplitStrategy } from '@nuclia/core';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { ExtractionModalComponent } from './extraction-modal/extraction-modal.component';
 import { SplitModalComponent } from './split-modal/split-modal.component';
@@ -22,7 +22,7 @@ export class ExtractionComponent {
   translate = inject(TranslateService);
   features = inject(FeaturesService);
 
-  @Input() learningConfigurations?: LearningConfigurations;
+  @Input() providers?: GenerativeProviders;
   extractStrategies = new BehaviorSubject<ExtractStrategies | null>({});
   splitStrategies = new BehaviorSubject<SplitStrategies>({});
   splitStrategiesEnabled = this.features.authorized.splitConfig;
@@ -39,10 +39,7 @@ export class ExtractionComponent {
 
   createExtractStrategy() {
     this.modalService
-      .openModal(
-        ExtractionModalComponent,
-        new ModalConfig({ data: { learningConfigurations: this.learningConfigurations } }),
-      )
+      .openModal(ExtractionModalComponent, new ModalConfig({ data: { providers: this.providers } }))
       .onClose.pipe(
         filter((data) => !!data),
         switchMap((config) =>
@@ -82,16 +79,13 @@ export class ExtractionComponent {
   displayExtractStrategy(id: string, config: ExtractConfig) {
     this.modalService.openModal(
       ExtractionModalComponent,
-      new ModalConfig({ data: { learningConfigurations: this.learningConfigurations, id, config } }),
+      new ModalConfig({ data: { providers: this.providers, id, config } }),
     );
   }
 
   createSplitStrategy() {
     this.modalService
-      .openModal(
-        SplitModalComponent,
-        new ModalConfig({ data: { learningConfigurations: this.learningConfigurations } }),
-      )
+      .openModal(SplitModalComponent, new ModalConfig({ data: { providers: this.providers } }))
       .onClose.pipe(
         filter((data) => !!data),
         switchMap((config) =>
@@ -131,7 +125,7 @@ export class ExtractionComponent {
   displaySplitStrategy(id: string, strategy: SplitStrategy) {
     this.modalService.openModal(
       SplitModalComponent,
-      new ModalConfig({ data: { learningConfigurations: this.learningConfigurations, id, config: strategy } }),
+      new ModalConfig({ data: { providers: this.providers, id, config: strategy } }),
     );
   }
 

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
+import { LearningConfigurations, GenerativeProviders, WritableKnowledgeBox } from '@nuclia/core';
 import { FeaturesService, SDKService, UnauthorizedFeatureModalComponent } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -20,6 +20,7 @@ export abstract class LearningConfigurationDirective implements OnChanges {
   @Input() learningConfigurations?: LearningConfigurations;
   @Input() kb?: WritableKnowledgeBox;
   @Input() kbConfigBackup?: { [key: string]: any };
+  @Input() providers?: GenerativeProviders;
 
   // permissions
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;

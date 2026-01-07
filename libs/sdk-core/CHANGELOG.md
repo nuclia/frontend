@@ -4,6 +4,7 @@
 
 - Add `show_consumption` option on `/ask`
 - Support importing and exporting Retrieval Agents
+- Support `/generative_providers` endpoint
 
 # 1.31.0 (2025-12-04)
 

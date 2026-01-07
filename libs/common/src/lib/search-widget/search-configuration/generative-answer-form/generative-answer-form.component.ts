@@ -16,7 +16,7 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
-import { LearningConfigurationOption, RAG_METADATAS, Widget } from '@nuclia/core';
+import { GenerativeProviders, RAG_METADATAS, Widget } from '@nuclia/core';
 import { FindResourceModalComponent } from '../find-resource-modal';
 import { ModelSelectorComponent } from '../../../ai-models';
 
@@ -53,7 +53,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       this.form.patchValue(value);
     }
   }
-  @Input({ required: true }) generativeModels: LearningConfigurationOption[] = [];
+  @Input({ required: true }) generativeProviders: GenerativeProviders = {};
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
   @Input() defaultSystemPrompt = '';

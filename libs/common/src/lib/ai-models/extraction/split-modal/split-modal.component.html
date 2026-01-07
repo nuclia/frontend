@@ -54,11 +54,12 @@
               @if (type === 'llm') {
                 <div class="extra-fields">
                   <stf-llm-configuration
-                    [generativeModels]="generativeModels"
+                    [providers]="providers"
                     [createMode]="createMode"
                     rulesDescription="kb.ai-models.extraction.split.llm.rules-description"
                     [config]="config?.llm_split"
-                    (valueChange)="llmSplit = $event"></stf-llm-configuration>
+                    (valueChange)="llmSplit = $event"
+                    (statusChange)="llmSplitStatus = $event"></stf-llm-configuration>
                 </div>
               }
             </div>
@@ -86,7 +87,7 @@
       <pa-button
         kind="primary"
         type="submit"
-        [disabled]="configForm.invalid"
+        [disabled]="invalid"
         (click)="save()">
         {{ 'generic.save' | translate }}
       </pa-button>

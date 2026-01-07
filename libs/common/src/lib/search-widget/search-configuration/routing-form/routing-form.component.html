@@ -24,7 +24,7 @@
         <div class="extra-fields visible">
           <stf-model-selector
             formControlName="generative_model"
-            [options]="generativeModels"
+            [providers]="generativeProviders"
             [disclaimerRequired]="!!(modelsDisclaimer | async)"
             (heightChanged)="heightChanged.emit()"></stf-model-selector>
         </div>

@@ -31,7 +31,7 @@
                     {{ 'kb.ai-models.extraction.extract.processing.vllm_config.warning' | translate }}
                   </nsi-info-card>
                   <stf-llm-configuration
-                    [generativeModels]="generativeModels"
+                    [providers]="providers"
                     [createMode]="createMode"
                     rulesDescription="kb.ai-models.extraction.extract.rules-description"
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
@@ -57,7 +57,7 @@
                       [innerHTML]="'kb.ai-models.extraction.extract.processing.ai_tables.warning' | translate"></span>
                   </nsi-info-card>
                   <stf-llm-configuration
-                    [generativeModels]="generativeModels"
+                    [providers]="providers"
                     [createMode]="createMode"
                     rulesDescription="kb.ai-models.extraction.extract.rules-description"
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"

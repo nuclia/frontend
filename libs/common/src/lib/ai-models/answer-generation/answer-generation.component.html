@@ -17,10 +17,10 @@
               "></span>
           </nsi-info-card>
         }
-        @if (learningConfig['generative_model'].options; as options) {
+        @if (learningConfig && providers) {
           <stf-model-selector
             formControlName="generative_model"
-            [options]="options"
+            [providers]="providers"
             [disclaimerExpanded]="true"
             [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
           <div [hidden]="!generativeModelValue || isModelConfiguration">

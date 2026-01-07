@@ -66,6 +66,7 @@ import {
   LabelSet,
   LabelSets,
   ProcessingStatus,
+  GenerativeProviders,
   ResourceList,
   ResourceOperationNotification,
   ResourcePagination,
@@ -731,6 +732,12 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest
       .get<LearningConfigurations>(`/kb/${this.id}/schema`)
       .pipe(map((config) => improveSchemaNames(normalizeSchemaProperty(config))));
+  }
+
+  getGenerativeProviders(): Observable<GenerativeProviders> {
+    return this.nuclia.rest
+      .get<{ providers: GenerativeProviders }>(`/kb/${this.id}/generative_providers`)
+      .pipe(map((res) => res.providers));
   }
 
   getUsers(): Observable<FullKbUser[]> {

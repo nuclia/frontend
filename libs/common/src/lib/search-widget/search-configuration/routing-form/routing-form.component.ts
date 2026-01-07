@@ -13,7 +13,7 @@ import {
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LearningConfigurationOption, Widget } from '@nuclia/core';
+import { GenerativeProviders, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -73,7 +73,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     this._kind = value;
   }
 
-  @Input({ required: true }) generativeModels: LearningConfigurationOption[] = [];
+  @Input({ required: true }) generativeProviders: GenerativeProviders = {};
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<Widget.RoutingConfig>();

@@ -12,7 +12,7 @@ import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModu
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
+import { ExtractVLLMConfig, GenerativeProviders } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { ModelSelectorComponent } from '../../answer-generation';
@@ -39,7 +39,7 @@ import { FeaturesService } from '@flaps/core';
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
   features = inject(FeaturesService);
 
-  @Input() generativeModels: LearningConfigurationOption[] = [];
+  @Input() providers: GenerativeProviders = {};
   @Input() createMode: boolean = true;
   @Input() vllmOnly: boolean = false;
   @Input() isAiTable: boolean = false;
@@ -104,7 +104,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
       .subscribe(() => {
         const values = this.configForm.getRawValue();
         this.valueChange.emit({
-          llm: values.customLLM ? this.getLLMConfig(values.llm.generative_model) : undefined,
+          llm: values.customLLM ? { generative_model: values.llm.generative_model } : undefined,
           merge_pages: this.isAiTable ? values.merge_pages : undefined,
           max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
@@ -126,17 +126,5 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   removeRule(index: number) {
     this.rules.removeAt(index);
-  }
-
-  getLLMConfig(model?: string): ExtractLLMConfig {
-    const modelOption = this.getGenerativeModel(model || '');
-    return {
-      generative_model: model || undefined,
-      generative_provider: model ? modelOption?.provider : undefined,
-    };
-  }
-
-  getGenerativeModel(value: string) {
-    return this.generativeModels.find((model) => model.value === value);
   }
 }
