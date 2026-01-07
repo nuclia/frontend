@@ -689,6 +689,7 @@
 	"kb.ai-models.model-selector.disclaimer.label": "He revisat i entenc els riscos associats amb l'ús de {{model}}. Accepto la responsabilitat de verificar els resultats abans de l'ús",
 	"kb.ai-models.model-selector.disclaimer.text": "<h3>Al·lucinacions<h3>\n<p>El model pot generar informació inexacta o fabricada que sembli creïble.</p>\n<h3>Privacitat de dades</h3>\n<p>Les dades d'entrada es poden transmetre a proveïdors externs per al seu processament. No s'han de compartir dades sensibles o personals.</p>\n<h3>Biaix i imparcialitat</h3>\n<p>Les respostes del model poden reflectir biaix de les dades d'entrenament. Reviseu els resultats amb cura.</p>\n<h3>Seguretat</h3>\n<p>Els prompts es poden explotar (injecció de prompts) per extreure contingut restringit o eludir instruccions.</p>\n<h3>Compliment</h3>\n<p>El resultat pot no complir les polítiques legals, del GDPR, de la HIPPA o de seguretat de la vostra empresa.</p>\n<h3>Contingut</h3>\n<p>La IA pot generar contingut perjudicial, enganyós o ofensiu sense intenció.</p>",
 	"kb.ai-models.model-selector.disclaimer.title": "Avís de risc del model d'IA",
+	"kb.ai-models.model-selector.enterprise-ready": "preparat per a les empreses",
 	"kb.ai-models.model-selector.search": "Cerca per seleccionar models",
 	"kb.ai-models.page-description": "Configureu els models disponibles per a les vostres dades",
 	"kb.ai-models.page-title": "Models d’IA",

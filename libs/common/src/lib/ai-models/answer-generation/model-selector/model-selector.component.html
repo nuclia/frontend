@@ -82,6 +82,11 @@
       @for (provider of filteredByProvider(); track provider.key) {
         <pa-option-header>
           {{ provider.value.title }}
+          @if (provider.value.enterprise_readiness) {
+            <span class="body-s enterprise-ready">
+              ({{ 'kb.ai-models.model-selector.enterprise-ready' | translate }})
+            </span>
+          }          
         </pa-option-header>
         @for (model of provider.value.models; track model.key) {
           <pa-option

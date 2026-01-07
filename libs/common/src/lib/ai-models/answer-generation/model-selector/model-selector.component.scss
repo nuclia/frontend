@@ -37,6 +37,10 @@
 pa-option-header {
   border-top: 1px solid $color-neutral-lighter;
   display: block;
+  .enterprise-ready {
+    margin-left: rhythm(0.5);
+    text-transform: none;
+  }
 }
 
 .disclaimer {
