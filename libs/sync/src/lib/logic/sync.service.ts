@@ -11,15 +11,22 @@ import {
 } from './models';
 import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './connectors/sitemap';
-import { NucliaOptions, WritableKnowledgeBox, SyncConfiguration, SyncConfigurationCreate } from '@nuclia/core';
+import {
+  NucliaOptions,
+  WritableKnowledgeBox,
+  SyncConfiguration,
+  SyncConfigurationCreate,
+  ExternalConnectionCredentials,
+  ExternalConnection,
+} from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './connectors/folder';
-import { SharepointImpl } from './connectors/sharepoint';
 import { ConfluenceConnector } from './connectors/confluence';
 import { RSSConnector } from './connectors/rss';
 import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
 import { SitefinityConnector } from './connectors/sitefinity';
+import { SharepointImpl } from './connectors/sharepoint';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -34,16 +41,16 @@ export class SyncService {
       instances?: { [key: string]: IConnector };
     };
   } = {
-    google_oauth: {
+    gdrive: {
       definition: {
-        id: 'google_oauth',
-        provider: 'google_oauth',
+        id: 'gdrive',
+        oauth_provider: 'google_oauth',
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
         cloud: true,
-        factory: (settings) => new OAuthConnector('google_oauth', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     onedrive: {
@@ -60,12 +67,14 @@ export class SyncService {
     sharepoint: {
       definition: {
         id: 'sharepoint',
+        oauth_provider: 'azure_oauth',
+        apikey_provider: 'azure_certificate_credentials',
         title: 'SharePoint',
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        deprecated: true,
-        factory: (settings) => new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer()),
+        cloud: true,
+        factory: (settings) => new SharepointImpl(settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     dropbox: {
@@ -151,6 +160,10 @@ export class SyncService {
       instances[instance] = source.definition.factory({ id: instance });
     }
     return instances[instance];
+  }
+
+  getConnectorIdForOauthProvider(provider: string, instance: string): string | undefined {
+    return Object.entries(this.connectors).find(([, data]) => data.definition.oauth_provider === provider)?.[0];
   }
 
   getCurrentSync(): Observable<ISyncEntity> {
@@ -244,8 +257,15 @@ export class SyncService {
   getOAuthUrl(provider: string): Observable<string> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.syncManager.createExternalConnection(provider)),
+      switchMap((kb) => kb.syncManager.createOAuthExternalConnection(provider)),
       map((res) => res.authorize_url),
+    );
+  }
+
+  addExternalConnection(provider: string, credentials: ExternalConnectionCredentials): Observable<ExternalConnection> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.createExternalConnection(provider, credentials)),
     );
   }
 
@@ -310,15 +330,21 @@ export class SyncService {
             map((configs) =>
               configs
                 .filter((config) => config.kb_id === kbId)
-                .map((config) => ({
-                  id: config.id,
-                  kbId: config.kb_id,
-                  title: config.name,
-                  connectorId: config.external_connection.provider,
-                  connector: this.getConnector(config.external_connection.provider, config.id),
-                  lastSyncGMT: undefined,
-                  disabled: false,
-                })),
+                .map((config) => {
+                  const connectorId = this.getConnectorIdForOauthProvider(
+                    config.external_connection.provider,
+                    config.id,
+                  );
+                  return {
+                    id: config.id,
+                    kbId: config.kb_id,
+                    title: config.name,
+                    connectorId,
+                    connector: connectorId ? this.getConnector(connectorId, config.id) : undefined,
+                    lastSyncGMT: undefined,
+                    disabled: false,
+                  };
+                }),
             ),
           ),
         ),

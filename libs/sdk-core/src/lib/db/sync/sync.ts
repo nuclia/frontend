@@ -1,7 +1,15 @@
 import { Observable } from 'rxjs';
 import { INuclia } from '../../models';
 import type { IWritableKnowledgeBox } from '../kb/kb.models';
-import { ISyncManager, Job, SyncConfiguration, SyncConfigurationCreate } from './sync.models';
+import {
+  ExternalConnection,
+  ExternalConnectionCredentials,
+  ISyncManager,
+  Job,
+  OAuthUrl,
+  SyncConfiguration,
+  SyncConfigurationCreate,
+} from './sync.models';
 
 export class SyncManager implements ISyncManager {
   kb: IWritableKnowledgeBox;
@@ -12,8 +20,15 @@ export class SyncManager implements ISyncManager {
     this.nuclia = nuclia;
   }
 
-  createExternalConnection(provider: string): Observable<{ authorize_url: string }> {
+  createOAuthExternalConnection(provider: string): Observable<OAuthUrl> {
     return this.nuclia.rest.post<any>(`${this.kb.path}/external_connections`, { provider });
+  }
+
+  createExternalConnection(
+    provider: string,
+    credentials: ExternalConnectionCredentials,
+  ): Observable<ExternalConnection> {
+    return this.nuclia.rest.post<any>(`${this.kb.path}/external_connections`, { provider, credentials });
   }
 
   createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration> {

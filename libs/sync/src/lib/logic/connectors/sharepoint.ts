@@ -1,37 +1,58 @@
-import { ConnectorParameters, Section } from '../models';
 import { Observable, of } from 'rxjs';
 import { OAuthConnector } from './oauth';
-
-const SITE_NAME = 'SHAREPOINT_SITE_NAME';
+import { Section } from '../models';
 
 export class SharepointImpl extends OAuthConnector {
-  constructor(name: string, id: string, path: string) {
-    super(name, id, path);
+  constructor(id: string, path: string) {
+    super('sharepoint', id, path);
   }
 
   override getParametersSections(): Observable<Section[]> {
     return of([
       {
-        id: 'account',
-        title: 'sync.connectors.sharepoint.account.title',
+        id: 'credentials',
+        title: 'sync.connectors.oauth.credentials.title',
         fields: [
           {
-            id: 'site_name',
-            label: 'sync.connectors.sharepoint.site.label',
+            id: 'tenant_id',
+            label: 'sync.connectors.sharepoint.tenant_id.label',
+            type: 'text',
+            required: true,
+          },
+          {
+            id: 'client_id',
+            label: 'sync.connectors.sharepoint.client_id.label',
+            type: 'text',
+            required: true,
+          },
+          {
+            id: 'pfx_base64',
+            label: 'sync.connectors.sharepoint.pfx_base64.label',
+            help: 'sync.connectors.sharepoint.pfx_base64.help',
+            type: 'text',
+            required: true,
+          },
+          {
+            id: 'pfx_password',
+            label: 'sync.connectors.sharepoint.pfx_password.label',
+            help: 'sync.connectors.sharepoint.pfx_password.help',
+            type: 'text',
+            required: true,
+          },
+        ],
+      },
+      {
+        id: 'folder',
+        title: 'sync.connectors.oauth.folder.title',
+        fields: [
+          {
+            id: 'sync_root_path',
+            label: 'sync.connectors.oauth.path.label',
             type: 'text',
             required: true,
           },
         ],
       },
     ]);
-  }
-
-  override handleParameters(params: ConnectorParameters) {
-    localStorage.setItem(SITE_NAME, params['site_name']);
-  }
-
-  override getParametersValues(): ConnectorParameters {
-    const params = super.getParametersValues();
-    return { ...params, site_name: localStorage.getItem(SITE_NAME) };
   }
 }
