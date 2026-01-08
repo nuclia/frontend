@@ -21,8 +21,7 @@
           <stf-model-selector
             formControlName="generative_model"
             [providers]="providers"
-            [disclaimerExpanded]="true"
-            [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
+            [disclaimerExpanded]="true"></stf-model-selector>
           <div [hidden]="!generativeModelValue || isModelConfiguration">
             <stf-user-keys
               [generativeModel]="currentGenerativeModel"

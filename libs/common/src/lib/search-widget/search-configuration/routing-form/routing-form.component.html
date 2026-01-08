@@ -25,7 +25,6 @@
           <stf-model-selector
             formControlName="generative_model"
             [providers]="generativeProviders"
-            [disclaimerRequired]="!!(modelsDisclaimer | async)"
             (heightChanged)="heightChanged.emit()"></stf-model-selector>
         </div>
         <div

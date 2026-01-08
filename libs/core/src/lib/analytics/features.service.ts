@@ -62,7 +62,6 @@ export class FeaturesService {
     routing: this.featureFlag.isFeatureEnabled('routing'),
     aragWithMemory: this.featureFlag.isFeatureEnabled('arag-with-memory'),
     sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),
-    modelsDisclaimer: this.featureFlag.isFeatureEnabled('models-disclaimer'),
     bedrockIntegration: this.featureFlag.isFeatureEnabled('bedrock-integration'),
     cloudSyncService: this.featureFlag.isFeatureEnabled('cloud-sync-service'),
   };

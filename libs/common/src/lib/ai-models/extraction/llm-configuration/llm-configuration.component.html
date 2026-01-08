@@ -14,7 +14,7 @@
           [rows]="2"
           resizable
           modalTitle="kb.ai-models.extraction.llm-configuration.rules.rule"
-          [placeholder]="(rulesPlaceholder || '') | translate">
+          [placeholder]="rulesPlaceholder || '' | translate">
           {{ 'kb.ai-models.extraction.llm-configuration.rules.rule' | translate }}
         </nsi-expandable-textarea>
         @if (createMode) {
@@ -71,8 +71,7 @@
         <div class="title-s">{{ 'kb.ai-models.extraction.llm-configuration.generative-model' | translate }}</div>
         <stf-model-selector
           formControlName="generative_model"
-          [providers]="providers"
-          [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
+          [providers]="providers"></stf-model-selector>
         <!-- 
         <nsi-expandable-textarea
           formControlName="generative_prompt_id"

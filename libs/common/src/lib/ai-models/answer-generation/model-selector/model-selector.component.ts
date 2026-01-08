@@ -46,7 +46,6 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   onTouched: any;
 
   providers = input<GenerativeProviders>({});
-  disclaimerRequired = input<boolean>(true);
   disclaimerExpanded = input<boolean>(false);
   heightChanged = output<void>();
 
@@ -82,6 +81,11 @@ export class ModelSelectorComponent implements ControlValueAccessor {
             .find((model) => model.modelKey === this.selectedModel())
       : undefined;
     return { title: model?.model.title, description: model?.model.description, provider: model?.provider };
+  });
+
+  disclaimerText = computed(() =>{
+    // TODO: get disclaimer text from "selectedModelData" once the backend returns the disclaimer text
+    return '';
   });
 
   filteredByTerm = computed(() =>
@@ -138,7 +142,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   }
 
   updateControl() {
-    if (this.disclaimerRequired()) {
+    if (this.showDisclaimer() && !!this.disclaimerText()) {
       const value = this.selectedModel() && this.accepted() ? this.selectedModel() : '';
       this.onChange(value);
     } else {

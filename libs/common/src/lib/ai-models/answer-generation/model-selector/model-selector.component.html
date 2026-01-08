@@ -27,7 +27,7 @@
           {{ 'generic.delete' | translate }}
         </pa-button>
       </div>
-      @if (disclaimerRequired() && showDisclaimer()) {
+      @if (showDisclaimer() && disclaimerText()) {
         <div class="disclaimer">
           <pa-expander [expanded]="disclaimerExpanded()">
             <pa-expander-header>
@@ -41,7 +41,7 @@
                       | translate: { model: selectedModelData()?.title || '' }
                   }}
                 </p>
-                <div [innerHTML]="'kb.ai-models.model-selector.disclaimer.text' | translate"></div>
+                <div>{{ disclaimerText() }}</div>
               </div>
             </pa-expander-body>
           </pa-expander>
@@ -86,7 +86,7 @@
             <span class="body-s enterprise-ready">
               ({{ 'kb.ai-models.model-selector.enterprise-ready' | translate }})
             </span>
-          }          
+          }
         </pa-option-header>
         @for (model of provider.value.models; track model.key) {
           <pa-option

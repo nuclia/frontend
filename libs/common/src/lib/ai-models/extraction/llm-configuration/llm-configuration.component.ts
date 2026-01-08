@@ -16,7 +16,6 @@ import { ExtractVLLMConfig, GenerativeProviders } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { ModelSelectorComponent } from '../../answer-generation';
-import { FeaturesService } from '@flaps/core';
 
 @Component({
   imports: [
@@ -37,7 +36,6 @@ import { FeaturesService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
-  features = inject(FeaturesService);
 
   @Input() providers: GenerativeProviders = {};
   @Input() createMode: boolean = true;
@@ -49,7 +47,6 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   @Output() valueChange = new EventEmitter<ExtractVLLMConfig>();
   @Output() statusChange = new EventEmitter<FormControlStatus>();
-  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
   private unsubscribeAll = new Subject<void>();
 
   configForm = new FormGroup({

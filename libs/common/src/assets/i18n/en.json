@@ -687,7 +687,6 @@
 	"kb.ai-models.extraction.split.title": "Split configurations",
 	"kb.ai-models.model-selector.disclaimer.description": "The {{model}} may introduce business or compliance risks. Please review and accept before saving.",
 	"kb.ai-models.model-selector.disclaimer.label": "I have reviewed and understand the risks associated with using {{model}}. I accept responsibility for verifying outputs before use",
-	"kb.ai-models.model-selector.disclaimer.text": "<h3>Hallucinations<h3>\n<p>The model may generate inaccurate or fabricated information that appears credible.</p>\n<h3>Data Privacy</h3>\n<p>Input data may be transmitted to external providers for processing. Sensitive or personal data should not be shared.</p>\n<h3>Bias & Fairness</h3>\n<p>Model responses may reflect bias from training data. Review outputs carefully.</p>\n<h3>Security</h3>\n<p>Prompts can be exploited (prompt injection) to extract restricted content or bypass instructions.</p>\n<h3>Compliance</h3>\n<p>Output may not meet your company's legal, GDPR, HIPPA or security policies.</p>\n<h3>Content</h3>\n<p>The AI may generate harmful, misleading, or offensive content without intent.</p>",
 	"kb.ai-models.model-selector.disclaimer.title": "AI Model Risk Disclaimer",
 	"kb.ai-models.model-selector.enterprise-ready": "enterprise-ready",
 	"kb.ai-models.model-selector.search": "Search to select models",

@@ -32,7 +32,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
+import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Classification,
@@ -118,7 +118,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private tasksAutomation = inject(TasksAutomationService);
   private modalService = inject(SisModalService);
-  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -220,7 +219,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   learningConfigurations?: LearningConfigurations;
   generativeProviders: GenerativeProviders = {};
   unsupportedProviders = ['none'];
-  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
 
   get properties() {
     return this.taskDefinition?.validation.properties;
