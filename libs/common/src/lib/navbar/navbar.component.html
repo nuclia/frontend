@@ -118,7 +118,7 @@
                     [class.disabled]="!(isAdminOrContrib | async)"
                     [stfUnauthorizedFeature]="(isTasksAutomationAuthorized | async) === false">
                     <pa-icon name="submenu"></pa-icon>
-                    <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
                   </a>
                   @if (isRemiMetricsEnabled | async) {
                     <a
