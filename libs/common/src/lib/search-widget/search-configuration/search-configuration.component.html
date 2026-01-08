@@ -148,7 +148,7 @@
               [defaultPrompt]="defaultPromptFromSettings"
               [defaultSystemPrompt]="defaultSystemPromptFromSettings"
               [promptInfos]="promptInfos"
-              [generativeModels]="generativeModels"
+              [generativeProviders]="generativeProviders"
               [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateGenerativeAnswerConfig($event)"
               (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
@@ -183,7 +183,7 @@
               <stf-routing-form
                 [config]="savedConfig?.routing"
                 [kind]="useGenerativeAnswer ? 'ask' : 'find'"
-                [generativeModels]="generativeModels"
+                [generativeProviders]="generativeProviders"
                 (configChanged)="updateRoutingConfig($event)"
                 (heightChanged)="updateRoutingHeight()"></stf-routing-form>
             </pa-accordion-item-body>

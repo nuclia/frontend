@@ -17,7 +17,7 @@ import { AnonymizationComponent } from './anonymization/anonymization.component'
 import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
-import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
+import { LearningConfigurations, GenerativeProviders, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { removeDeprecatedModels } from './ai-models.utils';
 import { StandaloneService } from '../services';
@@ -56,6 +56,7 @@ export class AiModelsComponent implements OnInit {
   kb?: WritableKnowledgeBox;
   learningConfigurations?: LearningConfigurations;
   kbConfigBackup?: { [key: string]: any };
+  providers?: GenerativeProviders;
   noKbConfig = false;
 
   isSummarizationAuthorized = this.features.authorized.summarization;
@@ -74,7 +75,13 @@ export class AiModelsComponent implements OnInit {
     this.sdk.currentKb
       .pipe(
         tap((kb) => (this.kb = kb)),
-        switchMap((kb) => forkJoin([kb.getConfiguration().pipe(catchError(() => of(null))), kb.getLearningSchema()])),
+        switchMap((kb) =>
+          forkJoin([
+            kb.getConfiguration().pipe(catchError(() => of(null))),
+            kb.getLearningSchema(),
+            kb.getGenerativeProviders(),
+          ]),
+        ),
         filter(([kbConfig]) => {
           if (kbConfig === null) {
             this.noKbConfig = true;
@@ -82,17 +89,19 @@ export class AiModelsComponent implements OnInit {
           return !!kbConfig;
         }),
         map(
-          ([kbConfig, learningSchema]) =>
-            ({ kbConfig, learningSchema }) as {
+          ([kbConfig, learningSchema, providers]) =>
+            ({ kbConfig, learningSchema, providers }) as {
               kbConfig: { [id: string]: any };
               learningSchema: LearningConfigurations;
+              providers: GenerativeProviders;
             },
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ kbConfig, learningSchema }) => {
+      .subscribe(({ kbConfig, learningSchema, providers }) => {
         this.kbConfigBackup = kbConfig;
         this.learningConfigurations = removeDeprecatedModels(learningSchema);
+        this.providers = providers;
         this.cdr.markForCheck();
       });
   }

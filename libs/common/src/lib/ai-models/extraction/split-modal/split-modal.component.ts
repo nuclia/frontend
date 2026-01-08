@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   ModalRef,
   PaButtonModule,
@@ -9,7 +9,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CustomSplitStrategy, LearningConfigurations, SplitLLMConfig, SplitStrategy } from '@nuclia/core';
+import { CustomSplitStrategy, GenerativeProviders, SplitLLMConfig, SplitStrategy } from '@nuclia/core';
 import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
 @Component({
@@ -28,12 +28,13 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SplitModalComponent implements OnInit {
-  generativeModels = this.modal.config.data?.learningConfigurations?.['generative_model']?.options || [];
+  providers = this.modal.config.data?.providers || {};
   id = this.modal.config.data?.id;
   config = this.modal.config.data?.config;
   createMode = !this.id;
 
   llmSplit?: SplitLLMConfig;
+  llmSplitStatus?: FormControlStatus;
 
   configForm = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
@@ -56,11 +57,12 @@ export class SplitModalComponent implements OnInit {
   }
 
   constructor(
-    private modal: ModalRef<
-      { learningConfigurations: LearningConfigurations; id?: string; config?: SplitStrategy },
-      SplitStrategy
-    >,
+    private modal: ModalRef<{ providers: GenerativeProviders; id?: string; config?: SplitStrategy }, SplitStrategy>,
   ) {}
+
+  get invalid() {
+    return this.configForm.invalid || (this.type === 'llm' && this.llmSplitStatus !== 'VALID');
+  }
 
   ngOnInit() {
     if (this.config) {

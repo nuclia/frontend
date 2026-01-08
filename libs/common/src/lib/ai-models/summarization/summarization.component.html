@@ -6,12 +6,11 @@
       noTopBorder
       itemTitle="kb.ai-models.summarization.select-llm.title"
       description="kb.ai-models.summarization.select-llm.description">
-      @if (learningConfig['summary_model'].options; as options) {
+      @if (providers) {
         <stf-model-selector
           formControlName="summary_model"
-          [options]="options"
-          [disclaimerExpanded]="true"
-          [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
+          [providers]="providers"
+          [disclaimerExpanded]="true"></stf-model-selector>
       }
     </nsi-two-columns-configuration-item>
 

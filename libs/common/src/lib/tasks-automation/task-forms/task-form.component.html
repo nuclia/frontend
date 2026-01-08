@@ -153,8 +153,7 @@
           formGroupName="llm">
           <stf-model-selector
             formControlName="model"
-            [options]="availableLLMs"
-            [disclaimerRequired]="!!(modelsDisclaimer | async)"></stf-model-selector>
+            [providers]="generativeProviders"></stf-model-selector>
           <stf-user-keys
             [learningConfigurations]="learningConfigurations"
             [generativeModel]="generativeModel"

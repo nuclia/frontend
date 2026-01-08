@@ -14,20 +14,7 @@ import {
   transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { type LearningConfigurationOption } from '@nuclia/core';
-
-const providersNames: { [provider: string]: string } = {
-  microsoft: 'Azure OpenAI',
-  openai: 'OpenAI',
-  claude3: 'Anthropic',
-  google: 'Google',
-  mistral: 'Mistral',
-  huggingface: 'Hugging Face',
-  vertex: 'Vertex',
-  openai_compat: 'OpenAI compatibility',
-  none: 'No generation',
-  azure_aii: 'Azure AI',
-};
+import { ModelInfo, GenerativeProvider, GenerativeProviders } from '@nuclia/core';
 
 @Component({
   selector: 'stf-model-selector',
@@ -55,12 +42,10 @@ const providersNames: { [provider: string]: string } = {
   ],
 })
 export class ModelSelectorComponent implements ControlValueAccessor {
-  providerNames = providersNames;
   onChange: any;
   onTouched: any;
 
-  options = input<LearningConfigurationOption[]>([]);
-  disclaimerRequired = input<boolean>(true);
+  providers = input<GenerativeProviders>({});
   disclaimerExpanded = input<boolean>(false);
   heightChanged = output<void>();
 
@@ -74,40 +59,56 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   @ViewChild('popup') popup?: PopupDirective;
   @ViewChild('dropdown') dropdown?: DropdownComponent;
 
-  selectedOption = computed(() =>
-    this.selectedModel() ? this.options().find((option) => option.value === this.selectedModel()) : undefined,
-  );
-
-  filteredByTerm = computed(() =>
-    this.options().filter((option) => option.name.toLowerCase().includes(this.term().toLowerCase())),
-  );
-
-  providers = computed(() =>
-    this.filteredByTerm().reduce((acc, curr) => {
-      if (curr.provider && !acc.includes(curr.provider)) {
-        acc.push(curr.provider);
-      }
-      return acc;
-    }, [] as string[]),
-  );
-
-  filteredByProvider = computed(() =>
-    this.filteredByTerm().filter((option) => !this.filter() || this.filter() === (option.provider || '')),
-  );
-
-  optionsGroups = computed(() =>
-    Object.entries(
-      this.filteredByProvider().reduce(
-        (acc, curr) => {
-          if (curr.provider) {
-            acc[curr.provider] = acc[curr.provider] ? acc[curr.provider].concat(curr) : [curr];
-          }
-          return acc;
-        },
-        {} as { [provider: string]: LearningConfigurationOption[] },
-      ),
+  modelList = computed(() =>
+    Object.entries(this.providers()).reduce(
+      (acc, [providerKey, provider]) =>
+        acc.concat(
+          Object.entries(provider.models).map(([modelKey, model]) => ({ providerKey, provider, modelKey, model })),
+        ),
+      [] as { providerKey: string; provider: GenerativeProvider; modelKey: string; model: ModelInfo }[],
     ),
   );
+
+  selectedModelData = computed(() => {
+    const isCustomModel = this.selectedModel()?.includes('/');
+    const model = this.selectedModel()
+      ? isCustomModel
+        ? this.modelList()
+            .filter((model) => model.providerKey === 'default')
+            .find((model) => model.model.name === this.selectedModel())
+        : this.modelList()
+            .filter((model) => model.providerKey !== 'default')
+            .find((model) => model.modelKey === this.selectedModel())
+      : undefined;
+    return { title: model?.model.title, description: model?.model.description, provider: model?.provider };
+  });
+
+  disclaimerText = computed(() =>{
+    // TODO: get disclaimer text from "selectedModelData" once the backend returns the disclaimer text
+    return '';
+  });
+
+  filteredByTerm = computed(() =>
+    Object.entries(this.providers())
+      .map(([key, provider]) => ({
+        key,
+        value: {
+          ...provider,
+          models: Object.entries(provider.models)
+            .filter(([, model]) => model.title.toLocaleLowerCase().includes(this.term().toLowerCase()))
+            .map(([key, value]) => ({ key, value })),
+        },
+      }))
+      .filter((provider) => Object.keys(provider.value.models).length > 0),
+  );
+
+  filteredByProvider = computed(() => {
+    if (this.filter()) {
+      const provider = this.filteredByTerm().find(({ key }) => key === this.filter());
+      return provider ? [provider] : [];
+    }
+    return this.filteredByTerm();
+  });
 
   writeValue(value: any) {
     this.selectedModel.set(value || '');
@@ -141,7 +142,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   }
 
   updateControl() {
-    if (this.disclaimerRequired()) {
+    if (this.showDisclaimer() && !!this.disclaimerText()) {
       const value = this.selectedModel() && this.accepted() ? this.selectedModel() : '';
       this.onChange(value);
     } else {

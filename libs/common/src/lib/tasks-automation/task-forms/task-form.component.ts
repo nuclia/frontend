@@ -32,20 +32,20 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
+import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Classification,
   FIELD_TYPE,
-  LearningConfigurationOption,
   LearningConfigurations,
   LLMConfig,
   longToShortFieldType,
+  GenerativeProviders,
   TaskFullDefinition,
   TaskName,
   TaskTrigger,
 } from '@nuclia/core';
-import { BehaviorSubject, filter, map, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, map, Subject, switchMap } from 'rxjs';
 import { delay, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { ModelSelectorComponent, UserKeysComponent, UserKeysForm } from '../../ai-models';
@@ -118,7 +118,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private tasksAutomation = inject(TasksAutomationService);
   private modalService = inject(SisModalService);
-  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -218,9 +217,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   taskDefinition?: TaskFullDefinition;
   learningConfigurations?: LearningConfigurations;
-  availableLLMs: LearningConfigurationOption[] = [];
-  unsupportedLLMs = ['generative-multilingual-2023'];
-  modelsDisclaimer = this.features.unstable.modelsDisclaimer;
+  generativeProviders: GenerativeProviders = {};
+  unsupportedProviders = ['none'];
 
   get properties() {
     return this.taskDefinition?.validation.properties;
@@ -246,17 +244,16 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) => kb.getLearningSchema()),
+        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getGenerativeProviders()])),
       )
-      .subscribe((schema) => {
+      .subscribe(([schema, providers]) => {
         this.learningConfigurations = schema;
-        this.availableLLMs = (schema?.['generative_model']?.options || []).filter(
-          (option) => !this.unsupportedLLMs.includes(option.value),
+        this.generativeProviders = Object.fromEntries(
+          Object.entries(providers).filter(([key]) => !this.unsupportedProviders.includes(key)),
         );
-        const hasCheapLLM = this.availableLLMs.some((option) => option.value === DEFAULT_CHEAP_LLM);
-        const hasDefaultLLM = this.availableLLMs.some(
-          (option) => option.value === schema?.['generative_model']?.default,
-        );
+        const models = schema?.['generative_model'].options || [];
+        const hasCheapLLM = models.some((option) => option.value === DEFAULT_CHEAP_LLM);
+        const hasDefaultLLM = models.some((option) => option.value === schema?.['generative_model']?.default);
         if (!this.form.controls.llm.controls.model.value) {
           this.form.controls.llm.controls.model.setValue(
             hasCheapLLM ? DEFAULT_CHEAP_LLM : hasDefaultLLM ? schema?.['generative_model']?.default : '',

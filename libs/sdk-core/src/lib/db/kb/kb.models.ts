@@ -167,6 +167,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }>;
   getLearningSchema(): Observable<LearningConfigurations>;
+  getGenerativeProviders(): Observable<GenerativeProviders>;
 
   getUsers(accountSlug: string): Observable<FullKbUser[]>;
 
@@ -569,4 +570,71 @@ export interface AskConfig {
 export interface FindConfig {
   kind: 'find';
   config: SearchOptions;
+}
+
+export interface GenerativeProviders {
+  [key: string]: GenerativeProvider;
+}
+
+export interface GenerativeProvider {
+  title: string;
+  enterprise_readiness: boolean;
+  models: { [key: string]: ModelInfo };
+}
+
+export interface ModelInfo {
+  name: string;
+  title: string;
+  description?: string;
+  config: ModelConfig;
+  features: ModelFeatures;
+  metadata: ModelMetadata;
+}
+
+export interface ModelConfig {
+  input_tokens: { min?: number; max: number };
+  output_tokens: { min?: number; max: number; default_max?: number };
+  prompt_id?: string;
+  driver?: string;
+  max_images?: string;
+  assume_role?: number;
+}
+
+export interface ModelFeatures {
+  reasoning?: {
+    default: number | ReasoningEffort;
+    available_efforts?: ReasoningEffort;
+  };
+  tools?: any;
+  structured_output?: any;
+  vision?: any;
+  streaming?: any;
+  system_message?: any;
+  text_extraction?: any;
+  custom_keys?: any;
+  file_input?: any;
+  image_generation?: any;
+}
+
+export interface ModelMetadata {
+  data_region?: string;
+  deployed_region?: string;
+  deprecated?: boolean;
+  shut_down_date?: string;
+  superseded_by?: string;
+  stability?: ModelStability;
+  knowledge_cutoff_date?: string;
+  release_date?: string;
+}
+
+export enum ModelStability {
+  STABLE = 'stable',
+  PREVIEW = 'preview',
+}
+
+export enum ReasoningEffort {
+  MINIMAL = 'minimal',
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
 }

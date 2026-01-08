@@ -48,13 +48,15 @@
         <stf-answer-generation
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
-          [kbConfigBackup]="kbConfigBackup"></stf-answer-generation>
+          [kbConfigBackup]="kbConfigBackup"
+          [providers]="providers"></stf-answer-generation>
       }
       @case ('summarization') {
         <stf-summarization
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
-          [kbConfigBackup]="kbConfigBackup"></stf-summarization>
+          [kbConfigBackup]="kbConfigBackup"
+          [providers]="providers"></stf-summarization>
       }
       @case ('semantic-model') {
         <stf-semantic-model
@@ -63,7 +65,7 @@
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
       }
       @case ('extraction') {
-        <stf-extraction [learningConfigurations]="learningConfigurations"></stf-extraction>
+        <stf-extraction [providers]="providers"></stf-extraction>
       }
       @case ('anonymization') {
         <stf-anonymization

@@ -31,7 +31,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurationOption, LearningConfigurations, SearchConfig, Widget } from '@nuclia/core';
+import { LearningConfigurations, GenerativeProviders, SearchConfig, Widget } from '@nuclia/core';
 import {
   ButtonMiniComponent,
   ExpandableTextareaComponent,
@@ -134,7 +134,7 @@ export class SearchConfigurationComponent {
   generativeModelFromSettings = '';
   semanticModelFromSettings = '';
   generativeModelNames: { [key: string]: string } = {};
-  generativeModels: LearningConfigurationOption[] = [];
+  generativeProviders: GenerativeProviders = {};
   semanticModels: OptionModel[] = [];
   promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
@@ -158,19 +158,21 @@ export class SearchConfigurationComponent {
       .pipe(
         take(1),
         switchMap((kb) => {
-          return forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
+          return forkJoin([kb.getLearningSchema(), kb.getConfiguration(), kb.getGenerativeProviders()]).pipe(
             map(
-              ([schema, config]) =>
-                ({ schema: removeDeprecatedModels(schema), config }) as {
+              ([schema, config, providers]) =>
+                ({ schema: removeDeprecatedModels(schema), config, providers }) as {
                   config: { [id: string]: any };
                   schema: LearningConfigurations;
+                  providers: GenerativeProviders;
                 },
             ),
           );
         }),
-        tap(({ schema, config }) => {
+        tap(({ schema, config, providers }) => {
           this.generativeModelFromSettings = config['generative_model'] || '';
           this.semanticModelFromSettings = config['default_semantic_model'] || '';
+          this.generativeProviders = providers;
           this.generativeModelNames =
             schema['generative_model']?.options?.reduce(
               (acc, model) => {
@@ -250,7 +252,6 @@ export class SearchConfigurationComponent {
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
     const generativeModels = schema['generative_model']?.options || [];
-    this.generativeModels = generativeModels;
     const semanticModelsName = (schema['semantic_models'].options || []).reduce(
       (names, model) => {
         names[model.value] = model.name;
