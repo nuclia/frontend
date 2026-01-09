@@ -1214,7 +1214,7 @@
 	"retrieval-agents.drivers.add.internet.all-configured": "Tots els controladors d'Internet ja estan configurats",
 	"retrieval-agents.drivers.add.internet.label": "Afegir un controlador Internet",
 	"retrieval-agents.drivers.add.nuclia": "Afegir un controlador Agentic RAG KB",
-	"retrieval-agents.drivers.add.title": "Afegeix un controlador {{name}}",
+	"retrieval-agents.drivers.add.title": "Afegeix un {{name}}",
 	"retrieval-agents.drivers.confirm-deletion.description": "Esteu segur que voleu suprimir aquest controlador? Aquesta acció no es pot desfer.",
 	"retrieval-agents.drivers.confirm-deletion.title": "Vols suprimir {{name}}?",
 	"retrieval-agents.drivers.description": "Seleccioneu les fonts externes disponibles per als agents",

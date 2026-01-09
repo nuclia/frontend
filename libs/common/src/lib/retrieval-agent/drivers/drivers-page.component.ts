@@ -53,7 +53,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
 
   // Expose service properties to template
   drivers = this.driversService.drivers;
-  titles = computed(() => {
+  driverOptions = computed(() => {
     const schemas = this.driversService.schemas();
     if (schemas === null) {
       return [];
@@ -61,8 +61,10 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       const driverSchemaIds = ((schemas.properties?.['drivers'].items as JSONSchema4)?.oneOf || []).map(
         (ref) => ref.$ref?.split('/').slice(-1)[0],
       );
-      const titles = Object.keys((schemas as JSONSchema7).$defs || {}).filter((id) => driverSchemaIds.includes(id));
-      return titles;
+      const options = Object.entries((schemas as JSONSchema7).$defs || {})
+        .filter(([key]) => driverSchemaIds.includes(key))
+        .map(([key, driver]) => ({ key, title: (driver as JSONSchema4)?.title || '' }));
+      return options;
     }
   });
   hasAllInternetDrivers = this.driversService.hasAllInternetDrivers;
@@ -88,7 +90,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  addDriver(driverTitle: string): void {
+  addDriver(driverKey: string): void {
     // Prevent multiple add operations from running simultaneously
     if (this.addInProgress) {
       return;
@@ -97,7 +99,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     this.addInProgress = true;
 
     this.driversService
-      .addDriver(driverTitle)
+      .addDriver(driverKey)
       .pipe(
         takeUntil(this._unsubscribeAll),
         finalize(() => {
@@ -228,37 +230,12 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Check if a driver should be shown based on feature flags
-   */
-  shouldShowDriver(driverTitle: string): boolean {
-    const titleLower = driverTitle.toLowerCase();
-
-    // Always show these drivers
-    if (titleLower.includes('nuclia') || titleLower.includes('internet')) {
-      return true;
-    }
-
-    return true;
-  }
-
-  /**
-   * Get the display name for a driver (with translation)
-   */
-  getDriverDisplayName(driverTitle: string): string {
-    const titleLower = driverTitle.toLowerCase();
-
-    // Fallback to the original title
-    return driverTitle;
-    // return this.translate.instant(`retrieval-agents.drivers.add.${titleLower}`) || driverTitle;
-  }
-
-  /**
    * Get description for a driver
    */
-  getDriverDescription(driverTitle: string): string {
-    const titleLower = driverTitle.toLowerCase();
+  getDriverDescription(driverKey: string): string {
+    const keyLower = driverKey.toLowerCase();
 
-    if (titleLower.includes('internet') && this.hasAllInternetDrivers()) {
+    if (keyLower.includes('internet') && this.hasAllInternetDrivers()) {
       return this.translate.instant('retrieval-agents.drivers.add.internet.all-configured');
     }
 
@@ -268,11 +245,11 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   /**
    * Check if a driver option should be disabled
    */
-  isDriverDisabled(driverTitle: string): boolean {
-    const titleLower = driverTitle.toLowerCase();
+  isDriverDisabled(driverKey: string): boolean {
+    const keyLower = driverKey.toLowerCase();
 
     // Disable internet driver if all are configured
-    if (titleLower.includes('internet') && this.hasAllInternetDrivers()) {
+    if (keyLower.includes('internet') && this.hasAllInternetDrivers()) {
       return true;
     }
 

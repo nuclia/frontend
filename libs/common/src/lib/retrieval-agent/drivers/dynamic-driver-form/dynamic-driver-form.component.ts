@@ -26,7 +26,7 @@ export interface RenderableDriverField {
   imports: [ReactiveFormsModule, TranslateModule, CommonModule, DriverFieldRendererComponent],
 })
 export class DynamicDriverFormComponent implements OnInit {
-  @Input() driverTitle!: string; // Title from the driver schema (e.g. "BraveDriverConfig")
+  @Input() driverKey!: string; // Key from the driver schema (e.g. "BraveDriverConfig")
   @Input() existingDriver?: Driver; // For editing mode
   @Input() existingDrivers?: Driver[]; // For validation
 
@@ -98,10 +98,10 @@ export class DynamicDriverFormComponent implements OnInit {
 
   private setupForm(): void {
     // Find the driver schema by title
-    const driverSchema = this.getSchema(this.driverTitle);
+    const driverSchema = this.getSchema(this.driverKey);
 
     if (!driverSchema) {
-      console.error(`Driver schema not found for title: ${this.driverTitle}`);
+      console.error(`Driver schema not found for key: ${this.driverKey}`);
       return;
     }
 

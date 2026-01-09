@@ -135,12 +135,12 @@ export class DriversService {
   /**
    * Add a new driver using dynamic form based on schema
    */
-  addDriver(driverTitle: string): Observable<any> {
+  addDriver(driverKey: string): Observable<any> {
     return of(this._drivers()).pipe(
       take(1),
       switchMap((existingDrivers) => {
         let modalRef$: Observable<ModalRef<any>>;
-        switch (driverTitle) {
+        switch (driverKey) {
           case 'NucliaDBConfig':
             modalRef$ = this.kbList$.pipe(
               take(1),
@@ -161,7 +161,7 @@ export class DriversService {
                 DynamicDriverModalComponent,
                 new ModalConfig({
                   data: {
-                    driverTitle,
+                    driverKey,
                     existingDrivers,
                   },
                   dismissable: false,
@@ -255,13 +255,13 @@ export class DriversService {
         }
 
         // Find the appropriate driver schema based on the provider
-        const driverTitle = this.getDriverTitleByProvider(driverToEdit.provider, schemas);
-        if (!driverTitle) {
+        const driverKey = this.getDriverKeyByProvider(driverToEdit.provider, schemas);
+        if (!driverKey) {
           throw new Error(`Unknown driver provider: ${driverToEdit.provider}`);
         }
 
         const modalRef =
-          driverTitle === 'NucliaDBConfig'
+          driverKey === 'NucliaDBConfig'
             ? this.modal.openModal(
                 NucliaDriverModalComponent,
                 new ModalConfig({
@@ -273,7 +273,7 @@ export class DriversService {
                 DynamicDriverModalComponent,
                 new ModalConfig({
                   data: {
-                    driverTitle,
+                    driverKey,
                     existingDriver: driverToEdit,
                     existingDrivers,
                   },
@@ -366,10 +366,10 @@ export class DriversService {
   /**
    * Get driver schema title by provider name
    */
-  private getDriverTitleByProvider(provider: string, schemas: JSONSchema4): string | null {
-    const driver = Object.values((schemas as JSONSchema7).$defs || []).find(
-      (schema) => ((schema as JSONSchema4).properties?.['provider'] as JSONSchema7)?.const === provider,
+  private getDriverKeyByProvider(provider: string, schemas: JSONSchema4): string | null {
+    const driver = Object.entries((schemas as JSONSchema7).$defs || []).find(
+      ([, schema]) => ((schema as JSONSchema4).properties?.['provider'] as JSONSchema7)?.const === provider,
     );
-    return (driver as JSONSchema4)?.title || null;
+    return driver?.[0] || null;
   }
 }

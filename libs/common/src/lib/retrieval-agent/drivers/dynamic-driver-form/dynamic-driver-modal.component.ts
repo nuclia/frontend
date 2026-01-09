@@ -1,15 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit, ViewChild, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild, signal, computed } from '@angular/core';
 import { PaModalModule, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ARAGSchemas, Driver, DriverCreation } from '@nuclia/core';
+import { Driver, DriverCreation } from '@nuclia/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { DynamicDriverFormComponent } from './dynamic-driver-form.component';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { JSONSchema4, JSONSchema7 } from 'json-schema';
+import { DriversService } from '../drivers.service';
 
 export interface DynamicDriverModalData {
-  driverTitle: string;
+  driverKey: string;
   existingDriver?: Driver;
   existingDrivers?: Driver[];
 }
@@ -28,9 +30,10 @@ export class DynamicDriverModalComponent implements OnInit {
   private modalRef = inject(ModalRef<DynamicDriverModalData>);
   private translate = inject(TranslateService);
   private toaster = inject(SisToastService);
+  private driversService = inject(DriversService);
 
   // Get data from modal service instead of @Input
-  driverTitle!: string;
+  driverKey?: string;
   existingDriver?: Driver;
   existingDrivers?: Driver[];
 
@@ -40,7 +43,9 @@ export class DynamicDriverModalComponent implements OnInit {
 
   modalTitle = computed(() => {
     const isEditing = !!this.existingDriver;
-    const driverName = this.getDriverDisplayName();
+    const schemas = this.driversService.schemas();
+    const schema = (schemas as JSONSchema7).$defs?.[this.driverKey || ''] as JSONSchema4;
+    const driverName = schema?.title || 'Driver';
     return isEditing
       ? this.translate.instant('retrieval-agents.drivers.edit-modal-title', { name: driverName })
       : this.translate.instant('retrieval-agents.drivers.add.title', { name: driverName });
@@ -54,7 +59,7 @@ export class DynamicDriverModalComponent implements OnInit {
   ngOnInit() {
     // Get data from the modal service
     const modalData = this.modalRef.config.data as DynamicDriverModalData;
-    this.driverTitle = modalData.driverTitle;
+    this.driverKey = modalData.driverKey;
     this.existingDriver = modalData.existingDriver;
     this.existingDrivers = modalData.existingDrivers;
   }
@@ -142,15 +147,5 @@ export class DynamicDriverModalComponent implements OnInit {
     }
 
     return true;
-  }
-
-  private getDriverDisplayName(): string {
-    // Handle case where driverTitle might be undefined
-    if (!this.driverTitle) {
-      return 'Driver';
-    }
-
-    // Fallback to the original title
-    return this.driverTitle;
   }
 }

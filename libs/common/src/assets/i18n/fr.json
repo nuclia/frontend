@@ -1214,7 +1214,7 @@
 	"retrieval-agents.drivers.add.internet.all-configured": "Tous les pilotes Internet sont déjà configurés",
 	"retrieval-agents.drivers.add.internet.label": "Ajouter un pilote Internet",
 	"retrieval-agents.drivers.add.nuclia": "Ajouter un pilote Agentic RAG KB",
-	"retrieval-agents.drivers.add.title": "Ajouter un pilote {{name}}",
+	"retrieval-agents.drivers.add.title": "Ajouter un {{name}}",
 	"retrieval-agents.drivers.confirm-deletion.description": "Êtes-vous sûr de vouloir supprimer ce pilote ? Cette action ne peut pas être annulée.",
 	"retrieval-agents.drivers.confirm-deletion.title": "Supprimer {{name}} ?",
 	"retrieval-agents.drivers.description": "Sélectionnez les sources externes disponibles pour les agents",
