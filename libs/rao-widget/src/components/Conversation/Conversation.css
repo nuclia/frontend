@@ -88,57 +88,57 @@
 .rao-react__message-card--feedback {
   border: 1px solid rgba(59, 130, 246, 0.2);
   background: #f1f5f9;
+  max-width: calc(100% - var(--rhythm-9, 72px));
+  width: 100%;
 }
 
 .rao-react__feedback-options {
-  list-style: none;
-  margin: var(--rhythm-1, 16px) 0 0;
-  padding: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--rhythm-1, 16px);
+  flex-wrap: wrap;
 }
 
 .rao-react__feedback-option {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-0_5, 8px);
-}
-
-.rao-react__feedback-option-button {
-  appearance: none;
-  border: 1px solid rgba(100, 116, 139, 0.32);
-  background: #ffffff;
-  padding: var(--rhythm-1, 16px);
+  border: 1px solid #999999;
   border-radius: 6px;
-  text-align: left;
-  font-weight: 600;
-  color: #0f172a;
-  cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
+  background: #ffffff;
+  flex: 1 1 calc(50% - var(--rhythm-1, 16px));
+  max-width: calc(50% - var(--rhythm-5, 40px));
+  padding: var(--rhythm-2, 16px);
 }
 
-.rao-react__feedback-option-button:hover {
-  border-color: rgba(37, 99, 235, 0.65);
+.rao-react__feedback-option:hover {
+  border-color: #2563eb;
   background: rgba(37, 99, 235, 0.08);
 }
 
-.rao-react__feedback-option-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+.rao-react__feedback-option.is-selected {
+  border-color: #62e278;
+  background: rgba(98, 226, 120, 0.12);
 }
 
-.rao-react__feedback-option.is-selected .rao-react__feedback-option-button {
-  border-color: #2563eb;
-  background: rgba(37, 99, 235, 0.12);
-  color: #0f172a;
+.rao-react__feedback-option-title-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--rhythm-1, 16px);
+  gap: var(--rhythm-1, 16px);
 }
 
-.rao-react__feedback-option-title {
+.rao-react__feedback-option-badge {
+  height: var(--rhythm-2_5, 10px);
+  width: var(--rhythm-2_5, 10px);
+  border-radius: 50%;
+  background: #2563eb;
   display: inline-block;
+  margin-right: var(--rhythm-0_5, 8px);
+}
+
+.rao-react__feedback-option-badge.is-selected {
+  background-color: #047857;
 }
 
 .rao-react__feedback-option-description {

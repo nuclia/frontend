@@ -6,11 +6,7 @@ import type { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { Icon } from '../Icon/Icon';
-import { IResources } from '../RaoWidget';
-
-// @ts-expect-error - inline CSS imports are handled by the bundler
-import styles from './Conversation.css?inline';
-import { IResources } from '../RaoWidget';
+import type { IResources } from '../RaoWidget';
 
 // @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Conversation.css?inline';
@@ -514,14 +510,6 @@ export const Conversation: React.FC<IConversation> = () => {
             const questionContent = isNonEmptyString(question) ? question : null;
             const isSubmitting = status === 'submitting';
             const isCompleted = status === 'completed';
-            const statusLabel =
-              status === 'completed'
-                ? resources.feedback_sent
-                : status === 'submitting'
-                  ? resources.feedback_sending
-                  : status === 'error'
-                    ? resources.feedback_error
-                    : '';
 
             const nameForMessage = message.title ?? assistantName;
             const avatarInitials =
@@ -569,21 +557,26 @@ export const Conversation: React.FC<IConversation> = () => {
                       )}
 
                       {options.length > 0 ? (
-                        <ul className="rao-react__feedback-options">
+                        <div className="rao-react__feedback-options">
                           {options.map((option) => {
                             const optionDescription = isNonEmptyString(option.description) ? option.description : null;
                             const isSelected = selectedOptionId === option.id;
                             return (
-                              <li
+                              <div
                                 key={option.id}
-                                className={`rao-react__feedback-option${isSelected ? ' is-selected' : ''}`}>
-                                <button
-                                  type="button"
-                                  className="rao-react__feedback-option-button"
-                                  onClick={() => handleOptionSelect(message.id, option.id)}
-                                  disabled={isSubmitting || isCompleted}>
-                                  <span className="rao-react__feedback-option-title">{option.title}</span>
-                                </button>
+                                className={`rao-react__feedback-option${isSelected ? ' is-selected' : ''}`}
+                                onClick={() => {
+                                  if (!(isSubmitting || isCompleted)) {
+                                    handleOptionSelect(message.id, option.id);
+                                  }
+                                }}>
+                                <h3 className="rao-react__feedback-option-title-wrapper">
+                                  <span
+                                    className={`rao-react__feedback-option-badge${isSelected ? ' is-selected' : ''}`}>
+                                    {option.label}
+                                  </span>
+                                  <span className="rao-react__feedback-option-title-text">{option.title}</span>
+                                </h3>
 
                                 {optionDescription && (
                                   <ReactMarkdown
@@ -593,25 +586,13 @@ export const Conversation: React.FC<IConversation> = () => {
                                     {optionDescription}
                                   </ReactMarkdown>
                                 )}
-                                {isSelected && isCompleted && (
-                                  <span className="rao-react__feedback-option-pill">{resources.feedback_selected}</span>
-                                )}
-                              </li>
+                              </div>
                             );
                           })}
-                        </ul>
+                        </div>
                       ) : (
                         <p className="rao-react__message-content rao-react__message-content--placeholder">
                           {resources.feedback_error}
-                        </p>
-                      )}
-
-                      {status !== 'error' && <p className="rao-react__feedback-status">{statusLabel}</p>}
-                      {status === 'error' && error && (
-                        <p
-                          className="rao-react__feedback-error"
-                          role="alert">
-                          {error}
                         </p>
                       )}
                     </div>
