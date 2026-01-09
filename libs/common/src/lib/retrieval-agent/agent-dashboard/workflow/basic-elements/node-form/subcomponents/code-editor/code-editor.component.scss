@@ -4,23 +4,16 @@
   margin-bottom: rhythm(2);
 
   .required {
-    color: var(--color-error-regular);
     margin-left: rhythm(0.25);
   }
 }
 
 .code-editor-container {
   position: relative;
-  border: 1px solid var(--color-neutral-light);
+  border: 1px solid $color-neutral-light;
   border-radius: rhythm(1);
   overflow: hidden;
-  background-color: var(--color-neutral-lightest);
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
-
-  &:focus-within {
-    border-color: var(--color-primary-regular);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-regular) 10%, transparent);
-  }
+  font-family: $font-family-monospace;
 }
 
 .highlight-layer {
@@ -42,7 +35,6 @@
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--color-neutral-darkest);
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -75,72 +67,75 @@
     letter-spacing: inherit;
     text-indent: inherit;
     text-align: inherit;
-  }
 
-  // Prism.js light theme syntax highlighting colors using design system
-  .token.comment,
-  .token.prolog,
-  .token.doctype,
-  .token.cdata {
-    color: var(--color-neutral-dark);
-    font-style: italic;
-  }
+    ::ng-deep {
+      // Prism.js light theme syntax highlighting colors
+      .token.comment,
+      .token.prolog,
+      .token.doctype,
+      .token.cdata {
+        color: #708090;
+        font-style: italic;
+      }
 
-  .token.punctuation {
-    color: var(--color-neutral-darkest);
-  }
+      .token.punctuation {
+        color: #999;
+      }
 
-  .token.property,
-  .token.tag,
-  .token.boolean,
-  .token.number,
-  .token.constant,
-  .token.symbol,
-  .token.deleted {
-    color: var(--color-primary-dark);
-  }
+      .token.property,
+      .token.tag,
+      .token.boolean,
+      .token.number,
+      .token.constant,
+      .token.symbol,
+      .token.deleted {
+        color: #905;
+      }
 
-  .token.selector,
-  .token.attr-name,
-  .token.string,
-  .token.char,
-  .token.builtin,
-  .token.inserted {
-    color: var(--color-success-dark);
-  }
+      .token.selector,
+      .token.attr-name,
+      .token.string,
+      .token.char,
+      .token.builtin,
+      .token.inserted {
+        color: #690;
+      }
 
-  .token.operator,
-  .token.entity,
-  .token.url,
-  .language-css .token.string,
-  .style .token.string {
-    color: var(--color-neutral-darkest);
-  }
+      .token.operator,
+      .token.entity,
+      .token.url,
+      .language-css .token.string,
+      .style .token.string {
+        color: #9a6e3a;
+        background: hsla(0, 0%, 100%, 0.5);
+      }
 
-  .token.atrule,
-  .token.attr-value,
-  .token.keyword {
-    color: var(--color-error-regular);
-  }
+      .token.atrule,
+      .token.attr-value,
+      .token.keyword {
+        color: #07a;
+      }
 
-  .token.function,
-  .token.class-name {
-    color: var(--color-secondary-regular);
-  }
+      .token.function,
+      .token.class-name {
+        color: #dd4a68;
+      }
 
-  .token.regex,
-  .token.important,
-  .token.variable {
-    color: var(--color-warning-regular);
-  }
+      .token.regex,
+      .token.important,
+      .token.variable {
+        color: #e90;
+      }
 
-  .token.important,
-  .token.bold {
-    font-weight: bold;
-  }
+      .token.important,
+      .token.bold {
+        font-weight: $font-weight-bold;
+      }
 
-  .token.italic {
-    font-style: italic;
+      .token.italic {
+        font-style: italic;
+      }
+    }
   }
 }
 
@@ -156,7 +151,7 @@
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
-  resize: vertical;
+  resize: none;
   outline: none;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -203,6 +198,19 @@
     -webkit-text-fill-color: rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 0 0px 1000px transparent inset;
     transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+.expand {
+  display: none;
+  position: absolute;
+  right: rhythm(1.5); // Avoid overlapping with the scrollbar
+  top: rhythm(0.5);
+  z-index: 10;
+}
+.code-editor-container:hover {
+  .expand {
+    display: block;
   }
 }
 
