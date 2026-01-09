@@ -1,7 +1,7 @@
 import { type FC, type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RaoContext } from './RaoContext';
 import { type IRaoContext, type IRaoProvider } from './RaoContext.interface';
-import type { ICallState, IMessage, ISessions } from '../interfaces';
+import type { ICallState, IMessage, IMessageFeedbackOption, ISessions } from '../interfaces';
 import {
   createAuthApi,
   createChatRepository,
@@ -70,6 +70,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   const [visibleViewType, setVisibleViewType] = useState<EViewType>(rest.viewtype ?? 'conversation');
   const [sessionsState, _setSessionsState] = useState<ICallState<ISessions>>({});
   const [conversation, setConversation] = useState<IMessage[] | null>(null);
+  const conversationRef = useRef<IMessage[] | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(() => sessionIdProp ?? null);
 
@@ -77,6 +78,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   const chatAbortControllerRef = useRef<AbortController | null>(null);
   const assistantMessageIdRef = useRef<string | null>(null);
   const lastAssistantMessageIdRef = useRef<string | null>(null);
+  const lastAssistantTextRef = useRef<string | null>(null);
   const cachedTokenRef = useRef<string | null>(null);
   const pendingTokenRequestRef = useRef<Promise<string | null> | null>(null);
   const pendingSessionRequestRef = useRef<Promise<string> | null>(null);
@@ -90,10 +92,13 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   const initialApiKey = nuclia?.options?.apiKey;
   const ndb = nuclia?.options?.client;
 
-  const text: IResources = {
-    ...DEFAULT_RESOURCES,
-    ...rest.resources,
-  };
+  const text: IResources = useMemo(
+    () => ({
+      ...DEFAULT_RESOURCES,
+      ...rest.resources,
+    }),
+    [rest.resources],
+  );
 
   const assistantTitle = useMemo(
     () => nuclia?.auth?.preview_short ?? nuclia?.auth?.name ?? DEFAULT_ASSISTANT_TITLE,
@@ -168,6 +173,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     setConversation(null);
     assistantMessageIdRef.current = null;
     lastAssistantMessageIdRef.current = null;
+    lastAssistantTextRef.current = null;
     pendingSessionRequestRef.current = null;
     sessionTokenCacheRef.current = {};
     pendingSessionTokenRequestRef.current = {};
@@ -196,8 +202,13 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       }
       assistantMessageIdRef.current = null;
       lastAssistantMessageIdRef.current = null;
+      lastAssistantTextRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    conversationRef.current = conversation;
+  }, [conversation]);
 
   const appendMessage = useCallback((message: IMessage) => {
     setConversation((prev) => {
@@ -231,6 +242,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       const id = createMessageId('assistant');
       assistantMessageIdRef.current = id;
       lastAssistantMessageIdRef.current = id;
+      lastAssistantTextRef.current = null;
       setConversation((prev) => {
         const current = prev ?? [];
         return [
@@ -258,17 +270,35 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   }, [assistantTitle, updateAssistantMessage]);
 
   const appendAssistantContent = useCallback(
-    (content: string) => {
-      if (!content) {
+    (rawContent: string) => {
+      if (typeof rawContent !== 'string') {
+        return;
+      }
+
+      const trimmed = rawContent.trim();
+      if (!trimmed) {
+        return;
+      }
+
+      if (lastAssistantTextRef.current === trimmed) {
         return;
       }
       if (!assistantMessageIdRef.current) {
         startAssistantResponse();
       }
-      updateAssistantMessage((message) => ({
-        ...message,
-        content: message.content ? `${message.content}${content}` : content,
-      }));
+      lastAssistantTextRef.current = trimmed;
+      updateAssistantMessage((message) => {
+        const existing = message.content ?? '';
+        const shouldSeparate =
+          existing.length > 0 &&
+          trimmed.length === rawContent.length &&
+          !existing.endsWith('\n') &&
+          !rawContent.startsWith('\n');
+        return {
+          ...message,
+          content: shouldSeparate ? `${existing}\n\n${rawContent}` : `${existing}${rawContent}`,
+        };
+      });
     },
     [startAssistantResponse, updateAssistantMessage],
   );
@@ -335,6 +365,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         lastAssistantMessageIdRef.current = targetId;
       }
       assistantMessageIdRef.current = null;
+      lastAssistantTextRef.current = null;
     },
     [startAssistantResponse, updateAssistantMessage],
   );
@@ -354,7 +385,99 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     );
     assistantMessageIdRef.current = null;
     lastAssistantMessageIdRef.current = null;
+    lastAssistantTextRef.current = null;
   }, [updateAssistantMessage]);
+
+  const toFeedbackOption = (entry: unknown, index: number): IMessageFeedbackOption | null => {
+    if (!entry || typeof entry !== 'object') {
+      return null;
+    }
+
+    const record = entry as Record<string, unknown>;
+    const rawName = typeof record.name === 'string' && record.name.trim().length > 0 ? record.name.trim() : '';
+    const baseName = rawName || `option-${index + 1}`;
+    const uniqueId = `${baseName}-${index}`;
+    const title = typeof record.title === 'string' && record.title.trim().length > 0 ? record.title.trim() : baseName;
+    const description = typeof record.description === 'string' ? record.description : undefined;
+    const args = Object.prototype.hasOwnProperty.call(record, 'arguments') ? record.arguments : undefined;
+    const metaValue =
+      record.meta && typeof record.meta === 'object' && record.meta !== null
+        ? (record.meta as Record<string, unknown>)
+        : null;
+
+    return {
+      id: uniqueId,
+      name: baseName,
+      title,
+      description,
+      arguments: args,
+      meta: metaValue,
+      raw: record,
+    };
+  };
+
+  const extractArgumentDefaults = (args: unknown): Record<string, unknown> => {
+    if (Array.isArray(args)) {
+      return args.reduce(
+        (acc, entry) => {
+          if (!entry || typeof entry !== 'object') {
+            return acc;
+          }
+          const record = entry as Record<string, unknown>;
+          const key = typeof record.name === 'string' && record.name.trim().length > 0 ? record.name.trim() : null;
+          if (!key) {
+            return acc;
+          }
+
+          if (Object.prototype.hasOwnProperty.call(record, 'value')) {
+            acc[key] = (record as { value: unknown }).value;
+            return acc;
+          }
+          if (Object.prototype.hasOwnProperty.call(record, 'default')) {
+            acc[key] = (record as { default: unknown }).default;
+            return acc;
+          }
+          if (Object.prototype.hasOwnProperty.call(record, 'example')) {
+            acc[key] = (record as { example: unknown }).example;
+            return acc;
+          }
+
+          acc[key] = null;
+          return acc;
+        },
+        {} as Record<string, unknown>,
+      );
+    }
+
+    if (args && typeof args === 'object') {
+      return { ...(args as Record<string, unknown>) };
+    }
+
+    return {};
+  };
+
+  const buildFeedbackPayload = (schema: unknown, option: IMessageFeedbackOption): Record<string, unknown> => {
+    const promptId = option.name || option.id;
+    const dataDefaults = extractArgumentDefaults(option.arguments);
+
+    const payload: Record<string, unknown> = {
+      prompt_id: promptId,
+      data: dataDefaults,
+    };
+
+    if (schema && typeof schema === 'object' && schema !== null) {
+      const schemaRecord = schema as Record<string, unknown>;
+      const defaultData = schemaRecord.default;
+      if (defaultData && typeof defaultData === 'object') {
+        payload.data = {
+          ...(defaultData as Record<string, unknown>),
+          ...dataDefaults,
+        };
+      }
+    }
+
+    return payload;
+  };
 
   const handleChatClose = useCallback(() => {
     if (chatAbortControllerRef.current) {
@@ -362,6 +485,8 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     }
     chatConnectionRef.current = null;
     assistantMessageIdRef.current = null;
+    lastAssistantMessageIdRef.current = null;
+    lastAssistantTextRef.current = null;
   }, []);
 
   const handleChatError = useCallback(
@@ -387,6 +512,50 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         return;
       }
 
+      if (answer.operation === AnswerOperation.agent_request && answer.feedback) {
+        const feedback = answer.feedback;
+        // Remove the in-progress assistant placeholder, we're switching to feedback interaction
+        const targetId = assistantMessageIdRef.current ?? lastAssistantMessageIdRef.current;
+        if (targetId) {
+          setConversation((prev) => (prev ? prev.filter((m) => m.id !== targetId) : prev));
+        }
+        const rawOptions = Array.isArray(feedback.data) ? feedback.data : [];
+        const options = rawOptions
+          .map((entry, index) => toFeedbackOption(entry, index))
+          .filter(Boolean) as IMessageFeedbackOption[];
+
+        const questionText =
+          typeof feedback.question === 'string' && feedback.question.trim().length > 0
+            ? feedback.question.trim()
+            : text.feedback_choose;
+
+        appendMessage({
+          id: createMessageId('assistant-feedback'),
+          role: 'assistant',
+          content: questionText,
+          meta: text.meta_agentrequest,
+          debug: [answer],
+          feedback: {
+            feedbackId: feedback.feedback_id,
+            requestId: feedback.request_id,
+            question: questionText,
+            module: feedback.module ?? undefined,
+            agentId: feedback.agent_id ?? undefined,
+            timeoutMs: feedback.timeout_ms ?? undefined,
+            responseSchema: feedback.response_schema ?? undefined,
+            options,
+            status: options.length > 0 ? 'pending' : 'error',
+            selectedOptionId: undefined,
+            error: options.length > 0 ? null : text.feedback_error,
+          },
+        });
+
+        assistantMessageIdRef.current = null;
+        lastAssistantMessageIdRef.current = null;
+        lastAssistantTextRef.current = null;
+        return;
+      }
+
       appendAssistantEvent(answer);
 
       if (answer.operation === AnswerOperation.error) {
@@ -403,21 +572,49 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         appendAssistantStep(answer.step);
       }
 
-      const text =
-        answer.generated_text ??
-        answer.answer ??
-        (typeof answer.agent_request === 'string' ? answer.agent_request : null);
+      const normalizeText = (value: unknown): string | null => {
+        if (typeof value !== 'string') {
+          return null;
+        }
+        const trimmed = value.trim();
+        return trimmed.length > 0 ? trimmed : null;
+      };
 
-      if (text) {
-        appendAssistantContent(text);
+      const extractPossibleAnswerText = (candidate: unknown): string | null => {
+        if (!candidate || typeof candidate !== 'object') {
+          return null;
+        }
+        const record = candidate as Record<string, unknown>;
+        return normalizeText(record.answer);
+      };
+
+      const candidateTexts: Array<string | null> = [
+        normalizeText(answer.generated_text),
+        normalizeText(answer.answer),
+        extractPossibleAnswerText(answer.possible_answer),
+        normalizeText(answer.agent_request),
+      ];
+
+      const messageText = candidateTexts.find((entry) => entry);
+
+      if (messageText) {
+        appendAssistantContent(messageText);
+      } else if (answer.step) {
+        const fallbackFromStep = normalizeText(answer.step.value);
+        if (fallbackFromStep && fallbackFromStep.endsWith('?')) {
+          appendAssistantContent(fallbackFromStep);
+        }
       }
     },
     [
       appendAssistantContent,
       appendAssistantEvent,
       appendAssistantStep,
+      appendMessage,
       finalizeAssistantMessage,
       startAssistantResponse,
+      text,
+      toFeedbackOption,
     ],
   );
 
@@ -605,11 +802,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   );
 
   const ensureChatConnection = useCallback(
-    (
-      sessionId: string,
-      token: string,
-      initialQuestion?: string,
-    ): { connection: ChatConnection | null; isNew: boolean } => {
+    (sessionId: string, token: string): { connection: ChatConnection | null; isNew: boolean } => {
       const current = chatConnectionRef.current;
 
       if (current) {
@@ -636,7 +829,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         const connection = chatRepository.connect({
           sessionId,
           token,
-          question: initialQuestion,
           signal: controller.signal,
           onOpen: startAssistantResponse,
           onAnswer: handleAnswerMessage,
@@ -658,6 +850,58 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     [chatRepository, startAssistantResponse, handleAnswerMessage, handleAnswerDone, handleChatError, handleChatClose],
   );
 
+  const dispatchChatPayload = useCallback(
+    async (
+      payload: string,
+      options?: {
+        suppressErrorMessage?: boolean;
+        headers?: Record<string, string>;
+      },
+    ): Promise<boolean> => {
+      const notifyError = (meta: string, content: string) => {
+        if (options?.suppressErrorMessage) {
+          return;
+        }
+        finalizeAssistantMessage(meta, content);
+      };
+
+      if (!chatRepository) {
+        notifyError('Error', 'Chat service is not configured.');
+        return false;
+      }
+      if (!authToken) {
+        notifyError('Info', 'Assistant is still initializing. Please try again in a moment.');
+        return false;
+      }
+
+      let sessionId: string;
+      try {
+        sessionId = await resolveSessionId();
+      } catch (error) {
+        console.error('Failed to resolve session identifier', error);
+        notifyError('Error', 'Unable to start a chat session. Please retry.');
+        return false;
+      }
+
+      const sessionToken = await resolveSessionToken(sessionId);
+      if (!sessionToken) {
+        notifyError('Error', 'Assistant token is unavailable. Please try again later.');
+        return false;
+      }
+
+      const { connection } = ensureChatConnection(sessionId, sessionToken);
+      if (!connection) {
+        notifyError('Error', 'Unable to connect to the assistant.');
+        return false;
+      }
+
+      connection.sendQuestion(payload, options?.headers);
+
+      return true;
+    },
+    [authToken, chatRepository, ensureChatConnection, finalizeAssistantMessage, resolveSessionId, resolveSessionToken],
+  );
+
   const handleChat = useCallback(
     async (prompt: string) => {
       const message = prompt.trim();
@@ -673,50 +917,160 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
 
       assistantMessageIdRef.current = null;
       lastAssistantMessageIdRef.current = null;
+      lastAssistantTextRef.current = null;
 
-      if (!chatRepository) {
-        finalizeAssistantMessage('Error', 'Chat service is not configured.');
-        return;
-      }
-      if (!authToken) {
-        finalizeAssistantMessage('Info', 'Assistant is still initializing. Please try again in a moment.');
-        return;
-      }
-
-      let sessionId: string;
-      try {
-        sessionId = await resolveSessionId();
-      } catch (error) {
-        console.error('Failed to resolve session identifier', error);
-        finalizeAssistantMessage('Error', 'Unable to start a chat session. Please retry.');
-        return;
-      }
-
-      const sessionToken = await resolveSessionToken(sessionId);
-      if (!sessionToken) {
-        finalizeAssistantMessage('Error', 'Assistant token is unavailable. Please try again later.');
-        return;
-      }
-
-      const { connection, isNew } = ensureChatConnection(sessionId, sessionToken, message);
-      if (!connection) {
-        finalizeAssistantMessage('Error', 'Unable to connect to the assistant.');
-        return;
-      }
-
-      if (!isNew) {
-        connection.sendQuestion(message);
-      }
+      await dispatchChatPayload(message);
     },
-    [
-      appendMessage,
-      chatRepository,
-      authToken,
-      ensureChatConnection,
-      resolveSessionId,
-      resolveSessionToken,
-      finalizeAssistantMessage,
-    ],
+    [appendMessage, dispatchChatPayload],
+  );
+
+  const handleFeedbackResponse = useCallback(
+    async (messageId: string, optionId: string) => {
+      // Resolve the selected option and schema from the latest state to avoid races
+      const currentMessages = conversationRef.current ?? [];
+      const target = currentMessages.find((m) => m.id === messageId && m.feedback);
+      if (!target || !target.feedback) {
+        return;
+      }
+      if (target.feedback.status === 'submitting' || target.feedback.status === 'completed') {
+        return;
+      }
+      const selected = target.feedback.options.find((o) => o.id === optionId);
+      if (!selected) {
+        return;
+      }
+
+      setConversation((prev) => {
+        if (!prev) return prev;
+        return prev.map((message) => {
+          if (message.id !== messageId || !message.feedback) return message;
+          return {
+            ...message,
+            feedback: {
+              ...message.feedback,
+              status: 'submitting',
+              selectedOptionId: optionId,
+              error: null,
+            },
+          };
+        });
+      });
+
+      const payload = buildFeedbackPayload(target.feedback.responseSchema, selected);
+      let serializedPayload: string;
+      try {
+        serializedPayload = JSON.stringify(payload);
+      } catch (error) {
+        console.error('Unable to serialize feedback payload', error);
+        setConversation((prev) => {
+          if (!prev) {
+            return prev;
+          }
+          return prev.map((message) => {
+            if (message.id !== messageId || !message.feedback) {
+              return message;
+            }
+            return {
+              ...message,
+              feedback: {
+                ...message.feedback,
+                status: 'error',
+                error: text.feedback_error,
+                selectedOptionId: undefined,
+              },
+            };
+          });
+        });
+        return;
+      }
+
+      // Optimistically mark as completed; send in background and revert on failure
+      setConversation((prev) => {
+        if (!prev) {
+          return prev;
+        }
+        return prev.map((message) => {
+          if (message.id !== messageId || !message.feedback) {
+            return message;
+          }
+          return {
+            ...message,
+            feedback: {
+              ...message.feedback,
+              status: 'completed',
+              error: null,
+            },
+          };
+        });
+      });
+
+      // If socket is not usable, force a fresh connection for reliability
+      const socket = chatConnectionRef.current?.socket;
+      if (!socket || (socket.readyState !== WebSocket.OPEN && socket.readyState !== WebSocket.CONNECTING)) {
+        try {
+          chatConnectionRef.current?.close(1000, 'reconnect for feedback');
+        } catch {}
+        chatConnectionRef.current = null;
+      }
+
+      console.debug('[RAO] Sending feedback selection', {
+        messageId,
+        optionId,
+        socketState: chatConnectionRef.current?.socket?.readyState,
+        payload,
+      });
+
+      // Send as JSON content to ensure backend parses it as structured input
+      const sendHeaders = { 'content-type': 'application/json' } as Record<string, string>;
+      dispatchChatPayload(serializedPayload, { suppressErrorMessage: true, headers: sendHeaders })
+        .then((success) => {
+          if (success) {
+            return;
+          }
+          setConversation((prev) => {
+            if (!prev) {
+              return prev;
+            }
+            return prev.map((message) => {
+              if (message.id !== messageId || !message.feedback) {
+                return message;
+              }
+              return {
+                ...message,
+                feedback: {
+                  ...message.feedback,
+                  status: 'error',
+                  error: text.feedback_error,
+                  selectedOptionId: undefined,
+                },
+              };
+            });
+          });
+        })
+        .catch((error) => {
+          console.error('Failed to dispatch feedback payload', error);
+          setConversation((prev) => {
+            if (!prev) {
+              return prev;
+            }
+            return prev.map((message) => {
+              if (message.id !== messageId || !message.feedback) {
+                return message;
+              }
+              return {
+                ...message,
+                feedback: {
+                  ...message.feedback,
+                  status: 'error',
+                  error: text.feedback_error,
+                  selectedOptionId: undefined,
+                },
+              };
+            });
+          });
+        });
+    },
+    [buildFeedbackPayload, dispatchChatPayload, text.feedback_error],
   );
 
   const value: IRaoContext = useMemo(
@@ -733,6 +1087,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       activeView: conversation ? 'conversation' : 'main',
       conversation,
       onChat: handleChat,
+      onFeedbackResponse: handleFeedbackResponse,
 
       visibleViewType,
       setVisibleViewType,
@@ -750,6 +1105,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       authToken,
       conversation,
       handleChat,
+      handleFeedbackResponse,
 
       visibleViewType,
       setVisibleViewType,
