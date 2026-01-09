@@ -590,15 +590,11 @@ export class WorkflowService {
     discriminatorOptions.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType as NodeType);
+      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
+      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput(
-        'nodeTitle',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
-      );
-      selectorRef.setInput(
-        'description',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
-      );
+      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
+      selectorRef.setInput('description', matchingSchema?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType as NodeType]);
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
@@ -696,15 +692,11 @@ export class WorkflowService {
     categoryConfigs.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType);
+      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
+      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput(
-        'nodeTitle',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
-      );
-      selectorRef.setInput(
-        'description',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
-      );
+      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
+      selectorRef.setInput('description', matchingSchema?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
@@ -979,10 +971,10 @@ export class WorkflowService {
     if (!node) {
       throw new Error(`selectNode: No node with id=${nodeId} in category ${nodeCategory}`);
     }
+    const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
+    const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
     const columnIndex = node.nodeRef.instance.columnIndex;
-    const container: HTMLElement = this.openSidebarWithTitle(
-      `retrieval-agents.workflow.node-types.${this.getNodeTypeKey(node.nodeType)}.title`,
-    );
+    const container: HTMLElement = this.openSidebarWithTitle(matchingSchema?.title || '');
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType, node.nodeCategory);
     formRef.setInput('category', nodeCategory);
