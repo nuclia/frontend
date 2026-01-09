@@ -29,7 +29,7 @@ export class SharepointImpl extends OAuthConnector {
             id: 'pfx_base64',
             label: 'sync.connectors.sharepoint.pfx_base64.label',
             help: 'sync.connectors.sharepoint.pfx_base64.help',
-            type: 'text',
+            type: 'textarea',
             required: true,
           },
           {

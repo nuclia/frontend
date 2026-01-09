@@ -106,6 +106,7 @@ export type Connector = {
 
 export interface ISyncEntity {
   connector: Connector;
+  connectorId?: string;
   kb?: NucliaOptions;
   labels?: ColoredLabel[];
   preserveLabels?: boolean;

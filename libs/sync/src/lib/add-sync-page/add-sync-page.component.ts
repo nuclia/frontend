@@ -120,7 +120,7 @@ export class AddSyncPageComponent implements OnInit {
           ),
           filter((confirmed) => !!confirmed),
           switchMap(() => this._createSync(syncEntity)),
-          switchMap(({ connector }) => this._onSuccessfulCreation(connector, syncEntity)),
+          switchMap((id) => this._syncCreationDone(id)),
         )
         .subscribe({
           error: (error) => {
@@ -180,7 +180,13 @@ export class AddSyncPageComponent implements OnInit {
           if (connector.cloud && connector.apikey_provider && this.configuration) {
             return this.syncService
               .addExternalConnection(connector.apikey_provider, this.configuration.connector.parameters)
-              .pipe(tap((data) => (this.externalConnectorId = data.id)));
+              .pipe(
+                tap((data) => {
+                  this.externalConnectorId = data.id;
+                  this.enterCredentials = false;
+                  this.cdr.markForCheck();
+                }),
+              );
           }
           return of(undefined);
         }),
@@ -199,7 +205,7 @@ export class AddSyncPageComponent implements OnInit {
     const syncEntity = this.configuration;
     if (!this.syncId) {
       this._createSync(syncEntity)
-        .pipe(switchMap(({ connector }) => this._onSuccessfulCreation(connector, syncEntity)))
+        .pipe(switchMap((id) => this._syncCreationDone(id)))
         .subscribe({
           error: (error) => this._errorHandler(error),
         });
@@ -230,12 +236,12 @@ export class AddSyncPageComponent implements OnInit {
     });
   }
 
-  private _createSync(syncEntity: ISyncEntity): Observable<{ connector: IConnector }> {
+  private _createSync(syncEntity: ISyncEntity): Observable<string> {
     return this.connectorDefinition.pipe(
       take(1),
       switchMap((connector) => {
         const isCloud = connector.cloud;
-        if (isCloud && connector.apikey_provider) {
+        if (isCloud) {
           if (!this.externalConnectorId) {
             throw 'No external connection id';
           }
@@ -246,8 +252,10 @@ export class AddSyncPageComponent implements OnInit {
               sync_root_path: syncEntity.connector.parameters['sync_root_path'],
             })
             .pipe(
-              tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),
-              map(() => ({ connector: this.syncService.getConnector(syncEntity.connector.name, syncEntity.id) })),
+              map((sync) => {
+                this.syncService.setCurrentSyncId(sync.id);
+                return sync.id;
+              }),
             );
         } else {
           return this.syncService.addSync(syncEntity).pipe(
@@ -263,27 +271,15 @@ export class AddSyncPageComponent implements OnInit {
                   .updateSync(syncEntity.id, {
                     foldersToSync: connector.getStaticFolders(),
                   })
-                  .pipe(
-                    map(() => ({
-                      connector: this.syncService.getConnector(syncEntity.connector.name, syncEntity.id),
-                    })),
-                  );
+                  .pipe(map(() => syncEntity.id));
               } else {
-                return of({ connector });
+                return of(syncEntity.id);
               }
             }),
           );
         }
       }),
     );
-  }
-
-  private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity): Observable<void> {
-    if (!connector.hasServerSideAuth) {
-      return this._syncCreationDone(syncEntity.id);
-    } else {
-      return of();
-    }
   }
 
   private performOAuth(authorize_url?: string) {
@@ -296,23 +292,22 @@ export class AddSyncPageComponent implements OnInit {
   private _syncCreationDone(syncId: string): Observable<void> {
     return of(true).pipe(
       tap(() => {
-        const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
+        let path = this.syncId || location.pathname.includes('/sync/add/') ? `../../../${syncId}` : `../../${syncId}`;
+        if (location.pathname.includes('/sync/add/')) {
+          const chunks = location.pathname.split('/');
+          const depth = chunks.length - chunks.lastIndexOf('add');
+          path = depth === 3 ? `../../../${syncId}` : `../../${syncId}`;
+        }
         this.router.navigate([path], { relativeTo: this.currentRoute });
       }),
-      switchMap(() => this.syncService.useCloudSync),
-      take(1),
-      switchMap((useCloud) => {
-        if (useCloud) {
-          return of();
-        } else {
-          this.toaster.success('sync.details.toast.triggering-sync-success');
-          return this.syncService.triggerSync(syncId).pipe(
-            catchError(() => {
-              this.toaster.error('sync.details.toast.triggering-sync-failed');
-              return of();
-            }),
-          );
-        }
+      switchMap(() => {
+        this.toaster.success('sync.details.toast.triggering-sync-success');
+        return this.syncService.triggerSync(syncId).pipe(
+          catchError(() => {
+            this.toaster.error('sync.details.toast.triggering-sync-failed');
+            return of();
+          }),
+        );
       }),
     );
   }

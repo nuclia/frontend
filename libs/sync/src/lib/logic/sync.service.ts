@@ -162,8 +162,10 @@ export class SyncService {
     return instances[instance];
   }
 
-  getConnectorIdForOauthProvider(provider: string, instance: string): string | undefined {
-    return Object.entries(this.connectors).find(([, data]) => data.definition.oauth_provider === provider)?.[0];
+  getConnectorIdForProvider(provider: string): string | undefined {
+    return Object.entries(this.connectors).find(
+      ([, data]) => data.definition.oauth_provider === provider || data.definition.apikey_provider === provider,
+    )?.[0];
   }
 
   getCurrentSync(): Observable<ISyncEntity> {
@@ -198,7 +200,7 @@ export class SyncService {
           map((config) => ({
             ...this.syncConfigtoISyncEntity(config),
             kbId: config.kb_id,
-            connectorId: config.external_connection.provider,
+            connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
           })),
         );
       } else {
@@ -331,10 +333,7 @@ export class SyncService {
               configs
                 .filter((config) => config.kb_id === kbId)
                 .map((config) => {
-                  const connectorId = this.getConnectorIdForOauthProvider(
-                    config.external_connection.provider,
-                    config.id,
-                  );
+                  const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
                   return {
                     id: config.id,
                     kbId: config.kb_id,

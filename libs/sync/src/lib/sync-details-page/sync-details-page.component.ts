@@ -58,9 +58,11 @@ export class SyncDetailsPageComponent implements OnDestroy {
     switchMap((syncId) => this.syncService.getSync(syncId)),
     takeUntil(this.isDeleted),
   );
-  connectorDef = this.sync.pipe(map((sync) => this.syncService.connectors[sync.connector.name].definition));
-  connector: Observable<IConnector> = this.connectorDef.pipe(
-    map((connectorDef) => this.syncService.getConnector(connectorDef.id, '')),
+  connectorDef = this.sync.pipe(
+    map((sync) => this.syncService.connectors[sync.connectorId || sync.connector.name]?.definition || undefined),
+  );
+  connector: Observable<IConnector | undefined> = this.connectorDef.pipe(
+    map((connectorDef) => (connectorDef ? this.syncService.getConnector(connectorDef.id, '') : undefined)),
   );
   activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
 

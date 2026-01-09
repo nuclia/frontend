@@ -57,8 +57,9 @@
                   @case ('textarea') {
                     <pa-textarea
                       [formControlName]="field.id"
-                      [help]="field.help">
-                      {{ field.label }}
+                      [help]="field.help"
+                      [rows]="4">
+                      {{ field.label | translate }}
                     </pa-textarea>
                   }
                   @case ('table') {
