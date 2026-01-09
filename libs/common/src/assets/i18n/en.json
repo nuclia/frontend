@@ -1214,7 +1214,7 @@
 	"retrieval-agents.drivers.add.internet.all-configured": "All internet drivers already configured",
 	"retrieval-agents.drivers.add.internet.label": "Add an Internet driver",
 	"retrieval-agents.drivers.add.nuclia": "Add a Agentic RAG KB driver",
-	"retrieval-agents.drivers.add.title": "Add a {{name}} driver",
+	"retrieval-agents.drivers.add.title": "Add a {{name}}",
 	"retrieval-agents.drivers.confirm-deletion.description": "Are you sure you want to delete this driver? This action cannot be undone.",
 	"retrieval-agents.drivers.confirm-deletion.title": "Delete {{name}}?",
 	"retrieval-agents.drivers.description": "Select the external sources available to the agents",

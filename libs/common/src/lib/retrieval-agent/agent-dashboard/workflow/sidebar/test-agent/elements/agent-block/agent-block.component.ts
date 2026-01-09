@@ -13,6 +13,7 @@ import { getNodeByAgentId } from '../../../../workflow.state';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SDKService } from '@flaps/core';
 import { WorkflowService } from '../../../../workflow.service';
+import { convertNodeTypeToConfigTitle } from '../../../../workflow.utils';
 
 @Component({
   selector: 'app-agent-block',
@@ -41,6 +42,7 @@ export class AgentBlockComponent {
   accordionItems = viewChildren(AccordionItemComponent);
   kbList = toSignal(this.sdk.kbList, { initialValue: [] });
   drivers = toSignal(this.workflow.driverModels$, { initialValue: [] });
+  schemas = toSignal(this.workflow.schemas$, { initialValue: null });
 
   contextCost = computed(() => {
     const cost = (this.answer()?.steps || []).reduce(
@@ -59,7 +61,8 @@ export class AgentBlockComponent {
   title = computed(() => {
     const answer = this.answer();
     if (answer) {
-      let title = `retrieval-agents.workflow.node-types.${this.getNodeKey(answer.module)}.title`;
+      const schemaKey = convertNodeTypeToConfigTitle(answer.module, this.schemas());
+      let title = this.schemas()?.['$defs'][schemaKey]?.title || '';
       if (answer.module === 'basic_ask' || answer.module === 'ask' || answer.module === 'advanced_ask') {
         const kbTitle = this.getKbTitle(answer.agentId, this.drivers() || [], this.kbList());
         if (kbTitle) {

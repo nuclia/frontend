@@ -1214,7 +1214,7 @@
 	"retrieval-agents.drivers.add.internet.all-configured": "Todos los controladores de Internet ya configurados",
 	"retrieval-agents.drivers.add.internet.label": "Agregar un controlador Internet",
 	"retrieval-agents.drivers.add.nuclia": "Agregar un controlador Agentic RAG KB",
-	"retrieval-agents.drivers.add.title": "Agregar un controlador {{name}}",
+	"retrieval-agents.drivers.add.title": "Agregar un {{name}}",
 	"retrieval-agents.drivers.confirm-deletion.description": "¿Está seguro de que desea eliminar este controlador? Esta acción no se puede deshacer.",
 	"retrieval-agents.drivers.confirm-deletion.title": "Borrar {{name}}?",
 	"retrieval-agents.drivers.description": "Seleccione las fuentes externas disponibles para los agentes",
