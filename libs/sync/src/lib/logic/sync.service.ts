@@ -189,12 +189,10 @@ export class SyncService {
     };
   }
   getSync(syncId: string): Observable<ISyncEntity> {
-    console.log('yep', syncId);
     const syncs = this._syncCache.getValue();
     if (syncs[syncId]) {
       return of(syncs[syncId]);
     } else {
-      console.log('use sync', this._useCloudSync.getValue());
       if (this._useCloudSync.getValue()) {
         return this.sdk.currentKb.pipe(
           take(1),
