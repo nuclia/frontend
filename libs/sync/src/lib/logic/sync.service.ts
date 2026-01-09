@@ -189,10 +189,12 @@ export class SyncService {
     };
   }
   getSync(syncId: string): Observable<ISyncEntity> {
+    console.log('yep', syncId);
     const syncs = this._syncCache.getValue();
     if (syncs[syncId]) {
       return of(syncs[syncId]);
     } else {
+      console.log('use sync', this._useCloudSync.getValue());
       if (this._useCloudSync.getValue()) {
         return this.sdk.currentKb.pipe(
           take(1),
@@ -462,23 +464,28 @@ export class SyncService {
   }
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
-    return this.http
-      .get<LogEntity[]>(
-        `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
-      )
-      .pipe(
-        map((logs) =>
-          logs.sort((a, b) => {
-            const dateComparison = compareDesc(a.createdAt, b.createdAt);
-            // Make sure logs about start are always displayed before logs about finished
-            if (dateComparison === 0) {
-              return a.action.startsWith('start') ? 1 : -1;
-            } else {
-              return dateComparison;
-            }
-          }),
-        ),
-      );
+    if (this._useCloudSync.getValue()) {
+      // TOD: get logs when backend can do it
+      return of([]);
+    } else {
+      return this.http
+        .get<LogEntity[]>(
+          `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
+        )
+        .pipe(
+          map((logs) =>
+            logs.sort((a, b) => {
+              const dateComparison = compareDesc(a.createdAt, b.createdAt);
+              // Make sure logs about start are always displayed before logs about finished
+              if (dateComparison === 0) {
+                return a.action.startsWith('start') ? 1 : -1;
+              } else {
+                return dateComparison;
+              }
+            }),
+          ),
+        );
+    }
   }
 
   clearLogs(): Observable<void> {

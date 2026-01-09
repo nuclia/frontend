@@ -38,6 +38,7 @@ export class SharepointImpl extends OAuthConnector {
             help: 'sync.connectors.sharepoint.pfx_password.help',
             type: 'text',
             required: true,
+            secret: true,
           },
         ],
       },
