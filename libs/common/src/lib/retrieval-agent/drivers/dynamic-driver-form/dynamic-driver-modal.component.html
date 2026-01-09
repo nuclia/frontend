@@ -8,7 +8,7 @@
 
   <pa-modal-content>
     <app-dynamic-driver-form
-      [driverKey]="driverKey"
+      [driverKey]="driverKey || ''"
       [existingDriver]="existingDriver"
       [existingDrivers]="existingDrivers"
       (formReady)="onFormReady($event)"
