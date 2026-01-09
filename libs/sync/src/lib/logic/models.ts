@@ -17,7 +17,8 @@ export interface ConnectorDefinition {
   permanentSyncOnly?: boolean;
   deprecated?: boolean;
   cloud?: boolean;
-  provider?: string;
+  oauth_provider?: string;
+  apikey_provider?: string;
   factory: (data?: ConnectorSettings) => IConnector;
 }
 
@@ -29,7 +30,6 @@ export interface IConnectorBase {
 }
 
 export interface IConnector extends IConnectorBase {
-  isCloud?: boolean;
   getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
@@ -106,6 +106,7 @@ export type Connector = {
 
 export interface ISyncEntity {
   connector: Connector;
+  connectorId?: string;
   kb?: NucliaOptions;
   labels?: ColoredLabel[];
   preserveLabels?: boolean;
@@ -124,8 +125,8 @@ export interface SyncBasicData {
   id: string;
   kbId: string;
   title: string;
-  connectorId: string;
-  connector: IConnectorBase;
+  connectorId?: string;
+  connector?: IConnectorBase;
   lastSyncGMT?: string;
   disabled?: boolean;
   totalSyncedResources?: number;

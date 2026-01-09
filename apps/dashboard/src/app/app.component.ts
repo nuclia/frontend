@@ -143,6 +143,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       const redirect = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}')['redirect'];
       if (external_connection_id && redirect) {
         location.href = `${redirect}/${external_connection_id}`;
+      } else {
+        // DEV PURPOSE
+        // when working on localhost, the oauth flow redirect to stage, we need to know external_connection_id
+        // so we can pass it manuallly to localhost
+        console.info('external_connection_id', external_connection_id);
       }
     }
   }

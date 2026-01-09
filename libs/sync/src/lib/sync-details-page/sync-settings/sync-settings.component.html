@@ -87,33 +87,35 @@
 
 @if (connector) {
   @for (section of connector.getParametersSections() | async; track section.id) {
-    <nsi-two-columns-configuration-item
-      [itemTitle]="section.title"
-      [description]="section.description || ''">
-      <div class="sync-settings-container">
-        @for (field of section.fields; track field.id) {
-          <div class="body-s settings-item">
-            <label>{{ field.label | translate }}</label>
-            @if (field.type !== 'table') {
-              @if (field.secret) {
-                <div>*****</div>
+    @if (section.id !== 'credentials') {
+      <nsi-two-columns-configuration-item
+        [itemTitle]="section.title"
+        [description]="section.description || ''">
+        <div class="sync-settings-container">
+          @for (field of section.fields; track field.id) {
+            <div class="body-s settings-item">
+              <label>{{ field.label | translate }}</label>
+              @if (field.type !== 'table') {
+                @if (field.secret) {
+                  <div>*****</div>
+                } @else {
+                  <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+                }
+              } @else if (sync.connector.parameters[field.id]?.length > 0) {
+                <app-parameters-table
+                  readonly
+                  [values]="sync.connector.parameters[field.id]"></app-parameters-table>
               } @else {
-                <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+                –
               }
-            } @else if (sync.connector.parameters[field.id]?.length > 0) {
-              <app-parameters-table
-                readonly
-                [values]="sync.connector.parameters[field.id]"></app-parameters-table>
-            } @else {
-              –
+            </div>
+            @if (!$last) {
+              <div class="separator-line"></div>
             }
-          </div>
-          @if (!$last) {
-            <div class="separator-line"></div>
           }
-        }
-      </div>
-    </nsi-two-columns-configuration-item>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
   }
 }
 

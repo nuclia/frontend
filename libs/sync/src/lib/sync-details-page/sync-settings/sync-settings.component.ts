@@ -44,7 +44,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private sdk = inject(SDKService);
 
   @Input({ required: true }) sync!: ISyncEntity;
-  @Input({ required: true }) connector: IConnector | null = null;
+  @Input({ required: true }) connector: IConnector | null | undefined = undefined;
   @Input() set logs(value: LogEntity[] | null | undefined) {
     if (value) {
       this._logs = value;

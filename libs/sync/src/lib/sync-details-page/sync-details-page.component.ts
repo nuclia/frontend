@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
-import { combineLatest, filter, map, Observable, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 import { ConfigurationFormComponent } from '../configuration-form';
@@ -57,10 +57,13 @@ export class SyncDetailsPageComponent implements OnDestroy {
     switchMap(() => this.syncId),
     switchMap((syncId) => this.syncService.getSync(syncId)),
     takeUntil(this.isDeleted),
+    shareReplay(1),
   );
-  connectorDef = this.sync.pipe(map((sync) => this.syncService.connectors[sync.connector.name].definition));
-  connector: Observable<IConnector> = this.connectorDef.pipe(
-    map((connectorDef) => this.syncService.getConnector(connectorDef.id, '')),
+  connectorDef = this.sync.pipe(
+    map((sync) => this.syncService.connectors[sync.connectorId || sync.connector.name]?.definition || undefined),
+  );
+  connector: Observable<IConnector | undefined> = this.connectorDef.pipe(
+    map((connectorDef) => (connectorDef ? this.syncService.getConnector(connectorDef.id, '') : undefined)),
   );
   activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
 

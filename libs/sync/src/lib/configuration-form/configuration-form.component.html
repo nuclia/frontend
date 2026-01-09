@@ -1,82 +1,90 @@
 @if (connector) {
   <form [formGroup]="form">
-    <nsi-two-columns-configuration-item
-      [noTopBorder]="noTopBorder"
-      itemTitle="sync.add-page.connector-name.title"
-      description="sync.add-page.connector-name.description">
-      <div class="form-container">
-        <pa-input formControlName="name">{{ 'sync.add-page.connector-name.field-label' | translate }}</pa-input>
-      </div>
-    </nsi-two-columns-configuration-item>
+    @if (!enterCredentials) {
+      <nsi-two-columns-configuration-item
+        [noTopBorder]="noTopBorder"
+        itemTitle="sync.add-page.connector-name.title"
+        description="sync.add-page.connector-name.description">
+        <div class="form-container">
+          <pa-input formControlName="name">{{ 'sync.add-page.connector-name.field-label' | translate }}</pa-input>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
 
     <ng-container formGroupName="extra">
       @for (section of connector.getParametersSections() | async; track section.id) {
-        <nsi-two-columns-configuration-item
-          [badge]="section.badge"
-          [itemTitle]="section.title"
-          [description]="section.description || ''">
-          <div class="form-container">
-            @for (field of section.fields; track field.id) {
-              @switch (field.type) {
-                @case ('text') {
-                  <pa-input
-                    [formControlName]="field.id"
-                    [placeholder]="field.placeholder"
-                    [type]="field.secret ? 'password' : 'text'"
-                    [help]="field.help">
-                    {{ field.label | translate }}
-                  </pa-input>
-                }
-                @case ('boolean') {
-                  <pa-toggle
-                    [formControlName]="field.id"
-                    [help]="field.help">
-                    {{ field.label | translate }}
-                  </pa-toggle>
-                }
-                @case ('select') {
-                  <pa-select
-                    [formControlName]="field.id"
-                    [label]="field.label"
-                    [help]="field.help">
-                    @for (option of field.options; track option.value) {
-                      <pa-option
-                        [disabled]="option.disabled"
-                        [value]="option.value">
-                        {{ option.label | translate }}
-                      </pa-option>
-                    }
-                  </pa-select>
-                }
-                @case ('textarea') {
-                  <pa-textarea
-                    [formControlName]="field.id"
-                    [help]="field.help">
-                    {{ field.label }}
-                  </pa-textarea>
-                }
-                @case ('table') {
-                  <div class="table-container">
-                    <label>{{ field.label | translate }}</label>
-                    @if (field.help) {
-                      <p>{{ field.help | translate }}</p>
-                    }
-                    <app-parameters-table
-                      [values]="tables[field.id] || []"
-                      (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
-                    @if (invalidTables.includes(field.id)) {
-                      <nsi-info-card
-                        type="warning"
-                        icon="warning">
-                        {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
-                      </nsi-info-card>
-                    }
-                  </div>
+        @if (
+          (section.id === 'credentials' && enterCredentials && !useOAuth) ||
+          (section.id !== 'credentials' && !enterCredentials)
+        ) {
+          <nsi-two-columns-configuration-item
+            [badge]="section.badge"
+            [itemTitle]="section.title"
+            [description]="section.description || ''">
+            <div class="form-container">
+              @for (field of section.fields; track field.id) {
+                @switch (field.type) {
+                  @case ('text') {
+                    <pa-input
+                      [formControlName]="field.id"
+                      [placeholder]="field.placeholder"
+                      [type]="field.secret ? 'password' : 'text'"
+                      [help]="field.help">
+                      {{ field.label | translate }}
+                    </pa-input>
+                  }
+                  @case ('boolean') {
+                    <pa-toggle
+                      [formControlName]="field.id"
+                      [help]="field.help">
+                      {{ field.label | translate }}
+                    </pa-toggle>
+                  }
+                  @case ('select') {
+                    <pa-select
+                      [formControlName]="field.id"
+                      [label]="field.label"
+                      [help]="field.help">
+                      @for (option of field.options; track option.value) {
+                        <pa-option
+                          [disabled]="option.disabled"
+                          [value]="option.value">
+                          {{ option.label | translate }}
+                        </pa-option>
+                      }
+                    </pa-select>
+                  }
+                  @case ('textarea') {
+                    <pa-textarea
+                      [formControlName]="field.id"
+                      [help]="field.help"
+                      [rows]="4">
+                      {{ field.label | translate }}
+                    </pa-textarea>
+                  }
+                  @case ('table') {
+                    <div class="table-container">
+                      <label>{{ field.label | translate }}</label>
+                      @if (field.help) {
+                        <p>{{ field.help | translate }}</p>
+                      }
+                      <app-parameters-table
+                        [values]="tables[field.id] || []"
+                        (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
+                      @if (invalidTables.includes(field.id)) {
+                        <nsi-info-card
+                          type="warning"
+                          icon="warning">
+                          {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
+                        </nsi-info-card>
+                      }
+                    </div>
+                  }
                 }
               }
-            }
-          </div>
-        </nsi-two-columns-configuration-item>
+            </div>
+          </nsi-two-columns-configuration-item>
+        }
       }
     </ng-container>
 

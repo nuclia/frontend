@@ -5,6 +5,15 @@
   @if (connectorId | async; as connectorId) {
     @if (connectorDefinition | async; as connectorDef) {
       <div>
+        @if (connectorDef.oauth_provider && connectorDef.apikey_provider) {
+          <div class="oauth-toggle">
+            <pa-toggle
+              [(value)]="useOAuth"
+              labelOnRight>
+              {{ 'sync.add-page.use-oauth' | translate }}
+            </pa-toggle>
+          </div>
+        }
         <h1 class="page-title">
           <pa-icon
             [path]="connectorDef.logo"
@@ -24,11 +33,13 @@
         @switch (step()) {
           @case (1) {
             <nsy-configuration-form
+              [useOAuth]="useOAuth"
+              [enterCredentials]="!!(isCloud | async) && enterCredentials"
               [sync]="sync"
               [kbId]="kbId | async"
               [connector]="connector"
               [connectorId]="connectorId | async"
-              [isCloud]="(connectorDefinition | async)?.cloud"
+              [isCloud]="!!(isCloud | async)"
               (configurationChange)="updateConfiguration($event)"
               (validForm)="validForm = $event"></nsy-configuration-form>
           }
@@ -70,12 +81,21 @@
                 {{ 'sync.add-page.footer.folder-selection-button' | translate }}
               </pa-button>
             } @else {
-              <pa-button
-                kind="primary"
-                [disabled]="!validForm || (connector.allowToSelectFolders && folderSelection.length === 0) || saving"
-                (click)="save()">
-                {{ 'sync.add-page.footer.save-button' | translate }}
-              </pa-button>
+              @if (!!(isCloud | async) && enterCredentials) {
+                <pa-button
+                  kind="primary"
+                  [disabled]="(!enterCredentials && !validForm) || saving"
+                  (click)="authenticate()">
+                  {{ 'sync.add-page.footer.auth-button' | translate }}
+                </pa-button>
+              } @else {
+                <pa-button
+                  kind="primary"
+                  [disabled]="!validForm || (connector.allowToSelectFolders && folderSelection.length === 0) || saving"
+                  (click)="save()">
+                  {{ 'sync.add-page.footer.save-button' | translate }}
+                </pa-button>
+              }
             }
           </nsi-sticky-footer>
         }

@@ -130,7 +130,7 @@
                 </a>
               </pa-table-cell>
               <pa-table-cell>
-                @if (connectors[sync.connectorId]?.definition; as connector) {
+                @if (sync.connectorId && connectors[sync.connectorId]?.definition; as connector) {
                   <div class="logo-title">
                     <pa-icon
                       size="small"
@@ -173,7 +173,7 @@
                   <pa-option [routerLink]="'./' + sync.id + '/edit'">
                     {{ 'sync.home-page.sync-list.menu.edit-settings' | translate }}
                   </pa-option>
-                  @if (sync.connector.allowToSelectFolders) {
+                  @if (sync.connector?.allowToSelectFolders) {
                     <pa-option [routerLink]="'./' + sync.id + '/edit'">
                       {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
                     </pa-option>
