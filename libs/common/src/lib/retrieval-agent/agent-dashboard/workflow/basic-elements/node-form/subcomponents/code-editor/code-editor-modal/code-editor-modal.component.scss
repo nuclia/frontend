@@ -1,0 +1,6 @@
+@use 'apps/dashboard/src/variables' as *;
+
+app-code-editor {
+  display: block;
+  width: rhythm(90);
+}

@@ -10,42 +10,47 @@
   <div
     class="code-editor-container"
     [formGroup]="form">
-    @if (highlight) {
-      <!-- Syntax Highlighting Layer -->
-      <div
-        #highlightContainer
-        class="highlight-layer"
-        aria-hidden="true"></div>
-      <!-- Code Input Textarea -->
-      <textarea
-        #codeTextarea
-        [id]="controlName"
-        [formControlName]="controlName"
-        [placeholder]="placeholder"
-        [rows]="rows"
-        class="code-textarea"
-        spellcheck="false"
-        autocomplete="off"
-        autocapitalize="off"
-        autocorrect="off"
-        (input)="onTextareaInput($event)"></textarea>
-    } @else {
-      <nsi-expandable-textarea
-        [id]="controlName"
-        [formControlName]="controlName"
-        [placeholder]="placeholder"
-        [modalTitle]="label"
-        [rows]="rows"></nsi-expandable-textarea>
+    <!-- Syntax Highlighting Layer -->
+    <div
+      #highlightContainer
+      class="highlight-layer"
+      aria-hidden="true">
+      @if (highlightedCode()) {
+        <code [innerHTML]="highlightedCode()"></code>
+      }
+    </div>
+    <!-- Code Input Textarea -->
+    <textarea
+      #codeTextarea
+      [id]="controlName"
+      [formControlName]="controlName"
+      [placeholder]="placeholder"
+      [rows]="rows"
+      class="code-textarea"
+      spellcheck="false"
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      (input)="onTextareaInput($event)"></textarea>
+
+    @if (expandable) {
+      <div class="expand">
+        <pa-button
+          aspect="basic"
+          icon="fullscreen"
+          size="small"
+          (click)="expand()">
+          {{ 'generic.expand' | translate }}
+        </pa-button>
+      </div>
     }
   </div>
 
-  @if (highlight) {
-    <!-- Helper Text -->
-    <div class="editor-help">
-      <span class="help-text">Python Code Editor - Tab for 4-space indent, Enter for smart indentation</span>
-      <span class="language-info">Python</span>
-    </div>
-  }
+  <!-- Helper Text -->
+  <div class="editor-help">
+    <span class="help-text">Python Code Editor - Tab for 4-space indent, Enter for smart indentation</span>
+    <span class="language-info">Python</span>
+  </div>
 
   <!-- Syntax Errors -->
   @if (validationErrors().length > 0) {
