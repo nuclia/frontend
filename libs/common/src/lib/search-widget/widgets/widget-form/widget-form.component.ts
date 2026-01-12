@@ -48,7 +48,7 @@ type RaoFormGroupControls = {
   username: FormControl<string>;
   viewtype: FormControl<RaoViewType>;
   promptconfig: FormGroup<RaoPromptConfigControls>;
-  recordingconfing: FormGroup<RaoRecordingConfigControls>;
+  recordingconfig: FormGroup<RaoRecordingConfigControls>;
 };
 
 type RaoFormValue = {
@@ -60,7 +60,7 @@ type RaoFormValue = {
     usefallbackprompts: boolean;
     visibleprompts: number;
   };
-  recordingconfing: {
+  recordingconfig: {
     language: string;
   };
 };
@@ -152,7 +152,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       usefallbackprompts: new FormControl<boolean>(false, { nonNullable: true }),
       visibleprompts: new FormControl<number>(4, { nonNullable: true }),
     }),
-    recordingconfing: new FormGroup<RaoRecordingConfigControls>({
+    recordingconfig: new FormGroup<RaoRecordingConfigControls>({
       language: new FormControl<string>('en-US', { nonNullable: true, updateOn: 'blur' }),
     }),
   });
@@ -319,8 +319,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
           usefallbackprompts: config?.promptconfig?.usefallbackprompts ?? false,
           visibleprompts: visiblePrompts,
         },
-        recordingconfing: {
-          language: config?.recordingconfing?.language ?? 'en-US',
+        recordingconfig: {
+          language: config?.recordingconfig?.language ?? 'en-US',
         },
       },
       { emitEvent: false },
@@ -377,9 +377,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       config.promptconfig = sanitizedPromptConfig;
     }
 
-    const language = raw.recordingconfing?.language?.trim();
+    const language = raw.recordingconfig?.language?.trim();
     if (language) {
-      config.recordingconfing = { language };
+      config.recordingconfig = { language };
     }
 
     return config;

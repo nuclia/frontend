@@ -56,6 +56,32 @@ export type RaoMessageRole = 'user' | 'assistant';
 
 export type RaoMessageVariant = 'chip';
 
+export type FeedbackStatus = 'pending' | 'submitting' | 'completed' | 'error';
+
+export interface IMessageFeedbackOption {
+  id: string;
+  name: string;
+  title: string;
+  description?: string;
+  arguments?: unknown;
+  meta?: Record<string, unknown> | null;
+  raw?: Record<string, unknown>;
+}
+
+export interface IMessageFeedback {
+  feedbackId: string;
+  requestId: string;
+  question: string;
+  module?: string;
+  agentId?: string;
+  timeoutMs?: number;
+  responseSchema?: unknown;
+  options: IMessageFeedbackOption[];
+  status: FeedbackStatus;
+  selectedOptionId?: string;
+  error?: string | null;
+}
+
 export interface IMessage {
   id: string;
   role: RaoMessageRole;
@@ -65,4 +91,5 @@ export interface IMessage {
   list?: string[];
   variant?: RaoMessageVariant;
   debug?: AragAnswer[];
+  feedback?: IMessageFeedback;
 }

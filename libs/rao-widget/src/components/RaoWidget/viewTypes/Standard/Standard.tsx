@@ -26,18 +26,19 @@ export interface StandardProps extends IRaoWidget {
 
 export const Standard: FC<StandardProps> = ({
   promptconfig,
-  recordingconfing,
+  recordingconfig,
   viewtype = 'conversation',
   onCloseFloating,
 }) => {
-  const { activeView, visibleViewType, onChat, setVisibleViewType, resources } = useRaoContext();
+  const { activeView, visibleViewType, onChat, setVisibleViewType, resources, conversation, onFeedbackResponse } =
+    useRaoContext();
   const {
     hasSupport: canUseVoice,
     isRecording,
     stopRecording,
     toggleRecording,
     transcript,
-  } = useVoiceRecorder(recordingconfing?.language ?? 'en-US');
+  } = useVoiceRecorder(recordingconfig?.language ?? 'en-US');
 
   const [query, setQuery] = useState('');
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -253,13 +254,13 @@ export const Standard: FC<StandardProps> = ({
             <input
               className="rao-react__query"
               placeholder={
-                isConversationActive ? resources.form_placeholder_followup : resources.form_placeholder_defuault
+                isConversationActive ? resources.form_placeholder_followup : resources.form_placeholder_default
               }
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
 
-            {!!recordingconfing?.language && (
+            {!!recordingconfig?.language && (
               <button
                 type="button"
                 className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}

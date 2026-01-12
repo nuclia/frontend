@@ -23,6 +23,7 @@ export interface IRaoContext extends Omit<IRaoProvider, 'sessionId' | 'resources
   setVisibleViewType: React.Dispatch<React.SetStateAction<EViewType>>;
   conversation: IMessage[] | null;
   onChat: (message: string) => void;
+  onFeedbackResponse: (messageId: string, optionId: string) => void;
 
   resources: IResources;
 }

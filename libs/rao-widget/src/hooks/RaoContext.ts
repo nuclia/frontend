@@ -15,6 +15,7 @@ const defaultContext: IRaoContext = {
   setVisibleViewType: () => {},
   conversation: null,
   onChat: () => {},
+  onFeedbackResponse: () => {},
   // @ts-expect-error - placeholder default
   resources: {},
 };
