@@ -151,7 +151,7 @@ export namespace Widget {
   }
 
   export interface WidgetConfiguration {
-    widgetMode: 'page' | 'popup' | 'chat';
+    widgetMode: 'page' | 'popup' | 'chat' | 'floating-chat';
     darkMode: 'light' | 'dark';
     customizePlaceholder: boolean;
     placeholder: string;
@@ -178,6 +178,12 @@ export namespace Widget {
     collapseTextBlocks: boolean;
     customizeCitationVisibility: boolean;
     citationVisibility: 'expanded' | 'collapsed';
+    fabPosition: 'bottom-right' | 'bottom-left';
+    fabSize: 'small' | 'medium' | 'large';
+    fabOffsetBottom: number;
+    fabOffsetSide: number;
+    panelWidth: number;
+    panelHeight: number;
   }
 
   export interface Widget {
@@ -519,6 +525,16 @@ export function getWidgetParameters(
   const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(
     searchConfig.generativeAnswer.ragStrategies,
   );
+
+  const floatingWidgetOptions = widgetOptions.widgetMode === 'floating-chat' ? {
+    fab_position: widgetOptions.fabPosition || 'bottom-right',
+    fab_size: widgetOptions.fabSize || 'medium',
+    fab_offset_bottom: widgetOptions.fabOffsetBottom || 24,
+    fab_offset_side: widgetOptions.fabOffsetSide || 24,
+    panel_width: widgetOptions.panelWidth || 400,
+    panel_height: widgetOptions.panelHeight || 600,
+  } : {};
+
   return {
     features: getFeatures(searchConfig, widgetOptions),
     prompt: getPrompt(searchConfig.generativeAnswer),
@@ -552,6 +568,7 @@ export function getWidgetParameters(
     mode: getWidgetTheme(widgetOptions),
     feedback: widgetOptions.feedback,
     security_groups: getSecurityGroups(searchConfig.searchBox),
+    ...floatingWidgetOptions,
   };
 }
 

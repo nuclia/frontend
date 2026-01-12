@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -86,7 +87,7 @@ type RaoFormValue = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class WidgetFormComponent implements OnInit, OnDestroy {
+export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -112,7 +113,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   isNotModified = true;
 
   form = new FormGroup({
-    widgetMode: new FormControl<'page' | 'popup' | 'chat'>('page', { nonNullable: true }),
+    widgetMode: new FormControl<'page' | 'popup' | 'chat' | 'floating-chat'>('page', { nonNullable: true }),
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
     customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -139,6 +140,13 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
     collapseTextBlocks: new FormControl<boolean>(false, { nonNullable: true }),
     citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
+    // Floating chat options
+    fabPosition: new FormControl<'bottom-right' | 'bottom-left'>('bottom-right', { nonNullable: true }),
+    fabSize: new FormControl<'small' | 'medium' | 'large'>('medium', { nonNullable: true }),
+    fabOffsetBottom: new FormControl<number>(24, { nonNullable: true }),
+    fabOffsetSide: new FormControl<number>(24, { nonNullable: true }),
+    panelWidth: new FormControl<number>(400, { nonNullable: true }),
+    panelHeight: new FormControl<number>(600, { nonNullable: true }),
   });
 
   raoForm = new FormGroup<RaoFormGroupControls>({
@@ -197,6 +205,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get chatStyleEnabled() {
     return this.form.controls.widgetMode.value === 'chat';
+  }
+  get floatingChatStyleEnabled() {
+    return this.form.controls.widgetMode.value === 'floating-chat';
   }
   get speechOn() {
     return this.form.controls.speech.value;
@@ -290,6 +301,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       });
 
     this.updateSpeechSynthesis(this.speechOn);
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.updateWidgetOptionsHeight();
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -480,12 +497,15 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
     }
-    if (value !== 'chat') {
+    if (value !== 'chat' && value !== 'floating-chat') {
       this.form.controls.persistChatHistory.setValue(false);
       this.form.controls.persistChatHistory.disable();
     } else {
       this.form.controls.persistChatHistory.enable();
     }
+    setTimeout(() => {
+      this.updateWidgetOptionsHeight();
+    });
   }
 
   onNavigationChange(value: Partial<Widget.WidgetConfiguration>) {

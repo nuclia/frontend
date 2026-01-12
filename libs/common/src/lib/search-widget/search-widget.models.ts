@@ -58,6 +58,12 @@ export const DEFAULT_WIDGET_CONFIG: Widget.WidgetConfiguration = {
   collapseTextBlocks: false,
   customizeCitationVisibility: false,
   citationVisibility: 'expanded',
+  fabPosition: 'bottom-right',
+  fabSize: 'medium',
+  fabOffsetBottom: 24,
+  fabOffsetSide: 24,
+  panelWidth: 400,
+  panelHeight: 600,
 };
 
 export function isSameConfigurations(
