@@ -55,6 +55,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   showDisclaimer = signal(false);
   accepted = signal(true);
   disabled = signal(false);
+  enterpriseReadyFilter = 'enterprise-ready-filter';
 
   @ViewChild('popup') popup?: PopupDirective;
   @ViewChild('dropdown') dropdown?: DropdownComponent;
@@ -83,7 +84,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
     return { title: model?.model.title, description: model?.model.description, provider: model?.provider };
   });
 
-  disclaimerText = computed(() =>{
+  disclaimerText = computed(() => {
     // TODO: get disclaimer text from "selectedModelData" once the backend returns the disclaimer text
     return '';
   });
@@ -104,8 +105,12 @@ export class ModelSelectorComponent implements ControlValueAccessor {
 
   filteredByProvider = computed(() => {
     if (this.filter()) {
-      const provider = this.filteredByTerm().find(({ key }) => key === this.filter());
-      return provider ? [provider] : [];
+      if (this.filter() === this.enterpriseReadyFilter) {
+        return this.filteredByTerm().filter(({ value }) => !!value.enterprise_readiness);
+      } else {
+        const provider = this.filteredByTerm().find(({ key }) => key === this.filter());
+        return provider ? [provider] : [];
+      }
     }
     return this.filteredByTerm();
   });
