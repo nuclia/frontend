@@ -16,6 +16,7 @@
       "executor": "@angular-devkit/build-angular:browser",
       "options": {
         "outputPath": "dist/apps/dashboard",
+        "subresourceIntegrity": true,
         "index": "apps/dashboard/src/index.html",
         "main": "apps/dashboard/src/main.ts",
         "polyfills": "apps/dashboard/src/polyfills.ts",

@@ -17,6 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/nucliadb-admin",
+        "subresourceIntegrity": true,
         "baseHref": "/admin/",
         "index": "apps/nucliadb-admin/src/index.html",
         "main": "apps/nucliadb-admin/src/main.ts",

@@ -17,6 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/manager-v2",
+        "subresourceIntegrity": true,
         "index": "apps/manager-v2/src/index.html",
         "main": "apps/manager-v2/src/main.ts",
         "polyfills": ["zone.js"],
