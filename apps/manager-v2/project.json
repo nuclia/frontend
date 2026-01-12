@@ -111,6 +111,7 @@
         },
         "local-stage": {
           "buildOptimizer": false,
+          "subresourceIntegrity": false,
           "optimization": false,
           "vendorChunk": true,
           "extractLicenses": false,
@@ -148,6 +149,7 @@
         },
         "local-prod": {
           "buildOptimizer": false,
+          "subresourceIntegrity": false,
           "optimization": false,
           "vendorChunk": true,
           "extractLicenses": false,

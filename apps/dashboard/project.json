@@ -124,6 +124,7 @@
         },
         "local-stage": {
           "aot": false,
+          "subresourceIntegrity": false,
           "buildOptimizer": false,
           "optimization": false,
           "vendorChunk": true,
@@ -168,6 +169,7 @@
         },
         "local-dev": {
           "aot": false,
+          "subresourceIntegrity": false,
           "buildOptimizer": false,
           "optimization": false,
           "vendorChunk": true,
@@ -212,6 +214,7 @@
         },
         "local-prod": {
           "aot": false,
+          "subresourceIntegrity": false,
           "buildOptimizer": false,
           "optimization": false,
           "vendorChunk": true,
