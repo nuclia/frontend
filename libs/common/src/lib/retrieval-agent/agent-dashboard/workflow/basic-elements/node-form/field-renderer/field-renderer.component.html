@@ -90,6 +90,15 @@
       [property]="property"
       [required]="required"></app-key-value-field>
 
+    <!-- Synonyms (dictionary of lists) field -->
+    <app-synonyms-field
+      *ngSwitchCase="'synonyms-field'"
+      [form]="form"
+      [controlName]="controlName"
+      [label]="label"
+      [property]="property"
+      [required]="required"></app-synonyms-field>
+
     <!-- Text input (includes string, const, and fallback) -->
     <pa-input
       *ngSwitchCase="'pa-input'"

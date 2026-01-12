@@ -8,6 +8,7 @@ import { NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
+import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
 import { aragUrl } from '../../workflow.state';
 import { WorkflowService } from '../../workflow.service';
 
@@ -23,6 +24,7 @@ import { WorkflowService } from '../../workflow.service';
     RulesFieldComponent,
     InfoCardComponent,
     RouterLink,
+    SynonymsFieldComponent,
   ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +38,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       kb: new FormControl('', { nonNullable: true }),
       extend: new FormControl(false),
       synonyms: new FormControl(false),
+      provided_synonyms: new FormControl<{ [key: string]: string[] }>({}, Validators.required),
       history: new FormControl(false),
       userInfo: new FormControl(false),
       split_question: new FormControl(false),
@@ -81,5 +84,22 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
         models.models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
       );
     });
+
+    // Toggle validators for provided_synonyms based on synonyms switch
+    const synonymsCtrl = this.configForm.controls.synonyms;
+    const providedSynonymsCtrl = this.configForm.controls.provided_synonyms;
+
+    const updateProvidedSynonymsValidation = (enabled: boolean) => {
+      if (enabled) {
+        providedSynonymsCtrl.addValidators(Validators.required);
+      } else {
+        providedSynonymsCtrl.clearValidators();
+        providedSynonymsCtrl.setValue(undefined as any);
+      }
+      providedSynonymsCtrl.updateValueAndValidity({ emitEvent: false });
+    };
+
+    updateProvidedSynonymsValidation(!!synonymsCtrl.value);
+    synonymsCtrl.valueChanges.subscribe((enabled) => updateProvidedSynonymsValidation(!!enabled));
   }
 }

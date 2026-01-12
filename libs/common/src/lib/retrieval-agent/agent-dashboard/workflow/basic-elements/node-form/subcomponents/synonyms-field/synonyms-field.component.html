@@ -1,0 +1,66 @@
+<div
+  class="synonyms-field"
+  [formGroup]="synonymsForm">
+  <div class="label-and-button">
+    <label>
+      {{ label }}
+      @if (required) {
+        <span style="color: red">*</span>
+      }
+    </label>
+    <pa-button
+      size="small"
+      aspect="basic"
+      (click)="addEntry()">
+      Add
+    </pa-button>
+  </div>
+
+  @for (group of synonymsForm.controls | keyvalue; track group.key) {
+    <div
+      class="synonyms-entry"
+      [formGroup]="getGroupFromControl(group.value)">
+      <pa-input
+        formControlName="key"
+        placeholder="Canonical term">
+        Key
+      </pa-input>
+
+      <div
+        class="synonyms-values"
+        formArrayName="values">
+        @for (ctrl of $any(getGroupFromControl(group.value).get('values')).controls; track ctrl) {
+          <div class="synonym-item">
+            <pa-input
+              [formControlName]="$index"
+              type="text"
+              placeholder="Synonym"></pa-input>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              size="small"
+              (click)="removeSynonym(group.key, $index)">
+              Remove
+            </pa-button>
+          </div>
+        }
+      </div>
+
+      <div class="entry-actions">
+        <pa-button
+          size="small"
+          aspect="basic"
+          (click)="addSynonym(group.key)">
+          + Add synonym
+        </pa-button>
+        <pa-button
+          icon="trash"
+          aspect="basic"
+          size="small"
+          (click)="removeEntry(group.key)">
+          Remove entry
+        </pa-button>
+      </div>
+    </div>
+  }
+</div>
