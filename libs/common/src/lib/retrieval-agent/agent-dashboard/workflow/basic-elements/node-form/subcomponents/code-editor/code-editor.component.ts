@@ -2,28 +2,33 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   signal,
   OnDestroy,
   ElementRef,
   ViewChild,
   AfterViewInit,
+  inject,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
-import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import DOMPurify from 'dompurify';
+import { SisModalService } from '@nuclia/sistema';
+import { ModalConfig, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { CodeEditorModalComponent } from './code-editor-modal/code-editor-modal.component';
 
 @Component({
   selector: 'app-code-editor',
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ExpandableTextareaComponent, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
 })
-export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CodeEditorComponent implements OnDestroy, AfterViewInit {
+  private modalService = inject(SisModalService);
+
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
@@ -34,7 +39,7 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() initialLanguage = 'python';
   @Input() availableLanguages: string[] = ['python', 'javascript', 'typescript', 'json'];
   @Input() showLanguageSelector = true;
-  @Input() highlight = false;
+  @Input() expandable = true;
 
   @ViewChild('codeTextarea', { static: false }) codeTextarea!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('highlightContainer', { static: false }) highlightContainer!: ElementRef<HTMLDivElement>;
@@ -43,20 +48,14 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   private prismLoaded = false;
 
   // Python-specific features
+  highlightedCode = signal<string>('');
   validationErrors = signal<string[]>([]);
   currentValue = signal<string>('');
 
-  ngOnInit() {
-    if (this.highlight) {
-      this.setupFormValueSubscription();
-      this.loadPrismJS();
-    }
-  }
-
   ngAfterViewInit() {
-    if (this.highlight) {
-      this.setupTextareaHandlers();
-    }
+    this.setupFormValueSubscription();
+    this.loadPrismJS();
+    this.setupTextareaHandlers();
   }
 
   ngOnDestroy() {
@@ -221,12 +220,6 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     try {
-      // Load Prism.js CSS
-      const prismCSS = document.createElement('link');
-      prismCSS.rel = 'stylesheet';
-      prismCSS.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
-      document.head.appendChild(prismCSS);
-
       // Load Prism.js core
       const prismJS = document.createElement('script');
       prismJS.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
@@ -272,11 +265,11 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         highlightedCode = prism.highlight(code, grammar, 'python');
       } else {
         // Fallback to plain text if no code or grammar not loaded
-        highlightedCode = this.escapeHtml(code);
+        highlightedCode = code;
       }
 
       // Safely set highlighted code using DOM methods instead of innerHTML
-      this.setHighlightedContent(highlightedCode, 'language-python');
+      this.setHighlightedContent(highlightedCode);
 
       // Sync scroll position after highlighting
       this.syncScroll();
@@ -286,63 +279,20 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } catch (error) {
       console.warn('Syntax highlighting failed:', error);
       // Fallback to plain text using safe DOM manipulation
-      this.setHighlightedContent(this.escapeHtml(code));
+      this.setHighlightedContent(code);
 
       // Sync scroll position after fallback
       this.syncScroll();
     }
   }
 
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
   /**
-   * Safely sets highlighted content using DOM methods without innerHTML
-   * to prevent XSS vulnerabilities
+   * Safely sets highlighted content to prevent XSS vulnerabilities
    */
-  private setHighlightedContent(content: string, className?: string): void {
-    // Clear existing content safely
-    while (this.highlightContainer.nativeElement.firstChild) {
-      this.highlightContainer.nativeElement.removeChild(this.highlightContainer.nativeElement.firstChild);
-    }
-
-    // Create code element
-    const codeElement = document.createElement('code');
-    if (className) {
-      codeElement.className = className;
-    }
-
-    // For highlighted content from Prism, we need to parse and safely add HTML elements
-    if (content.includes('<span')) {
-      // Content is highlighted HTML from Prism - parse it safely
-      this.parseAndSetHighlightedHtml(codeElement, content);
-    } else {
-      // Content is plain text - set it safely
-      codeElement.textContent = content;
-    }
-
-    // Append to container
-    this.highlightContainer.nativeElement.appendChild(codeElement);
+  private setHighlightedContent(content: string): void {
+    this.highlightedCode.set(DOMPurify.sanitize(content));
   }
 
-  /**
-   * Safely parse and set highlighted HTML content from Prism
-   * without using innerHTML
-   */
-  private parseAndSetHighlightedHtml(codeElement: HTMLElement, htmlContent: string): void {
-    // Create a temporary container to parse the HTML safely
-    const tempDiv = document.createElement('div');
-    tempDiv.textContent = htmlContent; // This escapes any potentially dangerous content
-
-    // For now, let's use a simple approach - just set the text content
-    // This will lose syntax highlighting but maintain security
-    // TODO: Implement proper HTML parsing if syntax highlighting is critical
-    const textContent = htmlContent.replace(/<[^>]*>/g, ''); // Strip HTML tags
-    codeElement.textContent = textContent;
-  }
   private validatePythonSyntax(code: string) {
     const errors: string[] = [];
 
@@ -403,5 +353,16 @@ export class CodeEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.validationErrors.set(errors);
+  }
+
+  expand() {
+    this.modalService
+      .openModal(CodeEditorModalComponent, new ModalConfig({ data: { value: this.currentValue(), title: this.label } }))
+      .onClose.pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        if (typeof value === 'string') {
+          this.updateFormControl(value);
+        }
+      });
   }
 }
