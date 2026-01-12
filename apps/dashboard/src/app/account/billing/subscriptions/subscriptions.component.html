@@ -31,34 +31,11 @@
         [class]="accountType | async">
         <tr>
           <th></th>
-          @if (!disableStarterPlan) {
-            <th class="plan">
-              <div class="plan-name">Starter</div>
-              @if ((prices | async)?.['v3starter']; as starter) {
-                <div class="price">
-                  <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-                  <span class="unit">/{{ 'billing.month' | translate }}</span>
-                </div>
-              }
-              @if (!!(isTrial | async)) {
-                <pa-button
-                  kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'v3starter' }">
-                  {{ 'billing.upgrade' | translate }}
-                </pa-button>
-              } @else if ((accountType | async) === 'v3starter') {
-                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-              } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-              }
-            </th>
-          }
           <th class="plan">
-            <div class="plan-name">Fly</div>
-            @if ((prices | async)?.['v3fly']; as fly) {
+            <div class="plan-name">Starter</div>
+            @if ((prices | async)?.['v3starter']; as starter) {
               <div class="price">
-                <span>{{ fly?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
                 <span class="unit">/{{ 'billing.month' | translate }}</span>
               </div>
             }
@@ -66,20 +43,20 @@
               <pa-button
                 kind="primary"
                 routerLink="../checkout"
-                [queryParams]="{ type: 'v3fly' }">
+                [queryParams]="{ type: 'v3starter' }">
                 {{ 'billing.upgrade' | translate }}
               </pa-button>
-            } @else if ((accountType | async) === 'v3fly') {
+            } @else if ((accountType | async) === 'v3starter') {
               <ng-container *ngTemplateOutlet="subscribed"></ng-container>
             } @else {
               <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
             }
           </th>
           <th class="plan">
-            <div class="plan-name">Growth</div>
-            @if ((prices | async)?.['v3growth']; as growth) {
+            <div class="plan-name">Pro</div>
+            @if ((prices | async)?.['v3pro']; as pro) {
               <div class="price">
-                <span>{{ growth?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                <span>{{ pro?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
                 <span class="unit">/{{ 'billing.month' | translate }}</span>
               </div>
             }
@@ -87,10 +64,10 @@
               <pa-button
                 kind="primary"
                 routerLink="../checkout"
-                [queryParams]="{ type: 'v3growth' }">
+                [queryParams]="{ type: 'v3pro' }">
                 {{ 'billing.upgrade' | translate }}
               </pa-button>
-            } @else if ((accountType | async) === 'v3growth') {
+            } @else if ((accountType | async) === 'v3pro') {
               <ng-container *ngTemplateOutlet="subscribed"></ng-container>
             } @else {
               <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
@@ -132,71 +109,44 @@
           @for (tier of tiers; track tier) {
             @if ((prices | async)?.[tier]?.usage?.['nuclia-tokens']?.price; as price) {
               <td>{{ price | currency: currency : 'symbol' : '1.2-6' }}</td>
-            } @else if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price) {
-              <td>
-                {{
-                  (prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price || 0
-                    | currency: currency : 'symbol' : '1.2-6'
-                }}
-              </td>
             }
           }
         </tr>
         <tr>
           <td>{{ 'billing.preprocessing' | translate }}</td>
-          @if (!disableStarterPlan) {
-            <td>Cloud</td>
-          }
           <td>Cloud</td>
           <td>Cloud</td>
           <td>Cloud / Hybrid</td>
         </tr>
         <tr>
           <td>{{ 'billing.support' | translate }}</td>
-          @if (!disableStarterPlan) {
-            <td>Community</td>
-          }
-          <td>Community / Email</td>
-          <td>Slack / Email</td>
-          <td>ZenDesk + SLA</td>
+          <td>Community Support</td>
+          <td>Community Support + ZenDesk</td>
+          <td>Private Slack Channel + Zendesk</td>
         </tr>
+        <tr>
+          <td>{{ 'billing.da-agents' | translate }}</td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+        </tr>        
         <tr>
           <td>{{ 'billing.audit-log' | translate }}</td>
-          @if (!disableStarterPlan) {
-            <td>
-              <pa-icon
-                name="cross"
-                size="small"></pa-icon>
-            </td>
-          }
           <td>
             <pa-icon
               name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-        </tr>
-        <tr>
-          <td>{{ 'billing.continuous-training' | translate }}</td>
-          @if (!disableStarterPlan) {
-            <td>
-              <pa-icon
-                name="cross"
-                size="small"></pa-icon>
-            </td>
-          }
-          <td>
-            <pa-icon
-              name="cross"
               size="small"></pa-icon>
           </td>
           <td>
@@ -222,12 +172,6 @@
       <div class="notes">
         <div>
           * {{ 'billing.token-help' | translate }}
-          <a
-            href="https://nuclia.com/nuclia-token"
-            target="_blank"
-            rel="noopener noreferrer">
-            {{ 'billing.learn-more' | translate }}
-          </a>
         </div>
         <div>{{ 'billing.prices_vat' | translate }}</div>
       </div>

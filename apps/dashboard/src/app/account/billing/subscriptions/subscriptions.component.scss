@@ -33,12 +33,10 @@ h2 {
 
   &.v3starter th:nth-child(2),
   &.v3starter td:nth-child(2),
-  &.v3fly th:nth-child(3),
-  &.v3fly td:nth-child(3),
-  &.v3growth th:nth-child(4),
-  &.v3growth td:nth-child(4),
-  &.v3enterprise th:nth-child(5),
-  &.v3enterprise td:nth-child(5) {
+  &.v3pro th:nth-child(3),
+  &.v3pro td:nth-child(3),
+  &.v3enterprise th:nth-child(4),
+  &.v3enterprise td:nth-child(4) {
     background-color: $color-light-stronger;
   }
 

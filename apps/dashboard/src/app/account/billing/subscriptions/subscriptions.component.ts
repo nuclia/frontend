@@ -31,9 +31,7 @@ export class SubscriptionsComponent implements OnDestroy {
     );
   // temporarily hiding the starter plan
   disableStarterPlan = true;
-  tiers: AccountTypes[] = this.disableStarterPlan
-    ? ['v3fly', 'v3growth', 'v3enterprise']
-    : ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
+  tiers: AccountTypes[] = ['v3starter', 'v3pro', 'v3enterprise'];
   isSubscribedToAws = this.billing.isSubscribedToAws;
   isManuallySubscribed = this.billing.isManuallySubscribed;
   unsubscribeAll = new Subject<void>();
@@ -65,7 +63,7 @@ export class SubscriptionsComponent implements OnDestroy {
   }
 
   contact() {
-    this.window.location.href = 'mailto:sales@nuclia.com';
+    window.open('https://www.progress.com/agentic-rag/contact-us', 'blank', 'noreferrer');
   }
 
   ngOnDestroy() {

@@ -31,12 +31,12 @@ export class FeaturesService {
     }),
   );
   isTrial: Observable<boolean> = this._account.pipe(map((account) => !!account.trial_expiration_date));
-  isEnterpriseOrGrowth: Observable<boolean> = this._account.pipe(
-    map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
+  isEnterpriseOrPro: Observable<boolean> = this._account.pipe(
+    map((account) => ['v3growth', 'v3pro', 'v3enterprise'].includes(account.type)),
   );
-  isEnterpriseOrGrowthOrFly: Observable<boolean> = this._account.pipe(
-    map((account) => ['v3fly', 'v3growth', 'v3enterprise'].includes(account.type)),
-  );  
+  isEnterpriseOrProOrStarter: Observable<boolean> = this._account.pipe(
+    map((account) => ['v3fly', 'v3starter', 'v3growth', 'v3pro', 'v3enterprise'].includes(account.type)),
+  );
   canUpgrade = combineLatest([this.isAccountManager, this._account]).pipe(
     map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
   );
@@ -74,54 +74,45 @@ export class FeaturesService {
    */
   authorized = {
     promptLab: combineLatest([
-      this.isEnterpriseOrGrowth,
+      this.isEnterpriseOrPro,
       this.isTrial,
       this.featureFlag.isFeatureAuthorized('llm-prompt-lab'),
     ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
-    summarization: combineLatest([
-      this.isEnterpriseOrGrowth,
-      this.featureFlag.isFeatureAuthorized('summarization'),
-    ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
+    summarization: combineLatest([this.isEnterpriseOrPro, this.featureFlag.isFeatureAuthorized('summarization')]).pipe(
+      map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized),
+    ),
     allowKbManagementFromNuaKey: combineLatest([
-      this.isEnterpriseOrGrowth,
+      this.isEnterpriseOrPro,
       this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
     ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
-    hideWidgetLogo: this._account.pipe(
-      map((account) =>
-        ['v3growth', 'v3enterprise'].includes(account.type),
-      ),
-    ),
+    hideWidgetLogo: this.isEnterpriseOrPro,
     vectorset: combineLatest([
-      this.isEnterpriseOrGrowth,
+      this.isEnterpriseOrPro,
       this.isTrial,
       this.featureFlag.isFeatureAuthorized('vectorset'),
     ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureAuthorized('tasks-automation'),
-      this.isEnterpriseOrGrowthOrFly,
+      this.isEnterpriseOrProOrStarter,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     labelerTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('labeller-task'),
-      this.isEnterpriseOrGrowthOrFly,
+      this.isEnterpriseOrProOrStarter,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
-    askTask: combineLatest([
-      this.featureFlag.isFeatureAuthorized('ask-task'),
-      this.isEnterpriseOrGrowthOrFly,
-    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    askTask: combineLatest([this.featureFlag.isFeatureAuthorized('ask-task'), this.isEnterpriseOrProOrStarter]).pipe(
+      map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed),
+    ),
     graphTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-task'),
-      this.isEnterpriseOrGrowthOrFly,
+      this.isEnterpriseOrProOrStarter,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
     questionsTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('questions-task'),
-      this.isEnterpriseOrGrowthOrFly,
+      this.isEnterpriseOrProOrStarter,
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
-    graphSearch: combineLatest([
-      this.featureFlag.isFeatureAuthorized('graph-search'),
-      this._account.pipe(
-        map((account) => ['v3growth', 'v3enterprise'].includes(account.type)),
-      ),
-    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    graphSearch: combineLatest([this.featureFlag.isFeatureAuthorized('graph-search'), this.isEnterpriseOrPro]).pipe(
+      map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed),
+    ),
     showDemoButton: this.featureFlag.isFeatureEnabled('demo-button'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
