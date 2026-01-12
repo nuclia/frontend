@@ -11,6 +11,7 @@ import {
   DriverSelectComponent,
   EnumSelectComponent,
   KeyValueFieldComponent,
+  SynonymsFieldComponent,
   TransportFieldComponent,
 } from '../subcomponents';
 import { ModelSelectComponent } from '../subcomponents/model-select/model-select.component';
@@ -31,6 +32,7 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
     EnumSelectComponent,
     ExpandableTextareaComponent,
     KeyValueFieldComponent,
+    SynonymsFieldComponent,
     FilteredSourceSelectComponent,
     ModelSelectComponent,
     PaTextFieldModule,

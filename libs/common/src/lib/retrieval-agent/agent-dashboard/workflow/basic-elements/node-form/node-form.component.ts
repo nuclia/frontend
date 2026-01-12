@@ -173,7 +173,9 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
     );
 
     this.renderableFields = Object.entries(this.schema.properties)
-      .filter(([key, property]) => !this.fieldConfigService.isFieldIgnored(key, property))
+      .filter(([key, property]) => {
+        return key !== 'provided_synonyms' && !this.fieldConfigService.isFieldIgnored(key, property);
+      })
       .map(([key, property]) => {
         const resolvedProperty = this.getPropertySchema(property);
         const config = this.fieldConfigService.getFieldConfig(key, resolvedProperty, this.schema);

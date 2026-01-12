@@ -83,6 +83,7 @@ export class FieldConfigService {
       },
     },
     parameters: { component: 'key-value-field', type: 'custom' },
+    provided_synonyms: { component: 'synonyms-field', type: 'custom' },
   };
 
   // Source mappings
@@ -182,6 +183,7 @@ export class FieldConfigService {
       key_value_field: { component: 'key-value-field', type: 'custom' },
       array_string_field: { component: 'array-string-field', type: 'array' },
       enum_select: { component: 'enum-select', type: 'enum' },
+      synonyms_field: { component: 'synonyms-field', type: 'custom' },
     };
 
     return widgetMappings[widget] || null;

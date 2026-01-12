@@ -38,6 +38,12 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.synonyms.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.synonyms.label' | translate }}
     </pa-toggle>
+    @if (configForm.value.synonyms) {
+      <app-synonyms-field
+        [form]="configForm"
+        controlName="provided_synonyms"
+        [label]="'Provided synonyms'"></app-synonyms-field>
+    }
     <pa-toggle
       formControlName="history"
       withBackground
