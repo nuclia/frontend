@@ -6,6 +6,7 @@ import {
   PaButtonModule,
   PaDropdownModule,
   PaExpanderModule,
+  PaIconModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -14,7 +15,7 @@ import {
   transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModelInfo, GenerativeProvider, GenerativeProviders } from '@nuclia/core';
+import { ModelInfo, GenerativeProvider, GenerativeProviders, DataResidencyStatus } from '@nuclia/core';
 
 @Component({
   selector: 'stf-model-selector',
@@ -23,6 +24,7 @@ import { ModelInfo, GenerativeProvider, GenerativeProviders } from '@nuclia/core
     PaButtonModule,
     PaDropdownModule,
     PaExpanderModule,
+    PaIconModule,
     PaPopupModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -58,6 +60,8 @@ export class ModelSelectorComponent implements ControlValueAccessor {
 
   @ViewChild('popup') popup?: PopupDirective;
   @ViewChild('dropdown') dropdown?: DropdownComponent;
+  
+  DataResidencyStatus = DataResidencyStatus;
 
   modelList = computed(() =>
     Object.entries(this.providers()).reduce(
