@@ -14,21 +14,38 @@
     }
   </button>
 
-  @if (showDemo && (hasDemoButton | async)) {
-    <pa-button
-      kind="primary"
-      aspect="basic"
-      paFocusable
-      (click)="bookDemo()"
-      (keyup.enter)="bookDemo()">
-      <a
-        href="https://nuclia.com/book-a-demo/"
-        target="_blank"
-        rel="noopener noreferrer">
-        {{ 'need-help-book-demo' | translate }}
-      </a>
-    </pa-button>
-  }
+  <div class="topbar-buttons">
+    @if (showDemo && (hasDemoButton | async)) {
+      <pa-button
+        kind="primary"
+        aspect="basic"
+        paFocusable
+        (click)="bookDemo()"
+        (keyup.enter)="bookDemo()">
+        <a
+          href="https://nuclia.com/book-a-demo/"
+          target="_blank"
+          rel="noopener noreferrer">
+          {{ 'need-help-book-demo' | translate }}
+        </a>
+      </pa-button>
+    }
+    @if (isTrial | async) {
+      <pa-button
+        kind="primary"
+        aspect="basic"
+        paFocusable
+        (click)="goToTutorial()"
+        (keyup.enter)="goToTutorial()">
+        <a
+          href="https://www.progress.com/agentic-rag/trial-guide"
+          target="_blank"
+          rel="noopener noreferrer">
+          {{ 'generic.trial-tutorial' | translate }}
+        </a>
+      </pa-button>
+    }
+  </div>
 
   <div class="topbar-actions">
     @if (!standalone && (shouldAccountTypeBeVisible | async)) {

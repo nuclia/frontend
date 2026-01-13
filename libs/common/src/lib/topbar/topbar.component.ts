@@ -49,7 +49,8 @@ export class TopbarComponent {
   billingUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
   );
-  showTrial = combineLatest([this.features.isTrial, this.accountType]).pipe(
+  isTrial = this.features.isTrial;
+  showTrial = combineLatest([this.isTrial, this.accountType]).pipe(
     map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
   );
 
@@ -85,4 +86,8 @@ export class TopbarComponent {
   bookDemo() {
     window.open('https://nuclia.com/book-a-demo/', 'blank', 'noreferrer');
   }
+
+  goToTutorial() {
+    window.open('https://www.progress.com/agentic-rag/trial-guide', 'blank', 'noreferrer');
+  }  
 }
