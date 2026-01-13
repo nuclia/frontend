@@ -3,6 +3,8 @@ import { OAuthConnector } from './oauth';
 import { Section } from '../models';
 
 export class SharepointImpl extends OAuthConnector {
+  override allowToSelectFolders = true;
+
   constructor(id: string, path: string) {
     super('sharepoint', id, path);
   }
@@ -39,18 +41,6 @@ export class SharepointImpl extends OAuthConnector {
             type: 'text',
             required: true,
             secret: true,
-          },
-        ],
-      },
-      {
-        id: 'folder',
-        title: 'sync.connectors.oauth.folder.title',
-        fields: [
-          {
-            id: 'sync_root_path',
-            label: 'sync.connectors.oauth.path.label',
-            type: 'text',
-            required: true,
           },
         ],
       },

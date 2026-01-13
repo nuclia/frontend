@@ -1,0 +1,38 @@
+<div class="container">
+  @if (loading) {
+    <div class="loading-shade">
+      <nsi-spinner></nsi-spinner>
+    </div>
+  }
+  @if (!selectedDrive) {
+    <ul>
+      @for (drive of drives; track drive.id) {
+        <li>
+          {{ drive.name }}
+          <nsi-button-mini (click)="browseDrive(drive)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="header">
+      <h3>{{ selectedDrive.name }} {{ currentPath }}</h3>
+      <nsi-button-mini (click)="selectFolder()">{{ 'sync.cloud-folder.select' | translate }}</nsi-button-mini>
+    </div>
+
+    <nsi-button-mini
+      icon="undo"
+      (click)="back()">
+      {{ 'sync.cloud-folder.back' | translate }}
+    </nsi-button-mini>
+    <ul>
+      @for (folder of folders; track folder.id) {
+        <li>
+          {{ folder.name }}
+          <nsi-button-mini
+            (click)="browseFolder(folder.path)"
+            icon="chevron-down"></nsi-button-mini>
+        </li>
+      }
+    </ul>
+  }
+</div>

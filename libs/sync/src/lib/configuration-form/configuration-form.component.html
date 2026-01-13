@@ -15,7 +15,7 @@
       @for (section of connector.getParametersSections() | async; track section.id) {
         @if (
           (section.id === 'credentials' && enterCredentials && !useOAuth) ||
-          (section.id !== 'credentials' && !enterCredentials)
+          (section.id !== 'credentials' && section.id !== 'folder' && !enterCredentials)
         ) {
           <nsi-two-columns-configuration-item
             [badge]="section.badge"

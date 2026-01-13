@@ -16,6 +16,7 @@ export class OAuthConnector implements IConnector {
 
   constructor(name: string, id: string, path: string) {
     this.canSyncSecurityGroups = name === 'gdrive';
+    this.allowToSelectFolders = name === 'gdrive';
     this.name = name;
     this.id = id;
     this.path = path;
@@ -27,6 +28,12 @@ export class OAuthConnector implements IConnector {
         id: 'folder',
         title: 'sync.connectors.oauth.folder.title',
         fields: [
+          {
+            id: 'drive_id',
+            label: 'sync.connectors.oauth.drive.label',
+            type: 'text',
+            required: true,
+          },
           {
             id: 'sync_root_path',
             label: 'sync.connectors.oauth.path.label',

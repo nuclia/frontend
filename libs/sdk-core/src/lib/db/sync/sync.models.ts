@@ -28,6 +28,12 @@ export interface ISyncManager {
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
   getConfigJobs(id: string): Observable<Job[]>;
+  browse(
+    externalConnectorId: string,
+    drive_id?: string,
+    path?: string,
+    page_token?: string,
+  ): Observable<StorageStructure>;
 }
 
 export interface OAuthUrl {
@@ -49,6 +55,7 @@ export interface SyncConfiguration {
   created_at: string;
   updated_at: string;
   sync_root_path: string;
+  drive_id?: string;
   sync_interval_minutes: number;
   created_by: string;
   external_connection: {
@@ -61,6 +68,7 @@ export interface SyncConfiguration {
 export interface SyncConfigurationCreate {
   name: string;
   sync_root_path: string;
+  drive_id?: string;
   external_connection_id: string;
 }
 
@@ -70,4 +78,24 @@ export interface Job {
   finished_at: string | null;
   config_id: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
+}
+
+export interface StorageStructure {
+  drives?: StorageDrive[];
+  folders?: StorageFolder[];
+  next_page_token: string;
+}
+
+export interface StorageDrive {
+  id: string;
+  name: string;
+  drive_type?: string;
+  web_url?: string;
+}
+
+export interface StorageFolder {
+  id: string;
+  name: string;
+  path: string;
+  web_url?: string;
 }

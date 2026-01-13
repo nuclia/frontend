@@ -7,6 +7,7 @@ import {
   ISyncManager,
   Job,
   OAuthUrl,
+  StorageStructure,
   SyncConfiguration,
   SyncConfigurationCreate,
 } from './sync.models';
@@ -49,5 +50,24 @@ export class SyncManager implements ISyncManager {
 
   getConfigJobs(id: string): Observable<Job[]> {
     return this.nuclia.rest.get<Job[]>(`${this.kb.path}/sync_config/${id}/jobs`);
+  }
+
+  browse(
+    externalConnectorId: string,
+    drive_id?: string,
+    path?: string,
+    page_token?: string,
+  ): Observable<StorageStructure> {
+    let endpoint = `${this.kb.path}/external_connection/${externalConnectorId}/browse?`;
+    if (drive_id) {
+      endpoint += `drive_id=${drive_id}&`;
+    }
+    if (path) {
+      endpoint += `path=${path}&`;
+    }
+    if (page_token) {
+      endpoint += `page_token=${page_token}`;
+    }
+    return this.nuclia.rest.get<StorageStructure>(endpoint);
   }
 }

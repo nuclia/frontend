@@ -7,10 +7,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
-import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { SDKService } from '@flaps/core';
-import { FolderSelectionComponent } from '../folder-selection';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -24,11 +22,9 @@ import { FolderSelectionComponent } from '../folder-selection';
     PaTogglesModule,
     PaTabsModule,
     SyncSettingsComponent,
-    FoldersTabComponent,
     RouterLink,
     StickyFooterComponent,
     ConfigurationFormComponent,
-    FolderSelectionComponent,
   ],
   templateUrl: './sync-details-page.component.html',
   styleUrl: './sync-details-page.component.scss',
@@ -66,8 +62,6 @@ export class SyncDetailsPageComponent implements OnDestroy {
     map((connectorDef) => (connectorDef ? this.syncService.getConnector(connectorDef.id, '') : undefined)),
   );
   activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
-
-  activeTab: 'settings' | 'folders' = 'settings';
 
   editMode: Observable<boolean> = this.currentRoute.url.pipe(
     map((fragments) => fragments.length > 1 && fragments[1].path === 'edit'),
