@@ -77,6 +77,13 @@
               {{ provider.value.title }}
             </pa-button>
           }
+          <pa-button
+            aspect="basic"
+            size="small"
+            [active]="filter() === enterpriseReadyFilter"
+            (click)="toggleFilter(enterpriseReadyFilter)">
+            {{ 'kb.ai-models.model-selector.features.enterprise-ready' | translate }}
+          </pa-button>
         </div>
       }
       @for (provider of filteredByProvider(); track provider.key) {
