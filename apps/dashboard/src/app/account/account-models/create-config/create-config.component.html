@@ -1,7 +1,7 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>
     <h2>
-      {{ (createMode ? 'account.models.model-configs.create' : 'account.models.model-configs.details') | translate }}
+      {{ createMode ? ('account.models.model-configs.create' | translate) : (generativeModel | async)?.name }}
     </h2>
   </pa-modal-title>
 
@@ -9,20 +9,24 @@
     <form
       class="form"
       [formGroup]="configForm">
-      <pa-select
-        formControlName="default_model_id"
-        [label]="'account.models.model-configs.generative-model' | translate"
-        [options]="generativeModelOptions | async"></pa-select>
+      @if (createMode) {
+        <pa-select
+          formControlName="default_model_id"
+          [label]="'account.models.model-configs.generative-model' | translate"
+          [options]="generativeModelOptions | async"></pa-select>
+      }
       <pa-input
         formControlName="description"
         [errorMessages]="validationMessages.description"
         [help]="'generic.required-field' | translate">
         {{ 'generic.description' | translate }}
       </pa-input>
-      <pa-select
-        formControlName="zone"
-        [label]="'generic.zone' | translate"
-        [options]="zoneOptions || []"></pa-select>
+      @if (createMode) {
+        <pa-select
+          formControlName="zone"
+          [label]="'generic.zone' | translate"
+          [options]="zoneOptions || []"></pa-select>
+      }
       <ng-container [formGroup]="promptsForm">
         @if (userPrompt | async; as prompt) {
           <nsi-expandable-textarea
@@ -43,6 +47,7 @@
           </nsi-expandable-textarea>
         }
       </ng-container>
+
       @if ((isBedrockIntegrationEnabled | async) && (showAssumeRole | async)) {
         <pa-toggle
           formControlName="useBedrock"
@@ -58,23 +63,36 @@
             (formReady)="initUserKeys($event)"></stf-user-keys>
         }
       }
+
+      @if (((kbList | async) || []).length > 0) {
+        <pa-toggle
+          [(value)]="isRestricted"
+          labelOnRight>
+          {{ 'account.models.model-configs.limit' | translate }}
+        </pa-toggle>
+        @if (isRestricted) {
+          <div class="checkboxes">
+            @for (item of kbList | async; track item.id) {
+              <pa-checkbox [(value)]="selectedKbs[item.id]">{{ item.title }}</pa-checkbox>
+            }
+          </div>
+        }
+      }
     </form>
   </pa-modal-content>
 
-  @if (createMode) {
-    <pa-modal-footer>
-      <pa-button
-        aspect="basic"
-        (click)="close()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-      <pa-button
-        kind="primary"
-        type="submit"
-        [disabled]="configForm.invalid || userKeysForm?.invalid"
-        (click)="save()">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-    </pa-modal-footer>
-  }
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="invalid"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
 </pa-modal-advanced>

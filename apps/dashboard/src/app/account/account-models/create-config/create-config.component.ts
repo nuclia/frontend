@@ -58,16 +58,12 @@ export class CreateConfigComponent implements OnInit {
     description: { required: 'validation.required' },
   };
 
-  schema = combineLatest([
-    this.sdk.currentAccount,
-    defer(() =>
-      this.configForm.controls.zone.valueChanges.pipe(
-        startWith(this.configForm.controls.zone.value),
-        filter((zone) => !!zone),
-      ),
-    ),
-  ]).pipe(
-    switchMap(([account, zone]) => this.sdk.nuclia.db.getLearningSchema(account.id, zone)),
+  currentZone = defer(() =>
+    this.configForm.controls.zone.valueChanges.pipe(startWith(this.configForm.controls.zone.value)),
+  ).pipe(map((current) => this.zones.find((zone) => zone.slug === current)));
+
+  schema = combineLatest([this.sdk.currentAccount, this.currentZone.pipe(filter((zone) => !!zone))]).pipe(
+    switchMap(([account, zone]) => this.sdk.nuclia.db.getLearningSchema(account.id, zone.slug)),
     shareReplay(1),
   );
 
@@ -82,9 +78,6 @@ export class CreateConfigComponent implements OnInit {
     map(([schema, model]) => (schema['generative_model']?.options || []).find((option) => option.value === model)),
     filter((value) => !!value),
   );
-  currentZone = defer(() =>
-    this.configForm.controls.zone.valueChanges.pipe(startWith(this.configForm.controls.zone.value)),
-  );
 
   prompts = combineLatest([this.schema, this.generativeModel]).pipe(
     map(([schema, model]) => schema['user_prompts']?.schemas?.[model.user_prompt || '']),
@@ -95,7 +88,7 @@ export class CreateConfigComponent implements OnInit {
     map(([model, currentZone]) => {
       // TODO: use "generative_providers" endpoint to know which are Bedrock models
       const isBedrockModel = model.provider === 'bedrock' || model.name.toLocaleLowerCase().includes('bedrock');
-      return isBedrockModel && this.bedrockZones.some((zone) => zone.slug === currentZone);
+      return isBedrockModel && this.bedrockZones.some((zone) => zone.slug === currentZone?.slug);
     }),
   );
   isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
@@ -105,9 +98,22 @@ export class CreateConfigComponent implements OnInit {
     map((schema) =>
       (schema['generative_model']?.options || [])
         .filter((option) => !option.value.includes('/')) // Filter out model configurations
-        .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
+        .map(
+          (option) =>
+            new OptionModel({ id: option.value, value: option.value, label: option.name, help: option.value }),
+        ),
     ),
   );
+
+  isRestricted = false;
+  selectedKbs: { [key: string]: boolean } = {};
+  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList, this.currentZone]).pipe(
+    map(([kbs, arags, zone]) => kbs.concat(arags).filter((item) => item.zone === zone?.slug)),
+  );
+
+  get invalid() {
+    return this.configForm.invalid || this.userKeysForm?.invalid;
+  }
 
   constructor(
     private modal: ModalRef<
@@ -123,12 +129,19 @@ export class CreateConfigComponent implements OnInit {
         zone: this.zone,
         useBedrock: this.config.assume_role === AssumeRole.BEDROCK,
       });
-      this.configForm.disable();
+
+      this.isRestricted = (this.config.kbids || []).length > 0;
+      this.selectedKbs = (this.config.kbids || []).reduce(
+        (acc, curr) => {
+          acc[curr] = true;
+          return acc;
+        },
+        {} as { [key: string]: boolean },
+      );
 
       this.generativeModel.pipe(take(1)).subscribe((model) => {
         const prompts = (this.config?.user_prompts || {})[model.user_prompt || ''];
         this.promptsForm.patchValue(prompts || {});
-        this.promptsForm.disable();
       });
     } else {
       if (!this.configForm.value.zone && this.zones[0]) {
@@ -146,31 +159,37 @@ export class CreateConfigComponent implements OnInit {
           enabled: !!userkeys,
           user_keys: userkeys,
         });
-        this.userKeysForm?.disable();
       });
     }
   }
 
   save() {
-    if (this.configForm.invalid || this.userKeysForm?.invalid) {
+    if (this.invalid) {
       return;
     }
     forkJoin([
       this.generativeModel.pipe(take(1)),
       this.userPrompt.pipe(take(1)),
       this.systemPrompt.pipe(take(1)),
-    ]).subscribe(([model, userPrompt, systemPrompt]) => {
+      this.kbList.pipe(take(1)),
+    ]).subscribe(([model, userPrompt, systemPrompt, kbList]) => {
       const { useBedrock, ...values } = this.configForm.getRawValue();
       const userKeys = this.userKeysForm?.getRawValue();
       const prompts = {
         prompt: !!userPrompt ? this.promptsForm.value.prompt?.trim() : '',
         system: !!systemPrompt ? this.promptsForm.value.system?.trim() : '',
       };
+      const kbids = this.isRestricted
+        ? Object.entries(this.selectedKbs)
+            .filter(([id, value]) => !!value && kbList.some((kb) => kb.id === id))
+            .map(([id]) => id)
+        : [];
       this.modal.close({
         ...values,
         user_keys: userKeys?.enabled ? { [model.user_key || '']: userKeys?.user_keys } : null,
         user_prompts: prompts.prompt || prompts.system ? { [model.user_prompt || '']: prompts } : null,
         assume_role: useBedrock ? AssumeRole.BEDROCK : undefined,
+        kbids,
       });
     });
   }

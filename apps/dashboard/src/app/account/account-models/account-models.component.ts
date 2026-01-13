@@ -108,12 +108,28 @@ export class AccountModelsComponent {
         take(1),
         switchMap((account) => this.sdk.nuclia.db.getModelConfiguration(config.id, account.id, config.zone)),
       ),
-    ]).subscribe(([zones, bedrockZones, configDetails]) => {
-      this.modalService.openModal(
-        CreateConfigComponent,
-        new ModalConfig({ data: { zones, bedrockZones, config: configDetails, zone: config.zone } }),
-      );
-    });
+    ])
+      .pipe(
+        switchMap(
+          ([zones, bedrockZones, configDetails]) =>
+            this.modalService.openModal(
+              CreateConfigComponent,
+              new ModalConfig({ data: { zones, bedrockZones, config: configDetails, zone: config.zone } }),
+            ).onClose,
+        ),
+        filter((data) => !!data),
+        switchMap((data) =>
+          this.sdk.currentAccount.pipe(
+            take(1),
+            switchMap((account) => {
+              const { zone, ...rest } = data;
+              return this.sdk.nuclia.db.updateModelConfiguration(rest, config.id, account.id, zone);
+            }),
+          ),
+        ),
+        switchMap(() => this.updateModelConfigs()),
+      )
+      .subscribe();
   }
 
   deleteConfig(config: ModelConfigurationWithZone, event?: Event) {

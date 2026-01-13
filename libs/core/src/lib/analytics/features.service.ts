@@ -4,7 +4,7 @@ import { combineLatest, map, Observable, of } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
-const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'v3starter'];
+const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial'];
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,8 @@ export class FeaturesService {
     }),
   );
   isTrial: Observable<boolean> = this._account.pipe(map((account) => !!account.trial_expiration_date));
+
+  // Note: v3growth and v3fly are here for backward compatibility with old accounts
   isEnterpriseOrPro: Observable<boolean> = this._account.pipe(
     map((account) => ['v3growth', 'v3pro', 'v3enterprise'].includes(account.type)),
   );

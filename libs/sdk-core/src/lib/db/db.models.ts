@@ -456,6 +456,7 @@ export interface ModelConfigurationItem {
   default_model_id: string;
   description?: string;
   assume_role?: AssumeRole;
+  kbids?: string[];
 }
 
 export interface ModelConfiguration extends ModelConfigurationItem {
