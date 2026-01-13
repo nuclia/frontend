@@ -23,7 +23,6 @@ export abstract class LearningConfigurationDirective implements OnChanges {
   @Input() providers?: GenerativeProviders;
 
   // permissions
-  isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
   isSummarizationAuthorized = this.features.authorized.summarization;
 
   protected saving = false;
