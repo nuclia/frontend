@@ -18,6 +18,7 @@ import {
   SyncConfigurationCreate,
   ExternalConnectionCredentials,
   ExternalConnection,
+  StorageStructure,
 } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './connectors/folder';
@@ -394,6 +395,17 @@ export class SyncService {
       {
         headers: this.serverHeaders,
       },
+    );
+  }
+
+  getCloudFolders(
+    external_connection: string,
+    drive_id?: string,
+    path?: string,
+    page_token?: string,
+  ): Observable<StorageStructure> {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.syncManager.browse(external_connection, drive_id, path, page_token)),
     );
   }
 

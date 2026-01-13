@@ -50,42 +50,16 @@
       </div>
     }
 
-    <pa-tabs notFullWidth>
-      <pa-tab
-        [active]="activeTab === 'settings'"
-        (click)="activeTab = 'settings'"
-        data-cy="settings-tab">
-        {{ 'sync.details.tabs.settings' | translate }}
-      </pa-tab>
-      @if ((connector | async)?.allowToSelectFolders) {
-        <pa-tab
-          [active]="activeTab === 'folders'"
-          (click)="activeTab = 'folders'"
-          data-cy="folders-tab">
-          {{ 'sync.details.tabs.folders' | translate }}
-        </pa-tab>
-      }
-    </pa-tabs>
-
     @if (editMode | async) {
       <div>
-        @switch (activeTab) {
-          @case ('settings') {
-            <nsy-configuration-form
-              noTopBorder
-              [sync]="sync"
-              [kbId]="kbId | async"
-              [connector]="connector | async"
-              [connectorId]="(connectorDef | async)?.id"
-              (configurationChange)="updateConfiguration($event)"
-              (validForm)="validForm = $event"></nsy-configuration-form>
-          }
-          @case ('folders') {
-            <nsy-folder-selection
-              [sync]="sync"
-              (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
-          }
-        }
+        <nsy-configuration-form
+          noTopBorder
+          [sync]="sync"
+          [kbId]="kbId | async"
+          [connector]="connector | async"
+          [connectorId]="(connectorDef | async)?.id"
+          (configurationChange)="updateConfiguration($event)"
+          (validForm)="validForm = $event"></nsy-configuration-form>
 
         <nsi-sticky-footer>
           <pa-button
@@ -101,19 +75,10 @@
         </nsi-sticky-footer>
       </div>
     } @else {
-      @switch (activeTab) {
-        @case ('settings') {
-          <nsy-sync-settings
-            [sync]="sync"
-            [connector]="connector | async"
-            [logs]="activityLogs | async"></nsy-sync-settings>
-        }
-        @case ('folders') {
-          <nsy-folders-tab
-            [sync]="sync"
-            (selectionChange)="updateFolders($event)"></nsy-folders-tab>
-        }
-      }
+      <nsy-sync-settings
+        [sync]="sync"
+        [connector]="connector | async"
+        [logs]="activityLogs | async"></nsy-sync-settings>
     }
   }
 </div>

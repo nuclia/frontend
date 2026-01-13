@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   BackButtonComponent,
   SisModalService,
@@ -13,8 +13,8 @@ import {
 } from '@nuclia/sistema';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ConfigurationFormComponent } from '../configuration-form';
-import { FolderSelectionComponent } from '../folder-selection';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
+import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -29,9 +29,9 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
     StickyFooterComponent,
     TranslateModule,
     ConfigurationFormComponent,
-    FolderSelectionComponent,
     SisProgressModule,
     PaTogglesModule,
+    CloudFolderComponent,
   ],
   templateUrl: './add-sync-page.component.html',
   styleUrl: './add-sync-page.component.scss',
@@ -43,9 +43,9 @@ export class AddSyncPageComponent implements OnInit {
   private sdk = inject(SDKService);
   private syncService = inject(SyncService);
   private modalService = inject(SisModalService);
-  private translate = inject(TranslateService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+  selectedFolder?: { sync_root_path: string; drive_id: string };
 
   connectorId = this.currentRoute.params.pipe(
     filter((params) => params['connector']),
@@ -62,12 +62,6 @@ export class AddSyncPageComponent implements OnInit {
 
   syncId?: string | null;
   sync?: ISyncEntity | null;
-
-  steps: Observable<('configuration' | 'folder-selection')[]> = this.connector.pipe(
-    map((connector) => (connector.allowToSelectFolders ? ['configuration', 'folder-selection'] : ['configuration'])),
-  );
-  stepIndex = signal(0);
-  step = computed(() => this.stepIndex() + 1);
 
   validForm = false;
   configuration?: ISyncEntity;
@@ -89,48 +83,9 @@ export class AddSyncPageComponent implements OnInit {
       .subscribe((params) => {
         this.externalConnectorId = params['syncId'];
         this.enterCredentials = false;
-        localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
+        // IMPORTANT: restore before merging
+        // localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
       });
-  }
-
-  goBack() {
-    if (this.stepIndex() > 0) {
-      this.stepIndex.update((value) => value - 1);
-    }
-  }
-
-  goNext() {
-    if (!this.configuration) {
-      return;
-    }
-    const syncEntity = this.configuration;
-    if (!this.syncId) {
-      this.connectorDefinition
-        .pipe(
-          take(1),
-          switchMap(
-            (connectorDef) =>
-              this.modalService.openConfirm({
-                title: this.translate.instant('sync.add-page.confirm-authenticate.title', {
-                  connector: connectorDef.title,
-                }),
-                description: this.translate.instant('sync.add-page.confirm-authenticate.description'),
-                confirmLabel: this.translate.instant('sync.add-page.confirm-authenticate.confirm-button'),
-              }).onClose,
-          ),
-          filter((confirmed) => !!confirmed),
-          switchMap(() => this._createSync(syncEntity)),
-          switchMap((id) => this._syncCreationDone(id)),
-        )
-        .subscribe({
-          error: (error) => {
-            console.warn(error);
-            this.toaster.error('sync.add-page.toast.generic-error');
-          },
-        });
-    } else {
-      this._goNext();
-    }
   }
 
   cancel() {
@@ -228,14 +183,6 @@ export class AddSyncPageComponent implements OnInit {
     this.folderSelection = selection;
   }
 
-  private _goNext() {
-    this.steps.pipe(take(1)).subscribe((steps) => {
-      if (this.stepIndex() < steps.length) {
-        this.stepIndex.update((value) => value + 1);
-      }
-    });
-  }
-
   private _createSync(syncEntity: ISyncEntity): Observable<string> {
     return this.connectorDefinition.pipe(
       take(1),
@@ -245,11 +192,14 @@ export class AddSyncPageComponent implements OnInit {
           if (!this.externalConnectorId) {
             throw 'No external connection id';
           }
+          if (!this.selectedFolder) {
+            throw 'No folder selected';
+          }
           return this.syncService
             .addCloudSync({
               name: syncEntity.title,
               external_connection_id: this.externalConnectorId,
-              sync_root_path: syncEntity.connector.parameters['sync_root_path'],
+              ...this.selectedFolder,
             })
             .pipe(
               map((sync) => {
@@ -316,5 +266,10 @@ export class AddSyncPageComponent implements OnInit {
     this.saving = false;
     console.warn(error);
     this.toaster.error('sync.add-page.toast.generic-error');
+  }
+
+  selectFolder(folder: { sync_root_path: string; drive_id: string }) {
+    this.selectedFolder = folder;
+    this.cdr.markForCheck();
   }
 }

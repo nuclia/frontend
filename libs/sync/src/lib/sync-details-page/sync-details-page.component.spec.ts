@@ -126,10 +126,4 @@ describe('SyncDetailsPageComponent', () => {
     spectator.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
   });
-
-  it('should display the selected folders', () => {
-    spectator.click('[data-cy="folders-tab"]');
-    spectator.detectChanges();
-    expect(spectator.query('nsy-folders-tab')?.textContent).toContain('/folder1');
-  });
 });
