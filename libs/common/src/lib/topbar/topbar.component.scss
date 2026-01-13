@@ -36,6 +36,11 @@
     }
   }
 
+  .topbar-buttons {
+    display: flex;
+    gap: rhythm(2);
+  }
+
   .topbar-actions {
     align-items: center;
     display: flex;
