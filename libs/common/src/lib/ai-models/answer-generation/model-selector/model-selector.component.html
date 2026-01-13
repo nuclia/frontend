@@ -80,20 +80,35 @@
         </div>
       }
       @for (provider of filteredByProvider(); track provider.key) {
-        <pa-option-header>
-          {{ provider.value.title }}
-          @if (provider.value.enterprise_readiness) {
-            <span class="body-s enterprise-ready">
-              ({{ 'kb.ai-models.model-selector.enterprise-ready' | translate }})
-            </span>
-          }
-        </pa-option-header>
+        <pa-option-header>{{ provider.value.title }}</pa-option-header>
         @for (model of provider.value.models; track model.key) {
           <pa-option
             [description]="model.value.description"
             [disabled]="disabled()"
             (selectOption)="selectOption(provider.key === 'default' ? model.value.name : model.key)">
-            {{ model.value.title }}
+            <div class="option-name">
+              <div>{{ model.value.title }}</div>
+              @let guaranteedDataResidency = model.value.metadata.data_residency_status === DataResidencyStatus.GUARANTEED;
+              @let enterpriseReady = provider.value.enterprise_readiness;
+              @if (enterpriseReady || guaranteedDataResidency) {
+                <div class="more-info">
+                  <pa-icon
+                    size="small"
+                    name="info"
+                    [paPopover]="modelInfo"></pa-icon>
+                  <pa-popover
+                    #modelInfo
+                    [keepOthersOpen]="true">
+                    @if (enterpriseReady) {
+                      <div>{{ 'kb.ai-models.model-selector.features.enterprise-ready' | translate }}</div>
+                    }
+                    @if (guaranteedDataResidency) {
+                      <div>{{ 'kb.ai-models.model-selector.features.data-residency' | translate }}</div>
+                    }
+                  </pa-popover>
+                </div>
+              }
+            </div>
           </pa-option>
         }
       } @empty {

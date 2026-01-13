@@ -618,6 +618,7 @@ export interface ModelFeatures {
 
 export interface ModelMetadata {
   data_region?: string;
+  data_residency_status?: DataResidencyStatus;
   deployed_region?: string;
   deprecated?: boolean;
   shut_down_date?: string;
@@ -637,4 +638,10 @@ export enum ReasoningEffort {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
+}
+
+export enum DataResidencyStatus {
+  UNKNOWN = 'unknown',
+  GUARANTEED = 'guaranteed',
+  NOT_GUARANTEED = 'not_guaranteed',
 }
