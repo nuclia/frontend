@@ -12,7 +12,7 @@ import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModu
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExtractVLLMConfig, GenerativeProviders } from '@nuclia/core';
+import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { ModelSelectorComponent } from '../../answer-generation';
@@ -38,6 +38,7 @@ import { ModelSelectorComponent } from '../../answer-generation';
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   @Input() providers: GenerativeProviders = {};
+  @Input() learningConfigurations: LearningConfigurations = {};
   @Input() createMode: boolean = true;
   @Input() vllmOnly: boolean = false;
   @Input() isAiTable: boolean = false;

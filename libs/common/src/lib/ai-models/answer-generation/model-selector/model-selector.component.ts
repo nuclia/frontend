@@ -15,7 +15,13 @@ import {
   transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModelInfo, GenerativeProvider, GenerativeProviders, DataResidencyStatus } from '@nuclia/core';
+import {
+  ModelInfo,
+  GenerativeProvider,
+  GenerativeProviders,
+  DataResidencyStatus,
+  LearningConfigurations,
+} from '@nuclia/core';
 
 @Component({
   selector: 'stf-model-selector',
@@ -48,6 +54,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   onTouched: any;
 
   providers = input<GenerativeProviders>({});
+  learningConfigurations = input<LearningConfigurations>({});
   disclaimerExpanded = input<boolean>(false);
   heightChanged = output<void>();
 
@@ -61,12 +68,31 @@ export class ModelSelectorComponent implements ControlValueAccessor {
 
   @ViewChild('popup') popup?: PopupDirective;
   @ViewChild('dropdown') dropdown?: DropdownComponent;
-  
+
   DataResidencyStatus = DataResidencyStatus;
 
+  allowedProviders = computed(() => {
+    const allowedModels = (this.learningConfigurations()['generative_model']?.options || []).map(
+      (option) => option.value,
+    );
+    return Object.entries(this.providers()).map(([providerKey, provider]) => ({
+      providerKey,
+      provider: {
+        ...provider,
+        models: Object.fromEntries(
+          Object.entries(provider.models).filter(
+            ([key, model]) =>
+              (providerKey !== 'default' && allowedModels?.includes(key)) ||
+              (providerKey === 'default' && allowedModels?.includes(model.name)),
+          ),
+        ),
+      },
+    }));
+  });
+
   modelList = computed(() =>
-    Object.entries(this.providers()).reduce(
-      (acc, [providerKey, provider]) =>
+    this.allowedProviders().reduce(
+      (acc, { providerKey, provider }) =>
         acc.concat(
           Object.entries(provider.models).map(([modelKey, model]) => ({ providerKey, provider, modelKey, model })),
         ),
@@ -94,9 +120,9 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   });
 
   filteredByTerm = computed(() =>
-    Object.entries(this.providers())
-      .map(([key, provider]) => ({
-        key,
+    this.allowedProviders()
+      .map(({ providerKey, provider }) => ({
+        key: providerKey,
         value: {
           ...provider,
           models: Object.entries(provider.models)
