@@ -83,8 +83,7 @@ export class AddSyncPageComponent implements OnInit {
       .subscribe((params) => {
         this.externalConnectorId = params['syncId'];
         this.enterCredentials = false;
-        // IMPORTANT: restore before merging
-        // localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
+        localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
       });
   }
 
