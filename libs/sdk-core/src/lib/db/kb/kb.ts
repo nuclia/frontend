@@ -1099,8 +1099,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /** Checks if a resource exists for the given slug. */
   hasResource(slug: string): Observable<boolean> {
-    // it should be a HEAD request but it's not supported by the backend at the moment
-    return this.nuclia.rest.get(`${this.path}/slug/${slug}`).pipe(
+    return this.nuclia.rest.head(`${this.path}/slug/${slug}`).pipe(
       map(() => true),
       catchError(() => of(false)),
     );
