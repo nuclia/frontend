@@ -43,6 +43,7 @@ export class RegionalAccountService {
                       accountId: index.account_id,
                       zone,
                       private: kb.state === 'PRIVATE',
+                      kbMode: index.kb_mode,
                       activity: {
                         redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
                         grafana: `http://platform.grafana.nuclia.com/d/${

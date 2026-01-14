@@ -73,7 +73,7 @@
           <li
             routerLink="kbs"
             routerLinkActive="active">
-            Knowledge Boxes
+            Knowledge Boxes & Agents
           </li>
           @for (kb of kbList | async; track kb.id) {
             <li
@@ -81,7 +81,7 @@
               [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
               routerLinkActive="active">
               <pa-icon
-                name="knowledge-box"
+                [name]="kb.kbMode === 'kb' ? 'knowledge-box' : 'workflows'"
                 size="small"></pa-icon>
               <div>
                 {{ kb.slug }}

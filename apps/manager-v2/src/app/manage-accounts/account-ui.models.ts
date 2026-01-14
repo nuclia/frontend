@@ -1,4 +1,11 @@
-import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBRoles } from '@nuclia/core';
+import {
+  AccountBlockingState,
+  AccountLimits,
+  AccountTypes,
+  BlockedFeature,
+  KBRoles,
+  KnowledgeBoxMode,
+} from '@nuclia/core';
 import { ZoneSummary } from '../manage-zones/zone.models';
 
 export interface AccountSummary {
@@ -31,6 +38,7 @@ export interface KbSummary {
     redash: string;
     grafana: string;
   };
+  kbMode: KnowledgeBoxMode;
 }
 
 export interface KbCounters {
