@@ -12,13 +12,12 @@
   import { SearchInput } from '../../components';
   import {
     addAragAnswer,
-    aragAnswerState,
+    getCurrentEntry,
     getApiErrors,
     isEmptySearchQuery,
     loadFonts,
     loadSvgSprite,
     resetNuclia,
-    resetState,
     searchQuery,
     setAragError,
     setAragQuestion,
@@ -107,10 +106,10 @@
   }
 
   const aragLastMessage = $derived(
-    aragAnswerState.answers.length > 0 ? aragAnswerState.answers[aragAnswerState.answers.length - 1] : undefined,
+    getCurrentEntry().answers?.length > 0 ? getCurrentEntry().answers[getCurrentEntry().answers.length - 1] : undefined,
   );
   const contextsAndSteps = $derived.by<{title: string, value: string, message: string}[]>(() => {
-    return aragAnswerState.answers
+    return getCurrentEntry().answers
       .filter((message) => !!message.context || !!message.step)
       .map((message) => {
         if (message.context) {
@@ -130,9 +129,8 @@
   <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
     <div class="search-box">
-      <button onclick={() => resetState()}>Reset</button>
       <SearchInput on:resetQuery={() => stopInteraction()} />
-      {#if aragAnswerState.running}
+      {#if getCurrentEntry().running}
         <div class="loading-container"><LoadingDots small={true} /></div>
       {/if}
     </div>
@@ -142,15 +140,15 @@
         <strong>Answer:</strong>
         <blockquote>{aragLastMessage.answer}</blockquote>
       {/if}
-      {#if aragAnswerState.error}
-        Error: {aragAnswerState.error.detail}
+      {#if getCurrentEntry().error}
+        Error: {getCurrentEntry().error?.detail}
       {/if}
-      {#if aragAnswerState.running || aragLastMessage?.answer}
+      {#if getCurrentEntry().running || aragLastMessage?.answer}
         <Expander expanded={!aragLastMessage?.answer}>
           {#snippet header()}
             <div class="title-s">Details</div>
           {/snippet}
-          {#if aragAnswerState.running}
+          {#if getCurrentEntry().running}
           <p class="step">
             <strong>Running agent {aragLastMessage?.step?.module}:</strong>
             {aragLastMessage?.step?.title}…
