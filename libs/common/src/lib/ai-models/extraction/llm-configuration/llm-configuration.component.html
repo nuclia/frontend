@@ -71,7 +71,8 @@
         <div class="title-s">{{ 'kb.ai-models.extraction.llm-configuration.generative-model' | translate }}</div>
         <stf-model-selector
           formControlName="generative_model"
-          [providers]="providers"></stf-model-selector>
+          [providers]="providers"
+          [learningConfigurations]="learningConfigurations"></stf-model-selector>
         <!-- 
         <nsi-expandable-textarea
           formControlName="generative_prompt_id"

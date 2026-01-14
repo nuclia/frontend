@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExtractConfig, ExtractVLLMConfig, GenerativeProviders } from '@nuclia/core';
+import { ExtractConfig, ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
@@ -34,6 +34,7 @@ export class ExtractionModalComponent implements OnInit {
   features = inject(FeaturesService);
 
   providers = this.modal.config.data?.providers || {};
+  learningConfigurations = this.modal.config.data?.learningConfigurations || {};
   id = this.modal.config.data?.id;
   config = this.modal.config.data?.config;
   createMode = !this.id;
@@ -73,7 +74,17 @@ export class ExtractionModalComponent implements OnInit {
     );
   }
 
-  constructor(private modal: ModalRef<{ providers: GenerativeProviders; id?: string; config?: ExtractConfig }, ExtractConfig>) {}
+  constructor(
+    private modal: ModalRef<
+      {
+        providers: GenerativeProviders;
+        learningConfigurations: LearningConfigurations;
+        id?: string;
+        config?: ExtractConfig;
+      },
+      ExtractConfig
+    >,
+  ) {}
 
   ngOnInit() {
     if (this.config) {

@@ -9,7 +9,13 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CustomSplitStrategy, GenerativeProviders, SplitLLMConfig, SplitStrategy } from '@nuclia/core';
+import {
+  CustomSplitStrategy,
+  GenerativeProviders,
+  LearningConfigurations,
+  SplitLLMConfig,
+  SplitStrategy,
+} from '@nuclia/core';
 import { LLMConfigurationComponent } from '../llm-configuration/llm-configuration.component';
 
 @Component({
@@ -29,6 +35,7 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
 })
 export class SplitModalComponent implements OnInit {
   providers = this.modal.config.data?.providers || {};
+  learningConfigurations = this.modal.config.data?.learningConfigurations || {};
   id = this.modal.config.data?.id;
   config = this.modal.config.data?.config;
   createMode = !this.id;
@@ -57,7 +64,15 @@ export class SplitModalComponent implements OnInit {
   }
 
   constructor(
-    private modal: ModalRef<{ providers: GenerativeProviders; id?: string; config?: SplitStrategy }, SplitStrategy>,
+    private modal: ModalRef<
+      {
+        providers: GenerativeProviders;
+        learningConfigurations: LearningConfigurations;
+        id?: string;
+        config?: SplitStrategy;
+      },
+      SplitStrategy
+    >,
   ) {}
 
   get invalid() {

@@ -6,10 +6,11 @@
       noTopBorder
       itemTitle="kb.ai-models.summarization.select-llm.title"
       description="kb.ai-models.summarization.select-llm.description">
-      @if (providers) {
+      @if (learningConfigurations && providers) {
         <stf-model-selector
           formControlName="summary_model"
           [providers]="providers"
+          [learningConfigurations]="learningConfigurations"
           [disclaimerExpanded]="true"></stf-model-selector>
       }
     </nsi-two-columns-configuration-item>

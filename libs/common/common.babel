@@ -2677,7 +2677,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>details</name>
+												<name>generative-model</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -2700,7 +2700,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>generative-model</name>
+												<name>limit</name>
 												<description/>
 												<comment/>
 												<translations>

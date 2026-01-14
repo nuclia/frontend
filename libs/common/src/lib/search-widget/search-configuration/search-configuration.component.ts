@@ -135,6 +135,7 @@ export class SearchConfigurationComponent {
   semanticModelFromSettings = '';
   generativeModelNames: { [key: string]: string } = {};
   generativeProviders: GenerativeProviders = {};
+  learningConfigurations: LearningConfigurations = {};
   semanticModels: OptionModel[] = [];
   promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
@@ -173,6 +174,7 @@ export class SearchConfigurationComponent {
           this.generativeModelFromSettings = config['generative_model'] || '';
           this.semanticModelFromSettings = config['default_semantic_model'] || '';
           this.generativeProviders = providers;
+          this.learningConfigurations = schema;
           this.generativeModelNames =
             schema['generative_model']?.options?.reduce(
               (acc, model) => {

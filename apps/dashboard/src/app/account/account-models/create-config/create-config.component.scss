@@ -11,3 +11,10 @@ h2 {
   padding: rhythm(2) 0 rhythm(4) 0;
   width: rhythm(80);
 }
+
+.checkboxes {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}

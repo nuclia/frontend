@@ -151,13 +151,16 @@
         <div
           class="form-container"
           formGroupName="llm">
-          <stf-model-selector
-            formControlName="model"
-            [providers]="generativeProviders"></stf-model-selector>
-          <stf-user-keys
-            [learningConfigurations]="learningConfigurations"
-            [generativeModel]="generativeModel"
-            (formReady)="initUserKeysForm($event)"></stf-user-keys>
+          @if (learningConfigurations) {
+            <stf-model-selector
+              formControlName="model"
+              [providers]="generativeProviders"
+              [learningConfigurations]="learningConfigurations"></stf-model-selector>
+            <stf-user-keys
+              [learningConfigurations]="learningConfigurations"
+              [generativeModel]="generativeModel"
+              (formReady)="initUserKeysForm($event)"></stf-user-keys>
+          }
           <nsi-info-card
             type="warning"
             icon="warning">

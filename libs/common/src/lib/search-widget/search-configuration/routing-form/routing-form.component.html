@@ -25,6 +25,7 @@
           <stf-model-selector
             formControlName="generative_model"
             [providers]="generativeProviders"
+            [learningConfigurations]="learningConfigurations"
             (heightChanged)="heightChanged.emit()"></stf-model-selector>
         </div>
         <div

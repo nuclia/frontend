@@ -864,6 +864,25 @@ export class Db implements IDb {
   }
 
   /**
+   * Updates a model configuration
+   */
+  updateModelConfiguration(
+    model: ModelConfigurationCreation,
+    modelId: string,
+    accountId: string,
+    zone: string,
+  ): Observable<void> {
+    return this.nuclia.rest.patch(
+      `/account/${accountId}/default_model/${modelId}`,
+      model,
+      undefined,
+      undefined,
+      true,
+      zone,
+    );
+  }
+
+  /**
    * Deletes a model configuration
    */
   deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void> {

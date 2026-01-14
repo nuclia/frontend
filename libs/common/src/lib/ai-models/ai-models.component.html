@@ -65,7 +65,9 @@
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
       }
       @case ('extraction') {
-        <stf-extraction [providers]="providers"></stf-extraction>
+        <stf-extraction
+          [learningConfigurations]="learningConfigurations"
+          [providers]="providers"></stf-extraction>
       }
       @case ('anonymization') {
         <stf-anonymization

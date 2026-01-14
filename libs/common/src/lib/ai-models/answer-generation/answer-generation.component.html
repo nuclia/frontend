@@ -17,10 +17,11 @@
               "></span>
           </nsi-info-card>
         }
-        @if (learningConfig && providers) {
+        @if (learningConfig && learningConfigurations && providers) {
           <stf-model-selector
             formControlName="generative_model"
             [providers]="providers"
+            [learningConfigurations]="learningConfigurations"
             [disclaimerExpanded]="true"></stf-model-selector>
           <div [hidden]="!generativeModelValue || isModelConfiguration">
             <stf-user-keys

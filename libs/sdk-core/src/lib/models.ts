@@ -228,6 +228,12 @@ export interface IDb {
     accountId: string,
     zone: string,
   ): Observable<{ id: string }>;
+  updateModelConfiguration(
+    model: ModelConfigurationCreation,
+    modelId: string,
+    accountId: string,
+    zone: string,
+  ): Observable<void>;
   deleteModelConfiguration(modelId: string, accountId: string, zone: string): Observable<void>;
 }
 
