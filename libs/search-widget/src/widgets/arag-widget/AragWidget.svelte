@@ -13,7 +13,6 @@
   import {
     addAragAnswer,
     aragAnswerState,
-    fillState,
     getApiErrors,
     isEmptySearchQuery,
     loadFonts,
@@ -110,11 +109,16 @@
   const aragLastMessage = $derived(
     aragAnswerState.answers.length > 0 ? aragAnswerState.answers[aragAnswerState.answers.length - 1] : undefined,
   );
-  const contextList = $derived.by<AragAnswerContext[]>(() => {
-    console.log(`Answer list:`, $state.snapshot(aragAnswerState.answers));
+  const contextsAndSteps = $derived.by<{title: string, value: string, message: string}[]>(() => {
     return aragAnswerState.answers
-      .filter((message) => !!message.context)
-      .map((message) => message.context as AragAnswerContext);
+      .filter((message) => !!message.context || !!message.step)
+      .map((message) => {
+        if (message.context) {
+          return {title: message.context.title || '', value: message.context.question || '', message: message.context.summary ? `Summary: ${message.context.summary}` : ''}
+        } else {
+          return {title: message.step?.title || '', value: message.step?.value || '', message: message.step?.reason ? `Reason: ${message.step.reason}` : ''}
+        }
+      });
   });
 </script>
 
@@ -126,7 +130,6 @@
   <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
     <div class="search-box">
-      <button onclick={() => fillState()}>Run demo</button>
       <button onclick={() => resetState()}>Reset</button>
       <SearchInput on:resetQuery={() => stopInteraction()} />
       {#if aragAnswerState.running}
@@ -147,29 +150,35 @@
           {#snippet header()}
             <div class="title-s">Details</div>
           {/snippet}
+          {#if aragAnswerState.running}
           <p class="step">
             <strong>Running agent {aragLastMessage?.step?.module}:</strong>
             {aragLastMessage?.step?.title}…
           </p>
+          {/if}
 
-          {#each contextList as context}
+          {#each contextsAndSteps as context}
             <div class="step">
-              <p>
-                <strong>Agent {context.agent} context:</strong>
-              </p>
               <Expander expanded={false}>
                 {#snippet header()}
-                  {context.question}
+                  {context.title}
                 {/snippet}
                 <ul>
+                  {#if context.question}
                   <li>
-                    <strong>Answer</strong>
-                    : {context.answer}
+                    <strong>{context.question}</strong>
                   </li>
+                  {/if}
+                  {#if context.value}
                   <li>
-                    <strong>Summary</strong>
-                    : {context.summary}
+                    {context.value}
                   </li>
+                  {/if}
+                  {#if context.message}
+                  <li>
+                    {context.message}
+                  </li>
+                  {/if}
                 </ul>
               </Expander>
             </div>

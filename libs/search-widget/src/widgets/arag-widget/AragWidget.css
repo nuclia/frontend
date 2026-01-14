@@ -22,6 +22,9 @@
     }
     .step {
       padding: var(--rhythm-1);
+      li {
+        display: block;
+      }
     }
   }
 }
