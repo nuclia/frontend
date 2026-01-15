@@ -1,0 +1,30 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended",
+        ":dependencyDashboard"
+    ],
+    "rebaseWhen": "never",
+    "assignees": [
+        "operramon",
+        "ebrehault"
+    ],
+    "npm": {
+        "enabled": false
+    },
+    "nvm": {
+        "enabled": false
+    },
+    "ignorePaths": [
+        ".yarn/**",
+        "apps/**",
+        "charts/**",
+        "libs/**",
+        "maintenance/**",
+        "nginx/**",
+        "test/**",
+        "tools/**",
+        ".github/workflows/bd_sca_scanner.yaml",
+        ".github/workflows/polaris.yaml"
+    ]
+}
