@@ -137,8 +137,9 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
     speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
     feedback: new FormControl<Widget.WidgetFeedback>('none', { nonNullable: true }),
     lang: new FormControl<string>('', { nonNullable: true }),
+    customizeTextBlocksVisibility: new FormControl<boolean>(false, { nonNullable: true }),
+    textBlocksVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
     customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
-    collapseTextBlocks: new FormControl<boolean>(false, { nonNullable: true }),
     citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
     // Floating chat options
     fabPosition: new FormControl<'bottom-right' | 'bottom-left'>('bottom-right', { nonNullable: true }),
@@ -211,6 +212,9 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   get speechOn() {
     return this.form.controls.speech.value;
+  }
+  get customizeTextBlocksVisibilityEnabled() {
+    return this.form.controls.customizeTextBlocksVisibility.value;
   }
   get customizeCitationVisibilityEnabled() {
     return this.form.controls.customizeCitationVisibility.value;

@@ -18,6 +18,7 @@
   import {
     collapseTextBlocks,
     displayMetadata,
+    expandTextBlocks,
     feedbackOnResults,
     getAttachedImageTemplate,
     getNavigationUrl,
@@ -65,7 +66,10 @@
   let isSelectedHidden = $derived(
     paragraphs.findIndex((paragraph) => paragraph.rank === selected) > NUM_PARAGRAPHS - 1,
   );
-  let showAllResults = $derived($collapseTextBlocks || isSelectedHidden);
+  let showAllResults = $derived($collapseTextBlocks || $expandTextBlocks || isSelectedHidden);
+  let enableAllResultsToggle = $derived(
+    paragraphs.length > NUM_PARAGRAPHS && !$collapseTextBlocks && !$expandTextBlocks,
+  );
 
   $effect(() => {
     if (showAllResults) {
@@ -277,7 +281,7 @@
           {/each}
         </ul>
 
-        {#if paragraphs.length > NUM_PARAGRAPHS && !$collapseTextBlocks}
+        {#if enableAllResultsToggle}
           <AllResultsToggle
             {showAllResults}
             on:toggle={() => (showAllResults = !showAllResults)} />

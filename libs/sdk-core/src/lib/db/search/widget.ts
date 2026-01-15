@@ -175,7 +175,8 @@ export namespace Widget {
     speechSynthesis: boolean;
     feedback: WidgetFeedback;
     lang: string;
-    collapseTextBlocks: boolean;
+    customizeTextBlocksVisibility: boolean;
+    textBlocksVisibility: 'expanded' | 'collapsed';
     customizeCitationVisibility: boolean;
     citationVisibility: 'expanded' | 'collapsed';
     fabPosition: 'bottom-right' | 'bottom-left';
@@ -251,7 +252,8 @@ export namespace Widget {
     speechSynthesis?: boolean;
     semanticOnly?: boolean;
     expandCitations?: boolean;
-    collapseCitations?: boolean;
+    collapseCitations?: boolean; 
+    expandTextBlocks?: boolean;
     collapseTextBlocks?: boolean;
     displaySearchButton?: boolean;
     hideDownload?: boolean;
@@ -526,14 +528,17 @@ export function getWidgetParameters(
     searchConfig.generativeAnswer.ragStrategies,
   );
 
-  const floatingWidgetOptions = widgetOptions.widgetMode === 'floating-chat' ? {
-    fab_position: widgetOptions.fabPosition || 'bottom-right',
-    fab_size: widgetOptions.fabSize || 'medium',
-    fab_offset_bottom: widgetOptions.fabOffsetBottom || 24,
-    fab_offset_side: widgetOptions.fabOffsetSide || 24,
-    panel_width: widgetOptions.panelWidth || 400,
-    panel_height: widgetOptions.panelHeight || 600,
-  } : {};
+  const floatingWidgetOptions =
+    widgetOptions.widgetMode === 'floating-chat'
+      ? {
+          fab_position: widgetOptions.fabPosition || 'bottom-right',
+          fab_size: widgetOptions.fabSize || 'medium',
+          fab_offset_bottom: widgetOptions.fabOffsetBottom || 24,
+          fab_offset_side: widgetOptions.fabOffsetSide || 24,
+          panel_width: widgetOptions.panelWidth || 400,
+          panel_height: widgetOptions.panelHeight || 600,
+        }
+      : {};
 
   return {
     features: getFeatures(searchConfig, widgetOptions),
@@ -629,7 +634,8 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     persistChatHistory: widgetOptions.persistChatHistory,
     speech: widgetOptions.speech,
     speechSynthesis: widgetOptions.speechSynthesis,
-    collapseTextBlocks: widgetOptions.collapseTextBlocks,
+    expandTextBlocks: widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'expanded',
+    collapseTextBlocks: widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'collapsed',
     expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
   };
