@@ -439,15 +439,30 @@
               </div>
               <div class="config-form-field">
                 <pa-toggle
-                  formControlName="collapseTextBlocks"
+                  formControlName="customizeTextBlocksVisibility"
                   withBackground
-                  spaceBetweenLabelAndToggle>
+                  spaceBetweenLabelAndToggle
+                  (valueChange)="updateWidgetOptionsHeight()">
                   <span class="toggle-label">
-                    {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-label' | translate }}
+                    {{ 'search.widgets.form.widget-options.customize-text-blocks-visibility.toggle-label' | translate }}
                   </span>
                 </pa-toggle>
                 <div class="config-form-help">
-                  {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-description' | translate }}
+                  {{
+                    'search.widgets.form.widget-options.customize-text-blocks-visibility.toggle-description' | translate
+                  }}
+                </div>
+                <div
+                  class="extra-fields"
+                  [class.visible]="customizeTextBlocksVisibilityEnabled">
+                  <pa-radio-group formControlName="textBlocksVisibility">
+                    <pa-radio value="expanded">
+                      {{ 'search.widgets.form.widget-options.customize-text-blocks-visibility.expanded' | translate }}
+                    </pa-radio>
+                    <pa-radio value="collapsed">
+                      {{ 'search.widgets.form.widget-options.customize-text-blocks-visibility.collapsed' | translate }}
+                    </pa-radio>
+                  </pa-radio-group>
                 </div>
               </div>
               <div class="config-form-field">
