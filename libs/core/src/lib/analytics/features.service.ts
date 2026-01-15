@@ -66,6 +66,7 @@ export class FeaturesService {
     sitefinityConnector: this.featureFlag.isFeatureEnabled('sitefinity-connector'),
     bedrockIntegration: this.featureFlag.isFeatureEnabled('bedrock-integration'),
     cloudSyncService: this.featureFlag.isFeatureEnabled('cloud-sync-service'),
+    raoWidget: this.featureFlag.isFeatureEnabled('rao-widget'),
   };
 
   /**

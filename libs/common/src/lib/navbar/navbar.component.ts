@@ -93,6 +93,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
+  isRaoWidgetEnabled = this.features.unstable.raoWidget;
   isAragWithMemory = this.sdk.isAragWithMemory;
 
   isPromptLabAuthorized = this.features.authorized.promptLab;
