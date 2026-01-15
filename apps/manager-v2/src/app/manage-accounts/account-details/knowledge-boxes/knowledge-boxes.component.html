@@ -1,7 +1,7 @@
-<h3>Knowledge Boxes</h3>
+<h3>Knowledge Boxes & Agents</h3>
 <pa-table
   border
-  columns="2fr repeat(2, 1fr) 96px 120px 1fr 80px">
+  columns="2fr repeat(2, 1fr) 96px 96px 120px 1fr 80px">
   <pa-table-header>
     <pa-table-cell header>
       <div class="id-and-lock">
@@ -11,6 +11,7 @@
     </pa-table-cell>
     <pa-table-cell header>Slug</pa-table-cell>
     <pa-table-cell header>Title</pa-table-cell>
+    <pa-table-cell header>Type</pa-table-cell>
     <pa-table-cell header>Zone</pa-table-cell>
     <pa-table-cell header>Resources</pa-table-cell>
     <pa-table-cell header>Content</pa-table-cell>
@@ -38,6 +39,11 @@
       </pa-table-cell>
       <pa-table-cell>
         <small>{{ kb.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>
+          {{ kb.kbMode === 'kb' ? 'Knowledge Box' : 'Agent' }}
+        </small>
       </pa-table-cell>
       <pa-table-cell>
         <small>{{ kb.zone.title }}</small>

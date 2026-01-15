@@ -382,6 +382,7 @@ export enum ResourceProperties {
 export interface KbIndex {
   account_id: string;
   kb_id: string;
+  kb_mode: KnowledgeBoxMode;
   zone_id: string;
 }
 
