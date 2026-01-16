@@ -284,7 +284,7 @@ jobs:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
-        uses: getsentry/action-release@v1.11.0
+        uses: getsentry/action-release@v3.5.0
         if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
