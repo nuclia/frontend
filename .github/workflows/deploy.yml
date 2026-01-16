@@ -63,12 +63,14 @@ jobs:
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
+        if: github.ref == 'refs/heads/main'
         with:
           role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
           aws-region: eu-central-1
 
       - name: Configure AWS client
         uses: unfor19/install-aws-cli-action@v1
+        if: github.ref == 'refs/heads/main'
         with:
           arch: amd64
 

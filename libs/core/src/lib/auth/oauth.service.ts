@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OAuthConsentData, OAuthLoginData } from '../models';
 import { BackendConfigurationService } from '../config';
+import { OAuthConsentData, OAuthLoginData } from '../models';
 import { SDKService } from '../api';
 
 export type OAuthErrors =
