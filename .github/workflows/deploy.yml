@@ -110,7 +110,7 @@ jobs:
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
 
       - name: Tag if new version
-        uses: pkgdeps/git-tag-action@v2.0.5
+        uses: pkgdeps/git-tag-action@v2.0.6
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
