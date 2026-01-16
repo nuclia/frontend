@@ -19,7 +19,9 @@ import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha-2';
 import { CallbackComponent } from './callback/callback.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { ConsentComponent } from './consent/consent.component';
+import { consentResolver } from './consent/consent.resolver';
 import { LoginComponent } from './login/login.component';
+import { loginResolver } from './login/login.resolver';
 import { LogoutComponent } from './logout/logout.component';
 import { MagicComponent } from './magic/magic.component';
 import {
@@ -70,7 +72,7 @@ export const userRoutes: Routes = [
     canActivate: [authGuard],
     component: ProfileComponent,
   },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'logout', component: LogoutComponent },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
@@ -79,7 +81,7 @@ export const userRoutes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'onboarding', component: OnboardingComponent },
   { path: 'check-mail', component: CheckMailComponent },
-  { path: 'consent', component: ConsentComponent },
+  { path: 'consent', component: ConsentComponent, resolve: { consentData: consentResolver } },
   { path: '**', redirectTo: 'login' },
 ];
 
