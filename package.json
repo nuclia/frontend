@@ -26,7 +26,7 @@
     "@angular/animations": "20.3.16",
     "@angular/cdk": "20.0.3",
     "@angular/common": "20.3.16",
-    "@angular/compiler": "20.3.16",
+    "@angular/compiler": "21.0.7",
     "@angular/core": "20.3.16",
     "@angular/forms": "20.3.16",
     "@angular/platform-browser": "20.3.16",
