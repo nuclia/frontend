@@ -44,7 +44,7 @@
     session,
     lang,
     apikey,
-    account,
+    account = undefined,
     client = 'widget',
     fullscreen = false,
     height,
@@ -63,8 +63,8 @@
   });
 
   onMount(() => {
-    if (!account || !arag || !zone || !session) {
-      console.error('Account id, Retrieval Agent id, session id and zone must be provided.');
+    if (!arag || !zone || !session) {
+      console.error('Retrieval Agent id, session id and zone must be provided.');
       return;
     }
     const nucliaOptions: NucliaOptions = {
