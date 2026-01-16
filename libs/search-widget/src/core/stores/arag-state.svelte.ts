@@ -1,6 +1,6 @@
 import { AnswerOperation, type AragAnswer, type IErrorResponse } from '@nuclia/core';
 
-interface AragChatEntry {
+export interface AragChatEntry {
   running: boolean;
   question: string;
   answers: AragAnswer[];
@@ -9,23 +9,38 @@ interface AragChatEntry {
 
 interface AragAnswerState {
   entries: AragChatEntry[];
-  running: boolean;
-  question: string;
-  answers: AragAnswer[];
-  error?: IErrorResponse;
 }
 
 export const aragAnswerState = $state<AragAnswerState>({
   entries: [],
-  running: false,
-  question: '',
-  answers: [],
 });
-export function getCurrentEntry() {
-  return aragAnswerState.entries.slice(-1)[0] || {};
+
+export function getCurrentEntry(): AragChatEntry | undefined {
+  return aragAnswerState.entries.slice(-1)[0];
 }
-export function getPreviousEntries() {
-  return aragAnswerState.entries.slice(0, -1);
+export function getEntryAnswer(entry: AragChatEntry) {
+  return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+}
+export function getEntryDetails(entry: AragChatEntry) {
+  return (
+    entry.answers
+      .filter((message) => !!message.context || !!message.step)
+      .map((message) => {
+        if (message.context) {
+          return {
+            title: message.context.title || '',
+            value: message.context.question || '',
+            message: message.context.summary ? `Summary: ${message.context.summary}` : '',
+          };
+        } else {
+          return {
+            title: message.step?.title || '',
+            value: message.step?.value || '',
+            message: message.step?.reason ? `Reason: ${message.step.reason}` : '',
+          };
+        }
+      }) || []
+  );
 }
 /**
  * SETTERS
@@ -58,4 +73,8 @@ export function stopAgent() {
   if (current) {
     current.running = false;
   }
+}
+
+export function resetState() {
+  aragAnswerState.entries = [];
 }

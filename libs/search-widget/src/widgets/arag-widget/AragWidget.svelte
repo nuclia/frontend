@@ -4,12 +4,12 @@
   }} />
 
 <script lang="ts">
-  import { Nuclia, type AragAnswerContext, type NucliaOptions } from '@nuclia/core';
+  import { Nuclia, type NucliaOptions } from '@nuclia/core';
   import { BehaviorSubject, filter, firstValueFrom, switchMap, take, tap } from 'rxjs';
   import { onMount } from 'svelte';
-  import { Expander, LoadingDots } from '../../common';
+  import { Button, Icon, LoadingDots } from '../../common';
   import globalCss from '../../common/global.css?inline';
-  import { SearchInput } from '../../components';
+  import { ChatInput } from '../../components';
   import {
     addAragAnswer,
     getCurrentEntry,
@@ -22,9 +22,12 @@
     setAragError,
     setAragQuestion,
     setLang,
-    stopAgent,
     triggerSearch,
+    aragAnswerState,
+    resetState,
+    _,
   } from '../../core';
+  import AragAnswer from '../../components/arag-answer/AragAnswer.svelte';
 
   const _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -43,7 +46,21 @@
     apikey,
     account,
     client = 'widget',
+    fullscreen = false,
+    height,
   } = $props();
+
+  const entries = $derived(aragAnswerState.entries);
+  let entriesContainerElement: HTMLDivElement | undefined = $state();
+
+  $effect(() => {
+    if (entries.length > 0 && entriesContainerElement) {
+        entriesContainerElement.scrollTo({
+          top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
+          behavior: 'smooth',
+        });
+      }
+  });
 
   onMount(() => {
     if (!account || !arag || !zone || !session) {
@@ -98,27 +115,10 @@
     _ready.next(true);
   });
 
-  function stopInteraction() {
-    if (nucliaAPI && session) {
-      nucliaAPI.arag.stopInteraction(session);
-    }
-    stopAgent();
+  function onInput(question: string) {
+    searchQuery.set(question);
+    triggerSearch.next();
   }
-
-  const aragLastMessage = $derived(
-    getCurrentEntry().answers?.length > 0 ? getCurrentEntry().answers[getCurrentEntry().answers.length - 1] : undefined,
-  );
-  const contextsAndSteps = $derived.by<{title: string, value: string, message: string}[]>(() => {
-    return getCurrentEntry().answers
-      .filter((message) => !!message.context || !!message.step)
-      .map((message) => {
-        if (message.context) {
-          return {title: message.context.title || '', value: message.context.question || '', message: message.context.summary ? `Summary: ${message.context.summary}` : ''}
-        } else {
-          return {title: message.step?.title || '', value: message.step?.value || '', message: message.step?.reason ? `Reason: ${message.step.reason}` : ''}
-        }
-      });
-  });
 </script>
 
 <svelte:element this={'style'}>{@html globalCss}</svelte:element>
@@ -128,67 +128,63 @@
   data-version="__NUCLIA_DEV_VERSION__">
   <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}
-    <div class="search-box">
-      <SearchInput on:resetQuery={() => stopInteraction()} />
-      {#if getCurrentEntry().running}
-        <div class="loading-container"><LoadingDots small={true} /></div>
-      {/if}
-    </div>
-
-    <div class="arag-results-container">
-      {#if aragLastMessage?.answer}
-        <strong>Answer:</strong>
-        <blockquote>{aragLastMessage.answer}</blockquote>
-      {/if}
-      {#if getCurrentEntry().error}
-        Error: {getCurrentEntry().error?.detail}
-      {/if}
-      {#if getCurrentEntry().running || aragLastMessage?.answer}
-        <Expander expanded={!aragLastMessage?.answer}>
-          {#snippet header()}
-            <div class="title-s">Details</div>
-          {/snippet}
-          {#if getCurrentEntry().running}
-          <p class="step">
-            <strong>Running agent {aragLastMessage?.step?.module}:</strong>
-            {aragLastMessage?.step?.title}…
-          </p>
-          {/if}
-
-          {#each contextsAndSteps as context}
-            <div class="step">
-              <Expander expanded={false}>
-                {#snippet header()}
-                  {context.title}
-                {/snippet}
-                <ul>
-                  {#if context.question}
-                  <li>
-                    <strong>{context.question}</strong>
-                  </li>
-                  {/if}
-                  {#if context.value}
-                  <li>
-                    {context.value}
-                  </li>
-                  {/if}
-                  {#if context.message}
-                  <li>
-                    {context.message}
-                  </li>
-                  {/if}
-                </ul>
-              </Expander>
+  <div
+    class="sw-chat"
+    class:fullscreen>
+  <div
+    class="chat-container"
+    class:fullscreen
+    style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
+      <div
+        class="entries-container"
+        class:hidden={entries.length === 0}
+        bind:this={entriesContainerElement}>
+          {#each entries as entry, i}
+          <div class="chat-entry">
+            <div
+              class="question"
+              class:error={!!entry.error}>
+              <div class="chat-icon">
+                <Icon name="chat" />
+              </div>
+              <div class="title-m">{entry.question}</div>
             </div>
+            <div class="answer">
+              {#if entry.answers.length > 0 || entry.error}
+                <AragAnswer
+                  expanded={i === entries.length - 1}
+                  {entry} />
+              {/if}
+            </div>
+          </div>
           {/each}
-        </Expander>
-      {/if}
+        </div>
+        {#if getCurrentEntry()?.running}
+          <LoadingDots />
+        {/if}
+        <div
+          class="input-container">
+          <ChatInput
+            placeholder={$_('input.placeholder')}
+            disabled={!!getCurrentEntry()?.running}
+            {fullscreen} onChange={onInput}/>
+            <div class="reset-button">
+              <Button
+                aspect="basic"
+                disabled={entries.length === 0}
+                size="small"
+                on:click={resetState}>
+                {$_('answer.reset')}
+              </Button>
+            </div>
+        </div>
+      </div>
     </div>
   {/if}
   <div
     id="nuclia-glyphs-sprite"
     hidden>
-    {@html svgSprite}
+      {@html svgSprite}
   </div>
 </div>
 

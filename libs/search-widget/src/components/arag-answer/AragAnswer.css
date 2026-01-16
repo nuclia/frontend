@@ -1,0 +1,16 @@
+.sw-arag-answer {
+  .answer-text {
+    line-height: calc(var(--font-size-base) * 1.4);
+    margin-top: var(--rhythm-1);
+  }
+  .reasoning-text {
+    font-size: 75%;
+    margin-left: calc(var(--rhythm-4) + var(--rhythm-0_5));
+  }
+  .error {
+    align-items: center;
+    display: inline-flex;
+    color: var(--color-neutral-light);
+    gap: var(--rhythm-0_5);
+  }
+}
