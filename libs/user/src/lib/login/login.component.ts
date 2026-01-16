@@ -145,12 +145,7 @@ export class LoginComponent {
         this.formError = error.status === 401;
         this.isLoggingIn = false;
       },
-    });autoSubmitOAuthForm() {
-    // Submit OAuth form without validation (for skip_login scenario)
-    this.form?.nativeElement.submit();
-  }
-
-  private 
+    });
   }
 
   oAuthLoginUrl() {
@@ -163,7 +158,12 @@ export class LoginComponent {
     }
   }
 
+  private autoSubmitOAuthForm() {
+    // Submit OAuth form without validation (for skip_login scenario)
+    this.form?.nativeElement.submit();
+  }
+
   private remoteLogin() {
     location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
   }
-}
+} 
