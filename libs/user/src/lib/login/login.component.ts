@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -21,6 +21,7 @@ export class LoginComponent {
 
   oauth: boolean = false;
   loginChallenge: string | undefined;
+  loginData: OAuthLoginData | undefined;
 
   message: string | null = null;
   loginError: boolean = false;
@@ -84,6 +85,18 @@ export class LoginComponent {
 
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
+      } else if (this.loginChallenge) {
+        this.oAuthService.getLoginData(this.loginChallenge).subscribe({
+          next: (data) => {
+            this.loginData = data;
+            if (data.skip_login) {
+              setTimeout(() => this.oAuthLogin(), 10);
+            }
+          },
+          error: () => {
+            this.error = 'login.error.unknown_login_challenge';
+          },
+        });
       }
       if (params['error']) {
         this.message = params['error_description'] || 'login.error.' + params['error'];

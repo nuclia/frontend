@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OAuthConsentData } from '../models';
+import { OAuthConsentData, OAuthLoginData } from '../models';
 import { BackendConfigurationService } from '../config';
 import { SDKService } from '../api';
 
@@ -26,6 +26,10 @@ export class OAuthService {
 
   consentUrl() {
     return this.config.getAPIURL() + STF_CONSENT;
+  }
+
+  getLoginData(challenge: string): Observable<OAuthLoginData> {
+    return this.sdk.nuclia.rest.get<OAuthLoginData>(this.loginUrl() + `?login_challenge=${challenge}`);
   }
 
   getConsentData(challenge: string): Observable<OAuthConsentData> {

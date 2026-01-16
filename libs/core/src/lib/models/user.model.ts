@@ -55,6 +55,11 @@ export interface OAuthConsentData {
   skip_consent: boolean;
 }
 
+export interface OAuthLoginData {
+  skip_login: boolean;
+  subject?: string;
+}
+
 export interface JwtUser {
   first_name: string;
   id: string;
