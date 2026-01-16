@@ -5,7 +5,7 @@ on:
       - main
       - dev
   push:
-    branches-ignore:
+    branches:
       - main
       - dev
 
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 22
-          cache: 'yarn'
+          cache: "yarn"
       - name: Install project dependencies
         run: |-
           yarn
