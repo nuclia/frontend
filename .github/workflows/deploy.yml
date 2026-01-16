@@ -211,7 +211,7 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
@@ -330,7 +330,7 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
@@ -404,7 +404,7 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
@@ -447,7 +447,7 @@ jobs:
     steps:
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
