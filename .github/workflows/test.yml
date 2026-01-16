@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'yarn'
