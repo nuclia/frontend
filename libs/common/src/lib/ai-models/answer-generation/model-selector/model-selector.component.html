@@ -62,8 +62,12 @@
       [paPopup]="dropdown"
       #popup="paPopupRef"
       (keyUp)="openDropdown()"
+      [externalLabel]="externalLabel()"
+      [placeholder]="externalLabel() ? ('kb.ai-models.model-selector.search' | translate) : undefined"
       sameWidth>
-      {{ 'kb.ai-models.model-selector.search' | translate }}
+      @if (!externalLabel()) {
+        {{ 'kb.ai-models.model-selector.search' | translate }}
+      }
     </pa-input>
     <pa-dropdown #dropdown>
       @if (filteredByTerm().length > 1) {

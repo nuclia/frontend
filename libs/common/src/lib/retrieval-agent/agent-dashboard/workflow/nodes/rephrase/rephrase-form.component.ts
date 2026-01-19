@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  forwardRef,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
@@ -9,8 +19,9 @@ import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
+import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select';
 import { aragUrl } from '../../workflow.state';
-import { WorkflowService } from '../../workflow.service';
+import { JSONSchema4 } from 'json-schema';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -25,13 +36,13 @@ import { WorkflowService } from '../../workflow.service';
     InfoCardComponent,
     RouterLink,
     SynonymsFieldComponent,
+    forwardRef(() => ModelSelectComponent), // Avoid circular dependency
   ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RephraseFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
-  private workflowService = inject(WorkflowService);
 
   override form = new FormGroup({
     rephrase: new FormGroup({
@@ -52,9 +63,10 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
     return this.form.controls.rephrase;
   }
 
+  schemas = input<JSONSchema4 | null>(null);
+  formReady = output<FormGroup>();
   driversPath = computed(() => `${aragUrl()}/drivers`);
   sourceOptions = signal<OptionModel[] | null>(null);
-  modelOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
     this.sdk.currentArag
@@ -79,11 +91,11 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
         ),
       );
 
-    this.workflowService.getModels().subscribe((models) => {
-      this.modelOptions.set(
-        models.models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
-      );
-    });
+    // Set default model
+    const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase');
+    const defaultModel = schema?.properties?.['model']?.default as string | undefined;
+    this.configForm.controls.model.patchValue(defaultModel || '');
+    this.formReady.emit(this.configForm);
 
     // Toggle validators for provided_synonyms based on synonyms switch
     const synonymsCtrl = this.configForm.controls.synonyms;
