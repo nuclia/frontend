@@ -9,10 +9,14 @@
         @if (block.title) {
           <div class="title">{{ block.title }}</div>
         }
-        <div
-          [innerHTML]="
-            labels()?.[block.key] ? labels()[block.key][block.content] || block.content : block.content
-          "></div>
+        @for (value of block.values; track value.value) {
+          <div>
+            <span [class.with-description]="value.description">{{ value.value }}</span>
+            @if (value.description) {
+              <span>: {{ value.description }}</span>
+            }
+          </div>
+        }
       </div>
     }
   </div>

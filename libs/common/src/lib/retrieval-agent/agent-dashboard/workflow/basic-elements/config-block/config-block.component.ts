@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface ConfigBlockItem {
   key: string;
   title?: string;
-  content: string;
+  values: { value: string; description?: string }[];
 }
 
 @Component({
@@ -16,5 +16,4 @@ export interface ConfigBlockItem {
 })
 export class ConfigBlockComponent {
   config = input<ConfigBlockItem[]>([]);
-  labels = input<{ [field: string]: { [key: string]: string } }>({});
 }
