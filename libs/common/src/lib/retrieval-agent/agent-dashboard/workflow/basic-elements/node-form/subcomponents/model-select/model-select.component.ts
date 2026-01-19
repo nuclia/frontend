@@ -3,7 +3,7 @@ import { Component, inject, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { WorkflowService } from '../../../../workflow.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModelSelectorComponent } from 'libs/common/src/lib/ai-models';
+import { ModelSelectorComponent } from '../../../../../../../ai-models';
 
 @Component({
   selector: 'app-model-select',
