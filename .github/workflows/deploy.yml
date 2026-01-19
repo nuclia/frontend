@@ -62,7 +62,7 @@ jobs:
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         if: github.ref == 'refs/heads/main'
         with:
           role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
