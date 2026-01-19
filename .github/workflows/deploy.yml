@@ -74,7 +74,7 @@ jobs:
         with:
           arch: amd64
 
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
 
       - uses: actions/setup-node@v6
         with:
