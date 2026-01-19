@@ -60,9 +60,9 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
     advanced_ask: new FormGroup({
       sources: new FormArray<FormControl<string>>([], { validators: [Validators.required] }),
       fallback: new FormControl<BaseContextAgent | null>(null),
-      generative_model: new FormControl<string>('', { nonNullable: true }),
-      rephrase_model: new FormControl<string>('', { nonNullable: true }),
-      summarize_model: new FormControl<string>('', { nonNullable: true }),
+      generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      rephrase_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      summarize_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       max_retries: new FormControl<number | null>(1),
       rules: new FormArray<FormControl<string>>([]),
       search_configuration: new FormControl<string>('', { nonNullable: true }),

@@ -109,6 +109,7 @@ export interface ParentNode {
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   ask: 'database',
   basic_ask: 'database',
+  advanced_ask: 'database',
   brave: 'globe',
   context_conditional: 'dataflow',
   cypher: 'file-code',
@@ -130,6 +131,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   sql: 'file-code',
   summarize: 'summary',
   tavily: 'globe',
+  static: 'file',
 };
 
 export interface CommonAgentConfig {

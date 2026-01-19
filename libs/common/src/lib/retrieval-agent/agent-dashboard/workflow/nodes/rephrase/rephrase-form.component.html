@@ -62,15 +62,10 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.split-question.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.split-question.label' | translate }}
     </pa-toggle>
-    <div class="form-entry">
-      <label for="rephrase-model">
-        {{ 'retrieval-agents.workflow.common-forms.model' | translate }}
-      </label>
-      <pa-select
-        id="rephrase-model"
-        formControlName="model"
-        [options]="modelOptions()"></pa-select>
-    </div>
+    <app-model-select
+      [label]="'retrieval-agents.workflow.common-forms.model' | translate"
+      [form]="configForm"
+      controlName="model"></app-model-select>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>

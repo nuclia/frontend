@@ -2,14 +2,16 @@
   <label [for]="controlName">
     {{ label }}
     @if (required) {
-      <span style="color: red">*</span>
+      <span class="required">*</span>
     }
   </label>
-  <div [formGroup]="form!">
-    <pa-select
-      [id]="controlName"
-      [formControlName]="controlName!"
-      [options]="options()"
-      [required]="required"></pa-select>
-  </div>
+  @if (form) {
+    <div [formGroup]="form">
+      <stf-model-selector
+        [formControlName]="controlName || ''"
+        [providers]="(generativeProviders | async) || {}"
+        [learningConfigurations]="(modelSchemas | async) || {}"
+        [externalLabel]="true"></stf-model-selector>
+    </div>
+  }
 </div>

@@ -15,16 +15,19 @@
     <app-model-select
       [label]="schema?.properties?.['generative_model']?.title || ''"
       [form]="configForm"
+      [required]="true"
       controlName="generative_model"></app-model-select>
 
     <app-model-select
       [label]="schema?.properties?.['rephrase_model']?.title || ''"
       [form]="configForm"
+      [required]="true"
       controlName="rephrase_model"></app-model-select>
 
     <app-model-select
       [label]="schema?.properties?.['summarize_model']?.title || ''"
       [form]="configForm"
+      [required]="true"
       controlName="summarize_model"></app-model-select>
 
     <app-rules-field
