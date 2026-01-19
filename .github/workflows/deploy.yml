@@ -39,7 +39,7 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -220,7 +220,7 @@ jobs:
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
@@ -310,7 +310,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -339,7 +339,7 @@ jobs:
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
@@ -384,7 +384,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -413,7 +413,7 @@ jobs:
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
