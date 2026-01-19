@@ -10,12 +10,12 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { CreateWidgetDialogComponent } from './dialogs';
-import { filter, map, Observable, switchMap, take } from 'rxjs';
-import { DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
-import { SDKService } from '@flaps/core';
+import { filter, forkJoin, map, Observable, switchMap, take } from 'rxjs';
+import { DEFAULT_RAO_WIDGET_CONFIG, DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
+import { NavigationService, SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core'
+import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-widget-list',
@@ -40,8 +40,9 @@ export class WidgetListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
-  private translate = inject(TranslateService);
+  private navigationService = inject(NavigationService);
 
+  inArag = this.navigationService.inArag;
   widgetList = this.searchWidgetService.widgetList;
   emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
   modelNames: { [key: string]: string } = {};
@@ -73,10 +74,11 @@ export class WidgetListComponent implements OnInit {
         switchMap((widgetName) =>
           this.sdk.currentKb.pipe(
             take(1),
-            switchMap((kb) => kb.getConfiguration()),
-            switchMap((configuration) =>
+            switchMap((kb) => forkJoin([kb.getConfiguration(), this.inArag.pipe(take(1))])),
+            switchMap(([configuration, inArag]) =>
               this.searchWidgetService.createWidget(
                 widgetName,
+                // inArag ? DEFAULT_RAO_WIDGET_CONFIG : DEFAULT_WIDGET_CONFIG,
                 DEFAULT_WIDGET_CONFIG,
                 NUCLIA_STANDARD_SEARCH_CONFIG.id,
                 configuration['generative_model'] || '',

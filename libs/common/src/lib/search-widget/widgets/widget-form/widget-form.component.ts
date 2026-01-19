@@ -32,38 +32,12 @@ import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';
 import { EmbedWidgetDialogComponent } from '../dialogs';
 
-type RaoViewType = 'conversation' | 'floating';
-
-type RaoPromptConfigControls = {
-  prompts: FormArray<FormControl<string>>;
-  usefallbackprompts: FormControl<boolean>;
-  visibleprompts: FormControl<number>;
-};
-
-type RaoRecordingConfigControls = {
-  language: FormControl<string>;
-};
-
 type RaoFormGroupControls = {
-  title: FormControl<string>;
-  username: FormControl<string>;
-  viewtype: FormControl<RaoViewType>;
-  promptconfig: FormGroup<RaoPromptConfigControls>;
-  recordingconfig: FormGroup<RaoRecordingConfigControls>;
+  darkMode: FormControl<'light' | 'dark'>;
 };
 
 type RaoFormValue = {
-  title: string;
-  username: string;
-  viewtype: RaoViewType;
-  promptconfig: {
-    prompts: string[];
-    usefallbackprompts: boolean;
-    visibleprompts: number;
-  };
-  recordingconfig: {
-    language: string;
-  };
+  darkMode: 'light' | 'dark';
 };
 
 @Component({
@@ -151,19 +125,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   });
 
   raoForm = new FormGroup<RaoFormGroupControls>({
-    title: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-    username: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-    viewtype: new FormControl<RaoViewType>('conversation', { nonNullable: true }),
-    promptconfig: new FormGroup<RaoPromptConfigControls>({
-      prompts: new FormArray<FormControl<string>>([
-        new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-      ]),
-      usefallbackprompts: new FormControl<boolean>(false, { nonNullable: true }),
-      visibleprompts: new FormControl<number>(4, { nonNullable: true }),
-    }),
-    recordingconfig: new FormGroup<RaoRecordingConfigControls>({
-      language: new FormControl<string>('en-US', { nonNullable: true, updateOn: 'blur' }),
-    }),
+    darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
   });
 
   widgetFormExpanded = true;
@@ -177,14 +139,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   );
   configChanges = new Subject<Widget.SearchConfiguration>();
 
-  inArag: Observable<boolean> = merge(
-    of(this.navigationService.inAragSpace(location.pathname)),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
-      takeUntil(this.unsubscribeAll),
-    ),
-  );
+  inArag = this.navigationService.inArag;
 
   get customizePlaceholderEnabled() {
     return this.form.controls.customizePlaceholder.value;
@@ -225,27 +180,8 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   get openNewTabDisabled() {
     return this.openNewTabControl.disabled;
   }
-  get promptControls(): FormArray<FormControl<string>> {
-    return this.raoForm.controls.promptconfig.controls.prompts;
-  }
-  addPrompt() {
-    this.promptControls.push(new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }));
-    this.cdr.markForCheck();
-  }
-  removePrompt(index: number) {
-    this.promptControls.removeAt(index);
-    if (this.promptControls.length === 0) {
-      this.promptControls.push(new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }), {
-        emitEvent: false,
-      });
-    }
-    this.cdr.markForCheck();
-  }
-  trackPromptIndex(index: number) {
-    return index;
-  }
+
   ngOnInit() {
-    this.resetRaoForm();
     this.route.params
       .pipe(
         filter((params) => !!params['slug']),
@@ -301,7 +237,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
           this.currentRaoWidget.widgetConfig = widgetConfig;
         }
         this.checkIsModified();
-        this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig, this.currentWidget?.slug);
+        this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig);
       });
 
     this.updateSpeechSynthesis(this.speechOn);
@@ -321,6 +257,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initWidget(widget: Widget.Widget) {
     this.savedWidget = widget;
+    // this.savedRaoConfig = widget;
     this.currentWidget = { ...this.savedWidget };
     this.form.patchValue(this.currentWidget.widgetConfig);
     this.onWidgetModeChange(this.currentWidget.widgetConfig.widgetMode);
@@ -328,81 +265,12 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  private resetRaoForm(config?: Widget.RaoWidgetConfiguration) {
-    const promptsSource = config?.promptconfig?.prompts ?? [];
-    const prompts = promptsSource.length > 0 ? promptsSource : [''];
-    const visiblePrompts = config?.promptconfig?.visibleprompts ?? Math.max(prompts.length, 1);
-
-    this.raoForm.patchValue(
-      {
-        viewtype: config?.viewtype ?? 'conversation',
-        promptconfig: {
-          usefallbackprompts: config?.promptconfig?.usefallbackprompts ?? false,
-          visibleprompts: visiblePrompts,
-        },
-        recordingconfig: {
-          language: config?.recordingconfig?.language ?? 'en-US',
-        },
-      },
-      { emitEvent: false },
-    );
-
-    const promptsArray = this.promptControls;
-    while (promptsArray.length > 0) {
-      promptsArray.removeAt(0, { emitEvent: false });
-    }
-    prompts.forEach((prompt) => {
-      promptsArray.push(new FormControl<string>(prompt, { nonNullable: true, updateOn: 'blur' }), {
-        emitEvent: false,
-      });
-    });
-    if (promptsArray.length === 0) {
-      promptsArray.push(new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }), {
-        emitEvent: false,
-      });
-    }
-
-    this.savedRaoConfig = this.sanitizeRaoWidgetConfig(this.raoForm.getRawValue() as RaoFormValue);
-    this.currentRaoConfig = this.savedRaoConfig;
-    this.raoForm.markAsPristine();
-    this.raoForm.markAsUntouched();
-    this.cdr.markForCheck();
-  }
-
   private sanitizeRaoWidgetConfig(raw: RaoFormValue): Widget.RaoWidgetConfiguration {
     const config: Widget.RaoWidgetConfiguration = {};
 
-    if (raw.viewtype) {
-      config.viewtype = raw.viewtype;
+    if (raw.darkMode) {
+      config.darkMode = raw.darkMode;
     }
-
-    const prompts = (raw.promptconfig?.prompts ?? [])
-      .map((prompt) => prompt.trim())
-      .filter((prompt) => prompt.length > 0);
-    const useFallback = raw.promptconfig?.usefallbackprompts ?? false;
-    const visiblePromptsRaw = raw.promptconfig?.visibleprompts;
-    const visiblePromptsNumber = Number(visiblePromptsRaw);
-    const hasVisiblePrompts = Number.isFinite(visiblePromptsNumber) && visiblePromptsNumber > 0;
-
-    if (prompts.length > 0 || useFallback || hasVisiblePrompts) {
-      const sanitizedPromptConfig: NonNullable<Widget.RaoWidgetConfiguration['promptconfig']> = {
-        prompts,
-      };
-      if (useFallback) {
-        sanitizedPromptConfig.usefallbackprompts = true;
-      }
-      if (hasVisiblePrompts) {
-        const capped = prompts.length > 0 ? Math.min(visiblePromptsNumber, prompts.length) : visiblePromptsNumber;
-        sanitizedPromptConfig.visibleprompts = Math.max(1, capped);
-      }
-      config.promptconfig = sanitizedPromptConfig;
-    }
-
-    const language = raw.recordingconfig?.language?.trim();
-    if (language) {
-      config.recordingconfig = { language };
-    }
-
     return config;
   }
 

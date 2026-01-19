@@ -497,89 +497,17 @@
           } @else {
             <form [formGroup]="raoForm">
               <div class="config-form-field">
-                <div class="title-xs">{{ 'search.widgets.form.rao-widget-options.viewtype.title' | translate }}</div>
-                <pa-radio-group formControlName="viewtype">
-                  <pa-radio value="conversation">
-                    {{ 'search.widgets.form.rao-widget-options.viewtype.conversation' | translate }}
+                <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
+                <pa-radio-group formControlName="darkMode">
+                  <pa-radio value="light">
+                    {{ 'search.widgets.form.widget-options.theme.light' | translate }}
                   </pa-radio>
-                  <pa-radio value="floating">
-                    {{ 'search.widgets.form.rao-widget-options.viewtype.floating' | translate }}
+                  <pa-radio
+                    value="dark"
+                    [hidden]="popupStyleEnabled">
+                    {{ 'search.widgets.form.widget-options.theme.dark' | translate }}
                   </pa-radio>
                 </pa-radio-group>
-              </div>
-
-              <div
-                class="config-form-field"
-                formGroupName="promptconfig">
-                <div class="title-xs">{{ 'search.widgets.form.rao-widget-options.prompts.title' | translate }}</div>
-                <div class="config-form-help">
-                  {{ 'search.widgets.form.rao-widget-options.prompts.description' | translate }}
-                </div>
-                <pa-toggle
-                  formControlName="usefallbackprompts"
-                  withBackground
-                  spaceBetweenLabelAndToggle>
-                  <span class="toggle-label">
-                    {{ 'search.widgets.form.rao-widget-options.prompts.use-fallback.label' | translate }}
-                  </span>
-                </pa-toggle>
-                <div class="config-form-help">
-                  {{ 'search.widgets.form.rao-widget-options.prompts.use-fallback.help' | translate }}
-                </div>
-                <div class="extra-fields visible">
-                  <div
-                    class="rao-prompt-list"
-                    formArrayName="prompts">
-                    @for (
-                      promptControl of promptControls.controls;
-                      track trackPromptIndex($index);
-                      let index = $index
-                    ) {
-                      <div class="rao-prompt-list__row">
-                        <pa-input [formControlName]="index">
-                          {{
-                            'search.widgets.form.rao-widget-options.prompts.prompt-label'
-                              | translate: { index: index + 1 }
-                          }}
-                        </pa-input>
-                        <pa-button
-                          type="button"
-                          aspect="basic"
-                          (click)="removePrompt(index)"
-                          [disabled]="promptControls.length <= 1">
-                          {{ 'search.widgets.form.rao-widget-options.prompts.remove' | translate }}
-                        </pa-button>
-                      </div>
-                    }
-                  </div>
-                  <pa-button
-                    type="button"
-                    aspect="basic"
-                    (click)="addPrompt()">
-                    {{ 'search.widgets.form.rao-widget-options.prompts.add' | translate }}
-                  </pa-button>
-                </div>
-                <pa-input
-                  type="number"
-                  min="1"
-                  formControlName="visibleprompts">
-                  {{ 'search.widgets.form.rao-widget-options.prompts.visible-count.label' | translate }}
-                </pa-input>
-                <div class="config-form-help">
-                  {{ 'search.widgets.form.rao-widget-options.prompts.visible-count.help' | translate }}
-                </div>
-              </div>
-
-              <div
-                class="config-form-field"
-                formGroupName="recordingconfig">
-                <div class="title-xs">{{ 'search.widgets.form.rao-widget-options.recording.title' | translate }}</div>
-                <pa-input formControlName="language">
-                  {{ 'search.widgets.form.rao-widget-options.recording.language.label' | translate }}
-                </pa-input>
-                <div class="config-form-help">
-                  {{ 'search.widgets.form.rao-widget-options.recording.language.help' | translate }}
-                </div>
               </div>
             </form>
           }

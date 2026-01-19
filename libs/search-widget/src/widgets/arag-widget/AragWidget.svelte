@@ -41,18 +41,21 @@
     backend = 'https://rag.progress.cloud/api',
     zone = 'europe-1',
     arag,
-    session,
+    session = 'ephemeral',
     lang,
     apikey,
     account = undefined,
     client = 'widget',
     fullscreen = false,
     height,
+    mode = '',
   } = $props();
 
   const entries = $derived(aragAnswerState.entries);
   let entriesContainerElement: HTMLDivElement | undefined = $state();
 
+  let darkMode = $derived(mode === 'dark');
+  
   $effect(() => {
     if (entries.length > 0 && entriesContainerElement) {
         entriesContainerElement.scrollTo({
@@ -125,6 +128,7 @@
 
 <div
   class="nuclia-widget"
+  class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   <style src="../../common/common-style.css"></style> 
   {#if $ready && !!svgSprite}

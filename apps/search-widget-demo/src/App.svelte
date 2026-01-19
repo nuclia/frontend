@@ -2,7 +2,7 @@
   import { NucliaSearchBar, NucliaSearchResults, NucliaChat } from '../../../libs/search-widget/src/widgets';
   import { NucliaAragWidget } from '../../../libs/search-widget/src/widgets/arag-widget';
 
-  const arag = 'f2c7d3d8-41da-46f9-968b-ef12b8981c11'; // Agent dragon
+  const arag = 'f2c7d3d8-41da-46f9-968b-ef12b8981c11'; // agent007 in mat-tetsing, about lawyers, example question "Who is a good lawyer for commercial dispute?"
   // const account = 'fc1ebf90-632b-4ca5-a406-ca93ccf1920d'; // mat-testing
   // const session = 'da7bb69f67864275b8bd1e07f312957c';
   const session = 'ephemeral';
@@ -48,7 +48,6 @@
     {arag}
     lang="en"
     zone="europe-1"
-    {account}
     {apikey}
     {session}></NucliaAragWidget>
   <!-- <NucliaSearchBar
