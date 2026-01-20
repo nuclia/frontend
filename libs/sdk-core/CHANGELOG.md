@@ -1,4 +1,4 @@
-# 1.31.1 (unreleased)
+# 1.31.1 (2026-01-20)
 
 ### Improvements
 
