@@ -42,7 +42,7 @@
     zone = 'europe-1',
     arag,
     session = 'ephemeral',
-    lang,
+    lang = window.navigator.language.split('-')[0] || 'en',
     apikey,
     account = undefined,
     client = 'widget',
