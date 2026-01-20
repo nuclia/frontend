@@ -113,9 +113,6 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   updateForm(data: Resource): void {
-    if (!data.origin?.metadata || Object.keys(data.origin?.metadata).length === 0) {
-      this.addMetadata();
-    }
     const metadata = Object.entries(data.origin?.metadata || {}).reduce(
       (acc, entry) => {
         acc.push({ key: entry[0], value: entry[1] });
@@ -123,10 +120,10 @@ export class ResourceProfileComponent implements OnInit {
       },
       [] as { key: string; value: string }[],
     );
-    if (metadata.length > this.metadataControls.length) {
-      for (let i = 0; i < metadata.length - this.metadataControls.length + 1; i++) {
-        this.addMetadata();
-      }
+    this.form.controls.origin.controls.metadata.clear();
+    const metadataSize = metadata.length > 0 ? metadata.length : 1;
+    for (let i = 0; i < metadataSize; i++) {
+      this.addMetadata();
     }
     this.form.patchValue({
       slug: data.slug,
@@ -365,6 +362,7 @@ export class ResourceProfileComponent implements OnInit {
 
   removeMetadata(index: number) {
     this.form.controls.origin.controls.metadata.removeAt(index);
+    this.form.markAsDirty();
     this.originAccordionItem?.updateContentHeight();
   }
 }
