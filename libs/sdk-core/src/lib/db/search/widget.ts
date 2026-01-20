@@ -191,10 +191,11 @@ export namespace Widget {
     slug: string;
     name: string;
     creationDate: string;
-    searchConfigId: string;
-    generativeModel: string;
-    vectorset: string;
-    widgetConfig: WidgetConfiguration;
+    searchConfigId?: string;
+    generativeModel?: string;
+    vectorset?: string;
+    widgetConfig?: WidgetConfiguration;
+    raoWidgetConfig?: RaoWidgetConfiguration;
   }
 
   export interface RaoWidgetConfiguration {
@@ -244,7 +245,7 @@ export namespace Widget {
     speechSynthesis?: boolean;
     semanticOnly?: boolean;
     expandCitations?: boolean;
-    collapseCitations?: boolean; 
+    collapseCitations?: boolean;
     expandTextBlocks?: boolean;
     collapseTextBlocks?: boolean;
     displaySearchButton?: boolean;
@@ -627,7 +628,8 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     speech: widgetOptions.speech,
     speechSynthesis: widgetOptions.speechSynthesis,
     expandTextBlocks: widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'expanded',
-    collapseTextBlocks: widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'collapsed',
+    collapseTextBlocks:
+      widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'collapsed',
     expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
   };

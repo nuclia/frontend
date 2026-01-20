@@ -42,7 +42,7 @@ export class WidgetListComponent implements OnInit {
   private modalService = inject(SisModalService);
   private navigationService = inject(NavigationService);
 
-  inArag = this.navigationService.inArag;
+  inArag = this.navigationService.inArag();
   widgetList = this.searchWidgetService.widgetList;
   emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
   modelNames: { [key: string]: string } = {};
@@ -75,16 +75,18 @@ export class WidgetListComponent implements OnInit {
           this.sdk.currentKb.pipe(
             take(1),
             switchMap((kb) => forkJoin([kb.getConfiguration(), this.inArag.pipe(take(1))])),
-            switchMap(([configuration, inArag]) =>
-              this.searchWidgetService.createWidget(
+            switchMap(([configuration, inArag]) => {
+              if (inArag) {
+                return this.searchWidgetService.createRaoWidget(widgetName, DEFAULT_RAO_WIDGET_CONFIG);
+              }
+              return this.searchWidgetService.createWidget(
                 widgetName,
-                // inArag ? DEFAULT_RAO_WIDGET_CONFIG : DEFAULT_WIDGET_CONFIG,
                 DEFAULT_WIDGET_CONFIG,
                 NUCLIA_STANDARD_SEARCH_CONFIG.id,
                 configuration['generative_model'] || '',
                 configuration['default_semantic_model'] || '',
-              ),
-            ),
+              );
+            }),
             switchMap((widgetSlug) => this.router.navigate(['.', widgetSlug], { relativeTo: this.route })),
           ),
         ),

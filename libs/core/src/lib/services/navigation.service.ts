@@ -11,13 +11,6 @@ const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
   providedIn: 'root',
 })
 export class NavigationService {
-  inArag: Observable<boolean> = merge(
-    of(this.inAragSpace(location.pathname)),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.inAragSpace((event as NavigationEnd).url)),
-    ),
-  );
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -54,6 +47,15 @@ export class NavigationService {
   }
   inAragSpace(path: string): boolean {
     return path.match(IN_ARAG) !== null;
+  }
+  inArag() {
+    return merge(
+      of(this.inAragSpace(location.pathname)),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => this.inAragSpace((event as NavigationEnd).url)),
+      ),
+    );
   }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard

@@ -81,9 +81,6 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
 
   savedWidget?: Widget.Widget;
   currentWidget?: Widget.Widget;
-  currentRaoWidget?: Widget.RaoWidget;
-  private savedRaoConfig?: Widget.RaoWidgetConfiguration;
-  private currentRaoConfig?: Widget.RaoWidgetConfiguration;
   isNotModified = true;
 
   form = new FormGroup({
@@ -139,7 +136,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   );
   configChanges = new Subject<Widget.SearchConfiguration>();
 
-  inArag = this.navigationService.inArag;
+  inArag = this.navigationService.inArag();
 
   get customizePlaceholderEnabled() {
     return this.form.controls.customizePlaceholder.value;
@@ -204,7 +201,9 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
           this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
           this.router.navigate(['..'], { relativeTo: this.route });
         } else {
-          this.searchWidgetService.saveSelectedSearchConfig(kbId, widget?.searchConfigId);
+          if (widget.searchConfigId) {
+            this.searchWidgetService.saveSelectedSearchConfig(kbId, widget.searchConfigId);
+          }
           this.initWidget(widget);
         }
       });
@@ -232,9 +231,8 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(startWith(this.raoForm.getRawValue()), takeUntil(this.unsubscribeAll))
       .subscribe((rawValue) => {
         const widgetConfig = this.sanitizeRaoWidgetConfig(rawValue as RaoFormValue);
-        this.currentRaoConfig = widgetConfig;
-        if (this.currentRaoWidget) {
-          this.currentRaoWidget.widgetConfig = widgetConfig;
+        if (this.currentWidget) {
+          this.currentWidget.raoWidgetConfig = widgetConfig;
         }
         this.checkIsModified();
         this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig);
@@ -257,11 +255,15 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initWidget(widget: Widget.Widget) {
     this.savedWidget = widget;
-    // this.savedRaoConfig = widget;
     this.currentWidget = { ...this.savedWidget };
-    this.form.patchValue(this.currentWidget.widgetConfig);
-    this.onWidgetModeChange(this.currentWidget.widgetConfig.widgetMode);
-    this.onNavigationChange(this.currentWidget.widgetConfig);
+    if (this.currentWidget.widgetConfig) {
+      this.form.patchValue(this.currentWidget.widgetConfig);
+      this.onWidgetModeChange(this.currentWidget.widgetConfig.widgetMode);
+      this.onNavigationChange(this.currentWidget.widgetConfig);
+    }
+    if (this.currentWidget.raoWidgetConfig) {
+      this.raoForm.patchValue(this.currentWidget.raoWidgetConfig);
+    }
     this.cdr.detectChanges();
   }
 
@@ -280,10 +282,17 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
 
   saveChanges() {
     const current = this.currentWidget;
-    if (current) {
-      this.searchWidgetService
-        .updateWidget(current.slug, current.widgetConfig, current.searchConfigId)
-        .pipe(switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))))
+    if (current && ((current.widgetConfig && current.searchConfigId) || current.raoWidgetConfig)) {
+      this.inArag
+        .pipe(
+          take(1),
+          switchMap((inArag) =>
+            inArag
+              ? this.searchWidgetService.updateRaoWidget(current.slug, current.raoWidgetConfig!)
+              : this.searchWidgetService.updateWidget(current.slug, current.widgetConfig!, current.searchConfigId!),
+          ),
+          switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))),
+        )
         .subscribe((widgets) => {
           const widget = widgets.find((widget) => widget.slug === current.slug);
           if (widget) {
@@ -347,11 +356,8 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private checkIsModified() {
-    const widgetUnchanged =
+    this.isNotModified =
       this.savedWidget && this.currentWidget ? deepEqual(this.savedWidget, this.currentWidget) : true;
-    const raoUnchanged =
-      this.savedRaoConfig && this.currentRaoConfig ? deepEqual(this.savedRaoConfig, this.currentRaoConfig) : true;
-    this.isNotModified = widgetUnchanged && raoUnchanged;
     this.cdr.markForCheck();
   }
 

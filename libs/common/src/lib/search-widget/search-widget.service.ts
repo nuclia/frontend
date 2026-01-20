@@ -338,6 +338,31 @@ export class SearchWidgetService {
       }),
     );
   }
+  /**
+   * Create a RAO widget and return its slug.
+   *
+   * @param name
+   * @param widgetConfig
+   */
+  createRaoWidget(name: string, raoWidgetConfig: Widget.RaoWidgetConfiguration): Observable<string> {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        let slug = STFUtils.generateSlug(name);
+        // if slug already exists in this KB, make it unique
+        if (storedWidgets.find((widget) => widget.slug === slug)) {
+          slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+        }
+        storedWidgets.push({
+          slug,
+          name,
+          raoWidgetConfig,
+          creationDate: new Date().toISOString(),
+        } as Widget.Widget);
+        return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
+      }),
+    );
+  }
 
   updateWidget(widgetSlug: string, widgetConfig: Widget.WidgetConfiguration, searchConfigId: string) {
     return this.widgetList.pipe(
@@ -347,6 +372,19 @@ export class SearchWidgetService {
         if (widget) {
           widget.searchConfigId = searchConfigId;
           widget.widgetConfig = widgetConfig;
+        }
+        return this.searchWidgetStorage.storeWidgets(storedWidgets);
+      }),
+    );
+  }
+
+  updateRaoWidget(widgetSlug: string, widgetConfig: Widget.RaoWidgetConfiguration) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
+        if (widget) {
+          widget.raoWidgetConfig = widgetConfig;
         }
         return this.searchWidgetStorage.storeWidgets(storedWidgets);
       }),

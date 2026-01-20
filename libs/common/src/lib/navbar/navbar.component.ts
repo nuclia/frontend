@@ -24,7 +24,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
   );
-  inArag = this.navigationService.inArag;
+  inArag = this.navigationService.inArag();
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
     this.router.events.pipe(
