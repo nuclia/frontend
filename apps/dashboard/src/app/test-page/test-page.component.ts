@@ -56,7 +56,7 @@ export class TestPageComponent {
       )
       .subscribe(({ widget, config }) => {
         this.searchWidgetService.generateWidgetSnippet(config || NUCLIA_STANDARD_SEARCH_CONFIG, widget?.widgetConfig);
-        this.darkMode = widget?.widgetConfig.darkMode === 'dark';
+        this.darkMode = widget?.widgetConfig?.darkMode === 'dark';
       });
   }
 }

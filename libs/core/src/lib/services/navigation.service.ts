@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
-import { combineLatest, forkJoin, map, Observable, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
 
 const IN_ARAG = new RegExp('at/[^/]+/[^/]+/arag');
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
@@ -47,6 +47,15 @@ export class NavigationService {
   }
   inAragSpace(path: string): boolean {
     return path.match(IN_ARAG) !== null;
+  }
+  inArag() {
+    return merge(
+      of(this.inAragSpace(location.pathname)),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => this.inAragSpace((event as NavigationEnd).url)),
+      ),
+    );
   }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard

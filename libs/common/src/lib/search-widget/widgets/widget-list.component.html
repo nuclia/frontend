@@ -46,7 +46,9 @@
             <span class="body-s">{{ widget.searchConfigId }}</span>
           </pa-table-cell>
           <pa-table-cell>
-            <span class="body-s">{{ modelNames[widget.generativeModel] || widget.generativeModel }}</span>
+            <span class="body-s">
+              {{ (widget.generativeModel && modelNames[widget.generativeModel]) || widget.generativeModel || '–' }}
+            </span>
           </pa-table-cell>
           <pa-table-cell>
             <span class="body-s"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>

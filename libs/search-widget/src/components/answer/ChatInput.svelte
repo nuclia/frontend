@@ -6,7 +6,6 @@
   import Textarea from '../../common/textarea/Textarea.svelte';
   import { chatInput, hasFilterButton, hasFilters, hasSearchButton, isSpeechEnabled, isSpeechOn } from '../../core';
   import { _, currentLanguage, translateInstant } from '../../core/i18n';
-  import { ask } from '../../core/stores/effects';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
   import SelectedFilters from '../search-filters/SelectedFilters.svelte';
 
@@ -14,9 +13,10 @@
     placeholder?: string;
     fullscreen: any;
     disabled?: boolean;
+    onChange: (text: string) => void
   }
 
-  let { placeholder = '', fullscreen, disabled = false }: Props = $props();
+  let { placeholder = '', fullscreen, disabled = false, onChange }: Props = $props();
 
   let inputElement: Textarea | undefined = $state();
   let question = $state('');
@@ -65,7 +65,8 @@
   });
 
   const askQuestion = () => {
-    ask.next({ question, reset: false });
+    // ask.next({ question, reset: false });
+    onChange(question);
     question = '';
     if ((navigator as any).userAgentData?.mobile) {
       // Make sure the keyboard disappear when triggering search in Mobile

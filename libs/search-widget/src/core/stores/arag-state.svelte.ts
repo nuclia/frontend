@@ -1,49 +1,80 @@
 import { AnswerOperation, type AragAnswer, type IErrorResponse } from '@nuclia/core';
-import { concatMap, delay, from, of } from 'rxjs';
-import { messages } from './demo-data';
 
-interface AragAnswerState {
+export interface AragChatEntry {
   running: boolean;
   question: string;
   answers: AragAnswer[];
   error?: IErrorResponse;
 }
 
-export function fillState() {
-  aragAnswerState.running = true;
-  from(messages)
-    .pipe(concatMap((message) => of(message).pipe(delay(1000))))
-    .subscribe((message) => addAragAnswer(message));
-}
-export const aragAnswerState = $state<AragAnswerState>({
-  running: false,
-  question: '',
-  answers: [],
-});
-export function resetState() {
-  aragAnswerState.running = false;
-  aragAnswerState.question = '';
-  aragAnswerState.answers = [];
+interface AragAnswerState {
+  entries: AragChatEntry[];
 }
 
+export const aragAnswerState = $state<AragAnswerState>({
+  entries: [],
+});
+
+export function getCurrentEntry(): AragChatEntry | undefined {
+  return aragAnswerState.entries.slice(-1)[0];
+}
+export function getEntryAnswer(entry: AragChatEntry) {
+  return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+}
+export function getEntryDetails(entry: AragChatEntry) {
+  return (
+    entry.answers
+      .filter((message) => !!message.context || !!message.step)
+      .map((message) => {
+        if (message.context) {
+          return {
+            title: message.context.title || '',
+            value: message.context.question || '',
+            message: message.context.summary ? `Summary: ${message.context.summary}` : '',
+          };
+        } else {
+          return {
+            title: message.step?.title || '',
+            value: message.step?.value || '',
+            message: message.step?.reason ? `Reason: ${message.step.reason}` : '',
+          };
+        }
+      }) || []
+  );
+}
 /**
  * SETTERS
  */
 export function setAragQuestion(question: string) {
-  resetState();
-  aragAnswerState.running = true;
-  aragAnswerState.question = question;
+  aragAnswerState.entries.push({ running: true, question, answers: [] });
 }
 export function addAragAnswer(answer: AragAnswer) {
-  aragAnswerState.answers.push(answer);
-  if (answer.operation === AnswerOperation.done || answer.operation === AnswerOperation.error) {
+  if (answer.operation === AnswerOperation.done) {
     stopAgent();
+  } else {
+    const current = aragAnswerState.entries.slice(-1)[0];
+    if (current) {
+      current.answers.push(answer);
+    }
+    if (answer.operation === AnswerOperation.error) {
+      stopAgent();
+    }
   }
 }
 export function setAragError(error: IErrorResponse) {
-  aragAnswerState.error = error;
+  const current = aragAnswerState.entries.slice(-1)[0];
+  if (current) {
+    current.error = error;
+  }
   stopAgent();
 }
 export function stopAgent() {
-  aragAnswerState.running = false;
+  const current = aragAnswerState.entries.slice(-1)[0];
+  if (current) {
+    current.running = false;
+  }
+}
+
+export function resetState() {
+  aragAnswerState.entries = [];
 }
