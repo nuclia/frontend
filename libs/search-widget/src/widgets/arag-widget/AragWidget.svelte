@@ -85,7 +85,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     setLang(lang);
 
-    triggerSearch
+    const subscription = triggerSearch
       .pipe(
         filter(() => !!session),
         switchMap(() =>
@@ -116,6 +116,11 @@
       });
 
     _ready.next(true);
+
+    return () => {
+      subscription.unsubscribe();
+      resetState();
+    };    
   });
 
   function onInput(question: string) {
