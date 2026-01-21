@@ -70,7 +70,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       this.currentValue.set(control.value || '');
 
       // Subscribe to value changes with debounce for syntax highlighting
-      control.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(300)).subscribe((value) => {
+      control.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(100)).subscribe((value) => {
         this.currentValue.set(value || '');
         this.highlightCode();
       });
