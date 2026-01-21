@@ -55,14 +55,14 @@
   let entriesContainerElement: HTMLDivElement | undefined = $state();
 
   let darkMode = $derived(mode === 'dark');
-  
+
   $effect(() => {
     if (entries.length > 0 && entriesContainerElement) {
-        entriesContainerElement.scrollTo({
-          top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
-          behavior: 'smooth',
-        });
-      }
+      entriesContainerElement.scrollTo({
+        top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
+        behavior: 'smooth',
+      });
+    }
   });
 
   onMount(() => {
@@ -85,7 +85,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     setLang(lang);
 
-    triggerSearch
+    const subscription = triggerSearch
       .pipe(
         filter(() => !!session),
         switchMap(() =>
@@ -116,6 +116,11 @@
       });
 
     _ready.next(true);
+
+    return () => {
+      subscription.unsubscribe();
+      resetState();
+    };
   });
 
   function onInput(question: string) {
@@ -130,57 +135,57 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  <style src="../../common/common-style.css"></style> 
+  <style src="../../common/common-style.css"></style>
   {#if $ready && !!svgSprite}
-  <div
-    class="sw-chat"
-    class:fullscreen>
-  <div
-    class="chat-container"
-    class:fullscreen
-    style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
+    <div
+      class="sw-chat"
+      class:fullscreen>
       <div
-        class="entries-container"
-        class:hidden={entries.length === 0}
-        bind:this={entriesContainerElement}>
+        class="chat-container"
+        class:fullscreen
+        style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
+        <div
+          class="entries-container"
+          class:hidden={entries.length === 0}
+          bind:this={entriesContainerElement}>
           {#each entries as entry, i}
-          <div class="chat-entry">
-            <div
-              class="question"
-              class:error={!!entry.error}>
-              <div class="chat-icon">
-                <Icon name="chat" />
+            <div class="chat-entry">
+              <div
+                class="question"
+                class:error={!!entry.error}>
+                <div class="chat-icon">
+                  <Icon name="chat" />
+                </div>
+                <div class="title-m">{entry.question}</div>
               </div>
-              <div class="title-m">{entry.question}</div>
+              <div class="answer">
+                {#if entry.answers.length > 0 || entry.error}
+                  <AragAnswer
+                    expanded={i === entries.length - 1}
+                    {entry} />
+                {/if}
+              </div>
             </div>
-            <div class="answer">
-              {#if entry.answers.length > 0 || entry.error}
-                <AragAnswer
-                  expanded={i === entries.length - 1}
-                  {entry} />
-              {/if}
-            </div>
-          </div>
           {/each}
         </div>
         {#if getCurrentEntry()?.running}
           <LoadingDots />
         {/if}
-        <div
-          class="input-container">
+        <div class="input-container">
           <ChatInput
             placeholder={$_('input.placeholder')}
             disabled={!!getCurrentEntry()?.running}
-            {fullscreen} onChange={onInput}/>
-            <div class="reset-button">
-              <Button
-                aspect="basic"
-                disabled={entries.length === 0}
-                size="small"
-                on:click={resetState}>
-                {$_('answer.reset')}
-              </Button>
-            </div>
+            {fullscreen}
+            onChange={onInput} />
+          <div class="reset-button">
+            <Button
+              aspect="basic"
+              disabled={entries.length === 0}
+              size="small"
+              on:click={resetState}>
+              {$_('answer.reset')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -188,7 +193,7 @@
   <div
     id="nuclia-glyphs-sprite"
     hidden>
-      {@html svgSprite}
+    {@html svgSprite}
   </div>
 </div>
 
