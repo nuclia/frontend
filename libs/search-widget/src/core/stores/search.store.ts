@@ -398,13 +398,6 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
   rangeCreationISO,
 ]).pipe(
   map(([filters, orFilterLogic, filterExpression, labelSets, rangeCreation]) => {
-    if (
-      ((filterExpression?.operator === 'and' || !filterExpression?.operator) && orFilterLogic) ||
-      (filterExpression?.operator === 'or' && !orFilterLogic)
-    ) {
-      // Filters cannot be combined if filters operator and filter expression operator are not the same
-      return filterExpression || {};
-    }
     const fieldFilters = {
       [orFilterLogic ? 'or' : 'and']: [
         ...(filters.entities || []).map((entity) => ({
@@ -451,6 +444,12 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     };
     const hasFieldFilters = Object.values(fieldFilters)[0].length > 0;
     const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
+    if (
+      filterExpression &&
+      cannotCombineFilters(hasFieldFilters, hasParagraphFilters, orFilterLogic, filterExpression)
+    ) {
+      return filterExpression;
+    }
     return {
       ...(filterExpression || {}),
       field:
@@ -472,6 +471,18 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     };
   }),
 );
+
+const cannotCombineFilters = (
+  hasFieldFilters: boolean,
+  hasParagraphFilters: boolean,
+  orFilterLogic: boolean,
+  prefilters: FilterExpression,
+) => {
+  // Cannot be combined when the logic operator is OR and either resource and paragraph filter types are included
+  const hasOrLogic = orFilterLogic || prefilters.operator === 'or';
+  const hasMultipleTypes = (hasFieldFilters && hasParagraphFilters) || (prefilters.field && prefilters.paragraph);
+  return hasOrLogic && hasMultipleTypes;
+};
 
 export const labelFilters = searchState.writer<LabelFilter[]>(
   (state) => state.filters.labels || [],
