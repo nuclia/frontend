@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { SelectAccountKbService } from '../select-account-kb.service';
 
 import { RouterModule } from '@angular/router';
-import { BackendConfigurationService, TranslatePipeMock } from '@flaps/core';
+import { BackendConfigurationService, TranslatePipeMock, SelectAccountKbService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
