@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { ExpirationModalComponent, TokenDialogComponent } from '@flaps/common';
+import { ExpirationModalComponent, TokenDialogComponent, KB_ROLE_TITLES, SORTED_KB_ROLES } from '@flaps/common';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 
 @Component({
   selector: 'app-service-access',

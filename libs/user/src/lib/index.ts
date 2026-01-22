@@ -1,6 +1,8 @@
 export * from './callback/callback.component';
 export * from './check-mail/check-mail.component';
 export * from './consent/consent.component';
+export * from './farewell';
+export * from './invite';
 export * from './login/login.component';
 export * from './logout/logout.component';
 export * from './magic/magic.component';
@@ -9,6 +11,7 @@ export * from './onboarding';
 export * from './password.validator';
 export * from './profile/profile.component';
 export * from './recover/recover.component';
+export * from './redirect';
 export * from './reset/reset.component';
 export * from './signup/signup.component';
 export * from './sso/sso-button.component';

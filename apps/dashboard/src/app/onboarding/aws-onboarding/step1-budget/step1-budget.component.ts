@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { BudgetComponent } from '../../../account/billing/usage/budget.component';
 import { AccountBudget } from '@flaps/core';
+import { BudgetComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-step1-budget',

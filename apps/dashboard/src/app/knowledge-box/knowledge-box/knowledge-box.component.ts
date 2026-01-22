@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import {
   catchError,
   distinctUntilKeyChanged,
@@ -71,7 +70,6 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.toaster.warning('api-key-management.expiration-warning');
       });
-
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),

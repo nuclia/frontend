@@ -5,9 +5,15 @@ import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { AppService, RemiMetricsService, UploadModule, UploadService } from '@flaps/common';
+import {
+  AccountStatusComponent,
+  AppService,
+  MetricsService,
+  RemiMetricsService,
+  UploadModule,
+  UploadService,
+} from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, ZoneService, STFPipesModule } from '@flaps/core';
-import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import {
@@ -18,7 +24,6 @@ import {
   PaTabsModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
-import { AccountStatusComponent } from '../../account/account-status/account-status.component';
 import { RouterModule } from '@angular/router';
 
 function createTranslateLoader() {

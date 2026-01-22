@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, tap } from 'rxjs';
-import { SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { Account } from '@nuclia/core';
+import { SDKService } from '../api';
+import { StaticEnvironmentConfiguration } from '../config';
+import { standaloneSimpleAccount } from '../models';
 
 @Injectable({
   providedIn: 'root',

@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 

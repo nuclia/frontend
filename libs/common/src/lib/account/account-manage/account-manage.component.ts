@@ -8,7 +8,7 @@ import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-import { Sluggable } from '@flaps/common';
+import { Sluggable } from '../../validators';
 
 @Component({
   selector: 'app-account-manage',

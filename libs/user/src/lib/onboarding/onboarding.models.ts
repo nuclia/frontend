@@ -23,4 +23,3 @@ export interface OnboardingStatus {
 }
 
 export type OnboardingStep = 'step1' | 'step2' | 'setting-up';
-export const GETTING_STARTED_DONE_KEY = 'NUCLIA_GETTING_STARTED_DONE';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus } from './onboarding.models';
+import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
-import { SDKService, STFUtils, UserService } from '@flaps/core';
+import { SDKService, STFUtils, UserService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';

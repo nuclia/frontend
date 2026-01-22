@@ -4,8 +4,8 @@ import { ModalRef, OptionModel, PaDropdownModule, PaModalModule } from '@guillot
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { Observable } from 'rxjs';
-import { ChartData } from '../../../account/metrics.service';
 import { UsageChartsComponent } from './usage-charts.component';
+import { ChartData } from '@flaps/common';
 
 export interface UsageModalConfig {
   processingChart: Observable<ChartData>;

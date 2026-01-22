@@ -1,4 +1,4 @@
-import { parseCsv } from '@flaps/common';
+import { parseCsv } from './csv-parser';
 
 describe('csv-parser', () => {
   describe('parseCsv', () => {

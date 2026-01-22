@@ -34,9 +34,8 @@ import {
   setAgentGuard,
   setKbGuard,
 } from '@flaps/common';
+import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
-import { FarewellComponent } from './farewell/farewell.component';
-import { FeedbackComponent } from './farewell/feedback.component';
 import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
@@ -45,9 +44,6 @@ import {
 } from './knowledge-box';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
-import { InviteComponent } from './onboarding/invite/invite.component';
-import { inviteGuard } from './onboarding/invite/invite.guard';
-import { RedirectComponent } from './redirect/redirect.component';
 import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [
@@ -77,7 +73,8 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            loadChildren: () => import('./account/account.module').then((m) => m.AccountModule),
+            loadChildren: () =>
+              import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
           },
           {
             path: `:zone/:kb`,

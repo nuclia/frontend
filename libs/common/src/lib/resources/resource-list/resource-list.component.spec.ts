@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ResourceListService } from '@flaps/common';
 import {
   BackendConfigurationService,
   FeaturesService,
@@ -22,6 +21,7 @@ import { ErrorResourcesTableComponent } from './error-resources-table/error-reso
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { ResourceListComponent } from './resource-list.component';
 import { ResourcesTableComponent } from './resources-table/resources-table.component';
+import { ResourceListService } from './resource-list.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
-import { ResourceWithLabels } from '@flaps/common';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { SisIconsModule } from '@nuclia/sistema';
 import { RouterModule } from '@angular/router';
+import { ResourceWithLabels } from '../resource-list.model';
 
 @Component({
   selector: 'stf-title-cell',
