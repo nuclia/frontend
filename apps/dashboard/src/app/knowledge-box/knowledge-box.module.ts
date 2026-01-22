@@ -7,9 +7,6 @@ import { RouterModule } from '@angular/router';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxUsersComponent } from './knowledge-box-users';
-import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
-import { ServiceAccessComponent } from './service-access/service-access.component';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -77,19 +74,7 @@ import { STFPipesModule } from '@flaps/core';
     STFPipesModule,
     RangeChartComponent,
   ],
-  declarations: [
-    KnowledgeBoxComponent,
-    KnowledgeBoxHomeComponent,
-    KnowledgeBoxUsersComponent,
-    KnowledgeBoxKeysComponent,
-    ServiceAccessComponent,
-  ],
-  exports: [
-    KnowledgeBoxComponent,
-    KnowledgeBoxHomeComponent,
-    KnowledgeBoxUsersComponent,
-    KnowledgeBoxKeysComponent,
-    ServiceAccessComponent,
-  ],
+  declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
+  exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
 })
 export class KnowledgeBoxModule {}

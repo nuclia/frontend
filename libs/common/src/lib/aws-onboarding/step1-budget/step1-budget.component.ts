@@ -4,7 +4,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { AccountBudget } from '@flaps/core';
-import { BudgetComponent } from '@flaps/common';
+import { BudgetComponent } from '../../account';
 
 @Component({
   selector: 'app-step1-budget',

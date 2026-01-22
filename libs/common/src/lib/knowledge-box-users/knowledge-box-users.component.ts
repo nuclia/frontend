@@ -1,5 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService } from '@flaps/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { UsersManageModule } from '../users-manage';
 
 @Component({
   selector: 'app-knowledge-box-users',
@@ -17,7 +20,8 @@ import { SDKService } from '@flaps/core';
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, TranslateModule, UsersManageModule],
 })
 export class KnowledgeBoxUsersComponent {
   kb = this.sdk.currentKb;

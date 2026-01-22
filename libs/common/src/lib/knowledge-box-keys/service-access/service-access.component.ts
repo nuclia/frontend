@@ -1,7 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ExpirationModalComponent, TokenDialogComponent, KB_ROLE_TITLES, SORTED_KB_ROLES } from '@flaps/common';
 import { FeaturesService, SDKService } from '@flaps/core';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { combineLatest, Observable, Subject } from 'rxjs';
@@ -12,7 +15,8 @@ import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operat
   templateUrl: './service-access.component.html',
   styleUrls: ['./service-access.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [TranslateModule, PaButtonModule, ReactiveFormsModule, PaTextFieldModule, CommonModule],
 })
 export class ServiceAccessComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;

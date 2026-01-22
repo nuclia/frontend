@@ -1,0 +1,300 @@
+{
+  "name": "rao",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/rao/src",
+  "prefix": "app",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist/apps/rao",
+        "subresourceIntegrity": true,
+        "index": "apps/rao/src/index.html",
+        "main": "apps/rao/src/main.ts",
+        "polyfills": "apps/rao/src/polyfills.ts",
+        "tsConfig": "apps/rao/tsconfig.app.json",
+        "allowedCommonJsDependencies": [],
+        "assets": [
+          "apps/rao/src/favicon.ico",
+          "apps/rao/src/assets",
+          "apps/rao/src/manifest.webmanifest",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n/common"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/user/src/assets/i18n",
+            "output": "assets/i18n/user"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sync/src/assets/i18n",
+            "output": "assets/i18n/sync"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/rao/src/environments_config/local",
+            "output": "assets/deployment"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/rao/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/rao/src"]
+        },
+        "scripts": [],
+        "ngswConfigPath": "apps/rao/src/ngsw-config.json",
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "2mb",
+            "maximumError": "30mb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "50kb",
+            "maximumError": "100kb"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "all",
+          "serviceWorker": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/rao/src/environments/environment.ts",
+              "with": "apps/rao/src/environments/environment.prod.ts"
+            }
+          ],
+          "assets": [
+            "apps/rao/src/favicon.ico",
+            "apps/rao/src/assets",
+            "apps/rao/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/rao/src/environments_config/production",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-stage": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/rao/src/favicon.ico",
+            "apps/rao/src/assets",
+            "apps/rao/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/rao/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-dev": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/rao/src/favicon.ico",
+            "apps/rao/src/assets",
+            "apps/rao/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/rao/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-prod": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/rao/src/favicon.ico",
+            "apps/rao/src/assets",
+            "apps/rao/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/rao/src/environments_config/local-prod",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "buildTarget": "rao:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "rao:build:production"
+        },
+        "local-stage": {
+          "buildTarget": "rao:build:local-stage"
+        },
+        "local-dev": {
+          "buildTarget": "rao:build:local-dev"
+        },
+        "local-prod": {
+          "buildTarget": "rao:build:local-prod"
+        }
+      },
+      "defaultConfiguration": "local-stage",
+      "continuous": true
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "rao:build"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/rao"],
+      "options": {
+        "jestConfig": "apps/rao/jest.config.js"
+      }
+    }
+  }
+}
