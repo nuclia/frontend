@@ -25,6 +25,7 @@ export class KbSwitchComponent implements OnDestroy {
   showKbSelector: Observable<boolean> = this.standalone
     ? of(true)
     : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length + arags.length > 1));
+  inRaoApp = this.navigation.inRaoApp;
 
   constructor(
     private sdk: SDKService,

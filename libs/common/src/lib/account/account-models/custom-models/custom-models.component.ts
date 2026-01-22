@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
-import { SDKService, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { CustomModel, ModelType } from '@nuclia/core';
@@ -45,6 +45,7 @@ export class CustomModelsComponent implements OnInit {
   private zoneService = inject(ZoneService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+  private navigation = inject(NavigationService);
 
   _kbConfigs = new ReplaySubject<{ [id: string]: any }>(1);
   @Input() set kbConfigs(value: { [id: string]: any } | undefined) {
@@ -53,7 +54,9 @@ export class CustomModelsComponent implements OnInit {
     }
   }
 
-  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList]).pipe(map(([kbs, arags]) => kbs.concat(arags)));
+  kbList = combineLatest([this.navigation.inRaoApp ? of([]) : this.sdk.kbList, this.sdk.aragList]).pipe(
+    map(([kbs, arags]) => kbs.concat(arags)),
+  );
   selection: { [kbId: string]: ModelSelection[] } = {};
   hasCustomModels = false;
   isSaving = false;

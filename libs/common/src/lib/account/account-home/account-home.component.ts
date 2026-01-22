@@ -32,6 +32,7 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
   selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
+  inRaoApp = this.navigation.inRaoApp;
 
   kbs = this.sdk.kbList;
   usage?: { [key: string]: UsagePoint[] };

@@ -33,6 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
+  inRaoApp = this.navigationService.inRaoApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(

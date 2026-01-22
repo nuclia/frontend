@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, SDKService, Zone } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, Zone } from '@flaps/core';
 import {
   ModalRef,
   OptionModel,
@@ -12,7 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AssumeRole, ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
-import { combineLatest, defer, filter, forkJoin, map, shareReplay, startWith, switchMap, take } from 'rxjs';
+import { combineLatest, defer, filter, forkJoin, map, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { UserKeysComponent, UserKeysForm } from '../../../ai-models';
 
@@ -35,6 +35,7 @@ import { UserKeysComponent, UserKeysForm } from '../../../ai-models';
 export class CreateConfigComponent implements OnInit {
   sdk = inject(SDKService);
   features = inject(FeaturesService);
+  private navigation = inject(NavigationService);
 
   zones = this.modal.config.data?.zones || [];
   bedrockZones = this.modal.config.data?.bedrockZones || [];
@@ -107,9 +108,11 @@ export class CreateConfigComponent implements OnInit {
 
   isRestricted = false;
   selectedKbs: { [key: string]: boolean } = {};
-  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList, this.currentZone]).pipe(
-    map(([kbs, arags, zone]) => kbs.concat(arags).filter((item) => item.zone === zone?.slug)),
-  );
+  kbList = combineLatest([
+    this.navigation.inRaoApp ? of([]) : this.sdk.kbList,
+    this.sdk.aragList,
+    this.currentZone,
+  ]).pipe(map(([kbs, arags, zone]) => kbs.concat(arags).filter((item) => item.zone === zone?.slug)));
 
   get invalid() {
     return this.configForm.invalid || this.userKeysForm?.invalid;

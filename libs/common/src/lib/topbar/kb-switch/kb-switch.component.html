@@ -11,20 +11,22 @@
 }
 
 <pa-dropdown #kbSwitch>
-  @for (kb of knowledgeBoxes | async; track kb.id) {
-    <pa-option
-      [disabled]="!kb.role_on_kb && !standalone"
-      iconOnRight
-      [paTooltip]="kb.title || ''"
-      [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
-      (selectOption)="goToKb(kb)">
-      <div class="title-wrapper">
-        <pa-icon
-          name="knowledge-box"
-          size="small"></pa-icon>
-        {{ kb.title }}
-      </div>
-    </pa-option>
+  @if (!inRaoApp) {
+    @for (kb of knowledgeBoxes | async; track kb.id) {
+      <pa-option
+        [disabled]="!kb.role_on_kb && !standalone"
+        iconOnRight
+        [paTooltip]="kb.title || ''"
+        [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
+        (selectOption)="goToKb(kb)">
+        <div class="title-wrapper">
+          <pa-icon
+            name="knowledge-box"
+            size="small"></pa-icon>
+          {{ kb.title }}
+        </div>
+      </pa-option>
+    }
   }
   @if (!standalone) {
     @for (arag of arags | async; track arag.id) {
