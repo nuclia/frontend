@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { AnalyticsService, SDKService, STFUtils } from '@flaps/core';
+import { AnalyticsService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Observable, of, ReplaySubject, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
@@ -27,12 +27,14 @@ export class OnboardingComponent {
   learningConfig?: LearningConfigurationForm;
   account?: Account;
   creatingAccount = false;
+  inRaoApp = this.navigation.inRaoApp;
 
   constructor(
     private onboardingService: OnboardingService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private analytics: AnalyticsService,
+    private navigation: NavigationService,
   ) {}
 
   goBack(): void {

@@ -6,7 +6,7 @@
       <label
         for="kbName"
         class="title-s">
-        {{ 'onboarding.step2.kb-name' | translate }}
+        {{ (inRaoApp ? 'onboarding.step2.rao-name' : 'onboarding.step2.kb-name') | translate }}
       </label>
       <pa-input
         id="kbName"
