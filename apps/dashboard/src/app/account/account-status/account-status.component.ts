@@ -56,7 +56,7 @@ export class AccountStatusComponent {
   }
 
   contact() {
-    this.window.location.href = 'mailto:eudald@nuclia.com';
+    this.window.location.href = 'mailto:Sales.AgenticRAG@progress.com';
   }
 
   checkIfTrialExpired() {
