@@ -6,9 +6,9 @@ import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pa
 import { RedirectComponent } from './redirect.component';
 
 @NgModule({
-  imports: [CommonModule, PaButtonModule, PaIconModule, TranslateModule.forChild(), PaTogglesModule],
+  imports: [],
   exports: [],
-  declarations: [RedirectComponent],
+  declarations: [],
   providers: [],
 })
 export class RedirectModule {}

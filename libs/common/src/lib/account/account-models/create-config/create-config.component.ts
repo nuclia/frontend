@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserKeysComponent, UserKeysForm } from '@flaps/common';
 import { FeaturesService, SDKService, Zone } from '@flaps/core';
 import {
   ModalRef,
@@ -15,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AssumeRole, ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
 import { combineLatest, defer, filter, forkJoin, map, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { UserKeysComponent, UserKeysForm } from '../../../ai-models';
 
 @Component({
   imports: [

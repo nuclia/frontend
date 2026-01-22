@@ -1,12 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
+import {
+  AppService,
+  ChartData,
+  MetricsService,
+  RangeChartData,
+  RemiMetricsService,
+  searchResources,
+} from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ChartData, MetricsService } from '../../account/metrics.service';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 
 @Component({

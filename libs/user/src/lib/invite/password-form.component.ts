@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { IErrorMessages, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
-import { SamePassword } from '@nuclia/user';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
+import { SamePassword } from '../password.validator';
 
 @Component({
   selector: 'app-password-form',

@@ -7,10 +7,9 @@ import { RouterModule } from '@angular/router';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-users';
+import { KnowledgeBoxUsersComponent } from './knowledge-box-users';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
-import { AccountStatusComponent } from '../account/account-status/account-status.component';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -33,6 +32,8 @@ import {
   RangeChartComponent,
   TokenDialogModule,
   UploadModule,
+  UsersManageModule,
+  AccountStatusComponent,
 } from '@flaps/common';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
 import { STFPipesModule } from '@flaps/core';

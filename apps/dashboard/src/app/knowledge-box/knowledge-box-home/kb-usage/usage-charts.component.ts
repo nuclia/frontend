@@ -1,7 +1,6 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, Input, numberAttribute } from '@angular/core';
 
-import { ChartsModule } from '@flaps/common';
-import { ChartData } from '../../../account/metrics.service';
+import { ChartsModule, ChartData } from '@flaps/common';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 

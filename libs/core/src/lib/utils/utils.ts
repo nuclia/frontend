@@ -7,6 +7,8 @@ export const MIN_PASSWORD_LENGTH = 8;
 
 export const DEFAULT_LANG = 'en';
 
+export const GETTING_STARTED_DONE_KEY = 'NUCLIA_GETTING_STARTED_DONE';
+
 const DATE_FORMATS: { [locale: string]: string } = {
   ca: 'dd/LL/yyyy',
   es: 'dd/LL/yyyy',

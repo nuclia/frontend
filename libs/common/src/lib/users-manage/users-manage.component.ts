@@ -3,10 +3,10 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
-import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
 import { FullKbUser, KBRoles, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 
 type Order = 'role' | 'name';
 

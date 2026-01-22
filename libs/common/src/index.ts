@@ -1,6 +1,7 @@
 /*
  * Public API Surface of @flaps/common
  */
+export * from './lib/account';
 export * from './lib/ai-models';
 export * from './lib/base';
 export * from './lib/charts';
@@ -26,4 +27,6 @@ export * from './lib/tasks-automation';
 export * from './lib/token-dialog';
 export * from './lib/topbar';
 export * from './lib/upload';
+export * from './lib/users-manage';
+export * from './lib/utils';
 export * from './lib/validators';

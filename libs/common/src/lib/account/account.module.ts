@@ -3,17 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import {
-  accountOwnerGuard,
-  agentFeatureEnabledGuard,
-  ChartsModule,
-  HintModule,
-  KbCreationComponent,
-  KnowledgeBoxSettingsModule,
-  NavbarModule,
-  PipesModule,
-  TokenDialogModule,
-} from '@flaps/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
@@ -31,7 +20,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
-import { UsersManageModule } from '../knowledge-box';
+import { UsersManageModule } from '../users-manage';
 import { AccountAragComponent } from './account-arag/account-arag.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
@@ -55,6 +44,14 @@ import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.co
 import { UsageTableComponent } from './billing/usage/usage-table.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
 import { AccountModelsComponent } from './account-models/account-models.component';
+import { accountOwnerGuard, agentFeatureEnabledGuard } from '../guards';
+import { KbCreationComponent } from '../kb-creation';
+import { PipesModule } from '../pipes';
+import { TokenDialogModule } from '../token-dialog';
+import { ChartsModule } from '../charts';
+import { NavbarModule } from '../navbar';
+import { HintModule } from '../hint';
+import { KnowledgeBoxSettingsModule } from '../knowledge-box-settings';
 
 const routes: Routes = [
   {
