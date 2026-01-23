@@ -68,9 +68,13 @@ podDisruptionBudget:
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
-envFrom:
-  - configMapRef:
-      name: app-config
+
+# envFrom:
+#   - configMapRef:
+#       name: config-map-name
+#   - secretRef:
+#       name: secret-name
+
 ## Intended to be used with secret
 # env:
 #   SITE_KEY: XXX
