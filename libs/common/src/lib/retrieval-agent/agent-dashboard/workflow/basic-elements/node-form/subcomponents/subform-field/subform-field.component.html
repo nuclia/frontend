@@ -19,7 +19,7 @@
 
   <div
     class="subform-content"
-    *ngIf="resolvedSchema && subFormGroup">
+    *ngIf="subFormGroup && renderableFields.length > 0">
     <div [formGroup]="subFormGroup">
       <!-- Render fields directly using the same logic as FieldRendererComponent but without circular dependency -->
       <div
@@ -145,8 +145,8 @@
   </div>
 
   <div
-    *ngIf="!resolvedSchema"
+    *ngIf="renderableFields.length === 0"
     class="subform-placeholder">
-    <em>Unable to resolve schema for: {{ property.$ref || 'unknown reference' }}</em>
+    <em>Unable to resolve schema.</em>
   </div>
 </div>
