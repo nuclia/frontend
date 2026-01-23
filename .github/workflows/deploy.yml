@@ -35,6 +35,7 @@ jobs:
       deploy-rao-widget: ${{ steps.check-deploy.outputs.deploy-rao-widget }}
       deploy-sdk: ${{ steps.check-deploy.outputs.deploy-sdk }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
+      deploy-rao: ${{ steps.check-deploy.outputs.deploy-rao }}
       deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}

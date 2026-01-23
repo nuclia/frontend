@@ -26,8 +26,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
-    private sdk: SDKService,
     private paTranslate: PaTranslateService,
+    private sdk: SDKService,
   ) {
     this.unsubscribeAll = new Subject();
 
