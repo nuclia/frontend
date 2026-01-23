@@ -1,27 +1,28 @@
 <script lang="ts">
-  import { type TypedResult, hideThumbnails } from '../../core';
+  import { type TypedResult } from '../../core';
   import { ResultRow } from '../result-row';
 
   interface Props {
     sources?: TypedResult[];
     selected: number | undefined;
     answerRank: number | undefined;
+    canOpenViewer: boolean;
   }
 
-  let { sources = [], selected, answerRank }: Props = $props();
+  let { sources = [], selected, answerRank, canOpenViewer }: Props = $props();
 </script>
 
 <div class="sw-sources">
-  {#each sources as source, i}
+  {#each sources as source}
     <div
-      class="source"
-      class:with-thumbnail={!$hideThumbnails}>
+      class="source">
       <div class="paragraph">
         {#if source.paragraphs?.[0] || (source.ranks && source.ranks.length > 0)}
           <ResultRow
             result={source}
             selected={selected !== undefined ? selected + 1 : undefined}
             isSource={true}
+            {canOpenViewer}
             {answerRank} />
         {/if}
       </div>

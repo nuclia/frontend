@@ -48,9 +48,10 @@
     selected?: number;
     isSource?: boolean;
     answerRank: number | undefined;
+    canOpenViewer?: boolean;
   }
 
-  let { result, selected = 0, isSource = false, answerRank }: Props = $props();
+  let { result, selected = 0, isSource = false, answerRank, canOpenViewer = true }: Props = $props();
 
   let thumbnailLoaded = $state(false);
 
@@ -97,7 +98,7 @@
     forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([_url, openNewTab]) => {
       if (_url) {
         goToUrl(_url, metaKeyOn || openNewTab);
-      } else {
+      } else if (canOpenViewer) {
         if (result.field) {
           viewerData.set({
             result,
@@ -196,13 +197,25 @@
       <h3
         class="ellipsis title-m result-title"
         class:no-thumbnail={$hideThumbnails}>
+        {#if isSource && result.ranks}
+          <div class="rank-container">
+            {#each result.ranks as rank}
+              <div
+                class="number body-m"
+                class:selected={selected === rank}
+                data-scroll-ref={rank}>
+                {rank}
+              </div>
+            {/each}
+          </div>
+        {/if}
         {#if $url}
           <a
             href={$url}
             onclick={preventDefault(() => clickOnResult())}>
             {result?.title}
           </a>
-        {:else}
+        {:else if canOpenViewer}
           <span
             tabindex="0"
             onclick={() => clickOnResult()}
@@ -211,6 +224,8 @@
             }}>
             {result?.title}
           </span>
+        {:else}
+          {result?.title}
         {/if}
       </h3>
     </div>
@@ -228,18 +243,6 @@
           class:can-expand={paragraphs.length > NUM_PARAGRAPHS}
           style:--non-toggled-paragraph-count={nonToggledParagraphCount}
           style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
-          {#if isSource && paragraphs.length === 0 && result.ranks}
-            <div class="rank-container">
-              {#each result.ranks as rank}
-                <div
-                  class="number body-m"
-                  class:selected={selected === rank}
-                  data-scroll-ref={rank}>
-                  {rank}
-                </div>
-              {/each}
-            </div>
-          {/if}
           {#each paragraphs as paragraph, index}
             <div class="paragraph-container">
               <div
@@ -258,6 +261,7 @@
                   resultType={result.resultType}
                   expanded={$collapseTextBlocks}
                   ellipsis={true}
+                  disabled={!$url && !canOpenViewer}
                   minimized={isMobile}
                   on:open={() => clickOnResult(paragraph, index)}
                   on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />

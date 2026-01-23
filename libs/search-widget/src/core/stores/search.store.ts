@@ -1043,6 +1043,16 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
 
 const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2})/g);
 
+export function parseFootenotes(text: string): { block: string; index: number }[] {
+  const references = (text || '').matchAll(FOOTNOTES_REF);
+  const refIndexes: { block: string; index: number }[] = [];
+  for (const match of references) {
+    refIndexes.push({ block: match[2], index: parseInt(match[1]) });
+  }
+  refIndexes.sort((entry1, entry2) => entry1.index - entry2.index);
+  return refIndexes;
+}
+
 export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   if (!answer.citations && !answer.citation_footnote_to_context) {
     return [];
@@ -1061,14 +1071,9 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
     // actual paragraph ids.
     // To attribute the proper citation to the proper marker, we extract the marker numbers from the
     // generated answer, and we sort the list of sources accordingly.
-    const references = (answer.text || '').matchAll(FOOTNOTES_REF);
-    const refIndexes: { block: string; index: number }[] = [];
-    for (const match of references) {
-      refIndexes.push({ block: match[2], index: parseInt(match[1]) });
-    }
-    const ordered = refIndexes.sort((entry1, entry2) => entry1.index - entry2.index).map((entry) => entry.block);
+    const orderedBlocks = parseFootenotes(answer.text || '').map((entry) => entry.block);
     citationIds = Object.entries(answer.citation_footnote_to_context)
-      .sort((entry1, entry2) => ordered.indexOf(entry1[0]) - ordered.indexOf(entry2[0]))
+      .sort((entry1, entry2) => orderedBlocks.indexOf(entry1[0]) - orderedBlocks.indexOf(entry2[0]))
       .map((entry) => entry[1]);
   }
   const augmentedContext = answer.augmentedContext;

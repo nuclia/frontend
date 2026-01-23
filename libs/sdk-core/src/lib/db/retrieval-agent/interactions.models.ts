@@ -53,6 +53,7 @@ export interface AragResponse {
 export interface AragAnswer {
   exception: ARAGException | null;
   answer: string | null;
+  answer_citations: Memory.Citations | null;
   agent_request: string | null;
   generated_text: string | null;
   step: Memory.Step | null;
