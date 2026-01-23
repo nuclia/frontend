@@ -9,6 +9,7 @@ on:
 env:
   APP_IMAGE_NAME: app
   MANAGER_IMAGE_NAME: manager
+  RAO_IMAGE_NAME: rao
   CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
@@ -267,7 +268,25 @@ jobs:
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
-          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' && steps.check-deploy.outputs.deploy-app == 'yes' }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-app == 'yes' }}
+          push: true
+          tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
+        if: steps.check-deploy.outputs.deploy-rao == 'yes'
+        with:
+          build-arg: |
+            appId=rao
+            appFolder=rao
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.RAO_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
@@ -440,13 +459,88 @@ jobs:
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
+  deploy-rao:
+    name: Deploy rao
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.deploy-rao == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "rao",
+              "chart-version": "${{ steps.chart-version-rao.outputs.chart-version }}",
+              "component-type": "global"
+            }
+          ]
+        }
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          token_format: access_token
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Calculate short sha
+        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@v6
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get chart version
+        id: chart-version-rao
+        run: |
+          VERSION=`cat apps/rao/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.RAO_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-rao.outputs.chart-version }}
+          image-name: ${{ env.RAO_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: './charts/${{ env.RAO_IMAGE_NAME }}'
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
+
   send-to-promotion:
     runs-on: ubuntu-latest
-    needs: [deploy-manager, deploy-app]
+    needs: [deploy-manager, deploy-app, deploy-rao]
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
-        needs.deploy-app.result != 'skipped' )
+        needs.deploy-app.result != 'skipped' ||
+        needs.deploy-rao.result != 'skipped' )
     steps:
       - name: Generate a token
         id: app-token
