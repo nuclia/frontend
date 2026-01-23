@@ -52,8 +52,10 @@ spec:
         env:
 {{ toYaml . | indent 8 }}
 {{ end }}
-{{- with .Values.envFrom }}
         envFrom:
+          - configMapRef:
+              name: "{{ .Release.Name }}"
+{{- with .Values.envFrom }}
 {{- toYaml . | nindent 10 }}
 {{- end }}
         readinessProbe:
