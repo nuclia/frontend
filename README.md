@@ -1,7 +1,7 @@
 ![CI](https://github.com/nuclia/frontend/actions/workflows/deploy.yml/badge.svg)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_shield)
 
-# Nuclia frontend apps and libraries
+# Nuclia frontend apps and libraries.
 
 ## Table of content
 
