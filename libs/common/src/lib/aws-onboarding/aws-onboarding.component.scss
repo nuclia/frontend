@@ -1,0 +1,30 @@
+@use 'apps/rao/src/variables' as *;
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  max-height: calc(100vh - #{rhythm(14)});
+  width: rhythm(60);
+
+  h1 {
+    margin-bottom: 0;
+  }
+  p.page-description {
+    color: $color-neutral-regular;
+    margin-bottom: 0;
+
+    @include body-m();
+  }
+
+  nsi-info-card {
+    margin-top: rhythm(1);
+  }
+
+  footer {
+    display: flex;
+    gap: rhythm(3);
+    justify-content: right;
+    padding: rhythm(2) 0;
+  }
+}

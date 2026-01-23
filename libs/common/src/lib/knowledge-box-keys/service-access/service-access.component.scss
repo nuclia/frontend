@@ -1,0 +1,85 @@
+@use 'apps/rao/src/variables' as *;
+
+.service-access-container {
+  h4 {
+    margin-bottom: rhythm(0.5);
+  }
+
+  form {
+    background-color: $color-light-stronger;
+    margin-bottom: rhythm(3);
+    max-width: 1000px;
+
+    .form-content {
+      display: flex;
+      gap: rhythm(1);
+      pa-select {
+        width: rhythm(20);
+      }
+    }
+  }
+
+  .container {
+    background-color: $color-light-stronger;
+    max-width: 1000px;
+    margin: rhythm(3) 0;
+  }
+
+  .service-access-list {
+    border-top: 1px solid $color-dark-stronger;
+  }
+
+  .service-access {
+    border-bottom: 1px solid $color-neutral-light;
+
+    .service-access-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      min-height: rhythm(4);
+    }
+
+    .service-access-title {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.5);
+
+      .service-access-title-arrow {
+        transition: transform $transition-response;
+        &.expanded {
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    .service-access-actions {
+      display: flex;
+      gap: rhythm(1);
+    }
+
+    .service-access-keys {
+      display: none;
+      padding: 0 0 rhythm(1.5) rhythm(2);
+
+      &.expanded {
+        display: block;
+      }
+    }
+    .service-access-key {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      height: rhythm(3);
+      font-size: var(--stf-font-size-ssmall);
+      width: 100%;
+
+      .service-access-key-actions {
+        text-align: right;
+      }
+    }
+
+    .delete-key {
+      margin-right: rhythm(0.25);
+    }
+  }
+}

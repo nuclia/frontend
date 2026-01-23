@@ -1,4 +1,4 @@
-@if ((kbs | async) !== null) {
+@if ((kbs | async) !== null || (arags | async) !== null) {
   <div class="select-kb">
     <div class="select-kb-header">
       @if (!standalone) {
@@ -71,38 +71,40 @@
               }
             }
           }
-          @for (kb of kbList; track kb.id) {
-            @if (kb.id) {
-              <a
-                class="kb"
-                data-cy="kb-list-item"
-                [class.disabled]="!kb.role_on_kb"
-                (click)="goToKb(kb)">
-                @if (standalone) {
-                  <pa-button
-                    class="delete-btn"
-                    data-cy="delete-kb-button"
-                    icon="trash"
-                    aspect="basic"
-                    kind="destructive"
-                    size="small"
-                    (click)="deleteKb($event, kb.id, kb.zone, kb.title)"></pa-button>
-                } @else {
+          @if (!inRaoApp) {
+            @for (kb of kbList; track kb.id) {
+              @if (kb.id) {
+                <a
+                  class="kb"
+                  data-cy="kb-list-item"
+                  [class.disabled]="!kb.role_on_kb"
+                  (click)="goToKb(kb)">
+                  @if (standalone) {
+                    <pa-button
+                      class="delete-btn"
+                      data-cy="delete-kb-button"
+                      icon="trash"
+                      aspect="basic"
+                      kind="destructive"
+                      size="small"
+                      (click)="deleteKb($event, kb.id, kb.zone, kb.title)"></pa-button>
+                  } @else {
+                    <pa-icon
+                      size="small"
+                      name="knowledge-box"></pa-icon>
+                  }
+
+                  <span
+                    class="kb-title"
+                    [paTooltip]="'select.kb-tooltip' | translate: { kb: kb.title }">
+                    {{ kb.title }}
+                  </span>
+
                   <pa-icon
-                    size="small"
-                    name="knowledge-box"></pa-icon>
-                }
-
-                <span
-                  class="kb-title"
-                  [paTooltip]="'select.kb-tooltip' | translate: { kb: kb.title }">
-                  {{ kb.title }}
-                </span>
-
-                <pa-icon
-                  name="chevron-right"
-                  size="small"></pa-icon>
-              </a>
+                    name="chevron-right"
+                    size="small"></pa-icon>
+                </a>
+              }
             }
           }
         </div>
@@ -122,7 +124,7 @@
     </div>
 
     <div class="select-kb-footer">
-      @if (standalone || (canAddKb | async) === true) {
+      @if (!inRaoApp && (standalone || (canAddKb | async) === true)) {
         <pa-button
           data-cy="create-kb-button"
           aspect="basic"

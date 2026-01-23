@@ -33,17 +33,14 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
+  awsGuard,
+  AwsOnboardingComponent,
+  KnowledgeBoxKeysComponent,
+  KnowledgeBoxUsersComponent,
 } from '@flaps/common';
 import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
-import {
-  KnowledgeBoxComponent,
-  KnowledgeBoxHomeComponent,
-  KnowledgeBoxKeysComponent,
-  KnowledgeBoxUsersComponent,
-} from './knowledge-box';
-import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
-import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
+import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [

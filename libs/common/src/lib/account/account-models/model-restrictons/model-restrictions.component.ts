@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IKnowledgeBoxItem, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
@@ -28,8 +28,11 @@ export class ModelRestrictionsComponent implements OnInit {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+  private navigation = inject(NavigationService);
 
-  kbList = combineLatest([this.sdk.kbList, this.sdk.aragList]).pipe(map(([kbs, arags]) => kbs.concat(arags)));
+  kbList = combineLatest([this.navigation.inRaoApp ? of([]) : this.sdk.kbList, this.sdk.aragList]).pipe(
+    map(([kbs, arags]) => kbs.concat(arags)),
+  );
   selection: { [kbId: string]: boolean } = {};
   isLoading = true;
   isSaving = false;

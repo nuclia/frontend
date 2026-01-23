@@ -11,6 +11,8 @@ const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
   providedIn: 'root',
 })
 export class NavigationService {
+  inRaoApp = this.environment.client === 'rao';
+
   constructor(
     private router: Router,
     private authService: AuthService,

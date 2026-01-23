@@ -1,0 +1,11 @@
+{
+  "version": "local-prod",
+  "production": false,
+  "remoteLogin": true,
+  "backend": {
+    "app": "app",
+    "apiOrigin": "https://rag.progress.cloud",
+    "cdn": "https://cdn.rag.progress.cloud",
+    "apiPath": "/api"
+  }
+}

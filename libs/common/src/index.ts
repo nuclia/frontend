@@ -3,6 +3,7 @@
  */
 export * from './lib/account';
 export * from './lib/ai-models';
+export * from './lib/aws-onboarding';
 export * from './lib/base';
 export * from './lib/charts';
 export * from './lib/directives';
@@ -11,7 +12,9 @@ export * from './lib/features';
 export * from './lib/guards';
 export * from './lib/hint';
 export * from './lib/kb-creation';
+export * from './lib/knowledge-box-keys';
 export * from './lib/knowledge-box-settings';
+export * from './lib/knowledge-box-users';
 export * from './lib/metrics';
 export * from './lib/navbar';
 export * from './lib/page-not-found';

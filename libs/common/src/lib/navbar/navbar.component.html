@@ -343,16 +343,18 @@
               <span class="nav-link-title">{{ 'navbar.account-settings' | translate }}</span>
             </a>
           </div>
-          <div class="group-items">
-            <a
-              [routerLink]="(accountUrl | async) + '/kbs'"
-              routerLinkActive="active"
-              data-cy="go-to-account-kbs"
-              class="nav-link">
-              <pa-icon name="knowledge-box"></pa-icon>
-              <span class="nav-link-title">{{ 'navbar.manage-kbs' | translate }}</span>
-            </a>
-          </div>
+          @if (!inRaoApp) {
+            <div class="group-items">
+              <a
+                [routerLink]="(accountUrl | async) + '/kbs'"
+                routerLinkActive="active"
+                data-cy="go-to-account-kbs"
+                class="nav-link">
+                <pa-icon name="knowledge-box"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.manage-kbs' | translate }}</span>
+              </a>
+            </div>
+          }
           <div class="group-items">
             <a
               [routerLink]="(accountUrl | async) + '/users'"

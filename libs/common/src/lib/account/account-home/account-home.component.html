@@ -16,31 +16,33 @@
       @if (isTrial | async) {
         <app-account-status></app-account-status>
       }
-      <div>
-        <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
-        @if (account$ | async; as account) {
-          <ul class="kb-list">
-            @for (kb of kbs | async; track kb.id) {
-              <li
-                class="kb-item"
-                [class.disabled]="!kb.role_on_kb"
-                (click)="kb.role_on_kb ? goToKb(account.slug, kb) : null">
-                {{ kb.title }}
-                @if (kb.state === 'PRIVATE') {
-                  <pa-icon
-                    size="small"
-                    name="lock"></pa-icon>
-                }
-                @if (tokensCount?.[kb.id]; as tokens) {
-                  @if (tokens > 1) {
-                    <span class="tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+      @if (!inRaoApp) {
+        <div>
+          <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
+          @if (account$ | async; as account) {
+            <ul class="kb-list">
+              @for (kb of kbs | async; track kb.id) {
+                <li
+                  class="kb-item"
+                  [class.disabled]="!kb.role_on_kb"
+                  (click)="kb.role_on_kb ? goToKb(account.slug, kb) : null">
+                  {{ kb.title }}
+                  @if (kb.state === 'PRIVATE') {
+                    <pa-icon
+                      size="small"
+                      name="lock"></pa-icon>
                   }
-                }
-              </li>
-            }
-          </ul>
-        }
-      </div>
+                  @if (tokensCount?.[kb.id]; as tokens) {
+                    @if (tokens > 1) {
+                      <span class="tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
       @if (totalQueries | async; as count) {
         <div class="count-container">
           <div class="title-s">{{ 'account.total_queries' | translate }}</div>

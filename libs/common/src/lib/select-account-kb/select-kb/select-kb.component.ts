@@ -37,6 +37,7 @@ export class SelectKbComponent implements OnDestroy {
   canAddArag: Observable<boolean> = combineLatest([this.isRetrievalAgentEnabled, this._canAddKb]).pipe(
     map(([aragEnabled, canAddKb]) => !this.standalone && aragEnabled && canAddKb),
   );
+  inRaoApp = this.navigation.inRaoApp;
 
   constructor(
     private navigation: NavigationService,
