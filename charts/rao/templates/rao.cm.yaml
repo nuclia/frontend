@@ -9,14 +9,14 @@ metadata:
     release: '{{ .Release.Name }}'
     heritage: '{{ .Release.Service }}'
 data:
-  APP_NAME: { { .Values.app_name } }
+  APP_NAME: '{{ .Values.app_name }}'
   CDN: '{{ .Values.cdn }}'
   BRAND_NAME: '{{ .Values.brand_name }}'
   BRAND_DOMAIN: '{{ .Values.brand_domain }}'
   GOOGLE_ANALYTICS: '{{ .Values.google_analytics }}'
   ASSETS_PATH: '{{ .Values.assets_path }}'
   NO_STRIPE: '{{ .Values.no_stripe }}'
-  SENTRY_ENV: { { .Values.sentry_environment } }
+  SENTRY_ENV: '{{ .Values.sentry_environment }}'
   EDITOR_URL: '{{ .Values.editor_url }}'
   STF_VERSION: '{{ .Chart.Version }}'
   EMAIL_DOMAIN: '{{ .Values.email_domain }}'
