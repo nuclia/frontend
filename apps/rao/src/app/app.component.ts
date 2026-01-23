@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewContainerRef,
-  DOCUMENT,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
@@ -37,7 +28,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
     private paTranslate: PaTranslateService,
-    @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
 
