@@ -1,14 +1,14 @@
 import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { SyncService } from '../logic';
 import { StorageDrive, StorageFolder } from '@nuclia/core';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonMiniComponent, SisProgressModule } from '@nuclia/sistema';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ButtonMiniComponent, TranslateModule, SisProgressModule],
+  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
   styleUrls: ['cloud-folder.component.scss'],

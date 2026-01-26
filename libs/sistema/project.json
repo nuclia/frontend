@@ -4,17 +4,18 @@
   "projectType": "library",
   "sourceRoot": "libs/sistema/src",
   "prefix": "nsi",
+  "tags": [],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/sistema"],
       "options": {
-        "jestConfig": "libs/sistema/jest.config.js"
+        "jestConfig": "libs/sistema/jest.config.js",
+        "tsConfig": "libs/sistema/tsconfig.spec.json"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": []
+  }
 }

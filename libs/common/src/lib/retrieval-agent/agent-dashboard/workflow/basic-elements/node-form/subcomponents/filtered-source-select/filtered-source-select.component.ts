@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,14 +15,13 @@ import { aragUrl } from '../../../../workflow.state';
   templateUrl: './filtered-source-select.component.html',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaButtonModule,
     RouterLink,
     TranslateModule,
-    InfoCardComponent,
-  ],
+    InfoCardComponent
+],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilteredSourceSelectComponent implements OnInit {

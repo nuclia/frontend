@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { DriverFieldConfig } from '../driver-field-config.service';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
@@ -30,7 +30,7 @@ import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea
     </div>
   `,
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule],
+  imports: [ReactiveFormsModule, PaTextFieldModule],
 })
 export class KbSelectComponent {
   @Input() form!: FormGroup;
@@ -74,7 +74,7 @@ export class KbSelectComponent {
     `,
   ],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule],
+  imports: [ReactiveFormsModule, PaTextFieldModule],
 })
 export class KeyValueFieldComponent {
   @Input() form!: FormGroup;
@@ -88,7 +88,6 @@ export class KeyValueFieldComponent {
   templateUrl: './driver-field-renderer.component.html',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -98,8 +97,8 @@ export class KeyValueFieldComponent {
     ApiHeadersFieldComponent,
     KbSelectComponent,
     KeyValueFieldComponent,
-    DriverExpandableTextareaComponent,
-  ],
+    DriverExpandableTextareaComponent
+],
 })
 export class DriverFieldRendererComponent implements OnInit {
   @Input() fieldConfig!: DriverFieldConfig;

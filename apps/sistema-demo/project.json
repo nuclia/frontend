@@ -133,7 +133,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/sistema-demo"],
       "options": {
-        "jestConfig": "apps/sistema-demo/jest.config.js"
+        "jestConfig": "apps/sistema-demo/jest.config.js",
+        "tsConfig": "apps/sistema-demo/tsconfig.spec.json"
       }
     }
   }

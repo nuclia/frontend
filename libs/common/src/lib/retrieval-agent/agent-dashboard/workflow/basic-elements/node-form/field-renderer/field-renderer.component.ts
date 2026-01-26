@@ -2,7 +2,7 @@ import { Component, Input, forwardRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfig } from '../field-config.service';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -27,7 +27,6 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
   imports: [
     ArrayStringFieldComponent,
     CodeEditorComponent,
-    CommonModule,
     DriverSelectComponent,
     EnumSelectComponent,
     ExpandableTextareaComponent,
@@ -40,8 +39,8 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
     ReactiveFormsModule,
     RulesFieldComponent,
     SubformFieldComponent,
-    TransportFieldComponent,
-  ],
+    TransportFieldComponent
+],
 })
 export class FieldRendererComponent {
   @Input() fieldConfig!: FieldConfig;

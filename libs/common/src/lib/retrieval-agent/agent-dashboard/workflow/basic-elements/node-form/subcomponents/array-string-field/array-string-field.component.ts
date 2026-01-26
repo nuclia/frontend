@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -10,7 +10,7 @@ import { NodeConfig } from '../../../../workflow.models';
   templateUrl: './array-string-field.component.html',
   styleUrls: ['./array-string-field.component.scss'],
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
 export class ArrayStringFieldComponent {
   @Input() form!: FormGroup;

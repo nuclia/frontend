@@ -293,7 +293,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/rao"],
       "options": {
-        "jestConfig": "apps/rao/jest.config.js"
+        "jestConfig": "apps/rao/jest.config.js",
+        "tsConfig": "apps/rao/tsconfig.spec.json"
       }
     }
   }

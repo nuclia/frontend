@@ -3,14 +3,15 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/sync/src",
   "prefix": "nsy",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/sync/jest.config.ts"
+        "jestConfig": "libs/sync/jest.config.ts",
+        "tsConfig": "libs/sync/tsconfig.spec.json"
       }
     },
     "lint": {

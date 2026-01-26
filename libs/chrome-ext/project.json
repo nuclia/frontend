@@ -3,6 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/chrome-ext/src",
   "projectType": "library",
+  "tags": [],
+  "implicitDependencies": ["sdk-core"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -25,7 +27,5 @@
         "jestConfig": "libs/chrome-ext/jest.config.ts"
       }
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["sdk-core"]
+  }
 }

@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "types": ["jest", "node"],
-    "target": "es2016"
+    "target": "es2016",
+    "emitDecoratorMetadata": false,
+    "isolatedModules": true
   },
   "files": ["src/test.ts"],
   "include": ["**/*.spec.ts", "**/*.d.ts"]

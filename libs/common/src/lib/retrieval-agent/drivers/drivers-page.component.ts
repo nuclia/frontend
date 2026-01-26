@@ -19,7 +19,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Driver } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject, takeUntil, finalize } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { DriversService, DriverType } from './drivers.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { JSONSchema4, JSONSchema7 } from 'json-schema';
@@ -33,9 +33,8 @@ import { JSONSchema4, JSONSchema7 } from 'json-schema';
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    TranslateModule,
-    CommonModule,
-  ],
+    TranslateModule
+],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.Default,

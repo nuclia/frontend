@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -52,7 +52,6 @@ import {
 @Component({
   selector: 'app-sessions-list',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
@@ -68,8 +67,8 @@ import {
     TablePaginationComponent,
     StickyFooterComponent,
     RouterLink,
-    PaDateTimeModule,
-  ],
+    PaDateTimeModule
+],
   templateUrl: './sessions-list.component.html',
   styleUrls: ['./sessions-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

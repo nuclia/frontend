@@ -200,7 +200,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/nucliadb-admin"],
       "options": {
-        "jestConfig": "apps/nucliadb-admin/jest.config.ts"
+        "jestConfig": "apps/nucliadb-admin/jest.config.ts",
+        "tsConfig": "apps/nucliadb-admin/tsconfig.spec.json"
       }
     }
   }

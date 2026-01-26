@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'driver-expandable-textarea',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ExpandableTextareaComponent],
+  imports: [ReactiveFormsModule, ExpandableTextareaComponent],
   template: `
     <div [formGroup]="form">
       <nsi-expandable-textarea
