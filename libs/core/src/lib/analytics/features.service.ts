@@ -94,17 +94,6 @@ export class FeaturesService {
       this.isTrial,
       this.featureFlag.isFeatureAuthorized('vectorset'),
     ]).pipe(map(([isEnterprise, isTrial, isAuthorized]) => isEnterprise || isTrial || isAuthorized)),
-    taskAutomation: combineLatest([
-      this.featureFlag.isFeatureAuthorized('tasks-automation'),
-      this.isEnterpriseOrProOrStarter,
-    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
-    labelerTask: combineLatest([
-      this.featureFlag.isFeatureAuthorized('labeller-task'),
-      this.isEnterpriseOrProOrStarter,
-    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
-    askTask: combineLatest([this.featureFlag.isFeatureAuthorized('ask-task'), this.isEnterpriseOrProOrStarter]).pipe(
-      map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed),
-    ),
     graphTask: combineLatest([
       this.featureFlag.isFeatureAuthorized('graph-task'),
       this.isEnterpriseOrProOrStarter,
