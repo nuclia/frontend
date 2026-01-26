@@ -14,6 +14,7 @@ export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);
 export const widgetJsonSchema = writableSubject<object | null>(null);
 export const widgetActions = writableSubject<WidgetAction[]>([]);
 export const widgetFeedback = writableSubject<Widget.WidgetFeedback>('answer');
+export const widgetViewerEnabled = writableSubject<boolean>(true);
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));

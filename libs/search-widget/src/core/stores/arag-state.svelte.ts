@@ -12,6 +12,20 @@ import { addLLMCitationReferences } from './answers.store';
 import type { TypedResult } from '../models';
 import { getResultType, parseFootenotes } from '.';
 
+type AragSource = SourceChunk | SourceField;
+
+export interface SourceChunk {
+  type: 'chunk';
+  rank: number;
+  value: Memory.Chunk;
+}
+
+export interface SourceField {
+  type: 'field'
+  rank: number;
+  value: TypedResult;
+}
+
 export interface AragChatEntry {
   running: boolean;
   question: string;
@@ -58,24 +72,26 @@ export function getEntryAnswerText(entry: AragChatEntry) {
   return addLLMCitationReferences(getEntryAnswer(entry)?.answer || '', true);
 }
 
-export function getEntrySources(entry: AragChatEntry) {
+export function getEntrySources(entry: AragChatEntry): AragSource[] {
   const answer = getEntryAnswer(entry);
   if (!answer) {
     return [];
   }
   const blocks = parseFootenotes(answer.answer || '');
-  const knowledgeBoxContext = entry.answers
-    .filter((answer) => ['ask', 'basic_ask', 'advanced_ask'].includes(answer.context?.agent || ''))
-    .map((answer) => answer.context as Memory.Context);
-  const sources = Object.entries(answer.answer_citations?.metadata || {}).map(([block, value]) => {
-    const context = knowledgeBoxContext.find((context) => context.id === value.context_id);
+  const sources = Object.entries(answer.answer_citations?.metadata || {}).reduce((acc, [block, value]) => {
+    const context = entry.answers.find((answer) => answer.context?.id === value.context_id)?.context;
     const chunks = context?.chunks.filter((chunk) => context.citations?.includes(chunk.chunk_id));
-    const rank = blocks.find((item) => item.block === block)?.index;
-    ['ask', 'basic_ask', 'advanced_ask'].includes(context?.agent || '')
-      ? convertChunksToResults(chunks || [], rank || 0)
-      : [];
-  });
-  return sources.flat();
+    const rank = blocks.find((item) => item.block === block)?.index || 0;
+    const fromAskAgent = ['ask', 'basic_ask', 'advanced_ask'].includes(context?.agent || '');
+    if (fromAskAgent) {
+      acc = acc.concat(convertChunksToResults(chunks || []).map((result) => ({ type: 'field', rank, value: result })));
+    }
+    else {
+      acc = acc.concat((chunks || []).map((chunk) => ({ type: 'chunk', rank, value: chunk })));
+    }
+    return acc;
+  }, [] as AragSource[]);
+  return sources;
 }
 /**
  * SETTERS
@@ -117,7 +133,7 @@ export function resetState() {
 /**
  * UTILS
  */
-function convertChunksToResults(chunks: Memory.Chunk[], rank: number) {
+function convertChunksToResults(chunks: Memory.Chunk[]) {
   const chunksGroups = chunks?.reduce(
     (acc, curr) => {
       const fieldId = curr.chunk_id.split('/').slice(0, 3).join('/');
@@ -126,7 +142,7 @@ function convertChunksToResults(chunks: Memory.Chunk[], rank: number) {
     },
     {} as { [key: string]: Memory.Chunk[] },
   );
-  const sources = Object.entries(chunksGroups || {}).map(([key, chunks]) => {
+  return Object.entries(chunksGroups || {}).map(([key, chunks]) => {
     const [resourceId, shortFieldType, fieldId] = key.split('/');
     const fieldType = shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE);
     const fieldResut: Search.FieldResult = {
@@ -139,7 +155,6 @@ function convertChunksToResults(chunks: Memory.Chunk[], rank: number) {
     };
     const result: TypedResult = {
       ...fieldResut,
-      ranks: [rank],
       ...getResultType(fieldResut),
       paragraphs: chunks.map((chunk) => convertChunkToParagraph(chunk)),
     };
@@ -147,7 +162,7 @@ function convertChunksToResults(chunks: Memory.Chunk[], rank: number) {
   });
 }
 
-function convertChunkToParagraph(chunk: Memory.Chunk): Search.FindParagraph {
+export function convertChunkToParagraph(chunk: Memory.Chunk): Search.FindParagraph {
   const position = chunk.chunk_id.split('/').pop()?.split('-');
   return {
     order: 0,

@@ -27,6 +27,7 @@
     resetState,
     _,
     widgetFeatures,
+    widgetViewerEnabled,
   } from '../../core';
   import AragAnswer from '../../components/arag-answer/AragAnswer.svelte';
 
@@ -86,6 +87,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     setLang(lang);
     widgetFeatures.set({ hideThumbnails: true });
+    widgetViewerEnabled.set(false);
 
     const subscription = triggerSearch
       .pipe(

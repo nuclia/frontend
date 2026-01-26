@@ -6,10 +6,9 @@
     sources?: TypedResult[];
     selected: number | undefined;
     answerRank: number | undefined;
-    canOpenViewer: boolean;
   }
 
-  let { sources = [], selected, answerRank, canOpenViewer }: Props = $props();
+  let { sources = [], selected, answerRank }: Props = $props();
 </script>
 
 <div class="sw-sources">
@@ -22,7 +21,6 @@
             result={source}
             selected={selected !== undefined ? selected + 1 : undefined}
             isSource={true}
-            {canOpenViewer}
             {answerRank} />
         {/if}
       </div>

@@ -2,7 +2,8 @@
   import { Expander, Icon } from '../../common';
   import { getEntryAnswer, getEntryAnswerText, getEntryDetails, getEntrySources, type AragChatEntry } from '../../core';
   import { _ } from '../../core/i18n';
-  import Sources from '../answer/Sources.svelte';
+  import ResultRow from '../result-row/ResultRow.svelte';
+  import AragSource from './AragSource.svelte';
   import { MarkdownRendering } from '../viewer';
 
   interface Props {
@@ -33,20 +34,33 @@
     </div>
   {/if}
   {#if sources.length > 0}
-    <Expander expanded={false}>
-      {#snippet header()}
-        <div class="title-s">
-          {$_('answer.sources')}
+    <div class="sources-container">
+      <Expander expanded={false}>
+        {#snippet header()}
+          <div class="title-s">
+            {$_('answer.sources')}
+          </div>
+        {/snippet}
+        <div class="sources">
+          {#each sources as source}
+            <div class="source">
+              <div class="ref">{source.rank}</div>
+              <div class="source-text">
+                {#if source.type === 'field'}
+                  <ResultRow
+                    result={source.value}
+                    selected={undefined}
+                    isSource={true}
+                    answerRank={undefined} />
+                {:else}
+                  <AragSource {source} />
+                {/if}
+              </div>
+            </div>
+          {/each}
         </div>
-      {/snippet}
-      <div class="sources">
-        <Sources
-          {sources}
-          canOpenViewer={false}
-          selected={undefined}
-          answerRank={undefined}></Sources>
-      </div>
-    </Expander>
+      </Expander>
+    </div>
   {/if}
   {#if details.length > 0}
     <Expander {expanded}>

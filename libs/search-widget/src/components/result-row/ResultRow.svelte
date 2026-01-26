@@ -35,6 +35,7 @@
     previewBaseUrl,
     trackingEngagement,
     viewerData,
+    widgetViewerEnabled,
   } from '../../core';
   import { showAttachedImages } from '../../core/stores/search.store';
   import Feedback from '../answer/Feedback.svelte';
@@ -48,10 +49,9 @@
     selected?: number;
     isSource?: boolean;
     answerRank: number | undefined;
-    canOpenViewer?: boolean;
   }
 
-  let { result, selected = 0, isSource = false, answerRank, canOpenViewer = true }: Props = $props();
+  let { result, selected = 0, isSource = false, answerRank }: Props = $props();
 
   let thumbnailLoaded = $state(false);
 
@@ -95,18 +95,20 @@
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
-    forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([_url, openNewTab]) => {
-      if (_url) {
-        goToUrl(_url, metaKeyOn || openNewTab);
-      } else if (canOpenViewer) {
-        if (result.field) {
-          viewerData.set({
-            result,
-            selectedParagraphIndex: typeof index === 'number' ? index : -1,
-          });
+    forkJoin([getUrl(paragraph), openNewTab.pipe(take(1)), widgetViewerEnabled.pipe(take(1))]).subscribe(
+      ([_url, openNewTab, viewerEnabled]) => {
+        if (_url) {
+          goToUrl(_url, metaKeyOn || openNewTab);
+        } else if (viewerEnabled) {
+          if (result.field) {
+            viewerData.set({
+              result,
+              selectedParagraphIndex: typeof index === 'number' ? index : -1,
+            });
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   function getUrl(paragraph?: Search.FindParagraph) {
@@ -215,7 +217,7 @@
             onclick={preventDefault(() => clickOnResult())}>
             {result?.title}
           </a>
-        {:else if canOpenViewer}
+        {:else if $widgetViewerEnabled}
           <span
             tabindex="0"
             onclick={() => clickOnResult()}
@@ -261,7 +263,7 @@
                   resultType={result.resultType}
                   expanded={$collapseTextBlocks}
                   ellipsis={true}
-                  disabled={!$url && !canOpenViewer}
+                  disabled={!$url && !$widgetViewerEnabled}
                   minimized={isMobile}
                   on:open={() => clickOnResult(paragraph, index)}
                   on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
