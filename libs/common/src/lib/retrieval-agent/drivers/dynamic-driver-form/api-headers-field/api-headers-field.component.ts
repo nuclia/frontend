@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormGroup, FormArray, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { PaTextFieldModule, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -15,7 +15,7 @@ export interface HeaderEntry {
   styleUrls: ['./api-headers-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule, PaIconModule, TranslateModule],
+  imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, PaIconModule, TranslateModule],
 })
 export class ApiHeadersFieldComponent implements OnInit {
   @Input() form!: FormGroup;

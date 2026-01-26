@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -42,14 +42,13 @@ interface UserKeysProperties {
 @Component({
   selector: 'stf-user-keys',
   imports: [
-    CommonModule,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
     UnauthorizedFeatureDirective,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   templateUrl: './user-keys.component.html',
   styleUrls: ['./user-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

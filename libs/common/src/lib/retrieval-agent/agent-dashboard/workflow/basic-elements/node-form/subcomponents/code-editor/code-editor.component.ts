@@ -10,7 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
@@ -24,7 +24,7 @@ import { CodeEditorModalComponent } from './code-editor-modal/code-editor-modal.
   templateUrl: './code-editor.component.html',
   styleUrls: ['./code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, ReactiveFormsModule, TranslateModule],
 })
 export class CodeEditorComponent implements OnDestroy, AfterViewInit {
   private modalService = inject(SisModalService);

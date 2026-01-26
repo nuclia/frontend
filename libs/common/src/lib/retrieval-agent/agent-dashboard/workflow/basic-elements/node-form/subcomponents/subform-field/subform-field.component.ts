@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
-import { CommonModule } from '@angular/common';
+
 import { FieldConfigService, FieldConfig } from '../../field-config.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -30,7 +30,6 @@ export interface RenderableField {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -41,8 +40,8 @@ export interface RenderableField {
     EnumSelectComponent,
     FilteredSourceSelectComponent,
     RulesFieldComponent,
-    TransportFieldComponent,
-  ],
+    TransportFieldComponent
+],
 })
 export class SubformFieldComponent implements OnInit {
   @Input() form!: FormGroup;

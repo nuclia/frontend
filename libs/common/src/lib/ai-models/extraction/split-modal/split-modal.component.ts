@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -20,15 +20,14 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
 
 @Component({
   imports: [
-    CommonModule,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
-    LLMConfigurationComponent,
-  ],
+    LLMConfigurationComponent
+],
   templateUrl: './split-modal.component.html',
   styleUrls: ['./split-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

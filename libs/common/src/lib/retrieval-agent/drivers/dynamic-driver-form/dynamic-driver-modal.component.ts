@@ -3,7 +3,7 @@ import { PaModalModule, PaButtonModule } from '@guillotinaweb/pastanaga-angular'
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Driver, DriverCreation } from '@nuclia/core';
-import { CommonModule } from '@angular/common';
+
 import { FormGroup } from '@angular/forms';
 import { DynamicDriverFormComponent } from './dynamic-driver-form.component';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
@@ -22,7 +22,7 @@ export interface DynamicDriverModalData {
   styleUrls: ['./dynamic-driver-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [PaModalModule, PaButtonModule, TranslateModule, CommonModule, DynamicDriverFormComponent],
+  imports: [PaModalModule, PaButtonModule, TranslateModule, DynamicDriverFormComponent],
 })
 export class DynamicDriverModalComponent implements OnInit {
   @ViewChild(DynamicDriverFormComponent) formComponent!: DynamicDriverFormComponent;

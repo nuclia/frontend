@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
@@ -21,7 +21,7 @@ export interface TransportChangeEvent {
 @Component({
   selector: 'app-transport-field',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PaButtonModule, PaTogglesModule, TranslateModule, RouterLink],
+  imports: [ReactiveFormsModule, PaButtonModule, PaTogglesModule, TranslateModule, RouterLink],
   templateUrl: './transport-field.component.html',
   styleUrl: './transport-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

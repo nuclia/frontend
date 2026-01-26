@@ -3,12 +3,12 @@ import { IErrorMessages, PaButtonModule, PaTextFieldModule } from '@guillotinawe
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
+
 import { SamePassword } from '../password.validator';
 
 @Component({
   selector: 'app-password-form',
-  imports: [CommonModule, PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './password-form.component.html',
   styleUrls: ['./password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

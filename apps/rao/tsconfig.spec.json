@@ -4,9 +4,12 @@
     "outDir": "../../dist/out-tsc",
     "types": ["jest", "node"],
     "resolveJsonModule": true,
-    "target": "es2016"
+    "target": "es2016",
+    "emitDecoratorMetadata": false,
+    "isolatedModules": true
   },
   "angularCompilerOptions": {},
   "files": ["src/test.ts", "src/polyfills.ts"],
-  "include": ["**/*.spec.ts", "**/*.d.ts"]
+  "include": ["**/*.spec.ts", "**/*.d.ts"],
+  "exclude": ["node_modules"]
 }

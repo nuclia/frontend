@@ -9,7 +9,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
@@ -20,7 +20,6 @@ import { ModelSelectorComponent } from '../../answer-generation';
 @Component({
   imports: [
     ButtonMiniComponent,
-    CommonModule,
     ModelSelectorComponent,
     PaButtonModule,
     PaTextFieldModule,
@@ -28,8 +27,8 @@ import { ModelSelectorComponent } from '../../answer-generation';
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
-    ExpandableTextareaComponent,
-  ],
+    ExpandableTextareaComponent
+],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',
   styleUrls: ['./llm-configuration.component.scss'],

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BedrockParameters, BedrockService, DEFAULT_IAM_POLICY, SDKService } from '@flaps/core';
@@ -20,14 +20,13 @@ import { filter, switchMap, take } from 'rxjs';
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
-    CommonModule,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
     ReactiveFormsModule,
     SisProgressModule,
-    TranslateModule,
-  ],
+    TranslateModule
+],
   templateUrl: './bedrock-authentication.component.html',
   styleUrls: ['./bedrock-authentication.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

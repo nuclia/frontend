@@ -24,12 +24,12 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "yarn"
+          cache: 'yarn'
       - name: Install project dependencies
         run: |-
           yarn
           yarn missdev
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,sistema-demo,rao-demo
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,sistema-demo,rao-demo,rao-widget
       - name: Check if build succeeds
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-demo
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-demo,rao-widget
