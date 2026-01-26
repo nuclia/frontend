@@ -63,8 +63,9 @@
   }
 
   .rank-container {
-    display: flex;
+    display: inline-flex;
     gap: var(--rhythm-0_5);
+    margin-right: var(--rhythm-1);
   }
 
   .number {

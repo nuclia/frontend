@@ -219,7 +219,7 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
 
 const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\sblock-[A-Z]{2}/g);
 
-function addLLMCitationReferences(rawText: string, html: boolean) {
+export function addLLMCitationReferences(rawText: string, html: boolean) {
   const references = rawText.matchAll(FOOTNOTES_REF);
   for (const match of references) {
     const footnoteIndex = match[1];

@@ -35,6 +35,7 @@
     previewBaseUrl,
     trackingEngagement,
     viewerData,
+    widgetViewerEnabled,
   } from '../../core';
   import { showAttachedImages } from '../../core/stores/search.store';
   import Feedback from '../answer/Feedback.svelte';
@@ -94,18 +95,20 @@
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
-    forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([_url, openNewTab]) => {
-      if (_url) {
-        goToUrl(_url, metaKeyOn || openNewTab);
-      } else {
-        if (result.field) {
-          viewerData.set({
-            result,
-            selectedParagraphIndex: typeof index === 'number' ? index : -1,
-          });
+    forkJoin([getUrl(paragraph), openNewTab.pipe(take(1)), widgetViewerEnabled.pipe(take(1))]).subscribe(
+      ([_url, openNewTab, viewerEnabled]) => {
+        if (_url) {
+          goToUrl(_url, metaKeyOn || openNewTab);
+        } else if (viewerEnabled) {
+          if (result.field) {
+            viewerData.set({
+              result,
+              selectedParagraphIndex: typeof index === 'number' ? index : -1,
+            });
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   function getUrl(paragraph?: Search.FindParagraph) {
@@ -196,13 +199,25 @@
       <h3
         class="ellipsis title-m result-title"
         class:no-thumbnail={$hideThumbnails}>
+        {#if isSource && result.ranks}
+          <div class="rank-container">
+            {#each result.ranks as rank}
+              <div
+                class="number body-m"
+                class:selected={selected === rank}
+                data-scroll-ref={rank}>
+                {rank}
+              </div>
+            {/each}
+          </div>
+        {/if}
         {#if $url}
           <a
             href={$url}
             onclick={preventDefault(() => clickOnResult())}>
             {result?.title}
           </a>
-        {:else}
+        {:else if $widgetViewerEnabled}
           <span
             tabindex="0"
             onclick={() => clickOnResult()}
@@ -211,6 +226,8 @@
             }}>
             {result?.title}
           </span>
+        {:else}
+          {result?.title}
         {/if}
       </h3>
     </div>
@@ -228,18 +245,6 @@
           class:can-expand={paragraphs.length > NUM_PARAGRAPHS}
           style:--non-toggled-paragraph-count={nonToggledParagraphCount}
           style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
-          {#if isSource && paragraphs.length === 0 && result.ranks}
-            <div class="rank-container">
-              {#each result.ranks as rank}
-                <div
-                  class="number body-m"
-                  class:selected={selected === rank}
-                  data-scroll-ref={rank}>
-                  {rank}
-                </div>
-              {/each}
-            </div>
-          {/if}
           {#each paragraphs as paragraph, index}
             <div class="paragraph-container">
               <div
@@ -258,6 +263,7 @@
                   resultType={result.resultType}
                   expanded={$collapseTextBlocks}
                   ellipsis={true}
+                  disabled={!$url && !$widgetViewerEnabled}
                   minimized={isMobile}
                   on:open={() => clickOnResult(paragraph, index)}
                   on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
