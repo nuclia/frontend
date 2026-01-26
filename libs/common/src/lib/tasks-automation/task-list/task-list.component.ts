@@ -52,8 +52,6 @@ export class TaskListComponent {
     ),
   );
 
-  labelerTaskEnabled = this.features.authorized.labelerTask;
-  askTaskEnabled = this.features.authorized.askTask;
   graphTaskEnabled = this.features.authorized.graphTask;
   questionsTaskEnabled = this.features.authorized.questionsTask;
   promptSafetyTaskEnabled = this.features.unstable.promptSafetyTask;

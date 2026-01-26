@@ -82,7 +82,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
-  isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
