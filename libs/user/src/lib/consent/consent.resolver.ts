@@ -30,7 +30,7 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
         
         const scopesInput = document.createElement('input');
         scopesInput.type = 'hidden';
-        scopesInput.name = 'accepted_scopes';
+        scopesInput.name = 'grant_scope';
         scopesInput.value = JSON.stringify(data.requested_scope);
         form.appendChild(scopesInput);
         
