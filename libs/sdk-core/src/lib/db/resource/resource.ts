@@ -159,12 +159,12 @@ export class ReadableResource implements IResource {
     }
   }
 
-  getParagraphText(fieldType: FIELD_TYPE, fieldId: string, paragraph: Paragraph): string {
-    return sliceUnicode(this.getFieldText(fieldType, fieldId, paragraph.key), paragraph.start, paragraph.end);
+  getParagraphText(fieldType: FIELD_TYPE, fieldId: string, paragraph: Paragraph, split?: string): string {
+    return sliceUnicode(this.getFieldText(fieldType, fieldId, split), paragraph.start, paragraph.end);
   }
 
-  getSentenceText(fieldType: FIELD_TYPE, fieldId: string, sentence: Sentence): string {
-    return sliceUnicode(this.getFieldText(fieldType, fieldId, sentence.key), sentence.start, sentence.end);
+  getSentenceText(fieldType: FIELD_TYPE, fieldId: string, sentence: Sentence, split?: string): string {
+    return sliceUnicode(this.getFieldText(fieldType, fieldId, split), sentence.start, sentence.end);
   }
 
   private getFieldText(fieldType: FIELD_TYPE, fieldId: string, split?: string): string[] {

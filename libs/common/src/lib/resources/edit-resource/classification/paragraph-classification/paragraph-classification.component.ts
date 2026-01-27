@@ -54,8 +54,11 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     this.editResource.setCurrentView('classification');
 
     combineLatest([this.fieldId, this.resource])
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource]) => this.paragraphService.initParagraphs(fieldId, resource));
+      .pipe(
+        switchMap(([fieldId, resource]) => this.paragraphService.initParagraphs(fieldId, resource)),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {

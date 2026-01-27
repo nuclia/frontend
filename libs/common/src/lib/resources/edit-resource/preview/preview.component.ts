@@ -12,7 +12,6 @@ import {
   FileFieldData,
   IError,
   LinkFieldData,
-  Message,
   MessageAttachment,
   Resource,
   TextField,
@@ -36,9 +35,7 @@ import { takeUntil } from 'rxjs/operators';
 import {
   DATA_AUGMENTATION_ERROR,
   getErrors,
-  getMessages,
   getParagraphsWithImages,
-  getTotalMessagePages,
   ParagraphWithTextAndClassifications,
   ParagraphWithTextAndImage,
   Thumbnail,
@@ -192,11 +189,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   currentFieldId?: FieldId;
 
-  messages = new BehaviorSubject<Message[] | null>(null);
-  messagePage = new BehaviorSubject<number>(1);
-  hasMoreMessages = combineLatest([this.fieldId, this.resource, this.messagePage]).pipe(
-    map(([fieldId, resource, messagePage]) => getTotalMessagePages(fieldId, resource) > messagePage),
-  );
+  messages = this.paragraphService.messages;
+  conversationPage = this.paragraphService.conversationPage;
+  hasMorePages = this.paragraphService.hasMorePages;
   attachments = this.messages.pipe(
     map((messages) =>
       (messages || []).reduce(
@@ -226,25 +221,20 @@ export class PreviewComponent implements OnInit, OnDestroy {
     this.editResource.setCurrentView('preview');
     combineLatest([this.fieldId, this.resource])
       .pipe(
-        switchMap(([fieldId, resource]) => {
-          if (fieldId.field_type === FIELD_TYPE.conversation) {
-            this.messagePage.next(1);
-            return getMessages(fieldId, resource, 1).pipe(map((messages) => ({ fieldId, resource, messages })));
-          } else {
-            return of({ fieldId, resource, messages: null });
-          }
-        }),
+        switchMap(([fieldId, resource]) =>
+          this.paragraphService
+            .initParagraphs(fieldId, resource, fieldId.field_type === FIELD_TYPE.conversation ? 1 : undefined)
+            .pipe(map(() => ({ fieldId, resource }))),
+        ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ fieldId, resource, messages }) => {
-        this.messages.next(messages);
+      .subscribe(({ fieldId, resource }) => {
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR);
         this.dataAugmentationErrors = getErrors(fieldId, resource).filter(
           (error) => error.code_str === DATA_AUGMENTATION_ERROR,
         );
         this.selectedTab = 'content';
-        this.paragraphService.initParagraphs(fieldId, resource, messages || undefined);
         this.loaded = true;
         this.cdr.markForCheck();
       });
@@ -327,20 +317,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   loadMoreMessages() {
-    const nextPage = this.messagePage.getValue() + 1;
-    this.messagePage.next(nextPage);
-    combineLatest([this.fieldId, this.resource])
+    combineLatest([this.fieldId, this.resource, this.conversationPage])
       .pipe(
         take(1),
-        switchMap(([fieldId, resource]) =>
-          getMessages(fieldId, resource, nextPage).pipe(map((messages) => ({ fieldId, resource, messages }))),
+        switchMap(([fieldId, resource, conversationPage]) =>
+          this.paragraphService.initParagraphs(fieldId, resource, conversationPage + 1),
         ),
       )
-      .subscribe(({ fieldId, resource, messages }) => {
-        const newMessages = (this.messages.getValue() || []).concat(messages || []);
-        this.messages.next(newMessages);
-        this.paragraphService.initParagraphs(fieldId, resource, newMessages);
-      });
+      .subscribe();
   }
 
   navigateToField(attachment: MessageAttachment) {
