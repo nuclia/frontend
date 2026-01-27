@@ -43,7 +43,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * The Retrieval Agent path on the regional API.
    */
   override get path(): string {
-    return `/kb/${this.id}/agent`;
+    return `/agent/${this.id}`;
   }
 
   /**
