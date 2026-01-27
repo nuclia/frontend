@@ -33,23 +33,10 @@ export class ConsentComponent implements OnInit {
     }
     this.consentChallenge = params.get('consent_challenge');
     
-    // Get data from resolver (if available) or fetch it
+    // Get data from resolver - resolver handles skip_consent auto-submit before component loads
     this.consentData = this.route.snapshot.data['consentData'];
     
-    if (this.consentChallenge && !this.consentData) {
-      // Fetch consent data if not provided by resolver (fallback for testing without resolver)
-      this.oAuthService.getConsentData(this.consentChallenge).subscribe({
-        next: (data) => {
-          this.consentData = data;
-          if (data.skip_consent) {
-            setTimeout(() => this.acceptConsent(), 10);
-          }
-        },
-        error: () => {
-          this.error = 'login.error.unknown_consent_challenge';
-        },
-      });
-    } else if (!this.consentData && !this.consentChallenge) {
+    if (!this.consentData && !this.consentChallenge) {
       this.error = 'login.error.unknown_consent_challenge';
     }
   }

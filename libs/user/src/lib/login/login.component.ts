@@ -83,24 +83,11 @@ export class LoginComponent {
       this.loginChallenge = params['login_challenge'];
       this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
 
-      // Get data from resolver (if available) or fetch it
+      // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
       
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
-      } else if (this.loginChallenge && !this.loginData) {
-        // Fetch login data if not provided by resolver (fallback for testing without resolver)
-        this.oAuthService.getLoginData(this.loginChallenge).subscribe({
-          next: (data) => {
-            this.loginData = data;
-            if (data.skip_login) {
-              setTimeout(() => this.autoSubmitOAuthForm(), 10);
-            }
-          },
-          error: () => {
-            this.error = 'login.error.unknown_login_challenge';
-          },
-        });
       }
       if (params['error']) {
         this.message = params['error_description'] || 'login.error.' + params['error'];
