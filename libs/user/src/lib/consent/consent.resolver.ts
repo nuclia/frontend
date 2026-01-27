@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { OAuthConsentData, OAuthService } from '@flaps/core';
 
 export const consentResolver: ResolveFn<OAuthConsentData | null> = (
@@ -38,7 +38,7 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
         form.submit();
       }
     }),
-    map((data) => (data.skip_consent ? null : data)),
+    switchMap((data) => (data.skip_consent ? EMPTY : of(data))),
     catchError(() => of(null)),
   );
 };

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { OAuthLoginData, OAuthService } from '@flaps/core';
 
 export const loginResolver: ResolveFn<OAuthLoginData | null> = (
@@ -32,7 +32,7 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
         form.submit();
       }
     }),
-    map((data) => (data.skip_login ? null : data)),
+    switchMap((data) => (data.skip_login ? EMPTY : of(data))),
     catchError(() => of(null)),
   );
 };
