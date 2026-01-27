@@ -14,7 +14,21 @@ export class SsoService {
   ) {}
 
   getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
-    return `${this.config.getAPIURL()}/auth/${provider}/authorize?came_from=${window.location.origin}`;
+    const params = new URLSearchParams();
+    params.set('came_from', window.location.origin);
+    
+    // Include login_challenge if present in current URL (for OAuth flows from other apps)
+    const currentParams = new URLSearchParams(window.location.search);
+    const loginChallenge = currentParams.get('login_challenge');
+    console.log('SSO Login - Current URL:', window.location.href);
+    console.log('SSO Login - login_challenge:', loginChallenge);
+    if (loginChallenge) {
+      params.set('login_challenge', loginChallenge);
+    }
+    
+    const finalUrl = `${this.config.getAPIURL()}/auth/${provider}/authorize?${params.toString()}`;
+    console.log('SSO Login - Final URL:', finalUrl);
+    return finalUrl;
   }
 
   login(code: string, state: string): Observable<AuthTokens> {
