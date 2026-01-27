@@ -11,7 +11,7 @@ import { Account, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/c
   providedIn: 'root',
 })
 export class OnboardingService {
-  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(2);
+  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   private _kbCreationFailureCount = 0;
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
     creating: false,
