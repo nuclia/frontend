@@ -36,7 +36,16 @@ export class SsoService {
     if (url === null || !this.isSafeRedirect(url)) {
       return throwError(() => new Error('Invalid state'));
     }
-    return this.sdk.nuclia.rest.post(url, { code });
+    
+    const decoded = this.decodeState(state);
+    const body: { code: string; login_challenge?: string } = { code };
+    
+    // Include login_challenge if present in state (for OAuth flows from other apps)
+    if (decoded['login_challenge']) {
+      body.login_challenge = decoded['login_challenge'];
+    }
+    
+    return this.sdk.nuclia.rest.post(url, body);
   }
 
   private getLoginUrl(state: string): string | null {
