@@ -33,6 +33,8 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
 import { ImportPanelComponent } from './workflow/sidebar/import';
+import { SisModalService } from '@nuclia/sistema';
+import { EndpointModalComponent } from './workflow/sidebar/endpoint/endpoint-modal.component';
 
 @Component({
   imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
@@ -48,6 +50,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private workflowEffects = inject(WorkflowEffectService);
   private sdk = inject(SDKService);
   private features = inject(FeaturesService);
+  private modelService = inject(SisModalService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -130,5 +133,9 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   export() {
     this.workflowService.openSidebar('export', ExportPanelComponent);
+  }
+
+  showEndpoint() {
+    this.modelService.openModal(EndpointModalComponent);
   }
 }

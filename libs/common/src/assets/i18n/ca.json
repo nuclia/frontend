@@ -1490,6 +1490,7 @@
 	"retrieval-agents.workflow.sidebar.test.toasts.session-closing-error": "S'ha produït un error en tancar les interaccions de la sessió.",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-creation-error": "S'ha produït un error en crear la sessió.",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Afegir un node",
+	"retrieval-agents.workflow.toolbar-buttons.api-endpoint": "Endpoint de l'API",
 	"retrieval-agents.workflow.toolbar-buttons.export": "Exportar",
 	"retrieval-agents.workflow.toolbar-buttons.import": "Importar",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Gestionar sessions",

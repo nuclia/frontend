@@ -1490,6 +1490,7 @@
 	"retrieval-agents.workflow.sidebar.test.toasts.session-closing-error": "Une erreur s’est produite lors de la fermeture des interactions de session.",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-creation-error": "Une erreur s’est produite lors de la création de la session.",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Ajouter un nœud",
+	"retrieval-agents.workflow.toolbar-buttons.api-endpoint": "API endpoint",
 	"retrieval-agents.workflow.toolbar-buttons.export": "Exporter",
 	"retrieval-agents.workflow.toolbar-buttons.import": "Importer",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Gérer les sessions",
