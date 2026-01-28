@@ -49,7 +49,7 @@ spec:
   http:
   - match:
     - uri:
-        regex: "^/(user/(login|logout|callback)|assets/.*|.*\\.(js|css|png|svg|woff2))"
+        regex: "^/(user/(login|consent|logout|callback)|assets/.*|.*\\.(js|css|png|svg|woff2))"
     {{- with .Values.virtualService.http.retries }}
     retries:
       {{- toYaml . | nindent 6 }}
