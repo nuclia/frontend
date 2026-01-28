@@ -85,7 +85,31 @@ export class CallbackComponent implements OnInit {
     const state = this.route.snapshot.queryParamMap.get('state');
     if (code !== null && state !== null) {
       this.ssoService.login(code, state).subscribe({
-        next: (token) => this.authenticate(token, state),
+        next: (response) => {
+          // Check if this is an OAuth flow (login_challenge present in state)
+          const decodedState = this.ssoService.decodeState(state);
+          const isOAuthFlow = !!decodedState['login_challenge'];
+          
+          // If OAuth flow and response contains consent_url, redirect to it
+          if (isOAuthFlow && response.consent_url) {
+            this.document.location.href = response.consent_url;
+          } else if (response.access_token && response.refresh_token) {
+            // Regular flow: authenticate with tokens
+            this.authenticate(
+              {
+                access_token: response.access_token,
+                refresh_token: response.refresh_token,
+              },
+              state,
+            );
+          } else {
+            // Invalid response
+            this.router.navigate(['../signup'], {
+              relativeTo: this.route,
+              queryParams: { error: 'oops' },
+            });
+          }
+        },
         error: (error) =>
           this.router.navigate(['../signup'], {
             relativeTo: this.route,

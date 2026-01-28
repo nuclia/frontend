@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { AuthTokens } from '../models';
+import { AuthTokens, SsoLoginResponse } from '../models';
 import { BackendConfigurationService } from '../config';
 import { SDKService } from './sdk.service';
 
@@ -20,18 +20,14 @@ export class SsoService {
     // Include login_challenge if present in current URL (for OAuth flows from other apps)
     const currentParams = new URLSearchParams(window.location.search);
     const loginChallenge = currentParams.get('login_challenge');
-    console.log('SSO Login - Current URL:', window.location.href);
-    console.log('SSO Login - login_challenge:', loginChallenge);
     if (loginChallenge) {
       params.set('login_challenge', loginChallenge);
     }
     
-    const finalUrl = `${this.config.getAPIURL()}/auth/${provider}/authorize?${params.toString()}`;
-    console.log('SSO Login - Final URL:', finalUrl);
-    return finalUrl;
+    return `${this.config.getAPIURL()}/auth/${provider}/authorize?${params.toString()}`;
   }
 
-  login(code: string, state: string): Observable<AuthTokens> {
+  login(code: string, state: string): Observable<SsoLoginResponse> {
     const url = this.getLoginUrl(state);
     if (url === null || !this.isSafeRedirect(url)) {
       return throwError(() => new Error('Invalid state'));

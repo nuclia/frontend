@@ -122,6 +122,12 @@ export interface AuthTokens {
   refresh_token: string;
 }
 
+export interface SsoLoginResponse {
+  access_token?: string;
+  refresh_token?: string;
+  consent_url?: string;
+}
+
 export interface RefreshResult {
   token: string;
 }
