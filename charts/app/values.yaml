@@ -35,6 +35,7 @@ virtualService:
   enabled: false
   gateway: XXX
   host: XXX
+  auth_host: XXX
   http:
     match:
       - uri:

@@ -30,7 +30,7 @@ spec:
         port:
           number: {{ .Values.service.internalPort }}
 ---
-{{- if .Values.virtualService.authHost }}
+{{- if .Values.virtualService.auth_host }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -45,7 +45,7 @@ spec:
   gateways:
   - "{{ .Values.virtualService.gateway }}"
   hosts:
-  - "{{ .Values.virtualService.authHost }}"
+  - "{{ .Values.virtualService.auth_host }}"
   http:
   - match:
     - uri:
