@@ -69,7 +69,7 @@ export class AppInitService {
           // - when electron, the backend is the one we have in the config
           const apiOrigin =
             config.production && location.origin.startsWith('http')
-              ? location.origin.replace('manage.', '').replace('auth.', '')
+              ? location.origin.replace('manage.', '')
               : config.backend.apiOrigin;
           config.backend.apiOrigin = apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
