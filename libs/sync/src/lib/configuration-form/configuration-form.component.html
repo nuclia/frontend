@@ -76,6 +76,28 @@
                     }
                   </div>
                 }
+                @case ('file') {
+                  <div>
+                    <pa-button
+                      iconAndText
+                      icon="add-file"
+                      size="small"
+                      aspect="basic"
+                      (click)="file.click()">
+                      {{ files[field.id] ? files[field.id].name : (field.label | translate) }}
+                    </pa-button>
+                    @if (field.help) {
+                      <div class="file-help">{{ field.help | translate }}</div>
+                    }
+                    <input
+                      id="file"
+                      type="file"
+                      [accept]="field.accept"
+                      #file
+                      hidden
+                      (change)="updateFile($event, field.id, field.handleFile)" />
+                  </div>
+                }
               }
             }
           </div>

@@ -128,6 +128,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
   invalidTables: string[] = [];
   extractStrategy: string | undefined = '';
+  files: { [id: string]: File } = {};
 
   private _extra: { [key: string]: string } = {};
 
@@ -301,5 +302,15 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     this.extractStrategy = strategy;
     this.validForm.emit(this.form.valid);
     this.emitSyncEntity();
+  }
+
+  updateFile(event: Event, fieldId: string, handleFile?: (file: File) => Observable<any>) {
+    const file = (event.target as HTMLInputElement).files?.[0] || undefined;
+    if (file && handleFile) {
+      handleFile(file).subscribe((value) => {
+        this.files[fieldId] = file;
+        this.form.controls.extra.get(fieldId)?.setValue(value);
+      });
+    }
   }
 }
