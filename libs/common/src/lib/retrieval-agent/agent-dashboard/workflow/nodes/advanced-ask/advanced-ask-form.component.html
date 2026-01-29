@@ -25,10 +25,10 @@
       controlName="rephrase_model"></app-model-select>
 
     <app-model-select
-      [label]="schema?.properties?.['summarize_model']?.title || ''"
+      [label]="schema?.properties?.['context_validation_model']?.title || ''"
       [form]="configForm"
       [required]="true"
-      controlName="summarize_model"></app-model-select>
+      controlName="context_validation_model"></app-model-select>
 
     <app-rules-field
       [form]="configForm"

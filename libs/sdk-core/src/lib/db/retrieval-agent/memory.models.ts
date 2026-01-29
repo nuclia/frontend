@@ -125,6 +125,11 @@ export namespace Memory {
     answer: string;
   }
 
+  export interface DataVisualization {
+    type: 'vega_lite';
+    vega_lite_obj: { [key: string]: any };
+  }
+
   // Utility functions (equivalent to Python methods)
   export class StepUtils {
     static toString(step: Step): string {

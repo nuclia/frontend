@@ -1470,6 +1470,7 @@
 	"retrieval-agents.workflow.sidebar.test.description.basic_ask": "Retrieving data from selected source(s)...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Evaluating condition based on the prompt…",
 	"retrieval-agents.workflow.sidebar.test.description.cypher": "",
+	"retrieval-agents.workflow.sidebar.test.description.data_viz": "Generating data visualization…",
 	"retrieval-agents.workflow.sidebar.test.description.external": "",
 	"retrieval-agents.workflow.sidebar.test.description.generate": "",
 	"retrieval-agents.workflow.sidebar.test.description.historical": "",
