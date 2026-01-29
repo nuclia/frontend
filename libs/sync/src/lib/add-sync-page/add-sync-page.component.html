@@ -57,7 +57,7 @@
         @if (!!(isCloud | async) && enterCredentials) {
           <pa-button
             kind="primary"
-            [disabled]="(!enterCredentials && !validForm) || saving"
+            [disabled]="!validForm || saving"
             (click)="authenticate()">
             {{ 'sync.add-page.footer.auth-button' | translate }}
           </pa-button>

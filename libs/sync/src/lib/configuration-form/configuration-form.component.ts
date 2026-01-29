@@ -13,7 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Filters, IConnector, ISyncEntity, Section } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, map, Observable, of, Subject, take, takeUntil } from 'rxjs';
+import { filter, map, Observable, of, startWith, Subject, take, takeUntil } from 'rxjs';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { LabelModule, LabelSetFormModalComponent, LabelsService, ParametersTableComponent } from '@flaps/core';
 import {
@@ -67,7 +67,14 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) connector?: IConnector | null;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
-  @Input() useOAuth: boolean = false;
+  @Input() set useOAuth(value: boolean) {
+    this._useOAuth = value;
+    this.updateExtraSections();
+  }
+  get useOAuth() {
+    return this._useOAuth;
+  }
+  private _useOAuth = false;
   @Input() enterCredentials: boolean = false;
   @Input() isCloud?: boolean = false;
   @Input() set sync(value: ISyncEntity | undefined | null) {
@@ -137,6 +144,21 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.updateExtraSections();
+    this.updateValidators();
+    this.extensionsControl.valueChanges
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((value) => (this.extensionList = this.formatExtensionList(value)));
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll), startWith(this.form.value)).subscribe(() => {
+      this.validForm.emit(this.form.valid);
+      this.emitSyncEntity();
+    });
+  }
+
+  updateExtraSections() {
+    Object.keys(this.form.controls.extra.controls).forEach((key) => {
+      this.form.controls.extra.removeControl(key);
+    });
     this.getExtraSections().subscribe((sections) => {
       sections.forEach((section) => {
         section.fields.forEach((field) => {
@@ -155,13 +177,11 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         this.form.patchValue({ extra: this._extra });
       }
     });
-    this.extensionsControl.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((value) => (this.extensionList = this.formatExtensionList(value)));
-    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.validForm.emit(this.form.valid);
-      this.emitSyncEntity();
-    });
+  }
+
+  updateValidators() {
+    this.form.controls.name.setValidators(this.enterCredentials ? [] : [Validators.required]);
+    this.form.controls.name.updateValueAndValidity();
   }
 
   getExtraSections(): Observable<Section[]> {
