@@ -64,6 +64,8 @@ export interface AragAnswer {
   original_question_uuid: string | null;
   actual_question_uuid: string | null;
   feedback: Feedback | null;
+  data_visualizations: Memory.DataVisualization[] | null;
+
 }
 
 export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {

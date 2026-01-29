@@ -1466,6 +1466,7 @@
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.basic_ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Evaluando la condición según el prompt…",
+	"retrieval-agents.workflow.sidebar.test.description.data_viz": "Generando visualización de datos…",
 	"retrieval-agents.workflow.sidebar.test.description.internet": "Recuperando datos de internet…",
 	"retrieval-agents.workflow.sidebar.test.description.remi": "Validando el contexto…",
 	"retrieval-agents.workflow.sidebar.test.description.rephrase": "Reformulando la entrada en función del prompt y la fuente…",

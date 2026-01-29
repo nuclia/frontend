@@ -1,10 +1,18 @@
 <script lang="ts">
   import { Expander, Icon } from '../../common';
-  import { getEntryAnswer, getEntryAnswerText, getEntryDetails, getEntrySources, type AragChatEntry } from '../../core';
+  import {
+    getEntryAnswer,
+    getEntryAnswerText,
+    getEntryDetails,
+    getEntrySources,
+    getEntryVisualizations,
+    type AragChatEntry,
+  } from '../../core';
   import { _ } from '../../core/i18n';
   import ResultRow from '../result-row/ResultRow.svelte';
   import AragSource from './AragSource.svelte';
   import { MarkdownRendering } from '../viewer';
+  import VegaChart from './VegaChart.svelte';
 
   interface Props {
     entry: AragChatEntry;
@@ -14,6 +22,7 @@
   let { entry, expanded }: Props = $props();
 
   const answer = $derived(getEntryAnswer(entry));
+  const visualizations = $derived(getEntryVisualizations(entry));
   const details = $derived(getEntryDetails(entry));
   const answerText = $derived(getEntryAnswerText(entry));
   const sources = $derived(getEntrySources(entry));
@@ -25,6 +34,13 @@
       <MarkdownRendering
         text={answerText}
         markers={true} />
+    </div>
+  {/if}
+  {#if visualizations}
+    <div class="data-visualizations">
+      {#each visualizations.data_visualizations as data}
+        <VegaChart {data} />
+      {/each}
     </div>
   {/if}
   {#if entry.error}
