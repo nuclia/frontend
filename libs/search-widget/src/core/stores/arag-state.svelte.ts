@@ -21,7 +21,7 @@ export interface SourceChunk {
 }
 
 export interface SourceField {
-  type: 'field'
+  type: 'field';
   rank: number;
   value: TypedResult;
 }
@@ -46,6 +46,9 @@ export function getCurrentEntry(): AragChatEntry | undefined {
 }
 export function getEntryAnswer(entry: AragChatEntry) {
   return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+}
+export function getEntryVisualizations(entry: AragChatEntry) {
+  return entry.answers.filter((a) => !!a.data_visualizations).slice(-1)[0];
 }
 export function getEntryDetails(entry: AragChatEntry) {
   return (
@@ -85,8 +88,7 @@ export function getEntrySources(entry: AragChatEntry): AragSource[] {
     const fromAskAgent = ['ask', 'basic_ask', 'advanced_ask'].includes(context?.agent || '');
     if (fromAskAgent) {
       acc = acc.concat(convertChunksToResults(chunks || []).map((result) => ({ type: 'field', rank, value: result })));
-    }
-    else {
+    } else {
       acc = acc.concat((chunks || []).map((chunk) => ({ type: 'chunk', rank, value: chunk })));
     }
     return acc;

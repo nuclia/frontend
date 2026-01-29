@@ -35,7 +35,8 @@ export type AragModule =
   | 'external'
   | 'restart'
   | 'postprocess_alinia'
-  | 'static';
+  | 'static'
+  | 'data_viz';
 
 export function getCategoryFromModule(
   module: AragModule,
@@ -82,7 +83,7 @@ export function isContextModule(x: any): x is ContextModule {
   return CONTEXT_MODULE.includes(x);
 }
 
-const GENERATION_MODULE: AragModule[] = ['summarize', 'generate'];
+const GENERATION_MODULE: AragModule[] = ['summarize', 'generate', 'data_viz'];
 export type GenerationModule = (typeof GENERATION_MODULE)[number];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isGenerationModule(x: any): x is GenerationModule {
