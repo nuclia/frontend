@@ -24,13 +24,7 @@ export class CallbackComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('[CALLBACK] ngOnInit started');
-    console.log('[CALLBACK] Route data:', this.route.snapshot.data);
-    console.log('[CALLBACK] Query params:', this.route.snapshot.queryParams);
-    console.log('[CALLBACK] Current URL:', window.location.href);
-    
     if (this.route.snapshot.queryParams['error']) {
-      console.log('[CALLBACK] Error in query params:', this.route.snapshot.queryParams['error']);
       this.toaster.error(this.route.snapshot.queryParams['error_description'] || 'login.error.oops');
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
@@ -39,11 +33,9 @@ export class CallbackComponent implements OnInit {
     }
 
     if (this.route.snapshot.data['saml']) {
-      console.log('[CALLBACK] SAML flow detected');
       // Returning from SAML authentication
       this.getSAMLToken();
     } else if (this.route.snapshot.data['samlOauth']) {
-      console.log('[CALLBACK] SAML OAuth flow detected');
       // Returning from SAML authentication in a OAuth flow
       this.redirect();
     } else if (
@@ -52,10 +44,8 @@ export class CallbackComponent implements OnInit {
         this.route.snapshot.data['github'] ||
         this.route.snapshot.data['microsoft'])
     ) {
-      console.log('[CALLBACK] SSO flow detected (google/github/microsoft)');
       this.ssoLogin();
     } else {
-      console.log('[CALLBACK] URL token flow detected');
       this.loadUrlToken();
     }
   }
@@ -94,29 +84,18 @@ export class CallbackComponent implements OnInit {
   ssoLogin(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
-    console.log('[CALLBACK] ssoLogin - code:', code ? 'present' : 'missing');
-    console.log('[CALLBACK] ssoLogin - state:', state ? 'present' : 'missing');
     
     if (code !== null && state !== null) {
-      console.log('[CALLBACK] Calling ssoService.login()');
       this.ssoService.login(code, state).subscribe({
         next: (response) => {
-          console.log('[CALLBACK] ssoService.login SUCCESS');
-          console.log('[CALLBACK] Response has access_token:', !!response.access_token);
-          console.log('[CALLBACK] Response has refresh_token:', !!response.refresh_token);
-          console.log('[CALLBACK] Response has consent_url:', !!response.consent_url);
-          
           // Check if this is an OAuth flow (login_challenge present in state)
           const decodedState = this.ssoService.decodeState(state);
           const isOAuthFlow = !!decodedState['login_challenge'];
-          console.log('[CALLBACK] Is OAuth flow:', isOAuthFlow);
           
           // If OAuth flow and response contains consent_url, redirect to it
           if (isOAuthFlow && response.consent_url) {
-            console.log('[CALLBACK] Redirecting to consent_url:', response.consent_url);
             this.document.location.href = response.consent_url;
           } else if (response.access_token && response.refresh_token) {
-            console.log('[CALLBACK] Regular flow - calling authenticate()');
             // Regular flow: authenticate with tokens
             this.authenticate(
               {
@@ -126,23 +105,26 @@ export class CallbackComponent implements OnInit {
               state,
             );
           } else {
-            console.log('[CALLBACK] Invalid response - no tokens, redirecting to signup with error');
             // Invalid response
             this.router.navigate(['../signup'], {
               relativeTo: this.route,
-              queryParams: { error: 'oops' },
+              queryParams: { error: 'invalid_response' },
             });
           }
         },
         error: (error) => {
-          console.log('[CALLBACK] ssoService.login ERROR');
-          console.log('[CALLBACK] Error status:', error.status);
-          console.log('[CALLBACK] Error details:', error);
+          let errorCode = 'oops';
+          
+          if (error.status === 412) {
+            errorCode = 'no_personal_email';
+          } else if (error.message === 'Invalid state') {
+            errorCode = 'invalid_configuration';
+            this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+          }
+          
           this.router.navigate(['../signup'], {
             relativeTo: this.route,
-            queryParams: {
-              error: error.status === 412 ? 'no_personal_email' : 'oops',
-            },
+            queryParams: { error: errorCode },
           });
         },
       });
@@ -150,17 +132,11 @@ export class CallbackComponent implements OnInit {
   }
 
   private authenticate(token: AuthTokens, state?: string): void {
-    console.log('[CALLBACK] authenticate() called');
-    console.log('[CALLBACK] Token present:', !!token.access_token);
     this.sdk.nuclia.auth.authenticate(token);
     const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
-    console.log('[CALLBACK] came_from:', came_from);
-    console.log('[CALLBACK] window.location.origin:', window.location.origin);
     if (came_from && came_from !== window.location.origin) {
-      console.log('[CALLBACK] Redirecting to came_from with tokens');
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
-      console.log('[CALLBACK] Navigating to root /');
       this.router.navigate(['/']);
     }
   }

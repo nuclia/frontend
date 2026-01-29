@@ -29,7 +29,13 @@ export class SsoService {
 
   login(code: string, state: string): Observable<SsoLoginResponse> {
     const url = this.getLoginUrl(state);
+    const apiUrl = this.config.getAPIURL();
+    
     if (url === null || !this.isSafeRedirect(url)) {
+      console.error('[SSO] Invalid state - URL validation failed');
+      console.error('[SSO] Expected login_url to start with:', apiUrl);
+      console.error('[SSO] Received login_url:', url);
+      console.error('[SSO] Current window.location.origin:', window.location.origin);
       return throwError(() => new Error('Invalid state'));
     }
     
