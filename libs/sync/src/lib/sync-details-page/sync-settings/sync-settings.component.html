@@ -140,7 +140,10 @@
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
       </pa-table-header>
       @for (log of logs; track log) {
-        <pa-table-row>
+        @let isClickable = sync.isCloud && (log.payload | keyvalue).length > 0;
+        <pa-table-row
+          [clickable]="isClickable"
+          (click)="isClickable ? showLog(log) : undefined">
           <pa-table-cell>
             <div class="body-s icon-and-text">
               @switch (log.level) {

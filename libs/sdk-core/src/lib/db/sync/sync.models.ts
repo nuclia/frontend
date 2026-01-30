@@ -78,6 +78,14 @@ export interface Job {
   finished_at: string | null;
   config_id: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  logs?: JobLog[];
+}
+
+export interface JobLog {
+  level: 'INFO' | 'WARNING' | 'ERROR' | 'EXCEPTION' | 'CRITICAL';
+  message: string;
+  timestamp: string;
+  [key: string]: unknown;
 }
 
 export interface StorageStructure {
