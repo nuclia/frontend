@@ -79,12 +79,14 @@ export interface Field {
   label: string;
   help?: string;
   placeholder?: string;
-  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean';
+  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean' | 'file';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   pattern?: string | RegExp;
   canBeRefreshed?: boolean;
   secret?: boolean;
+  accept?: string;
+  handleFile?: (file: File) => Observable<any>;
 }
 
 export interface Filters {

@@ -81,7 +81,7 @@
 	"sync.connectors.rss.url.label": "RSS feed URL",
 	"sync.connectors.sharepoint.account.title": "Sharepoint account",
 	"sync.connectors.sharepoint.client_id.label": "Client ID",
-	"sync.connectors.sharepoint.pfx_base64.help": "Base64-encoded .pfx (PKCS#12) file",
+	"sync.connectors.sharepoint.pfx_base64.help": ".pfx (PKCS#12) file",
 	"sync.connectors.sharepoint.pfx_base64.label": "PFX",
 	"sync.connectors.sharepoint.pfx_password.help": "Password to decrypt the .pfx file",
 	"sync.connectors.sharepoint.pfx_password.label": "Password",
