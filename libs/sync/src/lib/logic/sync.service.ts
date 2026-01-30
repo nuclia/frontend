@@ -6,6 +6,7 @@ import {
   IConnector,
   ISyncEntity,
   LogEntity,
+  LogSeverityLevel,
   SearchResults,
   SyncBasicData,
 } from './models';
@@ -475,8 +476,30 @@ export class SyncService {
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
     if (this._useCloudSync.getValue()) {
-      // TOD: get logs when backend can do it
-      return of([]);
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) => kb.syncManager.getConfigJobs(sync || '')),
+        map((jobs) =>
+          jobs.reduce((acc, curr) => {
+            acc = acc.concat(
+              (curr.logs || []).map((log) => {
+                const { level, message, timestamp, ...extra } = log;
+                return {
+                  level: ['WARNING', 'ERROR', 'EXCEPTION', 'CRITICAL'].includes(level)
+                    ? LogSeverityLevel.medium
+                    : LogSeverityLevel.low,
+                  message,
+                  createdAt: timestamp,
+                  origin: '',
+                  action: '',
+                  payload: extra,
+                };
+              }),
+            );
+            return acc;
+          }, [] as LogEntity[]),
+        ),
+      );
     } else {
       return this.http
         .get<LogEntity[]>(
