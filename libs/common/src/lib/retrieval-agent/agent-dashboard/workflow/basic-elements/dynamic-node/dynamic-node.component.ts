@@ -11,6 +11,8 @@ import {
 import { WorkflowService } from '../../workflow.service';
 import { NodeCategory, NodeType } from '../../workflow.models';
 import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Driver, NucliaDBDriver } from '@nuclia/core';
 
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
@@ -37,6 +39,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private schemas = signal<JSONSchema4 | null>(null);
   private schemaEntry = signal<SchemaEntry | null>(null);
   labels = signal<{ [field: string]: { [key: string]: string } }>({});
+  drivers = toSignal(this.workflowService.driverModels$);
 
   nodeConfig = computed<ConfigBlockItem[]>(() => {
     const config = this.config();
@@ -72,11 +75,21 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       return false;
     });
 
-    return meaningfulProperties.map(([key, value]) => ({
-      key,
-      title: this.formatPropertyName(key),
-      content: this.formatPropertyValue(value),
-    }));
+    return meaningfulProperties.map(([key, value]) => {
+      let values = [{ value: this.formatPropertyValue(value) }];
+      // For source/sources properties, extra information is displayed
+      if (key === 'sources') {
+        const sources = Array.isArray(value) ? value : value.split(',');
+        values = this.formatSourcesValue(sources, this.drivers() || []);
+      } else if (key === 'source' && typeof value === 'string') {
+        values = this.formatSourcesValue([value], this.drivers() || []);
+      }
+      return {
+        key,
+        title: this.formatPropertyName(key),
+        values,
+      };
+    });
   });
 
   private formatPropertyValue(value: any): string {
@@ -94,6 +107,16 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       return value ? 'Yes' : 'No';
     }
     return String(value);
+  }
+
+  private formatSourcesValue(value: string[], drivers: Driver[]) {
+    return value.map((id) => {
+      const source = drivers?.find((driver) => driver.identifier === id);
+      return {
+        value: source?.name || id,
+        description: source?.provider === 'nucliadb' ? (source as NucliaDBDriver).config.description : undefined,
+      };
+    });
   }
 
   nodeTitle = computed(() => {

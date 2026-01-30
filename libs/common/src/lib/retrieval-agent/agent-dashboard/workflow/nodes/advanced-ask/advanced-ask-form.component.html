@@ -15,17 +15,20 @@
     <app-model-select
       [label]="schema?.properties?.['generative_model']?.title || ''"
       [form]="configForm"
+      [required]="true"
       controlName="generative_model"></app-model-select>
 
     <app-model-select
       [label]="schema?.properties?.['rephrase_model']?.title || ''"
       [form]="configForm"
+      [required]="true"
       controlName="rephrase_model"></app-model-select>
 
     <app-model-select
-      [label]="schema?.properties?.['summarize_model']?.title || ''"
+      [label]="schema?.properties?.['context_validation_model']?.title || ''"
       [form]="configForm"
-      controlName="summarize_model"></app-model-select>
+      [required]="true"
+      controlName="context_validation_model"></app-model-select>
 
     <app-rules-field
       [form]="configForm"

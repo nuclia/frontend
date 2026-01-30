@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, NotificationService, SDKService } from '@flaps/core';
+import { LabelsService, md5, NotificationService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -42,7 +42,6 @@ import {
 import { debounceTime, delay, tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
-import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 import SparkMD5 from 'spark-md5';
 import { mergeExistingAndNewLabels } from '../resources/edit-resource';

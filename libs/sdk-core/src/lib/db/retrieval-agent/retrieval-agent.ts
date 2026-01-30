@@ -43,7 +43,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * The Retrieval Agent path on the regional API.
    */
   override get path(): string {
-    return `/kb/${this.id}/agent`;
+    return `/agent/${this.id}`;
   }
 
   /**
@@ -258,7 +258,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
   private getWsUrl(sessionId: string, fromCursor?: number) {
     const path = this.getWsPath(sessionId);
-    return this.getTempToken({ agent_session: sessionId }, true).pipe(
+    return (
+      this.nuclia.options.accountId
+        ? this.getTempToken({ agent_session: sessionId }, true)
+        : this.getAgentTempToken(sessionId)
+    ).pipe(
       map((token) => {
         const wsUrl = this.nuclia.rest.getWsUrl(path, token);
         return typeof fromCursor === 'number'
@@ -266,6 +270,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
           : wsUrl;
       }),
     );
+  }
+  getAgentTempToken(agent_session: string, ttl?: number): Observable<string> {
+    return this.nuclia.rest
+      .post<{ token: string }>('/service_account_agent_key', { agent_session, ttl })
+      .pipe(map((res) => res.token));
   }
 
   /**

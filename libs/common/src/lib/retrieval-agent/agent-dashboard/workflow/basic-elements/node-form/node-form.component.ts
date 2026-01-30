@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormDirective } from '../form.directive';
 import { ARAGSchemas } from '@nuclia/core';
-import { FieldConfigService, FieldConfig } from './field-config.service';
+import { FieldConfig } from './field-config.service';
 import { FieldRendererComponent } from './field-renderer';
 
 export interface RenderableField {
@@ -198,7 +198,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
     if (property.$ref) {
       const resolved = this.resolveRef(property.$ref);
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
-      return { ...resolved, ...property, $ref: undefined };
+      return { ...resolved, ...property, $ref: undefined, type: 'subform' };
     }
     if (property.anyOf) {
       // Find the first non-null object reference
@@ -206,7 +206,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       if (objRef) {
         const resolved = this.resolveRef(objRef.$ref);
         // Merge resolved schema with original property
-        return { ...resolved, ...property, anyOf: undefined };
+        return { ...resolved, ...property, anyOf: undefined, type: 'subform' };
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus } from './onboarding.models';
+import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
-import { SDKService, STFUtils, UserService } from '@flaps/core';
+import { SDKService, STFUtils, UserService, GETTING_STARTED_DONE_KEY, NavigationService } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
-import { Account, KnowledgeBoxCreation } from '@nuclia/core';
+import { Account, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -28,15 +28,19 @@ export class OnboardingService {
     private router: Router,
     private toaster: SisToastService,
     private user: UserService,
+    private navigation: NavigationService,
   ) {}
 
   nextStep() {
-    this._onboardingStep.next(this._onboardingStep.value + 1);
+    const step = this._onboardingStep.value;
+    const next = this.navigation.inRaoApp && step === 2 ? step + 2 : step + 1;
+    this._onboardingStep.next(next);
   }
   previousStep() {
     const step = this._onboardingStep.value;
     if (step > 1) {
-      this._onboardingStep.next(step - 1);
+      const previous = this.navigation.inRaoApp && step === 4 ? step - 2 : step - 1;
+      this._onboardingStep.next(previous);
     }
   }
 
@@ -111,7 +115,7 @@ export class OnboardingService {
       map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
       catchError((error) => {
         if (error.status >= 400 && error.status < 500) {
-          this.manageKbCreationError(
+          this.manageCreationError(
             accountSlug,
             `KB creation failed: ${error.status} ${error.body?.detail || 'Bad request'}`,
           );
@@ -121,7 +125,7 @@ export class OnboardingService {
           if (this._kbCreationFailureCount < 5) {
             return this.createKb(accountSlug, accountId, kbConfig, zone);
           } else {
-            this.manageKbCreationError(accountSlug, `KB creation failed`);
+            this.manageCreationError(accountSlug, `KB creation failed`);
             throw error;
           }
         }
@@ -140,16 +144,61 @@ export class OnboardingService {
     );
   }
 
-  private manageKbCreationError(accountSlug: string, message: string) {
+  createRao(
+    accountSlug: string,
+    accountId: string,
+    config: RetrievalAgentCreation,
+    zone: string,
+  ): Observable<{ accountSlug: string; raoSlug: string }> {
+    this._onboardingState.next({
+      creating: true,
+      accountCreated: true,
+      kbCreated: false,
+      creationFailed: false,
+    });
+    return this.sdk.nuclia.db.createRetrievalAgent(accountId, config, zone).pipe(
+      map(() => ({ accountSlug, raoSlug: config.slug })),
+      catchError((error) => {
+        if (error.status >= 400 && error.status < 500) {
+          this.manageCreationError(
+            accountSlug,
+            `RAO creation failed: ${error.status} ${error.body?.detail || 'Bad request'}`,
+          );
+          throw error;
+        } else {
+          this._kbCreationFailureCount += 1;
+          if (this._kbCreationFailureCount < 5) {
+            return this.createRao(accountSlug, accountId, config, zone);
+          } else {
+            this.manageCreationError(accountSlug, `RAO creation failed`);
+            throw error;
+          }
+        }
+      }),
+      tap(({ accountSlug, raoSlug }) => {
+        this._onboardingState.next({
+          creating: true,
+          accountCreated: true,
+          kbCreated: true,
+          creationFailed: false,
+        });
+        const path = `/at/${accountSlug}/${zone}/arag/${raoSlug}`;
+        localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
+        this.router.navigate([path]);
+      }),
+    );
+  }
+
+  private manageCreationError(accountSlug: string, message: string) {
     Sentry.captureMessage(message, { tags: { host: location.hostname } });
-    this.toaster.error('onboarding.kb-creation.failed');
+    this.toaster.error(this.navigation.inRaoApp ? 'onboarding.rao-creation.failed' : 'onboarding.kb-creation.failed');
     this._onboardingState.next({
       creating: false,
       accountCreated: true,
       kbCreated: false,
       creationFailed: true,
     });
-    // KB creation failed but account creation worked, so we redirect to account management page to unblock people
+    // creation failed but account creation worked, so we redirect to account management page to unblock people
     const path = `/at/${accountSlug}`;
     localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
     this.router.navigate([path]);

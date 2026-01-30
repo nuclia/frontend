@@ -94,7 +94,7 @@ export class UserMenuComponent implements OnDestroy {
   }
 
   goToSupport() {
-    window.open('https://github.com/nuclia/support', '_blank', 'noopener,noreferrer');
+    location.href = 'mailto:Sales.AgenticRAG@progress.com';
   }
 
   goToManageAccount() {

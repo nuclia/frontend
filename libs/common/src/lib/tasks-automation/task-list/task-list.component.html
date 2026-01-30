@@ -113,11 +113,11 @@
       <app-task-card
         type="labeler"
         (newTask)="createTask('labeler')"
-        [ready]="labelerTaskEnabled | async"></app-task-card>
+        [ready]="true"></app-task-card>
       <app-task-card
         type="ask"
         (newTask)="createTask('ask')"
-        [ready]="askTaskEnabled | async"></app-task-card>
+        [ready]="true"></app-task-card>
       <app-task-card
         type="llm-graph"
         (newTask)="createTask('llm-graph')"

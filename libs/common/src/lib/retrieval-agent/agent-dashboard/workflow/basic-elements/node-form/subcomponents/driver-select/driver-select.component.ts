@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -17,15 +17,14 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./driver-select.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     InfoCardComponent,
     PaButtonModule,
     PaTextFieldModule,
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
-    TranslateModule,
-  ],
+    TranslateModule
+],
 })
 export class DriverSelectComponent implements OnInit {
   @Input() label: string = '';

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,6 @@ import { ModelSelectorComponent } from '../answer-generation';
 @Component({
   selector: 'stf-summarization',
   imports: [
-    CommonModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,
@@ -28,8 +27,8 @@ import { ModelSelectorComponent } from '../answer-generation';
     StickyFooterComponent,
     PaButtonModule,
     ExpandableTextareaComponent,
-    ModelSelectorComponent,
-  ],
+    ModelSelectorComponent
+],
   templateUrl: './summarization.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -31,8 +31,10 @@ export class SharepointImpl extends OAuthConnector {
             id: 'pfx_base64',
             label: 'sync.connectors.sharepoint.pfx_base64.label',
             help: 'sync.connectors.sharepoint.pfx_base64.help',
-            type: 'textarea',
+            type: 'file',
             required: true,
+            accept: '.pfx',
+            handleFile: this.handlePfx,
           },
           {
             id: 'pfx_password',
@@ -45,5 +47,24 @@ export class SharepointImpl extends OAuthConnector {
         ],
       },
     ]);
+  }
+
+  private handlePfx(file: File): Observable<string> {
+    return new Observable((observer) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onerror = () => {
+        observer.error();
+      };
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          const base64 = reader.result?.split('data:application/x-pkcs12;base64,')[1];
+          observer.next(base64);
+          observer.complete();
+        } else {
+          observer.error();
+        }
+      };
+    });
   }
 }

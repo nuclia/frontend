@@ -13,6 +13,7 @@
     isStreaming,
     resetChat,
   } from '../../core';
+    import { ask } from '../../core/stores/effects';
   import Answer from './Answer.svelte';
   import ChatInput from './ChatInput.svelte';
 
@@ -39,6 +40,10 @@
   let entriesContainerElement: HTMLDivElement | undefined = $state();
 
   let isScrolling = $state(false);
+
+  function onInput(question: string) {
+    ask.next({ question, reset: false })
+  }
 
   onMount(() => {
     const sub = chat
@@ -120,7 +125,7 @@
         <ChatInput
           placeholder={$_($hasChatEntries ? $chatPlaceholderDiscussion : $chatPlaceholderInitial)}
           disabled={$isStreaming}
-          {fullscreen} />
+          {fullscreen} onChange={onInput}/>
         {#if standaloneChat}
           <div class="reset-button">
             <Button

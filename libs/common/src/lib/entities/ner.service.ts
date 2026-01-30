@@ -3,8 +3,8 @@ import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { EntitiesGroup, IKnowledgeBox } from '@nuclia/core';
-import { getNerFamilyTitle, NerFamily } from '@flaps/common';
 import { TranslateService } from '@ngx-translate/core';
+import { getNerFamilyTitle, NerFamily } from './model';
 
 @Injectable({
   providedIn: 'root',

@@ -54,6 +54,15 @@ export namespace Memory {
     agent_path: string;
   }
 
+  export interface Citations {
+    metadata: {
+      [block: string]: {
+        context_id: string;
+        origin_urls: string[];
+      };
+    };
+  }
+
   export interface Step {
     original_question_uuid?: string | null;
     actual_question_uuid?: string | null;
@@ -89,13 +98,17 @@ export namespace Memory {
     text: string;
     labels: string[];
     url: string[];
+    metadata?: { [key: string]: any } | null;
+    action?: string | null;
+    origin_url?: string | null;
   }
 
   export interface Context {
+    id: string;
     actual_question_uuid?: string | null;
     agent: string;
     chunks: Chunk[];
-    citations?: Record<string, any> | null;
+    citations: string[] | null;
     images: Record<string, any>; // Image type - TODO: Define this type when available
     missing?: string | null;
     original_question_uuid?: string | null;
@@ -110,6 +123,11 @@ export namespace Memory {
   export interface HistoryQuestionAnswer {
     question: string;
     answer: string;
+  }
+
+  export interface DataVisualization {
+    type: 'vega_lite';
+    vega_lite_obj: { [key: string]: any };
   }
 
   // Utility functions (equivalent to Python methods)

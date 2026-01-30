@@ -56,6 +56,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   providers = input<GenerativeProviders>({});
   learningConfigurations = input<LearningConfigurations>({});
   disclaimerExpanded = input<boolean>(false);
+  externalLabel = input<boolean>(false);
   heightChanged = output<void>();
 
   selectedModel = signal<string>('');

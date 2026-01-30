@@ -293,7 +293,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/dashboard"],
       "options": {
-        "jestConfig": "apps/dashboard/jest.config.js"
+        "jestConfig": "apps/dashboard/jest.config.js",
+        "tsConfig": "apps/dashboard/tsconfig.spec.json"
       }
     }
   }

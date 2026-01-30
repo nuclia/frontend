@@ -4,20 +4,21 @@
   "projectType": "library",
   "sourceRoot": "libs/core/src",
   "prefix": "stf",
-  "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/core"],
-      "options": {
-        "jestConfig": "libs/core/jest.config.js"
-      }
-    }
-  },
+  "tags": [],
   "generators": {
     "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }
   },
-  "tags": []
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/core"],
+      "options": {
+        "jestConfig": "libs/core/jest.config.js",
+        "tsConfig": "libs/core/tsconfig.spec.json"
+      }
+    }
+  }
 }

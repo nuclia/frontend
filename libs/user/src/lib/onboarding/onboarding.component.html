@@ -3,10 +3,12 @@
     @if (onboardingStep | async; as step) {
       <header>
         @if (step < lastStep) {
-          <h1>{{ 'onboarding.step' + step + '.title' | translate }}</h1>
+          <h1>{{ 'onboarding.step' + step + (step === 2 && inRaoApp ? '.rao-' : '.') + 'title' | translate }}</h1>
           <p
             class="page-description"
-            [innerHTML]="'onboarding.step' + step + '.subtitle' | translate"></p>
+            [innerHTML]="
+              'onboarding.step' + step + (step === 2 && inRaoApp ? '.rao-' : '.') + 'subtitle' | translate
+            "></p>
         } @else {
           <h1>{{ 'onboarding.setting-up.title' | translate }}</h1>
           <p class="page-description">{{ 'onboarding.setting-up.subtitle' | translate }}</p>

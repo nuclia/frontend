@@ -24,14 +24,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
   );
-  inArag: Observable<boolean> = merge(
-    of(this.navigationService.inAragSpace(location.pathname)),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
-      takeUntil(this.unsubscribeAll),
-    ),
-  );
+  inArag = this.navigationService.inArag();
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
     this.router.events.pipe(
@@ -40,6 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
+  inRaoApp = this.navigationService.inRaoApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
@@ -88,7 +82,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
-  isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;

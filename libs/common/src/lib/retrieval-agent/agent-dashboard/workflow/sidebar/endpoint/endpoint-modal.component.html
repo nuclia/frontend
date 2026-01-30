@@ -1,0 +1,21 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>{{ 'retrieval-agents.workflow.toolbar-buttons.api-endpoint' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    @if (endpoint | async; as endpoint) {
+      <div class="endpoint-input">
+        <pa-input
+          [value]="endpoint"
+          readonly></pa-input>
+        <pa-button
+          aspect="basic"
+          [icon]="copied() ? 'check' : 'copy'"
+          (click)="copy(endpoint)">
+          {{ 'generic.copy' | translate }}
+        </pa-button>
+      </div>
+    }
+  </pa-modal-content>
+  <pa-modal-footer></pa-modal-footer>
+</pa-modal-advanced>

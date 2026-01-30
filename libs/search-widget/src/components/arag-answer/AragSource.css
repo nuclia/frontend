@@ -1,0 +1,15 @@
+.sw-arag-source {
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rhythm-1);
+    margin: var(--rhythm-1) 0 0 var(--rhythm-4);
+  }
+
+  .link {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+  }
+
+}

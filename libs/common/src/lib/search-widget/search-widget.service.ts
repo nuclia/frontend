@@ -41,7 +41,6 @@ export class SearchWidgetService {
   }>();
   private _generateRaoWidgetSnippetSubject = new Subject<{
     widgetOptions: Widget.RaoWidgetConfiguration;
-    widgetId?: string;
   }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
   supportedSearchConfigurations = this.searchConfigurations.pipe(
@@ -63,7 +62,7 @@ export class SearchWidgetService {
     this._generateRaoWidgetSnippetSubject
       .pipe(
         debounceTime(300),
-        switchMap(({ widgetOptions, widgetId }) => this._generateRaoWidgetSnippet(widgetOptions, widgetId)),
+        switchMap(({ widgetOptions }) => this._generateRaoWidgetSnippet(widgetOptions)),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
       )
@@ -216,43 +215,26 @@ export class SearchWidgetService {
     );
   }
 
-  generateRaoWidgetSnippet(
-    widgetOptions: Widget.RaoWidgetConfiguration = {} as Widget.RaoWidgetConfiguration,
-    widgetId?: string,
-  ) {
-    this._generateRaoWidgetSnippetSubject.next({ widgetOptions, widgetId });
+  generateRaoWidgetSnippet(widgetOptions: Widget.RaoWidgetConfiguration = {} as Widget.RaoWidgetConfiguration) {
+    this._generateRaoWidgetSnippetSubject.next({ widgetOptions });
   }
 
   private _generateRaoWidgetSnippet(
     widgetOptions: Widget.RaoWidgetConfiguration,
-    widgetId?: string,
   ): Observable<{ preview: SafeHtml; snippet: string }> {
     this.deleteWidgetPreview();
 
-    const tagName = 'progress-rao-widget';
-    const scriptSrc = `${this.backendConfig.getCDN()}/rao-widget.umd.js`;
-    /*
-    const parameters = Object.entries(widgetOptions || {})
-      .filter(([, value]) => !!value)
-      .map(([key, value]) => {
-        if (typeof value === 'number') {
-          return `\n  ${key}="${value}"`;
-        }
-        return `\n  ${key}="${this.escapeParameter(value || '')}"`;
-      })
-      .join('');
-      */
-     // Provisional fix
-    const parameters = '';
+    const tagName = 'nuclia-arag-widget';
+    const scriptSrc = `${this.backendConfig.getCDN()}/nuclia-arag-widget.umd.js`;
+    const parameters = widgetOptions.darkMode === 'dark' ? '\n  mode="dark"' : '';
 
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
-      map(([kb, account]) => {
+    return forkJoin([this.sdk.currentArag.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
+      map(([arag, account]) => {
         const zone = this.sdk.nuclia.options.standalone
           ? `standalone="true"`
           : `zone="${this.sdk.nuclia.options.zone}"`;
         const apiKey = `apikey="YOUR_API_TOKEN"`;
-        // TODO: to be confirmed later, for now always include private details
-        const privateDetails = `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`;
+        const privateDetails = `\n  ${apiKey}`;
         let backend = '';
         if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('rag.progress.cloud')) {
           backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
@@ -261,15 +243,14 @@ export class SearchWidgetService {
         if (!this.backendConfig.getCDN().includes('rag.progress.cloud')) {
           cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
         }
-        let baseSnippet = `<${tagName}\n  aragId="${kb.id}"`;
+        let baseSnippet = `<${tagName}\n  arag="${arag.id}"`;
         baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
-        baseSnippet += `\n inputPlaceholder="Ask Agentic RAG a question or make a request."`;
         baseSnippet += `></${tagName}>\n`;
 
         let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
 
         const preview = this.sanitizer.bypassSecurityTrustHtml(
-          baseSnippet.replace('zone=', `client="dashboard" zone=`).replace(apiKey, ''),
+          baseSnippet.replace('zone=', `account="${account.id}" client="dashboard" zone=`).replace(apiKey, ''),
         );
 
         this._widgetPreview.next({ snippet, preview });
@@ -308,7 +289,7 @@ export class SearchWidgetService {
   }
 
   private deleteWidgetPreview() {
-    const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'progress-rao-widget'];
+    const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'nuclia-arag-widget'];
     tags.forEach((tag) => {
       const elements = document.getElementsByTagName(tag) as unknown as any;
       Array.from(elements).forEach((element: any) => {
@@ -352,7 +333,32 @@ export class SearchWidgetService {
           widgetConfig,
           vectorset,
           creationDate: new Date().toISOString(),
-        });
+        } as Widget.Widget);
+        return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
+      }),
+    );
+  }
+  /**
+   * Create a RAO widget and return its slug.
+   *
+   * @param name
+   * @param widgetConfig
+   */
+  createRaoWidget(name: string, raoWidgetConfig: Widget.RaoWidgetConfiguration): Observable<string> {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        let slug = STFUtils.generateSlug(name);
+        // if slug already exists in this KB, make it unique
+        if (storedWidgets.find((widget) => widget.slug === slug)) {
+          slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+        }
+        storedWidgets.push({
+          slug,
+          name,
+          raoWidgetConfig,
+          creationDate: new Date().toISOString(),
+        } as Widget.Widget);
         return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
       }),
     );
@@ -366,6 +372,19 @@ export class SearchWidgetService {
         if (widget) {
           widget.searchConfigId = searchConfigId;
           widget.widgetConfig = widgetConfig;
+        }
+        return this.searchWidgetStorage.storeWidgets(storedWidgets);
+      }),
+    );
+  }
+
+  updateRaoWidget(widgetSlug: string, widgetConfig: Widget.RaoWidgetConfiguration) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
+        if (widget) {
+          widget.raoWidgetConfig = widgetConfig;
         }
         return this.searchWidgetStorage.storeWidgets(storedWidgets);
       }),

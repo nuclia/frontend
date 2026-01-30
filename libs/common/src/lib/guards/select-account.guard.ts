@@ -1,9 +1,8 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { SelectAccountKbService } from '@flaps/common';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { UserService } from '@flaps/core';
+import { UserService, SelectAccountKbService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);

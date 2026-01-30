@@ -22,10 +22,9 @@ import {
   timer,
 } from 'rxjs';
 import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
-import { NavigationService, SDKService } from '@flaps/core';
+import { NavigationService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 
 const POLLING_DELAY = 30000; // in milliseconds, so 30s
 

@@ -9,8 +9,12 @@ import {
 } from '@angular/core';
 import { NavigationStart, Router, Scroll } from '@angular/router';
 import { filter, Observable, of, Subject } from 'rxjs';
-import { BackendConfigurationService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
-import { SelectAccountKbService } from '../select-account-kb.service';
+import {
+  BackendConfigurationService,
+  standaloneSimpleAccount,
+  StaticEnvironmentConfiguration,
+  SelectAccountKbService,
+} from '@flaps/core';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
 import { map, takeUntil } from 'rxjs/operators';

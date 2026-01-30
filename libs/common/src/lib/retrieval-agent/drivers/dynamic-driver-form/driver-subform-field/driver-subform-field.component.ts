@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4, JSONSchema7 } from 'json-schema';
-import { CommonModule } from '@angular/common';
+
 import { DriverFieldConfigService, DriverFieldConfig } from '../driver-field-config.service';
 import { DriversService } from '../../drivers.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -37,14 +37,13 @@ export interface RenderableDriverSubfield {
   standalone: true,
   imports: [
     ArrayStringFieldComponent,
-    CommonModule,
     ReactiveFormsModule,
     PaTextFieldModule,
     PaTogglesModule,
     ApiHeadersFieldComponent,
     KeyValueFieldComponent,
-    DriverExpandableTextareaComponent,
-  ],
+    DriverExpandableTextareaComponent
+],
 })
 export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;

@@ -67,6 +67,10 @@ export const DEFAULT_WIDGET_CONFIG: Widget.WidgetConfiguration = {
   panelHeight: 600,
 };
 
+export const DEFAULT_RAO_WIDGET_CONFIG: Widget.RaoWidgetConfiguration = {
+  darkMode: 'light',
+};
+
 export function isSameConfigurations(
   configA: Widget.AnySearchConfiguration,
   configB: Widget.AnySearchConfiguration,

@@ -1,0 +1,68 @@
+<div class="account-home page-spacing">
+  <div class="container-row">
+    <div class="consumption-stats">
+      <div>
+        <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
+        <div class="page-description">
+          {{ 'account.consumption-description' | translate }}
+        </div>
+      </div>
+      <app-nuclia-tokens
+        [usage]="usage"
+        [selectedPeriod]="selectedPeriod | async"
+        (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
+    </div>
+    <div class="right-column">
+      @if (isTrial | async) {
+        <app-account-status></app-account-status>
+      }
+      @if (!inRaoApp) {
+        <div>
+          <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
+          @if (account$ | async; as account) {
+            <ul class="kb-list">
+              @for (kb of kbs | async; track kb.id) {
+                <li
+                  class="kb-item"
+                  [class.disabled]="!kb.role_on_kb"
+                  (click)="kb.role_on_kb ? goToKb(account.slug, kb) : null">
+                  {{ kb.title }}
+                  @if (kb.state === 'PRIVATE') {
+                    <pa-icon
+                      size="small"
+                      name="lock"></pa-icon>
+                  }
+                  @if (tokensCount?.[kb.id]; as tokens) {
+                    @if (tokens > 1) {
+                      <span class="tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+      @if (totalQueries | async; as count) {
+        <div class="count-container">
+          <div class="title-s">{{ 'account.total_queries' | translate }}</div>
+
+          <div class="count">
+            <div class="title-xxs">{{ 'metrics.period.last-30-days' | translate }}</div>
+            <div class="display-s">{{ count.month | number }}</div>
+          </div>
+
+          <div class="count">
+            <div class="title-xxs">{{ 'metrics.period.last-12-months' | translate }}</div>
+            <div class="display-s">{{ count.year | number }}</div>
+          </div>
+
+          <div class="count">
+            <div class="title-xxs">{{ 'metrics.period.since-creation' | translate }}</div>
+            <div class="display-s">{{ count.sinceCreation | number }}</div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

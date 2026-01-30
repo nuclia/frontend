@@ -9,6 +9,7 @@ on:
 env:
   APP_IMAGE_NAME: app
   MANAGER_IMAGE_NAME: manager
+  RAO_IMAGE_NAME: rao
   CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
@@ -34,25 +35,26 @@ jobs:
       deploy-rao-widget: ${{ steps.check-deploy.outputs.deploy-rao-widget }}
       deploy-sdk: ${{ steps.check-deploy.outputs.deploy-sdk }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
+      deploy-rao: ${{ steps.check-deploy.outputs.deploy-rao }}
       deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+        uses: 'google-github-actions/setup-gcloud@v3'
 
       - name: Login to Google Artifact Registry
         uses: docker/login-action@v3
@@ -62,7 +64,7 @@ jobs:
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         if: github.ref == 'refs/heads/main'
         with:
           role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
@@ -74,11 +76,11 @@ jobs:
         with:
           arch: amd64
 
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
           cache: 'yarn'
 
@@ -103,16 +105,16 @@ jobs:
           yarn missdev
 
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget
 
       - name: Build affected apps
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget
 
       - name: Get package version
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
 
       - name: Tag if new version
-        uses: pkgdeps/git-tag-action@v2.0.6
+        uses: pkgdeps/git-tag-action@v3.0.0
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -127,6 +129,7 @@ jobs:
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
           (test -d dist/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
+          (test -d dist/apps/rao && echo "deploy-rao=yes" >> $GITHUB_OUTPUT) || echo "RAO app unchanged"
           (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
@@ -213,14 +216,14 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
@@ -266,7 +269,25 @@ jobs:
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
-          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' && steps.check-deploy.outputs.deploy-app == 'yes' }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-app == 'yes' }}
+          push: true
+          tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
+        if: steps.check-deploy.outputs.deploy-rao == 'yes'
+        with:
+          build-arg: |
+            appId=rao
+            appFolder=rao
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.RAO_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
@@ -284,7 +305,7 @@ jobs:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
-        uses: getsentry/action-release@v1.11.0
+        uses: getsentry/action-release@v3.5.0
         if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -310,11 +331,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
@@ -332,14 +353,14 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
@@ -384,11 +405,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
@@ -406,14 +427,14 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nuclia/tooling
           ref: main
@@ -439,17 +460,92 @@ jobs:
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
+  deploy-rao:
+    name: Deploy rao
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.deploy-rao == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "rao",
+              "chart-version": "${{ steps.chart-version-rao.outputs.chart-version }}",
+              "component-type": "global"
+            }
+          ]
+        }
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          token_format: access_token
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Calculate short sha
+        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@v6
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get chart version
+        id: chart-version-rao
+        run: |
+          VERSION=`cat apps/rao/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.RAO_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-rao.outputs.chart-version }}
+          image-name: ${{ env.RAO_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: './charts/${{ env.RAO_IMAGE_NAME }}'
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
+
   send-to-promotion:
     runs-on: ubuntu-latest
-    needs: [deploy-manager, deploy-app]
+    needs: [deploy-manager, deploy-app, deploy-rao]
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
-        needs.deploy-app.result != 'skipped' )
+        needs.deploy-app.result != 'skipped' ||
+        needs.deploy-rao.result != 'skipped' )
     steps:
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
@@ -494,6 +590,7 @@ jobs:
             } + {
               "commit-sha": $commit_sha
             }' \
+            <(echo '${{ needs.deploy-rao.outputs.json-summary }}') \
             <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
             <(echo '${{ needs.deploy-app.outputs.json-summary }}')
           )
@@ -502,7 +599,7 @@ jobs:
 
       - name: Send to promotion queue
         id: send-to-promo
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/core-apps

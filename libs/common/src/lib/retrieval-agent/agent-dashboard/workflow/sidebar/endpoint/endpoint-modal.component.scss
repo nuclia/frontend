@@ -1,0 +1,11 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.endpoint-input {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  width: rhythm(90);
+  pa-input {
+    width: 100%;
+  }
+}

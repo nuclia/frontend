@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, SelectAccountKbService } from '@flaps/core';
 import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SelectAccountKbService } from '../select-account-kb.service';
 
 @Component({
   selector: 'app-select-kb',
@@ -38,6 +37,7 @@ export class SelectKbComponent implements OnDestroy {
   canAddArag: Observable<boolean> = combineLatest([this.isRetrievalAgentEnabled, this._canAddKb]).pipe(
     map(([aragEnabled, canAddKb]) => !this.standalone && aragEnabled && canAddKb),
   );
+  inRaoApp = this.navigation.inRaoApp;
 
   constructor(
     private navigation: NavigationService,

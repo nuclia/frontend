@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { OptionModel, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { WorkflowService } from '../../../../workflow.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModelSelectorComponent } from '../../../../../../../ai-models';
 
 @Component({
   selector: 'app-model-select',
   templateUrl: './model-select.component.html',
   styleUrls: ['./model-select.component.scss'],
   standalone: true,
-  imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ModelSelectorComponent, ReactiveFormsModule, TranslateModule],
 })
-export class ModelSelectComponent implements OnInit {
+export class ModelSelectComponent {
   @Input() label: string = '';
   @Input() required: boolean = false;
   @Input() form?: FormGroup;
@@ -20,15 +20,6 @@ export class ModelSelectComponent implements OnInit {
 
   private workflowService = inject(WorkflowService);
 
-  options = signal<OptionModel[] | null>(null);
-
-  ngOnInit(): void {
-    this.workflowService.models$.subscribe((models) => {
-      if (models?.length) {
-        this.options.set(
-          models.map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name })),
-        );
-      }
-    });
-  }
+  modelSchemas = this.workflowService.modelSchemas$;
+  generativeProviders = this.workflowService.generativeProviders$;
 }

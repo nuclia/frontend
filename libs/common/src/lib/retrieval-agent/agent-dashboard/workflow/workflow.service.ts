@@ -15,12 +15,13 @@ import { NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  LearningConfigurationOption,
   Driver,
   SomeAgent,
   NucliaDBDriver,
   KnowledgeBox,
   SearchConfigs,
+  LearningConfigurations,
+  GenerativeProviders,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import {
@@ -110,11 +111,12 @@ export class WorkflowService {
   schemas$ = this._schemasSubject.asObservable();
 
   // Shared Models state
-  private _modelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
-  models$ = this._modelsSubject.asObservable();
+  private _modelSchemasSubject = new BehaviorSubject<LearningConfigurations | null>(null);
+  modelSchemas$ = this._modelSchemasSubject.asObservable();
+  semanticModels$ = this._modelSchemasSubject.pipe(map((schemas) => schemas?.['semantic_models']?.options || []));
 
-  private _semanticModelsSubject = new BehaviorSubject<LearningConfigurationOption[] | null>(null);
-  semanticModels$ = this._semanticModelsSubject.asObservable();
+  private _generativeProvidersSubject = new BehaviorSubject<GenerativeProviders | null>(null);
+  generativeProviders$ = this._generativeProvidersSubject.asObservable();
 
   // Driver Model state
   private _driverModelsSubject = new BehaviorSubject<Driver[] | null>(null);
@@ -1123,7 +1125,9 @@ export class WorkflowService {
       case 'postprocess_alinia':
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
       case 'rephrase':
-        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+        const refRephrase = createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+        refRephrase.setInput('schemas', this._schemasSubject.getValue());
+        return refRephrase;
     }
 
     const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector });
@@ -1205,28 +1209,19 @@ export class WorkflowService {
     }
   }
 
-  getModels() {
-    const unsupportedModels = ['generative-multilingual-2023'];
-    return this.sdk.currentArag.pipe(
-      take(1),
-      switchMap((arag) => arag.getLearningSchema()),
-      map((schema) => ({
-        models: (schema?.['generative_model'].options || []).filter(
-          (model) => !unsupportedModels.includes(model.value),
-        ),
-        semanticModels: schema?.['semantic_models'].options || [],
-      })),
-    );
-  }
-
   /**
    * Fetch models and update shared state
    */
   fetchModels() {
-    this.getModels().subscribe((models) => {
-      this._modelsSubject.next(models.models);
-      this._semanticModelsSubject.next(models.semanticModels);
-    });
+    return this.sdk.currentArag
+      .pipe(
+        take(1),
+        switchMap((arag) => forkJoin([arag.getLearningSchema(), arag.getGenerativeProviders()])),
+      )
+      .subscribe(([schemas, providers]) => {
+        this._modelSchemasSubject.next(schemas);
+        this._generativeProvidersSubject.next(providers);
+      });
   }
 
   getSchemas() {

@@ -11,9 +11,9 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Filters, IConnector, ISyncEntity } from '../logic';
+import { Filters, IConnector, ISyncEntity, Section } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, map, Observable, Subject, take, takeUntil } from 'rxjs';
+import { filter, map, Observable, of, startWith, Subject, take, takeUntil } from 'rxjs';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { LabelModule, LabelSetFormModalComponent, LabelsService, ParametersTableComponent } from '@flaps/core';
 import {
@@ -67,7 +67,14 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) connector?: IConnector | null;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
-  @Input() useOAuth: boolean = false;
+  @Input() set useOAuth(value: boolean) {
+    this._useOAuth = value;
+    this.updateExtraSections();
+  }
+  get useOAuth() {
+    return this._useOAuth;
+  }
+  private _useOAuth = false;
   @Input() enterCredentials: boolean = false;
   @Input() isCloud?: boolean = false;
   @Input() set sync(value: ISyncEntity | undefined | null) {
@@ -128,6 +135,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
   invalidTables: string[] = [];
   extractStrategy: string | undefined = '';
+  files: { [id: string]: File } = {};
 
   private _extra: { [key: string]: string } = {};
 
@@ -136,33 +144,61 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.connector) {
-      this.connector.getParametersSections().subscribe((sections) => {
-        sections.forEach((section) =>
-          section.fields.forEach((field) => {
-            if (field.type !== 'table') {
-              this.form.controls.extra.addControl(
-                field.id,
-                new FormControl<string>('', {
-                  nonNullable: true,
-                  validators: field.required ? [Validators.required] : [],
-                }),
-              );
-            }
-          }),
-        );
-        if (Object.keys(this._extra).length > 0) {
-          this.form.patchValue({ extra: this._extra });
-        }
-      });
-    }
+    this.updateExtraSections();
+    this.updateValidators();
     this.extensionsControl.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((value) => (this.extensionList = this.formatExtensionList(value)));
-    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll), startWith(this.form.value)).subscribe(() => {
       this.validForm.emit(this.form.valid);
       this.emitSyncEntity();
     });
+  }
+
+  updateExtraSections() {
+    Object.keys(this.form.controls.extra.controls).forEach((key) => {
+      this.form.controls.extra.removeControl(key);
+    });
+    this.getExtraSections().subscribe((sections) => {
+      sections.forEach((section) => {
+        section.fields.forEach((field) => {
+          if (field.type !== 'table') {
+            this.form.controls.extra.addControl(
+              field.id,
+              new FormControl<string>('', {
+                nonNullable: true,
+                validators: field.required ? [Validators.required] : [],
+              }),
+            );
+          }
+        });
+      });
+      if (Object.keys(this._extra).length > 0) {
+        this.form.patchValue({ extra: this._extra });
+      }
+    });
+  }
+
+  updateValidators() {
+    this.form.controls.name.setValidators(this.enterCredentials ? [] : [Validators.required]);
+    this.form.controls.name.updateValueAndValidity();
+  }
+
+  getExtraSections(): Observable<Section[]> {
+    if (!this.connector) {
+      return of([]);
+    }
+    return this.connector
+      .getParametersSections()
+      .pipe(
+        map((sections) =>
+          sections.filter(
+            (section) =>
+              (section.id === 'credentials' && this.enterCredentials && !this.useOAuth) ||
+              (section.id !== 'credentials' && section.id !== 'folder' && !this.enterCredentials),
+          ),
+        ),
+      );
   }
 
   ngOnDestroy() {
@@ -286,5 +322,15 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     this.extractStrategy = strategy;
     this.validForm.emit(this.form.valid);
     this.emitSyncEntity();
+  }
+
+  updateFile(event: Event, fieldId: string, handleFile?: (file: File) => Observable<any>) {
+    const file = (event.target as HTMLInputElement).files?.[0] || undefined;
+    if (file && handleFile) {
+      handleFile(file).subscribe((value) => {
+        this.files[fieldId] = file;
+        this.form.controls.extra.get(fieldId)?.setValue(value);
+      });
+    }
   }
 }

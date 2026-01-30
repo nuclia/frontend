@@ -53,6 +53,7 @@ export interface AragResponse {
 export interface AragAnswer {
   exception: ARAGException | null;
   answer: string | null;
+  answer_citations: Memory.Citations | null;
   agent_request: string | null;
   generated_text: string | null;
   step: Memory.Step | null;
@@ -63,6 +64,8 @@ export interface AragAnswer {
   original_question_uuid: string | null;
   actual_question_uuid: string | null;
   feedback: Feedback | null;
+  data_visualizations: Memory.DataVisualization[] | null;
+
 }
 
 export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {

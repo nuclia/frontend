@@ -88,6 +88,6 @@ export class TopbarComponent {
   }
 
   goToTutorial() {
-    window.open('https://www.progress.com/agentic-rag/trial-guide', 'blank', 'noreferrer');
+    window.open('https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial', 'blank', 'noreferrer');
   }  
 }

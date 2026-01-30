@@ -12,8 +12,8 @@ import { BackendConfigurationService, LabelSetsModule, STFConfigModule, STFPipes
 import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
-import { FarewellModule } from './farewell/farewell.module';
-import { AccountModule } from './account/account.module';
+import { FarewellModule } from '@nuclia/user';
+import { AccountModule } from '@flaps/common';
 import { AppComponent } from './app.component';
 
 // Load locales
@@ -22,7 +22,6 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
-import { RedirectModule } from './redirect/redirect.module';
 import {
   AuthInterceptor,
   BaseModule,
@@ -31,8 +30,8 @@ import {
   TopbarModule,
   UploadModule,
 } from '@flaps/common';
+import { InviteModule } from '@nuclia/user';
 import { KnowledgeBoxModule } from './knowledge-box';
-import { InviteModule } from './onboarding/invite/invite.module';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
@@ -63,7 +62,6 @@ const appModules = [
   EntitiesModule,
   LabelSetsModule,
   UploadModule,
-  RedirectModule,
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, signal, computed, OnDestroy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4, JSONSchema4Type } from 'json-schema';
 import { Subject, takeUntil } from 'rxjs';
@@ -16,7 +16,7 @@ interface OptionModel {
   templateUrl: './enum-select.component.html',
   styleUrls: ['./enum-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule],
 })
 export class EnumSelectComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;
