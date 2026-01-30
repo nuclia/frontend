@@ -28,11 +28,14 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
         challengeInput.value = consentChallenge;
         form.appendChild(challengeInput);
         
-        const scopesInput = document.createElement('input');
-        scopesInput.type = 'hidden';
-        scopesInput.name = 'grant_scope';
-        scopesInput.value = JSON.stringify(data.requested_scope);
-        form.appendChild(scopesInput);
+        // Add each scope as a separate form field
+        data.requested_scope.forEach((scope) => {
+          const scopeInput = document.createElement('input');
+          scopeInput.type = 'hidden';
+          scopeInput.name = 'grant_scope';
+          scopeInput.value = scope;
+          form.appendChild(scopeInput);
+        });
         
         document.body.appendChild(form);
         form.submit();
