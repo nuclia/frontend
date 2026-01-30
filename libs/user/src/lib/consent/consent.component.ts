@@ -32,19 +32,11 @@ export class ConsentComponent implements OnInit {
       return;
     }
     this.consentChallenge = params.get('consent_challenge');
-    if (this.consentChallenge) {
-      this.oAuthService.getConsentData(this.consentChallenge).subscribe({
-        next: (data) => {
-          this.consentData = data;
-          if (this.consentData.skip_consent) {
-            setTimeout(() => this.acceptConsent(), 10);
-          }
-        },
-        error: () => {
-          this.error = 'login.error.unknown_consent_challenge';
-        },
-      });
-    } else {
+    
+    // Get data from resolver - resolver handles skip_consent auto-submit before component loads
+    this.consentData = this.route.snapshot.data['consentData'];
+    
+    if (!this.consentData && !this.consentChallenge) {
       this.error = 'login.error.unknown_consent_challenge';
     }
   }

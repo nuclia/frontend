@@ -55,6 +55,11 @@ export interface OAuthConsentData {
   skip_consent: boolean;
 }
 
+export interface OAuthLoginData {
+  skip_login: boolean;
+  subject?: string;
+}
+
 export interface JwtUser {
   first_name: string;
   id: string;
@@ -115,6 +120,12 @@ export class JwtUserAdapter implements JwtUser {
 export interface AuthTokens {
   access_token: string;
   refresh_token: string;
+}
+
+export interface SsoLoginResponse {
+  access_token?: string;
+  refresh_token?: string;
+  consent_url?: string;
 }
 
 export interface RefreshResult {

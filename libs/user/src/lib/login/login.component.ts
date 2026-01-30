@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -21,6 +21,7 @@ export class LoginComponent {
 
   oauth: boolean = false;
   loginChallenge: string | undefined;
+  loginData: OAuthLoginData | undefined;
 
   message: string | null = null;
   loginError: boolean = false;
@@ -82,6 +83,9 @@ export class LoginComponent {
       this.loginChallenge = params['login_challenge'];
       this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
 
+      // Get data from resolver - resolver handles skip_login auto-submit before component loads
+      this.loginData = this.route.snapshot.data['loginData'];
+      
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
@@ -141,7 +145,12 @@ export class LoginComponent {
     }
   }
 
+  private autoSubmitOAuthForm() {
+    // Submit OAuth form without validation (for skip_login scenario)
+    this.form?.nativeElement.submit();
+  }
+
   private remoteLogin() {
     location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
   }
-}
+} 

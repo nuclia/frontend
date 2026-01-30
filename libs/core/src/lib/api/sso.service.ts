@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { AuthTokens } from '../models';
+import { AuthTokens, SsoLoginResponse } from '../models';
 import { BackendConfigurationService } from '../config';
 import { SDKService } from './sdk.service';
 
@@ -14,15 +14,40 @@ export class SsoService {
   ) {}
 
   getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
-    return `${this.config.getAPIURL()}/auth/${provider}/authorize?came_from=${window.location.origin}`;
+    const params = new URLSearchParams();
+    params.set('came_from', window.location.origin);
+    
+    // Include login_challenge if present in current URL (for OAuth flows from other apps)
+    const currentParams = new URLSearchParams(window.location.search);
+    const loginChallenge = currentParams.get('login_challenge');
+    if (loginChallenge) {
+      params.set('login_challenge', loginChallenge);
+    }
+    
+    return `${this.config.getAPIURL()}/auth/${provider}/authorize?${params.toString()}`;
   }
 
-  login(code: string, state: string): Observable<AuthTokens> {
+  login(code: string, state: string): Observable<SsoLoginResponse> {
     const url = this.getLoginUrl(state);
+    const apiUrl = this.config.getAPIURL();
+    
     if (url === null || !this.isSafeRedirect(url)) {
+      console.error('[SSO] Invalid state - URL validation failed');
+      console.error('[SSO] Expected login_url to start with:', apiUrl);
+      console.error('[SSO] Received login_url:', url);
+      console.error('[SSO] Current window.location.origin:', window.location.origin);
       return throwError(() => new Error('Invalid state'));
     }
-    return this.sdk.nuclia.rest.post(url, { code });
+    
+    const decoded = this.decodeState(state);
+    const body: { code: string; login_challenge?: string } = { code };
+    
+    // Include login_challenge if present in state (for OAuth flows from other apps)
+    if (decoded['login_challenge']) {
+      body.login_challenge = decoded['login_challenge'];
+    }
+    
+    return this.sdk.nuclia.rest.post(url, body);
   }
 
   private getLoginUrl(state: string): string | null {

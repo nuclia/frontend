@@ -29,6 +29,7 @@ export class CallbackComponent implements OnInit {
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
       });
+      return;
     }
 
     if (this.route.snapshot.data['saml']) {
@@ -83,16 +84,49 @@ export class CallbackComponent implements OnInit {
   ssoLogin(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
+    
     if (code !== null && state !== null) {
       this.ssoService.login(code, state).subscribe({
-        next: (token) => this.authenticate(token, state),
-        error: (error) =>
+        next: (response) => {
+          // Check if this is an OAuth flow (login_challenge present in state)
+          const decodedState = this.ssoService.decodeState(state);
+          const isOAuthFlow = !!decodedState['login_challenge'];
+          
+          // If OAuth flow and response contains consent_url, redirect to it
+          if (isOAuthFlow && response.consent_url) {
+            this.document.location.href = response.consent_url;
+          } else if (response.access_token && response.refresh_token) {
+            // Regular flow: authenticate with tokens
+            this.authenticate(
+              {
+                access_token: response.access_token,
+                refresh_token: response.refresh_token,
+              },
+              state,
+            );
+          } else {
+            // Invalid response
+            this.router.navigate(['../signup'], {
+              relativeTo: this.route,
+              queryParams: { error: 'invalid_response' },
+            });
+          }
+        },
+        error: (error) => {
+          let errorCode = 'oops';
+          
+          if (error.status === 412) {
+            errorCode = 'no_personal_email';
+          } else if (error.message === 'Invalid state') {
+            errorCode = 'invalid_configuration';
+            this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+          }
+          
           this.router.navigate(['../signup'], {
             relativeTo: this.route,
-            queryParams: {
-              error: error.status === 412 ? 'no_personal_email' : 'oops',
-            },
-          }),
+            queryParams: { error: errorCode },
+          });
+        },
       });
     }
   }
