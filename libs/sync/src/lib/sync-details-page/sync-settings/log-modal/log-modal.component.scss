@@ -1,0 +1,14 @@
+@use 'apps/dashboard/src/variables' as *;
+
+h2 {
+  margin: 0;
+}
+
+.table-container {
+  max-width: rhythm(80);
+  padding-bottom: rhythm(6);
+}
+
+.value {
+  overflow-wrap: break-word;
+}

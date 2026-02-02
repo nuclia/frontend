@@ -13,12 +13,19 @@ import { CommonModule } from '@angular/common';
 import { IConnector, ISyncEntity, LogEntity } from '../../logic';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaDateTimeModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  ModalService,
+  PaDateTimeModule,
+  PaIconModule,
+  PaTableModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { filter, map, switchMap, take } from 'rxjs';
 import { LabelSets } from '@nuclia/core';
 import { ColoredLabel } from '@flaps/common';
 import { ActivatedRoute } from '@angular/router';
+import { LogModalComponent } from './log-modal/log-modal.component';
 
 @Component({
   selector: 'nsy-sync-settings',
@@ -42,6 +49,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private cdr = inject(ChangeDetectorRef);
   private currentRoute = inject(ActivatedRoute);
   private sdk = inject(SDKService);
+  private modalService = inject(ModalService);
 
   @Input({ required: true }) sync!: ISyncEntity;
   @Input({ required: true }) connector: IConnector | null | undefined = undefined;
@@ -106,5 +114,9 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
           this.cdr.markForCheck();
         });
     }
+  }
+
+  showLog(log: LogEntity) {
+    this.modalService.openModal(LogModalComponent, new ModalConfig({ data: log }));
   }
 }
