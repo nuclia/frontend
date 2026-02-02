@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   ModalConfig,
   ModalService,
+  PaButtonModule,
   PaDateTimeModule,
   PaIconModule,
   PaTableModule,
@@ -34,6 +35,7 @@ import { LogModalComponent } from './log-modal/log-modal.component';
     TwoColumnsConfigurationItemComponent,
     TranslateModule,
     SisLabelModule,
+    PaButtonModule,
     PaDateTimeModule,
     PaTableModule,
     PaDateTimeModule,
@@ -68,6 +70,8 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   labelSets: LabelSets = {};
   coloredLabels: ColoredLabel[] = [];
   extractStrategy = '';
+  pageSize = 50;
+  visibleLogs = this.pageSize;
 
   ngAfterViewInit() {
     this.currentRoute.queryParams
@@ -114,6 +118,11 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
           this.cdr.markForCheck();
         });
     }
+  }
+
+  loadMore() {
+    this.visibleLogs += this.pageSize;
+    this.cdr.markForCheck();
   }
 
   showLog(log: LogEntity) {

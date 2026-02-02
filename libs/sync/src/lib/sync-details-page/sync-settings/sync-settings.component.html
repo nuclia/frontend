@@ -139,7 +139,7 @@
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.message' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
       </pa-table-header>
-      @for (log of logs; track log) {
+      @for (log of logs | slice: 0 : visibleLogs; track log) {
         @let isClickable = sync.isCloud && (log.payload | keyvalue).length > 0;
         <pa-table-row
           [clickable]="isClickable"
@@ -181,5 +181,14 @@
         </pa-table-row>
       }
     </pa-table>
+    @if (logs.length > visibleLogs) {
+      <div class="load-more">
+        <pa-button
+          aspect="basic"
+          (click)="loadMore()">
+          {{ 'generic.show_more' | translate }}
+        </pa-button>
+      </div>
+    }
   </div>
 </nsi-two-columns-configuration-item>
