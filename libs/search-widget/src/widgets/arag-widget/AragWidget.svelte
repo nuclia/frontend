@@ -55,6 +55,7 @@
 
   const entries = $derived(aragAnswerState.entries);
   let entriesContainerElement: HTMLDivElement | undefined = $state();
+  let entriesElements: HTMLDivElement[] = $state([]);
 
   let darkMode = $derived(mode === 'dark');
 
@@ -153,7 +154,9 @@
           class:hidden={entries.length === 0}
           bind:this={entriesContainerElement}>
           {#each entries as entry, i}
-            <div class="chat-entry">
+            <div
+              class="chat-entry"
+              bind:this={entriesElements[i]}>
               <div
                 class="question"
                 class:error={!!entry.error}>
@@ -166,6 +169,7 @@
                 {#if entry.answers.length > 0 || entry.error}
                   <AragAnswer
                     expanded={i === entries.length - 1}
+                    container={entriesElements[i]}
                     {entry} />
                 {/if}
               </div>
