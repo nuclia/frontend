@@ -197,7 +197,9 @@
       </div>
     </div>
     {#if $showLoading}
-      <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
+      <div class="loading">
+        <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
+      </div>
     {/if}
   {/if}
 
