@@ -18,7 +18,7 @@ import { ButtonMiniComponent, SisProgressModule } from '@nuclia/sistema';
 
 @Component({
   standalone: true,
-  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule, PaIconModule],
+  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule, PaButtonModule, PaIconModule],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
   styleUrls: ['cloud-folder.component.scss'],
