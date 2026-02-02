@@ -65,6 +65,18 @@ export class SyncService {
         factory: (settings) => new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
+    sharefile: {
+      definition: {
+        id: 'sharefile',
+        oauth_provider: 'sharefile_oauth',
+        title: 'ShareFile',
+        logo: `${baseLogoPath}/progress.svg`,
+        description: 'Progress ShareFile service',
+        permanentSyncOnly: true,
+        cloud: true,
+        factory: (settings) => new OAuthConnector('sharefile', settings?.['id'] || '', this.config.getOAuthServer()),
+      },
+    },
     sharepoint: {
       definition: {
         id: 'sharepoint',
