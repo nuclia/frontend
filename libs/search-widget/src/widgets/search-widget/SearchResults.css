@@ -44,6 +44,10 @@ h3 {
   gap: var(--rhythm-0_5);
 }
 
+.loading {
+  margin-top: var(--rhythm-10);
+}
+
 @media (min-width: 1200px) {
   .results-container {
     flex-direction: row;

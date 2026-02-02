@@ -73,8 +73,12 @@
           padding-top: var(--rhythm-0_5);
         }
         .question {
+          background-color: var(--color-light-stronger);
           display: flex;
           gap: var(--rhythm-2);
+          position: sticky;
+          top: 0;
+          z-index: 1;
         }
         .answer {
           max-width: calc(var(--max-width-container) - var(--chat-padding) * 2);

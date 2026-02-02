@@ -5,7 +5,7 @@
   justify-content: center;
   gap: var(--rhythm-1);
   &:not(.small) {
-    margin: var(--rhythm-12) auto 0;
+    margin: var(--rhythm-2) auto;
     text-align: center;
   }
 }
