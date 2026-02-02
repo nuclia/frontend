@@ -15,7 +15,12 @@
     </ul>
   } @else {
     <div class="header">
-      <h3>{{ selectedDrive.name }} {{ currentPath }}</h3>
+      <h3>
+        {{ selectedDrive.name }} {{ currentPath() }}
+        @if (isCurrentSelected()) {
+          <pa-icon name="check"></pa-icon>
+        }
+      </h3>
       <nsi-button-mini (click)="selectFolder()">{{ 'sync.cloud-folder.select' | translate }}</nsi-button-mini>
     </div>
 

@@ -1,14 +1,24 @@
-import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+  signal,
+} from '@angular/core';
 import { SyncService } from '../logic';
 import { StorageDrive, StorageFolder } from '@nuclia/core';
 
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonMiniComponent, SisProgressModule } from '@nuclia/sistema';
 
 @Component({
   standalone: true,
-  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule],
+  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule, PaIconModule],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
   styleUrls: ['cloud-folder.component.scss'],
@@ -17,7 +27,9 @@ export class CloudFolderComponent implements OnInit {
   @Input() externalConnectorId = '';
   @Output() selection = new EventEmitter<{ sync_root_path: string; drive_id: string }>();
   selectedDrive: StorageDrive | undefined = undefined;
-  currentPath: string | undefined = undefined;
+  currentPath = signal<string>('');
+  selectedPath = signal<string | undefined>(undefined);
+  isCurrentSelected = computed(() => this.selectedPath() === this.currentPath());
   drives: StorageDrive[] = [];
   folders: StorageFolder[] = [];
   private cdr = inject(ChangeDetectorRef);
@@ -46,6 +58,7 @@ export class CloudFolderComponent implements OnInit {
 
   browseDrive(drive: StorageDrive) {
     this.selectedDrive = drive;
+    this.selectedPath.set(undefined);
     this.loadFolders(drive.id);
   }
 
@@ -53,15 +66,15 @@ export class CloudFolderComponent implements OnInit {
     if (!this.selectedDrive) {
       return;
     }
-    this.currentPath = path;
+    this.currentPath.set(path);
     this.loadFolders(this.selectedDrive.id, path);
   }
 
   back() {
-    if (this.currentPath) {
-      const chunks = this.currentPath.split('/');
+    if (this.currentPath()) {
+      const chunks = this.currentPath().split('/');
       if (chunks.length === 2 && this.selectedDrive) {
-        this.currentPath = undefined;
+        this.currentPath.set('');
         this.browseDrive(this.selectedDrive);
       }
       if (chunks.length > 2) {
@@ -80,7 +93,9 @@ export class CloudFolderComponent implements OnInit {
 
   selectFolder() {
     if (this.selectedDrive) {
-      this.selection.emit({ drive_id: this.selectedDrive.id, sync_root_path: this.currentPath || '' });
+      this.selection.emit({ drive_id: this.selectedDrive.id, sync_root_path: this.currentPath() });
+      this.selectedPath.set(this.currentPath());
+      this.cdr.markForCheck();
     }
   }
 }
