@@ -36,6 +36,7 @@ export class ResourceListComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   statusCount = this.uploadService.statusCount;
+  uploadInProgress = this.uploadService.uploadInProgress;
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   query = this.resourceListService.query;

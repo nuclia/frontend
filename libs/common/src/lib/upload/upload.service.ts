@@ -65,7 +65,8 @@ export const STATUS_FACET = '/metadata.status';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
-  private _progress = new ReplaySubject<UploadStatus>();
+  private _progress = new ReplaySubject<UploadStatus>(1);
+  private _bulkUploadInProgress = new BehaviorSubject<boolean>(false);
   private _barDisabled = new BehaviorSubject<boolean>(false);
   private _statusCount: BehaviorSubject<{ processed: number; pending: number; error: number }> = new BehaviorSubject({
     processed: 0,
@@ -79,6 +80,9 @@ export class UploadService {
   pendingResourcesLimitExceeded = this._statusCount.pipe(map((count) => count.pending > PENDING_RESOURCES_LIMIT));
   private _refreshNeeded = new Subject<boolean>();
   refreshNeeded = this._refreshNeeded.asObservable();
+  uploadInProgress = combineLatest([this.progress.pipe(startWith(null)), this._bulkUploadInProgress]).pipe(
+    map(([progress, bulkUploadInProgress]) => (progress && !progress.completed) || bulkUploadInProgress),
+  );
 
   constructor(
     private sdk: SDKService,
@@ -420,6 +424,7 @@ export class UploadService {
     let conflicts = false;
     const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
     window.addEventListener('beforeunload', avoidTabClosing);
+    this._bulkUploadInProgress.next(true);
     uploads = uploads.map((upload) =>
       upload.pipe(
         // When there are many uploads, a delay is added to avoid overflowing the process queue
@@ -445,6 +450,7 @@ export class UploadService {
       tap(() => {
         window.removeEventListener('beforeunload', avoidTabClosing);
         this.onUploadComplete(errors === 0, errors429 > 0, blocked, conflicts);
+        this._bulkUploadInProgress.next(false);
       }),
       map(() => ({ errors })),
     );
