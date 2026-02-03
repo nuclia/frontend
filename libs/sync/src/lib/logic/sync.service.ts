@@ -6,13 +6,13 @@ import {
   IConnector,
   ISyncEntity,
   LogEntity,
-  LogSeverityLevel,
   SearchResults,
   SyncBasicData,
 } from './models';
 import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './connectors/sitemap';
 import {
+  Job,
   NucliaOptions,
   WritableKnowledgeBox,
   SyncConfiguration,
@@ -133,6 +133,7 @@ export class SyncService {
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
   private _cacheUpdated = new BehaviorSubject<string>(new Date().toISOString());
   private _isSyncing = new BehaviorSubject<{ [id: string]: boolean }>({});
+  private _syncJobs = new BehaviorSubject<Job[]>([]);
 
   isServerDown = this._isServerDown.asObservable();
   currentSyncId = this._currentSyncId.asObservable();
@@ -141,6 +142,7 @@ export class SyncService {
   };
   cacheUpdated = this._cacheUpdated.asObservable();
   isSyncing = this._isSyncing.asObservable();
+  syncJobs = this._syncJobs.asObservable();
   private _useCloudSync = new BehaviorSubject<boolean>(false);
   useCloudSync = this._useCloudSync.asObservable();
 
@@ -487,50 +489,31 @@ export class SyncService {
   }
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
-    if (this._useCloudSync.getValue()) {
-      return this.sdk.currentKb.pipe(
-        take(1),
-        switchMap((kb) => kb.syncManager.getConfigJobs(sync || '')),
-        map((jobs) =>
-          jobs.reduce((acc, curr) => {
-            acc = acc.concat(
-              (curr.logs || []).map((log) => {
-                const { level, message, timestamp, ...extra } = log;
-                return {
-                  level: ['WARNING', 'ERROR', 'EXCEPTION', 'CRITICAL'].includes(level)
-                    ? LogSeverityLevel.medium
-                    : LogSeverityLevel.low,
-                  message,
-                  createdAt: timestamp,
-                  origin: '',
-                  action: '',
-                  payload: extra,
-                };
-              }),
-            );
-            return acc;
-          }, [] as LogEntity[]),
+    return this.http
+      .get<LogEntity[]>(
+        `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
+      )
+      .pipe(
+        map((logs) =>
+          logs.sort((a, b) => {
+            const dateComparison = compareDesc(a.createdAt, b.createdAt);
+            // Make sure logs about start are always displayed before logs about finished
+            if (dateComparison === 0) {
+              return a.action.startsWith('start') ? 1 : -1;
+            } else {
+              return dateComparison;
+            }
+          }),
         ),
       );
-    } else {
-      return this.http
-        .get<LogEntity[]>(
-          `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
-        )
-        .pipe(
-          map((logs) =>
-            logs.sort((a, b) => {
-              const dateComparison = compareDesc(a.createdAt, b.createdAt);
-              // Make sure logs about start are always displayed before logs about finished
-              if (dateComparison === 0) {
-                return a.action.startsWith('start') ? 1 : -1;
-              } else {
-                return dateComparison;
-              }
-            }),
-          ),
-        );
-    }
+  }
+
+  updateSyncJobs(syncId: string) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.getConfigJobs(syncId || '')),
+      tap((jobs) => this._syncJobs.next(jobs)),
+    );
   }
 
   clearLogs(): Observable<void> {
@@ -557,17 +540,25 @@ export class SyncService {
   }
 
   triggerSync(syncId: string, resyncAll = false): Observable<void> {
-    this._isSyncing.next({ ...this._isSyncing.value, [syncId]: true });
-    const resync = resyncAll ? this.updateSync(syncId, {}, true).pipe(map(() => true)) : of(true);
-    return resync.pipe(
-      switchMap(() => this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`)),
-      tap(() => this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false })),
-      catchError((error) => {
-        console.warn(`Trigger sync failed:`, error);
-        this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false });
-        return of();
-      }),
-    );
+    if (this._useCloudSync.getValue()) {
+      return this.sdk.currentKb.pipe(
+        switchMap((kb) => kb.syncManager.syncConfig(syncId)),
+        switchMap(() => this.updateSyncJobs(syncId)),
+        map(() => undefined),
+      );
+    } else {
+      this._isSyncing.next({ ...this._isSyncing.value, [syncId]: true });
+      const resync = resyncAll ? this.updateSync(syncId, {}, true).pipe(map(() => true)) : of(true);
+      return resync.pipe(
+        switchMap(() => this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`)),
+        tap(() => this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false })),
+        catchError((error) => {
+          console.warn(`Trigger sync failed:`, error);
+          this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false });
+          return of();
+        }),
+      );
+    }
   }
 
   updateUseCloudSync(use: boolean) {

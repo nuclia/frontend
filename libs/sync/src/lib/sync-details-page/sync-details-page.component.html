@@ -24,15 +24,15 @@
                   {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
                 </pa-toggle>
               </div>
-
-              <pa-button
-                aspect="basic"
-                data-cy="sync-now"
-                [disabled]="isSyncing | async"
-                (click)="triggerSync()">
-                {{ 'sync.details.buttons.sync-now' | translate }}
-              </pa-button>
-
+            }
+            <pa-button
+              aspect="basic"
+              data-cy="sync-now"
+              [disabled]="sync.isCloud ? (isSyncingCloud | async) : (isSyncing | async)"
+              (click)="triggerSync()">
+              {{ 'sync.details.buttons.sync-now' | translate }}
+            </pa-button>
+            @if (!sync.isCloud) {
               <pa-button
                 aspect="basic"
                 routerLink="./edit">
@@ -78,7 +78,7 @@
       <nsy-sync-settings
         [sync]="sync"
         [connector]="connector | async"
-        [logs]="activityLogs | async"></nsy-sync-settings>
+        [logs]="sync.isCloud ? (activityLogsCloud | async) : (activityLogs | async)"></nsy-sync-settings>
     }
   }
 </div>

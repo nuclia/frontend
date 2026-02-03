@@ -68,6 +68,7 @@ describe('SyncDetailsPageComponent', () => {
         })),
         updateSync: jest.fn(() => of(undefined)),
         isSyncing: of(false),
+        syncJobs: of([]),
         getLogs: jest.fn(() =>
           of([
             {
