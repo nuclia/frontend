@@ -1,16 +1,20 @@
 <div class="resource-list page-spacing">
   @if ((emptyKb | async) === true) {
-    <div
-      class="empty-kb"
-      data-cy="empty-kb">
-      <div class="title-m">{{ 'resource.empty.title' | translate }}</div>
-      <div class="body-m">{{ 'resource.empty.description' | translate }}</div>
-      @if (isAdminOrContrib | async) {
-        <div>
-          <stf-upload-button></stf-upload-button>
-        </div>
-      }
-    </div>
+    @if (uploadInProgress | async) {
+      <nsi-spinner></nsi-spinner>
+    } @else {
+      <div
+        class="empty-kb"
+        data-cy="empty-kb">
+        <div class="title-m">{{ 'resource.empty.title' | translate }}</div>
+        <div class="body-m">{{ 'resource.empty.description' | translate }}</div>
+        @if (isAdminOrContrib | async) {
+          <div>
+            <stf-upload-button></stf-upload-button>
+          </div>
+        }
+      </div>
+    }
   } @else if ((emptyKb | async) === false) {
     <div
       class="resource-list-header"
