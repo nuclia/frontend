@@ -1,3 +1,9 @@
+# 1.31.2 (unreleased)
+
+### Improvements
+
+- Support endpoint to trigger a sync job for a sync configuration
+
 # 1.31.1 (2026-01-20)
 
 ### Improvements

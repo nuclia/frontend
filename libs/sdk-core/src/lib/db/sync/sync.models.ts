@@ -28,6 +28,7 @@ export interface ISyncManager {
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
   getConfigJobs(id: string): Observable<Job[]>;
+  syncConfig(id: string): Observable<Job>;
   browse(
     externalConnectorId: string,
     drive_id?: string,

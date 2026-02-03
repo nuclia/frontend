@@ -4,11 +4,24 @@ import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComp
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
-import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { IConnector, ISyncEntity, LogEntity, LogSeverityLevel, SyncItem, SyncService } from '../logic';
+import {
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { SDKService } from '@flaps/core';
+import { Job } from '@nuclia/core';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -62,6 +75,9 @@ export class SyncDetailsPageComponent implements OnDestroy {
     map((connectorDef) => (connectorDef ? this.syncService.getConnector(connectorDef.id, '') : undefined)),
   );
   activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
+  activityLogsCloud: Observable<LogEntity[]> = this.syncService.syncJobs.pipe(
+    map((jobs) => this.getLogsFromJobs(jobs)),
+  );
 
   editMode: Observable<boolean> = this.currentRoute.url.pipe(
     map((fragments) => fragments.length > 1 && fragments[1].path === 'edit'),
@@ -72,6 +88,16 @@ export class SyncDetailsPageComponent implements OnDestroy {
   isSyncing: Observable<boolean> = combineLatest([this.syncId, this.syncService.isSyncing]).pipe(
     map(([syncId, isSyncing]) => isSyncing[syncId] || false),
   );
+  isSyncingCloud = this.syncService.syncJobs.pipe(map((jobs) => ['in_progress', 'pending'].includes(jobs[0]?.status)));
+
+  constructor() {
+    this.sync
+      .pipe(
+        take(1),
+        switchMap((sync) => (sync.isCloud ? this.syncService.updateSyncJobs(sync.id) : of(false))),
+      )
+      .subscribe();
+  }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
@@ -93,19 +119,20 @@ export class SyncDetailsPageComponent implements OnDestroy {
   }
 
   triggerSync() {
-    this.modalService
-      .openConfirm({
-        title: this.translate.instant('sync.details.modal.title'),
-        description: 'sync.details.modal.description',
-        confirmLabel: 'sync.details.modal.sync-new',
-        cancelLabel: 'sync.details.modal.re-sync-all',
-      })
-      .onClose.pipe(
-        switchMap((syncNew: boolean) =>
-          this.syncId.pipe(
-            take(1),
-            switchMap((syncId) => this.syncService.triggerSync(syncId, !syncNew)),
-          ),
+    this.sync
+      .pipe(
+        take(1),
+        switchMap((sync) =>
+          sync.isCloud
+            ? this.syncService.triggerSync(sync.id)
+            : this.modalService
+                .openConfirm({
+                  title: this.translate.instant('sync.details.modal.title'),
+                  description: 'sync.details.modal.description',
+                  confirmLabel: 'sync.details.modal.sync-new',
+                  cancelLabel: 'sync.details.modal.re-sync-all',
+                })
+                .onClose.pipe(switchMap((syncNew: boolean) => this.syncService.triggerSync(sync.id, !syncNew))),
         ),
       )
       .subscribe({
@@ -179,5 +206,43 @@ export class SyncDetailsPageComponent implements OnDestroy {
       .subscribe({
         error: () => this.toaster.error('sync.details.toast.modification-failed'),
       });
+  }
+
+  getLogsFromJobs(jobs: Job[]) {
+    return jobs.reduce((acc, curr) => {
+      acc = acc
+        .concat(
+          (curr.logs || []).map((log) => {
+            const { level, message, timestamp, ...extra } = log;
+            return {
+              level: ['WARNING', 'ERROR', 'EXCEPTION', 'CRITICAL'].includes(level)
+                ? LogSeverityLevel.medium
+                : LogSeverityLevel.low,
+              message,
+              createdAt: timestamp,
+              origin: '',
+              action: '',
+              payload: extra,
+            };
+          }),
+        )
+        .concat(
+          curr.status !== 'completed'
+            ? [
+                {
+                  level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
+                  message: ['pending', 'in_progress'].includes(curr.status)
+                    ? 'Checking for changes...'
+                    : 'Synchronization failed',
+                  createdAt: curr.created_at,
+                  origin: '',
+                  action: '',
+                  payload: { status: curr.status },
+                },
+              ]
+            : [],
+        );
+      return acc;
+    }, [] as LogEntity[]);
   }
 }

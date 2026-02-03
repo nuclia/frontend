@@ -52,6 +52,10 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.get<Job[]>(`${this.kb.path}/sync_config/${id}/jobs`);
   }
 
+  syncConfig(id: string): Observable<Job> {
+    return this.nuclia.rest.post<Job>(`${this.kb.path}/sync_config/${id}/sync`, {});
+  }
+
   browse(
     externalConnectorId: string,
     drive_id?: string,
