@@ -226,22 +226,20 @@ export class SyncDetailsPageComponent implements OnDestroy {
             };
           }),
         )
-        .concat(
-          curr.status !== 'completed'
-            ? [
-                {
-                  level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
-                  message: ['pending', 'in_progress'].includes(curr.status)
-                    ? 'Checking for changes...'
-                    : 'Synchronization failed',
-                  createdAt: curr.created_at,
-                  origin: '',
-                  action: '',
-                  payload: { status: curr.status },
-                },
-              ]
-            : [],
-        );
+        .concat([
+          {
+            level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
+            message: ['pending', 'in_progress'].includes(curr.status)
+              ? 'Checking for changes...'
+              : curr.status === 'completed'
+                ? 'Synchronization complete'
+                : 'Synchronization failed',
+            createdAt: curr.created_at,
+            origin: '',
+            action: '',
+            payload: { status: curr.status },
+          },
+        ]);
       return acc;
     }, [] as LogEntity[]);
   }
