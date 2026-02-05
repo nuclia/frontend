@@ -1,0 +1,73 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>
+    {{ 'dashboard-home.test-page.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div
+      class="container"
+      [formGroup]="form">
+      @if (widgets | async; as widgets) {
+        @if (widgets.length === 0) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'dashboard-home.test-page.no-widgets' | translate }}
+          </nsi-info-card>
+        }
+        <pa-select
+          formControlName="widget"
+          [label]="'dashboard-home.test-page.select-widget' | translate"
+          [readonly]="widgets.length === 0">
+          @for (widget of widgets; track widget.slug) {
+            <pa-option [value]="widget.slug">{{ widget.name }}</pa-option>
+          }
+        </pa-select>
+      }
+      @if (!(isPublic | async)) {
+        <pa-date-picker
+          formControlName="expiration"
+          [label]="'dashboard-home.test-page.expiration-date' | translate"></pa-date-picker>
+      }
+      @if (url()) {
+        <div>
+          <div class="title-xs">{{ 'dashboard-home.test-page.generated-url'| translate }}</div>
+          <div class="generated-url">
+            <pa-textarea
+              rows="6"
+              readonly
+              [value]="url()"></pa-textarea>
+            <pa-button
+              [icon]="copied() ? 'check' : 'copy'"
+              aspect="basic"
+              size="small"
+              (click)="copy()">
+              {{ 'generic.copy' | translate }}
+            </pa-button>
+          </div>
+        </div>
+        @if (!(isPublic | async)) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'dashboard-home.test-page.warning' | translate }}
+          </nsi-info-card>
+        }
+      }
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="generateUrl()">
+      {{ 'dashboard-home.test-page.generate-url' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

@@ -14,6 +14,7 @@ import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
+import { TestPageModalComponent } from './test-page-modal/test-page-modal.component';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -229,6 +230,10 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         },
       }),
     );
+  }
+
+  openTestPageModal() {
+    this.modal.openModal(TestPageModalComponent);
   }
 
   navigateToTestPage() {

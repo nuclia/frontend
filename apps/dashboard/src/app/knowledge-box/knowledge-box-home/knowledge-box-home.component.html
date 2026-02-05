@@ -88,16 +88,18 @@
               </div>
             </div>
           }
-          <div>
-            <pa-button
-              size="small"
-              aspect="basic"
-              icon="square-arrow"
-              iconAndText
-              (click)="navigateToTestPage()">
-              {{ 'test-page.title' | translate }}
-            </pa-button>
-          </div>
+          @if (isKbAdmin | async) {
+            <div>
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="link"
+                iconAndText
+                (click)="openTestPageModal()">
+                {{ 'test-page.title' | translate }}
+              </pa-button>
+            </div>
+          }
         </nsi-home-container>
 
         @if (

@@ -29,7 +29,6 @@ export class PreviewService {
         cdn="${this.backendConfig.getCDN() + '/'}"
         backend="${this.backendConfig.getAPIURL()}"
         state="${kb.state || ''}"
-        kbslug="${kb.slug || ''}"
         account="${account.id}"
         lang="${this.translate.currentLang}"
         ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}

@@ -1,0 +1,77 @@
+:root {
+  --color-neutral-light: #c4c4c4;
+  --color-neutral-lightest: #f7f7f8;
+  --color-light-stronger: #fff;
+  --topbar-height: 4.5rem;
+  --inner-container-padding: 3rem;
+  --title-height: 4.5rem;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Sans-Serif;
+  margin: 0;
+}
+
+.topbar {
+  align-items: center;
+  background-color: var(--color-light-stronger);
+  border-bottom: 1px solid var(--color-neutral-light);
+  display: flex;
+  height: var(--topbar-height);
+  left: 0;
+  padding-left: 3rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.logo {
+  width: 7rem;
+}
+
+.container {
+  background-color: var(--color-neutral-lightest);
+  padding-top: var(--topbar-height);
+}
+
+.inner-container {
+  background-color: var(--color-light-stronger);
+  margin: 0 auto;
+  max-width: 58rem;
+  min-height: calc(100vh - var(--topbar-height));
+  padding: var(--inner-container-padding);
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  height: var(--title-height);
+  margin: 0;
+}
+
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.chat-widget {
+  --custom-height-container: calc(
+    100vh - var(--topbar-height) - var(--title-height) - var(--inner-container-padding) * 2
+  );
+}
+
+@media (max-width: 36rem) {
+  .topbar,
+  .inner-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
