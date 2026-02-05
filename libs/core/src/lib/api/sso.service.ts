@@ -57,7 +57,32 @@ export class SsoService {
   }
 
   private isSafeRedirect(redirectUrl: string) {
-    return redirectUrl.startsWith(this.config.getAPIURL());
+    try {
+      const redirectUrlObj = new URL(redirectUrl);
+      const apiUrlObj = new URL(this.config.getAPIURL());
+      
+      const redirectDomain = this.extractDomain(redirectUrlObj.hostname);
+      const apiDomain = this.extractDomain(apiUrlObj.hostname);
+      
+      return redirectDomain === apiDomain;
+    } catch {
+      return false;
+    }
+  }
+
+  private extractDomain(hostname: string): string {
+    // Handle localhost and IP addresses
+    if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+      return hostname;
+    }
+    
+    // Extract root domain (last 2 parts)
+    const parts = hostname.split('.');
+    if (parts.length >= 2) {
+      return parts.slice(-2).join('.');
+    }
+    
+    return hostname;
   }
 
   decodeState(state: string): { [key: string]: string } {
