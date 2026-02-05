@@ -1,0 +1,22 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  padding: rhythm(1) 0;
+  width: rhythm(64);
+}
+
+.title-xs {
+  margin-bottom: rhythm(1);
+}
+
+.generated-url {
+  align-items: flex-start;
+  display: flex;
+  gap: rhythm(1);
+  pa-textarea {
+    width: 100%;
+  }
+}
