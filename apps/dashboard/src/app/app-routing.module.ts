@@ -41,7 +41,6 @@ import {
 import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
-import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [
   {
@@ -280,23 +279,6 @@ const routes: Routes = [
         path: ':account',
         component: SelectKbComponent,
         canActivate: [selectKbGuard],
-      },
-    ],
-  },
-  {
-    path: 'test/:account/:zone/:kb',
-    canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        canActivate: [setAccountGuard],
-        children: [
-          {
-            path: '',
-            canActivate: [setKbGuard],
-            component: TestPageComponent,
-          },
-        ],
       },
     ],
   },

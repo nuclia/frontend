@@ -235,15 +235,4 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   openTestPageModal() {
     this.modal.openModal(TestPageModalComponent);
   }
-
-  navigateToTestPage() {
-    combineLatest([this.account, this.currentKb])
-      .pipe(
-        take(1),
-        map(([account, kb]) => this.navigationService.getTestPageUrl(account.slug, kb.slug)),
-      )
-      .subscribe((url) => {
-        window.open(url, 'blank', 'noreferrer');
-      });
-  }
 }
