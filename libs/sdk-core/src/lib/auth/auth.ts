@@ -8,6 +8,7 @@ import type { AuthInfo, AuthTokens, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
+const LOCALSTORAGE_ID_TOKEN_KEY = 'JWT_ID_TOKEN_KEY';
 // Restore the 6 hours delay as 5 minutes is too painful for the desktop
 // (temporary until we have the Deno agent)
 const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
@@ -119,6 +120,128 @@ export class Authentication implements IAuthentication {
     );
   }
 
+  getConsentUrl(): string {
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    return `${this.nuclia.options.oauth.auth}/api/auth/oauth/consent`;
+  }
+
+  redirectToOAuth(queryParams?: { [key: string]: string }) {
+    const oauthParams = this.nuclia.options.oauth;
+    if (!oauthParams) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    if (!queryParams || Object.keys(queryParams).length === 0) {
+      queryParams = { random: this.generateSecureToken(32) };
+    }
+    const stateToken = btoa(JSON.stringify(queryParams));
+    const nonceToken = this.generateSecureToken(32);
+
+    // Generate PKCE parameters
+    const codeVerifier = this.generateCodeVerifier();
+    this.generateCodeChallenge(codeVerifier).then((codeChallenge) => {
+      sessionStorage.setItem('oauth_state', stateToken);
+      sessionStorage.setItem('oauth_nonce', nonceToken);
+      sessionStorage.setItem('code_verifier', codeVerifier);
+
+      const authParams = new URLSearchParams({
+        response_type: 'code',
+        client_id: oauthParams.client_id,
+        redirect_uri: `${location.origin}/user/callback`,
+        scope: 'offline_access openid',
+        state: stateToken,
+        nonce: nonceToken,
+        code_challenge: codeChallenge,
+        code_challenge_method: 'S256',
+      });
+
+      const authorizationUrl = `${oauthParams.hydra}/oauth2/auth?${authParams}`;
+
+      console.log('Initiating OAuth flow with PKCE:', authorizationUrl);
+      window.location.href = authorizationUrl;
+    });
+  }
+
+  processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }> {
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    const expectedState = sessionStorage.getItem('oauth_state');
+
+    if (returnedState !== expectedState) {
+      console.error('State validation failed - possible security issue');
+      return of({ success: false, state: {} });
+    }
+    return this.exchangeAuthorizationCode(authCode).pipe(
+      map(() => {
+        sessionStorage.removeItem('oauth_state');
+        sessionStorage.removeItem('oauth_nonce');
+        let state = {};
+        try {
+          state = JSON.parse(atob(returnedState));
+        } catch {
+          console.error('Cannot parse state');
+        }
+        return { success: true, state };
+      }),
+    );
+  }
+
+  private exchangeAuthorizationCode(authCode: string) {
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    const codeVerifier = sessionStorage.getItem('code_verifier');
+
+    if (!codeVerifier) {
+      throw new Error('Code verifier not found - PKCE flow compromised');
+    }
+
+    const tokenRequestBody = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: authCode,
+      redirect_uri: `${window.location.origin}/user/callback`,
+      client_id: this.nuclia.options.oauth.client_id,
+      code_verifier: codeVerifier,
+    });
+
+    return this.fetch<AuthTokens>(`${this.nuclia.options.oauth.hydra}/oauth2/token`, tokenRequestBody, {}, true).pipe(
+      map((tokenData) => {
+        this.authenticate(tokenData);
+        sessionStorage.removeItem('code_verifier');
+      }),
+    );
+  }
+
+  private generateSecureToken(length: number) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const values = new Uint8Array(length);
+    crypto.getRandomValues(values);
+    return Array.from(values)
+      .map((v) => chars[v % chars.length])
+      .join('');
+  }
+
+  private generateCodeVerifier() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return this.base64URLEncode(array);
+  }
+
+  private base64URLEncode(buffer: Uint8Array<ArrayBuffer>) {
+    return btoa(String.fromCharCode(...buffer))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  private generateCodeChallenge(verifier: string) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    return crypto.subtle.digest('SHA-256', data).then((hash) => this.base64URLEncode(new Uint8Array(hash)));
+  }
+
   /**
    * Calls the login endpoint for account authentication and emits when done.
    *
@@ -143,12 +266,15 @@ export class Authentication implements IAuthentication {
     ```
    */
   login(username: string, password: string, validation?: string): Observable<boolean> {
-    return this.fetch<AuthTokens>(
-      '/auth/login',
-      { username, password },
-      false,
-      validation ? { 'X-STF-VALIDATION': validation } : {},
-    ).pipe(map((tokens) => this.authenticate(tokens)));
+    // TO BE REMOVED?
+    debugger;
+    return of(false);
+    // return this.fetch<AuthTokens>(
+    //   '/auth/login',
+    //   { username, password },
+    //   false,
+    //   validation ? { 'X-STF-VALIDATION': validation } : {},
+    // ).pipe(map((tokens) => this.authenticate(tokens)));
   }
 
   /**
@@ -174,14 +300,33 @@ export class Authentication implements IAuthentication {
 
   /** Calls the logout endpoint and removes the token stored in localStorage. */
   logout(): void {
-    this.fetch('/auth/logout', {}, true, {}).subscribe();
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    const id_token = localStorage.getItem(LOCALSTORAGE_ID_TOKEN_KEY) || '';
     localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
     localStorage.removeItem(LOCALSTORAGE_REFRESH_KEY);
-    this._isAuthenticated.next(false);
+    localStorage.removeItem(LOCALSTORAGE_ID_TOKEN_KEY);
+    const logoutParams = new URLSearchParams({
+      id_token_hint: id_token,
+      post_logout_redirect_uri: window.location.origin,
+    });
+    window.location.assign(`${this.nuclia.options.oauth.hydra}/oauth2/sessions/logout?${logoutParams}`);
   }
 
   refresh(): Observable<boolean> {
-    return this.fetch<AuthTokens>('/auth/refresh', { refresh_token: this.getRefreshToken() }, true, {}).pipe(
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    return this.fetch<AuthTokens>(
+      `${this.nuclia.options.oauth.hydra}/oauth2/token`,
+      {
+        grant_type: 'refresh_token',
+        client_id: this.nuclia.options.oauth.client_id,
+        refresh_token: this.getRefreshToken(),
+      },
+      {},
+    ).pipe(
       catchError((e) => {
         this.logout();
         return throwError(e);
@@ -233,7 +378,10 @@ export class Authentication implements IAuthentication {
     ```
    */
   setPassword(password: string): Observable<boolean> {
-    return this.fetch<AuthTokens>('/auth/setpassword', { password }, true, {}).pipe(
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    return this.fetch<AuthTokens>(`${this.nuclia.options.oauth.auth}/auth/setpassword`, { password }).pipe(
       map((tokens) => this.authenticate(tokens)),
     );
   }
@@ -283,6 +431,7 @@ export class Authentication implements IAuthentication {
   private storeTokens(tokens: AuthTokens): void {
     localStorage.setItem(LOCALSTORAGE_AUTH_KEY, tokens.access_token);
     localStorage.setItem(LOCALSTORAGE_REFRESH_KEY, tokens.refresh_token);
+    localStorage.setItem(LOCALSTORAGE_ID_TOKEN_KEY, tokens.id_token || '');
     this.checkTokenExpiration();
   }
 
@@ -310,21 +459,21 @@ export class Authentication implements IAuthentication {
   }
 
   private fetch<T>(
-    path: string,
+    url: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    body: any,
-    withAuth: boolean,
-    extraHeaders: { [key: string]: string },
+    body?: any,
+    extraHeaders?: { [key: string]: string },
+    formUrlencoded?: boolean,
   ): Observable<T> {
-    const headers: { [key: string]: string } = { 'content-type': 'application/json', ...extraHeaders };
-    if (withAuth) {
-      headers['Authorization'] = `Bearer ${this.getToken()}`;
-    }
-    return fromFetch(`${this.nuclia.backend}${path}`, {
+    const headers: { [key: string]: string } = {
+      'content-type': formUrlencoded ? 'application/x-www-form-urlencoded' : 'application/json',
+      ...(extraHeaders || {}),
+    };
+    return fromFetch(url, {
       method: 'POST',
       selector: (response) => Promise.resolve(response),
       headers,
-      body: JSON.stringify(body),
+      body: formUrlencoded ? body : JSON.stringify(body),
     }).pipe(
       switchMap((response) => {
         if (!response.ok) {

@@ -22,6 +22,11 @@ export type EnvironmentConfiguration = {
     assetsPath?: string;
     allowed_hosts_redirect?: string[];
   };
+  oauth: {
+    client_id: string;
+    hydra: string;
+    auth: string;
+  };
 };
 
 export type StaticEnvironmentConfiguration = {

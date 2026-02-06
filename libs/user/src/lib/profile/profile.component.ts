@@ -27,14 +27,9 @@ export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
-  canModifyPassword = false; // TODO
-  canModifyEmail = false; // TODO
-
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
-    email: [{ value: '', disabled: !this.canModifyEmail }, [Validators.required, Validators.email]],
-    password: ['', this.optionalPassword('passwordConfirm', [Validators.minLength(MIN_PASSWORD_LENGTH)])],
-    passwordConfirm: ['', this.optionalPassword('password', [SamePassword('password')])],
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
     language: [''],
   });
 
@@ -46,13 +41,6 @@ export class ProfileComponent implements OnInit {
       required: 'validation.required',
       email: 'validation.email',
     },
-    password: {
-      required: 'validation.password_required',
-      minlength: 'validation.password_minlength',
-    },
-    passwordConfirm: {
-      passwordMismatch: 'validation.password_mismatch',
-    } as IErrorMessages,
   };
 
   get language() {
@@ -97,11 +85,8 @@ export class ProfileComponent implements OnInit {
         payload.language = this.language.toUpperCase() as Language;
       }
 
-      let setPassword: Observable<boolean | null> = of(null);
-      if (this.profileForm.value.password && this.profileForm.value.passwordConfirm) {
-        setPassword = this.sdk.nuclia.auth.setPassword(this.profileForm.value.password);
-      }
-      forkJoin([this.loginService.setPreferences(payload), setPassword])
+      this.loginService
+        .setPreferences(payload)
         .pipe(switchMap(() => this.userService.updateWelcome()))
         .subscribe(() => {
           if (this.language) {
@@ -114,16 +99,5 @@ export class ProfileComponent implements OnInit {
 
   goBack() {
     this.location.back();
-  }
-
-  optionalPassword(siblingPassword: string, validators: ValidatorFn[]): ValidatorFn {
-    return (control: AbstractControl) => {
-      const siblingField = control.parent?.get(siblingPassword);
-      const composedValidators = Validators.compose(validators);
-      if (composedValidators) {
-        return control.value || siblingField?.value ? composedValidators(control) : null;
-      }
-      return null;
-    };
   }
 }

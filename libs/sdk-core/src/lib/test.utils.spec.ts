@@ -1,3 +1,7 @@
+import { TextEncoder, TextDecoder } from 'util';
+
+Object.assign(global, { TextDecoder, TextEncoder });
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockFetch = (response: any) => {
   global.fetch = jest.fn(() =>

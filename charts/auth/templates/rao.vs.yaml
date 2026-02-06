@@ -1,0 +1,32 @@
+{{- if .Values.virtualService.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  gateways:
+  - "{{ .Values.virtualService.gateway }}"
+  hosts:
+  - "{{ .Values.virtualService.host }}"
+  http:
+  {{- with .Values.virtualService.extraMatch }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+  - match:
+    {{- toYaml .Values.virtualService.http.match | nindent 4 }}
+    {{- with .Values.virtualService.http.retries }}
+    retries:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    route:
+    - destination:
+        host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
+        port:
+          number: {{ .Values.service.internalPort }}
+{{- end }}
