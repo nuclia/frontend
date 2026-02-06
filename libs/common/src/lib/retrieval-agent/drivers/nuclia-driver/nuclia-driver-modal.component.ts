@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import {
+  ModalConfig,
   ModalRef,
   PaButtonModule,
   PaModalModule,
@@ -14,6 +15,7 @@ import { ExpandableTextareaComponent, InfoCardComponent, SisModalService } from 
 import { filter, map, of, switchMap, take } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 import { getListFromTextarea } from '../../arag.utils';
+import { FilterExpressionModalComponent } from '../../../search-widget/search-configuration/filter-expression-modal';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
@@ -41,6 +43,7 @@ export class NucliaDriverModalComponent {
     description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     key: new FormControl<string>('', { nonNullable: true }),
     filters: new FormControl<string>('', { nonNullable: true }),
+    filter_expression: new FormControl<string>('', { nonNullable: true }),
     keepExistingKey: new FormControl<boolean>(false, { nonNullable: true }),
     custom: new FormControl<boolean>(false, { nonNullable: true }),
     url: new FormControl<string>('https://europe-1.rag.progress.cloud/api', { nonNullable: true }),
@@ -67,6 +70,9 @@ export class NucliaDriverModalComponent {
   get kb() {
     return this.getKb(this.form.controls.kbid.getRawValue());
   }
+  get hasDeprecatedFilters() {
+    return !!this.form.controls.filters.value;
+  }
 
   private existingKey?: string;
 
@@ -90,6 +96,9 @@ export class NucliaDriverModalComponent {
         custom,
         key: custom ? driver.config.key : undefined,
         filters: (driver.config.filters || []).join('\n'),
+        filter_expression: driver.config.filter_expression
+          ? JSON.stringify(driver.config.filter_expression, undefined, 2)
+          : '',
       });
     }
   }
@@ -104,18 +113,37 @@ export class NucliaDriverModalComponent {
     this.keyControl.updateValueAndValidity();
   }
 
+  openFilterExpression() {
+    this.modalService
+      .openModal(
+        FilterExpressionModalComponent,
+        new ModalConfig({ data: { filterExpression: this.form.controls.filter_expression.value, useKbData: false } }),
+      )
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => {
+        const control = this.form.controls.filter_expression;
+        control.patchValue(filters);
+        control.markAsDirty();
+      });
+  }
+
   cancel() {
     this.modal.close();
   }
 
   submit() {
     if (this.form.valid) {
-      const { name, filters, custom, keepExistingKey, ...rawConfig } = this.form.getRawValue();
+      const { name, filters, filter_expression, custom, keepExistingKey, ...rawConfig } = this.form.getRawValue();
       const filterList = getListFromTextarea(filters || '');
+      let filterExpression = undefined;
+      try {
+        filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
+      } catch (e) {}
       if (custom) {
         const config: NucliaDBConfig = {
           ...rawConfig,
           filters: filterList,
+          filter_expression: filterExpression,
         };
         this.submitConfig(name, config);
       } else {
@@ -155,6 +183,7 @@ export class NucliaDriverModalComponent {
                 manager: url,
                 key,
                 filters: filterList,
+                filter_expression: filterExpression,
               };
               this.submitConfig(name, config);
             },

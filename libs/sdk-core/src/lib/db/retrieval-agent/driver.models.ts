@@ -1,3 +1,4 @@
+import { FilterExpression } from '../search';
 import { ProviderType } from './retrieval-agent.types';
 
 export interface IDriver {
@@ -117,6 +118,7 @@ export interface NucliaDBConfig {
   description: string;
   kbid: string;
   filters: string[];
+  filter_expression?: FilterExpression;
 }
 
 export type PerplexityConfig = InternetConfig;

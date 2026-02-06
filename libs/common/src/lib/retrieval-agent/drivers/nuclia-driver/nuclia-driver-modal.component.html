@@ -99,19 +99,41 @@
           resizable=""
           [help]="'retrieval-agents.drivers.form.nuclia.description.help' | translate"></pa-textarea>
       </div>
-      <div class="form-entry">
-        <label for="filters">
-          {{ 'retrieval-agents.workflow.node-types.ask.form.filters.label' | translate }}
-        </label>
-        <nsi-expandable-textarea
-          id="filters"
-          formControlName="filters"
-          externalLabel=""
-          rows="2"
-          help="retrieval-agents.workflow.node-types.ask.form.filters.help"
-          modalTitle="retrieval-agents.workflow.node-types.ask.form.filters.label"
-          resizable="true"></nsi-expandable-textarea>
-      </div>
+      @if (isEdit && hasDeprecatedFilters) {
+        <div class="form-entry">
+          <label for="filters">
+            {{ 'retrieval-agents.workflow.node-types.ask.form.filters.label' | translate }}
+          </label>
+          <nsi-expandable-textarea
+            id="filters"
+            formControlName="filters"
+            externalLabel=""
+            rows="2"
+            help="retrieval-agents.workflow.node-types.ask.form.filters.help"
+            modalTitle="retrieval-agents.workflow.node-types.ask.form.filters.label"
+            resizable="true"></nsi-expandable-textarea>
+        </div>
+      } @else {
+        <div class="form-entry">
+          <label for="filter_expression">
+            {{ 'retrieval-agents.drivers.form.nuclia.filter-expression' | translate }}
+          </label>
+          <nsi-expandable-textarea
+            id="filter_expression"
+            formControlName="filter_expression"
+            externalLabel=""
+            rows="3"
+            [modalTitle]="'retrieval-agents.drivers.form.nuclia.filter-expression' | translate"
+            resizable="true"></nsi-expandable-textarea>
+        </div>
+        <div class="align-right">
+          <pa-button
+            aspect="basic"
+            (click)="openFilterExpression()">
+            {{ 'retrieval-agents.drivers.form.nuclia.use-assistant' | translate }}
+          </pa-button>
+        </div>
+      }
     </form>
   </pa-modal-content>
   <pa-modal-footer>
