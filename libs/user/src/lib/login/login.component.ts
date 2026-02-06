@@ -63,7 +63,7 @@ export class LoginComponent {
         ? this.samlService.checkDomain(domain).pipe(catchError(() => of(undefined)))
         : of(undefined);
     }),
-    map((result) => (result ? this.samlService.ssoUrl(result.account_id) : undefined)),
+    map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
   );
 
   constructor(

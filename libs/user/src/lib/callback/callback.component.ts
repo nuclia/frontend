@@ -35,7 +35,7 @@ export class CallbackComponent implements OnInit {
 
     if (this.route.snapshot.data['saml']) {
       // Returning from SAML authentication
-      this.getSAMLToken();
+      this.handleSAMLCallback();
     } else if (this.route.snapshot.data['samlOauth']) {
       // Returning from SAML authentication in a OAuth flow
       this.redirect();
@@ -60,7 +60,7 @@ export class CallbackComponent implements OnInit {
     );
   }
 
-  getSAMLToken(): void {
+  handleSAMLCallback(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
 
