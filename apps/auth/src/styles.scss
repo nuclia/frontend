@@ -1,0 +1,14 @@
+@use '../../../libs/sistema/styles/apps-common';
+@use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
+
+:root {
+  --app-background-color: $color-light-stronger;
+}
+
+.user-background {
+  background-image: url('./assets/images/background.png');
+  background-position-x: right;
+  background-position-y: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

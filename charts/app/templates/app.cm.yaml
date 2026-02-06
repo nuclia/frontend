@@ -21,3 +21,6 @@ data:
   STF_VERSION: "{{ .Chart.Version }}"
   EMAIL_DOMAIN: "{{ .Values.email_domain }}"
   SAML_ENABLED: "{{ .Values.saml_enabled }}"
+  OAUTH_CLIENT_ID: "{{ .Values.oauth_client_id }}"
+  HYDRA_ENDPOINT: "{{ .Values.hydra_endpoint }}"
+  AUTH_ENDPOINT: "{{ .Values.auth_endpoint }}"

@@ -52,7 +52,7 @@ export class SyncService {
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
         cloud: true,
-        factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     onedrive: {
@@ -63,7 +63,7 @@ export class SyncService {
         description: 'Microsoft OneDrive file hosting service',
         permanentSyncOnly: true,
         deprecated: true,
-        factory: (settings) => new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     sharefile: {
@@ -75,7 +75,8 @@ export class SyncService {
         description: 'Progress ShareFile service',
         permanentSyncOnly: true,
         cloud: true,
-        factory: (settings) => new OAuthConnector('sharefile', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) =>
+          new OAuthConnector('sharefile', settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     sharepoint: {
@@ -88,7 +89,7 @@ export class SyncService {
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
         cloud: true,
-        factory: (settings) => new SharepointImpl(settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new SharepointImpl(settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     dropbox: {
@@ -99,7 +100,7 @@ export class SyncService {
         description: 'File storage and synchronization service developed by Dropbox',
         permanentSyncOnly: true,
         deprecated: true,
-        factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer()),
+        factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getSyncOAuthServer()),
       },
     },
     folder: { definition: FolderConnector },
