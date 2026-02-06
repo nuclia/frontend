@@ -18,6 +18,11 @@ describe('SyncService', () => {
           useValue: {
             getAPIURL: () => 'http://backend',
             staticConf: { client: 'dashboard' },
+            getOAuthSettings: () => ({
+              client_id: 'abc123',
+              hydra: 'http://oauth.here',
+              auth: 'http://auth.here',
+            }),
           },
         },
         MockProvider(NotificationService),

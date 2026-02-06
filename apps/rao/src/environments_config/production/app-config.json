@@ -12,5 +12,10 @@
     "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
     "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
     "sentry_backend": "https://nuclia.cloud/api"
+  },
+  "oauth": {
+    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID",
+    "hydra": "STF_DOCKER_CONFIG_HYDRA_ENDPOINT",
+    "auth": "STF_DOCKER_CONFIG_AUTH_ENDPOINT"
   }
 }

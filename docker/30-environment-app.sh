@@ -24,6 +24,10 @@ function apply_path {
     test -n "$SAML_ENABLED"
     echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
     test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
+    echo "Check that we have oauth params vars"
+    test -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
+    test -n "$STF_DOCKER_CONFIG_HYDRA_ENDPOINT"
+    test -n "$STF_DOCKER_CONFIG_AUTH_ENDPOINT"
 
     echo "Configuring SITE_KEY vars"
     sed -i "s#STF_DOCKER_CONFIG_SITE_KEY#${SITE_KEY}#g" $jsonFile
@@ -54,6 +58,11 @@ function apply_path {
 
     echo "Configuring NO_STRIPE vars"
     sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
+
+    echo "Configuring OAUTH params"
+    sed -i "s#STF_DOCKER_CONFIG_OAUTH_CLIENT_ID#${OAUTH_CLIENT_ID}#g" $jsonFile
+    sed -i "s#STF_DOCKER_CONFIG_HYDRA_ENDPOINT#${HYDRA_ENDPOINT}#g" $jsonFile
+    sed -i "s#STF_DOCKER_CONFIG_AUTH_ENDPOINT#${AUTH_ENDPOINT}#g" $jsonFile
 
     echo "Configuring STF_DOCKER_CONFIG_GOOGLE_ANALYTICS vars"
     sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html
