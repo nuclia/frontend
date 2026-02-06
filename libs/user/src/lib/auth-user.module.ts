@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
-import { authGuard, BackendConfigurationService, LowerCaseInputDirective } from '@flaps/core';
+import { BackendConfigurationService, LowerCaseInputDirective } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
@@ -16,13 +16,11 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha-2';
-import { CallbackComponent } from './callback/callback.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { ConsentComponent } from './consent/consent.component';
 import { consentResolver } from './consent/consent.resolver';
 import { LoginComponent } from './login/login.component';
 import { loginResolver } from './login/login.resolver';
-import { LogoutComponent } from './logout/logout.component';
 import { MagicComponent } from './magic/magic.component';
 import {
   EmbeddingModelStepComponent,
@@ -32,48 +30,14 @@ import {
   Step1Component,
   ZoneStepComponent,
 } from './onboarding';
-import { ProfileComponent } from './profile/profile.component';
 import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
 import { UserContainerModule } from './user-container';
-import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 
-export const userRoutes: Routes = [
-  { path: 'callback', component: CallbackComponent },
-  {
-    path: 'callbacks/saml',
-    component: CallbackComponent,
-    data: { saml: true },
-  },
-  {
-    path: 'callbacks/oauth',
-    component: CallbackComponent,
-    data: { samlOauth: true },
-  },
-  {
-    path: 'callbacks/google',
-    component: CallbackComponent,
-    data: { google: true },
-  },
-  {
-    path: 'callbacks/github',
-    component: CallbackComponent,
-    data: { github: true },
-  },
-  {
-    path: 'callbacks/microsoft',
-    component: CallbackComponent,
-    data: { microsoft: true },
-  },
-  {
-    path: 'profile',
-    canActivate: [authGuard],
-    component: ProfileComponent,
-  },
+export const authRoutes: Routes = [
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
-  { path: 'logout', component: LogoutComponent },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
   { path: 'magic', component: MagicComponent },
@@ -89,13 +53,9 @@ export const userRoutes: Routes = [
   declarations: [
     LoginComponent,
     RecoverComponent,
-    LogoutComponent,
     MagicComponent,
-    CallbackComponent,
     ResetComponent,
-    ProfileComponent,
     ConsentComponent,
-    UserContainerLogoComponent,
     SignupComponent,
     SsoButtonComponent,
     CheckMailComponent,
@@ -107,13 +67,12 @@ export const userRoutes: Routes = [
     ReactiveFormsModule,
     RecaptchaV3Module,
     AngularSvgIconModule,
-    RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
+    RouterModule.forChild(authRoutes),
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
     PaTextFieldModule,
-
     SisPasswordInputModule,
     UserContainerModule,
     PaAvatarModule,
@@ -134,4 +93,4 @@ export const userRoutes: Routes = [
     },
   ],
 })
-export class UserModule {}
+export class AuthUserModule {}
