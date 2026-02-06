@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
 
-import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -16,6 +16,7 @@ export class CallbackComponent implements OnInit {
     private route: ActivatedRoute,
     private samlService: SAMLService,
     private ssoService: SsoService,
+    private oauthService: OAuthService,
     private config: BackendConfigurationService,
     @Inject(DOCUMENT) private document: Document,
     private sdk: SDKService,
@@ -61,6 +62,34 @@ export class CallbackComponent implements OnInit {
 
   getSAMLToken(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
+    const consentChallenge = this.route.snapshot.queryParamMap.get('consent_challenge');
+
+    // Both parameters present is an error condition
+    if (token && consentChallenge) {
+      this.router.navigate(['../signup'], {
+        relativeTo: this.route,
+        queryParams: { error: 'invalid_response' },
+      });
+      return;
+    }
+
+    // Handle OAuth consent flow
+    if (consentChallenge) {
+      this.oauthService.getConsentData(consentChallenge).subscribe({
+        next: (consentData) => {
+          this.document.location.href = consentData.consent_url;
+        },
+        error: () => {
+          this.router.navigate(['../signup'], {
+            relativeTo: this.route,
+            queryParams: { error: 'invalid_configuration' },
+          });
+        },
+      });
+      return;
+    }
+
+    // Handle regular SAML token exchange
     if (token) {
       this.samlService.getToken(token).subscribe((token) => {
         this.authenticate(token);
