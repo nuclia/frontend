@@ -9,11 +9,12 @@
             {{ 'generic.back' | translate }}
           </nsi-back-button>
         } @else {
-          <nsi-back-button
+          <nsi-button-mini
             class="select-kb-back"
-            link="/user/logout">
+            icon="chevron-left"
+            (click)="logout()">
             {{ 'generic.logout' | translate }}
-          </nsi-back-button>
+          </nsi-button-mini>
         }
       }
 

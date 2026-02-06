@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { SelectAccountComponent } from './select-account/select-account.component';
 import { SelectKbComponent } from './select-kb/select-kb.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent } from '@nuclia/sistema';
+import { BackButtonComponent, ButtonMiniComponent } from '@nuclia/sistema';
 
 @NgModule({
   imports: [
@@ -22,6 +22,7 @@ import { BackButtonComponent } from '@nuclia/sistema';
     PaTooltipModule,
     PaTextFieldModule,
     BackButtonComponent,
+    ButtonMiniComponent,
   ],
   declarations: [SelectAccountComponent, SelectKbComponent],
   exports: [],

@@ -121,4 +121,8 @@ export class SelectKbComponent implements OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
+
+  logout() {
+    this.sdk.nuclia.auth.logout();
+  }
 }

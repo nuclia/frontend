@@ -14,6 +14,7 @@ import {
   standaloneSimpleAccount,
   StaticEnvironmentConfiguration,
   SelectAccountKbService,
+  SDKService,
 } from '@flaps/core';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
@@ -43,6 +44,7 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
     private selectService: SelectAccountKbService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private sdk: SDKService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
@@ -69,7 +71,7 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.router.navigate(['/user/logout']);
+    this.sdk.nuclia.auth.logout();
   }
 
   ngOnDestroy(): void {
