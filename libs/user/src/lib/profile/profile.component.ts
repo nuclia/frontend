@@ -1,20 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { AbstractControl, UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import {
-  DEFAULT_LANG,
-  LoginService,
-  MIN_PASSWORD_LENGTH,
-  SDKService,
-  SetUserPreferences,
-  STFUtils,
-  UserService,
-} from '@flaps/core';
+import { filter, Subject, switchMap, takeUntil } from 'rxjs';
+import { DEFAULT_LANG, LoginService, SDKService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SamePassword } from '../password.validator';
 
 @Component({
   selector: 'nus-profile',

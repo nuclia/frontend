@@ -2,12 +2,13 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { UserService, SelectAccountKbService } from '@flaps/core';
+import { UserService, SelectAccountKbService, SDKService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
   const router: Router = inject(Router);
   const userService = inject(UserService);
+  const sdk = inject(SDKService);
 
   const selectedAccount = route.children[0]?.paramMap.get('account');
 
@@ -42,7 +43,8 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
           return of(router.createUrlTree(['/user/onboarding']));
         } else {
           // no accounts and no create permission, redirect to logout
-          return of(router.createUrlTree(['/user/logout']));
+          sdk.nuclia.auth.logout();
+          return of(false);
         }
       } else if (accounts.length === 1) {
         const accountSlug = accounts[0].slug;
@@ -56,7 +58,8 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
       }
     }),
     catchError(() => {
-      return of(router.createUrlTree(['/user/logout']));
+      sdk.nuclia.auth.logout();
+      return of(false);
     }),
   );
 };
