@@ -62,10 +62,10 @@ export class CallbackComponent implements OnInit {
 
   getSAMLToken(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
-    const consentChallenge = this.route.snapshot.queryParamMap.get('consent_challenge');
+    const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
 
     // Both parameters present is an error condition
-    if (token && consentChallenge) {
+    if (token && consentUrl) {
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
         queryParams: { error: 'invalid_response' },
@@ -73,19 +73,9 @@ export class CallbackComponent implements OnInit {
       return;
     }
 
-    // Handle OAuth consent flow
-    if (consentChallenge) {
-      this.oauthService.getConsentData(consentChallenge).subscribe({
-        next: (consentData) => {
-          this.document.location.href = consentData.consent_url;
-        },
-        error: () => {
-          this.router.navigate(['../signup'], {
-            relativeTo: this.route,
-            queryParams: { error: 'invalid_configuration' },
-          });
-        },
-      });
+    // Handle OAuth consent flow - redirect to consent URL
+    if (consentUrl) {
+      this.document.location.href = consentUrl;
       return;
     }
 
