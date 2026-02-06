@@ -12,7 +12,9 @@ describe('LogoutComponent', () => {
     TestBed.configureTestingModule({
       declarations: [LogoutComponent],
       imports: [RouterModule.forRoot([])],
-      providers: [{ provide: SDKService, useValue: { nuclia: { auth: { logout: () => {} } } } }],
+      providers: [
+        { provide: SDKService, useValue: { nuclia: { auth: { logout: () => {}, redirectToOAuth: () => {} } } } },
+      ],
     }).compileComponents();
   }));
 

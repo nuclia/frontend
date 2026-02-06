@@ -14,5 +14,10 @@
   },
   "stashify": {
     "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
+  },
+  "oauth": {
+    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID",
+    "hydra": "STF_DOCKER_CONFIG_HYDRA_ENDPOINT",
+    "auth": "STF_DOCKER_CONFIG_AUTH_ENDPOINT"
   }
 }

@@ -28,7 +28,11 @@ export class BackendConfigurationService {
     return this.config.backend.apiOrigin || '';
   }
 
-  getOAuthServer(): string {
+  getOAuthSettings() {
+    return this.config.oauth;
+  }
+
+  getSyncOAuthServer(): string {
     return this.config.backend.oauth || this.getAPIOrigin();
   }
 

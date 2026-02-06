@@ -18,7 +18,6 @@ import {
   STFUtils,
   UserService,
 } from '@flaps/core';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
@@ -43,7 +42,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   version: string | undefined;
 
   constructor(
-    private router: Router,
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
@@ -61,7 +59,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
     this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
-      this.router.navigate(['/user/login']);
+      this.sdk.nuclia.auth.redirectToOAuth();
       this.sdk.cleanAccount();
     });
 

@@ -1,0 +1,253 @@
+{
+  "name": "auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/auth/src",
+  "prefix": "app",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist/apps/auth",
+        "subresourceIntegrity": true,
+        "index": "apps/auth/src/index.html",
+        "main": "apps/auth/src/main.ts",
+        "polyfills": "apps/auth/src/polyfills.ts",
+        "tsConfig": "apps/auth/tsconfig.app.json",
+        "allowedCommonJsDependencies": [],
+        "assets": [
+          "apps/auth/src/favicon.ico",
+          "apps/auth/src/assets",
+          "apps/auth/src/manifest.webmanifest",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n/common"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/user/src/assets/i18n",
+            "output": "assets/i18n/user"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sync/src/assets/i18n",
+            "output": "assets/i18n/sync"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/auth/src/environments_config/local",
+            "output": "assets/deployment"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/auth/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/auth/src"]
+        },
+        "scripts": [],
+        "ngswConfigPath": "apps/auth/src/ngsw-config.json",
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "2mb",
+            "maximumError": "30mb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "50kb",
+            "maximumError": "100kb"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "all",
+          "serviceWorker": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/auth/src/environments/environment.ts",
+              "with": "apps/auth/src/environments/environment.prod.ts"
+            }
+          ],
+          "assets": [
+            "apps/auth/src/favicon.ico",
+            "apps/auth/src/assets",
+            "apps/auth/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/auth/src/environments_config/production",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-stage": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/auth/src/favicon.ico",
+            "apps/auth/src/assets",
+            "apps/auth/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/auth/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-dev": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/auth/src/favicon.ico",
+            "apps/auth/src/assets",
+            "apps/auth/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/auth/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "buildTarget": "auth:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "auth:build:production"
+        },
+        "local-stage": {
+          "buildTarget": "auth:build:local-stage"
+        },
+        "local-dev": {
+          "buildTarget": "auth:build:local-dev"
+        }
+      },
+      "defaultConfiguration": "local-stage",
+      "continuous": true
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "auth:build"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/auth"],
+      "options": {
+        "jestConfig": "apps/auth/jest.config.js",
+        "tsConfig": "apps/auth/tsconfig.spec.json"
+      }
+    }
+  }
+}

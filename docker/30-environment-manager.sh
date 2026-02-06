@@ -18,7 +18,11 @@ function apply_path {
     test -n "$STF_VERSION"
     echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
     test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
-
+    echo "Check that we have oauth params vars"
+    test -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
+    test -n "$STF_DOCKER_CONFIG_HYDRA_ENDPOINT"
+    test -n "$STF_DOCKER_CONFIG_AUTH_ENDPOINT"
+  
     echo "Configuring API_PATH vars"
     sed -i "s#STF_DOCKER_CONFIG_API_PATH#${API_PATH}#g" $jsonFile
 
@@ -42,6 +46,11 @@ function apply_path {
 
     echo "Configuring NO_STRIPE vars"
     sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
+
+    echo "Configuring OAUTH params"
+    sed -i "s#STF_DOCKER_CONFIG_OAUTH_CLIENT_ID#${OAUTH_CLIENT_ID}#g" $jsonFile
+    sed -i "s#STF_DOCKER_CONFIG_HYDRA_ENDPOINT#${HYDRA_ENDPOINT}#g" $jsonFile
+    sed -i "s#STF_DOCKER_CONFIG_AUTH_ENDPOINT#${AUTH_ENDPOINT}#g" $jsonFile
 
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"

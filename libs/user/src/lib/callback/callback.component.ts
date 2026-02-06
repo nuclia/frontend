@@ -24,8 +24,9 @@ export class CallbackComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.route.snapshot.queryParams['error']) {
-      this.toaster.error(this.route.snapshot.queryParams['error_description'] || 'login.error.oops');
+    const queryParams = this.route.snapshot.queryParams;
+    if (queryParams['error']) {
+      this.toaster.error(queryParams['error_description'] || 'login.error.oops');
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
       });
@@ -53,8 +54,21 @@ export class CallbackComponent implements OnInit {
         this.route.snapshot.data['microsoft'])
     ) {
       this.ssoLogin();
+    } else if (queryParams['code'] && queryParams['state']) {
+      this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe((res) => {
+        if (res.success) {
+          const came_from = res.state.came_from;
+          if (came_from && came_from !== window.location.origin) {
+            window.location.href = came_from;
+          } else {
+            this.router.navigate(['/']);
+          }
+        }
+      });
     } else {
-      this.loadUrlToken();
+      this.router.navigate(['../signup'], {
+        relativeTo: this.route,
+      });
     }
   }
 
@@ -92,14 +106,14 @@ export class CallbackComponent implements OnInit {
   ssoLogin(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
-    
+
     if (code !== null && state !== null) {
       this.ssoService.login(code, state).subscribe({
         next: (response) => {
           // Check if this is an OAuth flow (login_challenge present in state)
           const decodedState = this.ssoService.decodeState(state);
           const isOAuthFlow = !!decodedState['login_challenge'];
-          
+
           // If OAuth flow and response contains consent_url, redirect to it
           if (isOAuthFlow && response.consent_url) {
             this.document.location.href = response.consent_url;
@@ -122,14 +136,14 @@ export class CallbackComponent implements OnInit {
         },
         error: (error) => {
           let errorCode = 'oops';
-          
+
           if (error.status === 412) {
             errorCode = 'no_personal_email';
           } else if (error.message === 'Invalid state') {
             errorCode = 'invalid_configuration';
             this.toaster.error('Authentication configuration error. Please contact support if this persists.');
           }
-          
+
           this.router.navigate(['../signup'], {
             relativeTo: this.route,
             queryParams: { error: errorCode },
