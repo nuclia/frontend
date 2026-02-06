@@ -38,6 +38,7 @@ export class SDKService {
     backend: this.config.getAPIURL(),
     client: this.config.staticConf.client,
     standalone: this.config.staticConf.standalone,
+    oauth: this.config.getOAuthSettings(),
   });
 
   private _account = new BehaviorSubject<Account | null>(null);

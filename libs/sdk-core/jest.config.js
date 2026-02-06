@@ -2,6 +2,7 @@ module.exports = {
   displayName: 'sdk-core',
   preset: '../../jest.preset.js',
   globals: {},
+  testEnvironment: 'jsdom',
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
