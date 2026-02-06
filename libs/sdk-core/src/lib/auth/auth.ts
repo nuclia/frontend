@@ -267,7 +267,6 @@ export class Authentication implements IAuthentication {
    */
   login(username: string, password: string, validation?: string): Observable<boolean> {
     // TO BE REMOVED?
-    debugger;
     return of(false);
     // return this.fetch<AuthTokens>(
     //   '/auth/login',
