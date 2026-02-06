@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { UserService } from '../user.service';
 import { UserListComponent } from './user-list.component';
 import { ManagerStore } from '../../manager.store';
+import { SDKService } from '@flaps/core';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -33,6 +34,9 @@ describe('UserListComponent', () => {
         MockProvider(UserService, {
           getUsers: jest.fn(() => of([])),
         }),
+        MockProvider(SDKService, {
+          nuclia: { auth: { logout: () => {} } },
+        } as SDKService),
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(ManagerStore, {

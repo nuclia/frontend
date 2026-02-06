@@ -3,8 +3,8 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
 import { UserSummary } from '../user.models';
-import { Router } from '@angular/router';
 import { ManagerStore } from '../../manager.store';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: './user-list.component.html',
@@ -32,7 +32,7 @@ export class UserListComponent {
   lastIndex = 100;
 
   constructor(
-    private router: Router,
+    private sdk: SDKService,
     private userService: UserService,
     private modalService: SisModalService,
     private toast: SisToastService,
@@ -80,7 +80,7 @@ export class UserListComponent {
         // A bug on user deletion API makes us lose our token whenever deleting a user
         // To make it clear, we redirect to logout (otherwise we are in a quite confusing state)
         if (error.status === 403) {
-          this.router.navigate(['/user/logout']);
+          this.sdk.nuclia.auth.logout();
         } else {
           this.toast.error('An error occurred while loading user list');
         }

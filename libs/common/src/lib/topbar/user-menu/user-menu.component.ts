@@ -90,7 +90,7 @@ export class UserMenuComponent implements OnDestroy {
 
   logout() {
     this.close.emit();
-    this.router.navigate(['/user/logout']);
+    this.sdk.nuclia.auth.logout();
   }
 
   goToSupport() {
