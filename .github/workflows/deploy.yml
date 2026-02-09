@@ -14,7 +14,6 @@ env:
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
   S3_DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_DOCS_STORAGE || secrets.S3_DOCS_STORAGE_DEV }}
-  S3_WHITELABEL_STORAGE: ${{ secrets.S3_WHITELABEL_STORAGE }}
   S3_CDN_STORAGE_IAM_ROLE_ARN: ${{ github.ref == 'refs/heads/main' && secrets.AWS_DOCS_SYNC_ROLE || secrets.S3_CDN_STORAGE_IAM_ROLE_ARN_DEV }}
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
@@ -147,24 +146,6 @@ jobs:
         run: |-
           aws s3 cp dist/libs/search-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
           aws s3 cp libs/search-widget/public/ s3://$S3_CDN_STORAGE/ --recursive
-
-      - name: Build & publish white-labelled widget to GCS
-        if: steps.check-deploy.outputs.deploy-widget == 'yes'
-        run: |-
-          echo "VITE_BRAND_NAME=WHITE_LABEL_BRAND_NAME_PLACEHOLDER" > .env
-          echo "VITE_OVERRIDES=WHITE_LABEL_OVERRIDES_PLACEHOLDER" >> .env
-          # yes, the final / is in purpose
-          echo "VITE_CDN=WHITE_CDN_PLACEHOLDER/" >> .env
-          npx nx build search-widget
-          find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
-          gsutil copy dist/libs/search-widget/*.umd.js gs://ncl-white-label-frontend-gcp-global-stage-1
-          gsutil copy -r libs/search-widget/public/* gs://ncl-white-label-frontend-gcp-global-stage-1
-
-      - name: Build & publish white-labelled widget to S3
-        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/main'
-        run: |-
-          aws s3 cp dist/libs/search-widget/ s3://$S3_WHITELABEL_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
-          aws s3 cp libs/search-widget/public/ s3://$S3_WHITELABEL_STORAGE/ --recursive
 
       - name: Publish RAO widget to GCS
         if: steps.check-deploy.outputs.deploy-rao-widget == 'yes'
