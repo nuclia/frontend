@@ -8,6 +8,7 @@ import { IConnector, ISyncEntity, LogEntity, LogSeverityLevel, SyncItem, SyncSer
 import {
   combineLatest,
   filter,
+  forkJoin,
   map,
   Observable,
   of,
@@ -119,20 +120,19 @@ export class SyncDetailsPageComponent implements OnDestroy {
   }
 
   triggerSync() {
-    this.sync
+    forkJoin([this.sync.pipe(take(1)), this.connector.pipe(take(1))])
       .pipe(
-        take(1),
-        switchMap((sync) =>
-          sync.isCloud
-            ? this.syncService.triggerSync(sync.id)
-            : this.modalService
+        switchMap(([sync, connector]) =>
+          connector?.canSyncLastChanges
+            ? this.modalService
                 .openConfirm({
                   title: this.translate.instant('sync.details.modal.title'),
                   description: 'sync.details.modal.description',
                   confirmLabel: 'sync.details.modal.sync-new',
                   cancelLabel: 'sync.details.modal.re-sync-all',
                 })
-                .onClose.pipe(switchMap((syncNew: boolean) => this.syncService.triggerSync(sync.id, !syncNew))),
+                .onClose.pipe(switchMap((syncNew: boolean) => this.syncService.triggerSync(sync.id, !syncNew)))
+            : this.syncService.triggerSync(sync.id, true),
         ),
       )
       .subscribe({

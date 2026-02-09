@@ -542,7 +542,7 @@ export class SyncService {
   triggerSync(syncId: string, resyncAll = false): Observable<void> {
     if (this._useCloudSync.getValue()) {
       return this.sdk.currentKb.pipe(
-        switchMap((kb) => kb.syncManager.syncConfig(syncId)),
+        switchMap((kb) => kb.syncManager.syncConfig(syncId, resyncAll)),
         switchMap(() => this.updateSyncJobs(syncId)),
         map(() => undefined),
       );

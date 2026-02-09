@@ -26,6 +26,7 @@ class FolderImpl implements IConnector {
   files: ElectronFile[] = [];
   path = '';
   canSyncSecurityGroups = false;
+  canSyncLastChanges = true;
 
   getStaticFolders(): SyncItem[] {
     return this.path

@@ -23,6 +23,7 @@ class SitemapImpl implements IConnector {
   isExternal = true;
   allowToSelectFolders = false;
   canSyncSecurityGroups = false;
+  canSyncLastChanges = true;
 
   getStaticFolders(): SyncItem[] {
     return [
