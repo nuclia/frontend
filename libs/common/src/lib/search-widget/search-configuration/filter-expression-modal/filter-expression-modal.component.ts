@@ -59,22 +59,27 @@ export type FilterTarget = 'field' | 'paragraph';
 export class FilterExpressionModalComponent {
   filterExpression: FilterExpression = {};
   dataAugmentation = false;
+  useKbData = true;
   help?: string;
 
   @ViewChildren(AccordionItemComponent) accordionItems: AccordionItemComponent[] = [];
 
   constructor(
-    public modal: ModalRef<{ filterExpression: string; dataAugmentation?: boolean; help?: string }, string>,
+    public modal: ModalRef<
+      { filterExpression: string; dataAugmentation?: boolean; useKbData?: boolean; help?: string },
+      string
+    >,
     private modalService: SisModalService,
     private cdr: ChangeDetectorRef,
   ) {
     try {
       this.filterExpression = JSON.parse(this.modal.config.data?.filterExpression || '{}');
-      this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
-      this.help = this.modal.config.data?.help;
     } catch {
       // Invalid filter expression
     }
+    this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
+    this.useKbData = this.modal.config.data?.useKbData ?? true;
+    this.help = this.modal.config.data?.help;
   }
 
   get invalidExpession() {
@@ -90,7 +95,7 @@ export class FilterExpressionModalComponent {
     this.modalService
       .openModal(
         AddFilterModalComponent,
-        new ModalConfig({ data: { target, dataAugmentation: this.dataAugmentation } }),
+        new ModalConfig({ data: { target, dataAugmentation: this.dataAugmentation, useKbData: this.useKbData } }),
       )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {
@@ -119,7 +124,9 @@ export class FilterExpressionModalComponent {
     this.modalService
       .openModal(
         AddFilterModalComponent,
-        new ModalConfig({ data: { expression, target, dataAugmentation: this.dataAugmentation } }),
+        new ModalConfig({
+          data: { expression, target, dataAugmentation: this.dataAugmentation, useKbData: this.useKbData },
+        }),
       )
       .onClose.pipe(filter((expression) => expression))
       .subscribe((result) => {

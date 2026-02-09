@@ -51,37 +51,59 @@
         <ng-container [formGroup]="forms[prop.value]">
           @switch (prop.value) {
             @case ('label') {
-              <pa-select
-                formControlName="labelset"
-                [label]="'search.configuration.filter-expression-modal.label-filter.labelset' | translate"
-                (valueChange)="resetLabel()">
-                @for (labelset of labelsets | async | keyvalue; track labelset.key) {
-                  <pa-option [value]="labelset.key">{{ labelset.value.title }}</pa-option>
-                }
-              </pa-select>
-              @if (selectedLabelset) {
+              @if (useKbData) {
                 <pa-select
-                  formControlName="label"
-                  [label]="'search.configuration.filter-expression-modal.label-filter.label' | translate"
-                  [help]="'generic.optional' | translate">
-                  @for (label of ((labelsets | async) || {})?.[selectedLabelset]?.labels || []; track label.title) {
-                    <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                  formControlName="labelset"
+                  [label]="'search.configuration.filter-expression-modal.label-filter.labelset' | translate"
+                  (valueChange)="resetLabel()">
+                  @for (labelset of labelsets | async | keyvalue; track labelset.key) {
+                    <pa-option [value]="labelset.key">{{ labelset.value.title }}</pa-option>
                   }
                 </pa-select>
+                @if (selectedLabelset) {
+                  <pa-select
+                    formControlName="label"
+                    [label]="'search.configuration.filter-expression-modal.label-filter.label' | translate"
+                    [help]="'generic.optional' | translate">
+                    @for (label of ((labelsets | async) || {})?.[selectedLabelset]?.labels || []; track label.title) {
+                      <pa-option [value]="label.title">{{ label.title }}</pa-option>
+                    }
+                  </pa-select>
+                }
+              } @else {
+                <pa-input formControlName="labelset">
+                  {{ 'search.configuration.filter-expression-modal.label-filter.labelset-id' | translate }}
+                </pa-input>
+                <pa-input
+                  formControlName="label"
+                  [help]="'generic.optional' | translate">
+                  {{ 'search.configuration.filter-expression-modal.label-filter.label' | translate }}
+                </pa-input>
               }
             }
             @case ('entity') {
-              <pa-select
-                formControlName="subtype"
-                [label]="'search.configuration.filter-expression-modal.entity-filter.family' | translate"
-                (valueChange)="resetNer()"
-                [options]="(familyOptions | async) || []"></pa-select>
-              @if (selectedNerFamily) {
+              @if (useKbData) {
                 <pa-select
+                  formControlName="subtype"
+                  [label]="'search.configuration.filter-expression-modal.entity-filter.family' | translate"
+                  (valueChange)="resetNer()"
+                  [options]="(familyOptions | async) || []"></pa-select>
+                @if (selectedNerFamily) {
+                  <pa-select
+                    formControlName="value"
+                    label="NER"
+                    [help]="'generic.optional' | translate"
+                    [options]="(nerOptions | async) || []"></pa-select>
+                }
+              } @else {
+                <pa-input formControlName="subtype">
+                  {{ 'search.configuration.filter-expression-modal.entity-filter.family' | translate }}
+                </pa-input>
+                <pa-input
                   formControlName="value"
-                  label="NER"
-                  [help]="'generic.optional' | translate"
-                  [options]="(nerOptions | async) || []"></pa-select>
+                  [help]="'generic.optional' | translate">
+                  NER
+                </pa-input>
               }
             }
             @case ('language') {
