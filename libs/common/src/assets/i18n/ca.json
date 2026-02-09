@@ -2064,7 +2064,6 @@
 	"stash.valid_domains_label": "Dominis des d’on es pot enviar correu electrònic",
 	"stash.valid_emails": "Afegeix, separats per comes, els correus electrònics dels quals s’acceptarà correu electrònic",
 	"stash.valid_emails_label": "Correus electrònics",
-	"sync.cloud-folder.search-sites": "Buscar site de SharePoint",
 	"synonyms.add-form.bidirectional-checkbox": "Bidireccional",
 	"synonyms.add-form.main-word-label": "Paraula principal",
 	"synonyms.add-form.synonyms-label": "Sinònims separats per comes",

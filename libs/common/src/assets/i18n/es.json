@@ -2064,7 +2064,6 @@
 	"stash.valid_domains_label": "Dominios desde donde se puede enviar correo electrónico",
 	"stash.valid_emails": "Añada, separado por comas, las direcciones de correos electrónicos de los cuales se aceptará correo electrónico. ",
 	"stash.valid_emails_label": "Correos electrónicos",
-	"sync.cloud-folder.search-sites": "Buscar sitio de SharePoint",
 	"synonyms.add-form.bidirectional-checkbox": "Bidireccional",
 	"synonyms.add-form.main-word-label": "Palabra principal",
 	"synonyms.add-form.synonyms-label": "Sinónimos separados por comas",

@@ -2075,7 +2075,6 @@
 	"stash.valid_domains_label": "Domains from which email can be sent",
 	"stash.valid_emails": "Add, separated by comas, the emails addresses from witch emails will be accepted. ",
 	"stash.valid_emails_label": "Emails",
-	"sync.cloud-folder.search-sites": "Search SharePoint site",
 	"synonyms.add-form.bidirectional-checkbox": "Bidirectional",
 	"synonyms.add-form.main-word-label": "Main word",
 	"synonyms.add-form.synonyms-label": "Synonyms separated by commas",
