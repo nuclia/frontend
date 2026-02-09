@@ -37,6 +37,7 @@ import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.co
 export class AddFilterModalComponent {
   editMode = false;
   dataAugmentation = !!this.modal.config.data?.dataAugmentation;
+  useKbData = !!this.modal.config.data?.useKbData;
   target = new BehaviorSubject<FilterTarget>('field');
   labelsets = this.target.pipe(
     switchMap((target) =>
@@ -170,7 +171,7 @@ export class AddFilterModalComponent {
 
   constructor(
     public modal: ModalRef<
-      { expression: AnyFilterExpression; target: FilterTarget; dataAugmentation?: boolean },
+      { expression: AnyFilterExpression; target: FilterTarget; dataAugmentation: boolean; useKbData: boolean },
       AnyFilterExpression
     >,
     private labelsService: LabelsService,
