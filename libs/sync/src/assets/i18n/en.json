@@ -105,7 +105,7 @@
 	"sync.details.buttons.sync-now": "Sync now",
 	"sync.details.modal.description": "You can either synchronize only the changes (creations, modifications, deletions) since the last synchronization, or resynchronize all the data from the beginning.",
 	"sync.details.modal.re-sync-all": "Re-sync all",
-	"sync.details.modal.sync-new": "Sync only the last changes",
+	"sync.details.modal.sync-new": "Sync only last changes",
 	"sync.details.modal.title": "What data do you want to sync?",
 	"sync.details.settings.boolean.false": "False",
 	"sync.details.settings.boolean.true": "True",
