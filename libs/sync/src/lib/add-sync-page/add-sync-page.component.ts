@@ -15,6 +15,7 @@ import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'r
 import { ConfigurationFormComponent } from '../configuration-form';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
+import { ExternalConnection } from '@nuclia/core';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -56,7 +57,7 @@ export class AddSyncPageComponent implements OnInit {
   );
   isCloud = this.connectorDefinition.pipe(map((def) => !!def.cloud));
   enterCredentials = true;
-  externalConnectorId = '';
+  externalConnection?: ExternalConnection;
   connector: Observable<IConnector> = this.connectorId.pipe(map((id) => this.syncService.getConnector(id, '')));
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
 
@@ -79,11 +80,13 @@ export class AddSyncPageComponent implements OnInit {
       .pipe(
         filter((params) => !!params['syncId']),
         take(1),
+        switchMap((params) => this.syncService.getExternalConnection(params['syncId'])),
       )
-      .subscribe((params) => {
-        this.externalConnectorId = params['syncId'];
+      .subscribe((connection) => {
+        this.externalConnection = connection;
         this.enterCredentials = false;
         localStorage.removeItem(PENDING_NEW_CONNECTOR_KEY);
+        this.cdr.markForCheck();
       });
   }
 
@@ -136,7 +139,7 @@ export class AddSyncPageComponent implements OnInit {
               .addExternalConnection(connector.apikey_provider, this.configuration.connector.parameters)
               .pipe(
                 tap((data) => {
-                  this.externalConnectorId = data.id;
+                  this.externalConnection = data;
                   this.enterCredentials = false;
                   this.cdr.markForCheck();
                 }),
@@ -188,8 +191,8 @@ export class AddSyncPageComponent implements OnInit {
       switchMap((connector) => {
         const isCloud = connector.cloud;
         if (isCloud) {
-          if (!this.externalConnectorId) {
-            throw 'No external connection id';
+          if (!this.externalConnection) {
+            throw 'No external connection';
           }
           if (!this.selectedFolder) {
             throw 'No folder selected';
@@ -197,7 +200,7 @@ export class AddSyncPageComponent implements OnInit {
           return this.syncService
             .addCloudSync({
               name: syncEntity.title,
-              external_connection_id: this.externalConnectorId,
+              external_connection_id: this.externalConnection.id,
               ...this.selectedFolder,
             })
             .pipe(

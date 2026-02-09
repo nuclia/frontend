@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { INuclia } from '../../models';
 import type { IWritableKnowledgeBox } from '../kb/kb.models';
 import {
+  BrowseOptions,
   ExternalConnection,
   ExternalConnectionCredentials,
   ISyncManager,
@@ -32,6 +33,10 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.post<any>(`${this.kb.path}/external_connections`, { provider, credentials });
   }
 
+  getExternalConnection(id: string): Observable<ExternalConnection> {
+    return this.nuclia.rest.get<any>(`${this.kb.path}/external_connection/${id}`);
+  }
+
   createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
     return this.nuclia.rest.post<any>(`${this.kb.path}/sync_configs`, { ...config });
   }
@@ -56,22 +61,14 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.post<Job>(`${this.kb.path}/sync_config/${id}/sync`, { full_sync });
   }
 
-  browse(
-    externalConnectorId: string,
-    drive_id?: string,
-    path?: string,
-    page_token?: string,
-  ): Observable<StorageStructure> {
+  browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure> {
     let endpoint = `${this.kb.path}/external_connection/${externalConnectorId}/browse?`;
-    if (drive_id) {
-      endpoint += `drive_id=${drive_id}&`;
-    }
-    if (path) {
-      endpoint += `path=${path}&`;
-    }
-    if (page_token) {
-      endpoint += `page_token=${page_token}`;
-    }
-    return this.nuclia.rest.get<StorageStructure>(endpoint);
+    const params = new URLSearchParams();
+    Object.entries(options)
+      .filter(([, value]) => value !== undefined)
+      .forEach(([key, value]) => {
+        params.append(key, value);
+      });
+    return this.nuclia.rest.get<StorageStructure>(endpoint + params.toString());
   }
 }

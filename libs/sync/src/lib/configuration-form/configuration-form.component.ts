@@ -70,12 +70,21 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   @Input() set useOAuth(value: boolean) {
     this._useOAuth = value;
     this.updateExtraSections();
+    this.updateValidators();
   }
   get useOAuth() {
     return this._useOAuth;
   }
   private _useOAuth = false;
-  @Input() enterCredentials: boolean = false;
+  @Input() set enterCredentials(value: boolean) {
+    this._enterCredentials = value;
+    this.updateExtraSections();
+    this.updateValidators();
+  }
+  get enterCredentials() {
+    return this._enterCredentials;
+  }
+  private _enterCredentials = false;
   @Input() isCloud?: boolean = false;
   @Input() set sync(value: ISyncEntity | undefined | null) {
     if (value) {

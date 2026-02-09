@@ -12,6 +12,7 @@ import {
 import { BackendConfigurationService, FeaturesService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './connectors/sitemap';
 import {
+  BrowseOptions,
   Job,
   NucliaOptions,
   WritableKnowledgeBox,
@@ -287,6 +288,13 @@ export class SyncService {
     );
   }
 
+  getExternalConnection(id: string): Observable<ExternalConnection> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.getExternalConnection(id)),
+    );
+  }
+
   addCloudSync(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
     return this.sdk.currentKb.pipe(
       take(1),
@@ -413,15 +421,8 @@ export class SyncService {
     );
   }
 
-  getCloudFolders(
-    external_connection: string,
-    drive_id?: string,
-    path?: string,
-    page_token?: string,
-  ): Observable<StorageStructure> {
-    return this.sdk.currentKb.pipe(
-      switchMap((kb) => kb.syncManager.browse(external_connection, drive_id, path, page_token)),
-    );
+  getCloudFolders(external_connection: string, options: BrowseOptions): Observable<StorageStructure> {
+    return this.sdk.currentKb.pipe(switchMap((kb) => kb.syncManager.browse(external_connection, options)));
   }
 
   canSelectFiles(syncId: string) {

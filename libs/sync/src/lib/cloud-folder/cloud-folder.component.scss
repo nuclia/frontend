@@ -16,18 +16,28 @@
   z-index: 120;
 }
 .header {
+  align-items: center;
   display: flex;
+  gap: rhythm(2);
+  margin: rhythm(2) 0 rhythm(3);
   h3 {
-    margin-right: rhythm(2);
+    margin: 0;
   }
+}
+
+.search-sites {
+  display: block;
+  margin-bottom: rhythm(4);
+  width: rhythm(40);
 }
 
 ul {
   padding: 0;
 }
 li {
-  display: flex;
   align-items: center;
+  display: flex;
+  gap: rhythm(1);
   margin-bottom: rhythm(1);
   nsi-button-mini {
     margin-left: rhythm(1);

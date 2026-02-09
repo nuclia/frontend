@@ -2064,6 +2064,7 @@
 	"stash.valid_domains_label": "Domaines à partir desquels des e-mails peuvent être envoyés",
 	"stash.valid_emails": "Ajoutez, séparées par des virgules, les adresses emails des sorcières qui seront acceptées.",
 	"stash.valid_emails_label": "Courriels",
+	"sync.cloud-folder.search-sites": "Trouver un site SharePoint",
 	"synonyms.add-form.bidirectional-checkbox": "Bidirectionnel",
 	"synonyms.add-form.main-word-label": "Mot principal",
 	"synonyms.add-form.synonyms-label": "Synonymes séparés par des virgules",
