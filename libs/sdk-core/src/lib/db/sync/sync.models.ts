@@ -23,18 +23,14 @@ export interface ISyncManager {
   nuclia: INuclia;
   createOAuthExternalConnection(provider: string): Observable<OAuthUrl>;
   createExternalConnection(provider: string, credentials: { [key: string]: string }): Observable<ExternalConnection>;
+  getExternalConnection(id: string): Observable<ExternalConnection>;
   createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration>;
   getConfigs(): Observable<SyncConfiguration[]>;
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
   getConfigJobs(id: string): Observable<Job[]>;
   syncConfig(id: string, full_sync?: boolean): Observable<Job>;
-  browse(
-    externalConnectorId: string,
-    drive_id?: string,
-    path?: string,
-    page_token?: string,
-  ): Observable<StorageStructure>;
+  browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure>;
 }
 
 export interface OAuthUrl {
@@ -47,6 +43,12 @@ export interface ExternalConnection {
   updated_at: string;
   created_by: string;
   provider: string;
+  capabilities: BrowseCapabilities;
+}
+
+export interface BrowseCapabilities {
+  has_sites: boolean;
+  requires_site_search: boolean;
 }
 
 export interface SyncConfiguration {
@@ -89,7 +91,16 @@ export interface JobLog {
   [key: string]: unknown;
 }
 
+export interface BrowseOptions {
+  drive_id?: string;
+  path?: string;
+  page_token?: string;
+  site_id?: string;
+  site_search?: string;
+}
+
 export interface StorageStructure {
+  sites?: StorageSite[];
   drives?: StorageDrive[];
   folders?: StorageFolder[];
   next_page_token: string;
@@ -106,5 +117,11 @@ export interface StorageFolder {
   id: string;
   name: string;
   path: string;
+  web_url?: string;
+}
+
+export interface StorageSite {
+  id: string;
+  name: string;
   web_url?: string;
 }

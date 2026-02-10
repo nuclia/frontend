@@ -5,7 +5,7 @@
   @if (connectorId | async; as connectorId) {
     @if (connectorDefinition | async; as connectorDef) {
       <div>
-        @if (connectorDef.oauth_provider && connectorDef.apikey_provider) {
+        @if (connectorDef.oauth_provider && connectorDef.apikey_provider && !externalConnection) {
           <div class="oauth-toggle">
             <pa-toggle
               [(value)]="useOAuth"
@@ -39,9 +39,9 @@
           [isCloud]="!!(isCloud | async)"
           (configurationChange)="updateConfiguration($event)"
           (validForm)="validForm = $event"></nsy-configuration-form>
-        @if (externalConnectorId) {
+        @if (externalConnection) {
           <nsy-cloud-folder
-            [externalConnectorId]="externalConnectorId"
+            [externalConnection]="externalConnection"
             (selection)="selectFolder($event)"></nsy-cloud-folder>
         }
       }

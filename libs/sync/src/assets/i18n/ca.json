@@ -33,6 +33,7 @@
 	"sync.badge.inactive": "Inactiu",
 	"sync.cloud-folder.back": "Enrere",
 	"sync.cloud-folder.browse": "Navegar",
+	"sync.cloud-folder.search-sites": "Buscar site de SharePoint",
 	"sync.cloud-folder.select": "Seleccioneu",
 	"sync.confirm.cancel-oauth.cancel-label": "No",
 	"sync.confirm.cancel-oauth.confirm-label": "Sí, cancel·la",

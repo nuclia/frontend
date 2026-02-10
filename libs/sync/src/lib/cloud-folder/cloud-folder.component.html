@@ -4,34 +4,80 @@
       <nsi-spinner></nsi-spinner>
     </div>
   }
-  @if (!selectedDrive) {
+
+  @if (hasSites && !currentSite()) {
+    <pa-input
+      class="search-sites"
+      icon="search"
+      [(value)]="searchQuery"
+      (keyup.enter)="searchSites()">
+      {{ 'sync.cloud-folder.search-sites' | translate }}
+    </pa-input>
+  }
+
+  @if (currentSite() || currentDrive()) {
+    <div>
+      <nsi-button-mini
+        icon="undo"
+        (click)="back()">
+        {{ 'sync.cloud-folder.back' | translate }}
+      </nsi-button-mini>
+    </div>
+    <div class="header">
+      <h3>
+        @if (currentSite()) {
+          {{ currentSite()?.name }}
+          @if (currentDrive()) {
+            <span>-</span>
+          }
+        }
+        @if (currentDrive()) {
+          {{ currentDrive()?.name }}
+        }
+        @if (this.currentPath()) {
+          {{ this.currentPath() }}
+        }
+        @if (isCurrentSelected()) {
+          <pa-icon name="check"></pa-icon>
+        }
+      </h3>
+      @if (currentDrive()) {
+        <nsi-button-mini (click)="this.currentPath() ? selectFolder() : selectDrive()">
+          {{ 'sync.cloud-folder.select' | translate }}
+        </nsi-button-mini>
+      }
+    </div>
+  }
+
+  @if (hasSites && !currentSite()) {
+    @if (sites !== undefined) {
+      <ul>
+        @for (site of sites; track site.id) {
+          <li>
+            <pa-icon name="folder"></pa-icon>
+            {{ site.name }}
+            <nsi-button-mini (click)="browseSite(site)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+          </li>
+        } @empty {
+          <li class="body-m">{{ 'generic.no-results' | translate }}</li>
+        }
+      </ul>
+    }
+  } @else if (!currentDrive()) {
     <ul>
       @for (drive of drives; track drive.id) {
         <li>
+          <pa-icon name="folder"></pa-icon>
           {{ drive.name }}
           <nsi-button-mini (click)="browseDrive(drive)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
         </li>
       }
     </ul>
   } @else {
-    <div class="header">
-      <h3>
-        {{ selectedDrive.name }} {{ currentPath() }}
-        @if (isCurrentSelected()) {
-          <pa-icon name="check"></pa-icon>
-        }
-      </h3>
-      <nsi-button-mini (click)="selectFolder()">{{ 'sync.cloud-folder.select' | translate }}</nsi-button-mini>
-    </div>
-
-    <nsi-button-mini
-      icon="undo"
-      (click)="back()">
-      {{ 'sync.cloud-folder.back' | translate }}
-    </nsi-button-mini>
     <ul>
       @for (folder of folders; track folder.id) {
         <li>
+          <pa-icon name="folder"></pa-icon>
           {{ folder.name }}
           <nsi-button-mini
             (click)="browseFolder(folder.path)"
