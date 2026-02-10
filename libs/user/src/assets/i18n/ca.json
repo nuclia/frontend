@@ -131,6 +131,7 @@
 	"user.kb.creation-form.zone.title": "On voleu que s'emmagatzemin les dades de la Knowledge Box?",
 	"validation.company-email": "Si us plau, utilitzeu un correu electrònic de l'empresa",
 	"validation.email": "Introdueix un correu electrònic vàlid",
+	"validation.password-rules": "Ha de tenir com a mínim <strong>8 caràcters</strong> i incloure <strong>majúscules</strong>, <strong>minúscules</strong>, <strong>números</strong> i <strong>caràcters especials</strong>.",
 	"validation.password_minlength": "La contrasenya ha de tenir com a mínim 8 caràcters",
 	"validation.password_mismatch": "Ep! La contrasenya no coincideix",
 	"validation.password_required": "Escull una contrasenya",

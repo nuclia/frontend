@@ -12,6 +12,7 @@
           type="password"
           autocapitalize="off"
           [disabled]="resetting"
+          help="validation.password-rules"
           [errorMessages]="resetValidationMessages.password">
           {{ 'reset.password' | translate }}
         </nsi-password-input>
@@ -31,7 +32,7 @@
         class="full-width"
         type="submit"
         kind="primary"
-        [disabled]="resetting">
+        [disabled]="resetForm.invalid || resetting">
         {{ 'generic.save' | translate }}
       </pa-button>
     </form>

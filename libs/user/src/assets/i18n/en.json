@@ -131,6 +131,7 @@
 	"user.kb.creation-form.zone.title": "Where do you want your Knowledge Box data to be stored?",
 	"validation.company-email": "Please use a company email",
 	"validation.email": "Enter a valid email",
+	"validation.password-rules": "Must have at least <strong>8 characters</strong> and include <strong>uppercase</strong> and <strong>lowercase</strong> letters, <strong>numbers</strong>, and <strong>special characters</strong>.",
 	"validation.password_minlength": "Password must be at least 8 characters long",
 	"validation.password_mismatch": "Password does not match",
 	"validation.password_required": "Choose a password",

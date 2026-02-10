@@ -11,6 +11,7 @@ import {
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { Subject } from 'rxjs';
+import { StrongPassword } from '../password.validator';
 
 @Component({
   selector: 'nus-signup',
@@ -24,7 +25,7 @@ export class SignupComponent implements OnInit {
   signupForm = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });
 
   validationMessages = {

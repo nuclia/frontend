@@ -3,29 +3,9 @@
 .setup-invite {
   display: flex;
   flex-direction: column;
-  padding: rhythm(8) rhythm(12);
-
-  .logo {
-    text-align: center;
-    img {
-      width: rhythm(22);
-      height: auto;
-    }
-  }
+  width: rhythm(45);
 
   .setup-invite-title {
-    margin: rhythm(4) 0 rhythm(5) 0;
-    text-align: center;
-  }
-
-  pa-input {
-    display: block;
-    margin-bottom: rhythm(2);
-  }
-
-  .setup-invite-actions {
-    margin-top: auto;
-    padding-top: rhythm(3);
-    text-align: center;
+    margin-bottom: rhythm(4);
   }
 }

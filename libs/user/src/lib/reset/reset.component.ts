@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService, MIN_PASSWORD_LENGTH, ResetData } from '@flaps/core';
+import { LoginService, ResetData } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { SamePassword } from '../password.validator';
+import { StrongPassword, SamePassword } from '../password.validator';
 
 @Component({
   selector: 'nus-reset',
@@ -19,7 +19,7 @@ export class ResetComponent {
   resetForm = new FormGroup({
     password: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)],
+      validators: [Validators.required, StrongPassword],
     }),
     passwordConfirm: new FormControl<string>('', {
       nonNullable: true,
