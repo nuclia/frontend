@@ -127,6 +127,13 @@ export class Authentication implements IAuthentication {
     return `${this.nuclia.options.oauth.auth}/api/auth/oauth/consent`;
   }
 
+  getLoginUrl(): string {
+    if (!this.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
+    return `${this.nuclia.options.oauth.auth}/api/auth/oauth/login`;
+  }
+
   redirectToOAuth(queryParams?: { [key: string]: string }) {
     const oauthParams = this.nuclia.options.oauth;
     if (!oauthParams) {
