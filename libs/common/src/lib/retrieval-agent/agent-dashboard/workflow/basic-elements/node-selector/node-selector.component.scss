@@ -16,7 +16,10 @@
   .title-xs {
     align-items: center;
     display: flex;
-    justify-content: space-between;
+    gap: rhythm(1.5);
+    pa-icon {
+      margin-left: auto;
+    }
   }
 
   .body-s {

@@ -101,6 +101,9 @@
     <header #sidebarHeader>
       <div class="title-m">
         {{ sideBarTitle() }}
+        @if (sideBarBadge(); as badge) {
+          <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
+        }
         <pa-button
           aspect="basic"
           icon="cross"

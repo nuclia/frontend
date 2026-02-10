@@ -56,6 +56,7 @@ import {
   NODE_SELECTOR_ICONS,
   NodeCategory,
   NodeConfig,
+  NODES_IN_BETA,
   NodeType,
   WorkflowRoot,
 } from './workflow.models';
@@ -598,6 +599,9 @@ export class WorkflowService {
       selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
       selectorRef.setInput('description', matchingSchema?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType as NodeType]);
+      if (NODES_IN_BETA.includes(nodeType)) {
+        selectorRef.setInput('badge', 'generic.badge.beta');
+      }
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
@@ -700,6 +704,9 @@ export class WorkflowService {
       selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
       selectorRef.setInput('description', matchingSchema?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
+      if (NODES_IN_BETA.includes(nodeType)) {
+        selectorRef.setInput('badge', 'generic.badge.beta');
+      }
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
@@ -976,7 +983,11 @@ export class WorkflowService {
     const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
     const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
     const columnIndex = node.nodeRef.instance.columnIndex;
-    const container: HTMLElement = this.openSidebarWithTitle(matchingSchema?.title || '');
+    const container: HTMLElement = this.openSidebarWithTitle(
+      matchingSchema?.title || '',
+      undefined,
+      NODES_IN_BETA.includes(node.nodeType) ? 'generic.badge.beta' : undefined,
+    );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType, node.nodeCategory);
     formRef.setInput('category', nodeCategory);
@@ -1081,14 +1092,19 @@ export class WorkflowService {
    * Open the sidebar with specified title
    * @param titleKey translation key of the sidebar title
    * @param descriptionKey translation key of the sidebar description
+   * @param badge badge text
    * @returns the sidebar content HTML element
    */
-  private openSidebarWithTitle(titleKey: string, descriptionKey?: string): HTMLElement {
+  private openSidebarWithTitle(titleKey: string, descriptionKey?: string, badge?: string): HTMLElement {
     if (!this.sidebarContentWrapper) {
       throw new Error('Sidebar container not initialized');
     }
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    setSidebarHeader(this.translate.instant(titleKey), descriptionKey ? this.translate.instant(descriptionKey) : '');
+    setSidebarHeader(
+      this.translate.instant(titleKey),
+      descriptionKey ? this.translate.instant(descriptionKey) : '',
+      badge,
+    );
     setTimeout(() => setOpenSidebar(true));
     return container;
   }
