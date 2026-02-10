@@ -4,7 +4,7 @@
   {{ nodeTitle() }}
 
   @if (badge()) {
-    <nsi-badge kind="tertiary">{{ badge() | translate }}</nsi-badge>
+    <nsi-badge kind="tertiary">{{ badge() || '' | translate }}</nsi-badge>
   }
 
   @if (icon(); as icon) {
