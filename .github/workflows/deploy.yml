@@ -671,7 +671,8 @@ jobs:
             }' \
             <(echo '${{ needs.deploy-rao.outputs.json-summary }}') \
             <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-app.outputs.json-summary }}')
+            <(echo '${{ needs.deploy-app.outputs.json-summary }}') \
+            <(echo '${{ needs.deploy-auth.outputs.json-summary }}')
           )
 
           echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV
