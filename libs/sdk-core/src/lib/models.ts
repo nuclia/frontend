@@ -70,6 +70,7 @@ export interface IAuthentication {
   redirectToOAuth(queryParams?: { [key: string]: string }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
   getConsentUrl(): string;
+  getLoginUrl(): string;
 }
 
 export interface IRest {
