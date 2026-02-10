@@ -135,7 +135,7 @@ jobs:
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
       - name: Publish widget to GCS
-        if: steps.check-deploy.outputs.deploy-widget == 'yes'
+        if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/dev'
         run: |-
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/libs/search-widget/*.umd.js gs://$CDN_STORAGE
@@ -148,7 +148,7 @@ jobs:
           aws s3 cp libs/search-widget/public/ s3://$S3_CDN_STORAGE/ --recursive
 
       - name: Publish RAO widget to GCS
-        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes'
+        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes' && github.ref == 'refs/heads/dev'
         run: |-
           find dist/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/rao-widget/*.umd.js gs://$CDN_STORAGE
@@ -168,7 +168,7 @@ jobs:
           cd -
 
       - name: Push SDK to GCP CDN
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/dev'
         run: |-
           gsutil copy dist/sdk-core/umd/index.js gs://$CDN_STORAGE/nuclia-sdk.umd.js
 
@@ -178,14 +178,14 @@ jobs:
           aws s3 cp dist/sdk-core/umd/index.js s3://$S3_CDN_STORAGE/nuclia-sdk.umd.js
 
       - name: Invalidate CDN cache stage
-        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-rao-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
+        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-rao-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/dev' }}
         env:
           GCP_PROJECT: ${{ secrets.GCP_STAGE_PROJECT_ID }}
         run: |
           gcloud compute url-maps invalidate-cdn-cache ${CDN_STORAGE} --path "/*" --global --project ${GCP_PROJECT}
 
       - name: Generate and push SDK docs to GCS
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/dev'
         run: |-
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
