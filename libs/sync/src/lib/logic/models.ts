@@ -27,6 +27,7 @@ export interface IConnectorBase {
   isExternal: boolean;
   allowToSelectFolders: boolean;
   canSyncSecurityGroups: boolean;
+  canSyncLastChanges: boolean;
 }
 
 export interface IConnector extends IConnectorBase {

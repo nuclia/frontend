@@ -64,6 +64,7 @@ describe('SyncDetailsPageComponent', () => {
         },
         getConnector: jest.fn(() => ({
           allowToSelectFolders: true,
+          canSyncLastChanges: true,
           getParametersSections: () => of([]),
         })),
         updateSync: jest.fn(() => of(undefined)),

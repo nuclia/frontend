@@ -52,8 +52,8 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.get<Job[]>(`${this.kb.path}/sync_config/${id}/jobs`);
   }
 
-  syncConfig(id: string): Observable<Job> {
-    return this.nuclia.rest.post<Job>(`${this.kb.path}/sync_config/${id}/sync`, {});
+  syncConfig(id: string, full_sync = false): Observable<Job> {
+    return this.nuclia.rest.post<Job>(`${this.kb.path}/sync_config/${id}/sync`, { full_sync });
   }
 
   browse(

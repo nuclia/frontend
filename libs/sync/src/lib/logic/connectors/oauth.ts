@@ -13,10 +13,12 @@ export class OAuthConnector implements IConnector {
   allowToSelectFolders = false;
   resumable = false;
   canSyncSecurityGroups: boolean;
+  canSyncLastChanges = true;
 
   constructor(name: string, id: string, path: string) {
     this.canSyncSecurityGroups = name === 'gdrive';
     this.allowToSelectFolders = name === 'gdrive' || name === 'sharefile';
+    this.canSyncLastChanges = name !== 'sharefile' && name !== 's3';
     this.name = name;
     this.id = id;
     this.path = path;
