@@ -193,6 +193,7 @@ jobs:
       - name: Generate and push SDK docs to S3
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
+          sh ./tools/build-sdk-docs.sh
           aws s3 cp ./libs/sdk-core/docs s3://$S3_DOCS_STORAGE/js-sdk --recursive
 
       - name: Generate a token
