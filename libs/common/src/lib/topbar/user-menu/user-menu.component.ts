@@ -74,7 +74,7 @@ export class UserMenuComponent implements OnDestroy {
 
   goProfile() {
     this.close.emit();
-    this.router.navigate(['/user/profile']);
+    this.router.navigate(['/user-profile']);
   }
 
   goToBilling() {
