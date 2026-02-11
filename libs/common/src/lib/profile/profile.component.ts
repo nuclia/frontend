@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject, switchMap, takeUntil } from 'rxjs';
-import { DEFAULT_LANG, LoginService, SDKService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
+import { DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
 
 @Component({
@@ -45,7 +45,6 @@ export class ProfileComponent implements OnInit {
     private translate: TranslateService,
     private location: Location,
     private loginService: LoginService,
-    private sdk: SDKService,
     private cdr: ChangeDetectorRef,
   ) {}
 
