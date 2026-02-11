@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MIN_PASSWORD_LENGTH } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SamePassword } from '../password.validator';
+import { StrongPassword, SamePassword } from '../password.validator';
+import { SisPasswordInputModule } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-password-form',
-  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, SisPasswordInputModule, TranslateModule],
   templateUrl: './password-form.component.html',
   styleUrls: ['./password-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,7 +23,7 @@ export class PasswordFormComponent {
     }),
     password: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)],
+      validators: [Validators.required, StrongPassword],
     }),
     passwordConfirm: new FormControl('', {
       nonNullable: true,
