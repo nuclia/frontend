@@ -27,7 +27,7 @@ export class SsoService {
       throw new Error('OAuth parameters are missing.');
     }
 
-    return `${this.sdk.nuclia.options.oauth.auth}/auth/${provider}/authorize?${params.toString()}`;
+    return `${this.sdk.nuclia.options.oauth.auth}/api/auth/${provider}/authorize?${params.toString()}`;
   }
 
   login(code: string, state: string): Observable<SsoLoginResponse> {
