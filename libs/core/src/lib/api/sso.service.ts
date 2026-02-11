@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { AuthTokens, SsoLoginResponse } from '../models';
-import { BackendConfigurationService } from '../config';
+import { SsoLoginResponse } from '../models';
 import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SsoService {
-  constructor(
-    private sdk: SDKService,
-    private config: BackendConfigurationService,
-  ) {}
+  constructor(private sdk: SDKService) {}
 
   getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
     const params = new URLSearchParams();
@@ -60,9 +56,7 @@ export class SsoService {
   }
 
   private isSafeRedirect(redirectUrl: string) {
-    return (
-      redirectUrl.startsWith(this.config.getAPIURL()) || redirectUrl.startsWith(this.sdk.nuclia.auth.getLoginUrl())
-    );
+    return redirectUrl.startsWith(location.origin) || location.hostname === 'localhost';
   }
 
   decodeState(state: string): { [key: string]: string } {
