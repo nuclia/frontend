@@ -115,6 +115,11 @@
         <div class="description">{{ description }}</div>
       }
     </header>
+    @if (isRegistered() && !!selected()) {
+      <div class="registered-agent">
+        <app-registered-agent-subform></app-registered-agent-subform>
+      </div>
+    }
     <div
       #sidebarContentWrapper
       class="sidebar-content"></div>

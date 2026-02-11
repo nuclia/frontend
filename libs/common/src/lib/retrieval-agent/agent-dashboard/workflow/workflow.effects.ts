@@ -11,7 +11,6 @@ import {
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
-  AskAgentUI,
   BaseConditionalAgentUI,
   getAgentFromConfig,
   isCondionalNode,
@@ -19,6 +18,7 @@ import {
   NodeType,
   ParentNode,
   RestrictedAgentUI,
+  SmartAgentUI,
 } from './workflow.models';
 import {
   getNode,
@@ -40,7 +40,7 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
-    const LOGS_ENABLED = false;
+    const LOGS_ENABLED = true;
     if (!nodeInitialisationDone()) {
       return;
     }
@@ -197,7 +197,9 @@ export class WorkflowEffectService {
                 if (children.length > 0) {
                   updateParentAndChild(node.nodeCategory, { id: nodeId, partialNode }, children);
                 } else {
-                  updateNode(nodeId, node.nodeCategory, partialNode);
+                  // NOTE: here, we do not want to update the parent node is no children
+                  console.log('WHY NO CHILDREN???');
+                  // updateNode(nodeId, node.nodeCategory, partialNode);
                 }
               }),
               catchError(() => {
@@ -231,6 +233,7 @@ export class WorkflowEffectService {
   private getFullyConfiguredRootNode(
     childNode: ParentNode,
   ): { parentNode: ParentNode; children: { id: string; childIndex?: number }[] } | undefined {
+    console.log('getFullyConfiguredRootNode', childNode);
     if (!childNode.parentId) {
       return;
     }
@@ -241,24 +244,24 @@ export class WorkflowEffectService {
     }
     const childId = childNode.nodeRef.instance.id;
 
-    Object.keys(parentNode).forEach((key) => {
-      if ((parentNode.then || []).includes(childId)) {
-        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
-      } else if ((parentNode.else || []).includes(childId)) {
-        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
-      } else if ((parentNode.agents || []).includes(childId)) {
-        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'agents'));
-      } else if (parentNode[key as keyof ParentNode] === childId) {
-        const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
-        const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || key;
-        const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
-        parentConfig[configKey] = childConfig;
-        if (configKey !== key && key in parentConfig) {
-          delete parentConfig[key];
-        }
-        updatedChildren.push({ id: childId });
+    if ((parentNode.then || []).includes(childId)) {
+      updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
+    } else if ((parentNode.else || []).includes(childId)) {
+      updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
+    } else if ((parentNode.agents || []).includes(childId)) {
+      updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'agents'));
+    } else if ((parentNode.registeredAgents || []).includes(childId)) {
+      updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'registered_agents'));
+    } else if (Object.keys(parentNode).includes(childId)) {
+      const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
+      const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childId;
+      const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
+      parentConfig[configKey] = childConfig;
+      if (configKey !== childId && childId in parentConfig) {
+        delete parentConfig[childId];
       }
-    });
+      updatedChildren.push({ id: childId });
+    }
 
     if (parentNode.parentId) {
       const levelUp = this.getFullyConfiguredRootNode(parentNode);
@@ -280,13 +283,16 @@ export class WorkflowEffectService {
   private updateConditionalChildrenConfig(
     parentNode: ParentNode,
     childNode: ParentNode,
-    property: 'then' | 'else_' | 'agents',
+    // property: 'then' | 'else_' | 'agents',
+    property: 'then' | 'else_' | 'agents' | 'registered_agents',
   ): { id: string; childIndex: number } {
-    const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI | RestrictedAgentUI;
+    const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI | RestrictedAgentUI | SmartAgentUI;
     const children =
       property === 'agents'
-        ? (parentConfig as RestrictedAgentUI)[property] || []
-        : (parentConfig as BaseConditionalAgentUI)[property] || [];
+        ? (parentConfig as RestrictedAgentUI).agents || []
+        : property === 'registered_agents'
+          ? (parentConfig as SmartAgentUI).registered_agents || []
+          : (parentConfig as BaseConditionalAgentUI)[property] || [];
     const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
     let updatedChild;
     if (typeof childNode.childIndex === 'number') {
@@ -298,7 +304,9 @@ export class WorkflowEffectService {
       updatedChild = { id: childNode.nodeRef.instance.id, childIndex };
     }
     if (property === 'agents') {
-      (parentConfig as RestrictedAgentUI)[property] = children;
+      (parentConfig as RestrictedAgentUI).agents = children;
+    } else if (property === 'registered_agents') {
+      (parentConfig as SmartAgentUI).registered_agents = children;
     } else {
       (parentConfig as BaseConditionalAgentUI)[property] = children;
     }
@@ -326,6 +334,7 @@ export class WorkflowEffectService {
 
   private updateAgent(node: ParentNode, agentId: string): Observable<void> {
     const agentConfig = getAgentFromConfig(node.nodeType, node.nodeConfig);
+    console.log('GIOT', agentConfig);
     return this.sdk.currentArag.pipe(
       take(1),
       switchMap((arag) => {

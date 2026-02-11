@@ -68,6 +68,7 @@ import {
   hasChildInThen,
   nodeInitialisationDone,
   resetCurrentOrigin,
+  resetIsRegisteredAgent,
   resetNodes,
   resetSidebar,
   resetTestAgent,
@@ -342,7 +343,7 @@ export class WorkflowService {
     columnIndex: number,
   ) {
     // Common connectable properties that typically contain child agents
-    const connectableProperties = ['fallback', 'next_agent', 'then', 'else_', 'else', 'agents'];
+    const connectableProperties = ['fallback', 'next_agent', 'then', 'else_', 'else', 'agents', 'registered_agents'];
 
     connectableProperties.forEach((propertyName) => {
       const childAgents = this.getChildAgentsForEntry(agent, propertyName);
@@ -428,6 +429,7 @@ export class WorkflowService {
     }
     const root = this.workflowRoot;
     this.resetState(true);
+    resetIsRegisteredAgent();
     setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
@@ -615,68 +617,6 @@ export class WorkflowService {
         selectorRef.location.nativeElement.classList.add('last-of-section');
       }
     });
-  }
-
-  /**
-   * Check if schema matches node type (helper method)
-   */
-  private schemaMatchesNodeType(schema: any, nodeType: string): boolean {
-    // Check if the schema title matches the node type
-    if (schema.title?.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
-      return true;
-    }
-
-    // Check if properties contain identifiers that match the node type
-    if (schema.properties?.['module']) {
-      const moduleProperty = schema.properties['module'];
-      if (moduleProperty['const'] === nodeType || moduleProperty['default'] === nodeType) {
-        return true;
-      }
-    }
-
-    // Handle conditional nodes
-    if (nodeType.includes('conditional') && schema.title?.toLowerCase().includes('conditional')) {
-      return true;
-    }
-
-    // Handle exact module matches in $ref
-    if (schema['$ref']) {
-      const ref = schema['$ref'] as string;
-      if (ref.startsWith('#/$defs/')) {
-        const defName = ref.replace('#/$defs/', '');
-        if (defName.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Resolve schema $ref (helper method)
-   */
-  private resolveSchemaRef(rootSchema: any, ref: string, schemas: any): any {
-    if (ref.startsWith('#/$defs/')) {
-      const defName = ref.replace('#/$defs/', '');
-
-      // Try to find the definition in the root schema's $defs first
-      if (rootSchema['$defs'] && rootSchema['$defs'][defName]) {
-        return rootSchema['$defs'][defName];
-      }
-
-      // If not found, search through all categories
-      for (const [categoryName, category] of Object.entries(schemas.agents)) {
-        if (Array.isArray(category)) {
-          for (const schema of category) {
-            if (schema['$defs'] && schema['$defs'][defName]) {
-              return schema['$defs'][defName];
-            }
-          }
-        }
-      }
-    }
-    return null;
   }
 
   /**

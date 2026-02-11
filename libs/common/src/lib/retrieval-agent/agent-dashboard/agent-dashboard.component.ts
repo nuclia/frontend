@@ -18,8 +18,13 @@ import {
   activeSideBar,
   aragUrl,
   ConnectableEntryComponent,
+  isRegisteredAgent,
   LinkService,
+<<<<<<< HEAD
   sideBarBadge,
+=======
+  selectedNode,
+>>>>>>> 5c450fee (registered agents)
   sideBarClosing,
   sideBarDescription,
   sideBarLarge,
@@ -36,9 +41,18 @@ import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.com
 import { ImportPanelComponent } from './workflow/sidebar/import';
 import { BadgeComponent, SisModalService } from '@nuclia/sistema';
 import { EndpointModalComponent } from './workflow/sidebar/endpoint/endpoint-modal.component';
+import { RegisteredAgentSubformComponent } from './workflow/basic-elements/registered-agent/registered-agent-subform.component';
 
 @Component({
-  imports: [BadgeComponent, TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
+  imports: [
+    BadgeComponent,
+    TranslateModule,
+    PaButtonModule,
+    WorkflowRootComponent,
+    RouterLink,
+    CommonModule,
+    RegisteredAgentSubformComponent,
+  ],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +84,8 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   activeSideBar = activeSideBar;
   isAragWithMemory = this.sdk.isAragWithMemory;
   isAragAdmin = this.features.isAragAdmin;
+  isRegistered = isRegisteredAgent;
+  selected = selectedNode;
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());

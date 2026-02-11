@@ -33,6 +33,7 @@ import {
   PreprocessAgentCreation,
   RephraseAgent,
   RephraseAgentCreation,
+  SmartAgent,
   SqlAgent,
   SqlAgentCreation,
   TavilyAgent,
@@ -67,6 +68,7 @@ export type NodeType =
   | 'remi'
   | 'external'
   | 'restart'
+  | 'smart'
   | 'postprocess_alinia';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
@@ -100,10 +102,16 @@ export interface ParentNode {
   then?: string[];
   else?: string[];
   agents?: string[];
+  registeredAgents?: string[];
   fallback?: string;
   nextAgent?: string;
   // If node is a child, index in the parent then/else list
   childIndex?: number;
+  registeredAgentParams?: RegisteredAgentParams;
+}
+
+export interface RegisteredAgentParams {
+  description: string;
 }
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -260,6 +268,9 @@ export interface BaseConditionalAgentUI extends CommonAgentConfig {
   then?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
   else_?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
 }
+export interface SmartAgentUI extends CommonAgentConfig {
+  registered_agents?: BaseContextAgent[];
+}
 export interface PreConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
   then?: BasePreprocessAgent[];
@@ -415,6 +426,23 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
     ...agentConfig,
   };
 }
+// export function smartUiToCreation(config: any): any {
+//   config.registered_agents = (config.registeredAgents || []).map((agent: NodeConfig) => ({
+//     agent,
+//     description: 'yep',
+//   }));
+//   delete config.registeredAgents;
+//   return {
+//     module: 'smart',
+//     ...config,
+//   };
+// }
+// export function smartAgentToUi(agent: SmartAgent): SmartAgentUI {
+//   return {
+//     ...agent,
+//     registeredAgents:
+//   };
+// }
 export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
   const { call_schema, call_obj, ...uiConfig } = agent;
   return {
@@ -468,6 +496,7 @@ export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
+  console.log('get agent from config', config);
   const cleanConfig = cleanupConfig(config);
   switch (nodeType) {
     case 'rephrase':
@@ -482,6 +511,8 @@ export function getAgentFromConfig(
       return mcpUiToCreation(cleanConfig);
     case 'external':
       return externalUiToCreation(cleanConfig);
+    // case 'smart':
+    //   return smartUiToCreation(cleanConfig);
     case 'preprocess_alinia':
     case 'postprocess_alinia':
       return guardrailsUiToCreation(cleanConfig);
@@ -522,6 +553,8 @@ export function getConfigFromAgent(
       return basicAskAgentToUi(agent as BasicAskAgent);
     case 'external':
       return externalAgentToUi(agent as ExternalAgent);
+    // case 'smart':
+    //   return smartAgentToUi(agent as SmartAgent);
     case 'preprocess_alinia':
     case 'postprocess_alinia':
       return guardrailsAgentToUi(agent as GuardrailsAgent);

@@ -289,8 +289,9 @@ const contextNodes = signal<{ [id: string]: ParentNode }>({});
 const generationNodes = signal<{ [id: string]: ParentNode }>({});
 const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const childNodes = signal<{ [id: string]: ParentNode }>({});
-const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
+export const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
+export const isRegisteredAgent = signal<boolean>(false);
 const deletedAgents = signal<{ id: string; category: NodeCategory }[]>([]);
 
 export interface WorkflowState {
@@ -475,7 +476,12 @@ export function addNode(
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
     }
-    if (propertyStateKey === 'then' || propertyStateKey === 'else' || propertyStateKey === 'agents') {
+    if (
+      propertyStateKey === 'then' ||
+      propertyStateKey === 'else' ||
+      propertyStateKey === 'agents' ||
+      propertyStateKey === 'registeredAgents'
+    ) {
       const existing = (parent as any)?.[propertyStateKey];
       const childIds = Array.isArray(existing) ? [...existing] : [];
       const currentIndex = childIds.indexOf(nodeId);
@@ -488,7 +494,15 @@ export function addNode(
           : childIds.length;
       childIds.splice(insertionIndex, 0, nodeId);
       node.childIndex = insertionIndex;
-      childNodes.update((children) => ({ ...children, [nodeId]: { ...node } }));
+      if (propertyStateKey === 'registeredAgents') {
+        console.log('set params');
+        childNodes.update((children) => ({
+          ...children,
+          [nodeId]: { ...node, registeredAgentParams: { description: 'TBD' } },
+        }));
+      } else {
+        childNodes.update((children) => ({ ...children, [nodeId]: { ...node } }));
+      }
       updateNode(parentId, nodeCategory, { [propertyStateKey]: childIds, isSaved });
     } else {
       childNodes.update((children) => ({ ...children, [nodeId]: node }));
@@ -664,6 +678,13 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
     }
   }
 
+  // if (node.registeredAgents) {
+  //   console.log('has reg');
+  //   const regAgents = node.registeredAgents.map((id) => ({ agent: childNodes()[id].nodeConfig, description: 'tbd' }));
+  //   console.log(regAgents);
+  //   node.registered_agents = regAgents.filter((a) => !!a.agent) as { agent: NodeConfig; description: string }[];
+  // }
+
   if (isChild) {
     childNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
   } else {
@@ -717,6 +738,10 @@ export function updateParentAndChild(
  */
 export function setCurrentOrigin(origin: ConnectableEntryComponent) {
   currentOrigin.set(origin);
+  isRegisteredAgent.set(origin.id() === 'registered_agents');
+}
+export function resetIsRegisteredAgent() {
+  isRegisteredAgent.set(false);
 }
 /**
  * Set default state on current origin if any, before removing it from the state

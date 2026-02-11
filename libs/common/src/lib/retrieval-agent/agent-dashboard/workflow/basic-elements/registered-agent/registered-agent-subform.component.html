@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <h4 class="title-xxs">{{ 'retrieval-agents.workflow.registered-agent.title' | translate }}</h4>
+  <pa-textarea
+    formControlName="description"
+    [rows]="4"
+    [help]="'retrieval-agents.workflow.registered-agent.description' | translate">
+    {{ 'generic.description' | translate }}
+  </pa-textarea>
+</form>

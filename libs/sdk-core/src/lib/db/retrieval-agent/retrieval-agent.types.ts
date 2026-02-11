@@ -35,8 +35,9 @@ export type AragModule =
   | 'external'
   | 'restart'
   | 'postprocess_alinia'
-  | 'static'
-  | 'data_viz';
+  | 'data_viz'
+  | 'smart'
+  | 'static';
 
 export function getCategoryFromModule(
   module: AragModule,
@@ -76,6 +77,7 @@ const CONTEXT_MODULE: AragModule[] = [
   'restricted',
   'sparql',
   'static',
+  'smart',
 ];
 export type ContextModule = (typeof CONTEXT_MODULE)[number];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
