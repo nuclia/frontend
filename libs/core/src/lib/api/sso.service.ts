@@ -23,8 +23,11 @@ export class SsoService {
     if (loginChallenge) {
       params.set('login_challenge', loginChallenge);
     }
+    if (!this.sdk.nuclia.options.oauth) {
+      throw new Error('OAuth parameters are missing.');
+    }
 
-    return `${this.sdk.nuclia.auth.getLoginUrl()}/auth/${provider}/authorize?${params.toString()}`;
+    return `${this.sdk.nuclia.options.oauth.auth}/auth/${provider}/authorize?${params.toString()}`;
   }
 
   login(code: string, state: string): Observable<SsoLoginResponse> {
