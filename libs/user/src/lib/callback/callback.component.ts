@@ -27,7 +27,7 @@ export class CallbackComponent implements OnInit {
     const queryParams = this.route.snapshot.queryParams;
     if (queryParams['error']) {
       this.toaster.error(queryParams['error_description'] || 'login.error.oops');
-      this.router.navigate(['../signup'], {
+      this.router.navigate(['/user/signup'], {
         relativeTo: this.route,
       });
       return;
@@ -66,7 +66,7 @@ export class CallbackComponent implements OnInit {
         }
       });
     } else {
-      this.router.navigate(['../signup'], {
+      this.router.navigate(['/user/signup'], {
         relativeTo: this.route,
       });
     }
@@ -128,7 +128,7 @@ export class CallbackComponent implements OnInit {
             );
           } else {
             // Invalid response
-            this.router.navigate(['../signup'], {
+            this.router.navigate(['/user/signup'], {
               relativeTo: this.route,
               queryParams: { error: 'invalid_response' },
             });
@@ -144,7 +144,7 @@ export class CallbackComponent implements OnInit {
             this.toaster.error('Authentication configuration error. Please contact support if this persists.');
           }
 
-          this.router.navigate(['../signup'], {
+          this.router.navigate(['/user/signup'], {
             relativeTo: this.route,
             queryParams: { error: errorCode },
           });
