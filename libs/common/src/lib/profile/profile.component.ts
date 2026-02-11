@@ -1,17 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, Subject, switchMap, takeUntil } from 'rxjs';
 import { DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nus-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [TranslateModule, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
