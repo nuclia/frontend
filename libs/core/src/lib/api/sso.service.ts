@@ -30,7 +30,7 @@ export class SsoService {
     const url = this.getLoginUrl(state);
     const apiUrl = this.sdk.nuclia.auth.getLoginUrl();
 
-    if (url === null || !this.isSafeRedirect(url)) {
+    if (url === null || !this.isSafeRedirect(url, apiUrl)) {
       console.error('[SSO] Invalid state - URL validation failed');
       console.error('[SSO] Expected login_url to start with:', apiUrl);
       console.error('[SSO] Received login_url:', url);
@@ -55,8 +55,17 @@ export class SsoService {
     return hasUrl ? decoded['login_url'] : null;
   }
 
-  private isSafeRedirect(redirectUrl: string) {
-    return redirectUrl.startsWith(location.origin) || location.hostname === 'localhost';
+  private isSafeRedirect(redirectUrl: string, apiUrl: string) {
+    // Validate that the login_url domain matches the expected API domain
+    try {
+      const redirectUrlObj = new URL(redirectUrl);
+      const apiUrlObj = new URL(apiUrl);
+      
+      // Allow if same origin as the API
+      return redirectUrlObj.origin === apiUrlObj.origin;
+    } catch {
+      return false;
+    }
   }
 
   decodeState(state: string): { [key: string]: string } {
