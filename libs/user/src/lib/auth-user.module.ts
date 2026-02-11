@@ -35,8 +35,35 @@ import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
 import { UserContainerModule } from './user-container';
+import { CallbackComponent } from './callback/callback.component';
 
 export const authRoutes: Routes = [
+  { path: 'callback', component: CallbackComponent },
+  {
+    path: 'callbacks/saml',
+    component: CallbackComponent,
+    data: { saml: true },
+  },
+  {
+    path: 'callbacks/oauth',
+    component: CallbackComponent,
+    data: { samlOauth: true },
+  },
+  {
+    path: 'callbacks/google',
+    component: CallbackComponent,
+    data: { google: true },
+  },
+  {
+    path: 'callbacks/github',
+    component: CallbackComponent,
+    data: { github: true },
+  },
+  {
+    path: 'callbacks/microsoft',
+    component: CallbackComponent,
+    data: { microsoft: true },
+  },
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
@@ -46,7 +73,6 @@ export const authRoutes: Routes = [
   { path: 'onboarding', component: OnboardingComponent },
   { path: 'check-mail', component: CheckMailComponent },
   { path: 'consent', component: ConsentComponent, resolve: { consentData: consentResolver } },
-  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginService, SDKService, TranslatePipeMock, UserService } from '@flaps/core';
+import { LoginService, TranslatePipeMock, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
@@ -37,16 +37,6 @@ describe('ProfileComponent', () => {
         {
           provide: LoginService,
           useValue: { setPreferences: () => of() },
-        },
-        {
-          provide: SDKService,
-          useValue: {
-            nuclia: {
-              auth: {
-                setPassword: () => of(),
-              },
-            },
-          },
         },
         { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
       ],
