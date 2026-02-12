@@ -36,14 +36,7 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
 } from '@flaps/common';
-import {
-  RedirectComponent,
-  FarewellComponent,
-  FeedbackComponent,
-  inviteGuard,
-  InviteComponent,
-  CallbackComponent,
-} from '@nuclia/user';
+import { RedirectComponent, FarewellComponent, FeedbackComponent, CallbackComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 
 const routes: Routes = [
@@ -190,11 +183,6 @@ const routes: Routes = [
   {
     path: 'farewell',
     component: FarewellComponent,
-  },
-  {
-    path: 'setup/invite',
-    component: InviteComponent,
-    canActivate: [authGuard, inviteGuard],
   },
   {
     path: 'setup_account',
