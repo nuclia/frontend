@@ -13,7 +13,6 @@ describe('CallbackComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CallbackComponent],
       imports: [RouterModule.forRoot([])],
       providers: [
         { provide: SAMLService, useValue: { getToken: () => of(token) } },
