@@ -70,6 +70,13 @@ function apply_path {
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"
     sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
+
+    echo "Check that we have ASSETS_PATH vars"
+    test -n "$ASSETS_PATH"
+
+    echo "Using assets from '$ASSETS_PATH'";
+    sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
+    sed -i -E "s#assets\/(overrides|logos|favicon)#${ASSETS_PATH}/\1#g" /dist/index.html
 }
 
 # Should we monkey patch?
