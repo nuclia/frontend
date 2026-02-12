@@ -23,12 +23,12 @@ export class SsoService {
       throw new Error('OAuth parameters are missing.');
     }
 
-    return `${this.sdk.nuclia.options.oauth.auth}/api/auth/${provider}/authorize?${params.toString()}`;
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
   }
 
   login(code: string, state: string): Observable<SsoLoginResponse> {
     const url = this.getLoginUrl(state);
-    const apiUrl = this.sdk.nuclia.auth.getLoginUrl();
+    const apiUrl = `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
 
     if (url === null || !this.isSafeRedirect(url, apiUrl)) {
       console.error('[SSO] Invalid state - URL validation failed');
@@ -60,7 +60,7 @@ export class SsoService {
     try {
       const redirectUrlObj = new URL(redirectUrl);
       const apiUrlObj = new URL(apiUrl);
-      
+
       // Allow if same origin as the API
       return redirectUrlObj.origin === apiUrlObj.origin;
     } catch {
