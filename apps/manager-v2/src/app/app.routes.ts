@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { authGuard } from '@flaps/core';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
+import { CallbackComponent } from '@nuclia/user';
 
 export const appRoutes: Route[] = [
   {
@@ -28,11 +29,7 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard],
         loadChildren: () => import('./manage-zones/manage-zones.module').then((m) => m.ManageZonesModule),
       },
+      { path: 'user/callback', component: CallbackComponent },
     ],
-  },
-  {
-    path: 'user',
-    // eslint-disable-next-line @nx/enforce-module-boundaries
-    loadChildren: () => import('../../../../libs/user/src/lib/user.module').then((m) => m.UserModule),
   },
 ];

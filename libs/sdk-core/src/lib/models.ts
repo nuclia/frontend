@@ -67,6 +67,10 @@ export interface IAuthentication {
   deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
+  redirectToOAuth(queryParams?: { [key: string]: string }): void;
+  processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
+  getConsentUrl(): string;
+  getLoginUrl(): string;
 }
 
 export interface IRest {
@@ -290,6 +294,14 @@ export interface NucliaOptions {
    * Set it to `false` when using a private Knowledge Box.
    */
   public?: boolean;
+  /**
+   * OAuth parameters.
+   */
+  oauth?: {
+    client_id: string;
+    hydra: string;
+    auth: string;
+  };
   /**
    * Allow to modify the headers for the REST calls.
    */

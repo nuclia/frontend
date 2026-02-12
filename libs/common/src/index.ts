@@ -20,6 +20,7 @@ export * from './lib/navbar';
 export * from './lib/page-not-found';
 export * from './lib/pagination';
 export * from './lib/pipes';
+export * from './lib/profile';
 export * from './lib/rag-lab';
 export * from './lib/resources';
 export * from './lib/retrieval-agent';

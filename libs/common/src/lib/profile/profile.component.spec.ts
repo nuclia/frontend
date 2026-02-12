@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginService, SDKService, TranslatePipeMock, UserService } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
+import { LoginService, TranslatePipeMock, UserService } from '@flaps/core';
+import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { ProfileComponent } from './profile.component';
@@ -21,15 +21,15 @@ describe('ProfileComponent', () => {
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useClass: TranslateFakeLoader,
+          },
+        }),
       ],
       providers: [
-        {
-          provide: TranslateService,
-          useValue: {
-            get: () => {},
-            use: () => {},
-          },
-        },
+        TranslateService,
         {
           provide: UserService,
           useValue: { userPrefs: of({ email: '', type: 'USER' }) },
@@ -37,16 +37,6 @@ describe('ProfileComponent', () => {
         {
           provide: LoginService,
           useValue: { setPreferences: () => of() },
-        },
-        {
-          provide: SDKService,
-          useValue: {
-            nuclia: {
-              auth: {
-                setPassword: () => of(),
-              },
-            },
-          },
         },
         { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
       ],

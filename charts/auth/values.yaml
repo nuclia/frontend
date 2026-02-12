@@ -1,0 +1,83 @@
+affinity: {}
+nodeSelector: {}
+tolerations: []
+topologySpreadConstraints: []
+replicaCount: 1
+revisionHistoryLimit: 3
+
+containerRegistry: CONTAINER_REGISTRY_TO_REPLACE
+image: IMAGE_TO_REPLACE
+hash: HASH_VERSION_TO_REPLACE
+
+resources:
+  {}
+  # limits:
+  #   memory: '50Mi'
+  #   cpu: '50m'
+
+service:
+  internalPort: 80
+  externalPort: 80
+
+app_name: auth
+no_stripe: false
+google_analytics: XXX
+cdn: XXX
+brand_name: XXX
+brand_domain: XXX
+assets_path: XXX
+sentry_environment: stage
+editor_url: XXX
+email_domain: XXX
+saml_enabled: XXX
+oauth_client_id: XXX
+hydra_endpoint: XXX
+auth_endpoint: XXX
+
+virtualService:
+  enabled: false
+  gateway: XXX
+  host: XXX
+  http:
+    match:
+      - uri:
+          regex: ^/.{0,2}
+      - uri:
+          # Match everything except "/api"
+          regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
+    retries:
+      attempts: 3
+      retryOn: connect-failure
+  # Additional match rules can be added here
+  # Uncomment and modify the following section to add extra match rules
+  # extraMatch:
+  #   - match:
+  #     - uri:
+  #         regex: ^/path
+  #     - uri:
+  #         regex: ^/path/to/other
+  #     retries:
+  #       attempts: 3
+  #       retryOn: connect-failure
+  #     route:
+  #     - destination:
+  #         host: "name.svc"
+  #         port:
+  #           number: 8080
+
+podDisruptionBudget:
+  enabled: false
+# annotations:
+#   what: "add annotations"
+#   where: "in the pods"
+
+# envFrom:
+#   - configMapRef:
+#       name: config-map-name
+#   - secretRef:
+#       name: secret-name
+
+## Intended to be used with secret
+# env:
+#   SITE_KEY: XXX
+#   SENTRY_URL: XXX
