@@ -120,18 +120,11 @@ export class Authentication implements IAuthentication {
     );
   }
 
-  getConsentUrl(): string {
+  getAuthUrl(): string {
     if (!this.nuclia.options.oauth) {
       throw new Error('OAuth parameters are missing.');
     }
-    return `${this.nuclia.options.oauth.auth}/api/auth/oauth/consent`;
-  }
-
-  getLoginUrl(): string {
-    if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
-    return `${this.nuclia.options.oauth.auth}/api/auth/oauth/login`;
+    return `${this.nuclia.options.oauth.auth}/api/auth`;
   }
 
   redirectToOAuth(queryParams?: { [key: string]: string }) {
@@ -387,7 +380,7 @@ export class Authentication implements IAuthentication {
     if (!this.nuclia.options.oauth) {
       throw new Error('OAuth parameters are missing.');
     }
-    return this.fetch<AuthTokens>(`${this.nuclia.options.oauth.auth}/auth/setpassword`, { password }).pipe(
+    return this.fetch<AuthTokens>(`${this.getAuthUrl()}/setpassword`, { password }).pipe(
       map((tokens) => this.authenticate(tokens)),
     );
   }
