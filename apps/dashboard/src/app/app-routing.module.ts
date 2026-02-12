@@ -40,7 +40,14 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
 } from '@flaps/common';
-import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
+import {
+  RedirectComponent,
+  FarewellComponent,
+  FeedbackComponent,
+  inviteGuard,
+  InviteComponent,
+  CallbackComponent,
+} from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 
@@ -304,10 +311,11 @@ const routes: Routes = [
     canActivate: [awsGuard],
   },
   {
-    path: 'user-profile',
+    path: 'user/profile',
     component: ProfileComponent,
     canActivate: [authGuard],
   },
+  { path: 'user/callback', component: CallbackComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 
