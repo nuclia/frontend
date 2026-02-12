@@ -9,7 +9,6 @@ import { take } from 'rxjs';
 @Component({
   selector: 'stf-user-callback',
   template: '<div class="user-background" style="height: 100%"></div>',
-  standalone: false,
 })
 export class CallbackComponent implements OnInit {
   constructor(
