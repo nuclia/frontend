@@ -69,8 +69,7 @@ export interface IAuthentication {
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
   redirectToOAuth(queryParams?: { [key: string]: string }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
-  getConsentUrl(): string;
-  getLoginUrl(): string;
+  getAuthUrl(): string;
 }
 
 export interface IRest {

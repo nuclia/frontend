@@ -21,11 +21,11 @@ export class OAuthService {
   ) {}
 
   loginUrl() {
-    return this.sdk.nuclia.auth.getLoginUrl();
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
   }
 
   consentUrl() {
-    return this.sdk.nuclia.auth.getConsentUrl();
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/consent`;
   }
 
   getLoginData(challenge: string): Observable<OAuthLoginData> {
