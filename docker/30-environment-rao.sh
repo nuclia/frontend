@@ -8,6 +8,8 @@ function apply_path {
     test -n "$SITE_KEY"
     echo "Check that we have APP_NAME vars"
     test -n "$APP_NAME"
+    echo "Check that we have API_ORIGIN vars"
+    test -n "$API_ORIGIN"
     echo "Check that we have CDN vars"
     test -n "$CDN"
     echo "Check that we have SENTRY_ENV vars"
@@ -26,8 +28,6 @@ function apply_path {
     test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
     echo "Check that we have oauth params vars"
     test -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
-    test -n "$STF_DOCKER_CONFIG_HYDRA_ENDPOINT"
-    test -n "$STF_DOCKER_CONFIG_AUTH_ENDPOINT"
 
     echo "Configuring SITE_KEY vars"
     sed -i "s#STF_DOCKER_CONFIG_SITE_KEY#${SITE_KEY}#g" $jsonFile
@@ -35,7 +35,10 @@ function apply_path {
     echo "Configuring APP_NAME vars"
     sed -i "s#STF_DOCKER_CONFIG_APP_NAME#${APP_NAME}#g" $jsonFile
 
-    echo "Configuring APP_NAME vars"
+    echo "Configuring API_ORIGIN vars"
+    sed -i "s#STF_DOCKER_API_ORIGIN#${API_ORIGIN}#g" $jsonFile
+
+    echo "Configuring CDN vars"
     sed -i "s#STF_DOCKER_CONFIG_CDN#${CDN}#g" $jsonFile
 
     echo "Configuring SENTRY_ENV vars"
@@ -61,8 +64,6 @@ function apply_path {
 
     echo "Configuring OAUTH params"
     sed -i "s#STF_DOCKER_CONFIG_OAUTH_CLIENT_ID#${OAUTH_CLIENT_ID}#g" $jsonFile
-    sed -i "s#STF_DOCKER_CONFIG_HYDRA_ENDPOINT#${HYDRA_ENDPOINT}#g" $jsonFile
-    sed -i "s#STF_DOCKER_CONFIG_AUTH_ENDPOINT#${AUTH_ENDPOINT}#g" $jsonFile
 
     echo "Configuring STF_DOCKER_CONFIG_GOOGLE_ANALYTICS vars"
     sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html

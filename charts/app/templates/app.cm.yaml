@@ -10,6 +10,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
 data:
   APP_NAME: {{ .Values.app_name }}
+  API_ORIGIN: "{{ .Values.api_origin }}"
   CDN: "{{ .Values.cdn }}"
   BRAND_NAME: "{{ .Values.brand_name }}"
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
@@ -22,5 +23,4 @@ data:
   EMAIL_DOMAIN: "{{ .Values.email_domain }}"
   SAML_ENABLED: "{{ .Values.saml_enabled }}"
   OAUTH_CLIENT_ID: "{{ .Values.oauth_client_id }}"
-  HYDRA_ENDPOINT: "{{ .Values.hydra_endpoint }}"
   AUTH_ENDPOINT: "{{ .Values.auth_endpoint }}"
