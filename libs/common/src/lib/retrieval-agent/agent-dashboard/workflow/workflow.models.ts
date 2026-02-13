@@ -132,7 +132,10 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   summarize: 'summary',
   tavily: 'globe',
   static: 'file',
+  marklogic: 'database',
 };
+
+export const NODES_IN_BETA = ['marklogic'];
 
 export interface CommonAgentConfig {
   rules: string[] | null;

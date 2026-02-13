@@ -29,6 +29,7 @@ export type SidebarType = 'rules' | 'add' | 'test' | 'import' | 'export';
 const sidebar = signal<{
   title: string;
   description: string;
+  badge: string;
   open: boolean;
   closing: boolean;
   active: '' | SidebarType;
@@ -36,6 +37,7 @@ const sidebar = signal<{
 }>({
   title: '',
   description: '',
+  badge: '',
   open: false,
   closing: false,
   active: '',
@@ -50,13 +52,14 @@ export function setOpenSidebar(open: boolean) {
   const closing = !open;
   sidebar.update((bar) => ({ ...bar, open, closing }));
 }
-export function setSidebarHeader(title: string, description = '') {
-  sidebar.update((bar) => ({ ...bar, title, description }));
+export function setSidebarHeader(title: string, description = '', badge = '') {
+  sidebar.update((bar) => ({ ...bar, title, description, badge }));
 }
 export function resetSidebar(keepOpen = false) {
   sidebar.set({
     title: '',
     description: '',
+    badge: '',
     open: keepOpen ? sidebar().open : false,
     closing: false,
     active: '',
@@ -66,6 +69,7 @@ export function resetSidebar(keepOpen = false) {
 // computed signals are readonly: we don't want components to interact directly with the sidebar
 export const sideBarTitle = computed(() => sidebar().title);
 export const sideBarDescription = computed(() => sidebar().description);
+export const sideBarBadge = computed(() => sidebar().badge);
 export const sideBarOpen = computed(() => sidebar().open);
 export const sideBarClosing = computed(() => sidebar().closing);
 export const sideBarLarge = computed(() => sidebar().large);

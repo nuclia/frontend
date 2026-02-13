@@ -84,8 +84,11 @@
       .title-m {
         align-items: center;
         display: flex;
+        gap: rhythm(1.5);
         height: dashboard.$height-sidebar-header;
-        justify-content: space-between;
+        pa-button {
+          margin-left: auto;
+        }
       }
 
       .description {

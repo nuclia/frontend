@@ -3,6 +3,10 @@
   [attr.data-cy]="nodeType()">
   {{ nodeTitle() }}
 
+  @if (badge()) {
+    <nsi-badge kind="tertiary">{{ badge() || '' | translate }}</nsi-badge>
+  }
+
   @if (icon(); as icon) {
     <pa-icon
       size="small"

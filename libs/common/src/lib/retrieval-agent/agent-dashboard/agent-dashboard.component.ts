@@ -19,6 +19,7 @@ import {
   aragUrl,
   ConnectableEntryComponent,
   LinkService,
+  sideBarBadge,
   sideBarClosing,
   sideBarDescription,
   sideBarLarge,
@@ -33,11 +34,11 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
 import { ImportPanelComponent } from './workflow/sidebar/import';
-import { SisModalService } from '@nuclia/sistema';
+import { BadgeComponent, SisModalService } from '@nuclia/sistema';
 import { EndpointModalComponent } from './workflow/sidebar/endpoint/endpoint-modal.component';
 
 @Component({
-  imports: [TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
+  imports: [BadgeComponent, TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +63,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   aragUrl = aragUrl;
   sideBarTitle = sideBarTitle;
   sideBarDescription = sideBarDescription;
+  sideBarBadge = sideBarBadge;
   sideBarOpen = sideBarOpen;
   sideBarClosing = sideBarClosing;
   sideBarLarge = sideBarLarge;
