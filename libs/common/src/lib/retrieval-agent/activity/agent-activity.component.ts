@@ -24,7 +24,7 @@ import { ActivityLogTableComponent } from './log-table.component';
 import { PaButtonModule, PaExpanderModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 type ActivityDownload = {
-  status: 'pending' | 'stored' | 'downloading' | 'completed';
+  status: 'pending' | 'ready' | 'downloading' | 'downloaded';
   requestId?: string;
   url?: string;
   rows?: LogEntry[];
@@ -88,7 +88,7 @@ export class AgentActivityComponent implements OnDestroy {
                 switchMap(() => arag.getDownload(requestId)),
                 filter((data) => {
                   if (data.download_url) {
-                    this.downloads[month].status = 'stored';
+                    this.downloads[month].status = 'ready';
                     this.downloads[month].url = data.download_url;
                     this.cdr?.markForCheck();
                     return true;
@@ -145,7 +145,7 @@ export class AgentActivityComponent implements OnDestroy {
   toggleExpander(month: string) {
     this.visibleTables[month] = !this.visibleTables[month];
     const download = this.downloads[month];
-    if (download.status === 'stored') {
+    if (download.status === 'ready') {
       download.status = 'downloading';
       this.fetchRows(download).subscribe();
     }
@@ -155,7 +155,7 @@ export class AgentActivityComponent implements OnDestroy {
     return from(fetch(download.url || '').then((res) => res.text())).pipe(
       tap((ndjson) => {
         download.rows = ndjson ? this.parseNdjson(ndjson) : [];
-        download.status = 'completed';
+        download.status = 'downloaded';
         this.cdr?.markForCheck();
       }),
     );
@@ -184,7 +184,7 @@ export class AgentActivityComponent implements OnDestroy {
             const key = `${curr.query['year']}-${curr.query['month'].toString().padStart(2, '0')}`;
             acc[key] = {
               requestId: curr.id,
-              status: curr.status === 'ready' ? 'stored' : 'pending',
+              status: curr.status,
               url: curr.download_url,
               rows: undefined,
             };

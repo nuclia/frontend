@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -46,20 +46,7 @@ import { TableVirtualScrollDirective } from '@flaps/core';
 export class ActivityLogTableComponent {
   private modalService = inject(SisModalService);
 
-  wideColumns = [
-    'answer',
-    'filter',
-    'learning_id',
-    'question',
-    'rag_strategies',
-    'remi_scores',
-    'resource_id',
-    'retrieved_context',
-    'token_details',
-    'user_request',
-  ];
-  dateColumn = 'Date (UTC)';
-  idColumn = 'ID';
+  wideColumns = ['data'];
   rowHeight = 148;
   viewportOffset = 0;
 
@@ -67,11 +54,7 @@ export class ActivityLogTableComponent {
   hiddenHeaders = new BehaviorSubject<string[]>([]);
   term = new BehaviorSubject<string>('');
 
-  headers = this.data.pipe(
-    map((data) =>
-      data.length > 0 ? [this.dateColumn, this.idColumn].concat(data[0].data.map(([key, _]) => key)) : [],
-    ),
-  );
+  headers = this.data.pipe(map((data) => (data.length > 0 ? data[0].data.map(([key]) => key) : [])));
   displayedHeaders = combineLatest([this.headers, this.hiddenHeaders]).pipe(
     map(([headers, hiddenHeaders]) => headers.filter((header) => !hiddenHeaders.includes(header))),
   );
@@ -86,7 +69,6 @@ export class ActivityLogTableComponent {
   );
 
   @Input() month: string = '';
-  @Input() event: string = '';
   @Input() url: string | undefined;
   @Input()
   set rows(v: LogEntry[]) {
@@ -98,17 +80,14 @@ export class ActivityLogTableComponent {
     if (!term) {
       return rows;
     } else {
-      return rows.filter((row) => {
-        return (
-          row.date.includes(term) ||
-          row.data.some(([_, value]) => {
-            if (value.type === 'string') {
-              return value.value.toLocaleLowerCase().includes(term);
-            }
-            return JSON.stringify(value.value).toLocaleLowerCase().includes(term);
-          })
-        );
-      });
+      return rows.filter((row) =>
+        row.data.some(([_, value]) => {
+          if (value.type === 'string') {
+            return value.value.toLocaleLowerCase().includes(term);
+          }
+          return JSON.stringify(value.value).toLocaleLowerCase().includes(term);
+        }),
+      );
     }
   }
 
@@ -136,17 +115,15 @@ export class ActivityLogTableComponent {
   downloadCSV() {
     forkJoin([this.filteredRows.pipe(take(1)), this.displayedHeaders.pipe(take(1))]).subscribe(
       ([filteredRows, displayedHeaders]) => {
-        const rows = filteredRows.map((row) => [
-          ...(displayedHeaders.includes(this.dateColumn) ? [row.date] : []),
-          ...(displayedHeaders.includes(this.idColumn) ? [row.id] : []),
-          ...row.data
+        const rows = filteredRows.map((row) =>
+          row.data
             .filter((column) => displayedHeaders.includes(column[0]))
             .map((column) =>
               column[1].type === 'object' ? JSON.stringify(column[1].value, null, 2) : column[1].value,
             ),
-        ]);
+        );
         const csv = unparse([displayedHeaders, ...rows]);
-        const filename = `Agentic_RAG_Activity_${this.event}_${this.month}.csv`;
+        const filename = `Retrieval_Agent_Activity_${this.month}.csv`;
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
         const link = document.createElement('a');
         if (link.download !== undefined) {

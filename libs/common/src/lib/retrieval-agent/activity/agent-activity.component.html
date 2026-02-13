@@ -4,9 +4,10 @@
     @for (item of months | async; track item.month) {
       @let download = downloads[item.month];
       <pa-expander
-        [disabled]="!download || !download.status === 'pending'"
+        [disabled]="!download || download.status === 'pending'"
         card
         buttonOnlyToggle
+        [contentLoaded]="download?.status"
         (toggleExpander)="toggleExpander(item.month)">
         <pa-expander-header>
           <div class="download-item">
@@ -32,12 +33,11 @@
           </div>
         </pa-expander-header>
         <pa-expander-body>
-          @if (download?.status === 'pending' || !download?.rows) {
+          @if (!download?.rows) {
             <nsi-spinner></nsi-spinner>
           } @else if (visibleTables[item.month]) {
             <app-log-table
               [month]="item.month"
-              [event]="selectedActivityTab"
               [url]="download?.url"
               [rows]="!!download ? download.rows || [] : []"></app-log-table>
           }
