@@ -16,12 +16,8 @@ function apply_path {
     test -n "$SENTRY_ENV"
     echo "Check that we have SENTRY_URL vars"
     test -n "$SENTRY_URL"
-    echo "Check that we have EDITOR_URL vars"
-    test -n "$EDITOR_URL"
     echo "Check that we have STF_VERSION vars"
     test -n "$STF_VERSION"
-    echo "Check that we have EMAIL_DOMAIN vars"
-    test -n "$EMAIL_DOMAIN"
     echo "Check that we have SAML_ENABLED vars"
     test -n "$SAML_ENABLED"
     echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
@@ -47,14 +43,8 @@ function apply_path {
     echo "Configuring SENTRY_URL vars"
     sed -i "s#STF_DOCKER_CONFIG_SENTRY_URL#${SENTRY_URL}#g" $jsonFile
 
-    echo "Configuring EDITOR_URL vars"
-    sed -i "s#STF_DOCKER_CONFIG_EDITOR_URL#${EDITOR_URL}#g" $jsonFile
-
     echo "Configuring STF_VERSION vars"
     sed -i "s#STF_DOCKER_CONFIG_VERSION#${STF_VERSION}#g" $jsonFile
-
-    echo "Configuring EMAIL_DOMAIN vars"
-    sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
 
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile
