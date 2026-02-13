@@ -3,7 +3,7 @@
   "production": true,
   "backend": {
     "app": "STF_DOCKER_CONFIG_APP_NAME",
-    "apiPath": "/api",
+    "apiOrigin": "STF_DOCKER_API_ORIGIN",
     "cdn": "STF_DOCKER_CONFIG_CDN",
     "brand_name": "STF_DOCKER_CONFIG_BRAND_NAME",
     "assetsPath": "STF_DOCKER_CONFIG_ASSETS_PATH",
@@ -14,8 +14,6 @@
     "sentry_backend": "https://nuclia.cloud/api"
   },
   "oauth": {
-    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID",
-    "hydra": "STF_DOCKER_CONFIG_HYDRA_ENDPOINT",
-    "auth": "STF_DOCKER_CONFIG_AUTH_ENDPOINT"
+    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
   }
 }

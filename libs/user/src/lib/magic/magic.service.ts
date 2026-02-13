@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, MagicAction, SDKService, TokenService } from '@flaps/core';
+import { AuthService, SDKService } from '@flaps/core';
+import { MagicAction } from '@nuclia/core';
 import { catchError, map, of, tap } from 'rxjs';
 
 @Injectable({
@@ -11,7 +12,6 @@ export class MagicService {
     private authService: AuthService,
     private sdk: SDKService,
     private router: Router,
-    private tokenService: TokenService,
   ) {}
 
   execute(action: MagicAction) {
@@ -69,13 +69,11 @@ export class MagicService {
   }
 
   joinKb(action: MagicAction) {
-    return this.validateToken(action.join_kb_token || '', action.zone || '').pipe(
-      tap((nextAction) => this._execute(nextAction)),
-    );
+    return this.validateToken(action.join_kb_token || '').pipe(tap((nextAction) => this._execute(nextAction)));
   }
 
-  validateToken(token: string, zone?: string) {
-    return this.tokenService.validate(token, zone).pipe(
+  validateToken(token: string) {
+    return this.sdk.nuclia.auth.validateMagicToken(token).pipe(
       catchError((error) => {
         throw { tokenError: error };
       }),

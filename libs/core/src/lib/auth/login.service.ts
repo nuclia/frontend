@@ -23,25 +23,16 @@ export class LoginService {
   ) {}
 
   recover(data: RecoverData, token: string): Observable<ResetResponse> {
-    if (!this.sdk.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     const headers = { 'X-STF-VALIDATION': token };
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/recover`, data, headers);
   }
 
   reset(data: ResetData, token: string): Observable<ResetResponse> {
-    if (!this.sdk.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     const headers = { 'X-STF-VALIDATION': token };
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/reset`, data, headers);
   }
 
   signup(user: SignupData, token: string): Observable<SignupResponse> {
-    if (!this.sdk.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     const headers = { 'X-STF-VALIDATION': token };
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/signup`, user, headers);
   }
