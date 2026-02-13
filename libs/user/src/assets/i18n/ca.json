@@ -93,6 +93,7 @@
 	"recover.recover": "Recuperar",
 	"recover.title": "Recupera la contrasenya",
 	"recover.verify": "Verifica el compte per canviar la contrasenya",
+	"signup.demo": "Veure la demostració de prova en menys de 20 minuts aquí",
 	"signup.email.already_exists": "Aquesta adreça de correu electrònic ja existeix. Inicia sessió o utilitza un altre correu electrònic",
 	"signup.email.help": "Camp necessari. Només es permeten les adreces de correu electrònic de l'empresa.",
 	"signup.have_account_already": "Ja tens un compte?",

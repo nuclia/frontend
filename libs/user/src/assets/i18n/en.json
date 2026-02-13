@@ -93,6 +93,7 @@
 	"recover.recover": "Recover",
 	"recover.title": "Recover your password",
 	"recover.verify": "Check your email and use the provided link to change your password",
+	"signup.demo": "See trial demo in less than 20 min here",
 	"signup.email.already_exists": "This email address already exists. Please log in or use a different email",
 	"signup.email.help": "Required field. Only company email addresses allowed.",
 	"signup.have_account_already": "Already have an account?",
