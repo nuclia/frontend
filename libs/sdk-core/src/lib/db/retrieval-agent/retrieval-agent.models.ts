@@ -105,6 +105,10 @@ export interface IRetrievalAgent
 
   getSchemas(): Observable<ARAGSchemas>;
   getFullSchemas(): Observable<JSONSchema4>;
+
+  requestActivityDownload(options: DownloadOptions): Observable<DownloadStatus>;
+  getDownloads(): Observable<DownloadStatus[]>;
+  getDownload(requestId: string): Observable<DownloadStatus>;
 }
 
 export interface BaseAgent {
@@ -468,4 +472,19 @@ export interface ImportOptions {
   file: File;
   passphrase: string;
   overwrite?: boolean;
+}
+
+export interface DownloadOptions {
+  format: 'csv' | 'ndjson';
+  year?: number;
+  month?: number;
+  session_id?: string;
+}
+
+export interface DownloadStatus {
+  id: string;
+  type: string;
+  status: 'pending' | 'ready';
+  download_url?: string;
+  query: { [key: string]: any };
 }
