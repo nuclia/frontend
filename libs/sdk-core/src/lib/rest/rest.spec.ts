@@ -5,7 +5,12 @@ import { Rest } from './rest';
 describe('Rest', () => {
   let rest: Rest;
   beforeEach(() => {
-    const nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
+    const nuclia = new Nuclia({
+      backend: 'http://accounts.here',
+      zone: 'europe-1',
+      account: 'dc',
+      knowledgeBox: 'gotham',
+    });
     nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
     rest = nuclia.rest as Rest;
   });
@@ -102,7 +107,7 @@ describe('Rest', () => {
   it('should not prefix domain with zone for global endpoints', (done) => {
     mockFetch({});
     rest.get('/account').subscribe(() => {
-      expect(global.fetch).toHaveBeenCalledWith('http://here/v1/account', expect.anything());
+      expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
       done();
     });
   });
