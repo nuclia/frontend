@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
+  AgentActivityComponent,
   AgentDashboardComponent,
   AiModelsComponent,
   aragOwnerGuard,
@@ -140,6 +141,10 @@ const routes: Routes = [
               {
                 path: 'ai-models',
                 component: AiModelsComponent,
+              },
+              {
+                path: 'activity',
+                component: AgentActivityComponent,
               },
               {
                 path: 'users',

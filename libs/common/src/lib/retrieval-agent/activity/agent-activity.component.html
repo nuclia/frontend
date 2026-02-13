@@ -1,0 +1,48 @@
+<div class="page-spacing">
+  <h1>{{ 'navbar.activity' | translate }}</h1>
+  <div class="activity-container">
+    @for (item of months | async; track item.month) {
+      @let download = downloads[item.month];
+      <pa-expander
+        [disabled]="!download || !download.status === 'pending'"
+        card
+        buttonOnlyToggle
+        (toggleExpander)="toggleExpander(item.month)">
+        <pa-expander-header>
+          <div class="download-item">
+            <div class="body-m">{{ item.date | date: 'MMMM y' }}</div>
+            @if (!!download) {
+              @if (download.status === 'pending') {
+                <div class="email-sent">
+                  <pa-icon name="clock-dash"></pa-icon>
+                </div>
+              } @else {
+                <pa-button
+                  icon="reload"
+                  aspect="basic"
+                  paTooltip="generic.refresh"
+                  (click)="requestDownload(item.month)"></pa-button>
+              }
+            } @else {
+              <pa-button
+                icon="download"
+                aspect="basic"
+                (click)="requestDownload(item.month)"></pa-button>
+            }
+          </div>
+        </pa-expander-header>
+        <pa-expander-body>
+          @if (download?.status === 'pending' || !download?.rows) {
+            <nsi-spinner></nsi-spinner>
+          } @else if (visibleTables[item.month]) {
+            <app-log-table
+              [month]="item.month"
+              [event]="selectedActivityTab"
+              [url]="download?.url"
+              [rows]="!!download ? download.rows || [] : []"></app-log-table>
+          }
+        </pa-expander-body>
+      </pa-expander>
+    }
+  </div>
+</div>

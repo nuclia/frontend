@@ -1,0 +1,25 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.activity-container {
+  background-color: $color-neutral-lightest;
+  padding: rhythm(1) rhythm(3);
+}
+
+.download-item {
+  align-items: center;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  height: rhythm(5);
+  justify-content: space-between;
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.email-sent {
+  padding: rhythm(1);
+}
+
+:host ::ng-deep button[disabled] pa-icon {
+  opacity: 0.3;
+}

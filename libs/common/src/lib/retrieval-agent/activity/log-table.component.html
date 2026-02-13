@@ -1,0 +1,121 @@
+<div class="filters">
+  <pa-input (valueChange)="term.next($event)">{{ 'activity.filter' | translate }}</pa-input>
+  <div>
+    <nsi-dropdown-button
+      aspect="basic"
+      [popupRef]="visibleColumns">
+      {{ 'activity.columns' | translate }}
+    </nsi-dropdown-button>
+    <pa-dropdown #visibleColumns>
+      @for (header of headers | async; track header) {
+        <pa-option
+          [value]="header"
+          (selectOption)="selectHeader(header, $event)"
+          dontCloseOnSelect>
+          <pa-checkbox
+            [value]="(displayedHeaders | async)?.includes(header)"
+            (change)="this.toggleHeader(header)">
+            {{ header }}
+          </pa-checkbox>
+        </pa-option>
+      }
+      @if (((displayedHeaders | async) || []).length > 0) {
+        <div class="clear">
+          <nsi-button-mini
+            icon="circle-cross"
+            (click)="clearHeaders($event)">
+            {{ 'activity.clear' | translate }}
+          </nsi-button-mini>
+        </div>
+      }
+    </pa-dropdown>
+  </div>
+  <pa-button
+    aspect="basic"
+    icon="download"
+    iconAndText
+    (click)="downloadCSV()">
+    CSV
+  </pa-button>
+  @if (url) {
+    <pa-button
+      aspect="basic"
+      icon="download"
+      iconAndText
+      (click)="downloadJSON()">
+      {{ 'activity.original-link' | translate }}
+    </pa-button>
+  }
+</div>
+
+<div class="container">
+  <cdk-virtual-scroll-viewport
+    tableVirtualScroll
+    class="viewport"
+    [itemSize]="rowHeight"
+    (offsetChange)="viewportOffset = $event">
+    <pa-table
+      border
+      [style.--table-row-height]="rowHeight + 'px'"
+      [style.--table-header-top]="-1 * viewportOffset + 'px'"
+      [columns]="'fit-content(400px) ' + (gridLayout | async)">
+      @if ((filteredRows | async)?.length === 0) {
+        <pa-table-row>
+          <pa-table-cell>N/A</pa-table-cell>
+        </pa-table-row>
+      } @else {
+        <pa-table-header>
+          <pa-table-row>
+            <pa-table-cell
+              header
+              borderRight></pa-table-cell>
+            @for (title of displayedHeaders | async; track title) {
+              <pa-table-cell header>{{ title }}</pa-table-cell>
+            }
+          </pa-table-row>
+        </pa-table-header>
+      }
+      <pa-table-row *cdkVirtualFor="let row of filteredRows | async; let index = index">
+        <pa-table-cell borderRight>
+          <div class="body-s">{{ index + 1 }}</div>
+        </pa-table-cell>
+        @if ((displayedHeaders | async)?.includes(dateColumn)) {
+          <pa-table-cell>
+            <div
+              class="body-s"
+              [paTooltip]="(row.date + 'Z' | date: 'MMM d, h:mm a') + ' (' + ('activity.local-time' | translate) + ')'">
+              {{ row.date | date: 'MMM d, h:mm a' }}
+            </div>
+          </pa-table-cell>
+        }
+        @if ((displayedHeaders | async)?.includes(idColumn)) {
+          <pa-table-cell>
+            <div class="body-s">
+              {{ row.id }}
+            </div>
+          </pa-table-cell>
+        }
+        @for (cell of row.data; track cell[0]) {
+          @if ((displayedHeaders | async)?.includes(cell[0])) {
+            <pa-table-cell>
+              <div class="body-s">
+                @if (cell[1].type === 'object') {
+                  <pre>{{ cell[1].displayedValue }}</pre>
+                } @else {
+                  {{ cell[1].displayedValue }}
+                }
+                @if (cell[1].showMore) {
+                  <span
+                    class="show-more"
+                    (click)="showMore(cell)">
+                    {{ 'generic.show_more' | translate }}
+                  </span>
+                }
+              </div>
+            </pa-table-cell>
+          }
+        }
+      </pa-table-row>
+    </pa-table>
+  </cdk-virtual-scroll-viewport>
+</div>
