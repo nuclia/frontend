@@ -12,9 +12,6 @@
     "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
     "sentry_backend": "https://nuclia.cloud/api"
   },
-  "stashify": {
-    "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
-  },
   "oauth": {
     "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
   }

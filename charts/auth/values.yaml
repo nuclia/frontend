@@ -28,8 +28,6 @@ brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
-editor_url: XXX
-email_domain: XXX
 saml_enabled: XXX
 oauth_client_id: XXX
 auth_endpoint: XXX

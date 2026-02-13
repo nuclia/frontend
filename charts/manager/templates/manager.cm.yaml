@@ -17,6 +17,5 @@ data:
   NO_STRIPE: "{{ .Values.no_stripe }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
   STF_VERSION: "{{ .Chart.Version }}"
-  EMAIL_DOMAIN: "{{ .Values.email_domain }}"
   OAUTH_CLIENT_ID: "{{ .Values.oauth_client_id }}"
   AUTH_ENDPOINT: "{{ .Values.auth_endpoint }}"
