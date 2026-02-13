@@ -202,7 +202,7 @@ export class Rest implements IRest {
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
-      backend = `${this.nuclia.backend.replace('https://', `https://${zoneSlug}.`)}`;
+      backend = `${this.nuclia.backend.replace('https://accounts.', `https://${zoneSlug}.`)}`;
     } else {
       backend =
         isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy

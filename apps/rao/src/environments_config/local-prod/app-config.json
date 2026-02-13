@@ -5,7 +5,6 @@
   "backend": {
     "app": "app",
     "apiOrigin": "https://rag.progress.cloud",
-    "cdn": "https://cdn.rag.progress.cloud",
-    "apiPath": "/api"
+    "cdn": "https://cdn.rag.progress.cloud"
   }
 }

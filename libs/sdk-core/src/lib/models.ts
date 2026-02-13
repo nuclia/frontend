@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { AuthInfo, AuthTokens, JwtUser, NucliaDBRole } from './auth';
+import type { AuthInfo, AuthTokens, JwtUser, MagicAction, NucliaDBRole } from './auth';
 import {
   Account,
   AccountCreation,
@@ -70,6 +70,7 @@ export interface IAuthentication {
   redirectToOAuth(queryParams?: { [key: string]: string }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
   getAuthUrl(): string;
+  validateMagicToken(token: string): Observable<MagicAction>;
 }
 
 export interface IRest {
@@ -298,8 +299,6 @@ export interface NucliaOptions {
    */
   oauth?: {
     client_id: string;
-    hydra: string;
-    auth: string;
   };
   /**
    * Allow to modify the headers for the REST calls.
