@@ -24,7 +24,7 @@ export class Nuclia implements INuclia {
 
   /** The Nuclia regional backend URL. */
   get regionalBackend(): string {
-    return this.options.backend.replace('//', `//${this.options.zone}.`);
+    return this.options.backend.replace('//accounts.', `//${this.options.zone}.`);
   }
 
   /**

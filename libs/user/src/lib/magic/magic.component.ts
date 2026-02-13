@@ -1,8 +1,9 @@
-import { MagicActionError, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { MagicActionError } from '@nuclia/core';
 
 @Component({
   selector: 'stf-magic',

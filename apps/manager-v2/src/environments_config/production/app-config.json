@@ -3,7 +3,7 @@
   "production": true,
   "backend": {
     "app": "STF_DOCKER_CONFIG_APP_NAME",
-    "apiPath": "/api",
+    "apiOrigin": "STF_DOCKER_API_ORIGIN",
     "brand_name": "STF_DOCKER_CONFIG_BRAND_NAME",
     "assetsPath": "STF_DOCKER_CONFIG_ASSETS_PATH",
     "noStripe": STF_DOCKER_CONFIG_NO_STRIPE,
@@ -16,8 +16,6 @@
     "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
   },
   "oauth": {
-    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID",
-    "hydra": "STF_DOCKER_CONFIG_HYDRA_ENDPOINT",
-    "auth": "STF_DOCKER_CONFIG_AUTH_ENDPOINT"
+    "client_id": "STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
   }
 }
