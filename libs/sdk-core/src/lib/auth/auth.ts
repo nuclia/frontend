@@ -4,7 +4,7 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import type { AuthInfo, AuthTokens, NucliaDBRole } from './auth.models';
+import type { AuthInfo, AuthTokens, MagicAction, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -121,10 +121,11 @@ export class Authentication implements IAuthentication {
   }
 
   getAuthUrl(): string {
-    if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
-    return `${this.nuclia.options.oauth.auth}/api/auth`;
+    return `${this.nuclia.options.backend}/auth`;
+  }
+
+  getHydraUrl(): string {
+    return this.nuclia.options.backend.replace('//accounts.', '//oauth.').replace('/api', '');
   }
 
   redirectToOAuth(queryParams?: { [key: string]: string }) {
@@ -156,7 +157,7 @@ export class Authentication implements IAuthentication {
         code_challenge_method: 'S256',
       });
 
-      const authorizationUrl = `${oauthParams.hydra}/oauth2/auth?${authParams}`;
+      const authorizationUrl = `${this.getHydraUrl()}/oauth2/auth?${authParams}`;
 
       console.log('Initiating OAuth flow with PKCE:', authorizationUrl);
       window.location.href = authorizationUrl;
@@ -164,9 +165,6 @@ export class Authentication implements IAuthentication {
   }
 
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }> {
-    if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     const expectedState = sessionStorage.getItem('oauth_state');
 
     if (returnedState !== expectedState) {
@@ -206,7 +204,7 @@ export class Authentication implements IAuthentication {
       code_verifier: codeVerifier,
     });
 
-    return this.fetch<AuthTokens>(`${this.nuclia.options.oauth.hydra}/oauth2/token`, tokenRequestBody, {}, true).pipe(
+    return this.fetch<AuthTokens>(`${this.getHydraUrl()}/oauth2/token`, tokenRequestBody, {}, true).pipe(
       map((tokenData) => {
         this.authenticate(tokenData);
         sessionStorage.removeItem('code_verifier');
@@ -299,9 +297,6 @@ export class Authentication implements IAuthentication {
 
   /** Calls the logout endpoint and removes the token stored in localStorage. */
   logout(): void {
-    if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     const id_token = localStorage.getItem(LOCALSTORAGE_ID_TOKEN_KEY) || '';
     localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
     localStorage.removeItem(LOCALSTORAGE_REFRESH_KEY);
@@ -310,7 +305,7 @@ export class Authentication implements IAuthentication {
       id_token_hint: id_token,
       post_logout_redirect_uri: window.location.origin,
     });
-    window.location.assign(`${this.nuclia.options.oauth.hydra}/oauth2/sessions/logout?${logoutParams}`);
+    window.location.assign(`${this.getHydraUrl()}/oauth2/sessions/logout?${logoutParams}`);
   }
 
   refresh(): Observable<boolean> {
@@ -318,7 +313,7 @@ export class Authentication implements IAuthentication {
       throw new Error('OAuth parameters are missing.');
     }
     return this.fetch<AuthTokens>(
-      `${this.nuclia.options.oauth.hydra}/oauth2/token`,
+      `${this.getHydraUrl()}/oauth2/token`,
       {
         grant_type: 'refresh_token',
         client_id: this.nuclia.options.oauth.client_id,
@@ -377,9 +372,6 @@ export class Authentication implements IAuthentication {
     ```
    */
   setPassword(password: string): Observable<boolean> {
-    if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
-    }
     return this.fetch<AuthTokens>(`${this.getAuthUrl()}/setpassword`, { password }).pipe(
       map((tokens) => this.authenticate(tokens)),
     );
@@ -481,5 +473,9 @@ export class Authentication implements IAuthentication {
         return from(response.clone().json());
       }),
     );
+  }
+
+  validateMagicToken(token: string): Observable<MagicAction> {
+    return this.fetch(`${this.getAuthUrl()}/auth/magic?token=${token}`);
   }
 }
