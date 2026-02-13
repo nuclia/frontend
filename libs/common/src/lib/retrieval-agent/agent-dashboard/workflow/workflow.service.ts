@@ -66,9 +66,10 @@ import {
   getAllNodes,
   getNode,
   hasChildInThen,
+  showRegisteredAgentForm,
   nodeInitialisationDone,
   resetCurrentOrigin,
-  resetIsRegisteredAgent,
+  hideRegisteredAgentForm,
   resetNodes,
   resetSidebar,
   resetTestAgent,
@@ -429,7 +430,7 @@ export class WorkflowService {
     }
     const root = this.workflowRoot;
     this.resetState(true);
-    resetIsRegisteredAgent();
+    hideRegisteredAgentForm();
     setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
@@ -743,6 +744,7 @@ export class WorkflowService {
    */
   closeSidebar() {
     setOpenSidebar(false);
+    showRegisteredAgentForm.set(false);
     unselectNode();
     // Wait until the slide animation is done before emptying the sidebar
     setTimeout(() => this.resetState(), SLIDE_DURATION);

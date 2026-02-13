@@ -327,6 +327,8 @@ export interface SparqlAgentCreation {
 
 export interface SmartAgentCreation {
   module: 'smart';
+  registered_agents_descriptions?: { [id: string]: string };
+  registered_agents_exposed_functions?: { [id: string]: string[] };
 }
 
 export interface SummarizeAgentCreation {

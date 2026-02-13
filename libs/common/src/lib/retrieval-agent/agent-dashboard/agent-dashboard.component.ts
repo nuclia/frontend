@@ -18,7 +18,7 @@ import {
   activeSideBar,
   aragUrl,
   ConnectableEntryComponent,
-  isRegisteredAgent,
+  showRegisteredAgentForm,
   LinkService,
 <<<<<<< HEAD
   sideBarBadge,
@@ -84,7 +84,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   activeSideBar = activeSideBar;
   isAragWithMemory = this.sdk.isAragWithMemory;
   isAragAdmin = this.features.isAragAdmin;
-  isRegistered = isRegisteredAgent;
+  showRegisteredAgentForm = showRegisteredAgentForm;
   selected = selectedNode;
 
   constructor() {

@@ -115,7 +115,7 @@
         <div class="description">{{ description }}</div>
       }
     </header>
-    @if (isRegistered() && !!selected()) {
+    @if (showRegisteredAgentForm() && !!selected()) {
       <div class="registered-agent">
         <app-registered-agent-subform></app-registered-agent-subform>
       </div>

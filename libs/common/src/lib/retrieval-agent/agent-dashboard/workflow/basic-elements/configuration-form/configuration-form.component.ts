@@ -1,8 +1,8 @@
-
-import { ChangeDetectionStrategy, Component, input, output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output, ViewEncapsulation } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { isRegisteredAgentSubFormModified } from '../../workflow.state';
 
 @Component({
   selector: 'app-configuration-form',
@@ -21,6 +21,13 @@ export class ConfigurationFormComponent {
   triggerSubmit = output();
   cancel = output();
 
+  constructor() {
+    effect(() => {
+      if (isRegisteredAgentSubFormModified()) {
+        this.form().markAsDirty();
+      }
+    });
+  }
   onSubmit() {
     if (this.form().valid) {
       this.triggerSubmit.emit();
