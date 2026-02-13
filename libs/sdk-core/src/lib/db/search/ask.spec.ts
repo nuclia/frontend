@@ -5,7 +5,7 @@ import { ask } from './ask';
 describe('Ask', () => {
   let nuclia: Nuclia;
   beforeEach(() => {
-    nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
+    nuclia = new Nuclia({ backend: 'http://accounts.here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
     nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
   });
 
