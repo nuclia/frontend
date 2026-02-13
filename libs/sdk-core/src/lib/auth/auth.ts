@@ -476,6 +476,6 @@ export class Authentication implements IAuthentication {
   }
 
   validateMagicToken(token: string): Observable<MagicAction> {
-    return this.fetch(`${this.getAuthUrl()}/auth/magic?token=${token}`);
+    return this.fetch(`${this.getAuthUrl()}/magic?token=${token}`);
   }
 }
