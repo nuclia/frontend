@@ -9,7 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/rao.cm.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/auth.cm.yaml") . | sha256sum }}
 
 spec:
   replicas: {{ .Values.replicaCount }}
