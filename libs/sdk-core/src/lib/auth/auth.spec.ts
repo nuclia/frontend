@@ -15,7 +15,7 @@ describe('Authentication', () => {
   describe('with regular credentials', () => {
     beforeEach(() => {
       const nuclia = new Nuclia({
-        backend: 'http://here',
+        backend: 'http://accounts.here',
         zone: 'europe-1',
         account: 'dc',
         knowledgeBox: 'gotham',
@@ -42,7 +42,7 @@ describe('Authentication', () => {
   describe('with service API key', () => {
     beforeEach(() => {
       auth = new Authentication({
-        options: { backend: 'http://here', account: 'dc', knowledgeBox: 'gotham', apiKey: 'abc' },
+        options: { backend: 'http://accounts.here', account: 'dc', knowledgeBox: 'gotham', apiKey: 'abc' },
       } as INuclia);
     });
 
