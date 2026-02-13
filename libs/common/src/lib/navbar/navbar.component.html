@@ -295,6 +295,15 @@
 
                 @if (isAragAdmin | async) {
                   <a
+                    [routerLink]="aragUrl + '/activity'"
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-activity-log">
+                    <pa-icon name="activity-log"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
+                  </a>
+
+                  <a
                     [routerLink]="aragUrl + '/keys'"
                     routerLinkActive="active"
                     data-cy="go-to-api-keys"

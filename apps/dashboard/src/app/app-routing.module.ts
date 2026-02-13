@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
+  AgentActivityComponent,
   AgentDashboardComponent,
   AiModelsComponent,
   aragOwnerGuard,
@@ -255,8 +256,8 @@ const routes: Routes = [
               },
               {
                 path: 'activity',
-                loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
-              },
+                component: AgentActivityComponent,
+              },              
             ],
           },
 

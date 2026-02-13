@@ -25,6 +25,7 @@ export interface IKnowledgeBoxBase {
   state?: KBStates;
   description?: string;
   zone: string;
+  created?: string;
   allowed_origins?: string[] | null;
   allowed_ip_addresses?: string[] | null;
   search_configs?: { [key: string]: any };

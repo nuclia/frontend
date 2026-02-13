@@ -213,6 +213,7 @@
 	"activity.load-more": "Load more",
 	"activity.local-time": "Local time",
 	"activity.migration-warning": "Questions before September 2024 are not included in the log due to data migration.",
+	"activity.no-data": "No data available for this month.",
 	"activity.original-link": "Original JSON file",
 	"activity.resource": "Resource",
 	"activity.timestamp": "Time stamp",
