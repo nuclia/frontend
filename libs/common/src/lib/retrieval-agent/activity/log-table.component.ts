@@ -13,7 +13,7 @@ import {
 import { LogEntry, LogValueObject, LogValueString } from './log.models';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { ButtonMiniComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
+import { ButtonMiniComponent, DropdownButtonComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { unparse } from 'papaparse';
 import { ActivityLogTableModalComponent } from './log-table-modal.component';
 import { BehaviorSubject, combineLatest, forkJoin, map, shareReplay, take } from 'rxjs';
@@ -24,6 +24,7 @@ import { TableVirtualScrollDirective } from '@flaps/core';
   standalone: true,
   imports: [
     ButtonMiniComponent,
+    InfoCardComponent,
     PaTableModule,
     PaDateTimeModule,
     CommonModule,

@@ -105,5 +105,9 @@
     </cdk-virtual-scroll-viewport>
   </div>
 } @else {
-  <p class="title-s">{{ 'activity.no-data' | translate }}</p>
+  <nsi-info-card
+    type="warning"
+    icon="warning">
+    <div class="title-s">{{ 'activity.no-data' | translate }}</div>
+  </nsi-info-card>
 }
