@@ -137,7 +137,7 @@ export class Authentication implements IAuthentication {
       queryParams = { random: this.generateSecureToken(32) };
     }
     // Always include came_from in the state for OAuth flow
-    queryParams.came_from = window.location.origin;
+    queryParams['came_from'] = window.location.origin;
     const stateToken = btoa(JSON.stringify(queryParams));
     const nonceToken = this.generateSecureToken(32);
 
