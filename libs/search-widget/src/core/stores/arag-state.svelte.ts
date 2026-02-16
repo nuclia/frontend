@@ -9,7 +9,7 @@ import {
   type IErrorResponse,
 } from '@nuclia/core';
 import { addLLMCitationReferences } from './answers.store';
-import type { TypedResult } from '../models';
+import type { RankedParagraph, TypedResult } from '../models';
 import { getResultType, parseFootenotes } from '.';
 
 type AragSource = SourceChunk | SourceField;
@@ -22,9 +22,11 @@ export interface SourceChunk {
 
 export interface SourceField {
   type: 'field';
-  rank: number;
+  rank?: number;
   value: TypedResult;
 }
+
+type RankedChunk = Memory.Chunk & { rank?: number };
 
 export interface AragChatEntry {
   running: boolean;
@@ -81,18 +83,26 @@ export function getEntrySources(entry: AragChatEntry): AragSource[] {
     return [];
   }
   const blocks = parseFootenotes(answer.answer || '');
-  const sources = Object.entries(answer.answer_citations?.metadata || {}).reduce((acc, [block, value]) => {
+  let kbChunks: RankedChunk[] = [];
+  let otherChunks: RankedChunk[] = [];
+  Object.entries(answer.answer_citations?.metadata || {}).forEach(([block, value]) => {
     const context = entry.answers.find((answer) => answer.context?.id === value.context_id)?.context;
-    const chunks = context?.chunks.filter((chunk) => context.citations?.includes(chunk.chunk_id));
-    const rank = blocks.find((item) => item.block === block)?.index || 0;
-    const fromAskAgent = ['ask', 'basic_ask', 'advanced_ask'].includes(context?.agent || '');
-    if (fromAskAgent) {
-      acc = acc.concat(convertChunksToResults(chunks || []).map((result) => ({ type: 'field', rank, value: result })));
-    } else {
-      acc = acc.concat((chunks || []).map((chunk) => ({ type: 'chunk', rank, value: chunk })));
+    if (context) {
+      const chunks = typeof value.chunk_index === 'number' ? [context.chunks[value.chunk_index]] : context.chunks || [];
+      const rank = blocks.find((item) => item.block === block)?.index || 0;
+      const rankedChunks = chunks.map((chunk) => ({ ...chunk, rank }));
+      const fromAskAgent = ['ask', 'basic_ask', 'advanced_ask'].includes(context.agent);
+      if (fromAskAgent) {
+        kbChunks = kbChunks.concat(rankedChunks);
+      } else {
+        otherChunks = otherChunks.concat(rankedChunks);
+      }
     }
-    return acc;
-  }, [] as AragSource[]);
+  });
+  kbChunks.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+  otherChunks.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+  let sources: AragSource[] = convertChunksToResults(kbChunks).map((result) => ({ type: 'field', value: result }));
+  sources = sources.concat(otherChunks.map((chunk) => ({ type: 'chunk', rank: chunk.rank || 0, value: chunk })));
   return sources;
 }
 /**
@@ -135,14 +145,14 @@ export function resetState() {
 /**
  * UTILS
  */
-function convertChunksToResults(chunks: Memory.Chunk[]) {
+function convertChunksToResults(chunks: RankedChunk[]) {
   const chunksGroups = chunks?.reduce(
     (acc, curr) => {
       const fieldId = curr.chunk_id.split('/').slice(0, 3).join('/');
       acc[fieldId] = acc[fieldId] ? acc[fieldId].concat(curr) : [curr];
       return acc;
     },
-    {} as { [key: string]: Memory.Chunk[] },
+    {} as { [key: string]: RankedChunk[] },
   );
   return Object.entries(chunksGroups || {}).map(([key, chunks]) => {
     const [resourceId, shortFieldType, fieldId] = key.split('/');
@@ -164,7 +174,7 @@ function convertChunksToResults(chunks: Memory.Chunk[]) {
   });
 }
 
-export function convertChunkToParagraph(chunk: Memory.Chunk): Search.FindParagraph {
+export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
   const position = chunk.chunk_id.split('/').pop()?.split('-');
   return {
     order: 0,
@@ -182,5 +192,6 @@ export function convertChunkToParagraph(chunk: Memory.Chunk): Search.FindParagra
     page_with_visual: false,
     is_a_table: false,
     reference: '',
+    rank: chunk.rank,
   };
 }

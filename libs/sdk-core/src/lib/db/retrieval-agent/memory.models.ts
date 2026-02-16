@@ -57,6 +57,7 @@ export namespace Memory {
   export interface Citations {
     metadata: {
       [block: string]: {
+        chunk_index: number | null;
         context_id: string;
         origin_urls: string[];
       };

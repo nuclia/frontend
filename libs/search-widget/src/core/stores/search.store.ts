@@ -1041,7 +1041,7 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
   };
 }
 
-const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2})/g);
+const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2}(-[0-9]+)?)/g);
 
 export function parseFootenotes(text: string): { block: string; index: number }[] {
   const references = (text || '').matchAll(FOOTNOTES_REF);
