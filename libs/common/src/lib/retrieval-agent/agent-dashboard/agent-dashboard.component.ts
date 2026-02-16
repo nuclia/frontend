@@ -20,11 +20,8 @@ import {
   ConnectableEntryComponent,
   showRegisteredAgentForm,
   LinkService,
-<<<<<<< HEAD
   sideBarBadge,
-=======
   selectedNode,
->>>>>>> 5c450fee (registered agents)
   sideBarClosing,
   sideBarDescription,
   sideBarLarge,
