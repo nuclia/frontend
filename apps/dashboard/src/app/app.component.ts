@@ -48,8 +48,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
     private paTranslate: PaTranslateService,
-    private labelService: LabelsService,
     private modalService: SisModalService,
+    private labelService: LabelsService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
