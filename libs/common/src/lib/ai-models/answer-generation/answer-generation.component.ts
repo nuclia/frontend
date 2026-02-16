@@ -139,9 +139,9 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
         const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
         if (userKeys && schema) {
           userKeys = convertEnumProperties(userKeys, schema);
+          this.userKeyToggle?.patchValue(ownKey);
+          this.userKeysGroup?.patchValue(userKeys);
         }
-        this.userKeyToggle?.patchValue(ownKey);
-        this.userKeysGroup?.patchValue(userKeys);
       }
     }
     this.userKeysForm?.markAsPristine();
