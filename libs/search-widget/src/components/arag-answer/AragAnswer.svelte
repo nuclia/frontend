@@ -79,8 +79,12 @@
         <div class="sources">
           {#each sources as source}
             <div class="source">
-              <div class="ref">{source.rank}</div>
-              <div class="source-text">
+              {#if source.rank}
+                <div class="ref">{source.rank}</div>
+              {/if}
+              <div
+                class="source-text"
+                class:with-rank={source.rank}>
                 {#if source.type === 'field'}
                   <ResultRow
                     result={source.value}

@@ -36,7 +36,7 @@
     flex-direction: column;
     gap: var(--rhythm-2_5);
     padding-top: var(--rhythm-2_5);
-    padding-left: var(--rhythm-1);
+    padding-left: var(--rhythm-4);
   }
 
   .source {
@@ -47,7 +47,10 @@
   }
 
   .source-text {
-    width: calc(100% - var(--rhythm-3) - var(--rhythm-1));
+    width: 100%;
+    &.with-rank {
+      width: calc(100% - var(--rhythm-3) - var(--rhythm-1));
+    }    
   }
 
   .reasoning-text {
