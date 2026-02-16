@@ -32,9 +32,10 @@ export class LoginService {
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/reset`, data, headers);
   }
 
-  signup(user: SignupData, token: string): Observable<SignupResponse> {
+  signup(user: SignupData, token: string, loginChallenge?: string): Observable<SignupResponse> {
     const headers = { 'X-STF-VALIDATION': token };
-    return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/signup`, user, headers);
+    const payload = loginChallenge ? { ...user, login_challenge: loginChallenge } : user;
+    return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/signup`, payload, headers);
   }
 
   setPreferences(data: SetUserPreferences) {

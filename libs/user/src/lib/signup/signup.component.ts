@@ -95,7 +95,8 @@ export class SignupComponent implements OnInit {
 
   private signupFromForm(token: string) {
     const formValue = this.signupForm.getRawValue();
-    this.loginService.signup(formValue, token).subscribe({
+    const loginChallenge = this.route.snapshot.queryParams['login_challenge'];
+    this.loginService.signup(formValue, token, loginChallenge).subscribe({
       next: (response) => {
         this.analytics.logTrialSignup();
         if (response.action === 'check-mail') {
