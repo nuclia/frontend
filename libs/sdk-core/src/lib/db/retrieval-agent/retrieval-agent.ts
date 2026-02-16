@@ -13,6 +13,8 @@ import {
   ARAGSchemas,
   ContextAgent,
   ContextAgentCreation,
+  DownloadOptions,
+  DownloadStatus,
   ExportOptions,
   GenerationAgent,
   GenerationAgentCreation,
@@ -505,5 +507,30 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
       data.append(key, validValue);
     });
     return this.nuclia.rest.post<void>(`${this.path}/import`, data);
+  }
+
+  /**
+   * Request the download of activity data
+   * @param options Download options
+   */
+  requestActivityDownload(options: DownloadOptions): Observable<DownloadStatus> {
+    const { format, ...rest } = options;
+    const headers = { accept: options.format === 'csv' ? 'text/csv' : ' application/x-ndjson' };
+    return this.nuclia.rest.post<DownloadStatus>(`${this.path}/audit/interactions/download`, rest, headers);
+  }
+
+  /**
+   * Get the status of all downloads
+   */
+  getDownloads(): Observable<DownloadStatus[]> {
+    return this.nuclia.rest.get<DownloadStatus[]>(`${this.path}/audit/download_requests`);
+  }
+
+  /**
+   * Get the status of a download
+   * @param requestId
+   */
+  getDownload(requestId: string): Observable<DownloadStatus> {
+    return this.nuclia.rest.get<DownloadStatus>(`${this.path}/audit/download_request/${requestId}/status`);
   }
 }

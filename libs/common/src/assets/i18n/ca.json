@@ -213,6 +213,7 @@
 	"activity.load-more": "Carrega més",
 	"activity.local-time": "Hora local",
 	"activity.migration-warning": "Les preguntes anteriors al setembre de 2024 no s'inclouen al registre a causa de la migració de dades.",
+	"activity.no-data": "No hi ha dades disponibles per a aquest mes.",
 	"activity.original-link": "Fitxer JSON original",
 	"activity.resource": "Recurs",
 	"activity.timestamp": "Segell de temps",

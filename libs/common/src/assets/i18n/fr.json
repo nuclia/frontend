@@ -213,6 +213,7 @@
 	"activity.load-more": "Charger plus",
 	"activity.local-time": "Heure locale",
 	"activity.migration-warning": "Les questions antérieures à septembre 2024 ne sont pas incluses dans le journal en raison de la migration des données.",
+	"activity.no-data": "Aucune donnée disponible pour ce mois-ci.",
 	"activity.original-link": "Fichier JSON original",
 	"activity.resource": "Ressource",
 	"activity.timestamp": "Horodatage",
