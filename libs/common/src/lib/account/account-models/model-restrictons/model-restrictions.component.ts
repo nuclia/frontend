@@ -31,7 +31,9 @@ export class ModelRestrictionsComponent implements OnInit {
   private navigation = inject(NavigationService);
 
   kbList = combineLatest([this.navigation.inRaoApp ? of([]) : this.sdk.kbList, this.sdk.aragList]).pipe(
-    map(([kbs, arags]) => kbs.concat(arags)),
+    map(([kbs, arags]) =>
+      kbs.concat(arags).filter((item) => item.role_on_kb === 'SOWNER' || item.role_on_kb === 'SCONTRIBUTOR'),
+    ),
   );
   selection: { [kbId: string]: boolean } = {};
   isLoading = true;

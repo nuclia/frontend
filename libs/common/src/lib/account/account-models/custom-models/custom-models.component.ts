@@ -55,7 +55,9 @@ export class CustomModelsComponent implements OnInit {
   }
 
   kbList = combineLatest([this.navigation.inRaoApp ? of([]) : this.sdk.kbList, this.sdk.aragList]).pipe(
-    map(([kbs, arags]) => kbs.concat(arags)),
+    map(([kbs, arags]) =>
+      kbs.concat(arags).filter((item) => item.role_on_kb === 'SOWNER' || item.role_on_kb === 'SCONTRIBUTOR'),
+    ),
   );
   selection: { [kbId: string]: ModelSelection[] } = {};
   hasCustomModels = false;
