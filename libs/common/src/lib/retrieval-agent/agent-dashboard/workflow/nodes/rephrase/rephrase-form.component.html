@@ -40,8 +40,7 @@
     </pa-toggle>
     @if (configForm.value.synonyms) {
       <app-synonyms-field
-        [form]="configForm"
-        controlName="provided_synonyms"
+        formControlName="provided_synonyms"
         [label]="'Provided synonyms'"></app-synonyms-field>
     }
     <pa-toggle
