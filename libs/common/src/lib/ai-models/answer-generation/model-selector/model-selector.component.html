@@ -19,7 +19,7 @@
           }
         </div>
         <pa-button
-          icon="cross"
+          icon="edit"
           aspect="basic"
           size="small"
           [disabled]="disabled()"
@@ -102,7 +102,7 @@
               @let guaranteedDataResidency = model.value.metadata.data_residency_status === DataResidencyStatus.GUARANTEED;
               @let enterpriseReady = provider.value.enterprise_readiness;
               @if (enterpriseReady || guaranteedDataResidency) {
-                <div class="more-info">
+                <div>
                   <pa-icon
                     size="small"
                     name="info"
@@ -110,12 +110,18 @@
                   <pa-popover
                     #modelInfo
                     [keepOthersOpen]="true">
-                    @if (enterpriseReady) {
-                      <div>{{ 'kb.ai-models.model-selector.features.enterprise-ready' | translate }}</div>
-                    }
-                    @if (guaranteedDataResidency) {
-                      <div>{{ 'kb.ai-models.model-selector.features.data-residency' | translate }}</div>
-                    }
+                    <ul class="more-info body-s">
+                      @if (enterpriseReady) {
+                        <li>{{ 'kb.ai-models.model-selector.features.enterprise-ready' | translate }}</li>
+                      }
+                      @if (guaranteedDataResidency) {
+                        <li>
+                          {{
+                            'kb.ai-models.model-selector.features.data-residency' | translate: { zone: zone | async }
+                          }}
+                        </li>
+                      }
+                    </ul>
                   </pa-popover>
                 </div>
               }

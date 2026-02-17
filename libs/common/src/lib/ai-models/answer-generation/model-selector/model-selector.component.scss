@@ -49,6 +49,10 @@ pa-option {
   ::ng-deep .pa-option {
     display: block;
   }
+  .more-info {
+    padding-left: rhythm(2);
+    white-space: normal;
+  }
 }
 
 .disclaimer {
