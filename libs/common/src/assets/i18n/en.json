@@ -698,7 +698,7 @@
 	"kb.ai-models.model-selector.disclaimer.description": "The {{model}} may introduce business or compliance risks. Please review and accept before saving.",
 	"kb.ai-models.model-selector.disclaimer.label": "I have reviewed and understand the risks associated with using {{model}}. I accept responsibility for verifying outputs before use",
 	"kb.ai-models.model-selector.disclaimer.title": "AI Model Risk Disclaimer",
-	"kb.ai-models.model-selector.features.data-residency": "Data residency guaranteed",
+	"kb.ai-models.model-selector.features.data-residency": "Data residency guaranteed in {{zone}}",
 	"kb.ai-models.model-selector.features.enterprise-ready": "Enterprise-ready",
 	"kb.ai-models.model-selector.search": "Search to select models",
 	"kb.ai-models.page-description": "Configure the available models for your data",

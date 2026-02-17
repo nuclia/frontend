@@ -698,7 +698,7 @@
 	"kb.ai-models.model-selector.disclaimer.description": "El {{model}} pot introduir riscos empresarials o de compliment normatiu. Si us plau, reviseu-lo i accepteu-lo abans de desar.",
 	"kb.ai-models.model-selector.disclaimer.label": "He revisat i entenc els riscos associats amb l'ús de {{model}}. Accepto la responsabilitat de verificar els resultats abans de l'ús",
 	"kb.ai-models.model-selector.disclaimer.title": "Avís de risc del model d'IA",
-	"kb.ai-models.model-selector.features.data-residency": "Residència de dades garantida",
+	"kb.ai-models.model-selector.features.data-residency": "Residència de dades garantida a {{zone}}",
 	"kb.ai-models.model-selector.features.enterprise-ready": "Preparat per a les empreses",
 	"kb.ai-models.model-selector.search": "Cerca per seleccionar models",
 	"kb.ai-models.page-description": "Configureu els models disponibles per a les vostres dades",

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { SDKService, ZoneService } from '@flaps/core';
 import {
   DropdownComponent,
   PaButtonModule,
@@ -22,6 +23,7 @@ import {
   DataResidencyStatus,
   LearningConfigurations,
 } from '@nuclia/core';
+import { map, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'stf-model-selector',
@@ -50,6 +52,9 @@ import {
   ],
 })
 export class ModelSelectorComponent implements ControlValueAccessor {
+  zoneService = inject(ZoneService);
+  sdk = inject(SDKService);
+
   onChange: any;
   onTouched: any;
 
@@ -145,6 +150,14 @@ export class ModelSelectorComponent implements ControlValueAccessor {
     }
     return this.filteredByTerm();
   });
+
+  zone = this.zoneService.getZones().pipe(
+    map((zones) => {
+      const slug = this.sdk.nuclia.options.zone;
+      return zones.find((zone) => zone.slug === slug)?.title || slug;
+    }),
+    shareReplay(1),
+  );
 
   writeValue(value: any) {
     this.selectedModel.set(value || '');
