@@ -1,22 +1,29 @@
-<form
+<div
   class="node-configuration-form"
-  [style]="headerHeight() ? '--header-height:' + headerHeight() : ''"
-  [formGroup]="form()"
-  (ngSubmit)="onSubmit()">
-  <ng-content></ng-content>
-  <footer>
-    <pa-button
-      class="full-width"
-      aspect="basic"
-      (click)="cancel.emit()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      class="full-width"
-      kind="primary"
-      type="submit"
-      [disabled]="submitDisabled() !== undefined ? submitDisabled() : form().invalid || form().pristine">
-      {{ submitButton() || 'generic.save' | translate }}
-    </pa-button>
-  </footer>
-</form>
+  [style]="headerHeight() ? '--header-height:' + headerHeight() : ''">
+  <form
+    [formGroup]="form()"
+    (ngSubmit)="onSubmit()">
+    @if (showRegisteredAgentForm()) {
+      <div class="registered-agent">
+        <app-registered-agent-subform></app-registered-agent-subform>
+      </div>
+    }
+    <ng-content></ng-content>
+    <footer>
+      <pa-button
+        class="full-width"
+        aspect="basic"
+        (click)="cancel.emit()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        class="full-width"
+        kind="primary"
+        type="submit"
+        [disabled]="submitDisabled() !== undefined ? submitDisabled() : form().invalid || form().pristine">
+        {{ submitButton() || 'generic.save' | translate }}
+      </pa-button>
+    </footer>
+  </form>
+</div>

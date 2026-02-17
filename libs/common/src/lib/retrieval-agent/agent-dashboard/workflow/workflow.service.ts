@@ -924,6 +924,7 @@ export class WorkflowService {
     }
     const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
     const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+    console.log('schema ', matchingSchema);
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
       matchingSchema?.title || '',

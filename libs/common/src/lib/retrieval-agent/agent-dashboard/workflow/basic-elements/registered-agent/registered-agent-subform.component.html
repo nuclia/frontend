@@ -1,9 +1,16 @@
-<form [formGroup]="form">
-  <h4 class="title-xxs">{{ 'retrieval-agents.workflow.registered-agent.title' | translate }}</h4>
-  <pa-textarea
-    formControlName="description"
-    [rows]="4"
-    [help]="'retrieval-agents.workflow.registered-agent.description' | translate">
-    {{ 'generic.description' | translate }}
-  </pa-textarea>
-</form>
+<pa-accordion-item
+  id="registered-agent"
+  [itemTitle]="'retrieval-agents.workflow.registered-agent.title' | translate"
+  [(expanded)]="expanded">
+  <pa-accordion-item-body>
+    <form [formGroup]="form">
+      <h4 class="title-xxs"></h4>
+      <pa-textarea
+        formControlName="description"
+        [rows]="4"
+        [help]="'retrieval-agents.workflow.registered-agent.description' | translate">
+        {{ 'generic.description' | translate }}
+      </pa-textarea>
+    </form>
+  </pa-accordion-item-body>
+</pa-accordion-item>

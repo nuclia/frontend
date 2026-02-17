@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, effect, input, output, ViewEncapsul
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { isRegisteredAgentSubFormModified } from '../../workflow.state';
+import { isRegisteredAgentSubFormModified, showRegisteredAgentForm } from '../../workflow.state';
+import { RegisteredAgentSubformComponent } from '../registered-agent/registered-agent-subform.component';
 
 @Component({
   selector: 'app-configuration-form',
-  imports: [ReactiveFormsModule, TranslateModule, PaButtonModule, PaTextFieldModule],
+  imports: [ReactiveFormsModule, TranslateModule, PaButtonModule, PaTextFieldModule, RegisteredAgentSubformComponent],
   templateUrl: './configuration-form.component.html',
   styleUrl: './configuration-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +21,7 @@ export class ConfigurationFormComponent {
   submitButton = input('');
   triggerSubmit = output();
   cancel = output();
+  showRegisteredAgentForm = showRegisteredAgentForm;
 
   constructor() {
     effect(() => {
