@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { SDKService } from '@flaps/core';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   delay,
   filter,
@@ -110,7 +111,7 @@ export class NucliaTokensComponent implements OnDestroy {
       }
       const kb = new KnowledgeBox(this.sdk.nuclia, '', kbs[0]);
       this.sdk.nuclia.options.zone = kb.zone;
-      return kb.getLearningSchema();
+      return kb.getLearningSchema().pipe(catchError(() => of({} as LearningConfigurations)));
     }),
     shareReplay(1),
   );
