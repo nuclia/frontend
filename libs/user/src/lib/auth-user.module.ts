@@ -45,11 +45,6 @@ export const authRoutes: Routes = [
     data: { saml: true },
   },
   {
-    path: 'callbacks/oauth',
-    component: CallbackComponent,
-    data: { samlOauth: true },
-  },
-  {
     path: 'callbacks/google',
     component: CallbackComponent,
     data: { google: true },
