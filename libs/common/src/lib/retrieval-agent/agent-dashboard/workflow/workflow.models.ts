@@ -102,7 +102,7 @@ export interface ParentNode {
   then?: string[];
   else?: string[];
   agents?: string[];
-  registeredAgents?: string[];
+  registered_agents?: string[];
   fallback?: string;
   nextAgent?: string;
   // If node is a child, index in the parent then/else list
@@ -112,6 +112,7 @@ export interface ParentNode {
 export interface RegisteredAgentParams {
   description: string;
   functions: string[];
+  nodeType: string;
   modified?: boolean;
 }
 
@@ -431,7 +432,6 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
   };
 }
 export function smartUiToCreation(config: any): any {
-  delete config.registeredAgents;
   return {
     module: 'smart',
     ...config,

@@ -1453,6 +1453,7 @@
 	"retrieval-agents.workflow.node-types.tavily.description": "## TODO ##",
 	"retrieval-agents.workflow.node-types.tavily.title": "Internet - Tavily",
 	"retrieval-agents.workflow.registered-agent.description": "This description will be used by the Smart Agent to decide if this registered agent must be used.",
+	"retrieval-agents.workflow.registered-agent.functions": "Functions",
 	"retrieval-agents.workflow.registered-agent.title": "Registered agent",
 	"retrieval-agents.workflow.sidebar.close-button": "Close side panel",
 	"retrieval-agents.workflow.sidebar.export.description": "Export the Retrieval Agent configuration",

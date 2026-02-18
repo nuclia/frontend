@@ -4,13 +4,17 @@
   [(expanded)]="expanded">
   <pa-accordion-item-body>
     <form [formGroup]="form">
-      <h4 class="title-xxs"></h4>
       <pa-textarea
         formControlName="description"
         [rows]="4"
         [help]="'retrieval-agents.workflow.registered-agent.description' | translate">
         {{ 'generic.description' | translate }}
       </pa-textarea>
+      <pa-select
+        formControlName="functions"
+        [label]="'retrieval-agents.workflow.registered-agent.functions' | translate"
+        [multiple]="true"
+        [options]="functionOptions"></pa-select>
     </form>
   </pa-accordion-item-body>
 </pa-accordion-item>

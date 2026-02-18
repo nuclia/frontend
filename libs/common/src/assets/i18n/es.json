@@ -1450,6 +1450,7 @@
 	"retrieval-agents.workflow.node-types.tavily.description": "## TODO ##",
 	"retrieval-agents.workflow.node-types.tavily.title": "Internet - Tavily",
 	"retrieval-agents.workflow.registered-agent.description": "El Agente Inteligente utilizará esta descripción para decidir si se debe utilizar este agente registrado.",
+	"retrieval-agents.workflow.registered-agent.functions": "Funciones",
 	"retrieval-agents.workflow.registered-agent.title": "Agente registrado",
 	"retrieval-agents.workflow.sidebar.close-button": "Cerrar el panel lateral",
 	"retrieval-agents.workflow.sidebar.export.description": "Exportar la configuración del agente de recuperación",

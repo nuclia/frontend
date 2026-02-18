@@ -245,7 +245,7 @@ export class WorkflowEffectService {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'else_'));
     } else if ((parentNode.agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'agents'));
-    } else if ((parentNode.registeredAgents || []).includes(childId)) {
+    } else if ((parentNode.registered_agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
     } else if (Object.keys(parentNode).includes(childId)) {
       const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
@@ -332,7 +332,6 @@ export class WorkflowEffectService {
 
   private updateAgent(node: ParentNode, agentId: string): Observable<void> {
     const agentConfig = getAgentFromConfig(node.nodeType, node.nodeConfig);
-    console.log('GIOT', agentConfig);
     return this.sdk.currentArag.pipe(
       take(1),
       switchMap((arag) => {

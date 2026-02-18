@@ -82,6 +82,7 @@ import {
   SidebarType,
   unselectNode,
   updateNode,
+  rootSchema,
 } from './workflow.state';
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
 import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
@@ -924,7 +925,6 @@ export class WorkflowService {
     }
     const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
     const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
-    console.log('schema ', matchingSchema);
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
       matchingSchema?.title || '',
@@ -1193,6 +1193,9 @@ export class WorkflowService {
   fetchSchemas() {
     this.getSchemas().subscribe((schemas) => {
       this._schemasSubject.next(schemas);
+      // probably we should not have a subject + a signal
+      // to be refactored at some point
+      rootSchema.set(schemas);
     });
   }
 

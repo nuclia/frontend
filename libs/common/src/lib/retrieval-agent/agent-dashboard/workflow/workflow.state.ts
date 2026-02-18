@@ -13,6 +13,7 @@ import {
   RegisteredAgentParams,
   SmartAgentUI,
 } from './workflow.models';
+import { JSONSchema4 } from 'json-schema';
 
 /**
  * Global state
@@ -285,6 +286,7 @@ function setNodeState(node: ParentNode, state: NodeState) {
 /**
  * Workflow state
  */
+export const rootSchema = signal<JSONSchema4 | null>(null);
 export const nodeInitialisationDone = signal(false);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const contextNodes = signal<{ [id: string]: ParentNode }>({});
@@ -294,7 +296,11 @@ const childNodes = signal<{ [id: string]: ParentNode }>({});
 export const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
 export const showRegisteredAgentForm = signal<boolean>(false);
-export const registeredAgentParams = signal<RegisteredAgentParams>({ description: '', functions: [] });
+export const registeredAgentParams = signal<RegisteredAgentParams>({
+  description: '',
+  functions: [],
+  nodeType: '',
+});
 const deletedAgents = signal<{ id: string; category: NodeCategory }[]>([]);
 
 export interface WorkflowState {
@@ -346,7 +352,7 @@ export function hasChildInThen(nodeId: string, nodeCategory: NodeCategory): bool
  * @returns Node found or undefined
  */
 export function selectNode(id: string, nodeCategory: NodeCategory): ParentNode | undefined {
-  registeredAgentParams.set({ description: '', functions: [] });
+  registeredAgentParams.update((data) => ({ description: '', functions: [], nodeType: data.nodeType }));
   const node = getNode(id, nodeCategory);
   if (node) {
     if (node.parentLinkType === 'registered_agents') {
@@ -356,7 +362,7 @@ export function selectNode(id: string, nodeCategory: NodeCategory): ParentNode |
           const description = (parent.nodeConfig as SmartAgentUI)?.registered_agents_descriptions?.[node.agentId] || '';
           const functions =
             (parent.nodeConfig as SmartAgentUI)?.registered_agents_exposed_functions?.[node.agentId] || [];
-          registeredAgentParams.set({ description, functions });
+          registeredAgentParams.set({ description, functions, nodeType: node.nodeType });
         }
       }
       showRegisteredAgentForm.set(true);
@@ -482,23 +488,19 @@ export function addNode(
     _addNode(nodeId, nodeCategory, node);
   } else {
     const property = origin.id();
-    const propertyConfigKey = getConfigPropertyKey(property);
-    const propertyStateKey = toStatePropertyKey(propertyConfigKey);
 
     node.parentId = parentId;
     node.parentLinkType = property;
-    node.parentLinkConfigProperty = propertyConfigKey;
+    node.parentLinkConfigProperty = property;
     const parent = getNode(parentId, nodeCategory);
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
     }
-    if (
-      propertyStateKey === 'then' ||
-      propertyStateKey === 'else' ||
-      propertyStateKey === 'agents' ||
-      propertyStateKey === 'registered_agents'
-    ) {
-      const existing = (parent as any)?.[propertyStateKey];
+    if (property === 'registered_agents') {
+      registeredAgentParams.set({ description: '', functions: [], nodeType });
+    }
+    if (property === 'then' || property === 'else' || property === 'agents') {
+      const existing = (parent as any)?.[property];
       const childIds = Array.isArray(existing) ? [...existing] : [];
       const currentIndex = childIds.indexOf(nodeId);
       if (currentIndex !== -1) {
@@ -512,20 +514,8 @@ export function addNode(
       node.childIndex = insertionIndex;
     }
     childNodes.update((children) => ({ ...children, [nodeId]: node }));
-    updateNode(parentId, nodeCategory, { [propertyStateKey]: nodeId, isSaved });
+    updateNode(parentId, nodeCategory, { [property]: property === 'registered_agents' ? [nodeId] : nodeId, isSaved });
   }
-}
-
-function getConfigPropertyKey(property: string): string {
-  return property;
-}
-
-function toStatePropertyKey(property: string): string {
-  if (!property) {
-    return property;
-  }
-  const trimmed = property.replace(/[_-]+$/g, '');
-  return trimmed.replace(/[_-]+([a-zA-Z0-9])/g, (_match, char: string) => char.toUpperCase());
 }
 
 function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
@@ -585,6 +575,14 @@ export function deleteNode(
       } else if ((parentNode.agents || []).includes(id)) {
         const childIds = (parentNode.agents || []).filter((childId) => childId !== id);
         updateNode(parentId, nodeCategory, { agents: childIds });
+      } else if ((parentNode.registered_agents || []).includes(id)) {
+        const childIds = (parentNode.registered_agents || []).filter((childId) => childId !== id);
+        const parentConfig = parentNode.nodeConfig;
+        const agentId = getNode(id, nodeCategory)?.agentId;
+        (parentConfig as SmartAgentUI).registered_agents = (parentConfig as SmartAgentUI).registered_agents?.filter(
+          (ag) => ag.id !== agentId,
+        );
+        updateNode(parentId, nodeCategory, { registered_agents: childIds, nodeConfig: parentConfig });
       }
     }
   }
@@ -619,8 +617,11 @@ export function deleteNode(
     // Set agent that should be deleted from the backend
     deletedAgents.update((deleted) => [...deleted, { id, category: nodeCategory }]);
   }
-  if (node && (node.then || node.else || node.agents || node.fallback)) {
-    const childToDelete = (node.then || []).concat(node.else || []).concat(node.agents || []);
+  if (node && (node.then || node.else || node.agents || node.fallback || node.registered_agents)) {
+    const childToDelete = (node.then || [])
+      .concat(node.else || [])
+      .concat(node.agents || [])
+      .concat(node.registered_agents || []);
     if (node.fallback) {
       childToDelete.push(node.fallback);
     }
@@ -658,6 +659,7 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
     throw new Error(`updateNode: Node ${id} not found.`);
   }
 
+  // update registered_agents_descriptions and registered_agents_exposed_functions in the parent node
   if (node.agentId && node.parentLinkType === 'registered_agents' && node.parentId) {
     const parent = getNode(node.parentId, 'context');
     if (parent && parent.nodeType === 'smart' && parent.nodeConfig) {
