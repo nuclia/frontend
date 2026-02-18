@@ -91,7 +91,7 @@ describe('SignupComponent', () => {
       component.signupForm.setValue(data);
       component.submitForm();
       expect(captcha.execute).toHaveBeenCalled();
-      expect(loginService.signup).toHaveBeenCalledWith(data, 'some_token');
+      expect(loginService.signup).toHaveBeenCalledWith(data, 'some_token', undefined);
     });
 
     it('should navigate to check-mail page on success', () => {
