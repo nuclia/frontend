@@ -37,6 +37,23 @@
             </div>
           </div>
           <div>
+            <div class="title-xxs">
+              {{ 'dashboard-home.kb-details.mcp-server' | translate }}
+            </div>
+            <div class="details-block">
+              @if (clipboardSupported) {
+                <pa-button
+                  aspect="basic"
+                  size="small"
+                  [icon]="copyIcon.mcp"
+                  (click)="copyMcp()">
+                  {{ 'generic.copy' | translate }}
+                </pa-button>
+              }
+              <pre><code>{{ mcp | async }}</code></pre>
+            </div>
+          </div>
+          <div>
             <div class="title-xxs">{{ 'dashboard-home.kb-details.uid' | translate }}</div>
             <div class="details-block">
               @if (clipboardSupported) {

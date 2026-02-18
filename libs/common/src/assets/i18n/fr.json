@@ -397,6 +397,7 @@
 	"dashboard-home.health-status.title": "État de santé",
 	"dashboard-home.kb-details.endpoint": "NucliaDB API endpoint",
 	"dashboard-home.kb-details.generative-model": "Modèle génératif",
+	"dashboard-home.kb-details.mcp-server": "Endpoint du serveur MCP",
 	"dashboard-home.kb-details.region": "Région",
 	"dashboard-home.kb-details.status": "Statut de la Knowledge Box",
 	"dashboard-home.kb-details.test-page": "Page de test",
