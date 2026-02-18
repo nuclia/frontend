@@ -42,10 +42,7 @@ export class CallbackComponent implements OnInit {
 
     if (this.route.snapshot.data['saml']) {
       // Returning from SAML authentication
-      this.getSAMLToken();
-    } else if (this.route.snapshot.data['samlOauth']) {
-      // Returning from SAML authentication in a OAuth flow
-      this.redirect();
+      this.handleSAMLCallback();
     } else if (
       !this.route.snapshot.queryParamMap.get('token') &&
       (this.route.snapshot.data['google'] ||
@@ -80,25 +77,24 @@ export class CallbackComponent implements OnInit {
     );
   }
 
-  getSAMLToken(): void {
+  handleSAMLCallback(): void {
+    const consentChallenge = this.route.snapshot.queryParamMap.get('consent_challenge');
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) {
+
+    if (consentChallenge) {
+      // OAuth flow: navigate to consent challenge URL
+      this.document.location.href = consentChallenge;
+    } else if (token) {
+      // Regular flow: exchange token for access token and authenticate
       this.samlService.getToken(token).subscribe((token) => {
         this.authenticate(token);
       });
-    }
-  }
-
-  redirect(): void {
-    const redirectTo = this.route.snapshot.queryParamMap.get('redirect_to');
-    if (redirectTo) {
-      const allowedHosts = this.config.getAllowedHostsRedirect();
-      try {
-        const url = new URL(redirectTo);
-        if (allowedHosts.indexOf(url.hostname) >= 0) {
-          this.document.location.href = redirectTo;
-        }
-      } catch {}
+    } else {
+      // No valid parameters
+      this.toaster.error('login.error.oops');
+      this.router.navigate(['/user/signup'], {
+        relativeTo: this.route,
+      });
     }
   }
 
