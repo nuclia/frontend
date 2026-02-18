@@ -38,7 +38,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
   uid = this.currentKb.pipe(map((kb) => kb.id));
-  slug = this.currentKb.pipe(map((kb) => kb.slug));
+  mcp = this.endpoint.pipe(map((endpoint) => endpoint + '/mcp'));
   zone = combineLatest([this.currentKb, this.zoneService.getZones()]).pipe(
     map(([kb, zones]) => {
       const zone = zones.find((zone) => zone.slug === kb.zone);
@@ -143,7 +143,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   copyIcon = {
     endpoint: 'copy',
     uid: 'copy',
-    slug: 'copy',
+    mcp: 'copy',
   };
 
   healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
@@ -187,7 +187,11 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
   }
 
-  private copyToClipboard(type: 'endpoint' | 'uid' | 'slug', text: string) {
+  copyMcp() {
+    this.mcp.pipe(take(1)).subscribe((mcp) => this.copyToClipboard('mcp', mcp));
+  }
+
+  private copyToClipboard(type: 'endpoint' | 'uid' | 'mcp', text: string) {
     navigator.clipboard.writeText(text);
     this.copyIcon = {
       ...this.copyIcon,
