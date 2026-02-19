@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -8,11 +7,7 @@ import { BackendConfigurationService, SDKService } from '@flaps/core';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private backendConfig = inject(BackendConfigurationService);
-
-  constructor(
-    private router: Router,
-    private sdk: SDKService,
-  ) {}
+  private sdk = inject(SDKService);
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
@@ -35,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const isInvalidToken = error.status === 400 || error.status === 401;
     if (isInvalidToken) {
       this.sdk.nuclia.auth.logout();
-      this.router.navigate(['/user/login']);
+      this.sdk.nuclia.auth.redirectToOAuth();
     }
   }
 }

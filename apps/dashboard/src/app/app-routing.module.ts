@@ -38,8 +38,9 @@ import {
   AwsOnboardingComponent,
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
+  ProfileComponent,
 } from '@flaps/common';
-import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
+import { RedirectComponent, FarewellComponent, FeedbackComponent, CallbackComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 
@@ -293,19 +294,16 @@ const routes: Routes = [
     component: FarewellComponent,
   },
   {
-    path: 'setup/invite',
-    component: InviteComponent,
-    canActivate: [authGuard, inviteGuard],
-  },
-  {
     path: 'setup_account',
     component: AwsOnboardingComponent,
     canActivate: [awsGuard],
   },
   {
-    path: 'user',
-    loadChildren: () => import('./lazy-user.module').then((m) => m.LazyUserModule),
+    path: 'user/profile',
+    component: ProfileComponent,
+    canActivate: [authGuard],
   },
+  { path: 'user/callback', component: CallbackComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 

@@ -32,31 +32,13 @@
         </pa-input>
       </div>
 
-      @if (canModifyPassword) {
-        <div class="field">
-          <nsi-password-input
-            formControlName="password"
-            [errorMessages]="profile_validation_messages.password">
-            {{ 'profile.new_password' | translate }}
-          </nsi-password-input>
-        </div>
-        <div class="field">
-          <nsi-password-input
-            formControlName="passwordConfirm"
-            [errorMessages]="profile_validation_messages.passwordConfirm">
-            {{ 'profile.repeat_password' | translate }}
-          </nsi-password-input>
-        </div>
-      }
-
       <div class="field">
         <label for="language">{{ 'generic.language' | translate }}</label>
         <pa-radio-group
           id="language"
           formControlName="language">
           @for (lang of languages; track lang) {
-            <pa-radio
-              [value]="lang.value">
+            <pa-radio [value]="lang.value">
               {{ lang.label | translate }}
             </pa-radio>
           }

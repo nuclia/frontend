@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { RouterModule } from '@angular/router';
-import { BackendConfigurationService, TranslatePipeMock, SelectAccountKbService } from '@flaps/core';
+import { BackendConfigurationService, TranslatePipeMock, SelectAccountKbService, SDKService } from '@flaps/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -25,6 +25,9 @@ describe('SelectComponent', () => {
             accounts: of([]),
           },
         },
+        MockProvider(SDKService, {
+          nuclia: { auth: { logout: () => {} } },
+        } as SDKService),
         MockProvider('staticEnvironmentConfiguration', { standalone: false }),
         MockProvider(BackendConfigurationService),
       ],

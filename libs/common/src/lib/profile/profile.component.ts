@@ -1,40 +1,26 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { AbstractControl, UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { filter, forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import {
-  DEFAULT_LANG,
-  LoginService,
-  MIN_PASSWORD_LENGTH,
-  SDKService,
-  SetUserPreferences,
-  STFUtils,
-  UserService,
-} from '@flaps/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter, Subject, switchMap, takeUntil } from 'rxjs';
+import { DEFAULT_LANG, LoginService, SetUserPreferences, STFUtils, UserService } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SamePassword } from '../password.validator';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nus-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [TranslateModule, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
-  canModifyPassword = false; // TODO
-  canModifyEmail = false; // TODO
-
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
-    email: [{ value: '', disabled: !this.canModifyEmail }, [Validators.required, Validators.email]],
-    password: ['', this.optionalPassword('passwordConfirm', [Validators.minLength(MIN_PASSWORD_LENGTH)])],
-    passwordConfirm: ['', this.optionalPassword('password', [SamePassword('password')])],
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
     language: [''],
   });
 
@@ -46,13 +32,6 @@ export class ProfileComponent implements OnInit {
       required: 'validation.required',
       email: 'validation.email',
     },
-    password: {
-      required: 'validation.password_required',
-      minlength: 'validation.password_minlength',
-    },
-    passwordConfirm: {
-      passwordMismatch: 'validation.password_mismatch',
-    } as IErrorMessages,
   };
 
   get language() {
@@ -67,7 +46,6 @@ export class ProfileComponent implements OnInit {
     private translate: TranslateService,
     private location: Location,
     private loginService: LoginService,
-    private sdk: SDKService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -97,11 +75,8 @@ export class ProfileComponent implements OnInit {
         payload.language = this.language.toUpperCase() as Language;
       }
 
-      let setPassword: Observable<boolean | null> = of(null);
-      if (this.profileForm.value.password && this.profileForm.value.passwordConfirm) {
-        setPassword = this.sdk.nuclia.auth.setPassword(this.profileForm.value.password);
-      }
-      forkJoin([this.loginService.setPreferences(payload), setPassword])
+      this.loginService
+        .setPreferences(payload)
         .pipe(switchMap(() => this.userService.updateWelcome()))
         .subscribe(() => {
           if (this.language) {
@@ -114,16 +89,5 @@ export class ProfileComponent implements OnInit {
 
   goBack() {
     this.location.back();
-  }
-
-  optionalPassword(siblingPassword: string, validators: ValidatorFn[]): ValidatorFn {
-    return (control: AbstractControl) => {
-      const siblingField = control.parent?.get(siblingPassword);
-      const composedValidators = Validators.compose(validators);
-      if (composedValidators) {
-        return control.value || siblingField?.value ? composedValidators(control) : null;
-      }
-      return null;
-    };
   }
 }

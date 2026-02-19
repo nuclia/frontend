@@ -10,18 +10,23 @@ export class SAMLService {
   constructor(private sdk: SDKService) {}
 
   checkDomain(domain: string): Observable<{ account_id: string }> {
-    return this.sdk.nuclia.rest.get<{ account_id: string }>(`/auth/saml/inquiry?domain=${domain}`);
+    const authUrl = this.sdk.nuclia.auth.getAuthUrl();
+    return this.sdk.nuclia.rest.get<{ account_id: string }>(`${authUrl}/saml/inquiry?domain=${domain}`);
   }
 
   ssoUrl(accountId: string, loginChallenge?: string): string {
-    let url = this.sdk.nuclia.backend + `/auth/saml/sso?account_id=${accountId}`;
+    const authUrl = this.sdk.nuclia.auth.getAuthUrl();
+    let url = `${authUrl}/saml/sso?account_id=${accountId}`;
     if (loginChallenge) {
       url += `&login_challenge=${loginChallenge}`;
     }
+    // Add came_from parameter for migration process
+    url += `&came_from=${encodeURIComponent(window.location.origin)}`;
     return url;
   }
 
   getToken(tmpToken: string): Observable<AuthTokens> {
-    return this.sdk.nuclia.rest.post<AuthTokens>('/auth/saml/token', { token: tmpToken });
+    const authUrl = this.sdk.nuclia.auth.getAuthUrl();
+    return this.sdk.nuclia.rest.post<AuthTokens>(`${authUrl}/saml/token`, { token: tmpToken });
   }
 }

@@ -4,8 +4,8 @@ set -Ex
 function apply_path {
     jsonFile=/dist/assets/deployment/app-config.json
 
-    echo "Check that we have API_PATH vars"
-    test -n "$API_PATH"
+    echo "Check that we have API_ORIGIN vars"
+    test -n "$API_ORIGIN"
     echo "Check that we have SITE_KEY vars"
     test -n "$SITE_KEY"
     echo "Check that we have APP_NAME vars"
@@ -18,9 +18,11 @@ function apply_path {
     test -n "$STF_VERSION"
     echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
     test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
-
-    echo "Configuring API_PATH vars"
-    sed -i "s#STF_DOCKER_CONFIG_API_PATH#${API_PATH}#g" $jsonFile
+    echo "Check that we have oauth params vars"
+    test -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
+  
+    echo "Configuring API_ORIGIN vars"
+    sed -i "s#STF_DOCKER_API_ORIGIN#${API_ORIGIN}#g" $jsonFile
 
     echo "Configuring SITE_KEY vars"
     sed -i "s#STF_DOCKER_CONFIG_SITE_KEY#${SITE_KEY}#g" $jsonFile
@@ -37,11 +39,11 @@ function apply_path {
     echo "Configuring STF_VERSION vars"
     sed -i "s#STF_DOCKER_CONFIG_VERSION#${STF_VERSION}#g" $jsonFile
 
-    echo "Configuring EMAIL_DOMAIN vars"
-    sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
-
     echo "Configuring NO_STRIPE vars"
     sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
+
+    echo "Configuring OAUTH params"
+    sed -i "s#STF_DOCKER_CONFIG_OAUTH_CLIENT_ID#${OAUTH_CLIENT_ID}#g" $jsonFile
 
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"

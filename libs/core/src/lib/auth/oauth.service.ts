@@ -11,21 +11,21 @@ export type OAuthErrors =
   | 'unknown_consent_challenge'
   | 'get_consent_error';
 
-const STF_LOGIN = '/auth/oauth/login';
-const STF_CONSENT = '/auth/oauth/consent';
-
 @Injectable({
   providedIn: 'root',
 })
 export class OAuthService {
-  constructor(private config: BackendConfigurationService, private sdk: SDKService) {}
+  constructor(
+    private config: BackendConfigurationService,
+    private sdk: SDKService,
+  ) {}
 
   loginUrl() {
-    return this.config.getAPIURL() + STF_LOGIN;
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
   }
 
   consentUrl() {
-    return this.config.getAPIURL() + STF_CONSENT;
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/consent`;
   }
 
   getLoginData(challenge: string): Observable<OAuthLoginData> {

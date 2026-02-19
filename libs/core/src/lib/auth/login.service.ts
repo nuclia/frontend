@@ -13,9 +13,6 @@ import {
 import { SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
 
-const AUTH = 'auth';
-const USER = 'user';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,28 +22,24 @@ export class LoginService {
     private sdk: SDKService,
   ) {}
 
-  login(data: LoginData, token: string): Observable<AuthTokens> {
-    const headers = { 'X-STF-VALIDATION': token };
-    return this.sdk.nuclia.rest.post(this.config.getAPIURL() + '/auth/login', data, headers);
-  }
-
   recover(data: RecoverData, token: string): Observable<ResetResponse> {
     const headers = { 'X-STF-VALIDATION': token };
-    return this.sdk.nuclia.rest.post(this.config.getAPIURL() + '/auth/recover', data, headers);
+    return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/recover`, data, headers);
   }
 
   reset(data: ResetData, token: string): Observable<ResetResponse> {
     const headers = { 'X-STF-VALIDATION': token };
-    return this.sdk.nuclia.rest.post(this.config.getAPIURL() + '/auth/reset', data, headers);
+    return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/reset`, data, headers);
   }
 
-  signup(user: SignupData, token: string): Observable<SignupResponse> {
+  signup(user: SignupData, token: string, loginChallenge?: string): Observable<SignupResponse> {
     const headers = { 'X-STF-VALIDATION': token };
-    return this.sdk.nuclia.rest.post(this.config.getAPIURL() + `/${AUTH}/signup`, user, headers);
+    const payload = loginChallenge ? { ...user, login_challenge: loginChallenge } : user;
+    return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/signup`, payload, headers);
   }
 
   setPreferences(data: SetUserPreferences) {
-    const url = this.config.getAPIURL() + `/v1/${USER}`;
+    const url = this.config.getAPIURL() + `/v1/user`;
     return this.sdk.nuclia.rest.patch(url, data);
   }
 }
