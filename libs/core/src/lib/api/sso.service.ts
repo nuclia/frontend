@@ -59,7 +59,24 @@ export class SsoService {
       const apiUrlObj = new URL(apiUrl);
 
       // Allow if same origin as the API
-      return redirectUrlObj.origin === apiUrlObj.origin;
+      if (redirectUrlObj.origin === apiUrlObj.origin) {
+        return true;
+      }
+
+      // Temporary migration measure: also allow if the second-level domain (xxx.yy) matches
+      // e.g., stashify.cloud
+      const getSecondLevelDomain = (hostname: string) => {
+        const parts = hostname.split('.');
+        if (parts.length >= 2) {
+          return parts.slice(-2).join('.');
+        }
+        return hostname;
+      };
+
+      const redirectDomain = getSecondLevelDomain(redirectUrlObj.hostname);
+      const apiDomain = getSecondLevelDomain(apiUrlObj.hostname);
+
+      return redirectDomain === apiDomain;
     } catch {
       return false;
     }
