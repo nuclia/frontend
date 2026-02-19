@@ -78,12 +78,12 @@ export class CallbackComponent implements OnInit {
   }
 
   handleSAMLCallback(): void {
-    const consentChallenge = this.route.snapshot.queryParamMap.get('consent_challenge');
+    const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
     const token = this.route.snapshot.queryParamMap.get('token');
 
-    if (consentChallenge) {
+    if (consentUrl) {
       // OAuth flow: navigate to consent challenge URL
-      this.document.location.href = consentChallenge;
+      this.document.location.href = consentUrl;
     } else if (token) {
       // Regular flow: exchange token for access token and authenticate
       this.samlService.getToken(token).subscribe((token) => {
