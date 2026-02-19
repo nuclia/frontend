@@ -77,7 +77,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
   );
   activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
   activityLogsCloud: Observable<LogEntity[]> = this.syncService.syncJobs.pipe(
-    map((jobs) => this.getLogsFromJobs(jobs)),
+    map((jobs) => this.getLogEntitiesFromJobs(jobs)),
   );
 
   editMode: Observable<boolean> = this.currentRoute.url.pipe(
@@ -208,38 +208,22 @@ export class SyncDetailsPageComponent implements OnDestroy {
       });
   }
 
-  getLogsFromJobs(jobs: Job[]) {
+  getLogEntitiesFromJobs(jobs: Job[]) {
     return jobs.reduce((acc, curr) => {
-      acc = acc
-        .concat(
-          (curr.logs || []).map((log) => {
-            const { level, message, timestamp, ...extra } = log;
-            return {
-              level: ['WARNING', 'ERROR', 'EXCEPTION', 'CRITICAL'].includes(level)
-                ? LogSeverityLevel.medium
-                : LogSeverityLevel.low,
-              message,
-              createdAt: timestamp,
-              origin: '',
-              action: '',
-              payload: extra,
-            };
-          }),
-        )
-        .concat([
-          {
-            level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
-            message: ['pending', 'in_progress'].includes(curr.status)
-              ? 'Checking for changes...'
-              : curr.status === 'completed'
-                ? 'Synchronization complete'
-                : 'Synchronization failed',
-            createdAt: curr.created_at,
-            origin: '',
-            action: '',
-            payload: { status: curr.status },
-          },
-        ]);
+      acc = acc.concat([
+        {
+          level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
+          message: ['pending', 'in_progress'].includes(curr.status)
+            ? 'Checking for changes...'
+            : curr.status === 'completed'
+              ? 'Synchronization complete'
+              : 'Synchronization with errors',
+          createdAt: curr.created_at,
+          origin: '',
+          action: '',
+          payload: { id: curr.id, status: curr.status },
+        },
+      ]);
       return acc;
     }, [] as LogEntity[]);
   }

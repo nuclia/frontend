@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IConnector, ISyncEntity, LogEntity } from '../../logic';
+import { IConnector, ISyncEntity, LogEntity, SyncService } from '../../logic';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -26,7 +26,7 @@ import { filter, map, switchMap, take } from 'rxjs';
 import { LabelSets } from '@nuclia/core';
 import { ColoredLabel } from '@flaps/common';
 import { ActivatedRoute } from '@angular/router';
-import { LogModalComponent } from './log-modal/log-modal.component';
+import { LogsModalComponent } from './logs-modal/logs-modal.component';
 
 @Component({
   selector: 'nsy-sync-settings',
@@ -52,6 +52,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private currentRoute = inject(ActivatedRoute);
   private sdk = inject(SDKService);
   private modalService = inject(ModalService);
+  private syncService = inject(SyncService);
 
   @Input({ required: true }) sync!: ISyncEntity;
   @Input({ required: true }) connector: IConnector | null | undefined = undefined;
@@ -70,8 +71,9 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   labelSets: LabelSets = {};
   coloredLabels: ColoredLabel[] = [];
   extractStrategy = '';
-  pageSize = 50;
-  visibleLogs = this.pageSize;
+
+  hasMoreJobs = this.syncService.hasMoreJobs;
+  loadingJobs = false;
 
   ngAfterViewInit() {
     this.currentRoute.queryParams
@@ -121,11 +123,15 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   }
 
   loadMore() {
-    this.visibleLogs += this.pageSize;
+    this.loadingJobs = true;
     this.cdr.markForCheck();
+    this.syncService.updateSyncJobs(this.sync.id, true).subscribe(() => {
+      this.loadingJobs = false;
+      this.cdr.markForCheck();
+    });
   }
 
-  showLog(log: LogEntity) {
-    this.modalService.openModal(LogModalComponent, new ModalConfig({ data: log }));
+  showLogs(log: LogEntity) {
+    this.modalService.openModal(LogsModalComponent, new ModalConfig({ data: log }));
   }
 }

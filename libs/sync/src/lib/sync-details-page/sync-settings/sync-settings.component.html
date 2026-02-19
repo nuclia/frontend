@@ -139,11 +139,10 @@
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.message' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
       </pa-table-header>
-      @for (log of logs | slice: 0 : visibleLogs; track log) {
-        @let isClickable = sync.isCloud && (log.payload | keyvalue).length > 0;
+      @for (log of logs; track log) {
         <pa-table-row
-          [clickable]="isClickable"
-          (click)="isClickable ? showLog(log) : undefined">
+          [clickable]="sync.isCloud"
+          (click)="sync.isCloud ? showLogs(log) : undefined">
           <pa-table-cell>
             <div class="body-s icon-and-text">
               @switch (log.level) {
@@ -181,10 +180,11 @@
         </pa-table-row>
       }
     </pa-table>
-    @if (logs.length > visibleLogs) {
+    @if (sync.isCloud && (hasMoreJobs | async)) {
       <div class="load-more">
         <pa-button
           aspect="basic"
+          [disabled]="loadingJobs"
           (click)="loadMore()">
           {{ 'generic.show_more' | translate }}
         </pa-button>

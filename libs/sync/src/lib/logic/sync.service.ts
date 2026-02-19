@@ -21,6 +21,7 @@ import {
   ExternalConnectionCredentials,
   ExternalConnection,
   StorageStructure,
+  JobsPage,
 } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './connectors/folder';
@@ -134,7 +135,7 @@ export class SyncService {
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
   private _cacheUpdated = new BehaviorSubject<string>(new Date().toISOString());
   private _isSyncing = new BehaviorSubject<{ [id: string]: boolean }>({});
-  private _syncJobs = new BehaviorSubject<Job[]>([]);
+  private _syncJobs = new BehaviorSubject<JobsPage[]>([]);
 
   isServerDown = this._isServerDown.asObservable();
   currentSyncId = this._currentSyncId.asObservable();
@@ -143,7 +144,8 @@ export class SyncService {
   };
   cacheUpdated = this._cacheUpdated.asObservable();
   isSyncing = this._isSyncing.asObservable();
-  syncJobs = this._syncJobs.asObservable();
+  syncJobs = this._syncJobs.pipe(map((pages) => pages.reduce((acc, curr) => acc.concat(curr.items), [] as Job[])));
+  hasMoreJobs = this._syncJobs.pipe(map((pages) => !!pages[pages.length - 1]?.next_cursor));
   private _useCloudSync = new BehaviorSubject<boolean>(false);
   useCloudSync = this._useCloudSync.asObservable();
 
@@ -200,7 +202,7 @@ export class SyncService {
         name: config.external_connection.provider,
         parameters: config,
       },
-      lastSyncGMT: undefined,
+      lastSyncGMT: config.last_sync_run || undefined,
       disabled: false,
       isCloud: true,
     };
@@ -364,7 +366,7 @@ export class SyncService {
                     title: config.name,
                     connectorId,
                     connector: connectorId ? this.getConnector(connectorId, config.id) : undefined,
-                    lastSyncGMT: undefined,
+                    lastSyncGMT: config.last_sync_run || undefined,
                     disabled: false,
                   };
                 }),
@@ -509,11 +511,14 @@ export class SyncService {
       );
   }
 
-  updateSyncJobs(syncId: string) {
+  updateSyncJobs(syncId: string, nextPage = false) {
+    const cursor = this._syncJobs.value[this._syncJobs.value.length - 1]?.next_cursor;
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.syncManager.getConfigJobs(syncId || '')),
-      tap((jobs) => this._syncJobs.next(jobs)),
+      switchMap((kb) => kb.syncManager.getConfigJobs(syncId || '', { cursor: nextPage ? cursor : undefined })),
+      tap((jobsPage) => {
+        this._syncJobs.next(nextPage ? this._syncJobs.value.concat([jobsPage]) : [jobsPage]);
+      }),
     );
   }
 

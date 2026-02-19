@@ -1,0 +1,71 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>
+    <h2>{{ job?.message }}</h2>
+  </pa-modal-title>
+  <pa-modal-content>
+    <div class="table-container">
+      @if (logs().length > 0) {
+        <pa-table
+          columns="200px 1fr 2fr"
+          border>
+          <pa-table-header>
+            <pa-table-cell header>{{ 'sync.details.activity-log.table-header.message' | translate }}</pa-table-cell>
+            <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
+            <pa-table-cell header>{{ 'sync.details.activity-log.table-header.details' | translate }}</pa-table-cell>
+          </pa-table-header>
+          @for (log of logs(); track log) {
+            <pa-table-row>
+              <pa-table-cell>
+                <div class="icon-and-text">
+                  @if (log.error) {
+                    <pa-icon
+                      class="error"
+                      size="small"
+                      name="warning"></pa-icon>
+                  } @else {
+                    <pa-icon
+                      class="success"
+                      size="small"
+                      name="circle-check"></pa-icon>
+                  }
+                  <span class="body-s">{{ log.message }}</span>
+                </div>
+              </pa-table-cell>
+              <pa-table-cell>
+                <div class="body-s">
+                  <pa-datetime [datetime]="log.timestamp"></pa-datetime>
+                </div>
+              </pa-table-cell>
+              <pa-table-cell>
+                <ul class="details">
+                  @for (extra of log['extra'] || {} | keyvalue; track extra.key) {
+                    <li>
+                      <span class="title-xxs">{{ extra.key }}:&nbsp;</span>
+                      <span class="body-s">{{ extra.value }}</span>
+                    </li>
+                  }
+                </ul>
+              </pa-table-cell>
+            </pa-table-row>
+          }
+        </pa-table>
+        @if (nextCursor()) {
+          <div class="load-more">
+            <pa-button
+              aspect="basic"
+              [disabled]="loading()"
+              (click)="loadPage(nextCursor())">
+              {{ 'generic.show_more' | translate }}
+            </pa-button>
+          </div>
+        }
+      } @else if (job?.payload?.['status'] === 'completed') {
+        <nsi-info-card>
+          {{ 'sync.details.activity-log.no-logs' | translate }}
+        </nsi-info-card>
+      }
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>
