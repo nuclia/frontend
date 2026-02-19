@@ -178,13 +178,11 @@
                       {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
                     </pa-option>
                   }
-                  @if (!(useCloudSync | async)) {
-                    <pa-option
-                      [routerLink]="'./' + sync.id"
-                      [queryParams]="{ section: 'activity' }">
-                      {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
-                    </pa-option>
-                  }
+                  <pa-option
+                    [routerLink]="'./' + sync.id"
+                    [queryParams]="{ section: 'activity' }">
+                    {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
+                  </pa-option>
                   <pa-option
                     destructive
                     (selectOption)="deleteSync(sync)">

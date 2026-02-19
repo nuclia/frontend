@@ -1,0 +1,33 @@
+@use 'apps/dashboard/src/variables' as *;
+
+h2 {
+  margin: 0;
+}
+
+.table-container {
+  max-width: calc(rhythm(90) + rhythm(20));
+  padding-bottom: rhythm(6);
+}
+
+.icon-and-text {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  .error {
+    color: $color-secondary-stronger;
+  }
+  .success {
+    color: $color-success-strong;
+  }
+}
+
+.details {
+  margin: rhythm(0.5) 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+
+.load-more {
+  margin-top: rhythm(2);
+  text-align: right;
+}

@@ -7,6 +7,10 @@ import {
   ExternalConnectionCredentials,
   ISyncManager,
   Job,
+  JobLogsPage,
+  JobPagination,
+  JobsPage,
+  LogFilters,
   OAuthUrl,
   StorageStructure,
   SyncConfiguration,
@@ -53,8 +57,14 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.delete(`${this.kb.path}/sync_config/${id}`);
   }
 
-  getConfigJobs(id: string): Observable<Job[]> {
-    return this.nuclia.rest.get<Job[]>(`${this.kb.path}/sync_config/${id}/jobs`);
+  getConfigJobs(id: string, pagination: JobPagination = {}): Observable<JobsPage> {
+    const params = getURLParams(pagination);
+    return this.nuclia.rest.get<JobsPage>(`${this.kb.path}/sync_config/${id}/jobs?${params.toString()}`);
+  }
+
+  getJobLogs(jobId: string, pagination: JobPagination = {}, filters: LogFilters = {}): Observable<JobLogsPage> {
+    const params = getURLParams({ ...pagination, ...filters });
+    return this.nuclia.rest.get<JobLogsPage>(`${this.kb.path}/sync_job/${jobId}/logs?${params.toString()}`);
   }
 
   syncConfig(id: string, full_sync = false): Observable<Job> {
@@ -62,13 +72,18 @@ export class SyncManager implements ISyncManager {
   }
 
   browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure> {
-    let endpoint = `${this.kb.path}/external_connection/${externalConnectorId}/browse?`;
-    const params = new URLSearchParams();
-    Object.entries(options)
-      .filter(([, value]) => value !== undefined)
-      .forEach(([key, value]) => {
-        params.append(key, value);
-      });
+    const endpoint = `${this.kb.path}/external_connection/${externalConnectorId}/browse?`;
+    const params = getURLParams(options);
     return this.nuclia.rest.get<StorageStructure>(endpoint + params.toString());
   }
+}
+
+function getURLParams(values: { [key: string]: any }): URLSearchParams {
+  const params = new URLSearchParams();
+  Object.entries(values)
+    .filter(([, value]) => value !== undefined)
+    .forEach(([key, value]) => {
+      params.append(key, String(value));
+    });
+  return params;
 }

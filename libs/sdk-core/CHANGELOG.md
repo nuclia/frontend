@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support endpoint to trigger a sync job for a sync configuration
+- Add endpoints to get activity log for sync jobs
 
 # 1.31.1 (2026-01-20)
 

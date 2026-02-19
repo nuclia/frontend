@@ -28,7 +28,8 @@ export interface ISyncManager {
   getConfigs(): Observable<SyncConfiguration[]>;
   getConfig(id: string): Observable<SyncConfiguration>;
   deleteConfig(id: string): Observable<void>;
-  getConfigJobs(id: string): Observable<Job[]>;
+  getConfigJobs(id: string, pagination?: JobPagination): Observable<JobsPage>;
+  getJobLogs(jobId: string, pagination?: JobPagination, filters?: LogFilters): Observable<JobLogsPage>;
   syncConfig(id: string, full_sync?: boolean): Observable<Job>;
   browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure>;
 }
@@ -60,6 +61,7 @@ export interface SyncConfiguration {
   sync_root_path: string;
   drive_id?: string;
   sync_interval_minutes: number;
+  last_sync_run: string | null;
   created_by: string;
   external_connection: {
     id: string;
@@ -75,20 +77,44 @@ export interface SyncConfigurationCreate {
   external_connection_id: string;
 }
 
+export interface JobsPage {
+  items: Job[];
+  next_cursor?: string;
+}
+
 export interface Job {
   id: string;
   created_at: string;
   finished_at: string | null;
   config_id: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
-  logs?: JobLog[];
+  options: { full_sync: boolean };
 }
 
+export interface JobLogsPage {
+  items: JobLog[];
+  next_cursor?: string;
+}
+
+type LogLevel = 'INFO' | 'WARNING' | 'ERROR' | 'EXCEPTION' | 'CRITICAL';
+
 export interface JobLog {
-  level: 'INFO' | 'WARNING' | 'ERROR' | 'EXCEPTION' | 'CRITICAL';
+  level: LogLevel;
   message: string;
   timestamp: string;
   [key: string]: unknown;
+}
+
+export interface JobPagination {
+  limit?: number;
+  cursor?: string;
+  order?: 'asc' | 'desc';
+}
+
+export interface LogFilters {
+  level?: LogLevel;
+  start_date?: string;
+  end_date?: string;
 }
 
 export interface BrowseOptions {
