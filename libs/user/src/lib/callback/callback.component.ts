@@ -78,17 +78,25 @@ export class CallbackComponent implements OnInit {
   }
 
   handleSAMLCallback(): void {
+    console.log('[SAML Callback] Full URL:', window.location.href);
+    console.log('[SAML Callback] All query params:', this.route.snapshot.queryParams);
+    
     const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
     const token = this.route.snapshot.queryParamMap.get('token');
     const state = this.route.snapshot.queryParamMap.get('state');
+
+    console.log('[SAML Callback] token from query params:', token);
+    console.log('[SAML Callback] token length:', token?.length);
+    console.log('[SAML Callback] state from query params:', state);
 
     if (consentUrl) {
       // OAuth flow: navigate to consent challenge URL
       this.document.location.href = consentUrl;
     } else if (token) {
       // Regular flow: exchange token for access token and authenticate
-      this.samlService.getToken(token).subscribe((token) => {
-        this.authenticate(token, state || undefined);
+      console.log('[SAML Callback] Calling samlService.getToken with:', token);
+      this.samlService.getToken(token).subscribe((authTokens) => {
+        this.authenticate(authTokens, state || undefined);
       });
     } else {
       // No valid parameters
