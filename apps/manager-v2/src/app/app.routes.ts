@@ -29,7 +29,7 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard],
         loadChildren: () => import('./manage-zones/manage-zones.module').then((m) => m.ManageZonesModule),
       },
-      { path: 'user/callback', component: CallbackComponent },
     ],
   },
+  { path: 'user/callback', component: CallbackComponent },
 ];
