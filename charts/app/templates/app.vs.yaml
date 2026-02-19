@@ -29,35 +29,4 @@ spec:
         host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
         port:
           number: {{ .Values.service.internalPort }}
----
-{{- if .Values.virtualService.auth_host }}
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: "{{ .Release.Name }}-auth"
-  labels:
-    app: "{{ .Chart.Name }}"
-    version: "{{ .Values.hash }}"
-    chart: "{{ .Chart.Name }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-spec:
-  gateways:
-  - "{{ .Values.virtualService.gateway }}"
-  hosts:
-  - "{{ .Values.virtualService.auth_host }}"
-  http:
-  - match:
-    - uri:
-        regex: "^/(user/(login|logout|consent|callbacks?.*)|assets/.*|.*\\.(js|css|png|svg|woff2))"
-    {{- with .Values.virtualService.http.retries }}
-    retries:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-    route:
-    - destination:
-        host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
-        port:
-          number: {{ .Values.service.internalPort }}
-{{- end }}
 {{- end }}
