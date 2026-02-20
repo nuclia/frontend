@@ -35,7 +35,7 @@ export class CallbackComponent implements OnInit {
     // Correctly handle final step of sso/saml where AUTH app navigates to `came_from` url after calling
     // `CallbackComponent.authenticate` and then independently of saml or other sso, it ends
     // up here in the dashboard app with the tokens in the URL. 
-    if (queryParams['token'] && queryParams['refresh_token']) {
+    if (this.route.snapshot.queryParamMap.get('token') && this.route.snapshot.queryParamMap.get('refresh_token')) {
       this.loadUrlToken();
       return;
     }
