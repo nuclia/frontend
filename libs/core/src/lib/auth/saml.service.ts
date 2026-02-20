@@ -18,6 +18,8 @@ export class SAMLService {
     if (loginChallenge) {
       url += `&login_challenge=${loginChallenge}`;
     }
+    // Add came_from parameter for migration process
+    url += `&came_from=${encodeURIComponent(window.location.origin)}`;
     return url;
   }
 
