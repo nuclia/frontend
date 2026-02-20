@@ -32,10 +32,12 @@ export class CallbackComponent implements OnInit {
       return;
     }
 
-    // Correctly handle final step of sso/saml where AUTH app navigates to `came_from` url after calling
-    // `CallbackComponent.authenticate` and then independently of saml or other sso, it ends
-    // up here in the dashboard app with the tokens in the URL. 
-    if (this.route.snapshot.queryParamMap.get('token') && this.route.snapshot.queryParamMap.get('refresh_token')) {
+    // Handle second callback from migration flow with JWT tokens in the url
+    // This is part of the legacy login flow. Once the saml flow is completed in the
+    // auth app,  navigates to come_from with the tokens in the URL. This is triggerd in this
+    // same component in `authenticate`, and then independently of saml or other sso, it ends
+    // up here with the tokens in the URL.
+    if (queryParams['token'] && queryParams['refresh_token']) {
       this.loadUrlToken();
       return;
     }
@@ -80,7 +82,7 @@ export class CallbackComponent implements OnInit {
   handleSAMLCallback(): void {
     console.log('[SAML Callback] Full URL:', window.location.href);
     console.log('[SAML Callback] All query params:', this.route.snapshot.queryParams);
-    
+
     const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
     const token = this.route.snapshot.queryParamMap.get('token');
     const state = this.route.snapshot.queryParamMap.get('state');
