@@ -32,6 +32,16 @@ export class CallbackComponent implements OnInit {
       return;
     }
 
+    // Handle second callback from migration flow with JWT tokens in the url
+    // This is part of the legacy login flow. Once the saml flow is completed in the
+    // auth app,  navigates to come_from with the tokens in the URL. This is triggerd in this
+    // same component in `authenticate`, and then independently of saml or other sso, it ends
+    // up here with the tokens in the URL. 
+    if (queryParams['token'] && queryParams['refresh_token']) {
+      this.loadUrlToken();
+      return;
+    }
+
     if (this.route.snapshot.data['saml']) {
       // Returning from SAML authentication
       this.handleSAMLCallback();
