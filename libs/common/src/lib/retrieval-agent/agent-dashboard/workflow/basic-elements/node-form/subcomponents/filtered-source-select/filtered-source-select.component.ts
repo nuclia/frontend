@@ -5,8 +5,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
-import { SDKService } from '@flaps/core';
-import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent } from '@nuclia/sistema';
 import { WorkflowService } from '../../../../workflow.service';
 import { aragUrl } from '../../../../workflow.state';
 
@@ -14,14 +13,7 @@ import { aragUrl } from '../../../../workflow.state';
   selector: 'app-filtered-source-select',
   templateUrl: './filtered-source-select.component.html',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    PaTextFieldModule,
-    PaButtonModule,
-    RouterLink,
-    TranslateModule,
-    InfoCardComponent
-],
+  imports: [ReactiveFormsModule, PaTextFieldModule, PaButtonModule, RouterLink, TranslateModule, InfoCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilteredSourceSelectComponent implements OnInit {
@@ -31,9 +23,7 @@ export class FilteredSourceSelectComponent implements OnInit {
   @Input() controlName?: string;
   @Input() property?: JSONSchema4;
 
-  private sdk = inject(SDKService);
   private workflowService = inject(WorkflowService);
-  private toaster = inject(SisToastService);
   private drivers = signal<any[]>([]);
   transportType = signal<string | null>(null);
 
@@ -66,7 +56,7 @@ export class FilteredSourceSelectComponent implements OnInit {
     // Listen for transport changes in the form
     if (this.form) {
       const transportControl = this.form.get('transport');
-      const moduleControl = this.form.get('module');
+      const fallback = this.form.get('source')?.value || this.form.get('module')?.value;
       if (transportControl) {
         // Set initial value
         this.transportType.set(transportControl.value);
@@ -75,12 +65,8 @@ export class FilteredSourceSelectComponent implements OnInit {
         transportControl.valueChanges.subscribe((value) => {
           this.transportType.set(value);
         });
-      } else if (moduleControl) {
-        // Fallback to module control if transport is not available
-        this.transportType.set(moduleControl.value);
-        moduleControl.valueChanges.subscribe((value) => {
-          this.transportType.set(value);
-        });
+      } else if (fallback) {
+        this.transportType.set(fallback);
       }
     }
   }
