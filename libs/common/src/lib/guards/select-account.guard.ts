@@ -2,13 +2,14 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { UserService, SelectAccountKbService, SDKService } from '@flaps/core';
+import { UserService, SelectAccountKbService, SDKService, BackendConfigurationService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
   const router: Router = inject(Router);
   const userService = inject(UserService);
   const sdk = inject(SDKService);
+  const config = inject(BackendConfigurationService);
 
   const selectedAccount = route.children[0]?.paramMap.get('account');
 
@@ -40,7 +41,9 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
       if (accounts.length === 0) {
         // if the user can create an account, redirect to onboarding
         if (userInfo?.create) {
-          return of(router.createUrlTree(['/user/onboarding']));
+          const authAppUrl = config.getAPIOrigin().replace('//accounts.', '//auth.');
+          window.location.href = `${authAppUrl}/user/onboarding`;
+          return of(false);
         } else {
           // no accounts and no create permission, redirect to logout
           sdk.nuclia.auth.logout();
