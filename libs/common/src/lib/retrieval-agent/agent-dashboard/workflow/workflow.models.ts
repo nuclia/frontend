@@ -41,6 +41,7 @@ import {
 } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 
+export const TEMP_CHILD_ID = '__TEMP__';
 export interface WorkflowRoot {
   preprocess: ConnectableEntryComponent;
   context: ConnectableEntryComponent;
@@ -104,7 +105,7 @@ export interface ParentNode {
   agents?: string[];
   registered_agents?: string[];
   fallback?: string;
-  nextAgent?: string;
+  next_agent?: string;
   // If node is a child, index in the parent then/else list
   childIndex?: number;
 }
@@ -181,6 +182,7 @@ export type NodeConfig =
   | SmartAgentUI
   | GuardrailsAgentUI;
 
+export type NodeConfigWithId = NodeConfig & { id: string };
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
 }
@@ -431,7 +433,39 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
     ...agentConfig,
   };
 }
-export function smartUiToCreation(config: any): any {
+export function smartUiToCreation(config: SmartAgentUI): any {
+  const newRegistered = config.registered_agents?.find((a) => !a.id);
+  if (newRegistered) {
+    const id = crypto.randomUUID();
+    const registered_agents = config.registered_agents?.map((a) => (!a.id ? { ...a, id } : { ...a }));
+    const registered_agents_descriptions = config.registered_agents_descriptions;
+    if (registered_agents_descriptions?.[TEMP_CHILD_ID]) {
+      registered_agents_descriptions[id] = registered_agents_descriptions[TEMP_CHILD_ID];
+      delete registered_agents_descriptions[TEMP_CHILD_ID];
+    }
+    const registered_agents_exposed_functions = config.registered_agents_exposed_functions;
+    if (registered_agents_exposed_functions?.[TEMP_CHILD_ID]) {
+      registered_agents_exposed_functions[id] = [...registered_agents_exposed_functions[TEMP_CHILD_ID]];
+      delete registered_agents_exposed_functions[TEMP_CHILD_ID];
+    }
+    config = {
+      ...config,
+      registered_agents: [...(registered_agents || [])],
+      registered_agents_descriptions,
+      registered_agents_exposed_functions,
+    };
+  }
+
+  const existingAgents = (config.registered_agents || []).map((a) => a.id) as string[];
+  const descriptionsToDelete = Object.keys(config.registered_agents_descriptions || {}).filter(
+    (k) => !existingAgents.includes(k),
+  );
+  descriptionsToDelete.forEach((k) => delete config.registered_agents_descriptions?.[k]);
+  const functionsToDelete = Object.keys(config.registered_agents_exposed_functions || {}).filter(
+    (k) => !existingAgents.includes(k),
+  );
+  functionsToDelete.forEach((k) => delete config.registered_agents_exposed_functions?.[k]);
+
   return {
     module: 'smart',
     ...config,

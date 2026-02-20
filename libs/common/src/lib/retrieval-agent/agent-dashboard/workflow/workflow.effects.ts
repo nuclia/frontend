@@ -301,10 +301,6 @@ export class WorkflowEffectService {
       (parentConfig as RestrictedAgentUI).agents = children;
     } else if (property === 'registered_agents') {
       (parentConfig as SmartAgentUI).registered_agents = children;
-      (parentConfig as SmartAgentUI).registered_agents_descriptions = (parentNode.nodeConfig as SmartAgentUI)
-        ?.registered_agents_descriptions;
-      (parentConfig as SmartAgentUI).registered_agents_exposed_functions = (parentNode.nodeConfig as SmartAgentUI)
-        ?.registered_agents_exposed_functions;
     } else {
       (parentConfig as BaseConditionalAgentUI)[property] = children;
     }
