@@ -109,7 +109,23 @@ jobs:
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget
 
       - name: Build affected apps
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget
+        run: |-
+          npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget
+          
+          # Check if there's any app that should be built because of chart changes and mark it to be built. 
+          # Unless it's already build by "npx nx affected" command
+          APPS_TO_BUILD=""
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/app/' && ! test -d dist/apps/dashboard && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/rao/' && ! test -d dist/apps/rao && APPS_TO_BUILD="$APPS_TO_BUILD rao"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/auth/' && ! test -d dist/apps/auth && APPS_TO_BUILD="$APPS_TO_BUILD auth"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/manager/' && ! test -d dist/apps/manager-v2 && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
+          
+          if [ -n "$APPS_TO_BUILD" ]; then
+            echo "Building apps with chart changes:$APPS_TO_BUILD"
+            for app in $APPS_TO_BUILD; do
+              npx nx build $app --configuration production
+            done
+          fi
 
       - name: Get package version
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
@@ -127,33 +143,15 @@ jobs:
       - name: Check apps to deploy
         id: check-deploy
         run: |-
-          # Check if apps were built
-          test -d dist/libs/search-widget && WIDGET_BUILT=1 || WIDGET_BUILT=0
-          test -d dist/rao-widget && RAO_WIDGET_BUILT=1 || RAO_WIDGET_BUILT=0
-          test -d dist/apps/dashboard && APP_BUILT=1 || APP_BUILT=0
-          test -d dist/apps/rao && RAO_BUILT=1 || RAO_BUILT=0
-          test -d dist/apps/auth && AUTH_BUILT=1 || AUTH_BUILT=0
-          test -d dist/apps/nucliadb-admin && NUCLIADB_ADMIN_BUILT=1 || NUCLIADB_ADMIN_BUILT=0
-          test -d dist/apps/manager-v2 && MANAGER_BUILT=1 || MANAGER_BUILT=0
-          test -d dist/apps/sistema-demo && SISTEMA_BUILT=1 || SISTEMA_BUILT=0
-          test -d dist/sdk-core && SDK_BUILT=1 || SDK_BUILT=0
-          
-          # Check if charts changed
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/app/' && CHART_APP_CHANGED=1 || CHART_APP_CHANGED=0
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/rao/' && CHART_RAO_CHANGED=1 || CHART_RAO_CHANGED=0
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/auth/' && CHART_AUTH_CHANGED=1 || CHART_AUTH_CHANGED=0
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/manager/' && CHART_MANAGER_CHANGED=1 || CHART_MANAGER_CHANGED=0
-          
-          # Finaly check what needs to be deployed
-          ([ $WIDGET_BUILT -eq 1 ] && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
-          ([ $RAO_WIDGET_BUILT -eq 1 ] && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
-          ([ $APP_BUILT -eq 1 ] || [ $CHART_APP_CHANGED -eq 1 ]) && echo "deploy-app=yes" >> $GITHUB_OUTPUT || echo "Dashboard unchanged"
-          ([ $RAO_BUILT -eq 1 ] || [ $CHART_RAO_CHANGED -eq 1 ]) && echo "deploy-rao=yes" >> $GITHUB_OUTPUT || echo "RAO app unchanged"
-          ([ $AUTH_BUILT -eq 1 ] || [ $CHART_AUTH_CHANGED -eq 1 ]) && echo "deploy-auth=yes" >> $GITHUB_OUTPUT || echo "auth app unchanged"
-          ([ $NUCLIADB_ADMIN_BUILT -eq 1 ] && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
-          ([ $MANAGER_BUILT -eq 1 ] || [ $CHART_MANAGER_CHANGED -eq 1 ]) && echo "deploy-manager=yes" >> $GITHUB_OUTPUT || echo "Manager unchanged"
-          ([ $SISTEMA_BUILT -eq 1 ] && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
-          ([ $SDK_BUILT -eq 1 ] && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
+          (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
+          (test -d dist/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
+          (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
+          (test -d dist/apps/rao && echo "deploy-rao=yes" >> $GITHUB_OUTPUT) || echo "RAO app unchanged"
+          (test -d dist/apps/auth && echo "deploy-auth=yes" >> $GITHUB_OUTPUT) || echo "auth app unchanged"
+          (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
+          (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
+          (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
+          (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
       - name: Publish widget to GCS
         if: steps.check-deploy.outputs.deploy-widget == 'yes' && github.ref == 'refs/heads/dev'
