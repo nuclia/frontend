@@ -325,12 +325,6 @@ export interface SparqlAgentCreation {
   module: 'sparql';
 }
 
-export interface SmartAgentCreation {
-  module: 'smart';
-  registered_agents_descriptions?: { [id: string]: string };
-  registered_agents_exposed_functions?: { [id: string]: string[] };
-}
-
 export interface SummarizeAgentCreation {
   module: 'summarize';
   prompt?: string;
@@ -433,9 +427,6 @@ export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
 }
 export interface GoogleAgent extends ContextAgent, GoogleAgentCreation {
   module: 'google';
-}
-export interface SmartAgent extends ContextAgent, SmartAgentCreation {
-  module: 'smart';
 }
 export interface SparkleAgent extends ContextAgent, SparqlAgentCreation {
   module: 'sparql';

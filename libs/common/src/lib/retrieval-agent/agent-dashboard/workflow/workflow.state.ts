@@ -524,10 +524,14 @@ export function addNode(
       node.childIndex = insertionIndex;
     }
     childNodes.update((children) => ({ ...children, [nodeId]: node }));
-    updateNode(parentId, nodeCategory, {
-      [property]: property === 'registered_agents' || property === 'agents' ? [nodeId] : nodeId,
-      isSaved,
-    });
+    if (property === 'registered_agents' || property === 'agents') {
+      updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
+    } else {
+      updateNode(parentId, nodeCategory, {
+        [property]: nodeId,
+        isSaved,
+      });
+    }
   }
 }
 
@@ -666,15 +670,30 @@ export function resetNodes() {
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @param partialNode Partial node updated
  */
-export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
+export function updateNode(
+  id: string,
+  nodeCategory: NodeCategory,
+  partialNode: Partial<ParentNode>,
+  appendChild?: { property: 'agents' | 'registered_agents'; nodeId: string },
+) {
   const node = getNode(id, nodeCategory);
   if (!node) {
     throw new Error(`updateNode: Node ${id} not found.`);
   }
+  if (appendChild) {
+    const existingChildren = node[appendChild.property] || [];
+    partialNode[appendChild.property] = [...existingChildren, appendChild.nodeId];
+  }
 
   // if the node is a registered agent, update registered_agents_descriptions and registered_agents_exposed_functions in the parent node
   if (node.parentLinkType === 'registered_agents' && node.parentId) {
-    const id = node.agentId || TEMP_CHILD_ID;
+    if (!node.agentId) {
+      node.agentId = (partialNode.nodeConfig as any).id;
+    }
+    const id = node.agentId;
+    if (!id) {
+      throw new Error('No id');
+    }
     const parent = getNode(node.parentId, 'context');
     if (parent && parent.nodeType === 'smart' && parent.nodeConfig) {
       (parent.nodeConfig as SmartAgentUI).registered_agents_descriptions = {
@@ -692,7 +711,6 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
   const childKeys = ['then', 'else', 'fallback', 'next_agent'];
   const childrenKeys = ['agents', 'registered_agents'];
   if (node.parentId && node.parentLinkType) {
-    console.log('updating child for ', node.parentLinkType, node);
     const parent = getNode(node.parentId, nodeCategory);
     if (parent && parent.nodeConfig && node.nodeConfig) {
       if (childKeys.includes(node.parentLinkType)) {

@@ -33,11 +33,9 @@ import {
   PreprocessAgentCreation,
   RephraseAgent,
   RephraseAgentCreation,
-  SmartAgent,
   SqlAgent,
   SqlAgentCreation,
   TavilyAgent,
-  TavilyAgentCreation,
 } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 
@@ -434,28 +432,6 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
   };
 }
 export function smartUiToCreation(config: SmartAgentUI): any {
-  const newRegistered = config.registered_agents?.find((a) => !a.id);
-  if (newRegistered) {
-    const id = crypto.randomUUID();
-    const registered_agents = config.registered_agents?.map((a) => (!a.id ? { ...a, id } : { ...a }));
-    const registered_agents_descriptions = config.registered_agents_descriptions;
-    if (registered_agents_descriptions?.[TEMP_CHILD_ID]) {
-      registered_agents_descriptions[id] = registered_agents_descriptions[TEMP_CHILD_ID];
-      delete registered_agents_descriptions[TEMP_CHILD_ID];
-    }
-    const registered_agents_exposed_functions = config.registered_agents_exposed_functions;
-    if (registered_agents_exposed_functions?.[TEMP_CHILD_ID]) {
-      registered_agents_exposed_functions[id] = [...registered_agents_exposed_functions[TEMP_CHILD_ID]];
-      delete registered_agents_exposed_functions[TEMP_CHILD_ID];
-    }
-    config = {
-      ...config,
-      registered_agents: [...(registered_agents || [])],
-      registered_agents_descriptions,
-      registered_agents_exposed_functions,
-    };
-  }
-
   const existingAgents = (config.registered_agents || []).map((a) => a.id) as string[];
   const descriptionsToDelete = Object.keys(config.registered_agents_descriptions || {}).filter(
     (k) => !existingAgents.includes(k),
@@ -523,7 +499,11 @@ export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleA
 export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
+  id?: string,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
+  if (id && !config.id) {
+    config.id = id;
+  }
   const cleanConfig = cleanupConfig(config);
   switch (nodeType) {
     case 'rephrase':

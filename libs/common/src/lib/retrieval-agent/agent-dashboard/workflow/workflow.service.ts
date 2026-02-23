@@ -984,6 +984,9 @@ export class WorkflowService {
     nodeType: NodeType,
     columnIndex: number,
   ) {
+    if (!(config as any).id) {
+      (config as any).id = crypto.randomUUID();
+    }
     updateNode(nodeId, nodeCategory, { nodeConfig: config });
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
     let childCreated = false;

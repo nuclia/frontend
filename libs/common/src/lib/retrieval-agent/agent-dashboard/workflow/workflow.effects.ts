@@ -287,7 +287,7 @@ export class WorkflowEffectService {
         : property === 'registered_agents'
           ? (parentConfig as SmartAgentUI).registered_agents || []
           : (parentConfig as BaseConditionalAgentUI)[property] || [];
-    const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
+    const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig, childNode.agentId);
     let updatedChild;
     if (typeof childNode.childIndex === 'number') {
       children[childNode.childIndex] = { ...childConfig, id: childNode.agentId };
