@@ -17,6 +17,11 @@
             @if (task.parameters.llm.keys?.[modelInfo.userKey]) {
               <div>({{ 'tasks-automation.settings.own-key' | translate }})</div>
             }
+            @if (
+              !!task.parameters.llm.reasoning_config?.effort || !!task.parameters.llm.reasoning_config?.budget_tokens
+            ) {
+              <div>({{ 'tasks-automation.settings.with-reasoning' | translate }})</div>
+            }
           }
         </div>
       }

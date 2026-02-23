@@ -1,0 +1,7 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.reasoning-config {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}

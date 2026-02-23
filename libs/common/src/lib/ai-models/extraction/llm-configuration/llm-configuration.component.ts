@@ -12,10 +12,10 @@ import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModu
 
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations } from '@nuclia/core';
+import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations, ReasoningConfig } from '@nuclia/core';
 import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
-import { ModelSelectorComponent } from '../../answer-generation';
+import { ModelSelectorComponent, ReasoningConfigComponent } from '../../answer-generation';
 
 @Component({
   imports: [
@@ -25,17 +25,17 @@ import { ModelSelectorComponent } from '../../answer-generation';
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
+    ReasoningConfigComponent,
     TranslateModule,
     InfoCardComponent,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   selector: 'stf-llm-configuration',
   templateUrl: './llm-configuration.component.html',
   styleUrls: ['./llm-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
-
   @Input() providers: GenerativeProviders = {};
   @Input() learningConfigurations: LearningConfigurations = {};
   @Input() createMode: boolean = true;
@@ -56,9 +56,10 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
     customLLM: new FormControl<boolean>(false, { nonNullable: true }),
     llm: new FormGroup({
       generative_model: new FormControl<string>('', { nonNullable: true }),
-      //generative_prompt_id: new FormControl<string>('', { nonNullable: true }),
     }),
   });
+  reasoningConfig?: ReasoningConfig;
+  reasoningDisabled = false;
 
   get useCustomModel() {
     return this.configForm.controls.customLLM.value;
@@ -93,6 +94,8 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
           generative_model: this.config?.llm?.generative_model || '',
         },
       });
+      this.reasoningConfig = this.config?.llm?.reasoning_config;
+      this.reasoningDisabled = true;
       this.configForm.disable();
     }
 
@@ -101,7 +104,12 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
       .subscribe(() => {
         const values = this.configForm.getRawValue();
         this.valueChange.emit({
-          llm: values.customLLM ? { generative_model: values.llm.generative_model } : undefined,
+          llm: values.customLLM
+            ? {
+                generative_model: values.llm.generative_model,
+                reasoning_config: this.reasoningConfig,
+              }
+            : undefined,
           merge_pages: this.isAiTable ? values.merge_pages : undefined,
           max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
@@ -123,5 +131,10 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   removeRule(index: number) {
     this.rules.removeAt(index);
+  }
+
+  onReasoningChange() {
+    // Emit updated value
+    this.configForm.updateValueAndValidity();
   }
 }

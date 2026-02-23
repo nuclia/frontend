@@ -73,14 +73,10 @@
           formControlName="generative_model"
           [providers]="providers"
           [learningConfigurations]="learningConfigurations"></stf-model-selector>
-        <!-- 
-        <nsi-expandable-textarea
-          formControlName="generative_prompt_id"
-          modalTitle="kb.ai-models.extraction.llm-configuration.custom-prompt"
-          rows="3">
-          {{ 'kb.ai-models.extraction.llm-configuration.custom-prompt' | translate }}
-        </nsi-expandable-textarea>
-        -->
+        <stf-reasoning-config
+          [(config)]="reasoningConfig"
+          (configChange)="onReasoningChange()"
+          [disabled]="reasoningDisabled"></stf-reasoning-config>
       </ng-container>
     }
   </div>
