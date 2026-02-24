@@ -56,7 +56,7 @@ export class FilteredSourceSelectComponent implements OnInit {
     // Listen for transport changes in the form
     if (this.form) {
       const transportControl = this.form.get('transport');
-      const fallback = this.form.get('source')?.value || this.form.get('module')?.value;
+      const fallback = this.property?.default || this.form.get('module')?.value;
       if (transportControl) {
         // Set initial value
         this.transportType.set(transportControl.value);
