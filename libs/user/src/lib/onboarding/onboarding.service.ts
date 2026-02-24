@@ -137,9 +137,8 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        const path = `/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
-        localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
-        this.router.navigate([path]);
+        this.sdk.nuclia.options.backend;
+        window.location.href = `${this.sdk.getOriginFor('rag')}/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
       }),
     );
   }
@@ -182,9 +181,7 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        const path = `/at/${accountSlug}/${zone}/arag/${raoSlug}`;
-        localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
-        this.router.navigate([path]);
+        window.location.href = `${this.sdk.getOriginFor('rao')}/at/${accountSlug}/${zone}/arag/${raoSlug}`;
       }),
     );
   }
