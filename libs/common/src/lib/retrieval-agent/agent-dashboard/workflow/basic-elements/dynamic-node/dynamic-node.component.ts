@@ -404,73 +404,6 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     return entries;
   }
 
-  private resolveSchemaRef(rootSchema: JSONSchema4, ref: string): JSONSchema4 | null {
-    // Handle $ref like "#/$defs/ContextConditionalAgentConfig"
-    if (ref.startsWith('#/$defs/')) {
-      const defName = ref.replace('#/$defs/', '');
-      const defs = (rootSchema as any)['$defs'];
-      if (defs && defs[defName]) {
-        return defs[defName] as JSONSchema4;
-      }
-    }
-    return null;
-  }
-
-  private schemaMatchesNodeType(schema: JSONSchema4, nodeType: string): boolean {
-    // Check if the schema title matches the node type
-    if (schema.title?.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
-      return true;
-    }
-
-    // Check if properties contain identifiers that match the node type
-    if (schema.properties?.['module']) {
-      const moduleProperty = schema.properties['module'] as JSONSchema4;
-      if (moduleProperty['const'] === nodeType || moduleProperty['default'] === nodeType) {
-        return true;
-      }
-    }
-
-    // Handle conditional nodes
-    if (nodeType.includes('conditional') && schema.title?.toLowerCase().includes('conditional')) {
-      return true;
-    }
-
-    // Handle conditional nodes with $ref
-    if (nodeType.includes('conditional') && schema['$ref']) {
-      const ref = schema['$ref'] as string;
-      if (ref.toLowerCase().includes('conditional')) {
-        return true;
-      }
-    }
-
-    // Handle exact module matches in $ref
-    if (schema['$ref']) {
-      const ref = schema['$ref'] as string;
-      // Extract the definition name from the $ref
-      if (ref.startsWith('#/$defs/')) {
-        const defName = ref.replace('#/$defs/', '');
-        // Check if the definition name matches the node type pattern
-        if (defName.toLowerCase().includes(nodeType.toLowerCase().replace('_', ''))) {
-          return true;
-        }
-
-        if (nodeType === 'restricted' && defName.toLowerCase().includes('python')) {
-          return true;
-        }
-      }
-    }
-
-    // Handle alinia nodes
-    if (
-      (nodeType === 'preprocess_alinia' || nodeType === 'postprocess_alinia') &&
-      schema.title?.toLowerCase().includes('alinia')
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
   private createSchemaEntry(schema: JSONSchema4, title: string): SchemaEntry {
     const properties = schema.properties || {};
     const discriminatorProperties: string[] = [];
@@ -509,10 +442,9 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       } else if (
         key.toLowerCase().includes('fallback') ||
         key.toLowerCase().includes('next_agent') ||
-        key.toLowerCase().includes('nextagent') ||
-        key.toLowerCase().includes('else') ||
+        key.toLowerCase().includes('else_') ||
         key.toLowerCase().includes('alternative') ||
-        key.toLowerCase().includes('agents')
+        (key.toLowerCase().includes('agents') && !key.toLowerCase().startsWith('registered_agents_'))
       ) {
         // Only add if not already added from config
         if (!fallbackEntries.some((entry) => entry.id === key)) {

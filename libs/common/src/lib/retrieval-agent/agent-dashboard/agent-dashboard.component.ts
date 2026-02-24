@@ -20,6 +20,7 @@ import {
   ConnectableEntryComponent,
   LinkService,
   sideBarBadge,
+  selectedNode,
   sideBarClosing,
   sideBarDescription,
   sideBarLarge,
@@ -70,6 +71,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   activeSideBar = activeSideBar;
   isAragWithMemory = this.sdk.isAragWithMemory;
   isAragAdmin = this.features.isAragAdmin;
+  selected = selectedNode;
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());

@@ -36,10 +36,10 @@ import {
   SqlAgent,
   SqlAgentCreation,
   TavilyAgent,
-  TavilyAgentCreation,
 } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 
+export const TEMP_CHILD_ID = '__TEMP__';
 export interface WorkflowRoot {
   preprocess: ConnectableEntryComponent;
   context: ConnectableEntryComponent;
@@ -67,6 +67,7 @@ export type NodeType =
   | 'remi'
   | 'external'
   | 'restart'
+  | 'smart'
   | 'postprocess_alinia';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
@@ -98,12 +99,20 @@ export interface ParentNode {
   parentLinkType?: string;
   parentLinkConfigProperty?: string;
   then?: string[];
-  else?: string[];
+  else_?: string[];
   agents?: string[];
+  registered_agents?: string[];
   fallback?: string;
-  nextAgent?: string;
+  next_agent?: string;
   // If node is a child, index in the parent then/else list
   childIndex?: number;
+}
+
+export interface RegisteredAgentParams {
+  description: string;
+  functions: string[];
+  nodeType: string;
+  modified?: boolean;
 }
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -168,8 +177,10 @@ export type NodeConfig =
   | PostConditionalAgentUI
   | RestartAgentUI
   | ExternalAgentUI
+  | SmartAgentUI
   | GuardrailsAgentUI;
 
+export type NodeConfigWithId = NodeConfig & { id: string };
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
 }
@@ -259,6 +270,11 @@ export interface BaseConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
   then?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
   else_?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
+}
+export interface SmartAgentUI extends CommonAgentConfig {
+  registered_agents?: BaseContextAgent[];
+  registered_agents_descriptions?: { [id: string]: string };
+  registered_agents_exposed_functions?: { [id: string]: string[] };
 }
 export interface PreConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
@@ -415,6 +431,22 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
     ...agentConfig,
   };
 }
+export function smartUiToCreation(config: SmartAgentUI): any {
+  const existingAgents = (config.registered_agents || []).map((a) => a.id) as string[];
+  const descriptionsToDelete = Object.keys(config.registered_agents_descriptions || {}).filter(
+    (k) => !existingAgents.includes(k),
+  );
+  descriptionsToDelete.forEach((k) => delete config.registered_agents_descriptions?.[k]);
+  const functionsToDelete = Object.keys(config.registered_agents_exposed_functions || {}).filter(
+    (k) => !existingAgents.includes(k),
+  );
+  functionsToDelete.forEach((k) => delete config.registered_agents_exposed_functions?.[k]);
+
+  return {
+    module: 'smart',
+    ...config,
+  };
+}
 export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
   const { call_schema, call_obj, ...uiConfig } = agent;
   return {
@@ -467,7 +499,11 @@ export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleA
 export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
+  id?: string,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
+  if (id && !config.id) {
+    config.id = id;
+  }
   const cleanConfig = cleanupConfig(config);
   switch (nodeType) {
     case 'rephrase':
@@ -482,6 +518,8 @@ export function getAgentFromConfig(
       return mcpUiToCreation(cleanConfig);
     case 'external':
       return externalUiToCreation(cleanConfig);
+    case 'smart':
+      return smartUiToCreation(cleanConfig);
     case 'preprocess_alinia':
     case 'postprocess_alinia':
       return guardrailsUiToCreation(cleanConfig);
