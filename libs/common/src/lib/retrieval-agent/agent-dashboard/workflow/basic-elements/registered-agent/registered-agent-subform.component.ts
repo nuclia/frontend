@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { registeredAgentParams, rootSchema } from '../../workflow.state';
 import { WorkflowService } from '../../workflow.service';
 import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
+import { distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-registered-agent-subform',
@@ -30,27 +31,31 @@ export class RegisteredAgentSubformComponent implements OnInit {
   constructor() {
     effect(() => {
       const params = registeredAgentParams();
-      this.form.patchValue(
-        { description: params.description, functions: params.functions.join(',') },
-        { emitEvent: false },
-      );
-      this.nodeType = params.nodeType;
-      const schemas = rootSchema();
-      if (schemas) {
-        const schemaName = convertNodeTypeToConfigTitle(params.nodeType, schemas);
-        const matchingSchema = schemas['$defs'][schemaName];
-        this.functionOptions = (matchingSchema?.properties['published_functions'].default || []).map(
-          (func: string) => new OptionModel({ id: func, value: func, label: func }),
+      const description = params.description || '';
+      const functions = params.functions?.join(',') || '';
+      if (description !== this.form.value.description || functions !== this.form.value.functions) {
+        this.form.patchValue(
+          { description: params.description, functions: params.functions.join(',') },
+          { emitEvent: false },
         );
+        this.nodeType = params.nodeType;
+        const schemas = rootSchema();
+        if (schemas) {
+          const schemaName = convertNodeTypeToConfigTitle(params.nodeType, schemas);
+          const matchingSchema = schemas['$defs'][schemaName];
+          this.functionOptions = (matchingSchema?.properties['published_functions'].default || []).map(
+            (func: string) => new OptionModel({ id: func, value: func, label: func }),
+          );
+        }
       }
     });
   }
 
   ngOnInit(): void {
-    this.form.valueChanges.subscribe((values) => {
+    this.form.valueChanges.pipe(distinctUntilChanged()).subscribe((values) => {
       registeredAgentParams.set({
         description: values.description || '',
-        functions: (values.functions || '').split(','),
+        functions: values.functions ? values.functions.split(',') : [],
         modified: true,
         nodeType: this.nodeType,
       });
