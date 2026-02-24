@@ -1393,6 +1393,8 @@
 	"retrieval-agents.workflow.node-types.internet.form.related-questions": "Preguntes relacionades",
 	"retrieval-agents.workflow.node-types.internet.form.top-k": "Top K",
 	"retrieval-agents.workflow.node-types.internet.title": "Cerca a Internet",
+	"retrieval-agents.workflow.node-types.marklogic.form.go-to-drivers": "Creeu un controlador Marklogic",
+	"retrieval-agents.workflow.node-types.marklogic.form.no-source": "No hi ha cap controlador Marklogic registrat, cal que en creeu un abans d'afegir aquest tipus de node.",
 	"retrieval-agents.workflow.node-types.mcp.description": "Utilitzeu la comunicació MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Crea un controlador MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "No hi ha cap controlador MCP {{transport}} registrat; cal crear-ne un abans d'afegir aquest tipus de node.",

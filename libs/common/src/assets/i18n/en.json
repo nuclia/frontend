@@ -1394,6 +1394,8 @@
 	"retrieval-agents.workflow.node-types.internet.form.related-questions": "Related questions",
 	"retrieval-agents.workflow.node-types.internet.form.top-k": "Top K",
 	"retrieval-agents.workflow.node-types.internet.title": "Internet search",
+	"retrieval-agents.workflow.node-types.marklogic.form.go-to-drivers": "Create a Marklogic driver",
+	"retrieval-agents.workflow.node-types.marklogic.form.no-source": "There is no Marklogic driver registered, you need to create one before adding this kind of node.",
 	"retrieval-agents.workflow.node-types.mcp.description": "Use MCP communication ",
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Create an MCP driver",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "There is no MCP {{transport}} driver registered, you need to create one before adding this kind of node.",

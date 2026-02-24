@@ -1393,6 +1393,8 @@
 	"retrieval-agents.workflow.node-types.internet.form.related-questions": "Questions connexes",
 	"retrieval-agents.workflow.node-types.internet.form.top-k": "Top K",
 	"retrieval-agents.workflow.node-types.internet.title": "Recherche sur Internet",
+	"retrieval-agents.workflow.node-types.marklogic.form.go-to-drivers": "Créer un pilote Marklogic",
+	"retrieval-agents.workflow.node-types.marklogic.form.no-source": "Il n'y a pas de pilote Marklogic enregistré, vous devez en créer un avant d'ajouter ce type de nœud.",
 	"retrieval-agents.workflow.node-types.mcp.description": "Utiliser la communication MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.go-to-drivers": "Créer un pilote MCP",
 	"retrieval-agents.workflow.node-types.mcp.form.no-source": "Il n'y a pas de pilote MCP {{transport}} enregistré, vous devez en créer un avant d'ajouter ce type de nœud.",
