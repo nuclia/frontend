@@ -40,7 +40,7 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
-    const LOGS_ENABLED = true;
+    const LOGS_ENABLED = false;
     if (!nodeInitialisationDone()) {
       return;
     }
@@ -241,21 +241,25 @@ export class WorkflowEffectService {
 
     if ((parentNode.then || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'then'));
-    } else if ((parentNode.else || []).includes(childId)) {
+    } else if ((parentNode.else_ || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'else_'));
     } else if ((parentNode.agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'agents'));
     } else if ((parentNode.registered_agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
-    } else if (Object.keys(parentNode).includes(childId)) {
-      const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
-      const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childId;
-      const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
-      parentConfig[configKey] = childConfig;
-      if (configKey !== childId && childId in parentConfig) {
-        delete parentConfig[childId];
+    } else {
+      const childKey =
+        parentNode.fallback === childId ? 'fallback' : parentNode.next_agent === childId ? 'next_agent' : '';
+      if (childKey) {
+        const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
+        const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childKey;
+        const parentConfig = parentNode.nodeConfig as unknown as Record<string, unknown>;
+        parentConfig[configKey] = childConfig;
+        if (configKey !== childId && childId in parentConfig) {
+          delete parentConfig[childId];
+        }
+        updatedChildren.push({ id: childId });
       }
-      updatedChildren.push({ id: childId });
     }
 
     if (parentNode.parentId) {

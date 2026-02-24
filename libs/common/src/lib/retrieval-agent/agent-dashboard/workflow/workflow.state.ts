@@ -1,5 +1,5 @@
 import { ComponentRef, computed, signal } from '@angular/core';
-import { AnswerOperation, AragAnswer, AragModule, getCategoryFromModule } from '@nuclia/core';
+import { AnswerOperation, AragAnswer, AragModule, BaseContextAgent, getCategoryFromModule } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import {
   AragAnswerUi,
@@ -509,7 +509,7 @@ export function addNode(
     if (property === 'registered_agents') {
       registeredAgentParams.set({ description: '', functions: [], nodeType });
     }
-    if (property === 'then' || property === 'else' || property === 'agents') {
+    if (property === 'then' || property === 'else_' || property === 'agents') {
       const existing = (parent as any)?.[property];
       const childIds = Array.isArray(existing) ? [...existing] : [];
       const currentIndex = childIds.indexOf(nodeId);
@@ -524,7 +524,7 @@ export function addNode(
       node.childIndex = insertionIndex;
     }
     childNodes.update((children) => ({ ...children, [nodeId]: node }));
-    if (property === 'registered_agents' || property === 'agents') {
+    if (property === 'registered_agents' || property === 'agents' || property === 'then' || property === 'else_') {
       updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
     } else {
       updateNode(parentId, nodeCategory, {
@@ -571,35 +571,24 @@ export function deleteNode(
   if (parentId) {
     const parentNode = getNode(parentId, nodeCategory);
     if (parentNode) {
-      if (parentNode.fallback === id) {
-        const nodeConfig = parentNode.nodeConfig as AskAgentUI;
-        nodeConfig.fallback = null;
-        updateNode(parentId, nodeCategory, { fallback: undefined, nodeConfig });
-      } else if (parentNode.next_agent === id) {
-        const partial: Partial<ParentNode> = { next_agent: undefined };
-        if (parentNode.nodeConfig) {
-          const nodeConfig = { ...parentNode.nodeConfig } as any;
-          nodeConfig.next_agent = null;
-          partial.nodeConfig = nodeConfig;
-        }
-        updateNode(parentId, nodeCategory, partial);
-      } else if ((parentNode.then || []).includes(id)) {
-        const childIds = (parentNode.then || []).filter((childId) => childId !== id);
-        updateNode(parentId, nodeCategory, { then: childIds });
-      } else if ((parentNode.else || []).includes(id)) {
-        const childIds = (parentNode.else || []).filter((childId) => childId !== id);
-        updateNode(parentId, nodeCategory, { else: childIds });
-      } else if ((parentNode.agents || []).includes(id)) {
-        const childIds = (parentNode.agents || []).filter((childId) => childId !== id);
-        updateNode(parentId, nodeCategory, { agents: childIds });
-      } else if ((parentNode.registered_agents || []).includes(id)) {
-        const childIds = (parentNode.registered_agents || []).filter((childId) => childId !== id);
-        const parentConfig = parentNode.nodeConfig;
-        const agentId = getNode(id, nodeCategory)?.agentId;
-        (parentConfig as SmartAgentUI).registered_agents = (parentConfig as SmartAgentUI).registered_agents?.filter(
-          (ag) => ag.id !== agentId,
+      const impactedStringProp = ['fallback', 'next_agent'].find((prop) => (parentNode as any)[prop] === id);
+      if (impactedStringProp) {
+        const nodeConfig = parentNode.nodeConfig;
+        (nodeConfig as any)[impactedStringProp] = null;
+        updateNode(parentId, nodeCategory, { [impactedStringProp]: undefined, nodeConfig });
+      } else {
+        const impactedListProp = ['agents', 'registered_agents', 'then', 'else_'].find(
+          (prop) => (parentNode as any)[prop]?.includes(id),
         );
-        updateNode(parentId, nodeCategory, { registered_agents: childIds, nodeConfig: parentConfig });
+        if (impactedListProp) {
+          const childIds = ((parentNode as any)[impactedListProp] || []).filter((childId: string) => childId !== id);
+          const parentConfig = parentNode.nodeConfig;
+          const agentId = getNode(id, nodeCategory)?.agentId;
+          (parentConfig as any)[impactedListProp] = (parentConfig as any)[impactedListProp]?.filter(
+            (ag: BaseContextAgent) => ag.id !== agentId,
+          );
+          updateNode(parentId, nodeCategory, { [impactedListProp]: childIds, nodeConfig: parentConfig });
+        }
       }
     }
   }
@@ -634,9 +623,9 @@ export function deleteNode(
     // Set agent that should be deleted from the backend
     deletedAgents.update((deleted) => [...deleted, { id, category: nodeCategory }]);
   }
-  if (node && (node.then || node.else || node.agents || node.fallback || node.registered_agents)) {
+  if (node && (node.then || node.else_ || node.agents || node.fallback || node.registered_agents)) {
     const childToDelete = (node.then || [])
-      .concat(node.else || [])
+      .concat(node.else_ || [])
       .concat(node.agents || [])
       .concat(node.registered_agents || []);
     if (node.fallback) {
@@ -674,7 +663,7 @@ export function updateNode(
   id: string,
   nodeCategory: NodeCategory,
   partialNode: Partial<ParentNode>,
-  appendChild?: { property: 'agents' | 'registered_agents'; nodeId: string },
+  appendChild?: { property: 'agents' | 'registered_agents' | 'then' | 'else_'; nodeId: string },
 ) {
   const node = getNode(id, nodeCategory);
   if (!node) {
@@ -708,8 +697,8 @@ export function updateNode(
   }
 
   // update parent configs
-  const childKeys = ['then', 'else', 'fallback', 'next_agent'];
-  const childrenKeys = ['agents', 'registered_agents'];
+  const childKeys = ['fallback', 'next_agent'];
+  const childrenKeys = ['then', 'else_', 'agents', 'registered_agents'];
   if (node.parentId && node.parentLinkType) {
     const parent = getNode(node.parentId, nodeCategory);
     if (parent && parent.nodeConfig && node.nodeConfig) {

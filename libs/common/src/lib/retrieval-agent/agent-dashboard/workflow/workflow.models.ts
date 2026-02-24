@@ -99,7 +99,7 @@ export interface ParentNode {
   parentLinkType?: string;
   parentLinkConfigProperty?: string;
   then?: string[];
-  else?: string[];
+  else_?: string[];
   agents?: string[];
   registered_agents?: string[];
   fallback?: string;
