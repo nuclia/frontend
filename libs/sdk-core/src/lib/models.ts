@@ -70,7 +70,7 @@ export interface IAuthentication {
   redirectToOAuth(queryParams?: { [key: string]: string }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
   getAuthUrl(): string;
-  validateMagicToken(token: string): Observable<MagicAction>;
+  validateMagicToken(token: string, zone?: string): Observable<MagicAction>;
 }
 
 export interface IRest {
