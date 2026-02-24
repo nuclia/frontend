@@ -419,4 +419,8 @@ export class SDKService {
       )
       .subscribe();
   }
+
+  getOriginFor(prefix: string): string {
+    return this.config.getAPIOrigin().replace('//accounts.', `//${prefix}.`);
+  }
 }
