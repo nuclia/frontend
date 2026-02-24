@@ -70,11 +70,13 @@ export class MagicService {
   }
 
   joinKb(action: MagicAction) {
-    return this.validateToken(action.join_kb_token || '').pipe(tap((nextAction) => this._execute(nextAction)));
+    return this.validateToken(action.join_kb_token || '', action.zone).pipe(
+      tap((nextAction) => this._execute(nextAction)),
+    );
   }
 
-  validateToken(token: string) {
-    return this.sdk.nuclia.auth.validateMagicToken(token).pipe(
+  validateToken(token: string, zone?: string) {
+    return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
         throw { tokenError: error };
       }),
