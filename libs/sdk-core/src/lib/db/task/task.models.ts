@@ -1,3 +1,5 @@
+import { ReasoningConfig } from '../kb';
+
 export type TaskName =
   | 'labeler'
   | 'llm-graph'
@@ -129,6 +131,7 @@ export interface LLMConfig {
   prompts?: {
     [model: string]: { prompt: string; system?: string } | null;
   };
+  reasoning_config?: ReasoningConfig;
 }
 
 export type TaskParameters = DataAugmentationParameters | SemanticModelMigration;

@@ -44,11 +44,12 @@ import {
   TaskFullDefinition,
   TaskName,
   TaskTrigger,
+  ReasoningConfig,
 } from '@nuclia/core';
 import { BehaviorSubject, filter, forkJoin, map, Subject, switchMap } from 'rxjs';
 import { delay, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { ModelSelectorComponent, UserKeysComponent, UserKeysForm } from '../../ai-models';
+import { ModelSelectorComponent, ReasoningConfigComponent, UserKeysComponent, UserKeysForm } from '../../ai-models';
 import { DataAugmentationTaskOnGoing, getOperationFromTaskName, hasFilters } from '../tasks-automation.models';
 import { RouterModule } from '@angular/router';
 import { FilterExpressionModalComponent } from '../../search-widget/search-configuration/filter-expression-modal';
@@ -104,6 +105,7 @@ export interface TaskFormCommonConfig {
     TranslateModule,
     PaTableModule,
     PaButtonModule,
+    ReasoningConfigComponent,
     RouterModule,
     StickyFooterComponent,
     UserKeysComponent,
@@ -172,6 +174,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     }),
   });
   userKeysForm?: UserKeysForm;
+  reasoningConfig?: ReasoningConfig;
   headers: { key: string; value: string }[] = [];
   parameters: { key: string; value: string }[] = [];
   tasksRoute = this.tasksAutomation.tasksRoute;
@@ -310,6 +313,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       labelset: label.split('/')[0],
       label: label.split('/')[1],
     }));
+    this.reasoningConfig = task.parameters.llm.reasoning_config;
     if (triggers) {
       this.headers = Object.entries(triggers.headers || {}).map(([key, value]) => ({ key, value }));
       this.parameters = Object.entries(triggers.params || {}).map(([key, value]) => ({ key, value }));
@@ -400,6 +404,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           this.generativeModel?.user_key && userKeys?.enabled
             ? { [this.generativeModel.user_key]: userKeys.user_keys }
             : {},
+        reasoning_config: this.reasoningConfig,
       },
     });
   }

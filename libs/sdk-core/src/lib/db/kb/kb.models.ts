@@ -527,6 +527,7 @@ export interface ExtractLLMConfig {
   generative_provider?: string;
   generative_prompt_id?: string;
   user_keys?: any;
+  reasoning_config?: ReasoningConfig;
 }
 
 export interface ExtractVLLMConfig {
@@ -639,6 +640,18 @@ export enum ReasoningEffort {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
+}
+
+export enum NumericReasoningEffort {
+  MINIMAL = 0,
+  LOW = 1,
+  MEDIUM = 2,
+  HIGH = 3,
+}
+
+export interface ReasoningConfig {
+  budget_tokens?: number;
+  effort?: NumericReasoningEffort;
 }
 
 export enum DataResidencyStatus {

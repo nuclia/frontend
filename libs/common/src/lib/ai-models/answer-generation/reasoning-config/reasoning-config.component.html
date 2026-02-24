@@ -1,0 +1,34 @@
+<div
+  class="reasoning-config"
+  [formGroup]="form">
+  <pa-toggle
+    labelOnRight
+    formControlName="customizeReasoning">
+    {{ 'kb.ai-models.reasoning-config.customize-reasoning' | translate }}
+  </pa-toggle>
+  @if (isCustomReasoning) {
+    <pa-select
+      formControlName="effort"
+      [label]="'search.configuration.generative-answer.reasoning.effort-label' | translate"
+      [help]="'search.configuration.generative-answer.reasoning.effort-help' | translate">
+      <pa-option value="0">
+        {{ 'search.configuration.generative-answer.reasoning.effort-minimal' | translate }}
+      </pa-option>
+      <pa-option value="1">
+        {{ 'search.configuration.generative-answer.reasoning.effort-low' | translate }}
+      </pa-option>
+      <pa-option value="2">
+        {{ 'search.configuration.generative-answer.reasoning.effort-medium' | translate }}
+      </pa-option>
+      <pa-option value="3">
+        {{ 'search.configuration.generative-answer.reasoning.effort-high' | translate }}
+      </pa-option>
+    </pa-select>
+    <pa-input
+      formControlName="budget_tokens"
+      type="number"
+      [help]="'search.configuration.generative-answer.reasoning.budget-help' | translate">
+      {{ 'search.configuration.generative-answer.reasoning.budget-label' | translate }}
+    </pa-input>
+  }
+</div>

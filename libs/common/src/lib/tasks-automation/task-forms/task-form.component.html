@@ -160,6 +160,8 @@
               [learningConfigurations]="learningConfigurations"
               [generativeModel]="generativeModel"
               (formReady)="initUserKeysForm($event)"></stf-user-keys>
+            <stf-reasoning-config
+              [(config)]="reasoningConfig"></stf-reasoning-config>
           }
           <nsi-info-card
             type="warning"
