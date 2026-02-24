@@ -477,7 +477,11 @@ export class Authentication implements IAuthentication {
     );
   }
 
-  validateMagicToken(token: string): Observable<MagicAction> {
-    return this.fetch(`${this.getAuthUrl()}/magic?token=${token}`);
+  validateMagicToken(token: string, zone?: string): Observable<MagicAction> {
+    let endpoint = this.getAuthUrl();
+    if (zone) {
+      endpoint = endpoint.replace('//accounts.', `//${zone}.`);
+    }
+    return this.fetch(`${endpoint}/magic?token=${token}`);
   }
 }
