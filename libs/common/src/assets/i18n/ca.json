@@ -1298,6 +1298,8 @@
 	"retrieval-agents.workflow.errors.loading-workflow.preprocess": "S'ha produït un error en carregar els agents de preprocessament.",
 	"retrieval-agents.workflow.errors.save-agent": "S'ha produït un error en desar el node.",
 	"retrieval-agents.workflow.missing-configuration": "Falta la configuració",
+	"retrieval-agents.workflow.node-functions.agent-id": "ID del agent",
+	"retrieval-agents.workflow.node-functions.no-functions": "No hi ha funcions disponibles",
 	"retrieval-agents.workflow.node-types.advanced_ask.description": "Agent Agentic RAG ask",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.citations": "Cites",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.citations-and-json": "Citacions i sortida JSON",

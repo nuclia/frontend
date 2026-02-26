@@ -8,6 +8,11 @@
       <app-registered-agent-subform></app-registered-agent-subform>
     </div>
   }
+  @if (showPublishedFunctions()) {
+    <div class="node-functions">
+      <app-node-functions [node]="currentNode()"></app-node-functions>
+    </div>
+  }
   <ng-content></ng-content>
   <footer>
     <pa-button
