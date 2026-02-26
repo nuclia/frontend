@@ -66,8 +66,9 @@ export class ReasoningConfigComponent implements OnDestroy {
   }
 
   updateForm(value: ReasoningConfig | undefined) {
-    const noValues = value === undefined || (value?.budget_tokens === 0 && value?.effort === 0 && this.form.pristine);
-    if (noValues) {
+    const empty = value === undefined;
+    const defaultValue = value && value.budget_tokens === 0 && value.effort === 0 && this.form.pristine;
+    if (empty || defaultValue) {
       this.form.patchValue({ customizeReasoning: false }, { emitEvent: false });
       return;
     } else {

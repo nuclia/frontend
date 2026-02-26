@@ -80,10 +80,10 @@ export const retry429Config = (maxWaitOn429 = 30000): RetryConfig => ({
   count: 3,
   delay: (error, index) => {
     const tryAfter = error?.body?.detail?.try_after;
-    if (error.status === 429 && tryAfter) {
+    if (error?.status === 429 && tryAfter) {
       const delayOn429 = Math.min(tryAfter * 1000 - Date.now(), maxWaitOn429);
       return of(true).pipe(delay(delayOn429));
-    } else if (error.status === 429 && !tryAfter) {
+    } else if (error?.status === 429 && !tryAfter) {
       const delays = [1000, 5000, 10000];
       return of(true).pipe(delay(delays[index]));
     } else {
