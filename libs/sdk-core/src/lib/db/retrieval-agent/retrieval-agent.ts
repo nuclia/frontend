@@ -282,7 +282,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
   getAgentTempToken(agent_session: string, ttl?: number): Observable<string> {
     return this.nuclia.rest
-      .post<{ token: string }>('/service_account_agent_key', { agent_session, ttl })
+      .post<{ token: string }>('/ephemeral_token', { agent_session, ttl })
       .pipe(map((res) => res.token));
   }
 
