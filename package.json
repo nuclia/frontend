@@ -174,7 +174,7 @@
     "react-dom": "^19.2.1",
     "replace-in-file": "^6.3.5",
     "rimraf": "^3.0.2",
-    "rollup": "4.24.0",
+    "rollup": "4.59.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "6.1.1",
     "rollup-plugin-generate-package-json": "^3.2.0",
