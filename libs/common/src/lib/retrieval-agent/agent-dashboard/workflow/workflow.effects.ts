@@ -40,14 +40,10 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
-    const LOGS_ENABLED = false;
     if (!nodeInitialisationDone()) {
       return;
     }
     const workflowState = workflow();
-    if (LOGS_ENABLED) {
-      console.debug(`Effect:\n    Workflow state`, workflowState);
-    }
 
     // First checks for updates on children, as those changes may trigger updates on the parent
     let requests: { request: Observable<void>; nodeId: string; log: string }[] = [];
@@ -63,14 +59,7 @@ export class WorkflowEffectService {
     workflowState.postprocess.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
 
     if (requests.length > 0) {
-      forkJoin(
-        requests.map((item) => {
-          if (LOGS_ENABLED) {
-            console.debug(item.log);
-          }
-          return item.request;
-        }),
-      ).subscribe();
+      forkJoin(requests.map((item) => item.request)).subscribe();
     }
 
     // Check if there is a node to be deleted from the backend

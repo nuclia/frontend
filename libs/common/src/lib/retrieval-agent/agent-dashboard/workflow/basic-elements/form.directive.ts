@@ -99,9 +99,9 @@ export abstract class FormDirective {
       const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
       // Check if this is a subform field (contains $ref)
-      if (this.fieldConfigService.isSubformField(property, aragsSchema || schema)) {
+      if (this.fieldConfigService.isSubformField(property, aragsSchema)) {
         // Create a nested FormGroup for subform fields
-        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema || schema);
+        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema);
       } else if (type === 'array' || property.items || isMultiselect) {
         // Prefer config value over default for array fields
         let initialArrayValues: any[] = [];
