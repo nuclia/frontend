@@ -49,6 +49,13 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
 
   /**
+   * The Retrieval Agent fullpath on the regional API.
+   */
+  override get fullpath(): string {
+    return `${this.nuclia.regionalBackend}/v1/agent/${this.id}`;
+  }
+
+  /**
    * Retrieves a session from the Retrieval Agent.
    *
    * Example:
