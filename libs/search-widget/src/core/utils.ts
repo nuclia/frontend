@@ -302,7 +302,7 @@ export const getNavigationUrl = (
   if (url && navigateToOriginURL) {
     return of(url);
   } else {
-    const isFile = field.field_type === FIELD_TYPE.file;
+    const isFile = field?.field_type === FIELD_TYPE.file;
     if (url && navigateToLink && !isYoutubeUrl(url)) {
       const supportsTextFragments = 'fragmentDirective' in document;
       if (paragraph?.text && supportsTextFragments && !new URL(url).hash) {
@@ -319,7 +319,7 @@ export const getNavigationUrl = (
         const fileUrl = (field as FileFieldData)?.value?.file?.uri;
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
-    } else if (openNewTab && (permalink || previewBaseUrl)) {
+    } else if (openNewTab && (permalink || previewBaseUrl) && field) {
       return of(getPreviewUrl(resource.id, field, paragraph, previewBaseUrl));
     } else {
       return of(undefined);

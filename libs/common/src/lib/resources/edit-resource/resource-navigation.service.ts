@@ -48,9 +48,10 @@ export class ResourceNavigationService {
 
   isLastResource: Observable<boolean> = combineLatest([this._navigationData, this._currentResourceId]).pipe(
     filter(([data, resourceId]) => !!data && !!resourceId),
+    map(([data, resourceId]) => [data, resourceId] as [ResourceNavigationModel, string]),
     map(([data, resourceId]) => {
       const resourceIdList = (data as ResourceNavigationModel).resourceIdList;
-      return resourceIdList.findIndex((id) => resourceId === id) === resourceIdList.length - 1 && !data?.hasMore;
+      return resourceIdList.findIndex((id) => resourceId === id) === resourceIdList.length - 1 && !data.hasMore;
     }),
   );
 

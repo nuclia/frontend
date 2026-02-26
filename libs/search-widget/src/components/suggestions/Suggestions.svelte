@@ -67,7 +67,7 @@
                   permalink,
                   baseUrl,
                   resource,
-                  firstResourceField as ResourceField,
+                  firstResourceField,
                 ),
                 of(false),
               ),
