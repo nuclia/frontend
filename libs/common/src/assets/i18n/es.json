@@ -1298,6 +1298,8 @@
 	"retrieval-agents.workflow.errors.loading-workflow.preprocess": "Se produjo un error al cargar los agentes de preproceso.",
 	"retrieval-agents.workflow.errors.save-agent": "Se ha producido un error al guardar el nodo.",
 	"retrieval-agents.workflow.missing-configuration": "Configuración faltante",
+	"retrieval-agents.workflow.node-functions.agent-id": "ID del agente",
+	"retrieval-agents.workflow.node-functions.no-functions": "No hay funciones disponibles",
 	"retrieval-agents.workflow.node-types.advanced_ask.description": "Agente Agentic RAG ask",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.citations": "Citas",
 	"retrieval-agents.workflow.node-types.advanced_ask.form.citations-and-json": "Citas y salida JSON",

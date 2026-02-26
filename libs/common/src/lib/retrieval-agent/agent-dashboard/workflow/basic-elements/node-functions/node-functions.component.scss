@@ -1,0 +1,16 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.node-functions {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.input-and-button {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-input {
+    width: 100%;
+  }
+}

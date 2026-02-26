@@ -1,0 +1,35 @@
+<div class="node-functions">
+  @if (agentId()) {
+    <div class="form-entry">
+      <label>{{ 'retrieval-agents.workflow.node-functions.agent-id' | translate }}</label>
+      <div class="input-and-button">
+        <pa-input
+          [value]="agentId()"
+          readonly></pa-input>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [icon]="copied() ? 'check' : 'copy'"
+          (click)="copy()">
+          {{ 'generic.copy' | translate }}
+        </pa-button>
+      </div>
+    </div>
+  }
+  <pa-accordion-item
+    id="published-functions"
+    [itemTitle]="property()?.title"
+    [(expanded)]="expanded">
+    <pa-accordion-item-body>
+      <ul>
+        @for (function of functions(); track function) {
+          <li>
+            <code>{{ function }}</code>
+          </li>
+        } @empty {
+          <div class="body-s">{{ 'retrieval-agents.workflow.node-functions.no-functions' | translate }}</div>
+        }
+      </ul>
+    </pa-accordion-item-body>
+  </pa-accordion-item>
+</div>

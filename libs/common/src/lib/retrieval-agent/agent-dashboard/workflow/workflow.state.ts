@@ -330,6 +330,11 @@ export const workflow = computed<WorkflowState>(() => {
 export const selectedNodeId = computed(() => selectedNode()?.id);
 
 /**
+ * Selected node data or undefined.
+ */
+export const selectedNodeData = computed(() => getNode(selectedNodeId() || ''));
+
+/**
  * Reset deletedNode on state
  */
 export function resetDeletedNode() {
@@ -403,7 +408,7 @@ export function unselectNode() {
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @returns The node corresponding to specified id or undefined
  */
-export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | undefined {
+export function getNode(id: string, nodeCategory?: NodeCategory): ParentNode | undefined {
   let node;
   switch (nodeCategory) {
     case 'preprocess':
@@ -418,6 +423,8 @@ export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | un
     case 'postprocess':
       node = postprocessNodes()[id];
       break;
+    case undefined:
+      node = preprocessNodes()[id] || contextNodes()[id] || generationNodes()[id] || postprocessNodes()[id];
   }
   if (!node) {
     node = childNodes()[id];
