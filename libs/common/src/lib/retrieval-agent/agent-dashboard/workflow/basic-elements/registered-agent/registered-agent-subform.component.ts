@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
@@ -24,9 +24,21 @@ export class RegisteredAgentSubformComponent implements OnInit {
     description: new FormControl<string>('', { nonNullable: true }),
     functions: new FormControl<string>('', { nonNullable: true }),
   });
-  private nodeType = '';
   publishedFunctions: string[] = [];
-  functionOptions: OptionModel[] = [];
+  nodeType = computed(() => registeredAgentParams().nodeType || '');
+  functionOptions = computed<OptionModel[]>(() => {
+    const nodeType = this.nodeType();
+    const schemas = rootSchema();
+    if (schemas && nodeType) {
+      const schemaName = convertNodeTypeToConfigTitle(nodeType, schemas);
+      const matchingSchema = schemas['$defs'][schemaName];
+      return (matchingSchema?.properties['published_functions'].default || []).map(
+        (func: string) => new OptionModel({ id: func, value: func, label: func }),
+      );
+    } else {
+      return [];
+    }
+  });
 
   constructor() {
     effect(() => {
@@ -38,15 +50,6 @@ export class RegisteredAgentSubformComponent implements OnInit {
           { description: params.description, functions: params.functions.join(',') },
           { emitEvent: false },
         );
-        this.nodeType = params.nodeType;
-        const schemas = rootSchema();
-        if (schemas) {
-          const schemaName = convertNodeTypeToConfigTitle(params.nodeType, schemas);
-          const matchingSchema = schemas['$defs'][schemaName];
-          this.functionOptions = (matchingSchema?.properties['published_functions'].default || []).map(
-            (func: string) => new OptionModel({ id: func, value: func, label: func }),
-          );
-        }
       }
     });
   }
@@ -57,7 +60,7 @@ export class RegisteredAgentSubformComponent implements OnInit {
         description: values.description || '',
         functions: values.functions ? values.functions.split(',') : [],
         modified: true,
-        nodeType: this.nodeType,
+        nodeType: this.nodeType(),
       });
     });
   }
