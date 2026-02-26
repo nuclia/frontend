@@ -10200,7 +10200,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aria-query@npm:5.3.2, aria-query@npm:^5.3.1, aria-query@npm:^5.3.2":
+"aria-query@npm:5.3.1":
+  version: 5.3.1
+  resolution: "aria-query@npm:5.3.1"
+  checksum: 8f7ece335efadd80217901005dfb71130eab45b38d71ec5ba63b3a51c1028abc018618b86db3dcd9222995538e7b10d7c505051fb8ba7a02ec0a4e77499c9a9c
+  languageName: node
+  linkType: hard
+
+"aria-query@npm:5.3.2, aria-query@npm:^5.3.2":
   version: 5.3.2
   resolution: "aria-query@npm:5.3.2"
   checksum: d971175c85c10df0f6d14adfe6f1292409196114ab3c62f238e208b53103686f46cc70695a4f775b73bc65f6a09b6a092fd963c4f3a5a7d690c8fc5094925717
@@ -13149,7 +13156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devalue@npm:^5.5.0":
+"devalue@npm:^5.6.3":
   version: 5.6.3
   resolution: "devalue@npm:5.6.3"
   checksum: f2ade995d38bc298442d98dc06bdeadb2e255ef7546ece6920ba5c8e050f620ba685f97669f40f32acb007f32c31364131051fd7345d510124f700f25a548143
@@ -14149,12 +14156,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esrap@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "esrap@npm:2.2.1"
+"esrap@npm:^2.2.2":
+  version: 2.2.3
+  resolution: "esrap@npm:2.2.3"
   dependencies:
     "@jridgewell/sourcemap-codec": ^1.4.15
-  checksum: 003116a91222111e6dea84101a20aa8c9ca20dbebd1559d47ff694f6348fca6fb8a1dfebe1bcefa0b92a17331156befcf20838072fc4ddc67eb8bd3a5dc22006
+  checksum: f21a8d3e68e8f529b12c37ebb709ca255fb78887225114e54ac07db915e6d6a21520f2de922f7b254d741a20adba2eea48dbde8217cab58d3e1c619023dff915
   languageName: node
   linkType: hard
 
@@ -20446,7 +20453,7 @@ __metadata:
     rxjs: 7.8.1
     sass: ^1.89.0
     spark-md5: ^3.0.1
-    svelte: ^5.34.1
+    svelte: ^5.51.5
     svelte-check: ^4.0.0
     svelte-preprocess: ^6.0.3
     talk2svelte: ^0.1.4
@@ -25246,26 +25253,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^5.34.1":
-  version: 5.45.4
-  resolution: "svelte@npm:5.45.4"
+"svelte@npm:^5.51.5":
+  version: 5.53.5
+  resolution: "svelte@npm:5.53.5"
   dependencies:
     "@jridgewell/remapping": ^2.3.4
     "@jridgewell/sourcemap-codec": ^1.5.0
     "@sveltejs/acorn-typescript": ^1.0.5
     "@types/estree": ^1.0.5
+    "@types/trusted-types": ^2.0.7
     acorn: ^8.12.1
-    aria-query: ^5.3.1
+    aria-query: 5.3.1
     axobject-query: ^4.1.0
     clsx: ^2.1.1
-    devalue: ^5.5.0
+    devalue: ^5.6.3
     esm-env: ^1.2.1
-    esrap: ^2.2.1
+    esrap: ^2.2.2
     is-reference: ^3.0.3
     locate-character: ^3.0.0
     magic-string: ^0.30.11
     zimmerframe: ^1.1.2
-  checksum: c9b28665805a22604e352e64ddc7292f41a36426c57b916e19e4c6744a9fac9b6820bea799f177f8a3a28b78d7e216a2e2674fc9933b5b36d1c4c10dbc1244f2
+  checksum: 286401d30df282c249d63116ada54eb93e68cc94b29a2f9f913fbe638240204bc4081a6a57cacb88040b6c0d1659e1302c228303d138495d600eafc3d76a553f
   languageName: node
   linkType: hard
 
