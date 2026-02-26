@@ -123,7 +123,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
     this.workflowService.triggerNodeCreation(data.entry, data.targetColumn);
   }
 
-  closeSideBar() {
+  closeSidebar() {
     this.workflowService.closeSidebar();
   }
 
