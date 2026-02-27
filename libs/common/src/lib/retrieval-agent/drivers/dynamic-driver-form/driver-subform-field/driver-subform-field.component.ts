@@ -43,7 +43,7 @@ export interface RenderableDriverSubfield {
     ApiHeadersFieldComponent,
     KeyValueFieldComponent,
     DriverExpandableTextareaComponent
-],
+  ],
 })
 export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   @Input() form!: FormGroup;
@@ -76,16 +76,14 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   private getFieldConfigWithOverrides(key: string, property: JSONSchema4, schema?: JSONSchema4): DriverFieldConfig {
     // Check for special field overrides first
     if (this.specialFieldComponentOverrides[key]) {
-      const override = { ...this.specialFieldComponentOverrides[key], customKey: key };
-      return override;
+      return { ...this.specialFieldComponentOverrides[key], customKey: key };
     }
 
     // Also check by property title (case-insensitive)
     if (property.title) {
       const titleKey = property.title.toLowerCase().replace(/\s+/g, '');
       if (this.specialFieldComponentOverrides[titleKey]) {
-        const override = { ...this.specialFieldComponentOverrides[titleKey], customKey: key };
-        return override;
+        return { ...this.specialFieldComponentOverrides[titleKey], customKey: key };
       }
     }
 

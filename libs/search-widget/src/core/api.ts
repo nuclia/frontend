@@ -153,7 +153,7 @@ export const initNuclia = (
   if (!noTracking) {
     initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
     logEvent('init', {
-      widget_features: Object.entries(widgetOptions?.features || {})
+      widget_features: Object.entries(widgetOptions.features || {})
         .filter(([, value]) => !!value)
         .map(([key]) => key)
         .join(','),

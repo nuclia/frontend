@@ -55,16 +55,14 @@ export class DynamicDriverFormComponent implements OnInit {
   private getFieldConfigWithOverrides(key: string, property: JSONSchema4, schema?: JSONSchema4): DriverFieldConfig {
     // Check for special field overrides first
     if (this.specialFieldComponentOverrides[key]) {
-      const override = { ...this.specialFieldComponentOverrides[key], customKey: key };
-      return override;
+      return { ...this.specialFieldComponentOverrides[key], customKey: key };
     }
 
     // Also check by property title (case-insensitive)
     if (property.title) {
       const titleKey = property.title.toLowerCase().replace(/\s+/g, '');
       if (this.specialFieldComponentOverrides[titleKey]) {
-        const override = { ...this.specialFieldComponentOverrides[titleKey], customKey: key };
-        return override;
+        return { ...this.specialFieldComponentOverrides[titleKey], customKey: key };
       }
     }
 
@@ -344,17 +342,15 @@ export class DynamicDriverFormComponent implements OnInit {
   // Get the actual schema for a property (resolving anyOf and $refs)
   private getPropertySchema(property: any): any {
     if (property.$ref) {
-      const resolved = this.resolveRef(property.$ref);
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
-      return { ...resolved, ...property, $ref: undefined };
+      return { ...this.resolveRef(property.$ref), ...property, $ref: undefined };
     }
     if (property.anyOf) {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
       if (objRef) {
-        const resolved = this.resolveRef(objRef.$ref);
         // Merge resolved schema with original property
-        return { ...resolved, ...property, anyOf: undefined };
+        return { ...this.resolveRef(objRef.$ref), ...property, anyOf: undefined };
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');

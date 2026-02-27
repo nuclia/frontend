@@ -10,8 +10,6 @@ export type AccountTypes =
   | 'stash-basic'
   | 'stash-team';
 
-export const NUA_KEY = 'NUCLIA_NUA_KEY';
-
 export interface Account {
   blocked_features: BlockedFeature[];
   blocking_state?: AccountBlockingState;

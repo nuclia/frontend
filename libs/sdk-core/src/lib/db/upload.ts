@@ -91,7 +91,7 @@ export const upload = (
   metadata: FileMetadata = {},
 ): Observable<UploadResponse> => {
   if (!metadata.contentType && !(data instanceof ArrayBuffer)) {
-    metadata.contentType = (data as FileWithMetadata).contentType || (data?.type !== 'null' ? data?.type : undefined);
+    metadata.contentType = (data as FileWithMetadata).contentType || (data.type !== 'null' ? data.type : undefined);
   }
   if (!metadata.filename && !(data instanceof ArrayBuffer)) {
     metadata.filename = data?.name;
@@ -102,11 +102,11 @@ export const upload = (
   if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
     metadata.md5 = (data as FileWithMetadata).md5;
   }
-  if ((data as FileWithMetadata).processing) {
-    metadata.processing = (data as FileWithMetadata).processing;
+  if ('processing' in data) {
+    metadata.processing = data.processing;
   }
-  if ((data as FileWithMetadata).split) {
-    metadata.split = (data as FileWithMetadata).split;
+  if ('split' in data) {
+    metadata.split = data.split;
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>

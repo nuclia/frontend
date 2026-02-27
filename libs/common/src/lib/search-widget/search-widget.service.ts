@@ -291,10 +291,10 @@ export class SearchWidgetService {
   private deleteWidgetPreview() {
     const tags = ['nuclia-search', 'nuclia-search-bar', 'nuclia-search-results', 'nuclia-arag-widget'];
     tags.forEach((tag) => {
-      const elements = document.getElementsByTagName(tag) as unknown as any;
-      Array.from(elements).forEach((element: any) => {
-        if (typeof element?.$$c?.$destroy === 'function') {
-          element.$$c?.$destroy();
+      const elements = document.getElementsByTagName(tag);
+      Array.from(elements).forEach((element) => {
+        if (typeof (element as any).$$c?.$destroy === 'function') {
+          (element as any).$$c?.$destroy();
         }
         element.remove();
       });

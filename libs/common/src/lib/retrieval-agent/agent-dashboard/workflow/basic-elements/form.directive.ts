@@ -99,9 +99,9 @@ export abstract class FormDirective {
       const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
       // Check if this is a subform field (contains $ref)
-      if (this.fieldConfigService.isSubformField(property, aragsSchema || schema)) {
+      if (this.fieldConfigService.isSubformField(property, aragsSchema)) {
         // Create a nested FormGroup for subform fields
-        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema || schema);
+        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema);
       } else if (type === 'array' || property.items || isMultiselect) {
         // Prefer config value over default for array fields
         let initialArrayValues: any[] = [];
@@ -199,17 +199,15 @@ export abstract class FormDirective {
   // Resolve $ref properties to get correct default values and types
   private resolvePropertyForFormCreation(property: JSONSchema4, schema: JSONSchema4): JSONSchema4 {
     if (property.$ref) {
-      const resolved = this.resolveRefInFormDirective(property.$ref, schema);
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
-      return { ...resolved, ...property, $ref: undefined };
+      return { ...this.resolveRefInFormDirective(property.$ref, schema), ...property, $ref: undefined };
     }
     if (property.anyOf) {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
       if (objRef && objRef.$ref) {
-        const resolved = this.resolveRefInFormDirective(objRef.$ref, schema);
         // Merge resolved schema with original property
-        return { ...resolved, ...property, anyOf: undefined };
+        return { ...this.resolveRefInFormDirective(objRef.$ref, schema), ...property, anyOf: undefined };
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');

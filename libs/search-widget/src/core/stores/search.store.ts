@@ -1059,7 +1059,7 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   }
   const metadata = displayedMetadata.getValue();
   const resources = answer.sources?.resources || {};
-  const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
+  const graphPrequeryResources = answer.prequeries?.graph?.resources || {};
   let citationIds: string[] = [];
   if (answer.citations) {
     citationIds = Object.keys(answer.citations);

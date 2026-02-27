@@ -10,7 +10,6 @@ import {
   retry,
   RetryConfig,
   switchMap,
-  tap,
   throwError,
   timer,
 } from 'rxjs';
@@ -37,7 +36,6 @@ import {
   ModelConfigurationCreation,
   ModelConfigurationItem,
   normalizeSchemaProperty,
-  NUA_KEY,
   NUAClient,
   NUAClientPayload,
   PredictedToken,
@@ -570,12 +568,6 @@ export class Db implements IDb {
             return this.renewNUAClient(accountId, data.client_id);
           } else {
             throw err;
-          }
-        }),
-        tap((key) => {
-          if (this.nuclia.options.client === 'desktop') {
-            this.nuclia.options.nuaKey = key.token;
-            localStorage.setItem(NUA_KEY, key.token);
           }
         }),
       );

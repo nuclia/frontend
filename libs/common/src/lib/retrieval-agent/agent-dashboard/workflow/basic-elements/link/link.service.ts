@@ -44,8 +44,8 @@ export class LinkService {
       const rightBox = rightElement.getBoundingClientRect();
       const containerEl = this.container.nativeElement as HTMLElement;
       const containerBox = containerEl.getBoundingClientRect();
-      const scrollTop = containerEl?.scrollTop ?? 0;
-      const scrollLeft = containerEl?.scrollLeft ?? 0;
+      const scrollTop = containerEl.scrollTop;
+      const scrollLeft = containerEl.scrollLeft;
       const diff = Math.abs(leftBox.top - rightBox.top);
       const samePosition = diff <= 8;
       const goDown = leftBox.top < rightBox.top;
