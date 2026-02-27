@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { BackendConfigurationService } from '@flaps/core';
 
@@ -6,7 +7,7 @@ import { BackendConfigurationService } from '@flaps/core';
   templateUrl: './user-container.component.html',
   styleUrls: ['./user-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [CommonModule],
 })
 export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;

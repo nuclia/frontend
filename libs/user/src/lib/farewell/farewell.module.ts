@@ -6,14 +6,14 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { SisProgressModule } from '@nuclia/sistema';
 import { FarewellComponent } from './farewell.component';
 import { FeedbackComponent } from './feedback.component';
-import { UserContainerModule } from '../user-container';
+import { UserContainerComponent } from '../user-container';
 
 @NgModule({
   imports: [
     CommonModule,
     TranslateModule.forChild(),
     RouterModule,
-    UserContainerModule,
+    UserContainerComponent,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,

@@ -1,0 +1,29 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../../user-layout';
+
+.main-container {
+  gap: rhythm(4);
+
+  a {
+    text-decoration: none;
+  }
+
+  .form-header p {
+    margin-bottom: 0;
+  }
+
+  .sso-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+  }
+
+  .centered {
+    text-align: center;
+  }
+
+  .signup-error {
+    background-color: $color-secondary-regular;
+    padding: rhythm(0.5) rhythm(1);
+  }
+}
