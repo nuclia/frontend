@@ -3,65 +3,30 @@
     <div class="form-header">
       <h1>{{ 'signup.title' | translate }}</h1>
     </div>
-    @if (error) {
-      <div class="signup-error title-xxs">
-        {{ error | translate }}
-      </div>
-    }
     <form
       data-cy="signup-form"
       class="signup-form"
       method="POST"
-      [formGroup]="signupForm"
-      (ngSubmit)="submitForm()">
+      [action]="postUrl">
       <pa-input
         type="email"
-        [readonly]="true"
         [help]="'signup.email.help' | translate"
-        formControlName="email"
-        [errorMessages]="validationMessages.email"
+        name="email"
         stfLowerCaseInput>
         {{ 'login.email' | translate }}
       </pa-input>
-      <pa-input
-        required
-        autocapitalize="off"
-        formControlName="name"
-        [errorMessages]="validationMessages.name"
-        help="validation.required">
-        {{ 'signup.name' | translate }}
-      </pa-input>
-      <nsi-password-input
-        formControlName="password"
-        [errorMessages]="validationMessages.password"
-        help="validation.password-rules">
-        {{ 'login.password' | translate }}
-      </nsi-password-input>
+      <input
+        name="app"
+        type="hidden"
+        [value]="appUrl" />
 
       <pa-button
         class="full-width"
         type="submit"
-        kind="primary"
-        [disabled]="signupForm.invalid">
+        kind="primary">
         {{ 'signup.signup-button-label' | translate }}
       </pa-button>
     </form>
-
-    @if (config.getSocialLogin()) {
-      <div class="sso-container">
-        <stf-sso-button
-          provider="google"
-          signup></stf-sso-button>
-        @if (isGitHubEnabled | async) {
-          <stf-sso-button
-            provider="github"
-            signup></stf-sso-button>
-        }
-        <stf-sso-button
-          provider="microsoft"
-          signup></stf-sso-button>
-      </div>
-    }
 
     <p class="centered">
       <pa-button

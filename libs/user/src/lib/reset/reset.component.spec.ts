@@ -7,9 +7,9 @@ import { of } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
-import { MockModule } from 'ng-mocks';
+import { MockComponent, MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { UserContainerModule } from '../user-container';
+import { UserContainerComponent } from '../user-container';
 import { ResetComponent } from './reset.component';
 
 describe('ResetComponent', () => {
@@ -25,7 +25,7 @@ describe('ResetComponent', () => {
         MockModule(PaTextFieldModule),
         MockModule(PaTranslateModule),
         MockModule(SisPasswordInputModule),
-        MockModule(UserContainerModule),
+        MockComponent(UserContainerComponent),
         RouterModule.forRoot([]),
       ],
       providers: [

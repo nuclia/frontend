@@ -12,6 +12,7 @@ export * from './recover/recover.component';
 export * from './redirect';
 export * from './reset/reset.component';
 export * from './signup/signup.component';
+export * from './signup/temporary/app-signup.component';
 export * from './sso/sso-button.component';
 export * from './user-container';
 export * from './auth-user.module';

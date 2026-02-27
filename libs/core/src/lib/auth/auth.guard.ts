@@ -14,7 +14,7 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   }
   // Store the attempted URL for redirecting
   const url: string = state.url.split('?')[0];
-  const queryParams = route.queryParams;
+  const queryParams = { ...route.queryParams };
   authService.setNextParams(queryParams);
   authService.setNextUrl(url);
 
@@ -24,5 +24,5 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
 };
 
 function routeHasMagicToken(): boolean {
-  return window.location.search.indexOf('token=') > -1;
+  return window.location.search.includes('token=') && !window.location.search.includes('signup_token=');
 }

@@ -6,6 +6,7 @@ import {
   BackendConfigurationService,
   FeaturesService,
   LoginService,
+  OAuthService,
   injectScript,
 } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -22,9 +23,14 @@ import { StrongPassword } from '../password.validator';
 })
 export class SignupComponent implements OnInit {
   config = inject(BackendConfigurationService);
+  oauth = inject(OAuthService);
+  signupEmail = this.oauth.getEmail();
   signupForm = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    email: new FormControl<string>(this.signupEmail, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });
 
