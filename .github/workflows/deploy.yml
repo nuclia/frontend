@@ -180,9 +180,10 @@ jobs:
       - name: Invalidate CDN cache stage
         if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-rao-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/dev' }}
         env:
-          GCP_PROJECT: ${{ secrets.GCP_STAGE_PROJECT_ID }}
+          GCP_PROJECT: ${{ secrets.GCP_DEV_PROJECT_ID }}
+          URL_MAP_NAME: ${{ secrets.CDN_URL_MAP_NAME_DEV }}
         run: |
-          gcloud compute url-maps invalidate-cdn-cache ${CDN_STORAGE} --path "/*" --global --project ${GCP_PROJECT}
+          gcloud compute url-maps invalidate-cdn-cache ${URL_MAP_NAME} --path "/*" --global --project ${GCP_PROJECT}
 
       - name: Generate and push SDK docs to GCS
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/dev'
