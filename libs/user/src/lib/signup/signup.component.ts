@@ -105,6 +105,7 @@ export class SignupComponent implements OnInit {
     this.loginService.signup(formValue, token, loginChallenge).subscribe({
       next: (response) => {
         this.analytics.logTrialSignup();
+        this.oauth.setEmail('');
         if (response.action === 'check-mail') {
           this.router.navigate(['../check-mail'], {
             relativeTo: this.route,

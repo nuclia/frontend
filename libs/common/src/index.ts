@@ -17,6 +17,7 @@ export * from './lib/knowledge-box-settings';
 export * from './lib/knowledge-box-users';
 export * from './lib/metrics';
 export * from './lib/navbar';
+export * from './lib/onboarding';
 export * from './lib/page-not-found';
 export * from './lib/pagination';
 export * from './lib/pipes';

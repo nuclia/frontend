@@ -22,14 +22,6 @@ import { consentResolver } from './consent/consent.resolver';
 import { LoginComponent } from './login/login.component';
 import { loginResolver } from './login/login.resolver';
 import { MagicComponent } from './magic/magic.component';
-import {
-  EmbeddingModelStepComponent,
-  KbNameStepComponent,
-  OnboardingComponent,
-  SettingUpComponent,
-  Step1Component,
-  ZoneStepComponent,
-} from './onboarding';
 import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
@@ -65,7 +57,6 @@ export const authRoutes: Routes = [
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'onboarding', component: OnboardingComponent },
   { path: 'check-mail', component: CheckMailComponent },
   { path: 'consent', component: ConsentComponent, resolve: { consentData: consentResolver } },
 ];
@@ -80,7 +71,6 @@ export const authRoutes: Routes = [
     SignupComponent,
     SsoButtonComponent,
     CheckMailComponent,
-    OnboardingComponent,
   ],
   imports: [
     CommonModule,
@@ -97,15 +87,10 @@ export const authRoutes: Routes = [
     SisPasswordInputModule,
     UserContainerComponent,
     PaAvatarModule,
-    Step1Component,
-    KbNameStepComponent,
-    SettingUpComponent,
     PaButtonModule,
-    ZoneStepComponent,
-    EmbeddingModelStepComponent,
     LowerCaseInputDirective,
   ],
-  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent],
   providers: [
     {
       provide: RECAPTCHA_V3_SITE_KEY,

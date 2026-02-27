@@ -39,6 +39,7 @@ import {
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
   ProfileComponent,
+  OnboardingComponent,
 } from '@flaps/common';
 import {
   RedirectComponent,
@@ -312,6 +313,7 @@ const routes: Routes = [
   { path: 'user/callback', component: CallbackComponent },
   // TEMPORARY, will be removed once the signup form goes to progress.com
   { path: 'user/signup', component: TemporaryAppSignupComponent },
+  { path: 'user/onboarding', component: OnboardingComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 

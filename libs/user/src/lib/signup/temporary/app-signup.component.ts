@@ -20,8 +20,7 @@ export class TemporaryAppSignupComponent implements OnInit {
 
   unsubscribeAll = new Subject<void>();
   postUrl = `${this.sdk.nuclia.auth.getAuthUrl()}/signup/start`;
-  // appUrl = this.sdk.getOriginFor('rag');
-  appUrl = 'http://localhost:4200';
+  appUrl = this.sdk.getOriginFor(location.search.includes('app=rao') ? 'rao' : 'rag');
   demoUrl =
     'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial';
 
