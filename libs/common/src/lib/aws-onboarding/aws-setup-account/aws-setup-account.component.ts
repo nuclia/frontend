@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, in
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { AwsOnboardingPayload, Step1Component } from '@nuclia/user';
 import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap, take, tap } from 'rxjs';
 import { SDKService, STFUtils } from '@flaps/core';
 import { Account, AuthTokens } from '@nuclia/core';
+import { AwsOnboardingPayload, Step1Component } from '../../onboarding';
 
 interface SetupAccountPayload {
   customer_token: string;

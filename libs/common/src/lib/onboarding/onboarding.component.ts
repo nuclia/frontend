@@ -5,13 +5,28 @@ import { Observable, of, ReplaySubject, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { LearningConfigurationForm } from './embeddings-model-form';
+import { CommonModule } from '@angular/common';
+import { UserContainerComponent } from '@nuclia/user';
+import { TranslateModule } from '@ngx-translate/core';
+import { Step1Component } from './step1/step1.component';
+import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
+import { SettingUpComponent } from './setting-up/setting-up.component';
 
 @Component({
   selector: 'nus-onboarding',
   templateUrl: './onboarding.component.html',
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [
+    CommonModule,
+    UserContainerComponent,
+    TranslateModule,
+    Step1Component,
+    KbNameStepComponent,
+    SettingUpComponent,
+    ZoneStepComponent,
+    EmbeddingModelStepComponent,
+  ],
 })
 export class OnboardingComponent {
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
