@@ -6,7 +6,6 @@ export * from './invite';
 export * from './login/login.component';
 export * from './magic/magic.component';
 export * from './magic/magic.service';
-export * from './onboarding';
 export * from './password.validator';
 export * from './recover/recover.component';
 export * from './redirect';
