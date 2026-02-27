@@ -94,13 +94,13 @@ export const upload = (
     metadata.contentType = (data as FileWithMetadata).contentType || (data.type !== 'null' ? data.type : undefined);
   }
   if (!metadata.filename && !(data instanceof ArrayBuffer)) {
-    metadata.filename = data?.name;
+    metadata.filename = data.name;
   }
-  if (!metadata.lang && !(data instanceof ArrayBuffer)) {
-    metadata.lang = (data as FileWithMetadata).lang;
+  if (!metadata.lang && 'lang' in data) {
+    metadata.lang = data.lang;
   }
-  if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
-    metadata.md5 = (data as FileWithMetadata).md5;
+  if (!metadata.md5 && 'md5' in data) {
+    metadata.md5 = data.md5;
   }
   if ('processing' in data) {
     metadata.processing = data.processing;

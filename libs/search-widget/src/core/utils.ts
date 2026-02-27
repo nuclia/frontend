@@ -331,10 +331,10 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
   } else {
-    if (field?.field_type === FIELD_TYPE.link) {
-      return (field.value as LinkField).uri;
-    } else if (field?.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
-      return (field.value as FileField).file?.uri;
+    if (field && field.field_type === FIELD_TYPE.link) {
+      return (field.value as LinkField)?.uri;
+    } else if (field && field.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
+      return (field.value as FileField)?.file?.uri;
     } else if (resource.origin?.url) {
       return resource.origin.url;
     } else {
