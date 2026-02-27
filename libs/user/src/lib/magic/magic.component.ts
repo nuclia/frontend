@@ -1,8 +1,9 @@
-import { MagicActionError } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { MagicActionError } from '@nuclia/core';
 
 @Component({
   selector: 'stf-magic',
@@ -16,8 +17,8 @@ export class MagicComponent implements OnInit, OnDestroy {
   constructor(
     private magicService: MagicService,
     private route: ActivatedRoute,
-    private router: Router,
     private cdr: ChangeDetectorRef,
+    private sdk: SDKService,
   ) {}
 
   ngOnInit() {
@@ -44,9 +45,7 @@ export class MagicComponent implements OnInit, OnDestroy {
             if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
               message = `login.${cause}`;
             }
-            this.router.navigate(['/user/login'], {
-              queryParams: { message },
-            });
+            this.sdk.nuclia.auth.redirectToOAuth({ message });
           } else {
             this.error = 'onboarding.failed';
             this.cdr.markForCheck();

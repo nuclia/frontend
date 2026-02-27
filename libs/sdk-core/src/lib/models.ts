@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { AuthInfo, AuthTokens, JwtUser, NucliaDBRole } from './auth';
+import type { AuthInfo, AuthTokens, JwtUser, MagicAction, NucliaDBRole } from './auth';
 import {
   Account,
   AccountCreation,
@@ -67,6 +67,10 @@ export interface IAuthentication {
   deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
+  redirectToOAuth(queryParams?: { [key: string]: string }): void;
+  processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
+  getAuthUrl(): string;
+  validateMagicToken(token: string, zone?: string): Observable<MagicAction>;
 }
 
 export interface IRest {
@@ -290,6 +294,12 @@ export interface NucliaOptions {
    * Set it to `false` when using a private Knowledge Box.
    */
   public?: boolean;
+  /**
+   * OAuth parameters.
+   */
+  oauth?: {
+    client_id: string;
+  };
   /**
    * Allow to modify the headers for the REST calls.
    */

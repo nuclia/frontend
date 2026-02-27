@@ -18,13 +18,15 @@ service:
   internalPort: 80
   externalPort: 80
 
-api_path: XXX
+api_origin: XXX
 app_name: app
 no_stripe: false
 brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
+oauth_client_id: XXX
+auth_endpoint: XXX
 
 virtualService:
   enabled: false

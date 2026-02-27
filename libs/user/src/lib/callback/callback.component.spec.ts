@@ -13,14 +13,22 @@ describe('CallbackComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CallbackComponent],
       imports: [RouterModule.forRoot([])],
       providers: [
         { provide: SAMLService, useValue: { getToken: () => of(token) } },
         { provide: SsoService, useValue: { login: () => of() } },
         {
           provide: BackendConfigurationService,
-          useValue: { getAllowedHostsRedirect: () => [], getAPIURL: () => '', staticConf: { client: 'dashboard' } },
+          useValue: {
+            getAllowedHostsRedirect: () => [],
+            getAPIURL: () => '',
+            staticConf: { client: 'dashboard' },
+            getOAuthSettings: () => ({
+              client_id: 'abc123',
+              hydra: 'http://oauth.here',
+              auth: 'http://auth.here',
+            }),
+          },
         },
       ],
     }).compileComponents();

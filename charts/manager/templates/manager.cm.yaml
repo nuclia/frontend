@@ -9,7 +9,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 data:
-  API_PATH: {{ .Values.api_path }}
+  API_ORIGIN: "{{ .Values.api_origin }}"
   BRAND_NAME: "{{ .Values.brand_name }}"
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
   ASSETS_PATH: "{{ .Values.assets_path }}"
@@ -17,4 +17,5 @@ data:
   NO_STRIPE: "{{ .Values.no_stripe }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
   STF_VERSION: "{{ .Chart.Version }}"
-  EMAIL_DOMAIN: "{{ .Values.email_domain }}"
+  OAUTH_CLIENT_ID: "{{ .Values.oauth_client_id }}"
+  AUTH_ENDPOINT: "{{ .Values.auth_endpoint }}"

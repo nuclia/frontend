@@ -58,6 +58,9 @@ export interface OAuthConsentData {
 export interface OAuthLoginData {
   skip_login: boolean;
   subject?: string;
+  needs_signup: boolean;
+  email?: string;
+  needs_initial_setpassword?: boolean;
 }
 
 export interface JwtUser {

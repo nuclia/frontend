@@ -22,6 +22,9 @@ export type EnvironmentConfiguration = {
     assetsPath?: string;
     allowed_hosts_redirect?: string[];
   };
+  oauth: {
+    client_id: string;
+  };
 };
 
 export type StaticEnvironmentConfiguration = {
@@ -64,15 +67,8 @@ export class AppInitService {
               });
             });
           }
-          // on a prod build, this code can run on stage, rag.progress.cloud or in electron app
-          // - when stage or rag.progress.cloud, the backend is the same as the current domain
-          // - when electron, the backend is the one we have in the config
-          const apiOrigin =
-            config.production && location.origin.startsWith('http')
-              ? location.origin.replace('manage.', '')
-              : config.backend.apiOrigin;
-          config.backend.apiOrigin = apiOrigin;
-          config.backend.api = apiOrigin + config.backend.apiPath;
+          const apiOrigin = config.backend.apiOrigin;
+          config.backend.api = `${apiOrigin}/api`;
           config.backend.cdn = staticEnv.standalone ? 'https://cdn.rag.progress.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(`${config.backend.cdn}/nuclia-widget.umd.js`);

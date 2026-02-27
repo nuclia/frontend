@@ -22,14 +22,14 @@ service:
 app_name: app
 no_stripe: false
 google_analytics: XXX
+api_origin: XXX
 cdn: XXX
 brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
-editor_url: XXX
-email_domain: XXX
 saml_enabled: XXX
+oauth_client_id: XXX
 
 virtualService:
   enabled: false

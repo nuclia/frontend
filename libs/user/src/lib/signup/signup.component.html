@@ -15,20 +15,21 @@
       [formGroup]="signupForm"
       (ngSubmit)="submitForm()">
       <pa-input
+        type="email"
+        [readonly]="true"
+        [help]="'signup.email.help' | translate"
+        formControlName="email"
+        [errorMessages]="validationMessages.email"
+        stfLowerCaseInput>
+        {{ 'login.email' | translate }}
+      </pa-input>
+      <pa-input
         required
         autocapitalize="off"
         formControlName="name"
         [errorMessages]="validationMessages.name"
         help="validation.required">
         {{ 'signup.name' | translate }}
-      </pa-input>
-      <pa-input
-        type="email"
-        [help]="'signup.email.help' | translate"
-        formControlName="email"
-        [errorMessages]="validationMessages.email"
-        stfLowerCaseInput>
-        {{ 'login.email' | translate }}
       </pa-input>
       <nsi-password-input
         formControlName="password"

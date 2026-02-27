@@ -6,6 +6,7 @@ import {
   BackendConfigurationService,
   FeaturesService,
   LoginService,
+  OAuthService,
   injectScript,
 } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -22,9 +23,14 @@ import { StrongPassword } from '../password.validator';
 })
 export class SignupComponent implements OnInit {
   config = inject(BackendConfigurationService);
+  oauth = inject(OAuthService);
+  signupEmail = this.oauth.getEmail();
   signupForm = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    email: new FormControl<string>(this.signupEmail, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });
 
@@ -95,9 +101,11 @@ export class SignupComponent implements OnInit {
 
   private signupFromForm(token: string) {
     const formValue = this.signupForm.getRawValue();
-    this.loginService.signup(formValue, token).subscribe({
+    const loginChallenge = this.route.snapshot.queryParams['login_challenge'];
+    this.loginService.signup(formValue, token, loginChallenge).subscribe({
       next: (response) => {
         this.analytics.logTrialSignup();
+        this.oauth.setEmail('');
         if (response.action === 'check-mail') {
           this.router.navigate(['../check-mail'], {
             relativeTo: this.route,

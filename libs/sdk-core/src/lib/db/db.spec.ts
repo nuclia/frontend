@@ -8,7 +8,7 @@ describe('Db', () => {
 
   beforeEach(() => {
     const nuclia = new Nuclia({
-      backend: 'http://here',
+      backend: 'http://accounts.here',
       zone: 'europe-1',
       account: 'dc',
       knowledgeBox: 'gotham',
@@ -26,7 +26,7 @@ describe('Db', () => {
     mockFetch([{ id: '123456789', slug: 'gotham', title: 'Gotham City', zone: 'DC', type: 'stash-basic' }]);
     db.getAccounts().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/accounts',
+        'http://accounts.here/v1/accounts',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -50,19 +50,19 @@ describe('Db', () => {
     db.getKnowledgeBoxes('my-account', 'dc-id').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/zones',
+        'http://accounts.here/v1/zones',
         expect.objectContaining({
           method: 'GET',
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/my-account/index/kbs',
+        'http://accounts.here/v1/account/my-account/index/kbs',
         expect.objectContaining({
           method: 'GET',
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc-id/kbs',
+        'http://accounts.here/v1/account/dc-id/kbs',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -86,19 +86,19 @@ describe('Db', () => {
     db.getRetrievalAgents('my-account', 'dc-id').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/zones',
+        'http://accounts.here/v1/zones',
         expect.objectContaining({
           method: 'GET',
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/my-account/index/kbs',
+        'http://accounts.here/v1/account/my-account/index/kbs',
         expect.objectContaining({
           method: 'GET',
         }),
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc-id/kbs?mode=agents',
+        'http://accounts.here/v1/account/dc-id/kbs?mode=agents',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -119,7 +119,7 @@ describe('Db', () => {
     });
     db.getKnowledgeBox().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc-id/kb/gotham',
+        'http://accounts.here/v1/account/dc-id/kb/gotham',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -140,7 +140,7 @@ describe('Db', () => {
     });
     db.getRetrievalAgent().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc-id/kb/gotham',
+        'http://accounts.here/v1/account/dc-id/kb/gotham',
         expect.objectContaining({
           method: 'GET',
         }),

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { filter, map, Observable } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
-import { Router } from '@angular/router';
 import { ManagerStore } from '../manager.store';
 
 @Component({
@@ -29,12 +28,11 @@ export class AppLayoutComponent {
   brandName = this.backendConfig.getBrandName();
 
   constructor(
-    private router: Router,
     private userService: UserService,
     private sdk: SDKService,
   ) {}
 
   logout() {
-    this.router.navigate(['/user/logout']);
+    this.sdk.nuclia.auth.logout();
   }
 }

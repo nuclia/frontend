@@ -14,22 +14,16 @@ describe('Authentication', () => {
 
   describe('with regular credentials', () => {
     beforeEach(() => {
-      const nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
-      auth = nuclia.auth as Authentication;
-    });
-
-    it('should login', (done) => {
-      mockFetch({ access_token: ACCESS_TOKEN, refresh_token: 'qwerty' });
-      auth.login('test', 'test').subscribe(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          'http://here/auth/login',
-          expect.objectContaining({ body: '{"username":"test","password":"test"}', method: 'POST' }),
-        );
-        expect(localStorage.getItem(LOCALSTORAGE_AUTH_KEY)).toEqual(ACCESS_TOKEN);
-        expect(localStorage.getItem(LOCALSTORAGE_REFRESH_KEY)).toEqual('qwerty');
-        expect(auth.getAuthHeaders()).toEqual({ Authorization: `Bearer ${ACCESS_TOKEN}` });
-        done();
+      const nuclia = new Nuclia({
+        backend: 'http://accounts.here',
+        zone: 'europe-1',
+        account: 'dc',
+        knowledgeBox: 'gotham',
+        oauth: {
+          client_id: 'abc123',
+        },
       });
+      auth = nuclia.auth as Authentication;
     });
 
     it('should emit isAuthenticated', (done) => {
@@ -43,55 +37,12 @@ describe('Authentication', () => {
           done();
         });
     });
-
-    it('should logout', (done) => {
-      mockFetch({ access_token: ACCESS_TOKEN, refresh_token: 'qwerty' });
-      auth
-        .login('test', 'test')
-        .pipe(
-          tap(() => auth.logout()),
-          switchMap(() => auth.isAuthenticated()),
-          filter((isAuth) => !isAuth),
-        )
-        .subscribe((isAuth) => {
-          expect(isAuth).toBe(false);
-          expect(global.fetch).toHaveBeenCalledWith(
-            'http://here/auth/logout',
-            expect.objectContaining({
-              headers: { Authorization: `Bearer ${ACCESS_TOKEN}`, 'content-type': 'application/json' },
-              method: 'POST',
-            }),
-          );
-          expect(localStorage.getItem(LOCALSTORAGE_AUTH_KEY)).toBeFalsy();
-          done();
-        });
-    });
-
-    it('should refresh', (done) => {
-      mockFetch({ access_token: ACCESS_TOKEN, refresh_token: 'qwerty' });
-      auth
-        .login('test', 'test')
-        .pipe(switchMap(() => auth.refresh()))
-        .subscribe(() => {
-          expect(global.fetch).toHaveBeenCalledWith(
-            'http://here/auth/refresh',
-            expect.objectContaining({
-              headers: { Authorization: `Bearer ${ACCESS_TOKEN}`, 'content-type': 'application/json' },
-              method: 'POST',
-              body: '{"refresh_token":"qwerty"}',
-            }),
-          );
-          expect(localStorage.getItem(LOCALSTORAGE_AUTH_KEY)).toEqual(ACCESS_TOKEN);
-          expect(localStorage.getItem(LOCALSTORAGE_REFRESH_KEY)).toEqual('qwerty');
-          done();
-        });
-    });
   });
 
   describe('with service API key', () => {
     beforeEach(() => {
       auth = new Authentication({
-        options: { backend: 'http://here', account: 'dc', knowledgeBox: 'gotham', apiKey: 'abc' },
+        options: { backend: 'http://accounts.here', account: 'dc', knowledgeBox: 'gotham', apiKey: 'abc' },
       } as INuclia);
     });
 
