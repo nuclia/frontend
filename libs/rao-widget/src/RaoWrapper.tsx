@@ -89,7 +89,7 @@ export const RaoWrapper: FC<RaoWidgetProps> = ({
   }
   const nucliaOptions: NucliaOptions = {
     backend: backend || 'https://rag.progress.cloud/api',
-    zone: zone || 'europe-1',
+    zone: zone,
     knowledgeBox: knowledgeBoxId,
     client,
     account,

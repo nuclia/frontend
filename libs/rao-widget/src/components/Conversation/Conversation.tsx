@@ -113,7 +113,7 @@ const formatDisplayUrl = (candidate?: string): string | undefined => {
   }
 };
 
-const pickSourceIcon = (url?: string): string => {
+const pickSourceIcon = (url: string): string => {
   if (!isNonEmptyString(url)) {
     return 'file';
   }
@@ -184,7 +184,7 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string, re
       }
 
       const urls = Array.isArray(chunk.url) ? chunk.url.filter(isNonEmptyString) : [];
-      const primaryUrl = urls[0];
+      const primaryUrl: string | undefined = urls[0];
       let metadataLabel = extractMetaLabel(chunk.metadata, resources);
 
       if (!metadataLabel && Array.isArray(contextData.citations) && contextData.citations.length > 0) {
@@ -218,7 +218,7 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string, re
         url: primaryUrl,
         displayUrl,
         meta: metadataLabel ?? undefined,
-        icon: pickSourceIcon(primaryUrl),
+        icon: pickSourceIcon(primaryUrl ?? ''),
         thumbnail,
       });
     });

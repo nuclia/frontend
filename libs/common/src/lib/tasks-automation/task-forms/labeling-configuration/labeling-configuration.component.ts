@@ -169,7 +169,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     this.labelingForm.controls.on.patchValue(
       task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
     );
-    const operations = task.parameters?.operations
+    const operations = task.parameters.operations
       ?.filter((operation) => operation.label)
       ?.map((operation) => operation.label as LabelOperation);
 

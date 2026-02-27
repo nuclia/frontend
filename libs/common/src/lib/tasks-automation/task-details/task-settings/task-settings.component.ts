@@ -72,15 +72,15 @@ export class TaskSettingsComponent {
   @Input()
   set task(value: DataAugmentationTaskOnGoing | undefined) {
     this._task = value;
-    if (value?.parameters.filter.field_types?.length) {
-      this.fieldTypes = this.mapFieldTypes(value.parameters.filter.field_types);
-    }
-    if (value?.parameters.filter.not_field_types?.length) {
-      this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
-    }
-    this.labels = value?.parameters?.filter?.labels || [];
-    this.apply_to_agent_generated_fields = value?.parameters.filter.apply_to_agent_generated_fields || false;
     if (value) {
+      if (value.parameters.filter.field_types?.length) {
+        this.fieldTypes = this.mapFieldTypes(value.parameters.filter.field_types);
+      }
+      if (value.parameters.filter.not_field_types?.length) {
+        this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
+      }
+      this.labels = value.parameters?.filter?.labels || [];
+      this.apply_to_agent_generated_fields = value.parameters.filter.apply_to_agent_generated_fields || false;
       this.triggers = this.mapTriggers(value);
       this.hasFilters = hasFilters(value.parameters);
     }
