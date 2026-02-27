@@ -34,7 +34,7 @@ import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
-import { UserContainerModule } from './user-container';
+import { UserContainerComponent } from './user-container';
 import { CallbackComponent } from './callback/callback.component';
 
 export const authRoutes: Routes = [
@@ -95,7 +95,7 @@ export const authRoutes: Routes = [
     PaTogglesModule,
     PaTextFieldModule,
     SisPasswordInputModule,
-    UserContainerModule,
+    UserContainerComponent,
     PaAvatarModule,
     Step1Component,
     KbNameStepComponent,

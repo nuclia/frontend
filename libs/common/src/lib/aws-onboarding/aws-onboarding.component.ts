@@ -4,7 +4,7 @@ import {
   EmbeddingModelStepComponent,
   KbNameStepComponent,
   LearningConfigurationForm,
-  UserContainerModule,
+  UserContainerComponent,
   ZoneStepComponent,
 } from '@nuclia/user';
 import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils } from '@flaps/core';
@@ -20,7 +20,7 @@ import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.
   imports: [
     CommonModule,
     Step1BudgetComponent,
-    UserContainerModule,
+    UserContainerComponent,
     KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
