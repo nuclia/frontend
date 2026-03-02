@@ -11,11 +11,12 @@ export type OAuthErrors =
   | 'get_consent_error';
 
 const EMAIL_KEY = 'SIGNUP_EMAIL';
+const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
 @Injectable({
   providedIn: 'root',
 })
 export class OAuthService {
-  signupEmail = '';
+  cameFrom = '';
   constructor(private sdk: SDKService) {}
 
   loginUrl() {
@@ -40,5 +41,13 @@ export class OAuthService {
 
   setEmail(email: string) {
     localStorage.setItem(EMAIL_KEY, email);
+  }
+
+  getCameFrom() {
+    return localStorage.getItem(CAME_FROM_KEY) || '';
+  }
+
+  setCameFrom(cameFrom: string) {
+    localStorage.setItem(CAME_FROM_KEY, cameFrom);
   }
 }

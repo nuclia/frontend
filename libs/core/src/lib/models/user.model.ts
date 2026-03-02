@@ -53,6 +53,7 @@ export interface OAuthConsentData {
   client_name: string;
   requested_scope: string[];
   skip_consent: boolean;
+  came_from?: string;
 }
 
 export interface OAuthLoginData {

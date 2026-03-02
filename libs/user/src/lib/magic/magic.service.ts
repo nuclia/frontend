@@ -63,8 +63,11 @@ export class MagicService {
         break;
       case 'gosetupaccount':
       case 'startonboarding':
-        // TODO: get came_from when returned by backend
-        this.router.navigate(['/user/onboarding']);
+        if (action.consent_url) {
+          location.href = action.consent_url;
+        } else {
+          throw new Error('No consent_url');
+        }
         break;
     }
   }

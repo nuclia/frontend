@@ -29,7 +29,6 @@ export class SignupComponent implements OnInit {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>(this.signupEmail, {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
     }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });

@@ -10,6 +10,7 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
   const oAuthService = inject(OAuthService);
   const router = inject(Router);
   const loginChallenge = route.queryParamMap.get('login_challenge');
+  oAuthService.cameFrom = route.queryParamMap.get('came_from') || '';
 
   if (!loginChallenge) {
     return of(null);

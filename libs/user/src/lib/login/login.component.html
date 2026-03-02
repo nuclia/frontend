@@ -105,10 +105,9 @@
     <div class="login_signup">
       <span>{{ 'login.have_account' | translate }}</span>
       <a
-        [routerLink]="['/user/signup']"
+        [href]="signUpUrl"
         class="accent-link"
-        data-cy="create-account"
-        queryParamsHandling="merge">
+        data-cy="create-account">
         {{ 'login.create_one' | translate }}
       </a>
     </div>

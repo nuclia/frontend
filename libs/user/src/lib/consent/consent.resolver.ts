@@ -16,6 +16,9 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
 
   return oAuthService.getConsentData(consentChallenge).pipe(
     tap((data) => {
+      if (data.came_from) {
+        oAuthService.setCameFrom(data.came_from);
+      }
       if (data.skip_consent) {
         // Auto-submit the form by creating and submitting it programmatically
         const form = document.createElement('form');

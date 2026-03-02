@@ -53,6 +53,7 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
+  signUpUrl = `${this.oAuthService.cameFrom}/user/signup`;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -85,7 +86,7 @@ export class LoginComponent {
 
       // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
-      
+
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
@@ -153,4 +154,4 @@ export class LoginComponent {
   private remoteLogin() {
     location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
   }
-} 
+}

@@ -39,6 +39,7 @@ export interface MagicAction {
   kb?: string;
   login_token?: AuthTokens;
   zone?: string;
+  consent_url?: string;
 }
 
 export type MagicActionError = 'local_user_already_exists' | 'user_registered_as_external_user';
