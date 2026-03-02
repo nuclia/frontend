@@ -11,6 +11,7 @@ import {
   RetryConfig,
   switchMap,
   throwError,
+  timeout,
   timer,
 } from 'rxjs';
 import {
@@ -180,7 +181,19 @@ export class Db implements IDb {
           return zoneIds;
         }, [] as string[]);
         return zones.length > 0
-          ? forkJoin(zones.map((zone) => this._getKnowledgeBoxesForZone(id, zone, mode)))
+          ? forkJoin(
+              zones.map((zone) =>
+                this._getKnowledgeBoxesForZone(id, zone, mode).pipe(
+                  timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+                  catchError(() => {
+                    console.error(
+                      `Unable to load ${mode === 'kb' ? 'Knowledge Boxes' : 'Retrieval agents'} for zone: ${zone}`,
+                    );
+                    return of([] as IKnowledgeBoxItem[]);
+                  }),
+                ),
+              ),
+            )
           : of([]);
       }),
       map((kbByZone) =>
