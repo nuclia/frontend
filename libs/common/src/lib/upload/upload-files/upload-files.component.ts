@@ -71,7 +71,7 @@ export class UploadFilesComponent {
     }
   }
 
-  addFiles(filesOrFileList: File[] | FileList) {
+  addFiles(filesOrFileList: File[] | FileList | DroppedFile[]) {
     const { mediaFiles, nonMediaFiles } = getFilesGroupedByType(filesOrFileList);
 
     this.files = [
