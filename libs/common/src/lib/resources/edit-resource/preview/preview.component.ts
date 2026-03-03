@@ -75,9 +75,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
   extractConfigId: Observable<string | undefined> = this.editResourceService.currentFieldData.pipe(
     map((field) => (field?.value as FileField)?.extract_strategy),
   );
+  splitConfigId: Observable<string | undefined> = this.editResourceService.currentFieldData.pipe(
+    map((field) => (field?.value as FileField)?.split_strategy),
+  );
   extractConfig: Observable<ExtractConfig | undefined> = this.extractConfigId.pipe(
     filter((configId) => typeof configId === 'string'),
     switchMap((configId) => this.editResourceService.extractStrategies.pipe(map((strategies) => strategies[configId]))),
+  );
+  splitConfig: Observable<ExtractConfig | undefined> = this.splitConfigId.pipe(
+    filter((configId) => typeof configId === 'string'),
+    switchMap((configId) => this.editResourceService.splitStrategies.pipe(map((strategies) => strategies[configId]))),
   );
   aiModelsUrl = this.navigationService.kbUrl.pipe(map((kbUrl) => `${kbUrl}/ai-models`));
 
