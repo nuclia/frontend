@@ -1220,6 +1220,9 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    */
   inviteToKb(data: InviteKbData): Observable<void> {
     const { endpoint, zone } = this.getKbEndpointAndZone();
+    if (!data.came_from) {
+      data.came_from = location.origin;
+    }
     return this.nuclia.rest.post(`${endpoint}/invite`, data, undefined, undefined, undefined, zone);
   }
 

@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService, ResetData } from '@flaps/core';
+import { LoginService, ResetData, ResetResponse } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { StrongPassword, SamePassword } from '../password.validator';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'nus-reset',
@@ -70,10 +71,10 @@ export class ResetComponent {
     if (this.magicToken) {
       const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
       this.loginService.reset(resetInfo, token).subscribe({
-        complete: () => {
+        next: (data) => {
           this.toaster.success('reset.password_reset');
           this.resetting = false;
-          this.goLogin();
+          this.goLogin(data.login_challenge);
         },
         error: (error) => {
           this.toaster.error(error.status === 500 ? 'reset.invalid-token' : 'generic.error.oops');
@@ -84,9 +85,10 @@ export class ResetComponent {
     }
   }
 
-  goLogin() {
+  goLogin(login_challenge: string) {
     this.router.navigate(['../login'], {
       relativeTo: this.route,
+      queryParams: { login_challenge },
     });
   }
 }

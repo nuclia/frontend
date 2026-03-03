@@ -775,6 +775,9 @@ export class Db implements IDb {
    */
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void> {
     const url = `/account/${accountSlug}/invite`;
+    if (!data.came_from) {
+      data.came_from = location.origin;
+    }
     return this.nuclia.rest.post(url, data);
   }
 

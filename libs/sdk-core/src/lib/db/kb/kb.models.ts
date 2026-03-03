@@ -76,6 +76,7 @@ export interface KbUserPayload {
 export interface InviteKbData {
   email: string;
   role: KBRoles;
+  came_from?: string;
 }
 
 export interface KbInvite {

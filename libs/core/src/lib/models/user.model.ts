@@ -14,13 +14,10 @@ export interface SetPasswordData {
   password: string;
 }
 
-export class RecoverData {
+export interface RecoverData {
   username: string;
   app: string;
-  constructor(username: string, app: string) {
-    this.username = username;
-    this.app = app;
-  }
+  login_challenge?: string;
 }
 
 export class ResetData {
@@ -137,4 +134,6 @@ export interface RefreshResult {
 }
 
 // tslint:disable-next-line: no-empty-interface
-export interface ResetResponse {}
+export interface ResetResponse {
+  login_challenge: string;
+}

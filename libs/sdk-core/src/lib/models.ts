@@ -338,6 +338,7 @@ export interface AccountUsersPayload {
 export interface InviteAccountUserPayload {
   email: string;
   role?: AccountRoles;
+  came_from?: string;
 }
 
 export interface PendingInvitation {
