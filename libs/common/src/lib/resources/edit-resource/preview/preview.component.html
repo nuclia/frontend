@@ -41,23 +41,35 @@
       }
 
       @if (selectedTab === 'content') {
-        @if (extractConfigId | async; as configId) {
-          @if (extractConfig | async; as config) {
-            <nsi-info-card>
-              <span [innerHTML]="'resource.extract-strategy.info' | translate: { name: config.name }"></span>
-              <br />
-              <small>
-                <a [routerLink]="aiModelsUrl | async">{{ 'resource.extract-strategy.ai-models-link' | translate }}</a>
-              </small>
-            </nsi-info-card>
-          } @else {
-            <!-- prettier-ignore -->
-            <nsi-info-card type="warning">
-              <span [innerHTML]="'resource.extract-strategy.missing' | translate:{id: configId}"></span>
-            </nsi-info-card>
-          }
+        @let extractId = extractConfigId | async;
+        @let extractName = (extractConfig | async)?.name;
+        @let splitId = splitConfigId | async;
+        @let splitName = (splitConfig | async)?.name;        
+        @if (extractId || splitId) {
+          <nsi-info-card>
+            <div class="body-s">
+              @if (extractName || extractId) {
+                <div class="custom-processing">
+                  <strong>{{ 'resource.custom-processing.extract-strategy' | translate }}:</strong>
+                  <span>{{ extractName || extractId }}</span>
+                  @if (!extractName) {
+                    <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
+                  }
+                </div>
+              }
+              @if (splitName || splitId) {
+                <div class="custom-processing">
+                  <strong>{{ 'resource.custom-processing.split-strategy' | translate }}:</strong>
+                  <span>{{ splitName || splitId }}</span>
+                  @if (!splitName) {
+                    <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
+                  }
+                </div>
+              }
+              <a [routerLink]="aiModelsUrl | async">{{ 'resource.custom-processing.ai-models-link' | translate }}</a>
+            </div>
+          </nsi-info-card>
         }
-
         @if (hasFilters | async) {
           <div class="filters-container">
             <div class="filters">

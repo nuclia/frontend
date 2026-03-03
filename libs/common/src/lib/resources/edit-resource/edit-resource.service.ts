@@ -92,6 +92,7 @@ export class EditResourceService {
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
   extractStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getExtractStrategies().pipe(shareReplay(1))));
+  splitStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getSplitStrategies().pipe(shareReplay(1))));
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isSession = false;
 

@@ -26,7 +26,12 @@
 
   nsi-info-card {
     margin-bottom: rhythm(2);
-    padding: rhythm(1);
+  }
+
+  .custom-processing {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
   }
 
   .resource-container {
