@@ -9,6 +9,7 @@ export const inviteGuard = (route: ActivatedRouteSnapshot) => {
   const user: UserService = inject(UserService);
   const router: Router = inject(Router);
 
+  // TODO: do we still need that for existing users invited to account?
   return forkJoin([
     getSlugs(sdk, route.queryParams['account'], route.queryParams['kb']),
     user.userPrefs.pipe(

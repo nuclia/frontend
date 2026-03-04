@@ -10,7 +10,7 @@ import {
   awsGuard,
   AwsOnboardingComponent,
 } from '@flaps/common';
-import { RedirectComponent, FarewellComponent, FeedbackComponent, inviteGuard, InviteComponent } from '@nuclia/user';
+import { RedirectComponent, FarewellComponent, FeedbackComponent, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 
 const routes: Routes = [
@@ -42,7 +42,7 @@ const routes: Routes = [
   {
     path: 'setup/invite',
     component: InviteComponent,
-    canActivate: [authGuard, inviteGuard],
+    // canActivate: [authGuard],
   },
   {
     path: 'setup_account',

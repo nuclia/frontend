@@ -79,6 +79,14 @@ export class LoginComponent {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
+    this.route.data.subscribe((data) => {
+      if (data['loginData']['needs_initial_setpassword']) {
+        this.router.navigate(['/user/recover'], {
+          queryParamsHandling: 'merge',
+          queryParams: { isPasswordInit: true },
+        });
+      }
+    });
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
@@ -144,11 +152,6 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.form?.nativeElement.submit();
     }
-  }
-
-  private autoSubmitOAuthForm() {
-    // Submit OAuth form without validation (for skip_login scenario)
-    this.form?.nativeElement.submit();
   }
 
   private remoteLogin() {

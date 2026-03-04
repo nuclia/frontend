@@ -2000,7 +2000,6 @@
 	"select.arag-create-button": "Crear un agent de recuperació",
 	"select.arag-tooltip": "Aneu a l'agent de recol·lecció: {{arag}}",
 	"select.kb-tooltip": "Vés al Knowledge Box: {{kb}}",
-	"setup.set_password": "Estableix la contrasenya",
 	"standalone.menu.button-label": "Menú",
 	"standalone.menu.introspect": "Dades d’introspecció",
 	"standalone.menu.kb-list": "Knowledge Boxes",

@@ -144,6 +144,74 @@ Build the widget:
 ./tools/build-rao.sh
 ```
 
+## Auth app
+
+The auth app supports the OAuth workflow and other auth related features.
+
+As the backend is redirecting to the server, it might be painful to work locally.
+
+If needed you can run the auth app on port 4201:
+
+```
+nx serve auth --port 4201 -c local-dev --host 127.0.0.1
+```
+
+And proxy auth.gcp-global-dev-1.nuclia.io calls to this local port with the following setup:
+
+```
+brew install nginx mkcert nss
+cd ~/wherever
+mkcert -install
+mkcert auth.gcp-global-dev-1.nuclia.io
+mkdir logs
+```
+
+In /etc/hosts, add:
+
+```
+127.0.0.1   localhost auth.gcp-global-dev-1.nuclia.io
+```
+
+Note: do not forget to undo that once finished, else you will not be able to access the real auth.gcp-global-dev-1.nuclia.io.
+
+nginx.conf
+
+```
+# Required top-level block (even if empty)
+events {}
+
+http {
+  # Keep logs local to this temp project (optional)
+  access_log logs/access.log;
+  error_log  logs/error.log;
+
+  # Recommended: tighter proxy defaults
+  proxy_http_version 1.1;
+  proxy_set_header Host $host;
+  proxy_set_header X-Forwarded-Proto https;
+  proxy_set_header X-Forwarded-For $remote_addr;
+
+  server {
+    # You'll need sudo to bind to 443 on macOS
+    listen 443 ssl;
+    server_name auth.gcp-global-dev-1.nuclia.io;
+
+    # >>> Replace these with your mkcert outputs <<<
+    ssl_certificate     auth.gcp-global-dev-1.nuclia.io.pem;
+    ssl_certificate_key auth.gcp-global-dev-1.nuclia.io-key.pem;
+
+    # Forward EVERYTHING under this host to your Angular dev server
+    location / {
+      proxy_pass http://127.0.0.1:4201;
+    }
+  }
+}
+```
+
+```
+sudo nginx -p $(pwd) -c nginx.conf -g 'daemon off;'
+```
+
 ## SDK
 
 [Documentation](https://docs.nuclia.dev/docs/develop/js-sdk/)

@@ -25,9 +25,9 @@ import { MagicComponent } from './magic/magic.component';
 import { RecoverComponent } from './recover/recover.component';
 import { ResetComponent } from './reset/reset.component';
 import { SignupComponent } from './signup/signup.component';
-import { SsoButtonComponent } from './sso/sso-button.component';
 import { UserContainerComponent } from './user-container';
 import { CallbackComponent } from './callback/callback.component';
+import { SsoButtonsComponent } from './sso/sso-buttons.component';
 
 export const authRoutes: Routes = [
   { path: 'callback', component: CallbackComponent },
@@ -69,7 +69,6 @@ export const authRoutes: Routes = [
     ResetComponent,
     ConsentComponent,
     SignupComponent,
-    SsoButtonComponent,
     CheckMailComponent,
   ],
   imports: [
@@ -89,8 +88,9 @@ export const authRoutes: Routes = [
     PaAvatarModule,
     PaButtonModule,
     LowerCaseInputDirective,
+    SsoButtonsComponent,
   ],
-  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent],
+  exports: [RouterModule, SignupComponent, CheckMailComponent],
   providers: [
     {
       provide: RECAPTCHA_V3_SITE_KEY,

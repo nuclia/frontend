@@ -2000,7 +2000,6 @@
 	"select.arag-create-button": "Création d’un agent d’extraction",
 	"select.arag-tooltip": "Accéder à l'agent récolteur : {{arag}}",
 	"select.kb-tooltip": "Accéder à la Knowledge Box : {{kb}}",
-	"setup.set_password": "Définir votre mot de passe",
 	"standalone.menu.button-label": "Menu",
 	"standalone.menu.introspect": "Données d’introspection",
 	"standalone.menu.kb-list": "Knowledge Boxes",

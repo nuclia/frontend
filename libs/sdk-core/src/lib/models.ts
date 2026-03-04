@@ -67,7 +67,7 @@ export interface IAuthentication {
   deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
-  redirectToOAuth(queryParams?: { [key: string]: string }): void;
+  redirectToOAuth(queryParams?: { [key: string]: string | boolean }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
   getAuthUrl(): string;
   validateMagicToken(token: string, zone?: string): Observable<MagicAction>;

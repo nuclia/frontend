@@ -30,7 +30,6 @@ import {
   TopbarModule,
   UploadModule,
 } from '@flaps/common';
-import { InviteModule } from '@nuclia/user';
 import { KnowledgeBoxModule } from './knowledge-box';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
@@ -55,7 +54,6 @@ const components = [AppComponent];
 const appModules = [
   AppRoutingModule,
   FarewellModule,
-  InviteModule,
   SelectAccountKbModule,
   AccountModule,
   KnowledgeBoxModule,

@@ -30,7 +30,6 @@ import {
   TopbarModule,
   UploadModule,
 } from '@flaps/common';
-import { InviteModule } from '@nuclia/user';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
@@ -54,7 +53,6 @@ const components = [AppComponent];
 const appModules = [
   AppRoutingModule,
   FarewellModule,
-  InviteModule,
   SelectAccountKbModule,
   AccountModule,
   EntitiesModule,

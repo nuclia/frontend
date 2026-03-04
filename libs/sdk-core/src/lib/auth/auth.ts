@@ -128,7 +128,7 @@ export class Authentication implements IAuthentication {
     return this.nuclia.options.backend.replace('//accounts.', '//oauth.').replace('/api', '');
   }
 
-  redirectToOAuth(queryParams?: { [key: string]: string }) {
+  redirectToOAuth(queryParams?: { [key: string]: string | boolean }) {
     if (!queryParams) {
       queryParams = {};
     }

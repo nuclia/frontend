@@ -8,6 +8,8 @@ import { catchError, map, of, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class MagicService {
+  cameFrom = 'http://localhost:4200';
+
   constructor(
     private authService: AuthService,
     private sdk: SDKService,
@@ -17,6 +19,7 @@ export class MagicService {
   execute(action: MagicAction) {
     this.authService.setNextUrl(null);
     this.sdk.cleanAccount();
+    this.cameFrom = action.came_from || '';
 
     if (action.action === 'join_regional_kb') {
       // Action to join a kb has a different flow

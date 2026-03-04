@@ -1,7 +1,7 @@
 <nus-user-container>
   <div class="main-container with-gap">
-    <h1>{{ 'recover.title' | translate }}</h1>
-    <div class="body-s">{{ 'recover.description' | translate }}</div>
+    <h1>{{ (isPasswordInit ? 'recover.init.title' : 'recover.title') | translate }}</h1>
+    <div class="body-s">{{ (isPasswordInit ? 'recover.init.description' : 'recover.description') | translate }}</div>
 
     <form
       class="recover-form"
@@ -25,11 +25,13 @@
       </pa-button>
     </form>
 
-    <div>
-      <span>{{ 'recover.gologin_help' | translate }}</span>
-      <a routerLink="../login">
-        {{ 'recover.gologin' | translate }}
-      </a>
-    </div>
+    @if (!isPasswordInit) {
+      <div>
+        <span>{{ 'recover.gologin_help' | translate }}</span>
+        <a routerLink="../login">
+          {{ 'recover.gologin' | translate }}
+        </a>
+      </div>
+    }
   </div>
 </nus-user-container>

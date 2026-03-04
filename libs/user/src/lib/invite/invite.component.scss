@@ -8,4 +8,15 @@
   .setup-invite-title {
     margin-bottom: rhythm(4);
   }
+
+  .body-s {
+    margin-bottom: rhythm(2);
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: rhythm(2);
+  }
 }

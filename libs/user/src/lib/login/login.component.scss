@@ -46,32 +46,10 @@
 }
 
 .login_submit,
-.login_recover,
-.login_social {
+.login_recover {
   margin-top: rhythm(3);
 }
 
 .login_signup {
   margin-top: rhythm(6);
-}
-
-.login_separator {
-  align-items: center;
-  display: flex;
-  margin-bottom: rhythm(4);
-  span {
-    padding: 0 rhythm(2);
-  }
-  &::before,
-  &::after {
-    background-color: $color-neutral-regular;
-    content: '';
-    flex: 1 1 auto;
-    height: 1px;
-  }
-}
-
-.login_sso {
-  margin: -#{rhythm(1)} 0 rhythm(2);
-  text-align: right;
 }

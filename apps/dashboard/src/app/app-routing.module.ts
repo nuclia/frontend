@@ -47,6 +47,7 @@ import {
   FeedbackComponent,
   CallbackComponent,
   TemporaryAppSignupComponent,
+  SetPasswordComponent,
 } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
@@ -314,6 +315,7 @@ const routes: Routes = [
   // TEMPORARY, will be removed once the signup form goes to progress.com
   { path: 'user/signup', component: TemporaryAppSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
+  { path: 'user/set-password', component: SetPasswordComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
 

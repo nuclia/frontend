@@ -1,0 +1,31 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.login_social {
+  margin-top: rhythm(3);
+  .login_separator {
+    align-items: center;
+    display: flex;
+    margin-bottom: rhythm(4);
+    span {
+      padding: 0 rhythm(2);
+    }
+    &::before,
+    &::after {
+      background-color: $color-neutral-regular;
+      content: '';
+      flex: 1 1 auto;
+      height: 1px;
+    }
+  }
+
+  .login_sso {
+    margin: -#{rhythm(1)} 0 rhythm(2);
+    text-align: right;
+  }
+
+  .sso-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+  }
+}

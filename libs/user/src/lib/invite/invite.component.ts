@@ -1,29 +1,30 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { LoginService, SDKService } from '@flaps/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { BackendConfigurationService, LoginService, SDKService } from '@flaps/core';
 import { Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import { PasswordFormComponent } from './password-form.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UserContainerComponent } from '../user-container';
+import { SsoButtonsComponent } from '../sso/sso-buttons.component';
+import { MagicService } from '../magic/magic.service';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nuclia-invite',
   templateUrl: './invite.component.html',
   styleUrls: ['./invite.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  imports: [CommonModule, PaButtonModule, TranslateModule, UserContainerComponent],
 })
 export class InviteComponent {
-  constructor(
-    private router: Router,
-    private sdk: SDKService,
-    private loginService: LoginService,
-  ) {}
+  private magicService = inject(MagicService);
 
-  submit(data: { username?: string; password: string }) {
-    this.sdk.nuclia.auth
-      .setPassword(data.password)
-      .pipe(switchMap(() => this.loginService.setPreferences({ name: data.username || '' })))
-      .subscribe({
-        next: () => this.router.navigate(['/select']),
-        error: () => this.router.navigate(['/select']),
-      });
+  setPassword() {
+    location.href = `${this.magicService.cameFrom}/user/set-password`;
+  }
+
+  useSSO() {
+    location.href = this.magicService.cameFrom;
   }
 }

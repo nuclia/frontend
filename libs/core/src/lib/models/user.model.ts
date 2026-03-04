@@ -18,6 +18,7 @@ export interface RecoverData {
   username: string;
   app: string;
   login_challenge?: string;
+  initial_setpassword?: boolean;
 }
 
 export class ResetData {

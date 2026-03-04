@@ -2000,7 +2000,6 @@
 	"select.arag-create-button": "Creación de un agente de recuperación",
 	"select.arag-tooltip": "Ir al agente de cosecha: {{arag}}",
 	"select.kb-tooltip": "Ir a la Knowledge Box: {{kb}}",
-	"setup.set_password": "Establece tu contraseña",
 	"standalone.menu.button-label": "Menú",
 	"standalone.menu.introspect": "Datos de introspección",
 	"standalone.menu.kb-list": "Knowledge Boxes",

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +28,7 @@ export class RecoverComponent {
     },
   };
   loginChallenge = '';
+  isPasswordInit = false;
 
   constructor(
     private router: Router,
@@ -37,9 +38,12 @@ export class RecoverComponent {
     private config: BackendConfigurationService,
     private modalService: SisModalService,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.route.queryParams.subscribe((params) => {
       this.loginChallenge = params['login_challenge'];
+      this.isPasswordInit = params['isPasswordInit'];
+      this.cdr.markForCheck();
     });
   }
 
@@ -60,6 +64,7 @@ export class RecoverComponent {
       username: this.recoverForm.getRawValue().email,
       app: this.config.getAppName(),
       login_challenge: this.loginChallenge,
+      initial_setpassword: this.isPasswordInit,
     };
     this.loginService
       .recover(recoverInfo, token)
