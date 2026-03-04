@@ -96,9 +96,12 @@ export class CloudFolderComponent implements OnInit {
       if (chunks.length === 2 && this.currentDrive()) {
         this.currentPath.set('');
         this.browseDrive(this.currentDrive() as StorageDrive);
-      }
-      if (chunks.length > 2) {
-        const path = chunks.slice(0, length - 1).join('/');
+      } else if (chunks.length === 2 && !this.currentDrive()) {
+        // Drive-less providers (e.g. Dropbox): back to root
+        this.currentPath.set('');
+        this.loadFolders();
+      } else if (chunks.length > 2) {
+        const path = chunks.slice(0, chunks.length - 1).join('/');
         this.browseFolder(path);
       }
     } else if (this.currentDrive()) {

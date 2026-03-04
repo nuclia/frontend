@@ -96,11 +96,12 @@ export class SyncService {
     dropbox: {
       definition: {
         id: 'dropbox',
+        oauth_provider: 'dropbox_oauth',
         title: 'Dropbox',
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
         permanentSyncOnly: true,
-        deprecated: true,
+        cloud: true,
         factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },

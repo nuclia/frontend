@@ -17,7 +17,7 @@ export class OAuthConnector implements IConnector {
 
   constructor(name: string, id: string, path: string) {
     this.canSyncSecurityGroups = name === 'gdrive';
-    this.allowToSelectFolders = name === 'gdrive' || name === 'sharefile';
+    this.allowToSelectFolders = ['gdrive', 'sharefile', 'dropbox'].includes(name);
     this.canSyncLastChanges = name !== 'sharefile' && name !== 's3';
     this.name = name;
     this.id = id;
