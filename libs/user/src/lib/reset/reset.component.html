@@ -5,6 +5,13 @@
       class="reset-form"
       [formGroup]="resetForm"
       (ngSubmit)="submit()">
+      @if (initFullname) {
+        <pa-input
+          formControlName="username"
+          autocapitalize="off">
+          {{ 'login.full_name' | translate }}
+        </pa-input>
+      }
       <div class="reset_field">
         <nsi-password-input
           formControlName="password"

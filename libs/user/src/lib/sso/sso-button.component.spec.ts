@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SsoButtonComponent } from './sso-button.component';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { SsoService } from '@flaps/core';
-import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('SsoButtonComponent', () => {
   let component: SsoButtonComponent;
@@ -13,7 +13,7 @@ describe('SsoButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaIconModule), MockModule(PaTranslateModule)],
+      imports: [MockModule(PaIconModule), MockModule(TranslateModule)],
       declarations: [SsoButtonComponent],
       providers: [
         MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => `sso/login/${provider}`) }),

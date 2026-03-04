@@ -18,6 +18,9 @@ import { tap } from 'rxjs';
 export class ResetComponent {
   magicToken: string | undefined;
   resetForm = new FormGroup({
+    username: new FormControl('', {
+      nonNullable: true,
+    }),
     password: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, StrongPassword],
@@ -40,6 +43,7 @@ export class ResetComponent {
   };
 
   resetting = false;
+  initFullname = false;
 
   constructor(
     private loginService: LoginService,
@@ -51,6 +55,7 @@ export class ResetComponent {
   ) {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params['token'];
+      this.initFullname = params['init'];
     });
   }
 
@@ -69,6 +74,7 @@ export class ResetComponent {
 
   reset(token: string) {
     if (this.magicToken) {
+      // TODO: pass the fullname?
       const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
       this.loginService.reset(resetInfo, token).subscribe({
         next: (data) => {
