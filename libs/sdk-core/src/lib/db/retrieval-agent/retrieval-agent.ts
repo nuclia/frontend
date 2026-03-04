@@ -217,7 +217,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     headers?: { [key: string]: string },
   ): Observable<AragResponse | IErrorResponse> {
     const fullPath = this.getInteractionPath(sessionId);
-    let lastMessage: AragAnswer | undefined;
+    let nextIndex = 0;
     return this.nuclia.rest
       .getStreamedResponse(fullPath, {
         question,
@@ -231,13 +231,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             .split('\n')
             .filter((d) => d);
           let previous = '';
-          const items: AragAnswer[] = rows.reduce((list, row) => {
+          const items: AragAnswer[] = rows.slice(nextIndex).reduce((list, row) => {
             previous += row;
             try {
               const obj = JSON.parse(previous) as AragAnswer;
-              if (!lastMessage || (lastMessage.seqid && obj.seqid && obj.seqid > lastMessage.seqid)) {
-                list.push(obj);
-              }
+              list.push(obj);
               previous = '';
             } catch (e) {
               // block is not complete yet
@@ -246,7 +244,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
           }, [] as AragAnswer[]);
 
           if (items.length > 0) {
-            lastMessage = items[items.length - 1];
+            nextIndex += items.length;
           }
           return from(
             items.map((item) =>
