@@ -54,6 +54,7 @@ export const authRoutes: Routes = [
   { path: 'login', component: LoginComponent, resolve: { loginData: loginResolver } },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
+  { path: 'setup', component: ResetComponent },
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
   { path: 'signup', component: SignupComponent },

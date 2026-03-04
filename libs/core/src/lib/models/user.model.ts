@@ -21,13 +21,13 @@ export interface RecoverData {
   initial_setpassword?: boolean;
 }
 
-export class ResetData {
+export interface ResetData {
   password: string;
   token: string;
-  constructor(password: string, token: string) {
-    this.password = password;
-    this.token = token;
-  }
+}
+
+export interface SetupData extends ResetData {
+  fullname: string;
 }
 
 export interface LoginData {

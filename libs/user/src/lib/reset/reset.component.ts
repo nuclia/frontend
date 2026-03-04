@@ -55,8 +55,8 @@ export class ResetComponent {
   ) {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params['token'];
-      this.initFullname = params['init'];
     });
+    this.route.url.subscribe((u) => (this.initFullname = u[0].path === 'setup'));
   }
 
   submit() {
@@ -64,7 +64,7 @@ export class ResetComponent {
     this.resetting = true;
     this.reCaptchaV3Service.execute('reset').subscribe({
       next: (token) => {
-        this.reset(token);
+        this.apply(token);
       },
       error: (error) => {
         throw new Error('Recaptcha error', error);
@@ -72,11 +72,15 @@ export class ResetComponent {
     });
   }
 
-  reset(token: string) {
+  apply(reCaptchaToken: string) {
     if (this.magicToken) {
-      // TODO: pass the fullname?
-      const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
-      this.loginService.reset(resetInfo, token).subscribe({
+      const password = this.resetForm.getRawValue().password;
+      const fullname = this.resetForm.getRawValue().username;
+      const token = this.magicToken;
+      const request = this.initFullname
+        ? this.loginService.setup({ fullname, password, token }, reCaptchaToken)
+        : this.loginService.reset({ password, token }, reCaptchaToken);
+      request.subscribe({
         next: (data) => {
           this.toaster.success('reset.password_reset');
           this.resetting = false;

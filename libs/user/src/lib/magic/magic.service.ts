@@ -8,7 +8,7 @@ import { catchError, map, of, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class MagicService {
-  cameFrom = 'http://localhost:4200';
+  cameFrom = '';
 
   constructor(
     private authService: AuthService,
