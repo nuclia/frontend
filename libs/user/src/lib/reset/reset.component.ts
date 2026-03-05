@@ -42,7 +42,7 @@ export class ResetComponent {
     } as IErrorMessages,
   };
 
-  resetting = false;
+  pending = false;
   initFullname = false;
 
   constructor(
@@ -61,7 +61,7 @@ export class ResetComponent {
 
   submit() {
     if (!this.resetForm.valid) return;
-    this.resetting = true;
+    this.pending = true;
     this.reCaptchaV3Service.execute('reset').subscribe({
       next: (token) => {
         this.apply(token);
@@ -83,12 +83,12 @@ export class ResetComponent {
       request.subscribe({
         next: (data) => {
           this.toaster.success('reset.password_reset');
-          this.resetting = false;
+          this.pending = false;
           this.goLogin(data.login_challenge);
         },
         error: (error) => {
           this.toaster.error(error.status === 500 ? 'reset.invalid-token' : 'generic.error.oops');
-          this.resetting = false;
+          this.pending = false;
           this.cdr.markForCheck();
         },
       });
