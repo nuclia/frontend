@@ -27,7 +27,7 @@ export interface ResetData {
 }
 
 export interface SetupData extends ResetData {
-  fullname: string;
+  name: string;
 }
 
 export interface LoginData {

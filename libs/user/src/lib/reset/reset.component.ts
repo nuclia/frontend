@@ -75,10 +75,10 @@ export class ResetComponent {
   apply(reCaptchaToken: string) {
     if (this.magicToken) {
       const password = this.resetForm.getRawValue().password;
-      const fullname = this.resetForm.getRawValue().username;
+      const name = this.resetForm.getRawValue().username;
       const token = this.magicToken;
       const request = this.initFullname
-        ? this.loginService.setup({ fullname, password, token }, reCaptchaToken)
+        ? this.loginService.setup({ name, password, token }, reCaptchaToken)
         : this.loginService.reset({ password, token }, reCaptchaToken);
       request.subscribe({
         next: (data) => {
