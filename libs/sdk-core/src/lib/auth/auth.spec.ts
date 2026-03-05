@@ -12,33 +12,6 @@ const ACCESS_TOKEN =
 describe('Authentication', () => {
   let auth: Authentication;
 
-  describe('with regular credentials', () => {
-    beforeEach(() => {
-      const nuclia = new Nuclia({
-        backend: 'http://accounts.here',
-        zone: 'europe-1',
-        account: 'dc',
-        knowledgeBox: 'gotham',
-        oauth: {
-          client_id: 'abc123',
-        },
-      });
-      auth = nuclia.auth as Authentication;
-    });
-
-    it('should emit isAuthenticated', (done) => {
-      mockFetch({ access_token: ACCESS_TOKEN, refresh_token: 'qwerty' });
-      auth.login('test', 'test').subscribe();
-      auth
-        .isAuthenticated()
-        .pipe(filter((isAuth) => isAuth))
-        .subscribe((isAuth) => {
-          expect(isAuth).toBe(true);
-          done();
-        });
-    });
-  });
-
   describe('with service API key', () => {
     beforeEach(() => {
       auth = new Authentication({

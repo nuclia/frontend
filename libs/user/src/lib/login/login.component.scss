@@ -53,3 +53,8 @@
 .login_signup {
   margin-top: rhythm(6);
 }
+
+.login_sso {
+  margin: -#{rhythm(1)} 0 rhythm(2);
+  text-align: right;
+}

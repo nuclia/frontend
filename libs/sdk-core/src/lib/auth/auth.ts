@@ -276,7 +276,6 @@ export class Authentication implements IAuthentication {
       id_token_hint: id_token,
       post_logout_redirect_uri: window.location.origin,
     });
-    this._isAuthenticated.next(false);
     window.location.assign(`${this.getHydraUrl()}/oauth2/sessions/logout?${logoutParams}`);
   }
 

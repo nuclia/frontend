@@ -36,4 +36,8 @@ export class TemporaryAppSignupComponent implements OnInit {
   goToDemo() {
     window.open(this.demoUrl, 'blank', 'noreferrer');
   }
+
+  login() {
+    this.sdk.nuclia.auth.redirectToOAuth();
+  }
 }

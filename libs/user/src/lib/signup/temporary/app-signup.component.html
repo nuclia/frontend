@@ -44,7 +44,8 @@
     <p class="centered">
       {{ 'signup.have_account_already' | translate }}
       <a
-        routerLink="../login"
+        href="#"
+        (click)="login()"
         class="accent-link">
         {{ 'login.login' | translate }}
       </a>
