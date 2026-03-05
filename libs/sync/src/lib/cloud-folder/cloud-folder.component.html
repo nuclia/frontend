@@ -15,7 +15,7 @@
     </pa-input>
   }
 
-  @if (currentSite() || currentDrive()) {
+  @if (currentSite() || currentDrive() || currentPath()) {
     <div>
       <nsi-button-mini
         icon="undo"
@@ -41,7 +41,7 @@
           <pa-icon name="check"></pa-icon>
         }
       </h3>
-      @if (currentDrive()) {
+      @if (currentDrive() || currentPath()) {
         <nsi-button-mini (click)="this.currentPath() ? selectFolder() : selectDrive()">
           {{ 'sync.cloud-folder.select' | translate }}
         </nsi-button-mini>
@@ -70,6 +70,13 @@
           <pa-icon name="folder"></pa-icon>
           {{ drive.name }}
           <nsi-button-mini (click)="browseDrive(drive)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+        </li>
+      }
+      @for (folder of folders; track folder.id) {
+        <li>
+          <pa-icon name="folder"></pa-icon>
+          {{ folder.name }}
+          <nsi-button-mini (click)="browseFolder(folder.path)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
         </li>
       }
     </ul>
