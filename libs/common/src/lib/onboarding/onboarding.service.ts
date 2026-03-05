@@ -12,7 +12,6 @@ import { Account, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/c
 })
 export class OnboardingService {
   private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(1);
-  private _kbCreationFailureCount = 0;
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
     creating: false,
     accountCreated: false,
@@ -104,6 +103,7 @@ export class OnboardingService {
     accountId: string,
     kbConfig: KnowledgeBoxCreation,
     zone: string,
+    failCount = 0,
   ): Observable<{ accountSlug: string; kbSlug: string }> {
     this._onboardingState.next({
       creating: true,
@@ -121,9 +121,9 @@ export class OnboardingService {
           );
           throw error;
         } else {
-          this._kbCreationFailureCount += 1;
-          if (this._kbCreationFailureCount < 5) {
-            return this.createKb(accountSlug, accountId, kbConfig, zone);
+          failCount += 1;
+          if (failCount < 5) {
+            return this.createKb(accountSlug, accountId, kbConfig, zone, failCount);
           } else {
             this.manageCreationError(accountSlug, `KB creation failed`);
             throw error;
@@ -137,7 +137,6 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        this.sdk.nuclia.options.backend;
         window.location.href = `${this.sdk.getOriginFor('rag')}/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
       }),
     );
@@ -148,6 +147,7 @@ export class OnboardingService {
     accountId: string,
     config: RetrievalAgentCreation,
     zone: string,
+    failCount = 0,
   ): Observable<{ accountSlug: string; raoSlug: string }> {
     this._onboardingState.next({
       creating: true,
@@ -165,9 +165,9 @@ export class OnboardingService {
           );
           throw error;
         } else {
-          this._kbCreationFailureCount += 1;
-          if (this._kbCreationFailureCount < 5) {
-            return this.createRao(accountSlug, accountId, config, zone);
+          failCount += 1;
+          if (failCount < 5) {
+            return this.createRao(accountSlug, accountId, config, zone, failCount);
           } else {
             this.manageCreationError(accountSlug, `RAO creation failed`);
             throw error;

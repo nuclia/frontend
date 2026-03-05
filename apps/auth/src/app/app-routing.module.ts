@@ -42,7 +42,7 @@ const routes: Routes = [
   {
     path: 'setup/invite',
     component: InviteComponent,
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'setup_account',

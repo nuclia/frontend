@@ -24,5 +24,6 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
 };
 
 function routeHasMagicToken(): boolean {
-  return window.location.search.includes('token=') && !window.location.search.includes('signup_token=');
+  const params = new URLSearchParams(window.location.search);
+  return params.has('token') && !params.has('signup_token');
 }

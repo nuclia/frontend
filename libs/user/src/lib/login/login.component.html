@@ -2,6 +2,7 @@
   <div class="main-container">
     <header>
       <p class="body-m">{{ 'login.subtitle' | translate }}</p>
+      YEP
     </header>
     @if (message || error) {
       <div class="login_alert title-xxs">
@@ -12,7 +13,7 @@
       <form
         #form
         method="POST"
-        [action]="oauth ? oAuthLoginUrl() : null"
+        [action]="oAuthLoginUrl()"
         (ngSubmit)="login()">
         <div class="login_field">
           <pa-input
@@ -48,12 +49,10 @@
             </a>
           </div>
         }
-        @if (oauth) {
-          <input
-            type="hidden"
-            name="login_challenge"
-            [value]="loginChallenge" />
-        }
+        <input
+          type="hidden"
+          name="login_challenge"
+          [value]="loginChallenge" />
         <div class="login_policy body-xs">
           <span [innerHTML]="'user.consent' | translate"></span>
         </div>
@@ -90,7 +89,7 @@
         {{ 'login.recover' | translate }}
       </a>
     </div>
-    @if (config.getSocialLogin() || !oauth) {
+    @if (config.getSocialLogin()) {
       <stf-sso-buttons></stf-sso-buttons>
     }
 

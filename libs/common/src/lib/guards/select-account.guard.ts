@@ -41,7 +41,12 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
       if (accounts.length === 0) {
         // if the user can create an account, redirect to onboarding
         if (userInfo?.create) {
-          window.location.href = `${oauthService.getCameFrom()}/user/onboarding`;
+          const cameFrom = oauthService.getCameFrom();
+          if (cameFrom) {
+            window.location.href = `${cameFrom}/user/onboarding`;
+          } else {
+            router.navigate(['/user/onboarding']);
+          }
           return of(false);
         } else {
           // no accounts and no create permission, redirect to logout

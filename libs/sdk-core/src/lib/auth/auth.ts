@@ -165,8 +165,6 @@ export class Authentication implements IAuthentication {
       });
 
       const authorizationUrl = `${this.getHydraUrl()}/oauth2/auth?${authParams}`;
-
-      console.log('Initiating OAuth flow with PKCE:', authorizationUrl);
       window.location.href = authorizationUrl;
     });
   }
@@ -195,7 +193,7 @@ export class Authentication implements IAuthentication {
 
   private exchangeAuthorizationCode(authCode: string) {
     if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
+      return throwError(() => new Error('Code verifier not found - PKCE flow compromised'));
     }
     const codeVerifier = sessionStorage.getItem('code_verifier');
 
@@ -248,40 +246,6 @@ export class Authentication implements IAuthentication {
   }
 
   /**
-   * Calls the login endpoint for account authentication and emits when done.
-   *
-   * It can optionally take a reCaptcha validation code if the Nuclia backend requires it.
-   * Once authenticated, the Nuclia SDK will periodically refresh the token before it expires.
-   *
-   * Example:
-    ```ts
-    nuclia.auth.login(username, password).subscribe({
-      next: (success) => {
-        this.loginError = success ? '' : 'Error';
-        console.log('logged in', success);
-      },
-      error: (error) => {
-        this.loginError = 'Error';
-        console.error(error);
-      },
-      complete: () => {
-        this.pending = false;
-      },
-    });
-    ```
-   */
-  login(username: string, password: string, validation?: string): Observable<boolean> {
-    // TO BE REMOVED?
-    return of(false);
-    // return this.fetch<AuthTokens>(
-    //   '/auth/login',
-    //   { username, password },
-    //   false,
-    //   validation ? { 'X-STF-VALIDATION': validation } : {},
-    // ).pipe(map((tokens) => this.authenticate(tokens)));
-  }
-
-  /**
    * Returns a boolean if successful. Stores authentication tokens in localStorage and triggers `isAuthenticated`.
    *
    * This method is automatically called when using `login` and can be useful when using a custom authentication flow.
@@ -312,12 +276,13 @@ export class Authentication implements IAuthentication {
       id_token_hint: id_token,
       post_logout_redirect_uri: window.location.origin,
     });
+    this._isAuthenticated.next(false);
     window.location.assign(`${this.getHydraUrl()}/oauth2/sessions/logout?${logoutParams}`);
   }
 
   refresh(): Observable<boolean> {
     if (!this.nuclia.options.oauth) {
-      throw new Error('OAuth parameters are missing.');
+      return throwError(() => new Error('OAuth parameters are missing.'));
     }
     return this.fetch<AuthTokens>(
       `${this.getHydraUrl()}/oauth2/token`,
@@ -429,7 +394,9 @@ export class Authentication implements IAuthentication {
   private storeTokens(tokens: AuthTokens): void {
     localStorage.setItem(LOCALSTORAGE_AUTH_KEY, tokens.access_token);
     localStorage.setItem(LOCALSTORAGE_REFRESH_KEY, tokens.refresh_token);
-    localStorage.setItem(LOCALSTORAGE_ID_TOKEN_KEY, tokens.id_token || '');
+    if (tokens.id_token) {
+      localStorage.setItem(LOCALSTORAGE_ID_TOKEN_KEY, tokens.id_token);
+    }
     this.checkTokenExpiration();
   }
 

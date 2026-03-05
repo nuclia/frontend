@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OAuthConsentData, OAuthLoginData } from '../models';
 import { SDKService } from '../api';
@@ -16,8 +16,7 @@ const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
   providedIn: 'root',
 })
 export class OAuthService {
-  cameFrom = '';
-  constructor(private sdk: SDKService) {}
+  private sdk = inject(SDKService);
 
   loginUrl() {
     return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;

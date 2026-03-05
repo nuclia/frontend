@@ -53,15 +53,24 @@ export class CallbackComponent implements OnInit {
     ) {
       this.ssoLogin();
     } else if (queryParams['code'] && queryParams['state']) {
-      this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe((res) => {
-        if (res.success) {
-          const came_from = res.state.came_from;
-          if (came_from && came_from !== window.location.origin) {
-            window.location.href = came_from;
+      this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe({
+        next: (res) => {
+          if (res.success) {
+            const came_from = res.state.came_from;
+            if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
+              window.location.href = came_from;
+            } else {
+              this.router.navigate(['/']);
+            }
           } else {
-            this.router.navigate(['/']);
+            this.toaster.error('login.error.oops');
+            this.router.navigate(['/user/signup']);
           }
-        }
+        },
+        error: () => {
+          this.toaster.error('login.error.oops');
+          this.router.navigate(['/user/signup']);
+        },
       });
     } else {
       this.router.navigate(['/user/signup'], {
@@ -80,17 +89,9 @@ export class CallbackComponent implements OnInit {
   }
 
   handleSAMLCallback(): void {
-    console.log('[SAML Callback] Full URL:', window.location.href);
-    console.log('[SAML Callback] All query params:', this.route.snapshot.queryParams);
-
     const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
     const token = this.route.snapshot.queryParamMap.get('token');
     const state = this.route.snapshot.queryParamMap.get('state');
-
-    console.log('[SAML Callback] token from query params:', token);
-    console.log('[SAML Callback] token length:', token?.length);
-    console.log('[SAML Callback] state from query params:', state);
-
     if (consentUrl) {
       // OAuth flow: navigate to consent challenge URL
       this.document.location.href = consentUrl;
@@ -162,10 +163,17 @@ export class CallbackComponent implements OnInit {
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
     const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
-    if (came_from && came_from !== window.location.origin) {
+    if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  private isCameFromLegit(url: string): boolean {
+    const backend = this.config.getAPIOrigin();
+    const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
+    const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
+    return urlMainDomain === backendMainDomain;
   }
 }

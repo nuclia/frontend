@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
 import { AnalyticsService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { Observable, of, ReplaySubject, tap } from 'rxjs';
+import { Observable, of, ReplaySubject, take, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { LearningConfigurationForm } from './embeddings-model-form';
@@ -61,11 +61,14 @@ export class OnboardingComponent {
     this.cdr.markForCheck();
     this.onboardingInquiryPayload = $event;
     this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
-    this.onboardingService.createAccount(this.onboardingInquiryPayload.company).subscribe((account) => {
-      this.account = account;
-      this.creatingAccount = false;
-      this.onboardingService.nextStep();
-    });
+    this.onboardingService
+      .createAccount(this.onboardingInquiryPayload.company)
+      .pipe(take(1))
+      .subscribe((account) => {
+        this.account = account;
+        this.creatingAccount = false;
+        this.onboardingService.nextStep();
+      });
   }
 
   storeKbNameAndGoNext($event: string) {

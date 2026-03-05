@@ -19,7 +19,6 @@ export class LoginComponent {
   @ViewChild('password', { static: false }) password: PasswordInputComponent | undefined;
   @ViewChild('form', { static: false }) form: ElementRef | undefined;
 
-  oauth: boolean = false;
   loginChallenge: string | undefined;
   loginData: OAuthLoginData | undefined;
 
@@ -53,7 +52,7 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
-  signUpUrl = `${this.oAuthService.cameFrom}/user/signup`;
+  signUpUrl = `${this.oAuthService.getCameFrom()}/user/signup`;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -90,12 +89,11 @@ export class LoginComponent {
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
-      this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
 
       // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
 
-      if (this.oauth && !this.loginChallenge) {
+      if (!this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params['error']) {
@@ -114,34 +112,12 @@ export class LoginComponent {
     const recaptchaKey = this.config.getRecaptchaKey();
     this.isLoggingIn = true;
     if (recaptchaKey) {
-      this.reCaptchaV3Service.execute('login').subscribe((token) => {
-        this.doLogin(token);
+      this.reCaptchaV3Service.execute('login').subscribe(() => {
+        this.oAuthLogin();
       });
     } else {
-      this.doLogin();
-    }
-  }
-
-  private doLogin(recaptchaToken: string = '') {
-    if (this.oauth) {
       this.oAuthLogin();
-    } else {
-      this.firstPartyLogin(recaptchaToken);
     }
-  }
-
-  firstPartyLogin(recaptchaToken: string) {
-    const formValue = this.loginForm.getRawValue();
-    this.sdk.nuclia.auth.login(formValue.email, formValue.password, recaptchaToken).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (error) => {
-        this.loginError = true;
-        this.formError = error.status === 401;
-        this.isLoggingIn = false;
-      },
-    });
   }
 
   oAuthLoginUrl() {
