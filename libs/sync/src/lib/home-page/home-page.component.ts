@@ -23,18 +23,7 @@ import {
   SisModalService,
   SisToastService,
 } from '@nuclia/sistema';
-import {
-  BehaviorSubject,
-  combineLatest,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  Subject,
-  switchMap,
-  take,
-  takeUntil,
-} from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
 
@@ -87,8 +76,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
   connectors = this.syncService.connectors;
-  private _connectorList: Observable<ConnectorDefinition[]> = this.syncService.connectorsObs.pipe(
-    map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))),
+  private _connectorList: Observable<ConnectorDefinition[]> = forkJoin([
+    this.syncService.connectorsObs.pipe(take(1)),
+    this.features.unstable.cloudSyncSharepoint.pipe(take(1)),
+  ]).pipe(
+    map(([sources, hasSharepoint]) =>
+      sources
+        .filter((conn) => hasSharepoint || conn.id !== 'sharepoint')
+        .sort((a, b) => a.title.localeCompare(b.title)),
+    ),
   );
   connectorList: Observable<ConnectorDefinition[]> = this._connectorList.pipe(
     map((connectors) => connectors.filter((connector) => !connector.cloud)),
@@ -122,6 +118,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   get syncAgentOnServer() {
     return this.syncAgentForm.controls.type.value === 'server';
+  }
+  get syncAgentOnDesktop() {
+    return this.syncAgentForm.controls.type.value === 'desktop';
   }
   get syncAgentTypeControl() {
     return this.syncAgentForm.controls.type;

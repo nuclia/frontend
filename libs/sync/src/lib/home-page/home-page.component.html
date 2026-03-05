@@ -22,6 +22,7 @@
               value="cloud">
               <span class="title-m">{{ 'sync.home-page.setup-server.on-cloud.radio-label' | translate }}</span>
             </pa-radio>
+            <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
           </div>
           <div class="separator-line"></div>
         }
@@ -32,7 +33,7 @@
             <span class="title-m">{{ 'sync.home-page.setup-server.on-desktop.radio-label' | translate }}</span>
           </pa-radio>
 
-          @if (!syncAgentOnServer) {
+          @if (syncAgentOnDesktop) {
             @if (inactiveServer | async) {
               <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
 
