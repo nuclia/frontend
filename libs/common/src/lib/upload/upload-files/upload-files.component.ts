@@ -31,7 +31,7 @@ export class UploadFilesComponent {
   automaticLanguageDetection = true;
   langCode = new FormControl<string | undefined>(undefined, {
     nonNullable: true,
-    validators: [Validators.pattern(/^[a-z]{2}$/)],
+    validators: [Validators.pattern(/^[a-z]{2}(\+[a-z]{2}){0,3}$/)],
   });
 
   standalone = this.standaloneService.standalone;
