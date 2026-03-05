@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  AuthTokens,
-  LoginData,
   RecoverData,
   ResetData,
   ResetResponse,
