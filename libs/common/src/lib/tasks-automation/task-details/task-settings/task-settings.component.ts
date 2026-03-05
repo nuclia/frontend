@@ -79,7 +79,7 @@ export class TaskSettingsComponent {
       if (value.parameters.filter.not_field_types?.length) {
         this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
       }
-      this.labels = value.parameters.filter?.labels || [];
+      this.labels = value.parameters.filter.labels || [];
       this.apply_to_agent_generated_fields = value.parameters.filter.apply_to_agent_generated_fields || false;
       this.triggers = this.mapTriggers(value);
       this.hasFilters = hasFilters(value.parameters);
