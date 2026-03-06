@@ -22,6 +22,7 @@
 	"login.error.aws.invalid_customer_token": "Customer_token invalide",
 	"login.error.aws.missing_customer_token": "Customer_token manquant",
 	"login.error.get_consent_error": "Une erreur s'est produite lors de la récupération des informations relatives au consentement",
+	"login.error.invalid_user_or_credentials": "Identifiants ou nom d'utilisateur invalides",
 	"login.error.login_error": "Réessayez ou contactez votre administrateur.",
 	"login.error.no_personal_email": "L'accès à Agentic RAG est limité aux emails professionnels",
 	"login.error.oops": "Oups ! Quelque chose n'a pas marché !",
