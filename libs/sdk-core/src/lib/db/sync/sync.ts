@@ -12,6 +12,7 @@ import {
   JobsPage,
   LogFilters,
   OAuthUrl,
+  StorageSite,
   StorageStructure,
   SyncConfiguration,
   SyncConfigurationCreate,
@@ -75,6 +76,13 @@ export class SyncManager implements ISyncManager {
     const endpoint = `${this.kb.path}/external_connection/${externalConnectorId}/browse?`;
     const params = getURLParams(options);
     return this.nuclia.rest.get<StorageStructure>(endpoint + params.toString());
+  }
+
+  resolveSite(connectionId: string, siteUrl: string): Observable<StorageSite> {
+    const params = new URLSearchParams({ site_url: siteUrl });
+    return this.nuclia.rest.get<StorageSite>(
+      `${this.kb.path}/external_connection/${connectionId}/resolve_site?${params.toString()}`,
+    );
   }
 }
 

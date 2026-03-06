@@ -20,6 +20,7 @@ import {
   SyncConfigurationCreate,
   ExternalConnectionCredentials,
   ExternalConnection,
+  StorageSite,
   StorageStructure,
   JobsPage,
 } from '@nuclia/core';
@@ -295,6 +296,13 @@ export class SyncService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.syncManager.getExternalConnection(id)),
+    );
+  }
+
+  resolveSite(externalConnectionId: string, siteUrl: string): Observable<StorageSite> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.resolveSite(externalConnectionId, siteUrl)),
     );
   }
 
