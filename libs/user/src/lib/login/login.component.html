@@ -4,7 +4,9 @@
       <p class="body-m">{{ 'login.subtitle' | translate }}</p>
     </header>
     @if (message || error) {
-      <div class="login_alert title-xxs">
+      <div
+        class="login_alert title-xxs"
+        data-cy="login-error">
         {{ message || error || '' | translate }}
       </div>
     }
@@ -55,19 +57,6 @@
         <div class="login_policy body-xs">
           <span [innerHTML]="'user.consent' | translate"></span>
         </div>
-        @if (loginError) {
-          <div
-            class="login_form_error body-xs"
-            data-cy="login-error">
-            <pa-icon
-              name="warning"
-              size="small"></pa-icon>
-            <div>
-              <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
-              <span>{{ (formError ? 'login.try_again' : 'login.error.login_error') | translate }}</span>
-            </div>
-          </div>
-        }
         <div class="login_submit">
           <pa-button
             class="full-width"

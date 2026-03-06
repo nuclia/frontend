@@ -477,29 +477,6 @@
 							<folder_node>
 								<name>error</name>
 								<children>
-									<concept_node>
-										<name>auth_error</name>
-										<description/>
-										<comment/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
 									<folder_node>
 										<name>aws</name>
 										<children>
@@ -576,29 +553,6 @@
 									</concept_node>
 									<concept_node>
 										<name>invalid_user_or_credentials</name>
-										<description/>
-										<comment/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>login_error</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -974,29 +928,6 @@
 							</concept_node>
 							<concept_node>
 								<name>token_expired</name>
-								<description/>
-								<comment/>
-								<translations>
-									<translation>
-										<language>ca-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>en-US</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>es-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>fr-FR</language>
-										<approved>false</approved>
-									</translation>
-								</translations>
-							</concept_node>
-							<concept_node>
-								<name>try_again</name>
 								<description/>
 								<comment/>
 								<translations>

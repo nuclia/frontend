@@ -23,8 +23,6 @@ export class LoginComponent {
   loginData: OAuthLoginData | undefined;
 
   message: string | null = null;
-  loginError: boolean = false;
-  formError: boolean = false;
   error: string | null = null;
 
   loginValidationMessages = {
