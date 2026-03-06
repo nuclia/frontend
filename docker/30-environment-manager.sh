@@ -71,6 +71,6 @@ function apply_path {
 }
 
 # Should we monkey patch?
-test -n "$API_PATH" && apply_path
+test -n "$APP_NAME" && apply_path
 
 echo "Configured"
