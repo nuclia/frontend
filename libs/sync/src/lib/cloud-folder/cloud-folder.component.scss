@@ -31,6 +31,16 @@
   width: rhythm(40);
 }
 
+.resolve-site-input {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+
+  pa-input {
+    flex: 1;
+  }
+}
+
 ul {
   padding: 0;
 }

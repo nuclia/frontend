@@ -9,16 +9,26 @@ import {
   Output,
   signal,
 } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SyncService } from '../logic';
 import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@nuclia/core';
 
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { ButtonMiniComponent, SisProgressModule } from '@nuclia/sistema';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ButtonMiniComponent, SisProgressModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 
 @Component({
   standalone: true,
-  imports: [ButtonMiniComponent, TranslateModule, SisProgressModule, PaButtonModule, PaIconModule, PaTextFieldModule],
+  imports: [
+    ButtonMiniComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+    SisProgressModule,
+    TwoColumnsConfigurationItemComponent,
+    PaButtonModule,
+    PaIconModule,
+    PaTextFieldModule,
+  ],
   selector: 'nsy-cloud-folder',
   templateUrl: 'cloud-folder.component.html',
   styleUrls: ['cloud-folder.component.scss'],
@@ -41,16 +51,20 @@ export class CloudFolderComponent implements OnInit {
   folders: StorageFolder[] = [];
   hasSites = false;
   requiresSearch = false;
+  requiresSiteUrlResolution = false;
   searchQuery = '';
+  siteUrlControl = new FormControl('');
   private cdr = inject(ChangeDetectorRef);
   private syncService = inject(SyncService);
+  private translate = inject(TranslateService);
   loading = false;
 
   ngOnInit() {
     const capabilities = this.externalConnection?.capabilities;
     this.hasSites = !!capabilities?.has_sites;
     this.requiresSearch = !!capabilities?.requires_site_search;
-    if (!this.requiresSearch) {
+    this.requiresSiteUrlResolution = !!capabilities?.requires_site_url_resolution;
+    if (!this.requiresSearch && !this.requiresSiteUrlResolution) {
       this.loadFolders();
     }
   }
@@ -109,7 +123,10 @@ export class CloudFolderComponent implements OnInit {
       this.loadFolders(this.currentSite() ? this.currentSite()?.id : undefined);
     } else {
       this.currentSite.set(undefined);
-      if (!this.requiresSearch) {
+      if (this.requiresSiteUrlResolution) {
+        this.siteUrlControl.setErrors(null);
+      }
+      if (!this.requiresSearch && !this.requiresSiteUrlResolution) {
         this.loadFolders();
       }
     }
@@ -145,6 +162,33 @@ export class CloudFolderComponent implements OnInit {
       this.sites = res.sites || [];
       this.loading = false;
       this.cdr.markForCheck();
+    });
+  }
+
+  resolveAndBrowseSite() {
+    if (!this.externalConnection) {
+      return;
+    }
+    if (!this.siteUrlControl.value?.trim()) {
+      this.siteUrlControl.markAsDirty();
+      this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-required') });
+      this.cdr.markForCheck();
+      return;
+    }
+    this.siteUrlControl.setErrors(null);
+    this.loading = true;
+    this.cdr.markForCheck();
+    this.syncService.resolveSite(this.externalConnection.id, this.siteUrlControl.value).subscribe({
+      next: (site) => {
+        this.loading = false;
+        this.browseSite(site);
+      },
+      error: () => {
+        this.siteUrlControl.markAsDirty();
+        this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-error') });
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 }

@@ -6,13 +6,28 @@
   }
 
   @if (hasSites && !currentSite()) {
-    <pa-input
-      class="search-sites"
-      icon="search"
-      [(value)]="searchQuery"
-      (keyup.enter)="searchSites()">
-      {{ 'sync.cloud-folder.search-sites' | translate }}
-    </pa-input>
+    @if (requiresSiteUrlResolution) {
+      <nsi-two-columns-configuration-item
+        itemTitle="sync.cloud-folder.resolve-site-title"
+        description="sync.cloud-folder.resolve-site-description">
+        <div class="resolve-site-input">
+          <pa-input
+            [formControl]="siteUrlControl"
+            (keyup.enter)="resolveAndBrowseSite()">
+            {{ 'sync.cloud-folder.enter-site-url' | translate }}
+          </pa-input>
+          <nsi-button-mini (click)="resolveAndBrowseSite()">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+        </div>
+      </nsi-two-columns-configuration-item>
+    } @else {
+      <pa-input
+        class="search-sites"
+        icon="search"
+        [(value)]="searchQuery"
+        (keyup.enter)="searchSites()">
+        {{ 'sync.cloud-folder.search-sites' | translate }}
+      </pa-input>
+    }
   }
 
   @if (currentSite() || currentDrive() || currentPath()) {

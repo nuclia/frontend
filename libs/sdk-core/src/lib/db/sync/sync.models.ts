@@ -32,6 +32,7 @@ export interface ISyncManager {
   getJobLogs(jobId: string, pagination?: JobPagination, filters?: LogFilters): Observable<JobLogsPage>;
   syncConfig(id: string, full_sync?: boolean): Observable<Job>;
   browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure>;
+  resolveSite(connectionId: string, siteUrl: string): Observable<StorageSite>;
 }
 
 export interface OAuthUrl {
@@ -50,6 +51,7 @@ export interface ExternalConnection {
 export interface BrowseCapabilities {
   has_sites: boolean;
   requires_site_search: boolean;
+  requires_site_url_resolution: boolean;
 }
 
 export interface SyncConfiguration {
