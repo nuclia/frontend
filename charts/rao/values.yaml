@@ -29,7 +29,7 @@ brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
 saml_enabled: XXX
-oauth_client_id: XXX
+oauth_client_id: XXXX
 auth_endpoint: XXX
 
 virtualService:
