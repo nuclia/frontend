@@ -45,6 +45,11 @@
       [readonly]="!(canEdit | async)">
       Title
     </pa-input>
+    <pa-toggle
+      formControlName="prewarm_enabled"
+      [disabled]="!(canEdit | async)">
+      Shards pre-warming
+    </pa-toggle>
     <nma-form-footer
       [disabled]="kbForm.pristine || kbForm.invalid || isSaving"
       (cancel)="reset()"></nma-form-footer>

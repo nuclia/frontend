@@ -51,6 +51,7 @@ export interface Kb {
   created: string;
   admin: boolean;
   contrib: boolean;
+  prewarm_enabled?: boolean;
 }
 
 export interface AccountModelPayload {

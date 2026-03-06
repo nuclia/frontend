@@ -146,6 +146,7 @@ export class RegionalAccountService {
               slug: kb.slug,
               title: kb.title,
               created: kb.created,
+              prewarm_enabled: kb.prewarm_enabled,
               contributors: [],
               members: [],
               owners: [],
@@ -178,7 +179,7 @@ export class RegionalAccountService {
     );
   }
 
-  updateKb(kbSummary: KbSummary, data: { slug?: string; title?: string }) {
+  updateKb(kbSummary: KbSummary, data: { slug?: string; title?: string; prewarm_enabled?: boolean }) {
     const kbPath = `${ACCOUNT_ENDPOINT}/${kbSummary.accountId}/kb/${kbSummary.id}`;
     return this.getKbZoneSlug(kbSummary).pipe(
       switchMap((zoneSlug) => {

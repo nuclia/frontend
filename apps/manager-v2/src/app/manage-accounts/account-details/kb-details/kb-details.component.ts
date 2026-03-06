@@ -25,6 +25,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true }),
+    prewarm_enabled: new FormControl<boolean>(false, { nonNullable: true }),
   });
   kb$ = this.store.kbDetails;
   isSaving = false;
@@ -75,7 +76,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       )
       .subscribe((kb) => {
         this.backupKb = kb;
-        this.kbForm.patchValue({ title: kb.title, slug: kb.slug, zone: kb.zone.title });
+        this.kbForm.patchValue({ title: kb.title, slug: kb.slug, zone: kb.zone.title, prewarm_enabled: kb.prewarm_enabled ?? false });
         this.cdr.markForCheck();
       });
   }
@@ -106,7 +107,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   reset() {
     if (this.backupKb) {
-      this.kbForm.patchValue({ title: this.backupKb.title, slug: this.backupKb.slug });
+      this.kbForm.patchValue({ title: this.backupKb.title, slug: this.backupKb.slug, prewarm_enabled: this.backupKb.prewarm_enabled ?? false });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
     }
