@@ -163,6 +163,22 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             } else if (lastMessage.operation === AnswerOperation.error) {
               ws.close(1000);
               answerSubject.next(mapErrorResponseFromAnswer(lastMessage));
+            } else if (lastMessage.feedback?.module === 'oauth') {
+              const feedback = lastMessage.feedback;
+              if (feedback.question === 'Get credentials') {
+                ws.send(
+                  JSON.stringify({
+                    request_id: feedback.request_id,
+                    response: JSON.stringify({ existing_credentials: {} }),
+                  }),
+                );
+              } else if (question === 'Send credentials') {
+                // TODO: save the credentials
+                const credentials = feedback.credentials;
+                ws.send(JSON.stringify({ request_id: feedback.request_id }));
+              }
+            } else if (lastMessage.oauth) {
+              window.open(lastMessage.oauth.oauth_url, 'blank', 'noreferrer');
             } else {
               answerSubject.next({ type: 'answer', answer: lastMessage });
             }
