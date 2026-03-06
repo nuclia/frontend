@@ -26,8 +26,12 @@ export class OAuthService {
     return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/consent`;
   }
 
-  getLoginData(challenge: string): Observable<OAuthLoginData> {
-    return this.sdk.nuclia.rest.get<OAuthLoginData>(this.loginUrl() + `?login_challenge=${challenge}`);
+  getLoginData(challenge: string, user_hint: string | null): Observable<OAuthLoginData> {
+    let url = this.loginUrl() + `?login_challenge=${challenge}`;
+    if (user_hint) {
+      url += `&user_hint=${user_hint}`;
+    }
+    return this.sdk.nuclia.rest.get<OAuthLoginData>(url);
   }
 
   getConsentData(challenge: string): Observable<OAuthConsentData> {

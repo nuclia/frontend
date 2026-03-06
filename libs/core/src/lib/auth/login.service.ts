@@ -5,6 +5,7 @@ import {
   ResetData,
   ResetResponse,
   SetupData,
+  SetupResponse,
   SetUserPreferences,
   SignupData,
   SignupResponse,
@@ -31,7 +32,7 @@ export class LoginService {
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/reset`, data, headers);
   }
 
-  setup(data: SetupData, token: string): Observable<ResetResponse> {
+  setup(data: SetupData, token: string): Observable<SetupResponse> {
     const headers = { 'X-STF-VALIDATION': token };
     return this.sdk.nuclia.rest.post(`${this.sdk.nuclia.auth.getAuthUrl()}/setupuser`, data, headers);
   }

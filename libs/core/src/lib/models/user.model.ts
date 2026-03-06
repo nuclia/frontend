@@ -134,7 +134,11 @@ export interface RefreshResult {
   token: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
 export interface ResetResponse {
   login_challenge: string;
+}
+
+export interface SetupResponse {
+  login_challenge: string;
+  user_hint: string;
 }

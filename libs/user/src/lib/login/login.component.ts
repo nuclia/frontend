@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -72,7 +72,6 @@ export class LoginComponent {
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
-    private sdk: SDKService,
     private samlService: SAMLService,
   ) {
     if (this.config.useRemoteLogin()) {

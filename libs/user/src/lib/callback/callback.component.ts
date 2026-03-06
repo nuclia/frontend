@@ -97,7 +97,6 @@ export class CallbackComponent implements OnInit {
       this.document.location.href = consentUrl;
     } else if (token) {
       // Regular flow: exchange token for access token and authenticate
-      console.log('[SAML Callback] Calling samlService.getToken with:', token);
       this.samlService.getToken(token).subscribe((authTokens) => {
         this.authenticate(authTokens, state || undefined);
       });

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService, ResetData, ResetResponse } from '@flaps/core';
+import { LoginService, ResetResponse, SetupResponse } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { StrongPassword, SamePassword } from '../password.validator';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'nus-reset',
@@ -77,14 +77,14 @@ export class ResetComponent {
       const password = this.resetForm.getRawValue().password;
       const name = this.resetForm.getRawValue().username;
       const token = this.magicToken;
-      const request = this.initFullname
+      const request: Observable<ResetResponse | SetupResponse> = this.initFullname
         ? this.loginService.setup({ name, password, token }, reCaptchaToken)
         : this.loginService.reset({ password, token }, reCaptchaToken);
       request.subscribe({
         next: (data) => {
           this.toaster.success('reset.password_reset');
           this.pending = false;
-          this.goLogin(data.login_challenge);
+          this.goLogin(data);
         },
         error: (error) => {
           this.toaster.error(error.status === 500 ? 'reset.invalid-token' : 'generic.error.oops');
@@ -95,10 +95,10 @@ export class ResetComponent {
     }
   }
 
-  goLogin(login_challenge: string) {
+  goLogin(data: ResetResponse | SetupResponse) {
     this.router.navigate(['../login'], {
       relativeTo: this.route,
-      queryParams: { login_challenge },
+      queryParams: { ...data },
     });
   }
 }

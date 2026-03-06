@@ -212,7 +212,7 @@ describe('ResetComponent', () => {
   it('should navigate to login with challenge in goLogin', async () => {
     await buildComponent();
 
-    component.goLogin('challenge-2');
+    component.goLogin({ login_challenge: 'challenge-2' });
 
     expect(router.navigate).toHaveBeenCalledWith(['../login'], {
       relativeTo: TestBed.inject(ActivatedRoute),

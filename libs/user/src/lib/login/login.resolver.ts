@@ -10,13 +10,14 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
   const oAuthService = inject(OAuthService);
   const router = inject(Router);
   const loginChallenge = route.queryParamMap.get('login_challenge');
+  const userHint = route.queryParamMap.get('user_hint');
   oAuthService.setCameFrom(route.queryParamMap.get('came_from') || '');
 
   if (!loginChallenge) {
     return of(null);
   }
 
-  return oAuthService.getLoginData(loginChallenge).pipe(
+  return oAuthService.getLoginData(loginChallenge, userHint).pipe(
     tap((data) => {
       if (data.email && data.needs_signup) {
         oAuthService.setEmail(data.email);

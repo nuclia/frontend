@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, OAuthService, SAMLService, SDKService, OAuthLoginData } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData } from '@flaps/core';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
@@ -49,7 +49,6 @@ describe('LoginComponent', () => {
         },
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
         { provide: BackendConfigurationService, useValue: config },
-        { provide: SDKService, useValue: {} },
         { provide: SAMLService, useValue: samlService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
