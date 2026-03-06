@@ -114,7 +114,9 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       const source = drivers?.find((driver) => driver.identifier === id);
       return {
         value: source?.name || id,
-        description: source?.provider === 'nucliadb' ? (source as NucliaDBDriver).config.description : undefined,
+        description: ['nucliadb', 'sync'].includes(source?.provider || '')
+          ? (source as NucliaDBDriver).config.description
+          : undefined,
       };
     });
   }

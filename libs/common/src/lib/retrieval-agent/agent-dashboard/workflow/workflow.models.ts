@@ -68,7 +68,8 @@ export type NodeType =
   | 'external'
   | 'restart'
   | 'smart'
-  | 'postprocess_alinia';
+  | 'postprocess_alinia'
+  | 'sync';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
@@ -142,6 +143,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   tavily: 'globe',
   static: 'file',
   marklogic: 'database',
+  sync: 'database',
 };
 
 export const NODES_IN_BETA = ['marklogic'];

@@ -142,13 +142,14 @@ export class DriversService {
         let modalRef$: Observable<ModalRef<any>>;
         switch (driverKey) {
           case 'NucliaDBConfig':
+          case 'SyncDriverConfig':
             modalRef$ = this.kbList$.pipe(
               take(1),
               map((kbList) =>
                 this.modal.openModal(
                   NucliaDriverModalComponent,
                   new ModalConfig({
-                    data: { kbList },
+                    data: { kbList, isSyncDriver: driverKey === 'SyncDriverConfig' },
                     dismissable: false,
                   }),
                 ),
@@ -261,11 +262,11 @@ export class DriversService {
         }
 
         const modalRef =
-          driverKey === 'NucliaDBConfig'
+          driverKey === 'NucliaDBConfig' || driverKey === 'SyncDriverConfig'
             ? this.modal.openModal(
                 NucliaDriverModalComponent,
                 new ModalConfig({
-                  data: { kbList, driver: driverToEdit },
+                  data: { kbList, driver: driverToEdit, isSyncDriver: driverKey === 'SyncDriverConfig' },
                   dismissable: false,
                 }),
               )
