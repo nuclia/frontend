@@ -7,7 +7,7 @@ import { AccountTypes } from '@nuclia/core';
 import { GlobalAccountService } from '../../global-account.service';
 import { takeUntil } from 'rxjs/operators';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { SearchPrice } from '../../global-account.models';
+import { SearchPrice, PaymentCurrency } from '../../global-account.models';
 
 @Component({
   templateUrl: './payment-links.component.html',
@@ -23,11 +23,13 @@ export class PaymentLinksComponent implements OnDestroy {
     licensedPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     meteredPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     formula: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    currency: new FormControl<PaymentCurrency>('usd', { nonNullable: true, validators: [Validators.required] }),
     allowPromotionCode: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   isSaving = false;
   accountTypes: AccountTypes[] = ['v3pro', 'v3enterprise', 'v3starter'];
+  currencies: PaymentCurrency[] = ['usd', 'eur'];
   paymentLink?: string;
 
   licensedPrices = of(this.accountTypes).pipe(
@@ -95,6 +97,7 @@ export class PaymentLinksComponent implements OnDestroy {
         price_ids: [formValues.licensedPrice, formValues.meteredPrice].filter((price) => price !== 'opt-out'),
         billing_formula_id: formValues.formula,
         allow_promotion_codes: formValues.allowPromotionCode,
+        currency: formValues.currency,
       })
       .subscribe({
         next: (result) => {
