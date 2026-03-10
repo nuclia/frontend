@@ -95,7 +95,7 @@ export abstract class FormDirective {
       }
 
       // Check if this field should be a multiselect (has additionalProps.multiselect)
-      const fieldConfig = this.fieldConfigService.getFieldConfig(propKey, resolvedProperty, schema);
+      const fieldConfig = this.fieldConfigService.getFieldConfig(propKey, resolvedProperty, schema, key);
       const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
       // Check if this is a subform field (contains $ref)

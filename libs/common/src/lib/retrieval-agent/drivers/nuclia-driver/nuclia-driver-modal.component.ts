@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import {
   ModalConfig,
@@ -10,16 +10,26 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { DriverCreation, IKnowledgeBoxItem, NucliaDBConfig, NucliaDBDriver } from '@nuclia/core';
+import {
+  DriverCreation,
+  IKnowledgeBoxItem,
+  NucliaDBConfig,
+  NucliaDBDriver,
+  SyncConfig,
+  SyncDriver,
+} from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, map, of, switchMap, take } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 import { getListFromTextarea } from '../../arag.utils';
 import { FilterExpressionModalComponent } from '../../../search-widget/search-configuration/filter-expression-modal';
+import { ArrayStringFieldComponent } from '../../agent-dashboard/workflow';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
   imports: [
+    ArrayStringFieldComponent,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
@@ -31,6 +41,7 @@ import { FilterExpressionModalComponent } from '../../../search-widget/search-co
   ],
   templateUrl: './nuclia-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NucliaDriverModalComponent {
@@ -48,9 +59,11 @@ export class NucliaDriverModalComponent {
     custom: new FormControl<boolean>(false, { nonNullable: true }),
     url: new FormControl<string>('https://europe-1.rag.progress.cloud/api', { nonNullable: true }),
     manager: new FormControl<string>('https://europe-1.rag.progress.cloud/api', { nonNullable: true }),
+    connection_ids: new FormArray<FormControl<string>>([]),
   });
 
   isEdit: boolean;
+  isSyncDriver: boolean;
 
   get keyControl() {
     return this.form.controls.key;
@@ -80,14 +93,26 @@ export class NucliaDriverModalComponent {
     return this.kbList.find((kb) => kb.id === kbId);
   }
 
-  constructor(public modal: ModalRef<{ driver: NucliaDBDriver; kbList: IKnowledgeBoxItem[] }>) {
+  constructor(
+    public modal: ModalRef<{
+      driver: NucliaDBDriver | SyncDriver;
+      kbList: IKnowledgeBoxItem[];
+      isSyncDriver: boolean;
+    }>,
+  ) {
     const data = this.modal.config.data;
     const driver = data?.driver;
     this.isEdit = !!driver;
+    this.isSyncDriver = !!data?.isSyncDriver;
     if (driver) {
       const kbid = driver.config.kbid;
       const custom = !this.getKb(kbid);
       this.existingKey = driver.config.key;
+      if (driver.provider === 'sync') {
+        driver.config.connection_ids.forEach(() => {
+          this.form.controls.connection_ids.push(new FormControl<string>('', { nonNullable: true }));
+        });
+      }
       this.form.patchValue({
         name: driver.name,
         kbid,
@@ -99,8 +124,14 @@ export class NucliaDriverModalComponent {
         filter_expression: driver.config.filter_expression
           ? JSON.stringify(driver.config.filter_expression, undefined, 2)
           : '',
+        connection_ids: driver.provider === 'sync' ? driver.config.connection_ids : undefined,
       });
     }
+
+    this.form.controls.connection_ids.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      // TODO: app-array-string-field should mark the form as dirty automatically
+      this.form.markAsDirty();
+    });
   }
 
   checkFormValidators(roleOnKb?: string) {
@@ -133,17 +164,19 @@ export class NucliaDriverModalComponent {
 
   submit() {
     if (this.form.valid) {
-      const { name, filters, filter_expression, custom, keepExistingKey, ...rawConfig } = this.form.getRawValue();
+      const { name, filters, filter_expression, custom, keepExistingKey, connection_ids, ...rawConfig } =
+        this.form.getRawValue();
       const filterList = getListFromTextarea(filters || '');
       let filterExpression = undefined;
       try {
         filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {}
       if (custom) {
-        const config: NucliaDBConfig = {
+        const config: NucliaDBConfig | SyncConfig = {
           ...rawConfig,
           filters: filterList,
           filter_expression: filterExpression,
+          connection_ids: this.isSyncDriver ? connection_ids : undefined,
         };
         this.submitConfig(name, config);
       } else {
@@ -177,13 +210,14 @@ export class NucliaDriverModalComponent {
           .subscribe({
             next: ({ kb, key }) => {
               const url = kb.fullpath.slice(0, kb.fullpath.indexOf('/api') + 4);
-              const config: NucliaDBConfig = {
+              const config: NucliaDBConfig | SyncConfig = {
                 ...rawConfig,
                 url,
                 manager: url,
                 key,
                 filters: filterList,
                 filter_expression: filterExpression,
+                connection_ids: this.isSyncDriver ? connection_ids : undefined,
               };
               this.submitConfig(name, config);
             },
@@ -192,10 +226,10 @@ export class NucliaDriverModalComponent {
     }
   }
 
-  private submitConfig(name: string, config: NucliaDBConfig) {
+  private submitConfig(name: string, config: NucliaDBConfig | SyncConfig) {
     const driver: Omit<DriverCreation, 'identifier'> = {
       name,
-      provider: 'nucliadb',
+      provider: this.isSyncDriver ? 'sync' : 'nucliadb',
       config,
     };
     this.modal.close(driver);

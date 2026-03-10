@@ -178,7 +178,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       })
       .map(([key, property]) => {
         const resolvedProperty = this.getPropertySchema(property);
-        const config = this.fieldConfigService.getFieldConfig(key, resolvedProperty, this.schema);
+        const config = this.fieldConfigService.getFieldConfig(key, resolvedProperty, this.schema, this.agentName);
 
         return {
           key,

@@ -86,6 +86,16 @@ export class FieldConfigService {
     provided_synonyms: { component: 'synonyms-field', type: 'custom' },
   };
 
+  private readonly specialCasesByNodeType: Record<string, Record<string, FieldConfig>> = {
+    sync: {
+      sources: {
+        component: 'driver-select',
+        type: 'custom',
+        additionalProps: { provider: 'sync', multiselect: true },
+      },
+    },
+  };
+
   // Source mappings
   private readonly sourceComponentOverride = (
     key: string,
@@ -120,17 +130,23 @@ export class FieldConfigService {
    * Gets the field configuration for rendering a form field.
    * Priority order:
    * 1. Widget property in schema (highest priority)
-   * 2. Special field mappings by key name
-   * 3. Source component overrides
-   * 4. Type-based mappings (default)
+   * 2. Special field mappings by node type
+   * 3. Special field mappings by key name
+   * 4. Source component overrides
+   * 5. Type-based mappings (default)
    */
-  getFieldConfig(key: string, property: ExtendedJSONSchema4, schema?: JSONSchema4): FieldConfig {
+  getFieldConfig(key: string, property: ExtendedJSONSchema4, schema?: JSONSchema4, nodeType?: string): FieldConfig {
     // Check for widget property in schema first - this takes highest priority
     if (property.widget) {
       const widgetConfig = this.getConfigFromWidget(property.widget);
       if (widgetConfig) {
         return { ...widgetConfig, customKey: key };
       }
+    }
+
+    // Check for special cases based on node type
+    if (this.specialCasesByNodeType[nodeType || '']?.[key]) {
+      return this.specialCasesByNodeType[nodeType || '']?.[key];
     }
 
     // Check for special field mappings

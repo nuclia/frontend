@@ -43,6 +43,11 @@ export interface Feedback {
   data: any;
   timeout_ms: number;
   response_schema: any;
+  credentials?: { [key: string]: { [key: string]: any } };
+}
+
+export interface OAuthRedirection {
+  oauth_url: string;
 }
 
 export interface AragResponse {
@@ -64,8 +69,8 @@ export interface AragAnswer {
   original_question_uuid: string | null;
   actual_question_uuid: string | null;
   feedback: Feedback | null;
+  oauth: OAuthRedirection | null;
   data_visualizations: Memory.DataVisualization[] | null;
-
 }
 
 export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {

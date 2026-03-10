@@ -5,6 +5,7 @@ export type ProviderType =
   | GuardrailsProviderType
   | 'cypher'
   | 'nucliadb'
+  | 'sync'
   | 'sql'
   | 'mcpsse'
   | 'mcpstdio'
@@ -37,7 +38,8 @@ export type AragModule =
   | 'postprocess_alinia'
   | 'data_viz'
   | 'smart'
-  | 'static';
+  | 'static'
+  | 'sync';
 
 export function getCategoryFromModule(
   module: AragModule,
@@ -78,6 +80,7 @@ const CONTEXT_MODULE: AragModule[] = [
   'sparql',
   'static',
   'smart',
+  'sync',
 ];
 export type ContextModule = (typeof CONTEXT_MODULE)[number];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -16,6 +16,7 @@ export interface IDriver {
     | BraveConfig
     | CypherConfig
     | NucliaDBConfig
+    | SyncConfig
     | PerplexityConfig
     | TavilyConfig
     | GoogleConfig
@@ -56,6 +57,10 @@ export interface CypherDriver extends IDriver {
 export interface NucliaDBDriver extends IDriver {
   provider: 'nucliadb';
   config: NucliaDBConfig;
+}
+export interface SyncDriver extends IDriver {
+  provider: 'sync';
+  config: SyncConfig;
 }
 export interface PerplexityDriver extends IDriver {
   provider: 'perplexity';
@@ -119,6 +124,10 @@ export interface NucliaDBConfig {
   kbid: string;
   filters: string[];
   filter_expression?: FilterExpression;
+}
+
+export interface SyncConfig extends NucliaDBConfig {
+  connection_ids: string[];
 }
 
 export type PerplexityConfig = InternetConfig;
