@@ -1,17 +1,24 @@
 <nus-user-container>
   <div class="main-container with-gap">
-    <h1>{{ 'reset.title' | translate }}</h1>
+    <h1>{{ (initFullname ? 'reset.title-init' : 'reset.title') | translate }}</h1>
     <form
       class="reset-form"
       [formGroup]="resetForm"
       (ngSubmit)="submit()">
+      @if (initFullname) {
+        <pa-input
+          formControlName="username"
+          autocapitalize="off">
+          {{ 'login.full_name' | translate }}
+        </pa-input>
+      }
       <div class="reset_field">
         <nsi-password-input
           formControlName="password"
           required
           type="password"
           autocapitalize="off"
-          [disabled]="resetting"
+          [disabled]="pending"
           help="validation.password-rules"
           [errorMessages]="resetValidationMessages.password">
           {{ 'reset.password' | translate }}
@@ -23,7 +30,7 @@
           autocapitalize="off"
           required
           type="password"
-          [disabled]="resetting"
+          [disabled]="pending"
           [errorMessages]="resetValidationMessages.passwordConfirm">
           {{ 'generic.confirm_password' | translate }}
         </nsi-password-input>
@@ -32,7 +39,7 @@
         class="full-width"
         type="submit"
         kind="primary"
-        [disabled]="resetForm.invalid || resetting">
+        [disabled]="resetForm.invalid || pending">
         {{ 'generic.save' | translate }}
       </pa-button>
     </form>

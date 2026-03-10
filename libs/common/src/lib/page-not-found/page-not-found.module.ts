@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from './page-not-found.component';
-import { UserContainerModule } from '@nuclia/user';
+import { UserContainerComponent } from '@nuclia/user';
 
 @NgModule({
   declarations: [PageNotFoundComponent],
-  imports: [CommonModule, UserContainerModule],
+  imports: [CommonModule, UserContainerComponent],
   exports: [PageNotFoundComponent],
 })
 export class PageNotFoundModule {}

@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { AuthInfo, AuthTokens, JwtUser, NucliaDBRole } from './auth';
+import type { AuthInfo, AuthTokens, JwtUser, MagicAction, NucliaDBRole } from './auth';
 import {
   Account,
   AccountCreation,
@@ -56,7 +56,6 @@ export interface IEvents {
 export interface IAuthentication {
   isAuthenticated(): Observable<boolean>;
   hasLoggedOut(): Observable<boolean>;
-  login(username: string, password: string, validation?: string): Observable<boolean>;
   logout(): void;
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
@@ -67,6 +66,10 @@ export interface IAuthentication {
   deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
+  redirectToOAuth(queryParams?: { [key: string]: string | boolean }): void;
+  processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
+  getAuthUrl(): string;
+  validateMagicToken(token: string, zone?: string): Observable<MagicAction>;
 }
 
 export interface IRest {
@@ -291,6 +294,12 @@ export interface NucliaOptions {
    */
   public?: boolean;
   /**
+   * OAuth parameters.
+   */
+  oauth?: {
+    client_id: string;
+  };
+  /**
    * Allow to modify the headers for the REST calls.
    */
   modifyHeaders?: (headers: { [key: string]: string }) => { [key: string]: string };
@@ -328,6 +337,7 @@ export interface AccountUsersPayload {
 export interface InviteAccountUserPayload {
   email: string;
   role?: AccountRoles;
+  came_from?: string;
 }
 
 export interface PendingInvitation {

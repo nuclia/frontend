@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -19,13 +19,10 @@ export class LoginComponent {
   @ViewChild('password', { static: false }) password: PasswordInputComponent | undefined;
   @ViewChild('form', { static: false }) form: ElementRef | undefined;
 
-  oauth: boolean = false;
   loginChallenge: string | undefined;
   loginData: OAuthLoginData | undefined;
 
   message: string | null = null;
-  loginError: boolean = false;
-  formError: boolean = false;
   error: string | null = null;
 
   loginValidationMessages = {
@@ -53,6 +50,7 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
+  signUpUrl = `${this.oAuthService.getCameFrom()}/user/signup`;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -63,7 +61,7 @@ export class LoginComponent {
         ? this.samlService.checkDomain(domain).pipe(catchError(() => of(undefined)))
         : of(undefined);
     }),
-    map((result) => (result ? this.samlService.ssoUrl(result.account_id) : undefined)),
+    map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
   );
 
   constructor(
@@ -72,21 +70,27 @@ export class LoginComponent {
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
-    private sdk: SDKService,
     private samlService: SAMLService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
+    this.route.data.subscribe((data) => {
+      if (data['loginData']['needs_initial_setpassword']) {
+        this.router.navigate(['/user/recover'], {
+          queryParamsHandling: 'merge',
+          queryParams: { isPasswordInit: true },
+        });
+      }
+    });
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
-      this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
 
       // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
-      
-      if (this.oauth && !this.loginChallenge) {
+
+      if (!this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params['error']) {
@@ -105,34 +109,12 @@ export class LoginComponent {
     const recaptchaKey = this.config.getRecaptchaKey();
     this.isLoggingIn = true;
     if (recaptchaKey) {
-      this.reCaptchaV3Service.execute('login').subscribe((token) => {
-        this.doLogin(token);
+      this.reCaptchaV3Service.execute('login').subscribe(() => {
+        this.oAuthLogin();
       });
     } else {
-      this.doLogin();
-    }
-  }
-
-  private doLogin(recaptchaToken: string = '') {
-    if (this.oauth) {
       this.oAuthLogin();
-    } else {
-      this.firstPartyLogin(recaptchaToken);
     }
-  }
-
-  firstPartyLogin(recaptchaToken: string) {
-    const formValue = this.loginForm.getRawValue();
-    this.sdk.nuclia.auth.login(formValue.email, formValue.password, recaptchaToken).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (error) => {
-        this.loginError = true;
-        this.formError = error.status === 401;
-        this.isLoggingIn = false;
-      },
-    });
   }
 
   oAuthLoginUrl() {
@@ -145,12 +127,7 @@ export class LoginComponent {
     }
   }
 
-  private autoSubmitOAuthForm() {
-    // Submit OAuth form without validation (for skip_login scenario)
-    this.form?.nativeElement.submit();
-  }
-
   private remoteLogin() {
     location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
   }
-} 
+}

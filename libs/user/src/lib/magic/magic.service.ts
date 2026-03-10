@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, MagicAction, SDKService, TokenService } from '@flaps/core';
+import { AuthService, SDKService } from '@flaps/core';
+import { MagicAction } from '@nuclia/core';
 import { catchError, map, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MagicService {
+  cameFrom = '';
+
   constructor(
     private authService: AuthService,
     private sdk: SDKService,
     private router: Router,
-    private tokenService: TokenService,
   ) {}
 
   execute(action: MagicAction) {
     this.authService.setNextUrl(null);
     this.sdk.cleanAccount();
+    this.cameFrom = action.came_from || '';
 
     if (action.action === 'join_regional_kb') {
       // Action to join a kb has a different flow
@@ -63,19 +66,23 @@ export class MagicService {
         break;
       case 'gosetupaccount':
       case 'startonboarding':
-        this.router.navigate(['/user/onboarding']);
+        if (action.consent_url) {
+          location.href = action.consent_url;
+        } else {
+          throw new Error('No consent_url');
+        }
         break;
     }
   }
 
   joinKb(action: MagicAction) {
-    return this.validateToken(action.join_kb_token || '', action.zone || '').pipe(
+    return this.validateToken(action.join_kb_token || '', action.zone).pipe(
       tap((nextAction) => this._execute(nextAction)),
     );
   }
 
   validateToken(token: string, zone?: string) {
-    return this.tokenService.validate(token, zone).pipe(
+    return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
         throw { tokenError: error };
       }),

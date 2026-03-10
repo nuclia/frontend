@@ -43,8 +43,14 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
                     account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
                   ),
                 );
-          } else if (total === 1 && kbs.length === 1 && !selectService.standalone && !!kbs[0].role_on_kb) {
-            // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
+          } else if (
+            !navigation.inRaoApp &&
+            total === 1 &&
+            kbs.length === 1 &&
+            !selectService.standalone &&
+            !!kbs[0].role_on_kb
+          ) {
+            // if there's only one KB, and we're not in NucliaDB admin app or RAO app, then we automatically select the KB
             sdk.nuclia.options.zone = kbs[0].zone;
 
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));

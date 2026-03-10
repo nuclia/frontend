@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService, ResetData } from '@flaps/core';
+import { LoginService, ResetResponse, SetupResponse } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { StrongPassword, SamePassword } from '../password.validator';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'nus-reset',
@@ -17,6 +18,9 @@ import { StrongPassword, SamePassword } from '../password.validator';
 export class ResetComponent {
   magicToken: string | undefined;
   resetForm = new FormGroup({
+    username: new FormControl('', {
+      nonNullable: true,
+    }),
     password: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, StrongPassword],
@@ -38,7 +42,8 @@ export class ResetComponent {
     } as IErrorMessages,
   };
 
-  resetting = false;
+  pending = false;
+  initFullname = false;
 
   constructor(
     private loginService: LoginService,
@@ -51,14 +56,15 @@ export class ResetComponent {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params['token'];
     });
+    this.route.url.subscribe((u) => (this.initFullname = u[0].path === 'setup'));
   }
 
   submit() {
     if (!this.resetForm.valid) return;
-    this.resetting = true;
+    this.pending = true;
     this.reCaptchaV3Service.execute('reset').subscribe({
       next: (token) => {
-        this.reset(token);
+        this.apply(token);
       },
       error: (error) => {
         throw new Error('Recaptcha error', error);
@@ -66,27 +72,33 @@ export class ResetComponent {
     });
   }
 
-  reset(token: string) {
+  apply(reCaptchaToken: string) {
     if (this.magicToken) {
-      const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
-      this.loginService.reset(resetInfo, token).subscribe({
-        complete: () => {
+      const password = this.resetForm.getRawValue().password;
+      const name = this.resetForm.getRawValue().username;
+      const token = this.magicToken;
+      const request: Observable<ResetResponse | SetupResponse> = this.initFullname
+        ? this.loginService.setup({ name, password, token }, reCaptchaToken)
+        : this.loginService.reset({ password, token }, reCaptchaToken);
+      request.subscribe({
+        next: (data) => {
           this.toaster.success('reset.password_reset');
-          this.resetting = false;
-          this.goLogin();
+          this.pending = false;
+          this.goLogin(data);
         },
         error: (error) => {
           this.toaster.error(error.status === 500 ? 'reset.invalid-token' : 'generic.error.oops');
-          this.resetting = false;
+          this.pending = false;
           this.cdr.markForCheck();
         },
       });
     }
   }
 
-  goLogin() {
+  goLogin(data: ResetResponse | SetupResponse) {
     this.router.navigate(['../login'], {
       relativeTo: this.route,
+      queryParams: { ...data },
     });
   }
 }

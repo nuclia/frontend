@@ -1,12 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  EmbeddingModelStepComponent,
-  KbNameStepComponent,
-  LearningConfigurationForm,
-  UserContainerModule,
-  ZoneStepComponent,
-} from '@nuclia/user';
 import { AccountBudget, BillingService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
 import { of, ReplaySubject, switchMap, take, tap } from 'rxjs';
@@ -15,12 +8,19 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.component';
+import { UserContainerComponent } from '@nuclia/user';
+import {
+  EmbeddingModelStepComponent,
+  KbNameStepComponent,
+  LearningConfigurationForm,
+  ZoneStepComponent,
+} from '../onboarding';
 
 @Component({
   imports: [
     CommonModule,
     Step1BudgetComponent,
-    UserContainerModule,
+    UserContainerComponent,
     KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,

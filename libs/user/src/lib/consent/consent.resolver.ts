@@ -16,18 +16,21 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
 
   return oAuthService.getConsentData(consentChallenge).pipe(
     tap((data) => {
+      if (data.came_from) {
+        oAuthService.setCameFrom(data.came_from);
+      }
       if (data.skip_consent) {
         // Auto-submit the form by creating and submitting it programmatically
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = oAuthService.consentUrl();
-        
+
         const challengeInput = document.createElement('input');
         challengeInput.type = 'hidden';
         challengeInput.name = 'consent_challenge';
         challengeInput.value = consentChallenge;
         form.appendChild(challengeInput);
-        
+
         // Add each scope as a separate form field
         data.requested_scope.forEach((scope) => {
           const scopeInput = document.createElement('input');
@@ -36,7 +39,7 @@ export const consentResolver: ResolveFn<OAuthConsentData | null> = (
           scopeInput.value = scope;
           form.appendChild(scopeInput);
         });
-        
+
         document.body.appendChild(form);
         form.submit();
       }

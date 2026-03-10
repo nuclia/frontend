@@ -14,9 +14,9 @@ import {
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '@nuclia/user';
 import { filter, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
+import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '../onboarding';
 
 @Component({
   selector: 'app-kb-creation',

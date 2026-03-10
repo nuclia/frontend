@@ -1,0 +1,21 @@
+@use 'apps/auth/src/variables';
+
+.version {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  font-weight: variables.$font-weight-thin;
+  color: variables.$color-neutral-regular;
+  background-color: transparent;
+  font-size: font-size(xxs);
+  padding-right: rhythm(0.5);
+  padding-bottom: rhythm(0.5);
+}
+
+aside#pa-toasts-block {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+  align-content: center;
+}

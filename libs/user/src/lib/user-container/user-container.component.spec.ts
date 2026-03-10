@@ -10,7 +10,6 @@ describe('UserContainerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UserContainerComponent],
       providers: [MockProvider(BackendConfigurationService)],
     }).compileComponents();
 

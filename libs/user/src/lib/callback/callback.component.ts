@@ -9,7 +9,6 @@ import { take } from 'rxjs';
 @Component({
   selector: 'stf-user-callback',
   template: '<div class="user-background" style="height: 100%"></div>',
-  standalone: false,
 })
 export class CallbackComponent implements OnInit {
   constructor(
@@ -24,28 +23,28 @@ export class CallbackComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.route.snapshot.queryParams['error']) {
-      this.toaster.error(this.route.snapshot.queryParams['error_description'] || 'login.error.oops');
-      this.router.navigate(['../signup'], {
+    const queryParams = this.route.snapshot.queryParams;
+    if (queryParams['error']) {
+      this.toaster.error(queryParams['error_description'] || 'login.error.oops');
+      this.router.navigate(['/user/signup'], {
         relativeTo: this.route,
       });
       return;
     }
 
-    // Correctly handle final step of sso/saml where AUTH app navigates to `came_from` url after calling
-    // `CallbackComponent.authenticate` and then independently of saml or other sso, it ends
-    // up here in the dashboard app with the tokens in the URL. 
-    if (this.route.snapshot.queryParamMap.get('token') && this.route.snapshot.queryParamMap.get('refresh_token')) {
+    // Handle second callback from migration flow with JWT tokens in the url
+    // This is part of the legacy login flow. Once the saml flow is completed in the
+    // auth app,  navigates to come_from with the tokens in the URL. This is triggerd in this
+    // same component in `authenticate`, and then independently of saml or other sso, it ends
+    // up here with the tokens in the URL.
+    if (queryParams['token'] && queryParams['refresh_token']) {
       this.loadUrlToken();
       return;
     }
 
     if (this.route.snapshot.data['saml']) {
       // Returning from SAML authentication
-      this.getSAMLToken();
-    } else if (this.route.snapshot.data['samlOauth']) {
-      // Returning from SAML authentication in a OAuth flow
-      this.redirect();
+      this.handleSAMLCallback();
     } else if (
       !this.route.snapshot.queryParamMap.get('token') &&
       (this.route.snapshot.data['google'] ||
@@ -53,8 +52,30 @@ export class CallbackComponent implements OnInit {
         this.route.snapshot.data['microsoft'])
     ) {
       this.ssoLogin();
+    } else if (queryParams['code'] && queryParams['state']) {
+      this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe({
+        next: (res) => {
+          if (res.success) {
+            const came_from = res.state.came_from;
+            if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
+              window.location.href = came_from;
+            } else {
+              this.router.navigate(['/']);
+            }
+          } else {
+            this.toaster.error('login.error.oops');
+            this.router.navigate(['/user/signup']);
+          }
+        },
+        error: () => {
+          this.toaster.error('login.error.oops');
+          this.router.navigate(['/user/signup']);
+        },
+      });
     } else {
-      this.loadUrlToken();
+      this.router.navigate(['/user/signup'], {
+        relativeTo: this.route,
+      });
     }
   }
 
@@ -67,39 +88,38 @@ export class CallbackComponent implements OnInit {
     );
   }
 
-  getSAMLToken(): void {
+  handleSAMLCallback(): void {
+    const consentUrl = this.route.snapshot.queryParamMap.get('consent_url');
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) {
-      this.samlService.getToken(token).subscribe((token) => {
-        this.authenticate(token);
+    const state = this.route.snapshot.queryParamMap.get('state');
+    if (consentUrl) {
+      // OAuth flow: navigate to consent challenge URL
+      this.document.location.href = consentUrl;
+    } else if (token) {
+      // Regular flow: exchange token for access token and authenticate
+      this.samlService.getToken(token).subscribe((authTokens) => {
+        this.authenticate(authTokens, state || undefined);
       });
-    }
-  }
-
-  redirect(): void {
-    const redirectTo = this.route.snapshot.queryParamMap.get('redirect_to');
-    if (redirectTo) {
-      const allowedHosts = this.config.getAllowedHostsRedirect();
-      try {
-        const url = new URL(redirectTo);
-        if (allowedHosts.indexOf(url.hostname) >= 0) {
-          this.document.location.href = redirectTo;
-        }
-      } catch {}
+    } else {
+      // No valid parameters
+      this.toaster.error('login.error.oops');
+      this.router.navigate(['/user/signup'], {
+        relativeTo: this.route,
+      });
     }
   }
 
   ssoLogin(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
-    
+
     if (code !== null && state !== null) {
       this.ssoService.login(code, state).subscribe({
         next: (response) => {
           // Check if this is an OAuth flow (login_challenge present in state)
           const decodedState = this.ssoService.decodeState(state);
           const isOAuthFlow = !!decodedState['login_challenge'];
-          
+
           // If OAuth flow and response contains consent_url, redirect to it
           if (isOAuthFlow && response.consent_url) {
             this.document.location.href = response.consent_url;
@@ -114,7 +134,7 @@ export class CallbackComponent implements OnInit {
             );
           } else {
             // Invalid response
-            this.router.navigate(['../signup'], {
+            this.router.navigate(['/user/signup'], {
               relativeTo: this.route,
               queryParams: { error: 'invalid_response' },
             });
@@ -122,15 +142,15 @@ export class CallbackComponent implements OnInit {
         },
         error: (error) => {
           let errorCode = 'oops';
-          
+
           if (error.status === 412) {
             errorCode = 'no_personal_email';
           } else if (error.message === 'Invalid state') {
             errorCode = 'invalid_configuration';
             this.toaster.error('Authentication configuration error. Please contact support if this persists.');
           }
-          
-          this.router.navigate(['../signup'], {
+
+          this.router.navigate(['/user/signup'], {
             relativeTo: this.route,
             queryParams: { error: errorCode },
           });
@@ -142,10 +162,17 @@ export class CallbackComponent implements OnInit {
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
     const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
-    if (came_from && came_from !== window.location.origin) {
+    if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  private isCameFromLegit(url: string): boolean {
+    const backend = this.config.getAPIOrigin();
+    const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
+    const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
+    return urlMainDomain === backendMainDomain;
   }
 }

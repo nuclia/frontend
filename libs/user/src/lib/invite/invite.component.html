@@ -1,6 +1,10 @@
 <nus-user-container>
   <div class="setup-invite">
-    <h2 class="setup-invite-title">{{ 'setup.set_password' | translate }}</h2>
-    <app-password-form (submitData)="submit($event)"></app-password-form>
+    <h2 class="setup-invite-title">{{ 'invite.title' | translate }}</h2>
+    <div class="body-s">{{ 'invite.description' | translate }}</div>
+    <div class="buttons">
+      <pa-button (click)="setPassword()">{{ 'invite.set-password' | translate }}</pa-button>
+      <pa-button (click)="useSSO()">{{ 'invite.use-sso' | translate }}</pa-button>
+    </div>
   </div>
 </nus-user-container>

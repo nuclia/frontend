@@ -18,13 +18,15 @@ service:
   internalPort: 80
   externalPort: 80
 
-api_path: XXX
+api_origin: XXX
 app_name: app
 no_stripe: false
 brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
+oauth_client_id: XXX
+auth_endpoint: XXX
 
 virtualService:
   enabled: false
@@ -37,9 +39,10 @@ podDisruptionBudget:
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
-envFrom:
-  - configMapRef:
-      name: manager-config
+# envFrom can be used to inject additional secrets, e.g.:
+# envFrom:
+#   - secretRef:
+#       name: secretsmanager-app-secrets
 
 ## Intended to be used with secret
 # env:

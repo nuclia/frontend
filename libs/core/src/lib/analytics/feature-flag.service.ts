@@ -100,8 +100,8 @@ export class FeatureFlagService {
   );
 
   isStageOrDev =
-    location.hostname === 'stashify.cloud' ||
-    location.hostname === 'gcp-global-dev-1.nuclia.io' ||
+    location.hostname.endsWith('stashify.cloud') ||
+    location.hostname.endsWith('gcp-global-dev-1.nuclia.io') ||
     !this.environment.production;
 
   constructor(

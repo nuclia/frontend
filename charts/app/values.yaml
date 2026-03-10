@@ -22,14 +22,14 @@ service:
 app_name: app
 no_stripe: false
 google_analytics: XXX
+api_origin: XXX
 cdn: XXX
 brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
-editor_url: XXX
-email_domain: XXX
 saml_enabled: XXX
+oauth_client_id: XXX
 
 virtualService:
   enabled: false
@@ -69,9 +69,10 @@ podDisruptionBudget:
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
-envFrom:
-  - configMapRef:
-      name: app-config
+# envFrom can be used to inject additional secrets, e.g.:
+# envFrom:
+#   - secretRef:
+#       name: secretsmanager-app-secrets
 ## Intended to be used with secret
 # env:
 #   SITE_KEY: XXX

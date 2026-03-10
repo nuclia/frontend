@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BackendConfigurationService } from '../config';
 import { OAuthConsentData, OAuthLoginData } from '../models';
 import { SDKService } from '../api';
 
@@ -11,28 +10,47 @@ export type OAuthErrors =
   | 'unknown_consent_challenge'
   | 'get_consent_error';
 
-const STF_LOGIN = '/auth/oauth/login';
-const STF_CONSENT = '/auth/oauth/consent';
-
+const EMAIL_KEY = 'SIGNUP_EMAIL';
+const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
 @Injectable({
   providedIn: 'root',
 })
 export class OAuthService {
-  constructor(private config: BackendConfigurationService, private sdk: SDKService) {}
+  private sdk = inject(SDKService);
 
   loginUrl() {
-    return this.config.getAPIURL() + STF_LOGIN;
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
   }
 
   consentUrl() {
-    return this.config.getAPIURL() + STF_CONSENT;
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/consent`;
   }
 
-  getLoginData(challenge: string): Observable<OAuthLoginData> {
-    return this.sdk.nuclia.rest.get<OAuthLoginData>(this.loginUrl() + `?login_challenge=${challenge}`);
+  getLoginData(challenge: string, user_hint: string | null): Observable<OAuthLoginData> {
+    let url = this.loginUrl() + `?login_challenge=${challenge}`;
+    if (user_hint) {
+      url += `&user_hint=${user_hint}`;
+    }
+    return this.sdk.nuclia.rest.get<OAuthLoginData>(url);
   }
 
   getConsentData(challenge: string): Observable<OAuthConsentData> {
     return this.sdk.nuclia.rest.get<OAuthConsentData>(this.consentUrl() + `?consent_challenge=${challenge}`);
+  }
+
+  getEmail() {
+    return localStorage.getItem(EMAIL_KEY) || '';
+  }
+
+  setEmail(email: string) {
+    localStorage.setItem(EMAIL_KEY, email);
+  }
+
+  getCameFrom() {
+    return localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginFor('rag');
+  }
+
+  setCameFrom(cameFrom: string) {
+    localStorage.setItem(CAME_FROM_KEY, cameFrom);
   }
 }

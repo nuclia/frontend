@@ -14,22 +14,20 @@ export interface SetPasswordData {
   password: string;
 }
 
-export class RecoverData {
+export interface RecoverData {
   username: string;
   app: string;
-  constructor(username: string, app: string) {
-    this.username = username;
-    this.app = app;
-  }
+  login_challenge?: string;
+  initial_setpassword?: boolean;
 }
 
-export class ResetData {
+export interface ResetData {
   password: string;
   token: string;
-  constructor(password: string, token: string) {
-    this.password = password;
-    this.token = token;
-  }
+}
+
+export interface SetupData extends ResetData {
+  name: string;
 }
 
 export interface LoginData {
@@ -53,11 +51,15 @@ export interface OAuthConsentData {
   client_name: string;
   requested_scope: string[];
   skip_consent: boolean;
+  came_from?: string;
 }
 
 export interface OAuthLoginData {
   skip_login: boolean;
   subject?: string;
+  needs_signup: boolean;
+  email?: string;
+  needs_initial_setpassword?: boolean;
 }
 
 export interface JwtUser {
@@ -132,5 +134,11 @@ export interface RefreshResult {
   token: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
-export interface ResetResponse {}
+export interface ResetResponse {
+  login_challenge: string;
+}
+
+export interface SetupResponse {
+  login_challenge: string;
+  user_hint: string;
+}
