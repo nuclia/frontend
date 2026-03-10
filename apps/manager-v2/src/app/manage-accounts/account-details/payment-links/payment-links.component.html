@@ -31,6 +31,14 @@
     formControlName="formula"
     [options]="formulasOptions | async"></pa-select>
 
+  <pa-select
+    label="Currency"
+    formControlName="currency">
+    @for (currency of currencies; track currency) {
+      <pa-option [value]="currency">{{ currency }}</pa-option>
+    }
+  </pa-select>
+
   <pa-checkbox formControlName="allowPromotionCode">Allow promotion code</pa-checkbox>
 
   <div>

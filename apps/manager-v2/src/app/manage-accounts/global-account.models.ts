@@ -136,10 +136,13 @@ export interface BillingFormula {
   formula: string[];
 }
 
+export type PaymentCurrency = 'usd' | 'eur';
+
 export interface PaymentLinkPayload {
   account_id: string;
   account_type: AccountTypes;
   price_ids: string[];
   billing_formula_id: string;
   allow_promotion_codes?: boolean;
+  currency: PaymentCurrency;
 }
