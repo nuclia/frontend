@@ -12,6 +12,8 @@ const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
 })
 export class NavigationService {
   inRaoApp = this.environment.client === 'rao';
+  inPlatformApp = this.environment.client === 'platform';
+  inDashboard = this.environment.client === 'dashboard';
 
   constructor(
     private router: Router,
@@ -99,6 +101,10 @@ export class NavigationService {
 
   getRetrievalAgentUrl(accountSlug: string, agentSlug: string): string {
     return `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/arag/${agentSlug}`;
+  }
+
+  getPlatformUrl(accountSlug: string): string {
+    return `/at/${accountSlug}/platform`;
   }
 
   getAragSessionsUrl(accountSlug: string, agentSlug: string): string {

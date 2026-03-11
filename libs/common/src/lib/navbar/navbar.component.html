@@ -5,7 +5,7 @@
 <div class="app-navbar">
   <div class="navbar-scroll-container">
     @if (!isInAccount) {
-      @if (standalone || !isInArag) {
+      @if (standalone || inDashboard) {
         <div class="navbar-content">
           <div class="nav-group">
             <div class="group-items">
@@ -207,7 +207,7 @@
             </div>
           }
         </div>
-      } @else {
+      } @else if (isInArag) {
         <div class="navbar-content">
           <div class="nav-group">
             <div class="group-items">
@@ -325,9 +325,35 @@
             </div>
           }
         </div>
+      } @else if (inPlatformApp) {
+        <div class="navbar-content">
+          <div class="nav-group">
+            <div class="group-items">
+              <a
+                [routerLink]="platformUrl"
+                class="nav-link"
+                routerLinkActive="active"
+                data-cy="go-to-home"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <pa-icon name="home"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.home' | translate }}</span>
+              </a>
+            </div>
+            <div class="group-items">
+              <a
+                [routerLink]="platformUrl + '/random'"
+                class="nav-link"
+                routerLinkActive="active"
+                data-cy="go-to-home"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <pa-icon name="gear"></pa-icon>
+                <span class="nav-link-title">Random</span>
+              </a>
+            </div>
+          </div>
+        </div>
       }
     }
-
     @if (!standalone && isInAccount && (isAccountManager | async)) {
       <div class="navbar-content dark">
         <div class="nav-group">
@@ -351,7 +377,7 @@
               <span class="nav-link-title">{{ 'navbar.account-settings' | translate }}</span>
             </a>
           </div>
-          @if (!inRaoApp) {
+          @if (inDashboard) {
             <div class="group-items">
               <a
                 [routerLink]="(accountUrl | async) + '/kbs'"
@@ -383,7 +409,7 @@
               <span class="nav-link-title">{{ 'navbar.nua-keys' | translate }}</span>
             </a>
           </div>
-          @if (isRetrievalAgentsEnabled | async) {
+          @if ((isRetrievalAgentsEnabled | async) && (inDashboard || inRaoApp)) {
             <div class="group-items">
               <a
                 [routerLink]="(accountUrl | async) + '/arag'"

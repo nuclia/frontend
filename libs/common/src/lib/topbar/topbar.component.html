@@ -15,40 +15,42 @@
   </button>
 
   <div class="topbar-buttons">
-    @if (showDemo && (hasDemoButton | async)) {
-      <pa-button
-        kind="primary"
-        aspect="basic"
-        paFocusable
-        (click)="bookDemo()"
-        (keyup.enter)="bookDemo()">
-        <a
-          href="https://nuclia.com/book-a-demo/"
-          target="_blank"
-          rel="noopener noreferrer">
-          {{ 'need-help-book-demo' | translate }}
-        </a>
-      </pa-button>
-    }
-    @if (isTrial | async) {
-      <pa-button
-        kind="primary"
-        aspect="basic"
-        paFocusable
-        (click)="goToTutorial()"
-        (keyup.enter)="goToTutorial()">
-        <a
-          href="https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial"
-          target="_blank"
-          rel="noopener noreferrer">
-          {{ 'generic.trial-tutorial' | translate }}
-        </a>
-      </pa-button>
+    @if (!inPlatformApp) {
+      @if (showDemo && (hasDemoButton | async)) {
+        <pa-button
+          kind="primary"
+          aspect="basic"
+          paFocusable
+          (click)="bookDemo()"
+          (keyup.enter)="bookDemo()">
+          <a
+            href="https://nuclia.com/book-a-demo/"
+            target="_blank"
+            rel="noopener noreferrer">
+            {{ 'need-help-book-demo' | translate }}
+          </a>
+        </pa-button>
+      }
+      @if (isTrial | async) {
+        <pa-button
+          kind="primary"
+          aspect="basic"
+          paFocusable
+          (click)="goToTutorial()"
+          (keyup.enter)="goToTutorial()">
+          <a
+            href="https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial"
+            target="_blank"
+            rel="noopener noreferrer">
+            {{ 'generic.trial-tutorial' | translate }}
+          </a>
+        </pa-button>
+      }
     }
   </div>
 
   <div class="topbar-actions">
-    @if (!standalone && (shouldAccountTypeBeVisible | async)) {
+    @if (!inPlatformApp && !standalone && (shouldAccountTypeBeVisible | async)) {
       <pa-button
         kind="primary"
         aspect="basic"
@@ -67,7 +69,9 @@
       </div>
     }
 
-    <app-kb-switch></app-kb-switch>
+    @if (!inPlatformApp) {
+      <app-kb-switch></app-kb-switch>
+    }
 
     @if (!standalone) {
       <stf-notification-button
