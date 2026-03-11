@@ -149,9 +149,9 @@ export class Authentication implements IAuthentication {
     // Generate PKCE parameters
     const codeVerifier = this.generateCodeVerifier();
     this.generateCodeChallenge(codeVerifier).then((codeChallenge) => {
-      sessionStorage.setItem('oauth_state', stateToken);
-      sessionStorage.setItem('oauth_nonce', nonceToken);
-      sessionStorage.setItem('code_verifier', codeVerifier);
+      localStorage.setItem('oauth_state', stateToken);
+      localStorage.setItem('oauth_nonce', nonceToken);
+      localStorage.setItem('code_verifier', codeVerifier);
 
       const authParams = new URLSearchParams({
         response_type: 'code',
@@ -170,7 +170,7 @@ export class Authentication implements IAuthentication {
   }
 
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }> {
-    const expectedState = sessionStorage.getItem('oauth_state');
+    const expectedState = localStorage.getItem('oauth_state');
 
     if (returnedState !== expectedState) {
       console.error('State validation failed - possible security issue');
@@ -178,8 +178,8 @@ export class Authentication implements IAuthentication {
     }
     return this.exchangeAuthorizationCode(authCode).pipe(
       map(() => {
-        sessionStorage.removeItem('oauth_state');
-        sessionStorage.removeItem('oauth_nonce');
+        localStorage.removeItem('oauth_state');
+        localStorage.removeItem('oauth_nonce');
         let state = {};
         try {
           state = JSON.parse(atob(returnedState));
@@ -195,7 +195,7 @@ export class Authentication implements IAuthentication {
     if (!this.nuclia.options.oauth) {
       return throwError(() => new Error('Code verifier not found - PKCE flow compromised'));
     }
-    const codeVerifier = sessionStorage.getItem('code_verifier');
+    const codeVerifier = localStorage.getItem('code_verifier');
 
     if (!codeVerifier) {
       throw new Error('Code verifier not found - PKCE flow compromised');
@@ -212,7 +212,7 @@ export class Authentication implements IAuthentication {
     return this.fetch<AuthTokens>(`${this.getHydraUrl()}/oauth2/token`, tokenRequestBody, {}, true).pipe(
       map((tokenData) => {
         this.authenticate(tokenData);
-        sessionStorage.removeItem('code_verifier');
+        localStorage.removeItem('code_verifier');
       }),
     );
   }
