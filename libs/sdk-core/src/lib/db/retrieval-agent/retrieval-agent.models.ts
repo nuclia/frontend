@@ -488,3 +488,12 @@ export interface DownloadStatus {
   download_url?: string;
   query: { [key: string]: any };
 }
+
+export interface Workflow {
+  id: string;
+  name: string;
+  description?: string;
+  parameters?: { [key: string]: any };
+  rules?: (string | { prompt?: string })[];
+  required?: string[];
+}

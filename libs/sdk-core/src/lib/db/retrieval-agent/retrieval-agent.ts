@@ -28,6 +28,7 @@ import {
   SessionCreationResponse,
   SessionList,
   SessionPagination,
+  Workflow,
 } from './retrieval-agent.models';
 import { Memory } from './memory.models';
 import { ProviderType } from './retrieval-agent.types';
@@ -553,5 +554,33 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   getDownload(requestId: string): Observable<DownloadStatus> {
     return this.nuclia.rest.get<DownloadStatus>(`${this.path}/audit/download_request/${requestId}/status`);
+  }
+
+  /**
+   * Get the list of workflows
+   */
+  getWorkflows(): Observable<Workflow[]> {
+    return this.nuclia.rest.get<Workflow[]>(`${this.path}/workflows`);
+  }
+
+  /**
+   * Create a new workflow
+   */
+  createWorkflow(data: Workflow): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/workflows`, data);
+  }
+
+  /**
+   * Edit an existing workflow
+   */
+  patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/workflow/${workflowId}`, data);
+  }
+
+  /**
+   * Delete a workflow
+   */
+  deleteWorkflow(workflowId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}`);
   }
 }
