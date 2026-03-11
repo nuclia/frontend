@@ -8,7 +8,7 @@ export function App() {
         account="90288af7-5755-47bf-9700-d1ade78f7294"
         apikey={import.meta.env.VITE_API_KEY}
         zone="europe-1"
-        backend="https://stashify.cloud/api"
+        backend="https://accounts.stashify.cloud/api"
       />
     </div>
   );
