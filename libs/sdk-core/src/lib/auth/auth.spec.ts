@@ -34,7 +34,6 @@ describe('Authentication', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    sessionStorage.clear();
   });
 
   describe('with service API key', () => {
@@ -204,23 +203,23 @@ describe('Authentication', () => {
     });
 
     it('should process authorization response and parse state', async () => {
-      sessionStorage.setItem('oauth_state', btoa(JSON.stringify({ came_from: 'x', a: true })));
-      sessionStorage.setItem('code_verifier', 'my-code-verifier');
+      localStorage.setItem('oauth_state', btoa(JSON.stringify({ came_from: 'x', a: true })));
+      localStorage.setItem('code_verifier', 'my-code-verifier');
       mockFetch({ access_token: 'token', refresh_token: 'refresh' });
 
-      const expectedState = sessionStorage.getItem('oauth_state') || '';
+      const expectedState = localStorage.getItem('oauth_state') || '';
       const result = await firstValueFrom(auth.processAuthorizationResponse('auth-code', expectedState));
 
       expect(result.success).toBe(true);
       expect(result.state).toEqual({ came_from: 'x', a: true });
-      expect(sessionStorage.getItem('oauth_state')).toBeNull();
-      expect(sessionStorage.getItem('oauth_nonce')).toBeNull();
-      expect(sessionStorage.getItem('code_verifier')).toBeNull();
+      expect(localStorage.getItem('oauth_state')).toBeNull();
+      expect(localStorage.getItem('oauth_nonce')).toBeNull();
+      expect(localStorage.getItem('code_verifier')).toBeNull();
     });
 
     it('should fail processAuthorizationResponse when state does not match', async () => {
       const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      sessionStorage.setItem('oauth_state', 'expected');
+      localStorage.setItem('oauth_state', 'expected');
       const result = await firstValueFrom(auth.processAuthorizationResponse('auth-code', 'different'));
       expect(result).toEqual({ success: false, state: {} });
       expect(errorSpy).toHaveBeenCalled();
@@ -229,8 +228,8 @@ describe('Authentication', () => {
 
     it('should fail processAuthorizationResponse when state cannot be parsed', async () => {
       const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      sessionStorage.setItem('oauth_state', '%%%invalid%%%');
-      sessionStorage.setItem('code_verifier', 'my-code-verifier');
+      localStorage.setItem('oauth_state', '%%%invalid%%%');
+      localStorage.setItem('code_verifier', 'my-code-verifier');
       mockFetch({ access_token: 'token', refresh_token: 'refresh' });
 
       const result = await firstValueFrom(auth.processAuthorizationResponse('auth-code', '%%%invalid%%%'));
