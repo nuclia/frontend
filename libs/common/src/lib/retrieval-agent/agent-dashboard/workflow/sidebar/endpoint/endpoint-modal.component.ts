@@ -4,6 +4,7 @@ import { SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { workflowId } from '../../workflow.state';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, TranslateModule],
@@ -15,7 +16,7 @@ export class EndpointModalComponent {
   sdk = inject(SDKService);
   modal = inject(ModalRef);
 
-  endpoint = this.sdk.currentArag.pipe(map((arag) => arag.fullpath));
+  endpoint = this.sdk.currentArag.pipe(map((arag) => arag.fullpath + `/workflow/${workflowId()}`));
   copied = signal(false);
 
   copy(endpoint: string) {

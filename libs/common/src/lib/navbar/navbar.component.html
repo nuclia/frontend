@@ -109,9 +109,7 @@
                 </a>
                 @if (!standalone) {
                   <a
-                    [routerLink]="
-                      (isAdminOrContrib | async) ? kbUrl + '/tasks' : null
-                    "
+                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/tasks' : null"
                     routerLinkActive="active"
                     data-cy="go-to-tasks"
                     class="nav-link sub-item"
@@ -212,13 +210,13 @@
           <div class="nav-group">
             <div class="group-items">
               <a
-                [routerLink]="aragUrl"
+                [routerLink]="(isAragAdmin | async) ? aragUrl + '/workflows'  : null"
                 class="nav-link"
                 routerLinkActive="active"
                 data-cy="go-to-agent-workflow"
-                [routerLinkActiveOptions]="{ exact: true }">
+                [class.disabled]="!(isAragAdmin | async)">
                 <pa-icon name="workflows"></pa-icon>
-                <span class="nav-link-title">{{ 'navbar.agent.workflow' | translate }}</span>
+                <span class="nav-link-title">{{ 'navbar.agent.workflows' | translate }}</span>
               </a>
               @if (isAragWithMemory | async) {
                 <a
@@ -231,11 +229,12 @@
                 </a>
               }
               <a
-                [routerLink]="aragUrl + '/drivers'"
+                [routerLink]="(isAragAdmin | async) ? aragUrl + '/drivers' : null"
                 class="nav-link"
                 routerLinkActive="active"
                 data-cy="go-to-drivers-page"
-                [routerLinkActiveOptions]="{ exact: true }">
+                [routerLinkActiveOptions]="{ exact: true }"
+                [class.disabled]="!(isAragAdmin | async)">
                 <pa-icon name="puzzle"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.agent.drivers' | translate }}</span>
               </a>

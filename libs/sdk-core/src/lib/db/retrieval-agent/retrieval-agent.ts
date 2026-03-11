@@ -105,14 +105,15 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   interact(
     sessionId: string,
     question: string,
+    workflowId = 'default',
     method: 'POST' | 'WS' = 'WS',
     headers?: { [key: string]: string },
   ): Observable<AragResponse | IErrorResponse> {
     switch (method) {
       case 'POST':
-        return this._interactThroughPost(sessionId, question, headers);
+        return this._interactThroughPost(sessionId, question, workflowId, headers);
       case 'WS':
-        return this._interactThroughWs(sessionId, question, headers);
+        return this._interactThroughWs(sessionId, question, workflowId, headers);
     }
   }
 
@@ -128,11 +129,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private _interactThroughWs(
     sessionId: string,
     question: string,
+    workflowId: string,
     headers?: { [key: string]: string },
   ): Observable<AragResponse | IErrorResponse> {
     const answerSubject = new Subject<AragResponse | IErrorResponse>();
     this.wsOpeningCount = 0;
-    this.openWebSocket(sessionId, question, answerSubject, undefined, headers);
+    this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
 
     return answerSubject.asObservable();
   }
@@ -140,12 +142,13 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private openWebSocket(
     sessionId: string,
     question: string,
+    workflowId: string,
     answerSubject: Subject<AragResponse | IErrorResponse>,
     fromCursor?: number,
     headers?: { [key: string]: string },
   ) {
     let lastMessage: AragAnswer | undefined;
-    this.getWsUrl(sessionId, fromCursor).subscribe({
+    this.getWsUrl(sessionId, workflowId, fromCursor).subscribe({
       next: (wsUrl) => {
         const ws = new WebSocket(wsUrl);
         this.wsConnections[sessionId] = ws;
@@ -198,11 +201,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             // If not we reopen a connection from the last seqId
             const lastSeqId = lastMessage?.seqid || null;
             if (lastSeqId !== null) {
-              this.openWebSocket(sessionId, question, answerSubject, lastSeqId + 1, headers);
+              this.openWebSocket(sessionId, question, workflowId, answerSubject, lastSeqId + 1, headers);
             } else if (this.wsOpeningCount < 2) {
               // if we got no message, we retry only 3 times
               this.wsOpeningCount++;
-              this.openWebSocket(sessionId, question, answerSubject, undefined, headers);
+              this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
             } else {
               answerSubject.next({
                 type: 'error',
@@ -226,14 +229,17 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Interact with the session with an HTTP POST request.
    * @param sessionId Session identifier
    * @param question Question to send to the agent
+   * @param workflowId Workflow identifier
    * @returns
    */
   private _interactThroughPost(
     sessionId: string,
     question: string,
+    workflowId: string,
     headers?: { [key: string]: string },
   ): Observable<AragResponse | IErrorResponse> {
-    const fullPath = this.getInteractionPath(sessionId);
+    let fullPath = this.getInteractionPath(sessionId);
+    fullPath += fullPath.includes('?') ? '&' : '?' + `workflow_id=${workflowId}`;
     let nextIndex = 0;
     return this.nuclia.rest
       .getStreamedResponse(fullPath, {
@@ -280,7 +286,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private getWsPath(sessionId: string): string {
     return `${this.getInteractionPath(sessionId)}/ws`;
   }
-  private getWsUrl(sessionId: string, fromCursor?: number) {
+  private getWsUrl(sessionId: string, workflowId: string, fromCursor?: number) {
     const path = this.getWsPath(sessionId);
     return (
       this.nuclia.options.accountId
@@ -289,9 +295,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     ).pipe(
       map((token) => {
         const wsUrl = this.nuclia.rest.getWsUrl(path, token);
-        return typeof fromCursor === 'number'
-          ? `${wsUrl}${wsUrl.includes('?') ? '&' : '?'}from_cursor=${fromCursor}`
-          : wsUrl;
+        const queryParams = new URLSearchParams();
+        queryParams.set('workflow_id', workflowId);
+        if (typeof fromCursor === 'number') {
+          queryParams.set('from_cursor', fromCursor.toString());
+        }
+        return `${wsUrl}${wsUrl.includes('?') ? '&' : '?'}${queryParams.toString()}`;
       }),
     );
   }
@@ -348,152 +357,170 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
 
   /**
-   * Get the list of rules of the Retrieval Agent
+   * Get the list of rules of a workflow
+   * @param workflowId
    */
-  getRules(): Observable<(Memory.Rule | string)[]> {
+  getRules(workflowId = 'default'): Observable<(Memory.Rule | string)[]> {
     return this.nuclia.rest
-      .get<{ rules: (Memory.Rule | string)[] }>(`${this.path}/rules`)
+      .get<{ rules: (Memory.Rule | string)[] }>(`${this.path}/workflow/${workflowId}/rules`)
       .pipe(map((response) => response.rules));
   }
 
   /**
-   * Set the list of rules of the Retrieval Agent
+   * Set the list of rules of a workflow
    * @param rules List of rules to set
+   * @param workflowId
    */
-  setRules(rules: string[]): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/rules`, { rules });
+  setRules(rules: string[], workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/workflow/${workflowId}/rules`, { rules });
   }
 
   /**
-   * Get the list of preprocess agents from the Retrieval Agent.
+   * Get the list of preprocess agents from a workflow.
+   * @param workflowId
    * @returns the list of preprocess agents
    */
-  getPreprocess(): Observable<PreprocessAgent[]> {
-    return this.nuclia.rest.get<PreprocessAgent[]>(`${this.path}/preprocess`);
+  getPreprocess(workflowId = 'default'): Observable<PreprocessAgent[]> {
+    return this.nuclia.rest.get<PreprocessAgent[]>(`${this.path}/workflow/${workflowId}/preprocess`);
   }
 
   /**
-   * Add a preprocess agent to the Retrieval Agent.
+   * Add a preprocess agent to a workflow.
    * @param agent data representing the preprocess agent to add
+   * @param workflowId
    * @returns An observable providing the created agent id.
    */
-  addPreprocess(agent: PreprocessAgentCreation): Observable<{ id: string }> {
-    return this.nuclia.rest.post<{ id: string }>(`${this.path}/preprocess`, agent);
+  addPreprocess(agent: PreprocessAgentCreation, workflowId = 'default'): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/workflow/${workflowId}/preprocess`, agent);
   }
 
   /**
    * Edit an existing preprocess agent.
    * @param agent Modified preprocess agent to be saved.
+   * @param workflowId
    */
-  patchPreprocess(agent: PreprocessAgent): Observable<void> {
-    return this.nuclia.rest.patch(`${this.path}/preprocess/${agent.id}`, agent);
+  patchPreprocess(agent: PreprocessAgent, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/workflow/${workflowId}/preprocess/${agent.id}`, agent);
   }
 
   /**
-   * Delete a preprocess agent from the Retrieval Agent.
+   * Delete a preprocess agent from a workflow.
    * @param agentId Identifier of the preprocess agent to delete
+   * @param workflowId
    */
-  deletePreprocess(agentId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/preprocess/${agentId}`);
+  deletePreprocess(agentId: string, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}/preprocess/${agentId}`);
   }
 
   /**
-   * Get the list of context agents from the Retrieval Agent.
+   * Get the list of context agents from a workflow.
+   * @param workflowId
    * @returns The list of context agents
    */
-  getContext(): Observable<ContextAgent[]> {
-    return this.nuclia.rest.get<ContextAgent[]>(`${this.path}/context`);
+  getContext(workflowId = 'default'): Observable<ContextAgent[]> {
+    return this.nuclia.rest.get<ContextAgent[]>(`${this.path}/workflow/${workflowId}/context`);
   }
 
   /**
-   * Add a context agent to the Retrieval Agent.
+   * Add a context agent to a workflow.
    * @param agent data representing the context agent to add
+   * @param workflowId
    * @returns An observable providing the created agent id.
    */
-  addContext(agent: ContextAgentCreation): Observable<{ id: string }> {
-    return this.nuclia.rest.post<{ id: string }>(`${this.path}/context`, agent);
+  addContext(agent: ContextAgentCreation, workflowId = 'default'): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/workflow/${workflowId}/context`, agent);
   }
 
   /**
    * Edit an existing context agent.
    * @param agent Modified context agent to be saved
+   * @param workflowId
    */
-  patchContext(agent: ContextAgent): Observable<void> {
-    return this.nuclia.rest.patch(`${this.path}/context/${agent.id}`, agent);
+  patchContext(agent: ContextAgent, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/workflow/${workflowId}/context/${agent.id}`, agent);
   }
 
   /**
-   * Delete a context agent from the Retrieval Agent.
+   * Delete a context agent from a workflow.
    * @param agentId Identifier of the agent to delete.
+   * @param workflowId
    */
-  deleteContext(agentId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/context/${agentId}`);
+  deleteContext(agentId: string, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}/context/${agentId}`);
   }
 
   /**
-   * Get the list of generation agents from the Retrieval Agent.
+   * Get the list of generation agents from a workflow.
+   * @param workflowId
    * @returns The list of generation agents
    */
-  getGeneration(): Observable<GenerationAgent[]> {
-    return this.nuclia.rest.get<GenerationAgent[]>(`${this.path}/generation`);
+  getGeneration(workflowId = 'default'): Observable<GenerationAgent[]> {
+    return this.nuclia.rest.get<GenerationAgent[]>(`${this.path}/workflow/${workflowId}/generation`);
   }
 
   /**
-   * Add a generation agent to the Retrieval Agent.
+   * Add a generation agent to a workflow.
    * @param agent data representing the generation agent to add.
+   * @param workflowId
    * @returns An observable providing the created agent id.
    */
-  addGeneration(agent: GenerationAgentCreation): Observable<{ id: string }> {
-    return this.nuclia.rest.post<{ id: string }>(`${this.path}/generation`, agent);
+  addGeneration(agent: GenerationAgentCreation, workflowId = 'default'): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/workflow/${workflowId}/generation`, agent);
   }
 
   /**
    * Edit an existing generation agent.
    * @param agent Modified generation agent to be saved
+   * @param workflowId
    */
-  patchGeneration(agent: GenerationAgent): Observable<void> {
-    return this.nuclia.rest.patch(`${this.path}/generation/${agent.id}`, agent);
+  patchGeneration(agent: GenerationAgent, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/workflow/${workflowId}/generation/${agent.id}`, agent);
   }
 
   /**
-   * Delete a generation agent from the Retrieval Agent.
-   * @param agentId Identifier off the agent to delete
+   * Delete a generation agent from a workflow.
+   * @param agentId Identifier of the agent to delete
+   * @param workflowId
    */
-  deleteGeneration(agentId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/generation/${agentId}`);
+  deleteGeneration(agentId: string, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}/generation/${agentId}`);
   }
 
   /**
-   * Get the list of postprocess agents from the Retrieval Agent.
+   * Get the list of postprocess agents from a workflow.
+   * @param workflowId
    * @returns The list of postprocess agents
    */
-  getPostprocess(): Observable<PostprocessAgent[]> {
-    return this.nuclia.rest.get<PostprocessAgent[]>(`${this.path}/postprocess`);
+  getPostprocess(workflowId = 'default'): Observable<PostprocessAgent[]> {
+    return this.nuclia.rest.get<PostprocessAgent[]>(`${this.path}/workflow/${workflowId}/postprocess`);
   }
 
   /**
-   * Add a postprocess agent to the Retrieval Agent.
+   * Add a postprocess agent to a workflow.
    * @param agent data representing the postprocess agent to add
+   * @param workflowId
    * @returns An observable providing the created agent id.
    */
-  addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }> {
-    return this.nuclia.rest.post<{ id: string }>(`${this.path}/postprocess`, agent);
+  addPostprocess(agent: PostprocessAgentCreation, workflowId = 'default'): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/workflow/${workflowId}/postprocess`, agent);
   }
 
   /**
    * Edit an existing postprocess agent.
    * @param agent Modified postprocess agent to be saved
+   * @param workflowId
    */
-  patchPostprocess(agent: PostprocessAgent): Observable<void> {
-    return this.nuclia.rest.patch(`${this.path}/postprocess/${agent.id}`, agent);
+  patchPostprocess(agent: PostprocessAgent, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/workflow/${workflowId}/postprocess/${agent.id}`, agent);
   }
 
   /**
-   * Delete a postprocess agent from the Retrieval Agent.
+   * Delete a postprocess agent from a workflow.
    * @param agentId Identifier of the agent to delete
+   * @param workflowId
    */
-  deletePostprocess(agentId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/postprocess/${agentId}`);
+  deletePostprocess(agentId: string, workflowId = 'default'): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}/postprocess/${agentId}`);
   }
 
   /** @deprecated
@@ -575,12 +602,5 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/workflow/${workflowId}`, data);
-  }
-
-  /**
-   * Delete a workflow
-   */
-  deleteWorkflow(workflowId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}`);
   }
 }

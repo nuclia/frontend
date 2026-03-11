@@ -8,6 +8,23 @@
         (click)="toggleMainNav()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.toggle-navbar' | translate }}
       </pa-button>
+      <div>
+        <nsi-dropdown-button
+          aspect="basic"
+          size="small"
+          [popupRef]="workflowDropdown">
+          {{ (currentWorkflow | async)?.name || '' }}
+        </nsi-dropdown-button>
+        <pa-dropdown #workflowDropdown>
+          @for (workflow of workflows | async; track workflow) {
+            <pa-option
+              [value]="workflow.id"
+              (selectOption)="goToWorkflow(workflow.id)">
+              {{ workflow.name }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
       <pa-button
         aspect="basic"
         size="small"

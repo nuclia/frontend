@@ -83,6 +83,7 @@ import {
   unselectNode,
   updateNode,
   rootSchema,
+  workflowId,
 } from './workflow.state';
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
 import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
@@ -90,6 +91,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { convertNodeTypeToConfigTitle } from './workflow.utils';
 import { AdvancedAskFormComponent } from './nodes/advanced-ask';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 const COLUMN_CLASS = 'workflow-col';
 const COLUMN_SECTION_CLASS = 'column-section';
@@ -155,21 +157,22 @@ export class WorkflowService {
   }
   sidebarHeader?: ElementRef;
   sidebarContentWrapper?: ElementRef;
+  workflowId = toObservable(workflowId);
 
   /**
    * Initialise the workflow with the agents saved in current Arag, update the workflow when current Arag changes.
    */
   initAndUpdateWorkflow(root: WorkflowRoot) {
     this.workflowRoot = root;
-    return combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
-      map(([account, arag]) => {
+    return combineLatest([this.sdk.currentAccount, this.sdk.currentArag, this.workflowId]).pipe(
+      map(([account, arag, workflowId]) => {
         nodeInitialisationDone.set(false);
         setAragUrl(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
-        return arag;
+        return { arag, workflowId };
       }),
-      switchMap((arag) =>
+      switchMap(({ arag, workflowId }) =>
         forkJoin([
-          arag.getPreprocess().pipe(
+          arag.getPreprocess(workflowId || '').pipe(
             catchError(() => {
               this.toaster.error(
                 this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.preprocess'),
@@ -177,13 +180,13 @@ export class WorkflowService {
               return of([]);
             }),
           ),
-          arag.getContext().pipe(
+          arag.getContext(workflowId || '').pipe(
             catchError(() => {
               this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.context'));
               return of([]);
             }),
           ),
-          arag.getGeneration().pipe(
+          arag.getGeneration(workflowId || '').pipe(
             catchError(() => {
               this.toaster.error(
                 this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.generation'),
@@ -191,7 +194,7 @@ export class WorkflowService {
               return of([]);
             }),
           ),
-          arag.getPostprocess().pipe(
+          arag.getPostprocess(workflowId || '').pipe(
             catchError(() => {
               this.toaster.error(
                 this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.postprocess'),

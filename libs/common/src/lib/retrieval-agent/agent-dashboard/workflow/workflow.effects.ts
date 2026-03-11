@@ -28,6 +28,7 @@ import {
   updateNode,
   updateParentAndChild,
   workflow,
+  workflowId,
   WorkflowState,
 } from './workflow.state';
 
@@ -307,13 +308,13 @@ export class WorkflowEffectService {
       switchMap((arag) => {
         switch (node.nodeCategory) {
           case 'preprocess':
-            return arag.addPreprocess(agentCreation as PreprocessAgentCreation);
+            return arag.addPreprocess(agentCreation as PreprocessAgentCreation, workflowId());
           case 'context':
-            return arag.addContext(agentCreation as ContextAgentCreation);
+            return arag.addContext(agentCreation as ContextAgentCreation, workflowId());
           case 'generation':
-            return arag.addGeneration(agentCreation as GenerationAgentCreation);
+            return arag.addGeneration(agentCreation as GenerationAgentCreation, workflowId());
           case 'postprocess':
-            return arag.addPostprocess(agentCreation as PostprocessAgentCreation);
+            return arag.addPostprocess(agentCreation as PostprocessAgentCreation, workflowId());
         }
       }),
     );
@@ -326,13 +327,13 @@ export class WorkflowEffectService {
       switchMap((arag) => {
         switch (node.nodeCategory) {
           case 'preprocess':
-            return arag.patchPreprocess({ id: agentId, ...(agentConfig as PreprocessAgentCreation) });
+            return arag.patchPreprocess({ id: agentId, ...(agentConfig as PreprocessAgentCreation) }, workflowId());
           case 'context':
-            return arag.patchContext({ id: agentId, ...(agentConfig as ContextAgentCreation) });
+            return arag.patchContext({ id: agentId, ...(agentConfig as ContextAgentCreation) }, workflowId());
           case 'generation':
-            return arag.patchGeneration({ id: agentId, ...(agentConfig as GenerationAgentCreation) });
+            return arag.patchGeneration({ id: agentId, ...(agentConfig as GenerationAgentCreation) }, workflowId());
           case 'postprocess':
-            return arag.patchPostprocess({ id: agentId, ...(agentConfig as PostprocessAgentCreation) });
+            return arag.patchPostprocess({ id: agentId, ...(agentConfig as PostprocessAgentCreation) }, workflowId());
         }
       }),
     );
@@ -344,13 +345,13 @@ export class WorkflowEffectService {
       switchMap((arag) => {
         switch (deletedNode.category) {
           case 'preprocess':
-            return arag.deletePreprocess(deletedNode.id);
+            return arag.deletePreprocess(deletedNode.id, workflowId());
           case 'context':
-            return arag.deleteContext(deletedNode.id);
+            return arag.deleteContext(deletedNode.id, workflowId());
           case 'generation':
-            return arag.deleteGeneration(deletedNode.id);
+            return arag.deleteGeneration(deletedNode.id, workflowId());
           case 'postprocess':
-            return arag.deletePostprocess(deletedNode.id);
+            return arag.deletePostprocess(deletedNode.id, workflowId());
         }
       }),
     );

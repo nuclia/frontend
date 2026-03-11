@@ -67,6 +67,7 @@ export class TestPanelService {
   runTest(
     question: string,
     userSessionId: string,
+    workflowId: string,
     useWS = true,
     fromCursor?: number,
     headers?: { [key: string]: string },
@@ -77,7 +78,9 @@ export class TestPanelService {
     this.getOrCreateSession(userSessionId, question)
       .pipe(
         tap(({ sessionId }) => (this.currentSessionId = sessionId)),
-        switchMap(({ sessionId, arag }) => arag.interact(sessionId, question, useWS ? 'WS' : 'POST', headers)),
+        switchMap(({ sessionId, arag }) =>
+          arag.interact(sessionId, question, workflowId, useWS ? 'WS' : 'POST', headers),
+        ),
       )
       .subscribe({
         next: (data) => {

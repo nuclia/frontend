@@ -40,12 +40,4 @@ export class WorkflowsService {
       tap(() => this.update()),
     );
   }
-
-  deleteWorkflow(workflowId: string) {
-    return this.sdk.currentArag.pipe(
-      take(1),
-      switchMap((arag) => arag.deleteWorkflow(workflowId)),
-      tap(() => this.update()),
-    );
-  }
 }

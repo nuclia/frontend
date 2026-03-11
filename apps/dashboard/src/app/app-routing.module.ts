@@ -40,6 +40,8 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
+  WorkflowsListComponent,
+  WorkflowsComponent,
 } from '@flaps/common';
 import {
   RedirectComponent,
@@ -186,7 +188,22 @@ const routes: Routes = [
             children: [
               {
                 path: '',
-                component: AgentDashboardComponent,
+                redirectTo: 'workflows',
+                pathMatch: 'full',
+              },
+              {
+                path: 'workflows',
+                component: WorkflowsComponent,
+                children: [
+                  {
+                    path: '',
+                    component: WorkflowsListComponent,
+                  },
+                  {
+                    path: ':id',
+                    component: AgentDashboardComponent,
+                  },
+                ],
               },
               {
                 path: 'sessions',
