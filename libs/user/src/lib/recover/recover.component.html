@@ -28,7 +28,9 @@
     @if (!isPasswordInit) {
       <div>
         <span>{{ 'recover.gologin_help' | translate }}</span>
-        <a routerLink="../login">
+        <a
+          href="#"
+          (click)="goToLogin()">
           {{ 'recover.gologin' | translate }}
         </a>
       </div>
