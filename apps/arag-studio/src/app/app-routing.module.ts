@@ -44,15 +44,16 @@ import {
   CallbackComponent,
   TemporaryAppSignupComponent,
 } from '@nuclia/user';
-import { authGuard } from '@flaps/core';
 import { AgentsHomeComponent } from './home/home.component';
 import { StudioLayoutComponent } from './studio/studio-layout.component';
+import { LocalLoginComponent } from './local-login/local-login.component';
+import { localAuthGuard } from './local-auth.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: BaseComponent,
-    canActivate: [authGuard],
+    canActivate: [localAuthGuard],
     children: [
       {
         path: '',
@@ -73,7 +74,6 @@ const routes: Routes = [
             redirectTo: 'home',
             pathMatch: 'full',
           },
-          // n8n-like agents list home page
           {
             path: 'home',
             component: AgentsHomeComponent,
@@ -83,7 +83,6 @@ const routes: Routes = [
             loadChildren: () =>
               import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
           },
-          // n8n-like studio shell wrapping all ARAG agent routes
           {
             path: ':zone/arag/:agent',
             component: RetrievalAgentComponent,
@@ -187,7 +186,7 @@ const routes: Routes = [
   {
     path: 'select',
     component: SelectAccountComponent,
-    canActivate: [authGuard, selectAccountGuard],
+    canActivate: [localAuthGuard, selectAccountGuard],
     children: [
       {
         path: ':account',
@@ -199,7 +198,7 @@ const routes: Routes = [
   {
     path: 'feedback',
     component: FeedbackComponent,
-    canActivate: [authGuard],
+    canActivate: [localAuthGuard],
   },
   {
     path: 'farewell',
@@ -213,8 +212,9 @@ const routes: Routes = [
   {
     path: 'user/profile',
     component: ProfileComponent,
-    canActivate: [authGuard],
+    canActivate: [localAuthGuard],
   },
+  { path: 'user/local-login', component: LocalLoginComponent },
   { path: 'user/callback', component: CallbackComponent },
   { path: 'user/signup', component: TemporaryAppSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
