@@ -22,8 +22,8 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private ngxTranslate: TranslateService,
     private config: BackendConfigurationService,
-    private paTranslate: PaTranslateService,
     private labelService: LabelsService,
+    private paTranslate: PaTranslateService,
   ) {
     if (location.href.includes('/admin/admin/')) {
       // after OAuth flow, we need to restore hash-based routing

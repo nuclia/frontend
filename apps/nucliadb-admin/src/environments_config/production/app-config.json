@@ -3,7 +3,7 @@
   "production": true,
   "backend": {
     "app": "nucliadb-admin",
-    "apiOrigin": "STF_DOCKER_API_ORIGIN",
+    "apiOrigin": "",
     "oauth": "https://nuclia.cloud",
     "siteKey": "",
     "sentry_environment": "prod",
