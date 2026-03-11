@@ -199,6 +199,7 @@ export namespace Widget {
   }
 
   export interface RaoWidgetConfiguration {
+    workflow: string;
     darkMode?: 'light' | 'dark';
   }
 

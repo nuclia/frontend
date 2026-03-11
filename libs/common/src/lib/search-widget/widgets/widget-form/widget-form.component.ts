@@ -17,6 +17,7 @@ import {
   AccordionBodyDirective,
   AccordionItemComponent,
   ModalConfig,
+  OptionModel,
   PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
@@ -31,12 +32,15 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';
 import { EmbedWidgetDialogComponent } from '../dialogs';
+import { WorkflowsService } from '../../../retrieval-agent';
 
 type RaoFormGroupControls = {
+  workflow: FormControl<string>;
   darkMode: FormControl<'light' | 'dark'>;
 };
 
 type RaoFormValue = {
+  workflow: string;
   darkMode: 'light' | 'dark';
 };
 
@@ -72,6 +76,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   private modalService = inject(SisModalService);
   private featureService = inject(FeaturesService);
   private navigationService = inject(NavigationService);
+  private workflowsService = inject(WorkflowsService);
 
   isSpeechEnabled = this.featureService.unstable.speech;
 
@@ -123,7 +128,14 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
 
   raoForm = new FormGroup<RaoFormGroupControls>({
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
+    workflow: new FormControl<string>('default', { nonNullable: true }),
   });
+
+  workflows = this.workflowsService.workflows.pipe(
+    map((workflows) =>
+      workflows.map((workflow) => new OptionModel({ id: workflow.id, value: workflow.id, label: workflow.name })),
+    ),
+  );
 
   widgetFormExpanded = true;
 
@@ -268,7 +280,9 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private sanitizeRaoWidgetConfig(raw: RaoFormValue): Widget.RaoWidgetConfiguration {
-    const config: Widget.RaoWidgetConfiguration = {};
+    const config: Widget.RaoWidgetConfiguration = {
+      workflow: raw.workflow,
+    };
 
     if (raw.darkMode) {
       config.darkMode = raw.darkMode;
