@@ -1,0 +1,51 @@
+<div class="agent-card">
+  <div class="agent-card-header">
+    <div class="agent-icon">
+      <pa-icon name="cpu" />
+    </div>
+    <div class="agent-meta">
+      <h3 class="agent-name title-s">{{ agent.title }}</h3>
+      <span class="agent-zone body-xs">{{ agent.zone }}</span>
+    </div>
+    <div class="agent-status">
+      <span
+        class="status-badge"
+        [class.status-active]="agent.state === 'PUBLISHED'"
+        [class.status-inactive]="agent.state !== 'PUBLISHED'">
+        {{ agent.state === 'PUBLISHED' ? ('agents.status.active' | translate) : ('agents.status.inactive' | translate) }}
+      </span>
+    </div>
+  </div>
+
+  @if (agent.description) {
+    <p class="agent-description body-s">{{ agent.description }}</p>
+  }
+
+  <div class="agent-card-actions">
+    <pa-button
+      aspect="solid"
+      kind="primary"
+      size="small"
+      icon="workflow"
+      iconAndText
+      [routerLink]="studioUrl">
+      {{ 'agents.actions.open-studio' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      size="small"
+      icon="history"
+      iconAndText
+      [routerLink]="sessionsUrl">
+      {{ 'agents.actions.sessions' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      size="small"
+      icon="plug"
+      iconAndText
+      [routerLink]="driversUrl">
+      {{ 'agents.actions.drivers' | translate }}
+    </pa-button>
+  </div>
+</div>

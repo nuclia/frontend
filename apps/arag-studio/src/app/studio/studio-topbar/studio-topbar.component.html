@@ -1,0 +1,25 @@
+<header class="studio-topbar">
+  <div class="topbar-breadcrumb">
+    <a
+      class="breadcrumb-home body-s"
+      [routerLink]="homeUrl">
+      <pa-icon name="home" />
+      {{ 'studio.topbar.agents' | translate }}
+    </a>
+    <pa-icon
+      name="chevron-right"
+      class="breadcrumb-sep" />
+    <span class="breadcrumb-current title-xs">{{ agentTitle }}</span>
+  </div>
+
+  <div class="topbar-actions">
+    <pa-button
+      aspect="basic"
+      size="small"
+      icon="external-link"
+      iconAndText
+      [routerLink]="['/at', accountSlug, zone, 'arag', agentSlug, 'keys']">
+      {{ 'studio.topbar.api-keys' | translate }}
+    </pa-button>
+  </div>
+</header>
