@@ -7,6 +7,7 @@ import {
   FeaturesService,
   LoginService,
   OAuthService,
+  SDKService,
   injectScript,
 } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -68,6 +69,7 @@ export class SignupComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
     private analytics: AnalyticsService,
+    private sdk: SDKService,
   ) {}
 
   ngOnInit(): void {
@@ -129,5 +131,9 @@ export class SignupComponent implements OnInit {
 
   goToDemo() {
     window.open(this.demoUrl, 'blank', 'noreferrer');
+  }
+
+  goToLogin() {
+    this.sdk.nuclia.auth.redirectToOAuth();
   }
 }

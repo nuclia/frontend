@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BackendConfigurationService, LoginService } from '@flaps/core';
+import { BackendConfigurationService, LoginService, SDKService } from '@flaps/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { SisPasswordInputModule } from '@nuclia/sistema';
+import { SisModalService, SisPasswordInputModule } from '@nuclia/sistema';
 import { MockComponent, MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { UserContainerComponent } from '../user-container';
@@ -15,8 +16,46 @@ import { RecoverComponent } from './recover.component';
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
   let fixture: ComponentFixture<RecoverComponent>;
+  let queryParams$: BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>;
+
+  let loginService: { recover: jest.Mock };
+  let reCaptchaV3Service: { execute: jest.Mock };
+  let config: { getRecaptchaKey: jest.Mock; getAppName: jest.Mock };
+  let modalService: { openConfirm: jest.Mock };
+  let translateService: { get: jest.Mock };
+  let sdkService: { nuclia: { auth: { redirectToOAuth: jest.Mock } } };
 
   beforeEach(waitForAsync(() => {
+    queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
+      login_challenge: 'challenge-1',
+      isPasswordInit: true,
+    });
+
+    loginService = {
+      recover: jest.fn(() => of({ action: 'check-mail' })),
+    };
+
+    reCaptchaV3Service = {
+      execute: jest.fn(() => of('captcha-token')),
+    };
+
+    config = {
+      getRecaptchaKey: jest.fn(() => 'key'),
+      getAppName: jest.fn(() => 'platform'),
+    };
+
+    modalService = {
+      openConfirm: jest.fn(() => ({ onClose: of(undefined) })),
+    };
+
+    translateService = {
+      get: jest.fn(() => of('translated-message')),
+    };
+
+    sdkService = {
+      nuclia: { auth: { redirectToOAuth: jest.fn() } },
+    };
+
     TestBed.configureTestingModule({
       declarations: [RecoverComponent],
       imports: [
@@ -29,18 +68,13 @@ describe('RecoverComponent', () => {
         RouterModule.forRoot([]),
       ],
       providers: [
-        {
-          provide: LoginService,
-          useValue: {
-            recover: of({ action: 'check-mail' }),
-          },
-        },
-        { provide: ReCaptchaV3Service, useValue: { execute: () => {} } },
-        { provide: BackendConfigurationService, useValue: { getRecaptchaKey: () => 'key' } },
-        {
-          provide: TranslateService,
-          useValue: { get: () => of('') },
-        },
+        { provide: ActivatedRoute, useValue: { queryParams: queryParams$.asObservable() } },
+        { provide: LoginService, useValue: loginService },
+        { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
+        { provide: BackendConfigurationService, useValue: config },
+        { provide: SisModalService, useValue: modalService },
+        { provide: SDKService, useValue: sdkService },
+        { provide: TranslateService, useValue: translateService },
       ],
     }).compileComponents();
   }));
@@ -55,7 +89,81 @@ describe('RecoverComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should read login challenge and password init from query params', () => {
+    expect(component.loginChallenge).toBe('challenge-1');
+    expect(component.isPasswordInit).toBe(true);
+  });
+
+  it('should not execute captcha when submit is called with invalid form', () => {
+    component.recoverForm.controls.email.setValue('');
+
+    component.submit();
+
+    expect(reCaptchaV3Service.execute).not.toHaveBeenCalled();
+    expect(loginService.recover).not.toHaveBeenCalled();
+  });
+
+  it('should execute captcha and call recover with token when submit is valid', () => {
+    const recoverSpy = jest.spyOn(component, 'recover');
+    component.recoverForm.controls.email.setValue('user@example.com');
+
+    component.submit();
+
+    expect(reCaptchaV3Service.execute).toHaveBeenCalledWith('recover');
+    expect(recoverSpy).toHaveBeenCalledWith('captcha-token');
+  });
+
+  it('should call loginService.recover with expected payload', () => {
+    component.recoverForm.controls.email.setValue('user@example.com');
+
+    component.recover('captcha-token');
+
+    expect(config.getAppName).toHaveBeenCalled();
+    expect(loginService.recover).toHaveBeenCalledWith(
+      {
+        username: 'user@example.com',
+        app: 'platform',
+        login_challenge: 'challenge-1',
+        initial_setpassword: true,
+      },
+      'captcha-token',
+    );
+  });
+
+  it('should open confirmation modal with translated message and redirect on close', () => {
+    component.recoverForm.controls.email.setValue('user@example.com');
+
+    component.recover('captcha-token');
+
+    expect(translateService.get).toHaveBeenCalledWith('login.check_email.email_sent');
+    expect(translateService.get).toHaveBeenCalledWith('recover.verify');
+    expect(modalService.openConfirm).toHaveBeenCalledWith({
+      title: 'login.check_email.title',
+      description: 'translated-message<br>translated-message',
+      confirmLabel: 'Ok',
+      onlyConfirm: true,
+    });
+    expect(sdkService.nuclia.auth.redirectToOAuth).toHaveBeenCalled();
+  });
+
+  it('should redirect to OAuth when goToLogin is called', () => {
+    component.goToLogin();
+
+    expect(sdkService.nuclia.auth.redirectToOAuth).toHaveBeenCalled();
+  });
+
+  it('should not call recover when recaptcha execution fails', () => {
+    reCaptchaV3Service.execute.mockReturnValueOnce(throwError(() => new Error('recaptcha failed')));
+    component.recoverForm.controls.email.setValue('user@example.com');
+    const recoverSpy = jest.spyOn(component, 'recover');
+
+    component.submit();
+
+    expect(reCaptchaV3Service.execute).toHaveBeenCalledWith('recover');
+    expect(recoverSpy).not.toHaveBeenCalled();
+  });
+
   afterEach(() => {
-    fixture.destroy();
+    fixture?.destroy();
   });
 });
