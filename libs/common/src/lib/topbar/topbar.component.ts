@@ -50,6 +50,7 @@ export class TopbarComponent {
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
   );
   isTrial = this.features.isTrial;
+  inPlatformApp = this.navigationService.inPlatformApp;
   showTrial = combineLatest([this.isTrial, this.accountType]).pipe(
     map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
   );
@@ -88,6 +89,10 @@ export class TopbarComponent {
   }
 
   goToTutorial() {
-    window.open('https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial', 'blank', 'noreferrer');
-  }  
+    window.open(
+      'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial',
+      'blank',
+      'noreferrer',
+    );
+  }
 }
