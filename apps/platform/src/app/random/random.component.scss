@@ -1,0 +1,349 @@
+@use 'apps/platform/src/variables';
+@use '../../../../../libs/sistema/styles/mixins' as sistema-mixins;
+@use '../../../../../libs/sistema/theme/tokens/spacing.tokens' as *;
+
+:host {
+  --kitty-white: #{variables.$color-light-stronger};
+  --kitty-ink: #{variables.$color-dark-stronger};
+  --kitty-bow: #{variables.$color-primary-regular};
+  --kitty-bow-dark: #{variables.$color-primary-strong};
+  --kitty-nose: #{variables.$color-secondary-regular};
+  --scene-sky: #{variables.$color-primary-lightest};
+  --scene-sky-deep: #{variables.$color-primary-lighter};
+  --scene-accent: #{variables.$color-success-light};
+
+  display: block;
+}
+
+.kitty-scene {
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: rhythm(2);
+  min-height: 66vh;
+  overflow: hidden;
+  border-radius: rhythm(2.5);
+  background: radial-gradient(circle at 15% 22%, rgb(255 255 255 / 78%) 0 18%, transparent 20%),
+    radial-gradient(circle at 78% 18%, rgb(255 255 255 / 60%) 0 14%, transparent 16%),
+    linear-gradient(165deg, var(--scene-sky) 0%, var(--scene-sky-deep) 58%, var(--scene-accent) 100%);
+  box-shadow: inset 0 calc(-1 * #{rhythm(3)}) rhythm(9) rgb(44 116 148 / 20%);
+}
+
+.kitty-glow {
+  position: absolute;
+  bottom: 6%;
+  width: min(68vw, rhythm(40));
+  aspect-ratio: 1 / 0.25;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 58%);
+  filter: blur(rhythm(2));
+  animation: glowPulse 2.2s ease-in-out infinite;
+}
+
+.kitty {
+  position: relative;
+  width: min(58vw, rhythm(35));
+  aspect-ratio: 1 / 1.15;
+  animation: kittyBounce 1.8s ease-in-out infinite;
+}
+
+.kitty-head {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  width: 73%;
+  height: 58%;
+  border: rhythm(0.5) solid var(--kitty-ink);
+  border-radius: 46% 46% 42% 42%;
+  background: var(--kitty-white);
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.kitty-ear {
+  position: absolute;
+  top: 0;
+  width: 26%;
+  height: 24%;
+  border: rhythm(0.5) solid var(--kitty-ink);
+  border-radius: 26% 82% 18% 70%;
+  background: var(--kitty-white);
+  z-index: 2;
+}
+
+.kitty-ear-left {
+  left: 12%;
+  transform: rotate(-28deg);
+}
+
+.kitty-ear-right {
+  right: 12%;
+  transform: rotate(14deg) scaleX(-1);
+}
+
+.kitty-bow {
+  position: absolute;
+  top: 11%;
+  right: 11%;
+  width: 34%;
+  height: 26%;
+  transform-origin: 38% 52%;
+  animation: bowSway 2s ease-in-out infinite;
+}
+
+.bow-loop {
+  position: absolute;
+  top: 0;
+  width: 49%;
+  height: 100%;
+  border: rhythm(0.5) solid var(--kitty-bow-dark);
+  border-radius: 58% 42% 55% 45%;
+  background: var(--kitty-bow);
+}
+
+.bow-loop-left {
+  left: 0;
+  transform: rotate(-12deg);
+}
+
+.bow-loop-right {
+  right: 0;
+  transform: rotate(16deg);
+}
+
+.bow-knot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28%;
+  height: 36%;
+  border: rhythm(0.5) solid var(--kitty-bow-dark);
+  border-radius: 50%;
+  background: var(--kitty-bow);
+  transform: translate(-50%, -50%);
+}
+
+.kitty-eye {
+  position: absolute;
+  top: 44%;
+  width: 8%;
+  height: 12%;
+  border-radius: 48%;
+  background: var(--kitty-ink);
+  transform-origin: center 70%;
+  animation: blink 3.8s infinite;
+}
+
+.kitty-eye-left {
+  left: 29%;
+}
+
+.kitty-eye-right {
+  right: 29%;
+}
+
+.kitty-nose {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  width: 10%;
+  height: 8%;
+  border-radius: 42% 42% 50% 50%;
+  background: var(--kitty-nose);
+  transform: translateX(-50%);
+}
+
+.whiskers {
+  position: absolute;
+  top: 59%;
+  width: 28%;
+  display: grid;
+  gap: rhythm(0.75);
+}
+
+.whiskers span {
+  display: block;
+  width: 100%;
+  border-top: rhythm(0.5) solid var(--kitty-ink);
+}
+
+.whiskers-left {
+  left: -18%;
+}
+
+.whiskers-left span:nth-child(1) {
+  transform: rotate(12deg);
+}
+
+.whiskers-left span:nth-child(3) {
+  transform: rotate(-12deg);
+}
+
+.whiskers-right {
+  right: -18%;
+}
+
+.whiskers-right span:nth-child(1) {
+  transform: rotate(-12deg);
+}
+
+.whiskers-right span:nth-child(3) {
+  transform: rotate(12deg);
+}
+
+.kitty-body {
+  position: absolute;
+  bottom: 1%;
+  left: 50%;
+  width: 58%;
+  height: 39%;
+  border: rhythm(0.5) solid var(--kitty-ink);
+  border-radius: 44% 44% 36% 36%;
+  background: var(--kitty-white);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.kitty-arm {
+  position: absolute;
+  top: 22%;
+  width: 25%;
+  height: 38%;
+  border: rhythm(0.5) solid var(--kitty-ink);
+  border-radius: 45% 45% 40% 40%;
+  background: var(--kitty-white);
+}
+
+.kitty-arm-left {
+  left: -10%;
+  transform: rotate(24deg);
+}
+
+.kitty-arm-right {
+  right: -14%;
+  transform: rotate(-18deg);
+  transform-origin: top left;
+  animation: wave 1s ease-in-out infinite;
+}
+
+.kitty-leg {
+  position: absolute;
+  bottom: -6%;
+  width: 26%;
+  height: 32%;
+  border: rhythm(0.5) solid var(--kitty-ink);
+  border-radius: 50%;
+  background: var(--kitty-white);
+}
+
+.kitty-leg-left {
+  left: 16%;
+}
+
+.kitty-leg-right {
+  right: 16%;
+}
+
+.kitty-caption {
+  margin: 0;
+  color: #{variables.$color-primary-stronger};
+  font-size: clamp(rhythm(2.5), 2.5vw, rhythm(3.5));
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  @include sistema-mixins.text-truncate();
+}
+
+@media (prefers-color-scheme: dark) {
+  .kitty-scene {
+    @include sistema-mixins.dark-mode();
+    box-shadow: inset 0 calc(-1 * #{rhythm(3)}) rhythm(9) rgb(0 0 0 / 26%);
+  }
+}
+
+@keyframes kittyBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1 * #{rhythm(1)}));
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(-42deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  46%,
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+  49% {
+    transform: scaleY(0.06);
+  }
+}
+
+@keyframes bowSway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-8deg);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.07);
+  }
+}
+
+@media (max-width: calc(#{rhythm(80)} + #{rhythm(7)} + #{rhythm(0.5)})) {
+  .kitty-scene {
+    min-height: 58vh;
+    border-radius: rhythm(2);
+  }
+
+  .whiskers {
+    gap: rhythm(0.5);
+  }
+
+  .whiskers span {
+    border-top-width: rhythm(0.25);
+  }
+
+  .kitty-head,
+  .kitty-ear,
+  .kitty-body,
+  .kitty-arm,
+  .kitty-leg {
+    border-width: calc((#{rhythm(0.5)} + #{rhythm(0.25)}) / 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kitty,
+  .kitty-arm-right,
+  .kitty-eye,
+  .kitty-bow,
+  .kitty-glow {
+    animation: none;
+  }
+}

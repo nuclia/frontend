@@ -33,7 +33,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
+  inDashboard = this.navigationService.inDashboard;
   inRaoApp = this.navigationService.inRaoApp;
+  inPlatformApp = this.navigationService.inPlatformApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
@@ -71,6 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showSettings = false;
   kbUrl: string = '';
   aragUrl: string = '';
+  platformUrl: string = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -107,6 +110,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.sdk.currentAccount
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((account) => (this.platformUrl = this.navigationService.getPlatformUrl(account.slug)));
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([account, kb]) => {

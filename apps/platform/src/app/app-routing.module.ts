@@ -2,34 +2,18 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
-  AgentActivityComponent,
-  AgentDashboardComponent,
-  AiModelsComponent,
   aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
-  DriversPageComponent,
-  EditResourceComponent,
   EmptyComponent,
-  KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
-  PreviewComponent,
-  ResourceFileComponent,
-  ResourceLinkComponent,
-  ResourceTextComponent,
-  RetrievalAgentComponent,
   rootGuard,
-  SearchPageComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
   selectKbGuard,
-  SessionInfoComponent,
-  SessionsComponent,
-  SessionsListComponent,
   setAccountGuard,
-  setAgentGuard,
   awsGuard,
   AwsOnboardingComponent,
   KnowledgeBoxKeysComponent,
@@ -45,6 +29,9 @@ import {
   TemporaryAppSignupComponent,
 } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
+import { HomeComponent } from './home/home.component';
+import { PlatformComponent } from './platform.component';
+import { RandomComponent } from './random/random.component';
 
 const routes: Routes = [
   {
@@ -77,92 +64,16 @@ const routes: Routes = [
               import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
           },
           {
-            path: ':zone/arag/:agent',
-            component: RetrievalAgentComponent,
-            canActivate: [setAgentGuard],
+            path: 'platform',
+            component: PlatformComponent,
             children: [
               {
                 path: '',
-                component: AgentDashboardComponent,
+                component: HomeComponent,
               },
               {
-                path: 'sessions',
-                component: SessionsComponent,
-                children: [
-                  {
-                    path: '',
-                    component: SessionsListComponent,
-                  },
-                  {
-                    path: ':id/edit',
-                    component: EditResourceComponent,
-                    data: { mode: 'arag' },
-                    children: [
-                      {
-                        path: '',
-                        redirectTo: 'preview',
-                        pathMatch: 'full',
-                      },
-                      {
-                        path: 'preview',
-                        component: SessionInfoComponent,
-                      },
-                      {
-                        path: 'text/:fieldId',
-                        component: ResourceTextComponent,
-                      },
-                      {
-                        path: 'link/:fieldId',
-                        component: ResourceLinkComponent,
-                      },
-                      {
-                        path: 'file/:fieldId',
-                        component: ResourceFileComponent,
-                      },
-                      {
-                        path: 'preview/:fieldType/:fieldId',
-                        component: PreviewComponent,
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                path: 'drivers',
-                component: DriversPageComponent,
-              },
-              {
-                path: 'search',
-                component: SearchPageComponent,
-              },
-              {
-                path: 'widgets',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
-                    (m) => m.WIDGETS_ROUTES,
-                  ),
-              },
-              {
-                path: 'manage',
-                component: KnowledgeBoxSettingsComponent,
-              },
-              {
-                path: 'ai-models',
-                component: AiModelsComponent,
-              },
-              {
-                path: 'activity',
-                component: AgentActivityComponent,
-              },
-              {
-                path: 'users',
-                component: KnowledgeBoxUsersComponent,
-                canActivate: [aragOwnerGuard],
-              },
-              {
-                path: 'keys',
-                component: KnowledgeBoxKeysComponent,
-                canActivate: [aragOwnerGuard],
+                path: 'random',
+                component: RandomComponent,
               },
             ],
           },
