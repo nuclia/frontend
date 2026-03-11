@@ -12,3 +12,66 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+
+// ── Workflow canvas drag-and-drop ──────────────────────────────────────────
+
+// Drag handle injected into each node-box
+.arag-drag-handle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 16px;
+  color: var(--color-neutral-regular, #9b9b9b);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+
+  svg { pointer-events: none; }
+
+  &:active { cursor: grabbing; }
+}
+
+// Show handle on node hover
+app-node-box:hover .arag-drag-handle,
+app-node-box:focus-within .arag-drag-handle {
+  opacity: 1;
+}
+
+// Fade node while being dragged
+.is-dragging app-node-box {
+  opacity: 0.35;
+}
+
+// Blue line drop indicator (positioned absolutely by the directive)
+.drag-drop-indicator {
+  pointer-events: none;
+}
+
+// Drop-zone highlight when dragging over a column section
+.column-section.drag-drop-target {
+  outline: 2px dashed var(--color-primary-regular, #5c2fff);
+  outline-offset: 4px;
+  background: rgba(92, 47, 255, 0.04);
+  border-radius: 8px;
+}
+
+// Custom drag ghost shown during HTML5 drag
+.arag-drag-ghost {
+  position: fixed;
+  top: -200px;
+  left: -200px;
+  padding: 6px 12px;
+  background: var(--color-light-stronger, #fff);
+  border: 1.5px solid var(--color-primary-regular, #5c2fff);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-neutral-dark, #333);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+}

@@ -3,13 +3,16 @@
     <a
       class="breadcrumb-home body-s"
       [routerLink]="homeUrl">
-      <pa-icon name="home" />
-      {{ 'studio.topbar.agents' | translate }}
+      {{ accountSlug }}
     </a>
-    <pa-icon
-      name="chevron-right"
-      class="breadcrumb-sep" />
+    <span class="breadcrumb-sep">/</span>
     <span class="breadcrumb-current title-xs">{{ agentTitle }}</span>
+    <span
+      class="status-badge"
+      [class.status-badge--active]="isPublished"
+      [class.status-badge--inactive]="!isPublished">
+      {{ isPublished ? ('studio.topbar.status.active' | translate) : ('studio.topbar.status.inactive' | translate) }}
+    </span>
   </div>
 
   <div class="topbar-actions">
@@ -20,6 +23,14 @@
       iconAndText
       [routerLink]="['/at', accountSlug, zone, 'arag', agentSlug, 'keys']">
       {{ 'studio.topbar.api-keys' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="solid"
+      size="small"
+      icon="play"
+      iconAndText
+      (click)="navigateToSearch()">
+      {{ 'studio.topbar.test-agent' | translate }}
     </pa-button>
   </div>
 </header>

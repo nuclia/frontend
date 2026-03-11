@@ -12,10 +12,11 @@
       [accountSlug]="accountSlug"
       [agentSlug]="agentSlug"
       [zone]="zone"
-      [homeUrl]="homeUrl">
+      [homeUrl]="homeUrl"
+      [agentState]="agentState">
     </app-studio-topbar>
 
-    <div class="studio-content">
+    <div class="studio-content" appWorkflowCanvas>
       <router-outlet></router-outlet>
     </div>
   </div>

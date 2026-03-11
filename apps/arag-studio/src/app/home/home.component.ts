@@ -38,6 +38,8 @@ export class AgentsHomeComponent implements OnInit, OnDestroy {
     }),
   );
 
+  agentCount$ = this.filteredAgents$.pipe(map((agents) => agents.length));
+
   ngOnInit(): void {
     this.sdk.currentAccount
       .pipe(
@@ -65,5 +67,9 @@ export class AgentsHomeComponent implements OnInit, OnDestroy {
 
   onSearchChange(value: string): void {
     this.searchQuery.next(value);
+  }
+
+  createAgent(): void {
+    this.router.navigate(['/at', this.accountSlug, 'manage', 'arag']);
   }
 }

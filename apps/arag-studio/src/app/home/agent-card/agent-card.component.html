@@ -5,13 +5,14 @@
     </div>
     <div class="agent-meta">
       <h3 class="agent-name title-s">{{ agent.title }}</h3>
-      <span class="agent-zone body-xs">{{ agent.zone }}</span>
+      <span class="zone-badge body-xs">{{ agent.zone }}</span>
     </div>
     <div class="agent-status">
       <span
-        class="status-badge"
+        class="status-indicator"
         [class.status-active]="agent.state === 'PUBLISHED'"
         [class.status-inactive]="agent.state !== 'PUBLISHED'">
+        <span class="status-dot"></span>
         {{ agent.state === 'PUBLISHED' ? ('agents.status.active' | translate) : ('agents.status.inactive' | translate) }}
       </span>
     </div>

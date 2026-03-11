@@ -15,6 +15,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
 import { AccountModule } from '@flaps/common';
 import { AppComponent } from './app.component';
+import { CommandPaletteComponent } from './command-palette/command-palette.component';
 
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
@@ -81,6 +82,7 @@ const appModules = [
       },
     }),
     PaToastModule,
+    CommandPaletteComponent,
   ],
   providers: [
     {

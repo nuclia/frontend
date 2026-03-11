@@ -6,10 +6,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { StudioNavComponent } from './studio-nav/studio-nav.component';
 import { StudioTopbarComponent } from './studio-topbar/studio-topbar.component';
+import { WorkflowCanvasDirective } from './workflow-canvas.directive';
 
 @Component({
   selector: 'app-studio-layout',
-  imports: [CommonModule, RouterOutlet, TranslateModule, StudioNavComponent, StudioTopbarComponent],
+  imports: [CommonModule, RouterOutlet, TranslateModule, StudioNavComponent, StudioTopbarComponent, WorkflowCanvasDirective],
   templateUrl: './studio-layout.component.html',
   styleUrl: './studio-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,12 +25,14 @@ export class StudioLayoutComponent implements OnInit, OnDestroy {
   agentSlug = '';
   accountSlug = '';
   zone = '';
+  agentState = '';
 
   ngOnInit(): void {
     this.sdk.currentArag.pipe(takeUntil(this.unsubscribeAll)).subscribe((agent) => {
       if (agent) {
         this.agentTitle = agent.title || agent.slug;
         this.agentSlug = agent.slug;
+        this.agentState = agent.state || '';
         this.cdr.markForCheck();
       }
     });

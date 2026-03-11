@@ -2,8 +2,19 @@
   <div class="agents-home-header">
     <div class="header-title">
       <h1 class="title-xl">{{ 'agents.home.title' | translate }}</h1>
+      @if (agentCount$ | async; as count) {
+        <span class="agent-count body-s">{{ count }} {{ 'agents.home.count' | translate }}</span>
+      }
       <p class="body-m subtitle">{{ 'agents.home.subtitle' | translate }}</p>
     </div>
+    <pa-button
+      aspect="solid"
+      kind="primary"
+      icon="add"
+      iconAndText
+      (click)="createAgent()">
+      {{ 'agents.home.new-agent' | translate }}
+    </pa-button>
   </div>
 
   <div class="agents-home-toolbar">
@@ -36,6 +47,14 @@
           </pa-icon>
           <h3 class="title-m">{{ 'agents.home.empty.title' | translate }}</h3>
           <p class="body-m">{{ 'agents.home.empty.description' | translate }}</p>
+          <pa-button
+            aspect="solid"
+            kind="primary"
+            icon="add"
+            iconAndText
+            (click)="createAgent()">
+            {{ 'agents.home.empty.cta' | translate }}
+          </pa-button>
         </div>
       }
     }
