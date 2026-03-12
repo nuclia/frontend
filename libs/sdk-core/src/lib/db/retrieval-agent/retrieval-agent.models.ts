@@ -68,7 +68,8 @@ export interface IRetrievalAgent
   interact(
     sessionId: string,
     question: string,
-    method: 'POST' | 'WS',
+    workflowId?: string,
+    method?: 'POST' | 'WS',
     headers?: { [key: string]: string },
   ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse>;
   stopInteraction(sessionId: string): void;
@@ -80,28 +81,28 @@ export interface IRetrievalAgent
   patchDriver(driver: Driver): Observable<void>;
   deleteDriver(driverId: string): Observable<void>;
 
-  getRules(): Observable<(Memory.Rule | string)[]>;
-  setRules(rules: string[]): Observable<void>;
+  getRules(workflowId?: string): Observable<(Memory.Rule | string)[]>;
+  setRules(rules: string[], workflowId?: string): Observable<void>;
 
-  getPreprocess(): Observable<PreprocessAgent[]>;
-  addPreprocess(agent: PreprocessAgentCreation): Observable<{ id: string }>;
-  patchPreprocess(agent: PreprocessAgent): Observable<void>;
-  deletePreprocess(agentId: string): Observable<void>;
+  getPreprocess(workflowId?: string): Observable<PreprocessAgent[]>;
+  addPreprocess(agent: PreprocessAgentCreation, workflowId?: string): Observable<{ id: string }>;
+  patchPreprocess(agent: PreprocessAgent, workflowId?: string): Observable<void>;
+  deletePreprocess(agentId: string, workflowId?: string): Observable<void>;
 
-  getContext(): Observable<ContextAgent[]>;
-  addContext(agent: ContextAgentCreation): Observable<{ id: string }>;
-  patchContext(agent: ContextAgent): Observable<void>;
-  deleteContext(agentId: string): Observable<void>;
+  getContext(workflowId?: string): Observable<ContextAgent[]>;
+  addContext(agent: ContextAgentCreation, workflowId?: string): Observable<{ id: string }>;
+  patchContext(agent: ContextAgent, workflowId?: string): Observable<void>;
+  deleteContext(agentId: string, workflowId?: string): Observable<void>;
 
-  getGeneration(): Observable<GenerationAgent[]>;
-  addGeneration(agent: GenerationAgentCreation): Observable<{ id: string }>;
-  patchGeneration(agent: GenerationAgent): Observable<void>;
-  deleteGeneration(agentId: string): Observable<void>;
+  getGeneration(workflowId?: string): Observable<GenerationAgent[]>;
+  addGeneration(agent: GenerationAgentCreation, workflowId?: string): Observable<{ id: string }>;
+  patchGeneration(agent: GenerationAgent, workflowId?: string): Observable<void>;
+  deleteGeneration(agentId: string, workflowId?: string): Observable<void>;
 
-  getPostprocess(): Observable<PostprocessAgent[]>;
-  addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }>;
-  patchPostprocess(agent: PostprocessAgent): Observable<void>;
-  deletePostprocess(agentId: string): Observable<void>;
+  getPostprocess(workflowId?: string): Observable<PostprocessAgent[]>;
+  addPostprocess(agent: PostprocessAgentCreation, workflowId?: string): Observable<{ id: string }>;
+  patchPostprocess(agent: PostprocessAgent, workflowId?: string): Observable<void>;
+  deletePostprocess(agentId: string, workflowId?: string): Observable<void>;
 
   getSchemas(): Observable<ARAGSchemas>;
   getFullSchemas(): Observable<JSONSchema4>;
@@ -109,6 +110,10 @@ export interface IRetrievalAgent
   requestActivityDownload(options: DownloadOptions): Observable<DownloadStatus>;
   getDownloads(): Observable<DownloadStatus[]>;
   getDownload(requestId: string): Observable<DownloadStatus>;
+
+  getWorkflows(): Observable<Workflow[]>;
+  createWorkflow(data: Workflow): Observable<void>;
+  patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void>;
 }
 
 export interface BaseAgent {
@@ -487,4 +492,13 @@ export interface DownloadStatus {
   status: 'pending' | 'ready';
   download_url?: string;
   query: { [key: string]: any };
+}
+
+export interface Workflow {
+  id: string;
+  name: string;
+  description?: string;
+  parameters?: { [key: string]: any };
+  rules?: (string | { prompt?: string })[];
+  required?: string[];
 }

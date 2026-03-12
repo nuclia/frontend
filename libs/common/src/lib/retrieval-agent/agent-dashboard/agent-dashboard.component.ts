@@ -9,10 +9,10 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { auditTime, fromEvent, Subject, takeUntil } from 'rxjs';
+import { auditTime, combineLatest, filter, fromEvent, map, Subject, takeUntil } from 'rxjs';
 import { DashboardLayoutService } from '../../base';
 import {
   activeSideBar,
@@ -27,6 +27,7 @@ import {
   sideBarOpen,
   sideBarTitle,
   WorkflowEffectService,
+  workflowId,
   WorkflowRoot,
   WorkflowRootComponent,
   WorkflowService,
@@ -35,11 +36,23 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
 import { ImportPanelComponent } from './workflow/sidebar/import';
-import { BadgeComponent, SisModalService } from '@nuclia/sistema';
+import { BadgeComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
 import { EndpointModalComponent } from './workflow/sidebar/endpoint/endpoint-modal.component';
+import { WorkflowsService } from '../workflows';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
-  imports: [BadgeComponent, TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink, CommonModule],
+  imports: [
+    BadgeComponent,
+    CommonModule,
+    DropdownButtonComponent,
+    PaButtonModule,
+    PaDropdownModule,
+    PaPopupModule,
+    RouterLink,
+    TranslateModule,
+    WorkflowRootComponent,
+  ],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +66,9 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private sdk = inject(SDKService);
   private features = inject(FeaturesService);
   private modelService = inject(SisModalService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private workflowsService = inject(WorkflowsService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -72,9 +88,17 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   isAragWithMemory = this.sdk.isAragWithMemory;
   isAragAdmin = this.features.isAragAdmin;
   selected = selectedNode;
+  workflows = this.workflowsService.workflows;
+  currentWorkflow = combineLatest([this.workflows, toObservable(workflowId)]).pipe(
+    map(([workflows, workflowId]) => workflows.find((item) => item.id === workflowId)),
+  );
 
   constructor() {
     effect(() => this.workflowEffects.initEffect());
+
+    this.route.params.pipe(filter((params) => !!params['id'])).subscribe((params) => {
+      workflowId.set(params['id']);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -141,5 +165,9 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   showEndpoint() {
     this.modelService.openModal(EndpointModalComponent);
+  }
+
+  goToWorkflow(workflowId: string) {
+    this.router.navigate([`../${workflowId}`], { relativeTo: this.route });
   }
 }

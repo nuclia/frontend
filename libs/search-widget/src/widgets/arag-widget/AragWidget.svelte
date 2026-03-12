@@ -51,6 +51,7 @@
     fullscreen = false,
     height,
     mode = '',
+    workflow = 'default',
   } = $props();
 
   const entries = $derived(aragAnswerState.entries);
@@ -99,7 +100,7 @@
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((question) => setAragQuestion(question)),
-            switchMap((question) => nucliaAPI.arag.interact(session, question)),
+            switchMap((question) => nucliaAPI.arag.interact(session, question, workflow, 'WS')),
           ),
         ),
       )

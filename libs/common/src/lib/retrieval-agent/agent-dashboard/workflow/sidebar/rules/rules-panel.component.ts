@@ -15,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpandableTextareaComponent, SisToastService } from '@nuclia/sistema';
 import { Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConfigurationFormComponent } from '../../basic-elements';
+import { workflowId } from '../../workflow.state';
 
 @Component({
   selector: 'app-rules-panel',
@@ -59,7 +60,7 @@ export class RulesPanelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sdk.currentArag
       .pipe(
-        switchMap((arag) => arag.getRules()),
+        switchMap((arag) => arag.getRules(workflowId())),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe({
@@ -95,11 +96,12 @@ export class RulesPanelComponent implements OnInit, OnDestroy {
     this.sdk.currentArag
       .pipe(
         take(1),
-        switchMap((arag) => arag.setRules(rules)),
+        switchMap((arag) => arag.setRules(rules, workflowId())),
       )
       .subscribe({
         next: () => {
           this.sdk.refreshCurrentArag();
+          this.cancel.emit();
         },
         error: () => {
           this.toaster.error(this.translate.instant('retrieval-agents.workflow.sidebar.rules.errors.set-rules'));

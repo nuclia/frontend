@@ -14,7 +14,13 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
-import { resetTestAgent, testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
+import {
+  resetTestAgent,
+  testAgentAnswersByCategory,
+  testAgentQuestion,
+  testAgentRunning,
+  workflowId,
+} from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
 import { ParametersTableComponent, SDKService } from '@flaps/core';
@@ -98,6 +104,7 @@ export class TestPanelComponent implements OnInit, OnDestroy {
       this.service.runTest(
         question,
         this.session.getRawValue(),
+        workflowId() || '',
         this.useWs,
         undefined,
         this.headers.reduce(

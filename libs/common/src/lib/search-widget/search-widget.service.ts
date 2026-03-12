@@ -226,7 +226,9 @@ export class SearchWidgetService {
 
     const tagName = 'nuclia-arag-widget';
     const scriptSrc = `${this.backendConfig.getCDN()}/nuclia-arag-widget.umd.js`;
-    const parameters = widgetOptions.darkMode === 'dark' ? '\n  mode="dark"' : '';
+    const workflow = widgetOptions.workflow !== 'default' ? `\n  workflow="${widgetOptions.workflow}"` : '';
+    const darkMode = widgetOptions.darkMode === 'dark' ? '\n  mode="dark"' : '';
+    const parameters = `${workflow}${darkMode}`;
 
     return forkJoin([this.sdk.currentArag.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([arag, account]) => {

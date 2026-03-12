@@ -1,0 +1,67 @@
+<div class="page-spacing">
+  <header>
+    <div class="page-title">
+      {{ 'retrieval-agents.workflows-list.title' | translate }}
+      <pa-button
+        icon="circle-plus"
+        iconAndText
+        (click)="add()">
+        {{ 'retrieval-agents.workflows-list.add' | translate }}
+      </pa-button>
+    </div>
+    <div class="page-description">{{ 'retrieval-agents.workflows-list.description' | translate }}</div>
+  </header>
+
+  <div class="driver-list">
+    @if (((workflows | async) || []).length === 0) {
+      <nsi-info-card>
+        {{ 'retrieval-agents.workflows-list.empty' | translate }}
+      </nsi-info-card>
+    } @else {
+      <pa-table
+        columns="1fr 1fr 96px"
+        border
+        class="driver-list">
+        <pa-table-header>
+          <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'generic.description' | translate }}</pa-table-cell>
+          <pa-table-cell-menu header>
+            {{ 'generic.actions' | translate }}
+          </pa-table-cell-menu>
+        </pa-table-header>
+        @for (workflow of workflows | async; track workflow.id) {
+          <pa-table-row
+            clickable
+            (click)="goToWorkflow(workflow)">
+            <pa-table-cell>{{ workflow.name }}</pa-table-cell>
+            <pa-table-cell>
+              {{ workflow.description }}
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <div>
+                <pa-button
+                  aspect="basic"
+                  size="small"
+                  icon="more-vertical"
+                  [paPopup]="menu"></pa-button>
+                <pa-dropdown #menu>
+                  <pa-option (selectOption)="edit(workflow, $event)">
+                    {{ 'retrieval-agents.workflows-list.edit' | translate }}
+                  </pa-option>
+                  <!-- TODO: The endpoint to delete a workflow is not available yet -->
+                  <!--
+                  <pa-option
+                    destructive=""
+                    (selectOption)="delete(workflow, $event)">
+                    {{ 'retrieval-agents.workflows-list.delete' | translate }}
+                  </pa-option>
+                  -->
+                </pa-dropdown>
+              </div>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    }
+  </div>
+</div>

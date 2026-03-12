@@ -497,6 +497,12 @@
           } @else {
             <form [formGroup]="raoForm">
               <div class="config-form-field">
+                <div class="title-xs">{{ 'search.widgets.form.widget-options.workflow.title' | translate }}</div>
+                <pa-select
+                  formControlName="workflow"
+                  [options]="(workflows | async) || []"></pa-select>
+              </div>
+              <div class="config-form-field">
                 <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
                 <pa-radio-group formControlName="darkMode">
                   <pa-radio value="light">

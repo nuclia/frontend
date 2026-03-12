@@ -1,0 +1,48 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>
+    {{ (isEdit ? 'retrieval-agents.workflows-list.edit' : 'retrieval-agents.workflows-list.add') | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      @if (isEdit) {
+        <div class="form-entry">
+          <label for="id">{{ 'Id' | translate }}</label>
+          <pa-input
+            id="id"
+            readonly
+            externalLabel
+            formControlName="id"></pa-input>
+        </div>
+      }
+      <div class="form-entry">
+        <label for="name">{{ 'generic.name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"
+          help="generic.required-field"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="description">{{ 'generic.description' | translate }}</label>
+        <pa-textarea
+          id="description"
+          externalLabel
+          rows="3"
+          formControlName="description"></pa-textarea>
+      </div>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

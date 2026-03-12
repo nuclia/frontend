@@ -68,6 +68,7 @@ export const DEFAULT_WIDGET_CONFIG: Widget.WidgetConfiguration = {
 };
 
 export const DEFAULT_RAO_WIDGET_CONFIG: Widget.RaoWidgetConfiguration = {
+  workflow: 'default',
   darkMode: 'light',
 };
 
