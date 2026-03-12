@@ -30,7 +30,7 @@
         <span>{{ 'recover.gologin_help' | translate }}</span>
         <a
           href="#"
-          (click)="goToLogin()">
+          (click)="$event.preventDefault()">
           {{ 'recover.gologin' | translate }}
         </a>
       </div>
