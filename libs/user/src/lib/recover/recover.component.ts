@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BackendConfigurationService, LoginService, RecoverData, SDKService } from '@flaps/core';
+import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -38,7 +38,6 @@ export class RecoverComponent {
     private modalService: SisModalService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private sdk: SDKService,
   ) {
     this.route.queryParams.subscribe((params) => {
       this.loginChallenge = params['login_challenge'];
@@ -83,10 +82,10 @@ export class RecoverComponent {
             }).onClose,
         ),
       )
-      .subscribe(() => this.goToLogin());
+      .subscribe();
   }
 
-  goToLogin() {
-    this.sdk.nuclia.auth.redirectToOAuth();
+  goBack() {
+    history.back();
   }
 }

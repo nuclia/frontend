@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { BackendConfigurationService, LoginService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of, throwError } from 'rxjs';
@@ -23,8 +23,6 @@ describe('RecoverComponent', () => {
   let config: { getRecaptchaKey: jest.Mock; getAppName: jest.Mock };
   let modalService: { openConfirm: jest.Mock };
   let translateService: { get: jest.Mock };
-  let sdkService: { nuclia: { auth: { redirectToOAuth: jest.Mock } } };
-
   beforeEach(waitForAsync(() => {
     queryParams$ = new BehaviorSubject<{ login_challenge?: string; isPasswordInit?: boolean }>({
       login_challenge: 'challenge-1',
@@ -52,10 +50,6 @@ describe('RecoverComponent', () => {
       get: jest.fn(() => of('translated-message')),
     };
 
-    sdkService = {
-      nuclia: { auth: { redirectToOAuth: jest.fn() } },
-    };
-
     TestBed.configureTestingModule({
       declarations: [RecoverComponent],
       imports: [
@@ -73,7 +67,6 @@ describe('RecoverComponent', () => {
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
         { provide: BackendConfigurationService, useValue: config },
         { provide: SisModalService, useValue: modalService },
-        { provide: SDKService, useValue: sdkService },
         { provide: TranslateService, useValue: translateService },
       ],
     }).compileComponents();
@@ -143,13 +136,6 @@ describe('RecoverComponent', () => {
       confirmLabel: 'Ok',
       onlyConfirm: true,
     });
-    expect(sdkService.nuclia.auth.redirectToOAuth).toHaveBeenCalled();
-  });
-
-  it('should redirect to OAuth when goToLogin is called', () => {
-    component.goToLogin();
-
-    expect(sdkService.nuclia.auth.redirectToOAuth).toHaveBeenCalled();
   });
 
   it('should not call recover when recaptcha execution fails', () => {
