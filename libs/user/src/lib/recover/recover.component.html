@@ -29,8 +29,8 @@
       <div>
         <span>{{ 'recover.gologin_help' | translate }}</span>
         <a
-          href="#"
-          (click)="goBack()">
+          routerLink="../login"
+          queryParamsHandling="preserve">
           {{ 'recover.gologin' | translate }}
         </a>
       </div>
