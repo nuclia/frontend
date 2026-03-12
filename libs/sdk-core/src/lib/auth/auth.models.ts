@@ -44,3 +44,14 @@ export interface MagicAction {
 }
 
 export type MagicActionError = 'local_user_already_exists' | 'user_registered_as_external_user';
+
+export function replaceSubdomainInUrl(mainBackend: string, prefix?: string): string {
+  if (!prefix) {
+    return mainBackend;
+  }
+  if (mainBackend.includes('//accounts.')) {
+    return mainBackend.replace('//accounts.', `//${prefix}.`);
+  } else {
+    return mainBackend.replace('//', `//${prefix}.`);
+  }
+}

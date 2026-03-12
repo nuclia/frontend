@@ -4,7 +4,13 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import type { AuthInfo, AuthTokens, MagicAction, NucliaDBRole } from './auth.models';
+import {
+  replaceSubdomainInUrl,
+  type AuthInfo,
+  type AuthTokens,
+  type MagicAction,
+  type NucliaDBRole,
+} from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -125,7 +131,7 @@ export class Authentication implements IAuthentication {
   }
 
   getHydraUrl(): string {
-    return this.nuclia.options.backend.replace('//accounts.', '//oauth.').replace('/api', '');
+    return replaceSubdomainInUrl(this.nuclia.options.backend, 'oauth').replace('/api', '');
   }
 
   redirectToOAuth(queryParams?: { [key: string]: string | boolean }) {
@@ -451,7 +457,7 @@ export class Authentication implements IAuthentication {
   validateMagicToken(token: string, zone?: string): Observable<MagicAction> {
     let endpoint = this.getAuthUrl();
     if (zone) {
-      endpoint = endpoint.replace('//accounts.', `//${zone}.`);
+      endpoint = replaceSubdomainInUrl(endpoint, zone);
     }
     return this.fetch(`${endpoint}/magic?token=${token}`);
   }

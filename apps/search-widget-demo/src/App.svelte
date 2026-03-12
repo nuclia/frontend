@@ -13,7 +13,7 @@
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '16f09da3-6637-4e8a-963a-0a5c18f3eb3f'; // movies / knowledge graph
   // const kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
-  // const kb = 'baa24d32-9240-4d90-bd00-2e6f25b13668'; // e2e permanent
+  const kb = 'baa24d32-9240-4d90-bd00-2e6f25b13668'; // e2e permanent
 
   // KB in prod
   // const kb = '16375869-1037-460d-8648-b3ee9c9206c0' // market outlook reports
@@ -21,7 +21,7 @@
 
   // const kb = 'f2c7d3d8-41da-46f9-968b-ef12b8981c11'; // Agentic RAG KB
 
-  const backend = 'https://stashify.cloud/api';
+  const backend = 'https://accounts.stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
   const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
@@ -43,14 +43,14 @@
 </script>
 
 <main>
-  <NucliaAragWidget
+  <!-- <NucliaAragWidget
     {backend}
     {arag}
     lang="en"
     zone="europe-1"
     {apikey}
-    {session}></NucliaAragWidget>
-  <!-- <NucliaSearchBar
+    {session}></NucliaAragWidget> -->
+  <NucliaSearchBar
     zone="europe-1"
     {backend}
     cdn="/"
@@ -61,7 +61,7 @@
     {filters}
     labelsets_excluded_from_filters="taste,kind"
     metadata="origin:created:date:Date de sortie" />
-  <NucliaSearchResults no_tracking /> -->
+  <NucliaSearchResults no_tracking />
 
   <!-- <NucliaChat
     zone="europe-1"

@@ -138,6 +138,7 @@ export interface IRest {
   };
 
   getWsUrl(path: string, ephemeralToken: string): string;
+  getSubdomainUrl(mainBackend: string, prefix?: string): string;
 }
 export interface IDb {
   getAccounts(): Observable<Account[]>;
