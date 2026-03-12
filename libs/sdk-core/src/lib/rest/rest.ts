@@ -1,5 +1,5 @@
 import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
-import { NucliaDBRole } from '../auth/auth.models';
+import { NucliaDBRole, replaceSubdomainInUrl } from '../auth/auth.models';
 import { KBRoles } from '../db/kb/kb.models';
 import type { INuclia, IRest } from '../models';
 
@@ -202,7 +202,7 @@ export class Rest implements IRest {
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
-      backend = `${this.nuclia.backend.replace('https://accounts.', `https://${zoneSlug}.`)}`;
+      backend = this.getSubdomainUrl(this.nuclia.backend, zoneSlug);
     } else {
       backend =
         isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy
@@ -254,6 +254,10 @@ export class Rest implements IRest {
 
   getZoneSlug(zoneId: string): Observable<string> {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
+  }
+
+  getSubdomainUrl(mainBackend: string, prefix?: string): string {
+    return replaceSubdomainInUrl(mainBackend, prefix);
   }
 
   /**

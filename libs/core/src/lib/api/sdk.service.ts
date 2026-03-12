@@ -421,6 +421,6 @@ export class SDKService {
   }
 
   getOriginFor(prefix: string): string {
-    return this.config.getAPIOrigin().replace('//accounts.', `//${prefix}.`);
+    return this.nuclia.rest.getSubdomainUrl(this.config.getAPIOrigin(), prefix);
   }
 }
