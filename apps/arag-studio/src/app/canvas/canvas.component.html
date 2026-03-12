@@ -1,0 +1,61 @@
+<div class="canvas-wrapper">
+  <app-canvas-toolbar
+    (addNode)="openAddNodePanel()"
+    (fitView)="onFitView()" />
+
+  <div
+    #canvasViewport
+    class="canvas-viewport"
+    (pointerdown)="onViewportPointerDown($event)"
+    (pointermove)="onViewportPointerMove($event)"
+    (pointerup)="onViewportPointerUp($event)"
+    (wheel)="onWheel($event)">
+
+    <!-- SVG edges layer (behind nodes) -->
+    <app-canvas-edges
+      [nodes]="nodes()"
+      [edges]="edges()"
+      [selectedEdgeId]="selectedEdgeId()"
+      [pendingConnection]="pendingConnection()"
+      [viewport]="viewport()"
+      (edgeClicked)="canvasService.removeEdge($event)" />
+
+    <!-- World-space container -->
+    <div class="canvas-world" [class.animating]="arranging()" [style.transform]="worldTransform()">
+      @for (node of nodes(); track node.id) {
+        <div
+          class="node-wrapper"
+          [class.animating]="arranging()"
+          [style.transform]="'translate(' + node.x + 'px,' + node.y + 'px)'">
+          <app-canvas-node
+            [node]="node"
+            [selected]="selectedNodeId() === node.id"
+            [scale]="viewport().scale"
+            (nodeMoved)="onNodeMoved($event)"
+            (outputPortDragStart)="onOutputPortDragStart($event)"
+            (inputPortDrop)="onInputPortDrop($event)" />
+        </div>
+      }
+    </div>
+
+    <!-- Loading overlay -->
+    @if (loading()) {
+      <div class="canvas-overlay">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">Loading pipeline...</span>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (isEmpty()) {
+      <div class="canvas-overlay canvas-empty">
+        <div class="empty-icon">⬡</div>
+        <h3 class="empty-title">No agents configured</h3>
+        <p class="empty-subtitle">Add agents to build your ARAG pipeline</p>
+        <button class="empty-btn" (click)="openAddNodePanel()">
+          + Add your first agent
+        </button>
+      </div>
+    }
+  </div>
+</div>

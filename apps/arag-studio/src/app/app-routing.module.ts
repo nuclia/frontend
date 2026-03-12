@@ -45,6 +45,7 @@ import {
   TemporaryAppSignupComponent,
 } from '@nuclia/user';
 import { AgentsHomeComponent } from './home/home.component';
+import { CanvasComponent } from './canvas/canvas.component';
 import { StudioLayoutComponent } from './studio/studio-layout.component';
 import { LocalLoginComponent } from './local-login/local-login.component';
 import { localAuthGuard } from './local-auth.guard';
@@ -94,7 +95,7 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
-                    component: AgentDashboardComponent,
+                    component: CanvasComponent,
                   },
                   {
                     path: 'sessions',
