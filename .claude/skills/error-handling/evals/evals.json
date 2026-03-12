@@ -1,0 +1,38 @@
+{
+  "skill_name": "error-handling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write an Angular service method loadKbResources(kbId: string) that calls this.kb.listResources() from the SDK. If the call succeeds, store the result in a private signal. If it fails, show an error toast and return an empty array. The service has access to inject(SisToastService) as this.toaster.",
+      "expected_output": "Uses catchError (not try/catch). Error toast calls this.toaster.error('some.i18n.key') with an i18n key, never a raw string. Returns EMPTY or of([]) from catchError. Does NOT check for 401/400 (AuthInterceptor handles those). No custom retry logic added.",
+      "assertions": [
+        { "id": "uses-catch-error", "description": "Uses catchError RxJS operator, not try/catch or .subscribe error callback only" },
+        { "id": "toast-uses-i18n-key", "description": "toaster.error() receives an i18n key string, not a raw English string" },
+        { "id": "no-401-check", "description": "Does not add special handling for 401/400 (AuthInterceptor owns this)" },
+        { "id": "returns-empty-or-of", "description": "catchError returns EMPTY or of([]) to terminate the stream gracefully" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm calling this.kb.ask(query) in a component and want to show the answer. The SDK docs say ask() returns Observable<Ask | IErrorResponse>. Show me the correct subscription pattern to handle both the happy path and errors, including the special case where status is -2 (LLM can't answer).",
+      "expected_output": "Discriminates on result.type === 'error'. Maps -2 to a specific i18n key like 'answer.error.llm_cannot_answer' and other negative statuses to appropriate keys. Happy path sets the answer. Does NOT use catchError for IErrorResponse since ask() doesn't throw.",
+      "assertions": [
+        { "id": "discriminates-type", "description": "Checks result.type === 'error' to discriminate IErrorResponse from success" },
+        { "id": "handles-negative-two", "description": "Specifically handles status -2 (LLM cannot answer)" },
+        { "id": "no-catch-error-for-ask", "description": "Does not rely solely on catchError (ask() returns IErrorResponse, it doesn't throw)" },
+        { "id": "maps-to-i18n", "description": "Maps error status codes to i18n keys for display" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Here is a service method — find all error handling problems and fix them:\n\nloadUser(id: string) {\n  return this.sdk.getUser(id).pipe(\n    shareReplay(1),\n    catchError((err) => {\n      if (err.status === 401) this.router.navigate(['/login']);\n      this.toaster.error('Session expired. Please log in again.');\n      return of(null);\n    }),\n  );\n}",
+      "expected_output": "Identifies 3 problems: (1) shareReplay(1) is before catchError — should be after, (2) 401 handling is redundant — AuthInterceptor already handles this, (3) toaster.error gets a raw string — should be an i18n key. Provides corrected version with catchError before shareReplay(1), no 401 check, and an i18n key.",
+      "assertions": [
+        { "id": "identifies-share-replay-order", "description": "Identifies that shareReplay(1) must come after catchError" },
+        { "id": "identifies-redundant-401", "description": "Identifies the 401 manual handling as redundant/harmful (AuthInterceptor owns it)" },
+        { "id": "identifies-raw-string-toast", "description": "Identifies the raw English string in toaster.error() as a violation" },
+        { "id": "fixes-all-three", "description": "Rewritten method has catchError before shareReplay(1), no 401 check, and an i18n key for the toast" }
+      ]
+    }
+  ]
+}

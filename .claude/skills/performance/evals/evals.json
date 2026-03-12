@@ -1,0 +1,39 @@
+{
+  "skill_name": "performance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have an Angular component that renders a list of agents. There could be hundreds. The template currently uses: <div *ngFor=\"let agent of agents; trackBy: trackById\">. I'm migrating it to the new Angular block syntax. Show me the migrated @for loop and explain what to use for track.",
+      "expected_output": "@for (agent of agents(); track agent.id) using agent.id (or agent.slug if no id). Explains that $index should not be used for API data. TrackBy function becomes inline track expression. agents() is likely a signal so called with (). Preserves OnPush compatibility automatically.",
+      "assertions": [
+        { "id": "uses-block-syntax", "description": "Uses @for block syntax, not *ngFor" },
+        { "id": "track-by-id", "description": "Uses track agent.id (or other stable identifier), not track $index" },
+        { "id": "explains-no-index", "description": "Explains or mentions that $index should not be used for API-sourced lists" },
+        { "id": "signal-call-syntax", "description": "Calls agents as a signal: agents() not just agents" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review this component for performance issues:\n\n@Component({\n  selector: 'stf-agent-list',\n  template: `\n    <div *ngFor=\"let a of agents\">\n      <span>{{getLabel(a)}}</span>\n    </div>\n  `,\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class AgentListComponent {\n  @Input() agents: Agent[] = [];\n\n  private translate = inject(TranslateService);\n\n  get filteredAgents() {\n    return this.agents.filter(a => a.active);\n  }\n\n  getLabel(a: Agent) {\n    return this.translate.instant(`agent.status.${a.status}`);\n  }\n\n  constructor(private cdr: ChangeDetectorRef) {}\n}",
+      "expected_output": "Identifies: (1) *ngFor missing trackBy/track, (2) getter filteredAgents recalculates every CD cycle — should be computed(), (3) getLabel() called per-item per-cycle — consider memoising or precomputing, (4) @Input() decorator is legacy — use input() signal API, (5) constructor injection is legacy — use inject(). Suggests migration to signal input + computed().",
+      "assertions": [
+        { "id": "identifies-missing-track", "description": "Flags *ngFor without trackBy as a performance issue" },
+        { "id": "identifies-getter-issue", "description": "Identifies the getter filteredAgents as recalculating every CD cycle and suggests computed()" },
+        { "id": "identifies-legacy-input", "description": "Notes @Input() decorator is legacy and suggests input() signal" },
+        { "id": "identifies-constructor-injection", "description": "Notes constructor injection is legacy and suggests inject()" },
+        { "id": "suggests-computed", "description": "Suggests computed() as the replacement for the getter" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm adding a new feature route to apps/dashboard. The component is DashboardTasksComponent. Show me how to add it to the routing file as a lazy-loaded route, and explain why it should be lazy.",
+      "expected_output": "Uses loadComponent: () => import('./tasks/dashboard-tasks.component').then(m => m.DashboardTasksComponent). Explains that eager loading increases initial bundle size. Does not suggest loadChildren + NgModule (component is standalone). Follows the existing dashboard app-routing.module.ts pattern.",
+      "assertions": [
+        { "id": "uses-load-component", "description": "Uses loadComponent with dynamic import, not component: DashboardTasksComponent (eager)" },
+        { "id": "correct-import-syntax", "description": "Uses .then(m => m.DashboardTasksComponent) pattern" },
+        { "id": "not-load-children-module", "description": "Does not suggest creating a new NgModule with loadChildren for a standalone component" },
+        { "id": "explains-bundle-benefit", "description": "Explains that lazy loading reduces initial bundle / improves initial load time" }
+      ]
+    }
+  ]
+}

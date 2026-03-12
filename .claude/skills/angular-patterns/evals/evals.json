@@ -1,0 +1,33 @@
+{
+  "skill_name": "angular-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new standalone component called SessionCardComponent in libs/common/src/lib/retrieval-agent/sessions/. It should accept a session (of type Session with fields: id: string, title: string, createdAt: string, status: 'active' | 'closed') as a required input, emit a 'selected' output when clicked, and show the title, a formatted date using AngularDatePipe, and a status badge. Use DriversService pattern as inspiration for the state/inject style.",
+      "expected_output": "A .component.ts file using inject(), input.required<Session>(), output<string>(), ChangeDetectionStrategy.OnPush, standalone component with proper imports array. No constructor injection, no @Input/@Output decorators.",
+      "assertions": [
+        { "id": "uses-input-required", "description": "Uses input.required<Session>() not @Input() decorator" },
+        { "id": "uses-output-fn", "description": "Uses output<T>() not @Output() + EventEmitter" },
+        { "id": "uses-onpush", "description": "Has changeDetection: ChangeDetectionStrategy.OnPush" },
+        { "id": "uses-inject", "description": "Any services are injected with inject() not constructor parameters" },
+        { "id": "no-standalone-true", "description": "Does NOT include standalone: true (redundant in Angular 19+)" },
+        { "id": "correct-selector-prefix", "description": "Selector uses stf- prefix (or app-, stf-)" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a new service in libs/common/src/lib/tasks-automation/ called TaskStatsService that tracks stats about task runs. It should: (1) load stats from sdk.currentKb via kb.taskManager.getStats() on demand, (2) expose the stats as a readable signal so components can use them in templates without async pipe, (3) support a refresh() method, (4) compute a derived isHealthy signal that's true when the error rate is below 10%. Use the hybrid signal+RxJS pattern from DriversService.",
+      "expected_output": "A service using inject(), private signal + BehaviorSubject refresh trigger, public RxJS pipeline with tap() writing to signal, asReadonly() exposure, computed() for isHealthy. shareReplay(1) on the pipeline."
+    },
+    {
+      "id": 3,
+      "prompt": "Refactor this legacy component to Angular 21 modern style. The component is in libs/common/src/lib/knowledge-box-settings/ and currently uses constructor injection, @Input()/@Output() decorators, and a takeUntil(Subject) cleanup pattern. Here's the current code:\n\n@Component({\n  selector: 'stf-kb-settings',\n  templateUrl: './knowledge-box-settings.component.html',\n  styleUrls: ['./knowledge-box-settings.component.scss'],\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  standalone: false,\n})\nexport class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {\n  @Input() kbSlug: string = '';\n  @Input() readonly: boolean = false;\n  @Output() saved = new EventEmitter<void>();\n\n  private unsubscribeAll = new Subject<void>();\n  saving = false;\n\n  constructor(\n    private sdk: SDKService,\n    private toast: SisToastService,\n    private cdr: ChangeDetectorRef,\n  ) {}\n\n  ngOnInit() {\n    this.sdk.currentKb\n      .pipe(takeUntil(this.unsubscribeAll))\n      .subscribe((kb) => { this.cdr.markForCheck(); });\n  }\n\n  ngOnDestroy() {\n    this.unsubscribeAll.next();\n    this.unsubscribeAll.complete();\n  }\n\n  save() {\n    this.saving = true;\n    this.sdk.currentKb.pipe(take(1), switchMap(kb => kb.modify({ slug: this.kbSlug }))).subscribe({\n      next: () => { this.saving = false; this.saved.emit(); },\n      error: () => { this.saving = false; this.toast.error('Failed'); this.cdr.markForCheck(); },\n    });\n  }\n}",
+      "expected_output": "Component using inject() instead of constructor, input() for kbSlug and readonly, output() for saved, takeUntilDestroyed() instead of Subject pattern, signal(false) for saving state, standalone: true (or omit), no ChangeDetectorRef needed since saving is now a signal."
+    },
+    {
+      "id": 4,
+      "prompt": "Add a route guard to apps/dashboard that prevents navigation to any KB route if the current account is on a free plan AND the KB count exceeds 3. The guard should redirect to the account billing page. Guards should use inject() for FeaturesService (to check if isFree) and SDKService (to count KBs). The billing URL can be built with NavigationService.getBillingUrl(accountSlug).",
+      "expected_output": "A CanActivateFn using inject(), returning Observable<boolean | UrlTree>, using sdk.currentAccount + sdk.kbList with combineLatest/switchMap, redirecting via router.createUrlTree(). No class-based guard, no constructor."
+    }
+  ]
+}

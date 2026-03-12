@@ -1,0 +1,12 @@
+{
+  "label": "Knowledge Sync: Check staleness",
+  "type": "shell",
+  "command": ".claude/skills/knowledge-sync/scripts/check-staleness.sh",
+  "group": "none",
+  "presentation": {
+    "reveal": "always",
+    "panel": "shared",
+    "clear": true
+  },
+  "problemMatcher": []
+}
