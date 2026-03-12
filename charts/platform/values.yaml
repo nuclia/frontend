@@ -64,7 +64,7 @@ virtualService:
   #           number: 8080
 
 podDisruptionBudget:
-  enabled: false
+  enabled: true
 
 # annotations:
 #   what: "add annotations"
