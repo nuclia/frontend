@@ -1,0 +1,53 @@
+{
+  "skill_name": "rxjs-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new service called AgentSessionsService in libs/common/src/lib/retrieval-agent/sessions/. It should: (1) load sessions from sdk.currentArag via arag.getSessions() on demand, (2) expose sessions as a readonly signal, (3) support a refresh() method, (4) compute a hasActiveSessions signal (true when any session has status === 'active'). Follow the Tier 2 hybrid Signal+RxJS pattern from DriversService.",
+      "expected_output": "Service using BehaviorSubject<void>(undefined) as refresh trigger (NOT Subject), switchMap chain, catchError(() => of([])), tap writing to private signal, shareReplay(1), asReadonly() for public signal, computed() for hasActiveSessions.",
+      "assertions": [
+        { "id": "uses-behavior-subject-trigger", "description": "Uses BehaviorSubject<void>(undefined) as refresh trigger, not Subject<void>()" },
+        { "id": "has-catch-error", "description": "Pipeline includes catchError with a fallback (of([]) or similar)" },
+        { "id": "has-share-replay", "description": "Pipeline ends with shareReplay(1)" },
+        { "id": "tap-writes-signal", "description": "Uses tap() to write to private signal inside the pipeline, not toSignal() in the service" },
+        { "id": "as-readonly", "description": "Public signal exposed via asReadonly(), not raw signal or computed wrapper" },
+        { "id": "has-computed", "description": "hasActiveSessions is a computed() signal" },
+        { "id": "correct-import-path", "description": "Imports from 'rxjs' not 'rxjs/operators'" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to add a live search feature to a component in libs/common. There's a FormControl for the query. On each keystroke I want to: wait 300ms of silence, then call this.searchService.search(query) via HTTP, cancel any in-flight request if the user keeps typing, and show an empty array if the request fails. Write the component property that sets up this stream (you can assume you're inside the component class). The result should be consumable in the template without an async pipe — use toSignal.",
+      "expected_output": "debounceTime(300) before switchMap, catchError(() => of([])) inside switchMap callback (not outside), switchMap to cancel in-flight requests, toSignal(stream$, { initialValue: [] }) at component level.",
+      "assertions": [
+        { "id": "debounce-before-switch", "description": "debounceTime appears before switchMap in the pipe" },
+        { "id": "uses-switch-map", "description": "Uses switchMap (not mergeMap or concatMap)" },
+        { "id": "catch-error-inside", "description": "catchError is inside the switchMap callback, not outside it" },
+        { "id": "to-signal-with-initial", "description": "Uses toSignal with initialValue: [] (not just toSignal(obs$))" },
+        { "id": "correct-debounce-value", "description": "Debounce value is 300ms (matching search convention)" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write a method uploadWithLabels(files: FileWithMetadata[], labels: Classification[]) in a service that: (1) first creates any missing label sets by calling this.labelsService.createLabels(labels) — returns Observable<void>, (2) then uploads all files in parallel using this.sdk.currentKb.pipe(take(1), switchMap(kb => kb.batchUpload(files))) — returns Observable<UploadStatus>, (3) finally refreshes the resource list by calling this.resourceService.refresh() — returns Observable<void>. Steps must execute in order (labels before upload, refresh after upload). Use the correct flattening operators.",
+      "expected_output": "concatMap chaining all three steps sequentially, NOT mergeMap or switchMap for the outer chain. forkJoin or direct pipe acceptable for the parallel file uploads inside step 2.",
+      "assertions": [
+        { "id": "uses-concat-map-for-sequence", "description": "Uses concatMap to chain the three sequential steps" },
+        { "id": "does-not-use-merge-map-outer", "description": "Does NOT use mergeMap to chain steps (would run in parallel)" },
+        { "id": "take-1-before-write", "description": "Uses take(1) before the batchUpload write operation" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Here is a broken service. Identify all the RxJS anti-patterns and rewrite it correctly:\n\nimport { Injectable } from '@angular/core';\nimport { Subject, switchMap, tap, toSignal } from 'rxjs';\nimport { inject } from '@angular/core';\nimport { SDKService } from '@flaps/core';\nimport { signal, computed } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class BrokenDriversService {\n  private sdk = inject(SDKService);\n\n  private _refresh = new Subject<void>();\n  private _drivers = signal<string[]>([]);\n\n  drivers$ = this._refresh.pipe(\n    switchMap(() => this.sdk.currentArag),\n    switchMap((arag) => arag.getDrivers()),\n    tap((drivers) => this._drivers.set(drivers)),\n  );\n\n  drivers = toSignal(this.drivers$);\n  hasDrivers = computed(() => this._drivers().length > 0);\n\n  refresh() {\n    this._refresh.next();\n  }\n}",
+      "expected_output": "Identifies 4 issues: (1) Subject should be BehaviorSubject<void>(undefined), (2) missing catchError, (3) missing shareReplay(1), (4) toSignal() in service should be removed (use asReadonly() instead). Rewrites the service with all 4 fixes.",
+      "assertions": [
+        { "id": "identifies-subject-bug", "description": "Identifies that Subject<void>() as trigger means data never loads until manual refresh()" },
+        { "id": "identifies-missing-catch-error", "description": "Identifies absence of catchError as a bug that permanently kills the stream on error" },
+        { "id": "identifies-missing-share-replay", "description": "Identifies missing shareReplay(1)" },
+        { "id": "identifies-to-signal-bug", "description": "Identifies toSignal() inside service as wrong — bypasses shareReplay" },
+        { "id": "fixes-all-four", "description": "Rewritten service uses BehaviorSubject, catchError, shareReplay(1), and removes toSignal in favour of asReadonly()" }
+      ]
+    }
+  ]
+}

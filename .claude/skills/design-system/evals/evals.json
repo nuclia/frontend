@@ -1,0 +1,23 @@
+{
+  "skill_name": "design-system",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "In the dashboard app I need to add a confirmation modal before deleting a knowledge base. When the user clicks the delete button it should open a destructive confirmation dialog asking 'Delete this Knowledge Box?' with a description saying the action cannot be undone. If confirmed, it should call the delete method and show a success toast.",
+      "expected_output": "Component uses SisModalService.openConfirm() with isDestructive: true, subscribes to onClose, calls delete on confirm, and uses SisToastService.success() afterwards. No direct ModalService or ToastService usage.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I need to create a new settings page in the rao app. It should have a two-column layout with three configuration rows: 1) a toggle for 'Enable custom greeting', 2) a text input for 'Greeting message' that appears only when the toggle is on, and 3) a locked row for 'Advanced branding' that shows an upgrade prompt when clicked. There should be a Save button at the bottom that sticks to the page footer.",
+      "expected_output": "Uses nsi-two-columns-configuration-item for each row, pa-toggle and pa-input for controls, nsi-sticky-footer for the Save button. Locked row uses [unauthorized]=\"true\" and (clickOnUnauthorized) output. All are wrapped in ReactiveFormsModule. Imports are correct standalone/module mix.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Add a sortable table to the manager-v2 app showing accounts. Columns: account name (with description below), plan type, creation date, status indicator, and a kebab menu with edit and delete options. The table should load more rows when scrolling to the bottom (infinite scroll). Status should use the nsi-status component.",
+      "expected_output": "Uses pa-table with grid-template-columns, pa-table-sortable-header with HeaderCell[], pa-table-lead-cell-multi-line for the name+description cell, nsi-status for status, pa-table-cell-menu for actions, and pa-infinite-scroll wrapping the rows. Imports PaTableModule, PaScrollModule, StatusComponent from @nuclia/sistema.",
+      "files": []
+    }
+  ]
+}

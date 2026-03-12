@@ -1,0 +1,38 @@
+{
+  "skill_name": "i18n-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to add translation support to a new component in libs/common. The component shows a confirmation dialog with the text 'Are you sure you want to delete {{name}}?' and a button labelled 'Delete'. The component is a standalone Angular component. Show me: (1) the correct i18n key names to use, (2) how to add the keys to the codebase, (3) how to use them in the template.",
+      "expected_output": "Keys in flat dot-notation like 'kb.delete.confirm' and 'kb.delete.button'. Instructs to open libs/common/common.babel in BabelEdit (not edit JSON directly). Template uses '| translate' pipe with TranslateModule imported. Interpolation uses {{name}} syntax in the JSON value.",
+      "assertions": [
+        { "id": "flat-key-format", "description": "Proposes flat dot-notation keys, not nested JSON objects" },
+        { "id": "babeledit-instruction", "description": "Instructs to use BabelEdit via common.babel, not edit JSON files directly" },
+        { "id": "translate-pipe", "description": "Template uses the 'translate' pipe (not TranslateService.instant in template)" },
+        { "id": "translate-module-import", "description": "Component imports TranslateModule" },
+        { "id": "interpolation-syntax", "description": "Shows {{name}} double-curly interpolation syntax in JSON value" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "A teammate just added a translation key by directly editing libs/common/src/assets/i18n/en.json. They added: \"kb.agent.new_task\": \"New task\". The other locale files (es.json, fr.json, ca.json) don't have this key. How do I fix this properly?",
+      "expected_output": "Open libs/common/common.babel in BabelEdit. The key 'kb.agent.new_task' should already appear (BabelEdit reads the JSON files). Add translations for es, fr, ca — or leave blank to fall back to en. Save from BabelEdit to sync all files. Optionally delete the manual addition and re-add through BabelEdit to avoid future drift.",
+      "assertions": [
+        { "id": "identifies-root-cause", "description": "Identifies that direct JSON editing causes locale files to go out of sync" },
+        { "id": "babeledit-fix", "description": "Recommends opening common.babel in BabelEdit to fix the sync issue" },
+        { "id": "does-not-say-edit-other-json", "description": "Does NOT say to manually edit es.json / fr.json / ca.json" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "In the search-widget (Svelte 5), I need to show the message 'No results found for \"{{query}}\"'. How do I add this translation and use it in a Svelte component? The widget is in libs/search-widget.",
+      "expected_output": "Open libs/search-widget/widget.babel in BabelEdit to add the key. Use flat dot-notation like 'search.no_results'. In the Svelte component, import _ from core/i18n and use it as $_(\"search.no_results\", { query }). This is NOT ngx-translate — do not use TranslateModule or TranslateService.",
+      "assertions": [
+        { "id": "correct-babel-file", "description": "Specifies widget.babel (not common.babel) for the search-widget" },
+        { "id": "uses-underscore-function", "description": "Uses _() or translateInstant() from core/i18n, not TranslateService" },
+        { "id": "does-not-use-ngx-translate", "description": "Does NOT suggest TranslateModule or ngx-translate for the Svelte widget" },
+        { "id": "svelte-reactive-syntax", "description": "Uses $_ (store subscription) syntax for reactive translations in the template" }
+      ]
+    }
+  ]
+}
