@@ -84,4 +84,8 @@ export class RecoverComponent {
       )
       .subscribe();
   }
+
+  goBack() {
+    history.back();
+  }
 }
