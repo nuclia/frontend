@@ -65,7 +65,7 @@
 
   class Props {
     // Core API configuration
-    backend = 'https://rag.progress.cloud/api';
+    backend = 'https://accounts.progress.cloud/api';
     zone = 'europe-1';
     knowledgebox: any;
     lang?: string;

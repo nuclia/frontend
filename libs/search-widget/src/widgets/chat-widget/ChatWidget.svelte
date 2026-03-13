@@ -60,7 +60,7 @@
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
 
   class Props {
-    backend = 'https://rag.progress.cloud/api';
+    backend = 'https://accounts.progress.cloud/api';
     zone = 'europe-1';
     knowledgebox: any;
     lang?: string;

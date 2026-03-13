@@ -17,12 +17,12 @@
 
   // KB in prod
   // const kb = '16375869-1037-460d-8648-b3ee9c9206c0' // market outlook reports
-  // const kb = 'df8b4c24-2807-4888-ad6c-ae97357a638b'; // nuclia docs
+  const kb = 'df8b4c24-2807-4888-ad6c-ae97357a638b'; // nuclia docs
 
   // const kb = 'f2c7d3d8-41da-46f9-968b-ef12b8981c11'; // Agentic RAG KB
 
   const backend = 'https://accounts.stashify.cloud/api';
-  // const backend = 'https://nuclia.cloud/api';
+  // const backend = 'https://accounts.progress.cloud/api';
   const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
   const filters = 'labels,created,mime';
