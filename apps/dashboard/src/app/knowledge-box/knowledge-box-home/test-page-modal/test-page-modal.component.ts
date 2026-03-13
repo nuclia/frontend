@@ -63,7 +63,7 @@ export class TestPageModalComponent {
 
   generateUrl() {
     const values = this.form.getRawValue();
-    const expiration = Math.floor(new Date(values.expiration).getTime() / 1000).toString();
+    const expiration = values.expiration ? Math.floor(new Date(values.expiration).getTime() / 1000).toString() : '';
     forkJoin([
       this.sdk.currentAccount.pipe(take(1)),
       this.sdk.currentKb.pipe(take(1)),
@@ -77,6 +77,11 @@ export class TestPageModalComponent {
       params.append('account', account.id);
       params.append('widget_id', values.widget);
       params.append('mode', selectedWidget?.widgetConfig?.widgetMode || '');
+      params.append('knowledgebox_name', kb.title);
+      params.append('widget_name', selectedWidget?.name || '');      
+      if (expiration) {
+        params.append('expiration', expiration + '000');
+      }
       if (kb.state === 'PRIVATE') {
         params.append('apikey', key);
       }

@@ -1,10 +1,11 @@
 :root {
+  --color-neutral-regular: #707070;
   --color-neutral-light: #c4c4c4;
   --color-neutral-lightest: #f7f7f8;
   --color-light-stronger: #fff;
   --topbar-height: 4.5rem;
   --inner-container-padding: 3rem;
-  --title-height: 4.5rem;
+  --title-height: 7rem;
 }
 
 *,
@@ -49,11 +50,37 @@ body {
   padding: var(--inner-container-padding);
 }
 
+header {
+  height: var(--title-height);
+}
+
 h1 {
   font-size: 1.5rem;
   font-weight: bold;
-  height: var(--title-height);
-  margin: 0;
+  margin: 0 0 1.5rem;
+}
+
+.metadata {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.parameter {
+  color: var(--color-neutral-regular);
+  font-size: 0.75rem;
+}
+
+.separator {
+  background-color: var(--color-neutral-light);
+  width: 1px;
+  height: 0.75rem;
+}
+
+.expired {
+  color: var(--color-neutral-regular);
+  font-size: 1rem;
 }
 
 .widget {

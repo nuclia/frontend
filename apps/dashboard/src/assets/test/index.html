@@ -23,8 +23,31 @@
     </div>
     <div class="container">
       <div class="inner-container">
-        <h1>Testing page</h1>
+        <header>
+          <h1>Testing page</h1>
+          <div class="metadata">
+            <div class="parameter">
+              <strong>Knowledge Box:</strong>
+              <span class="knowledgebox-name"></span>
+            </div>
+            <div class="separator"></div>
+            <div class="parameter">
+              <strong>Widget:</strong>
+              <span class="widget-name"></span>
+            </div>
+            <div class="separator"></div>
+            <div class="parameter">
+              <strong>Valid until:</strong>
+              <span class="expiration-date"></span>
+            </div>
+          </div>
+        </header>
         <div class="widget"></div>
+        <div
+          class="expired"
+          hidden>
+          This page has expired
+        </div>
       </div>
     </div>
     <script
