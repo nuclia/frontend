@@ -482,8 +482,8 @@
 
       {#if $entityRelations.length > 0}
         <IconButton
-          icon="info"
           aspect="basic"
+          icon="info"
           on:click={displayRelations} />
       {/if}
     </div>
