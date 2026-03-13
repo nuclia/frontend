@@ -60,6 +60,7 @@ export interface OAuthLoginData {
   needs_signup: boolean;
   email?: string;
   needs_initial_setpassword?: boolean;
+  came_from?: string;
 }
 
 export interface JwtUser {
