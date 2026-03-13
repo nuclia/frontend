@@ -4,13 +4,8 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import {
-  replaceSubdomainInUrl,
-  type AuthInfo,
-  type AuthTokens,
-  type MagicAction,
-  type NucliaDBRole,
-} from './auth.models';
+import { type AuthInfo, type AuthTokens, type MagicAction, type NucliaDBRole } from './auth.models';
+import { replaceSubdomainInUrl, setZoneInRegionalUrl } from '../rest/utils';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -457,7 +452,7 @@ export class Authentication implements IAuthentication {
   validateMagicToken(token: string, zone?: string): Observable<MagicAction> {
     let endpoint = this.getAuthUrl();
     if (zone) {
-      endpoint = replaceSubdomainInUrl(endpoint, zone);
+      endpoint = setZoneInRegionalUrl(endpoint, zone, this.nuclia.options.regionalPrefix);
     }
     return this.fetch(`${endpoint}/magic?token=${token}`);
   }

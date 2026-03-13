@@ -7,6 +7,7 @@ import {
   KBRoles,
   KnowledgeBox,
   Nuclia,
+  replaceSubdomainInUrl,
   RetrievalAgent,
   WritableKnowledgeBox,
 } from '@nuclia/core';
@@ -420,7 +421,7 @@ export class SDKService {
       .subscribe();
   }
 
-  getOriginFor(prefix: string): string {
-    return this.nuclia.rest.getSubdomainUrl(this.config.getAPIOrigin(), prefix);
+  getOriginForApp(prefix: string): string {
+    return replaceSubdomainInUrl(this.config.getAPIOrigin(), prefix);
   }
 }

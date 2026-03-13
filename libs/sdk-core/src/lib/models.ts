@@ -138,7 +138,6 @@ export interface IRest {
   };
 
   getWsUrl(path: string, ephemeralToken: string): string;
-  getSubdomainUrl(mainBackend: string, prefix?: string): string;
 }
 export interface IDb {
   getAccounts(): Observable<Account[]>;
@@ -252,6 +251,11 @@ export interface NucliaOptions {
    *
    * Example: `europe-1` */
   zone?: string;
+  /**
+   * The regional base doamin prefix.
+   *
+   * Example: `europe-1` */
+  regionalPrefix?: string;
   /**
    * Allows you to make calls to a private Knowledge Box.
    *

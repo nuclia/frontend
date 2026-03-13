@@ -1,7 +1,8 @@
 import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
-import { NucliaDBRole, replaceSubdomainInUrl } from '../auth/auth.models';
+import { NucliaDBRole } from '../auth/auth.models';
 import { KBRoles } from '../db/kb/kb.models';
 import type { INuclia, IRest } from '../models';
+import { setZoneInRegionalUrl } from './utils';
 
 export const ABORT_STREAMING_REASON = 'Stop listening to streaming';
 const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fetch resource.';
@@ -202,7 +203,7 @@ export class Rest implements IRest {
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
-      backend = this.getSubdomainUrl(this.nuclia.backend, zoneSlug);
+      backend = setZoneInRegionalUrl(this.nuclia.backend, zoneSlug, this.nuclia.options.regionalPrefix);
     } else {
       backend =
         isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy
@@ -254,10 +255,6 @@ export class Rest implements IRest {
 
   getZoneSlug(zoneId: string): Observable<string> {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
-  }
-
-  getSubdomainUrl(mainBackend: string, prefix?: string): string {
-    return replaceSubdomainInUrl(mainBackend, prefix);
   }
 
   /**

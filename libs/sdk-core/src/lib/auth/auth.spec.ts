@@ -132,7 +132,7 @@ describe('Authentication', () => {
       mockFetch({ action: 'LOGIN' });
       await firstValueFrom(auth.validateMagicToken('my-token', 'eu-1'));
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://eu-1.here/auth/magic?token=my-token',
+        'http://eu-1.rag.here/auth/magic?token=my-token',
         expect.objectContaining({ method: 'POST' }),
       );
     });
