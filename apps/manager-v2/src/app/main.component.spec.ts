@@ -5,13 +5,13 @@ import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
-import { AppComponent } from './app.component';
+import { MainComponent } from './main.component';
 
-describe('AppComponent', () => {
+describe('MainComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RouterModule.forRoot([])],
-      declarations: [AppComponent],
+      declarations: [MainComponent],
       providers: [
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService, { onLangChange: new EventEmitter<LangChangeEvent>() }),
@@ -22,7 +22,7 @@ describe('AppComponent', () => {
   });
 
   it('should render version', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(MainComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.version')?.textContent).toContain('Version:');
