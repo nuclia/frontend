@@ -1,4 +1,8 @@
-# 1.31.2 (unreleased)
+# 1.32.0 (2026-03-13)
+
+### Breaking changes
+
+- Support for the new auth flow and for new sub-domains
 
 ### Improvements
 
