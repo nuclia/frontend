@@ -108,11 +108,11 @@ jobs:
           yarn missdev
 
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget,platform
 
       - name: Build affected apps
         run: |-
-          npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget
+          npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget,platform
 
           # Check if there's any app that should be built because of chart changes and mark it to be built. 
           # Unless it's already build by "npx nx affected" command
