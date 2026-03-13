@@ -1,5 +1,4 @@
 (function () {
-
   function init() {
     const env = new URLSearchParams(window.location.search).get('env');
     const script = window.document.createElement('script');
@@ -14,12 +13,25 @@
 
   function addWidget() {
     const params = new URLSearchParams(window.location.search);
-    const { zone, knowledgebox, account, widget_id, mode, apikey, env } = Object.fromEntries(params);
+    const { zone, knowledgebox, account, widget_id, mode, apikey, knowledgebox_name, widget_name, expiration, env } =
+      Object.fromEntries(params);
 
     if (!zone || !knowledgebox || !account || !widget_id || !mode) {
       console.error('Missing URL parameters');
       return;
     }
+
+    if (expiration && Date.now() > parseInt(expiration)) {
+      document.querySelector('.expired').removeAttribute('hidden');
+      return;
+    }
+
+    const knowledgeBoxName = document.querySelector('.knowledgebox-name');
+    knowledgeBoxName.textContent = knowledgebox_name || '-';
+    const widgetName = document.querySelector('.widget-name');
+    widgetName.textContent = widget_name || '-';
+    const expirationDate = document.querySelector('.expiration-date');
+    expirationDate.textContent = expiration ? new Date(parseInt(expiration)).toLocaleDateString() : '-';
 
     const container = document.querySelector('.widget');
     const element = document.createElement(mode === 'page' ? 'nuclia-search-bar' : 'nuclia-chat');
