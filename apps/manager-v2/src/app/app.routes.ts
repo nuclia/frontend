@@ -1,7 +1,7 @@
 import { Route } from '@angular/router';
 import { authGuard } from '@flaps/core';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
-import { CallbackComponent } from '@nuclia/user';
+import { AppLoginComponent, CallbackComponent } from '@nuclia/user';
 
 export const appRoutes: Route[] = [
   {
@@ -32,4 +32,5 @@ export const appRoutes: Route[] = [
     ],
   },
   { path: 'user/callback', component: CallbackComponent },
+  { path: 'user/login-redirect', component: AppLoginComponent },
 ];

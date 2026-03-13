@@ -4,6 +4,7 @@ export * from './consent/consent.component';
 export * from './farewell';
 export * from './invite';
 export * from './login/login.component';
+export * from './login/app-login.component';
 export * from './magic/magic.component';
 export * from './magic/magic.service';
 export * from './password.validator';

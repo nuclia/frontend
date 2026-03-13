@@ -15,6 +15,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { MainComponent } from './main.component';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -29,7 +30,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
 }
 
 @NgModule({
-  declarations: [AppComponent, AppLayoutComponent],
+  declarations: [AppComponent, AppLayoutComponent, MainComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),

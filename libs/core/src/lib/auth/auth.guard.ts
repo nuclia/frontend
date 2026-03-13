@@ -1,13 +1,12 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
-import { SDKService } from '../api';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 
 export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
-  const sdk = inject(SDKService);
+  const router = inject(Router);
 
   if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken()) {
     return true;
@@ -19,7 +18,7 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   authService.setNextUrl(url);
 
   // Navigate to the login page with extras
-  sdk.nuclia.auth.redirectToOAuth(queryParams);
+  router.navigate(['/user/login-redirect'], { queryParams });
   return false;
 };
 
