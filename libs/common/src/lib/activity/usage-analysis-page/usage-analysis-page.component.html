@@ -1,0 +1,30 @@
+<app-activity-log-page
+  pageTitle="activity.usage-analysis.title"
+  pageSubtitle="activity.usage-analysis.subtitle"
+  [columns]="columns"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)">
+
+  <!-- Stat cards -->
+  <div stat-cards class="stat-cards">
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.usage-analysis.total-queries' | translate }}</div>
+      <div class="display-s">{{ service.stats().totalQueries }}</div>
+    </div>
+    @if (service.stats().avgRemiScore) {
+      <div class="stat-card">
+        <div class="title-xxs">{{ 'activity.usage-analysis.avg-remi-score' | translate }}</div>
+        <div class="display-s">{{ service.stats().avgRemiScore }}<span class="body-s">/5</span></div>
+      </div>
+    }
+    @if (service.stats().topFilterUsed) {
+      <div class="stat-card">
+        <div class="title-xxs">{{ 'activity.usage-analysis.top-filter' | translate }}</div>
+        <div class="body-m">{{ service.stats().topFilterUsed }}</div>
+      </div>
+    }
+  </div>
+
+</app-activity-log-page>

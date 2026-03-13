@@ -1,0 +1,50 @@
+<app-activity-log-page
+  pageTitle="activity.processing-activity.title"
+  pageSubtitle="activity.processing-activity.subtitle"
+  [columns]="columns"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)">
+
+  <!-- Stat cards -->
+  <div stat-cards class="stat-cards">
+    <div class="stat-card" [class.stat-card--active]="service.activeStatusFilter() === 'Ingested'">
+      <div class="title-xxs">{{ 'activity.processing-activity.resources-ingested' | translate }}</div>
+      <div class="display-s">{{ service.stats().resourcesIngested }}</div>
+      <div class="stat-card-footer">
+        <button class="stat-card-view-all" (click)="filterByStatus('Ingested')">
+          {{ 'generic.view-all' | translate }}
+        </button>
+        @if (service.activeStatusFilter() === 'Ingested') {
+          <button class="stat-card-clear" (click)="clearStatusFilter()" [attr.aria-label]="'generic.clear' | translate">&#x2715;</button>
+        }
+      </div>
+    </div>
+    <div class="stat-card" [class.stat-card--active]="service.activeStatusFilter() === 'Processed'">
+      <div class="title-xxs">{{ 'activity.processing-activity.resources-processed' | translate }}</div>
+      <div class="display-s">{{ service.stats().resourcesProcessed }}</div>
+      <div class="stat-card-footer">
+        <button class="stat-card-view-all" (click)="filterByStatus('Processed')">
+          {{ 'generic.view-all' | translate }}
+        </button>
+        @if (service.activeStatusFilter() === 'Processed') {
+          <button class="stat-card-clear" (click)="clearStatusFilter()" [attr.aria-label]="'generic.clear' | translate">&#x2715;</button>
+        }
+      </div>
+    </div>
+    <div class="stat-card" [class.stat-card--active]="service.activeStatusFilter() === 'Edited'">
+      <div class="title-xxs">{{ 'activity.processing-activity.resources-edited' | translate }}</div>
+      <div class="display-s">{{ service.stats().resourcesEdited }}</div>
+      <div class="stat-card-footer">
+        <button class="stat-card-view-all" (click)="filterByStatus('Edited')">
+          {{ 'generic.view-all' | translate }}
+        </button>
+        @if (service.activeStatusFilter() === 'Edited') {
+          <button class="stat-card-clear" (click)="clearStatusFilter()" [attr.aria-label]="'generic.clear' | translate">&#x2715;</button>
+        }
+      </div>
+    </div>
+  </div>
+
+</app-activity-log-page>

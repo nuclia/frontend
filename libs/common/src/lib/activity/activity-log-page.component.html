@@ -1,0 +1,127 @@
+<div class="page-spacing">
+  <!-- Page header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ pageTitle() | translate }}</h1>
+    <p class="page-description">{{ pageSubtitle() | translate }}</p>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="activity-toolbar">
+    <!-- Month picker -->
+    <pa-select
+      class="month-picker"
+      [label]="'activity.select-month' | translate"
+      [value]="selectedMonth()"
+      [disabled]="availableMonths().length === 0"
+      (valueChange)="onMonthChange($event)">
+      @if (availableMonths().length === 0) {
+        <pa-option [value]="selectedMonth()">{{ formatMonth(selectedMonth()) }}</pa-option>
+      }
+      @for (month of availableMonths(); track month) {
+        <pa-option [value]="month">{{ formatMonth(month) }}</pa-option>
+      }
+    </pa-select>
+
+    <!-- Search with column-scoped modes -->
+    <nsi-search-input
+      class="toolbar-search"
+      [placeholder]="'generic.search' | translate"
+      [modes]="service.searchModes()"
+      (valueChange)="onSearch($event)"
+      (modeSelected)="onModeSelected($event)">
+    </nsi-search-input>
+
+    <div class="toolbar-actions">
+      <!-- Columns toggle -->
+      <nsi-dropdown-button
+        [popupRef]="columnsDropdown"
+        aspect="basic">
+        {{ 'activity.columns' | translate }}
+      </nsi-dropdown-button>
+      <pa-dropdown #columnsDropdown>
+        @for (col of service.columnDefs(); track col.key) {
+          <pa-option
+            [value]="col.key"
+            dontCloseOnSelect
+            (selectOption)="toggleColumn(col.key)">
+            <pa-checkbox [value]="isColumnVisible(col.key)">
+              {{ col.label | translate }}
+            </pa-checkbox>
+          </pa-option>
+        }
+      </pa-dropdown>
+
+      <!-- Download -->
+      <nsi-dropdown-button
+        [popupRef]="downloadDropdown"
+        aspect="basic"
+        icon="download">
+        {{ 'activity.download' | translate }}
+      </nsi-dropdown-button>
+      <pa-dropdown #downloadDropdown>
+        <pa-option (selectOption)="onDownloadCsv()">
+          {{ 'activity.download-csv' | translate }}
+        </pa-option>
+        <pa-option (selectOption)="onDownloadJson()">
+          {{ 'activity.download-json' | translate }}
+        </pa-option>
+      </pa-dropdown>
+    </div>
+  </div>
+
+  <!-- Stat cards slot — projected by each page -->
+  <ng-content select="[stat-cards]"></ng-content>
+
+  <!-- Data table -->
+  <div class="table-container">
+    @if (loading()) {
+      <nsi-spinner></nsi-spinner>
+    } @else if (service.filteredRows().length === 0) {
+      <div class="empty-state">
+        <p class="body-m">{{ 'generic.empty' | translate }}</p>
+      </div>
+    } @else {
+      <cdk-virtual-scroll-viewport
+        tableVirtualScroll
+        class="table-viewport"
+        [itemSize]="rowHeight"
+        (offsetChange)="viewportOffset = $event">
+        <pa-table
+          border
+          [style.--table-row-height]="rowHeight + 'px'"
+          [style.--table-header-top]="-1 * viewportOffset + 'px'"
+          [columns]="service.gridColumns()">
+
+          <pa-table-header>
+            <pa-table-row>
+              @for (col of service.columnDefs(); track col.key) {
+                @if (isColumnVisible(col.key)) {
+                  <pa-table-cell header>
+                    {{ col.label | translate }}
+                  </pa-table-cell>
+                }
+              }
+            </pa-table-row>
+          </pa-table-header>
+
+          <pa-table-row
+            *cdkVirtualFor="let item of service.filteredRows()"
+            (click)="rowClick.emit(item)"
+            class="clickable-row">
+            @for (col of service.columnDefs(); track col.key) {
+              @if (isColumnVisible(col.key)) {
+                <pa-table-cell>
+                  <span
+                    class="body-s cell-value"
+                    [paTooltip]="getCellValue(item, col.key)">
+                    {{ getCellValue(item, col.key) }}
+                  </span>
+                </pa-table-cell>
+              }
+            }
+          </pa-table-row>
+        </pa-table>
+      </cdk-virtual-scroll-viewport>
+    }
+  </div>
+</div>

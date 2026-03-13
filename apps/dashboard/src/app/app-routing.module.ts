@@ -115,7 +115,8 @@ const routes: Routes = [
               },
               {
                 path: 'activity',
-                loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
+                canActivate: [knowledgeBoxOwnerGuard],
+                loadChildren: () => import('../../../../libs/common/src/lib/activity/activity.module').then((m) => m.ActivityModule),
               },
               {
                 path: 'entities',
