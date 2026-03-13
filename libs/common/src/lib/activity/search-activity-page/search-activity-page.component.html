@@ -1,0 +1,30 @@
+<app-activity-log-page
+  pageTitle="activity.search-activity.title"
+  pageSubtitle="activity.search-activity.subtitle"
+  [columns]="columns"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)">
+
+  <!-- Stat cards -->
+  <div stat-cards class="stat-cards">
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search-activity.total-queries' | translate }}</div>
+      <div class="display-s">{{ service.stats().totalQueries }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search-activity.avg-retrieval-time' | translate }}</div>
+      <div class="display-s">{{ service.stats().avgRetrievalTimeMs }}<span class="body-s"> ms</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search-activity.avg-resources-returned' | translate }}</div>
+      <div class="display-s">{{ service.stats().avgResourcesReturned }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search-activity.empty-results' | translate }}</div>
+      <div class="display-s">{{ service.stats().emptyResults }}</div>
+    </div>
+  </div>
+
+</app-activity-log-page>

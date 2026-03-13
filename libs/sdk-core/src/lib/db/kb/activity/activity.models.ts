@@ -70,6 +70,10 @@ export enum EventType {
   PROCESSED = 'processed',
   CHAT = 'chat',
   ASK = 'ask',
+  SUGGEST = 'suggest',
+  INDEXED = 'indexed',
+  RETRIEVE = 'retrieve',
+  AUGMENT = 'augment',
 }
 
 export type DownloadFormat = 'application/x-ndjson' | 'text/csv';
@@ -93,16 +97,16 @@ export interface ActivityLogDownload {
 }
 
 export interface ActivityLogFilters {
-  user_id?: ActivityLogFilter<string>;
-  user_type?: ActivityLogFilter<string>;
-  client_type?: ActivityLogFilter<string>;
+  user_id?: ActivityLogStringFilter;
+  user_type?: ActivityLogStringFilter;
+  client_type?: ActivityLogStringFilter;
   total_duration?: ActivityLogFilter<number>;
   audit_metadata?: AuditMetadataFilter;
 }
 
 export interface ActivityLogSearchFilters extends ActivityLogFilters {
   question?: ActivityLogStringFilter;
-  resources_count?: ActivityLogStringFilter;
+  resources_count?: ActivityLogFilter<number>;
 }
 
 export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
@@ -111,7 +115,8 @@ export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
   feedback_good?: ActivityLogFilter<boolean>;
   feedback_comment?: ActivityLogStringFilter;
   model?: ActivityLogStringFilter;
-  status?: ActivityLogFilter<number>;
+  /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA */
+  status?: ActivityLogFilter<string>;
 }
 
 export interface ActivityLogFilter<T> {
@@ -131,4 +136,143 @@ export interface ActivityLogStringFilter extends ActivityLogFilter<string> {
 
 export interface AuditMetadataFilter extends ActivityLogStringFilter {
   key: string;
+}
+
+// ---------------------------------------------------------------------------
+// Activity log live query (POST /activity/{event_type}/query)
+// ---------------------------------------------------------------------------
+
+export interface ActivityLogPagination {
+  limit?: number;
+  starting_after?: number;
+  ending_before?: number;
+}
+
+/** Base query — used for generic / resource event types (new, modified, processed, etc.) */
+export interface ActivityLogBaseQuery {
+  year_month: string;
+  pagination?: ActivityLogPagination;
+  show?: ActivityLogBaseShowField[] | 'all';
+  filters: ActivityLogFilters;
+}
+
+export type ActivityLogBaseShowField =
+  | 'id' | 'date' | 'user_id' | 'user_type' | 'client_type'
+  | 'total_duration' | 'audit_metadata' | 'resource_id'
+  | 'nuclia_tokens';
+
+/** Search query — event_type = 'search' */
+export interface ActivityLogSearchQuery {
+  year_month: string;
+  pagination?: ActivityLogPagination;
+  show?: ActivityLogSearchShowField[] | 'all';
+  filters: ActivityLogSearchFilters;
+}
+
+export type ActivityLogSearchShowField =
+  | ActivityLogBaseShowField
+  | 'question' | 'resources_count' | 'filter' | 'retrieval_rephrased_question'
+  | 'vectorset' | 'security' | 'min_score_bm25' | 'min_score_semantic'
+  | 'result_per_page' | 'retrieval_time';
+
+/** Ask query — event_type = 'ask' */
+export interface ActivityLogAskQuery {
+  year_month: string;
+  pagination?: ActivityLogPagination;
+  show?: ActivityLogAskShowField[] | 'all';
+  filters: ActivityLogAskFilters;
+}
+
+export type ActivityLogAskShowField =
+  | ActivityLogBaseShowField
+  | 'question' | 'rephrased_question' | 'answer' | 'learning_id' | 'retrieved_context'
+  | 'chat_history' | 'feedback_good' | 'feedback_comment' | 'feedback_good_all'
+  | 'feedback_good_any' | 'feedback' | 'model' | 'rag_strategies_names' | 'rag_strategies'
+  | 'status' | 'generative_answer_first_chunk_time' | 'generative_reasoning_first_chunk_time'
+  | 'generative_answer_time' | 'remi_scores' | 'user_request' | 'reasoning'
+  | 'resources_count' | 'filter' | 'retrieval_rephrased_question' | 'vectorset'
+  | 'security' | 'min_score_bm25' | 'min_score_semantic' | 'result_per_page' | 'retrieval_time';
+
+export interface ActivityLogAskFilters extends ActivityLogChatFilters {
+  generative_answer_first_chunk_time?: ActivityLogFilter<number>;
+  generative_reasoning_first_chunk_time?: ActivityLogFilter<number>;
+  generative_answer_time?: ActivityLogFilter<number>;
+  reasoning?: ActivityLogStringFilter;
+  resources_count?: ActivityLogFilter<number>;
+  vectorset?: ActivityLogStringFilter;
+  min_score_bm25?: ActivityLogFilter<number>;
+  min_score_semantic?: ActivityLogFilter<number>;
+  result_per_page?: ActivityLogFilter<number>;
+  retrieval_time?: ActivityLogFilter<number>;
+}
+
+/** Chat query — event_type = 'chat' */
+export interface ActivityLogChatQuery {
+  year_month: string;
+  pagination?: ActivityLogPagination;
+  show?: ActivityLogChatShowField[] | 'all';
+  filters: ActivityLogChatFilters;
+}
+
+export type ActivityLogChatShowField =
+  | ActivityLogBaseShowField
+  | 'question' | 'rephrased_question' | 'answer' | 'learning_id' | 'retrieved_context'
+  | 'chat_history' | 'feedback_good' | 'feedback_comment' | 'feedback_good_all'
+  | 'feedback_good_any' | 'feedback' | 'model' | 'rag_strategies_names' | 'rag_strategies'
+  | 'status' | 'generative_answer_first_chunk_time' | 'generative_reasoning_first_chunk_time'
+  | 'generative_answer_time' | 'remi_scores' | 'user_request' | 'reasoning';
+
+export type ActivityLogQuery =
+  | ActivityLogBaseQuery
+  | ActivityLogSearchQuery
+  | ActivityLogAskQuery
+  | ActivityLogChatQuery;
+
+// ---------------------------------------------------------------------------
+// Activity log item — shape of each NDJSON line in the query response
+// ---------------------------------------------------------------------------
+
+export interface ActivityLogItem {
+  id: number;
+  date: string | null;
+  user_id: string | null;
+  user_type: string | null;
+  client_type: string | null;
+  total_duration: number | null;
+  audit_metadata: Record<string, string> | null;
+  resource_id: string | null;
+  nuclia_tokens: number | null;
+  // Search + Ask fields
+  question: string | null;
+  resources_count: number | null;
+  filter: string | null;
+  retrieval_rephrased_question: string | null;
+  vectorset: string | null;
+  security: unknown | null;
+  min_score_bm25: number | null;
+  min_score_semantic: number | null;
+  result_per_page: number | null;
+  retrieval_time: number | null;
+  // Ask + Chat fields
+  rephrased_question: string | null;
+  answer: string | null;
+  learning_id: string | null;
+  retrieved_context: unknown | null;
+  chat_history: unknown | null;
+  feedback_good: boolean | null;
+  feedback_comment: string | null;
+  feedback_good_all: boolean | null;
+  feedback_good_any: boolean | null;
+  feedback: unknown | null;
+  model: string | null;
+  rag_strategies_names: string[] | null;
+  rag_strategies: unknown | null;
+  /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA. Null on resource events. */
+  status: string | null;
+  generative_answer_first_chunk_time: number | null;
+  generative_reasoning_first_chunk_time: number | null;
+  generative_answer_time: number | null;
+  remi_scores: number | null;
+  user_request: string | null;
+  reasoning: string | null;
 }

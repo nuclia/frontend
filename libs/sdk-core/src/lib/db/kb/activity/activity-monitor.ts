@@ -3,6 +3,8 @@ import type { INuclia } from '../../../models';
 import {
   ActivityLogDownload,
   ActivityLogDownloadQuery,
+  ActivityLogItem,
+  ActivityLogQuery,
   DownloadFormat,
   EventType,
   RemiQueryCriteria,
@@ -11,7 +13,7 @@ import {
   RemiScoresResponseItem,
   SearchMetricsItem,
 } from './activity.models';
-import { Observable } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 import { UsageAggregation } from '../../db.models';
 
 export class ActivityMonitor {
@@ -117,5 +119,28 @@ export class ActivityMonitor {
       params.push(`aggregation=${aggregation}`);
     }
     return this.nuclia.rest.get<SearchMetricsItem[]>(`${this.kb.path}/activity/metrics?${params.join('&')}`);
+  }
+
+  /**
+   * Query activity logs with live pagination.
+   * Returns an array of log items parsed from the NDJSON response.
+   *
+   * @param eventType The event type to query (ask, search, chat, new, modified, processed, etc.)
+   * @param query Query body: year_month (required), optional pagination, show, filters
+   */
+  queryActivityLogs(eventType: EventType, query: ActivityLogQuery): Observable<ActivityLogItem[]> {
+    // The endpoint returns application/x-ndjson — one JSON object per line.
+    // Use doNotParse=true to receive the raw Response, then read its text body.
+    return this.nuclia.rest
+      .post<Response>(`${this.kb.path}/activity/${eventType}/query`, query, undefined, true)
+      .pipe(
+        switchMap((res) => from(res.text())),
+        map((text) =>
+          text
+            .split('\n')
+            .filter((line) => line.trim())
+            .map((line) => JSON.parse(line) as ActivityLogItem),
+        ),
+      );
   }
 }

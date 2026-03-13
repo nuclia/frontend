@@ -1,0 +1,22 @@
+<app-activity-log-page
+  pageTitle="activity.cost-token.title"
+  pageSubtitle="activity.cost-token.subtitle"
+  [columns]="columns"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)">
+
+  <!-- Stat cards -->
+  <div stat-cards class="stat-cards">
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.cost-token.total-tokens' | translate }}</div>
+      <div class="display-s">{{ service.stats().totalTokens | number }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.cost-token.avg-tokens-per-query' | translate }}</div>
+      <div class="display-s">{{ service.stats().avgTokensPerQuery | number }}</div>
+    </div>
+  </div>
+
+</app-activity-log-page>

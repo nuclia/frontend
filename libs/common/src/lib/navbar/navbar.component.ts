@@ -32,10 +32,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
-        of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
+        of(
+          this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl) &&
+            !this.isOnActivityMetricsPage(location.pathname),
+        ),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
-          map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          map(
+            (event) =>
+              this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl) &&
+              !this.isOnActivityMetricsPage((event as NavigationEnd).url),
+          ),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -64,6 +71,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ),
   );
   showSettings = false;
+  showMetrics = false;
   kbUrl: string = '';
   aragUrl: string = '';
   platformUrl: string = '';
@@ -137,6 +145,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.showSettings = inSettings;
         this.cdr.markForCheck();
       });
+
+    merge(
+      of(this.isOnActivityMetricsPage(location.pathname)),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => this.isOnActivityMetricsPage((event as NavigationEnd).url)),
+        takeUntil(this.unsubscribeAll),
+      ),
+    )
+      .pipe(
+        filter((inMetrics) => inMetrics),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.showMetrics = true;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy() {
@@ -149,5 +174,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleSettings() {
     this.showSettings = !this.showSettings;
     this.cdr.markForCheck();
+  }
+
+  toggleMetrics() {
+    this.showMetrics = !this.showMetrics;
+    this.cdr.markForCheck();
+  }
+
+  private isOnActivityMetricsPage(path: string): boolean {
+    return /\/activity\/(usage|tokens|resources|searches)/.test(path);
   }
 }
