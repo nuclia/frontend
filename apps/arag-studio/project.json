@@ -1,0 +1,302 @@
+{
+  "name": "arag-studio",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/arag-studio/src",
+  "prefix": "app",
+  "tags": [],
+  "generators": {
+    "@nx/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist/apps/arag-studio",
+        "subresourceIntegrity": true,
+        "index": "apps/arag-studio/src/index.html",
+        "main": "apps/arag-studio/src/main.ts",
+        "polyfills": "apps/arag-studio/src/polyfills.ts",
+        "tsConfig": "apps/arag-studio/tsconfig.app.json",
+        "allowedCommonJsDependencies": [],
+        "assets": [
+          "apps/arag-studio/src/favicon.ico",
+          "apps/arag-studio/src/assets",
+          "apps/arag-studio/src/manifest.webmanifest",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n/common"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/user/src/assets/i18n",
+            "output": "assets/i18n/user"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sync/src/assets/i18n",
+            "output": "assets/i18n/sync"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/arag-studio/src/environments_config/local",
+            "output": "assets/deployment"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/arag-studio/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/arag-studio/src"]
+        },
+        "scripts": [],
+        "ngswConfigPath": "apps/arag-studio/src/ngsw-config.json",
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "2mb",
+            "maximumError": "30mb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "50kb",
+            "maximumError": "100kb"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "outputHashing": "all",
+          "serviceWorker": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/arag-studio/src/environments/environment.ts",
+              "with": "apps/arag-studio/src/environments/environment.prod.ts"
+            }
+          ],
+          "assets": [
+            "apps/arag-studio/src/favicon.ico",
+            "apps/arag-studio/src/assets",
+            "apps/arag-studio/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/arag-studio/src/environments_config/production",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-stage": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/arag-studio/src/favicon.ico",
+            "apps/arag-studio/src/assets",
+            "apps/arag-studio/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/arag-studio/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-dev": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/arag-studio/src/favicon.ico",
+            "apps/arag-studio/src/assets",
+            "apps/arag-studio/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/arag-studio/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-prod": {
+          "aot": false,
+          "subresourceIntegrity": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/arag-studio/src/favicon.ico",
+            "apps/arag-studio/src/assets",
+            "apps/arag-studio/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/arag-studio/src/environments_config/local-prod",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "buildTarget": "arag-studio:build",
+        "port": 4201
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "arag-studio:build:production"
+        },
+        "local-stage": {
+          "buildTarget": "arag-studio:build:local-stage"
+        },
+        "local-dev": {
+          "buildTarget": "arag-studio:build:local-dev"
+        },
+        "local-prod": {
+          "buildTarget": "arag-studio:build:local-prod"
+        }
+      },
+      "defaultConfiguration": "local-stage",
+      "continuous": true
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "arag-studio:build"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/arag-studio"],
+      "options": {
+        "jestConfig": "apps/arag-studio/jest.config.js",
+        "tsConfig": "apps/arag-studio/tsconfig.spec.json"
+      }
+    }
+  }
+}
