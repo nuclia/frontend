@@ -50,7 +50,7 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
-  signUpUrl = `${this.oAuthService.getCameFrom()}/user/signup`;
+  signUpUrl = '';
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -75,6 +75,8 @@ export class LoginComponent {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
+    const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
+    this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
     this.route.data.subscribe((data) => {
       if (data['loginData']['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
