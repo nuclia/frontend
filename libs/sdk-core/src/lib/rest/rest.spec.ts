@@ -19,7 +19,7 @@ describe('Rest', () => {
     mockFetch({ id: 'abc', title: 'Gödel, Escher, Bach: an Eternal Golden Braid' });
     rest.get<{ id: string; title: string }>('/somepath').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.here/v1/somepath',
+        'http://europe-1.rag.here/v1/somepath',
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'GET',
@@ -39,7 +39,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.here/v1/somepath',
+          'http://europe-1.rag.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -59,7 +59,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.here/v1/somepath',
+          'http://europe-1.rag.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -79,7 +79,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.here/v1/somepath',
+          'http://europe-1.rag.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -94,7 +94,7 @@ describe('Rest', () => {
     mockFetch('');
     rest.delete<{ id: string; title: string }>('/somepath').subscribe(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.here/v1/somepath',
+        'http://europe-1.rag.here/v1/somepath',
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'DELETE',

@@ -47,7 +47,7 @@ export class OAuthService {
   }
 
   getCameFrom() {
-    return localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginFor('rag');
+    return localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginForApp('rag');
   }
 
   setCameFrom(cameFrom: string) {

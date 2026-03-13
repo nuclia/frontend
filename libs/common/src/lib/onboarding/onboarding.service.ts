@@ -137,7 +137,7 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        window.location.href = `${this.sdk.getOriginFor('rag')}/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
+        window.location.href = `${this.sdk.getOriginForApp('rag')}/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
       }),
     );
   }
@@ -181,7 +181,7 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        window.location.href = `${this.sdk.getOriginFor('rao')}/at/${accountSlug}/${zone}/arag/${raoSlug}`;
+        window.location.href = `${this.sdk.getOriginForApp('rao')}/at/${accountSlug}/${zone}/arag/${raoSlug}`;
       }),
     );
   }

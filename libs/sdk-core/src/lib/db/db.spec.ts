@@ -119,7 +119,7 @@ describe('Db', () => {
     });
     db.getKnowledgeBox().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.here/v1/account/dc-id/kb/gotham',
+        'http://europe-1.rag.here/v1/account/dc-id/kb/gotham',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -140,7 +140,7 @@ describe('Db', () => {
     });
     db.getRetrievalAgent().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.here/v1/account/dc-id/kb/gotham',
+        'http://europe-1.rag.here/v1/account/dc-id/kb/gotham',
         expect.objectContaining({
           method: 'GET',
         }),

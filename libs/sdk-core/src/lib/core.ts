@@ -4,6 +4,7 @@ import { Db, KnowledgeBox, RetrievalAgent } from './db';
 import { Events } from './events';
 import type { IAuthentication, IDb, INuclia, IRest, NucliaOptions, PromiseMapper } from './models';
 import { Rest } from './rest';
+import { setZoneInRegionalUrl } from './rest/utils';
 
 export class Nuclia implements INuclia {
   options: NucliaOptions;
@@ -24,7 +25,7 @@ export class Nuclia implements INuclia {
 
   /** The Nuclia regional backend URL. */
   get regionalBackend(): string {
-    return this.rest.getSubdomainUrl(this.options.backend, this.options.zone);
+    return setZoneInRegionalUrl(this.options.backend, this.options.zone, this.options.regionalPrefix);
   }
 
   /**
