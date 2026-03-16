@@ -333,6 +333,11 @@ const routes: Routes = [
   { path: 'user/signup', component: TemporaryAppSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
   { path: 'user/set-password', component: SetPasswordComponent },
+  {
+    path: 'user/login',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
   { path: '**', component: PageNotFoundComponent },
 ];
 
