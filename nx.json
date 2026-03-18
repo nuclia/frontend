@@ -170,5 +170,6 @@
         "testTargetName": "vite:test"
       }
     }
-  ]
+  ],
+  "analytics": false
 }
