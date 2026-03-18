@@ -84,3 +84,5 @@ vitest.config.*.timestamp*
 
 # AI
 .playwright-mcp
+.claude/worktrees
+.claude/settings.local.json
