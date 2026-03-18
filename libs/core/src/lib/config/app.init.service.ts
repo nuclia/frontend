@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as Sentry from '@sentry/angular';
 import { browserTracingIntegration } from '@sentry/angular';
-import { firstValueFrom, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, firstValueFrom, from } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 export type EnvironmentConfiguration = {
   version: string;
@@ -43,6 +43,9 @@ export type StaticEnvironmentConfiguration = {
 declare var window: any;
 @Injectable()
 export class AppInitService {
+  private _ready = new BehaviorSubject(false);
+  ready = this._ready.pipe(filter((ok) => ok));
+
   // This is the method you want to call at bootstrap
   // Important: It should return a Promise
   public init(staticEnv: StaticEnvironmentConfiguration) {
@@ -75,6 +78,7 @@ export class AppInitService {
             injectWidget(`${config.backend.cdn}/nuclia-arag-widget.umd.js`);
           }
           window.config = config;
+          this._ready.next(true);
         }),
       ),
     );
