@@ -9,8 +9,8 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
   selector: 'nma-main',
-  templateUrl: './Main.component.html',
-  styleUrls: ['./Main.component.scss'],
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
   standalone: false,
 })
 export class MainComponent implements OnInit, OnDestroy {
