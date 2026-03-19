@@ -22,14 +22,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
-import {
-  AuthInterceptor,
-  BaseModule,
-  EntitiesModule,
-  SelectAccountKbModule,
-  TopbarModule,
-  UploadModule,
-} from '@flaps/common';
+import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
@@ -89,7 +82,6 @@ const appModules = [
       useFactory: (config: BackendConfigurationService) => config.getVersion(),
       deps: [BackendConfigurationService],
     },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     provideHttpClient(withInterceptorsFromDi()),
