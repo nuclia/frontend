@@ -36,12 +36,6 @@ h2 {
   width: 100%;
 }
 
-.saving {
-  display: flex;
-  justify-content: center;
-  margin-top: rhythm(1);
-}
-
 ::ng-deep .pa-close-button {
   // The cancel button must be the only way to close the modal
   display: none;
