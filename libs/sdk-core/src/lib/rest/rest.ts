@@ -150,6 +150,10 @@ export class Rest implements IRest {
           });
           return res.json().then(
             (body) => {
+              if (res.status === 401 && body.detail === 'The OAuth Access token is either nonexistent or revoked') {
+                this.nuclia.auth.logout();
+                this.nuclia.auth.redirectToOAuth();
+              }
               const logMessage = `${res.status} error on ${method} ${path}${payload ? '\nPayload: ' + payload : ''}`;
               try {
                 console.error(`${logMessage}\n${JSON.stringify(body)}`);
