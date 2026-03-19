@@ -205,6 +205,15 @@
               <div class="nav-group">
                 <div class="group-items">
                   <a
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/remi-analytics' : null"
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-remi-analytics"
+                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                    <pa-icon name="image"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
+                  </a>
+                  <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/usage' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"

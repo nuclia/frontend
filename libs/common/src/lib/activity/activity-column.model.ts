@@ -22,6 +22,23 @@ export interface ActivityColumnDef {
 
   /** Whether this column is hidden by default (user can toggle it back on). */
   defaultHidden?: boolean;
+
+  /** If true, this column is not shown in the table at all — only in the side panel. */
+  sidebarOnly?: boolean;
+
+  /** Group name for sidebar section grouping. Maps to i18n key 'activity.detail.group.{group}' */
+  group?: string;
+}
+
+/** Extra fields shown only in the detail side panel, not tied to column definitions */
+export interface ActivitySidebarField {
+  key: string;
+  label: string;
+  value: (item: ActivityLogItem) => string | number | null | undefined;
+  /** If true, render as an expandable section */
+  expandable?: boolean;
+  /** Group name for sidebar section grouping */
+  group?: string;
 }
 
 /** Month range selected in the toolbar date picker.  Both values are YYYY-MM strings. */

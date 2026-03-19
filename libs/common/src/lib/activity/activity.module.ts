@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import {
   PaButtonModule,
   PaDropdownModule,
+  PaExpanderModule,
   PaIconModule,
   PaTableModule,
   PaTextFieldModule,
@@ -25,6 +26,7 @@ import { ProcessingActivityPageComponent } from './processing-activity-page/proc
 import { SearchActivityPageComponent } from './search-activity-page/search-activity-page.component';
 import { CostTokenPageComponent } from './cost-token-page/cost-token-page.component';
 import { UsageAnalysisPageComponent } from './usage-analysis-page/usage-analysis-page.component';
+import { MetricsPageComponent } from './metrics';
 
 import { ProcessingActivityPageService } from './processing-activity-page/processing-activity-page.service';
 import { SearchActivityPageService } from './search-activity-page/search-activity-page.service';
@@ -36,6 +38,7 @@ const ROUTES = [
   { path: 'tokens', component: CostTokenPageComponent },
   { path: 'resources', component: ProcessingActivityPageComponent },
   { path: 'searches', component: SearchActivityPageComponent },
+  { path: 'remi-analytics', component: MetricsPageComponent },
 ];
 
 @NgModule({
@@ -46,6 +49,7 @@ const ROUTES = [
     ScrollingModule,
     PaButtonModule,
     PaDropdownModule,
+    PaExpanderModule,
     PaIconModule,
     PaTableModule,
     PaTextFieldModule,
@@ -56,6 +60,7 @@ const ROUTES = [
     InfoCardComponent,
     SisProgressModule,
     SisSearchInputComponent,
+    MetricsPageComponent,
   ],
   declarations: [
     ActivityLogPageComponent,
@@ -65,6 +70,7 @@ const ROUTES = [
     UsageAnalysisPageComponent,
   ],
   providers: [
+    DatePipe,
     ProcessingActivityPageService,
     SearchActivityPageService,
     CostTokenPageService,

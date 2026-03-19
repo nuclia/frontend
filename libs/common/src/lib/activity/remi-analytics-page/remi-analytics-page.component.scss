@@ -1,0 +1,64 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.page-spacing {
+  height: calc(100vh - var(--app-topbar-height));
+  min-height: unset;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: rhythm(1);
+}
+
+.remi-toolbar {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+}
+
+.status-tabs {
+  display: flex;
+  gap: rhythm(1);
+}
+
+.status-tab {
+  padding: rhythm(1) rhythm(2);
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  background: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: $color-neutral-regular;
+  transition: all 0.15s;
+
+  &.active {
+    background: var(--color-primary-regular);
+    color: white;
+    border-color: var(--color-primary-regular);
+  }
+
+  &:hover:not(.active) {
+    background: var(--color-neutral-lightest);
+  }
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: rhythm(20);
+  color: $color-neutral-light;
+}
+
+.cell-value {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: rhythm(2);
+}

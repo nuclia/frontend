@@ -1,13 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ViewChild,
   inject,
 } from '@angular/core';
 import { ActivityMonthRange } from '../activity-column.model';
-import { ActivityLogPageComponent } from '../activity-log-page.component';
 import { ProcessingActivityPageService } from './processing-activity-page.service';
-import { PROCESSING_ACTIVITY_COLUMNS } from './processing-activity-page.config';
+import { PROCESSING_ACTIVITY_COLUMNS, PROCESSING_ACTIVITY_SIDEBAR_FIELDS } from './processing-activity-page.config';
 
 @Component({
   selector: 'app-processing-activity-page',
@@ -18,8 +16,7 @@ import { PROCESSING_ACTIVITY_COLUMNS } from './processing-activity-page.config';
 export class ProcessingActivityPageComponent {
   protected service = inject(ProcessingActivityPageService);
   readonly columns = PROCESSING_ACTIVITY_COLUMNS;
-
-  @ViewChild(ActivityLogPageComponent) private logPage?: ActivityLogPageComponent;
+  readonly sidebarFields = PROCESSING_ACTIVITY_SIDEBAR_FIELDS;
 
   constructor() {
     const now = new Date();
@@ -31,19 +28,15 @@ export class ProcessingActivityPageComponent {
     this.service.loadData(range.from);
   }
 
-  filterByStatus(status: string): void {
-    this.service.filterByStatus(status);
-    if (this.logPage) {
-      this.logPage.service.updateSearchMode('status');
-      this.logPage.service.updateSearchTerm(status);
-    }
+  onSearchChange(event: { term: string; column: string }): void {
+    this.service.setSearch(event.term, event.column);
   }
 
-  clearStatusFilter(): void {
-    this.service.clearStatusFilter();
-    if (this.logPage) {
-      this.logPage.service.updateSearchMode('');
-      this.logPage.service.updateSearchTerm('');
-    }
+  onLoadNextPage(): void {
+    this.service.loadNextPage();
+  }
+
+  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat; columns: string[] }): void {
+    this.service.download(event.format, event.columns);
   }
 }

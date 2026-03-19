@@ -16,7 +16,6 @@ export * from './lib/kb-creation';
 export * from './lib/knowledge-box-keys';
 export * from './lib/knowledge-box-settings';
 export * from './lib/knowledge-box-users';
-export * from './lib/metrics';
 export * from './lib/navbar';
 export * from './lib/onboarding';
 export * from './lib/page-not-found';

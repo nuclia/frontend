@@ -2,28 +2,25 @@
   pageTitle="activity.search-activity.title"
   pageSubtitle="activity.search-activity.subtitle"
   [columns]="columns"
+  [sidebarFields]="sidebarFields"
   [items]="service.items()"
   [loading]="service.loading()"
+  [loadingMore]="service.loadingMore()"
   [availableMonths]="service.availableMonths()"
-  (monthRangeChange)="onMonthRangeChange($event)">
+  (monthRangeChange)="onMonthRangeChange($event)"
+  (searchChange)="onSearchChange($event)"
+  (loadNextPage)="onLoadNextPage()"
+  (downloadRequested)="onDownloadRequested($event)">
 
   <!-- Stat cards -->
   <div stat-cards class="stat-cards">
     <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.search-activity.total-queries' | translate }}</div>
-      <div class="display-s">{{ service.stats().totalQueries }}</div>
+      <div class="title-xxs">{{ 'activity.search.total-search-queries' | translate }}</div>
+      <div class="display-s">{{ service.searchTotals().totalSearch !== null ? (service.searchTotals().totalSearch | number) : '—' }}</div>
     </div>
     <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.search-activity.avg-retrieval-time' | translate }}</div>
-      <div class="display-s">{{ service.stats().avgRetrievalTimeMs }}<span class="body-s"> ms</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.search-activity.avg-resources-returned' | translate }}</div>
-      <div class="display-s">{{ service.stats().avgResourcesReturned }}</div>
-    </div>
-    <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.search-activity.empty-results' | translate }}</div>
-      <div class="display-s">{{ service.stats().emptyResults }}</div>
+      <div class="title-xxs">{{ 'activity.search.total-llm-queries' | translate }}</div>
+      <div class="display-s">{{ service.searchTotals().totalChat !== null ? (service.searchTotals().totalChat | number) : '—' }}</div>
     </div>
   </div>
 

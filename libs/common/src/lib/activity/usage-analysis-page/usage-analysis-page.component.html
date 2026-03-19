@@ -2,29 +2,29 @@
   pageTitle="activity.usage-analysis.title"
   pageSubtitle="activity.usage-analysis.subtitle"
   [columns]="columns"
+  [sidebarFields]="sidebarFields"
   [items]="service.items()"
   [loading]="service.loading()"
+  [loadingMore]="service.loadingMore()"
   [availableMonths]="service.availableMonths()"
-  (monthRangeChange)="onMonthRangeChange($event)">
+  [showDownload]="false"
+  (monthRangeChange)="onMonthRangeChange($event)"
+  (loadNextPage)="onLoadNextPage()">
 
   <!-- Stat cards -->
   <div stat-cards class="stat-cards">
     <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.usage-analysis.total-queries' | translate }}</div>
-      <div class="display-s">{{ service.stats().totalQueries }}</div>
+      <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().answerRelevance !== null ? (service.remiScoreAverages().answerRelevance | number:'1.1-1') : '—' }}</div>
     </div>
-    @if (service.stats().avgRemiScore) {
-      <div class="stat-card">
-        <div class="title-xxs">{{ 'activity.usage-analysis.avg-remi-score' | translate }}</div>
-        <div class="display-s">{{ service.stats().avgRemiScore }}<span class="body-s">/5</span></div>
-      </div>
-    }
-    @if (service.stats().topFilterUsed) {
-      <div class="stat-card">
-        <div class="title-xxs">{{ 'activity.usage-analysis.top-filter' | translate }}</div>
-        <div class="body-m">{{ service.stats().topFilterUsed }}</div>
-      </div>
-    }
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.usage-analysis.avg-context-relevance' | translate }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().contextRelevance !== null ? (service.remiScoreAverages().contextRelevance | number:'1.1-1') : '—' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.usage-analysis.avg-groundedness' | translate }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().groundedness !== null ? (service.remiScoreAverages().groundedness | number:'1.1-1') : '—' }}</div>
+    </div>
   </div>
 
 </app-activity-log-page>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivityMonthRange } from '../activity-column.model';
 import { UsageAnalysisPageService } from './usage-analysis-page.service';
-import { USAGE_ANALYSIS_COLUMNS } from './usage-analysis-page.config';
+import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analysis-page.config';
 
 @Component({
   selector: 'app-usage-analysis-page',
@@ -12,6 +12,7 @@ import { USAGE_ANALYSIS_COLUMNS } from './usage-analysis-page.config';
 export class UsageAnalysisPageComponent {
   protected service = inject(UsageAnalysisPageService);
   readonly columns = USAGE_ANALYSIS_COLUMNS;
+  readonly sidebarFields = USAGE_ANALYSIS_SIDEBAR_FIELDS;
 
   constructor() {
     const now = new Date();
@@ -21,5 +22,9 @@ export class UsageAnalysisPageComponent {
 
   onMonthRangeChange(range: ActivityMonthRange): void {
     this.service.loadData(range.from);
+  }
+
+  onLoadNextPage(): void {
+    this.service.loadNextPage();
   }
 }

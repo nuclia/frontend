@@ -181,3 +181,144 @@ pa-table {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+// ── Side panel overlay ────────────────────────────────────────────────────
+
+.side-panel-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.side-panel {
+  position: fixed;
+  top: var(--app-topbar-height, 0);
+  right: 0;
+  bottom: 0;
+  width: 420px;
+  max-width: 90vw;
+  background: var(--color-neutral-lightest, #fff);
+  border-left: 1px solid $color-neutral-lighter;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+  transition: width 0.2s ease;
+
+  &.expanded {
+    width: 65vw;
+  }
+}
+
+.side-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: rhythm(2) rhythm(3);
+  border-bottom: 1px solid $color-neutral-lighter;
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+}
+
+.side-panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: rhythm(0.5);
+}
+
+.side-panel-body {
+  padding: rhythm(2);
+  flex: 1;
+  overflow-y: auto;
+}
+
+// ── Section titles ────────────────────────────────────────────────────────
+
+.section-title {
+  margin-bottom: rhythm(1.5);
+  color: var(--color-neutral-dark);
+}
+
+.detail-section {
+  margin-bottom: rhythm(3);
+}
+
+// ── Card-like containers (grey background boxes for grouping) ─────────────
+
+.detail-card {
+  background: $color-neutral-lightest;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(1);
+  padding: rhythm(1.5);
+}
+
+// ── Inner cards for large text fields (Question, Answer) ──────────────────
+
+.detail-inner-card {
+  background: white;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.75);
+  padding: 0;
+  margin: rhythm(0.75) 0;
+
+  pa-expander {
+    ::ng-deep .pa-expander-header {
+      padding: rhythm(1) rhythm(1.5);
+    }
+
+    ::ng-deep .pa-expander:not(.pa-expander-card).pa-collapsed .pa-expander-header {
+      box-shadow: none;
+    }
+  }
+
+  .detail-inner-label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-neutral-regular;
+    font-weight: 600;
+  }
+
+  .detail-expandable-content {
+    padding: rhythm(1) rhythm(2) rhythm(2) rhythm(2);
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+}
+
+// ── Standard key-value rows ───────────────────────────────────────────────
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: rhythm(0.75) 0;
+  gap: rhythm(2);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba($color-neutral-lighter, 0.5);
+  }
+
+  .detail-label {
+    color: $color-neutral-regular;
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+
+  .detail-value {
+    text-align: right;
+    word-break: break-word;
+    color: var(--color-neutral-dark);
+  }
+}
+
+
