@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
-import { combineLatest, filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, forkJoin, map, merge, Observable, of, switchMap, take } from 'rxjs';
 
 const IN_ARAG = new RegExp('at/[^/]+/[^/]+/arag');
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
@@ -14,13 +14,24 @@ export class NavigationService {
   inRaoApp = this.environment.client === 'rao';
   inPlatformApp = this.environment.client === 'platform';
   inDashboard = this.environment.client === 'dashboard';
+  simpleMode = new BehaviorSubject(false);
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private sdk: SDKService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
-  ) {}
+  ) {
+    this.simpleMode
+      .pipe(switchMap((simple) => this.kbUrl.pipe(map((kbUrl) => ({ simple, kbUrl })))))
+      .subscribe((res) => {
+        if (res.simple) {
+          this.router.navigateByUrl(`${res.kbUrl}/simple`);
+        } else {
+          this.router.navigateByUrl(res.kbUrl);
+        }
+      });
+  }
 
   homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.arag]).pipe(
     map(([account, kb, arag]) => {
@@ -44,6 +55,14 @@ export class NavigationService {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
       return this.getKbUrl(account.slug, kbSlug);
     }),
+  );
+
+  inAccount: Observable<boolean> = merge(
+    of(this.inAccountManagement(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.inAccountManagement((event as NavigationEnd).url)),
+    ),
   );
 
   inAccountManagement(path: string): boolean {

@@ -65,6 +65,7 @@ export class TopbarComponent {
   private backendConfig = inject(BackendConfigurationService);
   logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
+  simpleMode = this.navigationService.simpleMode;
 
   constructor(
     private router: Router,
@@ -94,5 +95,9 @@ export class TopbarComponent {
       'blank',
       'noreferrer',
     );
+  }
+
+  switchMode(value: boolean) {
+    this.navigationService.simpleMode.next(!value);
   }
 }

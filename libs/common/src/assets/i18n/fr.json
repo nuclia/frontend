@@ -632,6 +632,7 @@
 	"getting-started.upload.link-textarea.help": "Une URL par ligne",
 	"getting-started.upload.link-textarea.label": "Tapez ou collez les URLs des pages Web",
 	"getting-started.upload.title": "1. Télécharger des données",
+	"kb.advanced-mode": "Mode avancé",
 	"kb.ai-models.anonymization.activate.description": "Appliquer l’anonymisation conformément au Règlement général sur la protection des données (RGPD) à toutes les nouvelles ressources de la Knowledge Box.",
 	"kb.ai-models.anonymization.activate.title": "Activer l’anonymisation des données",
 	"kb.ai-models.anonymization.activate.toggle-label.active": "Anonymisation active",

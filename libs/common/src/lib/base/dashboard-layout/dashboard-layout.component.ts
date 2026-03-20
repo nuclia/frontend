@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { combineLatest, map, startWith } from 'rxjs';
 import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
 import { DashboardLayoutService } from './dashboard-layout.service';
+import { NavigationService } from '@flaps/core';
 
 @Component({
   selector: 'stf-dashboard-layout',
@@ -11,7 +12,10 @@ import { DashboardLayoutService } from './dashboard-layout.service';
   standalone: false,
 })
 export class DashboardLayoutComponent {
+  private uploadService = inject(UploadService);
+  private navigationService = inject(NavigationService);
   private layoutService = inject(DashboardLayoutService);
+
   showProgress = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
   );
@@ -21,6 +25,7 @@ export class DashboardLayoutComponent {
     map(([showLimit, showProgress]) => showLimit || showProgress),
   );
   collapsedNav = this.layoutService.collapsedNav;
-
-  constructor(private uploadService: UploadService) {}
+  noNavBar = combineLatest([this.navigationService.simpleMode, this.navigationService.inAccount]).pipe(
+    map(([simple, inAccount]) => simple && !inAccount),
+  );
 }

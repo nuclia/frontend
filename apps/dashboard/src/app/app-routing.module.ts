@@ -54,6 +54,7 @@ import {
 } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
+import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
 
 const routes: Routes = [
   {
@@ -93,6 +94,11 @@ const routes: Routes = [
               {
                 path: '',
                 component: KnowledgeBoxHomeComponent,
+                resolve: {},
+              },
+              {
+                path: 'simple',
+                component: SimpleKBComponent,
                 resolve: {},
               },
               {

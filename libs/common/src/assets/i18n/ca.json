@@ -632,6 +632,7 @@
 	"getting-started.upload.link-textarea.help": "Un URL per línia",
 	"getting-started.upload.link-textarea.label": "Escriviu o enganxeu els URLs de les pàgines web",
 	"getting-started.upload.title": "1. Carregueu dades",
+	"kb.advanced-mode": "Mode avançat",
 	"kb.ai-models.anonymization.activate.description": "Apliqueu l’anonimat conforme al Reglament General de Protecció de Dades (GDPR) a qualsevol recurs nou del Knowledge Box.",
 	"kb.ai-models.anonymization.activate.title": "Activa l’anonimització de les dades",
 	"kb.ai-models.anonymization.activate.toggle-label.active": "Anonimització activa",
