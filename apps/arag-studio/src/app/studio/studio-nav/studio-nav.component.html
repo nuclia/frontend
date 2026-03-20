@@ -1,0 +1,35 @@
+<nav class="studio-nav">
+  <div class="nav-logo">
+    <a
+      class="nav-logo-link"
+      [routerLink]="homeUrl"
+      [paTooltip]="'studio.nav.go-home' | translate"
+      tooltipPosition="right">
+      <pa-icon name="cpu" />
+    </a>
+  </div>
+
+  <div class="nav-items">
+    @for (item of navItems; track item.routeSegment) {
+      <a
+        class="nav-item"
+        [routerLink]="getRouteUrl(item.routeSegment)"
+        [routerLinkActive]="'nav-item--active'"
+        [routerLinkActiveOptions]="{ exact: item.exact || false }"
+        [paTooltip]="item.labelKey | translate"
+        tooltipPosition="right">
+        <pa-icon [name]="item.icon" />
+      </a>
+    }
+  </div>
+
+  <div class="nav-footer">
+    <a
+      class="nav-item"
+      [routerLink]="['/at', accountSlug, 'home']"
+      [paTooltip]="'studio.nav.all-agents' | translate"
+      tooltipPosition="right">
+      <pa-icon name="grid" />
+    </a>
+  </div>
+</nav>

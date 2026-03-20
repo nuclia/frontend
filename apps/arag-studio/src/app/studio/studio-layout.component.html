@@ -1,0 +1,23 @@
+<div class="studio-layout">
+  <app-studio-nav
+    [accountSlug]="accountSlug"
+    [agentSlug]="agentSlug"
+    [zone]="zone"
+    [homeUrl]="homeUrl">
+  </app-studio-nav>
+
+  <div class="studio-main">
+    <app-studio-topbar
+      [agentTitle]="agentTitle"
+      [accountSlug]="accountSlug"
+      [agentSlug]="agentSlug"
+      [zone]="zone"
+      [homeUrl]="homeUrl"
+      [agentState]="agentState">
+    </app-studio-topbar>
+
+    <div class="studio-content" appWorkflowCanvas>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
