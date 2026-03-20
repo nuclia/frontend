@@ -15,7 +15,12 @@ import { ExternalConnection, StorageDrive, StorageFolder, StorageSite } from '@n
 
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonMiniComponent, SisProgressModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import {
+  ButtonMiniComponent,
+  SisProgressModule,
+  SisToastService,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 
 @Component({
   standalone: true,
@@ -34,6 +39,8 @@ import { ButtonMiniComponent, SisProgressModule, TwoColumnsConfigurationItemComp
   styleUrls: ['cloud-folder.component.scss'],
 })
 export class CloudFolderComponent implements OnInit {
+  private toaster = inject(SisToastService);
+
   @Input() externalConnection?: ExternalConnection;
   @Output() selection = new EventEmitter<{ sync_root_path: string; drive_id: string }>();
   currentSite = signal<StorageSite | undefined>(undefined);
@@ -54,6 +61,8 @@ export class CloudFolderComponent implements OnInit {
   requiresSiteUrlResolution = false;
   searchQuery = '';
   siteUrlControl = new FormControl('');
+  requiresBucketSearch = false;
+  bucketName = '';
   private cdr = inject(ChangeDetectorRef);
   private syncService = inject(SyncService);
   private translate = inject(TranslateService);
@@ -64,7 +73,8 @@ export class CloudFolderComponent implements OnInit {
     this.hasSites = !!capabilities?.has_sites;
     this.requiresSearch = !!capabilities?.requires_site_search;
     this.requiresSiteUrlResolution = !!capabilities?.requires_site_url_resolution;
-    if (!this.requiresSearch && !this.requiresSiteUrlResolution) {
+    this.requiresBucketSearch = this.externalConnection?.provider === 'aws_s3_assume_role';
+    if (!this.requiresSearch && !this.requiresSiteUrlResolution && !this.requiresBucketSearch) {
       this.loadFolders();
     }
   }
@@ -100,8 +110,10 @@ export class CloudFolderComponent implements OnInit {
   }
 
   browseFolder(path: string) {
-    this.currentPath.set(path);
-    this.loadFolders(undefined, this.currentDrive()?.id, path);
+    // Normalize the path as some connectors (e.g. AWS S3) do not include the initial slash
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    this.currentPath.set(normalizedPath);
+    this.loadFolders(undefined, this.currentDrive()?.id, normalizedPath);
   }
 
   back() {
@@ -186,6 +198,24 @@ export class CloudFolderComponent implements OnInit {
       error: () => {
         this.siteUrlControl.markAsDirty();
         this.siteUrlControl.setErrors({ customError: this.translate.instant('sync.cloud-folder.site-url-error') });
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  validateAndBrowseDrive(drive: string) {
+    if (!this.externalConnection) {
+      return;
+    }
+    this.loading = true;
+    this.cdr.markForCheck();
+    this.syncService.getCloudFolders(this.externalConnection.id, { drive_id: drive }).subscribe({
+      next: () => {
+        this.browseDrive({ id: drive, name: drive });
+      },
+      error: () => {
+        this.toaster.error('sync.cloud-folder.drive-error');
         this.loading = false;
         this.cdr.markForCheck();
       },

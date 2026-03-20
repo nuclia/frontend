@@ -13,7 +13,7 @@ export interface BedrockStatus {
   errorMessage?: string;
 }
 
-export const DEFAULT_IAM_POLICY = {
+export const BEDROCK_IAM_POLICY = {
   Version: '2012-10-17',
   Statement: [
     {

@@ -105,6 +105,34 @@
       }
     </ng-container>
 
+    @if (assumeRole && enterCredentials) {
+      <nsi-two-columns-configuration-item
+        [noTopBorder]="noTopBorder"
+        itemTitle="sync.add-page.assume-role.title"
+        description="sync.add-page.assume-role.description">
+        <div
+          class="form-container"
+          formGroupName="assumeRole">
+          <pa-input formControlName="external_id">
+            {{ 'sync.add-page.assume-role.external-id.label' | translate }}
+          </pa-input>
+          <pa-input formControlName="role_arn">
+            {{ 'sync.add-page.assume-role.role-arn.label' | translate }}
+          </pa-input>
+          <div class="align-right">
+            <pa-button
+              aspect="basic"
+              iconAndText
+              icon="info"
+              (click)="openAssumeRoleModal()">
+              {{ 'sync.add-page.assume-role.role-arn.button' | translate }}
+            </pa-button>
+          </div>
+          <nsi-info-card>{{ 'sync.add-page.assume-role.reuse' | translate }}</nsi-info-card>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
+
     @if (!isCloud) {
       <nsi-two-columns-configuration-item
         itemTitle="sync.add-page.extract-config.title"

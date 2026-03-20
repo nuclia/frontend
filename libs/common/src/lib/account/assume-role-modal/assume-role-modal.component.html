@@ -1,6 +1,6 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>
-    <h2>{{ 'account.models.bedrock.integration' | translate }}</h2>
+    <h2>{{ title || '' | translate }}</h2>
   </pa-modal-title>
 
   <pa-modal-content>
@@ -8,17 +8,17 @@
       <pa-accordion [allowMultipleExpanded]="false">
         <pa-accordion-item
           id="step-1"
-          [itemTitle]="'account.models.bedrock.step' | translate: { num: 1 }"
-          [description]="'account.models.bedrock.create-role' | translate">
+          [itemTitle]="'account.assume-role.step' | translate: { num: 1 }"
+          [description]="'account.assume-role.create-role' | translate">
           <pa-accordion-item-body>
             <ul class="step-list body-m">
-              <li [innerHTML]="'account.models.bedrock.step-1-1' | translate: { region: awsRegion }"></li>
-              <li [innerHTML]="'account.models.bedrock.step-1-2' | translate"></li>
-              <li [innerHTML]="'account.models.bedrock.step-1-3' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-1-1' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-1-2' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-1-3' | translate"></li>
               <li>
-                <div [innerHTML]="'account.models.bedrock.step-1-4' | translate"></div>
+                <div [innerHTML]="'account.assume-role.step-1-4' | translate"></div>
                 <div class="input-container">
-                  <label for="account-id">{{ 'account.models.bedrock.account-id' | translate }}</label>
+                  <label for="account-id">{{ 'account.assume-role.account-id' | translate }}</label>
                   <pa-input
                     id="account-id"
                     [value]="params?.aws_account_id || ''"
@@ -33,7 +33,7 @@
                   </pa-button>
                 </div>
                 <div class="input-container">
-                  <label>{{ 'account.models.bedrock.external-id' | translate }}</label>
+                  <label>{{ 'account.assume-role.external-id' | translate }}</label>
                   <pa-input
                     [value]="params?.external_id || ''"
                     externalLabel
@@ -47,11 +47,11 @@
                   </pa-button>
                 </div>
               </li>
-              <li [innerHTML]="'account.models.bedrock.step-1-5' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-1-5' | translate"></li>
               <li class="step-with-inputs">
-                <div>{{ 'account.models.bedrock.step-1-6' | translate }}</div>
+                <div>{{ 'account.assume-role.step-1-6' | translate }}</div>
                 <div class="input-container">
-                  <label for="role-name">{{ 'account.models.bedrock.role-name' | translate }}</label>
+                  <label for="role-name">{{ 'account.assume-role.role-name' | translate }}</label>
                   <pa-input
                     id="role-name"
                     [value]="params?.role_name || ''"
@@ -66,32 +66,31 @@
                   </pa-button>
                 </div>
               </li>
-              <li [innerHTML]="'account.models.bedrock.step-1-7' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-1-7' | translate"></li>
             </ul>
           </pa-accordion-item-body>
         </pa-accordion-item>
         <pa-accordion-item
           id="step-2"
-          [itemTitle]="'account.models.bedrock.step' | translate: { num: 2 }"
-          [description]="'account.models.bedrock.permissions' | translate">
+          [itemTitle]="'account.assume-role.step' | translate: { num: 2 }"
+          [description]="'account.assume-role.permissions' | translate">
           <pa-accordion-item-body>
             <ul class="step-list body-m">
               <li>
-                <span [innerHTML]="'account.models.bedrock.step-2-1' | translate"></span>
+                <span [innerHTML]="'account.assume-role.step-2-1' | translate"></span>
                 <strong>{{ params?.role_name }}</strong>
               </li>
-              <li [innerHTML]="'account.models.bedrock.step-2-2' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-2-2' | translate"></li>
               <li>
-                <div [innerHTML]="'account.models.bedrock.step-2-3' | translate"></div>
+                <div [innerHTML]="'account.assume-role.step-2-3' | translate"></div>
                 <div class="input-container">
                   <pa-textarea
                     class="full-width"
                     [value]="policy"
-                    [help]="'account.models.bedrock.permissions-help' | translate"
+                    [help]="policyHelp ? (policyHelp | translate) : undefined"
                     rows="8"
                     readonly
                     externalLabel></pa-textarea>
-                  <!-- TODO: a link to the documentation should be added when it's ready -->
                   <pa-button
                     [icon]="copied['policy'] ? 'check' : 'copy'"
                     aspect="basic"
@@ -99,24 +98,24 @@
                     (click)="copy('policy', policy)"></pa-button>
                 </div>
               </li>
-              <li [innerHTML]="'account.models.bedrock.step-2-4' | translate"></li>
+              <li [innerHTML]="'account.assume-role.step-2-4' | translate"></li>
             </ul>
           </pa-accordion-item-body>
         </pa-accordion-item>
         <pa-accordion-item
           id="step-3"
-          [itemTitle]="'account.models.bedrock.step' | translate: { num: 3 }"
-          [description]="'account.models.bedrock.role-arn' | translate">
+          [itemTitle]="'account.assume-role.step' | translate: { num: 3 }"
+          [description]="'account.assume-role.role-arn' | translate">
           <pa-accordion-item-body>
             <ul class="step-list body-m">
               <li>
-                <div class="body-m">{{ 'account.models.bedrock.step-3-1' | translate }}</div>
+                <div class="body-m">{{ 'account.assume-role.step-3-1' | translate }}</div>
                 <div class="input-container">
                   <pa-input
                     class="full-width"
                     [formControl]="form.controls.arn"
                     [help]="'Example: arn:aws:iam::123456789:role/role-name' | translate">
-                    {{ 'account.models.bedrock.role-arn' | translate }}
+                    {{ 'account.assume-role.role-arn' | translate }}
                   </pa-input>
                 </div>
               </li>
@@ -124,25 +123,19 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
       </pa-accordion>
-      @if (saving) {
-        <div class="saving">
-          <nsi-spinner></nsi-spinner>
-        </div>
-      }
     </div>
   </pa-modal-content>
 
   <pa-modal-footer>
     <pa-button
       aspect="basic"
-      (click)="cancel()"
-      [disabled]="saving">
+      (click)="cancel()">
       {{ 'generic.cancel' | translate }}
     </pa-button>
     <pa-button
       kind="primary"
       type="submit"
-      [disabled]="form.invalid || saving"
+      [disabled]="form.invalid"
       (click)="save()">
       {{ 'generic.continue' | translate }}
     </pa-button>

@@ -56,6 +56,7 @@ export class AddSyncPageComponent implements OnInit {
     map((id) => this.syncService.getConnectorDefinition(id)),
   );
   isCloud = this.connectorDefinition.pipe(map((def) => !!def.cloud));
+  assumeRole = this.connectorDefinition.pipe(map((def) => def.apikey_provider === 'aws_s3_assume_role'));
   enterCredentials = true;
   externalConnection?: ExternalConnection;
   connector: Observable<IConnector> = this.connectorId.pipe(map((id) => this.syncService.getConnector(id, '')));
@@ -142,6 +143,10 @@ export class AddSyncPageComponent implements OnInit {
                   this.externalConnection = data;
                   this.enterCredentials = false;
                   this.cdr.markForCheck();
+                }),
+                catchError((error) => {
+                  this.toaster.error(error?.body?.detail || 'sync.add-page.toast.generic-error');
+                  return of(undefined);
                 }),
               );
           }

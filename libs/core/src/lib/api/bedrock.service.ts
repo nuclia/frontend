@@ -45,7 +45,10 @@ export class BedrockService {
                 : 'error';
           return of({
             status,
-            errorMessage: status === 'error' ? error?.body?.detail?.message : undefined,
+            errorMessage:
+              status === 'error'
+                ? error?.body?.detail?.detail?.Error?.Message || error?.body?.detail?.message
+                : undefined,
           } as BedrockStatus);
         }),
       );

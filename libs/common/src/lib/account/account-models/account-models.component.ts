@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
-import { BedrockService, BedrockStatus, FeaturesService, SDKService, Zone, ZoneService } from '@flaps/core';
+import {
+  BedrockService,
+  BedrockStatus,
+  BEDROCK_IAM_POLICY,
+  FeaturesService,
+  SDKService,
+  Zone,
+  ZoneService,
+} from '@flaps/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -12,12 +20,17 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModelConfigurationItem } from '@nuclia/core';
-import { SisModalService, SisProgressModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import {
+  SisModalService,
+  SisProgressModule,
+  SisToastService,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, filter, map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { CreateConfigComponent } from './create-config/create-config.component';
 import { ModelRestrictionsComponent } from './model-restrictons/model-restrictions.component';
-import { BedrockAuthenticatonComponent } from './bedrock-authentication/bedrock-authentication.component';
+import { AssumeRoleModalComponent } from '../assume-role-modal/assume-role-modal.component';
 
 interface ModelConfigurationWithZone extends ModelConfigurationItem {
   zone: string;
@@ -52,6 +65,7 @@ export class AccountModelsComponent {
   private modalService = inject(SisModalService);
   private bedrockService = inject(BedrockService);
   private features = inject(FeaturesService);
+  private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
 
   modelConfigs = new ReplaySubject<ModelConfigurationWithZone[]>(1);
@@ -175,13 +189,58 @@ export class AccountModelsComponent {
   }
 
   setupIntegration(zone: string) {
-    this.modalService
-      .openModal(
-        BedrockAuthenticatonComponent,
-        new ModalConfig<{ zone: string }>({ dismissable: false, data: { zone } }),
+    this.sdk.currentAccount
+      .pipe(
+        take(1),
+        switchMap((account) => this.bedrockService.startAuthFlow(account.id, zone)),
+        switchMap(
+          (params) =>
+            this.modalService.openModal(
+              AssumeRoleModalComponent,
+              new ModalConfig({
+                dismissable: false,
+                data: {
+                  params,
+                  policy: BEDROCK_IAM_POLICY,
+                  policyHelp: 'account.models.bedrock.policy',
+                  title: 'account.models.bedrock.integration',
+                  isBedrock: true,
+                },
+              }),
+            ).onClose,
+        ),
+        switchMap((arn) => (arn ? this.createIntegration(zone, arn) : this._deleteIntegration(zone))),
+        switchMap(() => this.updateBedrockIntegrations()),
       )
-      .onClose.pipe(switchMap(() => this.updateBedrockIntegrations()))
       .subscribe();
+  }
+
+  createIntegration(zone: string, arn: string) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      tap(() => {
+        this.loadingBedrock = true;
+        this.cdr.markForCheck();
+      }),
+      switchMap((account) =>
+        this.bedrockService
+          .finishAuthFlow(account.id, zone, { role_arn: arn })
+          .pipe(switchMap(() => this.bedrockService.getStatus(account.id, zone))),
+      ),
+      tap((res) => {
+        this.loadingBedrock = false;
+        this.cdr.markForCheck();
+        if (res.status !== 'active') {
+          this.toaster.error('account.models.bedrock.error');
+        }
+      }),
+      catchError(() => {
+        this.loadingBedrock = false;
+        this.cdr.markForCheck();
+        this.toaster.error('account.models.bedrock.error');
+        return of(true);
+      }),
+    );
   }
 
   deleteIntegration(zone: string) {
@@ -194,11 +253,17 @@ export class AccountModelsComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentAccount.pipe(take(1))),
-        switchMap((account) => this.bedrockService.delete(account.id, zone)),
+        switchMap(() => this._deleteIntegration(zone)),
         switchMap(() => this.updateBedrockIntegrations()),
       )
       .subscribe();
+  }
+
+  private _deleteIntegration(zone: string) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.bedrockService.delete(account.id, zone)),
+    );
   }
 
   updateBedrockIntegrations() {

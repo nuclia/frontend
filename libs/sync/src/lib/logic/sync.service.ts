@@ -32,6 +32,7 @@ import { OAuthConnector } from './connectors/oauth';
 import { compareDesc } from 'date-fns';
 import { SitefinityConnector } from './connectors/sitefinity';
 import { SharepointImpl } from './connectors/sharepoint';
+import { S3Impl } from './connectors/s3';
 
 export type SyncServerType = 'desktop' | 'server' | 'cloud';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -105,6 +106,18 @@ export class SyncService {
         permanentSyncOnly: true,
         cloud: true,
         factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getSyncOAuthServer()),
+      },
+    },
+    s3: {
+      definition: {
+        id: 's3',
+        apikey_provider: 'aws_s3_assume_role',
+        title: 'AWS S3',
+        logo: `${baseLogoPath}/aws.svg`,
+        description: 'AWS S3 service',
+        permanentSyncOnly: true,
+        cloud: true,
+        factory: () => new S3Impl(),
       },
     },
     folder: { definition: FolderConnector },

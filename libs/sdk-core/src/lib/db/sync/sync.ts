@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { INuclia } from '../../models';
 import type { IWritableKnowledgeBox } from '../kb/kb.models';
 import {
+  AssumeRoleInfo,
   BrowseOptions,
   ExternalConnection,
   ExternalConnectionCredentials,
@@ -40,6 +41,10 @@ export class SyncManager implements ISyncManager {
 
   getExternalConnection(id: string): Observable<ExternalConnection> {
     return this.nuclia.rest.get<any>(`${this.kb.path}/external_connection/${id}`);
+  }
+
+  getAssumeRoleInfo(): Observable<AssumeRoleInfo> {
+    return this.nuclia.rest.get<AssumeRoleInfo>(`${this.kb.path}/external_connections/s3/assume_role_info`);
   }
 
   createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration> {
