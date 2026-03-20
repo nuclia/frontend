@@ -45,8 +45,8 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
-  @if (currentSite() || currentDrive() || currentPath()) {
-    <div class="back">
+  @if (currentSite() || (currentDrive() && !requiresBucketSearch) || currentPath()) {
+    <div>
       <nsi-button-mini
         icon="undo"
         (click)="back()">

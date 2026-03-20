@@ -110,8 +110,10 @@ export class CloudFolderComponent implements OnInit {
   }
 
   browseFolder(path: string) {
-    this.currentPath.set(path);
-    this.loadFolders(undefined, this.currentDrive()?.id, path);
+    // Normalize the path as some connectors (e.g. AWS S3) do not include the initial slash
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    this.currentPath.set(normalizedPath);
+    this.loadFolders(undefined, this.currentDrive()?.id, normalizedPath);
   }
 
   back() {
@@ -130,9 +132,7 @@ export class CloudFolderComponent implements OnInit {
       }
     } else if (this.currentDrive()) {
       this.currentDrive.set(undefined);
-      if (!this.requiresBucketSearch) {
-        this.loadFolders(this.currentSite() ? this.currentSite()?.id : undefined);
-      }
+      this.loadFolders(this.currentSite() ? this.currentSite()?.id : undefined);
     } else {
       this.currentSite.set(undefined);
       if (this.requiresSiteUrlResolution) {
