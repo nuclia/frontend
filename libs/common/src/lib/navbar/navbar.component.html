@@ -205,7 +205,7 @@
               <div class="nav-group">
                 <div class="group-items">
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/remi-analytics' : null"
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
                     data-cy="go-to-remi-analytics"
@@ -214,40 +214,40 @@
                     <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
                   </a>
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/usage' : null"
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
-                    data-cy="go-to-usage-analysis"
+                    data-cy="go-to-usage-analytics"
                     [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                     <pa-icon name="chart"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.usage-analysis' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.metrics.usage-analytics' | translate }}</span>
                   </a>
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/tokens' : null"
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/cost-token-usage' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
                     data-cy="go-to-cost-token"
                     [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                     <pa-icon name="payment-details"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.cost-token' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
                   </a>
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/resources' : null"
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/resource-activity' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
-                    data-cy="go-to-processing-activity"
+                    data-cy="go-to-resource-activity"
                     [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                     <pa-icon name="activity-log"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.processing' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
                   </a>
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/activity/searches' : null"
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/search-activity' : null"
                     routerLinkActive="active"
                     class="nav-link sub-item"
                     data-cy="go-to-search-activity"
                     [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                     <pa-icon name="payment-history"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.searches' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
                   </a>
                 </div>
               </div>

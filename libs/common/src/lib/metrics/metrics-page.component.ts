@@ -1,285 +1,231 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  ElementRef,
+  computed,
+  DestroyRef,
+  effect,
   inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewChildren,
+  input,
+  output,
+  signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import {
-  AccordionBodyDirective,
-  AccordionComponent,
-  AccordionExtraDescriptionDirective,
-  AccordionItemComponent,
-  PaButtonModule,
-  PaExpanderModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
-import { fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, takeUntil } from 'rxjs/operators';
-import {
-  DatedRangeChartData,
-  GroupedBarChartComponent,
-  GroupedBarChartData,
-  RangeChartComponent,
-  RangeChartData,
-  RangeEvolutionChartComponent,
-} from '../charts';
-import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
-import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { format } from 'date-fns';
-import {
-  RemiQueryCriteria,
-  RemiQueryResponse,
-  RemiQueryResponseContextDetails,
-  SHORT_FIELD_TYPE,
-  shortToLongFieldType,
-} from '@nuclia/core';
-import { DateAfter } from '../validators';
-import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
-import { PreviewService } from '../resources';
-import { SafeHtml } from '@angular/platform-browser';
-import { NavigationService } from '@flaps/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
+import { Subject, debounceTime } from 'rxjs';
+import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
+import { MetricsColumnDef, MetricsMonthRange, MetricsSidebarField } from './metrics-column.model';
+import { MetricsPageService } from './metrics-page.service';
 
 @Component({
-  imports: [
-    CommonModule,
-    TranslateModule,
-    PaTextFieldModule,
-    RangeChartComponent,
-    RangeEvolutionChartComponent,
-    AccordionComponent,
-    AccordionItemComponent,
-    AccordionBodyDirective,
-    SisProgressModule,
-    ReactiveFormsModule,
-    InfoCardComponent,
-    PaTableModule,
-    GroupedBarChartComponent,
-    PaExpanderModule,
-    AccordionExtraDescriptionDirective,
-    MissingKnowledgeDetailsComponent,
-    PaButtonModule,
-    RouterModule,
-  ],
+  standalone: false,
+  selector: 'app-metrics-page',
   templateUrl: './metrics-page.component.html',
   styleUrl: './metrics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [DatePipe, MetricsPageService],
 })
-export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
-  private remiMetrics = inject(RemiMetricsService);
-  private previewService = inject(PreviewService);
-  private navigationService = inject(NavigationService);
-  private cdr = inject(ChangeDetectorRef);
+export class MetricsPageComponent {
+  readonly service = inject(MetricsPageService);
+  private destroyRef = inject(DestroyRef);
+  private datePipe = inject(DatePipe);
 
-  private unsubscribeAll: Subject<void> = new Subject();
+  // ── Inputs ────────────────────────────────────────────────────────────────
 
-  @ViewChild('missingKnowledgeHeader', { read: ElementRef }) missingKnowledgeHeader?: ElementRef;
-  @ViewChildren(AccordionItemComponent) accordionItems?: AccordionItemComponent[];
+  pageTitle = input('');
+  pageSubtitle = input('');
+  loading = input(false);
+  loadingMore = input(false);
+  columns = input<MetricsColumnDef[]>([]);
+  sidebarFields = input<MetricsSidebarField[]>([]);
+  items = input<ActivityLogItem[]>([]);
+  availableMonths = input<string[]>([]);
+  showDownload = input(true);
+  showSearch = input(true);
 
-  period: Observable<RemiPeriods> = this.remiMetrics.period;
+  // ── Outputs ───────────────────────────────────────────────────────────────
 
-  healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
+  monthRangeChange = output<MetricsMonthRange>();
+  rowClick = output<ActivityLogItem>();
+  searchChange = output<{ term: string; column: string }>();
+  loadNextPage = output<void>();
+  downloadRequested = output<{ format: DownloadFormat; columns: string[] }>();
 
-  groundednessEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.groundednessEvolution;
-  answerEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.answerEvolution;
-  contextEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.contextEvolution;
-  lowContextData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeLowContext;
-  noAnswerData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeNoAnswer;
-  badFeedbackData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeBadFeedback;
-  missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
-    this.remiMetrics.missingKnowledgeBarPlotData;
+  // ── Internal state ────────────────────────────────────────────────────────
 
-  missingKnowledgeDetails: { [id: number]: RemiQueryResponseContextDetails } = {};
-  missingKnowledgeError: { [id: number]: boolean } = {};
+  readonly rowHeight = 56;
+  viewportOffset = 0;
 
-  lowContextCriteria = new FormGroup({
-    value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
-    }),
-  });
-  noAnswerCriteria = new FormGroup({
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
-    }),
-  });
-  badFeedbackCriteria = new FormGroup({
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
-      nonNullable: true,
-      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
-    }),
-  });
+  readonly selectedMonth = signal<string>(MetricsPageComponent.currentYearMonth());
+  readonly selectedItem = signal<ActivityLogItem | null>(null);
+  readonly sidePanelExpanded = signal(false);
 
-  noEvolutionData: Observable<boolean> = this.remiMetrics.noEvolutionData;
-  healthStatusOnError: Observable<boolean> = this.remiMetrics.healthStatusOnError;
-  evolutionDataOnError: Observable<boolean> = this.remiMetrics.evolutionDataOnError;
-  lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
-  noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
-  badFeedbackOnError: Observable<boolean> = this.remiMetrics.badFeedbackOnError;
-  
-  lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
-  noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
-  badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
+  /** Search debounce — 250 ms delay before updating the filter signal. */
+  private readonly searchInput$ = new Subject<string>();
+  private readonly currentSearchTerm = signal<string>('');
 
-  lowContextLoading: Observable<boolean> = this.remiMetrics.lowContextLoading;
-  noAnswerLoading: Observable<boolean> = this.remiMetrics.noAnswerLoading;
-  badFeedbackLoading: Observable<boolean> = this.remiMetrics.badFeedbackLoading;
+  constructor() {
+    effect(() => {
+      this.service.setColumns(this.columns());
+    });
+    effect(() => {
+      this.service.setItems(this.items());
+    });
 
-  viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
-  kbUrl = this.navigationService.kbUrl;
+    effect(() => {
+      const months = this.availableMonths();
+      if (months.length > 0 && !months.includes(this.selectedMonth())) {
+        this._selectMonth(months[0]);
+      }
+    });
 
-  get lowContextMonthControl() {
-    return this.lowContextCriteria.controls.month;
-  }
-  get lowControlMonthValue() {
-    return this.lowContextMonthControl.value;
-  }
-  get criteriaPercentValue() {
-    return parseInt(this.lowContextCriteria.controls.value.getRawValue(), 10) * 20 + '%';
-  }
-  get noAnswerMonthControl() {
-    return this.noAnswerCriteria.controls.month;
-  }
-  get noAnswerMonthValue() {
-    return this.noAnswerMonthControl.value;
-  }
-  get badFeedbackMonthControl() {
-    return this.badFeedbackCriteria.controls.month;
-  }
-  get badFeedbackMonthValue() {
-    return this.badFeedbackMonthControl.value;
-  }
+    this.service.updateRangeLabel(this.selectedMonth());
 
-  missingKnowledgeHeaderHeight = '';
-
-  ngAfterViewInit() {
-    if (this.missingKnowledgeHeader) {
-      this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
-      fromEvent(window, 'resize')
-        .pipe(auditTime(200), takeUntil(this.unsubscribeAll))
-        .subscribe(() => {
-          if (this.missingKnowledgeHeader) {
-            this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
-            this.cdr.detectChanges();
-          }
-        });
-    }
-  }
-
-  ngOnInit() {
-    this.loadNoAnswers();
-    this.loadLowContext();
-    this.loadBadFeedback();
-    this.noAnswerCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadNoAnswers());
-    this.lowContextCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadLowContext());
-    this.badFeedbackCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadBadFeedback());
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
-  updatePeriod(period: RemiPeriods) {
-    this.remiMetrics.updatePeriod(period);
-  }
-
-  loadMissingKnowledgeDetails(id: number) {
-    if (this.missingKnowledgeDetails[id]) {
-      return;
-    }
-    this.remiMetrics.getMissingKnowledgeDetails(id).subscribe({
-      next: (details) => {
-        this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [id]: details };
-        this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: false };
-        setTimeout(() => {
-          const accordionItem = this.accordionItems?.find((item) => item.id === `${id}`);
-          if (accordionItem) {
-            accordionItem.updateContentHeight();
-          }
-        });
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: true };
-        this.cdr.detectChanges();
-      },
+    this.searchInput$.pipe(
+      debounceTime(250),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((term) => {
+      this.currentSearchTerm.set(term ?? '');
+      this.searchChange.emit({ term: term ?? '', column: this.service.searchMode() });
     });
   }
 
-  openViewer(contextId: string) {
-    const [resourceId, fieldType, fieldId] = contextId.split('/');
-    if (!resourceId || !fieldType || !fieldId) {
-      console.error(`Malformed context id ${contextId}:`, resourceId, fieldType, fieldId);
-      return;
-    }
-    const longFieldType = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
-    if (!longFieldType) {
-      console.error(`Unknown field type ${fieldType}`);
-      return;
-    }
-    this.previewService
-      .openViewer({
-        resourceId: resourceId,
-        field_type: longFieldType,
-        field_id: fieldId,
-      })
-      .subscribe();
-  }
+  // ── Event handlers ────────────────────────────────────────────────────────
 
-  private loadLowContext() {
-    if (this.lowContextCriteria.valid) {
-      const data = this.lowContextCriteria.getRawValue();
-      const criteria: RemiQueryCriteria = {
-        month: data.month,
-        context_relevance: {
-          value: parseInt(data.value, 10),
-          operation: 'lt',
-          aggregation: 'max',
-        },
-      };
-      this.remiMetrics.updateLowContextCriteria(criteria);
+  onMonthChange(value: string): void {
+    if (value) {
+      this._selectMonth(value);
     }
   }
 
-  private loadNoAnswers() {
-    if (this.noAnswerCriteria.valid) {
-      const month = this.noAnswerCriteria.getRawValue().month;
-      this.remiMetrics.updateNoAnswerMonth(month);
+  formatMonth(yyyyMM: string): string {
+    const [year, month] = yyyyMM.split('-');
+    const d = new Date(Number(year), Number(month) - 1, 1);
+    return this.datePipe.transform(d, 'MMM yyyy') ?? yyyyMM;
+  }
+
+  private _selectMonth(value: string): void {
+    this.selectedMonth.set(value);
+    this.service.updateRangeLabel(value);
+    this.monthRangeChange.emit({ from: value, to: value });
+  }
+
+  onSearch(term: string): void {
+    this.searchInput$.next(term ?? '');
+  }
+
+  onModeSelected(mode: string): void {
+    this.service.updateSearchMode(mode);
+    const term = this.currentSearchTerm();
+    if (term) {
+      this.searchChange.emit({ term, column: mode });
     }
   }
 
-  private loadBadFeedback() {
-    if (this.badFeedbackCriteria.valid) {
-      const month = this.badFeedbackCriteria.getRawValue().month;
-      this.remiMetrics.updateBadFeedbackMonth(month);
+  toggleColumn(key: string): void {
+    this.service.toggleColumn(key);
+  }
+
+  onRowClick(item: ActivityLogItem): void {
+    this.selectedItem.set(item);
+    this.rowClick.emit(item);
+  }
+
+  closeSidePanel(): void {
+    this.selectedItem.set(null);
+    this.sidePanelExpanded.set(false);
+  }
+
+  toggleSidePanelExpand(): void {
+    this.sidePanelExpanded.update((v) => !v);
+  }
+
+  /** Fields like question/answer/reasoning get the accordion inner-card treatment. */
+  isLargeTextField(key: string): boolean {
+    return key === 'question' || key === 'answer' || key === 'reasoning' || key === 'retrieval_rephrased_question';
+  }
+
+  /** Groups all columns + sidebar fields by their group property for sidebar rendering */
+  readonly sidebarGroups = computed(() => {
+    const colFields = this.service.columnDefs().map((col) => ({
+      key: col.key,
+      label: col.label,
+      value: col.value,
+      group: col.group || 'query',
+      expandable: this.isLargeTextField(col.key),
+      isColumn: true,
+    }));
+
+    const extraFields = this.sidebarFields().map((field) => ({
+      key: field.key,
+      label: field.label,
+      value: field.value,
+      group: field.group || 'query',
+      expandable: field.expandable || this.isLargeTextField(field.key),
+      isColumn: false,
+    }));
+
+    const allFields = [...colFields, ...extraFields];
+
+    const groupMap = allFields.reduce((map, field) => {
+      const group = field.group;
+      if (!map.has(group)) map.set(group, []);
+      map.get(group)!.push(field);
+      return map;
+    }, new Map<string, typeof allFields>());
+
+    return Array.from(groupMap.entries()).map(([group, fields]) => ({
+      group,
+      labelKey: `activity.detail.group.${group}`,
+      fields,
+    }));
+  });
+
+  getFieldValue(item: ActivityLogItem, field: { key: string; value: (item: ActivityLogItem) => any; isColumn: boolean }): string {
+    if (field.isColumn) {
+      return this.getCellValue(item, field.key);
+    }
+    const raw = field.value(item);
+    if (raw == null) return '—';
+    if (field.key === 'date') {
+      return this.datePipe.transform(raw as string, 'MMM dd, yyyy') ?? String(raw);
+    }
+    return String(raw);
+  }
+
+  hasGroupData(item: ActivityLogItem, fields: Array<{ value: (item: ActivityLogItem) => any }>): boolean {
+    return fields.some((f) => f.value(item) != null);
+  }
+
+  isColumnVisible(key: string): boolean {
+    return this.service.isColumnVisible(key);
+  }
+
+  getCellValue(item: ActivityLogItem, key: string): string {
+    return this.service.getCellValue(item, key);
+  }
+
+  // ── Download ──────────────────────────────────────────────────────────────
+
+  onDownload(format: DownloadFormat): void {
+    this.downloadRequested.emit({
+      format,
+      columns: this.service.visibleColumnKeys(),
+    });
+  }
+
+  // ── Scroll ────────────────────────────────────────────────────────────────
+
+  private readonly SCROLL_NEAR_END_THRESHOLD = 30;
+
+  onScrolledIndexChange(firstVisible: number): void {
+    const total = this.items().length;
+    if (total > 0 && firstVisible + this.SCROLL_NEAR_END_THRESHOLD >= total) {
+      this.loadNextPage.emit();
     }
   }
 
-  updateNoAnswerPage(event: MouseEvent, next: boolean) {
-    event.stopPropagation();
-    this.remiMetrics.updateNoAnswerPage(next);
-  }
-
-  updateLowContextPage(event: MouseEvent, next: boolean) {
-    event.stopPropagation();
-    this.remiMetrics.updateLowContextPage(next);
-  }
-
-  updateBadFeedbackPage(event: MouseEvent, next: boolean) {
-    event.stopPropagation();
-    this.remiMetrics.updateBadFeedbackPage(next);
+  private static currentYearMonth(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   }
 }

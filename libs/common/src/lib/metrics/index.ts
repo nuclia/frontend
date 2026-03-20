@@ -1,2 +1,4 @@
-export * from './metrics-page.component';
-export * from './remi-metrics.service';
+export * from './metrics.module';
+export * from './metrics-column.model';
+export * from './metrics-filters';
+export * from './remi-analytics-page';

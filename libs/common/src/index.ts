@@ -2,7 +2,7 @@
  * Public API Surface of @flaps/common
  */
 export * from './lib/account';
-export * from './lib/activity';
+export * from './lib/metrics';
 export * from './lib/ai-models';
 export * from './lib/aws-onboarding';
 export * from './lib/base';

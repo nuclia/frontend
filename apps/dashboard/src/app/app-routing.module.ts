@@ -13,7 +13,7 @@ import {
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
-  MetricsPageComponent,
+  RemiAnalyticsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PreviewComponent,
@@ -121,9 +121,9 @@ const routes: Routes = [
                 loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
               },
               {
-                path: 'activity',
+                path: 'metrics',
                 canActivate: [knowledgeBoxOwnerGuard],
-                loadChildren: () => import('../../../../libs/common/src/lib/activity/activity.module').then((m) => m.ActivityModule),
+                loadChildren: () => import('../../../../libs/common/src/lib/metrics/metrics.module').then((m) => m.MetricsModule),
               },
               {
                 path: 'entities',
@@ -162,7 +162,7 @@ const routes: Routes = [
               },
               {
                 path: 'metrics',
-                component: MetricsPageComponent,
+                component: RemiAnalyticsPageComponent,
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {
