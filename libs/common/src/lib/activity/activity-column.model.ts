@@ -23,6 +23,9 @@ export interface ActivityColumnDef {
   /** Whether this column is hidden by default (user can toggle it back on). */
   defaultHidden?: boolean;
 
+  /** If true, this column appears in the search bar mode selector. Only string-filterable columns should be searchable. */
+  searchable?: boolean;
+
   /** If true, this column is not shown in the table at all — only in the side panel. */
   sidebarOnly?: boolean;
 

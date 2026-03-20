@@ -86,12 +86,22 @@ export class UsageAnalysisPageService {
     NO_CONTEXT: { hasMore: false, lastId: undefined },
   };
 
+  // Filter state
+  private _activeStatuses = signal<Set<RemiAnswerStatus>>(new Set(STATUSES));
+  private _feedbackGoodFilter = signal<boolean | undefined>(undefined);
+  private _contentRelevanceFilter = signal<
+    { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
+  >(undefined);
+
   readonly items = this._items.asReadonly();
   readonly loading = this._loading.asReadonly();
   readonly loadingMore = this._loadingMore.asReadonly();
   readonly availableMonths = this._availableMonths.asReadonly();
   readonly hasMore = this._hasMore.asReadonly();
   readonly remiScoreAverages = this._remiScoreAverages.asReadonly();
+  readonly activeStatuses = this._activeStatuses.asReadonly();
+  readonly feedbackGoodFilter = this._feedbackGoodFilter.asReadonly();
+  readonly contentRelevanceFilter = this._contentRelevanceFilter.asReadonly();
 
   private readonly _reset$ = new Subject<void>();
   private readonly _nextPage$ = new Subject<void>();
@@ -177,6 +187,47 @@ export class UsageAnalysisPageService {
     this._nextPage$.next();
   }
 
+  updateActiveStatuses(statuses: RemiAnswerStatus[]): void {
+    this._activeStatuses.set(new Set(statuses));
+    this._applyFilters();
+  }
+
+  updateFeedbackGoodFilter(value: boolean | undefined): void {
+    this._feedbackGoodFilter.set(value);
+    this._applyFilters();
+  }
+
+  updateContentRelevanceFilter(
+    filter: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
+  ): void {
+    this._contentRelevanceFilter.set(filter);
+    this._applyFilters();
+  }
+
+  applyAllFilters(
+    statuses: RemiAnswerStatus[],
+    feedbackGood: boolean | undefined,
+    contentRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
+  ): void {
+    // If contentRelevance is set, we cannot filter by status (API constraint)
+    if (contentRelevance) {
+      this._activeStatuses.set(new Set(STATUSES));
+    } else {
+      this._activeStatuses.set(new Set(statuses));
+    }
+    this._feedbackGoodFilter.set(feedbackGood);
+    this._contentRelevanceFilter.set(contentRelevance);
+    this._applyFilters();
+  }
+
+  private _applyFilters(): void {
+    if (!this._yearMonth()) return;
+    this._resetStatusPages();
+    this._items.set([]);
+    this._loading.set(true);
+    this._reset$.next();
+  }
+
   private _resetStatusPages(): void {
     for (const status of STATUSES) {
       this._statusPages[status] = { hasMore: false, lastId: undefined };
@@ -186,9 +237,20 @@ export class UsageAnalysisPageService {
 
   private _queryAllStatuses(isAppend: boolean) {
     const yearMonth = this._yearMonth();
+    const feedbackGood = this._feedbackGoodFilter();
+    const contextRelevance = this._contentRelevanceFilter();
+
+    // If contentRelevance is set, we cannot filter by status (API constraint:
+    // "Only one of [context_relevance, status_code] can be set")
+    if (contextRelevance) {
+      return this._querySinglePage(yearMonth, isAppend, feedbackGood, contextRelevance);
+    }
+
+    // Normal per-status queries
+    const active = this._activeStatuses();
     const statusesToQuery = isAppend
-      ? STATUSES.filter((s) => this._statusPages[s].hasMore)
-      : STATUSES;
+      ? STATUSES.filter((s) => active.has(s) && this._statusPages[s].hasMore)
+      : STATUSES.filter((s) => active.has(s));
 
     if (statusesToQuery.length === 0) {
       return of([] as UsageAnalysisItem[]);
@@ -208,6 +270,9 @@ export class UsageAnalysisPageService {
                   ? { limit: PAGE_SIZE, starting_after: state.lastId }
                   : { limit: PAGE_SIZE },
             };
+            if (feedbackGood !== undefined) {
+              criteria.feedback_good = feedbackGood;
+            }
             return kb.activityMonitor.queryRemiScores(criteria).pipe(
               map((response) => ({ status, response })),
               catchError(() => of({ status, response: { data: [], has_more: false } as RemiQueryResponse })),
@@ -227,8 +292,57 @@ export class UsageAnalysisPageService {
             merged.push(this._mapToUsageItem(item, status));
           }
         }
-        this._hasMore.set(STATUSES.some((s) => this._statusPages[s].hasMore));
+        this._hasMore.set(STATUSES.some((s) => active.has(s) && this._statusPages[s].hasMore));
         return merged.sort((a, b) => b.id - a.id);
+      }),
+    );
+  }
+
+  /**
+   * Single-query mode used when contentRelevance is set.
+   * The REMI API does not allow context_relevance and status to be combined,
+   * so we send a single query without status and use the 'SUCCESS' page state
+   * for shared pagination tracking.
+   */
+  private _querySinglePage(
+    yearMonth: string,
+    isAppend: boolean,
+    feedbackGood: boolean | undefined,
+    contextRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' },
+  ) {
+    // Use 'SUCCESS' page state as shared pagination tracker
+    const pageState = this._statusPages['SUCCESS'];
+    const pagination =
+      isAppend && pageState.lastId !== undefined
+        ? { limit: PAGE_SIZE, starting_after: pageState.lastId }
+        : { limit: PAGE_SIZE };
+
+    const criteria: RemiQueryCriteria = {
+      month: yearMonth,
+      context_relevance: contextRelevance,
+      pagination,
+    };
+    if (feedbackGood !== undefined) {
+      criteria.feedback_good = feedbackGood;
+    }
+
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.activityMonitor.queryRemiScores(criteria).pipe(
+          catchError(() => of({ data: [], has_more: false } as RemiQueryResponse)),
+        ),
+      ),
+      map((response) => {
+        pageState.hasMore = response.has_more;
+        const lastItem = response.data[response.data.length - 1];
+        if (lastItem) pageState.lastId = lastItem.id;
+        this._hasMore.set(response.has_more);
+
+        // RemiQueryResponseItem does not include a status field when querying by
+        // context_relevance (API constraint: "Only one of [context_relevance, status_code]").
+        // Status is unknown here, so we pass null to display '—' instead of a misleading value.
+        return response.data.map((item) => this._mapToUsageItem(item, null));
       }),
     );
   }
@@ -243,7 +357,7 @@ export class UsageAnalysisPageService {
     }
   }
 
-  private _mapToUsageItem(remiItem: RemiQueryResponseItem, status: RemiAnswerStatus): UsageAnalysisItem {
+  private _mapToUsageItem(remiItem: RemiQueryResponseItem, status: RemiAnswerStatus | null): UsageAnalysisItem {
     return {
       ...NULL_ACTIVITY_FIELDS,
       id: remiItem.id,
@@ -251,7 +365,7 @@ export class UsageAnalysisPageService {
       answer: remiItem.answer,
       status,
       remi_scores: remiItem.remi?.answer_relevance?.score ?? null,
-      _displayStatus: this._translateStatus(status),
+      _displayStatus: status ? this._translateStatus(status) : '—',
       _remiScore: remiItem.remi?.answer_relevance?.score ?? null,
     };
   }

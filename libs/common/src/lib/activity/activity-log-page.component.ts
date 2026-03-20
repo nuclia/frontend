@@ -40,6 +40,7 @@ export class ActivityLogPageComponent {
   items = input<ActivityLogItem[]>([]);
   availableMonths = input<string[]>([]);
   showDownload = input(true);
+  showSearch = input(true);
 
   // ── Outputs ───────────────────────────────────────────────────────────────
 

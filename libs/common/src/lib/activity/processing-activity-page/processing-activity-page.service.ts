@@ -8,12 +8,16 @@ import {
   ActivityLogPagination,
   DownloadFormat,
   EventType,
+  UsagePoint,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { NumericCondition } from '../activity-filters';
 import { PROCESSING_ACTIVITY_SHOW_FIELDS } from './processing-activity-page.config';
 
 type ProcessingItem = ActivityLogItem & { _displayStatus?: string };
+
+const ALL_SOURCES: EventType[] = [EventType.NEW, EventType.MODIFIED, EventType.PROCESSED];
 
 @Injectable()
 export class ProcessingActivityPageService {
@@ -28,17 +32,27 @@ export class ProcessingActivityPageService {
   private _items = signal<ProcessingItem[]>([]);
   private _loading = signal(false);
   private _loadingMore = signal(false);
+  private _usageStats = signal<{ resourcesProcessed: number | null; paragraphsProcessed: number | null }>({
+    resourcesProcessed: null, paragraphsProcessed: null,
+  });
   private _availableMonths = signal<string[]>([]);
   private _yearMonth = signal('');
   private _search = signal<{ term: string; column: string } | null>(null);
   private _lastIds = signal<Record<string, number | undefined>>({});
   private _hasMore = signal(false);
 
+  // Filter state
+  private _activeSources = signal<Set<EventType>>(new Set(ALL_SOURCES));
+  private _numericConditions = signal<NumericCondition[]>([]);
+
   readonly items = this._items.asReadonly();
   readonly loading = this._loading.asReadonly();
   readonly loadingMore = this._loadingMore.asReadonly();
+  readonly usageStats = this._usageStats.asReadonly();
   readonly availableMonths = this._availableMonths.asReadonly();
   readonly hasMore = this._hasMore.asReadonly();
+  readonly activeSources = this._activeSources.asReadonly();
+  readonly numericConditions = this._numericConditions.asReadonly();
 
   private readonly _sources: Array<[EventType, string]> = [
     [EventType.NEW, 'Ingested'],
@@ -48,6 +62,7 @@ export class ProcessingActivityPageService {
 
   private readonly _reset$ = new Subject<void>();
   private readonly _nextPage$ = new Subject<void>();
+  private readonly _loadUsage$ = new Subject<string>();
 
   constructor() {
     this._reset$
@@ -101,21 +116,65 @@ export class ProcessingActivityPageService {
         next: (months) => this._availableMonths.set(months),
         error: () => {},
       });
+
+    this._loadUsage$
+      .pipe(
+        switchMap((yearMonth) => {
+          const { from, to } = this._getMonthRange(yearMonth);
+          return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
+            switchMap(([account, kb]) => this.sdk.nuclia.db.getUsage(account.id, from, to, kb.id)),
+            catchError((err) => {
+              console.error('[ProcessingActivityPageService] failed to load usage stats', err);
+              return of([] as UsagePoint[]);
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((usagePoints) => {
+        let resourcesProcessed = 0;
+        let paragraphsProcessed = 0;
+        for (const point of usagePoints) {
+          for (const metric of point.metrics ?? []) {
+            if (metric.name === 'resources_processed') resourcesProcessed += metric.value;
+            if (metric.name === 'paragraphs_processed') paragraphsProcessed += metric.value;
+          }
+        }
+        this._usageStats.set({
+          resourcesProcessed: usagePoints.length > 0 ? resourcesProcessed : null,
+          paragraphsProcessed: usagePoints.length > 0 ? paragraphsProcessed : null,
+        });
+      });
   }
 
   private _buildFilters(): ActivityLogFilters {
+    const filters: ActivityLogFilters = {};
     const search = this._search();
-    if (!search?.term || search.column === 'status') return {};
-    return { [search.column]: { ilike: search.term } } as ActivityLogFilters;
+    if (search?.term && search.column !== 'status') {
+      if (search.column === 'id') {
+        const parsed = parseInt(search.term, 10);
+        if (!isNaN(parsed)) {
+          filters['id'] = { eq: parsed };
+        }
+      } else if (search.column === 'client_type') {
+        (filters as Record<string, unknown>)[search.column] = { eq: search.term };
+      } else {
+        (filters as Record<string, unknown>)[search.column] = { ilike: search.term };
+      }
+    }
+
+    for (const c of this._numericConditions()) {
+      const existing = ((filters as Record<string, unknown>)[c.column] as Record<string, unknown>) ?? {};
+      existing[c.operation] = c.value;
+      (filters as Record<string, unknown>)[c.column] = existing;
+    }
+
+    return filters;
   }
 
   private _getFilteredSources(): Array<[EventType, string]> {
-    const search = this._search();
-    if (search?.term && search.column === 'status') {
-      const term = search.term.toLowerCase();
-      return this._sources.filter(([, label]) => label.toLowerCase().includes(term));
-    }
-    return this._sources;
+    const active = this._activeSources();
+    return this._sources.filter(([eventType]) => active.has(eventType));
   }
 
   private _queryPage(isAppend: boolean): Observable<Array<{ eventType: EventType; items: ProcessingItem[] }>> {
@@ -184,8 +243,10 @@ export class ProcessingActivityPageService {
     this._lastIds.set({});
     this._hasMore.set(false);
     this._items.set([]);
+    this._usageStats.set({ resourcesProcessed: null, paragraphsProcessed: null });
     this._loading.set(true);
     this._reset$.next();
+    this._loadUsage$.next(yearMonth);
   }
 
   setSearch(term: string, column: string): void {
@@ -201,6 +262,34 @@ export class ProcessingActivityPageService {
     if (!this._hasMore() || this._loading() || this._loadingMore()) return;
     this._loadingMore.set(true);
     this._nextPage$.next();
+  }
+
+  updateActiveSources(sources: EventType[]): void {
+    if (sources.length === 0) return;
+    this._activeSources.set(new Set(sources));
+    this._applyFilters();
+  }
+
+  updateNumericConditions(conditions: NumericCondition[]): void {
+    this._numericConditions.set(conditions);
+    this._applyFilters();
+  }
+
+  applyAllFilters(activeSources: EventType[], numericConditions: NumericCondition[]): void {
+    if (activeSources.length > 0) {
+      this._activeSources.set(new Set(activeSources));
+    }
+    this._numericConditions.set(numericConditions);
+    this._applyFilters();
+  }
+
+  private _applyFilters(): void {
+    if (!this._yearMonth()) return;
+    this._lastIds.set({});
+    this._hasMore.set(false);
+    this._items.set([]);
+    this._loading.set(true);
+    this._reset$.next();
   }
 
   download(format: DownloadFormat, columns: string[]): void {
@@ -240,5 +329,14 @@ export class ProcessingActivityPageService {
       .subscribe((email) => {
         this.toaster.success(this.translate.instant('activity.email-sent', { email }));
       });
+  }
+
+  private _getMonthRange(yearMonth: string): { from: string; to: string } {
+    const [year, month] = yearMonth.split('-');
+    const lastDay = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+    return {
+      from: `${yearMonth}-01`,
+      to: `${yearMonth}-${String(lastDay).padStart(2, '0')}`,
+    };
   }
 }

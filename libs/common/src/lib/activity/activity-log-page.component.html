@@ -10,6 +10,7 @@
     <!-- Month picker -->
     <pa-select
       class="month-picker"
+      [alignPopupOnLeft]="true"
       [label]="'activity.select-month' | translate"
       [value]="selectedMonth()"
       [disabled]="availableMonths().length === 0"
@@ -23,18 +24,24 @@
     </pa-select>
 
     <!-- Search with column-scoped modes -->
-    <nsi-search-input
-      class="toolbar-search"
-      [placeholder]="'generic.search' | translate"
-      [modes]="service.searchModes()"
-      (valueChange)="onSearch($event)"
-      (modeSelected)="onModeSelected($event)">
-    </nsi-search-input>
+    @if (showSearch()) {
+      <nsi-search-input
+        class="toolbar-search"
+        [placeholder]="'generic.search' | translate"
+        [modes]="service.searchModes()"
+        (valueChange)="onSearch($event)"
+        (modeSelected)="onModeSelected($event)">
+      </nsi-search-input>
+    }
 
     <div class="toolbar-actions">
+      <!-- Extra toolbar buttons projected by child pages (e.g. filters) -->
+      <ng-content select="[toolbar-extra]"></ng-content>
+
       <!-- Columns toggle -->
       <nsi-dropdown-button
         [popupRef]="columnsDropdown"
+        [alignLeft]="false"
         aspect="basic">
         {{ 'activity.columns' | translate }}
       </nsi-dropdown-button>
@@ -55,6 +62,7 @@
       @if (showDownload()) {
         <nsi-dropdown-button
           [popupRef]="downloadDropdown"
+          [alignLeft]="false"
           aspect="basic"
           icon="download">
           {{ 'activity.download' | translate }}

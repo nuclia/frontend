@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivityMonthRange } from '../activity-column.model';
+import { FilterApplyEvent, FilterColumnConfig } from '../activity-filters';
 import { SearchActivityPageService } from './search-activity-page.service';
 import { SEARCH_ACTIVITY_COLUMNS, SEARCH_ACTIVITY_SIDEBAR_FIELDS } from './search-activity-page.config';
 
@@ -13,6 +14,16 @@ export class SearchActivityPageComponent {
   protected service = inject(SearchActivityPageService);
   readonly columns = SEARCH_ACTIVITY_COLUMNS;
   readonly sidebarFields = SEARCH_ACTIVITY_SIDEBAR_FIELDS;
+
+  readonly filterColumns: FilterColumnConfig[] = [
+    { key: 'total_duration', labelKey: 'activity.column.duration', type: 'numeric' },
+    { key: 'nuclia_tokens', labelKey: 'activity.column.nuclia-tokens', type: 'numeric' },
+    { key: 'resources_count', labelKey: 'activity.column.resources-count', type: 'numeric' },
+    { key: 'min_score_bm25', labelKey: 'activity.column.min-score-bm25', type: 'numeric' },
+    { key: 'min_score_semantic', labelKey: 'activity.column.min-score-semantic', type: 'numeric' },
+    { key: 'result_per_page', labelKey: 'activity.column.results-per-page', type: 'numeric' },
+    { key: 'retrieval_time', labelKey: 'activity.column.retrieval-time', type: 'numeric' },
+  ];
 
   constructor() {
     const now = new Date();
@@ -34,5 +45,9 @@ export class SearchActivityPageComponent {
 
   onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat; columns: string[] }): void {
     this.service.download(event.format, event.columns);
+  }
+
+  onFiltersApplied(event: FilterApplyEvent): void {
+    this.service.applyAllFilters(event.numericConditions);
   }
 }

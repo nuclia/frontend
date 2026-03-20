@@ -1,3 +1,4 @@
+export * from './compact-number.pipe';
 export * from './format-date.pipe';
 export * from './format-duration.pipe';
 export * from './format-eta.pipe';

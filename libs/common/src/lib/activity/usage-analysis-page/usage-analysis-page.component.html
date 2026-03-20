@@ -8,22 +8,36 @@
   [loadingMore]="service.loadingMore()"
   [availableMonths]="service.availableMonths()"
   [showDownload]="false"
+  [showSearch]="false"
   (monthRangeChange)="onMonthRangeChange($event)"
   (loadNextPage)="onLoadNextPage()">
+
+  <!-- Filter button in toolbar (projected into toolbar-extra slot) -->
+  <app-activity-filters toolbar-extra
+    [showSyntheticStatus]="true"
+    [syntheticStatuses]="syntheticStatuses"
+    [syntheticStatusLabels]="syntheticStatusLabelsMap"
+    [activeSyntheticStatuses]="service.activeStatuses()"
+    [syntheticStatusDisabled]="syntheticStatusDisabled()"
+    [filterColumns]="filterColumns"
+    [activeBooleanConditions]="activeBooleanConditions()"
+    [activeNumericConditions]="activeNumericConditions()"
+    (filtersApplied)="onFiltersApplied($event)">
+  </app-activity-filters>
 
   <!-- Stat cards -->
   <div stat-cards class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().answerRelevance !== null ? (service.remiScoreAverages().answerRelevance | number:'1.1-1') : '—' }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().answerRelevance | compactNumber }}</div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-context-relevance' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().contextRelevance !== null ? (service.remiScoreAverages().contextRelevance | number:'1.1-1') : '—' }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().contextRelevance | compactNumber }}</div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-groundedness' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().groundedness !== null ? (service.remiScoreAverages().groundedness | number:'1.1-1') : '—' }}</div>
+      <div class="display-s">{{ service.remiScoreAverages().groundedness | compactNumber }}</div>
     </div>
   </div>
 

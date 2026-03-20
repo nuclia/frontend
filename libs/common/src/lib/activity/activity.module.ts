@@ -20,8 +20,10 @@ import {
   SisProgressModule,
   SisSearchInputComponent,
 } from '@nuclia/sistema';
+import { CompactNumberPipe } from '../pipes/compact-number.pipe';
 
 import { ActivityLogPageComponent } from './activity-log-page.component';
+import { ActivityFiltersComponent } from './activity-filters';
 import { ProcessingActivityPageComponent } from './processing-activity-page/processing-activity-page.component';
 import { SearchActivityPageComponent } from './search-activity-page/search-activity-page.component';
 import { CostTokenPageComponent } from './cost-token-page/cost-token-page.component';
@@ -61,6 +63,8 @@ const ROUTES = [
     SisProgressModule,
     SisSearchInputComponent,
     MetricsPageComponent,
+    ActivityFiltersComponent,
+    CompactNumberPipe,
   ],
   declarations: [
     ActivityLogPageComponent,

@@ -12,6 +12,14 @@
   (loadNextPage)="onLoadNextPage()"
   (downloadRequested)="onDownloadRequested($event)">
 
+  <app-activity-filters toolbar-extra
+    [showSyntheticStatus]="false"
+    [filterColumns]="filterColumns"
+    [activeBooleanConditions]="[]"
+    [activeNumericConditions]="service.numericConditions()"
+    (filtersApplied)="onFiltersApplied($event)">
+  </app-activity-filters>
+
   <!-- Stat cards -->
   <div stat-cards class="stat-cards">
     <div class="stat-card">

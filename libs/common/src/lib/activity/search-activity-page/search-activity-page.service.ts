@@ -12,6 +12,7 @@ import {
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { NumericCondition } from '../activity-filters';
 import { SEARCH_ACTIVITY_SHOW_FIELDS } from './search-activity-page.config';
 
 @Injectable()
@@ -38,12 +39,16 @@ export class SearchActivityPageService {
     totalChat: null,
   });
 
+  // Sidebar numeric filter state
+  private _numericConditions = signal<NumericCondition[]>([]);
+
   readonly items = this._items.asReadonly();
   readonly loading = this._loading.asReadonly();
   readonly loadingMore = this._loadingMore.asReadonly();
   readonly availableMonths = this._availableMonths.asReadonly();
   readonly hasMore = this._hasMore.asReadonly();
   readonly searchTotals = this._searchTotals.asReadonly();
+  readonly numericConditions = this._numericConditions.asReadonly();
 
   private readonly _reset$ = new Subject<void>();
   private readonly _nextPage$ = new Subject<void>();
@@ -112,9 +117,31 @@ export class SearchActivityPageService {
   }
 
   private _buildFilters(): ActivityLogSearchFilters {
+    const filters: ActivityLogSearchFilters = {};
+
+    // Text search
     const search = this._search();
-    if (!search?.term) return {};
-    return { [search.column]: { ilike: search.term } } as ActivityLogSearchFilters;
+    if (search?.term) {
+      if (search.column === 'id') {
+        const parsed = parseInt(search.term, 10);
+        if (!isNaN(parsed)) {
+          filters['id'] = { eq: parsed };
+        }
+      } else if (search.column === 'client_type') {
+        (filters as Record<string, unknown>)[search.column] = { eq: search.term };
+      } else {
+        (filters as Record<string, unknown>)[search.column] = { ilike: search.term };
+      }
+    }
+
+    // Numeric filters
+    for (const c of this._numericConditions()) {
+      const existing = ((filters as Record<string, unknown>)[c.column] as Record<string, unknown>) ?? {};
+      existing[c.operation] = c.value;
+      (filters as Record<string, unknown>)[c.column] = existing;
+    }
+
+    return filters;
   }
 
   private _queryPage(isAppend: boolean): Observable<ActivityLogItem[]> {
@@ -174,6 +201,25 @@ export class SearchActivityPageService {
     if (!this._hasMore() || this._loading() || this._loadingMore()) return;
     this._loadingMore.set(true);
     this._nextPage$.next();
+  }
+
+  updateNumericConditions(conditions: NumericCondition[]): void {
+    this._numericConditions.set(conditions);
+    this._applyFilters();
+  }
+
+  applyAllFilters(numericConditions: NumericCondition[]): void {
+    this._numericConditions.set(numericConditions);
+    this._applyFilters();
+  }
+
+  private _applyFilters(): void {
+    if (!this._yearMonth()) return;
+    this._lastId.set(undefined);
+    this._hasMore.set(false);
+    this._items.set([]);
+    this._loading.set(true);
+    this._reset$.next();
   }
 
   download(format: DownloadFormat, columns: string[]): void {

@@ -97,22 +97,32 @@ export interface ActivityLogDownload {
 }
 
 export interface ActivityLogFilters {
+  id?: ActivityLogFilter<number>;
   user_id?: ActivityLogStringFilter;
   user_type?: ActivityLogStringFilter;
   client_type?: ActivityLogStringFilter;
   total_duration?: ActivityLogFilter<number>;
+  nuclia_tokens?: ActivityLogFilter<number>;
   audit_metadata?: AuditMetadataFilter;
 }
 
 export interface ActivityLogSearchFilters extends ActivityLogFilters {
   question?: ActivityLogStringFilter;
   resources_count?: ActivityLogFilter<number>;
+  vectorset?: ActivityLogStringFilter;
+  min_score_bm25?: ActivityLogFilter<number>;
+  min_score_semantic?: ActivityLogFilter<number>;
+  result_per_page?: ActivityLogFilter<number>;
+  retrieval_time?: ActivityLogFilter<number>;
 }
 
 export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
   rephrased_question?: ActivityLogStringFilter;
   answer?: ActivityLogStringFilter;
+  learning_id?: ActivityLogStringFilter;
   feedback_good?: ActivityLogFilter<boolean>;
+  feedback_good_all?: ActivityLogFilter<boolean>;
+  feedback_good_any?: ActivityLogFilter<boolean>;
   feedback_comment?: ActivityLogStringFilter;
   model?: ActivityLogStringFilter;
   /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA */
@@ -198,12 +208,6 @@ export interface ActivityLogAskFilters extends ActivityLogChatFilters {
   generative_reasoning_first_chunk_time?: ActivityLogFilter<number>;
   generative_answer_time?: ActivityLogFilter<number>;
   reasoning?: ActivityLogStringFilter;
-  resources_count?: ActivityLogFilter<number>;
-  vectorset?: ActivityLogStringFilter;
-  min_score_bm25?: ActivityLogFilter<number>;
-  min_score_semantic?: ActivityLogFilter<number>;
-  result_per_page?: ActivityLogFilter<number>;
-  retrieval_time?: ActivityLogFilter<number>;
 }
 
 /** Chat query — event_type = 'chat' */

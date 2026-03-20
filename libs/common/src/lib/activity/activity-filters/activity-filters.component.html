@@ -1,0 +1,107 @@
+<!-- Filter button (rendered inline in toolbar) -->
+<pa-button aspect="basic" icon="filter" [iconAndText]="true" (click)="toggleSidebar()">
+  {{ 'activity.filter_label' | translate }}
+  @if (activeFilterCount() > 0) {
+    <span class="filter-badge">({{ activeFilterCount() }})</span>
+  }
+</pa-button>
+
+<!-- Sidebar overlay -->
+@if (isOpen()) {
+  <div class="filter-backdrop" (click)="closeSidebar()"></div>
+  <aside class="filter-sidebar" [class.expanded]="isExpanded()">
+    <div class="filter-sidebar-header">
+      <h2 class="title-m">{{ 'activity.filter.filters' | translate }}</h2>
+      <div class="filter-sidebar-header-actions">
+        <pa-button aspect="basic" [icon]="isExpanded() ? 'collapse' : 'expand'" size="small" (click)="toggleExpand()"></pa-button>
+        <pa-button aspect="basic" icon="cross" size="small" (click)="closeSidebar()"></pa-button>
+      </div>
+    </div>
+    <div class="filter-sidebar-body">
+
+      <!-- Synthetic status checkboxes -->
+      @if (showSyntheticStatus()) {
+        <div class="filter-section">
+          <h3 class="title-s section-title">{{ 'activity.filter.status' | translate }}</h3>
+          @if (syntheticStatusDisabled()) {
+            <p class="body-s disabled-hint">{{ 'activity.filter.status_disabled_hint' | translate }}</p>
+          }
+          <div class="filter-checkboxes">
+            @for (status of syntheticStatuses(); track status) {
+              <pa-checkbox
+                [value]="syntheticStatusDisabled() ? true : isSyntheticStatusActive(status)"
+                [disabled]="syntheticStatusDisabled()"
+                (valueChange)="onSyntheticStatusToggle(status, $event)">
+                {{ getSyntheticStatusLabel(status) | translate }}
+              </pa-checkbox>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Unified condition builder -->
+      @if (filterColumns().length > 0) {
+        @if (showSyntheticStatus()) {
+          <div class="separator-line"></div>
+        }
+        <div class="filter-section">
+          <div class="conditions-header">
+            <h3 class="title-s section-title">{{ 'activity.filter.conditions' | translate }}</h3>
+            <pa-button aspect="basic" size="small" icon="plus" (click)="addCondition()">
+              {{ 'activity.filter.add_condition' | translate }}
+            </pa-button>
+          </div>
+          @for (condition of conditions(); track condition.id) {
+            <div class="condition-row">
+              <pa-select
+                class="condition-select"
+                [value]="condition.column"
+                [placeholder]="'activity.filter.select_column' | translate"
+                (valueChange)="updateConditionColumn(condition.id, $event)">
+                @for (col of filterColumns(); track col.key) {
+                  <pa-option [value]="col.key">{{ col.labelKey | translate }}</pa-option>
+                }
+              </pa-select>
+
+              @if (condition.columnType === 'numeric') {
+                <pa-select
+                  class="condition-select condition-op"
+                  [value]="condition.operation"
+                  (valueChange)="updateConditionOperation(condition.id, $event)">
+                  @for (op of getOperationsForColumn(condition.column); track op.value) {
+                    <pa-option [value]="op.value">{{ op.symbol }}</pa-option>
+                  }
+                </pa-select>
+                <input type="number" class="condition-input" [value]="condition.numericValue" placeholder="0" (input)="updateConditionNumericValue(condition.id, $any($event.target).value)" />
+              } @else if (condition.columnType === 'boolean') {
+                <pa-select
+                  class="condition-select condition-bool"
+                  [value]="condition.booleanValue.toString()"
+                  (valueChange)="updateConditionBooleanValue(condition.id, $event === 'true')">
+                  <pa-option value="true">{{ 'activity.filter.boolean_yes' | translate }}</pa-option>
+                  <pa-option value="false">{{ 'activity.filter.boolean_no' | translate }}</pa-option>
+                </pa-select>
+              }
+
+              <pa-button aspect="basic" size="small" icon="cross" (click)="removeCondition(condition.id)"></pa-button>
+            </div>
+          }
+          @if (conditions().length === 0) {
+            <p class="body-s no-conditions">{{ 'activity.filter.no_conditions' | translate }}</p>
+          }
+        </div>
+      }
+
+    </div>
+
+    <!-- Sticky footer with Apply / Reset -->
+    <div class="filter-sidebar-footer">
+      <pa-button kind="primary" (click)="applyFilters()">
+        {{ 'activity.filter.apply' | translate }}
+      </pa-button>
+      <pa-button aspect="basic" (click)="resetFilters()">
+        {{ 'activity.filter.reset' | translate }}
+      </pa-button>
+    </div>
+  </aside>
+}

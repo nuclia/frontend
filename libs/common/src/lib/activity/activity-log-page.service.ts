@@ -45,11 +45,11 @@ export class ActivityLogPageService {
   setColumns(defs: ActivityColumnDef[]): void {
     this.columnDefs.set(defs);
     this.hiddenColumns.set(defs.filter((c) => c.defaultHidden).map((c) => c.key));
-    this.searchMode.set('');
-    this.searchModes.set([
-      new ControlModel({ id: 'all', value: '', label: 'activity.search-mode.all' }),
-      ...defs.map((col) => new ControlModel({ id: col.key, value: col.key, label: col.label })),
-    ]);
+    const searchable = defs.filter((c) => c.searchable);
+    this.searchModes.set(
+      searchable.map((col) => new ControlModel({ id: col.key, value: col.key, label: col.label })),
+    );
+    this.searchMode.set(searchable.length > 0 ? searchable[0].key : '');
   }
 
   updateSearchMode(mode: string): void {
