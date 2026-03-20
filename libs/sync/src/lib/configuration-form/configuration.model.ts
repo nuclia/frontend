@@ -12,6 +12,10 @@ export interface ConfigurationForm {
   syncSecurityGroups: boolean | null;
   preserveLabels: boolean | null;
   filterResources: FiltersResources;
+  assumeRole: {
+    external_id: string;
+    role_arn: string;
+  };
   extra: {
     [fieldId: string]: string;
   };

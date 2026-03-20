@@ -29,9 +29,24 @@
       </pa-input>
     }
   }
-
+  @if (requiresBucketSearch) {
+    <nsi-two-columns-configuration-item
+      itemTitle="sync.cloud-folder.bucket-title"
+      noTopBorder>
+      <div class="resolve-site-input">
+        <pa-input
+          [(value)]="bucketName"
+          (keyup.enter)="validateAndBrowseDrive(bucketName)">
+          {{ 'sync.cloud-folder.bucket-name' | translate }}
+        </pa-input>
+        <nsi-button-mini (click)="validateAndBrowseDrive(bucketName)">
+          {{ 'sync.cloud-folder.browse' | translate }}
+        </nsi-button-mini>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
   @if (currentSite() || currentDrive() || currentPath()) {
-    <div>
+    <div class="back">
       <nsi-button-mini
         icon="undo"
         (click)="back()">

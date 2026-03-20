@@ -13,9 +13,15 @@ import {
 import { CommonModule } from '@angular/common';
 import { Filters, IConnector, ISyncEntity, Section } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, map, Observable, of, startWith, Subject, take, takeUntil } from 'rxjs';
-import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
-import { LabelModule, LabelSetFormModalComponent, LabelsService, ParametersTableComponent } from '@flaps/core';
+import { filter, map, Observable, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { AssumeRoleInfo, Classification, LabelSetKind, LabelSets } from '@nuclia/core';
+import {
+  LabelModule,
+  LabelSetFormModalComponent,
+  LabelsService,
+  ParametersTableComponent,
+  SDKService,
+} from '@flaps/core';
 import {
   InfoCardComponent,
   SisLabelModule,
@@ -30,8 +36,9 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
+import { AssumeRoleModalComponent, ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
 import { ConfigurationForm, FiltersResources } from './configuration.model';
+import { S3_IAM_POLICY } from '../logic/connectors/s3';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
@@ -60,6 +67,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
+  private sdk = inject(SDKService);
 
   private unsubscribeAll = new Subject<void>();
   private connectorParametersBackup?: { [key: string]: unknown };
@@ -86,6 +94,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   }
   private _enterCredentials = false;
   @Input() isCloud?: boolean = false;
+  @Input() assumeRole?: boolean = false;
   @Input() set sync(value: ISyncEntity | undefined | null) {
     if (value) {
       this.connectorParametersBackup = value.connector.parameters;
@@ -133,6 +142,10 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       from: new FormControl(''),
       to: new FormControl(''),
     }),
+    assumeRole: new FormGroup({
+      external_id: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      role_arn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    }),
     extra: new FormGroup({}),
   });
 
@@ -145,11 +158,16 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   invalidTables: string[] = [];
   extractStrategy: string | undefined = '';
   files: { [id: string]: File } = {};
+  assumeRoleInfo?: AssumeRoleInfo;
 
   private _extra: { [key: string]: string } = {};
 
   get extensionsControl() {
     return this.form.controls.filterResources.controls.extensions;
+  }
+
+  get assumeRoleForm() {
+    return this.form.controls.assumeRole;
   }
 
   ngOnInit(): void {
@@ -162,6 +180,17 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       this.validForm.emit(this.form.valid);
       this.emitSyncEntity();
     });
+    if (this.assumeRole) {
+      this.sdk.currentKb
+        .pipe(
+          take(1),
+          switchMap((kb) => kb.syncManager.getAssumeRoleInfo()),
+        )
+        .subscribe((data) => {
+          this.assumeRoleForm.patchValue({ external_id: data.external_id });
+          this.assumeRoleInfo = data;
+        });
+    }
   }
 
   updateExtraSections() {
@@ -190,7 +219,11 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
 
   updateValidators() {
     this.form.controls.name.setValidators(this.enterCredentials ? [] : [Validators.required]);
+    this.assumeRoleForm.controls.external_id.setValidators(this.assumeRole ? [Validators.required] : []);
+    this.assumeRoleForm.controls.role_arn.setValidators(this.assumeRole ? [Validators.required] : []);
     this.form.controls.name.updateValueAndValidity();
+    this.assumeRoleForm.controls.external_id.updateValueAndValidity();
+    this.assumeRoleForm.controls.role_arn.updateValueAndValidity();
   }
 
   getExtraSections(): Observable<Section[]> {
@@ -305,6 +338,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       },
       {} as { [tableId: string]: { key: string; value: string; secret: boolean }[] },
     );
+    const assumeRole = this.assumeRole ? config.assumeRole : {};
     const syncEntity: ISyncEntity = {
       id,
       title,
@@ -317,6 +351,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
           ...this.connectorParametersBackup,
           ...tables,
           ...extraParams,
+          ...assumeRole,
         },
       },
     };
@@ -341,5 +376,27 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         this.form.controls.extra.get(fieldId)?.setValue(value);
       });
     }
+  }
+
+  openAssumeRoleModal() {
+    this.modalService
+      .openModal(
+        AssumeRoleModalComponent,
+        new ModalConfig({
+          data: {
+            params: this.assumeRoleInfo,
+            policy: S3_IAM_POLICY,
+            zone: this.sdk.nuclia.options.zone,
+            policyHelp: 'sync.add-page.assume-role.policy',
+            title: 'sync.add-page.assume-role.role-arn.button',
+            isBedrock: false,
+          },
+        }),
+      )
+      .onClose.pipe(filter((roleArn) => roleArn))
+      .subscribe((roleArn) => {
+        this.assumeRoleForm.controls.role_arn.patchValue(roleArn);
+        this.cdr.markForCheck();
+      });
   }
 }

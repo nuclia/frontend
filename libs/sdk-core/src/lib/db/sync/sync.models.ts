@@ -24,6 +24,7 @@ export interface ISyncManager {
   createOAuthExternalConnection(provider: string): Observable<OAuthUrl>;
   createExternalConnection(provider: string, credentials: { [key: string]: string }): Observable<ExternalConnection>;
   getExternalConnection(id: string): Observable<ExternalConnection>;
+  getAssumeRoleInfo(): Observable<AssumeRoleInfo>;
   createConfig(config: SyncConfigurationCreate): Observable<SyncConfiguration>;
   getConfigs(): Observable<SyncConfiguration[]>;
   getConfig(id: string): Observable<SyncConfiguration>;
@@ -46,6 +47,12 @@ export interface ExternalConnection {
   created_by: string;
   provider: string;
   capabilities: BrowseCapabilities;
+}
+
+export interface AssumeRoleInfo {
+  external_id: string;
+  role_name: string;
+  aws_account_id: string;
 }
 
 export interface BrowseCapabilities {

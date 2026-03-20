@@ -37,6 +37,7 @@
           [connector]="connector"
           [connectorId]="connectorId | async"
           [isCloud]="!!(isCloud | async)"
+          [assumeRole]="!!(assumeRole | async)"
           (configurationChange)="updateConfiguration($event)"
           (validForm)="validForm = $event"></nsy-configuration-form>
         @if (externalConnection) {

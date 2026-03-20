@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService, ZoneService } from '@flaps/core';
 import {
   HeaderCell,
   PaButtonModule,
@@ -62,6 +62,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
   private translate = inject(TranslateService);
   private features = inject(FeaturesService);
+  private zoneService = inject(ZoneService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -76,13 +77,24 @@ export class HomePageComponent implements OnInit, OnDestroy {
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
   connectors = this.syncService.connectors;
+  currentZone = forkJoin([this.zoneService.getZones(), this.sdk.currentKb.pipe(take(1))]).pipe(
+    map(([zones, kb]) => zones.find((zone) => zone.slug === kb.zone)),
+  );
+
   private _connectorList: Observable<ConnectorDefinition[]> = forkJoin([
     this.syncService.connectorsObs.pipe(take(1)),
     this.features.unstable.cloudSyncSharepoint.pipe(take(1)),
+    this.features.unstable.cloudSyncS3.pipe(take(1)),
+    this.currentZone,
   ]).pipe(
-    map(([sources, hasSharepoint]) =>
+    map(([sources, hasSharepoint, hasS3, zone]) =>
       sources
-        .filter((conn) => hasSharepoint || conn.id !== 'sharepoint')
+        .filter((conn) => {
+          const hidden =
+            (conn.id === 'sharepoint' && !hasSharepoint) ||
+            (conn.id === 's3' && (!hasS3 || zone?.cloud_provider !== 'AWS'));
+          return !hidden;
+        })
         .sort((a, b) => a.title.localeCompare(b.title)),
     ),
   );

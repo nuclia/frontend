@@ -67,6 +67,7 @@ export class FeaturesService {
     bedrockIntegration: this.featureFlag.isFeatureEnabled('bedrock-integration'),
     cloudSyncService: this.featureFlag.isFeatureEnabled('cloud-sync-service'),
     cloudSyncSharepoint: this.featureFlag.isFeatureEnabled('cloud-sync-sharepoint'),
+    cloudSyncS3: this.featureFlag.isFeatureEnabled('cloud-sync-s3'),
     raoWidget: this.featureFlag.isFeatureEnabled('rao-widget'),
   };
 
