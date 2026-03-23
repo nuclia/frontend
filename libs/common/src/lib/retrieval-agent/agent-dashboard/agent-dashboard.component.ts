@@ -36,8 +36,7 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { ExportPanelComponent } from './workflow/sidebar/export/export-panel.component';
 import { ImportPanelComponent } from './workflow/sidebar/import';
-import { BadgeComponent, DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
-import { EndpointModalComponent } from './workflow/sidebar/endpoint/endpoint-modal.component';
+import { BadgeComponent, DropdownButtonComponent } from '@nuclia/sistema';
 import { WorkflowsService } from '../workflows';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -65,7 +64,6 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private workflowEffects = inject(WorkflowEffectService);
   private sdk = inject(SDKService);
   private features = inject(FeaturesService);
-  private modelService = inject(SisModalService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private workflowsService = inject(WorkflowsService);
@@ -161,10 +159,6 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   export() {
     this.workflowService.openSidebar('export', ExportPanelComponent);
-  }
-
-  showEndpoint() {
-    this.modelService.openModal(EndpointModalComponent);
   }
 
   goToWorkflow(workflowId: string) {

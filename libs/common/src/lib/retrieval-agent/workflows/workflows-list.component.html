@@ -12,16 +12,30 @@
     <div class="page-description">{{ 'retrieval-agents.workflows-list.description' | translate }}</div>
   </header>
 
-  <div class="driver-list">
+  <div class="section">
+    <div class="section-title title-s">{{ 'retrieval-agents.workflows-list.mcp-endpoint' | translate }}</div>
+    <div class="endpoint">
+      <pa-button
+        aspect="basic"
+        size="small"
+        [icon]="copied() ? 'check' : 'copy'"
+        (click)="copyEndpoint()">
+        {{ 'generic.copy' | translate }}
+      </pa-button>
+      <pre><code>{{ endpoint | async }}</code></pre>
+    </div>
+  </div>
+
+  <div class="section">
     @if (((workflows | async) || []).length === 0) {
       <nsi-info-card>
         {{ 'retrieval-agents.workflows-list.empty' | translate }}
       </nsi-info-card>
     } @else {
+      <div class="section-title title-s">{{ 'retrieval-agents.workflows-list.workflow-list' | translate }}</div>
       <pa-table
         columns="1fr 1fr 96px"
-        border
-        class="driver-list">
+        border>
         <pa-table-header>
           <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
           <pa-table-cell header>{{ 'generic.description' | translate }}</pa-table-cell>

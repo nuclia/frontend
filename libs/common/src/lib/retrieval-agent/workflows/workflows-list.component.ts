@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -10,10 +10,11 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Workflow } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { filter, of, switchMap, take } from 'rxjs';
+import { filter, map, of, switchMap, take } from 'rxjs';
 import { WorkflowModalComponent } from './workflow-modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkflowsService } from './workflows.service';
+import { SDKService } from '@flaps/core';
 
 @Component({
   imports: [
@@ -36,8 +37,11 @@ export class WorkflowsListComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
+  private sdk = inject(SDKService);
 
   workflows = this.workflowsService.workflows;
+  endpoint = this.sdk.currentArag.pipe(map((arag) => arag.fullpath + '/session/default/mcp'));
+  copied = signal(false);
 
   goToWorkflow(workflow: Workflow) {
     this.router.navigate([workflow.id], { relativeTo: this.route });
@@ -99,5 +103,13 @@ export class WorkflowsListComponent {
           this.toaster.error('retrieval-agents.workflows-list.errors.deletion');
         },
       });
+  }
+
+  copyEndpoint() {
+    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
+      navigator.clipboard.writeText(endpoint);
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 1000);
+    });
   }
 }
