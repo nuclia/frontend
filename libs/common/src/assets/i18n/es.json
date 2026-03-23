@@ -1439,6 +1439,8 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postproceso",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Preprocesar",
 	"retrieval-agents.workflow.node-types.router.title": "Enrutador",
+	"retrieval-agents.workflow.node-types.sitefinity.form.go-to-drivers": "Crear un controlador Sitefinity",
+	"retrieval-agents.workflow.node-types.sitefinity.form.no-source": "No hay ningún controlador Sitefinity registrado, debe crear uno antes de agregar este tipo de nodo.",
 	"retrieval-agents.workflow.node-types.sql.description": "Accedar a los datos de su base de datos SQL",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Crear un controlador SQL",
 	"retrieval-agents.workflow.node-types.sql.title": "Consulta SQL",
