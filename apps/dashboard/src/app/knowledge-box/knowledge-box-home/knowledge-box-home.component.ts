@@ -11,7 +11,7 @@ import { FeaturesService, NavigationService, SDKService, ZoneService } from '@fl
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { TestPageModalComponent } from './test-page-modal/test-page-modal.component';
@@ -53,8 +53,8 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
 
   allChartsData: Observable<Partial<{ [key in UsageType]: ChartData }>> = this.isAccountManager.pipe(
     filter((isManager) => isManager),
-    switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getUsageCharts(kb.id)),
+    switchMap(() => combineLatest([this.currentKb, this.currentPeriod.pipe(filter((period) => !!period))])),
+    switchMap(([kb, period]) => this.metrics.getUsageCharts(kb.id, period)),
     takeUntil(this.unsubscribeAll),
     shareReplay(1),
   );
@@ -63,8 +63,8 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
 
   searchChartsData = this.isAccountManager.pipe(
     filter((isManager) => isManager),
-    switchMap(() => this.currentKb),
-    switchMap(() => this.metrics.getSearchCharts()),
+    switchMap(() => combineLatest([this.currentKb, this.currentPeriod.pipe(filter((period) => !!period))])),
+    switchMap(([, period]) => this.metrics.getSearchCharts(period)),
     takeUntil(this.unsubscribeAll),
     shareReplay(1),
   );
@@ -124,21 +124,27 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     ),
     map((data) => Object.values(data.results.resources || {})),
   );
-  isChartDropdownOpen = false;
 
   readonly chartHeight = 232;
   readonly defaultChartOption = new OptionModel({
-    id: 'search',
-    label: 'metrics.search.title',
-    value: 'search',
+    id: 'ask',
+    label: 'metrics.ask.title',
+    value: 'ask',
   });
   currentChart: OptionModel = this.defaultChartOption;
+  currentPeriod = new BehaviorSubject<{ start: Date; end: Date } | null>(null);
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
-    new OptionModel({ id: 'ask', label: 'metrics.ask.title', value: 'ask' }),
+    new OptionModel({ id: 'search', label: 'metrics.search.title', value: 'search' }),
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
     new OptionModel({ id: 'token', label: 'metrics.nuclia-tokens.title', value: 'token' }),
   ];
+  chartPeriods = combineLatest([this.isSubscribed, this.metrics.period]).pipe(
+    map(([isSubscribed, period]) =>
+      isSubscribed ? this.metrics.getLastStripePeriods(period, 6) : this.metrics.getLastMonths(6),
+    ),
+  );
+
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {
     endpoint: 'copy',
@@ -172,6 +178,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // We want the health status on the last 7 days
     this.remiMetrics.updatePeriod('7d');
+    this.metrics.period.pipe(take(1)).subscribe((period) => {
+      this.currentPeriod.next(period);
+    });
   }
 
   ngOnDestroy() {
@@ -220,6 +229,10 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  selectPeriod(period: { start: Date; end: Date }) {
+    this.currentPeriod.next(period);
+  }
+
   openFullscreen() {
     this.modal.openModal(
       UsageModalComponent,
@@ -231,6 +244,8 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
           tokenChart: this.nucliaTokenChart,
           currentChart: this.currentChart,
           chartDropdownOptions: this.chartDropdownOptions,
+          isSubscribed: this.isSubscribed,
+          currentPeriod: this.currentPeriod.getValue(),
         },
       }),
     );

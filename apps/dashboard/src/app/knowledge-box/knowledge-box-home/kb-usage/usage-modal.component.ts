@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalRef, OptionModel, PaDropdownModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,6 +14,8 @@ export interface UsageModalConfig {
   tokenChart: Observable<ChartData>;
   currentChart: OptionModel;
   chartDropdownOptions: OptionModel[];
+  isSubscribed: Observable<boolean>;
+  currentPeriod: { start: Date; end: Date };
 }
 
 @Component({
