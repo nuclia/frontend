@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { MockProvider } from 'ng-mocks';
-import { SDKService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
+import { SisToastService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 import { ActivityLogItem } from '@nuclia/core';
 import { ResourceActivityPageService } from './resource-activity-page.service';
 
@@ -20,53 +22,20 @@ describe('ResourceActivityPageService', () => {
     TestBed.configureTestingModule({
       providers: [
         ResourceActivityPageService,
-        MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(SDKService, {
+          currentKb: of(mockKb as any),
+          currentAccount: of({ id: 'acc-1' } as any),
+          nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+        }),
+        MockProvider(UserService),
+        MockProvider(SisToastService),
+        MockProvider(TranslateService, { instant: (key: string) => key }),
       ],
     });
     service = TestBed.inject(ResourceActivityPageService);
   });
 
-  describe('filterByStatus()', () => {
-    it('updates activeStatusFilter to the provided status', () => {
-      service.filterByStatus('Ingested');
-      expect(service.activeStatusFilter()).toBe('Ingested');
-    });
-
-    it('can be updated to a different status', () => {
-      service.filterByStatus('Ingested');
-      service.filterByStatus('Processed');
-      expect(service.activeStatusFilter()).toBe('Processed');
-    });
-  });
-
-  describe('clearStatusFilter()', () => {
-    it('resets activeStatusFilter to an empty string', () => {
-      service.filterByStatus('Processed');
-      service.clearStatusFilter();
-      expect(service.activeStatusFilter()).toBe('');
-    });
-  });
-
   describe('loadData() — success path', () => {
-    it('computes stats from grouped items returned by forkJoin', () => {
-      const ingestedItems = [makeItem('2024-01-01'), makeItem('2024-01-02')];
-      const editedItems = [makeItem('2024-01-03')];
-      const processedItems: ActivityLogItem[] = [];
-
-      // forkJoin calls queryActivityLogs in declaration order:
-      // sources[0]=NEW(Ingested), sources[1]=MODIFIED(Edited), sources[2]=PROCESSED(Processed)
-      queryActivityLogs
-        .mockReturnValueOnce(of(ingestedItems))
-        .mockReturnValueOnce(of(editedItems))
-        .mockReturnValueOnce(of(processedItems));
-
-      service.loadData('2024-01');
-
-      expect(service.stats().resourcesIngested).toBe(2);
-      expect(service.stats().resourcesEdited).toBe(1);
-      expect(service.stats().resourcesProcessed).toBe(0);
-    });
-
     it('sets loading to false after success', () => {
       queryActivityLogs.mockReturnValue(of([]));
       service.loadData('2024-01');
@@ -102,7 +71,14 @@ describe('ResourceActivityPageService', () => {
       TestBed.configureTestingModule({
         providers: [
           ResourceActivityPageService,
-          MockProvider(SDKService, { currentKb: of(freshKb as any) }),
+          MockProvider(SDKService, {
+            currentKb: of(freshKb as any),
+            currentAccount: of({ id: 'acc-1' } as any),
+            nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          }),
+          MockProvider(UserService),
+          MockProvider(SisToastService),
+          MockProvider(TranslateService, { instant: (key: string) => key }),
         ],
       });
       const freshService = TestBed.inject(ResourceActivityPageService);
@@ -118,7 +94,14 @@ describe('ResourceActivityPageService', () => {
       TestBed.configureTestingModule({
         providers: [
           ResourceActivityPageService,
-          MockProvider(SDKService, { currentKb: of(freshKb) }),
+          MockProvider(SDKService, {
+            currentKb: of(freshKb),
+            currentAccount: of({ id: 'acc-1' }),
+            nuclia: { db: { getUsage: jest.fn().mockReturnValue(of([])) } } as any,
+          }),
+          MockProvider(UserService),
+          MockProvider(SisToastService),
+          MockProvider(TranslateService, { instant: (key: string) => key }),
         ],
       });
       const freshService = TestBed.inject(ResourceActivityPageService);

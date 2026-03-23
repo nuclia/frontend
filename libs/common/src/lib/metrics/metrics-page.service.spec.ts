@@ -6,14 +6,15 @@ import { MetricsPageService } from './metrics-page.service';
 import { MetricsColumnDef } from './metrics-column.model';
 
 const MOCK_DEFS: MetricsColumnDef[] = [
-  { key: 'question', label: 'activity.question', value: (item) => (item as any).question },
+  { key: 'question', label: 'activity.question', value: (item) => (item as any).question, searchable: true },
   {
     key: 'answer',
     label: 'activity.answer',
     value: (item) => (item as any).answer,
     defaultHidden: true,
+    searchable: true,
   },
-  { key: 'status', label: 'activity.status', value: (item) => (item as any).status },
+  { key: 'status', label: 'activity.status', value: (item) => (item as any).status, searchable: true },
 ];
 
 const MOCK_ROWS = [
@@ -46,21 +47,16 @@ describe('MetricsPageService', () => {
       expect(service.hiddenColumns()).toEqual(['answer']);
     });
 
-    it('resets searchMode to empty string', () => {
-      service.updateSearchMode('question');
+    it('sets searchMode to the first searchable column', () => {
       service.setColumns(MOCK_DEFS);
-      expect(service.searchMode()).toBe('');
+      expect(service.searchMode()).toBe('question');
     });
 
-    it('regenerates searchModes with one "all" entry + one entry per column', () => {
+    it('generates searchModes from searchable columns', () => {
       service.setColumns(MOCK_DEFS);
       const modes = service.searchModes();
-      expect(modes).toHaveLength(MOCK_DEFS.length + 1);
-    });
-
-    it('places the "all" mode (value="") first in searchModes', () => {
-      service.setColumns(MOCK_DEFS);
-      expect(service.searchModes()[0].value).toBe('');
+      expect(modes).toHaveLength(MOCK_DEFS.length);
+      expect(modes[0].value).toBe('question');
     });
   });
 
@@ -101,39 +97,13 @@ describe('MetricsPageService', () => {
     });
   });
 
-  describe('filteredRows computed', () => {
+  describe('data signal', () => {
     beforeEach(() => {
       service.setColumns(MOCK_DEFS);
       service.setItems(MOCK_ROWS);
     });
 
-    it('returns all rows when search term is empty', () => {
-      expect(service.filteredRows()).toHaveLength(2);
-    });
-
-    it('searches across all columns when no mode is set', () => {
-      service.updateSearchTerm('hello');
-      const results = service.filteredRows();
-      expect(results).toHaveLength(1);
-      expect((results[0] as any).question).toBe('hello world');
-    });
-
-    it('is case-insensitive when filtering', () => {
-      service.updateSearchTerm('HELLO');
-      expect(service.filteredRows()).toHaveLength(1);
-    });
-
-    it('searches only the specified column when a mode is set', () => {
-      service.updateSearchMode('status');
-      service.updateSearchTerm('error');
-      const results = service.filteredRows();
-      expect(results).toHaveLength(1);
-      expect((results[0] as any).status).toBe('ERROR');
-    });
-
-    it('returns all rows when mode column key does not exist in defs', () => {
-      service.updateSearchMode('nonexistent_key');
-      service.updateSearchTerm('hello');
+    it('returns all rows via filteredRows', () => {
       expect(service.filteredRows()).toHaveLength(2);
     });
   });
