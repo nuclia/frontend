@@ -318,6 +318,7 @@
                         <div class="chart-container">
                           <stf-grouped-bar-chart
                             [data]="data[item.id]"
+                            [colors]="[metricColors['context_relevance'], metricColors['groundedness']]"
                             height="144"></stf-grouped-bar-chart>
                           <h6>Text blocks scores distribution</h6>
                         </div>

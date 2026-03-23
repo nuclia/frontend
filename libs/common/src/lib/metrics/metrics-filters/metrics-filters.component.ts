@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  HostListener,
   input,
   output,
   signal,
@@ -104,6 +105,22 @@ export class MetricsFiltersComponent {
 
     return count;
   });
+
+  // ── Keyboard handlers ──────────────────────────────────────────────────────
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.isOpen()) {
+      this.closeSidebar();
+    }
+  }
+
+  @HostListener('document:keydown.enter')
+  onEnterKey(): void {
+    if (this.isOpen()) {
+      this.applyFilters();
+    }
+  }
 
   // ── Expand / collapse ─────────────────────────────────────────────────────
   isExpanded = signal(false);

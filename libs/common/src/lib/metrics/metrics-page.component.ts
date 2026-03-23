@@ -4,6 +4,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  HostListener,
   inject,
   input,
   output,
@@ -87,6 +88,15 @@ export class MetricsPageComponent {
       this.currentSearchTerm.set(term ?? '');
       this.searchChange.emit({ term: term ?? '', column: this.service.searchMode() });
     });
+  }
+
+  // ── Keyboard handlers ──────────────────────────────────────────────────────
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.selectedItem()) {
+      this.closeSidePanel();
+    }
   }
 
   // ── Event handlers ────────────────────────────────────────────────────────
@@ -196,12 +206,27 @@ export class MetricsPageComponent {
     return fields.some((f) => f.value(item) != null);
   }
 
+  isFieldVisible(item: ActivityLogItem, field: { value: (item: ActivityLogItem) => any }): boolean {
+    const val = field.value(item);
+    return val != null && val !== '';
+  }
+
   isColumnVisible(key: string): boolean {
     return this.service.isColumnVisible(key);
   }
 
   getCellValue(item: ActivityLogItem, key: string): string {
     return this.service.getCellValue(item, key);
+  }
+
+  isRemiScoreLow(item: ActivityLogItem, col: MetricsColumnDef): boolean {
+    const val = col.value(item);
+    return typeof val === 'number' && val <= 2;
+  }
+
+  isRemiScoreHigh(item: ActivityLogItem, col: MetricsColumnDef): boolean {
+    const val = col.value(item);
+    return typeof val === 'number' && val >= 4;
   }
 
   // ── Download ──────────────────────────────────────────────────────────────

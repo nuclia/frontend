@@ -127,6 +127,8 @@
                 <pa-table-cell>
                   <span
                     class="body-s cell-value"
+                    [class.remi-score-low]="col.key === 'remiScore' && isRemiScoreLow(item, col)"
+                    [class.remi-score-high]="col.key === 'remiScore' && isRemiScoreHigh(item, col)"
                     [paTooltip]="getCellValue(item, col.key)">
                     {{ getCellValue(item, col.key) }}
                   </span>
@@ -157,22 +159,24 @@
             <h3 class="title-s section-title">{{ section.labelKey | translate }}</h3>
             <div class="detail-card">
               @for (field of section.fields; track field.key) {
-                @if (field.expandable) {
-                  <div class="detail-inner-card">
-                    <pa-expander [expanded]="false">
-                      <pa-expander-header>
-                        <span class="detail-inner-label overline">{{ field.label | translate }}</span>
-                      </pa-expander-header>
-                      <pa-expander-body>
-                        <p class="body-s detail-expandable-content">{{ getFieldValue(selectedItem()!, field) }}</p>
-                      </pa-expander-body>
-                    </pa-expander>
-                  </div>
-                } @else {
-                  <div class="detail-row">
-                    <span class="detail-label body-s">{{ field.label | translate }}</span>
-                    <span class="detail-value body-s">{{ getFieldValue(selectedItem()!, field) }}</span>
-                  </div>
+                @if (isFieldVisible(item, field)) {
+                  @if (field.expandable) {
+                    <div class="detail-inner-card">
+                      <pa-expander [expanded]="false">
+                        <pa-expander-header>
+                          <span class="detail-inner-label overline">{{ field.label | translate }}</span>
+                        </pa-expander-header>
+                        <pa-expander-body>
+                          <p class="body-s detail-expandable-content">{{ getFieldValue(selectedItem()!, field) }}</p>
+                        </pa-expander-body>
+                      </pa-expander>
+                    </div>
+                  } @else {
+                    <div class="detail-row">
+                      <span class="detail-label body-s">{{ field.label | translate }}</span>
+                      <span class="detail-value body-s">{{ getFieldValue(selectedItem()!, field) }}</span>
+                    </div>
+                  }
                 }
               }
             </div>

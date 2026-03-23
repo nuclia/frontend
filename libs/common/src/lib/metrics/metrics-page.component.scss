@@ -186,6 +186,16 @@ pa-table {
   white-space: nowrap;
 }
 
+.remi-score-low {
+  color: var(--color-danger, #dc2626);
+  font-weight: 600;
+}
+
+.remi-score-high {
+  color: var(--color-success, #16a34a);
+  font-weight: 600;
+}
+
 // ── Side panel overlay ────────────────────────────────────────────────────
 
 .side-panel-backdrop {
