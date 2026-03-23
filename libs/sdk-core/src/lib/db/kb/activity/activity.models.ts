@@ -1,3 +1,5 @@
+import { UserType } from '../../db.models';
+
 export interface Metric {
   name: string;
   min: number;
@@ -81,7 +83,7 @@ export type DownloadFormat = 'application/x-ndjson' | 'text/csv';
 export interface ActivityLogDownloadQuery {
   year_month: string;
   show?: string[] | 'all';
-  filters: ActivityLogFilters | ActivityLogSearchFilters | ActivityLogChatFilters;
+  filters: ActivityLogFilters | ActivityLogSearchFilters | ActivityLogChatFilters | ActivityLogAskFilters;
   email_address?: string;
   notify_via_email?: boolean;
 }
@@ -96,14 +98,90 @@ export interface ActivityLogDownload {
   download_url: string | null;
 }
 
+// ---------------------------------------------------------------------------
+// Activity log live query (POST /activity/{event_type}/query)
+// ---------------------------------------------------------------------------
+
+/** Generic query base — parameterized by show-field type and filters type. */
+export interface ActivityLogQueryBase<
+  S extends string = ActivityLogShowFields,
+  F = ActivityLogFilters,
+> {
+  year_month: string;
+  pagination?: ActivityLogPagination;
+  show?: S[] | 'all';
+  filters: F;
+}
+
+export type ActivityLogBaseQuery = ActivityLogQueryBase;
+export type ActivityLogSearchQuery = ActivityLogQueryBase<ActivityLogSearchShowFields, ActivityLogSearchFilters>;
+export type ActivityLogChatQuery = ActivityLogQueryBase<ActivityLogChatShowFields, ActivityLogChatFilters>;
+export type ActivityLogAskQuery = ActivityLogQueryBase<ActivityLogAskShowFields, ActivityLogAskFilters>;
+
+export type ActivityLogQuery =
+  | ActivityLogBaseQuery
+  | ActivityLogSearchQuery
+  | ActivityLogAskQuery
+  | ActivityLogChatQuery;
+
+export type ActivityLogResponseItemUnion =
+  | ActivityLogResponseItem
+  | ActivityLogResponseSearchItem
+  | ActivityLogResponseChatItem
+  | ActivityLogResponseAskItem;
+
+/** @deprecated Use {@link ActivityLogResponseItemUnion} instead. */
+export type ActvityLogResponseItem = ActivityLogResponseItemUnion;
+
+export interface ActivityLogResponseItem {
+  id: number;
+  date: string | null;
+  user_id: string | null;
+  user_type: string | null;
+  client_type: string | null;
+  total_duration: number | null;
+  audit_metadata: Record<string, string> | null;
+  resource_id: string | null;
+  nuclia_tokens: number | null;
+}
+
+export interface ActivityLogPagination {
+  limit?: number;
+  starting_after?: number;
+  ending_before?: number;
+}
+
 export interface ActivityLogFilters {
   id?: ActivityLogFilter<number>;
-  user_id?: ActivityLogStringFilter;
-  user_type?: ActivityLogStringFilter;
-  client_type?: ActivityLogStringFilter;
+  user_id?: ActivityLogFilter<string>;
+  user_type?: ActivityLogFilter<UserType>;
+  client_type?: ActivityLogFilter<string>;
   total_duration?: ActivityLogFilter<number>;
   nuclia_tokens?: ActivityLogFilter<number>;
   audit_metadata?: AuditMetadataFilter;
+}
+
+export const ACTIVITY_LOG_SHOW_FIELDS = [
+  'id', 'date', 'user_id', 'user_type', 'client_type',
+  'total_duration', 'audit_metadata', 'resource_id',
+  'nuclia_tokens',
+] as const;
+export type ActivityLogShowFields = (typeof ACTIVITY_LOG_SHOW_FIELDS)[number];
+
+/** @deprecated Use {@link ActivityLogShowFields} instead. */
+export type ActivityLogBaseShowField = ActivityLogShowFields;
+
+export interface ActivityLogResponseSearchItem extends ActivityLogResponseItem {
+  question: string | null;
+  resources_count: number | null;
+  filter: string | null;
+  retrieval_rephrased_question: string | null;
+  vectorset: string | null;
+  security: unknown | null;
+  min_score_bm25: number | null;
+  min_score_semantic: number | null;
+  result_per_page: number | null;
+  retrieval_time: number | null;
 }
 
 export interface ActivityLogSearchFilters extends ActivityLogFilters {
@@ -116,148 +194,19 @@ export interface ActivityLogSearchFilters extends ActivityLogFilters {
   retrieval_time?: ActivityLogFilter<number>;
 }
 
-export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
-  rephrased_question?: ActivityLogStringFilter;
-  answer?: ActivityLogStringFilter;
-  learning_id?: ActivityLogStringFilter;
-  feedback_good?: ActivityLogFilter<boolean>;
-  feedback_good_all?: ActivityLogFilter<boolean>;
-  feedback_good_any?: ActivityLogFilter<boolean>;
-  feedback_comment?: ActivityLogStringFilter;
-  model?: ActivityLogStringFilter;
-  /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA */
-  status?: ActivityLogFilter<string>;
-}
+export const ACTIVITY_LOG_SEARCH_SHOW_FIELDS = [
+  ...ACTIVITY_LOG_SHOW_FIELDS,
+  'question', 'token_details', 'resources_count', 'filter', 'retrieval_rephrased_question',
+  'vectorset', 'security', 'min_score_bm25', 'min_score_semantic',
+  'result_per_page', 'retrieval_time',
+] as const;
+export type ActivityLogSearchShowFields = (typeof ACTIVITY_LOG_SEARCH_SHOW_FIELDS)[number];
 
-export interface ActivityLogFilter<T> {
-  eq?: T;
-  gt?: T;
-  ge?: T;
-  lt?: T;
-  le?: T;
-  ne?: T;
-  isnull?: boolean;
-}
+/** @deprecated Use {@link ActivityLogSearchShowFields} instead. */
+export type ActivityLogSearchShowField = ActivityLogSearchShowFields;
 
-export interface ActivityLogStringFilter extends ActivityLogFilter<string> {
-  like?: string;
-  ilike?: string;
-}
-
-export interface AuditMetadataFilter extends ActivityLogStringFilter {
-  key: string;
-}
-
-// ---------------------------------------------------------------------------
-// Activity log live query (POST /activity/{event_type}/query)
-// ---------------------------------------------------------------------------
-
-export interface ActivityLogPagination {
-  limit?: number;
-  starting_after?: number;
-  ending_before?: number;
-}
-
-/** Base query — used for generic / resource event types (new, modified, processed, etc.) */
-export interface ActivityLogBaseQuery {
-  year_month: string;
-  pagination?: ActivityLogPagination;
-  show?: ActivityLogBaseShowField[] | 'all';
-  filters: ActivityLogFilters;
-}
-
-export type ActivityLogBaseShowField =
-  | 'id' | 'date' | 'user_id' | 'user_type' | 'client_type'
-  | 'total_duration' | 'audit_metadata' | 'resource_id'
-  | 'nuclia_tokens';
-
-/** Search query — event_type = 'search' */
-export interface ActivityLogSearchQuery {
-  year_month: string;
-  pagination?: ActivityLogPagination;
-  show?: ActivityLogSearchShowField[] | 'all';
-  filters: ActivityLogSearchFilters;
-}
-
-export type ActivityLogSearchShowField =
-  | ActivityLogBaseShowField
-  | 'question' | 'resources_count' | 'filter' | 'retrieval_rephrased_question'
-  | 'vectorset' | 'security' | 'min_score_bm25' | 'min_score_semantic'
-  | 'result_per_page' | 'retrieval_time';
-
-/** Ask query — event_type = 'ask' */
-export interface ActivityLogAskQuery {
-  year_month: string;
-  pagination?: ActivityLogPagination;
-  show?: ActivityLogAskShowField[] | 'all';
-  filters: ActivityLogAskFilters;
-}
-
-export type ActivityLogAskShowField =
-  | ActivityLogBaseShowField
-  | 'question' | 'rephrased_question' | 'answer' | 'learning_id' | 'retrieved_context'
-  | 'chat_history' | 'feedback_good' | 'feedback_comment' | 'feedback_good_all'
-  | 'feedback_good_any' | 'feedback' | 'model' | 'rag_strategies_names' | 'rag_strategies'
-  | 'status' | 'generative_answer_first_chunk_time' | 'generative_reasoning_first_chunk_time'
-  | 'generative_answer_time' | 'remi_scores' | 'user_request' | 'reasoning'
-  | 'resources_count' | 'filter' | 'retrieval_rephrased_question' | 'vectorset'
-  | 'security' | 'min_score_bm25' | 'min_score_semantic' | 'result_per_page' | 'retrieval_time';
-
-export interface ActivityLogAskFilters extends ActivityLogChatFilters {
-  generative_answer_first_chunk_time?: ActivityLogFilter<number>;
-  generative_reasoning_first_chunk_time?: ActivityLogFilter<number>;
-  generative_answer_time?: ActivityLogFilter<number>;
-  reasoning?: ActivityLogStringFilter;
-}
-
-/** Chat query — event_type = 'chat' */
-export interface ActivityLogChatQuery {
-  year_month: string;
-  pagination?: ActivityLogPagination;
-  show?: ActivityLogChatShowField[] | 'all';
-  filters: ActivityLogChatFilters;
-}
-
-export type ActivityLogChatShowField =
-  | ActivityLogBaseShowField
-  | 'question' | 'rephrased_question' | 'answer' | 'learning_id' | 'retrieved_context'
-  | 'chat_history' | 'feedback_good' | 'feedback_comment' | 'feedback_good_all'
-  | 'feedback_good_any' | 'feedback' | 'model' | 'rag_strategies_names' | 'rag_strategies'
-  | 'status' | 'generative_answer_first_chunk_time' | 'generative_reasoning_first_chunk_time'
-  | 'generative_answer_time' | 'remi_scores' | 'user_request' | 'reasoning';
-
-export type ActivityLogQuery =
-  | ActivityLogBaseQuery
-  | ActivityLogSearchQuery
-  | ActivityLogAskQuery
-  | ActivityLogChatQuery;
-
-// ---------------------------------------------------------------------------
-// Activity log item — shape of each NDJSON line in the query response
-// ---------------------------------------------------------------------------
-
-export interface ActivityLogItem {
-  id: number;
-  date: string | null;
-  user_id: string | null;
-  user_type: string | null;
-  client_type: string | null;
-  total_duration: number | null;
-  audit_metadata: Record<string, string> | null;
-  resource_id: string | null;
-  nuclia_tokens: number | null;
-  // Search + Ask fields
+export interface ActivityLogResponseChatItem extends ActivityLogResponseItem {
   question: string | null;
-  resources_count: number | null;
-  filter: string | null;
-  retrieval_rephrased_question: string | null;
-  vectorset: string | null;
-  security: unknown | null;
-  min_score_bm25: number | null;
-  min_score_semantic: number | null;
-  result_per_page: number | null;
-  retrieval_time: number | null;
-  // Ask + Chat fields
   rephrased_question: string | null;
   answer: string | null;
   learning_id: string | null;
@@ -280,3 +229,98 @@ export interface ActivityLogItem {
   user_request: string | null;
   reasoning: string | null;
 }
+
+export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
+  rephrased_question?: ActivityLogStringFilter;
+  answer?: ActivityLogStringFilter;
+  learning_id?: ActivityLogStringFilter;
+  feedback_good?: ActivityLogFilter<boolean>;
+  feedback_good_all?: ActivityLogFilter<boolean>;
+  feedback_good_any?: ActivityLogFilter<boolean>;
+  feedback_comment?: ActivityLogStringFilter;
+  model?: ActivityLogStringFilter;
+  /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA */
+  status?: ActivityLogFilter<string>;
+  generative_answer_first_chunk_time?: ActivityLogFilter<number>;
+  generative_reasoning_first_chunk_time?: ActivityLogFilter<number>;
+  generative_answer_time?: ActivityLogFilter<number>;
+  reasoning?: ActivityLogStringFilter;
+}
+
+export const ACTIVITY_LOG_CHAT_SHOW_FIELDS = [
+  ...ACTIVITY_LOG_SHOW_FIELDS,
+  'question', 'token_details', 'rephrased_question', 'answer', 'learning_id',
+  'retrieved_context', 'chat_history', 'feedback_good', 'feedback_comment', 'feedback_good_all',
+  'feedback_good_any', 'feedback', 'model', 'rag_strategies_names', 'rag_strategies', 'status',
+  'generative_answer_first_chunk_time', 'generative_reasoning_first_chunk_time', 'generative_answer_time',
+  'remi_scores', 'user_request', 'reasoning',
+] as const;
+export type ActivityLogChatShowFields = (typeof ACTIVITY_LOG_CHAT_SHOW_FIELDS)[number];
+
+/** @deprecated Use {@link ActivityLogChatShowFields} instead. */
+export type ActivityLogChatShowField = ActivityLogChatShowFields;
+
+export interface ActivityLogResponseAskItem extends ActivityLogResponseChatItem {
+  resources_count: number | null;
+  filter: string | null;
+  retrieval_rephrased_question: string | null;
+  vectorset: string | null;
+  security: unknown | null;
+  min_score_bm25: number | null;
+  min_score_semantic: number | null;
+  result_per_page: number | null;
+  retrieval_time: number | null;
+}
+
+export interface ActivityLogAskFilters extends ActivityLogChatFilters {
+  resources_count?: ActivityLogFilter<number>;
+  vectorset?: ActivityLogStringFilter;
+  min_score_bm25?: ActivityLogFilter<number>;
+  min_score_semantic?: ActivityLogFilter<number>;
+  result_per_page?: ActivityLogFilter<number>;
+  retrieval_time?: ActivityLogFilter<number>;
+}
+
+export const ACTIVITY_LOG_ASK_SHOW_FIELDS = [
+  ...ACTIVITY_LOG_CHAT_SHOW_FIELDS,
+  'resources_count', 'filter', 'retrieval_rephrased_question', 'vectorset', 'security',
+  'min_score_bm25', 'min_score_semantic', 'result_per_page', 'retrieval_time',
+] as const;
+export type ActivityLogAskShowFields = (typeof ACTIVITY_LOG_ASK_SHOW_FIELDS)[number];
+
+/** @deprecated Use {@link ActivityLogAskShowFields} instead. */
+export type ActivityLogAskShowField = ActivityLogAskShowFields;
+
+// ---------------------------------------------------------------------------
+// Generic filter helpers
+// ---------------------------------------------------------------------------
+
+export interface ActivityLogFilter<T> {
+  eq?: T;
+  gt?: T;
+  ge?: T;
+  lt?: T;
+  le?: T;
+  ne?: T;
+  isnull?: boolean;
+}
+
+export interface ActivityLogStringFilter extends ActivityLogFilter<string> {
+  like?: string;
+  ilike?: string;
+}
+
+export interface AuditMetadataFilter extends ActivityLogStringFilter {
+  key: string;
+}
+
+// ---------------------------------------------------------------------------
+// Backward-compatible alias
+// ---------------------------------------------------------------------------
+
+/**
+ * Backward-compatible alias — the "widest" response item containing all possible fields.
+ * Prefer the specific response types (ActivityLogResponseItem, ActivityLogResponseSearchItem, etc.)
+ * when the event type is known.
+ */
+export type ActivityLogItem = ActivityLogResponseAskItem;

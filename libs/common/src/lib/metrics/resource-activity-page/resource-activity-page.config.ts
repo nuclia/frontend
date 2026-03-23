@@ -1,4 +1,4 @@
-import { ActivityLogBaseShowField, ActivityLogItem } from '@nuclia/core';
+import { ACTIVITY_LOG_SHOW_FIELDS, ActivityLogItem } from '@nuclia/core';
 import { MetricsColumnDef, MetricsSidebarField, ProcessingItem } from '../metrics-column.model';
 
 export const PROCESSING_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
@@ -11,8 +11,9 @@ export const PROCESSING_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
   { key: 'total_duration', label: 'activity.column.duration', value: (item: ActivityLogItem) => item.total_duration ?? null, width: '140px', defaultHidden: true, group: 'tokens' },
 ];
 
-export const PROCESSING_ACTIVITY_SHOW_FIELDS: ActivityLogBaseShowField[] = [
-  'date', 'client_type', 'total_duration', 'resource_id', 'id', 'nuclia_tokens',
-];
+const EXCLUDED_PROCESSING_FIELDS: readonly string[] = ['user_id', 'user_type', 'audit_metadata'];
+export const PROCESSING_ACTIVITY_SHOW_FIELDS = ACTIVITY_LOG_SHOW_FIELDS.filter(
+  (f) => !EXCLUDED_PROCESSING_FIELDS.includes(f),
+);
 
 export const PROCESSING_ACTIVITY_SIDEBAR_FIELDS: MetricsSidebarField[] = [];

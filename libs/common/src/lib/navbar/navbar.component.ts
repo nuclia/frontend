@@ -34,14 +34,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       merge(
         of(
           this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl) &&
-            !this.isOnActivityMetricsPage(location.pathname),
+            !this.isOnMetricsPage(location.pathname),
         ),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map(
             (event) =>
               this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl) &&
-              !this.isOnActivityMetricsPage((event as NavigationEnd).url),
+              !this.isOnMetricsPage((event as NavigationEnd).url),
           ),
           takeUntil(this.unsubscribeAll),
         ),
@@ -147,10 +147,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
 
     merge(
-      of(this.isOnActivityMetricsPage(location.pathname)),
+      of(this.isOnMetricsPage(location.pathname)),
       this.router.events.pipe(
         filter((event) => event instanceof NavigationEnd),
-        map((event) => this.isOnActivityMetricsPage((event as NavigationEnd).url)),
+        map((event) => this.isOnMetricsPage((event as NavigationEnd).url)),
         takeUntil(this.unsubscribeAll),
       ),
     )
@@ -181,7 +181,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private isOnActivityMetricsPage(path: string): boolean {
+  private isOnMetricsPage(path: string): boolean {
     return /\/metrics\/(remi-analytics|usage-analytics|cost-token-usage|resource-activity|search-activity)/.test(path);
   }
 }

@@ -1,7 +1,7 @@
-import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable, Subject, catchError, exhaustMap, map, of, switchMap, take } from 'rxjs';
-import { SDKService, UserService } from '@flaps/core';
+import { EMPTY, Observable, Subject, catchError, map, of, switchMap, take } from 'rxjs';
+import { UserService } from '@flaps/core';
 import {
   ActivityLogItem,
   ActivityLogPagination,
@@ -11,30 +11,18 @@ import {
   SearchMetricsItem,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
 import { NumericCondition } from '../metrics-filters';
 import { applyNumericConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
 import { SEARCH_ACTIVITY_SHOW_FIELDS } from './search-activity-page.config';
+import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
 @Injectable()
-export class SearchActivityPageService {
-  private sdk = inject(SDKService);
+export class SearchActivityPageService extends AbstractMetricsPageService<ActivityLogItem> {
   private user = inject(UserService);
   private toaster = inject(SisToastService);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
-  private readonly PAGE_SIZE = 100;
-
-  private _items = signal<ActivityLogItem[]>([]);
-  private _loading = signal(false);
-  private _loadingMore = signal(false);
-
-  private _availableMonths = signal<string[]>([]);
-  private _yearMonth = signal('');
   private _search = signal<{ term: string; column: string } | null>(null);
   private _lastId = signal<number | undefined>(undefined);
-  private _hasMore = signal(false);
   private _searchTotals = signal<{ totalSearch: number | null; totalChat: number | null }>({
     totalSearch: null,
     totalChat: null,
@@ -43,49 +31,15 @@ export class SearchActivityPageService {
   // Sidebar numeric filter state
   private _numericConditions = signal<NumericCondition[]>([]);
 
-  readonly items = this._items.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly loadingMore = this._loadingMore.asReadonly();
-  readonly availableMonths = this._availableMonths.asReadonly();
-  readonly hasMore = this._hasMore.asReadonly();
   readonly searchTotals = this._searchTotals.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
 
-  private readonly _reset$ = new Subject<void>();
-  private readonly _nextPage$ = new Subject<void>();
   private readonly _loadTotals$ = new Subject<string>();
 
   constructor() {
-    this._reset$
-      .pipe(
-        switchMap(() =>
-          this._queryPage(false).pipe(
-            catchError((err) => {
-              console.error('[SearchActivityPageService] failed to load data', err);
-              this._items.set([]);
-              this._loading.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (items) => this._applyPage(items, false) });
-
-    this._nextPage$
-      .pipe(
-        exhaustMap(() =>
-          this._queryPage(true).pipe(
-            catchError((err) => {
-              console.error('[SearchActivityPageService] failed to load next page', err);
-              this._loadingMore.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (items) => this._applyPage(items, true) });
+    super();
+    this.initPipeline();
+    this.loadAvailableMonths();
 
     this._loadTotals$
       .pipe(
@@ -105,7 +59,9 @@ export class SearchActivityPageService {
       .subscribe((items) => {
         this._searchTotals.set(this._computeSearchTotals(items));
       });
+  }
 
+  protected loadAvailableMonths(): void {
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -115,6 +71,11 @@ export class SearchActivityPageService {
         next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
         error: () => {},
       });
+  }
+
+  protected override _resetPaginationState(): void {
+    super._resetPaginationState();
+    this._lastId.set(undefined);
   }
 
   private _buildFilters(): ActivityLogSearchFilters {
@@ -129,7 +90,7 @@ export class SearchActivityPageService {
     return filters as ActivityLogSearchFilters;
   }
 
-  private _queryPage(isAppend: boolean): Observable<ActivityLogItem[]> {
+  protected _queryPage(isAppend: boolean): Observable<ActivityLogItem[]> {
     const pagination: ActivityLogPagination =
       isAppend && this._lastId() !== undefined
         ? { limit: this.PAGE_SIZE, starting_after: this._lastId() }
@@ -147,7 +108,7 @@ export class SearchActivityPageService {
     );
   }
 
-  private _applyPage(newItems: ActivityLogItem[], isAppend: boolean): void {
+  protected _applyPage(newItems: ActivityLogItem[], isAppend: boolean): void {
     const lastId = newItems.length > 0 ? newItems[newItems.length - 1].id : undefined;
     this._hasMore.set(newItems.length >= this.PAGE_SIZE);
     if (lastId !== undefined) this._lastId.set(lastId);
@@ -182,12 +143,6 @@ export class SearchActivityPageService {
     this._reset$.next();
   }
 
-  loadNextPage(): void {
-    if (!this._hasMore() || this._loading() || this._loadingMore()) return;
-    this._loadingMore.set(true);
-    this._nextPage$.next();
-  }
-
   updateNumericConditions(conditions: NumericCondition[]): void {
     this._numericConditions.set(conditions);
     this._applyFilters();
@@ -196,15 +151,6 @@ export class SearchActivityPageService {
   applyAllFilters(numericConditions: NumericCondition[]): void {
     this._numericConditions.set(numericConditions);
     this._applyFilters();
-  }
-
-  private _applyFilters(): void {
-    if (!this._yearMonth()) return;
-    this._lastId.set(undefined);
-    this._hasMore.set(false);
-    this._items.set([]);
-    this._loading.set(true);
-    this._reset$.next();
   }
 
   download(format: DownloadFormat, columns: string[]): void {

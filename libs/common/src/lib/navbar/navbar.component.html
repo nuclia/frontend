@@ -204,6 +204,7 @@
             @if (showMetrics) {
               <div class="nav-group">
                 <div class="group-items">
+                  @if (isRemiMetricsEnabled | async) {
                   <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null"
                     routerLinkActive="active"
@@ -213,6 +214,7 @@
                     <pa-icon name="image"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
                   </a>
+                }
                   <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null"
                     routerLinkActive="active"

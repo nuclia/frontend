@@ -1,4 +1,4 @@
-import { ActivityLogItem, ActivityLogSearchShowField } from '@nuclia/core';
+import { ACTIVITY_LOG_SEARCH_SHOW_FIELDS, ActivityLogItem } from '@nuclia/core';
 import { MetricsColumnDef, MetricsSidebarField } from '../metrics-column.model';
 
 export const SEARCH_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
@@ -15,11 +15,12 @@ export const SEARCH_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
   { key: 'vectorset', label: 'activity.column.vectorset', value: (item: ActivityLogItem) => item.vectorset ?? null, width: '140px', defaultHidden: true, group: 'retrieval', searchable: true },
 ];
 
-export const SEARCH_ACTIVITY_SHOW_FIELDS: ActivityLogSearchShowField[] = [
-  'date', 'question', 'client_type', 'min_score_semantic', 'total_duration',
-  'id', 'min_score_bm25', 'nuclia_tokens', 'resources_count',
-  'retrieval_time', 'vectorset', 'retrieval_rephrased_question',
+const EXCLUDED_SEARCH_FIELDS: readonly string[] = [
+  'user_id', 'user_type', 'audit_metadata', 'resource_id', 'token_details', 'filter', 'security', 'result_per_page',
 ];
+export const SEARCH_ACTIVITY_SHOW_FIELDS = ACTIVITY_LOG_SEARCH_SHOW_FIELDS.filter(
+  (f) => !EXCLUDED_SEARCH_FIELDS.includes(f),
+);
 
 export const SEARCH_ACTIVITY_SIDEBAR_FIELDS: MetricsSidebarField[] = [
   { key: 'retrieval_rephrased_question', label: 'activity.column.retrieval-rephrased-question', value: (item: ActivityLogItem) => item.retrieval_rephrased_question ?? null, expandable: true, group: 'retrieval' },

@@ -81,10 +81,7 @@ export class MetricsPageComponent {
 
     this.service.updateRangeLabel(this.selectedMonth());
 
-    this.searchInput$.pipe(
-      debounceTime(250),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((term) => {
+    this.searchInput$.pipe(debounceTime(250), takeUntilDestroyed(this.destroyRef)).subscribe((term) => {
       this.currentSearchTerm.set(term ?? '');
       this.searchChange.emit({ term: term ?? '', column: this.service.searchMode() });
     });
@@ -179,7 +176,7 @@ export class MetricsPageComponent {
     const groupMap = allFields.reduce((map, field) => {
       const group = field.group;
       if (!map.has(group)) map.set(group, []);
-      map.get(group)!.push(field);
+      map.get(group)?.push(field);
       return map;
     }, new Map<string, typeof allFields>());
 
@@ -190,7 +187,10 @@ export class MetricsPageComponent {
     }));
   });
 
-  getFieldValue(item: ActivityLogItem, field: { key: string; value: (item: ActivityLogItem) => any; isColumn: boolean }): string {
+  getFieldValue(
+    item: ActivityLogItem,
+    field: { key: string; value: (item: ActivityLogItem) => unknown; isColumn: boolean },
+  ): string {
     if (field.isColumn) {
       return this.getCellValue(item, field.key);
     }
@@ -202,11 +202,11 @@ export class MetricsPageComponent {
     return String(raw);
   }
 
-  hasGroupData(item: ActivityLogItem, fields: Array<{ value: (item: ActivityLogItem) => any }>): boolean {
+  hasGroupData(item: ActivityLogItem, fields: Array<{ value: (item: ActivityLogItem) => unknown }>): boolean {
     return fields.some((f) => f.value(item) != null);
   }
 
-  isFieldVisible(item: ActivityLogItem, field: { value: (item: ActivityLogItem) => any }): boolean {
+  isFieldVisible(item: ActivityLogItem, field: { value: (item: ActivityLogItem) => unknown }): boolean {
     const val = field.value(item);
     return val != null && val !== '';
   }

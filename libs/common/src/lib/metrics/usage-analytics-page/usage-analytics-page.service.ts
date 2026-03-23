@@ -1,8 +1,8 @@
-import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, exhaustMap, forkJoin, map, of, switchMap, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import {
+  ACTIVITY_LOG_ASK_SHOW_FIELDS,
   ActivityLogItem,
   EventType,
   Metric,
@@ -12,12 +12,11 @@ import {
   RemiQueryResponseItem,
   RemiScoresResponseItem,
 } from '@nuclia/core';
-import { TranslateService } from '@ngx-translate/core';
 import { UsageAnalyticsItem } from '../metrics-column.model';
 import { getMonthRange } from '../metrics-utils';
+import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
 const STATUSES: RemiAnswerStatus[] = ['SUCCESS', 'ERROR', 'NO_CONTEXT'];
-const PAGE_SIZE = 100;
 
 interface StatusPageState {
   hasMore: boolean;
@@ -27,55 +26,16 @@ interface StatusPageState {
 type StatusPageMap = Record<RemiAnswerStatus, StatusPageState>;
 
 /** Default values for all ActivityLogItem fields not provided by the REMI API. */
-const NULL_ACTIVITY_FIELDS: Omit<ActivityLogItem, 'id' | 'question' | 'answer' | 'status' | 'remi_scores'> = {
-  date: null,
-  user_id: null,
-  user_type: null,
-  client_type: null,
-  total_duration: null,
-  audit_metadata: null,
-  resource_id: null,
-  nuclia_tokens: null,
-  resources_count: null,
-  filter: null,
-  retrieval_rephrased_question: null,
-  vectorset: null,
-  security: null,
-  min_score_bm25: null,
-  min_score_semantic: null,
-  result_per_page: null,
-  retrieval_time: null,
-  rephrased_question: null,
-  learning_id: null,
-  retrieved_context: null,
-  chat_history: null,
-  feedback_good: null,
-  feedback_comment: null,
-  feedback_good_all: null,
-  feedback_good_any: null,
-  feedback: null,
-  model: null,
-  rag_strategies_names: null,
-  rag_strategies: null,
-  generative_answer_first_chunk_time: null,
-  generative_reasoning_first_chunk_time: null,
-  generative_answer_time: null,
-  user_request: null,
-  reasoning: null,
-};
+const REMI_PROVIDED_FIELDS = ['id', 'question', 'answer', 'status', 'remi_scores'] as const;
+const NULL_ACTIVITY_FIELDS = Object.fromEntries(
+  ACTIVITY_LOG_ASK_SHOW_FIELDS.filter((f) => !(REMI_PROVIDED_FIELDS as readonly string[]).includes(f)).map((f) => [
+    f,
+    null,
+  ]),
+) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
 @Injectable()
-export class UsageAnalyticsPageService {
-  private sdk = inject(SDKService);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-
-  private _items = signal<UsageAnalyticsItem[]>([]);
-  private _loading = signal(false);
-  private _loadingMore = signal(false);
-  private _availableMonths = signal<string[]>([]);
-  private _yearMonth = signal('');
-  private _hasMore = signal(false);
+export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
   private _remiScoreAverages = signal<{
     answerRelevance: number | null;
     contextRelevance: number | null;
@@ -94,51 +54,17 @@ export class UsageAnalyticsPageService {
     { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
   >(undefined);
 
-  readonly items = this._items.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly loadingMore = this._loadingMore.asReadonly();
-  readonly availableMonths = this._availableMonths.asReadonly();
-  readonly hasMore = this._hasMore.asReadonly();
   readonly remiScoreAverages = this._remiScoreAverages.asReadonly();
   readonly activeStatuses = this._activeStatuses.asReadonly();
   readonly feedbackGoodFilter = this._feedbackGoodFilter.asReadonly();
   readonly contentRelevanceFilter = this._contentRelevanceFilter.asReadonly();
 
-  private readonly _reset$ = new Subject<void>();
-  private readonly _nextPage$ = new Subject<void>();
   private readonly _loadScores$ = new Subject<string>();
 
   constructor() {
-    this._reset$
-      .pipe(
-        switchMap(() =>
-          this._queryAllStatuses(false).pipe(
-            catchError((err) => {
-              console.error('[UsageAnalyticsPageService] failed to load data', err);
-              this._items.set([]);
-              this._loading.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (items) => this._applyPage(items, false) });
-
-    this._nextPage$
-      .pipe(
-        exhaustMap(() =>
-          this._queryAllStatuses(true).pipe(
-            catchError((err) => {
-              console.error('[UsageAnalyticsPageService] failed to load next page', err);
-              this._loadingMore.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (items) => this._applyPage(items, true) });
+    super();
+    this.initPipeline();
+    this.loadAvailableMonths();
 
     this._loadScores$
       .pipe(
@@ -158,7 +84,9 @@ export class UsageAnalyticsPageService {
       .subscribe((items) => {
         this._remiScoreAverages.set(this._computeRemiAverages(items));
       });
+  }
 
+  protected loadAvailableMonths(): void {
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -171,6 +99,10 @@ export class UsageAnalyticsPageService {
       });
   }
 
+  protected override _resetPaginationState(): void {
+    this._resetStatusPages();
+  }
+
   loadData(yearMonth: string): void {
     if (!yearMonth) return;
     this._yearMonth.set(yearMonth);
@@ -180,12 +112,6 @@ export class UsageAnalyticsPageService {
     this._remiScoreAverages.set({ answerRelevance: null, contextRelevance: null, groundedness: null });
     this._reset$.next();
     this._loadScores$.next(yearMonth);
-  }
-
-  loadNextPage(): void {
-    if (!this._hasMore() || this._loading() || this._loadingMore()) return;
-    this._loadingMore.set(true);
-    this._nextPage$.next();
   }
 
   updateActiveStatuses(statuses: RemiAnswerStatus[]): void {
@@ -221,19 +147,15 @@ export class UsageAnalyticsPageService {
     this._applyFilters();
   }
 
-  private _applyFilters(): void {
-    if (!this._yearMonth()) return;
-    this._resetStatusPages();
-    this._items.set([]);
-    this._loading.set(true);
-    this._reset$.next();
-  }
-
   private _resetStatusPages(): void {
     for (const status of STATUSES) {
       this._statusPages[status] = { hasMore: false, lastId: undefined };
     }
     this._hasMore.set(false);
+  }
+
+  protected _queryPage(isAppend: boolean): Observable<UsageAnalyticsItem[]> {
+    return this._queryAllStatuses(isAppend);
   }
 
   private _queryAllStatuses(isAppend: boolean) {
@@ -268,8 +190,8 @@ export class UsageAnalyticsPageService {
               status,
               pagination:
                 isAppend && state.lastId !== undefined
-                  ? { limit: PAGE_SIZE, starting_after: state.lastId }
-                  : { limit: PAGE_SIZE },
+                  ? { limit: this.PAGE_SIZE, starting_after: state.lastId }
+                  : { limit: this.PAGE_SIZE },
             };
             if (feedbackGood !== undefined) {
               criteria.feedback_good = feedbackGood;
@@ -313,8 +235,8 @@ export class UsageAnalyticsPageService {
     const pageState = this._statusPages['SUCCESS'];
     const pagination =
       isAppend && pageState.lastId !== undefined
-        ? { limit: PAGE_SIZE, starting_after: pageState.lastId }
-        : { limit: PAGE_SIZE };
+        ? { limit: this.PAGE_SIZE, starting_after: pageState.lastId }
+        : { limit: this.PAGE_SIZE };
 
     const criteria: RemiQueryCriteria = {
       month: yearMonth,
@@ -346,7 +268,7 @@ export class UsageAnalyticsPageService {
     );
   }
 
-  private _applyPage(newItems: UsageAnalyticsItem[], isAppend: boolean): void {
+  protected _applyPage(newItems: UsageAnalyticsItem[], isAppend: boolean): void {
     if (isAppend) {
       this._items.update((prev) => [...prev, ...newItems].sort((a, b) => b.id - a.id));
       this._loadingMore.set(false);

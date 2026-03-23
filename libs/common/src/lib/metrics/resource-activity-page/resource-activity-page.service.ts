@@ -1,56 +1,44 @@
-import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable, Subject, catchError, exhaustMap, forkJoin, map, of, switchMap, take } from 'rxjs';
-import { SDKService, UserService } from '@flaps/core';
+import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { UserService } from '@flaps/core';
 import {
   ActivityLogFilters,
-  ActivityLogItem,
   ActivityLogPagination,
   DownloadFormat,
   EventType,
   UsagePoint,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
 import { NumericCondition } from '../metrics-filters';
 import { ProcessingItem, ProcessingStats } from '../metrics-column.model';
 import { aggregateUsageMetric, applyNumericConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
 import { PROCESSING_ACTIVITY_SHOW_FIELDS } from './resource-activity-page.config';
+import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
 const ALL_SOURCES: EventType[] = [EventType.NEW, EventType.MODIFIED, EventType.PROCESSED];
 
+interface ResourceActivityGroup {
+  eventType: EventType;
+  items: ProcessingItem[];
+}
+
 @Injectable()
-export class ResourceActivityPageService {
-  private sdk = inject(SDKService);
+export class ResourceActivityPageService extends AbstractMetricsPageService<ProcessingItem, ResourceActivityGroup[]> {
   private user = inject(UserService);
   private toaster = inject(SisToastService);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
-  private readonly PAGE_SIZE = 100;
-
-  private _items = signal<ProcessingItem[]>([]);
-  private _loading = signal(false);
-  private _loadingMore = signal(false);
   private _usageStats = signal<ProcessingStats>({
     resourcesProcessed: null, paragraphsProcessed: null,
   });
-  private _availableMonths = signal<string[]>([]);
-  private _yearMonth = signal('');
   private _search = signal<{ term: string; column: string } | null>(null);
   private _lastIds = signal<Record<string, number | undefined>>({});
-  private _hasMore = signal(false);
 
   // Filter state
   private _activeSources = signal<Set<EventType>>(new Set(ALL_SOURCES));
   private _numericConditions = signal<NumericCondition[]>([]);
 
-  readonly items = this._items.asReadonly();
-  readonly loading = this._loading.asReadonly();
-  readonly loadingMore = this._loadingMore.asReadonly();
   readonly usageStats = this._usageStats.asReadonly();
-  readonly availableMonths = this._availableMonths.asReadonly();
-  readonly hasMore = this._hasMore.asReadonly();
   readonly activeSources = this._activeSources.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
 
@@ -60,62 +48,12 @@ export class ResourceActivityPageService {
     [EventType.PROCESSED, 'Processed'],
   ];
 
-  private readonly _reset$ = new Subject<void>();
-  private readonly _nextPage$ = new Subject<void>();
   private readonly _loadUsage$ = new Subject<string>();
 
   constructor() {
-    this._reset$
-      .pipe(
-        switchMap(() =>
-          this._queryPage(false).pipe(
-            catchError((err) => {
-              console.error('[ResourceActivityPageService] failed to load data', err);
-              this._items.set([]);
-              this._loading.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (groups) => this._applyPage(groups, false) });
-
-    this._nextPage$
-      .pipe(
-        exhaustMap(() =>
-          this._queryPage(true).pipe(
-            catchError((err) => {
-              console.error('[ResourceActivityPageService] failed to load next page', err);
-              this._loadingMore.set(false);
-              return EMPTY;
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe({ next: (groups) => this._applyPage(groups, true) });
-
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          forkJoin([
-            kb.activityMonitor.getMonthsWithActivity(EventType.NEW),
-            kb.activityMonitor.getMonthsWithActivity(EventType.MODIFIED),
-            kb.activityMonitor.getMonthsWithActivity(EventType.PROCESSED),
-          ]),
-        ),
-        map(([a, b, c]) =>
-          [...new Set([...a.downloads, ...b.downloads, ...c.downloads])].sort((a, b) =>
-            b.localeCompare(a),
-          ),
-        ),
-      )
-      .subscribe({
-        next: (months) => this._availableMonths.set(months),
-        error: () => {},
-      });
+    super();
+    this.initPipeline();
+    this.loadAvailableMonths();
 
     this._loadUsage$
       .pipe(
@@ -139,6 +77,34 @@ export class ResourceActivityPageService {
       });
   }
 
+  protected loadAvailableMonths(): void {
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          forkJoin([
+            kb.activityMonitor.getMonthsWithActivity(EventType.NEW),
+            kb.activityMonitor.getMonthsWithActivity(EventType.MODIFIED),
+            kb.activityMonitor.getMonthsWithActivity(EventType.PROCESSED),
+          ]),
+        ),
+        map(([a, b, c]) =>
+          [...new Set([...a.downloads, ...b.downloads, ...c.downloads])].sort((a, b) =>
+            b.localeCompare(a),
+          ),
+        ),
+      )
+      .subscribe({
+        next: (months) => this._availableMonths.set(months),
+        error: () => {},
+      });
+  }
+
+  protected override _resetPaginationState(): void {
+    super._resetPaginationState();
+    this._lastIds.set({});
+  }
+
   private _buildFilters(): ActivityLogFilters {
     const filters: Record<string, unknown> = {};
     const search = this._search();
@@ -156,7 +122,7 @@ export class ResourceActivityPageService {
     return this._sources.filter(([eventType]) => active.has(eventType));
   }
 
-  private _queryPage(isAppend: boolean): Observable<Array<{ eventType: EventType; items: ProcessingItem[] }>> {
+  protected _queryPage(isAppend: boolean): Observable<ResourceActivityGroup[]> {
     const lastIds = this._lastIds();
     const sources = this._getFilteredSources();
     if (sources.length === 0) {
@@ -191,7 +157,7 @@ export class ResourceActivityPageService {
     );
   }
 
-  private _applyPage(groups: Array<{ eventType: EventType; items: ProcessingItem[] }>, isAppend: boolean): void {
+  protected _applyPage(groups: ResourceActivityGroup[], isAppend: boolean): void {
     const newLastIds: Record<string, number | undefined> = { ...this._lastIds() };
     groups.forEach(({ eventType, items }) => {
       if (items.length > 0) {
@@ -237,12 +203,6 @@ export class ResourceActivityPageService {
     this._reset$.next();
   }
 
-  loadNextPage(): void {
-    if (!this._hasMore() || this._loading() || this._loadingMore()) return;
-    this._loadingMore.set(true);
-    this._nextPage$.next();
-  }
-
   updateActiveSources(sources: EventType[]): void {
     if (sources.length === 0) return;
     this._activeSources.set(new Set(sources));
@@ -260,15 +220,6 @@ export class ResourceActivityPageService {
     }
     this._numericConditions.set(numericConditions);
     this._applyFilters();
-  }
-
-  private _applyFilters(): void {
-    if (!this._yearMonth()) return;
-    this._lastIds.set({});
-    this._hasMore.set(false);
-    this._items.set([]);
-    this._loading.set(true);
-    this._reset$.next();
   }
 
   download(format: DownloadFormat, columns: string[]): void {

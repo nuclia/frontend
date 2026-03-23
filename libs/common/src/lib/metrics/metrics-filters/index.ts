@@ -1,9 +1,11 @@
+export { MetricsFiltersComponent } from './metrics-filters.component';
+export { MetricsFiltersService } from './metrics-filters.service';
 export {
-  MetricsFiltersComponent,
   FilterColumnConfig,
   FilterColumnType,
   FilterApplyEvent,
   BooleanCondition,
   NumericCondition,
   NumericOperation,
-} from './metrics-filters.component';
+  ConditionRow,
+} from './metrics-filters.model';

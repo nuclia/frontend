@@ -3,6 +3,7 @@ import { MetricsMonthRange } from '../metrics-column.model';
 import { BooleanCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
 import { CostTokenUsagePageService } from './cost-token-usage-page.service';
 import { COST_TOKEN_COLUMNS, COST_TOKEN_SIDEBAR_FIELDS } from './cost-token-usage-page.config';
+import { DownloadFormat } from '@nuclia/core';
 
 @Component({
   selector: 'app-cost-token-usage-page',
@@ -23,8 +24,16 @@ export class CostTokenUsagePageComponent {
     { key: 'total_duration', labelKey: 'activity.column.duration', type: 'numeric' },
     { key: 'nuclia_tokens', labelKey: 'activity.column.nuclia-tokens', type: 'numeric' },
     { key: 'status', labelKey: 'activity.column.status', type: 'numeric' },
-    { key: 'generative_answer_first_chunk_time', labelKey: 'activity.column.generative-answer-first-chunk-time', type: 'numeric' },
-    { key: 'generative_reasoning_first_chunk_time', labelKey: 'activity.column.generative-reasoning-first-chunk-time', type: 'numeric' },
+    {
+      key: 'generative_answer_first_chunk_time',
+      labelKey: 'activity.column.generative-answer-first-chunk-time',
+      type: 'numeric',
+    },
+    {
+      key: 'generative_reasoning_first_chunk_time',
+      labelKey: 'activity.column.generative-reasoning-first-chunk-time',
+      type: 'numeric',
+    },
     { key: 'generative_answer_time', labelKey: 'activity.column.generative-answer-time', type: 'numeric' },
     { key: 'resources_count', labelKey: 'activity.column.resources-count', type: 'numeric' },
     { key: 'min_score_bm25', labelKey: 'activity.column.min-score-bm25', type: 'numeric' },
@@ -57,7 +66,7 @@ export class CostTokenUsagePageComponent {
     this.service.loadNextPage();
   }
 
-  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat; columns: string[] }): void {
+  onDownloadRequested(event: { format: DownloadFormat; columns: string[] }): void {
     this.service.download(event.format, event.columns);
   }
 

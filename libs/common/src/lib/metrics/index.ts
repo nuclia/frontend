@@ -1,3 +1,4 @@
+export * from './abstract-metrics-page.service';
 export * from './metrics.module';
 export * from './metrics-column.model';
 export * from './metrics-filters';

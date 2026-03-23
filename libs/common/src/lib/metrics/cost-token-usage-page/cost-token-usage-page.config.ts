@@ -1,4 +1,4 @@
-import { ActivityLogAskShowField, ActivityLogItem } from '@nuclia/core';
+import { ACTIVITY_LOG_ASK_SHOW_FIELDS, ActivityLogItem } from '@nuclia/core';
 import { MetricsColumnDef, MetricsSidebarField } from '../metrics-column.model';
 
 export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
@@ -24,12 +24,15 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   { key: 'vectorset', label: 'activity.column.vectorset', value: (item: ActivityLogItem) => item.vectorset ?? null, width: '140px', defaultHidden: true, group: 'retrieval', searchable: true },
 ];
 
-export const COST_TOKEN_SHOW_FIELDS: ActivityLogAskShowField[] = [
-  'date', 'question', 'answer', 'client_type', 'model', 'nuclia_tokens',
-  'generative_answer_first_chunk_time', 'generative_answer_time',
-  'generative_reasoning_first_chunk_time', 'retrieval_time', 'status', 'total_duration',
-  'feedback_good', 'feedback_good_all', 'feedback_good_any',
-  'min_score_bm25', 'min_score_semantic', 'reasoning', 'resources_count', 'vectorset',
+const EXCLUDED_COST_TOKEN_FIELDS: readonly string[] = [
+  'id', 'user_id', 'user_type', 'audit_metadata', 'resource_id', 'token_details',
+  'rephrased_question', 'learning_id', 'retrieved_context', 'chat_history',
+  'feedback_comment', 'feedback', 'rag_strategies_names', 'rag_strategies',
+  'remi_scores', 'user_request', 'filter', 'retrieval_rephrased_question',
+  'security', 'result_per_page',
 ];
+export const COST_TOKEN_SHOW_FIELDS = ACTIVITY_LOG_ASK_SHOW_FIELDS.filter(
+  (f) => !EXCLUDED_COST_TOKEN_FIELDS.includes(f),
+);
 
 export const COST_TOKEN_SIDEBAR_FIELDS: MetricsSidebarField[] = [];
