@@ -1439,6 +1439,8 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postprocés",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Preprocés",
 	"retrieval-agents.workflow.node-types.router.title": "Encaminador",
+	"retrieval-agents.workflow.node-types.sitefinity.form.go-to-drivers": "Creeu un controlador Sitefinity",
+	"retrieval-agents.workflow.node-types.sitefinity.form.no-source": "No hi ha cap controlador Sitefinity registrat, cal que en creeu un abans d'afegir aquest tipus de node.",
 	"retrieval-agents.workflow.node-types.sql.description": "Accedar a les dades de la vostra base de dades SQL",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Creeu un controlador de SQL",
 	"retrieval-agents.workflow.node-types.sql.title": "Consulta SQL",

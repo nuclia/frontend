@@ -1439,6 +1439,8 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Post-traitement",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Prétraitement",
 	"retrieval-agents.workflow.node-types.router.title": "Routeur",
+	"retrieval-agents.workflow.node-types.sitefinity.form.go-to-drivers": "Créer un pilote Sitefinity",
+	"retrieval-agents.workflow.node-types.sitefinity.form.no-source": "Il n'y a pas de pilote Sitefinity enregistré, vous devez en créer un avant d'ajouter ce type de nœud.",
 	"retrieval-agents.workflow.node-types.sql.description": "Accéder aux données de votre base de données SQL",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Créer un pilote SQL",
 	"retrieval-agents.workflow.node-types.sql.title": "Requête SQL",

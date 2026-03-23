@@ -1442,6 +1442,8 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postprocess",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Preprocess",
 	"retrieval-agents.workflow.node-types.router.title": "Router",
+	"retrieval-agents.workflow.node-types.sitefinity.form.go-to-drivers": "Create a Sitefinity driver",
+	"retrieval-agents.workflow.node-types.sitefinity.form.no-source": "There is no Sitefinity driver registered, you need to create one before adding this kind of node.",
 	"retrieval-agents.workflow.node-types.sql.description": "Access data from your SQL database",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Create an SQL driver",
 	"retrieval-agents.workflow.node-types.sql.title": "SQL query",
