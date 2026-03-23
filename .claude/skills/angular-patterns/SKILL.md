@@ -457,6 +457,102 @@ Rule of thumb: each line should do **one thing** — a sum, a filter, a rounding
 
 ---
 
+## `as const` Arrays for Type Derivation
+
+When defining a set of string literal union types, prefer defining a `const` array first and
+deriving the type from it. This gives you both **runtime iteration** over the values and
+**compile-time type safety**:
+
+```ts
+// ✅ Preferred: const array → derived type
+export const MY_FIELDS = ['field1', 'field2', 'field3'] as const;
+export type MyField = (typeof MY_FIELDS)[number];
+// MyField = 'field1' | 'field2' | 'field3'
+
+// ✅ Extending a parent set: spread + as const
+export const EXTENDED_FIELDS = [...MY_FIELDS, 'extra1', 'extra2'] as const;
+export type ExtendedField = (typeof EXTENDED_FIELDS)[number];
+```
+
+```ts
+// ❌ Avoid: standalone union type that can't be iterated at runtime
+export type MyField = 'field1' | 'field2' | 'field3';
+// No way to loop over values without duplicating them in an array
+```
+
+This pattern is used extensively in SDK model files (e.g., `activity.models.ts` show fields).
+
+---
+
+## Abstract Base Classes
+
+When **3+ services or components** share significant logic (state signals, lifecycle methods,
+pipeline patterns), extract an abstract base class rather than duplicating code:
+
+```ts
+// metrics/abstract-metrics-page.service.ts — at the module root
+@Injectable()
+export abstract class AbstractMetricsPageService<T, R = T[]> {
+  // inject() works as field initializers in abstract classes
+  protected sdk = inject(SDKService);
+  protected toast = inject(SisToastService);
+
+  // ── Shared state ────────────────────────────────────────────────
+  private _items = signal<R | null>(null);
+  items = this._items.asReadonly();
+
+  // ── Protected hooks that subclasses can override ────────────────
+  protected _resetPaginationState(): void {
+    // Default no-op — subclasses override if they have pagination
+  }
+
+  // ── Shared pipeline logic ───────────────────────────────────────
+  protected initPipeline(): void {
+    // Build the common refresh → switchMap → tap pipeline
+  }
+
+  protected loadAvailableMonths(): void {
+    // Shared month-loading logic
+  }
+}
+```
+
+**Rules for abstract base classes:**
+- Place at the module root (e.g., `metrics/abstract-metrics-page.service.ts`)
+- Use generics for item types: `AbstractMetricsPageService<T, R = T[]>`
+- Provide protected hook methods (`_resetPaginationState()`) that subclasses can override
+- `inject()` as field initializers works with inheritance — no need to pass services via `super()`
+- Subclass constructor pattern: `super()` → `this.initPipeline()` → `this.loadAvailableMonths()`
+
+---
+
+## File Splitting Convention: `.model.ts` Files
+
+In addition to the Component / Service / Config trinity, complex components use a
+**`.model.ts`** file for interfaces, types, and data models:
+
+| File | Content |
+|---|---|
+| `feature-name.model.ts` | Interfaces, type aliases, enums, and small data-shape classes |
+| `feature-name.service.ts` | Business logic: state management, data transformation, condition CRUD |
+| `feature-name.component.ts` | Thin UI shell that delegates all logic to the service |
+| `feature-name.config.ts` | Static column defs, dropdown options, constants |
+
+**When to split:** This applies to complex components with significant logic. Simple components
+with 1–2 interfaces can keep them inline or in the service file.
+
+```
+activity/
+  cost-token-page/
+    cost-token-page.component.ts    ← thin UI shell
+    cost-token-page.component.html
+    cost-token-page.service.ts      ← business logic + state
+    cost-token-page.model.ts        ← interfaces and types
+    cost-token-page.config.ts       ← static constants
+```
+
+---
+
 ## Lazy Routing Patterns
 
 Two styles coexist — prefer the route-array style for new features:

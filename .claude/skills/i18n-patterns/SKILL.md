@@ -21,9 +21,11 @@ Translations cover 4 locales: **en, es, fr, ca**. These are the only supported l
 
 ## Non-Negotiable Rules
 
-1. **Never edit translation JSON files directly when adding, renaming, or deleting keys.**
-   Always open the library's `.babel` project file in BabelEdit so all 4 locale files stay
-   in sync. Manual JSON edits are allowed only for fixing a typo in a single locale's value.
+1. **When adding new translation keys programmatically, only add them to `en.json`.**
+   Never touch `fr.json`, `ca.json`, or `es.json` — the user handles those manually via
+   BabelEdit. BabelEdit detects blank/missing keys, so adding only to `en.json` makes it
+   easy for the user to fill in the other locales. Manual JSON edits to non-English files
+   are allowed only for fixing a typo in a single locale's value.
 2. **Keys are flat dot-notation strings.** The JSON files use a flat structure with namespaced
    keys like `"account.delete_account": "Delete account"`. Never introduce nested JSON objects.
 3. **Every user-visible string must be translatable.** Do not hardcode English text in templates
@@ -49,7 +51,12 @@ Each library that owns translation files has a `.babel` project file at its root
 > Apps (`dashboard`, `rao`, `manager-v2`, `nucliadb-admin`) do not own translation files —
 > they aggregate translations from the libs above.
 
-**To add a new key:**
+**To add a new key (agent / programmatic workflow):**
+1. Add the key and English value to the library's `en.json` file only.
+2. **Do not touch** `fr.json`, `ca.json`, or `es.json` — the user fills those in via BabelEdit.
+3. BabelEdit will detect the missing key in other locales and prompt the user to translate it.
+
+**To add a new key (BabelEdit manual workflow):**
 1. Open the library's `.babel` file in BabelEdit (File → Open).
 2. Click **+** to add a new key. BabelEdit adds it to all 4 locale files simultaneously.
 3. Fill in the English value; add translations or leave others blank (they'll fall back to `en`).
@@ -205,7 +212,7 @@ JSON files) rather than pulling in ngx-translate.
 
 | Mistake | Correct approach |
 |---------|-----------------|
-| Adding a key only to `en.json` manually | Open `common.babel` / `sync.babel` / etc. in BabelEdit |
+| Adding a key to all 4 locale files at once (programmatically) | Only add to `en.json` — the user fills other locales via BabelEdit |
 | Hardcoding English text in a template | Use `'key' \| translate` pipe |
 | Passing raw strings to `SisToastService.error()` | Use i18n key: `toaster.error('upload.toast.blocked')` |
 | Using nested JSON keys `{ "account": { "title": "..." } }` | Use flat dot-notation: `"account.title"` |

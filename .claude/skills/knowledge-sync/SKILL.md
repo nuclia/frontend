@@ -81,6 +81,44 @@ Given the list of changed files, populate this map:
 | New file in `.claude/agents/` | Update `.github/copilot-instructions.md` agents list | CRITICAL |
 | `charts/` or `docker/` | Review root `AGENTS.md` deployment section if one exists | LOW |
 
+### Content ROI Quick Reference
+
+Use this when deciding what belongs in an AGENTS.md. The full detailed framework lives in
+`.claude/skills/agents-review/SKILL.md`, but these criteria cover the most common decisions.
+
+**Core test:** "Can an agent discover this in under 5 seconds by reading the source? If yes, skip it."
+
+#### High ROI — Always Include
+
+- **Non-obvious invariants and runtime constraints** — things that look like bugs but are intentional
+- **Custom architecture patterns unique to the project** — not inferable from filenames alone
+- **Guards with their enforced conditions** — agents will accidentally route around unknown guards
+- **File structure tree with one-line annotations**
+- **Run commands** — `nx serve/test/build` with the exact project name
+- **Flag interactions and mutual exclusions** — cannot be found without running code
+- **Intentional divergence from workspace norms** — hash routing, eslint-disable on purpose, etc.
+- **Critical API usage distinctions** — when to use one method vs another, why something emits multiple values
+
+#### Low ROI — Skip These
+
+- **Method signature tables** — agents read source directly
+- **Model/interface property lists** — duplication of `*.models.ts`
+- **Constants and enum value lists** — greppable in under 2 seconds
+- **External dependency tables** — already in `package.json`
+- **Integration tutorials / README content** — AGENTS.md is for contributors, not integrators
+- **Public API re-export indexes** — note the barrel and categories, don't list all symbols
+- **Boilerplate descriptions redundant with filenames**
+
+#### Token Budget Targets
+
+| Project type | Target | Max |
+|---|---:|---:|
+| Small lib (< 10 source files) | ~1,000 tokens | 2,000 |
+| Medium lib or app | ~2,000 tokens | 4,000 |
+| Large lib (`libs/common`, `libs/core`) | ~3,000 tokens | 5,500 |
+
+Files above max almost certainly duplicate source. Keep conventions and structure; cut method tables.
+
 ### Step 4 — Execute Updates
 
 Work through the staleness map from **CRITICAL → HIGH → MEDIUM → LOW**.
@@ -89,7 +127,7 @@ Work through the staleness map from **CRITICAL → HIGH → MEDIUM → LOW**.
 
 If a new app or lib was created and has no AGENTS.md:
 1. Read the project's `project.json`, routing files, main module/component tree, and key services
-2. Follow the `agents-review` skill (`.claude/skills/agents-review/SKILL.md`) to write the file from scratch — including its **Content ROI** guidance: keep conventions, guards, structure trees, non-obvious runtime constraints; exclude method signature tables, model property lists, dependency tables, and integration tutorials. Target ≤ 2,000 tokens for a medium app/lib; ≤ 3,000 tokens for a large lib.
+2. Write the file from scratch, applying the **Content ROI Quick Reference** above — include high-ROI items (guards, structure tree, run commands, non-obvious constraints), skip low-ROI items (method tables, model lists, dependency tables). Use the `agents-review` skill for the full evaluation framework if needed.
 3. Then add a row for the project in the root `AGENTS.md` apps or libs table
 
 #### 4b. Existing project — update AGENTS.md
@@ -100,7 +138,7 @@ If source files changed in a project that already has an AGENTS.md:
 3. Identify which facts are now wrong or missing (routing changes, renamed services, new guards)
 4. Edit the file in-place — do not rewrite sections that are still accurate
 5. Verify every class name, method name, and file path mentioned still exists in source
-6. Apply Content ROI from `.claude/skills/agents-review/SKILL.md` — actively remove any method signature tables, model property lists, dependency tables, or integration tutorials that snuck in. Files above 5,500 tokens almost certainly contain duplicated source. Target ≤ 2,000 tokens for a medium app/lib; ≤ 3,000 tokens for a large lib.
+6. Apply the **Content ROI Quick Reference** above — actively remove any low-ROI content (method signature tables, model property lists, dependency tables, integration tutorials) that snuck in. Use the `agents-review` skill for the full evaluation framework if the file needs a deeper overhaul.
 
 #### 4c. Skills and agents — update inline knowledge
 
