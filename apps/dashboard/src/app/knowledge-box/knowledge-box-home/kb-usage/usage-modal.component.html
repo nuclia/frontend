@@ -3,6 +3,16 @@
   fitContentHeight>
   <pa-modal-title>
     {{ 'dashboard-home.usage.title' | translate }}
+    @if (config.currentPeriod) {
+      @if (config.isSubscribed | async) {
+        <span>
+          ({{ config.currentPeriod.start | date: 'MMM d, y' : 'UTC' }} -
+          {{ config.currentPeriod.end | date: 'MMM d, y' : 'UTC' }})
+        </span>
+      } @else {
+        <span>- {{ config.currentPeriod.start | date: 'MMMM y' : 'UTC' }}</span>
+      }
+    }
   </pa-modal-title>
   <pa-modal-content>
     <div class="usage-modal-chart-container">

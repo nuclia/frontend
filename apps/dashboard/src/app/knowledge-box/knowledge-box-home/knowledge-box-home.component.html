@@ -401,36 +401,52 @@
               }
             </pa-table>
 
-            <div>
-              <nsi-dropdown-button
-                fullWidth
-                aspect="basic"
-                [popupRef]="chartDropdown"
-                [open]="isChartDropdownOpen">
-                <span class="title-with-icon">
+            <div class="usage-charts-header">
+              <div>
+                <nsi-dropdown-button
+                  fullWidth
+                  aspect="basic"
+                  [popupRef]="chartDropdown">
                   {{ currentChart.label | translate }}
-                  <span class="body-s period">
+                </nsi-dropdown-button>
+                <pa-dropdown #chartDropdown>
+                  @for (option of chartDropdownOptions; track option.id) {
+                    <pa-option
+                      [value]="option.value"
+                      (selectOption)="selectChart(option)">
+                      {{ option.label | translate }}
+                    </pa-option>
+                  }
+                </pa-dropdown>
+              </div>
+              <div>
+                <nsi-dropdown-button
+                  fullWidth
+                  aspect="basic"
+                  [popupRef]="monthsDropdown">
+                  @if (currentPeriod | async; as currentPeriod) {
                     @if (isSubscribed | async) {
-                      ({{ 'kb.metrics.period.current-billing-period' | translate }})
+                      {{ currentPeriod.start | date: 'MMM d' : 'UTC' }} -
+                      {{ currentPeriod.end | date: 'MMM d' : 'UTC' }}
                     } @else {
-                      ({{ 'kb.metrics.period.current-month' | translate }})
+                      {{ currentPeriod.start | date: 'MMMM y' : 'UTC' }}
                     }
-                  </span>
-                </span>
-              </nsi-dropdown-button>
-
-              <pa-dropdown
-                #chartDropdown
-                (onClose)="isChartDropdownOpen = false"
-                (onOpen)="isChartDropdownOpen = true">
-                @for (option of chartDropdownOptions; track option.id) {
-                  <pa-option
-                    [value]="option.value"
-                    (selectOption)="selectChart(option)">
-                    {{ option.label | translate }}
-                  </pa-option>
-                }
-              </pa-dropdown>
+                  }
+                </nsi-dropdown-button>
+                <pa-dropdown #monthsDropdown>
+                  @for (period of chartPeriods | async; track period.start) {
+                    <pa-option
+                      [value]="period.start.toISOString()"
+                      (selectOption)="selectPeriod(period)">
+                      @if (isSubscribed | async) {
+                        {{ period.start | date: 'MMM d' : 'UTC' }} - {{ period.end | date: 'MMM d' : 'UTC' }}
+                      } @else {
+                        {{ period.start | date: 'MMMM y' : 'UTC' }}
+                      }
+                    </pa-option>
+                  }
+                </pa-dropdown>
+              </div>
             </div>
 
             <app-kb-usage-charts

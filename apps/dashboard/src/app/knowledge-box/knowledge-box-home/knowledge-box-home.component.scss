@@ -136,15 +136,19 @@
     .title-xxs.header {
       color: $color-neutral-regular;
     }
+    .usage-charts-header {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      > div {
+        width: 50%;
+      }
+    }
   }
 
   .blocked-features {
     .title-with-icon {
       margin-bottom: rhythm(1);
     }
-  }
-
-  .period {
-    color: $color-neutral-regular;
   }
 }

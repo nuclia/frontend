@@ -119,9 +119,13 @@ export class MetricsService {
     );
   }
 
-  getUsageCharts(kbId?: string, cumulative = false): Observable<Partial<{ [key in UsageType]: ChartData }>> {
-    return combineLatest([this.account$, this.period]).pipe(
-      switchMap(([account, period]) =>
+  getUsageCharts(
+    kbId: string,
+    period: { start: Date; end: Date },
+    cumulative = false,
+  ): Observable<Partial<{ [key in UsageType]: ChartData }>> {
+    return this.account$.pipe(
+      switchMap((account) =>
         this.sdk.nuclia.db.getUsage(account.id, period.start.toISOString(), period.end.toISOString(), kbId, 'day').pipe(
           map((usagePoints) => {
             const charts: Partial<{ [key in UsageType]: ChartData }> = usagePoints.reduce((charts, point) => {
@@ -138,9 +142,10 @@ export class MetricsService {
     );
   }
 
-  getSearchCharts(): Observable<{ search: ChartData; ask: ChartData }> {
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.period.pipe(take(1))]).pipe(
-      switchMap(([kb, period]) =>
+  getSearchCharts(period: { start: Date; end: Date }): Observable<{ search: ChartData; ask: ChartData }> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
         kb.activityMonitor.getSearchMetrics(period.start.toISOString(), period.end.toISOString(), 'day').pipe(
           map((items) => {
             return {
@@ -159,10 +164,6 @@ export class MetricsService {
         ),
       ),
     );
-  }
-
-  getCumulativeUsageCharts(kbId?: string): Observable<Partial<{ [key in UsageType]: ChartData }>> {
-    return this.getUsageCharts(kbId, true);
   }
 
   private getEmptyCharts() {
