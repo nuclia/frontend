@@ -1,0 +1,118 @@
+@if (
+  {
+    latestProcessed: latestProcessedResources | async,
+    processingQueue: processingQueue | async,
+    kbUrl: kbUrl | async
+  };
+  as data
+) {
+  <div class="last-resources">
+    <div class="title-m title-with-action">
+      <div class="title-with-icon">
+        <pa-icon name="list"></pa-icon>
+        {{ 'dashboard-home.resources.title' | translate }}
+      </div>
+
+      <a
+        class="title-xxs accent-link"
+        [routerLink]="data.kbUrl + '/resources'">
+        {{ 'dashboard-home.go-to.resource-list' | translate }}
+      </a>
+    </div>
+
+    <pa-tabs notFullWidth>
+      <pa-tab
+        [active]="selectedResourcesTab === 'processed'"
+        (click)="selectedResourcesTab = 'processed'">
+        {{ 'dashboard-home.resources.latest-processed.title' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="selectedResourcesTab === 'pending'"
+        (click)="selectedResourcesTab = 'pending'">
+        {{ 'dashboard-home.resources.processing-queue.title' | translate }}
+      </pa-tab>
+    </pa-tabs>
+
+    <pa-table
+      border
+      columns="1fr 120px">
+      <pa-table-header>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'resource.title' | translate }}</span>
+        </pa-table-cell>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'generic.date' | translate }}</span>
+        </pa-table-cell>
+      </pa-table-header>
+
+      @switch (selectedResourcesTab) {
+        @case ('processed') {
+          @for (resource of data.latestProcessed; track resource.id) {
+            <pa-table-row>
+              <pa-table-cell>
+                <span class="title-with-icon title-xxs">
+                  @if (resource.icon | mimeIcon; as icon) {
+                    <pa-icon [name]="icon"></pa-icon>
+                  }
+                  <a [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                    {{ resource.title }}
+                  </a>
+                </span>
+              </pa-table-cell>
+              <pa-table-cell>
+                <span class="body-s">
+                  <pa-datetime
+                    [datetime]="resource.created"
+                    dateOnly></pa-datetime>
+                </span>
+              </pa-table-cell>
+            </pa-table-row>
+          } @empty {
+            <pa-table-row>
+              <pa-table-cell>
+                <span class="title-xxs">
+                  {{ 'dashboard-home.resources.latest-processed.empty' | translate }}
+                </span>
+              </pa-table-cell>
+              <pa-table-cell></pa-table-cell>
+            </pa-table-row>
+          }
+        }
+        @case ('pending') {
+          @for (resource of data.processingQueue; track resource.id) {
+            <pa-table-row>
+              <pa-table-cell>
+                <span
+                  class="title-with-icon title-xxs"
+                  paEllipsisTooltip>
+                  @if (resource.icon | mimeIcon; as icon) {
+                    <pa-icon [name]="icon"></pa-icon>
+                  }
+                  <a [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                    {{ resource.title }}
+                  </a>
+                </span>
+              </pa-table-cell>
+              <pa-table-cell>
+                <span class="body-s">
+                  <pa-datetime
+                    [datetime]="resource.created"
+                    dateOnly></pa-datetime>
+                </span>
+              </pa-table-cell>
+            </pa-table-row>
+          } @empty {
+            <pa-table-row>
+              <pa-table-cell>
+                <span class="title-xxs">
+                  {{ 'dashboard-home.resources.processing-queue.empty' | translate }}
+                </span>
+              </pa-table-cell>
+              <pa-table-cell></pa-table-cell>
+            </pa-table-row>
+          }
+        }
+      }
+    </pa-table>
+  </div>
+}

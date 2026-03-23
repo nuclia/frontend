@@ -34,6 +34,7 @@ import {
 } from '@flaps/common';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
 import { STFPipesModule } from '@flaps/core';
+import { LastResourcesComponent } from './knowledge-box-home/last-resources/last-resources.component';
 
 @NgModule({
   imports: [
@@ -73,6 +74,7 @@ import { STFPipesModule } from '@flaps/core';
     PaTableModule,
     STFPipesModule,
     RangeChartComponent,
+    LastResourcesComponent,
   ],
   declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
   exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],

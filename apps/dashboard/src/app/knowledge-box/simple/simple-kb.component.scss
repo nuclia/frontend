@@ -1,0 +1,24 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.simple-kb {
+  --width-small-column: #{rhythm(48)};
+  --gap-size: #{rhythm(2)};
+
+  display: flex;
+  gap: var(--gap-size);
+  .column-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-size);
+
+    &.wide-column {
+      flex: 1 1 auto;
+      max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
+      min-width: var(--width-small-column);
+    }
+  }
+
+  .preview-content {
+    margin-top: rhythm(2);
+  }
+}

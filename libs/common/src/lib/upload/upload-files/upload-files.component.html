@@ -68,7 +68,7 @@
         hidden />
     }
 
-    @if (!useFoldersAsLabels) {
+    @if (!(simpleMode | async) && !useFoldersAsLabels) {
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
     }
 
@@ -94,34 +94,36 @@
       </div>
     }
 
-    <pa-expander [expanded]="false">
-      <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
-      <pa-expander-body>
-        <div class="language-detection">
-          <pa-toggle
-            labelOnRight
-            [(value)]="automaticLanguageDetection">
-            {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
-          </pa-toggle>
+    @if (!(simpleMode | async)) {
+      <pa-expander [expanded]="false">
+        <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
+        <pa-expander-body>
+          <div class="language-detection">
+            <pa-toggle
+              labelOnRight
+              [(value)]="automaticLanguageDetection">
+              {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
+            </pa-toggle>
 
-          @if (!automaticLanguageDetection) {
-            <pa-input
-              minlength="2"
-              maxlength="11"
-              help="upload.advanced.language-detection.input-help"
-              [formControl]="langCode">
-              {{ 'upload.advanced.language-detection.input-label' | translate }}
-            </pa-input>
+            @if (!automaticLanguageDetection) {
+              <pa-input
+                minlength="2"
+                maxlength="11"
+                help="upload.advanced.language-detection.input-help"
+                [formControl]="langCode">
+                {{ 'upload.advanced.language-detection.input-label' | translate }}
+              </pa-input>
+            }
+          </div>
+          @if ((extractConfigEnabled | async) && !standalone) {
+            <app-extraction-select
+              [(extractConfig)]="extractStrategy"
+              [(splitConfig)]="splitStrategy"
+              [onlyExtract]="!(spitConfigEnabled | async)"></app-extraction-select>
           }
-        </div>
-        @if ((extractConfigEnabled | async) && !standalone) {
-          <app-extraction-select
-            [(extractConfig)]="extractStrategy"
-            [(splitConfig)]="splitStrategy"
-            [onlyExtract]="!(spitConfigEnabled | async)"></app-extraction-select>
-        }
-      </pa-expander-body>
-    </pa-expander>
+        </pa-expander-body>
+      </pa-expander>
+    }
     @if (isTrial | async) {
       <ncom-hint
         noMaxWidth

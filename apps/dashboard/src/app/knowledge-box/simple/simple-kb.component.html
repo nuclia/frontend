@@ -1,1 +1,35 @@
-Hello
+<div class="page-spacing simple-kb">
+  <div class="column-container wide-column">
+    <nsi-home-container>
+      <div class="title-m">
+        <div class="title-with-icon">
+          <pa-icon name="search"></pa-icon>
+          {{ 'search.title' | translate }}
+        </div>
+        @if (widgetPreview | async; as widgetPreview) {
+          <div
+            id="preview"
+            class="preview-content"
+            [innerHtml]="widgetPreview.preview"></div>
+        }
+      </div>
+    </nsi-home-container>
+
+    <nsi-home-container>
+      <app-last-resources></app-last-resources>
+    </nsi-home-container>
+  </div>
+
+  <div class="column-container">
+    <nsi-home-container>
+      <pa-button
+        icon="upload"
+        iconAndText
+        kind="primary"
+        alignPopupOnLeft
+        (click)="uploadFiles()">
+        {{ 'upload.files' | translate }}
+      </pa-button>
+    </nsi-home-container>
+  </div>
+</div>

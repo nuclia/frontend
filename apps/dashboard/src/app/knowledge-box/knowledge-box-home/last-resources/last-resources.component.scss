@@ -1,0 +1,23 @@
+@use 'apps/dashboard/src/variables' as *;
+.last-resources {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  pa-tab ::ng-deep .pa-tabs-link {
+    font-size: font-size(s);
+  }
+
+  pa-table a {
+    color: $color-dark-stronger;
+  }
+
+  .title-with-action {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    pa-button {
+      margin-right: calc(-1 * #{rhythm(1)});
+    }
+  }
+}

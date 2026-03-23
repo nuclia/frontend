@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
-import { DroppedFile, FeaturesService, SDKService, STFUtils } from '@flaps/core';
+import { DroppedFile, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
@@ -20,6 +28,9 @@ export class UploadFilesComponent {
   @Input() folderMode: boolean = false;
   @Output() close = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
+
+  navigationService = inject(NavigationService);
+  simpleMode = this.navigationService.simpleMode;
 
   files: { file: FileWithMetadata; aboveLimit: boolean }[] = [];
   selectedLabels: Classification[] = [];

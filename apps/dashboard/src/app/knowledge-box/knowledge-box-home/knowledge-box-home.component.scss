@@ -122,15 +122,15 @@
     }
   }
 
-  .resources-container {
-    pa-tab ::ng-deep .pa-tabs-link {
-      font-size: font-size(s);
-    }
+  // .resources-container {
+  //   pa-tab ::ng-deep .pa-tabs-link {
+  //     font-size: font-size(s);
+  //   }
 
-    pa-table a {
-      color: $color-dark-stronger;
-    }
-  }
+  //   pa-table a {
+  //     color: $color-dark-stronger;
+  //   }
+  // }
 
   .usage-charts {
     .title-xxs.header {
