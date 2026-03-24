@@ -12,6 +12,7 @@ import {
 } from '@flaps/common';
 import { RedirectComponent, FarewellComponent, FeedbackComponent, InviteComponent } from '@nuclia/user';
 import { authGuard } from '@flaps/core';
+import { fallbackRedirectGuard } from './fallback-redirect.guard';
 
 const routes: Routes = [
   {
@@ -53,7 +54,7 @@ const routes: Routes = [
     path: 'user',
     loadChildren: () => import('./lazy-user.module').then((m) => m.LazyUserModule),
   },
-  { path: '**', component: PageNotFoundComponent },
+  { path: '**', canActivate: [fallbackRedirectGuard], component: PageNotFoundComponent },
 ];
 
 const routerOptions: ExtraOptions = {
