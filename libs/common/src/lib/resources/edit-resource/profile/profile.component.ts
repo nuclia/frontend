@@ -249,7 +249,11 @@ export class ResourceProfileComponent implements OnInit {
 
   private getArrayAttribute(newValue: string[] | undefined, oldValue: string[] | undefined): string[] | undefined {
     const newValues = (newValue || []).map((s) => s.trim()).filter((s) => s.length > 0);
-    return newValues.length === 0 ? undefined : newValue;
+    if (newValues.length === 0 && (oldValue || []).length > 0) {
+      return [];
+    } else {
+      return newValues.length === 0 ? undefined : newValues;
+    }
   }
 
   chooseFiles($event: MouseEvent) {
