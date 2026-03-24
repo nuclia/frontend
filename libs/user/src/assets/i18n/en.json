@@ -114,6 +114,7 @@
 	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>See details about the <a href=\"https://docs.rag.progress.cloud/docs/rag/advanced/models#{{model}}\" target=\"_blank\" rel=\"noopener noreferrer\">\"{{model}}\"</a> model.",
 	"user.kb.creation-form.models.options.ENGLISH": "English only",
 	"user.kb.creation-form.models.options.GECKO_MULTI": "Google Gecko",
+	"user.kb.creation-form.models.options.GEMINI_2": "Gemini Embedding 2",
 	"user.kb.creation-form.models.options.HF": "Hugging Face",
 	"user.kb.creation-form.models.options.MULTILINGUAL": "Common languages",
 	"user.kb.creation-form.models.options.MULTILINGUAL_ALPHA": "Other languages",
