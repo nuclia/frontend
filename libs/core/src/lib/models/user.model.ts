@@ -1,9 +1,10 @@
 export type Language = 'CA' | 'ES' | 'EN';
 
 export interface SignupData {
-  name: string;
-  email: string;
-  company?: string;
+  name?: string;
+  email?: string;
+  password: string;
+  login_challenge?: string;
 }
 
 export type SignupResponse = {
@@ -61,6 +62,8 @@ export interface OAuthLoginData {
   email?: string;
   needs_initial_setpassword?: boolean;
   came_from?: string;
+  fullname?: string;
+  company?: string;
 }
 
 export interface JwtUser {
