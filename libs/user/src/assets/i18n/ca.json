@@ -119,6 +119,7 @@
 	"user.kb.creation-form.models.nuclia-model.help.MULTILINGUAL_BETA": "Model de llenguatges comuns ajustat per a casos d'ús específics de RAG",
 	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>Vegeu detalls sobre el model <a href=\"https://docs.rag.progress.cloud/docs/rag/advanced/models#{{model}}\" target=\"_blank\" rel=\"noopener noreferrer\">\"{{model}}\"</a>.",
 	"user.kb.creation-form.models.options.ENGLISH": "Només anglès",
+	"user.kb.creation-form.models.options.GEMINI_2": "Gemini Embedding 2",
 	"user.kb.creation-form.models.options.GECKO_MULTI": "Google Gecko",
 	"user.kb.creation-form.models.options.HF": "Hugging Face",
 	"user.kb.creation-form.models.options.MULTILINGUAL": "Idiomes comuns",
