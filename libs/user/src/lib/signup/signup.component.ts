@@ -10,7 +10,6 @@ import {
   SDKService,
   injectScript,
 } from '@flaps/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { Subject } from 'rxjs';
 import { StrongPassword } from '../password.validator';
@@ -25,38 +24,19 @@ import { StrongPassword } from '../password.validator';
 export class SignupComponent implements OnInit {
   config = inject(BackendConfigurationService);
   oauth = inject(OAuthService);
-  signupEmail = this.oauth.getEmail();
+  signupData = this.oauth.getSignUpData();
   signupForm = new FormGroup({
-    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl<string>(this.signupEmail, {
-      nonNullable: true,
-      // no validator as it is in readonly mode
-    }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });
 
   validationMessages = {
-    name: {
-      required: 'validation.required',
-    },
-    password: {
-      required: 'validation.required',
-    },
-    email: {
-      required: 'validation.required',
-      email: 'validation.email',
-      conflict: 'signup.email.already_exists',
-      personalEmail: 'login.error.no_personal_email',
-    } as IErrorMessages,
+    required: 'validation.required',
   };
 
   unsubscribeAll = new Subject<void>();
 
   error?: string;
 
-  get emailControl() {
-    return this.signupForm.controls['email'];
-  }
   isGitHubEnabled = this.features.unstable.githubSignin;
   demoUrl =
     'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial';
@@ -107,20 +87,19 @@ export class SignupComponent implements OnInit {
     this.loginService.signup(formValue, token, loginChallenge).subscribe({
       next: (response) => {
         this.analytics.logTrialSignup();
-        this.oauth.setEmail('');
         if (response.action === 'check-mail') {
           this.router.navigate(['../check-mail'], {
             relativeTo: this.route,
-            queryParams: { email: formValue.email },
+            queryParams: { email: this.signupData?.email },
             queryParamsHandling: 'merge', // Preserve login_challenge
           });
         } else if (response.action === 'user-exists') {
-          this.emailControl.setErrors({ conflict: true });
+          this.error = 'signup.email.already_exists';
         }
       },
       error: (error) => {
         if (error.status === 412) {
-          this.emailControl.setErrors({ personalEmail: true });
+          this.error = 'login.error.no_personal_email';
         } else {
           this.error = 'login.error.oops';
         }
