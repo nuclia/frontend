@@ -1,0 +1,76 @@
+<pa-demo-page>
+  <pa-demo-title>Country Select</pa-demo-title>
+
+  <pa-demo-description>
+    <p>
+      <code>nsi-country-select</code> is a searchable country dropdown that displays all countries with their emoji
+      flag icons (e.g., 🇺🇸 USA, 🇬🇧 United Kingdom). Type to filter the list.
+    </p>
+    <p>
+      It implements <code>ControlValueAccessor</code>, working seamlessly with both
+      <code>ReactiveFormsModule</code> (<code>[formControl]</code>, <code>formControlName</code>) and
+      <code>FormsModule</code> (<code>ngModel</code>). The emitted value is the ISO 2-letter country
+      code (e.g., <code>"US"</code>, <code>"GB"</code>).
+    </p>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <div style="width: 360px">
+      <label class="title-s" for="country-example">Country</label>
+      <nsi-country-select
+        [id]="'country-example'"
+        [formControl]="countryControl"
+        [readonly]="readonly"
+        [externalLabel]="true">
+      </nsi-country-select>
+      <p class="body-s" style="margin-top: 8px">Selected code: <strong>{{ countryControl.value || '—' }}</strong></p>
+    </div>
+    <div class="options">
+      <pa-checkbox [(value)]="disabled" (change)="disabled ? countryControl.disable() : countryControl.enable()">Disable</pa-checkbox>
+      <pa-checkbox [(value)]="readonly">Readonly</pa-checkbox>
+    </div>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h4>Inputs</h4>
+    <dl>
+      <dt><code>errorMessages</code></dt>
+      <dd>
+        An <code>IErrorMessages</code> object mapping validation error keys to display strings.
+        <small>(optional)</small>
+      </dd>
+      <dt><code>externalLabel</code></dt>
+      <dd>
+        When <code>true</code>, the component expects a label element outside the component (using
+        <code>for</code> + <code>id</code>). Defaults to <code>false</code>.
+        <small>(optional)</small>
+      </dd>
+      <dt><code>readonly</code></dt>
+      <dd>
+        When <code>true</code>, the dropdown is displayed but cannot be interacted with.
+        Defaults to <code>false</code>.
+        <small>(optional)</small>
+      </dd>
+    </dl>
+
+    <h4>Value</h4>
+    <p>
+      The component emits and accepts ISO 3166-1 alpha-2 country codes (e.g., <code>"US"</code>,
+      <code>"GB"</code>, <code>"ES"</code>). The displayed text shows the flag emoji and full country
+      name.
+    </p>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <p>Works with both <code>ReactiveFormsModule</code> and <code>FormsModule</code>.</p>
+
+    <h4>FormControl example</h4>
+    <pre><code>{{ formControlCode }}</code></pre>
+
+    <h4>FormGroup / formControlName example</h4>
+    <pre><code>{{ formGroupCode }}</code></pre>
+
+    <h4>Readonly example</h4>
+    <pre><code>{{ readonlyCode }}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

@@ -16,6 +16,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import {
   BackButtonComponent,
+  CountrySelectComponent,
   DropdownButtonComponent,
   SisLabelModule,
   SisPasswordInputModule,
@@ -36,6 +37,7 @@ import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-b
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
+import { SistemaCountrySelectComponent } from './sistema-country-select/sistema-country-select.component';
 import { SistemaSearchInputComponent } from './sistema-search-input/sistema-search-input.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
 
@@ -50,6 +52,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SistemaToastComponent,
     SistemaConfirmationDialogComponent,
     SistemaBackButtonComponent,
+    SistemaCountrySelectComponent,
     SistemaDropdownButtonComponent,
     SistemaPasswordInputComponent,
     SistemaSearchInputComponent,
@@ -72,6 +75,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     PaTogglesModule,
 
     BackButtonComponent,
+    CountrySelectComponent,
     DropdownButtonComponent,
     SisPasswordInputModule,
     SisSearchInputComponent,

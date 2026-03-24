@@ -121,13 +121,12 @@
         for="country">
         {{ 'onboarding.step1.country' | translate }}
       </label>
-      <pa-select
+      <nsi-country-select
         formControlName="country"
-        id="country"
-        externalLabel
-        help="validation.required"
-        [options]="countries"
-        [errorMessages]="validationMessages.country"></pa-select>
+        [id]="'country'"
+        [externalLabel]="true"
+        [errorMessages]="validationMessages.country">
+      </nsi-country-select>
     </div>
     <div class="field">
       <label
