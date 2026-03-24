@@ -30,6 +30,13 @@
         (click)="uploadFiles()">
         {{ 'upload.files' | translate }}
       </pa-button>
+      @if ((emptyKb | async) === true) {
+        @if (uploadInProgress | async) {
+          <nsi-spinner></nsi-spinner>
+        } @else {
+          <h2>{{ 'simple.empty' | translate }}</h2>
+        }
+      }
     </nsi-home-container>
   </div>
 </div>

@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { searchResources } from '@flaps/common';
+import { searchResources, UploadService } from '@flaps/common';
 import { NavigationService, SDKService } from '@flaps/core';
 import { PaDateTimeModule, PaIconModule, PaTableModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IResource, RESOURCE_STATUS, SortField } from '@nuclia/core';
 import { MimeIconPipe, SisIconsModule } from '@nuclia/sistema';
-import { combineLatest, map, Observable, switchMap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-last-resources',
@@ -28,6 +28,7 @@ import { combineLatest, map, Observable, switchMap } from 'rxjs';
 export class LastResourcesComponent {
   private navigationService = inject(NavigationService);
   private sdk = inject(SDKService);
+  private uploadService = inject(UploadService);
   account = this.sdk.currentAccount;
   currentKb = this.sdk.currentKb;
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
@@ -39,8 +40,9 @@ export class LastResourcesComponent {
     }),
   );
   selectedResourcesTab: 'processed' | 'pending' = 'processed';
-  latestProcessedResources: Observable<IResource[]> = this.currentKb.pipe(
-    switchMap((kb) =>
+  statusChanged = this.uploadService.statusCount.pipe(distinctUntilChanged());
+  latestProcessedResources: Observable<IResource[]> = combineLatest([this.currentKb, this.statusChanged]).pipe(
+    switchMap(([kb]) =>
       searchResources(kb, {
         pageSize: 6,
         sort: { field: SortField.created, order: 'desc' },
@@ -52,8 +54,8 @@ export class LastResourcesComponent {
     ),
     map((data) => Object.values(data.results.resources || {})),
   );
-  processingQueue: Observable<IResource[]> = this.currentKb.pipe(
-    switchMap((kb) =>
+  processingQueue: Observable<IResource[]> = combineLatest([this.currentKb, this.statusChanged]).pipe(
+    switchMap(([kb]) =>
       searchResources(kb, {
         pageSize: 6,
         sort: { field: SortField.created, order: 'desc' },

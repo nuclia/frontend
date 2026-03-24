@@ -1,20 +1,18 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .simple-kb {
-  --width-small-column: #{rhythm(48)};
-  --gap-size: #{rhythm(2)};
-
   display: flex;
-  gap: var(--gap-size);
+  gap: rhythm(2);
+  justify-content: center;
+
   .column-container {
+    flex: 1 1 25%;
     display: flex;
     flex-direction: column;
-    gap: var(--gap-size);
+    gap: rhythm(2);
 
     &.wide-column {
-      flex: 1 1 auto;
-      max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
-      min-width: var(--width-small-column);
+      flex: 2 1 75%;
     }
   }
 

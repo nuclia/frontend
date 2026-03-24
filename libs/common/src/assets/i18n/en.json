@@ -2025,6 +2025,7 @@
 	"select.arag-create-button": "Create a Retrieval Agent",
 	"select.arag-tooltip": "Go to retrieval agent: {{arag}}",
 	"select.kb-tooltip": "Go to Knowledge Box: {{kb}}",
+	"simple.empty": "Your Knowledge Box is empty. Upload some files to unlock your knowledge!",
 	"standalone.menu.button-label": "Menu",
 	"standalone.menu.introspect": "Introspection data",
 	"standalone.menu.kb-list": "Knowledge Boxes",
