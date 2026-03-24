@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, EventEmitter, inject, Input, Output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,7 +12,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { AwsOnboardingPayload, OnboardingPayload } from '../onboarding.models';
 import { StickyFooterComponent } from '@nuclia/sistema';
-import { COUNTRIES } from '@flaps/core';
+import { COUNTRIES, FeaturesService } from '@flaps/core';
 
 const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
 const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
@@ -51,6 +52,8 @@ export class Step1Component {
   @Output() submitStep1 = new EventEmitter<OnboardingPayload>();
   @Output() submitStep1Aws = new EventEmitter<AwsOnboardingPayload>();
 
+  private featuresService = inject(FeaturesService);
+  hasSignupOnProgressCom = toSignal(this.featuresService.unstable.progressComSignup, { initialValue: false });
   onboardingForm = new FormGroup({
     first_name: new FormControl<string>('', { nonNullable: true }),
     last_name: new FormControl<string>('', { nonNullable: true }),
@@ -74,6 +77,12 @@ export class Step1Component {
     getUpdates: new FormControl<boolean>(true, { nonNullable: true }),
     acceptPrivacyPolicy: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
   });
+
+  constructor() {
+    effect(() => {
+      this.updateForm(this._isAws);
+    });
+  }
 
   validationMessages = {
     first_name: { required: 'validation.required' },
@@ -120,13 +129,33 @@ export class Step1Component {
   }
 
   updateForm(isAws: boolean) {
-    this.onboardingForm.controls.first_name.setValidators(isAws ? [Validators.required] : []);
-    this.onboardingForm.controls.last_name.setValidators(isAws ? [Validators.required] : []);
+    const hideInquiryFields = this.hasSignupOnProgressCom();
+
+    this.onboardingForm.controls.first_name.setValidators(isAws && !hideInquiryFields ? [Validators.required] : []);
+    this.onboardingForm.controls.last_name.setValidators(isAws && !hideInquiryFields ? [Validators.required] : []);
     this.onboardingForm.controls.owner_email_address.setValidators(
-      isAws ? [Validators.required, Validators.email] : [],
+      isAws && !hideInquiryFields ? [Validators.required, Validators.email] : [],
+    );
+    this.onboardingForm.controls.company.setValidators(hideInquiryFields ? [] : [Validators.required]);
+    this.onboardingForm.controls.use_case.setValidators(hideInquiryFields ? [] : [Validators.required]);
+    this.onboardingForm.controls.role.setValidators(hideInquiryFields ? [] : [Validators.required]);
+    this.onboardingForm.controls.organization_size.setValidators(hideInquiryFields ? [] : [Validators.required]);
+    this.onboardingForm.controls.country.setValidators(hideInquiryFields ? [] : [Validators.required]);
+    this.onboardingForm.controls.phoneInternationalCode.setValidators(
+      hideInquiryFields ? [] : [Validators.required, Validators.pattern(PHONE_INTERNATIONAL_CODE)],
+    );
+    this.onboardingForm.controls.phoneNumber.setValidators(
+      hideInquiryFields ? [] : [Validators.required, Validators.pattern(PHONE_NUMBER)],
     );
     this.onboardingForm.controls.first_name.updateValueAndValidity();
     this.onboardingForm.controls.last_name.updateValueAndValidity();
     this.onboardingForm.controls.owner_email_address.updateValueAndValidity();
+    this.onboardingForm.controls.company.updateValueAndValidity();
+    this.onboardingForm.controls.use_case.updateValueAndValidity();
+    this.onboardingForm.controls.role.updateValueAndValidity();
+    this.onboardingForm.controls.organization_size.updateValueAndValidity();
+    this.onboardingForm.controls.country.updateValueAndValidity();
+    this.onboardingForm.controls.phoneInternationalCode.updateValueAndValidity();
+    this.onboardingForm.controls.phoneNumber.updateValueAndValidity();
   }
 }
