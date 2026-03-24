@@ -32,6 +32,7 @@ apps/auth/src/
 │   ├── app.component.ts         # Root component — minimal shell
 │   ├── app-routing.module.ts    # Root routes (see below)
 │   ├── app-title.strategy.ts    # Page title strategy
+│   ├── fallback-redirect.guard.ts # Catch-all: redirects unknown routes to rag app
 │   └── lazy-user.module.ts      # Lazy loader for @nuclia/user authRoutes
 ├── environments/
 │   ├── environment.ts           # Dev: client='rao', social_login=true
@@ -68,7 +69,7 @@ The root app owns the shell and delegates all auth pages to `@nuclia/user` via a
   /user/signup            → SignupComponent
   /user/check-mail        → CheckMailComponent
   /user/consent           → ConsentComponent (resolve: consentResolver)
-/** → PageNotFoundComponent
+/**                   → fallbackRedirectGuard → external redirect to rag app (preserves path + query)
 ```
 
 **Important:** All auth pages live under `/user/*` and are implemented in `libs/user`, not in
@@ -83,6 +84,7 @@ this app. Never add auth logic directly to `apps/auth/src` — it belongs in `li
 | `authGuard` | `@flaps/core` | User must be authenticated; redirects to `/user/login` if not |
 | `rootGuard` | `@flaps/common` | Redirects authenticated users to their home dashboard |
 | `awsGuard` | `@flaps/common` | Only allows access during AWS Marketplace onboarding flow |
+| `fallbackRedirectGuard` | `apps/auth` (local) | Catches ALL unmatched routes (`**`) and redirects to the rag app preserving path + query |
 
 ---
 
@@ -141,6 +143,19 @@ nx test user        # all auth flow tests live here
 
 - **Auth pages are not in this app.** They live in `libs/user/src/lib/`. If you need to add or
   change a login/signup/callback flow, work in `libs/user`, not here.
+- **The `**` wildcard redirects to the rag app, not a 404 page.** The auth app uses a
+  `fallbackRedirectGuard` on the catch-all route that redirects unmatched URLs to the rag app
+  (via `OAuthService.getCameFrom()`) preserving the full path and query parameters. This
+  prevents dead-end 404 pages for routes like `/select`, `/user/login-redirect`,
+  `/user/onboarding`, `/at/:account/...`, or any other route that shared libs navigate to but
+  only exists in the dashboard/rao apps. The `PageNotFoundComponent` is still the declared
+  component but never renders because the guard always returns `false`.
+- **`came_from` can equal the auth app's own origin.** When the OAuth flow is initiated from
+  the auth app itself (e.g. after logout + re-auth), `redirectToOAuth()` sets
+  `came_from = window.location.origin` (auth.progress.cloud). On callback, the check
+  `came_from !== window.location.origin` fails, so the callback navigates to `/` instead of
+  redirecting externally. This triggers `rootGuard` → `goToLandingPage()` → `/select`.
+  The `fallbackRedirectGuard` breaks this loop by redirecting to the rag app.
 - **`/user/reset` and `/user/setup` are the same component.** `ResetComponent` handles both
   "set new password via reset link" and "set password during invite onboarding" — they use the
   same URL pattern with different query strings.
