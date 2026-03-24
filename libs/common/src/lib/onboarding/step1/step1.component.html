@@ -2,154 +2,155 @@
   [formGroup]="onboardingForm"
   (ngSubmit)="submitForm()">
   <div class="onboarding-form">
-    @if (isAws) {
+    @if (!hasSignupOnProgressCom()) {
+      @if (isAws) {
+        <div class="field">
+          <label
+            class="title-s"
+            for="first_name">
+            {{ 'onboarding.step1.first_name' | translate }}
+          </label>
+          <pa-input
+            formControlName="first_name"
+            id="first_name"
+            externalLabel
+            help="validation.required"
+            [errorMessages]="validationMessages.first_name"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="last_name">
+            {{ 'onboarding.step1.last_name' | translate }}
+          </label>
+          <pa-input
+            formControlName="last_name"
+            id="last_name"
+            externalLabel
+            help="validation.required"
+            [errorMessages]="validationMessages.last_name"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="owner_email_address">
+            {{ 'generic.email' | translate }}
+          </label>
+          <pa-input
+            formControlName="owner_email_address"
+            id="owner_email_address"
+            externalLabel
+            help="validation.required"
+            [errorMessages]="validationMessages.owner_email_address"></pa-input>
+        </div>
+      }
       <div class="field">
         <label
           class="title-s"
-          for="first_name">
-          {{ 'onboarding.step1.first_name' | translate }}
+          for="company">
+          {{ 'onboarding.step1.company' | translate }}
         </label>
         <pa-input
-          formControlName="first_name"
-          id="first_name"
+          formControlName="company"
+          id="company"
           externalLabel
           help="validation.required"
-          [errorMessages]="validationMessages.first_name"></pa-input>
+          [errorMessages]="validationMessages.company"></pa-input>
       </div>
       <div class="field">
         <label
           class="title-s"
-          for="last_name">
-          {{ 'onboarding.step1.last_name' | translate }}
+          for="use_case">
+          {{ 'onboarding.step1.use_case.label' | translate }}
         </label>
-        <pa-input
-          formControlName="last_name"
-          id="last_name"
-          externalLabel
+        <pa-select
+          id="use_case"
+          formControlName="use_case"
           help="validation.required"
-          [errorMessages]="validationMessages.last_name"></pa-input>
+          [errorMessages]="validationMessages.use_case">
+          <pa-option value="Customer / employee support">Customer / employee support</pa-option>
+          <pa-option value="Global site search">Global site search</pa-option>
+          <pa-option value="Workspace search">Workspace search</pa-option>
+          <pa-option value="Research & Analysis">Research & Analysis</pa-option>
+          <pa-option value="Document summarisation">Document summarisation</pa-option>
+          <pa-option value="Automatic classification">Automatic classification</pa-option>
+          <pa-option value="Fine-tune my own AI model">Fine-tune my own AI model</pa-option>
+          <pa-option value="Other">Other</pa-option>
+        </pa-select>
       </div>
       <div class="field">
         <label
           class="title-s"
-          for="owner_email_address">
-          {{ 'generic.email' | translate }}
+          for="orgSize">
+          {{ 'onboarding.step1.org_size' | translate }}
         </label>
-        <pa-input
-          formControlName="owner_email_address"
-          id="owner_email_address"
+        <pa-select
+          formControlName="organization_size"
+          id="orgSize"
           externalLabel
           help="validation.required"
-          [errorMessages]="validationMessages.owner_email_address"></pa-input>
+          [errorMessages]="validationMessages.organization_size">
+          <pa-option value="1-50">1-50</pa-option>
+          <pa-option value="50-200">50-200</pa-option>
+          <pa-option value="200-1000">200-1000</pa-option>
+          <pa-option value="1000-5000">1000-5000</pa-option>
+          <pa-option value="+5000">+5000</pa-option>
+        </pa-select>
+      </div>
+      <div class="field">
+        <label
+          class="title-s"
+          for="role">
+          {{ 'onboarding.step1.role.label' | translate }}
+        </label>
+        <pa-select
+          formControlName="role"
+          id="role"
+          externalLabel
+          [errorMessages]="validationMessages.role">
+          <pa-option value="Business & Business Development">Business & Business Development</pa-option>
+          <pa-option value="Sales & Marketing">Sales & Marketing</pa-option>
+          <pa-option value="Developer or Technical role">Developer or Technical role</pa-option>
+          <pa-option value="Legal & Compliance">Legal & Compliance</pa-option>
+          <pa-option value="Other">Other</pa-option>
+        </pa-select>
+      </div>
+
+      <div class="field">
+        <label
+          class="title-s"
+          for="country">
+          {{ 'onboarding.step1.country' | translate }}
+        </label>
+        <nsi-country-select
+          [id]="'country'"
+          formControlName="country"
+          [externalLabel]="true"
+          [errorMessages]="validationMessages.country"></nsi-country-select>
+      </div>
+      <div class="field">
+        <label
+          class="title-s"
+          for="phoneNumber">
+          {{ 'onboarding.step1.phone' | translate }}
+        </label>
+        <div class="phone-field">
+          <pa-input
+            class="phone-code"
+            formControlName="phoneInternationalCode"
+            externalLabel
+            placeholder="+99"
+            [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
+          <pa-input
+            id="phoneNumber"
+            formControlName="phoneNumber"
+            externalLabel
+            placeholder="11 1111 1111"
+            help="validation.required"
+            [errorMessages]="validationMessages.phoneNumber"></pa-input>
+        </div>
       </div>
     }
-    <div class="field">
-      <label
-        class="title-s"
-        for="company">
-        {{ 'onboarding.step1.company' | translate }}
-      </label>
-      <pa-input
-        formControlName="company"
-        id="company"
-        externalLabel
-        help="validation.required"
-        [errorMessages]="validationMessages.company"></pa-input>
-    </div>
-    <div class="field">
-      <label
-        class="title-s"
-        for="use_case">
-        {{ 'onboarding.step1.use_case.label' | translate }}
-      </label>
-      <pa-select
-        id="use_case"
-        formControlName="use_case"
-        help="validation.required"
-        [errorMessages]="validationMessages.use_case">
-        <pa-option value="Customer / employee support">Customer / employee support</pa-option>
-        <pa-option value="Global site search">Global site search</pa-option>
-        <pa-option value="Workspace search">Workspace search</pa-option>
-        <pa-option value="Research & Analysis">Research & Analysis</pa-option>
-        <pa-option value="Document summarisation">Document summarisation</pa-option>
-        <pa-option value="Automatic classification">Automatic classification</pa-option>
-        <pa-option value="Fine-tune my own AI model">Fine-tune my own AI model</pa-option>
-        <pa-option value="Other">Other</pa-option>
-      </pa-select>
-    </div>
-    <div class="field">
-      <label
-        class="title-s"
-        for="orgSize">
-        {{ 'onboarding.step1.org_size' | translate }}
-      </label>
-      <pa-select
-        formControlName="organization_size"
-        id="orgSize"
-        externalLabel
-        help="validation.required"
-        [errorMessages]="validationMessages.organization_size">
-        <pa-option value="1-50">1-50</pa-option>
-        <pa-option value="50-200">50-200</pa-option>
-        <pa-option value="200-1000">200-1000</pa-option>
-        <pa-option value="1000-5000">1000-5000</pa-option>
-        <pa-option value="+5000">+5000</pa-option>
-      </pa-select>
-    </div>
-    <div class="field">
-      <label
-        class="title-s"
-        for="role">
-        {{ 'onboarding.step1.role.label' | translate }}
-      </label>
-      <pa-select
-        formControlName="role"
-        id="role"
-        externalLabel
-        [errorMessages]="validationMessages.role">
-        <pa-option value="Business & Business Development">Business & Business Development</pa-option>
-        <pa-option value="Sales & Marketing">Sales & Marketing</pa-option>
-        <pa-option value="Developer or Technical role">Developer or Technical role</pa-option>
-        <pa-option value="Legal & Compliance">Legal & Compliance</pa-option>
-        <pa-option value="Other">Other</pa-option>
-      </pa-select>
-    </div>
-
-    <div class="field">
-      <label
-        class="title-s"
-        for="country">
-        {{ 'onboarding.step1.country' | translate }}
-      </label>
-      <nsi-country-select
-        formControlName="country"
-        [id]="'country'"
-        [externalLabel]="true"
-        [errorMessages]="validationMessages.country">
-      </nsi-country-select>
-    </div>
-    <div class="field">
-      <label
-        class="title-s"
-        for="phoneNumber">
-        {{ 'onboarding.step1.phone' | translate }}
-      </label>
-      <div class="phone-field">
-        <pa-input
-          class="phone-code"
-          formControlName="phoneInternationalCode"
-          externalLabel
-          placeholder="+99"
-          [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
-        <pa-input
-          id="phoneNumber"
-          formControlName="phoneNumber"
-          externalLabel
-          placeholder="11 1111 1111"
-          help="validation.required"
-          [errorMessages]="validationMessages.phoneNumber"></pa-input>
-      </div>
-    </div>
 
     <pa-checkbox formControlName="getUpdates">{{ 'onboarding.step1.updates' | translate }}</pa-checkbox>
 

@@ -69,6 +69,7 @@ export class FeaturesService {
     cloudSyncSharepoint: this.featureFlag.isFeatureEnabled('cloud-sync-sharepoint'),
     cloudSyncS3: this.featureFlag.isFeatureEnabled('cloud-sync-s3'),
     raoWidget: this.featureFlag.isFeatureEnabled('rao-widget'),
+    progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
   };
 
   /**

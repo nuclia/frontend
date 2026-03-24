@@ -20,7 +20,7 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
   return oAuthService.getLoginData(loginChallenge, userHint).pipe(
     tap((data) => {
       if (data.email && data.needs_signup) {
-        oAuthService.setEmail(data.email);
+        oAuthService.setSignUpData({ email: data.email, fullname: data.fullname, company: data.company });
         router.navigate(['/user/signup'], { queryParams: { login_challenge: loginChallenge } });
       } else if (data.skip_login) {
         // Auto-submit the form by creating and submitting it programmatically
