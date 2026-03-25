@@ -63,7 +63,7 @@
       </pa-button>
     }
 
-    @if (hasSimpleUI | async) {
+    @if ((hasSimpleUI | async) && inDashboard && !(inArag | async)) {
       <pa-toggle
         [value]="!(simpleMode | async)"
         (valueChange)="switchMode($event)">

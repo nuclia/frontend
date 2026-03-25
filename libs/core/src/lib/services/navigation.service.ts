@@ -22,15 +22,19 @@ export class NavigationService {
     private sdk: SDKService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {
-    this.simpleMode
-      .pipe(switchMap((simple) => this.kbUrl.pipe(map((kbUrl) => ({ simple, kbUrl })))))
-      .subscribe((res) => {
-        if (res.simple) {
-          this.router.navigateByUrl(`${res.kbUrl}/simple`);
-        } else {
-          this.router.navigateByUrl(res.kbUrl);
-        }
-      });
+    if (this.inDashboard) {
+      combineLatest([this.simpleMode, this.inArag()])
+        .pipe(switchMap(([simple, inArag]) => this.kbUrl.pipe(map((kbUrl) => ({ simple, inArag, kbUrl })))))
+        .subscribe((res) => {
+          if (!res.inArag) {
+            if (res.simple) {
+              this.router.navigateByUrl(`${res.kbUrl}/simple`);
+            } else {
+              this.router.navigateByUrl(res.kbUrl);
+            }
+          }
+        });
+    }
   }
 
   homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.arag]).pipe(

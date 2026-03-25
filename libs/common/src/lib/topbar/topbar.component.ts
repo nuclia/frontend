@@ -51,6 +51,8 @@ export class TopbarComponent {
   );
   isTrial = this.features.isTrial;
   inPlatformApp = this.navigationService.inPlatformApp;
+  inDashboard = this.navigationService.inDashboard;
+  inArag = this.navigationService.inArag();
   showTrial = combineLatest([this.isTrial, this.accountType]).pipe(
     map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
   );
