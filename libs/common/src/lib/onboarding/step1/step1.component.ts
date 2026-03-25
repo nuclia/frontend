@@ -3,15 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  OptionModel,
-  PaButtonModule,
-  PaIconModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { AwsOnboardingPayload, OnboardingPayload } from '../onboarding.models';
-import { StickyFooterComponent } from '@nuclia/sistema';
+import { CountrySelectComponent, StickyFooterComponent } from '@nuclia/sistema';
 import { COUNTRIES, FeaturesService } from '@flaps/core';
 
 const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
@@ -27,6 +21,7 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
+    CountrySelectComponent,
     StickyFooterComponent,
   ],
   templateUrl: './step1.component.html',
@@ -97,10 +92,6 @@ export class Step1Component {
     phoneNumber: { required: 'validation.required', pattern: 'onboarding.step1.invalid_phone_number' },
   };
 
-  countries = Object.values(COUNTRIES).map(
-    (country) => new OptionModel({ id: country, label: country, value: country }),
-  );
-
   submitForm() {
     if (this.onboardingForm.invalid) {
       return;
@@ -111,7 +102,7 @@ export class Step1Component {
       use_case: formValue.use_case,
       role: formValue.role,
       organization_size: formValue.organization_size,
-      country: formValue.country,
+      country: COUNTRIES[formValue.country] || formValue.country,
       phone: `${formValue.phoneInternationalCode} ${formValue.phoneNumber}`,
       receive_updates: formValue.getUpdates,
       accept_privacy_policy: formValue.acceptPrivacyPolicy,

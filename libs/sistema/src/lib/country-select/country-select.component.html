@@ -1,0 +1,13 @@
+<pa-typeahead-select
+  [id]="id()"
+  [formControl]="innerControl"
+  [readonly]="readonly()"
+  [errorMessages]="errorMessages()"
+  [externalLabel]="externalLabel()"
+  (blur)="onTouched()">
+  @for (country of countryList; track country.code) {
+    <pa-option [value]="country.code">
+      {{ country.flag }} {{ country.name }}
+    </pa-option>
+  }
+</pa-typeahead-select>

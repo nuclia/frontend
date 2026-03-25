@@ -143,18 +143,13 @@
                   for="country">
                   {{ 'billing.country' | translate }} *
                 </label>
-                <pa-typeahead-select
-                  id="country"
+                <nsi-country-select
+                  [id]="'country'"
                   formControlName="country"
                   [readonly]="!!customer"
                   [errorMessages]="errors"
-                  externalLabel>
-                  @for (country of countryList; track country) {
-                    <pa-option [value]="country.code">
-                      {{ country.name }}
-                    </pa-option>
-                  }
-                </pa-typeahead-select>
+                  [externalLabel]="true">
+                </nsi-country-select>
               </div>
             </div>
             <div class="field-line">

@@ -74,9 +74,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   loading = false;
   countries = COUNTRIES;
-  countryList = Object.entries(COUNTRIES)
-    .map(([code, name]) => ({ code, name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   accountType = combineLatest([
     this.sdk.currentAccount.pipe(

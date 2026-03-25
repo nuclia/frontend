@@ -47,6 +47,7 @@ import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects
 import {
   SistemaActionCardComponent,
   SistemaBackButtonComponent,
+  SistemaCountrySelectComponent,
   SistemaDropdownButtonComponent,
   SistemaExpandableTextareaComponent,
   SistemaFolderTreeComponent,
@@ -100,6 +101,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'country-select', title: 'Country select', type: SistemaCountrySelectComponent },
       { view: 'search-input', title: 'Search input', type: SistemaSearchInputComponent },
       { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
