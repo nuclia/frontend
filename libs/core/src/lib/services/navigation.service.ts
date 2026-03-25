@@ -29,8 +29,6 @@ export class NavigationService {
           if (!res.inArag) {
             if (res.simple) {
               this.router.navigateByUrl(`${res.kbUrl}/simple`);
-            } else {
-              this.router.navigateByUrl(res.kbUrl);
             }
           }
         });
