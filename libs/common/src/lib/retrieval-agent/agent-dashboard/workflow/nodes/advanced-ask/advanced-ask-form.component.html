@@ -30,6 +30,12 @@
       [required]="true"
       controlName="context_validation_model"></app-model-select>
 
+    <pa-toggle
+      formControlName="prune_context"
+      withBackground>
+      {{ schema?.properties?.['prune_context']?.title || '' }}
+    </pa-toggle>
+
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>
@@ -47,7 +53,7 @@
     <pa-toggle
       [(value)]="useExistingConfiguration"
       (valueChange)="updateValidators($event)"
-      labelOnRight>
+      withBackground>
       {{ 'retrieval-agents.workflow.node-types.advanced_ask.form.use-existing-config' | translate }}
     </pa-toggle>
 
