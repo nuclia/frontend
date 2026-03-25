@@ -66,6 +66,7 @@ export class TopbarComponent {
   logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
+  hasSimpleUI = this.features.unstable.simpleUI;
 
   constructor(
     private router: Router,
