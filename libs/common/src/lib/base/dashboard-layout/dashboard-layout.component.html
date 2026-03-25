@@ -1,11 +1,13 @@
 <div class="dashboard-layout">
-  <nav [class.collapsed]="collapsedNav()">
-    <app-navbar></app-navbar>
-  </nav>
+  @if (!(noNavBar | async)) {
+    <nav [class.collapsed]="collapsedNav()">
+      <app-navbar></app-navbar>
+    </nav>
+  }
 
   <div
     class="dashboard-content"
-    [class.full-width]="collapsedNav()">
+    [class.full-width]="collapsedNav() || (noNavBar | async)">
     @if (showStatusBar | async) {
       <div class="status-bar">
         @if (showProgress | async) {

@@ -25,14 +25,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }),
   );
   inArag = this.navigationService.inArag();
-  inAccount: Observable<boolean> = merge(
-    of(this.navigationService.inAccountManagement(location.pathname)),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.navigationService.inAccountManagement((event as NavigationEnd).url)),
-      takeUntil(this.unsubscribeAll),
-    ),
-  );
+  inAccount: Observable<boolean> = this.navigationService.inAccount.pipe(takeUntil(this.unsubscribeAll));
   inDashboard = this.navigationService.inDashboard;
   inRaoApp = this.navigationService.inRaoApp;
   inPlatformApp = this.navigationService.inPlatformApp;

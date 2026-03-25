@@ -1,15 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  AppService,
-  ChartData,
-  MetricsService,
-  RangeChartData,
-  RemiMetricsService,
-  searchResources,
-} from '@flaps/common';
+import { AppService, ChartData, MetricsService, RangeChartData, RemiMetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
+import { BlockedFeature, Counters, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -96,34 +89,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   showAccountStatus = combineLatest([this.features.isAccountManager, this.features.isTrial]).pipe(
     map(([isManager, isTrial]) => isManager && isTrial),
   );
-
-  selectedResourcesTab: 'processed' | 'pending' = 'processed';
-  latestProcessedResources: Observable<IResource[]> = this.currentKb.pipe(
-    switchMap((kb) =>
-      searchResources(kb, {
-        pageSize: 6,
-        sort: { field: SortField.created, order: 'desc' },
-        query: '',
-        filters: [],
-        page: 0,
-        status: RESOURCE_STATUS.PROCESSED,
-      }),
-    ),
-    map((data) => Object.values(data.results.resources || {})),
-  );
-  processingQueue: Observable<IResource[]> = this.currentKb.pipe(
-    switchMap((kb) =>
-      searchResources(kb, {
-        pageSize: 6,
-        sort: { field: SortField.created, order: 'desc' },
-        query: '',
-        filters: [],
-        page: 0,
-        status: RESOURCE_STATUS.PENDING,
-      }),
-    ),
-    map((data) => Object.values(data.results.resources || {})),
-  );
+  isChartDropdownOpen = false;
 
   readonly chartHeight = 232;
   readonly defaultChartOption = new OptionModel({

@@ -70,6 +70,7 @@ export class FeaturesService {
     cloudSyncS3: this.featureFlag.isFeatureEnabled('cloud-sync-s3'),
     raoWidget: this.featureFlag.isFeatureEnabled('rao-widget'),
     progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
+    simpleUI: this.featureFlag.isFeatureEnabled('simple-ui'),
   };
 
   /**
