@@ -58,6 +58,7 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     advanced_ask: new FormGroup({
+      id: new FormControl<string>('', { nonNullable: true }),
       sources: new FormArray<FormControl<string>>([], { validators: [Validators.required] }),
       fallback: new FormControl<BaseContextAgent | null>(null),
       generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
