@@ -6,7 +6,8 @@ import { HomeContainerComponent, SisProgressModule } from '@nuclia/sistema';
 import { LastResourcesComponent } from '../knowledge-box-home/last-resources/last-resources.component';
 import { CommonModule } from '@angular/common';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-simple-kb',
@@ -26,10 +27,17 @@ import { map } from 'rxjs';
 export class SimpleKBComponent implements OnDestroy, OnInit {
   private upload = inject(UploadDialogService);
   private searchWidgetService = inject(SearchWidgetService);
-  private resourceListService = inject(ResourceListService);
+  private sdk = inject(SDKService);
   private uploadService = inject(UploadService);
   widgetPreview = this.searchWidgetService.widgetPreview;
-  emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
+  emptyKb = combineLatest([this.sdk.counters, this.uploadService.statusCount]).pipe(
+    map(([counters, statusCount]) => {
+      return (
+        (!counters?.resources || counters.resources === 0) &&
+        statusCount.error + statusCount.pending + statusCount.processed === 0
+      );
+    }),
+  );
   uploadInProgress = this.uploadService.uploadInProgress;
 
   uploadFiles() {
@@ -38,6 +46,7 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, undefined, '#preview');
+    this.uploadService.updateStatusCount();
   }
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
