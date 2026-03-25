@@ -5,8 +5,8 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { AwsOnboardingPayload, OnboardingPayload } from '../onboarding.models';
-import { CountrySelectComponent, StickyFooterComponent } from '@nuclia/sistema';
-import { COUNTRIES, FeaturesService } from '@flaps/core';
+import { COUNTRIES, CountrySelectComponent, StickyFooterComponent } from '@nuclia/sistema';
+import { FeaturesService } from '@flaps/core';
 
 const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
 const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { AccountTypes } from '@nuclia/core';
-import { COUNTRIES, Currency, Prices, StripeCustomer } from '@flaps/core';
+import { Currency, Prices, StripeCustomer } from '@flaps/core';
+import { COUNTRIES } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './review.component.html',
