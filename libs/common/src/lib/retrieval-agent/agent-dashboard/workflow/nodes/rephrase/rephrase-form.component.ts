@@ -46,6 +46,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     rephrase: new FormGroup({
+      id: new FormControl('', { nonNullable: true }),
       kb: new FormControl('', { nonNullable: true }),
       extend: new FormControl(false),
       synonyms: new FormControl(false),

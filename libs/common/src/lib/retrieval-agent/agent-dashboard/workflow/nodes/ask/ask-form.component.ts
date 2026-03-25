@@ -34,6 +34,7 @@ export class AskFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     ask: new FormGroup({
+      id: new FormControl<string>('', { nonNullable: true }),
       sources: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       fallback: new FormControl<BaseContextAgent | null>(null),
       ai_parameter_search: new FormControl<boolean>(false, { nonNullable: true }),
