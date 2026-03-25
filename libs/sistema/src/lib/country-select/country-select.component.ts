@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { IErrorMessages, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { COUNTRIES } from '@flaps/core';
+import { COUNTRIES } from './countries';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
