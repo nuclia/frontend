@@ -1,0 +1,38 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'retrieval-agents.workflows-list.tool-parameters.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-container">
+        <nsi-expandable-textarea
+          rows="5"
+          formControlName="parameters"
+          [modalTitle]="'retrieval-agents.workflows-list.tool-parameters.parameters' | translate"
+          [help]="'retrieval-agents.workflows-list.tool-parameters.parameters-help' | translate">
+          {{ 'retrieval-agents.workflows-list.tool-parameters.parameters' | translate }}
+        </nsi-expandable-textarea>
+        <ncom-hint [label]="'retrieval-agents.workflows-list.tool-parameters.example' | translate">
+          <pre><code>{{ example | json }}</code></pre>
+        </ncom-hint>
+        <pa-textarea
+          rows="3"
+          formControlName="required"
+          [help]="'retrieval-agents.workflows-list.tool-parameters.required-help' | translate">
+          {{ 'retrieval-agents.workflows-list.tool-parameters.required' | translate }}
+        </pa-textarea>
+      </div>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
