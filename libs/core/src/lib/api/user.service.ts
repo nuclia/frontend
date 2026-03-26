@@ -34,11 +34,9 @@ export class UserService {
   updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
-        if (error.status === 403 || error.status === 400) {
-          this.authService.setNextParams(this.route.snapshot.queryParams);
-          this.authService.setNextUrl(new URL(window.location.href).pathname);
-          this.sdk.nuclia.auth.logout();
-        }
+        this.authService.setNextParams(this.route.snapshot.queryParams);
+        this.authService.setNextUrl(new URL(window.location.href).pathname);
+        this.sdk.nuclia.auth.logout();
         return of(error);
       }),
       map((welcome) => {
