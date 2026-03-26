@@ -15,6 +15,7 @@ import { WorkflowModalComponent } from './workflow-modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkflowsService } from './workflows.service';
 import { SDKService } from '@flaps/core';
+import { ToolParametersModalComponent } from './tool-parameters-modal';
 
 @Component({
   imports: [
@@ -39,7 +40,9 @@ export class WorkflowsListComponent {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
 
-  workflows = this.workflowsService.workflows;
+  workflows = this.workflowsService.workflows.pipe(
+    map((workflows) => [...workflows].sort((a, b) => a.name.localeCompare(b.name))),
+  );
   endpoint = this.sdk.currentArag.pipe(map((arag) => arag.fullpath + '/session/default/mcp'));
   copied = signal(false);
 
@@ -69,6 +72,21 @@ export class WorkflowsListComponent {
     event.stopPropagation();
     this.modalService
       .openModal(WorkflowModalComponent, new ModalConfig({ data: { workflow } }))
+      .onClose.pipe(
+        filter((workflow) => !!workflow),
+        switchMap((workflow) => this.workflowsService.patchWorkflow(workflow)),
+      )
+      .subscribe({
+        error: () => {
+          this.toaster.error('retrieval-agents.workflows-list.errors.edition');
+        },
+      });
+  }
+
+  editToolParameters(workflow: Workflow, event: MouseEvent | KeyboardEvent) {
+    event.stopPropagation();
+    this.modalService
+      .openModal(ToolParametersModalComponent, new ModalConfig({ data: { workflow } }))
       .onClose.pipe(
         filter((workflow) => !!workflow),
         switchMap((workflow) => this.workflowsService.patchWorkflow(workflow)),

@@ -62,6 +62,9 @@
                   <pa-option (selectOption)="edit(workflow, $event)">
                     {{ 'retrieval-agents.workflows-list.edit' | translate }}
                   </pa-option>
+                  <pa-option (selectOption)="editToolParameters(workflow, $event)">
+                    {{ 'retrieval-agents.workflows-list.tool-parameters.title' | translate }}
+                  </pa-option>                  
                   <!-- TODO: The endpoint to delete a workflow is not available yet -->
                   <!--
                   <pa-option
