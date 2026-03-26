@@ -276,7 +276,7 @@
                   </div>
                 {/if}
               </div>
-              {#if $showAttachedImages && paragraph.reference}
+              {#if $showAttachedImages && paragraph.reference && $imageTemplate}
                 <Image
                   path={$imageTemplate.replace(
                     IMAGE_PLACEHOLDER,
