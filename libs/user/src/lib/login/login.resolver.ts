@@ -2,12 +2,13 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, Router } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { OAuthLoginData, OAuthService } from '@flaps/core';
+import { AuthService, OAuthLoginData, OAuthService } from '@flaps/core';
 
 export const loginResolver: ResolveFn<OAuthLoginData | null> = (
   route: ActivatedRouteSnapshot,
 ): Observable<OAuthLoginData | null> => {
   const oAuthService = inject(OAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
   const loginChallenge = route.queryParamMap.get('login_challenge');
   const userHint = route.queryParamMap.get('user_hint');
@@ -20,7 +21,7 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
   return oAuthService.getLoginData(loginChallenge, userHint).pipe(
     tap((data) => {
       if (data.email && data.needs_signup) {
-        oAuthService.setSignUpData({ email: data.email, fullname: data.fullname, company: data.company });
+        authService.setSignUpEmail(data.email);
         router.navigate(['/user/signup'], { queryParams: { login_challenge: loginChallenge } });
       } else if (data.skip_login) {
         // Auto-submit the form by creating and submitting it programmatically

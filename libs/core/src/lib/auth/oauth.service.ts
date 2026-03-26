@@ -10,7 +10,6 @@ export type OAuthErrors =
   | 'unknown_consent_challenge'
   | 'get_consent_error';
 
-const SIGNUP_DATA = 'SIGNUP_DATA';
 const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
 @Injectable({
   providedIn: 'root',
@@ -36,19 +35,6 @@ export class OAuthService {
 
   getConsentData(challenge: string): Observable<OAuthConsentData> {
     return this.sdk.nuclia.rest.get<OAuthConsentData>(this.consentUrl() + `?consent_challenge=${challenge}`);
-  }
-
-  getSignUpData(): { email: string; fullname?: string; company?: string } | undefined {
-    const data = localStorage.getItem(SIGNUP_DATA);
-    if (data) {
-      return JSON.parse(data);
-    } else {
-      return undefined;
-    }
-  }
-
-  setSignUpData(data: { email: string; fullname?: string; company?: string }) {
-    localStorage.setItem(SIGNUP_DATA, JSON.stringify(data));
   }
 
   getCameFrom() {

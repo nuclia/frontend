@@ -43,6 +43,7 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   QueryInfo,
+  SignUpInfo,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -137,6 +138,13 @@ export class Db implements IDb {
   */
   getWelcome(): Observable<Welcome> {
     return this.nuclia.rest.get<Welcome>('/user/welcome');
+  }
+
+  /**
+   * Returns sign up information.
+   */
+  getSignupInfo(signup_token: string): Observable<SignUpInfo> {
+    return this.nuclia.rest.get<SignUpInfo>(`/auth/signup/info?signup_token=${signup_token}`);
   }
 
   /**

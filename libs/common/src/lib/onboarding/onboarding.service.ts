@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
-import { SDKService, STFUtils, UserService, GETTING_STARTED_DONE_KEY, NavigationService } from '@flaps/core';
+import {
+  SDKService,
+  STFUtils,
+  UserService,
+  GETTING_STARTED_DONE_KEY,
+  NavigationService,
+  AuthService,
+} from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
@@ -28,6 +35,7 @@ export class OnboardingService {
     private toaster: SisToastService,
     private user: UserService,
     private navigation: NavigationService,
+    private authService: AuthService,
   ) {}
 
   nextStep() {
@@ -57,45 +65,59 @@ export class OnboardingService {
   }
 
   createAccount(company: string): Observable<Account> {
-    const accountSlugRequested = STFUtils.generateSlug(company);
     this._onboardingState.next({
       creating: true,
       accountCreated: false,
       kbCreated: false,
       creationFailed: false,
     });
-    return this.getAvailableAccountSlug(accountSlugRequested).pipe(
-      switchMap((accountSlug) =>
-        this.sdk.nuclia.db
-          .createAccount({
-            slug: accountSlug,
-            title: company,
-          })
-          .pipe(
-            catchError((error) => {
-              this._onboardingState.next({
-                creating: false,
-                accountCreated: false,
-                kbCreated: false,
-                creationFailed: true,
-              });
-              console.error(`Account creation failed`, error);
-              this.toaster.error('Account creation failed');
-              throw error;
-            }),
-          ),
-      ),
-      switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
-      switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
-      tap(() => {
-        this._onboardingState.next({
-          creating: false,
-          accountCreated: true,
-          kbCreated: false,
-          creationFailed: false,
-        });
-      }),
-    );
+    const signupToken = this.authService.getSignUpToken();
+    if (!signupToken) {
+      this._onboardingState.next({
+        creating: false,
+        accountCreated: false,
+        kbCreated: false,
+        creationFailed: true,
+      });
+      console.error('No signup data');
+      throw new Error('No signup data');
+      // redirect to sign up form
+      location.href = 'https://www.progress.com/agentic-rag';
+    } else {
+      return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
+        switchMap((data) => this.getAvailableAccountSlug(STFUtils.generateSlug(data.company))),
+        switchMap((accountSlug) =>
+          this.sdk.nuclia.db
+            .createAccount({
+              slug: accountSlug,
+              title: company,
+            })
+            .pipe(
+              catchError((error) => {
+                this._onboardingState.next({
+                  creating: false,
+                  accountCreated: false,
+                  kbCreated: false,
+                  creationFailed: true,
+                });
+                console.error(`Account creation failed`, error);
+                this.toaster.error('Account creation failed');
+                throw error;
+              }),
+            ),
+        ),
+        switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
+        switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
+        tap(() => {
+          this._onboardingState.next({
+            creating: false,
+            accountCreated: true,
+            kbCreated: false,
+            creationFailed: false,
+          });
+        }),
+      );
+    }
   }
 
   createKb(

@@ -5,10 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
   AnalyticsService,
+  AuthService,
   BackendConfigurationService,
   FeaturesService,
   LoginService,
-  OAuthService,
   SDKService,
   SignupResponse,
   StaticEnvironmentConfiguration,
@@ -73,9 +73,6 @@ describe('SignupComponent', () => {
         MockProvider(LoginService, {
           signup: jest.fn(() => signupResponse.asObservable()),
         }),
-        MockProvider(OAuthService, {
-          getSignUpData: jest.fn(() => signupData),
-        }),
         MockProvider(AnalyticsService, {
           logTrialSignup: jest.fn(),
         }),
@@ -92,6 +89,9 @@ describe('SignupComponent', () => {
         MockProvider(FeaturesService, {
           unstable: { githubSignin: of(true) },
         } as FeaturesService),
+        MockProvider(AuthService, {
+          getSignUpEmail: () => 'bruce@wayne.corp',
+        } as AuthService),
         MockProvider(BackendConfigurationService, {
           getRecaptchaKey: () => 'fake',
           getSocialLogin: () => false,
@@ -144,7 +144,7 @@ describe('SignupComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(
         ['../check-mail'],
         expect.objectContaining({
-          queryParams: { email: signupData.email },
+          queryParams: { email: 'bruce@wayne.corp' },
         }),
       );
     });

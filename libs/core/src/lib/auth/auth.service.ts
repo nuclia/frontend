@@ -3,6 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 
 const NEXT_URL_KEY = 'NEXT_URL_KEY';
 const NEXT_URL_PARAMS_KEY = 'NEXT_URL_PARAMS';
+const SIGNUP_DATA = 'SIGNUP_DATA';
+const SIGNUP_EMAIL = 'SIGNUP_EMAIL';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +46,21 @@ export class AuthService {
     } else {
       localStorage.removeItem(NEXT_URL_PARAMS_KEY);
     }
+  }
+
+  getSignUpEmail(): string | null {
+    return localStorage.getItem(SIGNUP_DATA);
+  }
+
+  setSignUpEmail(email: string) {
+    localStorage.setItem(SIGNUP_EMAIL, email);
+  }
+
+  getSignUpToken(): string | null {
+    return localStorage.getItem(SIGNUP_DATA);
+  }
+
+  setSignUpToken(token: string) {
+    localStorage.setItem(SIGNUP_DATA, token);
   }
 }
