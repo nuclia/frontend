@@ -2,6 +2,8 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
 
+const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
+
 export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
   const router = inject(Router);
@@ -12,7 +14,7 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
     authService.setSignUpToken(signup_token);
   }
   const routeHasMagicToken = params.has('token') && !params.has('signup_token');
-  if (routeHasMagicToken) {
+  if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken) {
     return true;
   }
 
