@@ -37,7 +37,7 @@ jobs:
         id: blackduck-pr-scan
         uses: blackduck-inc/black-duck-security-scan@v2
         env:
-          DETECT_PROJECT_NAME: frontend
+          DETECT_PROJECT_NAME: nuclia-frontend
           DETECT_PROJECT_GROUP_NAME: Nuclia
           DETECT_PROJECT_VERSION_NAME: main
         with:
