@@ -54,6 +54,7 @@ Do this classification explicitly — write out which categories apply and why b
 | **Testing** | test, spec, `*.spec.ts`, TestBed, `ng-mocks`, `MockProvider`, `MockModule`, `fixture.detectChanges`, `fakeAsync`, vitest, jest | `test-writer` |
 | **Infra** | nx, build, serve, `project.json`, generator, `nx g`, library, app, module boundary, `tsconfig.base.json`, tags, cache, affected, CI | `infra-expert` |
 | **Knowledge** | sync knowledge, update AGENTS.md, stale docs, knowledge after commit/PR, commit hash + "what needs updating", "big update landed", missing AGENTS.md, skill references stale symbol | `knowledge-keeper` |
+| **Product** | "what does X do", "how does Y work", "can the platform support", "what API exists for", "what are the limits of", feature idea feasibility, UX intent, platform capabilities, "which endpoint", "what parameters", REMi behaviour, KB vs account scope, LLM options, ingestion pipeline questions | `product-owner` |
 
 > **Ambiguity rule:** If the task matches two or more categories, use the Multi-Agent Playbook
 > below. If the task matches zero categories, ask one targeted clarifying question before proceeding.
@@ -112,6 +113,8 @@ format defined in `.claude/agents/handoff.md` before invoking Agent B. Key field
 | **Refactor legacy component to Angular 21** | `quality-inspector` (audit current state) → `ui-builder` (rewrite component) → `reactive-expert` (rewrite streams) → `test-writer` (update specs) | quality-inspector identifies what must change; ui-builder rewrites template/signals/inject(); reactive-expert replaces subscription patterns; test-writer updates TestBed setup for signal inputs |
 | **API feature with UI** | `api-integrator` → `ui-builder` | api-integrator defines the service interface; ui-builder consumes it |
 | **Full end-to-end feature** | `infra-expert` (if new lib/project needed) → `api-integrator` → `ui-builder` → `reactive-expert` (if streams) → `test-writer` | Each agent's output feeds the next |
+| **Plan a new feature** | `product-owner` → `orchestrator` (for implementation) | product-owner clarifies platform capabilities, constraints, and API contracts; then hand off for implementation |
+| **Unclear what's possible** | `product-owner` first, then route to specialist | Use product-owner to answer feasibility before delegating any implementation work |
 
 ### Parallelisable vs sequential
 
@@ -188,6 +191,7 @@ If the next step requires a sequential handoff, generate the handoff block now (
 | `test-writer` | `*.spec.ts` files, TestBed, ng-mocks, Vitest | Implementation code, Nx config |
 | `infra-expert` | `project.json`, `nx.json`, `tsconfig.base.json`, generators | Implementation code, test files |
 | `knowledge-keeper` | AGENTS.md files, `.claude/skills/`, staleness detection | Feature implementation, tests, Nx config |
+| `product-owner` | Platform domain knowledge, API capabilities, UX intent, feature feasibility | Writing any code, test files, Nx config |
 
 ---
 

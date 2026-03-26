@@ -118,6 +118,14 @@ Test files are co-located alongside source as `*.spec.ts`.
 
 Every app and lib has its own `AGENTS.md` with project-specific routing, components, services, and gotchas. Read the relevant file before working in any sub-project. This root file documents only what is shared across the entire workspace.
 
+---
+
+## Communication Rules
+
+- **NEVER ask questions as plain text.** Always use the `ask_user` tool with choices when clarification is needed.
+- **Prefer multiple-choice over freeform.** Provide a `choices` array whenever possible — faster UX and lower quota usage.
+- **Batch information, not questions.** If you need multiple pieces of info, gather them via tool calls or codebase exploration first; only ask the user when truly blocked.
+
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 

@@ -1,0 +1,5268 @@
+info:
+  title: Knowledge Box & Zone REST API
+  description: API documentation for managing Knowledge Boxes, NUA keys, and API Keys
+    within designated zones.
+  version: v1
+openapi: 3.1.0
+servers:
+- url: https://{region-x}.stashify.cloud
+  description: Development server
+tags:
+- description: Operations for creating, reading, updating, and deleting Knowledge
+    Boxes.
+  name: Knowledge Boxes
+- description: Management of users assigned to a Knowledge Box.
+  name: Users
+- description: Handling Knowledge Box invitation management.
+  name: Invites
+- description: Management of API keys assigned to a Knowledge Box.
+  name: API Keys
+- description: Management of NUA keys.
+  name: NUA Keys
+- description: Management of Activity logs for a Knowledge Box.
+  name: Knowledgebox activity
+- description: Management of Backups for a Knowledge Box.
+  name: Backups
+paths:
+  /api/auth/magic: {}
+  /api/export/{export_id}/import_to/{kb_uuid}: {}
+  /api/exports: {}
+  /api/v1/account/{account_id}/backup/{backup_id}:
+    delete:
+      tags:
+      - Backups
+      summary: Delete
+      description: Delete knowledgebox backup
+      operationId: delete_api_v1_account__account_id__backup__backup_id__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      - name: backup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Backup Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/backup/{backup_id}/restore:
+    post:
+      tags:
+      - Backups
+      summary: Restore
+      description: Restore a backup into a new knowledgebox
+      operationId: restore_api_v1_account__account_id__backup__backup_id__restore_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      - name: backup_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Backup Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupRestore'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemCreated'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/backups:
+    post:
+      tags:
+      - Backups
+      summary: Create
+      description: Create knowledgebox backup
+      operationId: create_api_v1_account__account_id__backups_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackupCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupCreateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Backups
+      summary: List
+      description: Get all backups from an account in a region
+      operationId: list_api_v1_account__account_id__backups_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BackupResponse'
+                title: Response List Api V1 Account  Account Id  Backups Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}:
+    get:
+      tags:
+      - Knowledge Boxes
+      summary: Get Knowledge Box
+      operationId: get_knowledge_box_api_v1_account__account_id__kb__kb_id__get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBox'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Knowledge Boxes
+      summary: Modify Knowledge Box
+      description: Modifies an existing Knowledge Box.
+      operationId: modify_knowledge_box_api_v1_account__account_id__kb__kb_id__patch
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBoxUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Modify Knowledge Box Api V1 Account  Account Id  Kb  Kb
+                  Id  Patch
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Knowledge Boxes
+      summary: Delete Knowledge Box
+      operationId: delete_knowledge_box_api_v1_account__account_id__kb__kb_id__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/ephemeral_tokens:
+    post:
+      tags:
+      - Knowledge Boxes
+      summary: Create Ephemeral Token
+      description: Create an ephemeral token to access the Knowledge Box
+      operationId: create_ephemeral_token_api_v1_account__account_id__kb__kb_id__ephemeral_tokens_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/EphemeralTokenProperties'
+              - type: 'null'
+              title: Payload
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EphemeralTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/invite:
+    post:
+      tags:
+      - Invites
+      summary: Invite To Knowledge Box
+      description: Send an invitation to join a Knowledge Box via email.
+      operationId: invite_to_knowledge_box_api_v1_account__account_id__kb__kb_id__invite_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteKnowledgeBoxPayload'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Invites
+      summary: Delete Invite
+      description: Invalidate an invite to join a Knowledge Box
+      operationId: delete_invite_api_v1_account__account_id__kb__kb_id__invite_delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: email
+        in: query
+        required: true
+        schema:
+          type: string
+          format: email
+          title: Email
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/invites:
+    get:
+      tags:
+      - Invites
+      summary: Invited Users
+      description: List of users invited to a Knowledge Box, but not yet joined
+      operationId: invited_users_api_v1_account__account_id__kb__kb_id__invites_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KbInvitedUser'
+                title: Response Invited Users Api V1 Account  Account Id  Kb  Kb Id  Invites
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/logo.png:
+    get:
+      tags:
+      - Knowledge Boxes
+      summary: Download Logo
+      description: Knowledge Box logo
+      operationId: download_logo_api_v1_account__account_id__kb__kb_id__logo_png_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/permissions:
+    get:
+      tags:
+      - Knowledge Boxes
+      summary: Get Knowledge Box Permissions
+      operationId: get_knowledge_box_permissions_api_v1_account__account_id__kb__kb_id__permissions_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/service_account/{sa_id}:
+    delete:
+      tags:
+      - API Keys
+      summary: Delete Service Account
+      description: Delete a new Service Account for a Knowledge Box
+      operationId: delete_service_account_api_v1_account__account_id__kb__kb_id__service_account__sa_id__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: sa_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Sa Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/service_account/{sa_id}/key/{sa_key_id}:
+    delete:
+      tags:
+      - API Keys
+      summary: Delete Api Key
+      description: Delete an API Key of a Knowledge Box
+      operationId: delete_api_key_api_v1_account__account_id__kb__kb_id__service_account__sa_id__key__sa_key_id__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: sa_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Sa Id
+      - name: sa_key_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Sa Key Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/service_account/{sa_id}/keys:
+    post:
+      tags:
+      - API Keys
+      summary: Add Service Account Key
+      description: Create an API Key for a Service Account of a Knowledge Box
+      operationId: add_service_account_key_api_v1_account__account_id__kb__kb_id__service_account__sa_id__keys_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: sa_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Sa Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountKeyCreation'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountJWT'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/service_accounts:
+    get:
+      tags:
+      - API Keys
+      summary: List Service Accounts
+      description: List of Service Accounts of a Knowledge Box
+      operationId: list_service_accounts_api_v1_account__account_id__kb__kb_id__service_accounts_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceAccount'
+                title: Response List Service Accounts Api V1 Account  Account Id  Kb  Kb
+                  Id  Service Accounts Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - API Keys
+      summary: Add Service Account
+      description: Create a new Service Account for a Knowledge Box
+      operationId: add_service_account_api_v1_account__account_id__kb__kb_id__service_accounts_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountCreation'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemCreated'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kb/{kb_id}/users:
+    get:
+      tags:
+      - Users
+      summary: Users
+      description: List of users of a Knowledge Box
+      operationId: users_api_v1_account__account_id__kb__kb_id__users_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: include_user_detail
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Include User Detail
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KbUser'
+                title: Response Users Api V1 Account  Account Id  Kb  Kb Id  Users
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Users
+      summary: Update Users
+      description: Assign or remove users from a Knowledge Box
+      operationId: update_users_api_v1_account__account_id__kb__kb_id__users_patch
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpdateKbUsers'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/kbs:
+    get:
+      tags:
+      - Knowledge Boxes
+      summary: List Knowledge Boxes
+      description: List all region Knowledge Boxes that belongs to an specific account
+        that the authenticated user can see
+      operationId: list_knowledge_boxes_api_v1_account__account_id__kbs_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: mode
+        in: query
+        required: false
+        schema:
+          enum:
+          - kb
+          - agent
+          - agent_no_memory
+          - agents
+          type: string
+          description: Optional mode filter. 'kb' for standard KBs, 'agent' for agents
+            with memory, 'agent_no_memory' for agents without memory, 'agents' for
+            all agent types (agent + agent_no_memory). Defaults to 'kb'.
+          default: kb
+          title: Mode
+        description: Optional mode filter. 'kb' for standard KBs, 'agent' for agents
+          with memory, 'agent_no_memory' for agents without memory, 'agents' for all
+          agent types (agent + agent_no_memory). Defaults to 'kb'.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeBoxSummary'
+                title: Response List Knowledge Boxes Api V1 Account  Account Id  Kbs
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Knowledge Boxes
+      summary: Create Knowledge Box
+      description: Creates a new Knowledge Box. The accepted values for the `learning_configuration`
+        are dynamic and may be dependant of the account used. Accepted field values
+        needs to be checked on the 'Learning configuration schema' endpoint
+      operationId: create_knowledge_box_api_v1_account__account_id__kbs_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBoxCreation'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemCreated'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/nua_client/{client_id}:
+    delete:
+      tags:
+      - NUA Keys
+      summary: Delete Nua Client By Id
+      description: Deletes an existing Nuclia Understanding API client
+      operationId: delete_nua_client_by_id_api_v1_account__account_id__nua_client__client_id__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: client_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Client Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - NUA Keys
+      summary: Get Nua Client By Id
+      description: Gets the metadata of an existing Nuclia Understanding API
+      operationId: get_nua_client_by_id_api_v1_account__account_id__nua_client__client_id__get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: client_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Client Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NUAClientMetadata'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/nua_client/{client_id}/key:
+    put:
+      tags:
+      - NUA Keys
+      summary: Set Account Nua Client Key
+      description: Recreates a new session key for an existing Nuclia Understanding
+        API client
+      operationId: set_account_nua_client_key_api_v1_account__account_id__nua_client__client_id__key_put
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: client_id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Client Id
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NUAClient'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/nua_clients:
+    get:
+      tags:
+      - NUA Keys
+      summary: Get Account Nua Clients
+      description: Gets the list of Nuclia Understanding API clients of an account
+      operationId: get_account_nua_clients_api_v1_account__account_id__nua_clients_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: client_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NUAClientsMetadata'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - NUA Keys
+      summary: Create Account Nua Client
+      description: Create a new Nuclia Understanding API client for an account
+      operationId: create_account_nua_client_api_v1_account__account_id__nua_clients_post
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NUAClientKeyCreation'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NUAClient'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ephemeral_token:
+    post:
+      tags:
+      - Knowledge Boxes
+      summary: Create Ephemeral Token From Sa
+      description: Create an ephemeral token to access the Knowledge Box using a Service
+        Account
+      operationId: create_ephemeral_token_from_sa_api_v1_ephemeral_token_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EphemeralTokenProperties'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EphemeralTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/activity/download_request/{request_id}:
+    get:
+      tags:
+      - Knowledgebox activity
+      summary: Get Download Status
+      description: Get the status of a download request by Knowledgebox ID and request
+        ID
+      operationId: get_download_status_api_v1_kb__kb_id__activity_download_request__request_id__get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid1
+          title: Request Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadRequest'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/activity/metrics:
+    get:
+      tags:
+      - Knowledgebox activity
+      summary: Activity Logs Metrics
+      description: Get metrics for search and ask logs
+      operationId: activity_logs_metrics_api_v1_kb__kb_id__activity_metrics_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      - name: aggregation
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Aggregation'
+          default: millennium
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: From
+      - name: to
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          default: '2026-03-10T12:19:00.445103'
+          title: To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityUsageResponse'
+                title: Response Activity Logs Metrics Api V1 Kb  Kb Id  Activity Metrics
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/activity/{event_type}/months:
+    get:
+      tags:
+      - Knowledgebox activity
+      summary: Get Knowledgebox Activity Downloads List
+      description: Get the list of monthly activity audit files available to download
+      operationId: Get_Knowledgebox_Activity_Downloads_List_api_v1_kb__kb_id__activity__event_type__months_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      - name: event_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventType'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDownloadsList'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/activity/{event_type}/query:
+    post:
+      tags:
+      - Knowledgebox activity
+      summary: Query Knowledgebox Activity Logs
+      description: Query Knowledgebox Activity Logs
+      operationId: Query_Knowledgebox_Activity_Logs_api_v1_kb__kb_id__activity__event_type__query_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      - name: event_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/ActivityLogsQuery'
+              - $ref: '#/components/schemas/ActivityLogsSearchQuery'
+              - $ref: '#/components/schemas/ActivityLogsAskQuery'
+              - $ref: '#/components/schemas/ActivityLogsChatQuery'
+              title: Body
+      responses:
+        '200':
+          description: Returns data in NDJSON format
+          content:
+            application/x-ndjson:
+              example: '{"question":null,"id":0,"date":null,"user_id":null,"user_type":null,"client_type":null,"total_duration":null,"audit_metadata":null,"resource_id":null,"nuclia_tokens":null,"token_details":null,"rephrased_question":null,"answer":null,"learning_id":null,"retrieved_context":null,"chat_history":null,"feedback_good":null,"feedback_comment":null,"feedback_good_all":null,"feedback_good_any":null,"feedback":null,"model":null,"rag_strategies_names":null,"rag_strategies":null,"status":null,"generative_answer_first_chunk_time":null,"generative_reasoning_first_chunk_time":null,"generative_answer_time":null,"remi_scores":null,"user_request":null,"reasoning":null,"resources_count":null,"filter":null,"retrieval_rephrased_question":null,"vectorset":null,"security":null,"min_score_bm25":null,"min_score_semantic":null,"result_per_page":null,"retrieval_time":null}
+
+                '
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/activity/{event_type}/query/download:
+    post:
+      tags:
+      - Knowledgebox activity
+      summary: Request The Preparation Of Knowledgebox Activity Logs Download
+      description: Request Knowledgebox Activity Logs download
+      operationId: Request_the_preparation_of_Knowledgebox_Activity_Logs_download_api_v1_kb__kb_id__activity__event_type__query_download_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      - name: event_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/EventType'
+      - name: accept
+        in: header
+        required: true
+        schema:
+          enum:
+          - application/x-ndjson
+          - text/csv
+          type: string
+          title: Accept
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/DownloadActivityLogsQuery'
+              - $ref: '#/components/schemas/DownloadActivityLogsSearchQuery'
+              - $ref: '#/components/schemas/DownloadActivityLogsAskQuery'
+              - $ref: '#/components/schemas/DownloadActivityLogsChatQuery'
+              title: Body
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadRequest'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/external_connection/{connection_id}:
+    get:
+      tags:
+      - External Connections
+      summary: Get External Connection
+      operationId: get_external_connection_api_v1_kb__kb_id__external_connection__connection_id__get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Connection Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalConnectionOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - External Connections
+      summary: Delete External Connection
+      operationId: delete_external_connection_api_v1_kb__kb_id__external_connection__connection_id__delete
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Connection Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/external_connection/{connection_id}/browse:
+    get:
+      tags:
+      - External Connections
+      summary: Browse Storage
+      description: "Browse cloud storage to discover sites, drives and folders.\n\n\
+        Use this endpoint to help users select a drive and folder path when\ncreating\
+        \ a sync configuration.\n\n**SharePoint/OneDrive flow (OAuth):**\n1. Resolve\
+        \ site URL: use the `/resolve_site` endpoint with a site URL \u2192 get `site_id`\n\
+        2. List drives in a site: provide `site_id` \u2192 returns drives for that\
+        \ site\n   - Use `site_id=me` for personal OneDrive (OAuth only)\n3. List\
+        \ folders in a drive: provide `drive_id` \u2192 returns folders at root\n\
+        4. Navigate folders: provide `drive_id` and `path` \u2192 returns subfolders\n\
+        \n**SharePoint flow (certificate auth):**\n1. List sites: no parameters \u2192\
+        \ returns all sites (max 50)\n   - Or use `site_search` to search for specific\
+        \ sites\n2. List drives in a site: provide `site_id` \u2192 returns drives\
+        \ for that site\n3. List folders in a drive: provide `drive_id` \u2192 returns\
+        \ folders at root\n4. Navigate folders: provide `drive_id` and `path` \u2192\
+        \ returns subfolders\n\n**Google Drive flow:**\n1. List drives: no parameters\
+        \ \u2192 returns My Drive and Shared Drives\n2. List folders: provide `drive_id`\
+        \ and optionally `path`\n\n**AWS S3 flow:**\n1. List folders: provide `drive_id`\
+        \ (bucket name) and optionally `path` (prefix)\n- S3 requires `drive_id` (bucket\
+        \ name). Bucket listing is not supported.\n\n**ShareFile flow:**\n1. List\
+        \ roots: no parameters \u2192 returns root folders\n2. List folders: provide\
+        \ `drive_id` and optionally `path`\n\n**Dropbox flow:**\n1. List root folders:\
+        \ no parameters \u2192 returns folders at the Dropbox root\n2. Navigate folders:\
+        \ provide `path` (e.g. `/Documents`) \u2192 returns subfolders\n- Dropbox\
+        \ does not have drives. Do **not** pass `drive_id`.\n\n**Parameter validation:**\n\
+        - `site_search` cannot be combined with `site_id`, `drive_id`, or `path`\n\
+        - `site_search` is only supported for certificate auth connections (not OAuth)\n\
+        - `site_id` is only valid for SharePoint/Azure connections\n- SharePoint OAuth\
+        \ connections require `site_id` to browse (use `/resolve_site` to get it)\n\
+        - When `drive_id` is provided, `site_id` is ignored (drive_id is sufficient)"
+      operationId: browse_storage_api_v1_kb__kb_id__external_connection__connection_id__browse_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Connection Id
+      - name: site_search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Search query for SharePoint sites. Only supported for certificate
+            auth connections. For OAuth, use the /resolve_site endpoint instead.
+          title: Site Search
+        description: Search query for SharePoint sites. Only supported for certificate
+          auth connections. For OAuth, use the /resolve_site endpoint instead.
+      - name: site_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Microsoft Graph site ID to list drives for. Must be in the
+            format 'hostname,site-collection-id,web-id' (e.g. 'contoso.sharepoint.com,<guid>,<guid>').
+            Use 'me' for personal OneDrive (OAuth only). Use the /resolve_site endpoint
+            to convert a SharePoint URL to a site ID.
+          title: Site Id
+        description: Microsoft Graph site ID to list drives for. Must be in the format
+          'hostname,site-collection-id,web-id' (e.g. 'contoso.sharepoint.com,<guid>,<guid>').
+          Use 'me' for personal OneDrive (OAuth only). Use the /resolve_site endpoint
+          to convert a SharePoint URL to a site ID.
+      - name: drive_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Drive ID to browse folders in.
+          title: Drive Id
+        description: Drive ID to browse folders in.
+      - name: path
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Folder path to list within the drive.
+          title: Path
+        description: Folder path to list within the drive.
+      - name: page_token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Pagination token
+          title: Page Token
+        description: Pagination token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrowseStorageOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/external_connection/{connection_id}/resolve_site:
+    get:
+      tags:
+      - External Connections
+      summary: Resolve Site
+      description: "Resolve a SharePoint site URL to its site ID.\n\nGiven a full\
+        \ SharePoint site URL, this endpoint returns the site ID,\nname, and web URL.\
+        \ The returned site ID can then be used with the\n`/browse` endpoint to list\
+        \ drives for that site.\n\nThis endpoint works with the **Sites.Selected**\
+        \ permission scope,\nas long as the specific site has been granted access\
+        \ to the application.\n\n**Usage flow:**\n1. Call this endpoint with a site\
+        \ URL \u2192 get `site_id`\n2. Call `/browse?site_id={site_id}` \u2192 get\
+        \ drives\n3. Call `/browse?drive_id={drive_id}` \u2192 get folders"
+      operationId: resolve_site_api_v1_kb__kb_id__external_connection__connection_id__resolve_site_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Connection Id
+      - name: site_url
+        in: query
+        required: true
+        schema:
+          type: string
+          description: 'Full SharePoint site URL to resolve. Example: https://contoso.sharepoint.com/sites/TeamSite'
+          title: Site Url
+        description: 'Full SharePoint site URL to resolve. Example: https://contoso.sharepoint.com/sites/TeamSite'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageSiteOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/external_connections:
+    get:
+      tags:
+      - External Connections
+      summary: List External Connections
+      operationId: list_external_connections_api_v1_kb__kb_id__external_connections_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExternalConnectionOutput'
+                title: Response List External Connections Api V1 Kb  Kb Id  External
+                  Connections Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - External Connections
+      summary: Create External Connection
+      description: 'Create an external connection for cloud storage sync.
+
+
+        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth):
+
+        - Only `provider` is required in the request body
+
+        - Returns an `authorize_url` that the user should visit to complete the OAuth
+        flow
+
+        - After successful authorization, an ExternalConnection will be created
+
+        - Returns HTTP 200
+
+
+        For aws_s3_assume_role:
+
+        - Both `provider` and `credentials` are required in the request body
+
+        - Returns the created ExternalConnection directly
+
+        - Returns HTTP 201'
+      operationId: create_external_connection_api_v1_kb__kb_id__external_connections_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalConnectionInput'
+      responses:
+        '200':
+          description: OAuth authorization URL (for OAuth providers)
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/AuthorizeUrlOutput'
+                - $ref: '#/components/schemas/ExternalConnectionOutput'
+                title: Response Create External Connection Api V1 Kb  Kb Id  External
+                  Connections Post
+                $ref: '#/components/schemas/AuthorizeUrlOutput'
+        '201':
+          description: Created external connection (for access key providers)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalConnectionOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/external_connections/s3/assume_role_info:
+    get:
+      tags:
+      - External Connections
+      summary: Get S3 Assume Role Info
+      description: Returns the AWS assume-role information that a client needs to
+        create an IAM role in their own AWS account for cross-account S3 access. The
+        client should use the returned external_id, role_name, and aws_account_id
+        to configure the IAM role trust policy.
+      operationId: get_s3_assume_role_info_api_v1_kb__kb_id__external_connections_s3_assume_role_info_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/S3AssumeRoleInfoOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_config/{config_id}:
+    get:
+      tags:
+      - Sync Configs
+      summary: Get Config
+      operationId: get_config_api_v1_kb__kb_id__sync_config__config_id__get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncConfigOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Sync Configs
+      summary: Delete Config
+      operationId: delete_config_api_v1_kb__kb_id__sync_config__config_id__delete
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_config/{config_id}/authorize:
+    post:
+      tags:
+      - Sync Configs
+      summary: Get Authorize Url
+      operationId: get_authorize_url_api_v1_kb__kb_id__sync_config__config_id__authorize_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalAuthorizationInput'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizeUrlOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_config/{config_id}/jobs:
+    get:
+      tags:
+      - Sync Jobs
+      summary: List Jobs
+      description: 'List sync jobs for a sync config with cursor-based pagination.
+
+
+        Use the `next_cursor` from the response to fetch the next page of results.'
+      operationId: list_jobs_api_v1_kb__kb_id__sync_config__config_id__jobs_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of jobs to return (1-100)
+          default: 20
+          title: Limit
+        description: Maximum number of jobs to return (1-100)
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Pagination cursor from previous response to fetch next page
+          title: Cursor
+        description: Pagination cursor from previous response to fetch next page
+      - name: order
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+          description: 'Sort order by creation time: ''desc'' (newest first) or ''asc''
+            (oldest first)'
+          default: desc
+        description: 'Sort order by creation time: ''desc'' (newest first) or ''asc''
+          (oldest first)'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSyncJobsOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_config/{config_id}/sync:
+    post:
+      tags:
+      - Sync Jobs
+      summary: Trigger Sync
+      description: "Trigger an immediate sync for a sync config.\n\nCreates a new\
+        \ pending sync job that will be processed by the sync job runner.\nReturns\
+        \ 409 Conflict if there's already an active (pending or in-progress) job\n\
+        for the specified config.\n\nArgs:\n    data: Optional input. Set options.full_sync=True\
+        \ to ignore incremental sync state\n        and perform a full re-sync. Note:\
+        \ S3 and ShareFile providers always\n        perform full syncs as they don't\
+        \ support delta tracking."
+      operationId: trigger_sync_api_v1_kb__kb_id__sync_config__config_id__sync_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/TriggerSyncInput'
+              - type: 'null'
+              title: Data
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncJobOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_config/{config_id}/validate_resources:
+    post:
+      tags:
+      - Sync Configs
+      summary: Validate Resources
+      description: "Validate that the user has read access to the specified resources.\n\
+        \nThis endpoint checks if the provided credentials have access to the files/items\n\
+        specified in the request. The provider is determined from the sync config.\n\
+        Credentials must be encrypted using the same encryption key used for external\
+        \ connections.\n\nArgs:\n    kb_id: The knowledge base ID.\n    config_id:\
+        \ The sync config ID (determines the provider).\n    item: The validation\
+        \ input containing encrypted credentials and resources to validate.\n\nReturns:\n\
+        \    ResourceValidationOutput with lists of valid and invalid resources."
+      operationId: validate_resources_api_v1_kb__kb_id__sync_config__config_id__validate_resources_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceValidationInput'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceValidationOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_configs:
+    get:
+      tags:
+      - Sync Configs
+      summary: List Configs
+      operationId: list_configs_api_v1_kb__kb_id__sync_configs_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SyncConfigOutput'
+                title: Response List Configs Api V1 Kb  Kb Id  Sync Configs Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Sync Configs
+      summary: Add Config
+      operationId: add_config_api_v1_kb__kb_id__sync_configs_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncConfigInput'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncConfigOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/sync_job/{job_id}/logs:
+    get:
+      tags:
+      - Sync Jobs
+      summary: Get Job Logs
+      description: 'Get logs for a sync job with cursor-based pagination.
+
+
+        Use the `next_cursor` from the response to fetch the next page of results.
+
+
+        Supports optional filtering by:
+
+        - `level`: Log level (DEBUG, INFO, WARNING, ERROR, EXCEPTION, CRITICAL)
+
+        - `start_date` / `end_date`: Timestamp range'
+      operationId: get_job_logs_api_v1_kb__kb_id__sync_job__job_id__logs_get
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Maximum number of log entries to return (1-500)
+          default: 50
+          title: Limit
+        description: Maximum number of log entries to return (1-500)
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 1
+          - type: 'null'
+          description: ID-based cursor from previous response to fetch next page (logs
+            with id < cursor)
+          title: Cursor
+        description: ID-based cursor from previous response to fetch next page (logs
+          with id < cursor)
+      - name: level
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/LogLevel'
+          - type: 'null'
+          description: Filter by log level
+          title: Level
+        description: Filter by log level
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter logs with timestamp >= start_date (ISO 8601 format)
+          title: Start Date
+        description: Filter logs with timestamp >= start_date (ISO 8601 format)
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Filter logs with timestamp <= end_date (ISO 8601 format)
+          title: End Date
+        description: Filter logs with timestamp <= end_date (ISO 8601 format)
+      - name: order
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortOrder'
+          description: 'Sort order by ID: ''desc'' (newest first) or ''asc'' (oldest
+            first)'
+          default: desc
+        description: 'Sort order by ID: ''desc'' (newest first) or ''asc'' (oldest
+          first)'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLogsOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_uuid}/remi/events/{event_id}:
+    get:
+      tags:
+      - Knowledgebox activity
+      summary: Get A Rag Request With Related Remi Scores And Full Context
+      description: Get a rag request with full context and REMI scores. Intended for
+        obtaining complete context for an item originating from a /remi/query
+      operationId: Get_a_rag_request_with_related_remi_scores_and_full_context_api_v1_kb__kb_uuid__remi_events__event_id__get
+      parameters:
+      - name: kb_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Uuid
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemiQueryResultWithContext'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_uuid}/remi/query:
+    post:
+      tags:
+      - Knowledgebox activity
+      summary: Query Rag Requests By Scores
+      description: Get a list of rag request that matches a remi scores query
+      operationId: Query_rag_requests_by_scores_api_v1_kb__kb_uuid__remi_query_post
+      parameters:
+      - name: kb_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemiQuery'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemiQueryResults'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_uuid}/remi/scores:
+    get:
+      tags:
+      - Knowledgebox activity
+      summary: Aggregated Remi Scores Across Time
+      description: Get the evolution of remi scores of a kb on a period of time
+      operationId: Aggregated_remi_scores_across_time_api_v1_kb__kb_uuid__remi_scores_get
+      parameters:
+      - name: kb_uuid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Uuid
+      - name: aggregation
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Aggregation'
+          default: millennium
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: From
+      - name: to
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          default: '2026-03-10T12:19:00.450189'
+          title: To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregatedRemiScoreMetric'
+                title: Response Aggregated Remi Scores Across Time Api V1 Kb  Kb Uuid  Remi
+                  Scores Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/service_account_agent_key:
+    post:
+      tags:
+      - API Keys
+      summary: Create Temporal Agent Key
+      description: Creates a temporal key to use an agent session
+      operationId: create_temporal_agent_key_api_v1_service_account_agent_key_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemporalAgentKeyCreation'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporalSecurityTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/service_account_temporal_key:
+    post:
+      tags:
+      - API Keys
+      summary: Create Temporal Secure Token
+      description: 'Creates a temporal key for a service account.
+
+
+        The key accepts'
+      operationId: create_temporal_secure_token_api_v1_service_account_temporal_key_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+              - $ref: '#/components/schemas/TemporalServiceAccountKeyCreation'
+              - type: 'null'
+              title: Payload
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporalSecurityTokenResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+x-metadata:
+  idp_regional:
+    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
+    last_updated: '2026-03-10T12:21:13.270559'
+  events:
+    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
+    last_updated: '2026-03-10T12:19:00.779831'
+  cloud_storage_sync:
+    commit: 9e06ef555db0a026605aff3e1ac8e3e9d180434d
+    last_updated: '2026-03-12T12:40:01.220751+00:00'
+components:
+  schemas:
+    AccountType:
+      type: string
+      enum:
+      - stash-trial
+      - v3starter
+      - v3pro
+      - v3enterprise
+      - v3fly
+      - v3growth
+      title: AccountType
+    AddKbUser:
+      properties:
+        id:
+          type: string
+          title: Id
+        role:
+          $ref: '#/components/schemas/KbRole'
+      type: object
+      required:
+      - id
+      - role
+      title: AddKbUser
+    BackupCreate:
+      properties:
+        kb_id:
+          type: string
+          format: uuid4
+          title: Kb Id
+          description: The unique identifier of the knowledgebox to backup.
+      type: object
+      required:
+      - kb_id
+      title: BackupCreate
+    BackupCreateResponse:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+          description: The unique identifier of the created backup.
+      type: object
+      required:
+      - id
+      title: BackupCreateResponse
+    BackupResponse:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+          description: The unique identifier of the backup.
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+          description: The unique identifier of the account associated with the backup.
+        started_at:
+          type: string
+          format: date-time
+          title: Started At
+          description: The timestamp when the backup process started.
+        kb_data:
+          $ref: '#/components/schemas/KBDataResponse'
+          description: Metadata of the backed-up knowledgebox.
+        finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Finished At
+          description: The timestamp when the backup process finished.
+        size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Size
+          description: The size of the backup in bytes.
+      type: object
+      required:
+      - id
+      - account_id
+      - started_at
+      - kb_data
+      title: BackupResponse
+    BackupRestore:
+      properties:
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+          description: The slug of the new restored knowledgebox.
+        title:
+          type: string
+          title: Title
+          description: The title of the new restored knowledgebox.
+      type: object
+      required:
+      - slug
+      - title
+      title: BackupRestore
+    BatchUpdateKbUsers:
+      properties:
+        add:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AddKbUser'
+            type: array
+          - type: 'null'
+          title: Add
+        update:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UpdateKbUser'
+            type: array
+          - type: 'null'
+          title: Update
+        delete:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Delete
+      type: object
+      title: BatchUpdateKbUsers
+    DummyKBIndexProvider:
+      properties:
+        type:
+          $ref: '#/components/schemas/KBExternalIndexProviderType'
+          default: unset
+      type: object
+      title: DummyKBIndexProvider
+    EphemeralTokenProperties:
+      properties:
+        agent_session:
+          anyOf:
+          - type: string
+            const: ephemeral
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Agent Session
+        ttl:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ttl
+      type: object
+      title: EphemeralTokenProperties
+    EphemeralTokenResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: EphemeralTokenResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InviteKnowledgeBoxPayload:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        role:
+          $ref: '#/components/schemas/KbRole'
+        came_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Came From
+      type: object
+      required:
+      - email
+      - role
+      title: InviteKnowledgeBoxPayload
+    ItemCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: ItemCreated
+    KBDataResponse:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+          description: The unique identifier of the knowledgebox.
+        slug:
+          type: string
+          title: Slug
+          description: A human-readable, URL-friendly identifier for the knowledgebox.
+        title:
+          type: string
+          title: Title
+          description: The title of the knowledgebox.
+        created:
+          type: string
+          format: date-time
+          title: Created
+          description: The timestamp when the knowledgebox was created.
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - created
+      title: KBDataResponse
+    KBExternalIndexProviderType:
+      type: string
+      enum:
+      - unset
+      title: KBExternalIndexProviderType
+    KBMode:
+      type: string
+      enum:
+      - kb
+      - agent
+      - agent_no_memory
+      title: KBMode
+      description: 'Knowledge Box modes define the architecture and components of
+        a KB.
+
+
+        - kb: KB in idp_regional + NucliaDB KB (same ID), no agent
+
+        - agent: KB in idp_regional + NucliaDB KB (same ID) + Agent with memory (agent_id
+        = kb_id)
+
+        - agent_no_memory: KB in idp_regional + Agent without memory (agent_id = kb_id),
+        no NucliaDB KB'
+    KbInvitedUser:
+      properties:
+        email:
+          type: string
+          title: Email
+        role:
+          $ref: '#/components/schemas/KbRole'
+        expires:
+          type: string
+          format: date-time
+          title: Expires
+      type: object
+      required:
+      - email
+      - role
+      - expires
+      title: KbInvitedUser
+    KbRole:
+      type: string
+      enum:
+      - SOWNER
+      - SMEMBER
+      - SCONTRIBUTOR
+      title: KbRole
+    KbState:
+      type: string
+      enum:
+      - PUBLISHED
+      - PRIVATE
+      title: KbState
+    KbUser:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        role:
+          $ref: '#/components/schemas/KbRole'
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - id
+      - role
+      title: KbUser
+    KnowledgeBox:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        account_id:
+          type: string
+          title: Account Id
+        zone:
+          type: string
+          title: Zone
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        state:
+          $ref: '#/components/schemas/KbState'
+        created:
+          type: string
+          format: date-time
+          title: Created
+        admin:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Admin
+        contrib:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Contrib
+        allowed_origins:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Allowed Origins
+        allowed_ip_addresses:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Allowed Ip Addresses
+        search_configs:
+          additionalProperties: true
+          type: object
+          title: Search Configs
+          default: {}
+        external_index_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External Index Provider
+      type: object
+      required:
+      - id
+      - slug
+      - account_id
+      - zone
+      - title
+      - state
+      - created
+      title: KnowledgeBox
+    KnowledgeBoxCreation:
+      properties:
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        mode:
+          $ref: '#/components/schemas/KBMode'
+          description: 'Mode of the Knowledge Box (immutable after creation). ''kb'':
+            Standard KB with NucliaDB storage. ''agent'': Agent with memory backed
+            by NucliaDB. ''agent_no_memory'': Agent without memory (no NucliaDB KB
+            created).'
+          default: kb
+        learning_configuration:
+          additionalProperties: true
+          type: object
+          title: Learning Configuration
+        allowed_origins:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            minItems: 1
+          - type: 'null'
+          title: Allowed Origins
+        allowed_ip_addresses:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            minItems: 1
+            uniqueItems: true
+          - type: 'null'
+          title: Allowed Ip Addresses
+        external_index_provider:
+          anyOf:
+          - $ref: '#/components/schemas/DummyKBIndexProvider'
+          - type: 'null'
+          title: External index provider
+          description: External index provider configuration for the Knowledge Box.
+            If not set, the default NucliaDB's index will be used.
+        search_configs:
+          additionalProperties: true
+          type: object
+          title: Search Configs
+          default: {}
+      type: object
+      required:
+      - slug
+      - title
+      title: KnowledgeBoxCreation
+    KnowledgeBoxExport:
+      properties:
+        id:
+          type: string
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - id
+      - title
+      - description
+      title: KnowledgeBoxExport
+    KnowledgeBoxSummary:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        zone:
+          type: string
+          title: Zone
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        state:
+          $ref: '#/components/schemas/KbState'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        role_on_kb:
+          anyOf:
+          - $ref: '#/components/schemas/KbRole'
+          - type: 'null'
+        allowed_origins:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Allowed Origins
+        allowed_ip_addresses:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Allowed Ip Addresses
+        search_configs:
+          additionalProperties: true
+          type: object
+          title: Search Configs
+        external_index_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: External Index Provider
+      type: object
+      required:
+      - id
+      - slug
+      - zone
+      - title
+      - state
+      - search_configs
+      title: KnowledgeBoxSummary
+    KnowledgeBoxUpdate:
+      properties:
+        slug:
+          anyOf:
+          - type: string
+            pattern: ^[a-z0-9_-]+$
+          - type: 'null'
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/KbState'
+          - type: 'null'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        allowed_origins:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            minItems: 1
+          - type: 'null'
+          title: Allowed Origins
+        allowed_ip_addresses:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            minItems: 1
+            uniqueItems: true
+          - type: 'null'
+          title: Allowed Ip Addresses
+        search_configs:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Search Configs
+      type: object
+      title: KnowledgeBoxUpdate
+    NUAClient:
+      properties:
+        token:
+          type: string
+          title: Token
+        client_id:
+          type: string
+          title: Client Id
+      type: object
+      required:
+      - token
+      - client_id
+      title: NUAClient
+    NUAClientKeyCreation:
+      properties:
+        contact:
+          type: string
+          title: Contact
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+            pattern: ^[a-z0-9_-]+$
+          - type: 'null'
+          title: Client Id
+        processing_webhook:
+          anyOf:
+          - $ref: '#/components/schemas/ProcessingWebhook'
+          - type: 'null'
+        allow_kb_management:
+          type: boolean
+          title: Allow Kb Management
+          default: false
+      type: object
+      required:
+      - contact
+      - title
+      title: NUAClientKeyCreation
+    NUAClientMetadata:
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+          default: ''
+        contact:
+          type: string
+          title: Contact
+        created:
+          type: string
+          format: date-time
+          title: Created
+        partitions:
+          type: integer
+          title: Partitions
+        client_id:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Client Id
+        account_id:
+          type: string
+          title: Account Id
+        processing_webhook:
+          anyOf:
+          - $ref: '#/components/schemas/ProcessingWebhook'
+          - type: 'null'
+      type: object
+      required:
+      - title
+      - contact
+      - created
+      - partitions
+      - client_id
+      - account_id
+      title: NUAClientMetadata
+    NUAClientsMetadata:
+      properties:
+        clients:
+          items:
+            $ref: '#/components/schemas/NUAClientMetadata'
+          type: array
+          title: Clients
+      type: object
+      required:
+      - clients
+      title: NUAClientsMetadata
+    PermissionsResponse:
+      properties:
+        permissions:
+          items:
+            type: string
+          type: array
+          title: Permissions
+      type: object
+      required:
+      - permissions
+      title: PermissionsResponse
+    ProcessingWebhook:
+      properties:
+        uri:
+          type: string
+          title: Uri
+        headers:
+          additionalProperties:
+            type: string
+          type: object
+          title: Headers
+          default: {}
+      type: object
+      required:
+      - uri
+      title: ProcessingWebhook
+    ServiceAccount:
+      properties:
+        id:
+          type: string
+          title: Id
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        role:
+          $ref: '#/components/schemas/KbRole'
+        keys:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ServiceAccountKey'
+            type: array
+          - type: 'null'
+          title: Keys
+      type: object
+      required:
+      - id
+      - title
+      - role
+      title: ServiceAccount
+    ServiceAccountCreation:
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        role:
+          $ref: '#/components/schemas/KbRole'
+      type: object
+      required:
+      - title
+      - role
+      title: ServiceAccountCreation
+    ServiceAccountJWT:
+      properties:
+        id:
+          type: string
+          title: Id
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - id
+      - token
+      title: ServiceAccountJWT
+    ServiceAccountKey:
+      properties:
+        id:
+          type: string
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        expires:
+          type: string
+          format: date-time
+          title: Expires
+      type: object
+      required:
+      - id
+      - created
+      - expires
+      title: ServiceAccountKey
+    ServiceAccountKeyCreation:
+      properties:
+        expires:
+          type: string
+          format: date-time
+          title: Expires
+      type: object
+      required:
+      - expires
+      title: ServiceAccountKeyCreation
+    TemporalAgentKeyCreation:
+      properties:
+        agent_session:
+          type: string
+          title: Agent Session
+        ttl:
+          type: integer
+          maximum: 10.0
+          minimum: 1.0
+          title: Ttl
+          default: 10
+      type: object
+      required:
+      - agent_session
+      title: TemporalAgentKeyCreation
+    TemporalSecurityTokenResponse:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: TemporalSecurityTokenResponse
+    TemporalServiceAccountKeyCreation:
+      properties:
+        ttl:
+          type: integer
+          maximum: 10.0
+          minimum: 1.0
+          title: Ttl
+          default: 10
+        security_groups:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Security Groups
+      type: object
+      title: TemporalServiceAccountKeyCreation
+    UpdateKbUser:
+      properties:
+        id:
+          type: string
+          title: Id
+        role:
+          $ref: '#/components/schemas/KbRole'
+      type: object
+      required:
+      - id
+      - role
+      title: UpdateKbUser
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ActivityLogsAskQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - answer
+          - date
+          - rag_strategies_names
+          - rephrased_question
+          - question
+          - resources_count
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsAskQuery
+    ActivityLogsChatQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - rephrased_question
+          - answer
+          - rag_strategies_names
+          - question
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsChatQuery
+    ActivityLogsQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsQuery
+    ActivityLogsSearchQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - resources_count
+          - date
+          - id
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsSearchQuery
+    ActivityUsageResponse:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        search:
+          type: integer
+          title: Search
+        chat:
+          type: integer
+          title: Chat
+          deprecated: true
+        ask:
+          type: integer
+          title: Ask
+      type: object
+      required:
+      - timestamp
+      - search
+      - chat
+      - ask
+      title: ActivityUsageResponse
+    AggregatedRemiScoreMetric:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        metrics:
+          items:
+            $ref: '#/components/schemas/AggregatedRemiScoreValues'
+          type: array
+          title: Metrics
+      type: object
+      required:
+      - timestamp
+      - metrics
+      title: AggregatedRemiScoreMetric
+    AggregatedRemiScoreValues:
+      properties:
+        name:
+          type: string
+          title: Name
+        min:
+          type: number
+          title: Min
+        max:
+          type: number
+          title: Max
+        average:
+          type: number
+          title: Average
+      type: object
+      required:
+      - name
+      - min
+      - max
+      - average
+      title: AggregatedRemiScoreValues
+    Aggregation:
+      type: string
+      enum:
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+      - millennium
+      title: Aggregation
+    AuditMetadata:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+        key:
+          type: string
+          title: Key
+      additionalProperties: false
+      type: object
+      required:
+      - key
+      title: AuditMetadata
+    ClientType:
+      type: string
+      enum:
+      - api
+      - widget
+      - web
+      - dashboard
+      - desktop
+      - chrome_extension
+      title: ClientType
+    ContextRelevanceQuery:
+      properties:
+        value:
+          type: integer
+          title: Value
+        operation:
+          type: string
+          enum:
+          - gt
+          - lt
+          - eq
+          title: Operation
+        aggregation:
+          type: string
+          enum:
+          - average
+          - max
+          - min
+          title: Aggregation
+      type: object
+      required:
+      - value
+      - operation
+      - aggregation
+      title: ContextRelevanceQuery
+    DownloadActivityLogsAskQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - answer
+          - date
+          - rag_strategies_names
+          - rephrased_question
+          - question
+          - resources_count
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsAskQuery
+    DownloadActivityLogsChatQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - rephrased_question
+          - answer
+          - rag_strategies_names
+          - question
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsChatQuery
+    DownloadActivityLogsQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsQuery
+    DownloadActivityLogsSearchQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - resources_count
+          - date
+          - id
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsSearchQuery
+    DownloadFormat:
+      type: string
+      enum:
+      - ndjson
+      - csv
+      title: DownloadFormat
+    DownloadRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        download_type:
+          $ref: '#/components/schemas/DownloadRequestType'
+        download_format:
+          $ref: '#/components/schemas/DownloadFormat'
+        event_type:
+          $ref: '#/components/schemas/EventType'
+        requested_at:
+          type: string
+          format: date-time
+          title: Requested At
+        kb_id:
+          type: string
+          title: Kb Id
+        download_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Download Url
+      type: object
+      required:
+      - request_id
+      - download_type
+      - download_format
+      - event_type
+      - requested_at
+      - kb_id
+      - download_url
+      title: DownloadRequest
+    DownloadRequestType:
+      type: string
+      enum:
+      - query
+      title: DownloadRequestType
+    EventDownloadsList:
+      properties:
+        downloads:
+          items:
+            type: string
+          type: array
+          title: Downloads
+      type: object
+      required:
+      - downloads
+      title: EventDownloadsList
+    EventType:
+      type: string
+      enum:
+      - visited
+      - modified
+      - deleted
+      - new
+      - search
+      - suggest
+      - indexed
+      - chat
+      - ask
+      - retrieve
+      - augment
+      - started
+      - stopped
+      - processed
+      title: EventType
+    GenericFilter_ClientType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[ClientType]
+    GenericFilter_UserType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[UserType]
+    GenericFilter_bool_:
+      properties:
+        eq:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[bool]
+    GenericFilter_float_:
+      properties:
+        eq:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[float]
+    GenericFilter_int_:
+      properties:
+        eq:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[int]
+    GenericFilter_str_:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[str]
+    Pagination:
+      properties:
+        limit:
+          type: integer
+          maximum: 1000.0
+          minimum: 0.0
+          title: Limit
+          default: 10
+        starting_after:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Starting After
+        ending_before:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ending Before
+      type: object
+      title: Pagination
+    QueryFiltersAsk:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersAsk
+    QueryFiltersChat:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersChat
+    QueryFiltersCommon:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersCommon
+    QueryFiltersSearch:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersSearch
+    RemiAnswerRelevance:
+      properties:
+        score:
+          type: integer
+          title: Score
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - score
+      - reason
+      title: RemiAnswerRelevance
+    RemiQuery:
+      properties:
+        context_relevance:
+          anyOf:
+          - $ref: '#/components/schemas/ContextRelevanceQuery'
+          - type: 'null'
+        month:
+          type: string
+          title: Month
+        feedback_good:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Feedback Good
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/Status'
+          - type: 'null'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+      type: object
+      required:
+      - month
+      title: RemiQuery
+    RemiQueryResult:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - question
+      - answer
+      - remi
+      title: RemiQueryResult
+    RemiQueryResultWithContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+        context:
+          items:
+            $ref: '#/components/schemas/RetrievedContext'
+          type: array
+          title: Context
+      type: object
+      required:
+      - id
+      - question
+      - answer
+      - remi
+      - context
+      title: RemiQueryResultWithContext
+    RemiQueryResults:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/RemiQueryResult'
+          type: array
+          title: Data
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - data
+      - has_more
+      title: RemiQueryResults
+    RemiScores:
+      properties:
+        answer_relevance:
+          $ref: '#/components/schemas/RemiAnswerRelevance'
+        context_relevance:
+          items:
+            type: integer
+          type: array
+          title: Context Relevance
+        groundedness:
+          items:
+            type: integer
+          type: array
+          title: Groundedness
+      type: object
+      required:
+      - answer_relevance
+      - context_relevance
+      - groundedness
+      title: RemiScores
+    RetrievedContext:
+      properties:
+        text:
+          type: string
+          title: Text
+        text_block_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text Block Id
+      type: object
+      required:
+      - text
+      title: RetrievedContext
+    ShowOnly:
+      properties: {}
+      additionalProperties: false
+      type: object
+      title: ShowOnly
+      description: 'Marker class to indicate that a field is for display purposes
+        only.
+
+
+        Fields wrapped in this class are excluded from OpenAPI documentation to prevent
+        confusion,
+
+        as they are not intended for filtering. Instead, they are only used in the
+        "show" parameter.
+
+
+        This behavior is enforced in the FastAPI application through introspection,
+
+        ensuring these fields are removed from the generated API documentation.'
+    Status:
+      type: string
+      enum:
+      - SUCCESS
+      - ERROR
+      - NO_CONTEXT
+      title: Status
+    StringFilter:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+      additionalProperties: false
+      type: object
+      title: StringFilter
+    UserType:
+      type: string
+      enum:
+      - user
+      - nuakey
+      title: UserType
+    AWSS3AssumeRoleCredentials:
+      properties:
+        role_arn:
+          type: string
+          title: Role Arn
+        external_id:
+          type: string
+          title: External Id
+      type: object
+      required:
+      - role_arn
+      - external_id
+      title: AWSS3AssumeRoleCredentials
+    AuthorizeUrlOutput:
+      properties:
+        authorize_url:
+          type: string
+          title: Authorize Url
+      type: object
+      required:
+      - authorize_url
+      title: AuthorizeUrlOutput
+    AzureCertificateCredentials:
+      properties:
+        tenant_id:
+          type: string
+          title: Tenant Id
+        client_id:
+          type: string
+          title: Client Id
+        pfx_base64:
+          type: string
+          title: Pfx Base64
+        pfx_password:
+          type: string
+          title: Pfx Password
+      type: object
+      required:
+      - tenant_id
+      - client_id
+      - pfx_base64
+      - pfx_password
+      title: AzureCertificateCredentials
+      description: 'Credentials for Azure/SharePoint certificate-based authentication.
+
+
+        This uses the client credentials flow with a certificate instead of a client
+        secret.
+
+        The certificate must be registered in the Azure App Registration.
+
+
+        Users provide a .pfx file (base64-encoded) and its password. The private key
+        and
+
+        certificate are extracted server-side and stored for authentication.'
+    BrowseCapabilities:
+      properties:
+        has_sites:
+          type: boolean
+          title: Has Sites
+          description: Whether the provider supports site browsing (SharePoint only).
+          default: false
+        requires_site_search:
+          type: boolean
+          title: Requires Site Search
+          description: Whether site_search is required (True) or can list all sites
+            (False). Only applicable for certificate auth connections.
+          default: false
+        requires_site_url_resolution:
+          type: boolean
+          title: Requires Site Url Resolution
+          description: Whether the client must use the /resolve_site endpoint to obtain
+            a site_id from a site URL before browsing drives. Applies to OAuth connections
+            using Sites.Selected permission.
+          default: false
+      type: object
+      title: BrowseCapabilities
+      description: Capabilities for browsing storage in this external connection.
+    BrowseStorageOutput:
+      properties:
+        sites:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageSiteOutput'
+            type: array
+          - type: 'null'
+          title: Sites
+        drives:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageDriveOutput'
+            type: array
+          - type: 'null'
+          title: Drives
+        folders:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageFolderOutput'
+            type: array
+          - type: 'null'
+          title: Folders
+        next_page_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Page Token
+      type: object
+      title: BrowseStorageOutput
+      description: Result of browsing storage, containing sites, drives or folders.
+    ExternalAuthorizationInput:
+      properties:
+        widget_redirect_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Widget Redirect Url
+        rao_redirect_url:
+          type: string
+          title: Rao Redirect Url
+      type: object
+      required:
+      - rao_redirect_url
+      title: ExternalAuthorizationInput
+      description: Input schema for external connection authorization with additional
+        parameters.
+    ExternalConnectionInput:
+      properties:
+        provider:
+          $ref: '#/components/schemas/Provider'
+        credentials:
+          anyOf:
+          - $ref: '#/components/schemas/AWSS3AssumeRoleCredentials'
+          - $ref: '#/components/schemas/AzureCertificateCredentials'
+          - type: 'null'
+          title: Credentials
+      type: object
+      required:
+      - provider
+      title: ExternalConnectionInput
+      description: 'Input schema for creating an external connection.
+
+
+        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth): only provider
+        is required.
+
+        The response will contain an authorize_url to complete the OAuth flow.
+
+
+        For providers aws_s3_assume_role, azure_certificate_credentials:
+
+        provider and credentials are required.
+
+        The response will contain the created ExternalConnection directly.'
+    ExternalConnectionOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        provider:
+          $ref: '#/components/schemas/Provider'
+        capabilities:
+          $ref: '#/components/schemas/BrowseCapabilities'
+      type: object
+      required:
+      - id
+      - kb_id
+      - created_by
+      - created_at
+      - updated_at
+      - provider
+      - capabilities
+      title: ExternalConnectionOutput
+      description: External connection output without sensitive credential data.
+    InvalidResource:
+      properties:
+        resource:
+          $ref: '#/components/schemas/ResourceIdentifier'
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - resource
+      - reason
+      title: InvalidResource
+      description: Details about a resource that failed validation.
+    LogEntryOutput:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier for the log entry
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the log entry
+        level:
+          type: string
+          title: Level
+          description: Log level (INFO, WARNING, ERROR, etc.)
+        message:
+          type: string
+          title: Message
+          description: Log message
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+          description: Additional context data for the log entry
+      type: object
+      required:
+      - id
+      - timestamp
+      - level
+      - message
+      title: LogEntryOutput
+      description: A single log entry from a sync job.
+    LogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - EXCEPTION
+      - CRITICAL
+      title: LogLevel
+      description: Log level for filtering sync job logs.
+    PaginatedLogsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LogEntryOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor (log ID) to fetch the next page of results. None if
+            no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedLogsOutput
+      description: Paginated list of log entries.
+    PaginatedSyncJobsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SyncJobOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor to fetch the next page of results. None if no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedSyncJobsOutput
+      description: Paginated list of sync jobs.
+    Provider:
+      type: string
+      enum:
+      - google_oauth
+      - azure_oauth
+      - azure_certificate_credentials
+      - aws_s3_assume_role
+      - sharefile_oauth
+      - dropbox_oauth
+      title: Provider
+    ResourceIdentifier:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: ResourceIdentifier
+      description: 'Identifier for an external resource.
+
+
+        The meaning of ``file_id`` depends on the provider (determined by the sync
+        config):
+
+        - Google Drive: the Drive file id
+
+        - SharePoint / OneDrive: the item id
+
+        - S3: the object key
+
+        - ShareFile: the item id
+
+        - Dropbox: the full file path including filename (e.g. ``/Documents/report.pdf``)'
+    ResourceValidationInput:
+      properties:
+        credentials:
+          additionalProperties: true
+          type: object
+          title: Credentials
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - credentials
+      - resources
+      title: ResourceValidationInput
+      description: 'Input schema for validating multiple resources with existing external
+        connection.
+
+
+        Credentials should be encrypted using the same encryption secret used for
+
+        external_connection credential storage.'
+    ResourceValidationOutput:
+      properties:
+        valid_resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Valid Resources
+        invalid_resources:
+          items:
+            $ref: '#/components/schemas/InvalidResource'
+          type: array
+          title: Invalid Resources
+      type: object
+      required:
+      - valid_resources
+      - invalid_resources
+      title: ResourceValidationOutput
+      description: Output schema for validated resources.
+    S3AssumeRoleInfoOutput:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+          description: The external ID to use in the IAM role trust policy condition.
+        role_name:
+          type: string
+          title: Role Name
+          description: The role name that should be created in the client's AWS account.
+        aws_account_id:
+          type: string
+          title: Aws Account Id
+          description: Nuclia's AWS account ID that will assume the role.
+      type: object
+      required:
+      - external_id
+      - role_name
+      - aws_account_id
+      title: S3AssumeRoleInfoOutput
+      description: Information the client needs to configure an IAM role for Nuclia
+        S3 sync.
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Sort order for paginated queries.
+    StorageDriveOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        drive_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Type
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageDriveOutput
+      description: Represents a drive/storage location that can be selected for syncing.
+    StorageFolderOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      - path
+      title: StorageFolderOutput
+      description: Represents a folder that can be selected for syncing.
+    StorageSiteOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageSiteOutput
+      description: Represents a SharePoint site that can be selected for browsing
+        drives.
+    SyncConfigInput:
+      properties:
+        name:
+          type: string
+          title: Name
+        sync_root_path:
+          type: string
+          title: Sync Root Path
+        external_connection_id:
+          type: string
+          format: uuid
+          title: External Connection Id
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+      type: object
+      required:
+      - name
+      - sync_root_path
+      - external_connection_id
+      title: SyncConfigInput
+    SyncConfigOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        sync_root_path:
+          type: string
+          title: Sync Root Path
+        sync_interval_minutes:
+          type: integer
+          title: Sync Interval Minutes
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        external_connection:
+          $ref: '#/components/schemas/ExternalConnectionOutput'
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+        last_sync_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Sync Run
+      type: object
+      required:
+      - id
+      - name
+      - kb_id
+      - created_at
+      - updated_at
+      - sync_root_path
+      - sync_interval_minutes
+      - created_by
+      - external_connection
+      title: SyncConfigOutput
+    SyncJobOptionsOutput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          default: false
+      type: object
+      title: SyncJobOptionsOutput
+      description: Options for a sync job.
+    SyncJobOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Finished At
+        config_id:
+          type: string
+          format: uuid
+          title: Config Id
+        status:
+          $ref: '#/components/schemas/SyncJobStatus'
+        options:
+          $ref: '#/components/schemas/SyncJobOptionsOutput'
+          default:
+            full_sync: false
+      type: object
+      required:
+      - id
+      - created_at
+      - finished_at
+      - config_id
+      - status
+      title: SyncJobOutput
+    SyncJobStatus:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - completed
+      - failed
+      title: SyncJobStatus
+    TriggerSyncInput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          description: 'If True, ignore incremental sync state and perform a full
+            sync. Note: S3 and ShareFile providers always perform full syncs as they
+            don''t support delta tracking.'
+          default: false
+      type: object
+      title: TriggerSyncInput
+      description: Input for triggering a sync job.
