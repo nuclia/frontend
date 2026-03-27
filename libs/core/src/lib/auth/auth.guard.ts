@@ -8,9 +8,16 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken()) {
+  const params = new URLSearchParams(window.location.search);
+  const signup_token = params.get('signup_token');
+  if (signup_token) {
+    authService.setSignUpToken(signup_token);
+  }
+  const routeHasMagicToken = params.has('token') && !params.has('signup_token');
+  if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || routeHasMagicToken) {
     return true;
   }
+
   // Store the attempted URL for redirecting
   const url: string = state.url.split('?')[0];
   const queryParams = { ...route.queryParams };
@@ -21,8 +28,3 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   router.navigate(['/user/login-redirect'], { queryParams });
   return false;
 };
-
-function routeHasMagicToken(): boolean {
-  const params = new URLSearchParams(window.location.search);
-  return params.has('token') && !params.has('signup_token');
-}

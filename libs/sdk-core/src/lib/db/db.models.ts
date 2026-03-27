@@ -26,7 +26,7 @@ export interface Account {
   max_agents: number;
   max_kbs: number;
   max_memories: number;
-  /** @deprecated */  
+  /** @deprecated */
   max_arags: number;
   max_users: number | null;
   saml_entity_id?: string;
@@ -214,6 +214,12 @@ export interface WelcomeUser {
   name?: string;
   type: UserType;
   language?: Language;
+}
+
+export interface SignUpInfo {
+  company: string;
+  email: string;
+  fullname: string;
 }
 
 export type UserType = 'ROOT' | 'DEALER' | 'MANAGER' | 'SALES' | 'READONLY' | 'USER';

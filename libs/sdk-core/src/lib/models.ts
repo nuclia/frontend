@@ -29,6 +29,7 @@ import {
   QueryInfo,
   RetrievalAgent,
   RetrievalAgentCreation,
+  SignUpInfo,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -147,6 +148,7 @@ export interface IDb {
   modifyAccount(accountSlug: string, data: AccountModification): Observable<void>;
   deleteAccount(accountSlug: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
+  getSignupInfo(signup_token: string): Observable<SignUpInfo>;
   getAccount(): Observable<Account>;
   getAccount(accountIdOrSlug?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;

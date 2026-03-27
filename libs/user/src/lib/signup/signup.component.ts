@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AnalyticsService,
+  AuthService,
   BackendConfigurationService,
   FeaturesService,
   LoginService,
@@ -11,7 +12,7 @@ import {
   injectScript,
 } from '@flaps/core';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { Subject } from 'rxjs';
+import { map, Subject, switchMap } from 'rxjs';
 import { StrongPassword } from '../password.validator';
 
 @Component({
@@ -24,7 +25,8 @@ import { StrongPassword } from '../password.validator';
 export class SignupComponent implements OnInit {
   config = inject(BackendConfigurationService);
   oauth = inject(OAuthService);
-  signupData = this.oauth.getSignUpData();
+  authService = inject(AuthService);
+  signup_token = '';
   signupForm = new FormGroup({
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, StrongPassword] }),
   });
@@ -84,13 +86,14 @@ export class SignupComponent implements OnInit {
   private signupFromForm(token: string) {
     const formValue = this.signupForm.getRawValue();
     const loginChallenge = this.route.snapshot.queryParams['login_challenge'];
+    const signupEmail = this.authService.getSignUpEmail();
     this.loginService.signup(formValue, token, loginChallenge).subscribe({
       next: (response) => {
         this.analytics.logTrialSignup();
         if (response.action === 'check-mail') {
           this.router.navigate(['../check-mail'], {
             relativeTo: this.route,
-            queryParams: { email: this.signupData?.email },
+            queryParams: { email: signupEmail },
             queryParamsHandling: 'merge', // Preserve login_challenge
           });
         } else if (response.action === 'user-exists') {
