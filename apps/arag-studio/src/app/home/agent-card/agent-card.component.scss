@@ -1,0 +1,114 @@
+.agent-card {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding: rhythm(3);
+  background: var(--color-neutral-lightest, #fff);
+  border: 1px solid var(--color-neutral-light, #e5e5e5);
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: default;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary-regular, #5a45ff);
+  }
+}
+
+.agent-card-header {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+}
+
+.agent-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-primary-lightest, #ede9ff);
+  border-radius: 8px;
+  color: var(--color-primary-regular, #5a45ff);
+  flex-shrink: 0;
+}
+
+.agent-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+.agent-name {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-neutral-darkest);
+}
+
+.zone-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--color-neutral-lightest, #f5f5f5);
+  border: 1px solid var(--color-neutral-light, #e5e5e5);
+  color: var(--color-neutral-darker);
+  font-size: font-size(xs);
+  width: fit-content;
+}
+
+.agent-status {
+  flex-shrink: 0;
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: font-size(xs);
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &.status-active {
+    color: var(--color-success-dark, #166534);
+
+    .status-dot {
+      background-color: var(--color-success-regular, #22c55e);
+    }
+  }
+
+  &.status-inactive {
+    color: var(--color-neutral-regular);
+
+    .status-dot {
+      background-color: var(--color-neutral-regular, #9ca3af);
+    }
+  }
+}
+
+.agent-description {
+  margin: 0;
+  color: var(--color-neutral-darker);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.agent-card-actions {
+  display: flex;
+  gap: rhythm(1);
+  flex-wrap: wrap;
+  padding-top: rhythm(1);
+  border-top: 1px solid var(--color-neutral-light, #e5e5e5);
+}

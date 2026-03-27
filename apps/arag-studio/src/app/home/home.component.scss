@@ -1,0 +1,76 @@
+.agents-home {
+  padding: rhythm(4);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.agents-home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: rhythm(3);
+  margin-bottom: rhythm(4);
+}
+
+.header-title {
+  h1 {
+    margin: 0 0 rhythm(0.5) 0;
+    color: var(--color-neutral-darkest);
+  }
+
+  .agent-count {
+    display: inline-block;
+    margin-bottom: rhythm(0.5);
+    color: var(--color-neutral-regular);
+    font-weight: 500;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--color-neutral-regular);
+  }
+}
+
+.agents-home-toolbar {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+
+  .search-field {
+    width: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: rhythm(3);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: rhythm(8) rhythm(4);
+  text-align: center;
+  color: var(--color-neutral-regular);
+
+  pa-icon {
+    font-size: 48px;
+    margin-bottom: rhythm(3);
+    color: var(--color-neutral-light);
+  }
+
+  h3 {
+    margin: 0 0 rhythm(1) 0;
+    color: var(--color-neutral-darker);
+  }
+
+  p {
+    margin: 0 0 rhythm(3) 0;
+    max-width: 400px;
+  }
+}

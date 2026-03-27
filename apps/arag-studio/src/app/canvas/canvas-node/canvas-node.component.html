@@ -1,0 +1,36 @@
+<div
+  class="canvas-node"
+  [class.selected]="selected()"
+  [class.root-node]="node().isRoot"
+  [style.width.px]="node().width"
+  [style.height.px]="node().height"
+  (pointerdown)="onPointerDown($event)">
+
+  <!-- Input port (left side) -->
+  @if (!node().isRoot) {
+    <div
+      class="port port-input"
+      (pointerdown)="$event.stopPropagation()"
+      (pointerup)="onInputPortPointerUp($event)">
+    </div>
+  }
+
+  <!-- Node header with category color -->
+  <div class="node-header" [style.background]="categoryColor()">
+    <pa-icon [name]="node().icon" size="small"></pa-icon>
+    <span class="node-title">{{ node().title }}</span>
+  </div>
+
+  <!-- Node body -->
+  <div class="node-body">
+    <span class="category-badge" [style.background]="categoryColor() + '22'" [style.color]="categoryColor()">
+      {{ node().category }}
+    </span>
+  </div>
+
+  <!-- Output port (right side) -->
+  <div
+    class="port port-output"
+    (pointerdown)="onOutputPortPointerDown($event)">
+  </div>
+</div>
