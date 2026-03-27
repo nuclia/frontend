@@ -81,6 +81,50 @@
                   <pa-option value="true">{{ 'activity.filter.boolean_yes' | translate }}</pa-option>
                   <pa-option value="false">{{ 'activity.filter.boolean_no' | translate }}</pa-option>
                 </pa-select>
+              } @else if (condition.columnType === 'date') {
+                @if (getDateMode(condition.column) === null) {
+                  <!-- Mode selector: shown before the user picks Date vs Date Range -->
+                  <div class="date-mode-selector">
+                    <button class="date-mode-tab" (click)="selectDateMode(condition.column, 'date')">
+                      {{ 'activity.filter.date_mode_date' | translate }}
+                    </button>
+                    <span class="date-mode-sep">|</span>
+                    <button class="date-mode-tab" (click)="selectDateMode(condition.column, 'range')">
+                      {{ 'activity.filter.date_mode_range' | translate }}
+                    </button>
+                  </div>
+                } @else if (getDateMode(condition.column) === 'date') {
+                  <!-- Date mode: single exact day (=) -->
+                  <span class="condition-op-label">{{ getDateOperationSymbol('eq') }}</span>
+                  <input
+                    type="date"
+                    class="condition-input condition-date-input"
+                    [value]="condition.dateValue"
+                    [min]="selectedMonth() + '-01'"
+                    [max]="getMonthLastDay()"
+                    (change)="updateConditionDateValue(condition.id, $any($event.target).value)" />
+                } @else {
+                  <!-- Range mode: ≥ / ≤ with date and time -->
+                  <pa-select
+                    class="condition-select condition-op condition-date-op"
+                    [value]="condition.dateOperation"
+                    (valueChange)="updateConditionDateOperation(condition.id, $event)">
+                    <pa-option value="ge">{{ getDateOperationSymbol('ge') }}</pa-option>
+                    <pa-option value="le">{{ getDateOperationSymbol('le') }}</pa-option>
+                  </pa-select>
+                  <input
+                    type="date"
+                    class="condition-input condition-date-input"
+                    [value]="condition.dateValue"
+                    [min]="selectedMonth() + '-01'"
+                    [max]="getMonthLastDay()"
+                    (change)="updateConditionDateValue(condition.id, $any($event.target).value)" />
+                  <input
+                    type="time"
+                    class="condition-input condition-time-input"
+                    [value]="condition.dateTime || (condition.dateOperation === 'ge' ? '00:00' : '23:59')"
+                    (change)="updateConditionDateTime(condition.id, $any($event.target).value)" />
+                }
               }
 
               <pa-button aspect="basic" size="small" icon="cross" (click)="removeCondition(condition.id)"></pa-button>

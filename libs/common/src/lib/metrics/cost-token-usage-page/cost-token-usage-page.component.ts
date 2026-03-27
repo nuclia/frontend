@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MetricsMonthRange } from '../metrics-column.model';
-import { BooleanCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
+import { BooleanCondition, DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
 import { CostTokenUsagePageService } from './cost-token-usage-page.service';
 import { COST_TOKEN_COLUMNS, COST_TOKEN_SIDEBAR_FIELDS } from './cost-token-usage-page.config';
 import { DownloadFormat } from '@nuclia/core';
@@ -18,6 +18,7 @@ export class CostTokenUsagePageComponent {
   readonly sidebarFields = COST_TOKEN_SIDEBAR_FIELDS;
 
   readonly filterColumns: FilterColumnConfig[] = [
+    { key: 'date', labelKey: 'activity.filter.date', type: 'date' },
     { key: 'feedback_good', labelKey: 'activity.column.feedback-good', type: 'boolean' },
     { key: 'feedback_good_all', labelKey: 'activity.column.feedback-good-all', type: 'boolean' },
     { key: 'feedback_good_any', labelKey: 'activity.column.feedback-good-any', type: 'boolean' },
@@ -48,14 +49,21 @@ export class CostTokenUsagePageComponent {
       .map(([column, value]) => ({ column, value: value! }));
   });
 
-  constructor() {
+  protected selectedMonth = signal<string>(this._currentMonth());
+  protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
+
+  private _currentMonth(): string {
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    this.service.loadData(currentMonth);
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  constructor() {
+    this.service.loadData(this._currentMonth());
   }
 
   onMonthRangeChange(range: MetricsMonthRange): void {
     this.service.loadData(range.from);
+    this.selectedMonth.set(range.from);
   }
 
   onSearchChange(event: { term: string; column: string }): void {
@@ -75,6 +83,6 @@ export class CostTokenUsagePageComponent {
       (acc, bc) => ({ ...acc, [bc.column]: bc.value }),
       {},
     );
-    this.service.applyAllFilters(booleans, event.numericConditions);
+    this.service.applyAllFilters(booleans, event.numericConditions, event.dateConditions ?? []);
   }
 }

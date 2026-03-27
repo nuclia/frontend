@@ -15,6 +15,7 @@ import {
 import { UsageAnalyticsItem } from '../metrics-column.model';
 import { getMonthRange } from '../metrics-utils';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
+import { DateCondition } from '../metrics-filters';
 
 const STATUSES: RemiAnswerStatus[] = ['SUCCESS', 'ERROR', 'NO_CONTEXT'];
 
@@ -53,11 +54,13 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   private _contentRelevanceFilter = signal<
     { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
   >(undefined);
+  private _dateConditions = signal<DateCondition[]>([]);
 
   readonly remiScoreAverages = this._remiScoreAverages.asReadonly();
   readonly activeStatuses = this._activeStatuses.asReadonly();
   readonly feedbackGoodFilter = this._feedbackGoodFilter.asReadonly();
   readonly contentRelevanceFilter = this._contentRelevanceFilter.asReadonly();
+  readonly dateConditions = this._dateConditions.asReadonly();
 
   private readonly _loadScores$ = new Subject<string>();
 
@@ -135,6 +138,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     statuses: RemiAnswerStatus[],
     feedbackGood: boolean | undefined,
     contentRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
+    dateConditions: DateCondition[] = [],
   ): void {
     // If contentRelevance is set, we cannot filter by status (API constraint)
     if (contentRelevance) {
@@ -144,6 +148,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     }
     this._feedbackGoodFilter.set(feedbackGood);
     this._contentRelevanceFilter.set(contentRelevance);
+    this._dateConditions.set(dateConditions);
     this._applyFilters();
   }
 
@@ -162,11 +167,12 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     const yearMonth = this._yearMonth();
     const feedbackGood = this._feedbackGoodFilter();
     const contextRelevance = this._contentRelevanceFilter();
+    const dateConditions = this._dateConditions();
 
     // If contentRelevance is set, we cannot filter by status (API constraint:
     // "Only one of [context_relevance, status_code] can be set")
     if (contextRelevance) {
-      return this._querySinglePage(yearMonth, isAppend, feedbackGood, contextRelevance);
+      return this._querySinglePage(yearMonth, isAppend, feedbackGood, contextRelevance, dateConditions);
     }
 
     // Normal per-status queries
@@ -196,6 +202,11 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
             if (feedbackGood !== undefined) {
               criteria.feedback_good = feedbackGood;
             }
+            if (dateConditions.length > 0) {
+              const dc = dateConditions[0];
+              if (dc.from) criteria.from_date = dc.from;
+              if (dc.to) criteria.to_date = dc.to;
+            }
             return kb.activityMonitor.queryRemiScores(criteria).pipe(
               map((response) => ({ status, response })),
               catchError(() => of({ status, response: { data: [], has_more: false } as RemiQueryResponse })),
@@ -214,7 +225,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
         // Map data (functional)
         return results
           .flatMap(({ status, response }) => response.data.map((item) => this._mapToUsageItem(item, status)))
-          .sort((a, b) => b.id - a.id);
+          .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
       }),
     );
   }
@@ -230,6 +241,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     isAppend: boolean,
     feedbackGood: boolean | undefined,
     contextRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' },
+    dateConditions: DateCondition[] = [],
   ) {
     // Use 'SUCCESS' page state as shared pagination tracker
     const pageState = this._statusPages['SUCCESS'];
@@ -245,6 +257,11 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     };
     if (feedbackGood !== undefined) {
       criteria.feedback_good = feedbackGood;
+    }
+    if (dateConditions.length > 0) {
+      const dc = dateConditions[0];
+      if (dc.from) criteria.from_date = dc.from;
+      if (dc.to) criteria.to_date = dc.to;
     }
 
     return this.sdk.currentKb.pipe(
@@ -270,7 +287,9 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
 
   protected _applyPage(newItems: UsageAnalyticsItem[], isAppend: boolean): void {
     if (isAppend) {
-      this._items.update((prev) => [...prev, ...newItems].sort((a, b) => b.id - a.id));
+      this._items.update((prev) =>
+        [...prev, ...newItems].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
+      );
       this._loadingMore.set(false);
     } else {
       this._items.set(newItems);
@@ -284,6 +303,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       id: remiItem.id,
       question: remiItem.question,
       answer: remiItem.answer,
+      date: remiItem.date ?? null,
       status,
       remi_scores: remiItem.remi?.answer_relevance?.score ?? null,
       _displayStatus: status ? this._translateStatus(status) : '—',

@@ -10,9 +10,9 @@ import {
   UsagePoint,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { NumericCondition } from '../metrics-filters';
+import { NumericCondition, DateCondition } from '../metrics-filters';
 import { ProcessingItem, ProcessingStats } from '../metrics-column.model';
-import { aggregateUsageMetric, applyNumericConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import { aggregateUsageMetric, applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
 import { PROCESSING_ACTIVITY_SHOW_FIELDS } from './resource-activity-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -37,10 +37,12 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
   // Filter state
   private _activeSources = signal<Set<EventType>>(new Set(ALL_SOURCES));
   private _numericConditions = signal<NumericCondition[]>([]);
+  private _dateConditions = signal<DateCondition[]>([]);
 
   readonly usageStats = this._usageStats.asReadonly();
   readonly activeSources = this._activeSources.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
+  readonly dateConditions = this._dateConditions.asReadonly();
 
   private readonly _sources: Array<[EventType, string]> = [
     [EventType.NEW, 'Ingested'],
@@ -114,6 +116,9 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
 
     applyNumericConditions(this._numericConditions(), filters);
 
+    // Date filters
+    applyDateConditions(this._dateConditions(), filters);
+
     return filters as ActivityLogFilters;
   }
 
@@ -169,9 +174,9 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
 
     const newMerged = groups
       .flatMap((g) => g.items)
-      .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
+      .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
     const combined = isAppend
-      ? [...this._items(), ...newMerged].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+      ? [...this._items(), ...newMerged]
       : newMerged;
     this._items.set(combined);
     if (isAppend) {
@@ -214,11 +219,17 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._applyFilters();
   }
 
-  applyAllFilters(activeSources: EventType[], numericConditions: NumericCondition[]): void {
+  updateDateFilter(conditions: DateCondition[]): void {
+    this._dateConditions.set(conditions);
+    this._applyFilters();
+  }
+
+  applyAllFilters(activeSources: EventType[], numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {
     if (activeSources.length > 0) {
       this._activeSources.set(new Set(activeSources));
     }
     this._numericConditions.set(numericConditions);
+    this._dateConditions.set(dateConditions);
     this._applyFilters();
   }
 

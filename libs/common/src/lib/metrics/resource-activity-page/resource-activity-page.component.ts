@@ -3,10 +3,11 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { EventType } from '@nuclia/core';
 import { MetricsMonthRange } from '../metrics-column.model';
-import { FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
+import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
 import { ResourceActivityPageService } from './resource-activity-page.service';
 import { PROCESSING_ACTIVITY_COLUMNS, PROCESSING_ACTIVITY_SIDEBAR_FIELDS } from './resource-activity-page.config';
 
@@ -30,6 +31,7 @@ export class ResourceActivityPageComponent {
   };
 
   readonly filterColumns: FilterColumnConfig[] = [
+    { key: 'date', labelKey: 'activity.filter.date', type: 'date' },
     { key: 'total_duration', labelKey: 'activity.column.duration', type: 'numeric' },
     { key: 'nuclia_tokens', labelKey: 'activity.column.nuclia-tokens', type: 'numeric' },
   ];
@@ -50,14 +52,21 @@ export class ResourceActivityPageComponent {
     );
   });
 
-  constructor() {
+  protected selectedMonth = signal<string>(this._currentMonth());
+  protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
+
+  private _currentMonth(): string {
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    this.service.loadData(currentMonth);
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  constructor() {
+    this.service.loadData(this._currentMonth());
   }
 
   onMonthRangeChange(range: MetricsMonthRange): void {
     this.service.loadData(range.from);
+    this.selectedMonth.set(range.from);
   }
 
   onSearchChange(event: { term: string; column: string }): void {
@@ -79,6 +88,7 @@ export class ResourceActivityPageComponent {
     this.service.applyAllFilters(
       sources.length > 0 ? sources : [EventType.NEW, EventType.MODIFIED, EventType.PROCESSED],
       event.numericConditions,
+      event.dateConditions ?? [],
     );
   }
 }

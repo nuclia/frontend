@@ -20,6 +20,8 @@
     [filterColumns]="filterColumns"
     [activeBooleanConditions]="[]"
     [activeNumericConditions]="service.numericConditions()"
+    [selectedMonth]="selectedMonth()"
+    [activeDateConditions]="activeDateConditions()"
     (filtersApplied)="onFiltersApplied($event)">
   </app-metrics-filters>
 

@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RemiAnswerStatus } from '@nuclia/core';
 import { MetricsMonthRange } from '../metrics-column.model';
-import { BooleanCondition, FilterApplyEvent, FilterColumnConfig, NumericCondition, NumericOperation } from '../metrics-filters';
+import { BooleanCondition, DateCondition, FilterApplyEvent, FilterColumnConfig, NumericCondition, NumericOperation } from '../metrics-filters';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analytics-page.config';
 
@@ -31,6 +31,7 @@ export class UsageAnalyticsPageComponent {
   readonly filterColumns: FilterColumnConfig[] = [
     { key: 'feedback_good', labelKey: 'activity.filter.feedback', type: 'boolean' },
     { key: 'content_relevance', labelKey: 'activity.filter.content_relevance', type: 'numeric', allowedOperations: ['lt', 'gt', 'eq'] },
+    { key: 'date', labelKey: 'activity.filter.date', type: 'date' },
   ];
 
   protected activeBooleanConditions = computed<BooleanCondition[]>(() => {
@@ -53,16 +54,23 @@ export class UsageAnalyticsPageComponent {
     return this.service.contentRelevanceFilter() !== undefined;
   });
 
-  constructor() {
+  protected selectedMonth = signal<string>(this._currentMonth());
+  protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
+
+  private _currentMonth(): string {
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    this.service.loadData(currentMonth);
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  constructor() {
+    this.service.loadData(this._currentMonth());
   }
 
   // ── Data handlers ─────────────────────────────────────────────────────────
 
   onMonthRangeChange(range: MetricsMonthRange): void {
     this.service.loadData(range.from);
+    this.selectedMonth.set(range.from);
   }
 
   onLoadNextPage(): void {
@@ -78,6 +86,6 @@ export class UsageAnalyticsPageComponent {
     const contentRelevance = crCondition
       ? { value: crCondition.value, operation: crCondition.operation as 'gt' | 'lt' | 'eq', aggregation: 'max' as const }
       : undefined;
-    this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance);
+    this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
   }
 }

@@ -11,8 +11,8 @@ import {
   SearchMetricsItem,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { NumericCondition } from '../metrics-filters';
-import { applyNumericConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import { NumericCondition, DateCondition } from '../metrics-filters';
+import { applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
 import { SEARCH_ACTIVITY_SHOW_FIELDS } from './search-activity-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -30,9 +30,11 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
 
   // Sidebar numeric filter state
   private _numericConditions = signal<NumericCondition[]>([]);
+  private _dateConditions = signal<DateCondition[]>([]);
 
   readonly searchTotals = this._searchTotals.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
+  readonly dateConditions = this._dateConditions.asReadonly();
 
   private readonly _loadTotals$ = new Subject<string>();
 
@@ -86,6 +88,9 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
 
     // Numeric filters
     applyNumericConditions(this._numericConditions(), filters);
+
+    // Date filters
+    applyDateConditions(this._dateConditions(), filters);
 
     return filters as ActivityLogSearchFilters;
   }
@@ -148,8 +153,14 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
     this._applyFilters();
   }
 
-  applyAllFilters(numericConditions: NumericCondition[]): void {
+  updateDateFilter(conditions: DateCondition[]): void {
+    this._dateConditions.set(conditions);
+    this._applyFilters();
+  }
+
+  applyAllFilters(numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {
     this._numericConditions.set(numericConditions);
+    this._dateConditions.set(dateConditions);
     this._applyFilters();
   }
 

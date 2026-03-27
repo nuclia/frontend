@@ -1,4 +1,5 @@
-export type FilterColumnType = 'numeric' | 'boolean';
+export type FilterColumnType = 'numeric' | 'boolean' | 'date';
+export type DateMode = 'date' | 'range';
 
 export interface FilterColumnConfig {
   key: string;
@@ -8,6 +9,7 @@ export interface FilterColumnConfig {
 }
 
 export type NumericOperation = 'eq' | 'ne' | 'gt' | 'ge' | 'lt' | 'le';
+export type DateOperation = 'ge' | 'le' | 'eq';
 
 export interface NumericCondition {
   column: string;
@@ -20,10 +22,17 @@ export interface BooleanCondition {
   value: boolean;
 }
 
+export interface DateCondition {
+  column: string;
+  from?: string;  // YYYY-MM-DD
+  to?: string;    // YYYY-MM-DD
+}
+
 export interface FilterApplyEvent {
   syntheticStatuses?: string[];
   booleanConditions: BooleanCondition[];
   numericConditions: NumericCondition[];
+  dateConditions: DateCondition[];
 }
 
 export interface ConditionRow {
@@ -33,4 +42,7 @@ export interface ConditionRow {
   operation: NumericOperation;
   numericValue: string;
   booleanValue: boolean;
+  dateValue: string;       // YYYY-MM-DD or ''
+  dateTime: string;        // HH:mm (only relevant for ge/le; ignored for eq)
+  dateOperation: DateOperation;
 }

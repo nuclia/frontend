@@ -13,6 +13,9 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { MetricsFiltersService } from './metrics-filters.service';
 import {
   BooleanCondition,
+  DateCondition,
+  DateMode,
+  DateOperation,
   FilterApplyEvent,
   FilterColumnConfig,
   NumericCondition,
@@ -38,6 +41,8 @@ export class MetricsFiltersComponent {
   filterColumns = input<FilterColumnConfig[]>([]);
   activeBooleanConditions = input<BooleanCondition[]>([]);
   activeNumericConditions = input<NumericCondition[]>([]);
+  selectedMonth = input<string>('');
+  activeDateConditions = input<DateCondition[]>([]);
 
   // ── Output ──────────────────────────────────────────────────────────────
   filtersApplied = output<FilterApplyEvent>();
@@ -60,6 +65,7 @@ export class MetricsFiltersComponent {
     }
     count += this.activeBooleanConditions().length;
     count += this.activeNumericConditions().length;
+    count += this.activeDateConditions().length;
     return count;
   });
 
@@ -91,6 +97,7 @@ export class MetricsFiltersComponent {
         this.activeSyntheticStatuses(),
         this.activeBooleanConditions(),
         this.activeNumericConditions(),
+        this.activeDateConditions(),
       );
     }
   }
@@ -136,6 +143,39 @@ export class MetricsFiltersComponent {
 
   updateConditionBooleanValue(id: number, val: boolean): void {
     this.service.updateConditionBooleanValue(id, val);
+  }
+
+  updateConditionDateValue(id: number, val: string): void {
+    this.service.updateConditionDateValue(id, val);
+  }
+
+  updateConditionDateTime(id: number, val: string): void {
+    this.service.updateConditionDateTime(id, val);
+  }
+
+  updateConditionDateOperation(id: number, op: string): void {
+    this.service.updateConditionDateOperation(id, op as DateOperation);
+  }
+
+  selectDateMode(columnKey: string, mode: DateMode): void {
+    this.service.selectDateMode(columnKey, mode);
+  }
+
+  getDateMode(columnKey: string): DateMode | null {
+    return this.service.getDateMode(columnKey);
+  }
+
+  getDateOperationSymbol(op: string): string {
+    const symbols: Record<string, string> = { ge: '≥', le: '≤', eq: '=' };
+    return symbols[op] ?? op;
+  }
+
+  getMonthLastDay(): string {
+    const month = this.selectedMonth();
+    if (!month) return '';
+    const [year, mo] = month.split('-');
+    const lastDay = new Date(Number(year), Number(mo), 0).getDate();
+    return `${month}-${String(lastDay).padStart(2, '0')}`;
   }
 
   getColumnType(key: string) {

@@ -1,5 +1,5 @@
 import { UsagePoint } from '@nuclia/core';
-import { NumericCondition } from './metrics-filters';
+import { DateCondition, NumericCondition } from './metrics-filters';
 
 /**
  * Converts a YYYY-MM string into a date range spanning that full month.
@@ -49,6 +49,24 @@ export function applyTextSearchFilter(
     filters[search.column] = { eq: search.term };
   } else {
     filters[search.column] = { ilike: search.term };
+  }
+}
+
+/**
+ * Applies an array of date filter conditions to the filters object.
+ * Each condition maps to { date: { ge?: string, le?: string } }.
+ * Multiple conditions on the same column are merged.
+ */
+export function applyDateConditions(
+  conditions: DateCondition[],
+  filters: Record<string, unknown>,
+): void {
+  for (const c of conditions) {
+    if (!c.from && !c.to) continue;
+    const existing = (filters[c.column] as Record<string, unknown>) ?? {};
+    if (c.from) existing['ge'] = c.from;
+    if (c.to) existing['le'] = c.to;
+    filters[c.column] = existing;
   }
 }
 

@@ -25,7 +25,7 @@
   top: var(--app-topbar-height, 0);
   right: 0;
   bottom: 0;
-  width: 360px;
+  width: 540px;
   max-width: 90vw;
   background: var(--color-neutral-lightest, #fff);
   border-left: 1px solid v.$color-neutral-lighter;
@@ -121,6 +121,11 @@
   flex-shrink: 0;
 }
 
+.condition-date-op {
+  width: 60px;
+  flex-shrink: 0;
+}
+
 .condition-bool {
   flex: 1;
 }
@@ -138,6 +143,16 @@
   &:focus {
     outline: 2px solid var(--color-primary-regular);
   }
+}
+
+.condition-date-input {
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.condition-time-input {
+  width: 80px;
+  flex-shrink: 0;
 }
 
 .no-conditions {
@@ -169,4 +184,33 @@
   color: var(--color-neutral-regular);
   font-style: italic;
   margin: 0 0 v.rhythm(0.5);
+}
+
+// ── Date mode picker (text-tab style) ─────────────────────────────────────
+
+.date-mode-selector {
+  display: flex;
+  align-items: center;
+  gap: v.rhythm(0.5);
+}
+
+.date-mode-tab {
+  background: none;
+  border: none;
+  padding: 0 v.rhythm(0.5);
+  font-size: var(--font-size-s, 13px);
+  color: var(--color-primary-regular);
+  cursor: pointer;
+  text-decoration: underline;
+  line-height: 1.4;
+
+  &:hover {
+    color: var(--color-primary-dark);
+  }
+}
+
+.date-mode-sep {
+  color: var(--color-neutral-regular);
+  font-size: var(--font-size-s, 13px);
+  user-select: none;
 }

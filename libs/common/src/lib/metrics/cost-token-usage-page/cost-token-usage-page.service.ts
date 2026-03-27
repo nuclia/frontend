@@ -11,9 +11,9 @@ import {
   UsagePoint,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { NumericCondition } from '../metrics-filters';
+import { NumericCondition, DateCondition } from '../metrics-filters';
 import { CostTokenStats } from '../metrics-column.model';
-import { aggregateUsageMetric, applyNumericConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import { aggregateUsageMetric, applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
 import { COST_TOKEN_SHOW_FIELDS } from './cost-token-usage-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -29,10 +29,12 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   private _lastId = signal<number | undefined>(undefined);
   private _booleanFilters = signal<Record<string, boolean | undefined>>({});
   private _numericConditions = signal<NumericCondition[]>([]);
+  private _dateConditions = signal<DateCondition[]>([]);
 
   readonly usageStats = this._usageStats.asReadonly();
   readonly booleanFilters = this._booleanFilters.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
+  readonly dateConditions = this._dateConditions.asReadonly();
 
   private readonly _loadUsage$ = new Subject<string>();
 
@@ -89,6 +91,9 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
 
     // Numeric sidebar filters (status is ActivityLogFilter<string> in the API)
     applyNumericConditions(this._numericConditions(), filters, ['status']);
+
+    // Date filters
+    applyDateConditions(this._dateConditions(), filters);
 
     return filters as ActivityLogAskFilters;
   }
@@ -156,9 +161,15 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     this._applyFilters();
   }
 
-  applyAllFilters(booleans: Record<string, boolean | undefined>, numericConditions: NumericCondition[]): void {
+  updateDateFilter(conditions: DateCondition[]): void {
+    this._dateConditions.set(conditions);
+    this._applyFilters();
+  }
+
+  applyAllFilters(booleans: Record<string, boolean | undefined>, numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {
     this._booleanFilters.set(booleans);
     this._numericConditions.set(numericConditions);
+    this._dateConditions.set(dateConditions);
     this._applyFilters();
   }
 

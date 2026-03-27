@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { MetricsMonthRange } from '../metrics-column.model';
-import { FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
+import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
 import { SearchActivityPageService } from './search-activity-page.service';
 import { SEARCH_ACTIVITY_COLUMNS, SEARCH_ACTIVITY_SIDEBAR_FIELDS } from './search-activity-page.config';
 
@@ -17,6 +17,7 @@ export class SearchActivityPageComponent {
   readonly sidebarFields = SEARCH_ACTIVITY_SIDEBAR_FIELDS;
 
   readonly filterColumns: FilterColumnConfig[] = [
+    { key: 'date', labelKey: 'activity.filter.date', type: 'date' },
     { key: 'total_duration', labelKey: 'activity.column.duration', type: 'numeric' },
     { key: 'nuclia_tokens', labelKey: 'activity.column.nuclia-tokens', type: 'numeric' },
     { key: 'resources_count', labelKey: 'activity.column.resources-count', type: 'numeric' },
@@ -26,14 +27,21 @@ export class SearchActivityPageComponent {
     { key: 'retrieval_time', labelKey: 'activity.column.retrieval-time', type: 'numeric' },
   ];
 
-  constructor() {
+  protected selectedMonth = signal<string>(this._currentMonth());
+  protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
+
+  private _currentMonth(): string {
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    this.service.loadData(currentMonth);
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  constructor() {
+    this.service.loadData(this._currentMonth());
   }
 
   onMonthRangeChange(range: MetricsMonthRange): void {
     this.service.loadData(range.from);
+    this.selectedMonth.set(range.from);
   }
 
   onSearchChange(event: { term: string; column: string }): void {
@@ -49,6 +57,6 @@ export class SearchActivityPageComponent {
   }
 
   onFiltersApplied(event: FilterApplyEvent): void {
-    this.service.applyAllFilters(event.numericConditions);
+    this.service.applyAllFilters(event.numericConditions, event.dateConditions ?? []);
   }
 }

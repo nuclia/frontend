@@ -27,6 +27,7 @@ export interface RemiQueryResponseItem {
   id: number;
   question: string;
   answer: string;
+  date?: string | null;
   remi?: RemiScore;
 }
 
@@ -48,6 +49,8 @@ export interface RemiQueryCriteria {
   feedback_good?: boolean;
   status?: RemiAnswerStatus;
   month: string;
+  from_date?: string;
+  to_date?: string;
   pagination?: {
     limit?: number;
     starting_after?: number;
@@ -103,10 +106,7 @@ export interface ActivityLogDownload {
 // ---------------------------------------------------------------------------
 
 /** Generic query base — parameterized by show-field type and filters type. */
-export interface ActivityLogQueryBase<
-  S extends string = ActivityLogShowFields,
-  F = ActivityLogFilters,
-> {
+export interface ActivityLogQueryBase<S extends string = ActivityLogShowFields, F = ActivityLogFilters> {
   year_month: string;
   pagination?: ActivityLogPagination;
   show?: S[] | 'all';
@@ -153,6 +153,7 @@ export interface ActivityLogPagination {
 
 export interface ActivityLogFilters {
   id?: ActivityLogFilter<number>;
+  date?: ActivityLogFilter<string>;
   user_id?: ActivityLogFilter<string>;
   user_type?: ActivityLogFilter<UserType>;
   client_type?: ActivityLogFilter<string>;
@@ -162,8 +163,14 @@ export interface ActivityLogFilters {
 }
 
 export const ACTIVITY_LOG_SHOW_FIELDS = [
-  'id', 'date', 'user_id', 'user_type', 'client_type',
-  'total_duration', 'audit_metadata', 'resource_id',
+  'id',
+  'date',
+  'user_id',
+  'user_type',
+  'client_type',
+  'total_duration',
+  'audit_metadata',
+  'resource_id',
   'nuclia_tokens',
 ] as const;
 export type ActivityLogShowFields = (typeof ACTIVITY_LOG_SHOW_FIELDS)[number];
@@ -196,9 +203,17 @@ export interface ActivityLogSearchFilters extends ActivityLogFilters {
 
 export const ACTIVITY_LOG_SEARCH_SHOW_FIELDS = [
   ...ACTIVITY_LOG_SHOW_FIELDS,
-  'question', 'token_details', 'resources_count', 'filter', 'retrieval_rephrased_question',
-  'vectorset', 'security', 'min_score_bm25', 'min_score_semantic',
-  'result_per_page', 'retrieval_time',
+  'question',
+  'token_details',
+  'resources_count',
+  'filter',
+  'retrieval_rephrased_question',
+  'vectorset',
+  'security',
+  'min_score_bm25',
+  'min_score_semantic',
+  'result_per_page',
+  'retrieval_time',
 ] as const;
 export type ActivityLogSearchShowFields = (typeof ACTIVITY_LOG_SEARCH_SHOW_FIELDS)[number];
 
@@ -249,11 +264,28 @@ export interface ActivityLogChatFilters extends ActivityLogSearchFilters {
 
 export const ACTIVITY_LOG_CHAT_SHOW_FIELDS = [
   ...ACTIVITY_LOG_SHOW_FIELDS,
-  'question', 'token_details', 'rephrased_question', 'answer', 'learning_id',
-  'retrieved_context', 'chat_history', 'feedback_good', 'feedback_comment', 'feedback_good_all',
-  'feedback_good_any', 'feedback', 'model', 'rag_strategies_names', 'rag_strategies', 'status',
-  'generative_answer_first_chunk_time', 'generative_reasoning_first_chunk_time', 'generative_answer_time',
-  'remi_scores', 'user_request', 'reasoning',
+  'question',
+  'token_details',
+  'rephrased_question',
+  'answer',
+  'learning_id',
+  'retrieved_context',
+  'chat_history',
+  'feedback_good',
+  'feedback_comment',
+  'feedback_good_all',
+  'feedback_good_any',
+  'feedback',
+  'model',
+  'rag_strategies_names',
+  'rag_strategies',
+  'status',
+  'generative_answer_first_chunk_time',
+  'generative_reasoning_first_chunk_time',
+  'generative_answer_time',
+  'remi_scores',
+  'user_request',
+  'reasoning',
 ] as const;
 export type ActivityLogChatShowFields = (typeof ACTIVITY_LOG_CHAT_SHOW_FIELDS)[number];
 
@@ -283,8 +315,15 @@ export interface ActivityLogAskFilters extends ActivityLogChatFilters {
 
 export const ACTIVITY_LOG_ASK_SHOW_FIELDS = [
   ...ACTIVITY_LOG_CHAT_SHOW_FIELDS,
-  'resources_count', 'filter', 'retrieval_rephrased_question', 'vectorset', 'security',
-  'min_score_bm25', 'min_score_semantic', 'result_per_page', 'retrieval_time',
+  'resources_count',
+  'filter',
+  'retrieval_rephrased_question',
+  'vectorset',
+  'security',
+  'min_score_bm25',
+  'min_score_semantic',
+  'result_per_page',
+  'retrieval_time',
 ] as const;
 export type ActivityLogAskShowFields = (typeof ACTIVITY_LOG_ASK_SHOW_FIELDS)[number];
 
