@@ -42,7 +42,7 @@ describe('ResourceActivityPageService', () => {
       expect(service.loading()).toBe(false);
     });
 
-    it('merges and sorts all groups by date descending', () => {
+    it('merges and sorts all groups by date ascending', () => {
       queryActivityLogs
         .mockReturnValueOnce(of([makeItem('2024-01-01')]))
         .mockReturnValueOnce(of([makeItem('2024-01-03')]))
@@ -51,7 +51,7 @@ describe('ResourceActivityPageService', () => {
       service.loadData('2024-01');
 
       const dates = service.items().map((i) => i.date);
-      expect(dates).toEqual(['2024-01-03', '2024-01-02', '2024-01-01']);
+      expect(dates).toEqual(['2024-01-01', '2024-01-02', '2024-01-03']);
     });
   });
 

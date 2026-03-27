@@ -10,7 +10,6 @@
     <!-- Month picker -->
     <pa-select
       class="month-picker"
-      [alignPopupOnLeft]="true"
       [label]="'activity.select-month' | translate"
       [value]="selectedMonth()"
       [disabled]="availableMonths().length === 0"
@@ -30,8 +29,7 @@
         [placeholder]="'generic.search' | translate"
         [modes]="service.searchModes()"
         (valueChange)="onSearch($event)"
-        (modeSelected)="onModeSelected($event)">
-      </nsi-search-input>
+        (modeSelected)="onModeSelected($event)"></nsi-search-input>
     }
 
     <div class="toolbar-actions">
@@ -105,7 +103,6 @@
           [style.--table-row-height]="rowHeight + 'px'"
           [style.--table-header-top]="-1 * viewportOffset + 'px'"
           [columns]="service.gridColumns()">
-
           <pa-table-header>
             <pa-table-row>
               @for (col of service.columnDefs(); track col.key) {
@@ -143,13 +140,25 @@
 </div>
 
 @if (selectedItem(); as item) {
-  <div class="side-panel-backdrop" (click)="closeSidePanel()"></div>
-  <aside class="side-panel" [class.expanded]="sidePanelExpanded()">
+  <div
+    class="side-panel-backdrop"
+    (click)="closeSidePanel()"></div>
+  <aside
+    class="side-panel"
+    [class.expanded]="sidePanelExpanded()">
     <div class="side-panel-header">
       <h2 class="title-m">{{ pageTitle() | translate }}</h2>
       <div class="side-panel-header-actions">
-        <pa-button aspect="basic" [icon]="sidePanelExpanded() ? 'collapse' : 'expand'" size="small" (click)="toggleSidePanelExpand()"></pa-button>
-        <pa-button aspect="basic" icon="cross" size="small" (click)="closeSidePanel()"></pa-button>
+        <pa-button
+          aspect="basic"
+          [icon]="sidePanelExpanded() ? 'collapse' : 'expand'"
+          size="small"
+          (click)="toggleSidePanelExpand()"></pa-button>
+        <pa-button
+          aspect="basic"
+          icon="cross"
+          size="small"
+          (click)="closeSidePanel()"></pa-button>
       </div>
     </div>
     <div class="side-panel-body">

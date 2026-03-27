@@ -27,6 +27,7 @@ import {
   KnowledgeBoxSettingsModule,
   PipesModule,
   RangeChartComponent,
+  RemiMetricsService,
   TokenDialogModule,
   UploadModule,
   UsersManageModule,
@@ -78,5 +79,6 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
   ],
   declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
   exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
+  providers: [RemiMetricsService],
 })
 export class KnowledgeBoxModule {}
