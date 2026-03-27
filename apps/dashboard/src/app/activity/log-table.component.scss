@@ -1,0 +1,57 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.filters {
+  display: flex;
+  gap: rhythm(2);
+  margin: rhythm(1.5) 0;
+  pa-input {
+    display: block;
+    width: rhythm(48);
+  }
+}
+
+.clear {
+  background: $color-light-stronger;
+  border-top: 1px solid $color-neutral-light;
+  bottom: 0;
+  padding: rhythm(1);
+  position: sticky;
+  z-index: 1;
+}
+
+.container {
+  margin: rhythm(0.5) 0;
+}
+
+.viewport {
+  height: 60vh;
+  overflow: auto;
+}
+
+pa-table {
+  display: block;
+  width: max-content;
+
+  // This hack is required to keep sticky headers in the correct position when using virtual scroll
+  ::ng-deep .pa-table-grid--header {
+    top: var(--table-header-top);
+  }
+
+  ::ng-deep .pa-table-grid--cell {
+    height: var(--table-row-height);
+  }
+
+  pre {
+    margin: 0;
+    max-width: rhythm(40);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+.show-more {
+  cursor: pointer;
+  font-weight: $font-weight-bold;
+  &:hover {
+    color: $color-neutral-regular;
+  }
+}

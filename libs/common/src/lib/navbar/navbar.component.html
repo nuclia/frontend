@@ -117,6 +117,28 @@
                     <pa-icon name="submenu"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
                   </a>
+                  @if(!(isMetricsEnabled | async)) {
+                    @if (isRemiMetricsEnabled | async) {
+                      <a
+                        [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
+                        routerLinkActive="active"
+                        class="nav-link sub-item"
+                        data-cy="go-to-metrics"
+                        [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                        <pa-icon name="chart"></pa-icon>
+                        <span class="nav-link-title">{{ 'navbar.metrics' | translate }}</span>
+                      </a>
+                    }
+                    <a
+                      [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-activity-log"
+                      [class.disabled]="(isAdminOrContrib | async) === false">
+                      <pa-icon name="activity-log"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
+                    </a>
+                  }
                   @if (isKbAdmin | async) {
                     <a
                       [routerLink]="kbUrl + '/keys'"
@@ -184,6 +206,7 @@
             </div>
           }
           @if (!standalone) {
+            @if (isMetricsEnabled | async) {
             <div class="nav-group">
               <div class="group-items">
                 <a
@@ -204,7 +227,6 @@
             @if (showMetrics) {
               <div class="nav-group">
                 <div class="group-items">
-                  @if (isRemiMetricsEnabled | async) {
                   <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null"
                     routerLinkActive="active"
@@ -214,7 +236,6 @@
                     <pa-icon name="image"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
                   </a>
-                }
                   <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null"
                     routerLinkActive="active"
@@ -253,7 +274,7 @@
                   </a>
                 </div>
               </div>
-            }
+            }}
           }
         </div>
       } @else if (isInArag) {
