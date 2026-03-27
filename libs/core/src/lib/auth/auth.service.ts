@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   getSignUpEmail(): string | null {
-    return localStorage.getItem(SIGNUP_DATA);
+    return localStorage.getItem(SIGNUP_EMAIL);
   }
 
   setSignUpEmail(email: string) {
