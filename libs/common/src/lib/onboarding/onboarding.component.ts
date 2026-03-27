@@ -62,7 +62,7 @@ export class OnboardingComponent {
     this.onboardingInquiryPayload = $event;
     this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
     this.onboardingService
-      .createAccount(this.onboardingInquiryPayload.company)
+      .createAccount()
       .pipe(take(1))
       .subscribe((account) => {
         this.account = account;
