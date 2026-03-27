@@ -64,7 +64,7 @@ export class OnboardingService {
       .subscribe();
   }
 
-  createAccount(company: string): Observable<Account> {
+  createAccount(): Observable<Account> {
     this._onboardingState.next({
       creating: true,
       accountCreated: false,
@@ -85,26 +85,29 @@ export class OnboardingService {
       location.href = 'https://www.progress.com/agentic-rag';
     } else {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
-        switchMap((data) => this.getAvailableAccountSlug(STFUtils.generateSlug(data.company))),
-        switchMap((accountSlug) =>
-          this.sdk.nuclia.db
-            .createAccount({
-              slug: accountSlug,
-              title: company,
-            })
-            .pipe(
-              catchError((error) => {
-                this._onboardingState.next({
-                  creating: false,
-                  accountCreated: false,
-                  kbCreated: false,
-                  creationFailed: true,
-                });
-                console.error(`Account creation failed`, error);
-                this.toaster.error('Account creation failed');
-                throw error;
-              }),
+        switchMap((data) =>
+          this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
+            switchMap((accountSlug) =>
+              this.sdk.nuclia.db
+                .createAccount({
+                  slug: accountSlug,
+                  title: data.company,
+                })
+                .pipe(
+                  catchError((error) => {
+                    this._onboardingState.next({
+                      creating: false,
+                      accountCreated: false,
+                      kbCreated: false,
+                      creationFailed: true,
+                    });
+                    console.error(`Account creation failed`, error);
+                    this.toaster.error('Account creation failed');
+                    throw error;
+                  }),
+                ),
             ),
+          ),
         ),
         switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
         switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
