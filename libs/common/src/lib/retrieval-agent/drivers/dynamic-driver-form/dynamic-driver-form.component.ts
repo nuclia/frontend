@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
-import { JSONSchema4, JSONSchema7 } from 'json-schema';
+import { JSONSchema4 } from 'json-schema';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ARAGSchemas, Driver, DriverCreation } from '@nuclia/core';
+import { Driver, DriverCreation } from '@nuclia/core';
 import { DriverFieldConfigService, DriverFieldConfig } from './driver-field-config.service';
 import { DriverFieldRendererComponent } from './driver-field-renderer/driver-field-renderer.component';
-import { DriverSubformFieldComponent } from './driver-subform-field/driver-subform-field.component';
 import { DriversService } from '../drivers.service';
 
 export interface RenderableDriverField {
@@ -52,7 +51,7 @@ export class DynamicDriverFormComponent implements OnInit {
   /**
    * Get field configuration with special overrides support
    */
-  private getFieldConfigWithOverrides(key: string, property: JSONSchema4, schema?: JSONSchema4): DriverFieldConfig {
+  private getFieldConfigWithOverrides(key: string, property: JSONSchema4): DriverFieldConfig {
     // Check for special field overrides first
     if (this.specialFieldComponentOverrides[key]) {
       return { ...this.specialFieldComponentOverrides[key], customKey: key };
@@ -67,7 +66,7 @@ export class DynamicDriverFormComponent implements OnInit {
     }
 
     // Fallback to service configuration
-    return this.fieldConfigService.getFieldConfig(key, property, schema);
+    return this.fieldConfigService.getFieldConfig(key, property, this.schema);
   }
 
   ngOnInit() {
@@ -85,7 +84,7 @@ export class DynamicDriverFormComponent implements OnInit {
     }
 
     // Find the driver schema by title
-    const driverSchema = (schemas as JSONSchema7).$defs?.[schemaId] as JSONSchema4;
+    const driverSchema = schemas.drivers[schemaId]?.config_schema;
 
     if (!driverSchema) {
       console.error(`Schema not found for: ${schemaId}`);
@@ -104,7 +103,7 @@ export class DynamicDriverFormComponent implements OnInit {
     }
 
     this.schema = driverSchema;
-    this.form = this.buildFormFromSchema(driverSchema);
+    this.form = this.buildFormFromSchema();
     this.setupRenderableFields();
 
     // Validate form structure before marking as ready
@@ -124,14 +123,14 @@ export class DynamicDriverFormComponent implements OnInit {
     }
   }
 
-  private buildFormFromSchema(schema: JSONSchema4): FormGroup {
-    if (!schema.properties) {
+  private buildFormFromSchema(): FormGroup {
+    if (!this.schema.properties) {
       return new FormGroup({});
     }
 
     const group: { [key: string]: any } = {};
 
-    for (const [key, prop] of Object.entries(schema.properties)) {
+    for (const [key, prop] of Object.entries(this.schema.properties)) {
       const property = prop as JSONSchema4;
       const resolvedProperty = this.getPropertySchema(property);
 
@@ -147,7 +146,7 @@ export class DynamicDriverFormComponent implements OnInit {
   }
 
   private createFormControl(key: string, property: JSONSchema4): any {
-    const config = this.getFieldConfigWithOverrides(key, property, this.schema);
+    const config = this.getFieldConfigWithOverrides(key, property);
     let type = property.type;
     let defaultValue = property.default ?? null;
 
@@ -222,9 +221,6 @@ export class DynamicDriverFormComponent implements OnInit {
         continue;
       }
 
-      // Apply our overrides for nested fields too
-      const nestedConfig = this.getFieldConfigWithOverrides(propKey, nestedProperty, this.schema);
-
       group[propKey] = this.createFormControl(propKey, nestedProperty);
     }
 
@@ -285,7 +281,7 @@ export class DynamicDriverFormComponent implements OnInit {
           resolvedProperty = this.resolveRef(property.$ref);
         }
 
-        const config = this.getFieldConfigWithOverrides(key, resolvedProperty, this.schema);
+        const config = this.getFieldConfigWithOverrides(key, resolvedProperty);
 
         return {
           key,
@@ -340,7 +336,7 @@ export class DynamicDriverFormComponent implements OnInit {
   }
 
   // Get the actual schema for a property (resolving anyOf and $refs)
-  private getPropertySchema(property: any): any {
+  private getPropertySchema(property: JSONSchema4): any {
     if (property.$ref) {
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
       return { ...this.resolveRef(property.$ref), ...property, $ref: undefined };
@@ -348,7 +344,7 @@ export class DynamicDriverFormComponent implements OnInit {
     if (property.anyOf) {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
-      if (objRef) {
+      if (objRef?.$ref) {
         // Merge resolved schema with original property
         return { ...this.resolveRef(objRef.$ref), ...property, anyOf: undefined };
       }
@@ -367,9 +363,8 @@ export class DynamicDriverFormComponent implements OnInit {
     // Handle #/$defs/SomeName references
     if (ref.startsWith('#/$defs/')) {
       const defName = ref.replace('#/$defs/', '');
-      const schema = this.getSchema(defName);
-      if (schema) {
-        return schema;
+      if (this.schema) {
+        return this.schema['$defs'][defName];
       } else {
         console.warn(`Could not resolve $ref: ${ref} (looking for ${defName})`);
         return {};

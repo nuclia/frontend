@@ -2,7 +2,7 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { SDKService, STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { Driver } from '@nuclia/core';
+import { ARAGSchemas, Driver } from '@nuclia/core';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import {
   BehaviorSubject,
@@ -37,7 +37,7 @@ export class DriversService {
 
   // Reactive state management
   private _drivers = signal<Driver[]>([]);
-  private _schemas = signal<JSONSchema4 | null>(null);
+  private _schemas = signal<ARAGSchemas | null>(null);
   private _refreshTrigger = new BehaviorSubject<void>(undefined);
 
   // Public observables
@@ -57,7 +57,7 @@ export class DriversService {
 
   schemas$ = this._refreshTrigger.pipe(
     switchMap(() => this.sdk.currentArag),
-    switchMap((arag) => arag.getFullSchemas()),
+    switchMap((arag) => arag.getSchemas()),
     catchError((error) => {
       console.error('Error fetching schemas:', error);
       this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.schemas'));
@@ -100,7 +100,7 @@ export class DriversService {
    * Initialize service by subscribing to data streams
    * Call this once in your main component's ngOnInit
    */
-  initialize(): Observable<[Driver[], JSONSchema4 | null]> {
+  initialize(): Observable<[Driver[], ARAGSchemas | null]> {
     this._refreshTrigger.next();
     return combineLatest([this.drivers$, this.schemas$]);
   }
@@ -141,15 +141,15 @@ export class DriversService {
       switchMap((existingDrivers) => {
         let modalRef$: Observable<ModalRef<any>>;
         switch (driverKey) {
-          case 'NucliaDBConfig':
-          case 'SyncDriverConfig':
+          case 'nucliadb':
+          case 'sync':
             modalRef$ = this.kbList$.pipe(
               take(1),
               map((kbList) =>
                 this.modal.openModal(
                   NucliaDriverModalComponent,
                   new ModalConfig({
-                    data: { kbList, isSyncDriver: driverKey === 'SyncDriverConfig' },
+                    data: { kbList, isSyncDriver: driverKey === 'sync' },
                     dismissable: false,
                   }),
                 ),
@@ -255,18 +255,14 @@ export class DriversService {
           throw new Error('Schemas not available');
         }
 
-        // Find the appropriate driver schema based on the provider
-        const driverKey = this.getDriverKeyByProvider(driverToEdit.provider, schemas);
-        if (!driverKey) {
-          throw new Error(`Unknown driver provider: ${driverToEdit.provider}`);
-        }
+        const driverKey = driverToEdit.provider;
 
         const modalRef =
-          driverKey === 'NucliaDBConfig' || driverKey === 'SyncDriverConfig'
+          driverKey === 'nucliadb' || driverKey === 'sync'
             ? this.modal.openModal(
                 NucliaDriverModalComponent,
                 new ModalConfig({
-                  data: { kbList, driver: driverToEdit, isSyncDriver: driverKey === 'SyncDriverConfig' },
+                  data: { kbList, driver: driverToEdit, isSyncDriver: driverKey === 'sync' },
                   dismissable: false,
                 }),
               )
@@ -355,22 +351,5 @@ export class DriversService {
           );
         }),
       );
-  }
-
-  /**
-   * Get drivers by provider type
-   */
-  getDriversByProvider(provider: string): Observable<Driver[]> {
-    return this.drivers$.pipe(map((drivers) => drivers.filter((driver) => driver.provider === provider)));
-  }
-
-  /**
-   * Get driver schema title by provider name
-   */
-  private getDriverKeyByProvider(provider: string, schemas: JSONSchema4): string | null {
-    const driver = Object.entries((schemas as JSONSchema7).$defs || []).find(
-      ([, schema]) => ((schema as JSONSchema4).properties?.['provider'] as JSONSchema7)?.const === provider,
-    );
-    return driver?.[0] || null;
   }
 }

@@ -466,7 +466,14 @@ export interface ARAGSchemas {
     preprocess: JSONSchema4[];
     postprocess: JSONSchema4[];
   };
-  drivers: JSONSchema4[];
+  drivers: { [id: string]: ARAGDriver };
+}
+
+export interface ARAGDriver {
+  id: string;
+  title: string;
+  description: string;
+  config_schema: JSONSchema4;
 }
 
 export interface ExportOptions {

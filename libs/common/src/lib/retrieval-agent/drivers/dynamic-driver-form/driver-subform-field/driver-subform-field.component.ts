@@ -9,16 +9,14 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { JSONSchema4, JSONSchema7 } from 'json-schema';
+import { JSONSchema4 } from 'json-schema';
 
 import { DriverFieldConfigService, DriverFieldConfig } from '../driver-field-config.service';
-import { DriversService } from '../../drivers.service';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
 import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
 import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
 import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow';
-import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 export interface RenderableDriverSubfield {
@@ -42,7 +40,7 @@ export interface RenderableDriverSubfield {
     PaTogglesModule,
     ApiHeadersFieldComponent,
     KeyValueFieldComponent,
-    DriverExpandableTextareaComponent
+    DriverExpandableTextareaComponent,
   ],
 })
 export class DriverSubformFieldComponent implements OnInit, OnDestroy {
@@ -51,10 +49,9 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   @Input() label!: string;
   @Input() property!: JSONSchema4;
   @Input() required: boolean = false;
-  @Input() rootSchema?: JSONSchema4; // The root driver schema containing $defs
+  @Input() driverSchema!: JSONSchema4;
 
   private fieldConfigService = inject(DriverFieldConfigService);
-  private driversService = inject(DriversService);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
@@ -149,16 +146,8 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   }
 
   private resolveRefFromAllSchemas(defName: string): JSONSchema4 | null {
-    // First try the root schema if provided
-    if (this.rootSchema && this.rootSchema['$defs']?.[defName]) {
-      return this.rootSchema['$defs'][defName] as JSONSchema4;
-    }
-
-    // Search through all driver schemas from the service
-    const schemas = this.driversService.schemas();
-    const schema = (schemas as JSONSchema7).$defs?.[defName];
-    if (schema) {
-      return schema as JSONSchema4;
+    if (this.driverSchema['$defs']?.[defName]) {
+      return this.driverSchema['$defs'][defName] as JSONSchema4;
     } else {
       console.warn(`Could not find definition for ${defName} in any driver schema`);
       return null;
