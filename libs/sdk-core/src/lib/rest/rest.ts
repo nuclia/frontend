@@ -155,7 +155,7 @@ export class Rest implements IRest {
                 this.nuclia.auth.logout();
                 this.nuclia.auth.redirectToOAuth();
               }
-              const logMessage = `${res.status} error on ${method} ${path}${payload ? '\nPayload: ' + payload : ''}`;
+              const logMessage = `${res.status} error on ${method} ${path}`;
               try {
                 console.error(`${logMessage}\n${JSON.stringify(body)}`);
               } catch (e) {
@@ -164,7 +164,7 @@ export class Rest implements IRest {
               throw { status: res.status, body };
             },
             () => {
-              console.error(`${res.status} error on ${method} ${path}${payload ? '\nPayload: ' + payload : ''}`);
+              console.error(`${res.status} error on ${method} ${path}`);
               throw { status: res.status };
             },
           );
