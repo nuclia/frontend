@@ -32,10 +32,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
-        of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
+        of(
+          this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl) &&
+            !this.isOnMetricsPage(location.pathname),
+        ),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
-          map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          map(
+            (event) =>
+              this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl) &&
+              !this.isOnMetricsPage((event as NavigationEnd).url),
+          ),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -64,6 +71,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ),
   );
   showSettings = false;
+  showMetrics = false;
   kbUrl: string = '';
   aragUrl: string = '';
   platformUrl: string = '';
@@ -80,6 +88,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   noStripe = this.backendConfig.noStripe();
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
+  isMetricsEnabled = this.features.unstable.metrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
   isRaoWidgetEnabled = this.features.unstable.raoWidget;
@@ -137,6 +146,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.showSettings = inSettings;
         this.cdr.markForCheck();
       });
+
+    merge(
+      of(this.isOnMetricsPage(location.pathname)),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event) => this.isOnMetricsPage((event as NavigationEnd).url)),
+        takeUntil(this.unsubscribeAll),
+      ),
+    )
+      .pipe(
+        filter((inMetrics) => inMetrics),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.showMetrics = true;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy() {
@@ -149,5 +175,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   toggleSettings() {
     this.showSettings = !this.showSettings;
     this.cdr.markForCheck();
+  }
+
+  toggleMetrics() {
+    this.showMetrics = !this.showMetrics;
+    this.cdr.markForCheck();
+  }
+
+  private isOnMetricsPage(path: string): boolean {
+    return /\/metrics\/(remi-analytics|usage-analytics|cost-token-usage|resource-activity|search-activity)/.test(path);
   }
 }

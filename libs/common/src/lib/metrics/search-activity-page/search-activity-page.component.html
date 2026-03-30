@@ -1,0 +1,37 @@
+<app-metrics-page
+  pageTitle="activity.search-activity.title"
+  pageSubtitle="activity.search-activity.subtitle"
+  [columns]="columns"
+  [sidebarFields]="sidebarFields"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [loadingMore]="service.loadingMore()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)"
+  (searchChange)="onSearchChange($event)"
+  (loadNextPage)="onLoadNextPage()"
+  (downloadRequested)="onDownloadRequested($event)">
+
+  <app-metrics-filters toolbar-extra
+    [showSyntheticStatus]="false"
+    [filterColumns]="filterColumns"
+    [activeBooleanConditions]="[]"
+    [activeNumericConditions]="service.numericConditions()"
+    [selectedMonth]="selectedMonth()"
+    [activeDateConditions]="activeDateConditions()"
+    (filtersApplied)="onFiltersApplied($event)">
+  </app-metrics-filters>
+
+  <!-- Stat cards -->
+  <div stat-cards class="stat-cards">
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search.total-search-queries' | translate }}</div>
+      <div class="display-s">{{ service.searchTotals().totalSearch !== null ? (service.searchTotals().totalSearch | number) : '—' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="title-xxs">{{ 'activity.search.total-llm-queries' | translate }}</div>
+      <div class="display-s">{{ service.searchTotals().totalChat !== null ? (service.searchTotals().totalChat | number) : '—' }}</div>
+    </div>
+  </div>
+
+</app-metrics-page>

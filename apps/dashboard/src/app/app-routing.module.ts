@@ -13,7 +13,7 @@ import {
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
-  MetricsPageComponent,
+  LegacyRemiMetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PreviewComponent,
@@ -52,7 +52,7 @@ import {
   SetPasswordComponent,
   AppLoginComponent,
 } from '@nuclia/user';
-import { authGuard } from '@flaps/core';
+import { authGuard, metricsEnabledGuard, metricsDisabledGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
 
@@ -122,7 +122,21 @@ const routes: Routes = [
               },
               {
                 path: 'activity',
+                canMatch: [metricsDisabledGuard],
                 loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
+              },
+              {
+                path: 'metrics',
+                canMatch: [metricsDisabledGuard],
+                canActivate: [knowledgeBoxOwnerGuard],
+                component: LegacyRemiMetricsPageComponent,
+              },
+              {
+                path: 'metrics',
+                canMatch: [metricsEnabledGuard],
+                canActivate: [knowledgeBoxOwnerGuard],
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/metrics/metrics.module').then((m) => m.MetricsModule),
               },
               {
                 path: 'entities',
@@ -157,11 +171,6 @@ const routes: Routes = [
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
-                canActivate: [knowledgeBoxOwnerGuard],
-              },
-              {
-                path: 'metrics',
-                component: MetricsPageComponent,
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {

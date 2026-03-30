@@ -245,6 +245,15 @@ Brand tokens — override any via `--custom-color-*` hooks in app global styles:
 --shadow-small  --shadow-default  --shadow-medium  --shadow-large
 ```
 
+**Critical rule: Never hardcode colour hex values (`#666`, `#ccc`, `#f0f0f0`, `#999`, etc.) in
+component SCSS.** Always use theme variables:
+- `$color-neutral-regular` for muted text / axis labels
+- `$color-neutral-light` for borders, tick lines, secondary fills
+- `$color-neutral-lighter` for dividers, light borders
+- `$color-neutral-lightest` for backgrounds, grid lines
+- `$color-primary-regular` for interactive / accent elements
+- `$color-light-stronger` for text on dark backgrounds
+
 White-label override hooks:
 ```css
 --custom-color-primary-regular   /* override brand primary */
@@ -270,6 +279,18 @@ $padding-right-page: rhythm(4) // 32px
 $padding-top-page: rhythm(4)   // 32px
 $border-radius-default: 0.25rem
 $border-radius-card: rhythm(1)  // 8px
+```
+
+**Critical rule: Never use hardcoded `px` values for spacing (gap, margin, padding, width, height).
+Always use `rhythm(N)`.** For example:
+- `gap: rhythm(3)` not `gap: 24px`
+- `margin-bottom: rhythm(2)` not `margin-bottom: 16px`
+- `padding: rhythm(1) rhythm(2)` not `padding: 8px 16px`
+
+To use `rhythm()` in a component SCSS, import the variables:
+```scss
+@use 'apps/dashboard/src/variables' as *;
+// then rhythm(N), $color-*, $font-size-*, etc. are all available
 ```
 
 ---

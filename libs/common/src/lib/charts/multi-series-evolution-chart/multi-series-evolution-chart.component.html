@@ -1,0 +1,32 @@
+<div class="chart-legend">
+  @for (s of _series; track s.key) {
+    <label class="legend-item" [class.dimmed]="!s.visible">
+      <pa-checkbox [value]="s.visible" (valueChange)="onToggleSeries(s.key)"></pa-checkbox>
+      <span class="legend-color" [style.background]="s.color"></span>
+      <span class="legend-label body-s">{{ s.label }}</span>
+    </label>
+  }
+</div>
+<div
+  class="multi-series-chart"
+  #container
+  [ngClass]="id">
+  <div
+    class="tooltip"
+    [style.opacity]="showTooltip ? '1' : '0'"
+    [style.bottom.px]="tooltipBottom"
+    [style.left.px]="tooltipLeft">
+    @if (tooltipSeries.length > 0) {
+      <strong>{{ tooltipTimestamp }}</strong>
+      <ul>
+        @for (item of tooltipSeries; track item.label) {
+          <li>
+            <span class="tooltip-color" [style.background]="item.color"></span>
+            {{ item.label }}: {{ item.average | number: '1.0-0' }}%
+            <span class="tooltip-range">({{ item.min | number: '1.0-0' }}–{{ item.max | number: '1.0-0' }})</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

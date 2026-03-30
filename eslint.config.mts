@@ -1,33 +1,27 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
+import nxPlugin from "@nx/eslint-plugin";
 
-export default defineConfig([
-  // JS/TS base config
+export default [
+  // Global ignores (node_modules is auto-ignored by ESLint 9)
+  { ignores: ["dist/**"] },
+
+  // Nx base — registers the @nx plugin, ignores .nx
+  ...nxPlugin.configs["flat/base"],
+
+  // Nx flat/typescript — bundles @eslint/js recommended, typescript-eslint
+  // parser + recommended rules, Nx TypeScript rules, and eslint-config-prettier
+  ...nxPlugin.configs["flat/typescript"],
+
+  // Nx flat/javascript — bundles @eslint/js recommended for JS files,
+  // Nx JavaScript rules, and eslint-config-prettier
+  ...nxPlugin.configs["flat/javascript"],
+
+  // Project-specific rules (applied after prettier so overrides stick)
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,tsx,jsx}"],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        ecmaVersion: 2018,
-        sourceType: "module",
-        project: "./tsconfig.json",
-      },
-      globals: globals.browser,
-    },
-    plugins: {
-      js,
-      "@typescript-eslint": tseslint.plugin,
-      "@nx": require("@nx/eslint-plugin"),
-    },
+    files: ["**/*.{ts,tsx,mts,cts,js,mjs,cjs,jsx}"],
     rules: {
-      // General rules
       "@typescript-eslint/explicit-member-accessibility": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-parameter-properties": "off",
-      "@typescript-eslint/no-extra-semi": "error",
-      "no-extra-semi": "off",
       "@nx/enforce-module-boundaries": [
         "error",
         {
@@ -42,20 +36,13 @@ export default defineConfig([
         },
       ],
     },
-    // Extends recommended configs
-    extends: [
-      "js/recommended",
-      ...tseslint.configs.recommended,
-      "plugin:@nx/typescript",
-      "plugin:@nx/javascript",
-      "prettier",
-    ],
   },
-  // Override for TSX files
+
+  // TSX override
   {
-    files: ["*.tsx"],
+    files: ["**/*.tsx"],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
-]);
+] as const;

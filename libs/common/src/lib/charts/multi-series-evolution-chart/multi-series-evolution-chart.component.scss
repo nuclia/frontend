@@ -1,0 +1,71 @@
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
+
+.multi-series-chart {
+  @include charts.chart();
+}
+
+.chart-legend {
+  display: flex;
+  gap: rhythm(3);
+  margin-bottom: rhythm(2);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &.dimmed {
+    opacity: 0.4;
+  }
+}
+
+.legend-color {
+  width: rhythm(1.5);
+  height: rhythm(1.5);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltip-color {
+  display: inline-block;
+  width: rhythm(1);
+  height: rhythm(1);
+  border-radius: 2px;
+  margin-right: rhythm(0.5);
+}
+
+.tooltip-range {
+  opacity: 0.7;
+  font-size: font-size(xxs);
+}
+
+:host ::ng-deep {
+  .x-axis,
+  .y-axis {
+    font-size: font-size(xs);
+    color: $color-neutral-regular;
+
+    .domain {
+      stroke: $color-neutral-light;
+    }
+
+    .tick line {
+      stroke: $color-neutral-light;
+    }
+  }
+
+  .grid-line {
+    stroke: $color-neutral-lightest;
+    stroke-width: 1;
+  }
+
+  .unit {
+    font-size: font-size(xs);
+    fill: $color-neutral-light;
+  }
+}

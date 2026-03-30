@@ -1,0 +1,440 @@
+<div class="remi-metrics page-spacing">
+  <div>
+    <h1 class="page-title">{{ 'kb.metrics.page-title' | translate }}</h1>
+    <div
+      class="page-description"
+      [innerHTML]="'kb.metrics.page-description' | translate"></div>
+  </div>
+
+  <!-- Period selector bar -->
+  <section class="period-bar sticky-section">
+    <label for="period">{{ 'kb.metrics.period.label' | translate }}</label>
+    <pa-select
+      id="period"
+      dim
+      [value]="period | async"
+      (valueChange)="updatePeriod($event)">
+      <pa-option value="24h">{{ 'kb.metrics.period.last-24h' | translate | lowercase }}</pa-option>
+      <pa-option value="7d">{{ 'kb.metrics.period.last-7d' | translate | lowercase }}</pa-option>
+      <pa-option value="14d">{{ 'kb.metrics.period.last-14d' | translate | lowercase }}</pa-option>
+      <pa-option value="30d">{{ 'kb.metrics.period.last-30d' | translate | lowercase }}</pa-option>
+    </pa-select>
+  </section>
+
+  <!-- Health Status card -->
+  <section class="metric-card">
+    <div class="metric-card-header">
+      <div class="title-l">{{ 'dashboard-home.health-status.title' | translate }}</div>
+      <div class="page-description">{{ 'kb.metrics.health-status.description' | translate }}</div>
+    </div>
+    <div class="metric-card-body">
+      @if (healthStatusOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.health-status-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else {
+        @if (healthCheckData | async; as healthStatus) {
+          @if (healthStatus.length > 0) {
+            <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
+          } @else {
+            <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+          }
+        }
+      }
+    </div>
+    <div class="definitions-row">
+      <div class="definition-item">
+        <span class="definition-term title-xxs">
+          <span class="color-dot" [style.background]="metricColors['answer_relevance']"></span>
+          {{ 'metrics.remi.category-short.answer_relevance' | translate }}
+        </span>
+        <span class="definition-desc body-s">{{ 'kb.metrics.definition.answer-relevance' | translate }}</span>
+      </div>
+      <div class="definition-item">
+        <span class="definition-term title-xxs">
+          <span class="color-dot" [style.background]="metricColors['context_relevance']"></span>
+          {{ 'metrics.remi.category-short.context_relevance' | translate }}
+        </span>
+        <span class="definition-desc body-s">{{ 'kb.metrics.definition.context-relevance' | translate }}</span>
+      </div>
+      <div class="definition-item">
+        <span class="definition-term title-xxs">
+          <span class="color-dot" [style.background]="metricColors['groundedness']"></span>
+          {{ 'metrics.remi.category-short.groundedness' | translate }}
+        </span>
+        <span class="definition-desc body-s">{{ 'kb.metrics.definition.groundedness' | translate }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Evolution card (chart is untouched) -->
+  <section class="metric-card">
+    <div class="metric-card-header">
+      <div class="title-l">{{ 'kb.metrics.performance-evolution.title' | translate }}</div>
+      <div class="page-description">{{ 'kb.metrics.performance-evolution.description' | translate }}</div>
+    </div>
+    <div class="metric-card-body">
+      @if (evolutionDataOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.evolution-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else if (noEvolutionData | async) {
+        <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+      } @else {
+        <div class="chart-container unified-chart">
+          <stf-multi-series-evolution-chart
+            [series]="(evolutionSeries | async) || []"
+            [height]="400">
+          </stf-multi-series-evolution-chart>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Download banner -->
+  <div class="download-banner">
+    <pa-icon name="download"></pa-icon>
+    <span>{{ 'kb.metrics.download.description' | translate }}</span>
+    <a [routerLink]="(kbUrl | async) + '/metrics/cost-token-usage'">
+      {{ 'activity.cost-token.title' | translate }}
+    </a>
+  </div>
+
+  <!-- Missing Knowledge section -->
+  <section
+    class="missing-knowledge"
+    [style]="missingKnowledgeHeaderHeight">
+    <div
+      class="sticky-section"
+      #missingKnowledgeHeader>
+      <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
+      <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
+    </div>
+
+    <!-- No Answer sub-section -->
+    <div class="metric-card missing-knowledge-card">
+      <div class="sticky-section sub-section">
+        <pa-expander
+          [expanded]="false"
+          [contentLoaded]="noAnswerMonthControl.errors?.['dateBefore']">
+          <pa-expander-header>
+            <div class="criteria-header">
+              <span class="title-xxs">
+                {{ 'kb.metrics.missing-knowledge.status.summary' | translate: { month: noAnswerMonthValue } }}
+              </span>
+              <div class="pagination">
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-left"
+                  (click)="updateNoAnswerPage($event, false)"
+                  [disabled]="!(noAnswerPage | async) || noAnswerMonthControl.invalid || (noAnswerLoading | async)">
+                  {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+                </pa-button>
+                <div>
+                  {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((noAnswerPage | async) || 0) + 1 } }}
+                </div>
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-right"
+                  (click)="updateNoAnswerPage($event, true)"
+                  [disabled]="
+                    !(noAnswerData | async)?.has_more || noAnswerMonthControl.invalid || (noAnswerLoading | async)
+                  ">
+                  {{ 'kb.metrics.missing-knowledge.next' | translate }}
+                </pa-button>
+              </div>
+            </div>
+          </pa-expander-header>
+          <pa-expander-body>
+            <div class="criteria-container">
+              <form [formGroup]="noAnswerCriteria">
+                <div class="field-container">
+                  <label for="monthNoAnswer">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
+                  <pa-input
+                    id="monthNoAnswer"
+                    externalLabel
+                    formControlName="month"
+                    help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+                </div>
+                @if (noAnswerMonthControl.errors?.['dateBefore']) {
+                  <nsi-info-card type="warning">
+                    {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                  </nsi-info-card>
+                }
+              </form>
+            </div>
+          </pa-expander-body>
+        </pa-expander>
+      </div>
+
+      @if (noAnswerOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else if (!noAnswerMonthControl.errors) {
+        @if (noAnswerData | async; as noAnswers) {
+          @if (noAnswers.data.length === 0) {
+            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+          } @else {
+            <pa-accordion>
+              @for (item of noAnswers.data; track item.id) {
+                <pa-accordion-item
+                  [id]="'' + item.id"
+                  [itemTitle]="item.question"
+                  (expandedChange)="loadMissingKnowledgeDetails(item.id)">
+                  <pa-accordion-item-body>
+                    <app-missing-knowledge-details
+                      noScore
+                      [item]="item"
+                      [missingKnowledgeDetails]="missingKnowledgeDetails"
+                      [missingKnowledgeError]="missingKnowledgeError"
+                      (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                  </pa-accordion-item-body>
+                </pa-accordion-item>
+              }
+            </pa-accordion>
+          }
+        }
+      }
+    </div>
+
+    <!-- Low Context sub-section -->
+    <div class="metric-card missing-knowledge-card">
+      <div class="sticky-section sub-section">
+        <pa-expander [expanded]="false">
+          <pa-expander-header>
+            <div class="criteria-header">
+              <span class="title-xxs">
+                {{
+                  'kb.metrics.missing-knowledge.criteria.summary'
+                    | translate: { value: criteriaPercentValue, month: lowControlMonthValue }
+                }}
+              </span>
+              <div class="pagination">
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-left"
+                  (click)="updateLowContextPage($event, false)"
+                  [disabled]="!(lowContextPage | async) || lowContextCriteria.invalid || (lowContextLoading | async)">
+                  {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+                </pa-button>
+                <div>
+                  {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((lowContextPage | async) || 0) + 1 } }}
+                </div>
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-right"
+                  (click)="updateLowContextPage($event, true)"
+                  [disabled]="
+                    !(lowContextData | async)?.has_more || lowContextCriteria.invalid || (lowContextLoading | async)
+                  ">
+                  {{ 'kb.metrics.missing-knowledge.next' | translate }}
+                </pa-button>
+              </div>
+            </div>
+          </pa-expander-header>
+          <pa-expander-body>
+            <div class="criteria-container">
+              <form [formGroup]="lowContextCriteria">
+                <div class="field-container">
+                  <label for="value">
+                    {{ 'kb.metrics.missing-knowledge.criteria.context-lower-than-label' | translate }}
+                  </label>
+                  <pa-select
+                    id="value"
+                    formControlName="value"
+                    externalLabel>
+                    <pa-option value="1">20%</pa-option>
+                    <pa-option value="2">40%</pa-option>
+                    <pa-option value="3">60%</pa-option>
+                    <pa-option value="4">80%</pa-option>
+                    <pa-option value="4">80%</pa-option>
+                    <pa-option value="5">100%</pa-option>
+                  </pa-select>
+                </div>
+                <div class="field-container">
+                  <label for="month">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
+                  <pa-input
+                    id="month"
+                    externalLabel
+                    formControlName="month"
+                    help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+                </div>
+                @if (lowContextMonthControl.errors?.['dateBefore']) {
+                  <nsi-info-card type="warning">
+                    {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                  </nsi-info-card>
+                }
+              </form>
+            </div>
+          </pa-expander-body>
+        </pa-expander>
+      </div>
+
+      @if (lowContextOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else if (!lowContextMonthControl.errors) {
+        @if (lowContextData | async; as missingKnowledge) {
+          @if (missingKnowledge.data.length === 0) {
+            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+          } @else {
+            <pa-accordion>
+              @for (item of missingKnowledge.data; track item.id) {
+                @if (item.remi) {
+                  <pa-accordion-item
+                    [id]="'' + item.id"
+                    [itemTitle]="item.question"
+                    [description]="
+                      '<strong>' +
+                      ('kb.metrics.missing-knowledge.summary.answer' | translate) +
+                      '</strong>' +
+                      item.answer +
+                      '<br><strong>' +
+                      ('kb.metrics.missing-knowledge.summary.relevance' | translate) +
+                      item.remi.answer_relevance.score * 20 +
+                      '%</strong> – ' +
+                      item.remi.answer_relevance.reason +
+                      '<br>' +
+                      ('kb.metrics.missing-knowledge.summary.context-count'
+                        | translate: { count: item.remi.context_relevance.length })
+                    "
+                    (expandedChange)="loadMissingKnowledgeDetails(item.id)">
+                    <pa-accordion-item-extra-description>
+                      @if (missingKnowledgeBarPlotData | async; as data) {
+                        <div class="chart-container">
+                          <stf-grouped-bar-chart
+                            [data]="data[item.id]"
+                            [colors]="[metricColors['context_relevance'], metricColors['groundedness']]"
+                            height="144"></stf-grouped-bar-chart>
+                          <h6>Text blocks scores distribution</h6>
+                        </div>
+                      }
+                    </pa-accordion-item-extra-description>
+
+                    <pa-accordion-item-body>
+                      <app-missing-knowledge-details
+                        [item]="item"
+                        [missingKnowledgeDetails]="missingKnowledgeDetails"
+                        [missingKnowledgeError]="missingKnowledgeError"
+                        (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                    </pa-accordion-item-body>
+                  </pa-accordion-item>
+                }
+              }
+            </pa-accordion>
+          }
+        }
+      }
+    </div>
+
+    <!-- Bad Feedback sub-section -->
+    <div class="metric-card missing-knowledge-card">
+      <div class="sticky-section sub-section">
+        <pa-expander
+          [expanded]="false"
+          [contentLoaded]="badFeedbackMonthControl.errors?.['dateBefore']">
+          <pa-expander-header>
+            <div class="criteria-header">
+              <span class="title-xxs">
+                {{ 'kb.metrics.missing-knowledge.bad-feedback.title' | translate: { month: badFeedbackMonthValue } }}
+              </span>
+              <div class="pagination">
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-left"
+                  (click)="updateBadFeedbackPage($event, false)"
+                  [disabled]="
+                    !(badFeedbackPage | async) || badFeedbackMonthControl.invalid || (badFeedbackLoading | async)
+                  ">
+                  {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+                </pa-button>
+                <div>
+                  {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((badFeedbackPage | async) || 0) + 1 } }}
+                </div>
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  icon="chevron-right"
+                  (click)="updateBadFeedbackPage($event, true)"
+                  [disabled]="
+                    !(badFeedbackData | async)?.has_more ||
+                    badFeedbackMonthControl.invalid ||
+                    (badFeedbackLoading | async)
+                  ">
+                  {{ 'kb.metrics.missing-knowledge.next' | translate }}
+                </pa-button>
+              </div>
+            </div>
+          </pa-expander-header>
+          <pa-expander-body>
+            <div class="criteria-container">
+              <form [formGroup]="badFeedbackCriteria">
+                <div class="field-container">
+                  <label for="monthBadFeedback">
+                    {{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}
+                  </label>
+                  <pa-input
+                    id="monthBadFeedback"
+                    externalLabel
+                    formControlName="month"
+                    help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+                </div>
+                @if (badFeedbackMonthControl.errors?.['dateBefore']) {
+                  <nsi-info-card type="warning">
+                    {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                  </nsi-info-card>
+                }
+              </form>
+            </div>
+          </pa-expander-body>
+        </pa-expander>
+      </div>
+
+      @if (badFeedbackOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else if (!badFeedbackMonthControl.errors) {
+        @if (badFeedbackData | async; as badFeedback) {
+          @if (badFeedback.data.length === 0) {
+            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+          } @else {
+            <pa-accordion>
+              @for (item of badFeedback.data; track item.id) {
+                <pa-accordion-item
+                  [id]="'' + item.id"
+                  [itemTitle]="item.question">
+                  <pa-accordion-item-body>
+                    <div class="title-s">{{ 'kb.metrics.missing-knowledge.summary.answer' | translate }}</div>
+                    <div>{{ item.answer }}</div>
+                  </pa-accordion-item-body>
+                </pa-accordion-item>
+              }
+            </pa-accordion>
+          }
+        }
+      }
+    </div>
+  </section>
+</div>
+
+<div class="viewer-container">
+  <div [innerHTML]="viewerWidget | async"></div>
+</div>

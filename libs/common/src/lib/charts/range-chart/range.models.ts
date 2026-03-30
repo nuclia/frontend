@@ -3,6 +3,8 @@ export interface RangeChartData {
   average: number;
   min: number;
   max: number;
+  /** Optional per-category color. When set, overrides the default CSS class styling. */
+  color?: string;
 }
 
 export interface DatedRangeChartData {
