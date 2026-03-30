@@ -34,6 +34,11 @@ Translations cover 4 locales: **en, es, fr, ca**. These are the only supported l
    for the `SisToastService` pattern.
 5. **The search-widget has its own independent i18n system** (not ngx-translate). Do not mix
    the two approaches.
+6. **Never move or reorder existing keys**, even if it seems logical to group them differently.
+   The JSON files are the source of truth for all locales — any key position change creates
+   unnecessary diffs across all 4 locale files, conflicts in PRs, and confusion in BabelEdit
+   history. Only add keys in their correct alphabetical/namespace position; leave existing
+   keys exactly where they are.
 
 ---
 
@@ -218,3 +223,4 @@ JSON files) rather than pulling in ngx-translate.
 | Using nested JSON keys `{ "account": { "title": "..." } }` | Use flat dot-notation: `"account.title"` |
 | Using `$localize` (Angular's native i18n) | This project uses ngx-translate — do not mix |
 | Calling `TranslateService` in search-widget | Use `_()` / `translateInstant()` from `core/i18n.ts` |
+| Moving or reordering existing keys in JSON files | Leave existing keys in place — only add new keys in alphabetical order |

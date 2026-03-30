@@ -48,7 +48,6 @@
   }
 }
 
-
 // ── Stat cards (projected from page components) ───────────────────────────
 
 :host ::ng-deep {
@@ -77,50 +76,52 @@
     }
   }
 
-.stat-card--active {
-      border-color: var(--color-primary-regular);
+  .stat-card--active {
+    border-color: var(--color-primary-regular);
+  }
+
+  .stat-card-footer {
+    display: flex;
+    align-items: center;
+    gap: rhythm(0.75);
+  }
+
+  .stat-card-view-all {
+    font-size: font-size(xs);
+    line-height: rhythm(3);
+    color: var(--color-primary-regular);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-primary-strong);
+      text-decoration: underline;
     }
+  }
 
-    .stat-card-footer {
-      display: flex;
-      align-items: center;
-      gap: rhythm(0.75);
-    }
+  .stat-card-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: rhythm(2);
+    height: rhythm(2);
+    border-radius: 50%;
+    border: 1px solid $color-neutral-lighter;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: font-size(xxs);
+    line-height: 1;
+    color: $color-neutral-regular;
+    transition:
+      background 0.15s,
+      color 0.15s;
 
-    .stat-card-view-all {
-      font-size: 0.75rem;
-      line-height: 1.5rem;
-      color: var(--color-primary-regular);
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-
-      &:hover {
-        color: var(--color-primary-strong);
-        text-decoration: underline;
-      }
-    }
-
-    .stat-card-clear {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: rhythm(2);
-      height: rhythm(2);
-      border-radius: 50%;
-      border: 1px solid $color-neutral-lighter;
-      background: none;
-      padding: 0;
-      cursor: pointer;
-      font-size: 0.625rem;
-      line-height: 1;
+    &:hover {
+      background: $color-neutral-lighter;
       color: $color-neutral-regular;
-      transition: background 0.15s, color 0.15s;
-
-      &:hover {
-        background: $color-neutral-lighter;
-        color: $color-neutral-regular;
     }
   }
 }
@@ -187,12 +188,12 @@ pa-table {
 }
 
 .remi-score-low {
-  color: var(--color-danger, #dc2626);
+  color: var(--color-danger-regular);
   font-weight: 600;
 }
 
 .remi-score-high {
-  color: var(--color-success, #16a34a);
+  color: var(--color-success-regular);
   font-weight: 600;
 }
 
@@ -291,7 +292,7 @@ pa-table {
   }
 
   .detail-inner-label {
-    font-size: 0.6875rem;
+    font-size: font-size(xs);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: $color-neutral-regular;
@@ -334,5 +335,3 @@ pa-table {
     color: var(--color-neutral-dark);
   }
 }
-
-

@@ -1,4 +1,5 @@
 @use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
 
 .multi-series-chart {
   @include charts.chart();
@@ -6,15 +7,15 @@
 
 .chart-legend {
   display: flex;
-  gap: 24px;
-  margin-bottom: 16px;
+  gap: rhythm(3);
+  margin-bottom: rhythm(2);
   flex-wrap: wrap;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: rhythm(1);
   cursor: pointer;
   transition: opacity 0.2s;
 
@@ -24,47 +25,47 @@
 }
 
 .legend-color {
-  width: 12px;
-  height: 12px;
+  width: rhythm(1.5);
+  height: rhythm(1.5);
   border-radius: 2px;
   flex-shrink: 0;
 }
 
 .tooltip-color {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: rhythm(1);
+  height: rhythm(1);
   border-radius: 2px;
-  margin-right: 4px;
+  margin-right: rhythm(0.5);
 }
 
 .tooltip-range {
   opacity: 0.7;
-  font-size: 10px;
+  font-size: font-size(xxs);
 }
 
 :host ::ng-deep {
   .x-axis,
   .y-axis {
-    font-size: 11px;
-    color: #666;
+    font-size: font-size(xs);
+    color: $color-neutral-regular;
 
     .domain {
-      stroke: #ccc;
+      stroke: $color-neutral-light;
     }
 
     .tick line {
-      stroke: #ccc;
+      stroke: $color-neutral-light;
     }
   }
 
   .grid-line {
-    stroke: #f0f0f0;
+    stroke: $color-neutral-lightest;
     stroke-width: 1;
   }
 
   .unit {
-    font-size: 11px;
-    fill: #999;
+    font-size: font-size(xs);
+    fill: $color-neutral-light;
   }
 }

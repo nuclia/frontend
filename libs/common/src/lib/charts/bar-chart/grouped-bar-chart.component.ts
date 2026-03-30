@@ -24,7 +24,11 @@ export class GroupedBarChartComponent extends BaseChartDirective implements Afte
 
   override defaultHeight = 200;
   @Input({ transform: numberAttribute }) height = this.defaultHeight;
-  @Input() colors: string[] = ['#F97316', '#3B82F6', '#10B981'];
+  @Input() colors: string[] = [
+    'var(--color-remi-asnwer-relevance)',
+    'var(--color-remi-context-relevance)',
+    'var(--color-remi-groundedness)',
+  ];
   @Input()
   set data(values: GroupedBarChartData[]) {
     this._data = values;

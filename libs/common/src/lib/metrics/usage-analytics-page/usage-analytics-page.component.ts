@@ -1,14 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RemiAnswerStatus } from '@nuclia/core';
 import { MetricsMonthRange } from '../metrics-column.model';
-import { BooleanCondition, DateCondition, FilterApplyEvent, FilterColumnConfig, NumericCondition, NumericOperation } from '../metrics-filters';
+import {
+  BooleanCondition,
+  DateCondition,
+  FilterApplyEvent,
+  FilterColumnConfig,
+  NumericCondition,
+  NumericOperation,
+} from '../metrics-filters';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analytics-page.config';
 
 @Component({
   selector: 'app-usage-analytics-page',
   templateUrl: './usage-analytics-page.component.html',
-  styleUrl: './usage-analytics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
   providers: [UsageAnalyticsPageService],
@@ -30,7 +36,12 @@ export class UsageAnalyticsPageComponent {
 
   readonly filterColumns: FilterColumnConfig[] = [
     { key: 'feedback_good', labelKey: 'activity.filter.feedback', type: 'boolean' },
-    { key: 'content_relevance', labelKey: 'activity.filter.content_relevance', type: 'numeric', allowedOperations: ['lt', 'gt', 'eq'] },
+    {
+      key: 'content_relevance',
+      labelKey: 'activity.filter.content_relevance',
+      type: 'numeric',
+      allowedOperations: ['lt', 'gt', 'eq'],
+    },
     { key: 'date', labelKey: 'activity.filter.date', type: 'date' },
   ];
 
@@ -84,7 +95,11 @@ export class UsageAnalyticsPageComponent {
     const feedbackCondition = event.booleanConditions.find((c) => c.column === 'feedback_good');
     const crCondition = event.numericConditions.find((c) => c.column === 'content_relevance');
     const contentRelevance = crCondition
-      ? { value: crCondition.value, operation: crCondition.operation as 'gt' | 'lt' | 'eq', aggregation: 'max' as const }
+      ? {
+          value: crCondition.value,
+          operation: crCondition.operation as 'gt' | 'lt' | 'eq',
+          aggregation: 'max' as const,
+        }
       : undefined;
     this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
   }
