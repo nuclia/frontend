@@ -31,6 +31,20 @@ export interface MetricsColumnDef {
 
   /** Group name for sidebar section grouping. Maps to i18n key 'activity.detail.group.{group}' */
   group?: string;
+
+  /**
+   * Optional inline action button rendered inside this cell (to the right of the value).
+   * When set, the cell content is wrapped in a flex row with the value on the left and the
+   * button on the right. The button emits `rowActionTriggered` on the parent metrics-page.
+   */
+  inlineAction?: {
+    /** pa-icon glyph name, e.g. 'bulb' */
+    icon: string;
+    /** i18n key used as the button tooltip */
+    tooltip: string;
+    /** Return true to show the button for a given row item */
+    visible: (item: ActivityLogItem) => boolean;
+  };
 }
 
 /** Extra fields shown only in the detail side panel, not tied to column definitions */
@@ -53,8 +67,14 @@ export interface MetricsMonthRange {
 /** A processing-activity row — extends ActivityLogItem with a display-only status label. */
 export type ProcessingItem = ActivityLogItem & { _displayStatus?: string };
 
-/** A usage-analytics row — extends ActivityLogItem with display status and REMi score. */
-export type UsageAnalyticsItem = ActivityLogItem & { _displayStatus?: string; _remiScore?: number | null };
+/** A usage-analytics row — extends ActivityLogItem with display status and individual REMi scores. */
+export type UsageAnalyticsItem = ActivityLogItem & {
+  _displayStatus?: string;
+  _remiScore?: number | null;
+  _remiAnswerRelevance?: number | null;
+  _remiContextRelevance?: number | null;
+  _remiGroundedness?: number | null;
+};
 
 /** Aggregated cost/token usage stats for the selected month. */
 export interface CostTokenStats {

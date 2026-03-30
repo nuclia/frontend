@@ -10,7 +10,8 @@
   [showDownload]="false"
   [showSearch]="false"
   (monthRangeChange)="onMonthRangeChange($event)"
-  (loadNextPage)="onLoadNextPage()">
+  (loadNextPage)="onLoadNextPage()"
+  (rowActionTriggered)="openAdvice($event)">
 
   <!-- Filter button in toolbar (projected into toolbar-extra slot) -->
   <app-metrics-filters toolbar-extra
@@ -44,3 +45,4 @@
   </div>
 
 </app-metrics-page>
+

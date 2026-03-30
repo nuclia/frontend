@@ -37,18 +37,21 @@ import {
   MultiSeriesEvolutionChartComponent,
 } from '../../charts';
 import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
-import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
   RemiQueryResponse,
   RemiQueryResponseContextDetails,
+  RemiQueryResponseItem,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DateAfter } from '../../validators';
 import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
+import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
+import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { PreviewService } from '../../resources';
 import { SafeHtml } from '@angular/platform-browser';
 import { NavigationService } from '@flaps/core';
@@ -94,6 +97,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   private translate = inject(TranslateService);
   private previewService = inject(PreviewService);
   private navigationService = inject(NavigationService);
+  private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll: Subject<void> = new Subject();
@@ -336,4 +340,44 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     event.stopPropagation();
     this.remiMetrics.updateBadFeedbackPage(next);
   }
+
+  onRequestAdvice(item: RemiQueryResponseItem): void {
+    if (this.missingKnowledgeDetails[item.id]) {
+      this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
+      return;
+    }
+    this.remiMetrics
+      .getMissingKnowledgeDetails(item.id)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe({
+        next: (details) => {
+          this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
+          this.openAdviceModal(item, details);
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  private openAdviceModal(item: RemiQueryResponseItem, details: RemiQueryResponseContextDetails): void {
+    const context = details.context.map((c) => c.text).join('\n\n');
+    const input: AdviceInput = {
+      question: item.question,
+      answer: item.answer,
+      context,
+      remiScores: item.remi
+        ? {
+            answerRelevance: item.remi.answer_relevance.score,
+            contextRelevance:
+              item.remi.context_relevance.length > 0 ? Math.max(...item.remi.context_relevance) : undefined,
+            groundedness:
+              item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
+          }
+        : undefined,
+      // RemiQueryResponseItem does not carry per-query RAG params. Pass an empty object so
+      // the advisor knows the field was considered rather than silently omitting it.
+      params: {},
+    };
+    openRagAdviceModal(this.modalService, input);
+  }
 }
+

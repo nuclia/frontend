@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import {
   ACTIVITY_LOG_ASK_SHOW_FIELDS,
+  ActivityLogAskQuery,
   ActivityLogItem,
   EventType,
   Metric,
@@ -308,6 +309,15 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       remi_scores: remiItem.remi?.answer_relevance?.score ?? null,
       _displayStatus: status ? this._translateStatus(status) : '—',
       _remiScore: remiItem.remi?.answer_relevance?.score ?? null,
+      _remiAnswerRelevance: remiItem.remi?.answer_relevance?.score ?? null,
+      _remiContextRelevance:
+        (remiItem.remi?.context_relevance?.length ?? 0) > 0
+          ? Math.max(...(remiItem.remi!.context_relevance))
+          : null,
+      _remiGroundedness:
+        (remiItem.remi?.groundedness?.length ?? 0) > 0
+          ? Math.max(...(remiItem.remi!.groundedness))
+          : null,
     };
   }
 
@@ -318,6 +328,21 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       NO_CONTEXT: 'activity.remi-analytics.status.no-context',
     };
     return this.translate.instant(statusKeys[status]);
+  }
+
+  fetchActivityParams(id: number): Observable<ActivityLogItem | null> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.activityMonitor.queryActivityLogs(EventType.ASK, {
+          year_month: this._yearMonth(),
+          show: [...ACTIVITY_LOG_ASK_SHOW_FIELDS],
+          filters: { id: { eq: id } },
+        } as ActivityLogAskQuery),
+      ),
+      map((items) => items[0] ?? null),
+      catchError(() => of(null)),
+    );
   }
 
   private _computeRemiAverages(items: RemiScoresResponseItem[]): {

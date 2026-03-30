@@ -1,0 +1,145 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.query-summary {
+  background: $color-neutral-lightest;
+  border-radius: $border-radius-default;
+  padding: rhythm(1) rhythm(2);
+  margin-bottom: rhythm(2);
+
+  .summary-field {
+    margin-bottom: rhythm(1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: $color-neutral-regular;
+      margin-bottom: rhythm(0.25);
+    }
+
+    .summary-value {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      &.truncated {
+        max-height: 80px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+
+  .remi-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+  }
+
+  .remi-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: rhythm(0.25) rhythm(0.5);
+    border-radius: $border-radius-default;
+    background: $color-neutral-lighter;
+    font-size: 0.875rem;
+
+    &.low {
+      background: var(--color-secondary-lightest, #fff8e1);
+      color: var(--color-secondary-strong, #b45309);
+      font-weight: 600;
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: rhythm(4) rhythm(2);
+  gap: rhythm(1);
+
+  p {
+    color: $color-neutral-regular;
+    margin: 0;
+  }
+}
+
+.advice-section {
+  margin-top: rhythm(2);
+
+  h4 {
+    margin: rhythm(2) 0 rhythm(1);
+    color: var(--color-primary-strong, #4731a7);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 0 0 rhythm(1);
+  }
+
+  .suggestions-list {
+    margin: 0;
+    padding-left: rhythm(3);
+
+    li {
+      margin-bottom: rhythm(1);
+      line-height: 1.5;
+    }
+  }
+}
+
+.suggested-params {
+  margin-top: rhythm(2);
+  padding: rhythm(1) rhythm(1.5);
+  background: var(--color-primary-lightest, rgba(71, 49, 167, 0.06));
+  border-radius: $border-radius-default;
+  border-left: 3px solid var(--color-primary-regular, #4731a7);
+
+  .params-label {
+    margin: 0 0 rhythm(0.75);
+    color: var(--color-primary-strong);
+  }
+
+  .params-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: rhythm(1);
+
+    .param-name {
+      min-width: 160px;
+      color: $color-neutral-regular;
+      flex-shrink: 0;
+    }
+
+    .param-value {
+      font-weight: 600;
+      color: var(--color-primary-strong, #4731a7);
+      font-family: monospace;
+    }
+  }
+}
+
+.info-card-title {
+  margin-bottom: rhythm(1);
+}

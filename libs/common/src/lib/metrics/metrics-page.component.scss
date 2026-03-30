@@ -336,3 +336,63 @@ pa-table {
 }
 
 
+
+
+// ── Row action column ─────────────────────────────────────────────────────
+
+.action-col-header,
+.action-col-cell {
+  width: 48px;
+  min-width: 48px;
+  text-align: center;
+}
+
+.row-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-primary-regular, #6e48ce);
+  padding: 4px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--color-primary-lightest, #f0ebfd);
+  }
+}
+
+// ── Inline action (rendered inside a cell, e.g. remiScore column) ─────────
+
+.cell-inline-action-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+}
+
+.inline-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  color: var(--color-primary-regular);
+  opacity: 0.7;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+    background: var(--color-primary-lightest, rgba(71, 49, 167, 0.08));
+  }
+
+  pa-icon {
+    font-size: 16px;
+  }
+}

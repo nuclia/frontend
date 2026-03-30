@@ -196,7 +196,8 @@
                       [item]="item"
                       [missingKnowledgeDetails]="missingKnowledgeDetails"
                       [missingKnowledgeError]="missingKnowledgeError"
-                      (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                      (openViewer)="openViewer($event)"
+                      (requestAdvice)="onRequestAdvice($event)"></app-missing-knowledge-details>
                   </pa-accordion-item-body>
                 </pa-accordion-item>
               }
@@ -330,7 +331,8 @@
                         [item]="item"
                         [missingKnowledgeDetails]="missingKnowledgeDetails"
                         [missingKnowledgeError]="missingKnowledgeError"
-                        (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                        (openViewer)="openViewer($event)"
+                        (requestAdvice)="onRequestAdvice($event)"></app-missing-knowledge-details>
                     </pa-accordion-item-body>
                   </pa-accordion-item>
                 }
@@ -438,3 +440,4 @@
 <div class="viewer-container">
   <div [innerHTML]="viewerWidget | async"></div>
 </div>
+

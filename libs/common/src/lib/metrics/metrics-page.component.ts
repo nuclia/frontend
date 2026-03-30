@@ -42,6 +42,11 @@ export class MetricsPageComponent {
   availableMonths = input<string[]>([]);
   showDownload = input(true);
   showSearch = input(true);
+  readonly rowAction = input<{
+    icon: string;
+    tooltip: string;
+    visible: (item: ActivityLogItem) => boolean;
+  } | null>(null);
 
   // ── Outputs ───────────────────────────────────────────────────────────────
 
@@ -50,6 +55,7 @@ export class MetricsPageComponent {
   searchChange = output<{ term: string; column: string }>();
   loadNextPage = output<void>();
   downloadRequested = output<{ format: DownloadFormat; columns: string[] }>();
+  rowActionTriggered = output<ActivityLogItem>();
 
   // ── Internal state ────────────────────────────────────────────────────────
 
@@ -185,6 +191,11 @@ export class MetricsPageComponent {
       labelKey: `activity.detail.group.${group}`,
       fields,
     }));
+  });
+
+  readonly computedGridColumns = computed(() => {
+    const base = this.service.gridColumns();
+    return this.rowAction() ? `${base} 48px` : base;
   });
 
   getFieldValue(

@@ -1,4 +1,13 @@
 @if (missingKnowledgeDetails()[item().id]; as details) {
+  <div class="advice-action-row">
+    <pa-button
+      kind="secondary"
+      size="small"
+      icon="bulb"
+      (click)="requestAdvice.emit(item())">
+      {{ 'activity.advice.generate' | translate }}
+    </pa-button>
+  </div>
   <pa-table
     border
     [columns]="noScore() ? '1fr 80px' : 'repeat(2, 112px) 1fr 80px'">

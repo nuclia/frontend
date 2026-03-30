@@ -1,0 +1,195 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'activity.advice.title' | translate }}</pa-modal-title>
+
+  <pa-modal-content>
+    <!-- Query summary (always visible) -->
+    <div class="query-summary">
+      <div class="summary-field">
+        <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+        <p class="summary-value">{{ input?.question }}</p>
+      </div>
+      @if (input?.answer) {
+        <div class="summary-field">
+          <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+          <p class="summary-value truncated">{{ input?.answer }}</p>
+        </div>
+      }
+      @if (input?.remiScores) {
+        <div class="remi-scores">
+          @if (input?.remiScores?.answerRelevance !== undefined) {
+            <span
+              class="remi-badge"
+              [class.low]="(input?.remiScores?.answerRelevance ?? 5) < 3">
+              {{ 'metrics.remi.answer' | translate }}: {{ input?.remiScores?.answerRelevance | number: '1.1-1' }}
+            </span>
+          }
+          @if (input?.remiScores?.contextRelevance !== undefined) {
+            <span
+              class="remi-badge"
+              [class.low]="(input?.remiScores?.contextRelevance ?? 5) < 3">
+              {{ 'metrics.remi.context' | translate }}: {{ input?.remiScores?.contextRelevance | number: '1.1-1' }}
+            </span>
+          }
+          @if (input?.remiScores?.groundedness !== undefined) {
+            <span
+              class="remi-badge"
+              [class.low]="(input?.remiScores?.groundedness ?? 5) < 3">
+              {{ 'metrics.remi.groundedness' | translate }}: {{ input?.remiScores?.groundedness | number: '1.1-1' }}
+            </span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- User expectation expander (only in 'input' state) -->
+    @if (state() === 'input') {
+      <pa-expander [expanded]="false">
+        <pa-expander-header>{{ 'activity.advice.expectation-header' | translate }}</pa-expander-header>
+        <pa-expander-body>
+          <pa-textarea
+            [placeholder]="'activity.advice.expectation-placeholder' | translate"
+            [ngModel]="userExpectation()"
+            (ngModelChange)="userExpectation.set($event)"
+            [rows]="3"></pa-textarea>
+        </pa-expander-body>
+      </pa-expander>
+    }
+
+    <!-- Loading -->
+    @if (state() === 'loading') {
+      <div class="loading-state">
+        <nsi-spinner></nsi-spinner>
+        <p>{{ 'activity.advice.analyzing' | translate }}</p>
+      </div>
+    }
+
+    <!-- Advice -->
+    @if (state() === 'advice' || state() === 'rerunning' || state() === 'result') {
+      <div class="advice-section">
+        <h4 class="title-s">{{ 'activity.advice.diagnosis' | translate }}</h4>
+        <p class="body-m">{{ advice()?.diagnosis }}</p>
+
+        @if ((advice()?.suggestions?.length ?? 0) > 0) {
+          <h4 class="title-s">{{ 'activity.advice.suggestions' | translate }}</h4>
+          <ul class="suggestions-list">
+            @for (suggestion of advice()?.suggestions; track $index) {
+              <li class="body-m">{{ suggestion }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      @if (hasRerunOption()) {
+        <div class="suggested-params">
+          <p class="params-label body-s-bold">{{ 'activity.advice.suggested-params' | translate }}</p>
+          <ul class="params-list">
+            @if (advice()?.suggestedParams?.minScoreSemantic !== undefined) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.min-score-semantic' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.minScoreSemantic }}</span>
+              </li>
+            }
+            @if (advice()?.suggestedParams?.minScoreBm25 !== undefined) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.min-score-bm25' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.minScoreBm25 }}</span>
+              </li>
+            }
+            @if (advice()?.suggestedParams?.model) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.model' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.model }}</span>
+              </li>
+            }
+            @if (advice()?.suggestedParams?.topK !== undefined) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.top-k' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.topK }}</span>
+              </li>
+            }
+            @if (advice()?.suggestedParams?.ragStrategies?.length) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.rag-strategies' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.ragStrategies?.join(', ') }}</span>
+              </li>
+            }
+            @if (advice()?.suggestedParams?.rephrase !== undefined) {
+              <li class="body-s">
+                <span class="param-name">{{ 'activity.advice.param.rephrase' | translate }}</span>
+                <span class="param-value">{{ advice()?.suggestedParams?.rephrase }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    }
+
+    <!-- Re-running spinner -->
+    @if (state() === 'rerunning') {
+      <div class="loading-state">
+        <nsi-spinner></nsi-spinner>
+        <p>{{ 'activity.advice.rerunning' | translate }}</p>
+      </div>
+    }
+
+    <!-- Re-run result -->
+    @if (state() === 'result' && rerunResult()) {
+      <nsi-info-card type="highlight">
+        <p class="info-card-title body-s-bold">{{ 'activity.advice.new-answer' | translate }}</p>
+        <p class="body-m">{{ rerunResult()?.answer }}</p>
+      </nsi-info-card>
+    }
+
+    <!-- Error -->
+    @if (state() === 'error') {
+      <nsi-info-card type="warning">
+        <p class="body-m">{{ errorMessage() || ('activity.advice.error' | translate) }}</p>
+      </nsi-info-card>
+    }
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    @switch (state()) {
+      @case ('input') {
+        <pa-button (click)="generateAdvice()">
+          {{ 'activity.advice.generate' | translate }}
+        </pa-button>
+        <pa-button
+          kind="secondary"
+          (click)="modal.close()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      }
+      @case ('advice') {
+        @if (hasRerunOption()) {
+          <pa-button (click)="rerunWithSuggestions()">
+            {{ 'activity.advice.rerun' | translate }}
+          </pa-button>
+        }
+        <pa-button
+          kind="secondary"
+          (click)="modal.close()">
+          {{ 'generic.close' | translate }}
+        </pa-button>
+      }
+      @case ('result') {
+        <pa-button (click)="modal.close()">
+          {{ 'generic.done' | translate }}
+        </pa-button>
+      }
+      @case ('error') {
+        <pa-button
+          kind="secondary"
+          (click)="state.set('input')">
+          {{ 'generic.retry' | translate }}
+        </pa-button>
+        <pa-button
+          kind="secondary"
+          (click)="modal.close()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      }
+    }
+  </pa-modal-footer>
+</pa-modal-advanced>
+

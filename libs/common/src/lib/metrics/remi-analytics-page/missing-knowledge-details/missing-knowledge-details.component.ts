@@ -18,4 +18,5 @@ export class MissingKnowledgeDetailsComponent {
   readonly noScore = input(false, { transform: booleanAttribute });
 
   readonly openViewer = output<string>();
+  readonly requestAdvice = output<RemiQueryResponseItem>();
 }
