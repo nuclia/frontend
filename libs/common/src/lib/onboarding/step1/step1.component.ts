@@ -44,7 +44,7 @@ export class Step1Component {
   }
   private _isAws = false;
 
-  @Output() submitStep1 = new EventEmitter<OnboardingPayload>();
+  @Output() submitStep1 = new EventEmitter<OnboardingPayload | null>();
   @Output() submitStep1Aws = new EventEmitter<AwsOnboardingPayload>();
 
   private featuresService = inject(FeaturesService);
@@ -76,6 +76,11 @@ export class Step1Component {
   constructor() {
     effect(() => {
       this.updateForm(this._isAws);
+    });
+    effect(() => {
+      if (this.hasSignupOnProgressCom()) {
+        this.submitStep1.emit(null);
+      }
     });
   }
 

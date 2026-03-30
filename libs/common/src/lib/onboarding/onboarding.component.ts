@@ -56,11 +56,13 @@ export class OnboardingComponent {
     this.onboardingService.previousStep();
   }
 
-  createAccountAndInquiry($event: OnboardingPayload) {
+  createAccountAndInquiry($event: OnboardingPayload | null) {
     this.creatingAccount = true;
     this.cdr.markForCheck();
-    this.onboardingInquiryPayload = $event;
-    this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
+    if ($event) {
+      this.onboardingInquiryPayload = $event;
+      this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
+    }
     this.onboardingService
       .createAccount()
       .pipe(take(1))

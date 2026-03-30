@@ -151,18 +151,17 @@
             [errorMessages]="validationMessages.phoneNumber"></pa-input>
         </div>
       </div>
+      <pa-checkbox formControlName="getUpdates">{{ 'onboarding.step1.updates' | translate }}</pa-checkbox>
+
+      <pa-checkbox
+        formControlName="acceptPrivacyPolicy"
+        [noEllipsis]="true">
+        <div [innerHTML]="'user.consent' | translate"></div>
+      </pa-checkbox>
+      <div
+        class="privacy-policy-text"
+        [innerHTML]="'onboarding.privacy-policy' | translate"></div>
     }
-
-    <pa-checkbox formControlName="getUpdates">{{ 'onboarding.step1.updates' | translate }}</pa-checkbox>
-
-    <pa-checkbox
-      formControlName="acceptPrivacyPolicy"
-      [noEllipsis]="true">
-      <div [innerHTML]="'user.consent' | translate"></div>
-    </pa-checkbox>
-    <div
-      class="privacy-policy-text"
-      [innerHTML]="'onboarding.privacy-policy' | translate"></div>
   </div>
   <nsi-sticky-footer>
     <pa-button
