@@ -305,6 +305,32 @@ export class SearchConfigService {
 
 ---
 
+## `as const` Show Field Pattern
+
+SDK model files (e.g., `activity.models.ts`) define show/field sets as `as const` arrays with
+derived union types:
+
+```ts
+// In the SDK model file
+export const ACTIVITY_SHOW_FIELDS = ['date', 'user', 'action', 'resource'] as const;
+export type ActivityShowField = (typeof ACTIVITY_SHOW_FIELDS)[number];
+```
+
+**Consumer code should import the SDK arrays and filter — never re-enumerate the values:**
+
+```ts
+// ✅ Correct: filter the SDK source-of-truth array
+const EXCLUDED: ActivityShowField[] = ['user'];
+const MY_FIELDS = ACTIVITY_SHOW_FIELDS.filter((f) => !EXCLUDED.includes(f));
+
+// ❌ Wrong: re-listing values that already exist in the SDK
+const MY_FIELDS = ['date', 'action', 'resource'];  // drifts when SDK adds new fields
+```
+
+This ensures consumers automatically pick up new fields added to the SDK without code changes.
+
+---
+
 ## Common Mistakes to Avoid
 
 | Mistake | Correct pattern |

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
-import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../charts';
+import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../../charts';
 import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
@@ -27,9 +27,7 @@ interface RawEvolutionResults {
 }
 
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class RemiMetricsService {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
@@ -143,13 +141,14 @@ export class RemiMetricsService {
 
   updateBadFeedbackMonth(month: string) {
     this._badFeedbackPage.next(0);
+    this._badFeedbackPageIds.next([0]);
     this._badFeedbackCriteria.next({ month, pagination: undefined });
   }
   updateBadFeedbackPage(next: boolean) {
     this.missingKnowledgeBadFeedback.pipe(take(1)).subscribe((data) => {
       const newPage = this._badFeedbackPage.value + (next ? 1 : -1);
       const starting_after = next ? data.data[data.data.length - 1].id : this._badFeedbackPageIds.value[newPage];
-      this._noAnswerPage.next(newPage);
+      this._badFeedbackPage.next(newPage);
       if (this._badFeedbackPageIds.value[newPage] === undefined) {
         this._badFeedbackPageIds.next(this._badFeedbackPageIds.value.concat([starting_after]));
       }
@@ -351,15 +350,18 @@ export class RemiMetricsService {
     data: RawEvolutionResults,
     category: 'groundedness' | 'answer_relevance' | 'context_relevance',
   ): DatedRangeChartData[] {
-    return data.results.map((item) => {
-      const groundedness = item.metrics.find((metric) => metric.name === category);
-      return {
-        timestamp: format(new Date(item.timestamp), data.parameters.aggregation === 'hour' ? 'HH' : 'd/MM'),
-        min: (groundedness!.min * 100) / 5,
-        max: (groundedness!.max * 100) / 5,
-        average: (groundedness!.average * 100) / 5,
-      };
-    });
+    return data.results
+      .map((item) => {
+        const metric = item.metrics.find((m) => m.name === category);
+        if (!metric) return null;
+        return {
+          timestamp: format(new Date(item.timestamp), data.parameters.aggregation === 'hour' ? 'HH' : 'd/MM'),
+          min: (metric.min * 100) / 5,
+          max: (metric.max * 100) / 5,
+          average: (metric.average * 100) / 5,
+        };
+      })
+      .filter((item): item is DatedRangeChartData => item !== null);
   }
 
   private getDistribution(scores: number[]): { [score: string]: number } {

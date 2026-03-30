@@ -96,7 +96,8 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('x2', (d) => x(d.max))
       .attr('y1', (d) => y(d.category) || '')
       .attr('y2', (d) => y(d.category) || '')
-      .attr('class', 'range-line');
+      .attr('class', 'range-line')
+      .style('stroke', (d) => d.color || null);
 
     // Circles of average
     svg
@@ -107,7 +108,9 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('cx', (d) => x(d.average))
       .attr('cy', (d) => y(d.category) || 0)
       .attr('r', 4)
-      .attr('class', 'range-point');
+      .attr('class', 'range-point')
+      .style('fill', (d) => d.color || null)
+      .style('stroke', (d) => d.color || null);
 
     svg
       .selectAll('min')
@@ -118,7 +121,8 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('x2', (d) => x(d.min))
       .attr('y1', (d) => (y(d.category) || 0) + 2)
       .attr('y2', (d) => (y(d.category) || 0) - 2)
-      .attr('class', 'range-line');
+      .attr('class', 'range-line')
+      .style('stroke', (d) => d.color || null);
     svg
       .selectAll('max')
       .data(this.data)
@@ -128,6 +132,7 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('x2', (d) => x(d.max))
       .attr('y1', (d) => (y(d.category) || 0) + 2)
       .attr('y2', (d) => (y(d.category) || 0) - 2)
-      .attr('class', 'range-line');
+      .attr('class', 'range-line')
+      .style('stroke', (d) => d.color || null);
   }
 }

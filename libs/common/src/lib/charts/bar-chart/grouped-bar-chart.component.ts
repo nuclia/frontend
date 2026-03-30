@@ -24,6 +24,11 @@ export class GroupedBarChartComponent extends BaseChartDirective implements Afte
 
   override defaultHeight = 200;
   @Input({ transform: numberAttribute }) height = this.defaultHeight;
+  @Input() colors: string[] = [
+    'var(--color-remi-asnwer-relevance)',
+    'var(--color-remi-context-relevance)',
+    'var(--color-remi-groundedness)',
+  ];
   @Input()
   set data(values: GroupedBarChartData[]) {
     this._data = values;
@@ -74,7 +79,7 @@ export class GroupedBarChartComponent extends BaseChartDirective implements Afte
     // another scale for subgroup position
     const xSubGroup = d3.scaleBand().domain(subgroups).range([0, x.bandwidth()]).padding(0.05);
 
-    const color = d3.scaleOrdinal().domain(subgroups).range(['#FF75AC', '#674DFF', '#FFEC80']);
+    const color = d3.scaleOrdinal().domain(subgroups).range(this.colors);
 
     // Show the bars
     svg

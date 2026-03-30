@@ -1,0 +1,5148 @@
+info:
+  title: Account REST API
+  description: API documentation for managing Nuclia accounts, including all related
+    endpoints. Requires Personal Access Key.
+  version: v1
+openapi: 3.1.0
+servers:
+- url: https://stashify.cloud/api/v1
+  description: Development server
+tags:
+- description: Operations for creating, reading, updating, and deleting accounts.
+  name: Accounts
+- description: Operations related to the currently authenticated user.
+  name: Authenticated User
+- description: Management of users assigned to an account.
+  name: Users
+- description: Management of zones.
+  name: Zones
+- description: Manage inviting users to an account, list and invalidate invites
+  name: Invites
+paths:
+  /api/auth/github/authorize: {}
+  /api/auth/github/login: {}
+  /api/auth/google/authorize: {}
+  /api/auth/google/login: {}
+  /api/auth/login: {}
+  /api/auth/logout: {}
+  /api/auth/magic: {}
+  /api/auth/microsoft/authorize: {}
+  /api/auth/microsoft/login: {}
+  /api/auth/oauth/consent: {}
+  /api/auth/oauth/login: {}
+  /api/auth/oauth/logout: {}
+  /api/auth/recover: {}
+  /api/auth/refresh: {}
+  /api/auth/reset: {}
+  /api/auth/saml: {}
+  /api/auth/saml/acs: {}
+  /api/auth/saml/inquiry: {}
+  /api/auth/saml/sso: {}
+  /api/auth/saml/token: {}
+  /api/auth/setpassword: {}
+  /api/auth/setupuser: {}
+  /api/auth/signup: {}
+  /api/auth/signup/start: {}
+  /api/billing/account/{account_id}/aws/current_usage: {}
+  /api/billing/account/{account_id}/aws/manual-agreement: {}
+  /api/billing/account/{account_id}/aws/subscription: {}
+  /api/billing/account/{account_id}/aws/subscription/sync: {}
+  /api/billing/account/{account_id}/current_usage: {}
+  /api/billing/account/{account_id}/customer: {}
+  /api/billing/account/{account_id}/invoices: {}
+  /api/billing/account/{account_id}/manual/subscription:
+    put:
+      summary: Create Manual Subscription
+      operationId: create_manual_subscription_api_billing_account__account_id__manual_subscription_put
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualSubscriptionCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      summary: Patch Manual Subscription
+      operationId: patch_manual_subscription_api_billing_account__account_id__manual_subscription_patch
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManualSubscriptionUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NucliaCustomerData'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      summary: Delete Manual Subscription
+      operationId: delete_manual_subscription_api_billing_account__account_id__manual_subscription_delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/billing/account/{account_id}/nuclia/current_usage: {}
+  /api/billing/account/{account_id}/payment_methods: {}
+  /api/billing/account/{account_id}/stripe/current_usage: {}
+  /api/billing/account/{account_id}/stripe/customer: {}
+  /api/billing/account/{account_id}/stripe/invoices: {}
+  /api/billing/account/{account_id}/stripe/payment_methods: {}
+  /api/billing/account/{account_id}/stripe/subscription: {}
+  /api/billing/account/{account_id}/stripe/subscription/cancel: {}
+  /api/billing/account/{account_id}/stripe/subscription/reactivate: {}
+  /api/billing/account/{account_id}/stripe/subscription/reset: {}
+  /api/billing/account/{account_id}/stripe/subscription/update_metered_prices: {}
+  /api/billing/account/{account_id}/stripe/subscription/upgrade: {}
+  /api/billing/account/{account_id}/subscription: {}
+  /api/billing/account/{account_id}/subscription/cancel: {}
+  /api/billing/account/{account_id}/subscription/reactivate: {}
+  /api/billing/account/{account_id}/subscription/reset: {}
+  /api/billing/account/{account_id}/subscription/upgrade: {}
+  /api/billing/currencies: {}
+  /api/billing/formula: {}
+  /api/billing/formula/{id}: {}
+  /api/billing/stripe/payment_links: {}
+  /api/billing/stripe/public: {}
+  /api/billing/stripe/search_prices: {}
+  /api/billing/tiers: {}
+  /api/configuration/account_types: {}
+  /api/hub/pull: {}
+  /api/hub/push: {}
+  /api/manage/@account/{account_id_or_slug}: {}
+  /api/manage/@account/{account_id_or_slug}/blocking_status: {}
+  /api/manage/@account/{account_id_or_slug}/{user_id}: {}
+  /api/manage/@accounts: {}
+  /api/manage/@search_users/{term}: {}
+  /api/manage/@search_users_account/{account_id}/{term}: {}
+  /api/manage/@user/{user_id}: {}
+  /api/manage/@user/{user_id}/@reset: {}
+  /api/manage/@users: {}
+  /api/manage/@zone/{zone_id}: {}
+  /api/manage/@zone/{zone_id}/key: {}
+  /api/manage/@zones: {}
+  /api/marketplace/aws/callback: {}
+  /api/marketplace/aws/login: {}
+  /api/marketplace/aws/setup_account: {}
+  /api/v1/account/{account_id}/invite/{email}:
+    delete:
+      tags:
+      - Invites
+      summary: Delete Invite
+      description: Invalidate an invite to join an account
+      operationId: delete_invite_api_v1_account__account_id__invite__email__delete
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+          format: email
+          title: Email
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/invites:
+    get:
+      tags:
+      - Invites
+      summary: Invited Users
+      description: List of users invited to an account, but not yet joined
+      operationId: invited_users_api_v1_account__account_id__invites_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvitedUser'
+                title: Response Invited Users Api V1 Account  Account Id  Invites
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_id}/usage:
+    get:
+      tags:
+      - Accounts
+      summary: Get Usage
+      description: Retrieve statistics for a knowledgebox or account
+      operationId: get_usage_api_v1_account__account_id__usage_get
+      parameters:
+      - name: account_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      - name: aggregation
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Aggregation'
+          default: millennium
+      - name: knowledgebox
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Knowledgebox
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+          title: From
+      - name: to
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          default: '2026-03-13T07:56:59.426946'
+          title: To
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KbUsageDashboard'
+                title: Response Get Usage Api V1 Account  Account Id  Usage Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug_or_id}:
+    get:
+      tags:
+      - Accounts
+      summary: Get Account
+      operationId: get_account_api_v1_account__account_slug_or_id__get
+      parameters:
+      - name: account_slug_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug Or Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}:
+    patch:
+      tags:
+      - Accounts
+      summary: Modify Account
+      operationId: modify_account_api_v1_account__account_slug__patch
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountModification'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Accounts
+      summary: Delete Account
+      operationId: delete_account_api_v1_account__account_slug__delete
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/index/kbs: {}
+  /api/v1/account/{account_slug}/invite:
+    post:
+      tags:
+      - Invites
+      summary: Invite To Account
+      description: Invite somebody by email
+      operationId: invite_to_account_api_v1_account__account_slug__invite_post
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvitePayload'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/logo.png:
+    patch:
+      tags:
+      - Accounts
+      summary: Upload Account Logo
+      description: Account logo
+      operationId: upload_account_logo_api_v1_account__account_slug__logo_png_patch
+      parameters:
+      - name: account_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Account Id
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_upload_account_logo_api_v1_account__account_slug__logo_png_patch'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Accounts
+      summary: Download Account Logo
+      description: Account logo
+      operationId: download_account_logo_api_v1_account__account_slug__logo_png_get
+      parameters:
+      - name: account_id
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      responses:
+        '200':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/permissions:
+    get:
+      tags:
+      - Accounts
+      summary: Get Account Permissions
+      operationId: get_account_permissions_api_v1_account__account_slug__permissions_get
+      parameters:
+      - name: account_id
+        in: query
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Account Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/status: {}
+  /api/v1/account/{account_slug}/user/{user_id}:
+    get:
+      tags:
+      - Users
+      summary: Get Account User Details
+      description: Account user
+      operationId: get_account_user_details_api_v1_account__account_slug__user__user_id__get
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: User Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUser'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/users:
+    get:
+      tags:
+      - Users
+      summary: List Account Users
+      description: Account user
+      operationId: list_account_users_api_v1_account__account_slug__users_get
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountUser'
+                title: Response List Account Users Api V1 Account  Account Slug  Users
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Users
+      summary: Update Users
+      description: Account user modification
+      operationId: update_users_api_v1_account__account_slug__users_patch
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchUpdateAccountUsers'
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug}/users/search:
+    get:
+      tags:
+      - Users
+      summary: Search Account Users
+      description: Search account users
+      operationId: search_account_users_api_v1_account__account_slug__users_search_get
+      parameters:
+      - name: account_slug
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug
+      - name: query
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountUser'
+                title: Response Search Account Users Api V1 Account  Account Slug  Users
+                  Search Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/accounts:
+    get:
+      tags:
+      - Accounts
+      summary: List Accounts
+      operationId: list_accounts_api_v1_accounts_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AccountListItem'
+                type: array
+                title: Response List Accounts Api V1 Accounts Get
+    post:
+      tags:
+      - Accounts
+      summary: Create Account
+      operationId: create_account_api_v1_accounts_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountCreation'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemCreated'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/user:
+    get:
+      tags:
+      - Authenticated User
+      summary: Get Authenticated User
+      description: Information about user
+      operationId: get_authenticated_user_api_v1_user_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stashify_idp__api__models__User'
+    delete:
+      tags:
+      - Authenticated User
+      summary: Delete Authenticated User
+      description: Delete the logged in user
+      operationId: delete_authenticated_user_api_v1_user_delete
+      responses:
+        '204':
+          description: Successful Response
+    patch:
+      tags:
+      - Authenticated User
+      summary: Modify User Profile
+      description: Set information about user
+      operationId: modify_user_profile_api_v1_user_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSetPreferences'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/user/onboarding_inquiry: {}
+  /api/v1/user/pa_token/{token_id}:
+    delete:
+      tags:
+      - Personal Access Tokens
+      summary: Delete Token
+      description: Delete a personal access token by its ID
+      operationId: delete_token_api_v1_user_pa_token__token_id__delete
+      parameters:
+      - name: token_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Token Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/user/pa_tokens:
+    get:
+      tags:
+      - Personal Access Tokens
+      summary: List Tokens
+      description: List all personal access tokens for the authenticated user
+      operationId: list_tokens_api_v1_user_pa_tokens_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TokenItem'
+                type: array
+                title: Response List Tokens Api V1 User Pa Tokens Get
+    post:
+      tags:
+      - Personal Access Tokens
+      summary: Create Token
+      description: Create a new personal access token
+      operationId: create_token_api_v1_user_pa_tokens_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTokenRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenCreated'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/user/welcome:
+    get:
+      tags:
+      - Authenticated User
+      summary: Welcome
+      description: Welcome information for a new user
+      operationId: welcome_api_v1_user_welcome_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Welcome'
+  /api/v1/zones:
+    get:
+      tags:
+      - Zones
+      summary: List Zones
+      description: List available zones
+      operationId: list_zones_api_v1_zones_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Zone'
+                type: array
+                title: Response List Zones Api V1 Zones Get
+  /api/webhooks/stripe: {}
+  /api/zone/account/{account_id}: {}
+  /api/zone/billing/account/{account_id}/config: {}
+  /api/zone/billing/calculator: {}
+  /api/zone/billing/formula/{id}: {}
+  /api/zone/index/kb/{kb_id}: {}
+  /api/zone/index/kbs: {}
+  /api/zone/index/nua_client/{client_id}: {}
+  /api/zone/index/nua_clients: {}
+  /api/zone/user: {}
+  /api/zone/user/token: {}
+  /api/zone/users: {}
+x-metadata:
+  zone_hub:
+    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
+    last_updated: '2026-03-10T12:18:15.759952'
+  accounting:
+    commit: eb3b330d565c8e34e335d110e478a86dad63a2a5
+    last_updated: '2026-03-13T07:56:59.904438'
+  idp:
+    commit: 4bbc77ec242883671dfd97c2f8d65e257ca5fed6
+    last_updated: '2026-03-12T16:52:53.042705'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AWSMarketplaceCustomerData:
+      properties:
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          type: string
+          title: Last Name
+        owner_email_address:
+          type: string
+          title: Owner Email Address
+        phone:
+          type: string
+          title: Phone
+        company:
+          type: string
+          title: Company
+        country:
+          type: string
+          title: Country
+        use_case:
+          type: string
+          title: Use Case
+        organization_size:
+          type: string
+          title: Organization Size
+        role:
+          type: string
+          title: Role
+        receive_updates:
+          type: boolean
+          title: Receive Updates
+      type: object
+      required:
+      - first_name
+      - last_name
+      - owner_email_address
+      - phone
+      - company
+      - country
+      - use_case
+      - organization_size
+      - role
+      - receive_updates
+      title: AWSMarketplaceCustomerData
+    AWSMarketplaceLoginRequest:
+      properties:
+        customer_token:
+          type: string
+          title: Customer Token
+      type: object
+      required:
+      - customer_token
+      title: AWSMarketplaceLoginRequest
+    AWSMarketplaceLoginResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      title: AWSMarketplaceLoginResponse
+    AWSMarketplaceSetupAccountResponse:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - account_id
+      - access_token
+      - refresh_token
+      title: AWSMarketplaceSetupAccountResponse
+    AWSMarketplaceSetupRequest:
+      properties:
+        customer_token:
+          type: string
+          title: Customer Token
+        account_slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Slug
+        customer_data:
+          anyOf:
+          - $ref: '#/components/schemas/AWSMarketplaceCustomerData'
+          - type: 'null'
+      type: object
+      required:
+      - customer_token
+      title: AWSMarketplaceSetupRequest
+    AWSMarketplaceSubscriptionStatus:
+      type: string
+      enum:
+      - no_subscription
+      - active
+      - failed
+      - cancel_scheduled
+      - canceled
+      title: AWSMarketplaceSubscriptionStatus
+    AccountAWSMarketplaceSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/AWSMarketplaceSubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        aws_product_code:
+          type: string
+          title: Aws Product Code
+        aws_product_id:
+          type: string
+          title: Aws Product Id
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+      type: object
+      required:
+      - status
+      - aws_product_code
+      - aws_product_id
+      - free_tokens_per_billing_cycle
+      title: AccountAWSMarketplaceSubscriptionInfo
+    AccountBillingConfig:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+      type: object
+      required:
+      - account_id
+      - billing_formula_id
+      title: AccountBillingConfig
+    AccountBlockingState:
+      type: string
+      enum:
+      - unblocked
+      - quota
+      - manager
+      - trial_expired
+      - budget
+      - subscription_canceled
+      - subscription_unpaid
+      title: AccountBlockingState
+    AccountMeteredUsage:
+      properties:
+        budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget
+        currency:
+          $ref: '#/components/schemas/Currency'
+        invoice_items:
+          $ref: '#/components/schemas/InvoiceItems'
+        start_billing_date:
+          type: string
+          format: date-time
+          title: Start Billing Date
+        end_billing_date:
+          type: string
+          format: date-time
+          title: End Billing Date
+      type: object
+      required:
+      - currency
+      - invoice_items
+      - start_billing_date
+      - end_billing_date
+      title: AccountMeteredUsage
+    AccountNucliaCustomerTableSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+      type: object
+      required:
+      - status
+      - free_tokens_per_billing_cycle
+      title: AccountNucliaCustomerTableSubscriptionInfo
+    AccountStripeCustomer:
+      properties:
+        customer_id:
+          type: string
+          title: Customer Id
+        billing_details:
+          $ref: '#/components/schemas/BillingDetails'
+      type: object
+      required:
+      - customer_id
+      - billing_details
+      title: AccountStripeCustomer
+    AccountStripeSubscription:
+      properties:
+        subscription_id:
+          type: string
+          title: Subscription Id
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          type: string
+          title: Status
+        requires_action:
+          type: boolean
+          title: Requires Action
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+        error:
+          anyOf:
+          - $ref: '#/components/schemas/PaymentError'
+          - type: 'null'
+      type: object
+      required:
+      - subscription_id
+      - payment_method_id
+      - currency
+      - status
+      - requires_action
+      title: AccountStripeSubscription
+    AccountStripeSubscriptionInfo:
+      properties:
+        status:
+          $ref: '#/components/schemas/SubscriptionStatus'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        start_billing_period:
+          type: string
+          format: date-time
+          title: Start Billing Period
+        end_billing_period:
+          type: string
+          format: date-time
+          title: End Billing Period
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+      type: object
+      required:
+      - status
+      - start_billing_period
+      - end_billing_period
+      - free_tokens_per_billing_cycle
+      title: AccountStripeSubscriptionInfo
+    AccountSubscription:
+      properties:
+        provider:
+          $ref: '#/components/schemas/SubscriptionProvider'
+        subscription:
+          anyOf:
+          - $ref: '#/components/schemas/AccountStripeSubscriptionInfo'
+          - $ref: '#/components/schemas/AccountAWSMarketplaceSubscriptionInfo'
+          - $ref: '#/components/schemas/AccountNucliaCustomerTableSubscriptionInfo'
+          title: Subscription
+      type: object
+      required:
+      - provider
+      - subscription
+      title: AccountSubscription
+    AccountType:
+      type: string
+      enum:
+      - stash-trial
+      - v3starter
+      - v3pro
+      - v3enterprise
+      - v3fly
+      - v3growth
+      title: AccountType
+    AccountingTarget:
+      type: string
+      enum:
+      - media
+      - training
+      - paragraphs_processed
+      - predict
+      - generative
+      - ai-tokens-used
+      - nuclia-tokens
+      - paragraphs
+      - searches
+      - qa
+      - self-hosted-qa
+      - self-hosted-predict
+      - self-hosted-processed-paragraphs
+      - self-hosted-processed-documents
+      title: AccountingTarget
+      description: 'Accounting target identifies a specific method of calculating
+        a value for a
+
+        stripe price from accounting metrics, but uncoupled from both price and metrics
+
+        concepts.
+
+
+        Originally, the purpose of target was intended to be filled in
+
+        by the value of a specific metric in accounting. Given that accounting
+
+        metrics have their lifecycle and, plan & pricing definition another one
+
+        this targets will link together the two concepts, but uncoupled, so we''ll
+
+        have, e.g:
+
+
+        PRO account type -> price with target SEARCHES - accounting implementation
+        for SEARCHES
+
+
+        This way the pricing config does not need to know about the implementation
+
+        of how searches accounting data is stored, and accounting does not rely in
+
+        prices details'
+    ActionOnBudgetExhausted:
+      type: string
+      enum:
+      - WARN_ACCOUNT_OWNER
+      - BLOCK_ACCOUNT
+      title: ActionOnBudgetExhausted
+    Aggregation:
+      type: string
+      enum:
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+      - millennium
+      title: Aggregation
+    Agreement-Input:
+      properties:
+        id:
+          type: string
+          title: Id
+        status:
+          type: string
+          title: Status
+        start_time:
+          type: string
+          title: Start Time
+        expiration_date:
+          type: string
+          title: Expiration Date
+        offer:
+          $ref: '#/components/schemas/Offer'
+        entitlement_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/EntitlementTerm-Input'
+          type: object
+          title: Entitlement Terms
+          default: {}
+        metered_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/MeteredTerm-Input'
+          type: object
+          title: Metered Terms
+          default: {}
+      type: object
+      required:
+      - id
+      - status
+      - start_time
+      - expiration_date
+      - offer
+      title: Agreement
+    Agreement-Output:
+      properties:
+        id:
+          type: string
+          title: Id
+        status:
+          type: string
+          title: Status
+        start_time:
+          type: string
+          title: Start Time
+        expiration_date:
+          type: string
+          title: Expiration Date
+        offer:
+          $ref: '#/components/schemas/Offer'
+        entitlement_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/EntitlementTerm-Output'
+          type: object
+          title: Entitlement Terms
+          default: {}
+        metered_terms:
+          additionalProperties:
+            $ref: '#/components/schemas/MeteredTerm-Output'
+          type: object
+          title: Metered Terms
+          default: {}
+      type: object
+      required:
+      - id
+      - status
+      - start_time
+      - expiration_date
+      - offer
+      title: Agreement
+    BillCurrentPeriodResponse:
+      properties:
+        budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget
+        nuclia_tokens:
+          type: number
+          title: Nuclia Tokens
+        start_billing_date:
+          type: string
+          format: date-time
+          title: Start Billing Date
+        end_billing_date:
+          type: string
+          format: date-time
+          title: End Billing Date
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+      type: object
+      required:
+      - nuclia_tokens
+      - start_billing_date
+      - end_billing_date
+      - free_storage_nuclia_tokens
+      - free_tokens_per_billing_cycle
+      - nuclia_tokens_price
+      title: BillCurrentPeriodResponse
+    BillingDetails:
+      properties:
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          format: email
+          title: Email
+        address:
+          type: string
+          title: Address
+        country:
+          $ref: '#/components/schemas/Country'
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        city:
+          type: string
+          title: City
+        postal_code:
+          type: string
+          title: Postal Code
+        phone:
+          type: string
+          title: Phone
+        is_company:
+          type: boolean
+          title: Is Company
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        vat:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vat
+      type: object
+      required:
+      - name
+      - email
+      - address
+      - country
+      - city
+      - postal_code
+      - phone
+      - is_company
+      title: BillingDetails
+    BillingDetailsModified:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Address
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        city:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City
+        postal_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postal Code
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        is_company:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Company
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        vat:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vat
+      type: object
+      title: BillingDetailsModified
+    BillingFormulaCreate:
+      properties:
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        formula:
+          items:
+            type: string
+          type: array
+          title: Formula
+          default: []
+        absolute_formula:
+          items:
+            type: string
+          type: array
+          title: Absolute Formula
+          default: []
+      type: object
+      required:
+      - title
+      title: BillingFormulaCreate
+    BillingFormulaResponse:
+      properties:
+        id:
+          type: string
+          format: uuid4
+          title: Id
+        created:
+          type: string
+          format: date-time
+          title: Created
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        formula:
+          items:
+            type: string
+          type: array
+          title: Formula
+        absolute_formula:
+          items:
+            type: string
+          type: array
+          title: Absolute Formula
+      type: object
+      required:
+      - id
+      - created
+      - title
+      - description
+      - formula
+      - absolute_formula
+      title: BillingFormulaResponse
+    Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post:
+      properties:
+        x-amzn-marketplace-token:
+          type: string
+          title: X-Amzn-Marketplace-Token
+      type: object
+      required:
+      - x-amzn-marketplace-token
+      title: Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post
+    CalculatorConfig:
+      properties:
+        version:
+          type: string
+          title: Version
+        models:
+          additionalProperties:
+            anyOf:
+            - $ref: '#/components/schemas/RawFactor'
+            - $ref: '#/components/schemas/ModelFactor'
+          type: object
+          title: Models
+        storage:
+          additionalProperties:
+            $ref: '#/components/schemas/RawFactor'
+          type: object
+          title: Storage
+      type: object
+      required:
+      - version
+      - models
+      - storage
+      title: CalculatorConfig
+    CancelStripeSubscription:
+      properties:
+        feedback:
+          anyOf:
+          - $ref: '#/components/schemas/StripeSubscriptionCancellationFeedback'
+          - type: 'null'
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      title: CancelStripeSubscription
+    Country:
+      type: string
+      enum:
+      - AF
+      - AX
+      - AL
+      - DZ
+      - AD
+      - AO
+      - AI
+      - AQ
+      - AG
+      - AR
+      - AM
+      - AW
+      - AC
+      - AU
+      - AT
+      - AZ
+      - BS
+      - BH
+      - BD
+      - BB
+      - BY
+      - BE
+      - BZ
+      - BJ
+      - BM
+      - BT
+      - BO
+      - BA
+      - BW
+      - BV
+      - BR
+      - IO
+      - VG
+      - BN
+      - BG
+      - BF
+      - BI
+      - KH
+      - CM
+      - CA
+      - CV
+      - BQ
+      - KY
+      - CF
+      - TD
+      - CL
+      - CN
+      - CO
+      - KM
+      - CG
+      - CD
+      - CK
+      - CR
+      - CI
+      - HR
+      - CW
+      - CY
+      - CZ
+      - DK
+      - DJ
+      - DM
+      - DO
+      - EC
+      - EG
+      - SV
+      - GQ
+      - ER
+      - EE
+      - SZ
+      - ET
+      - FK
+      - FO
+      - FJ
+      - FI
+      - FR
+      - GF
+      - PF
+      - TF
+      - GA
+      - GM
+      - GE
+      - DE
+      - GH
+      - GI
+      - GR
+      - GL
+      - GD
+      - GP
+      - GU
+      - GT
+      - GG
+      - GN
+      - GW
+      - GY
+      - HT
+      - HN
+      - HK
+      - HU
+      - IS
+      - IN
+      - ID
+      - IQ
+      - IE
+      - IM
+      - IL
+      - IT
+      - JM
+      - JP
+      - JE
+      - JO
+      - KZ
+      - KE
+      - KI
+      - XK
+      - KW
+      - KG
+      - LA
+      - LV
+      - LB
+      - LS
+      - LR
+      - LY
+      - LI
+      - LT
+      - LU
+      - MO
+      - MG
+      - MW
+      - MY
+      - MV
+      - ML
+      - MT
+      - MQ
+      - MR
+      - MU
+      - YT
+      - MX
+      - MD
+      - MC
+      - MN
+      - ME
+      - MS
+      - MA
+      - MZ
+      - MM
+      - NA
+      - NR
+      - NP
+      - NL
+      - NC
+      - NZ
+      - NI
+      - NE
+      - NG
+      - NU
+      - MK
+      - 'NO'
+      - OM
+      - PK
+      - PS
+      - PA
+      - PG
+      - PY
+      - PE
+      - PH
+      - PN
+      - PL
+      - PT
+      - PR
+      - QA
+      - RE
+      - RO
+      - RU
+      - RW
+      - WS
+      - SM
+      - ST
+      - SA
+      - SN
+      - RS
+      - SC
+      - SL
+      - SG
+      - SX
+      - SK
+      - SI
+      - SB
+      - SO
+      - ZA
+      - GS
+      - KR
+      - SS
+      - ES
+      - LK
+      - BL
+      - SH
+      - KN
+      - LC
+      - MF
+      - PM
+      - VC
+      - SR
+      - SJ
+      - SE
+      - CH
+      - TW
+      - TJ
+      - TZ
+      - TH
+      - TL
+      - TG
+      - TK
+      - TO
+      - TT
+      - TA
+      - TN
+      - TR
+      - TM
+      - TC
+      - TV
+      - UG
+      - UA
+      - AE
+      - GB
+      - US
+      - UY
+      - UZ
+      - VU
+      - VA
+      - VE
+      - VN
+      - WF
+      - EH
+      - YE
+      - ZM
+      - ZW
+      title: Country
+    CountryCurrency:
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+      type: object
+      required:
+      - currency
+      title: CountryCurrency
+    CreatePaymentMethod:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: CreatePaymentMethod
+    CreateStripeCustomer:
+      properties:
+        billing_details:
+          $ref: '#/components/schemas/BillingDetails'
+      type: object
+      required:
+      - billing_details
+      title: CreateStripeCustomer
+    CreateStripePaymentLink:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        price_ids:
+          items:
+            type: string
+          type: array
+          title: Price Ids
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+        allow_promotion_codes:
+          type: boolean
+          title: Allow Promotion Codes
+          default: false
+        currency:
+          $ref: '#/components/schemas/Currency'
+          default: usd
+      type: object
+      required:
+      - account_id
+      - account_type
+      - price_ids
+      - billing_formula_id
+      title: CreateStripePaymentLink
+    CreateStripeSubscription:
+      properties:
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - payment_method_id
+      - account_type
+      title: CreateStripeSubscription
+    Currency:
+      type: string
+      enum:
+      - eur
+      - usd
+      title: Currency
+    EntitlementTerm-Input:
+      properties:
+        price:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Price
+        duration:
+          type: string
+          title: Duration
+        trial:
+          type: boolean
+          title: Trial
+          default: false
+      type: object
+      required:
+      - duration
+      title: EntitlementTerm
+    EntitlementTerm-Output:
+      properties:
+        price:
+          anyOf:
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          - type: 'null'
+          title: Price
+        duration:
+          type: string
+          title: Duration
+        trial:
+          type: boolean
+          title: Trial
+          default: false
+      type: object
+      required:
+      - duration
+      title: EntitlementTerm
+    FlatIdentifier:
+      properties:
+        type:
+          type: string
+          title: Type
+        service:
+          type: string
+          title: Service
+        model:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model
+        version:
+          type: string
+          title: Version
+      type: object
+      required:
+      - type
+      - service
+      - version
+      title: FlatIdentifier
+    IntervalType:
+      type: string
+      enum:
+      - month
+      - year
+      title: IntervalType
+    InvoiceItems:
+      properties:
+        media:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        training:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        paragraphs_processed:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        predict:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        generative:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        searches:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        paragraphs:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        ai-tokens-used:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        nuclia-tokens:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        qa:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-qa:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-predict:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-processed-paragraphs:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+        self-hosted-processed-documents:
+          anyOf:
+          - $ref: '#/components/schemas/nuclia_accounting__models__models__InvoiceItem'
+          - type: 'null'
+      type: object
+      title: InvoiceItems
+    InvoicesList:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/nuclia_accounting__api__models__InvoiceItem'
+          type: array
+          title: Items
+        pagination:
+          $ref: '#/components/schemas/InvoicesListPagination'
+      type: object
+      required:
+      - items
+      - pagination
+      title: InvoicesList
+    InvoicesListPagination:
+      properties:
+        starting_after:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Starting After
+        limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Limit
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - has_more
+      title: InvoicesListPagination
+    KbUsageDashboard:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        metrics:
+          items:
+            $ref: '#/components/schemas/Metric'
+          type: array
+          title: Metrics
+      type: object
+      required:
+      - timestamp
+      - metrics
+      title: KbUsageDashboard
+    LastNotifications:
+      properties:
+        notified_approaching_budget:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Notified Approaching Budget
+        notified_budget_exhausted:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Notified Budget Exhausted
+      type: object
+      title: LastNotifications
+    ManualAgreementRequest:
+      properties:
+        agreement:
+          $ref: '#/components/schemas/Agreement-Input'
+      type: object
+      required:
+      - agreement
+      title: ManualAgreementRequest
+      description: Request body for setting manual agreement data for CPPO customers.
+    ManualSubscriptionCreate:
+      properties:
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        billing_formula_id:
+          type: string
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000001
+        free_storage_nuclia_tokens:
+          type: integer
+          title: Free Storage Nuclia Tokens
+        on_demand_budget:
+          type: number
+          title: On Demand Budget
+          default: 500
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+          default: WARN_ACCOUNT_OWNER
+      type: object
+      required:
+      - nuclia_tokens_price
+      title: ManualSubscriptionCreate
+    ManualSubscriptionUpdate:
+      properties:
+        billing_formula_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      title: ManualSubscriptionUpdate
+    MarketplaceSubscriptionState:
+      properties:
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        is_trial:
+          type: boolean
+          title: Is Trial
+        trial_expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trial Expiration Date
+        active:
+          type: boolean
+          title: Active
+          default: true
+        blocking_state:
+          anyOf:
+          - $ref: '#/components/schemas/AccountBlockingState'
+          - type: 'null'
+      type: object
+      required:
+      - account_type
+      - is_trial
+      title: MarketplaceSubscriptionState
+    MarketplaceSubscriptionUpdateAction:
+      type: string
+      enum:
+      - change_account_type
+      - remove_trial
+      - unblock_account
+      - activate_subscription
+      - deactivate_subscription
+      - block_account_canceled
+      title: MarketplaceSubscriptionUpdateAction
+    MeteredTerm-Input:
+      properties:
+        price:
+          anyOf:
+          - type: number
+          - type: string
+            pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Price
+      type: object
+      required:
+      - price
+      title: MeteredTerm
+    MeteredTerm-Output:
+      properties:
+        price:
+          type: string
+          pattern: ^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$
+          title: Price
+      type: object
+      required:
+      - price
+      title: MeteredTerm
+    Metric:
+      properties:
+        name:
+          $ref: '#/components/schemas/MetricNames'
+        value:
+          type: number
+          title: Value
+        details:
+          items:
+            $ref: '#/components/schemas/NucliaTokenDetails'
+          type: array
+          title: Details
+          default: []
+      type: object
+      required:
+      - name
+      - value
+      title: Metric
+    MetricNames:
+      type: string
+      enum:
+      - pre_processing_time
+      - slow_processing_time
+      - resources_processed
+      - bytes_processed
+      - chars_processed
+      - media_seconds_processed
+      - pages_processed
+      - paragraphs_processed
+      - train_seconds
+      - searches_performed
+      - suggestions_performed
+      - predictions_performed
+      - docs_no_media
+      - ai_tokens_used
+      - nuclia_tokens
+      - nuclia_tokens_billed
+      title: MetricNames
+    ModelFactor:
+      properties:
+        input:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Input
+        output:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Output
+        image:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Image
+        model:
+          type: string
+          title: Model
+      type: object
+      required:
+      - model
+      title: ModelFactor
+    NucliaCustomerData:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000001
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        billing_history:
+          additionalProperties: true
+          type: object
+          title: Billing History
+        last_notifications:
+          $ref: '#/components/schemas/LastNotifications'
+      type: object
+      required:
+      - account_id
+      - nuclia_tokens_price
+      title: NucliaCustomerData
+    NucliaCustomerTableSubscriptionStatus:
+      type: string
+      enum:
+      - active
+      title: NucliaCustomerTableSubscriptionStatus
+    NucliaTokenDetails:
+      properties:
+        identifier:
+          $ref: '#/components/schemas/FlatIdentifier'
+        nuclia_tokens:
+          $ref: '#/components/schemas/Tokens'
+        nuclia_tokens_billed:
+          $ref: '#/components/schemas/Tokens'
+        raw_usage:
+          $ref: '#/components/schemas/Tokens'
+        requests:
+          $ref: '#/components/schemas/Requests'
+      type: object
+      required:
+      - identifier
+      - nuclia_tokens
+      - nuclia_tokens_billed
+      - raw_usage
+      - requests
+      title: NucliaTokenDetails
+    Offer:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        is_trial:
+          type: boolean
+          title: Is Trial
+          default: false
+        trial_duration:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Trial Duration
+      type: object
+      required:
+      - id
+      - name
+      title: Offer
+    PaymentError:
+      properties:
+        code:
+          type: string
+          title: Code
+        decline_code:
+          type: string
+          title: Decline Code
+      type: object
+      required:
+      - code
+      - decline_code
+      title: PaymentError
+    PaymentMethod:
+      properties:
+        payment_method_id:
+          type: string
+          title: Payment Method Id
+        payment_method_type:
+          type: string
+          title: Payment Method Type
+      type: object
+      required:
+      - payment_method_id
+      - payment_method_type
+      title: PaymentMethod
+    RawFactor:
+      properties:
+        factor:
+          type: number
+          title: Factor
+        source:
+          type: string
+          title: Source
+      type: object
+      required:
+      - factor
+      - source
+      title: RawFactor
+    Requests:
+      properties:
+        api:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Api
+        web:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Web
+        widget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Widget
+        desktop:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Desktop
+        dashboard:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Dashboard
+        chrome_extension:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Chrome Extension
+        internal:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Internal
+      type: object
+      title: Requests
+    StripeCharge:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: charge
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        status:
+          $ref: '#/components/schemas/StripeChargeStatus'
+        amount:
+          type: integer
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+        description:
+          type: string
+          title: Description
+        invoice:
+          type: string
+          title: Invoice
+        failure_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Failure Code
+        failure_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Failure Message
+        paid:
+          type: boolean
+          title: Paid
+        created:
+          type: integer
+          title: Created
+        outcome:
+          anyOf:
+          - $ref: '#/components/schemas/StripeChargeOutcome'
+          - type: 'null'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - status
+      - amount
+      - currency
+      - description
+      - invoice
+      - paid
+      - created
+      title: StripeCharge
+    StripeChargeOutcome:
+      properties:
+        network_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Network Status
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        risk_level:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Risk Level
+        risk_score:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Risk Score
+        rule:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Rule
+        seller_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Seller Message
+        type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Type
+      type: object
+      title: StripeChargeOutcome
+    StripeChargeStatus:
+      type: string
+      enum:
+      - succeeded
+      - pending
+      - failed
+      title: StripeChargeStatus
+    StripeChargesList:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+        data:
+          items:
+            $ref: '#/components/schemas/StripeCharge'
+          type: array
+          title: Data
+      type: object
+      required:
+      - object
+      - data
+      title: StripeChargesList
+    StripeCheckoutSession:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: checkout.session
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        payment_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payment Link
+        subscription:
+          type: string
+          title: Subscription
+        mode:
+          type: string
+          title: Mode
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - payment_link
+      - subscription
+      - mode
+      - status
+      title: StripeCheckoutSession
+    StripeEvent:
+      properties:
+        object:
+          type: string
+          title: Object
+        data:
+          $ref: '#/components/schemas/StripeObject'
+        type:
+          type: string
+          title: Type
+      type: object
+      required:
+      - object
+      - data
+      - type
+      title: StripeEvent
+    StripeObject:
+      properties:
+        object:
+          anyOf:
+          - $ref: '#/components/schemas/StripeSubscription'
+          - $ref: '#/components/schemas/StripePaymentIntent'
+          - $ref: '#/components/schemas/StripeCheckoutSession'
+          title: Object
+        previous_attributes:
+          additionalProperties: true
+          type: object
+          title: Previous Attributes
+          default: {}
+      type: object
+      required:
+      - object
+      title: StripeObject
+    StripePaymentIntent:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: payment_intent
+          title: Object
+        customer:
+          type: string
+          title: Customer
+        status:
+          $ref: '#/components/schemas/StripePaymentIntentStatus'
+        amount:
+          type: integer
+          title: Amount
+        currency:
+          type: string
+          title: Currency
+        description:
+          type: string
+          title: Description
+        charges:
+          anyOf:
+          - $ref: '#/components/schemas/StripeChargesList'
+          - type: 'null'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - customer
+      - status
+      - amount
+      - currency
+      - description
+      title: StripePaymentIntent
+    StripePaymentIntentStatus:
+      type: string
+      enum:
+      - requires_payment_method
+      - requires_confirmation
+      - requires_action
+      - processing
+      - requires_capture
+      - canceled
+      - succeeded
+      title: StripePaymentIntentStatus
+    StripePaymentLinkInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        url:
+          type: string
+          title: Url
+      type: object
+      required:
+      - id
+      - url
+      title: StripePaymentLinkInfo
+    StripePriceInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        nickname:
+          type: string
+          title: Nickname
+        product:
+          type: string
+          title: Product
+      type: object
+      required:
+      - id
+      - nickname
+      - product
+      title: StripePriceInfo
+    StripePublicKey:
+      properties:
+        public_key:
+          type: string
+          title: Public Key
+      type: object
+      required:
+      - public_key
+      title: StripePublicKey
+    StripeSubscription:
+      properties:
+        id:
+          type: string
+          title: Id
+        object:
+          type: string
+          const: subscription
+          title: Object
+        billing_cycle_anchor:
+          type: integer
+          title: Billing Cycle Anchor
+        customer:
+          type: string
+          title: Customer
+        default_payment_method:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Default Payment Method
+        status:
+          $ref: '#/components/schemas/StripeSubscriptionStatus'
+        items:
+          $ref: '#/components/schemas/StripeSubscriptionItemsList'
+        metadata:
+          additionalProperties: true
+          type: object
+          title: Metadata
+          default: {}
+      type: object
+      required:
+      - id
+      - object
+      - billing_cycle_anchor
+      - customer
+      - status
+      - items
+      title: StripeSubscription
+    StripeSubscriptionCancellationFeedback:
+      type: string
+      enum:
+      - too_expensive
+      - missing_features
+      - switched_service
+      - unused
+      - customer_service
+      - too_complex
+      - low_quality
+      - other
+      title: StripeSubscriptionCancellationFeedback
+    StripeSubscriptionItemsList:
+      properties:
+        object:
+          type: string
+          const: list
+          title: Object
+        data:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Data
+      type: object
+      required:
+      - object
+      - data
+      title: StripeSubscriptionItemsList
+    StripeSubscriptionStatus:
+      type: string
+      enum:
+      - incomplete
+      - incomplete_expired
+      - trialing
+      - active
+      - past_due
+      - canceled
+      - unpaid
+      title: StripeSubscriptionStatus
+    StripeUsageType:
+      type: string
+      enum:
+      - metered
+      - licensed
+      title: StripeUsageType
+    SubscriptionProvider:
+      type: string
+      enum:
+      - NO_SUBSCRIPTION
+      - STRIPE
+      - AWS_MARKETPLACE
+      - MANUAL
+      title: SubscriptionProvider
+    SubscriptionStatus:
+      type: string
+      enum:
+      - no_subscription
+      - pending
+      - active
+      - payment_issues
+      - cancel_scheduled
+      - canceled
+      title: SubscriptionStatus
+    SubscriptionSyncExecutionResponse:
+      properties:
+        previous_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        current_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        actions:
+          items:
+            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
+          type: array
+          title: Actions
+      type: object
+      required:
+      - previous_state
+      - current_state
+      - actions
+      title: SubscriptionSyncExecutionResponse
+    SubscriptionSyncStateResponse:
+      properties:
+        current_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        desired_state:
+          $ref: '#/components/schemas/MarketplaceSubscriptionState'
+        actions:
+          items:
+            $ref: '#/components/schemas/MarketplaceSubscriptionUpdateAction'
+          type: array
+          title: Actions
+      type: object
+      required:
+      - current_state
+      - desired_state
+      - actions
+      title: SubscriptionSyncStateResponse
+    Tier:
+      properties:
+        recurring:
+          anyOf:
+          - additionalProperties:
+              $ref: '#/components/schemas/TierRecurringBillingItem'
+            propertyNames:
+              $ref: '#/components/schemas/IntervalType'
+            type: object
+          - type: 'null'
+          title: Recurring
+        usage:
+          additionalProperties:
+            $ref: '#/components/schemas/TierUsageBillingItem'
+          propertyNames:
+            $ref: '#/components/schemas/AccountingTarget'
+          type: object
+          title: Usage
+      type: object
+      required:
+      - recurring
+      - usage
+      title: Tier
+    TierRecurringBillingItem:
+      properties:
+        price:
+          type: number
+          title: Price
+      type: object
+      required:
+      - price
+      title: TierRecurringBillingItem
+    TierUsageBillingItem:
+      properties:
+        threshold:
+          type: integer
+          title: Threshold
+        price:
+          type: number
+          title: Price
+      type: object
+      required:
+      - threshold
+      - price
+      title: TierUsageBillingItem
+    Tokens:
+      properties:
+        input:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Input
+        output:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Output
+        image:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Image
+        search:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Search
+        storage:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Storage
+      type: object
+      title: Tokens
+    UpdateAWSMarketplaceSubscription:
+      properties:
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+      type: object
+      title: UpdateAWSMarketplaceSubscription
+    UpdateStripeCustomer:
+      properties:
+        billing_details:
+          $ref: '#/components/schemas/BillingDetailsModified'
+      type: object
+      required:
+      - billing_details
+      title: UpdateStripeCustomer
+    UpdateStripeSubscription:
+      properties:
+        on_demand_budget:
+          anyOf:
+          - type: number
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+      type: object
+      title: UpdateStripeSubscription
+    UpdateStripeSubscriptionMeteredPrices:
+      properties:
+        price_nicknames:
+          items:
+            type: string
+          type: array
+          title: Price Nicknames
+      type: object
+      required:
+      - price_nicknames
+      title: UpdateStripeSubscriptionMeteredPrices
+    UpgradeStripeSubscription:
+      properties:
+        billing_interval:
+          anyOf:
+          - $ref: '#/components/schemas/IntervalType'
+          - type: 'null'
+          default: month
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - account_type
+      title: UpgradeStripeSubscription
+    nuclia_accounting__api__models__InvoiceItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        period_start:
+          type: string
+          format: date-time
+          title: Period Start
+        period_end:
+          type: string
+          format: date-time
+          title: Period End
+        order_number:
+          type: string
+          title: Order Number
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        amount:
+          type: number
+          title: Amount
+        pdf:
+          type: string
+          title: Pdf
+      type: object
+      required:
+      - id
+      - period_start
+      - period_end
+      - order_number
+      - account_type
+      - amount
+      - pdf
+      title: InvoiceItem
+    nuclia_accounting__models__models__InvoiceItem:
+      properties:
+        threshold:
+          type: integer
+          title: Threshold
+        current_usage:
+          type: integer
+          title: Current Usage
+        price:
+          type: number
+          title: Price
+        over_usage:
+          type: integer
+          title: Over Usage
+        over_cost:
+          type: number
+          title: Over Cost
+      type: object
+      required:
+      - threshold
+      - current_usage
+      - price
+      - over_usage
+      - over_cost
+      title: InvoiceItem
+    Account:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        type:
+          $ref: '#/components/schemas/AccountType'
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        can_manage_account:
+          type: boolean
+          title: Can Manage Account
+        current_users:
+          type: integer
+          title: Current Users
+        max_users:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Users
+        current_kbs:
+          type: integer
+          title: Current Kbs
+        max_kbs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Kbs
+        current_agents:
+          type: integer
+          title: Current Agents
+        max_agents:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Agents
+        current_memories:
+          type: integer
+          title: Current Memories
+        max_memories:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Memories
+        current_arags:
+          type: integer
+          title: Current Arags
+        max_arags:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Arags
+        blocking_state:
+          $ref: '#/components/schemas/AccountBlockingState'
+          default: unblocked
+        blocked_features:
+          items:
+            $ref: '#/components/schemas/BlockedFeature'
+          type: array
+          title: Blocked Features
+          default: []
+        limits:
+          anyOf:
+          - $ref: '#/components/schemas/AccountLimits'
+          - type: 'null'
+        creation_date:
+          type: string
+          format: date-time
+          title: Creation Date
+        trial_expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trial Expiration Date
+        domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Domain
+        saml_entity_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Saml Entity Id
+        saml_sso_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Saml Sso Url
+        saml_x509_cert:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Saml X509 Cert
+        saml_config:
+          anyOf:
+          - $ref: '#/components/schemas/SAMLConfig'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - type
+      - can_manage_account
+      - current_users
+      - current_kbs
+      - current_agents
+      - current_memories
+      - current_arags
+      - creation_date
+      title: Account
+    AccountCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: AccountCreated
+    AccountCreation:
+      properties:
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Account slug
+          description: Identifier to use as the account identifier in all account
+            resources and subresources. This is a mutable field, unique, but independent
+            of the account id
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone
+      type: object
+      required:
+      - slug
+      - title
+      title: AccountCreation
+    AccountId:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+      type: object
+      required:
+      - id
+      - slug
+      title: AccountId
+    AccountLimits:
+      properties:
+        upload:
+          anyOf:
+          - $ref: '#/components/schemas/AccountUploadLimits'
+          - type: 'null'
+        usage:
+          anyOf:
+          - $ref: '#/components/schemas/AccountUsageLimits'
+          - type: 'null'
+        processing:
+          anyOf:
+          - $ref: '#/components/schemas/AccountUsageLimits'
+          - type: 'null'
+      type: object
+      title: AccountLimits
+    AccountListItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - type
+      title: AccountListItem
+    AccountManager:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        type:
+          $ref: '#/components/schemas/AccountType'
+        creator:
+          type: string
+          title: Creator
+        email:
+          type: string
+          title: Email
+        created:
+          type: string
+          format: date-time
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+        blocked_features:
+          items:
+            $ref: '#/components/schemas/BlockedFeature'
+          type: array
+          title: Blocked Features
+        blocking_state:
+          $ref: '#/components/schemas/AccountBlockingState'
+        users:
+          items:
+            $ref: '#/components/schemas/stashify_idp__api__manage__models__User'
+          type: array
+          title: Users
+        members:
+          items:
+            type: string
+          type: array
+          title: Members
+        managers:
+          items:
+            type: string
+          type: array
+          title: Managers
+        stashes:
+          $ref: '#/components/schemas/AccountManagerStashes'
+        max_kbs:
+          type: integer
+          title: Max Kbs
+        max_agents:
+          type: integer
+          title: Max Agents
+        max_memories:
+          type: integer
+          title: Max Memories
+        max_arags:
+          type: integer
+          title: Max Arags
+        arags:
+          type: integer
+          title: Arags
+        limits:
+          anyOf:
+          - $ref: '#/components/schemas/AccountManagerLimits'
+          - type: 'null'
+        trial_expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trial Expiration Date
+        saml_config:
+          anyOf:
+          - $ref: '#/components/schemas/SAMLConfig'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - slug
+      - type
+      - creator
+      - email
+      - created
+      - blocked_features
+      - blocking_state
+      - users
+      - members
+      - managers
+      - stashes
+      - max_kbs
+      - max_agents
+      - max_memories
+      - max_arags
+      - arags
+      title: AccountManager
+    AccountManagerLimits:
+      properties:
+        upload:
+          anyOf:
+          - $ref: '#/components/schemas/AccountManagerUploadLimits'
+          - type: 'null'
+        usage:
+          anyOf:
+          - $ref: '#/components/schemas/AccountManagerUsageLimits'
+          - type: 'null'
+      type: object
+      title: AccountManagerLimits
+    AccountManagerPatch:
+      properties:
+        slug:
+          anyOf:
+          - type: string
+            pattern: ^[a-z0-9_-]+$
+          - type: 'null'
+          title: Slug
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        creator:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/AccountType'
+          - type: 'null'
+        kbs:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Kbs
+        agents:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Agents
+        arags:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Arags
+        memories:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Memories
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        saml_config:
+          anyOf:
+          - $ref: '#/components/schemas/SAMLConfig'
+          - type: 'null'
+        limits:
+          anyOf:
+          - $ref: '#/components/schemas/AccountManagerLimits'
+          - type: 'null'
+        trial_expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Trial Expiration Date
+      type: object
+      title: AccountManagerPatch
+    AccountManagerSetBlocking:
+      properties:
+        blocking_state:
+          $ref: '#/components/schemas/AccountBlockingState'
+        blocked_features:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BlockedFeature'
+            type: array
+          - type: 'null'
+          title: Blocked Features
+      type: object
+      required:
+      - blocking_state
+      title: AccountManagerSetBlocking
+    AccountManagerStashes:
+      properties:
+        max_stashes:
+          type: integer
+          title: Max Stashes
+        items:
+          items:
+            $ref: '#/components/schemas/Stash'
+          type: array
+          title: Items
+      type: object
+      required:
+      - max_stashes
+      - items
+      title: AccountManagerStashes
+    AccountManagerSummary:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        type:
+          $ref: '#/components/schemas/AccountType'
+        creator:
+          type: string
+          title: Creator
+        email:
+          type: string
+          title: Email
+        created:
+          type: string
+          format: date-time
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+      type: object
+      required:
+      - id
+      - slug
+      - type
+      - creator
+      - email
+      - created
+      title: AccountManagerSummary
+    AccountManagerUploadLimits:
+      properties:
+        upload_limit_max_media_file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Upload Limit Max Media File Size
+        upload_limit_max_non_media_file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Upload Limit Max Non Media File Size
+      type: object
+      title: AccountManagerUploadLimits
+    AccountManagerUsageLimits:
+      properties:
+        monthly_limit_paragraphs_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Paragraphs Processed
+        monthly_limit_docs_no_media_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Docs No Media Processed
+        monthly_limit_media_seconds_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Media Seconds Processed
+        monthly_limit_paragraphs_stored:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Paragraphs Stored
+        monthly_limit_hosted_searches_performed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Hosted Searches Performed
+        monthly_limit_hosted_answers_generated:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Hosted Answers Generated
+        monthly_limit_self_hosted_searches_performed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Self Hosted Searches Performed
+        monthly_limit_self_hosted_answers_generated:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Self Hosted Answers Generated
+        storage_limit_max_bytes_per_kb:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Limit Max Bytes Per Kb
+        storage_limit_max_resources_per_kb:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Limit Max Resources Per Kb
+      type: object
+      title: AccountManagerUsageLimits
+    AccountModification:
+      properties:
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        saml:
+          anyOf:
+          - $ref: '#/components/schemas/OldSAMLConfig'
+          - type: 'null'
+        saml_config:
+          anyOf:
+          - $ref: '#/components/schemas/SAMLConfig'
+          - type: 'null'
+        slug:
+          anyOf:
+          - type: string
+            pattern: ^[a-z0-9_-]+$
+          - type: 'null'
+          title: Slug
+      type: object
+      title: AccountModification
+    AccountRole:
+      type: string
+      enum:
+      - AOWNER
+      - AMEMBER
+      title: AccountRole
+    AccountStatus:
+      properties:
+        blocking_state:
+          $ref: '#/components/schemas/AccountBlockingState'
+          default: unblocked
+        blocked_features:
+          items:
+            $ref: '#/components/schemas/BlockedFeature'
+          type: array
+          title: Blocked Features
+          default: []
+        requested_account_type:
+          anyOf:
+          - $ref: '#/components/schemas/AccountType'
+          - type: 'null'
+      type: object
+      title: AccountStatus
+    AccountStatusAvailable:
+      properties:
+        available:
+          type: boolean
+          title: Available
+      type: object
+      required:
+      - available
+      title: AccountStatusAvailable
+    AccountTypeDefaults:
+      properties:
+        max_kbs:
+          type: integer
+          title: Max Kbs
+        max_agents:
+          type: integer
+          title: Max Agents
+        max_memories:
+          type: integer
+          title: Max Memories
+        max_trial_days:
+          type: integer
+          title: Max Trial Days
+          default: -1
+        monthly_limit_paragraphs_processed:
+          type: integer
+          title: Monthly Limit Paragraphs Processed
+          default: -1
+        monthly_limit_docs_no_media_processed:
+          type: integer
+          title: Monthly Limit Docs No Media Processed
+          default: -1
+        monthly_limit_media_seconds_processed:
+          type: integer
+          title: Monthly Limit Media Seconds Processed
+          default: -1
+        monthly_limit_paragraphs_stored:
+          type: integer
+          title: Monthly Limit Paragraphs Stored
+          default: -1
+        monthly_limit_hosted_searches_performed:
+          type: integer
+          title: Monthly Limit Hosted Searches Performed
+          default: -1
+        monthly_limit_hosted_answers_generated:
+          type: integer
+          title: Monthly Limit Hosted Answers Generated
+          default: -1
+        monthly_limit_self_hosted_searches_performed:
+          type: integer
+          title: Monthly Limit Self Hosted Searches Performed
+          default: -1
+        monthly_limit_self_hosted_answers_generated:
+          type: integer
+          title: Monthly Limit Self Hosted Answers Generated
+          default: -1
+        storage_limit_max_bytes_per_kb:
+          type: integer
+          title: Storage Limit Max Bytes Per Kb
+          default: -1
+        storage_limit_max_resources_per_kb:
+          type: integer
+          title: Storage Limit Max Resources Per Kb
+          default: -1
+        upload_limit_max_media_file_size:
+          type: integer
+          title: Upload Limit Max Media File Size
+        upload_limit_max_non_media_file_size:
+          type: integer
+          title: Upload Limit Max Non Media File Size
+      type: object
+      required:
+      - max_kbs
+      - max_agents
+      - max_memories
+      - upload_limit_max_media_file_size
+      - upload_limit_max_non_media_file_size
+      title: AccountTypeDefaults
+    AccountUploadLimits:
+      properties:
+        upload_limit_max_media_file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Upload Limit Max Media File Size
+        upload_limit_max_non_media_file_size:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Upload Limit Max Non Media File Size
+      type: object
+      title: AccountUploadLimits
+    AccountUsageLimits:
+      properties:
+        monthly_limit_paragraphs_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Paragraphs Processed
+        monthly_limit_docs_no_media_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Docs No Media Processed
+        monthly_limit_media_seconds_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Media Seconds Processed
+        monthly_limit_paragraphs_stored:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Paragraphs Stored
+        monthly_limit_hosted_searches_performed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Hosted Searches Performed
+        monthly_limit_hosted_answers_generated:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Hosted Answers Generated
+        monthly_limit_self_hosted_searches_performed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Self Hosted Searches Performed
+        monthly_limit_self_hosted_answers_generated:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Self Hosted Answers Generated
+        storage_limit_max_bytes_per_kb:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Limit Max Bytes Per Kb
+        storage_limit_max_resources_per_kb:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Limit Max Resources Per Kb
+        monthly_limit_non_media_files_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Non Media Files Processed
+        monthly_limit_chars_processed:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Monthly Limit Chars Processed
+      type: object
+      title: AccountUsageLimits
+    AccountUser:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          title: Email
+        role:
+          $ref: '#/components/schemas/AccountRole'
+      type: object
+      required:
+      - id
+      - name
+      - email
+      - role
+      title: AccountUser
+    AccountUserCreation:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: AccountUserCreation
+    AccountUserPatch:
+      properties:
+        type:
+          type: string
+          title: Type
+      type: object
+      required:
+      - type
+      title: AccountUserPatch
+    AccountZoneInfo:
+      properties:
+        account_type:
+          $ref: '#/components/schemas/AccountType'
+        account_email:
+          type: string
+          title: Account Email
+        account_slug:
+          type: string
+          title: Account Slug
+        account_title:
+          type: string
+          title: Account Title
+        blocking_state:
+          $ref: '#/components/schemas/AccountBlockingState'
+        blocked_features:
+          items:
+            $ref: '#/components/schemas/BlockedFeature'
+          type: array
+          title: Blocked Features
+        upload_limits:
+          $ref: '#/components/schemas/AccountUploadLimits'
+      type: object
+      required:
+      - account_type
+      - account_email
+      - account_slug
+      - account_title
+      - blocking_state
+      - blocked_features
+      - upload_limits
+      title: AccountZoneInfo
+    ActionId:
+      type: string
+      enum:
+      - join_account
+      - join_kb
+      - go_account
+      - edit
+      - create_template
+      - create
+      - edit_template
+      - signup_create_user
+      title: ActionId
+    AddAccountUser:
+      properties:
+        id:
+          type: string
+          title: Id
+        role:
+          $ref: '#/components/schemas/AccountRole'
+      type: object
+      required:
+      - id
+      - role
+      title: AddAccountUser
+    BatchUpdateAccountUsers:
+      properties:
+        add:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AddAccountUser'
+            type: array
+          - type: 'null'
+          title: Add
+        delete:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Delete
+      type: object
+      title: BatchUpdateAccountUsers
+    BlockedFeature:
+      type: string
+      enum:
+      - upload
+      - processing
+      - search
+      - generative
+      - training
+      - public_upload
+      - public_processing
+      - public_search
+      - public_generative
+      title: BlockedFeature
+    Body_acs_api_auth_saml_acs_post:
+      properties:
+        SAMLResponse:
+          type: string
+          title: Samlresponse
+        RelayState:
+          type: string
+          title: Relaystate
+      type: object
+      required:
+      - SAMLResponse
+      - RelayState
+      title: Body_acs_api_auth_saml_acs_post
+    Body_oauth_login_api_auth_oauth_login_post:
+      properties:
+        login_challenge:
+          type: string
+          title: Login Challenge
+        username:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Username
+        password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Password
+      type: object
+      required:
+      - login_challenge
+      title: Body_oauth_login_api_auth_oauth_login_post
+    Body_signup_start_api_auth_signup_start_post:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        app:
+          type: string
+          title: App
+      type: object
+      required:
+      - email
+      - app
+      title: Body_signup_start_api_auth_signup_start_post
+    Body_submit_consent_api_auth_oauth_consent_post:
+      properties:
+        consent_challenge:
+          type: string
+          title: Consent Challenge
+        grant_scope:
+          items:
+            type: string
+          type: array
+          title: Grant Scope
+          default: []
+        reject:
+          type: boolean
+          title: Reject
+          default: false
+      type: object
+      required:
+      - consent_challenge
+      title: Body_submit_consent_api_auth_oauth_consent_post
+    Body_upload_account_logo_api_v1_account__account_slug__logo_png_patch:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_upload_account_logo_api_v1_account__account_slug__logo_png_patch
+    CloudProvider:
+      type: string
+      enum:
+      - AWS
+      - GCP
+      title: CloudProvider
+    CreateTokenRequest:
+      properties:
+        description:
+          type: string
+          title: Description
+        expiration_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expiration Date
+      type: object
+      required:
+      - description
+      title: CreateTokenRequest
+    GlobalAccountUser:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        account_role:
+          anyOf:
+          - $ref: '#/components/schemas/AccountRole'
+          - type: 'null'
+        account_slug:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Slug
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      type: object
+      required:
+      - user_id
+      title: GlobalAccountUser
+    GlobalMagicToken:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: GlobalMagicToken
+    InvitePayload:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        role:
+          $ref: '#/components/schemas/AccountRole'
+          default: AMEMBER
+        came_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Came From
+      type: object
+      required:
+      - email
+      title: InvitePayload
+    InvitedUser:
+      properties:
+        email:
+          type: string
+          title: Email
+        role:
+          $ref: '#/components/schemas/AccountRole'
+        expires:
+          type: string
+          format: date-time
+          title: Expires
+      type: object
+      required:
+      - email
+      - role
+      - expires
+      title: InvitedUser
+    ItemCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: ItemCreated
+    KBMode:
+      type: string
+      enum:
+      - kb
+      - agent
+      - agent_no_memory
+      title: KBMode
+      description: 'Knowledge Box modes define the architecture and components of
+        a KB.
+
+
+        - kb: KB in idp_regional + NucliaDB KB (same ID), no agent
+
+        - agent: KB in idp_regional + NucliaDB KB (same ID) + Agent with memory (agent_id
+        = kb_id)
+
+        - agent_no_memory: KB in idp_regional + Agent without memory (agent_id = kb_id),
+        no NucliaDB KB'
+    KbState:
+      type: string
+      enum:
+      - PUBLISHED
+      - PRIVATE
+      title: KbState
+    KnowledgeBoxIndex:
+      properties:
+        kb_id:
+          type: string
+          title: Kb Id
+        account_id:
+          type: string
+          title: Account Id
+        zone_id:
+          type: string
+          title: Zone Id
+        kb_mode:
+          $ref: '#/components/schemas/KBMode'
+      type: object
+      required:
+      - kb_id
+      - account_id
+      - zone_id
+      - kb_mode
+      title: KnowledgeBoxIndex
+    KnowledgeBoxIndexCreationPayload:
+      properties:
+        kb_id:
+          type: string
+          title: Kb Id
+        account_id:
+          type: string
+          title: Account Id
+        kb_mode:
+          $ref: '#/components/schemas/KBMode'
+      type: object
+      required:
+      - kb_id
+      - account_id
+      - kb_mode
+      title: KnowledgeBoxIndexCreationPayload
+    Languages:
+      type: string
+      enum:
+      - CA
+      - ES
+      - EN
+      - FR
+      - DE
+      - PT
+      title: Languages
+    LoginPayload:
+      properties:
+        username:
+          type: string
+          format: email
+          title: Username
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - username
+      - password
+      title: LoginPayload
+    LoginProvider:
+      type: string
+      enum:
+      - GOOGLE
+      - APPLE
+      - LOCAL
+      - SAML
+      - GITHUB
+      - AWS_MARKETPLACE
+      - MICROSOFT
+      title: LoginProvider
+    ManageAccountCreation:
+      properties:
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        email:
+          type: string
+          format: email
+          title: Email
+        zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Zone
+        type:
+          $ref: '#/components/schemas/AccountType'
+      type: object
+      required:
+      - slug
+      - title
+      - email
+      - type
+      title: ManageAccountCreation
+    ManageUser:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        email:
+          type: string
+          title: Email
+        language:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Language
+        type:
+          $ref: '#/components/schemas/UserType'
+        providers:
+          items:
+            $ref: '#/components/schemas/LoginProvider'
+          type: array
+          title: Providers
+          default: []
+        data:
+          title: Data
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+      type: object
+      required:
+      - id
+      - email
+      - type
+      - data
+      title: ManageUser
+    ManageUserPatch:
+      properties:
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+      type: object
+      title: ManageUserPatch
+    ManageZone:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[.a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        creator:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        subdomain:
+          type: string
+          title: Subdomain
+      type: object
+      required:
+      - id
+      - slug
+      - cloud_provider
+      - subdomain
+      title: ManageZone
+    ManageZoneAdd:
+      properties:
+        slug:
+          type: string
+          pattern: ^[.a-z0-9_-]+$
+          title: Slug
+        title:
+          type: string
+          minLength: 1
+          title: Title
+        creator:
+          type: string
+          title: Creator
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        subdomain:
+          type: string
+          title: Subdomain
+      type: object
+      required:
+      - slug
+      - title
+      - creator
+      - cloud_provider
+      - subdomain
+      title: ManageZoneAdd
+    ManageZoneCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[.a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        creator:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Creator
+        account:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        subdomain:
+          type: string
+          title: Subdomain
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - id
+      - slug
+      - cloud_provider
+      - subdomain
+      - token
+      title: ManageZoneCreated
+    ManageZonePatch:
+      properties:
+        slug:
+          anyOf:
+          - type: string
+            pattern: ^[.a-z0-9_-]+$
+          - type: 'null'
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        cloud_provider:
+          anyOf:
+          - $ref: '#/components/schemas/CloudProvider'
+          - type: 'null'
+        subdomain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Subdomain
+      type: object
+      title: ManageZonePatch
+    ManageZoneSessionToken:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: ManageZoneSessionToken
+    NuaKeyIndexCreationPayload:
+      properties:
+        client_id:
+          type: string
+          title: Client Id
+        account_id:
+          type: string
+          title: Account Id
+      type: object
+      required:
+      - client_id
+      - account_id
+      title: NuaKeyIndexCreationPayload
+    OAuthTokens:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      title: OAuthTokens
+    OldSAMLConfig:
+      properties:
+        domain:
+          type: string
+          minLength: 1
+          title: Domain
+        sso_url:
+          type: string
+          title: Sso Url
+        entity_id:
+          type: string
+          title: Entity Id
+        x509_cert:
+          type: string
+          title: X509 Cert
+      type: object
+      required:
+      - domain
+      - sso_url
+      - entity_id
+      - x509_cert
+      title: OldSAMLConfig
+    RecoverPayload:
+      properties:
+        username:
+          type: string
+          format: email
+          title: Username
+        app:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: App
+        login_challenge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Challenge
+        initial_setpassword:
+          type: boolean
+          title: Initial Setpassword
+          default: false
+      type: object
+      required:
+      - username
+      title: RecoverPayload
+    RefreshRequest:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - refresh_token
+      title: RefreshRequest
+    RequestGlobalMagicToken:
+      properties:
+        action_id:
+          $ref: '#/components/schemas/ActionId'
+        token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        account_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Account Id
+        came_from:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Came From
+      type: object
+      required:
+      - action_id
+      title: RequestGlobalMagicToken
+    ResetPayload:
+      properties:
+        password:
+          type: string
+          title: Password
+        token:
+          type: string
+          title: Token
+        login_challenge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Challenge
+      type: object
+      required:
+      - password
+      - token
+      title: ResetPayload
+    SAMLConfig:
+      properties:
+        domains:
+          items:
+            type: string
+            minLength: 1
+          type: array
+          title: Domains
+        sso_url:
+          type: string
+          title: Sso Url
+        entity_id:
+          type: string
+          title: Entity Id
+        x509_cert:
+          type: string
+          title: X509 Cert
+        authn_context:
+          anyOf:
+          - type: string
+            enum:
+            - exact
+            - minimum
+            - better
+            - maximum
+          - type: 'null'
+          title: Authn Context
+      type: object
+      required:
+      - domains
+      - sso_url
+      - entity_id
+      - x509_cert
+      title: SAMLConfig
+    SetPasswordPayload:
+      properties:
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - password
+      title: SetPasswordPayload
+    SetupUserPayload:
+      properties:
+        token:
+          type: string
+          title: Token
+        password:
+          type: string
+          title: Password
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - token
+      - password
+      - name
+      title: SetupUserPayload
+    SignupAction:
+      type: string
+      enum:
+      - check-mail
+      - user-exists
+      title: SignupAction
+    SignupRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          title: Password
+        login_challenge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Challenge
+      type: object
+      required:
+      - name
+      - email
+      - password
+      title: SignupRequest
+    SignupResponse:
+      properties:
+        action:
+          $ref: '#/components/schemas/SignupAction'
+      type: object
+      required:
+      - action
+      title: SignupResponse
+    Stash:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+        creator:
+          type: string
+          title: Creator
+        state:
+          $ref: '#/components/schemas/KbState'
+        account:
+          type: string
+          title: Account
+        zone:
+          type: string
+          title: Zone
+        created:
+          type: string
+          format: date-time
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/StashPreferences'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - slug
+      - creator
+      - state
+      - account
+      - zone
+      - created
+      title: Stash
+    StashPreferences:
+      properties: {}
+      type: object
+      title: StashPreferences
+    TokenCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+        token:
+          type: string
+          title: Token
+        expires:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires
+      type: object
+      required:
+      - id
+      - token
+      - expires
+      title: TokenCreated
+    TokenExchangeRequestInput:
+      properties:
+        token:
+          type: string
+          title: Token
+      type: object
+      required:
+      - token
+      title: TokenExchangeRequestInput
+    TokenItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        description:
+          type: string
+          title: Description
+        expires:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires
+      type: object
+      required:
+      - id
+      - description
+      - expires
+      title: TokenItem
+    UserCreated:
+      properties:
+        id:
+          type: string
+          title: Id
+      type: object
+      required:
+      - id
+      title: UserCreated
+    UserCreation:
+      properties:
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          format: email
+          title: Email
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+        type:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+          default: USER
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+      type: object
+      required:
+      - name
+      - email
+      title: UserCreation
+    UserOnboardingInquiry:
+      properties:
+        use_case:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Use Case
+        organization_size:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Organization Size
+        receive_updates:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Receive Updates
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        role:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Role
+        country:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Country
+        accept_privacy_policy:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Accept Privacy Policy
+          default: false
+      type: object
+      title: UserOnboardingInquiry
+    UserPreferences:
+      properties: {}
+      type: object
+      title: UserPreferences
+    UserSetPreferences:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+      type: object
+      title: UserSetPreferences
+    UserType:
+      type: string
+      enum:
+      - ROOT
+      - DEALER
+      - USER
+      - READONLY
+      - MANAGER
+      - SALES
+      title: UserType
+    Welcome:
+      properties:
+        preferences:
+          $ref: '#/components/schemas/WelcomeUser'
+        accounts:
+          items:
+            type: string
+          type: array
+          title: Accounts
+        create:
+          type: boolean
+          title: Create
+        can_be_deleted:
+          type: boolean
+          title: Can Be Deleted
+        dependant_accounts:
+          items:
+            $ref: '#/components/schemas/AccountId'
+          type: array
+          title: Dependant Accounts
+      type: object
+      required:
+      - preferences
+      - accounts
+      - create
+      - can_be_deleted
+      - dependant_accounts
+      title: Welcome
+    WelcomeUser:
+      properties:
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+        email:
+          type: string
+          title: Email
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          $ref: '#/components/schemas/UserType'
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+      type: object
+      required:
+      - email
+      - type
+      title: WelcomeUser
+    Zone:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          pattern: ^[.a-z0-9_-]+$
+          title: Slug
+        title:
+          anyOf:
+          - type: string
+            minLength: 1
+          - type: 'null'
+          title: Title
+        cloud_provider:
+          $ref: '#/components/schemas/CloudProvider'
+        subdomain:
+          type: string
+          title: Subdomain
+      type: object
+      required:
+      - id
+      - slug
+      - cloud_provider
+      - subdomain
+      title: Zone
+    stashify_idp__api__auth__providers__microsoft__SocialLoginAuthorizationRequest:
+      properties:
+        code:
+          type: string
+          title: Code
+        login_challenge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Challenge
+      type: object
+      required:
+      - code
+      title: SocialLoginAuthorizationRequest
+    stashify_idp__api__manage__models__User:
+      properties:
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Id
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+        last_login_ip:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Login Ip
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+        email:
+          type: string
+          title: Email
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        type:
+          $ref: '#/components/schemas/UserType'
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/UserPreferences'
+          - type: 'null'
+      type: object
+      required:
+      - email
+      - type
+      title: User
+    stashify_idp__api__models__User:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        email:
+          type: string
+          title: Email
+        language:
+          anyOf:
+          - $ref: '#/components/schemas/Languages'
+          - type: 'null'
+        type:
+          $ref: '#/components/schemas/UserType'
+        last_login:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Login
+        avatar:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar
+      type: object
+      required:
+      - id
+      - name
+      - email
+      - type
+      title: User

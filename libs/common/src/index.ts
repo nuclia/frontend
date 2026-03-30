@@ -2,6 +2,7 @@
  * Public API Surface of @flaps/common
  */
 export * from './lib/account';
+export * from './lib/metrics';
 export * from './lib/ai-models';
 export * from './lib/aws-onboarding';
 export * from './lib/base';
@@ -15,7 +16,6 @@ export * from './lib/kb-creation';
 export * from './lib/knowledge-box-keys';
 export * from './lib/knowledge-box-settings';
 export * from './lib/knowledge-box-users';
-export * from './lib/metrics';
 export * from './lib/navbar';
 export * from './lib/onboarding';
 export * from './lib/page-not-found';

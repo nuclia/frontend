@@ -13,6 +13,19 @@ description: >
 
 # Testing Patterns — Nuclia Frontend Monorepo
 
+## When to Write Tests
+
+**Tests are not auto-generated after feature work.** The user triggers test writing manually
+when they decide the feature is stable enough. Agents must follow these rules:
+
+1. **Never auto-generate tests as part of a feature build** — unless the user explicitly says
+   "write tests", "add tests", or similar.
+2. **Do not offer to write tests** at the end of a feature implementation. The user will ask
+   when ready.
+3. When the user _does_ ask for tests, use the `test-writer` agent or follow the patterns below.
+
+---
+
 Two separate test stacks live in this repo. Match the stack to the project:
 
 | Projects | Runner | Config |

@@ -1,0 +1,294 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.remi-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+
+  // ── Period selector bar ────────────────────────────────────────────
+  .period-bar {
+    align-items: baseline;
+    display: flex;
+    gap: rhythm(1);
+    padding: rhythm(1.5) rhythm(3);
+    background: $color-neutral-lightest;
+    border-bottom: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(1);
+    box-shadow: var(--shadow-small);
+  }
+
+  label {
+    @include font-size(m);
+    @include line-height(l);
+    font-weight: $font-weight-semi-bold;
+  }
+
+  // ── Metric card (shared across sections) ───────────────────────────
+  .metric-card {
+    background: $color-light-stronger;
+    border: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(1);
+    padding: rhythm(3);
+  }
+
+  .metric-card-header {
+    margin-bottom: rhythm(2);
+  }
+
+  .metric-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  // ── Health Status definitions row ──────────────────────────────────
+  .definitions-row {
+    display: flex;
+    gap: rhythm(3);
+    margin-top: rhythm(2);
+    padding-top: rhythm(2);
+    border-top: 1px solid $color-neutral-lightest;
+  }
+
+  .definition-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+
+    .definition-term {
+      align-items: center;
+      color: $color-dark-stronger;
+      display: flex;
+      gap: rhythm(0.75);
+    }
+    .definition-desc {
+      color: $color-neutral-regular;
+    }
+  }
+
+  .color-dot {
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    height: 10px;
+    width: 10px;
+  }
+
+  // ── Chart containers ───────────────────────────────────────────────
+  .chart-container {
+    display: inline-block;
+    text-align: center;
+    width: calc((100% - #{rhythm(2)} * 2) / 3);
+    max-width: rhythm(60);
+
+    &:not(:last-child) {
+      margin-right: rhythm(2);
+    }
+
+    &.unified-chart {
+      display: block;
+      width: 100%;
+      max-width: none;
+      text-align: left;
+    }
+  }
+
+  .evolution-chart-legend {
+    align-items: center;
+    display: flex;
+    gap: rhythm(3);
+
+    .legend-item {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
+
+    .average-line {
+      background: $color-primary-regular;
+      height: rhythm(0.25);
+      width: rhythm(2);
+    }
+    .range-area {
+      background: $color-primary-lightest;
+      height: rhythm(2);
+      width: rhythm(2);
+    }
+  }
+
+  // ── Download banner ────────────────────────────────────────────────
+  .download-banner {
+    display: flex;
+    align-items: center;
+    gap: rhythm(2);
+    padding: rhythm(2) rhythm(3);
+    background: var(--color-primary-lightest, #{$color-primary-lightest});
+    border-radius: rhythm(1);
+
+    a {
+      color: var(--color-primary-regular, #{$color-primary-regular});
+      font-weight: $font-weight-semi-bold;
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  // ── Missing Knowledge section ──────────────────────────────────────
+  .missing-knowledge {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+  }
+
+  .missing-knowledge-card {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+
+    // ── Fix #5: Accordion items — borders, gap, expanded bg ────────
+    pa-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1);
+    }
+
+    // Subtle border around each accordion item (host-level — no ::ng-deep)
+    pa-accordion-item {
+      border: 1px solid $color-neutral-lighter;
+      border-radius: $border-radius-default;
+    }
+
+    // Expanded item — header separator + body background (internal — needs ::ng-deep)
+    pa-accordion-item:not(.pa-accordion-collapsed) ::ng-deep {
+      .pa-accordion-item-header::after {
+        background: $color-neutral-lighter;
+        height: 1px;
+      }
+
+      .pa-accordion-item-body {
+        background: $color-neutral-lightest;
+        border-bottom-left-radius: $border-radius-default;
+        border-bottom-right-radius: $border-radius-default;
+        padding: rhythm(2) rhythm(3);
+      }
+    }
+
+    // Better typography for description content (answer, relevance, etc.)
+    pa-accordion-item ::ng-deep .pa-accordion-item-title .body-s {
+      line-height: line-height(l);
+      margin-top: rhythm(0.5);
+
+      strong {
+        font-weight: $font-weight-semi-bold;
+        color: $color-dark-stronger;
+      }
+    }
+
+    // ── Fix #4: Chart containers inside accordion — wider ──────────
+    pa-accordion-item ::ng-deep .chart-container {
+      display: block;
+      width: rhythm(50);
+      max-width: 100%;
+      margin-top: rhythm(1);
+      text-align: center;
+
+      h6 {
+        color: $color-neutral-regular;
+        margin-top: rhythm(0.5);
+      }
+    }
+  }
+
+  .criteria-container form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  // ── Fix #3: Criteria / expander header styling ─────────────────────
+  .criteria-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: rhythm(1) rhythm(1.5);
+    background: $color-neutral-lightest;
+    border-radius: $border-radius-default;
+    gap: rhythm(2);
+  }
+
+  .pagination {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+    line-height: $line-height-body;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .criteria-container {
+    padding: rhythm(2) 0;
+    max-width: rhythm(64);
+
+    form .field-container {
+      align-items: baseline;
+      display: flex;
+      gap: rhythm(1);
+
+      label {
+        flex: 1 0 auto;
+        text-align: right;
+      }
+      pa-select,
+      pa-input {
+        width: rhythm(14);
+      }
+    }
+  }
+
+  pa-expander ::ng-deep .pa-expander:not(.pa-expander-card).pa-collapsed .pa-expander-header {
+    box-shadow: none;
+  }
+
+  .context-list {
+    margin: 0;
+
+    .score {
+      color: $color-neutral-regular;
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  // ── Fix #2: Sticky section with z-index, solid bg, shadow ──────────
+  .sticky-section {
+    background: $color-light-stronger;
+    position: sticky;
+    top: 0;
+    z-index: $z-index-default;
+    box-shadow: 0 2px 4px -2px transparent;
+    transition: box-shadow 0.2s ease;
+
+    // Apply shadow when content scrolls beneath via IntersectionObserver
+    // fallback: always show a subtle separator at the bottom
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: $color-neutral-lighter;
+    }
+
+    &.sub-section {
+      padding-top: rhythm(2);
+      margin-bottom: rhythm(0);
+      top: var(--header-height);
+    }
+  }
+}

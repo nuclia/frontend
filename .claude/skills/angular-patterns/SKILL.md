@@ -32,6 +32,156 @@ many features; this covers only what the team has adopted. When in doubt, match 
 
 ---
 
+## Code-Splitting Pattern: Component / Service / Config Trinity
+
+Every non-trivial page or feature component **must** be split into three files:
+
+| File | Responsibility | Class/export type |
+|---|---|---|
+| `feature-name.component.ts` | Template wiring, host element, signals bound to service state | `@Component` class — no business logic, no HTTP calls, no inline data |
+| `feature-name.service.ts` | All business logic, API calls, derived state | `@Injectable()` class — scoped to the component via `providers: [FeatureNameService]` in the `@Component` decorator |
+| `feature-name.config.ts` | Static configuration: column defs, dropdown options, constants | Exported `const` values and types — no class, no DI |
+
+### Rules
+
+- **Component file** may only: inject the local service, bind signals to the template, handle user events by delegating to the service.
+- **Service file** owns state as `signal()` / `computed()`. If state feeds from an observable, use the Tier 2 pattern (tap into signal, expose `asReadonly()`).
+- **Config file** is pure TypeScript — no imports from Angular, no `@Injectable`. Import it in both the component and the service if needed.
+
+### Example
+
+```ts
+// my-page.config.ts  — pure constants, no Angular imports
+import { MyColumnDef } from './my-page.models';
+
+export const MY_PAGE_COLUMNS: MyColumnDef[] = [
+  { key: 'date', label: 'activity.column.date', width: '120px' },
+  { key: 'name', label: 'activity.column.name', width: '1fr' },
+];
+```
+
+```ts
+// my-page.service.ts  — logic + state, local scope
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { SDKService } from '@flaps/core';
+import { MY_PAGE_COLUMNS } from './my-page.config';
+
+@Injectable()
+export class MyPageService {
+  private sdk = inject(SDKService);
+
+  // ── State (signals) ───────────────────────────────────────────────
+  private _items   = signal<MyItem[]>([]);
+  private _loading = signal(false);
+
+  items   = this._items.asReadonly();
+  loading = this._loading.asReadonly();
+  isEmpty = computed(() => this._items().length === 0);
+
+  loadData(month: string): void {
+    this._loading.set(true);
+    this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.getActivityLog(month)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (rows) => { this._items.set(rows); this._loading.set(false); },
+      error: () => this._loading.set(false),
+    });
+  }
+}
+```
+
+```ts
+// my-page.component.ts  — thin wrapper, template wiring only
+@Component({
+  selector: 'app-my-page',
+  templateUrl: './my-page.component.html',
+  styleUrl: './my-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [MyPageService],   // ← scopes service to this component tree
+})
+export class MyPageComponent {
+  protected service = inject(MyPageService);
+  readonly columns = MY_PAGE_COLUMNS;     // ← from config, not computed here
+}
+```
+
+> **When to provide locally vs in a module:** If the service holds state that should reset
+> when the component is destroyed (e.g. per-page filter state), use component-level `providers`.
+> If the state should survive route transitions, lift to the module providers.
+
+---
+
+## Component File Organization
+
+Each feature module organises its files using a named-subfolder convention.
+
+### Named subfolder rule
+
+Every **page component** and all files that belong exclusively to it (`.component.ts`,
+`.component.html`, `.config.ts`, `.service.ts`) **must** live in a subfolder named after the
+component:
+
+```
+activity/
+  activity-log-page.component.*    ← module-root component (exception — see below)
+  activity-log-page.service.ts     ← belongs to the root component, stays at root
+  activity.module.ts
+  activity.service.ts              ← module-level shared service
+  activity-column.model.ts         ← module-level model
+  cost-token-page/                 ← subfolder: named after the page component
+    cost-token-page.component.html
+    cost-token-page.component.ts
+    cost-token-page.config.ts
+    cost-token-page.service.ts
+  search-activity-page/            ← subfolder: named after the page component
+    search-activity-page.component.html
+    search-activity-page.component.ts
+    ...
+```
+
+### Module-root exception
+
+A component **stays at the module root** (not in a subfolder) when it is:
+- The "spine" or wrapper/template component that other components in the module are routed into, **or**
+- A component that is directly used (`<stf-foo>`) by other components in the same module.
+
+Files that always stay at the module root: `*.module.ts`, shared `*.service.ts`, shared `*.model.ts`,
+and the module-root component's own files.
+
+### No empty SCSS files
+
+Never create or commit empty `.scss` files. If a component needs no custom styles, **omit
+`styleUrl` from the `@Component` decorator entirely** rather than pointing it at an empty file:
+
+```ts
+// ✅ No styles needed — omit styleUrl completely
+@Component({
+  selector: 'stf-my-page',
+  templateUrl: './my-page.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+
+// ❌ Never do this
+@Component({
+  styleUrl: './my-page.component.scss',  // file is empty — remove it
+})
+```
+
+### Relative imports inside subfolders
+
+When a component lives in a subfolder (`feature-name/feature-name.component.ts`), imports
+to sibling module-level files use the `../` prefix:
+
+```ts
+// Inside cost-token-page/cost-token-page.component.ts
+import { ActivityColumnModel } from '../activity-column.model';
+import { ActivityLogPageComponent } from '../activity-log-page.component';
+import { COST_TOKEN_COLUMNS } from './cost-token-page.config';  // sibling in same subfolder
+```
+
+---
+
 ## Component Skeleton
 
 ```ts
@@ -276,6 +426,133 @@ export const myFeatureGuard: CanActivateFn = (route) => {
 
 ---
 
+## Computed Value Readability
+
+When computing a derived stat value (average, percentage, count), **always extract intermediate
+steps into named variables** before assembling the final `signal.set()` call. Inline nesting of
+`reduce`, `filter`, `Math.round`, and `parseFloat` in the same expression is banned.
+
+```ts
+// ❌ Hard to read — everything inline
+this._stats.set({
+  avgRetrievalTimeMs:
+    withRetrieval.length > 0
+      ? Math.round(
+          withRetrieval.reduce((sum, i) => sum + i.retrieval_time!, 0) / withRetrieval.length,
+        )
+      : 0,
+});
+
+// ✅ Extract each step into a named variable
+const retrievalSum = withRetrieval.reduce((sum, i) => sum + i.retrieval_time!, 0);
+const avgRetrievalTimeMs = withRetrieval.length > 0 ? Math.round(retrievalSum / withRetrieval.length) : 0;
+this._stats.set({ avgRetrievalTimeMs });
+
+// ✅ Same rule applies to parseFloat + toFixed chains
+const remiSum = withRemi.reduce((sum, i) => sum + i.remi_scores!, 0);
+const avgRemiScore = withRemi.length > 0 ? parseFloat((remiSum / withRemi.length).toFixed(1)) : 0;
+```
+
+Rule of thumb: each line should do **one thing** — a sum, a filter, a rounding, or a guard check.
+
+---
+
+## `as const` Arrays for Type Derivation
+
+When defining a set of string literal union types, prefer defining a `const` array first and
+deriving the type from it. This gives you both **runtime iteration** over the values and
+**compile-time type safety**:
+
+```ts
+// ✅ Preferred: const array → derived type
+export const MY_FIELDS = ['field1', 'field2', 'field3'] as const;
+export type MyField = (typeof MY_FIELDS)[number];
+// MyField = 'field1' | 'field2' | 'field3'
+
+// ✅ Extending a parent set: spread + as const
+export const EXTENDED_FIELDS = [...MY_FIELDS, 'extra1', 'extra2'] as const;
+export type ExtendedField = (typeof EXTENDED_FIELDS)[number];
+```
+
+```ts
+// ❌ Avoid: standalone union type that can't be iterated at runtime
+export type MyField = 'field1' | 'field2' | 'field3';
+// No way to loop over values without duplicating them in an array
+```
+
+This pattern is used extensively in SDK model files (e.g., `activity.models.ts` show fields).
+
+---
+
+## Abstract Base Classes
+
+When **3+ services or components** share significant logic (state signals, lifecycle methods,
+pipeline patterns), extract an abstract base class rather than duplicating code:
+
+```ts
+// metrics/abstract-metrics-page.service.ts — at the module root
+@Injectable()
+export abstract class AbstractMetricsPageService<T, R = T[]> {
+  // inject() works as field initializers in abstract classes
+  protected sdk = inject(SDKService);
+  protected toast = inject(SisToastService);
+
+  // ── Shared state ────────────────────────────────────────────────
+  private _items = signal<R | null>(null);
+  items = this._items.asReadonly();
+
+  // ── Protected hooks that subclasses can override ────────────────
+  protected _resetPaginationState(): void {
+    // Default no-op — subclasses override if they have pagination
+  }
+
+  // ── Shared pipeline logic ───────────────────────────────────────
+  protected initPipeline(): void {
+    // Build the common refresh → switchMap → tap pipeline
+  }
+
+  protected loadAvailableMonths(): void {
+    // Shared month-loading logic
+  }
+}
+```
+
+**Rules for abstract base classes:**
+- Place at the module root (e.g., `metrics/abstract-metrics-page.service.ts`)
+- Use generics for item types: `AbstractMetricsPageService<T, R = T[]>`
+- Provide protected hook methods (`_resetPaginationState()`) that subclasses can override
+- `inject()` as field initializers works with inheritance — no need to pass services via `super()`
+- Subclass constructor pattern: `super()` → `this.initPipeline()` → `this.loadAvailableMonths()`
+
+---
+
+## File Splitting Convention: `.model.ts` Files
+
+In addition to the Component / Service / Config trinity, complex components use a
+**`.model.ts`** file for interfaces, types, and data models:
+
+| File | Content |
+|---|---|
+| `feature-name.model.ts` | Interfaces, type aliases, enums, and small data-shape classes |
+| `feature-name.service.ts` | Business logic: state management, data transformation, condition CRUD |
+| `feature-name.component.ts` | Thin UI shell that delegates all logic to the service |
+| `feature-name.config.ts` | Static column defs, dropdown options, constants |
+
+**When to split:** This applies to complex components with significant logic. Simple components
+with 1–2 interfaces can keep them inline or in the service file.
+
+```
+activity/
+  cost-token-page/
+    cost-token-page.component.ts    ← thin UI shell
+    cost-token-page.component.html
+    cost-token-page.service.ts      ← business logic + state
+    cost-token-page.model.ts        ← interfaces and types
+    cost-token-page.config.ts       ← static constants
+```
+
+---
+
 ## Lazy Routing Patterns
 
 Two styles coexist — prefer the route-array style for new features:
@@ -320,6 +597,8 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 | `@Output() changed = new EventEmitter<string>()` | `changed = output<string>()` |
 | `standalone: true` explicitly written | Omit it — defaults to `true` in Angular 19+ |
 | `styleUrls: ['./foo.component.scss']` (array) | `styleUrl: './foo.component.scss'` (singular string) |
+| Empty `.scss` file committed for a component | Omit `styleUrl` entirely when no styles are needed |
+| Page component files at the module root | Put each page component in a named subfolder (`feature-name/`) |
 | Missing `changeDetection: ChangeDetectionStrategy.OnPush` | Always include it |
 | `effect()` to derive values | Use `computed()` for derived state |
 | `this.signal.set(x)` inside `computed()` | Never write inside computed |
