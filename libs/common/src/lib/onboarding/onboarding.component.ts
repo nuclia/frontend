@@ -60,7 +60,9 @@ export class OnboardingComponent {
     this.creatingAccount = true;
     this.cdr.markForCheck();
     this.onboardingInquiryPayload = $event;
-    this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
+    if (this.onboardingInquiryPayload) {
+      this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
+    }
     this.onboardingService
       .createAccount()
       .pipe(take(1))
