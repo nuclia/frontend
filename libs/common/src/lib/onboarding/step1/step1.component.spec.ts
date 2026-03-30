@@ -55,7 +55,7 @@ describe('Step1Component', () => {
     expect(element.querySelector('#role')).toBeNull();
     expect(element.querySelector('#country')).toBeNull();
     expect(element.querySelector('#phoneNumber')).toBeNull();
-    expect(element.querySelectorAll('pa-checkbox')).toHaveLength(2);
+    expect(element.querySelectorAll('pa-checkbox')).toHaveLength(0);
   });
 
   it('should only require the privacy policy checkbox when progress.com signup is enabled', async () => {
