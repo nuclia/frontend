@@ -37,6 +37,8 @@
     resetChat,
     routingParam,
     searchConfigId,
+    widgetBlocked,
+    widgetBlockedMessage,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -205,6 +207,16 @@
     searchConfigId.set(id);
   }
 
+  export function block(message: string) {
+    widgetBlocked.set(true);
+    widgetBlockedMessage.set(message);
+  }
+
+  export function unblock() {
+    widgetBlocked.set(false);
+    widgetBlockedMessage.set('');
+  }
+
   export const onError = getApiErrors();
 
   export const reset = () => resetNuclia();
@@ -279,7 +291,7 @@
       );
       if (Object.keys(_filters).length === 0) {
         _filters.labels = true;
-      }      
+      }
       _securityGroups = security_groups?.split(',').filter((group) => !!group);
       _ragStrategies = parseRAGStrategies(rag_strategies);
       _ragImageStrategies = parseRAGImageStrategies(rag_images_strategies);

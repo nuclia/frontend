@@ -81,6 +81,14 @@
         }
       }
     }
+    
+    .warning {
+      align-items: center;
+      display: flex;
+      color: var(--color-secondary-strong);
+      gap: var(--rhythm-0_5);
+      margin-top: var(--rhythm-0_5);
+    }    
     .reset-button {
       margin-top: var(--rhythm-0_5);
       text-align: right;
