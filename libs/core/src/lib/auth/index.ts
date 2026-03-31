@@ -1,3 +1,4 @@
+export * from './account-verification.service';
 export * from './auth.guard';
 export * from './auth.service';
 export * from './jwt';

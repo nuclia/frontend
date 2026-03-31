@@ -36,7 +36,11 @@ libs/sdk-core/
             ├── upload.ts        # upload() / batchUpload() with TUS support
             ├── kb/
             │   ├── kb.ts            # KnowledgeBox (read) + WritableKnowledgeBox (write)
-            │   └── kb.models.ts     # IKnowledgeBoxBase, KBRoles, LabelSet, SearchConfig…
+            │   ├── kb.models.ts     # IKnowledgeBoxBase, KBRoles, LabelSet, SearchConfig…
+            │   └── activity/
+            │       ├── activity-monitor.ts  # ActivityMonitor — download + queryActivityLogs()
+            │       ├── activity.models.ts   # ActivityLogItem, EventType, RemiQueryCriteria…
+            │       └── index.ts
             ├── search/
             │   ├── search.ts        # find(), search(), catalog(), suggest()
             │   ├── search.models.ts # Search namespace, SearchOptions, filters
@@ -129,7 +133,10 @@ Standard events emitted: `api-error`, `partial`, `lastQuery`, `lastResults`.
 ### Agentic RAG pipelines
 `createAgenticRAGPipeline(steps)` builds a declarative state machine. Steps use `{{variableName}}` template interpolation to reference previous step outputs. Run with `pipeline.run({ query }).subscribe(...)`.
 
----
+### Activity log live query
+`ActivityMonitor.queryActivityLogs(eventType, query)` is the SDK-level pagination API for the metrics pages. The endpoint returns NDJSON — `rest.post(..., doNotParse=true)` receives the raw `Response`, then text body is split by newlines and JSON-parsed. **Do not** use the download-based methods for UI display — they produce CSV/NDJSON files for download, not structured data.
+
+`EventType` values: `NEW`, `MODIFIED`, `PROCESSED`, `CHAT`, `ASK`, `SEARCH`, `SUGGEST`, `INDEXED`, `RETRIEVE`, `AUGMENT`.---
 
 ## How Workspace Apps Use This Library
 

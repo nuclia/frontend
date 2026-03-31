@@ -27,14 +27,17 @@ libs/core/src/lib/
 ├── api/
 │   ├── sdk.service.ts              # ★ SDKService — central SDK wrapper & reactive state hub
 │   ├── billing.service.ts          # Stripe/AWS/Manual billing API client
+│   ├── sso.service.ts              # SSO login URL builder (Google/GitHub/Microsoft); reauth URL
 │   ├── user.service.ts             # Current user info
 │   └── zone.service.ts             # Available deployment zones
 ├── auth/
-│   ├── auth.guard.ts               # authGuard (functional) — checks JWT_KEY or ?token=
-│   ├── auth.service.ts             # Stores pre-login redirect URL in localStorage
+│   ├── auth.guard.ts               # authGuard (functional) — checks JWT_KEY or ?token= or ?signup_token=
+│   ├── auth.service.ts             # Stores pre-login redirect URL in localStorage; setSignUpToken()
 │   ├── login.service.ts            # Password auth REST calls
+│   ├── metrics.guards.ts           # metricsEnabledGuard / metricsDisabledGuard (CanMatchFn)
 │   ├── oauth.service.ts            # OAuth/Hydra consent
-│   └── saml.service.ts             # SAML/SSO token exchange
+│   ├── saml.service.ts             # SAML/SSO token exchange
+│   └── account-verification.service.ts  # Force-reauth support; reads last_verified_at from JWT
 ├── config/
 │   ├── app.init.service.ts         # Loads app-config.json; inits Sentry + CDN scripts
 │   ├── backend-config.service.ts   # Typed accessors over loaded config
@@ -84,7 +87,7 @@ Central source of truth for the currently active account/KB/ARAG. Application-le
 High-level service combining `FeatureFlagService` (CDN MD5 rollout) with account-type rules. Exposes named `Observable<boolean>` properties:
 
 - **Roles:** `isKbAdmin`, `isKBContrib`, `isAragAdmin`, `isAccountManager`, `isTrial`, `isEnterpriseOrPro`
-- **`unstable.*`** (hidden in prod, enabled per-account via MD5): `billing`, `retrievalAgents`, `modelManagement`, `routing`, `aragWithMemory`, `bedrockIntegration`, `cloudSyncService`, `raoWidget`, and others
+- **`unstable.*`** (hidden in prod, enabled per-account via MD5): `billing`, `retrievalAgents`, `modelManagement`, `routing`, `aragWithMemory`, `bedrockIntegration`, `cloudSyncService`, `raoWidget`, `progressComSignup`, `simpleUI`, `metrics`, and others
 - **`authorized.*`** (visible but tier-gated): `promptLab`, `summarization`, `remiMetrics`, `ragImages`, `extractConfig`, `splitConfig`, and others
 
 ---
@@ -116,7 +119,7 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 
 | Guard | Enforces |
 |---|---|
-| `authGuard` | Checks `localStorage['JWT_KEY']` or `?token=` query param |
+| `authGuard` | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=` |
 | `setAccountGuard` | Calls `SDKService.setCurrentAccount()` from route param |
 | `setKbGuard` | Calls `SDKService.setCurrentKb()` from route params |
 | `setAgentGuard` | Calls `SDKService.setCurrentRetrievalAgent()` from route params |
@@ -125,6 +128,8 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 | `aragOwnerGuard` | ARAG owner required |
 | `selectAccountGuard` | Redirects if account already selected |
 | `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents` |
+| `metricsEnabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`) |
+| `metricsDisabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`) |
 
 ---
 
@@ -144,3 +149,9 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 5. **Zone/region in URLs** — zone is always included in non-standalone KB/ARAG URLs. Active zone stored on `SDKService.nuclia.options.zone`.
 
 6. **Testing stubs** — use `subscriptionFn` / `subscriptionPipeFn` from `@flaps/core` testing exports to mock observable-returning services without importing RxJS subjects directly.
+
+7. **`UserService.updateWelcome()` logs out on any error** — previously only 403/400 triggered logout; now any `/db/welcome` error does. If the current tokens are invalid, users are redirected to login immediately.
+
+8. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.
+
+9. **`metricsEnabledGuard` / `metricsDisabledGuard`** live in `libs/core/src/lib/auth/metrics.guards.ts` (not in `libs/common`). They are `CanMatchFn` guards, not `CanActivateFn`. Use them to serve two different route configurations for the same `/metrics` path.

@@ -35,6 +35,8 @@ Routes are auto-derived from the `menu` array in `app.component.ts` — **no `ap
 
 Top-level route groups: `Sistema Components`, `Sistema Services`, `Pastanaga Overrides`.
 
+Includes a demo page for `nsi-country-select` (added in `sistema-pages/`).
+
 ---
 
 ## Component Quick Reference

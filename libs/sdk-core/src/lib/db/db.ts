@@ -104,9 +104,10 @@ export class Db implements IDb {
     return this.nuclia.rest.patch<void>(`/account/${accountSlug}`, data);
   }
 
-  /** Deletes an account. */
-  deleteAccount(accountSlug: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${accountSlug}`);
+  /** Deletes an account. Optionally pass an OTP code (from email verification) via the x-otp-email header. */
+  deleteAccount(accountSlug: string, otpCode?: string): Observable<void> {
+    const headers = otpCode ? { 'x-otp-email': otpCode } : undefined;
+    return this.nuclia.rest.delete(`/account/${accountSlug}`, headers);
   }
 
   /**

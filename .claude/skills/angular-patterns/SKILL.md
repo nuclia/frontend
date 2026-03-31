@@ -366,6 +366,119 @@ export class MyService {
 
 ---
 
+## Template-Bound State Must Use `signal()`
+
+### The rule
+
+**Any component property that is read from a template — via `@if`, `@for`, property binding
+`[x]`, interpolation `{{ x }}`, or a condition checked inside an event handler — MUST be
+declared as a `signal()`.**
+
+Plain mutable class properties are only acceptable for state that is **never read from a
+template** (subscription refs, scratch variables, `@ViewChild` refs used only in methods, etc.).
+
+```ts
+// ✅ Correct — template-bound state uses signal()
+@Component({ ..., changeDetection: ChangeDetectionStrategy.OnPush })
+export class MyComponent {
+  isLoading = signal(false);
+  items      = signal<Item[]>([]);
+  selected   = signal<Item | null>(null);
+
+  // ✅ OK as plain property — never touched by template
+  private sub?: Subscription;
+  private scratch: number[] = [];
+}
+```
+
+```ts
+// ❌ Wrong — plain properties are invisible to OnPush
+@Component({ ..., changeDetection: ChangeDetectionStrategy.OnPush })
+export class MyComponent {
+  isLoading = false;          // ← @if(isLoading) will NOT update automatically
+  items: Item[] = [];         // ← @for(item of items) will NOT update automatically
+}
+```
+
+### Why
+
+`ChangeDetectionStrategy.OnPush` components only re-render when Angular detects a signal
+change (or an `@Input` reference changes). Plain mutable properties are invisible to the
+scheduler — they silently fail to trigger re-renders. The only workaround is injecting
+`ChangeDetectorRef` and calling `markForCheck()` on every mutation, which is:
+
+- error-prone (easy to forget a mutation site),
+- verbose (adds noise to every method that writes state),
+- and defeats the entire purpose of OnPush.
+
+### Corollary: remove `ChangeDetectorRef` once all state is signals
+
+Once all template-bound state in a component is declared as `signal()`, injecting
+`ChangeDetectorRef` and calling `markForCheck()` / `detectChanges()` becomes unnecessary.
+Remove both when refactoring a component to signals.
+
+```ts
+// ❌ Legacy pattern — needed only when template reads plain properties
+private cdr = inject(ChangeDetectorRef);
+
+loadData(): void {
+  this.items = response.data;
+  this.cdr.markForCheck();   // ← manual trigger, fragile
+}
+
+// ✅ Modern pattern — no ChangeDetectorRef needed
+private _items = signal<Item[]>([]);
+items = this._items.asReadonly();
+
+loadData(): void {
+  this._items.set(response.data);  // ← scheduler notified automatically
+}
+```
+
+### Two-way bindings with pastanaga/sistema components
+
+`[(value)]` banana-in-a-box syntax is **not used** with `nsi-*` / `pa-*` components. Replace
+with explicit signal binding + event handler:
+
+```ts
+// ❌ Avoid — banana-in-a-box
+<pa-input [(value)]="name"></pa-input>
+
+// ✅ Preferred — signal + explicit event
+name = signal('');
+
+// template
+<pa-input [value]="name()" (valueChange)="name.set($event)"></pa-input>
+```
+
+The `model()` primitive (Angular 17+) is also acceptable but `signal()` + explicit
+`(valueChange)` is the established pattern in this codebase — prefer it for consistency.
+
+### Array and object signals — always replace, never mutate in place
+
+Mutating an array element or object property **in place does not trigger signal updates**
+because the signal reference is unchanged. Always replace the whole value:
+
+```ts
+// ❌ Silent failure — Angular sees same array reference, no update scheduled
+const arr = this._items();
+arr[i] = updatedItem;           // mutates in place
+// this._items has NOT changed — no re-render
+
+// ✅ Correct — create new array so signal reference changes
+const copy = [...this._items()];
+copy[i] = updatedItem;
+this._items.set(copy);          // new reference → re-render scheduled
+
+// ✅ Also correct for objects
+this._config.update((c) => ({ ...c, pageSize: 25 }));
+```
+
+The same rule applies to deeply nested objects — spread (or `structuredClone`) to create a
+new reference at every level you mutate.
+
+---
+
 ## RxJS ↔ Signal Bridge Patterns
 
 ```ts
@@ -603,6 +716,10 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 | `effect()` to derive values | Use `computed()` for derived state |
 | `this.signal.set(x)` inside `computed()` | Never write inside computed |
 | `inject()` inside `ngOnInit` | Move to property initializer or constructor |
+| Plain property read in template (`isLoading = false`) | `isLoading = signal(false)` — OnPush won't re-render otherwise |
+| `this.cdr.markForCheck()` after every mutation | Convert state to `signal()` and remove `ChangeDetectorRef` |
+| `[(value)]="name"` with nsi-/pa- components | `[value]="name()" (valueChange)="name.set($event)"` |
+| `arr[i] = val` on a signal array | `const copy = [...arr()]; copy[i] = val; arr.set(copy)` |
 | `new Subject<void>()` as Tier 2 refresh trigger | `new BehaviorSubject<void>(undefined)` |
 | `toSignal(obs$)` inside a Tier 2 service | Use `tap((v) => this._sig.set(v))` in the pipeline |
 | Omit `shareReplay(1)` on service pipelines | Always include — prevents duplicate HTTP requests |

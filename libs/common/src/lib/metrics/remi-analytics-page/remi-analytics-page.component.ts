@@ -58,11 +58,15 @@ import { NavigationService } from '@flaps/core';
 
 /** Shared color palette for the 3 REMI metrics — keep in sync with the evolution chart. */
 const METRIC_COLORS: Record<string, string> = {
-  answer_relevance: '#F97316',
-  context_relevance: '#3B82F6',
-  groundedness: '#10B981',
+  answer_relevance: 'var(--color-remi-asnwer-relevance)',
+  context_relevance: 'var(--color-remi-context-relevance)',
+  groundedness: 'var(--color-remi-groundedness)',
 };
-const METRIC_COLOR_LIST = [METRIC_COLORS['answer_relevance'], METRIC_COLORS['context_relevance'], METRIC_COLORS['groundedness']];
+const METRIC_COLOR_LIST = [
+  METRIC_COLORS['answer_relevance'],
+  METRIC_COLORS['context_relevance'],
+  METRIC_COLORS['groundedness'],
+];
 
 @Component({
   imports: [
@@ -185,7 +189,6 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
   noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
   badFeedbackOnError: Observable<boolean> = this.remiMetrics.badFeedbackOnError;
-  
   lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
   noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
   badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
@@ -257,23 +260,26 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     if (this.missingKnowledgeDetails[id]) {
       return;
     }
-    this.remiMetrics.getMissingKnowledgeDetails(id).pipe(takeUntil(this.unsubscribeAll)).subscribe({
-      next: (details) => {
-        this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [id]: details };
-        this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: false };
-        setTimeout(() => {
-          const accordionItem = this.accordionItems?.find((item) => item.id === `${id}`);
-          if (accordionItem) {
-            accordionItem.updateContentHeight();
-          }
-        });
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: true };
-        this.cdr.detectChanges();
-      },
-    });
+    this.remiMetrics
+      .getMissingKnowledgeDetails(id)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe({
+        next: (details) => {
+          this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [id]: details };
+          this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: false };
+          setTimeout(() => {
+            const accordionItem = this.accordionItems?.find((item) => item.id === `${id}`);
+            if (accordionItem) {
+              accordionItem.updateContentHeight();
+            }
+          });
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.missingKnowledgeError = { ...this.missingKnowledgeError, [id]: true };
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   openViewer(contextId: string) {
@@ -293,7 +299,10 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
         field_type: longFieldType,
         field_id: fieldId,
       })
-      .pipe(takeUntil(this.unsubscribeAll), catchError(() => EMPTY))
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        catchError(() => EMPTY),
+      )
       .subscribe();
   }
 
@@ -369,8 +378,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
             answerRelevance: item.remi.answer_relevance.score,
             contextRelevance:
               item.remi.context_relevance.length > 0 ? Math.max(...item.remi.context_relevance) : undefined,
-            groundedness:
-              item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
+            groundedness: item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
           }
         : undefined,
       // RemiQueryResponseItem does not carry per-query RAG params. Pass an empty object so
@@ -380,4 +388,3 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     openRagAdviceModal(this.modalService, input);
   }
 }
-

@@ -176,7 +176,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
                     response: JSON.stringify({ existing_credentials: {} }),
                   }),
                 );
-              } else if (question === 'Send credentials') {
+              } else if (feedback.question === 'Send credentials') {
                 // TODO: save the credentials
                 const credentials = feedback.credentials;
                 ws.send(JSON.stringify({ request_id: feedback.request_id }));

@@ -21,6 +21,8 @@ apps/manager-v2/src/
 └── app/
     ├── app.module.ts               # Root NgModule
     ├── app.routes.ts               # Top-level routes
+    ├── app.component.ts            # Thin config-ready shell: shows Loading… until AppInitService resolves, then renders MainComponent
+    ├── main.component.ts           # Main shell (formerly app.component): header nav, avatar, permission-gated router-outlet, translations
     ├── manager.store.ts            # Global reactive store (BehaviorSubjects + permissions)
     ├── app-layout/                 # Shell: header nav, avatar, permission-gated router-outlet
     ├── manage-accounts/            # lazy NgModule: AccountService, account CRUD components
@@ -143,3 +145,4 @@ Runtime config: `assets/deployment/app-config.json` (local: `environments_config
 6. **Component prefix `nma`** — all selectors must start `nma-`.
 7. **Runtime config** — never hardcode backend URLs; use `BackendConfigurationService`.
 8. **Module boundary exception** — `UserModule` route uses a direct relative path import (suppressed with eslint-disable comment). Prefer `@nuclia/user` alias for future work.
+9. **`AppComponent` is a config-ready shell** — it renders `Loading…` until `AppInitService` resolves, then switches to `<nma-main>` (`MainComponent`). The actual layout and translations live in `MainComponent`. Never put feature UI in `AppComponent`.

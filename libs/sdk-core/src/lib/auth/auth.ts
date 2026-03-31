@@ -129,7 +129,7 @@ export class Authentication implements IAuthentication {
     return replaceSubdomainInUrl(this.nuclia.options.backend, 'oauth').replace('/api', '');
   }
 
-  redirectToOAuth(queryParams?: { [key: string]: string | boolean }) {
+  redirectToOAuth(queryParams?: { [key: string]: string | boolean }, oauthUrlParams?: { [key: string]: string }) {
     if (!queryParams) {
       queryParams = {};
     }
@@ -164,6 +164,13 @@ export class Authentication implements IAuthentication {
         code_challenge: codeChallenge,
         code_challenge_method: 'S256',
       });
+
+      // Append any extra OAuth authorization-endpoint parameters (e.g. prompt=login, max_age=0
+      // for forced re-authentication).  These are distinct from the state-token params above and
+      // are sent directly to the Hydra authorization endpoint.
+      if (oauthUrlParams) {
+        Object.entries(oauthUrlParams).forEach(([key, value]) => authParams.set(key, value));
+      }
 
       const authorizationUrl = `${this.getHydraUrl()}/oauth2/auth?${authParams}`;
       window.location.href = authorizationUrl;
@@ -361,6 +368,21 @@ export class Authentication implements IAuthentication {
    */
   deleteAuthenticatedUser(): Observable<void> {
     return this.nuclia.rest.delete('/user').pipe(tap(() => this.storeTokens({ access_token: '', refresh_token: '' })));
+  }
+
+  /**
+   * Requests an email OTP for the currently authenticated user.
+   * Used to verify identity when deleting an account via email-based providers.
+   *
+   * Example:
+    ```ts
+    nuclia.auth.requestEmailOtp().subscribe(() => {
+      console.log('OTP sent');
+    });
+    ```
+   */
+  requestEmailOtp(): Observable<void> {
+    return this.nuclia.rest.post(`${this.getAuthUrl()}/otp/email`, {});
   }
 
   /** Returns authentication information */

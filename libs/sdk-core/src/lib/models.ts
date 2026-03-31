@@ -65,9 +65,10 @@ export interface IAuthentication {
   authenticate(tokens: AuthTokens): boolean;
   setPassword(password: string): Observable<boolean>;
   deleteAuthenticatedUser(): Observable<void>;
+  requestEmailOtp(): Observable<void>;
   getJWTUser(): JwtUser | null;
   getAuthInfo(includeIP?: boolean): Observable<AuthInfo>;
-  redirectToOAuth(queryParams?: { [key: string]: string | boolean }): void;
+  redirectToOAuth(queryParams?: { [key: string]: string | boolean }, oauthUrlParams?: { [key: string]: string }): void;
   processAuthorizationResponse(authCode: string, returnedState: string): Observable<{ success: boolean; state: any }>;
   getAuthUrl(): string;
   validateMagicToken(token: string, zone?: string): Observable<MagicAction>;
@@ -146,7 +147,7 @@ export interface IDb {
   createAccount(account: AccountCreation): Observable<Account>;
   getAccountStatus(accountSlug: string): Observable<AccountStatus>;
   modifyAccount(accountSlug: string, data: AccountModification): Observable<void>;
-  deleteAccount(accountSlug: string): Observable<void>;
+  deleteAccount(accountSlug: string, otpCode?: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getSignupInfo(signup_token: string): Observable<SignUpInfo>;
   getAccount(): Observable<Account>;

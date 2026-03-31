@@ -12,9 +12,9 @@
   (monthRangeChange)="onMonthRangeChange($event)"
   (loadNextPage)="onLoadNextPage()"
   (rowActionTriggered)="openAdvice($event)">
-
   <!-- Filter button in toolbar (projected into toolbar-extra slot) -->
-  <app-metrics-filters toolbar-extra
+  <app-metrics-filters
+    toolbar-extra
     [showSyntheticStatus]="true"
     [syntheticStatuses]="syntheticStatuses"
     [syntheticStatusLabels]="syntheticStatusLabelsMap"
@@ -25,11 +25,12 @@
     [activeNumericConditions]="activeNumericConditions()"
     [selectedMonth]="selectedMonth()"
     [activeDateConditions]="activeDateConditions()"
-    (filtersApplied)="onFiltersApplied($event)">
-  </app-metrics-filters>
+    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
 
   <!-- Stat cards -->
-  <div stat-cards class="stat-cards">
+  <div
+    stat-cards
+    class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
       <div class="display-s">{{ service.remiScoreAverages().answerRelevance | compactNumber }}</div>
@@ -43,6 +44,4 @@
       <div class="display-s">{{ service.remiScoreAverages().groundedness | compactNumber }}</div>
     </div>
   </div>
-
 </app-metrics-page>
-
