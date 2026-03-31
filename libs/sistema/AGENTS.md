@@ -38,6 +38,7 @@ libs/sistema/
 | `<nsi-two-columns-configuration-item>` | standalone | title/description + action row for settings pages |
 | `<nsi-back-button>` | standalone | Router back-nav icon button |
 | `<nsi-button-mini>` | standalone | Compact icon button with optional tooltip, destructive variant |
+| `<nsi-country-select>` | standalone | Searchable country dropdown wrapping `pa-typeahead-select`; full `ControlValueAccessor`; emoji flags (🇺🇸 🇬🇧); signal inputs (`id`, `readonly`, `errorMessages`, `externalLabel`) |
 | `<nsi-dropdown-button>` | standalone | Button wired to `pa-dropdown` |
 | `<nsi-segmented-buttons>` | standalone | Two-option pill toggle |
 | `<nsi-password-input>` | standalone | Password field with show/hide toggle; integrates with `NgControl` |

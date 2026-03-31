@@ -19,6 +19,7 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 | -------------------- | --------------- | -------------------------------------------------------------- |
 | `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth     |
 | `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                  |
+| `platform`           | Angular 21      | Progress Cloud branded platform (account mgmt, `platform` UX)  |
 | `rao`                | Angular 21      | RAO white-label (agents only, no KB management)                |
 | `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                  |
 | `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                       |
@@ -51,6 +52,7 @@ All aliases are declared in `tsconfig.base.json`. Internal consumers **never** i
 # Angular apps
 nx serve auth
 nx serve dashboard
+nx serve platform
 nx serve rao
 nx serve manager-v2
 nx serve nucliadb-admin

@@ -26,7 +26,7 @@ guards/            ← All route guards (functional, not class-based)
 metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5 sub-pages)
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
 resources/         ← Resource CRUD, editor, list with pending/processed/error tabs
-retrieval-agent/   ← ARAG: visual workflow canvas, drivers, sessions, activity log
+retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
 search-widget/     ← Search widget builder & deployment config
 services/          ← AppService (locale), StandaloneService (NucliaDB standalone mode)
 tasks-automation/  ← Data augmentation task CRUD (ask, labeler, graph-extraction, etc.)
@@ -95,7 +95,14 @@ Apps import modules directly from `libs/common/src/lib/...` in `loadChildren` ca
 
 ## Metrics Module — Gotchas
 
-Dashboard-only feature at `libs/common/src/lib/metrics/` with 5 sub-pages, lazy-loaded via `MetricsModule` (guarded by `knowledgeBoxOwnerGuard`).
+Dashboard-only feature at `libs/common/src/lib/metrics/` lazy-loaded via `MetricsModule` (guarded by `knowledgeBoxOwnerGuard` + `metricsEnabledGuard`).
+
+### Legacy vs New metrics
+Two parallel implementations exist:
+- **`metrics/legacy/`** — `LegacyRemiMetricsPageComponent` + `LegacyRemiMetricsModule`. Used when `FeaturesService.unstable.metrics` is **off**. The original REMI-only view.
+- **`metrics/`** (new) — `MetricsModule` with full sub-pages. Used when `FeaturesService.unstable.metrics` is **on**.
+
+Routes are split with `canMatch` guards (`metricsEnabledGuard` / `metricsDisabledGuard`) in the app routing; `ActivityModule` is also disabled when metrics are enabled (activity lives inside the new `MetricsModule`).
 
 ### Abstract service pattern
 `AbstractMetricsPageService<T, R = T[]>` — subclasses call `initPipeline()` in constructor, implement `loadData()`, `_queryPage()`, `_applyPage()`, `loadAvailableMonths()`. Pipeline: `_reset$` uses `switchMap` (cancels in-flight), `_nextPage$` uses `exhaustMap` (ignores while busy). `R` type param allows grouped results (e.g., `ResourceActivityGroup[]`).
