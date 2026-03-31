@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { catchError, concatMap, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { BillingService, NavigationService, SDKService, STFUtils, SubscriptionStatus } from '@flaps/core';
+import { AccountVerificationService, BillingService, NavigationService, SDKService, STFUtils, SubscriptionStatus } from '@flaps/core';
 import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -67,9 +67,17 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     private billingService: BillingService,
     private toaster: SisToastService,
     private router: Router,
+    private accountVerification: AccountVerificationService,
   ) {}
 
   ngOnInit(): void {
+    // After forced reauth, the user lands back on this page.
+    // If there's a pending delete and they've just been re-verified, auto-open the modal.
+    if (this.accountVerification.hasPendingDelete() && this.accountVerification.isRecentlyVerified()) {
+      this.accountVerification.clearPendingDelete();
+      this.modalService.openModal(AccountDeleteComponent);
+    }
+
     this.sdk.currentAccount
       .pipe(
         tap((account) => {

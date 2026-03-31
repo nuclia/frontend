@@ -119,6 +119,8 @@ export class LazyUserModule {}
 4. **Resolver auto-submit** — `loginResolver` auto-POSTs when `data.skip_login` is true; `consentResolver` does the same for `data.skip_consent`. Both return `EMPTY` to prevent component rendering.
 5. **RAO onboarding step skipping** — `OnboardingService.nextStep()` checks `NavigationService.inRaoApp`; when true, step 2 jumps to step 4 (skips zone step). Maintain this parity when adding steps.
 6. **KB creation retry** — `OnboardingService.createKb` retries 5xx up to 5 times; 4xx fails immediately. Failure reported via Sentry + redirects to account page.
+7. **`signup_token` pre-fills sign-up data** — when `?signup_token=` is present, `authGuard` stores it via `AuthService.setSignUpToken()`. `OnboardingService` later reads it to pre-fill company name and full name in step 1. `SignupComponent` also reads it to skip form fields already populated.
+8. **GEMINI_2 model option** — `user.kb.creation-form.models.options.GEMINI_2` i18n key maps to `'Gemini Embedding 2'`. Present in all locale files.
 7. **Redirect validation** — `RedirectComponent` validates `redirect` query param against `AUTHORIZED_REDIRECTS` and `AUTHORIZED_REDIRECTS_REGEX`. Update both constants when adding new redirect targets.
 8. **Magic action routing** — `MagicService._execute` is the central dispatch table. New backend action types must be added here.
 9. **`authGuard` on profile only** — the only protected route is `profile`. All others are public.

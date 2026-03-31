@@ -37,25 +37,31 @@ apps/dashboard/src/app/
   /manage                  → AccountModule (lazy) — billing, users, ARAGs list
   /:zone/:kb  [setKbGuard]
     /                      → KnowledgeBoxHomeComponent
+    /simple                → SimpleKBComponent  ← frictionless UI (simpleUI feature flag)
     /upload                → UploadModule (lazy)
     /resources             → ResourcesModule (lazy)
     /search                → SearchPageComponent
-    /activity              → ActivityModule (lazy)
+    /activity              [canMatch: metricsDisabledGuard] → ActivityModule (lazy)
     /ai-models             → AiModelsComponent
     /widgets               → WIDGETS_ROUTES (lazy)
     /manage                → KnowledgeBoxSettingsComponent
     /rag-lab               → RagLabPageComponent
     /tasks                 → TASK_AUTOMATION_ROUTES (lazy)
-    /metrics               → MetricsPageComponent (knowledgeBoxOwnerGuard)
+    /metrics               [canMatch: metricsDisabledGuard, knowledgeBoxOwnerGuard] → LegacyRemiMetricsPageComponent
+    /metrics               [canMatch: metricsEnabledGuard, knowledgeBoxOwnerGuard]  → MetricsModule (lazy)
     /users / /keys         → guarded by aragOwnerGuard
   /:zone/arag/:agent  [setAgentGuard]
-    /                      → AgentDashboardComponent
+    /                      → redirect to /workflows
+    /workflows             → WorkflowsComponent
+      /                    → WorkflowsListComponent
+      /:id                 → AgentDashboardComponent
     /sessions              → SessionsComponent
     /drivers               → DriversPageComponent
     /widgets / /manage / /ai-models / /users / /keys / /activity
 /select  [authGuard, selectAccountGuard]
   /:account  [selectKbGuard] → SelectKbComponent
 /user                      → LazyUserModule (login, logout, invite, farewell)
+/user/callbacks/saml       → CallbackComponent (data: { saml: true }) ← TEMPORARY IDP-initiated SAML
 /feedback / /farewell / /invite / /aws-onboarding
 /**                        → PageNotFoundComponent
 ```
@@ -68,7 +74,7 @@ apps/dashboard/src/app/
 `STFConfigModule.forRoot(environment)`, `TranslateModule.forRoot(MultiTranslateHttpLoader)`, `BaseModule`, `PaToastModule`, `AuthInterceptor`, `TitleStrategy → AppTitleStrategy`.
 
 ### `KnowledgeBoxModule`
-`KnowledgeBoxComponent` (thin router-outlet wrapper) + `KnowledgeBoxHomeComponent` (KB dashboard: usage charts, status counts, trial info, REMI metrics). Lazy-loaded heavy UI.
+`KnowledgeBoxComponent` (thin router-outlet wrapper) + `KnowledgeBoxHomeComponent` (KB dashboard: usage charts, status counts, trial info, REMI metrics) + `SimpleKBComponent` (frictionless upload-and-search UI, gated by `unstable.simpleUI` feature flag, shown at `/simple`). Lazy-loaded heavy UI.
 
 ### `ActivityModule`
 `ActivityDownloadComponent` (tabs: Resource / Search activity, date pickers, CSV/JSON download), `LogTableComponent`, `ActivityService` (polls backend for `DownloadStatus: 'pending' | 'ready'`).
@@ -110,6 +116,8 @@ apps/dashboard/src/app/
 | `aragOwnerGuard` | ARAG owner/admin required |
 | `awsGuard` | AWS Marketplace onboarding |
 | `inviteGuard` | Validates invite token |
+| `metricsEnabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is on |
+| `metricsDisabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is off |
 
 ---
 
@@ -147,3 +155,8 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 4. **Module-based** — app uses NgModules; imported lib components may be standalone.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
 6. **Lazy modules** — `AccountModule`, `UploadModule`, `ResourcesModule`, `ActivityModule`, `WIDGETS_ROUTES`, `TASK_AUTOMATION_ROUTES`, `LazyUserModule` are all lazy-loaded.
+7. **Metrics route is feature-flag-split** — `/metrics` has two `canMatch` entries: `metricsDisabledGuard` → `LegacyRemiMetricsPageComponent`, `metricsEnabledGuard` → `MetricsModule` (lazy). Angular evaluates them in order; only one renders.
+8. **`/activity` is also gated by `metricsDisabledGuard`** — when the `metrics` flag is on, activity is handled inside `MetricsModule`; the standalone `ActivityModule` route is disabled.
+9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.
+10. **`/simple` frictionless UI** — `SimpleKBComponent` is a lightweight upload+search page gated by `FeaturesService.unstable.simpleUI`. It uses `LastResourcesComponent` (standalone) for the resource table.
+11. **ARAG routes now under `/workflows`** — `/:zone/arag/:agent` redirects to `./workflows`. `WorkflowsListComponent` shows all workflows; `AgentDashboardComponent` is at `./workflows/:id`.

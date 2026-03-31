@@ -17,3 +17,23 @@ pa-radio {
 pa-modal-footer {
   gap: rhythm(2);
 }
+
+.otp-send-row {
+  margin: rhythm(3) 0 rhythm(2) 0;
+
+  pa-button {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+  }
+}
+
+.otp-error {
+  color: var(--color-error-regular);
+  margin: rhythm(2) 0;
+}
+
+.otp-sent-message {
+  color: $color-neutral-regular;
+  margin: rhythm(2) 0;
+}

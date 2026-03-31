@@ -4,6 +4,7 @@ export interface JwtUser {
   ext: {
     first_name: string;
     type: string;
+    last_verified_at?: number;
   };
   iat: number;
   iss: string;

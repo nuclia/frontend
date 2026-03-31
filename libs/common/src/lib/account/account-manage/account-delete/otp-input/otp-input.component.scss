@@ -1,0 +1,28 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.otp-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: rhythm(2);
+  margin: rhythm(3) 0;
+}
+
+.otp-digit {
+  flex: 1;
+  min-width: 0;
+  max-width: rhythm(9);
+  aspect-ratio: 1;
+  text-align: center;
+  font-size: 1.25rem;
+  font-family: monospace;
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(1);
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: $color-primary-regular;
+    box-shadow: 0 0 0 2px rgba($color-primary-regular, 0.2);
+  }
+}

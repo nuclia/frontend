@@ -34,6 +34,7 @@ libs/sync/src/lib/
         ├── folder.ts        # FolderConnector (local path)
         ├── sitemap.ts       # SitemapConnector (sitemap.xml crawl)
         ├── rss.ts           # RSSConnector (RSS feed crawl)
+        ├── s3.ts            # S3Impl + AWS Assume Role connector
         └── sitefinity.ts    # SitefinityConnector (feature-flagged)
 ```
 
@@ -121,6 +122,7 @@ nx lint sync
 3. **Cloud vs desktop branching** — every service method checks `this._useCloudSync.getValue()`. When adding new operations, always handle both paths.
 4. **Deprecated connectors** — `connectorsObs` filters `deprecated: true` from display; existing syncs continue to work.
 5. **Feature-flagged connector** — `sitefinity` filtered unless `features.unstable.sitefinityConnector`.
+6. **S3 Assume Role connector** — `s3.ts` exports `S3Impl` plus a separate AWS Assume Role implementation. The assume-role variant uses an IAM policy modal (`assume-role-modal`) to guide users through the bucket policy setup. Both share the same connector ID pattern.
 6. **`PENDING_NEW_CONNECTOR` localStorage key** — stays in sync with `apps/dashboard/app.component` to resume OAuth flows after redirect.
 7. **Server polling** — `SyncRootComponent` uses dual-rate timer: 5 s when server down, skips 12 ticks when up (effectively ~60 s). Logic resets `count` on each actual poll.
 8. **Standalone components only** — no NgModules in this library.

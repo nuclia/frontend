@@ -1,0 +1,15 @@
+<div class="otp-container">
+  @for (digit of digits(); track $index; let i = $index) {
+    <input
+      #otpDigit
+      type="text"
+      inputmode="numeric"
+      maxlength="1"
+      autocomplete="one-time-code"
+      class="otp-digit"
+      [attr.aria-label]="'OTP digit ' + (i + 1)"
+      (input)="onInput(i, $event)"
+      (keydown)="onKeydown(i, $event)"
+      (paste)="onPaste($event)" />
+  }
+</div>

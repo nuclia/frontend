@@ -28,6 +28,7 @@ import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
 import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
+import { OtpInputComponent } from './account-manage/account-delete/otp-input/otp-input.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
@@ -178,6 +179,7 @@ const routes: Routes = [
     UnauthorizedFeatureDirective,
     NucliaTokensComponent,
     LowerCaseInputDirective,
+    OtpInputComponent,
   ],
   declarations: [
     AccountHomeComponent,
