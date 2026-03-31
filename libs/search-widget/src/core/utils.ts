@@ -572,7 +572,7 @@ export function getResultMetadata(metadata: ResultMetadata, resource: IResource,
 }
 
 function supportsCSSNesting() {
-  // Check for css nesting support as some Safari version do ot support it
+  // Check for css nesting support as some Safari version do not support it
   const style = document.createElement('style');
   style.textContent = `
     div {
