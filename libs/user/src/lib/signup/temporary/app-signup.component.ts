@@ -21,8 +21,6 @@ export class TemporaryAppSignupComponent implements OnInit {
   unsubscribeAll = new Subject<void>();
   postUrl = `${this.sdk.nuclia.auth.getAuthUrl()}/signup/start`;
   appUrl = this.sdk.getOriginForApp(location.search.includes('app=rao') ? 'rao' : 'rag');
-  demoUrl =
-    'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial';
 
   ngOnInit(): void {
     injectScript('https://cdn.cookielaw.org/consent/f9397248-1dbe-47fc-9dbf-c50e7dd51096-test/otSDKStub.js', [
@@ -31,10 +29,6 @@ export class TemporaryAppSignupComponent implements OnInit {
         value: 'f9397248-1dbe-47fc-9dbf-c50e7dd51096-test',
       },
     ]).subscribe();
-  }
-
-  goToDemo() {
-    window.open(this.demoUrl, 'blank', 'noreferrer');
   }
 
   login() {

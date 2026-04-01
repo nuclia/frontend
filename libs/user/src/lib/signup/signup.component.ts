@@ -40,8 +40,6 @@ export class SignupComponent implements OnInit {
   error?: string;
 
   isGitHubEnabled = this.features.unstable.githubSignin;
-  demoUrl =
-    'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial';
 
   constructor(
     private router: Router,
@@ -109,10 +107,6 @@ export class SignupComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  goToDemo() {
-    window.open(this.demoUrl, 'blank', 'noreferrer');
   }
 
   goToLogin() {
