@@ -8,6 +8,7 @@ import {
   AragResponse,
   InteractionOperation,
   mapErrorResponseFromAnswer,
+  OAuthCredentials,
 } from './interactions.models';
 import {
   ARAGSchemas,
@@ -41,6 +42,7 @@ import { JSONSchema4 } from 'json-schema';
  */
 export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAgent {
   private wsConnections: { [sessionId: string]: WebSocket } = {};
+  private oauthCredentials: OAuthCredentials = {};
 
   /**
    * The Retrieval Agent path on the regional API.
@@ -170,16 +172,24 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             } else if (lastMessage.feedback?.module === 'oauth') {
               const feedback = lastMessage.feedback;
               if (feedback.question === 'Get credentials') {
+                const syncConfigIds = Object.keys(feedback.get_credentials || {});
+                const existingCredentials = Object.fromEntries(
+                  Object.entries(this.oauthCredentials || {}).filter(([key]) => syncConfigIds.includes(key)),
+                );
                 ws.send(
                   JSON.stringify({
                     request_id: feedback.request_id,
-                    response: JSON.stringify({ existing_credentials: {} }),
+                    response: JSON.stringify({ existing_credentials: existingCredentials }),
                   }),
                 );
               } else if (feedback.question === 'Send credentials') {
-                // TODO: save the credentials
-                const credentials = feedback.credentials;
-                ws.send(JSON.stringify({ request_id: feedback.request_id }));
+                this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
+                ws.send(
+                  JSON.stringify({
+                    request_id: feedback.request_id,
+                    response: JSON.stringify({ existing_credentials: feedback.credentials }),
+                  }),
+                );
               }
             } else if (lastMessage.oauth) {
               window.open(lastMessage.oauth.oauth_url, 'blank', 'noreferrer');

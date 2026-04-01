@@ -43,11 +43,16 @@ export interface Feedback {
   data: any;
   timeout_ms: number;
   response_schema: any;
-  credentials?: { [key: string]: { [key: string]: any } };
+  get_credentials?: { [key: string]: string };
+  credentials?: OAuthCredentials;
 }
 
 export interface OAuthRedirection {
   oauth_url: string;
+}
+
+export interface OAuthCredentials {
+  [key: string]: { [key: string]: any };
 }
 
 export interface AragResponse {
