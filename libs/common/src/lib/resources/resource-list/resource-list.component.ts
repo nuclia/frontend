@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -107,6 +115,18 @@ export class ResourceListComponent implements OnDestroy {
             }),
           ),
         ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
+
+    this.resourceCacheService.resourceDeleted$
+      .pipe(
+        switchMap(() => {
+          if (this.isMainView || this.isProcessedView) {
+            return this.loadFilters();
+          }
+          return of(null);
+        }),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
@@ -273,9 +293,9 @@ export class ResourceListComponent implements OnDestroy {
     ]).pipe(
       switchMap(([labelSets, queryParams, prevFilters, prevLabelsLogic]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return this.resourceCacheService.requestFacets(faceted).pipe(
-          map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic })),
-        );
+        return this.resourceCacheService
+          .requestFacets(faceted)
+          .pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic })));
       }),
       map(({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }) => {
         const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');

@@ -181,6 +181,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.resourceCacheService.invalidate();
+        this.resourceCacheService.notifyDeletion();
         this.backToResources();
       });
   }

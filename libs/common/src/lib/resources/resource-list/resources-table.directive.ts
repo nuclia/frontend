@@ -290,6 +290,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
         tap(() => {
           this.manageBulkActionResults('deleting');
           this.resourceCacheService.invalidate();
+          this.resourceCacheService.notifyDeletion();
           this.sdk.refreshCounter(true);
           this.cdr.markForCheck();
         }),

@@ -102,4 +102,11 @@ export class ResourceCacheService {
   invalidate(): void {
     this._facetsCache.next(null);
   }
+
+  private _resourceDeleted = new Subject<void>();
+  resourceDeleted$ = this._resourceDeleted.asObservable();
+
+  notifyDeletion(): void {
+    this._resourceDeleted.next();
+  }
 }
