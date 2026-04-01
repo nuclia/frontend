@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
@@ -71,8 +71,6 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   unauthorizedIcon = UNAUTHORIZED_ICON;
 
-  private resourceCacheService = inject(ResourceCacheService);
-
   activeField?: FieldId | 'resource';
 
   constructor(
@@ -85,6 +83,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private features: FeaturesService,
     private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
+    private resourceCacheService: ResourceCacheService,
   ) {
     combineLatest([this.route.params, this.isArag])
       .pipe(
