@@ -141,6 +141,14 @@
     previewBaseUrl.set(url);
   }
 
+  export function block(message: string) {
+    searchBar?.block(message);
+  }
+
+  export function unblock() {
+    searchBar?.unblock();
+  }
+
   export const onError = getApiErrors();
 
   function enablePopupTrigger() {

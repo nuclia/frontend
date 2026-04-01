@@ -31,6 +31,7 @@
     triggerSearch,
     triggerSuggestions,
     typeAhead,
+    widgetBlocked,
     widgetPlaceholder,
   } from '../../core';
   import InputImages from '../input-images/InputImages.svelte';
@@ -141,7 +142,7 @@
   class="sw-search-input"
   class:has-filters={$hasFilters}
   class:has-logo={!$hideLogo}
-  class:disabled={$isStreaming}
+  class:disabled={$isStreaming || $widgetBlocked}
   bind:this={inputContainerElement}>
   {#if !$hideLogo}
     <img
@@ -160,7 +161,7 @@
             icon="cross"
             ariaLabel={$_('input.clear')}
             size="small"
-            disabled={$isStreaming}
+            disabled={$isStreaming || $widgetBlocked}
             on:click={clear}
             on:enter={clear} />
         {:else}
@@ -173,7 +174,7 @@
         name="nuclia-search-field"
         ariaLabel="Search input"
         placeholder={$_($widgetPlaceholder)}
-        disabled={$isStreaming}
+        disabled={$isStreaming || $widgetBlocked}
         bind:this={searchInputElement}
         bind:value={$typeAhead}
         on:input={onInput}
