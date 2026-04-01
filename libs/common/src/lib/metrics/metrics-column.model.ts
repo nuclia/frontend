@@ -74,6 +74,7 @@ export type UsageAnalyticsItem = ActivityLogItem & {
   _remiAnswerRelevance?: number | null;
   _remiContextRelevance?: number | null;
   _remiGroundedness?: number | null;
+  _rawStatus?: string | null;
 };
 
 /** Aggregated cost/token usage stats for the selected month. */

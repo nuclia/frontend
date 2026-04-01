@@ -37,14 +37,14 @@ export const USAGE_ANALYSIS_COLUMNS: MetricsColumnDef[] = [
     width: '140px',
     group: 'remi',
     inlineAction: {
-      icon: 'bulb',
+      icon: 'info',
       tooltip: 'activity.advice.trigger-tooltip',
       visible: (item: ActivityLogItem) => {
         const usageItem = item as UsageAnalyticsItem;
         const score = usageItem._remiAnswerRelevance ?? (item.remi_scores as number | null | undefined);
         const badScore = score !== null && score !== undefined && score < 3;
         const noScore = score === null || score === undefined;
-        const badStatus = ['NO_CONTEXT', 'ERROR'].includes(usageItem._displayStatus ?? '');
+        const badStatus = ['NO_CONTEXT', 'ERROR'].includes(usageItem._rawStatus ?? '');
         return badScore || (noScore && badStatus);
       },
     },

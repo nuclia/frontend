@@ -4,6 +4,7 @@ import { Observable, Subject, catchError, forkJoin, map, of, switchMap, take } f
 import {
   ACTIVITY_LOG_ASK_SHOW_FIELDS,
   ActivityLogAskQuery,
+  ActivityLogAskShowFields,
   ActivityLogItem,
   EventType,
   Metric,
@@ -308,6 +309,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       status,
       remi_scores: remiItem.remi?.answer_relevance?.score ?? null,
       _displayStatus: status ? this._translateStatus(status) : '—',
+      _rawStatus: status ?? null,
       _remiScore: remiItem.remi?.answer_relevance?.score ?? null,
       _remiAnswerRelevance: remiItem.remi?.answer_relevance?.score ?? null,
       _remiContextRelevance:
@@ -332,7 +334,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       switchMap((kb) =>
         kb.activityMonitor.queryActivityLogs(EventType.ASK, {
           year_month: this._yearMonth(),
-          show: [...ACTIVITY_LOG_ASK_SHOW_FIELDS],
+          show: [...ACTIVITY_LOG_ASK_SHOW_FIELDS].filter((f) => f !== 'chat_history') as ActivityLogAskShowFields[],
           filters: { id: { eq: id } },
         } as ActivityLogAskQuery),
       ),

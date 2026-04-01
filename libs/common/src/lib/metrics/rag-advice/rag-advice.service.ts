@@ -157,6 +157,12 @@ export class RagAdviceService {
       `| rag_strategies: full_resource | Includes the entire source document in context (expensive) | groundedness |`,
       `| rag_strategies: prequeries | Runs extra search queries to retrieve additional relevant context | context_relevance |`,
       `| model | The generative LLM. Low answer_relevance with good context = wrong model | answer_relevance |`,
+      ``,
+      `IMPORTANT: For the \`model\` parameter:`,
+      `- ONLY include model in PARAMS_JSON if you have been given a current \`model\` value in the diagnostic data above.`,
+      `- If you suggest a different model, you MUST use one of these exact identifiers ONLY: chatgpt-azure-4o, chatgpt-azure-4-turbo, gemini-1-5-pro-001, claude-3-5-sonnet.`,
+      `- Do NOT invent model names. Do NOT use names like "new model", "gpt-4", "gpt-4o", or any other variant not in the list above.`,
+      `- If unsure, OMIT model from PARAMS_JSON entirely.`,
       `| systemPrompt | System-level instruction to the LLM. Controls evasion and hallucination | answer_relevance, groundedness |`,
       `| rephrase | Rewrites the query before retrieval using domain vocabulary | context_relevance |`,
       ``,
@@ -406,6 +412,15 @@ export class RagAdviceService {
         if (val !== undefined && (val > 1.0 || val < 0.0)) {
           console.warn(`[RagAdviceService] post-parse: ${scoreKey} value ${val} is out of 0.0–1.0 range, discarding`);
           delete suggestedParams[scoreKey];
+        }
+      }
+
+      // Validate model name — strip if it looks hallucinated (contains spaces or is too long)
+      if (suggestedParams.model !== undefined) {
+        const isValidModel = /^[a-z0-9][a-z0-9._/-]*[a-z0-9]$/i.test(suggestedParams.model) && suggestedParams.model.length <= 60;
+        if (!isValidModel) {
+          console.warn(`[RagAdviceService] post-parse: model "${suggestedParams.model}" looks hallucinated, discarding`);
+          suggestedParams.model = undefined;
         }
       }
     }

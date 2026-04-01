@@ -2,57 +2,109 @@
   <pa-modal-title>{{ 'activity.advice.title' | translate }}</pa-modal-title>
 
   <pa-modal-content>
-    <!-- Query summary (always visible) -->
-    <div class="query-summary">
-      <div class="summary-field">
-        <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
-        <p class="summary-value">{{ input?.question }}</p>
-      </div>
-      @if (input?.answer) {
+    <!-- input / loading: query summary directly visible -->
+    @if (state() === 'input' || state() === 'loading') {
+      <div class="query-summary">
         <div class="summary-field">
-          <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
-          <p class="summary-value truncated">{{ input?.answer }}</p>
+          <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+          <p class="summary-value">{{ input?.question }}</p>
         </div>
-      }
-      @if (input?.remiScores) {
-        <div class="remi-scores">
-          @if (input?.remiScores?.answerRelevance !== undefined) {
-            <span
-              class="remi-badge"
-              [class.low]="(input?.remiScores?.answerRelevance ?? 5) < 3">
-              {{ 'metrics.remi.answer' | translate }}: {{ input?.remiScores?.answerRelevance | number: '1.1-1' }}
-            </span>
-          }
-          @if (input?.remiScores?.contextRelevance !== undefined) {
-            <span
-              class="remi-badge"
-              [class.low]="(input?.remiScores?.contextRelevance ?? 5) < 3">
-              {{ 'metrics.remi.context' | translate }}: {{ input?.remiScores?.contextRelevance | number: '1.1-1' }}
-            </span>
-          }
-          @if (input?.remiScores?.groundedness !== undefined) {
-            <span
-              class="remi-badge"
-              [class.low]="(input?.remiScores?.groundedness ?? 5) < 3">
-              {{ 'metrics.remi.groundedness' | translate }}: {{ input?.remiScores?.groundedness | number: '1.1-1' }}
-            </span>
-          }
-        </div>
-      }
-    </div>
+        @if (input?.answer) {
+          <div class="summary-field">
+            <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+            <p class="summary-value truncated">{{ input?.answer }}</p>
+          </div>
+        }
+        @if (input?.remiScores) {
+          <div class="remi-scores">
+            @if (input?.remiScores?.answerRelevance !== undefined) {
+              <span
+                class="remi-badge"
+                [class.low]="(input?.remiScores?.answerRelevance ?? 5) < 3">
+                {{ 'metrics.remi.answer' | translate }}: {{ input?.remiScores?.answerRelevance | number: '1.1-1' }}
+              </span>
+            }
+            @if (input?.remiScores?.contextRelevance !== undefined) {
+              <span
+                class="remi-badge"
+                [class.low]="(input?.remiScores?.contextRelevance ?? 5) < 3">
+                {{ 'metrics.remi.context' | translate }}: {{ input?.remiScores?.contextRelevance | number: '1.1-1' }}
+              </span>
+            }
+            @if (input?.remiScores?.groundedness !== undefined) {
+              <span
+                class="remi-badge"
+                [class.low]="(input?.remiScores?.groundedness ?? 5) < 3">
+                {{ 'metrics.remi.groundedness' | translate }}: {{ input?.remiScores?.groundedness | number: '1.1-1' }}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    }
 
-    <!-- User expectation expander (only in 'input' state) -->
-    @if (state() === 'input') {
+    <!-- advice / rerunning / result: query summary + expectation collapsed in expander -->
+    @if (state() === 'advice' || state() === 'rerunning' || state() === 'result') {
       <pa-expander [expanded]="false">
-        <pa-expander-header>{{ 'activity.advice.expectation-header' | translate }}</pa-expander-header>
+        <pa-expander-header>{{ 'activity.advice.query-details' | translate }}</pa-expander-header>
         <pa-expander-body>
-          <pa-textarea
-            [placeholder]="'activity.advice.expectation-placeholder' | translate"
-            [ngModel]="userExpectation()"
-            (ngModelChange)="userExpectation.set($event)"
-            [rows]="3"></pa-textarea>
+          <div class="query-summary">
+            <div class="summary-field">
+              <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+              <p class="summary-value">{{ input?.question }}</p>
+            </div>
+            @if (input?.answer) {
+              <div class="summary-field">
+                <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+                <p class="summary-value truncated">{{ input?.answer }}</p>
+              </div>
+            }
+            @if (input?.remiScores) {
+              <div class="remi-scores">
+                @if (input?.remiScores?.answerRelevance !== undefined) {
+                  <span
+                    class="remi-badge"
+                    [class.low]="(input?.remiScores?.answerRelevance ?? 5) < 3">
+                    {{ 'metrics.remi.answer' | translate }}: {{ input?.remiScores?.answerRelevance | number: '1.1-1' }}
+                  </span>
+                }
+                @if (input?.remiScores?.contextRelevance !== undefined) {
+                  <span
+                    class="remi-badge"
+                    [class.low]="(input?.remiScores?.contextRelevance ?? 5) < 3">
+                    {{ 'metrics.remi.context' | translate }}: {{ input?.remiScores?.contextRelevance | number: '1.1-1' }}
+                  </span>
+                }
+                @if (input?.remiScores?.groundedness !== undefined) {
+                  <span
+                    class="remi-badge"
+                    [class.low]="(input?.remiScores?.groundedness ?? 5) < 3">
+                    {{ 'metrics.remi.groundedness' | translate }}: {{ input?.remiScores?.groundedness | number: '1.1-1' }}
+                  </span>
+                }
+              </div>
+            }
+          </div>
+          @if (userExpectation()) {
+            <div class="expectation-display">
+              <span class="summary-label">{{ 'activity.advice.expectation-header' | translate }}</span>
+              <p class="body-m">{{ userExpectation() }}</p>
+            </div>
+          }
         </pa-expander-body>
       </pa-expander>
+    }
+
+    <!-- input: user expectation directly (no accordion) -->
+    @if (state() === 'input') {
+      <div class="expectation-input">
+        <span class="summary-label">{{ 'activity.advice.expectation-header' | translate }}</span>
+        <pa-textarea
+          [placeholder]="'activity.advice.expectation-placeholder' | translate"
+          [ngModel]="userExpectation()"
+          (ngModelChange)="userExpectation.set($event)"
+          [rows]="3"></pa-textarea>
+      </div>
     }
 
     <!-- Loading -->
@@ -63,8 +115,8 @@
       </div>
     }
 
-    <!-- Advice -->
-    @if (state() === 'advice' || state() === 'rerunning' || state() === 'result') {
+    <!-- Advice section: directly visible in advice/rerunning; in expander in result -->
+    @if (state() === 'advice' || state() === 'rerunning') {
       <div class="advice-section">
         <h4 class="title-s">{{ 'activity.advice.diagnosis' | translate }}</h4>
         <p class="body-m">{{ advice()?.diagnosis }}</p>
@@ -124,6 +176,71 @@
       }
     }
 
+    @if (state() === 'result') {
+      <pa-expander [expanded]="false">
+        <pa-expander-header>{{ 'activity.advice.advice-details' | translate }}</pa-expander-header>
+        <pa-expander-body>
+          <div class="advice-section">
+            <h4 class="title-s">{{ 'activity.advice.diagnosis' | translate }}</h4>
+            <p class="body-m">{{ advice()?.diagnosis }}</p>
+
+            @if ((advice()?.suggestions?.length ?? 0) > 0) {
+              <h4 class="title-s">{{ 'activity.advice.suggestions' | translate }}</h4>
+              <ul class="suggestions-list">
+                @for (suggestion of advice()?.suggestions; track $index) {
+                  <li class="body-m">{{ suggestion }}</li>
+                }
+              </ul>
+            }
+          </div>
+
+          @if (hasRerunOption()) {
+            <div class="suggested-params">
+              <p class="params-label body-s-bold">{{ 'activity.advice.suggested-params' | translate }}</p>
+              <ul class="params-list">
+                @if (advice()?.suggestedParams?.minScoreSemantic !== undefined) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.min-score-semantic' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.minScoreSemantic }}</span>
+                  </li>
+                }
+                @if (advice()?.suggestedParams?.minScoreBm25 !== undefined) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.min-score-bm25' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.minScoreBm25 }}</span>
+                  </li>
+                }
+                @if (advice()?.suggestedParams?.model) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.model' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.model }}</span>
+                  </li>
+                }
+                @if (advice()?.suggestedParams?.topK !== undefined) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.top-k' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.topK }}</span>
+                  </li>
+                }
+                @if (advice()?.suggestedParams?.ragStrategies?.length) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.rag-strategies' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.ragStrategies?.join(', ') }}</span>
+                  </li>
+                }
+                @if (advice()?.suggestedParams?.rephrase !== undefined) {
+                  <li class="body-s">
+                    <span class="param-name">{{ 'activity.advice.param.rephrase' | translate }}</span>
+                    <span class="param-value">{{ advice()?.suggestedParams?.rephrase }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </pa-expander-body>
+      </pa-expander>
+    }
+
     <!-- Re-running spinner -->
     @if (state() === 'rerunning') {
       <div class="loading-state">
@@ -134,10 +251,17 @@
 
     <!-- Re-run result -->
     @if (state() === 'result' && rerunResult()) {
-      <nsi-info-card type="highlight">
-        <p class="info-card-title body-s-bold">{{ 'activity.advice.new-answer' | translate }}</p>
-        <p class="body-m">{{ rerunResult()?.answer }}</p>
-      </nsi-info-card>
+      @if (rerunResult()?.answer) {
+        <nsi-info-card type="highlight">
+          <p class="info-card-title body-s-bold">{{ 'activity.advice.new-answer' | translate }}</p>
+          <p class="body-m">{{ rerunResult()?.answer }}</p>
+        </nsi-info-card>
+      } @else {
+        <nsi-info-card type="warning">
+          <p class="info-card-title body-s-bold">{{ 'activity.advice.no-answer-title' | translate }}</p>
+          <p class="body-m">{{ 'activity.advice.no-answer-hint' | translate }}</p>
+        </nsi-info-card>
+      }
     }
 
     <!-- Error -->

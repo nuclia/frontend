@@ -143,3 +143,33 @@
 .info-card-title {
   margin-bottom: rhythm(1);
 }
+
+.expectation-input {
+  margin-top: rhythm(2);
+
+  .summary-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(0.5);
+  }
+}
+
+.expectation-display {
+  margin-top: rhythm(2);
+
+  .summary-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(0.25);
+  }
+
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}

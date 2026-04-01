@@ -23,9 +23,10 @@ import {
   PaIconModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { combineLatest, EMPTY, fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, catchError, map, takeUntil } from 'rxjs/operators';
+import { auditTime, catchError, map, take, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -90,6 +91,7 @@ const METRIC_COLOR_LIST = [
     MissingKnowledgeDetailsComponent,
     PaButtonModule,
     RouterModule,
+    PaTooltipModule,
   ],
   templateUrl: './remi-analytics-page.component.html',
   styleUrl: './remi-analytics-page.component.scss',
@@ -348,6 +350,39 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   updateBadFeedbackPage(event: MouseEvent, next: boolean) {
     event.stopPropagation();
     this.remiMetrics.updateBadFeedbackPage(next);
+  }
+
+  openAdviceForItem(item: RemiQueryResponseItem, event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.missingKnowledgeDetails[item.id]) {
+      this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
+      return;
+    }
+    this.remiMetrics
+      .getMissingKnowledgeDetails(item.id)
+      .pipe(take(1))
+      .subscribe({
+        next: (details) => {
+          this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
+          this.openAdviceModal(item, details);
+        },
+        error: () => {
+          const input: AdviceInput = {
+            question: item.question,
+            answer: item.answer,
+            remiScores: item.remi
+              ? {
+                  answerRelevance: item.remi.answer_relevance.score,
+                  contextRelevance:
+                    item.remi.context_relevance.length > 0 ? Math.max(...item.remi.context_relevance) : undefined,
+                  groundedness: item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
+                }
+              : undefined,
+            params: {},
+          };
+          openRagAdviceModal(this.modalService, input);
+        },
+      });
   }
 
   onRequestAdvice(item: RemiQueryResponseItem): void {
