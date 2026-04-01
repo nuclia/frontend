@@ -1,0 +1,15 @@
+.skeleton-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.skeleton-avatar-row {
+  flex: 1;
+}

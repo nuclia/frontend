@@ -28,6 +28,78 @@ raw Pastanaga equivalents. They apply opinionated defaults (`cancelAspect: 'basi
 
 ---
 
+## Mandatory: Demo Page for Every Sistema Component
+
+> **Whenever a component is added to or updated in `@nuclia/sistema`, a corresponding demo page
+> in `apps/sistema-demo` must also be added or updated.**
+
+Demo pages live in `apps/sistema-demo/src/app/sistema-pages/`. Follow this checklist:
+
+### 1 — Create the demo folder
+
+Create `sistema-pages/<component-name>/` with these files:
+
+**`<component-name>.component.ts`**
+```ts
+@Component({
+  selector: 'nsd-sistema-<name>',
+  templateUrl: './<component-name>.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,           // ← always false in this module
+})
+export class Sistema<Name>DemoComponent { ... }
+```
+
+**`<component-name>.component.html`** — uses the `pa-demo-*` DSL:
+```html
+<pa-demo-page>
+  <pa-demo-title>Component Name</pa-demo-title>
+  <pa-demo-description>
+    <p>Brief description of what the component does.</p>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <!-- live interactive examples -->
+  </pa-demo-examples>
+
+  <pa-demo-code>
+    <!-- copyable code snippets -->
+    <pre><code>{{ codeSnippet }}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>
+```
+
+Add `<component-name>.component.scss` only when additional demo-page styles are needed.
+
+### 2 — Register in `sistema-pages.module.ts`
+
+In `apps/sistema-demo/src/app/sistema-pages/sistema-pages.module.ts`:
+- Add the demo component class to `declarations`
+- Add any new `NsiXxxComponent` (or module) from `@nuclia/sistema` to `imports`
+
+### 3 — Export from `index.ts`
+
+Add a barrel export to `apps/sistema-demo/src/app/sistema-pages/index.ts`:
+```ts
+export * from './sistema-<name>/sistema-<name>.component';
+```
+
+### 4 — Register in the app menu
+
+In `apps/sistema-demo/src/app/app.component.ts`, add an entry to the `menu` array under the
+`'Nuclia Sistema'` section, keeping **alphabetical order by `title`**:
+```ts
+{ path: 'sistema-<name>', title: '<Display Name>' }
+```
+
+### Reference example
+
+`apps/sistema-demo/src/app/sistema-pages/sistema-spinner/` is the canonical minimal example
+(no SCSS needed, single component, three size variants shown in `pa-demo-examples` +
+`pa-demo-code`).
+
+---
+
 ## SCSS Setup (every app's global styles)
 
 ```scss
