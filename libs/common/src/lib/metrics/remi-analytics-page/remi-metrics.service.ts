@@ -26,8 +26,7 @@ interface RawEvolutionResults {
   parameters: RangeParameters;
 }
 
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RemiMetricsService {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
@@ -83,7 +82,7 @@ export class RemiMetricsService {
   private _lowContextPageIds = new BehaviorSubject<number[]>([0]);
   private _noAnswerPageIds = new BehaviorSubject<number[]>([0]);
   private _badFeedbackPageIds = new BehaviorSubject<number[]>([0]);
-  
+
   private _lowContextLoading = new BehaviorSubject<boolean>(false);
   private _noAnswerLoading = new BehaviorSubject<boolean>(false);
   private _badFeedbackLoading = new BehaviorSubject<boolean>(false);

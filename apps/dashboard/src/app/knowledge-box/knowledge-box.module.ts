@@ -20,6 +20,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisIconsModule } from '@nuclia/sistema';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   ChartsModule,
   GenerativeModelPipe,
@@ -27,13 +28,13 @@ import {
   KnowledgeBoxSettingsModule,
   PipesModule,
   RangeChartComponent,
-  RemiMetricsService,
   TokenDialogModule,
   UploadModule,
   UsersManageModule,
   AccountStatusComponent,
 } from '@flaps/common';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { STFPipesModule } from '@flaps/core';
 import { LastResourcesComponent } from './knowledge-box-home/last-resources/last-resources.component';
 
@@ -79,6 +80,5 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
   ],
   declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
   exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
-  providers: [RemiMetricsService],
 })
 export class KnowledgeBoxModule {}
