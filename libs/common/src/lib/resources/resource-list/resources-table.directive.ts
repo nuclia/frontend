@@ -21,6 +21,7 @@ import {
   toArray,
 } from 'rxjs';
 import { ResourceListService } from './resource-list.service';
+import { ResourceCacheService } from '../resource-cache.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ export const COMMON_COLUMNS = [
 })
 export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected resourceListService = inject(ResourceListService);
+  protected resourceCacheService = inject(ResourceCacheService);
   protected sdk: SDKService = inject(SDKService);
   protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected router = inject(Router);
@@ -287,6 +289,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
         switchMap(() => this.resourceListService.loadResources()),
         tap(() => {
           this.manageBulkActionResults('deleting');
+          this.resourceCacheService.invalidate();
           this.sdk.refreshCounter(true);
           this.cdr.markForCheck();
         }),
