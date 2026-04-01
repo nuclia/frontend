@@ -30,6 +30,7 @@ import { ResourcesComponent } from './resources.component';
 import {
   BackButtonComponent,
   DropdownButtonComponent,
+  NsiSkeletonComponent,
   SisIconsModule,
   SisLabelModule,
   SisProgressModule,
@@ -169,6 +170,7 @@ const ROUTES: Routes = [
     BackButtonComponent,
     DropdownButtonComponent,
     SisSearchInputComponent,
+    NsiSkeletonComponent,
 
     // Nuclia
     PaginationModule,

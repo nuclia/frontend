@@ -46,6 +46,7 @@ export class ResourceListComponent implements OnDestroy {
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
   ready = this.resourceListService.ready;
+  loading = this.resourceListService.loading;
   hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   labelSets = this.resourceListService.labelSets;
