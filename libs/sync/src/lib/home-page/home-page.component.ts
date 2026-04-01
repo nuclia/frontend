@@ -84,15 +84,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private _connectorList: Observable<ConnectorDefinition[]> = forkJoin([
     this.syncService.connectorsObs.pipe(take(1)),
     this.features.unstable.cloudSyncSharepoint.pipe(take(1)),
-    this.features.unstable.cloudSyncS3.pipe(take(1)),
     this.currentZone,
   ]).pipe(
-    map(([sources, hasSharepoint, hasS3, zone]) =>
+    map(([sources, hasSharepoint, zone]) =>
       sources
         .filter((conn) => {
           const hidden =
-            (conn.id === 'sharepoint' && !hasSharepoint) ||
-            (conn.id === 's3' && (!hasS3 || zone?.cloud_provider !== 'AWS'));
+            (conn.id === 'sharepoint' && !hasSharepoint) || (conn.id === 's3' && zone?.cloud_provider !== 'AWS');
           return !hidden;
         })
         .sort((a, b) => a.title.localeCompare(b.title)),
