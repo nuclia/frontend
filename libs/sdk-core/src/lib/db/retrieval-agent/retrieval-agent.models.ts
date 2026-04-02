@@ -461,12 +461,20 @@ export interface PostprocessAliniaAgent extends PostprocessAgent, PostprocessAli
 
 export interface ARAGSchemas {
   agents: {
-    context: JSONSchema4[];
-    generation: JSONSchema4[];
-    preprocess: JSONSchema4[];
-    postprocess: JSONSchema4[];
+    context: { [id: string]: ARAGAgent };
+    generation: { [id: string]: ARAGAgent };
+    preprocess: { [id: string]: ARAGAgent };
+    postprocess: { [id: string]: ARAGAgent };
   };
   drivers: { [id: string]: ARAGDriver };
+}
+
+export interface ARAGAgent {
+  id: string;
+  agent_type: keyof ARAGSchemas['agents'];
+  title: string;
+  description: string;
+  config_schema: JSONSchema4;
 }
 
 export interface ARAGDriver {

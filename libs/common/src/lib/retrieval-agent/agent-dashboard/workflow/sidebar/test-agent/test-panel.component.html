@@ -65,7 +65,9 @@
         <section class="category-section">
           <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}</stf-chip>
           @for (item of rawAnswers().preprocess; track item.seqid) {
-            <app-agent-block [answer]="item"></app-agent-block>
+            <app-agent-block
+              [answer]="item"
+              category="preprocess"></app-agent-block>
           }
         </section>
       }
@@ -73,7 +75,9 @@
         <section class="category-section">
           <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.context' | translate }}</stf-chip>
           @for (item of rawAnswers().context; track item.seqid) {
-            <app-agent-block [answer]="item"></app-agent-block>
+            <app-agent-block
+              [answer]="item"
+              category="context"></app-agent-block>
           }
         </section>
       }
@@ -81,7 +85,9 @@
         <section class="category-section">
           <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.generation' | translate }}</stf-chip>
           @for (item of rawAnswers().generation; track item.seqid) {
-            <app-agent-block [answer]="item"></app-agent-block>
+            <app-agent-block
+              [answer]="item"
+              category="generation"></app-agent-block>
           }
         </section>
       }
@@ -89,7 +95,9 @@
         <section class="category-section">
           <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}</stf-chip>
           @for (item of rawAnswers().postprocess; track item.seqid) {
-            <app-agent-block [answer]="item"></app-agent-block>
+            <app-agent-block
+              [answer]="item"
+              category="postprocess"></app-agent-block>
           }
         </section>
       }

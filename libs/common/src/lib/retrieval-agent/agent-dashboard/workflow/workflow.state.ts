@@ -1,5 +1,12 @@
 import { ComponentRef, computed, signal } from '@angular/core';
-import { AnswerOperation, AragAnswer, AragModule, BaseContextAgent, getCategoryFromModule } from '@nuclia/core';
+import {
+  AnswerOperation,
+  AragAnswer,
+  AragModule,
+  ARAGSchemas,
+  BaseContextAgent,
+  getCategoryFromModule,
+} from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import {
   AragAnswerUi,
@@ -289,7 +296,7 @@ function setNodeState(node: ParentNode, state: NodeState) {
  * Workflow state
  */
 export const workflowId = signal<string | undefined>(undefined);
-export const rootSchema = signal<JSONSchema4 | null>(null);
+export const rootSchema = signal<ARAGSchemas | null>(null);
 export const nodeInitialisationDone = signal(false);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const contextNodes = signal<{ [id: string]: ParentNode }>({});

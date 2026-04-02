@@ -10,9 +10,8 @@ import {
 } from '../index';
 import { WorkflowService } from '../../workflow.service';
 import { NodeCategory, NodeType } from '../../workflow.models';
-import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Driver, NucliaDBDriver } from '@nuclia/core';
+import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
 
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
@@ -36,7 +35,7 @@ interface SchemaEntry {
 export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private workflowService = inject(WorkflowService);
 
-  private schemas = signal<JSONSchema4 | null>(null);
+  private schemas = signal<ARAGSchemas | null>(null);
   private schemaEntry = signal<SchemaEntry | null>(null);
   labels = signal<{ [field: string]: { [key: string]: string } }>({});
   drivers = toSignal(this.workflowService.driverModels$);
@@ -188,24 +187,12 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private getMatchingSchema(
     nodeType: NodeType | undefined,
     category: NodeCategory | undefined,
-    schemas: JSONSchema4 | null,
+    schemas: ARAGSchemas | null,
   ): JSONSchema4 | undefined {
     if (!schemas || !nodeType || !category) {
       return;
     }
-    const categorySchemas = schemas.properties?.[category];
-    if (!categorySchemas) {
-      return;
-    }
-    const mapping = (categorySchemas.items as any)?.discriminator?.mapping;
-    if (!mapping) {
-      return;
-    }
-    const key = mapping[nodeType]?.split('/').slice(-1)[0];
-    if (key) {
-      return schemas['$defs'][key] as JSONSchema4;
-    }
-    return;
+    return schemas.agents[category][nodeType].config_schema;
   }
 
   private createEntriesFromConfig(): Array<{ id: string; title: string }> {
@@ -239,14 +226,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       return entries;
     }
 
-    // Find the schema for this node type
-    const categorySchemas = schemas.properties?.[category];
-    if (!categorySchemas) {
-      return entries;
-    }
-
-    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, schemas);
-    const matchingSchema = schemas['$defs'][schemaTitle];
+    const matchingSchema = this.getMatchingSchema(nodeType, category, schemas);
 
     if (!matchingSchema?.properties) {
       return entries;

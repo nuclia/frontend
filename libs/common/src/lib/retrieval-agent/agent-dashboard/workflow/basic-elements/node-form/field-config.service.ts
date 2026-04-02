@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ARAGSchemas } from '@nuclia/core';
 import { JSONSchema4 } from 'json-schema';
 
 export enum WidgetType {
@@ -315,6 +316,9 @@ export class FieldConfigService {
   }
 
   isSubformField(property: ExtendedJSONSchema4, schema?: JSONSchema4): boolean {
+    if (property.widget === WidgetType.NOT_SHOW) {
+      return false;
+    }
     // If we can resolve the $ref, check what it actually points to
     if (schema) {
       const resolvedProperty = this.resolvePropertyRef(property, schema);

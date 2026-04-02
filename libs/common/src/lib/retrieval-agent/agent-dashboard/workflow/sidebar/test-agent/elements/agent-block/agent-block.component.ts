@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule, Driver, IKnowledgeBoxItem, NucliaDBDriver } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../../../../../../pipes';
 import { getFormattedCost } from '../../../../../../arag.utils';
-import { AragAnswerUi } from '../../../../workflow.models';
+import { AragAnswerUi, NodeCategory } from '../../../../workflow.models';
 import { AgentContextComponent } from '../agent-context';
 import { AgentStepComponent } from '../agent-step';
 import { BlockquoteComponent } from '../blockquote';
@@ -13,7 +13,6 @@ import { getNodeByAgentId } from '../../../../workflow.state';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SDKService } from '@flaps/core';
 import { WorkflowService } from '../../../../workflow.service';
-import { convertNodeTypeToConfigTitle } from '../../../../workflow.utils';
 
 @Component({
   selector: 'app-agent-block',
@@ -38,6 +37,7 @@ export class AgentBlockComponent {
 
   answer = input<AragAnswerUi>();
   result = input<AragAnswer>();
+  category = input<NodeCategory>();
 
   accordionItems = viewChildren(AccordionItemComponent);
   kbList = toSignal(this.sdk.kbList, { initialValue: [] });
@@ -60,9 +60,9 @@ export class AgentBlockComponent {
 
   title = computed(() => {
     const answer = this.answer();
-    if (answer) {
-      const schemaKey = convertNodeTypeToConfigTitle(answer.module, this.schemas());
-      let title = this.schemas()?.['$defs'][schemaKey]?.title || '';
+    const category = this.category();
+    if (answer && category) {
+      let title = this.schemas()?.agents[category][answer.module]?.title;
       if (answer.module === 'basic_ask' || answer.module === 'ask' || answer.module === 'advanced_ask') {
         const kbTitle = this.getKbTitle(answer.agentId, this.drivers() || [], this.kbList());
         if (kbTitle) {

@@ -22,6 +22,7 @@ import {
   SearchConfigs,
   LearningConfigurations,
   GenerativeProviders,
+  ARAGSchemas,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import {
@@ -88,8 +89,6 @@ import {
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
 import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
-import { convertNodeTypeToConfigTitle } from './workflow.utils';
 import { AdvancedAskFormComponent } from './nodes/advanced-ask';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -113,7 +112,7 @@ export class WorkflowService {
   private environmentInjector = this.applicationRef.injector;
 
   // Shared schemas state
-  private _schemasSubject = new BehaviorSubject<JSONSchema4 | null>(null);
+  private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
   schemas$ = this._schemasSubject.asObservable();
 
   // Shared Models state
@@ -508,20 +507,19 @@ export class WorkflowService {
     const nodeCategory = parentNode.nodeCategory;
 
     // Find the schema for this node type
-    const categorySchemas = schemas.properties?.[nodeCategory];
+    const categorySchemas = schemas.agents[nodeCategory];
     if (!categorySchemas) {
       return [];
     }
 
-    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-    const matchingSchema = schemas['$defs'][schemaTitle];
+    const matchingSchema = categorySchemas[nodeType];
 
-    if (!matchingSchema?.properties) {
+    if (!matchingSchema?.config_schema?.properties) {
       return [];
     }
 
     // Look for the property that matches this connectable entry
-    const property = matchingSchema.properties[entryId];
+    const property = matchingSchema.config_schema.properties[entryId];
     if (!property) {
       return [];
     }
@@ -600,11 +598,10 @@ export class WorkflowService {
     discriminatorOptions.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType as NodeType);
-      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+      const matchingAgent = this._schemasSubject.getValue()?.agents[originCategory]?.[nodeType];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
-      selectorRef.setInput('description', matchingSchema?.description || '');
+      selectorRef.setInput('nodeTitle', matchingAgent?.title || '');
+      selectorRef.setInput('description', matchingAgent?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType as NodeType]);
       if (NODES_IN_BETA.includes(nodeType)) {
         selectorRef.setInput('badge', 'generic.badge.beta');
@@ -643,11 +640,10 @@ export class WorkflowService {
     categoryConfigs.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType);
-      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+      const matchingAgent = this._schemasSubject.getValue()?.agents[nodeCategory]?.[nodeType];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
-      selectorRef.setInput('description', matchingSchema?.description || '');
+      selectorRef.setInput('nodeTitle', matchingAgent?.title || '');
+      selectorRef.setInput('description', matchingAgent?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       if (NODES_IN_BETA.includes(nodeType)) {
         selectorRef.setInput('badge', 'generic.badge.beta');
@@ -671,10 +667,7 @@ export class WorkflowService {
    * Get all node configurations directly from schemas for a specific category
    */
   private getCategoryConfigurations(nodeCategory: NodeCategory): NodeType[] {
-    return Object.keys(
-      (this._schemasSubject.getValue()?.properties?.[nodeCategory].items as JSONSchema4)?.['discriminator'].mapping ||
-        {},
-    ).map((k) => k as NodeType);
+    return Object.keys(this._schemasSubject.getValue()?.agents[nodeCategory] || {}).map((k) => k as NodeType);
   }
 
   /**
@@ -926,11 +919,10 @@ export class WorkflowService {
     if (!node) {
       throw new Error(`selectNode: No node with id=${nodeId} in category ${nodeCategory}`);
     }
-    const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
-    const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+    const matchingAgent = this._schemasSubject.getValue()?.agents[nodeCategory]?.[node.nodeType];
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
-      matchingSchema?.title || '',
+      matchingAgent?.title || '',
       undefined,
       NODES_IN_BETA.includes(node.nodeType) ? 'generic.badge.beta' : undefined,
     );
@@ -1190,7 +1182,7 @@ export class WorkflowService {
   }
 
   getSchemas() {
-    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getFullSchemas()));
+    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
   }
 
   /**
