@@ -130,7 +130,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
 
   ngOnInit() {
     if (this.schemas) {
-      this.agentSchema = this.schemas.agents[this.agentType][this.agentName];
+      this.agentSchema = this.schemas.agents[this.agentType][this.agentName].config_schema;
     }
     if (this.isNested && this.nestedSchema && this.parentForm) {
       // When used as nested component, use provided schema and parent form
