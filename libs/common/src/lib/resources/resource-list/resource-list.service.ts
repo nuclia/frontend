@@ -16,9 +16,12 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  defer,
+  distinctUntilChanged,
   EMPTY,
   expand,
   filter,
+  finalize,
   forkJoin,
   map,
   Observable,
@@ -70,6 +73,9 @@ export class ResourceListService {
   filters = this._filters.asObservable();
   private _ready = new BehaviorSubject<boolean>(false);
   ready = this._ready.asObservable();
+  loading = this._ready.pipe(map((ready) => !ready));
+  private _tableLoading = new BehaviorSubject<boolean>(false);
+  tableLoading = this._tableLoading.asObservable().pipe(distinctUntilChanged());
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
   data = this._data.asObservable();
   private _query = new BehaviorSubject<string>('');
@@ -195,12 +201,18 @@ export class ResourceListService {
   }
 
   loadResources(replaceData = true, updateCount = true) {
-    return forkJoin([
-      this.status === RESOURCE_STATUS.PENDING
+    if (updateCount) {
+      // Fire status count in background — does not block ready signal
+      this.uploadService.updateStatusCount().pipe(take(1)).subscribe();
+    }
+    return defer(() => {
+      if (this._ready.value) {
+        this._tableLoading.next(true);
+      }
+      return this.status === RESOURCE_STATUS.PENDING
         ? this.loadPendingResources(replaceData)
-        : this.loadResourcesFromCatalog(replaceData),
-      updateCount ? this.uploadService.updateStatusCount() : of(undefined),
-    ]).pipe(
+        : this.loadResourcesFromCatalog(replaceData);
+    }).pipe(
       map(() => undefined),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
@@ -208,6 +220,7 @@ export class ResourceListService {
         this._data.next([]);
         return of(undefined);
       }),
+      finalize(() => this._tableLoading.next(false)),
     );
   }
 

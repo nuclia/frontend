@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
@@ -15,6 +8,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
 import { EditResourceService } from './edit-resource.service';
 import { ResourceNavigationService } from './resource-navigation.service';
+import { ResourceCacheService } from '../resource-cache.service';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -89,6 +83,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private features: FeaturesService,
     private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
+    private resourceCacheService: ResourceCacheService,
   ) {
     combineLatest([this.route.params, this.isArag])
       .pipe(
@@ -183,7 +178,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         map((resource) => resource as Resource),
         switchMap((resource: Resource) => resource.delete(true)),
       )
-      .subscribe((route) => this.backToResources());
+      .subscribe(() => {
+        this.resourceCacheService.invalidate();
+        this.resourceCacheService.notifyDeletion();
+        this.backToResources();
+      });
   }
 
   summarizeResource() {

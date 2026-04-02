@@ -1,0 +1,26 @@
+@use '../../../styles/variables' as *;
+
+.nsi-skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    $color-neutral-lightest 25%,
+    $color-neutral-lighter 50%,
+    $color-neutral-lightest 75%
+  );
+  background-size: 200% 100%;
+  animation: nsi-shimmer 1.5s infinite;
+}
+
+.nsi-skeleton--small  { border-radius: rhythm(0.5); }
+.nsi-skeleton--medium { border-radius: rhythm(1); }
+.nsi-skeleton--round  { border-radius: 50%; }
+
+@keyframes nsi-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

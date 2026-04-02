@@ -18,6 +18,7 @@ import {
   BackButtonComponent,
   CountrySelectComponent,
   DropdownButtonComponent,
+  NsiSkeletonComponent,
   SisLabelModule,
   SisPasswordInputModule,
   SisProgressModule,
@@ -39,6 +40,7 @@ import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
 import { SistemaCountrySelectComponent } from './sistema-country-select/sistema-country-select.component';
 import { SistemaSearchInputComponent } from './sistema-search-input/sistema-search-input.component';
+import { SistemaSkeletonComponent } from './sistema-skeleton/sistema-skeleton.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
 
 @NgModule({
@@ -56,6 +58,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SistemaDropdownButtonComponent,
     SistemaPasswordInputComponent,
     SistemaSearchInputComponent,
+    SistemaSkeletonComponent,
     SistemaSpinnerComponent,
   ],
   imports: [
@@ -77,6 +80,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     BackButtonComponent,
     CountrySelectComponent,
     DropdownButtonComponent,
+    NsiSkeletonComponent,
     SisPasswordInputModule,
     SisSearchInputComponent,
     SisProgressModule,
@@ -84,6 +88,6 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SisLabelModule,
     TranslateModule.forRoot(),
   ],
-  exports: [SistemaSpinnerComponent],
+  exports: [SistemaSkeletonComponent, SistemaSpinnerComponent],
 })
 export class SistemaPagesModule {}

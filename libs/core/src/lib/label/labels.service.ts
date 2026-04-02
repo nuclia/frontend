@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
-import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { LabelSetCounts } from './label-sets/model';
 
 @Injectable({
@@ -13,10 +13,16 @@ export class LabelsService {
   resourceLabelSets = this.labelSets.pipe(
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.RESOURCES)),
+    // filter intentionally excludes null — shareReplay never caches a null value.
+    // initLabelSets() transitions directly between KB label sets without a null gap.
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
   textBlockLabelSets = this.labelSets.pipe(
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
+    // filter intentionally excludes null — shareReplay never caches a null value.
+    // initLabelSets() transitions directly between KB label sets without a null gap.
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
   hasResourceLabelSets = this.resourceLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
   hasTextBlockLabelSets = this.textBlockLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
