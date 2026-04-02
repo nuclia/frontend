@@ -35,7 +35,7 @@
 
     <pa-table
       border
-      columns="1fr 120px">
+      [columns]="selectedResourcesTab === 'processed' ? '1fr 120px 80px' : '1fr 120px'">
       <pa-table-header>
         <pa-table-cell header>
           <span class="title-xxs">{{ 'resource.title' | translate }}</span>
@@ -43,6 +43,11 @@
         <pa-table-cell header>
           <span class="title-xxs">{{ 'generic.date' | translate }}</span>
         </pa-table-cell>
+        @if (selectedResourcesTab === 'processed') {
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'generic.actions' | translate }}</span>
+          </pa-table-cell>
+        }
       </pa-table-header>
 
       @switch (selectedResourcesTab) {
@@ -66,6 +71,24 @@
                     dateOnly></pa-datetime>
                 </span>
               </pa-table-cell>
+              <pa-table-cell-menu>
+                @if (isAdminOrContrib | async) {
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="menu">
+                    {{ 'generic.actions' | translate }}
+                  </pa-button>
+                  <pa-dropdown #menu>
+                    <pa-option
+                      destructive
+                      (selectOption)="deleteResource(resource)">
+                      {{ 'generic.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                }
+              </pa-table-cell-menu>
             </pa-table-row>
           } @empty {
             <pa-table-row>
@@ -74,6 +97,7 @@
                   {{ 'dashboard-home.resources.latest-processed.empty' | translate }}
                 </span>
               </pa-table-cell>
+              <pa-table-cell></pa-table-cell>
               <pa-table-cell></pa-table-cell>
             </pa-table-row>
           }
