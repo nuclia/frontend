@@ -43,11 +43,7 @@ export class LabelerResultsComponent {
 
   fieldsWithLabels = this.resultsSubject.pipe(
     map((results) => {
-      const taskLabels = (this.task?.parameters.operations || []).reduce(
-        (acc, curr) =>
-          acc.concat((curr?.label?.labels || []).map((label) => `${curr?.label?.ident || ''}/${label.label}`)),
-        [] as string[],
-      );
+      const taskLabels = this.getTaskLabels();
       return Object.entries(results.results)
         .filter(([key]) => this.getFieldId(key).fieldType !== FIELD_TYPE.generic)
         .map(([key, field]) => ({
@@ -73,10 +69,7 @@ export class LabelerResultsComponent {
           ),
         ),
         map((resource) => {
-          const labelOperation = this.task?.parameters.operations?.[0].label;
-          const taskLabels = (labelOperation?.labels || []).map(
-            (label) => `${labelOperation?.ident || ''}/${label.label}`,
-          );
+          const taskLabels = this.getTaskLabels();
           return Object.entries(results.results)
             .map(([key, field]) => ({ ...this.getFieldId(key), field }))
             .filter(({ fieldType }) => fieldType !== FIELD_TYPE.generic)
@@ -115,5 +108,13 @@ export class LabelerResultsComponent {
     return key.startsWith('t/da-')
       ? key.split('-')[1] || ''
       : this.translate.instant('resource.field-' + shortToLongFieldType(key[0] as SHORT_FIELD_TYPE) || '');
+  }
+
+  getTaskLabels() {
+    return (this.task?.parameters.operations || []).reduce(
+      (acc, curr) =>
+        acc.concat((curr?.label?.labels || []).map((label) => `${curr?.label?.ident || ''}/${label.label}`)),
+      [] as string[],
+    );
   }
 }
