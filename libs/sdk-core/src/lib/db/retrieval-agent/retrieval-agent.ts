@@ -533,15 +533,15 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}/postprocess/${agentId}`);
   }
 
-  /** @deprecated
-   * Use getFullSchemas
+  /**
+   * Get the agents and drivers schemas
    */
   getSchemas(): Observable<ARAGSchemas> {
     return this.nuclia.rest.get<ARAGSchemas>(`${this.path}/schema`);
   }
 
-  /**
-   * Get the agents and drivers schemas
+  /** @deprecated
+   * Use getSchemas
    */
   getFullSchemas(): Observable<JSONSchema4> {
     return this.nuclia.rest.get<JSONSchema4>(`${this.path}/fullschema`);

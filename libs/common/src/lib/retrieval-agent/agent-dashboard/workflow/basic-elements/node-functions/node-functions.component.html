@@ -18,7 +18,7 @@
   }
   <pa-accordion-item
     id="published-functions"
-    [itemTitle]="property()?.title"
+    [itemTitle]="property()?.title || ''"
     [(expanded)]="expanded">
     <pa-accordion-item-body>
       <ul>

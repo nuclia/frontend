@@ -10,9 +10,10 @@ import {
 } from '../index';
 import { WorkflowService } from '../../workflow.service';
 import { NodeCategory, NodeType } from '../../workflow.models';
-import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Driver, NucliaDBDriver } from '@nuclia/core';
+import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
+
+const CONNECTABLES = ['then', 'else_', 'next_agent', 'alternative', 'fallback', 'agents', 'registered_agents'];
 
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
@@ -36,7 +37,7 @@ interface SchemaEntry {
 export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private workflowService = inject(WorkflowService);
 
-  private schemas = signal<JSONSchema4 | null>(null);
+  private schemas = signal<ARAGSchemas | null>(null);
   private schemaEntry = signal<SchemaEntry | null>(null);
   labels = signal<{ [field: string]: { [key: string]: string } }>({});
   drivers = toSignal(this.workflowService.driverModels$);
@@ -188,24 +189,12 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private getMatchingSchema(
     nodeType: NodeType | undefined,
     category: NodeCategory | undefined,
-    schemas: JSONSchema4 | null,
+    schemas: ARAGSchemas | null,
   ): JSONSchema4 | undefined {
     if (!schemas || !nodeType || !category) {
       return;
     }
-    const categorySchemas = schemas.properties?.[category];
-    if (!categorySchemas) {
-      return;
-    }
-    const mapping = (categorySchemas.items as any)?.discriminator?.mapping;
-    if (!mapping) {
-      return;
-    }
-    const key = mapping[nodeType]?.split('/').slice(-1)[0];
-    if (key) {
-      return schemas['$defs'][key] as JSONSchema4;
-    }
-    return;
+    return schemas.agents[category][nodeType].config_schema;
   }
 
   private createEntriesFromConfig(): Array<{ id: string; title: string }> {
@@ -239,14 +228,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       return entries;
     }
 
-    // Find the schema for this node type
-    const categorySchemas = schemas.properties?.[category];
-    if (!categorySchemas) {
-      return entries;
-    }
-
-    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, schemas);
-    const matchingSchema = schemas['$defs'][schemaTitle];
+    const matchingSchema = this.getMatchingSchema(nodeType, category, schemas);
 
     if (!matchingSchema?.properties) {
       return entries;
@@ -409,7 +391,6 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private createSchemaEntry(schema: JSONSchema4, title: string): SchemaEntry {
     const properties = schema.properties || {};
     const discriminatorProperties: string[] = [];
-    const nodeType = this.type();
 
     // Start with config-based entries
     const fallbackEntries = this.createEntriesFromConfig();
@@ -432,29 +413,13 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       // Check for properties with discriminators or fallback scenarios
       if (this.hasDiscriminatorProperty(prop)) {
         hasDiscriminator = true;
-        // Extract discriminator entries dynamically from the schema - but only if we didn't already add from config
-        const discriminatorEntries = this.extractDiscriminatorEntries(prop, key);
-        // Avoid duplicates - don't add if we already added from config
-        const newEntries = discriminatorEntries.filter(
-          (entry) => !fallbackEntries.some((existing) => existing.id === entry.id),
-        );
-        // "rank_fusion" property (from advanced_ask) is not a fallback entry even if it has a discriminator
-        const validEntries = newEntries.filter((entry) => entry.id !== 'rank_fusion');
-        fallbackEntries.push(...validEntries);
-      } else if (
-        key.toLowerCase().includes('fallback') ||
-        key.toLowerCase().includes('next_agent') ||
-        key.toLowerCase().includes('else_') ||
-        key.toLowerCase().includes('alternative') ||
-        (key.toLowerCase().includes('agents') && !key.toLowerCase().startsWith('registered_agents_'))
-      ) {
-        // Only add if not already added from config
-        if (!fallbackEntries.some((entry) => entry.id === key)) {
-          fallbackEntries.push({
-            id: key,
-            title: prop.title || this.formatPropertyName(key),
-          });
-        }
+      }
+
+      if (CONNECTABLES.includes(key) && !fallbackEntries.some((entry) => entry.id === key)) {
+        fallbackEntries.push({
+          id: key,
+          title: prop.title || this.formatPropertyName(key),
+        });
       }
     });
 

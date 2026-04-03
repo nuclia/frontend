@@ -1,6 +1,6 @@
 <stf-blockquote>
   @if (title()) {
-    <stf-chip>{{ title() | translate }}</stf-chip>
+    <stf-chip>{{ title() || '' | translate }}</stf-chip>
   }
   <div class="description">{{ description() | translate }}</div>
 

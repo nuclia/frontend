@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { NucliaDBDriver } from '@nuclia/core';
+import { ARAGSchemas, NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -64,7 +64,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
     return this.form.controls.rephrase;
   }
 
-  schemas = input<JSONSchema4 | null>(null);
+  schemas = input<ARAGSchemas | null>(null);
   formReady = output<FormGroup>();
   driversPath = computed(() => `${aragUrl()}/drivers`);
   sourceOptions = signal<OptionModel[] | null>(null);
@@ -93,7 +93,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       );
 
     // Set default model
-    const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase');
+    const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase', 'preprocess');
     const defaultModel = schema?.properties?.['model']?.default as string | undefined;
     this.configForm.controls.model.patchValue(defaultModel || '');
     this.formReady.emit(this.configForm);
