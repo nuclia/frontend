@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
-import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../../charts';
+import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
