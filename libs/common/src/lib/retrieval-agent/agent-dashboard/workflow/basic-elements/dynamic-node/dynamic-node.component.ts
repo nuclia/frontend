@@ -13,6 +13,8 @@ import { NodeCategory, NodeType } from '../../workflow.models';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
 
+const CONNECTABLES = ['then', 'else_', 'next_agent', 'alternative', 'fallback', 'agents', 'registered_agents'];
+
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
   show_in_node?: boolean;
@@ -389,7 +391,6 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
   private createSchemaEntry(schema: JSONSchema4, title: string): SchemaEntry {
     const properties = schema.properties || {};
     const discriminatorProperties: string[] = [];
-    const nodeType = this.type();
 
     // Start with config-based entries
     const fallbackEntries = this.createEntriesFromConfig();
@@ -412,29 +413,13 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
       // Check for properties with discriminators or fallback scenarios
       if (this.hasDiscriminatorProperty(prop)) {
         hasDiscriminator = true;
-        // Extract discriminator entries dynamically from the schema - but only if we didn't already add from config
-        const discriminatorEntries = this.extractDiscriminatorEntries(prop, key);
-        // Avoid duplicates - don't add if we already added from config
-        const newEntries = discriminatorEntries.filter(
-          (entry) => !fallbackEntries.some((existing) => existing.id === entry.id),
-        );
-        // "rank_fusion" property (from advanced_ask) is not a fallback entry even if it has a discriminator
-        const validEntries = newEntries.filter((entry) => entry.id !== 'rank_fusion');
-        fallbackEntries.push(...validEntries);
-      } else if (
-        key.toLowerCase().includes('fallback') ||
-        key.toLowerCase().includes('next_agent') ||
-        key.toLowerCase().includes('else_') ||
-        key.toLowerCase().includes('alternative') ||
-        (key.toLowerCase().includes('agents') && !key.toLowerCase().startsWith('registered_agents_'))
-      ) {
-        // Only add if not already added from config
-        if (!fallbackEntries.some((entry) => entry.id === key)) {
-          fallbackEntries.push({
-            id: key,
-            title: prop.title || this.formatPropertyName(key),
-          });
-        }
+      }
+
+      if (CONNECTABLES.includes(key) && !fallbackEntries.some((entry) => entry.id === key)) {
+        fallbackEntries.push({
+          id: key,
+          title: prop.title || this.formatPropertyName(key),
+        });
       }
     });
 
