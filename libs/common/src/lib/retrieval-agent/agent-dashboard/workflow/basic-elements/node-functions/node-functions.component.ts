@@ -31,7 +31,7 @@ export class NodeFunctionsComponent {
       return undefined;
     }
   });
-  functions = computed(() => this.property()?.default || []);
+  functions = computed(() => (this.property()?.default as string[]) || []);
 
   copy() {
     this.copied.set(true);
