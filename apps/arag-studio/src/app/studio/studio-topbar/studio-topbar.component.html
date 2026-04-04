@@ -1,0 +1,36 @@
+<header class="studio-topbar">
+  <div class="topbar-breadcrumb">
+    <a
+      class="breadcrumb-home body-s"
+      [routerLink]="homeUrl">
+      {{ accountSlug }}
+    </a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="breadcrumb-current title-xs">{{ agentTitle }}</span>
+    <span
+      class="status-badge"
+      [class.status-badge--active]="isPublished"
+      [class.status-badge--inactive]="!isPublished">
+      {{ isPublished ? ('studio.topbar.status.active' | translate) : ('studio.topbar.status.inactive' | translate) }}
+    </span>
+  </div>
+
+  <div class="topbar-actions">
+    <pa-button
+      aspect="basic"
+      size="small"
+      icon="external-link"
+      iconAndText
+      [routerLink]="['/at', accountSlug, zone, 'arag', agentSlug, 'keys']">
+      {{ 'studio.topbar.api-keys' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="solid"
+      size="small"
+      icon="play"
+      iconAndText
+      (click)="navigateToSearch()">
+      {{ 'studio.topbar.test-agent' | translate }}
+    </pa-button>
+  </div>
+</header>
