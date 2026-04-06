@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-empty-chart',
@@ -6,14 +6,10 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./empty-chart.component.scss'],
   standalone: false,
 })
-export class EmptyChartComponent implements OnInit {
+export class EmptyChartComponent {
   @Input()
   set numLines(value: number) {
     this._numLines = Array(value).fill(1);
   }
   _numLines: number[] = [];
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UploadDialogService, UploadType } from './upload-dialog.service';
 import { FeaturesService } from '@flaps/core';
 
@@ -8,13 +8,11 @@ import { FeaturesService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class UploadButtonComponent implements OnInit {
+export class UploadButtonComponent {
   constructor(
     private uploadService: UploadDialogService,
     private features: FeaturesService,
   ) {}
-
-  ngOnInit(): void {}
 
   upload(type: UploadType) {
     this.uploadService.upload(type);

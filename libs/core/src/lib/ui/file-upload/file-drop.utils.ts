@@ -6,7 +6,7 @@ export const getDroppedFiles = (dataTransferItemList: DataTransferItemList) =>
 
 // Drop handler function to get all files
 async function getAllFileEntries(dataTransferItemList: DataTransferItemList) {
-  let fileEntries: DroppedFile[] = [];
+  const fileEntries: DroppedFile[] = [];
   // Use BFS to traverse entire directory/file structure
   const queue: { entry: FileSystemEntry; path: string }[] = [];
   // Unfortunately dataTransferItemList is not iterable i.e. no forEach

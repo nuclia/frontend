@@ -1,4 +1,3 @@
-
 import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -23,16 +22,16 @@ import { FormsModule } from '@angular/forms';
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
-    TranslateModule
-],
+    TranslateModule,
+  ],
 })
 export class DriverSelectComponent implements OnInit {
-  @Input() label: string = '';
-  @Input() required: boolean = false;
+  @Input() label = '';
+  @Input() required = false;
   @Input() form?: FormGroup;
   @Input() controlName?: string;
   @Input() provider!: ProviderType | ProviderType[];
-  @Input() multiselect: boolean = false;
+  @Input() multiselect = false;
 
   private sdk = inject(SDKService);
 

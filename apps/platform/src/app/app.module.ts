@@ -8,11 +8,13 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule, SPRITE_CACHE_VERSION } from '@guillotinaweb/pastanaga-angular';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BackendConfigurationService, LabelSetsModule, STFConfigModule, STFPipesModule } from '@flaps/core';
 import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { AccountModule } from '@flaps/common';
 import { AppComponent } from './app.component';
 
@@ -22,6 +24,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';

@@ -65,7 +65,7 @@ export const isMediaPlayer = viewerState.reader<boolean>(
 export const metadataBlockCount = viewerState.reader<number>((state) => {
   const searchBlock = (state.currentResult?.paragraphs || []).length > 0 ? 1 : 0;
   const transcriptBlock = isMediaPlayer.getValue() ? 1 : 0;
-  const summaryBlock = !!state.summary ? 1 : 0;
+  const summaryBlock = state.summary ? 1 : 0;
   const itemsBlock = (fieldList.getValue() || []).length > 0 ? 1 : 0;
   return searchBlock + transcriptBlock + summaryBlock + itemsBlock;
 });
@@ -154,7 +154,7 @@ export const selectedParagraphIndex = viewerState.writer<
 
 export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>((state) => {
   if (state.selectedParagraphIndex !== null) {
-    if (!!state.searchInFieldResults) {
+    if (state.searchInFieldResults) {
       return state.searchInFieldResults[state.selectedParagraphIndex];
     }
     if (state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== -1) {

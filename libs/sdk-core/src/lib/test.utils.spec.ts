@@ -79,5 +79,7 @@ export class LocalStorageMock {
 global.localStorage = new LocalStorageMock() as unknown as Storage;
 
 describe('Just test utils', () => {
-  it.skip('should do nothing', () => {});
+  it.skip('should do nothing', () => {
+    /* empty */
+  });
 });

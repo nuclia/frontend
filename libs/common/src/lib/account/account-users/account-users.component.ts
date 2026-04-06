@@ -109,7 +109,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
           description: 'account.admin.warning',
         })
         .onClose.pipe(
-          switchMap((result) => (!!result ? this._changeRole(user, role as AccountRoles) : of(null))),
+          switchMap((result) => (result ? this._changeRole(user, role as AccountRoles) : of(null))),
           switchMap(() => this.account$.pipe(take(1))),
           switchMap((account) => this.updateUsers(account)),
           takeUntil(this.unsubscribeAll),

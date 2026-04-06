@@ -24,7 +24,7 @@ import {
   SisProgressModule,
   SisSearchInputComponent,
 } from '@nuclia/sistema';
-import { PaDemoModule } from '../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import {
   DialogExampleComponent,
   ModalExampleComponent,

@@ -3,7 +3,7 @@ import { MockModule } from 'ng-mocks';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 import { CountrySelectComponent } from './country-select.component';
-import { COUNTRIES } from '@nuclia/sistema';
+import { COUNTRIES } from './countries';
 
 describe('CountrySelectComponent', () => {
   let component: CountrySelectComponent;

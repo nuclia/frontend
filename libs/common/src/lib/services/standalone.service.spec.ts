@@ -11,7 +11,7 @@ import { of, take } from 'rxjs';
 describe('Standalone service', () => {
   let service: StandaloneService;
   let toast: SisToastService;
-  let mockGet: jest.Mock = jest.fn();
+  const mockGet: jest.Mock = jest.fn();
 
   beforeEach(() => {
     TestBed.configureTestingModule({

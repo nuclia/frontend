@@ -29,7 +29,7 @@ export class DriverExpandableTextareaComponent {
   @Input() controlName!: string;
   @Input() form!: FormGroup;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
   @Input() placeholder = '';
   @Input() rows = 3;
   @Input() resizable = false;

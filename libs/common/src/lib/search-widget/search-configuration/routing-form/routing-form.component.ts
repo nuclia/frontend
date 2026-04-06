@@ -62,7 +62,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }
   }
-  private _kind: string = '';
+  private _kind = '';
   @Input() get kind(): string {
     return this._kind;
   }

@@ -32,7 +32,7 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(
     map((accounts) => (accounts || []).sort((a, b) => a.title.localeCompare(b.title))),
   );
-  selectKb: boolean = false;
+  selectKb = false;
   unsubscribeAll = new Subject<void>();
   private backendConfig = inject(BackendConfigurationService);
   logoPath = this.backendConfig.getLogoPath();

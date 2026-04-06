@@ -6,7 +6,11 @@ export class JwtHelperService {
   tokenGetter: () => string;
 
   constructor(@Inject(JWT_OPTIONS) config: any = null) {
-    this.tokenGetter = (config && config.tokenGetter) || function () {};
+    this.tokenGetter =
+      (config && config.tokenGetter) ||
+      function () {
+        /* empty */
+      };
   }
 
   public urlBase64Decode(str: string): string {
@@ -95,10 +99,9 @@ export class JwtHelperService {
   }
 
   public getTokenExpirationDate(token: string = this.tokenGetter()): Date | null {
-    let decoded: any;
-    decoded = this.decodeToken(token);
+    const decoded: any = this.decodeToken(token);
 
-    if (!decoded.hasOwnProperty('exp')) {
+    if (!Object.prototype.hasOwnProperty.call(decoded, 'exp')) {
       return null;
     }
 

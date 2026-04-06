@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'manager-v2',
   preset: '../../jest.preset.js',

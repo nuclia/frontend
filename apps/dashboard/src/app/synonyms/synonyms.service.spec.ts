@@ -48,7 +48,7 @@ describe('SynonymsService', () => {
     });
 
     it('should return false when main word provided already used as synonym entry', () => {
-      // @ts-ignore access to private member
+      // @ts-expect-error access to private member
       service._synonyms.next(synonymsLoaded);
       expect(service.isUnique('main')).toBe(false);
     });
@@ -89,7 +89,7 @@ describe('SynonymsService', () => {
 
   describe('editSynonym', () => {
     beforeEach(() => {
-      // @ts-ignore access to private member
+      // @ts-expect-error access to private member
       service._synonyms.next(synonymsLoaded);
     });
 
@@ -105,7 +105,7 @@ describe('SynonymsService', () => {
 
   describe('deleteSynonym', () => {
     beforeEach(() => {
-      // @ts-ignore access to private member
+      // @ts-expect-error access to private member
       service._synonyms.next({ ...synonymsLoaded, another: ['other'] });
     });
 

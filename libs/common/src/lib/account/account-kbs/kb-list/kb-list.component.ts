@@ -29,7 +29,7 @@ export class KbListComponent implements OnInit, OnDestroy {
   isLoading = false;
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
-  maxKnowledgeBoxes: number = 1;
+  maxKnowledgeBoxes = 1;
   canAddKb = this.features.isAccountManager;
   unsubscribeAll = new Subject<void>();
 

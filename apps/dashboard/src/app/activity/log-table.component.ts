@@ -85,8 +85,8 @@ export class ActivityLogTableComponent {
     map((headers) => headers.map((header) => (this.wideColumns.includes(header) ? '400px' : '180px')).join(' ')),
   );
 
-  @Input() month: string = '';
-  @Input() event: string = '';
+  @Input() month = '';
+  @Input() event = '';
   @Input() url: string | undefined;
   @Input()
   set rows(v: LogEntry[]) {

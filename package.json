@@ -19,7 +19,8 @@
     "sdk-build": "run-script-os",
     "sdk-build:win32": "echo 'NO WIN32 BUILD'",
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -154,12 +155,14 @@
     "eslint-plugin-svelte": "^2.30.0",
     "exitzero": "^1.0.1",
     "globals": "^16.4.0",
+    "husky": "^9.1.7",
     "jest": "30.0.5",
     "jest-environment-jsdom": "30.0.5",
     "jest-preset-angular": "16.0.0",
     "jest-util": "30.0.5",
     "jiti": "2.4.2",
     "jsdom": "^26.1.0",
+    "lint-staged": "^16.4.0",
     "ng-mocks": "14.15.0",
     "ng-packagr": "21.1.0",
     "nodemon": "^2.0.22",

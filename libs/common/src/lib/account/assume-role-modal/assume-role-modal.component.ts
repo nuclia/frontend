@@ -52,7 +52,7 @@ export class AssumeRoleModalComponent {
   constructor(
     private modal: ModalRef<{
       params: AssumeRoleInfo;
-      policy: Object;
+      policy: object;
       policyHelp: string;
       title: string;
       isBedrock: boolean;

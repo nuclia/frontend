@@ -22,7 +22,7 @@ export class FindResourceModalComponent {
 
   search = new Subject<string>();
   minLength = 2;
-  query: string = '';
+  query = '';
   resources = this.search.pipe(
     debounceTime(300),
     switchMap((value) =>

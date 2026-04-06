@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   AgentActivityComponent,
   AgentDashboardComponent,
@@ -52,7 +51,7 @@ import {
   SetPasswordComponent,
   AppLoginComponent,
 } from '@nuclia/user';
-// eslint-disable-next-line @nx/enforce-module-boundaries
+
 import { authGuard, metricsEnabledGuard, metricsDisabledGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';

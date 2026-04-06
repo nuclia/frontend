@@ -24,9 +24,9 @@ export class BarChartComponent extends BaseChartDirective implements AfterViewIn
     this.draw();
   }
   @Input() threshold?: number;
-  @Input() axisYMultiplier: number = 1.5;
-  @Input() height: number = 170;
-  @Input() locale: string = 'en-US';
+  @Input() axisYMultiplier = 1.5;
+  @Input() height = 170;
+  @Input() locale = 'en-US';
   @Input() tooltipsEnabled = false;
 
   showTooltip = false;

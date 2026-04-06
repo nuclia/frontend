@@ -17,8 +17,8 @@ import { aragUrl } from '../../../../workflow.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilteredSourceSelectComponent implements OnInit {
-  @Input() label: string = '';
-  @Input() required: boolean = false;
+  @Input() label = '';
+  @Input() required = false;
   @Input() form?: FormGroup;
   @Input() controlName?: string;
   @Input() property?: JSONSchema4;

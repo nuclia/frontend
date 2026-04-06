@@ -868,7 +868,7 @@ export class WorkflowService {
     if (!section) {
       throw new Error(`Section missing for category ${nodeCategory} in column ${columnIndex}`);
     }
-    let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
+    const nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('type', nodeType);
     nodeRef.setInput('origin', origin);
     nodeRef.setInput('category', nodeCategory);
@@ -894,7 +894,7 @@ export class WorkflowService {
     if (this.columnContainer) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
       newColumn.classList.add(COLUMN_CLASS);
-      for (let category of ['preprocess', 'context', 'generation', 'postprocess']) {
+      for (const category of ['preprocess', 'context', 'generation', 'postprocess']) {
         const section = this.renderer.createElement('div') as HTMLElement;
         section.id = category;
         section.classList.add(COLUMN_SECTION_CLASS);
@@ -1068,12 +1068,13 @@ export class WorkflowService {
    * @returns ComponentRef<FormDirective> corresponding to the node type.
    */
   private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
-    let nodeTypeOverride: string = nodeType;
+    const nodeTypeOverride: string = nodeType;
     switch (nodeType) {
-      case 'advanced_ask':
+      case 'advanced_ask': {
         const ref = createComponent(AdvancedAskFormComponent, { environmentInjector: this.environmentInjector });
         ref.setInput('schemas', this._schemasSubject.getValue());
         return ref;
+      }
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
@@ -1081,10 +1082,11 @@ export class WorkflowService {
       case 'preprocess_alinia':
       case 'postprocess_alinia':
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
-      case 'rephrase':
+      case 'rephrase': {
         const refRephrase = createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
         refRephrase.setInput('schemas', this._schemasSubject.getValue());
         return refRephrase;
+      }
     }
 
     const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector });

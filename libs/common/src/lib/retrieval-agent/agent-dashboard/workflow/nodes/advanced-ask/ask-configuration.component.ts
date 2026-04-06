@@ -23,6 +23,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { INITIAL_CITATION_THRESHOLD, RAG_METADATAS, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { JsonValidator } from 'libs/common/src/lib/validators';
 import { WorkflowService } from '../../workflow.service';
 import { CommonModule } from '@angular/common';

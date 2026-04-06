@@ -28,6 +28,7 @@ import {
   PaDropdownModule,
   PaPopupModule,
   PaTextFieldModule,
+  PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -41,7 +42,6 @@ import {
 } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PaTogglesModule } from '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { getChatOptions, getFindOptions, isSameConfigurations } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';

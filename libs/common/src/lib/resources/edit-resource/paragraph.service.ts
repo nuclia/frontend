@@ -156,9 +156,11 @@ export class ParagraphService {
           const paragraphs = getConversationParagraphs(field, resource, messages);
           this._conversationPage.next(page);
           this._conversationTotalPages.next(getTotalMessagePages(fieldId, resource));
-          page === 1
-            ? this._messages.next(messages)
-            : this._messages.next(this._messages.value?.concat(messages) || []);
+          if (page === 1) {
+            this._messages.next(messages);
+          } else {
+            this._messages.next(this._messages.value?.concat(messages) || []);
+          }
           return page === 1 ? paragraphs : this._allParagraphs.value.concat(paragraphs);
         }),
       );

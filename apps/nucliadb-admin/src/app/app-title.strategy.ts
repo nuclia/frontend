@@ -1,6 +1,7 @@
 import { RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { SDKService } from '@flaps/core';
 import { map, take } from 'rxjs';
 

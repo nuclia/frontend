@@ -127,7 +127,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   private _stripe: any;
   @ViewChild('card') private cardContainer?: ElementRef;
   card: any;
-  cardError: string = '';
+  cardError = '';
   validCard = false;
   editCard = false;
   token?: any;

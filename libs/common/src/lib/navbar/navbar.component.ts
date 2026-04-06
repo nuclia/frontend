@@ -72,9 +72,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   showMetrics = false;
-  kbUrl: string = '';
-  aragUrl: string = '';
-  platformUrl: string = '';
+  kbUrl = '';
+  aragUrl = '';
+  platformUrl = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;

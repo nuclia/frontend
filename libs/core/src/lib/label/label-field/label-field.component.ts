@@ -31,7 +31,7 @@ export class LabelFieldComponent {
     this._labelSets.next(value);
   }
   @Input() size: Size = 'medium';
-  @Input() disabled: boolean = false;
+  @Input() disabled = false;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() hasLabels = new EventEmitter<boolean>();

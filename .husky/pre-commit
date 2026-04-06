@@ -1,0 +1,5 @@
+#!/bin/sh
+
+yarn lint-staged
+yarn nx affected --target=lint --uncommitted
+yarn nx affected --target=test --uncommitted

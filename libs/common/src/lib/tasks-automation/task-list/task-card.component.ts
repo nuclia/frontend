@@ -17,6 +17,6 @@ export class TaskCardComponent {
   icons = TASK_ICONS;
 
   @Input({ required: true }) type: TaskName = 'ask';
-  @Input({ transform: booleanAttribute }) ready: boolean = false;
+  @Input({ transform: booleanAttribute }) ready = false;
   @Output() newTask = new EventEmitter<void>();
 }

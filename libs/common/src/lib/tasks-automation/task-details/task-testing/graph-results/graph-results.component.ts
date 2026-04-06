@@ -6,6 +6,7 @@ import { TestResults } from '../task-testing.component';
 import { Relation } from '@nuclia/core';
 import { combineLatest, map, ReplaySubject } from 'rxjs';
 import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { EntityComponent } from 'libs/common/src/lib/entities/entity/entity.component';
 
 @Component({

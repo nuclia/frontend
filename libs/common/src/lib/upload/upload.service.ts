@@ -244,7 +244,9 @@ export class UploadService {
           ),
         );
       }),
-      map(() => {}),
+      map(() => {
+        /* empty */
+      }),
     );
   }
 
@@ -496,7 +498,11 @@ export class UploadService {
     showNotification = true,
   ) {
     if (showNotification) {
-      success ? this.toaster.success('upload.toast.successful') : this.toaster.warning('upload.toast.failed');
+      if (success) {
+        this.toaster.success('upload.toast.successful');
+      } else {
+        this.toaster.warning('upload.toast.failed');
+      }
     }
     if (blocked) {
       this.toaster.error('upload.toast.blocked');

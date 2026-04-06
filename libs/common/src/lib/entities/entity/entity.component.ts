@@ -11,6 +11,6 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class EntityComponent {
   @Input({ transform: booleanAttribute }) border = false;
-  @Input() backgroundColor: string = 'transparent';
-  @Input() textColor: string = '#000000';
+  @Input() backgroundColor = 'transparent';
+  @Input() textColor = '#000000';
 }

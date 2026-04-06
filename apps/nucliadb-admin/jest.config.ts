@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'nucliadb-admin',
   preset: '../../jest.preset.js',

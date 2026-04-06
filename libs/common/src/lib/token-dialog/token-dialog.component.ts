@@ -7,7 +7,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   standalone: false,
 })
 export class TokenDialogComponent {
-  clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
+  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   successMessage = false;
 
   constructor(public modal: ModalRef) {}

@@ -25,7 +25,7 @@ const GENERAL_LABELSET = 'General';
   standalone: false,
 })
 export class UploadFilesComponent {
-  @Input() folderMode: boolean = false;
+  @Input() folderMode = false;
   @Output() close = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
 
@@ -34,7 +34,7 @@ export class UploadFilesComponent {
 
   files: { file: FileWithMetadata; aboveLimit: boolean }[] = [];
   selectedLabels: Classification[] = [];
-  hasBaseDropZoneOver: boolean = false;
+  hasBaseDropZoneOver = false;
   limitsExceeded = false;
   maxFileSize = 0;
   maxMediaFileSize = 0;
@@ -122,7 +122,7 @@ export class UploadFilesComponent {
   startUpload(files: File[]) {
     if (files.length > 0) {
       this.upload.emit();
-      let labelledFiles = this.setLabels(files);
+      const labelledFiles = this.setLabels(files);
       if (this.langCode) {
         labelledFiles.forEach((file) => {
           file.lang = this.langCode.getRawValue();

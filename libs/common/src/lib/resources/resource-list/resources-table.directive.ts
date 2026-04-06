@@ -153,13 +153,14 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     switch (cell.id) {
       case SortField.title:
       case SortField.created:
-      case SortField.modified:
+      case SortField.modified: {
         const sorting: SortOption = {
           field: cell.id,
           order: cell.descending ? 'desc' : 'asc',
         };
         this.resourceListService.sortBy(sorting);
         break;
+      }
     }
   }
 

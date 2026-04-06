@@ -218,7 +218,9 @@ describe('Authentication', () => {
     });
 
     it('should fail processAuthorizationResponse when state does not match', async () => {
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+        /* empty */
+      });
       localStorage.setItem('oauth_state', 'expected');
       const result = await firstValueFrom(auth.processAuthorizationResponse('auth-code', 'different'));
       expect(result).toEqual({ success: false, state: {} });
@@ -227,7 +229,9 @@ describe('Authentication', () => {
     });
 
     it('should fail processAuthorizationResponse when state cannot be parsed', async () => {
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+        /* empty */
+      });
       localStorage.setItem('oauth_state', '%%%invalid%%%');
       localStorage.setItem('code_verifier', 'my-code-verifier');
       mockFetch({ access_token: 'token', refresh_token: 'refresh' });

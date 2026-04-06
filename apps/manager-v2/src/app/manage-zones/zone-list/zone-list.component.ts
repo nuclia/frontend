@@ -56,7 +56,9 @@ export class ZoneListComponent {
         switchMap(() => this.zoneService.loadZones()),
       )
       .subscribe({
-        next: () => {},
+        next: () => {
+          /* empty */
+        },
         error: () => this.toast.error('Zone deletion failed'),
       });
   }

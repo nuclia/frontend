@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FolderTree, FolderTreeComponent } from '@nuclia/sistema';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   selector: 'nsd-sistema-folder-tree',
