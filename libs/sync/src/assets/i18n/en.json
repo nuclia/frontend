@@ -89,6 +89,8 @@
 	"sync.connectors.rss.url.label": "RSS feed URL",
 	"sync.connectors.sharepoint.account.title": "Sharepoint account",
 	"sync.connectors.sharepoint.client_id.label": "Client ID",
+	"sync.connectors.sharepoint.permissions.help": "<ul>\n<li>Ensure that at least one of the following permissions is configured in the Azure App Registration:\n<ul>\n<li><code>Files.Read.All</code></li>\n<li><code>Sites.Selected</code>.</li>\n</ul>\n</li>\n<li>These permissions must be configured as <strong>Application permissions</strong> (not Delegated permissions) and granted by a tenant administrator.</li>\n<li><code>Sites.Selected</code> is recommended for least‑privilege access. When using it, a tenant administrator must explicitly grant access to each required SharePoint site using the <a href=\"https://learn.microsoft.com/en-us/graph/api/site-post-permissions\" target=\"_blank\" rel=\"noopener noreferrer\">Microsoft Graph permissions endpoint</a>.</li>\n</ul>",
+	"sync.connectors.sharepoint.permissions.label": "Permission configuration",
 	"sync.connectors.sharepoint.pfx_base64.help": ".pfx (PKCS#12) file",
 	"sync.connectors.sharepoint.pfx_base64.label": "PFX",
 	"sync.connectors.sharepoint.pfx_password.help": "Password to decrypt the .pfx file",

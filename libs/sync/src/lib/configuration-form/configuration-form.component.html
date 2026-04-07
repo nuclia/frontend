@@ -98,6 +98,11 @@
                       (change)="updateFile($event, field.id, field.handleFile)" />
                   </div>
                 }
+                @case ('hint') {
+                  <ncom-hint [label]="field.label | translate">
+                    <div [innerHTML]="field.help || '' | translate"></div>
+                  </ncom-hint>
+                }
               }
             }
           </div>

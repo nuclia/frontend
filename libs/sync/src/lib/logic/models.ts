@@ -80,7 +80,7 @@ export interface Field {
   label: string;
   help?: string;
   placeholder?: string;
-  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean' | 'file';
+  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean' | 'file' | 'hint';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   pattern?: string | RegExp;
