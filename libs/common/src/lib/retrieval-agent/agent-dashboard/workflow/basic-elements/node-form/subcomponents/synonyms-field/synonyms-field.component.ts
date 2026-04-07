@@ -35,7 +35,7 @@ let synonymsIndex = 0;
 export class SynonymsFieldComponent implements ControlValueAccessor, OnInit, OnDestroy {
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
 
   private destroy$ = new Subject<void>();
   synonymsForm = new FormGroup({});

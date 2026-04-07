@@ -23,7 +23,7 @@ export class ColorPickerComponent {
 
   @Output() valueChange = new EventEmitter<string>();
 
-  selectedCustomColor: boolean = false;
+  selectedCustomColor = false;
 
   isExistingColor(color: string): boolean {
     return isHexColor(color) && isColorInList(color, this.hexColors);

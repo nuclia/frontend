@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { StandaloneService } from '@flaps/common';
 
 @Component({

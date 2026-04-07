@@ -248,6 +248,10 @@
         "jestConfig": "apps/auth/jest.config.js",
         "tsConfig": "apps/auth/tsconfig.spec.json"
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

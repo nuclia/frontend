@@ -1,4 +1,3 @@
-
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -67,8 +66,8 @@ import {
     TablePaginationComponent,
     StickyFooterComponent,
     RouterLink,
-    PaDateTimeModule
-],
+    PaDateTimeModule,
+  ],
   templateUrl: './sessions-list.component.html',
   styleUrls: ['./sessions-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -226,13 +225,14 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
     switch (cell.id) {
       case SortField.title:
       case SortField.created:
-      case SortField.modified:
+      case SortField.modified: {
         const sorting: SortOption = {
           field: cell.id,
           order: cell.descending ? 'desc' : 'asc',
         };
         this.pagination.update((pagination) => ({ ...pagination, page: 0, sort: sorting }));
         break;
+      }
     }
     this.triggerSearch();
   }

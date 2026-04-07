@@ -100,7 +100,9 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
   } else if (searchConfig.searchBox.setPreselectedFilters && searchConfig.searchBox.preselectedFilterExpression) {
     try {
       options.filter_expression = JSON.parse(searchConfig.searchBox.preselectedFilterExpression);
-    } catch {}
+    } catch {
+      /* empty */
+    }
   }
   if (searchConfig.searchBox.limitParagraphs && !!searchConfig.searchBox.paragraphsLimit) {
     options.top_k = searchConfig.searchBox.paragraphsLimit;
@@ -199,7 +201,7 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
     limitParagraphs: typeof options.top_k === 'number',
     paragraphsLimit: typeof options.top_k === 'number' ? options.top_k : null,
     rephraseQuery: !!options.rephrase,
-    securityGroups: !!options.security?.groups ? options.security.groups.join('\n') : '',
+    securityGroups: options.security?.groups ? options.security.groups.join('\n') : '',
     semanticReranking: !options.reranker || options.reranker === 'predict',
     showHiddenResources: !!options.show_hidden,
     useSecurityGroups: !!options.security,
@@ -220,7 +222,9 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
     config.searchBox.setPreselectedFilters = true;
     try {
       config.searchBox.preselectedFilterExpression = JSON.stringify(options.filter_expression, null, 2);
-    } catch {}
+    } catch {
+      /* empty */
+    }
   }
   if (options.rank_fusion) {
     config.searchBox.rrfBoosting = true;

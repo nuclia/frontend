@@ -33,7 +33,11 @@ export class ReasoningConfigComponent implements OnDestroy {
   }
   @Input()
   set disabled(value: boolean | undefined) {
-    value ? this.form.disable() : this.form.enable();
+    if (value) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+    }
   }
   @Output() configChange = new EventEmitter<ReasoningConfig>();
 

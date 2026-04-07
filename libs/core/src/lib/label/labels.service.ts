@@ -1,7 +1,19 @@
 import { inject, Injectable } from '@angular/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { SDKService } from '@flaps/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
-import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  distinctUntilKeyChanged,
+  filter,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { LabelSetCounts } from './label-sets/model';
 
 @Injectable({

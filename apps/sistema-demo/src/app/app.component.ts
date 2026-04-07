@@ -42,8 +42,9 @@ import {
   TooltipPageComponent,
   TranslatePageComponent,
   TypographyPageComponent,
-} from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
+} from '@guillotinaweb/pastanaga-angular/demo';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { SliderPageComponent } from 'libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import {
   SistemaActionCardComponent,
   SistemaBackButtonComponent,

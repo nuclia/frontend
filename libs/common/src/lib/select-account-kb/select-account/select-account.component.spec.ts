@@ -26,7 +26,13 @@ describe('SelectComponent', () => {
           },
         },
         MockProvider(SDKService, {
-          nuclia: { auth: { logout: () => {} } },
+          nuclia: {
+            auth: {
+              logout: () => {
+                /* empty */
+              },
+            },
+          },
         } as SDKService),
         MockProvider('staticEnvironmentConfiguration', { standalone: false }),
         MockProvider(BackendConfigurationService),

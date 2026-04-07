@@ -38,7 +38,7 @@ export const knowledgeBoxOwnerGuard = (route: ActivatedRouteSnapshot, routerStat
     return sdk
       .setCurrentKnowledgeBoxFromSlug(accountSlug, kbSlug, zone)
       .pipe(
-        switchMap((kb) => (!!kb.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))))),
+        switchMap((kb) => (kb.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))))),
       );
   }
 };
@@ -59,7 +59,7 @@ export const aragOwnerGuard = (route: ActivatedRouteSnapshot, routerState: Route
       .setCurrentRetrievalAgentFromSlug(accountSlug, aragSlug, zone)
       .pipe(
         switchMap((arag) =>
-          !!arag.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))),
+          arag.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))),
         ),
       );
   }

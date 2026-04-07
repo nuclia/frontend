@@ -8,8 +8,6 @@ export class SubscriptionService {
   private _initialCurrency = new BehaviorSubject<Currency>('USD');
   initialCurrency = this._initialCurrency.asObservable();
 
-  constructor() {}
-
   setInitialCurrency(currency: Currency) {
     this._initialCurrency.next(currency);
   }

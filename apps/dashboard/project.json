@@ -296,6 +296,10 @@
         "jestConfig": "apps/dashboard/jest.config.js",
         "tsConfig": "apps/dashboard/tsconfig.spec.json"
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     }
   }
 }

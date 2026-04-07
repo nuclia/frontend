@@ -111,7 +111,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     ),
   );
 
-  clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
+  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {
     endpoint: 'copy',
     uid: 'copy',

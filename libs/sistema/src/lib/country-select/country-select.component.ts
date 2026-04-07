@@ -50,8 +50,12 @@ export class CountrySelectComponent implements ControlValueAccessor {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   // ── CVA callbacks ──────────────────────────────────────────────────
-  private onChange: (value: string) => void = () => {};
-  protected onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => {
+    /* empty */
+  };
+  protected onTouched: () => void = () => {
+    /* empty */
+  };
 
   constructor() {
     this.innerControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((value) => {

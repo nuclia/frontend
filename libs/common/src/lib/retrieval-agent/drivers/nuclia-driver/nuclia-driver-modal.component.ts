@@ -170,7 +170,9 @@ export class NucliaDriverModalComponent {
       let filterExpression = undefined;
       try {
         filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
-      } catch (e) {}
+      } catch (e) {
+        /* empty */
+      }
       if (custom) {
         const config: NucliaDBConfig | SyncConfig = {
           ...rawConfig,

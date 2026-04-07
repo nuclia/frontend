@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { Router } from '@angular/router';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { NavigationService, SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaIconModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';

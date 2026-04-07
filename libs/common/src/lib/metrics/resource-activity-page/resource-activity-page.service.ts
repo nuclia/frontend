@@ -2,17 +2,17 @@ import { Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { UserService } from '@flaps/core';
-import {
-  ActivityLogFilters,
-  ActivityLogPagination,
-  DownloadFormat,
-  EventType,
-  UsagePoint,
-} from '@nuclia/core';
+import { ActivityLogFilters, ActivityLogPagination, DownloadFormat, EventType, UsagePoint } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { NumericCondition, DateCondition } from '../metrics-filters';
 import { ProcessingItem, ProcessingStats } from '../metrics-column.model';
-import { aggregateUsageMetric, applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import {
+  aggregateUsageMetric,
+  applyNumericConditions,
+  applyDateConditions,
+  applyTextSearchFilter,
+  getMonthRange,
+} from '../metrics-utils';
 import { PROCESSING_ACTIVITY_SHOW_FIELDS } from './resource-activity-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -29,7 +29,8 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
   private toaster = inject(SisToastService);
 
   private _usageStats = signal<ProcessingStats>({
-    resourcesProcessed: null, paragraphsProcessed: null,
+    resourcesProcessed: null,
+    paragraphsProcessed: null,
   });
   private _search = signal<{ term: string; column: string } | null>(null);
   private _lastIds = signal<Record<string, number | undefined>>({});
@@ -74,7 +75,8 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
       .subscribe((usagePoints) => {
         this._usageStats.set({
           resourcesProcessed: usagePoints.length > 0 ? aggregateUsageMetric(usagePoints, 'resources_processed') : null,
-          paragraphsProcessed: usagePoints.length > 0 ? aggregateUsageMetric(usagePoints, 'paragraphs_processed') : null,
+          paragraphsProcessed:
+            usagePoints.length > 0 ? aggregateUsageMetric(usagePoints, 'paragraphs_processed') : null,
         });
       });
   }
@@ -91,14 +93,14 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
           ]),
         ),
         map(([a, b, c]) =>
-          [...new Set([...a.downloads, ...b.downloads, ...c.downloads])].sort((a, b) =>
-            b.localeCompare(a),
-          ),
+          [...new Set([...a.downloads, ...b.downloads, ...c.downloads])].sort((a, b) => b.localeCompare(a)),
         ),
       )
       .subscribe({
         next: (months) => this._availableMonths.set(months),
-        error: () => {},
+        error: () => {
+          /* empty */
+        },
       });
   }
 
@@ -172,12 +174,8 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._lastIds.set(newLastIds);
     this._hasMore.set(groups.some((g) => g.items.length >= this.PAGE_SIZE));
 
-    const newMerged = groups
-      .flatMap((g) => g.items)
-      .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
-    const combined = isAppend
-      ? [...this._items(), ...newMerged]
-      : newMerged;
+    const newMerged = groups.flatMap((g) => g.items).sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
+    const combined = isAppend ? [...this._items(), ...newMerged] : newMerged;
     this._items.set(combined);
     if (isAppend) {
       this._loadingMore.set(false);
@@ -224,7 +222,11 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._applyFilters();
   }
 
-  applyAllFilters(activeSources: EventType[], numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {
+  applyAllFilters(
+    activeSources: EventType[],
+    numericConditions: NumericCondition[],
+    dateConditions: DateCondition[] = [],
+  ): void {
     if (activeSources.length > 0) {
       this._activeSources.set(new Set(activeSources));
     }
@@ -235,9 +237,7 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
 
   download(format: DownloadFormat, columns: string[]): void {
     const sources = this._getFilteredSources();
-    const apiShowFields = columns.filter((col) =>
-      (PROCESSING_ACTIVITY_SHOW_FIELDS as string[]).includes(col),
-    );
+    const apiShowFields = columns.filter((col) => (PROCESSING_ACTIVITY_SHOW_FIELDS as string[]).includes(col));
     this.sdk.currentKb
       .pipe(
         take(1),

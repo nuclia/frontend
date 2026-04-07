@@ -82,7 +82,7 @@ export abstract class FormDirective {
       const property = prop as JSONSchema4;
       const resolvedProperty = this.resolvePropertyForFormCreation(property, agentSchema);
       let type = resolvedProperty.type;
-      let defaultValue = resolvedProperty.default ?? null;
+      const defaultValue = resolvedProperty.default ?? null;
 
       // Handle anyOf
       if (resolvedProperty.anyOf) {

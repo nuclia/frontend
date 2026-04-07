@@ -57,7 +57,7 @@ export class AragListComponent implements OnInit, OnDestroy {
   isLoading = false;
   account?: Account;
   retrievalAgents: IRetrievalAgentItem[] | undefined;
-  maxRetrievalAgents: number = 1;
+  maxRetrievalAgents = 1;
   canAddArag = this.features.isAccountManager;
   aragUrl?: string;
 

@@ -13,7 +13,7 @@ import { BillingService, NavigationService, CancellationFeedback, SDKService } f
 })
 export class FeedbackComponent {
   feedback?: CancellationFeedback;
-  comment: string = '';
+  comment = '';
   loading = false;
 
   constructor(

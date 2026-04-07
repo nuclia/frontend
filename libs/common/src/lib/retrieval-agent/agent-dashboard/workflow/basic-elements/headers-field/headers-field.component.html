@@ -13,7 +13,7 @@
       @for (group of headersGroup.controls | keyvalue; track group.key) {
         <div
           class="config-property-form"
-          [formGroup]="group.value">
+          [formGroup]="$any(group.value)">
           <pa-input formControlName="property">
             {{ 'retrieval-agents.workflow.common-forms.property.name' | translate }}
           </pa-input>

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { StandaloneService } from 'libs/common/src/lib/services';
 
 @Component({

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BackendConfigurationService, LabelsService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';

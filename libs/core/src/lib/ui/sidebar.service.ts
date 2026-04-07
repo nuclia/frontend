@@ -7,8 +7,6 @@ export class SidebarService {
   // Private
   private _registry: { [key: string]: any } = {};
 
-  constructor() {}
-
   register(key: string, sidebar: any): void {
     if (this._registry[key]) {
       console.error(

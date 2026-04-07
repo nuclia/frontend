@@ -31,7 +31,7 @@ export class LinkComponent {
   readonly id = `link-${count++}`;
   readonly width = defaultSize;
 
-  @HostBinding('style.left.px') @Input() left: number = 0;
+  @HostBinding('style.left.px') @Input() left = 0;
   @HostBinding('style.top.px') @Input() top?: number;
 
   goDown = input(false, { transform: booleanAttribute });

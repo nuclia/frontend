@@ -72,7 +72,7 @@ export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, 
     effect(() => {
       const entry = this.origin();
       const state = this.state();
-      if (!!entry) {
+      if (entry) {
         if (state === 'processed' || state === 'processing') {
           entry.outputElement.nativeElement.classList.add('processing');
         } else {

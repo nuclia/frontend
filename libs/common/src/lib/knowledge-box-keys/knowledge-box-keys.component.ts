@@ -10,6 +10,4 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
   standalone: true,
   imports: [TranslateModule, ServiceAccessComponent],
 })
-export class KnowledgeBoxKeysComponent {
-  constructor() {}
-}
+export class KnowledgeBoxKeysComponent {}

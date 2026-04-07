@@ -324,8 +324,8 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
     const extractFromMapping = (discriminator: any) => {
       if (discriminator.mapping && typeof discriminator.mapping === 'object') {
         // Map property name to appropriate connectable entry
-        let entryId = propertyKey;
-        let entryTitle = this.formatPropertyName(propertyKey);
+        const entryId = propertyKey;
+        const entryTitle = this.formatPropertyName(propertyKey);
 
         entries.push({ id: entryId, title: entryTitle });
         return true;

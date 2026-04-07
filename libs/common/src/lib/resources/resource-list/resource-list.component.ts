@@ -62,7 +62,7 @@ export class ResourceListComponent implements OnDestroy {
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   status = this.route.params.pipe(map((params) => this.getStatusFromParam(params['status'] || '')));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
-  andLogicForLabels: boolean = false;
+  andLogicForLabels = false;
   displayedLabelSets: LabelSets = {};
   searchModes = [
     new ControlModel({ id: 'title', value: 'title', label: 'stash.search-modes.title' }),

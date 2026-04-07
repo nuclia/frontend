@@ -48,7 +48,7 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
   @Input() controlName!: string;
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
   @Input() driverSchema!: JSONSchema4;
 
   private fieldConfigService = inject(DriverFieldConfigService);

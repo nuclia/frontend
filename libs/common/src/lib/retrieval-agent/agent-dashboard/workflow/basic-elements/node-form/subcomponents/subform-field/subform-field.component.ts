@@ -40,15 +40,15 @@ export interface RenderableField {
     EnumSelectComponent,
     FilteredSourceSelectComponent,
     RulesFieldComponent,
-    TransportFieldComponent
-],
+    TransportFieldComponent,
+  ],
 })
 export class SubformFieldComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
 
   private fieldConfigService = inject(FieldConfigService);
 

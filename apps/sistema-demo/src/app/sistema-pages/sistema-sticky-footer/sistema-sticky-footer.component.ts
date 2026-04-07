@@ -1,8 +1,7 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { StickyFooterComponent } from '@nuclia/sistema';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   selector: 'nsd-sistema-sticky-footer',

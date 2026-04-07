@@ -20,13 +20,23 @@ describe('ConsentComponent', () => {
         MockModule(PaTranslateModule),
       ],
       providers: [
-        { provide: OAuthService, useValue: { getConsentData: () => {}, consentUrl: () => 'url' } },
+        {
+          provide: OAuthService,
+          useValue: {
+            getConsentData: () => {
+              /* empty */
+            },
+            consentUrl: () => 'url',
+          },
+        },
         {
           provide: BackendConfigurationService,
           useValue: {
             getAPIURL: () => 'key',
             getRecaptchaKey: () => 'key',
-            getSocialLogin: () => {},
+            getSocialLogin: () => {
+              /* empty */
+            },
             getLogoPath: () => 'logo.svg',
             getBrandName: () => 'Agentic RAG',
           },

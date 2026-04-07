@@ -25,7 +25,7 @@ export class BudgetComponent implements OnDestroy, OnInit {
   unsubscribeAll = new Subject<void>();
 
   @Input() currency: Currency | undefined;
-  @Input() showActions: boolean = true;
+  @Input() showActions = true;
   @Input() defaultBudget = false;
   @Output() budgetChange = new EventEmitter<Partial<AccountBudget> | undefined>();
 

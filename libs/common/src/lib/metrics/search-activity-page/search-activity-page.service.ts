@@ -71,7 +71,9 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
       )
       .subscribe({
         next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
-        error: () => {},
+        error: () => {
+          /* empty */
+        },
       });
   }
 

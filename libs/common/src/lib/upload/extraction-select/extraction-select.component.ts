@@ -23,7 +23,7 @@ import { SDKService } from '@flaps/core';
 })
 export class ExtractionSelectComponent<T> {
   sdk = inject(SDKService);
-  enabled: boolean = false;
+  enabled = false;
 
   private _extractConfig: string | undefined;
   @Input() set extractConfig(value: string | undefined) {
@@ -46,7 +46,7 @@ export class ExtractionSelectComponent<T> {
   get splitConfig() {
     return this._splitConfig;
   }
-  @Input() onlyExtract: boolean = false;
+  @Input() onlyExtract = false;
   @Output() extractConfigChange = new EventEmitter<string | undefined>();
   @Output() splitConfigChange = new EventEmitter<string | undefined>();
   @Output() heightChange = new EventEmitter<void>();

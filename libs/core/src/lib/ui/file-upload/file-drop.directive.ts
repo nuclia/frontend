@@ -2,7 +2,7 @@ import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from
 import { getDroppedFiles } from './file-drop.utils';
 
 export type DroppedFile = File & { relativePath: string };
-const extensionRegexp = new RegExp(`^\.[a-zA-Z0-9]+$`);
+const extensionRegexp = /^\.[a-zA-Z0-9]+$/;
 
 @Directive({
   selector: '[stfFileDrop]',
@@ -59,7 +59,7 @@ export class FileDropDirective {
     this.fileOver.emit(false);
     getDroppedFiles(transfer.items).subscribe((files) => {
       let acceptedFiles: DroppedFile[] = files;
-      let unacceptedFiles: DroppedFile[] = [];
+      const unacceptedFiles: DroppedFile[] = [];
       if (this._fileTypeSpecifiers.length > 0) {
         acceptedFiles = [];
         files.forEach((file) => {

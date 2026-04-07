@@ -179,8 +179,8 @@ export class CreateConfigComponent implements OnInit {
       const { useBedrock, ...values } = this.configForm.getRawValue();
       const userKeys = this.userKeysForm?.getRawValue();
       const prompts = {
-        prompt: !!userPrompt ? this.promptsForm.value.prompt?.trim() : '',
-        system: !!systemPrompt ? this.promptsForm.value.system?.trim() : '',
+        prompt: userPrompt ? this.promptsForm.value.prompt?.trim() : '',
+        system: systemPrompt ? this.promptsForm.value.system?.trim() : '',
       };
       const kbids = this.isRestricted
         ? Object.entries(this.selectedKbs)

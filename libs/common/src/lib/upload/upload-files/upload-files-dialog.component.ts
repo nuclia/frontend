@@ -8,18 +8,17 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
       <app-upload-files
         [folderMode]="modal.config.data?.['folderMode']"
         (upload)="onUpload()"
-      (close)="close($event)"></app-upload-files>
+        (close)="close($event)"></app-upload-files>
     }
     @if (showProgress) {
-      <app-upload-progress
-      (close)="close()"></app-upload-progress>
+      <app-upload-progress (close)="close()"></app-upload-progress>
     }
-    `,
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class UploadFilesDialogComponent {
-  showProgress: boolean = false;
+  showProgress = false;
 
   constructor(public modal: ModalRef) {}
 

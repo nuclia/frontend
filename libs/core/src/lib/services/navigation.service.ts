@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, merge, Observable, of, switchMap, take } from 'rxjs';
 

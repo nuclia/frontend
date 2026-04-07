@@ -36,7 +36,7 @@ export class KbSelectComponent {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
 }
 
 @Component({
@@ -80,7 +80,7 @@ export class KeyValueFieldComponent {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
 }
 
 @Component({
@@ -107,7 +107,7 @@ export class DriverFieldRendererComponent {
   @Input() label!: string;
   @Input() property!: JSONSchema4;
   @Input() driverSchema!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
   @Input() config?: any;
 
   getInputType(): any {

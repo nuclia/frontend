@@ -103,7 +103,8 @@ export class AddModelComponent implements OnDestroy {
       )
       .subscribe(([model, models, schema]) => {
         this.addModel = false;
-        let { model_types, openai_compat, ...values } = model;
+        const { model_types, openai_compat: rawOpenaiCompat, ...values } = model;
+        let openai_compat = rawOpenaiCompat;
         const description = models.find((item) => item.model_id === model.model_id)?.title || '';
         this.modelForm.patchValue({
           ...values,

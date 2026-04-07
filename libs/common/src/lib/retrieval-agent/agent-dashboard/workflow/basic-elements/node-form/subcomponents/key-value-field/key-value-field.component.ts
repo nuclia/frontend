@@ -22,7 +22,7 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   @Input() controlName!: string;
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
 
   private destroy$ = new Subject<void>();
   keyValueForm = new FormGroup({});

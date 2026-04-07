@@ -1,7 +1,6 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ButtonMiniComponent } from '@nuclia/sistema';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   selector: 'nsd-sistema-button-mini',

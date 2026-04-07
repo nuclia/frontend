@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./farewell.component.scss'],
   standalone: false,
 })
-export class FarewellComponent {
-  constructor() {}
-}
+export class FarewellComponent {}

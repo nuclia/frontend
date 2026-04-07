@@ -141,7 +141,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get modelsHidden() {
     return this._modelsHidden;
   }
-  private _modelsHidden: boolean = false;
+  private _modelsHidden = false;
   // Task whose data is displayed in the form
   @Input() set task(value: DataAugmentationTaskOnGoing | undefined | null) {
     if (value) {

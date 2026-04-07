@@ -1,8 +1,7 @@
-
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   selector: 'nsd-sistema-two-columns-configuration-item',

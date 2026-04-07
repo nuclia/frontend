@@ -98,7 +98,9 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       )
       .subscribe({
         next: (months) => this._availableMonths.set(months),
-        error: () => {},
+        error: () => {
+          /* empty */
+        },
       });
   }
 
@@ -137,7 +139,9 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   applyAllFilters(
     statuses: RemiAnswerStatus[],
     feedbackGood: boolean | undefined,
-    contentRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
+    contentRelevance:
+      | { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' }
+      | undefined,
     dateConditions: DateCondition[] = [],
   ): void {
     // If contentRelevance is set, we cannot filter by status (API constraint)
@@ -267,9 +271,9 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.activityMonitor.queryRemiScores(criteria).pipe(
-          catchError(() => of({ data: [], has_more: false } as RemiQueryResponse)),
-        ),
+        kb.activityMonitor
+          .queryRemiScores(criteria)
+          .pipe(catchError(() => of({ data: [], has_more: false } as RemiQueryResponse))),
       ),
       map((response) => {
         pageState.hasMore = response.has_more;
@@ -287,9 +291,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
 
   protected _applyPage(newItems: UsageAnalyticsItem[], isAppend: boolean): void {
     if (isAppend) {
-      this._items.update((prev) =>
-        [...prev, ...newItems].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
-      );
+      this._items.update((prev) => [...prev, ...newItems].sort((a, b) => (a.date ?? '').localeCompare(b.date ?? '')));
       this._loadingMore.set(false);
     } else {
       this._items.set(newItems);

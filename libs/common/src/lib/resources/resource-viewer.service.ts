@@ -160,7 +160,7 @@ export class ResourceViewerService {
   handleBackButton(widget: any) {
     widget?.addEventListener('openPreview', () => {
       let backButtonClicked = false;
-      let initialPath = window.location.pathname;
+      const initialPath = window.location.pathname;
 
       // Add history entry
       this.location.go(window.location.pathname, window.location.search, this.location.getState());

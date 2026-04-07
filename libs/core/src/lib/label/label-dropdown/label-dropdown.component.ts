@@ -104,7 +104,7 @@ export class LabelDropdownComponent {
     if (!!this.labelSetExpanded && !this.labelSetExpanded.multiple) {
       const selectedLabel = this.selection.find((label) => label.labelset === labelSetType);
       this.labelSetInSelection = !!selectedLabel;
-      this.radioValue = !!selectedLabel ? `${selectedLabel.labelset}${selectedLabel.label}` : '';
+      this.radioValue = selectedLabel ? `${selectedLabel.labelset}${selectedLabel.label}` : '';
     }
   }
 

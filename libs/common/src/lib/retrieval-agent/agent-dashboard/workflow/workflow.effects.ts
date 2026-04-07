@@ -223,7 +223,7 @@ export class WorkflowEffectService {
       return;
     }
     const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
-    let updatedChildren: { id: string; childIndex?: number }[] = [];
+    const updatedChildren: { id: string; childIndex?: number }[] = [];
     if (!parentNode || !parentNode.nodeConfig) {
       return;
     }

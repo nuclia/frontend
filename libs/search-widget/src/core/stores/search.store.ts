@@ -880,7 +880,7 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
               shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
-        let [, shortType, field_id] = fullFieldId.split('/');
+        const [, shortType, field_id] = fullFieldId.split('/');
         let fieldId: FieldId;
 
         if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
@@ -945,7 +945,7 @@ export function getFieldDataFromResource(resource: IResource, field: FieldId): I
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
   return result.paragraphs && result.paragraphs.length > 0
-    ? `${(result.paragraphs).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`
+    ? `${result.paragraphs.reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`
     : result.id;
 }
 

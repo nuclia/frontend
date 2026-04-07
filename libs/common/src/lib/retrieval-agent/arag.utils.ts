@@ -6,6 +6,6 @@ export function getListFromTextarea(value: string): string[] {
     .filter((item) => !!item);
 }
 
-export function getFormattedCost(timing: number, input: number = 0, output: number = 0): string {
+export function getFormattedCost(timing: number, input = 0, output = 0): string {
   return `${timing.toFixed(2)}s | ${(input || 0).toFixed(3)} input tokens | ${(output || 0).toFixed(3)} output tokens`;
 }

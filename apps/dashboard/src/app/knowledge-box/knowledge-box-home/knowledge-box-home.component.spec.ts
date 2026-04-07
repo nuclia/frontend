@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import {

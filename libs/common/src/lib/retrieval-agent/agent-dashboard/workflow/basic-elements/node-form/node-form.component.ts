@@ -242,7 +242,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
     for (const [propKey, prop] of Object.entries(resolvedSchema.properties)) {
       const property = prop as JSONSchema4;
       let type = property.type;
-      let defaultValue = property.default ?? null;
+      const defaultValue = property.default ?? null;
 
       // Handle anyOf
       if (property.anyOf) {

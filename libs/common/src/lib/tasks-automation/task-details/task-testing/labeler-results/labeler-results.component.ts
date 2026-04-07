@@ -14,6 +14,7 @@ import {
 } from '@nuclia/core';
 import { map, ReplaySubject, switchMap, take } from 'rxjs';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { getParagraphId, ParagraphWithText } from 'libs/common/src/lib/resources';
 import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
 

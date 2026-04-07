@@ -287,7 +287,9 @@ export class SyncService {
         this._syncCache.next(syncs);
         this._cacheUpdated.next(new Date().toISOString());
       }),
-      map(() => {}),
+      map(() => {
+        /* empty */
+      }),
     );
   }
 

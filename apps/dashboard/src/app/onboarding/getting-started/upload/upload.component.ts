@@ -39,7 +39,7 @@ import { UploadListComponent } from '../upload-list/upload-list.component';
 export class UploadComponent implements OnInit, OnDestroy {
   @Output() uploadReady = new EventEmitter<{ ready: boolean; itemList: ItemToUpload[] }>();
 
-  hasBaseDropZoneOver: boolean = false;
+  hasBaseDropZoneOver = false;
   account = this.sdk.currentAccount;
   isTrial: Observable<boolean> = this.features.isTrial;
 

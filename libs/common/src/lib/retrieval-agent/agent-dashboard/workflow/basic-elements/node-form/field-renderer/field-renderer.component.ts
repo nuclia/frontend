@@ -39,8 +39,8 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
     ReactiveFormsModule,
     RulesFieldComponent,
     SubformFieldComponent,
-    TransportFieldComponent
-],
+    TransportFieldComponent,
+  ],
 })
 export class FieldRendererComponent {
   @Input() fieldConfig!: FieldConfig;
@@ -48,7 +48,7 @@ export class FieldRendererComponent {
   @Input() controlName!: string;
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() required = false;
   @Input() config?: any;
 
   getFieldType(): any {
