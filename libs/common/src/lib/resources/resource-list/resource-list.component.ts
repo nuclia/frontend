@@ -306,6 +306,7 @@ export class ResourceListComponent implements OnDestroy {
         if (previousFilters.length > 0) {
           this.onToggleFilter();
         }
+        this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
       }),
     );
   }
