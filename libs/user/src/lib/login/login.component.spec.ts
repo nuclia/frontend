@@ -275,4 +275,36 @@ describe('LoginComponent', () => {
 
     await expect(ssoPromise).resolves.toBeUndefined();
   });
+
+  it('should pre-fill email and set account_already_exists message when loginData has email and needs_signup is false', async () => {
+    routeData$.next({
+      loginData: {
+        skip_login: false,
+        needs_signup: false,
+        email: 'test@example.com',
+      } as OAuthLoginData,
+    });
+    routeQueryParams$.next({ login_challenge: 'challenge-1' });
+
+    await buildComponent();
+
+    expect(component.emailControl.value).toBe('test@example.com');
+    expect(component.message).toBe('login.account_already_exists');
+  });
+
+  it('should not pre-fill email and not set account_already_exists message when needs_signup is true', async () => {
+    routeData$.next({
+      loginData: {
+        skip_login: false,
+        needs_signup: true,
+        email: 'test@example.com',
+      } as OAuthLoginData,
+    });
+    routeQueryParams$.next({ login_challenge: 'challenge-1' });
+
+    await buildComponent();
+
+    expect(component.emailControl.value).toBe('');
+    expect(component.message).not.toBe('login.account_already_exists');
+  });
 });
