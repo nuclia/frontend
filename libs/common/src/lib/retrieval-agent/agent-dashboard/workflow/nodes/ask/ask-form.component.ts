@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseContextAgent, NucliaDBDriver } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-import { map, Observable, switchMap, take } from 'rxjs';
+import { map } from 'rxjs';
 import { getListFromTextarea } from '../../../../arag.utils';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { AskAgentUI } from '../../workflow.models';
 import { aragUrl } from '../../workflow.state';
+import { DriversService } from '../../../../drivers/drivers.service';
 
 @Component({
   selector: 'app-ask-form',
@@ -30,7 +31,8 @@ import { aragUrl } from '../../workflow.state';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AskFormComponent extends FormDirective implements OnInit {
-  private sdk = inject(SDKService);
+  private destroyRef = inject(DestroyRef);
+  private driversService = inject(DriversService);
 
   override form = new FormGroup({
     ask: new FormGroup({
@@ -69,12 +71,11 @@ export class AskFormComponent extends FormDirective implements OnInit {
   sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
-    this.sdk.currentArag
+    this.driversService.drivers$
       .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
+        takeUntilDestroyed(this.destroyRef),
         map((drivers) =>
-          drivers.map(
+          (drivers.filter((d) => d.provider === 'nucliadb') as NucliaDBDriver[]).map(
             (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
           ),
         ),
