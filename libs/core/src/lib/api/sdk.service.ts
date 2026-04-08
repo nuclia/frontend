@@ -59,7 +59,6 @@ export class SDKService {
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
   private _isAragLoaded = false;
-  private _isArag = new Subject<boolean>();
 
   hasAccount = this._account.pipe(map((account) => account !== null));
   hasKb = this._kb.pipe(map((kb) => kb !== null));
@@ -83,6 +82,9 @@ export class SDKService {
   isAragWithMemory = combineLatest([this._currentArag, this.aragListWithMemory]).pipe(
     map(([currentArag, withMemory]) => withMemory.some((arag) => arag.id === currentArag.id)),
   );
+  isArag = combineLatest([this.currentKb, this.aragList]).pipe(
+    map(([kb, list]) => list.map((item) => item.id).includes(kb.id)),
+  );
 
   get isKbLoaded() {
     return this._isKbLoaded;
@@ -104,13 +106,6 @@ export class SDKService {
   set account(account: Account | null) {
     this.nuclia.options.accountId = account?.id;
     this._account.next(account);
-  }
-
-  get isArag(): Observable<boolean> {
-    return this._isArag.asObservable();
-  }
-  set isArag(isArag: boolean) {
-    this._isArag.next(isArag);
   }
 
   constructor(private config: BackendConfigurationService) {
@@ -389,7 +384,7 @@ export class SDKService {
     this._refreshCounter
       .pipe(
         filter((refresh) => refresh),
-        switchMap(() => this.isArag),
+        switchMap(() => this.isArag.pipe(take(1))),
         switchMap((isArag) => (isArag ? of(undefined) : this.currentKb.pipe(switchMap((kb) => kb.counters())))),
         tap((counters) => this.counters.next(counters)),
       )

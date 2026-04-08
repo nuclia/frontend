@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
 import { differenceInSeconds } from 'date-fns';
-import { BehaviorSubject, combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, take, takeUntil } from 'rxjs/operators';
 import { SDKService } from '../api';
 import { NavigationService } from '../services';
 import { NotificationData, NotificationUI } from './notification.model';
@@ -28,19 +28,25 @@ export class NotificationService {
 
   startListening() {
     if (!this.sdk.nuclia.options.standalone) {
-      combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.isArag])
+      combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
         .pipe(
-          tap(([, kb, isArag]) => {
+          tap(() => {
             if (this._currentKb) {
               this.stopListening();
             }
-            if (!isArag) {
-              this._currentKb = kb;
-            }
           }),
-          filter(([, , isArag]) => !isArag),
           switchMap(([account, kb]) =>
-            kb.listenToResourceOperationNotifications().pipe(
+            this.sdk.isArag.pipe(
+              take(1),
+              filter((isArag) => !isArag && account.id == kb.accountId),
+              map(() => ({ account, kb })),
+            ),
+          ),
+          switchMap(({ account, kb }) => {
+            this._currentKb = kb;
+            return kb
+              .listenToResourceOperationNotifications()
+              .pipe(
               tap((notifications) => {
                 let existingNotifications = this._notifications.value;
                 // most recent notifications are first in the list

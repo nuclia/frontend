@@ -38,10 +38,7 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
             switchMap(() => sdk.currentArag),
             filter((arag) => arag.slug === agentSlug),
             take(1),
-            map(() => {
-              sdk.isArag = true;
-              return true;
-            }),
+            map(() => true),
           );
     }),
   );

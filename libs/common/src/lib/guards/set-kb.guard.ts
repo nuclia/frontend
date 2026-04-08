@@ -33,7 +33,6 @@ export const setKbGuard = (route: ActivatedRouteSnapshot) => {
     filter((kb) => kb.slug === kbSlug),
     take(1),
     map(() => {
-      sdk.isArag = false;
       sdk.arag = null;
       return true;
     }),
