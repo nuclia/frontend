@@ -1,17 +1,17 @@
-
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GuardrailsPreconfig, GuardrailsProviderType } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-import { map, switchMap, take } from 'rxjs';
+import { map } from 'rxjs';
 import { JsonValidator } from '../../../../../validators';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { GuardrailsAgentUI } from '../../workflow.models';
 import { aragUrl } from '../../workflow.state';
+import { DriversService } from '../../../../drivers/drivers.service';
 
 @Component({
   selector: 'app-guardrails-form',
@@ -25,13 +25,14 @@ import { aragUrl } from '../../workflow.state';
     RulesFieldComponent,
     InfoCardComponent,
     RouterLink,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+  ],
   templateUrl: './guardrails-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuardrailsFormComponent extends FormDirective implements OnInit {
-  private sdk = inject(SDKService);
+  private destroyRef = inject(DestroyRef);
+  private driversService = inject(DriversService);
   private translate = inject(TranslateService);
 
   override form = new FormGroup({
@@ -70,20 +71,21 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
   preconfigOptions = signal<OptionModel[]>([]);
 
   ngOnInit(): void {
-    this.sdk.currentArag
+    this.driversService.drivers$
       .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers('alinia')),
+        takeUntilDestroyed(this.destroyRef),
         map((drivers) =>
-          drivers.map(
-            (driver) =>
-              new OptionModel({
-                id: driver.identifier,
-                label: driver.name,
-                value: driver.identifier,
-                help: driver.provider,
-              }),
-          ),
+          drivers
+            .filter((d) => d.provider === 'alinia')
+            .map(
+              (driver) =>
+                new OptionModel({
+                  id: driver.identifier,
+                  label: driver.name,
+                  value: driver.identifier,
+                  help: driver.provider,
+                }),
+            ),
         ),
       )
       .subscribe((options) => this.providerOptions.set(options));

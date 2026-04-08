@@ -12,6 +12,7 @@ import {
   Type,
 } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
+import { DriversService } from '../../drivers/drivers.service';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -34,6 +35,7 @@ import {
   map,
   Observable,
   of,
+  startWith,
   switchMap,
   take,
   tap,
@@ -110,6 +112,7 @@ export class WorkflowService {
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
+  private driversService = inject(DriversService);
 
   // Shared schemas state
   private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
@@ -123,9 +126,11 @@ export class WorkflowService {
   private _generativeProvidersSubject = new BehaviorSubject<GenerativeProviders | null>(null);
   generativeProviders$ = this._generativeProvidersSubject.asObservable();
 
-  // Driver Model state
-  private _driverModelsSubject = new BehaviorSubject<Driver[] | null>(null);
-  driverModels$ = this._driverModelsSubject.asObservable();
+  // Driver state: derived from DriversService so that add/edit/delete operations
+  // automatically propagate here without an additional HTTP call.
+  // startWith(null) preserves the null-initial-value contract for existing consumers
+  // that guard with filter(Boolean) / filter((d) => !!d).
+  driverModels$ = this.driversService.drivers$.pipe(startWith(null));
 
   private columns: HTMLElement[] = [];
 
@@ -1200,18 +1205,11 @@ export class WorkflowService {
   }
 
   /**
-   * Fetch drivers and update shared state
+   * Trigger a refresh of the shared driver list.
+   * DriversService.drivers$ will re-emit, propagating to all consumers of driverModels$.
    */
   fetchDrivers() {
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers()),
-      )
-      .subscribe({
-        next: (drivers) => this._driverModelsSubject.next(drivers),
-        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.load-drivers')),
-      });
+    this.driversService.initialize().pipe(take(1)).subscribe();
   }
 
   private getDriverKnowledgeBox(driverIdentifier: string): Observable<KnowledgeBox | null> {

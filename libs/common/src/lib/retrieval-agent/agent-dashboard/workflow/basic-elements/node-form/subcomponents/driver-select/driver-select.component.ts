@@ -1,14 +1,15 @@
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { SDKService } from '@flaps/core';
-import { NucliaDBDriver, ProviderType } from '@nuclia/core';
-import { take, switchMap, Observable, map, forkJoin, of } from 'rxjs';
+import { ProviderType } from '@nuclia/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { RouterLink } from '@angular/router';
 import { aragUrl } from '../../../../workflow.state';
 import { FormsModule } from '@angular/forms';
+import { DriversService } from '../../../../../../drivers/drivers.service';
 
 @Component({
   selector: 'app-driver-select',
@@ -33,7 +34,8 @@ export class DriverSelectComponent implements OnInit {
   @Input() provider!: ProviderType | ProviderType[];
   @Input() multiselect = false;
 
-  private sdk = inject(SDKService);
+  private destroyRef = inject(DestroyRef);
+  private driversService = inject(DriversService);
 
   driversPath = computed(() => `${aragUrl()}/drivers`);
   options = signal<OptionModel[] | null>(null);
@@ -60,31 +62,15 @@ export class DriverSelectComponent implements OnInit {
       }
     }
 
-    this.sdk.currentArag
+    const providers = Array.isArray(this.provider) ? this.provider : [this.provider];
+    this.driversService.drivers$
       .pipe(
-        take(1),
-        switchMap((arag) => {
-          // Handle both single provider and array of providers
-          const providers = Array.isArray(this.provider) ? this.provider : [this.provider];
-
-          // Get drivers from all providers
-          const driverRequests = providers.map(
-            (providerType) => arag.getDrivers(providerType) as Observable<NucliaDBDriver[]>,
-          );
-
-          // Combine all driver requests
-          return forkJoin(driverRequests).pipe(
-            map((driverArrays) => {
-              // Flatten all driver arrays into a single array
-              const allDrivers = driverArrays.flat();
-
-              // Remove duplicates based on identifier
-              const uniqueDrivers = allDrivers.filter(
-                (driver, index, self) => index === self.findIndex((d) => d.identifier === driver.identifier),
-              );
-
-              return uniqueDrivers;
-            }),
+        takeUntilDestroyed(this.destroyRef),
+        map((drivers) => {
+          const filtered = drivers.filter((d) => providers.includes(d.provider as ProviderType));
+          // Deduplicate by identifier (mirrors original forkJoin behaviour)
+          return filtered.filter(
+            (driver, index, self) => index === self.findIndex((d) => d.identifier === driver.identifier),
           );
         }),
         map((drivers) =>
@@ -97,14 +83,7 @@ export class DriverSelectComponent implements OnInit {
         // For single select, include empty option. For multiselect, don't include it.
         const finalOptions = this.multiselect
           ? options
-          : [
-              new OptionModel({
-                id: '',
-                label: '–',
-                value: '',
-              }),
-            ].concat(options);
-
+          : [new OptionModel({ id: '', label: '–', value: '' })].concat(options);
         this.options.set(finalOptions);
       });
   }

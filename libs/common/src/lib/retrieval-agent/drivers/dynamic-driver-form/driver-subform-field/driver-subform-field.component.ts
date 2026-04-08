@@ -16,7 +16,7 @@ import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-ang
 import { ApiHeadersFieldComponent } from '../api-headers-field/api-headers-field.component';
 import { KeyValueFieldComponent } from '../key-value-field/key-value-field.component';
 import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea/driver-expandable-textarea.component';
-import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow';
+import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { Subject, takeUntil } from 'rxjs';
 
 export interface RenderableDriverSubfield {
