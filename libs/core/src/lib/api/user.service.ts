@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Welcome } from '@nuclia/core';
 import { SDKService } from './sdk.service';
@@ -34,10 +34,12 @@ export class UserService {
   updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
-        this.authService.setNextParams(this.route.snapshot.queryParams);
-        this.authService.setNextUrl(new URL(window.location.href).pathname);
-        this.sdk.nuclia.auth.logout();
-        return of(error);
+        if (error?.status === 401) {
+          this.authService.setNextParams(this.route.snapshot.queryParams);
+          this.authService.setNextUrl(new URL(window.location.href).pathname);
+          this.sdk.nuclia.auth.logout();
+        }
+        return EMPTY;
       }),
       map((welcome) => {
         this.userInfoSubject.next(welcome);

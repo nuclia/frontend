@@ -78,7 +78,7 @@ export class LoginComponent {
     const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
     this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
     this.route.data.subscribe((data) => {
-      if (data['loginData']['needs_initial_setpassword']) {
+      if (data['loginData']?.['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
           queryParamsHandling: 'merge',
           queryParams: { isPasswordInit: true },
