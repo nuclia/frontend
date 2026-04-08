@@ -98,6 +98,10 @@ export class LoginComponent {
       if (params['error']) {
         this.message = params['error_description'] || 'login.error.' + params['error'];
       }
+      if (this.loginData?.email && !this.loginData?.needs_signup) {
+        this.emailControl.setValue(this.loginData.email);
+        this.message = 'login.account_already_exists';
+      }
     });
   }
   onEnterPressed(formField: string) {
