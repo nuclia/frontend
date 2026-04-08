@@ -36,7 +36,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { AssumeRoleModalComponent, ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
+import { AssumeRoleModalComponent, ColoredLabel, ExtractionSelectComponent, HintModule } from '@flaps/common';
 import { ConfigurationForm, FiltersResources } from './configuration.model';
 import { S3_IAM_POLICY } from '../logic/connectors/s3';
 
@@ -46,6 +46,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
   selector: 'nsy-configuration-form',
   imports: [
     CommonModule,
+    HintModule,
     InfoCardComponent,
     TwoColumnsConfigurationItemComponent,
     ReactiveFormsModule,

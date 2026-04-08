@@ -89,6 +89,8 @@
 	"sync.connectors.rss.url.label": "URL de la fuente RSS",
 	"sync.connectors.sharepoint.account.title": "Cuenta Sharepoint",
 	"sync.connectors.sharepoint.client_id.label": "ID del cliente",
+	"sync.connectors.sharepoint.permissions.help": "<ul>\n<li>Asegúrese de que al menos uno de los siguientes permisos esté configurado en Registro de aplicaciones de Azure:\n<ul>\n<li><code>Files.Read.All</code></li>\n<li><code>Sites.Selected</code>.</li>\n</ul>\n</li>\n<li>Estos permisos deben configurarse como permisos de aplicación(no como permisos delegados) y ser otorgados por un administrador del inquilino.</li>\n<li><code>Sites.Selected</code> se recomienda para un acceso con privilegios mínimos. Al usarlo, un administrador del inquilino debe otorgar explícitamente acceso a cada sitio de SharePoint necesario mediante <a href=\"https://learn.microsoft.com/en-us/graph/api/site-post-permissions\" target=\"_blank\" rel=\"noopener noreferrer\">Microsoft Graph permissions endpoint</a>.</li>\n</ul>",
+	"sync.connectors.sharepoint.permissions.label": "Configuración de permisos",
 	"sync.connectors.sharepoint.pfx_base64.help": "Archivo .pfx (PKCS#12)",
 	"sync.connectors.sharepoint.pfx_base64.label": "PFX",
 	"sync.connectors.sharepoint.pfx_password.help": "Contraseña para descifrar el archivo .pfx",
