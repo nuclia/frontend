@@ -39,6 +39,9 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
     }),
   );
   uploadInProgress = this.uploadService.uploadInProgress;
+  totalResources = this.uploadService.statusCount.pipe(
+    map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
+  );
 
   uploadFiles() {
     this.upload.upload('files');

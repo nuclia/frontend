@@ -38,5 +38,13 @@
         }
       }
     </nsi-home-container>
+    @if (totalResources | async; as totalResources) {
+      <nsi-home-container>
+        <div class="stats">
+          <div class="title-s">{{ 'dashboard-home.kb-storage.total.resources' | translate }}</div>
+          <div class="title-l">{{ totalResources }}</div>
+        </div>
+      </nsi-home-container>
+    }
   </div>
 </div>
