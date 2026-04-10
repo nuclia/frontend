@@ -2,7 +2,19 @@ import { Inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
-import { BehaviorSubject, combineLatest, filter, forkJoin, map, merge, Observable, of, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  defer,
+  filter,
+  forkJoin,
+  map,
+  merge,
+  Observable,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 
 const IN_ARAG = new RegExp('at/[^/]+/[^/]+/arag');
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
@@ -61,7 +73,7 @@ export class NavigationService {
   );
 
   inAccount: Observable<boolean> = merge(
-    of(this.inAccountManagement(location.pathname)),
+    defer(() => of(this.inAccountManagement(location.pathname))),
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
       map((event) => this.inAccountManagement((event as NavigationEnd).url)),
@@ -76,7 +88,7 @@ export class NavigationService {
   }
   inArag() {
     return merge(
-      of(this.inAragSpace(location.pathname)),
+      defer(() => of(this.inAragSpace(location.pathname))),
       this.router.events.pipe(
         filter((event) => event instanceof NavigationEnd),
         map((event) => this.inAragSpace((event as NavigationEnd).url)),
