@@ -73,7 +73,12 @@ export class ResourceListService {
   filters = this._filters.asObservable();
   private _ready = new BehaviorSubject<boolean>(false);
   ready = this._ready.asObservable();
-  loading = this._ready.pipe(map((ready) => !ready));
+  // Tracks whether updateStatusCount() has resolved at least once per load cycle.
+  // Prevents the empty-KB state from flashing before the status count is known.
+  private _statusCountReady = new BehaviorSubject<boolean>(false);
+  loading = combineLatest([this._ready, this._statusCountReady]).pipe(
+    map(([ready, statusCountReady]) => !ready || !statusCountReady),
+  );
   private _tableLoading = new BehaviorSubject<boolean>(false);
   tableLoading = this._tableLoading.asObservable().pipe(distinctUntilChanged());
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
@@ -139,6 +144,7 @@ export class ResourceListService {
 
   clear() {
     this._ready.next(false);
+    this._statusCountReady.next(false);
     this._data.next([]);
     this._page.next(0);
     this._totalItems.next(0);
@@ -202,8 +208,17 @@ export class ResourceListService {
 
   loadResources(replaceData = true, updateCount = true) {
     if (updateCount) {
-      // Fire status count in background — does not block ready signal
-      this.uploadService.updateStatusCount().pipe(take(1)).subscribe();
+      // Fire status count in background — does not block ready signal, but does
+      // gate the loading state via _statusCountReady to prevent the empty-KB flash.
+      this.uploadService
+        .updateStatusCount()
+        .pipe(
+          take(1),
+          finalize(() => this._statusCountReady.next(true)),
+        )
+        .subscribe();
+    } else if (!this._statusCountReady.value) {
+      this._statusCountReady.next(true);
     }
     return defer(() => {
       if (this._ready.value) {
