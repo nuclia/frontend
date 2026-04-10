@@ -1,0 +1,36 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.inline-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &.full-width {
+    width: 100%;
+
+    > * {
+      flex: 1;
+    }
+  }
+
+  &.small-gap {
+    gap: rhythm(0.5);
+    flex-wrap: wrap;
+  }
+}
+
+.label-field-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+.toggle-container pa-toggle ::ng-deep .pa-toggle-context {
+  justify-content: space-between;
+}

@@ -7,6 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, LogSeverityLevel, SyncItem, SyncService } from '../logic';
 import {
   combineLatest,
+  EMPTY,
   filter,
   forkJoin,
   map,
@@ -23,6 +24,7 @@ import { SyncSettingsComponent } from './sync-settings';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { SDKService } from '@flaps/core';
 import { Job } from '@nuclia/core';
+import { getCloudSyncOptionsPayload, SyncOptions, SyncOptionsFormComponent } from '../sync-options-form';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -39,6 +41,7 @@ import { Job } from '@nuclia/core';
     RouterLink,
     StickyFooterComponent,
     ConfigurationFormComponent,
+    SyncOptionsFormComponent,
   ],
   templateUrl: './sync-details-page.component.html',
   styleUrl: './sync-details-page.component.scss',
@@ -86,6 +89,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
   validForm = false;
   updatedConfig?: ISyncEntity;
   updatedSelection?: SyncItem[];
+  cloudOptions?: SyncOptions;
   isSyncing: Observable<boolean> = combineLatest([this.syncId, this.syncService.isSyncing]).pipe(
     map(([syncId, isSyncing]) => isSyncing[syncId] || false),
   );
@@ -173,18 +177,26 @@ export class SyncDetailsPageComponent implements OnDestroy {
     this.updatedSelection = newSelection;
   }
 
+  updateCloudOptions(options: SyncOptions) {
+    this.cloudOptions = options;
+  }
+
   saveChanges() {
-    if (!this.updatedConfig && !this.updatedSelection) {
-      return;
-    }
-    this.syncId
+    forkJoin([this.sync.pipe(take(1)), this.syncId.pipe(take(1))])
       .pipe(
-        take(1),
-        switchMap((syncId) => {
-          const updatedSync: Partial<ISyncEntity> = { ...this.updatedConfig };
-          if (this.updatedSelection) {
-            updatedSync.foldersToSync = this.updatedSelection;
+        takeUntil(this.unsubscribeAll),
+        switchMap(([sync, syncId]) => {
+          if (sync.isCloud) {
+            return this.syncService.updateSync(syncId, {
+              ...(this.updatedConfig?.title ? { title: this.updatedConfig.title } : {}),
+              ...getCloudSyncOptionsPayload(this.cloudOptions),
+            });
           }
+          if (!this.updatedConfig && !this.updatedSelection) {
+            return EMPTY;
+          }
+          const updatedSync: Partial<ISyncEntity> = { ...this.updatedConfig };
+          if (this.updatedSelection) updatedSync.foldersToSync = this.updatedSelection;
           return this.syncService.updateSync(syncId, updatedSync);
         }),
       )

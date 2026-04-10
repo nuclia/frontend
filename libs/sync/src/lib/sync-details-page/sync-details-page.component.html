@@ -32,13 +32,11 @@
               (click)="triggerSync()">
               {{ 'sync.details.buttons.sync-now' | translate }}
             </pa-button>
-            @if (!sync.isCloud) {
-              <pa-button
-                aspect="basic"
-                routerLink="./edit">
-                {{ 'sync.details.buttons.edit-settings' | translate }}
-              </pa-button>
-            }
+            <pa-button
+              aspect="basic"
+              routerLink="./edit">
+              {{ 'sync.details.buttons.edit-settings' | translate }}
+            </pa-button>
             <pa-button
               kind="destructive"
               data-cy="delete"
@@ -55,11 +53,19 @@
         <nsy-configuration-form
           noTopBorder
           [sync]="sync"
+          [isCloud]="sync.isCloud"
           [kbId]="kbId | async"
           [connector]="connector | async"
           [connectorId]="(connectorDef | async)?.id"
           (configurationChange)="updateConfiguration($event)"
           (validForm)="validForm = $event"></nsy-configuration-form>
+
+        @if (sync.isCloud) {
+          <nsy-sync-options-form
+            [isCloud]="true"
+            [existingConfig]="sync"
+            (optionsChange)="updateCloudOptions($event)"></nsy-sync-options-form>
+        }
 
         <nsi-sticky-footer>
           <pa-button
@@ -69,6 +75,7 @@
           </pa-button>
           <pa-button
             kind="primary"
+            [disabled]="sync.isCloud"
             (click)="saveChanges()">
             {{ 'sync.details.buttons.save-changes' | translate }}
           </pa-button>

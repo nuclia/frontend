@@ -11,106 +11,108 @@
       </nsi-two-columns-configuration-item>
     }
 
-    <ng-container formGroupName="extra">
-      @for (section of getExtraSections() | async; track section.id) {
-        <nsi-two-columns-configuration-item
-          [badge]="section.badge"
-          [itemTitle]="section.title"
-          [description]="section.description || ''">
-          <div class="form-container">
-            @for (field of section.fields; track field.id) {
-              @switch (field.type) {
-                @case ('text') {
-                  <pa-input
-                    [formControlName]="field.id"
-                    [placeholder]="field.placeholder"
-                    [type]="field.secret ? 'password' : 'text'"
-                    [help]="field.help">
-                    {{ field.label | translate }}
-                  </pa-input>
-                }
-                @case ('boolean') {
-                  <pa-toggle
-                    [formControlName]="field.id"
-                    [help]="field.help">
-                    {{ field.label | translate }}
-                  </pa-toggle>
-                }
-                @case ('select') {
-                  <pa-select
-                    [formControlName]="field.id"
-                    [label]="field.label"
-                    [help]="field.help">
-                    @for (option of field.options; track option.value) {
-                      <pa-option
-                        [disabled]="option.disabled"
-                        [value]="option.value">
-                        {{ option.label | translate }}
-                      </pa-option>
-                    }
-                  </pa-select>
-                }
-                @case ('textarea') {
-                  <pa-textarea
-                    [formControlName]="field.id"
-                    [help]="field.help"
-                    [rows]="4">
-                    {{ field.label | translate }}
-                  </pa-textarea>
-                }
-                @case ('table') {
-                  <div class="table-container">
-                    <label>{{ field.label | translate }}</label>
-                    @if (field.help) {
-                      <p>{{ field.help | translate }}</p>
-                    }
-                    <app-parameters-table
-                      [values]="tables[field.id] || []"
-                      (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
-                    @if (invalidTables.includes(field.id)) {
-                      <nsi-info-card
-                        type="warning"
-                        icon="warning">
-                        {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
-                      </nsi-info-card>
-                    }
-                  </div>
-                }
-                @case ('file') {
-                  <div>
-                    <pa-button
-                      iconAndText
-                      icon="add-file"
-                      size="small"
-                      aspect="basic"
-                      (click)="file.click()">
-                      {{ files[field.id] ? files[field.id].name : (field.label | translate) }}
-                    </pa-button>
-                    @if (field.help) {
-                      <div class="file-help">{{ field.help | translate }}</div>
-                    }
-                    <input
-                      id="file"
-                      type="file"
-                      [accept]="field.accept"
-                      #file
-                      hidden
-                      (change)="updateFile($event, field.id, field.handleFile)" />
-                  </div>
-                }
-                @case ('hint') {
-                  <ncom-hint [label]="field.label | translate">
-                    <div [innerHTML]="field.help || '' | translate"></div>
-                  </ncom-hint>
+    @if (!isCloud) {
+      <ng-container formGroupName="extra">
+        @for (section of getExtraSections() | async; track section.id) {
+          <nsi-two-columns-configuration-item
+            [badge]="section.badge"
+            [itemTitle]="section.title"
+            [description]="section.description || ''">
+            <div class="form-container">
+              @for (field of section.fields; track field.id) {
+                @switch (field.type) {
+                  @case ('text') {
+                    <pa-input
+                      [formControlName]="field.id"
+                      [placeholder]="field.placeholder"
+                      [type]="field.secret ? 'password' : 'text'"
+                      [help]="field.help">
+                      {{ field.label | translate }}
+                    </pa-input>
+                  }
+                  @case ('boolean') {
+                    <pa-toggle
+                      [formControlName]="field.id"
+                      [help]="field.help">
+                      {{ field.label | translate }}
+                    </pa-toggle>
+                  }
+                  @case ('select') {
+                    <pa-select
+                      [formControlName]="field.id"
+                      [label]="field.label"
+                      [help]="field.help">
+                      @for (option of field.options; track option.value) {
+                        <pa-option
+                          [disabled]="option.disabled"
+                          [value]="option.value">
+                          {{ option.label | translate }}
+                        </pa-option>
+                      }
+                    </pa-select>
+                  }
+                  @case ('textarea') {
+                    <pa-textarea
+                      [formControlName]="field.id"
+                      [help]="field.help"
+                      [rows]="4">
+                      {{ field.label | translate }}
+                    </pa-textarea>
+                  }
+                  @case ('table') {
+                    <div class="table-container">
+                      <label>{{ field.label | translate }}</label>
+                      @if (field.help) {
+                        <p>{{ field.help | translate }}</p>
+                      }
+                      <app-parameters-table
+                        [values]="tables[field.id] || []"
+                        (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
+                      @if (invalidTables.includes(field.id)) {
+                        <nsi-info-card
+                          type="warning"
+                          icon="warning">
+                          {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
+                        </nsi-info-card>
+                      }
+                    </div>
+                  }
+                  @case ('file') {
+                    <div>
+                      <pa-button
+                        iconAndText
+                        icon="add-file"
+                        size="small"
+                        aspect="basic"
+                        (click)="file.click()">
+                        {{ files[field.id] ? files[field.id].name : (field.label | translate) }}
+                      </pa-button>
+                      @if (field.help) {
+                        <div class="file-help">{{ field.help | translate }}</div>
+                      }
+                      <input
+                        id="file"
+                        type="file"
+                        [accept]="field.accept"
+                        #file
+                        hidden
+                        (change)="updateFile($event, field.id, field.handleFile)" />
+                    </div>
+                  }
+                  @case ('hint') {
+                    <ncom-hint [label]="field.label | translate">
+                      <div [innerHTML]="field.help || '' | translate"></div>
+                    </ncom-hint>
+                  }
                 }
               }
-            }
-          </div>
-        </nsi-two-columns-configuration-item>
-      }
-    </ng-container>
+            </div>
+          </nsi-two-columns-configuration-item>
+        }
+      </ng-container>
+    }
 
-    @if (assumeRole && enterCredentials) {
+    @if (!isCloud && assumeRole && enterCredentials) {
       <nsi-two-columns-configuration-item
         [noTopBorder]="noTopBorder"
         itemTitle="sync.add-page.assume-role.title"
@@ -140,126 +142,39 @@
 
     @if (!isCloud) {
       <nsi-two-columns-configuration-item
-        itemTitle="sync.add-page.extract-config.title"
-        description="sync.add-page.extract-config.description"
-        badge="generic.badge.advanced">
-        <div class="form-container toggle-container">
-          <app-extraction-select
-            [onlyExtract]="true"
-            [extractConfig]="extractStrategy"
-            (extractConfigChange)="updateExtractStrategy($event)"></app-extraction-select>
-        </div>
-      </nsi-two-columns-configuration-item>
-
-      @if (connector.canSyncSecurityGroups) {
-        <nsi-two-columns-configuration-item
-          itemTitle="sync.add-page.security-group.title"
-          description="sync.add-page.security-group.description"
-          badge="generic.badge.advanced">
-          <div class="form-container toggle-container">
-            <pa-toggle
-              withBackground
-              formControlName="syncSecurityGroups">
-              {{ 'sync.add-page.security-group.toggle-label' | translate }}
-            </pa-toggle>
-          </div>
-        </nsi-two-columns-configuration-item>
-      }
-      <nsi-two-columns-configuration-item
         badge="generic.badge.optional"
         itemTitle="sync.add-page.add-labels.title"
         description="sync.add-page.add-labels.description">
-        <div class="form-container">
-          <div class="inline-form full-width">
-            <app-label-dropdown
-              [labelSets]="labelSets | async"
-              [selection]="labelSelection"
-              [disabled]="(hasLabelSet | async) === false"
-              (selectionChange)="updateLabelSelection($event)"
-              displayRadioForNonMultiple
-              aspect="basic"
-              fullWidth>
-              {{ 'sync.add-page.add-labels.select-labels' | translate }}
-            </app-label-dropdown>
-            <span class="separator-word body-s">{{ 'generic.or' | translate }}</span>
-            <pa-button
-              class="full-width"
-              icon="circle-plus"
-              aspect="basic"
-              iconAndText
-              (click)="createLabelSet()">
-              {{ 'sync.add-page.add-labels.create-labelset' | translate }}
-            </pa-button>
-          </div>
-
-          <div class="inline-form small-gap">
-            @for (label of labelSelection; track label) {
-              <nsi-label
-                [color]="label.color"
-                (removeLabel)="removeLabel(label)">
-                {{ label.label }}
-              </nsi-label>
-            }
-          </div>
-        </div>
-
-        <div class="toggle-container">
-          <pa-toggle formControlName="preserveLabels">
+        <div class="form-container toggle-container">
+          <pa-toggle
+            withBackground
+            formControlName="preserveLabels">
             {{ 'sync.add-page.preserve-labels.toggle-label' | translate }}
           </pa-toggle>
         </div>
       </nsi-two-columns-configuration-item>
+    }
 
+    @if (!isCloud && connector.canSyncSecurityGroups) {
       <nsi-two-columns-configuration-item
-        badge="generic.badge.optional"
-        itemTitle="sync.add-page.filter-resources.title"
-        description="sync.add-page.filter-resources.description">
-        <div class="form-container">
-          <nsi-info-card>{{ 'sync.add-page.filter-resources.file-extension.info' | translate }}</nsi-info-card>
-          <div
-            class="form-container"
-            formGroupName="filterResources">
-            <div class="inline-form full-width small-gap">
-              <pa-select formControlName="extensionUsage">
-                <pa-option value="include">
-                  {{ 'sync.add-page.filter-resources.file-extension.include' | translate }}
-                </pa-option>
-                <pa-option value="exclude">
-                  {{ 'sync.add-page.filter-resources.file-extension.exclude' | translate }}
-                </pa-option>
-              </pa-select>
-              <pa-input
-                id="extension"
-                placeholder=".pdf,.docx"
-                formControlName="extensions">
-                {{ 'sync.add-page.filter-resources.file-extension.label' | translate }}
-              </pa-input>
-            </div>
-
-            <div class="inline-form small-gap">
-              @for (extension of extensionList; track extension) {
-                <nsi-label
-                  neutral
-                  (removeLabel)="removeExtension(extension)">
-                  {{ extension }}
-                </nsi-label>
-              }
-            </div>
-
-            <div class="label-field-container">
-              <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
-              <div class="inline-form full-width small-gap">
-                <pa-date-picker
-                  formControlName="from"
-                  [label]="'sync.add-page.filter-resources.modification-date.from' | translate"></pa-date-picker>
-                <pa-date-picker
-                  formControlName="to"
-                  [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
-              </div>
-            </div>
-          </div>
+        itemTitle="sync.add-page.security-group.title"
+        description="sync.add-page.security-group.description"
+        badge="generic.badge.advanced">
+        <div class="form-container toggle-container">
+          <pa-toggle
+            withBackground
+            formControlName="syncSecurityGroups">
+            {{ 'sync.add-page.security-group.toggle-label' | translate }}
+          </pa-toggle>
         </div>
       </nsi-two-columns-configuration-item>
     }
   </form>
+
+  @if (!isCloud) {
+    <nsy-sync-options-form
+      [isCloud]="isCloud || false"
+      [existingConfig]="syncEntity"
+      (optionsChange)="onOptionsChange($event)"></nsy-sync-options-form>
+  }
 }

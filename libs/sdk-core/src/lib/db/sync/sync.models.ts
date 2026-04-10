@@ -34,6 +34,7 @@ export interface ISyncManager {
   syncConfig(id: string, full_sync?: boolean): Observable<Job>;
   browse(externalConnectorId: string, options: BrowseOptions): Observable<StorageStructure>;
   resolveSite(connectionId: string, siteUrl: string): Observable<StorageSite>;
+  updateConfig(id: string, config: SyncConfigurationUpdate): Observable<SyncConfiguration>;
 }
 
 export interface OAuthUrl {
@@ -61,7 +62,7 @@ export interface BrowseCapabilities {
   requires_site_url_resolution: boolean;
 }
 
-export interface SyncConfiguration {
+export interface SyncConfiguration extends SyncConfigurationOptions {
   id: string;
   name: string;
   kb_id: string;
@@ -79,11 +80,33 @@ export interface SyncConfiguration {
   provider: string;
 }
 
-export interface SyncConfigurationCreate {
+export interface SyncConfigurationCreate extends SyncConfigurationOptions {
   name: string;
   sync_root_path: string;
   drive_id?: string;
   external_connection_id: string;
+}
+
+export interface SyncConfigurationUpdate extends SyncConfigurationOptions {
+  name?: string;
+}
+
+export interface SyncConfigurationOptions {
+  file_filter?: FileFilter;
+  labels?: { labelset: string; label: string }[];
+  modified_time_range?: ModifiedTimeRange;
+  extract_strategy?: string;
+}
+
+export interface FileFilter {
+  mode: 'include' | 'exclude';
+  extensions?: string[];
+  glob_patterns?: string[];
+}
+
+export interface ModifiedTimeRange {
+  from?: string;
+  to?: string;
 }
 
 export interface JobsPage {

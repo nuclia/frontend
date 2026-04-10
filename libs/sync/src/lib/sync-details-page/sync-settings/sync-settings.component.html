@@ -1,3 +1,21 @@
+<ng-template
+  #tagList
+  let-items="items">
+  @if (items?.length) {
+    <div class="row-container">
+      @for (item of items; track $index) {
+        <nsi-label
+          readonly
+          neutral>
+          {{ item }}
+        </nsi-label>
+      }
+    </div>
+  } @else {
+    –
+  }
+</ng-template>
+
 <nsi-two-columns-configuration-item
   noTopBorder
   itemTitle="sync.details.settings.title"
@@ -8,50 +26,52 @@
       <div>{{ sync.title }}</div>
     </div>
 
-    @if (!sync.isCloud) {
-      <div class="separator-line"></div>
+    <div class="separator-line"></div>
 
-      @if (connector?.canSyncSecurityGroups) {
-        <div class="body-s settings-item">
-          <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
-          <div style="text-transform: capitalize">
-            {{
-              (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
-                | translate
-            }}
-          </div>
-        </div>
-        <div class="separator-line"></div>
-      }
-
+    @if (!sync.isCloud && connector?.canSyncSecurityGroups) {
       <div class="body-s settings-item">
-        <label>{{ 'sync.details.settings.labels' | translate }}</label>
-        <div class="row-container">
-          @for (label of coloredLabels; track label) {
-            <nsi-label
-              readonly
-              [color]="label.color">
-              {{ label.label }}
-            </nsi-label>
-          } @empty {
-            –
-          }
+        <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
+        <div style="text-transform: capitalize">
+          {{
+            (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
+              | translate
+          }}
         </div>
       </div>
-
       <div class="separator-line"></div>
-      <label>
-        {{
-          (sync.filters?.fileExtensions?.exclude
-            ? 'sync.details.settings.file-extensions.excluded'
-            : 'sync.details.settings.file-extensions.included'
-          ) | translate
-        }}
-      </label>
-      <div class="body-s settings-item">
-        @if (sync.filters?.fileExtensions; as fileExtensions) {
+    }
+
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.labels' | translate }}</label>
+      <div class="row-container">
+        @for (label of coloredLabels; track label.labelset + '_' + label.label) {
+          <nsi-label
+            readonly
+            [color]="label.color">
+            {{ label.label }}
+          </nsi-label>
+        } @empty {
+          –
+        }
+      </div>
+    </div>
+
+    <div class="separator-line"></div>
+    <label>
+      {{
+        ((sync.isCloud ? sync.file_filter?.mode === 'exclude' : sync.filters?.fileExtensions?.exclude)
+          ? 'sync.details.settings.file-extensions.excluded'
+          : 'sync.details.settings.file-extensions.included'
+        ) | translate
+      }}
+    </label>
+    <div class="body-s settings-item">
+      @if (sync.isCloud) {
+        <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.extensions }"></ng-container>
+      } @else {
+        @if (sync.filters?.fileExtensions?.extensions; as extensions) {
           <div class="row-container">
-            @for (extension of fileExtensions.extensions.split(', '); track extension) {
+            @for (extension of extensions.split(', '); track $index) {
               <nsi-label
                 readonly
                 neutral>
@@ -64,24 +84,33 @@
         } @else {
           –
         }
-      </div>
+      }
+    </div>
+
+    @if (sync.isCloud) {
       <div class="separator-line"></div>
-      <label>{{ 'sync.details.settings.modification-date.label' | translate }}</label>
-      <div class="body-s row-container">
-        @if (sync.filters?.modified; as dates) {
-          {{ 'sync.details.settings.modification-date.from' | translate }}
-          <pa-datetime
-            dateOnly
-            [datetime]="dates.from"></pa-datetime>
-          {{ 'sync.details.settings.modification-date.to' | translate }}
-          <pa-datetime
-            dateOnly
-            [datetime]="dates.to"></pa-datetime>
-        } @else {
-          –
-        }
+      <label>{{ 'sync.add-page.file-patterns.title' | translate }}</label>
+      <div class="body-s settings-item">
+        <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.glob_patterns }"></ng-container>
       </div>
     }
+
+    <div class="separator-line"></div>
+    <label>{{ 'sync.details.settings.modification-date.label' | translate }}</label>
+    <div class="body-s row-container">
+      @if (sync.isCloud ? sync.modified_time_range : sync.filters?.modified; as dates) {
+        {{ 'sync.details.settings.modification-date.from' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.from"></pa-datetime>
+        {{ 'sync.details.settings.modification-date.to' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.to"></pa-datetime>
+      } @else {
+        –
+      }
+    </div>
   </div>
 </nsi-two-columns-configuration-item>
 

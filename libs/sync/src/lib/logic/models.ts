@@ -101,6 +101,17 @@ export interface Filters {
   };
 }
 
+export interface FileFilter {
+  mode: 'include' | 'exclude';
+  extensions?: string[];
+  glob_patterns?: string[];
+}
+
+export interface ModifiedTimeRange {
+  from?: string;
+  to?: string;
+}
+
 export type Connector = {
   name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,6 +133,8 @@ export interface ISyncEntity {
   syncSecurityGroups?: boolean;
   extract_strategy?: string;
   isCloud?: boolean;
+  file_filter?: FileFilter;
+  modified_time_range?: ModifiedTimeRange;
 }
 
 export interface SyncBasicData {
