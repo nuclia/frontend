@@ -45,6 +45,11 @@
             [externalConnection]="externalConnection"
             (selection)="selectFolder($event)"></nsy-cloud-folder>
         }
+        @if (externalConnection) {
+          <nsy-sync-options-form
+            [isCloud]="true"
+            (optionsChange)="updateCloudSyncOptions($event)"></nsy-sync-options-form>
+        }
       }
 
       <nsi-sticky-footer>
