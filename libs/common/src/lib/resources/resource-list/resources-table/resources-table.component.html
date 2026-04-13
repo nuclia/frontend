@@ -7,9 +7,7 @@
 }
 
 @if ((isReady | async) === true) {
-  <div
-    class="resource-table-header"
-    [style.--filters-header-height]="(headerHeight | async) + 'px'">
+  <div class="resource-table-header">
     <div class="header-container">
       @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
         <div class="resource-bulk-actions">
@@ -169,9 +167,7 @@
     }
   </div>
 
-  <div
-    class="table-container"
-    [style.--filters-header-height]="(headerHeight | async) + 'px'">
+  <div class="table-container">
     <pa-table [columns]="tableLayout | async">
       <pa-table-sortable-header
         noBackground
@@ -194,23 +190,41 @@
           <pa-table-row>
             @if (isAdminOrContrib | async) {
               <pa-table-cell>
-                <nsi-skeleton width="16px" height="16px" borderRadius="small"></nsi-skeleton>
+                <nsi-skeleton
+                  width="16px"
+                  height="16px"
+                  borderRadius="small"></nsi-skeleton>
               </pa-table-cell>
             }
             <pa-table-cell>
-              <nsi-skeleton width="60%" height="1rem" borderRadius="small"></nsi-skeleton>
+              <nsi-skeleton
+                width="60%"
+                height="1rem"
+                borderRadius="small"></nsi-skeleton>
             </pa-table-cell>
             <pa-table-cell>
-              <nsi-skeleton width="80px" height="1rem" borderRadius="small"></nsi-skeleton>
+              <nsi-skeleton
+                width="80px"
+                height="1rem"
+                borderRadius="small"></nsi-skeleton>
             </pa-table-cell>
             <pa-table-cell>
-              <nsi-skeleton width="70px" height="1rem" borderRadius="small"></nsi-skeleton>
+              <nsi-skeleton
+                width="70px"
+                height="1rem"
+                borderRadius="small"></nsi-skeleton>
             </pa-table-cell>
             <pa-table-cell>
-              <nsi-skeleton width="70px" height="1rem" borderRadius="small"></nsi-skeleton>
+              <nsi-skeleton
+                width="70px"
+                height="1rem"
+                borderRadius="small"></nsi-skeleton>
             </pa-table-cell>
             <pa-table-cell>
-              <nsi-skeleton width="50px" height="1rem" borderRadius="small"></nsi-skeleton>
+              <nsi-skeleton
+                width="50px"
+                height="1rem"
+                borderRadius="small"></nsi-skeleton>
             </pa-table-cell>
           </pa-table-row>
         }

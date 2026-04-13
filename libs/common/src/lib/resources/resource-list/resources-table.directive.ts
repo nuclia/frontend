@@ -61,7 +61,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   totalKbResources = this.resourceListService.totalKbResources;
   pageSize = this.resourceListService.pageSize;
   pageSizes = PAGE_SIZES;
-  headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   unsubscribeAll = new Subject<void>();
 
