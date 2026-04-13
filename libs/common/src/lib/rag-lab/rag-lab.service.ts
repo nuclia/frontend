@@ -5,8 +5,9 @@ import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 
 import {
   Ask,
   ChatOptions,
+  GenerativeProvider,
   IErrorResponse,
-  LearningConfiguration,
+  ModelInfo,
   NUCLIA_STANDARD_SEARCH_CONFIG,
   Prompts,
   TokenConsumption,
@@ -45,19 +46,19 @@ export class RagLabService {
   >([]);
 
   private _kbConfigBackup = new BehaviorSubject<{ [id: string]: any } | null>(null);
-  private _generativeModelList = new BehaviorSubject<LearningConfiguration | null>(null);
+  private _generativeProviders = new BehaviorSubject<GenerativeProvider[] | null>(null);
   private _generativeModelMap = new BehaviorSubject<{ [value: string]: string } | null>(null);
   private _searchConfigurations = new BehaviorSubject<Widget.TypedSearchConfiguration[]>([]);
 
   kbConfigBackup = this._kbConfigBackup.asObservable();
-  generativeModelList = this._generativeModelList.asObservable();
+  generativeProviders = this._generativeProviders.asObservable();
   generativeModelMap = this._generativeModelMap.asObservable();
   searchConfigurations = this._searchConfigurations.asObservable();
   promptLabResults = this._promptLabResults.asObservable();
   ragLabResults = this._ragLabResults.asObservable();
 
   private getModelName(model: string) {
-    return this._generativeModelList.value?.options?.find((option) => option.value === model)?.name || model;
+    return this._generativeModelMap.value?.[model] || model;
   }
 
   loadKbConfigAndModels(): Observable<void> {
@@ -67,24 +68,37 @@ export class RagLabService {
         forkJoin([
           kb.getConfiguration(),
           kb.getLearningSchema(),
+          kb.getGenerativeProviders(),
           this.searchWidgetService.supportedSearchConfigurations.pipe(take(1)),
         ]),
       ),
-      map(([config, schema, savedConfigurations]) => {
+      map(([config, schema, providers, savedConfigurations]) => {
         this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));
         this._kbConfigBackup.next(config);
-        this._generativeModelList.next({
-          ...schema[GENERATIVE_MODEL_KEY],
-          options: [
-            ...(schema[GENERATIVE_MODEL_KEY]?.options?.filter((model) => model.name !== 'Do not generate answers') ||
-              []),
-          ],
-        });
+        // Only models present in both schema and providers are allowed
+        const allowedModels = (schema[GENERATIVE_MODEL_KEY]?.options || []).map((option) => option.value);
+        const allowedProviders = Object.entries(providers)
+          .map(([providerKey, provider]) => ({
+            ...provider,
+            models: Object.fromEntries(
+              Object.entries(provider.models)
+                .map(([key, value]) =>
+                  // The key and name of custom models are swapped to keep consistency with the other models
+                  providerKey === 'default' ? [value.name, { ...value, name: key }] : [key, value],
+                )
+                .map((value) => value as [string, ModelInfo])
+                .filter(([key]) => allowedModels.includes(key) && key !== 'generative-multilingual-2023'),
+            ),
+          }))
+          .filter((provider) => Object.keys(provider.models || {}).length > 0);
+        this._generativeProviders.next(allowedProviders);
         this._generativeModelMap.next(
-          (this._generativeModelList.value?.options || []).reduce(
-            (models, option) => {
-              models[option.value] = option.name;
-              return models;
+          allowedProviders.reduce(
+            (acc, provider) => {
+              Object.entries(provider.models).forEach(([key, model]) => {
+                acc[key] = provider.title + ' - ' + model.title;
+              });
+              return acc;
             },
             {} as { [value: string]: string },
           ),
