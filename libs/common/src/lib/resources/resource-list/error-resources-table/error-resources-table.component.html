@@ -70,9 +70,7 @@
   }
 </div>
 
-<div
-  class="table-container"
-  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+<div class="table-container">
   <pa-table [columns]="tableLayout | async">
     <pa-table-sortable-header
       noBackground

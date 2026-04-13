@@ -6,9 +6,7 @@
   </div>
 }
 
-<div
-  class="resource-table-header"
-  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+<div class="resource-table-header">
   <div class="header-container">
     @if ((isAdminOrContrib | async) && selection.length > 0) {
       <div class="resource-bulk-actions">
