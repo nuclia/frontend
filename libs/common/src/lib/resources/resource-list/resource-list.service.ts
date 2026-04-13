@@ -82,8 +82,6 @@ export class ResourceListService {
   query = this._query.asObservable();
   private _searchMode = new BehaviorSubject<SearchModes>('title');
   searchMode = this._searchMode.asObservable();
-  private _headerHeight = new BehaviorSubject<number>(0);
-  headerHeight = this._headerHeight.asObservable();
   private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
 
   private _page = new BehaviorSubject<number>(0);
@@ -194,10 +192,6 @@ export class ResourceListService {
 
   setSearchMode(mode: SearchModes) {
     this._searchMode.next(mode);
-  }
-
-  setHeaderHeight(height: number) {
-    this._headerHeight.next(height);
   }
 
   loadResources(replaceData = true, updateCount = true) {

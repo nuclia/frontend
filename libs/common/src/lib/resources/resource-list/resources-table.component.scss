@@ -5,8 +5,6 @@ $height-pagination: rhythm(9);
 
 .resource-table-header {
   background-color: $color-light-stronger;
-  position: sticky;
-  top: var(--filters-header-height);
   z-index: 1;
 
   .header-container {

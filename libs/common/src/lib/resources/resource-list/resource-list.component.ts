@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  inject,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -40,7 +32,6 @@ import { SearchModes } from './resource-list.model';
 })
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
-  @ViewChild('header') header?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
 
@@ -147,12 +138,6 @@ export class ResourceListComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
-
-    merge(this.resourceListService.ready, this.resourceListService.filters, this.uploadService.statusCount)
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(() => {
-        this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
-      });
   }
 
   ngOnDestroy() {
@@ -306,7 +291,6 @@ export class ResourceListComponent implements OnDestroy {
         if (previousFilters.length > 0) {
           this.onToggleFilter();
         }
-        this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
       }),
     );
   }
