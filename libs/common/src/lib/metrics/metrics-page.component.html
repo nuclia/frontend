@@ -12,25 +12,11 @@
       class="month-picker"
       [label]="'activity.select-month' | translate"
       [value]="selectedMonth()"
-      [disabled]="availableMonths().length === 0"
       (valueChange)="onMonthChange($event)">
-      @if (availableMonths().length === 0) {
-        <pa-option [value]="selectedMonth()">{{ formatMonth(selectedMonth()) }}</pa-option>
-      }
-      @for (month of availableMonths(); track month) {
+      @for (month of monthOptions(); track month) {
         <pa-option [value]="month">{{ formatMonth(month) }}</pa-option>
       }
     </pa-select>
-
-    <!-- Search with column-scoped modes -->
-    @if (showSearch()) {
-      <nsi-search-input
-        class="toolbar-search"
-        [placeholder]="'generic.search' | translate"
-        [modes]="service.searchModes()"
-        (valueChange)="onSearch($event)"
-        (modeSelected)="onModeSelected($event)"></nsi-search-input>
-    }
 
     <div class="toolbar-actions">
       <!-- Extra toolbar buttons projected by child pages (e.g. filters) -->
@@ -75,6 +61,15 @@
         </pa-dropdown>
       }
     </div>
+
+    @if (showSearch()) {
+      <nsi-search-input
+        class="toolbar-search"
+        [placeholder]="'generic.search' | translate"
+        [modes]="service.searchModes()"
+        (valueChange)="onSearch($event)"
+        (modeSelected)="onModeSelected($event)"></nsi-search-input>
+    }
   </div>
 
   <!-- Stat cards slot — projected by each page -->

@@ -11,31 +11,23 @@
   (searchChange)="onSearchChange($event)"
   (loadNextPage)="onLoadNextPage()"
   (downloadRequested)="onDownloadRequested($event)">
-
-  <app-metrics-filters toolbar-extra
+  <app-metrics-filters
+    toolbar-extra
     [showSyntheticStatus]="false"
     [filterColumns]="filterColumns"
     [activeBooleanConditions]="activeBooleanConditions()"
     [activeNumericConditions]="service.numericConditions()"
     [selectedMonth]="selectedMonth()"
     [activeDateConditions]="activeDateConditions()"
-    (filtersApplied)="onFiltersApplied($event)">
-  </app-metrics-filters>
+    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
 
   <!-- Stat cards -->
-  <div stat-cards class="stat-cards">
-    <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.cost-token.total-ai-tokens' | translate }}</div>
-      <div class="display-s">{{ service.usageStats().aiTokensUsed | compactNumber }}</div>
-    </div>
-    <div class="stat-card">
-      <div class="title-xxs">{{ 'activity.cost-token.total-nuclia-tokens' | translate }}</div>
-      <div class="display-s">{{ service.usageStats().nucliaTokens | compactNumber }}</div>
-    </div>
+  <div
+    stat-cards
+    class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.cost-token.total-billed-tokens' | translate }}</div>
       <div class="display-s">{{ service.usageStats().nucliaTokensBilled | compactNumber }}</div>
     </div>
   </div>
-
 </app-metrics-page>

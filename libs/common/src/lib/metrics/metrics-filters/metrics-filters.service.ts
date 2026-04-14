@@ -19,13 +19,13 @@ export class MetricsFiltersService {
   readonly conditions = signal<ConditionRow[]>([]);
   readonly dateColumnModes = signal<Record<string, DateMode>>({});
 
-  readonly operations: ReadonlyArray<{ value: NumericOperation; symbol: string }> = [
-    { value: 'eq', symbol: '=' },
-    { value: 'ne', symbol: '≠' },
-    { value: 'gt', symbol: '>' },
-    { value: 'ge', symbol: '≥' },
-    { value: 'lt', symbol: '<' },
-    { value: 'le', symbol: '≤' },
+  readonly operations: ReadonlyArray<{ value: NumericOperation; labelKey: string }> = [
+    { value: 'eq', labelKey: 'activity.filter.operation_eq' },
+    { value: 'ne', labelKey: 'activity.filter.operation_ne' },
+    { value: 'gt', labelKey: 'activity.filter.operation_gt' },
+    { value: 'ge', labelKey: 'activity.filter.operation_ge' },
+    { value: 'lt', labelKey: 'activity.filter.operation_lt' },
+    { value: 'le', labelKey: 'activity.filter.operation_le' },
   ];
 
   // ── Synthetic status (draft) ─────────────────────────────────────────────
@@ -69,9 +69,7 @@ export class MetricsFiltersService {
     const row = this.conditions().find((c) => c.id === id);
     this.conditions.update((list) => list.filter((c) => c.id !== id));
     if (row && row.columnType === 'date' && row.column) {
-      const remaining = this.conditions().filter(
-        (c) => c.column === row.column && c.columnType === 'date',
-      );
+      const remaining = this.conditions().filter((c) => c.column === row.column && c.columnType === 'date');
       if (remaining.length === 0) {
         this.dateColumnModes.update((modes) => {
           const next = { ...modes };
@@ -86,15 +84,11 @@ export class MetricsFiltersService {
     const colConfig = filterColumns.find((c) => c.key === columnKey);
     const oldRow = this.conditions().find((c) => c.id === id);
     this.conditions.update((list) =>
-      list.map((c) =>
-        c.id === id ? { ...c, column: columnKey, columnType: colConfig?.type ?? null } : c,
-      ),
+      list.map((c) => (c.id === id ? { ...c, column: columnKey, columnType: colConfig?.type ?? null } : c)),
     );
     // Clear date mode for the old column if it was a date column and has no remaining rows
     if (oldRow && oldRow.columnType === 'date' && oldRow.column && oldRow.column !== columnKey) {
-      const remaining = this.conditions().filter(
-        (c) => c.column === oldRow.column && c.columnType === 'date',
-      );
+      const remaining = this.conditions().filter((c) => c.column === oldRow.column && c.columnType === 'date');
       if (remaining.length === 0) {
         this.dateColumnModes.update((modes) => {
           const next = { ...modes };
@@ -106,48 +100,34 @@ export class MetricsFiltersService {
   }
 
   updateConditionOperation(id: number, op: string): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, operation: op as NumericOperation } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, operation: op as NumericOperation } : c)));
   }
 
   updateConditionNumericValue(id: number, val: string): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, numericValue: val } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, numericValue: val } : c)));
   }
 
   updateConditionBooleanValue(id: number, val: boolean): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, booleanValue: val } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, booleanValue: val } : c)));
   }
 
   updateConditionDateValue(id: number, val: string): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, dateValue: val } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, dateValue: val } : c)));
   }
 
   updateConditionDateTime(id: number, val: string): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, dateTime: val } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, dateTime: val } : c)));
   }
 
   updateConditionDateOperation(id: number, op: DateOperation): void {
-    this.conditions.update((list) =>
-      list.map((c) => (c.id === id ? { ...c, dateOperation: op } : c)),
-    );
+    this.conditions.update((list) => list.map((c) => (c.id === id ? { ...c, dateOperation: op } : c)));
   }
 
   // ── Date mode ────────────────────────────────────────────────────────────
 
   selectDateMode(column: string, mode: DateMode): void {
     // Remove all existing date condition rows for this column
-    this.conditions.update((list) =>
-      list.filter((c) => !(c.column === column && c.columnType === 'date')),
-    );
+    this.conditions.update((list) => list.filter((c) => !(c.column === column && c.columnType === 'date')));
     // Add a fresh row for the chosen mode
     const dateOperation: DateOperation = mode === 'date' ? 'eq' : 'ge';
     this.conditions.update((list) => [
@@ -179,7 +159,7 @@ export class MetricsFiltersService {
   getOperationsForColumn(
     columnKey: string,
     filterColumns: FilterColumnConfig[],
-  ): Array<{ value: NumericOperation; symbol: string }> {
+  ): Array<{ value: NumericOperation; labelKey: string }> {
     const config = filterColumns.find((c) => c.key === columnKey);
     if (config?.allowedOperations) {
       return this.operations.filter((op) => config.allowedOperations!.includes(op.value));

@@ -165,17 +165,22 @@ export class MetricsFiltersComponent {
     return this.service.getDateMode(columnKey);
   }
 
-  getDateOperationSymbol(op: string): string {
-    const symbols: Record<string, string> = { ge: '≥', le: '≤', eq: '=' };
-    return symbols[op] ?? op;
+  getDateOperationLabelKey(op: DateOperation): string {
+    const keys: Record<DateOperation, string> = {
+      ge: 'activity.filter.date_op_ge',
+      le: 'activity.filter.date_op_le',
+      eq: 'activity.filter.date_op_eq',
+    };
+    return keys[op];
   }
 
-  getMonthLastDay(): string {
-    const month = this.selectedMonth();
-    if (!month) return '';
-    const [year, mo] = month.split('-');
-    const lastDay = new Date(Number(year), Number(mo), 0).getDate();
-    return `${month}-${String(lastDay).padStart(2, '0')}`;
+  onDateValueChange(conditionId: number, isoValue: string | null | undefined): void {
+    if (!isoValue) {
+      this.updateConditionDateValue(conditionId, '');
+      return;
+    }
+    // Slice to YYYY-MM-DD to avoid timezone-offset drift when constructing Date objects
+    this.updateConditionDateValue(conditionId, isoValue.slice(0, 10));
   }
 
   getColumnType(key: string) {
@@ -186,22 +191,24 @@ export class MetricsFiltersComponent {
     return this.service.getOperationsForColumn(key, this.filterColumns());
   }
 
+  getMonthLastDay(): string {
+    const month = this.selectedMonth();
+    if (!month) return '';
+    const [year, mo] = month.split('-');
+    const lastDay = new Date(Number(year), Number(mo), 0).getDate();
+    return `${month}-${String(lastDay).padStart(2, '0')}`;
+  }
+
   // ── Apply / Reset ────────────────────────────────────────────────────
 
   applyFilters(): void {
-    const event = this.service.buildApplyEvent(
-      this.showSyntheticStatus(),
-      this.syntheticStatuses(),
-    );
+    const event = this.service.buildApplyEvent(this.showSyntheticStatus(), this.syntheticStatuses());
     this.filtersApplied.emit(event);
     this.closeSidebar();
   }
 
   resetFilters(): void {
-    const event = this.service.buildResetEvent(
-      this.showSyntheticStatus(),
-      this.syntheticStatuses(),
-    );
+    const event = this.service.buildResetEvent(this.showSyntheticStatus(), this.syntheticStatuses());
     this.filtersApplied.emit(event);
     this.closeSidebar();
   }

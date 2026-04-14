@@ -60,6 +60,15 @@ export class MetricsPageComponent {
   readonly selectedItem = signal<ActivityLogItem | null>(null);
   readonly sidePanelExpanded = signal(false);
 
+  /** Always includes the current month at the top so the user can see it even with no data. */
+  readonly monthOptions = computed(() => {
+    const available = this.availableMonths();
+    const current = MetricsPageComponent.currentYearMonth();
+    if (available.length === 0) return [current];
+    if (!available.includes(current)) return [current, ...available];
+    return available;
+  });
+
   /** Search debounce — 250 ms delay before updating the filter signal. */
   private readonly searchInput$ = new Subject<string>();
   private readonly currentSearchTerm = signal<string>('');

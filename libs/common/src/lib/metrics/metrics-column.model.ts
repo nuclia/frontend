@@ -15,8 +15,11 @@ export interface MetricsColumnDef {
   value: (item: ActivityLogItem) => string | number | null | undefined;
 
   /**
-   * Column width. Wide columns (long text like question/answer) should use '400px'.
-   * Defaults to '180px'.
+   * Column width passed directly to the CSS grid template.
+   * Use a fixed value like `'120px'` for short content, or `'1fr'` for long text columns
+   * (question, answer, resource_id) — `1fr` columns are automatically capped at 400px
+   * via `minmax(180px, 400px)` in the grid computation.
+   * Defaults to `'180px'`.
    */
   width?: string;
 
