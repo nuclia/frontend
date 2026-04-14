@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfiguration, Prompts, Widget } from '@nuclia/core';
+import { GenerativeProvider, Prompts, Widget } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { combineLatest, Observable, tap } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
@@ -44,12 +44,13 @@ export class PromptLabComponent implements OnDestroy {
   private searchWidgetService = inject(SearchWidgetService);
   private sdk = inject(SDKService);
 
-  generativeModels: Observable<LearningConfiguration> = this.ragLabService.generativeModelList.pipe(
-    filter((models) => !!models),
-    map((models) => models as LearningConfiguration),
-    tap((models) => {
-      models.options?.forEach((model) => {
-        this.form.addControl(model.value, new FormControl<boolean>(false, { nonNullable: true }));
+  generativeProviders: Observable<GenerativeProvider[]> = this.ragLabService.generativeProviders.pipe(
+    filter((providers) => !!providers),
+    tap((providers) => {
+      providers.forEach((provider) => {
+        Object.keys(provider.models).forEach((model) => {
+          this.form.addControl(model, new FormControl<boolean>(false, { nonNullable: true }));
+        });
       });
       this.updateFormContent();
       this.cdr.detectChanges();

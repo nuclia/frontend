@@ -76,12 +76,21 @@
 
     <div class="field-spacing">
       <div class="title-s">{{ 'rag-lab.prompt-lab.configuration.models.title' | translate }}</div>
-      <div class="checkbox-container">
-        @if (generativeModels | async; as generativeModels) {
-          @for (model of generativeModels.options; track model.name) {
-            <pa-checkbox [formControlName]="model.value">
-              {{ model.name }}
-            </pa-checkbox>
+      <div class="providers-container">
+        @if (generativeProviders | async; as generativeProviders) {
+          @for (provider of generativeProviders; track provider.title) {
+            <div>
+              <div class="title-s">{{ provider.title }}</div>
+              <div class="checkbox-container">
+                @for (model of provider.models | keyvalue; track model.key) {
+                  <pa-checkbox
+                    [formControlName]="model.key"
+                    [help]="model.value.description || ''">
+                    {{ model.value.title }}
+                  </pa-checkbox>
+                }
+              </div>
+            </div>
           }
         }
       </div>

@@ -30,6 +30,18 @@
       margin-top: calc(-1 * #{rhythm(2) + rhythm(0.5)});
     }
   }
+
+  .providers-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    margin-top: rhythm(1);
+    
+    .title-s {
+      color: $color-neutral-regular;
+    }
+  }
+
   .checkbox-container {
     display: flex;
     flex-direction: column;
