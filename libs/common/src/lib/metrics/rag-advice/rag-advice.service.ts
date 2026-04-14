@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { cloneDeep } from '@flaps/core';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, RAG_METADATAS, Widget } from '@nuclia/core';
 
 export interface AdviceInput {
   question: string;
@@ -15,27 +17,118 @@ export interface AdviceInput {
   params?: {
     minScoreSemantic?: number;
     minScoreBm25?: number;
+    topK?: number;
     ragStrategies?: string[];
     model?: string;
     filter?: string;
+    rephrase?: boolean;
+    systemPrompt?: string;
   };
   status?: string;
   userExpectation?: string;
+  /** History of exploration rounds — used when re-generating advice after one or more test runs. */
+  iterationHistory?: IterationHistoryEntry[];
 }
+
+/** One exploration round for the advisor prompt context. */
+export interface IterationHistoryEntry {
+  round: number;
+  paramsDescription: string;
+  outcome: 'no_context' | 'no_answer' | 'answer';
+  answer?: string;
+  remiScore?: number;
+  remiAnswerRelevance?: number;
+  remiContentRelevance?: number;
+  remiGroundedness?: number;
+}
+
+type SuggestedAdviceParams = Partial<{
+  minScoreSemantic: number;
+  minScoreBm25: number;
+  topK: number;
+  ragStrategies: string[];
+  systemPrompt: string;
+  rephrase: boolean;
+}> & { model?: never };
 
 export interface AdviceResult {
   diagnosis: string;
   suggestions: string[];
-  suggestedParams?: Partial<{
-    minScoreSemantic: number;
-    minScoreBm25: number;
-    topK: number;
-    ragStrategies: string[];
-    model: string;
-    systemPrompt: string;
-    rephrase: boolean;
-  }>;
+  suggestedParams?: SuggestedAdviceParams;
   rawResponse: string;
+}
+
+/** View-model for the editable params panel in the exploration modal. */
+export interface EditableParams {
+  minScoreSemantic: number | null;
+  minScoreBm25: number | null;
+  topK: number | null;
+  neighbouringParagraphs: boolean;
+  fullResource: boolean;
+  metadatas: boolean;
+  graph: boolean;
+  rephrase: boolean;
+  model: string;
+  systemPrompt: string;
+}
+
+/**
+ * Converts editable exploration params into a Widget.SearchConfiguration that can be saved
+ * via SearchWidgetService.saveSearchConfig().
+ *
+ * Note: minScoreSemantic and minScoreBm25 are KB-level thresholds — they are NOT part of
+ * widget configurations and must be applied separately in KB defaults.
+ */
+export function suggestedParamsToSearchConfig(
+  params: EditableParams,
+  configId: string,
+): Widget.TypedSearchConfiguration {
+  const config = cloneDeep(NUCLIA_STANDARD_SEARCH_CONFIG) as Widget.TypedSearchConfiguration;
+  config.id = configId;
+
+  if (params.topK !== null) {
+    config.searchBox.limitParagraphs = true;
+    config.searchBox.paragraphsLimit = params.topK;
+  }
+  config.searchBox.rephraseQuery = params.rephrase;
+
+  if (params.model) {
+    config.generativeAnswer.generativeModel = params.model;
+  }
+  if (params.systemPrompt) {
+    config.generativeAnswer.useSystemPrompt = true;
+    config.generativeAnswer.systemPrompt = params.systemPrompt;
+  }
+
+  config.generativeAnswer.ragStrategies.includeNeighbouringParagraphs =
+    params.neighbouringParagraphs && !params.fullResource;
+  if (params.neighbouringParagraphs && !params.fullResource) {
+    config.generativeAnswer.ragStrategies.precedingParagraphs = 1;
+    config.generativeAnswer.ragStrategies.succeedingParagraphs = 1;
+  }
+  config.generativeAnswer.ragStrategies.entireResourceAsContext = params.fullResource;
+  config.generativeAnswer.ragStrategies.metadatasRagStrategy = params.metadatas;
+  if (params.metadatas) {
+    config.generativeAnswer.ragStrategies.metadatas = {
+      [RAG_METADATAS.ORIGIN]: true,
+      [RAG_METADATAS.LABELS]: true,
+      [RAG_METADATAS.NERS]: true,
+      [RAG_METADATAS.EXTRA]: true,
+    };
+  }
+  config.generativeAnswer.ragStrategies.graphRagStrategy = params.graph;
+  if (params.graph) {
+    config.generativeAnswer.ragStrategies.graph = {
+      hops: 1,
+      top_k: 10,
+      exclude_processor_relations: false,
+      relation_text_as_paragraphs: false,
+      generative_relation_ranking: false,
+      suggest_query_entity_detection: false,
+    };
+  }
+
+  return config;
 }
 
 interface NdjsonItem {
@@ -53,12 +146,10 @@ export class RagAdviceService {
   generateAdvice(input: AdviceInput): Observable<AdviceResult> {
     const query = this.buildQuery(input);
 
-    return this.http
-      .post(this.PUBLIC_KB_URL, { query }, { params: { synchronous: 'true' }, responseType: 'text' })
-      .pipe(
-        map((rawText) => this.parseAdvice(this.extractAnswerFromNdjson(rawText))),
-        catchError((err) => throwError(() => err)),
-      );
+    return this.http.post(this.PUBLIC_KB_URL, { query }, { responseType: 'text' }).pipe(
+      map((rawText) => this.parseAdvice(this.extractAnswerFromNdjson(rawText))),
+      catchError((err) => throwError(() => err)),
+    );
   }
 
   private extractAnswerFromNdjson(rawText: string): string {
@@ -79,163 +170,117 @@ export class RagAdviceService {
   }
 
   private buildQuery(input: AdviceInput): string {
-    const { question, answer, context, remiScores, params, status, userExpectation } = input;
-
+    const { question, answer, context, remiScores, params, status, userExpectation, iterationHistory } = input;
     const formattedStatus = this.formatStatus(status);
-    const truncatedContext = context ? context.slice(0, 1500) : null;
 
-    const scoreLines: string[] = [];
-    if (remiScores) {
-      if (remiScores.answerRelevance !== undefined) {
-        scoreLines.push(`  - Answer Relevance: ${remiScores.answerRelevance.toFixed(2)} / 5`);
-      }
-      if (remiScores.contextRelevance !== undefined) {
-        scoreLines.push(`  - Context Relevance: ${remiScores.contextRelevance.toFixed(2)} / 5`);
-      }
-      if (remiScores.groundedness !== undefined) {
-        scoreLines.push(`  - Groundedness: ${remiScores.groundedness.toFixed(2)} / 5`);
-      }
-    }
-
-    const paramLines: string[] = [];
-    if (params) {
-      if (params.minScoreSemantic !== undefined) {
-        paramLines.push(`  - min_score_semantic: ${params.minScoreSemantic}`);
-      }
-      if (params.minScoreBm25 !== undefined) {
-        paramLines.push(`  - min_score_bm25: ${params.minScoreBm25}`);
-      }
-      if (params.ragStrategies !== undefined && params.ragStrategies.length > 0) {
-        paramLines.push(`  - rag_strategies: ${params.ragStrategies.join(', ')}`);
-      }
-      if (params.model) {
-        paramLines.push(`  - model: ${params.model}`);
-      }
-      if (params.filter) {
-        paramLines.push(`  - filter: ${params.filter}`);
-      }
-    }
-
-    const sections: string[] = [
-      `I need help tuning a Nuclia RAG (Retrieval-Augmented Generation) pipeline. Here is the diagnostic data:`,
+    // ── Situation block ───────────────────────────────────────────────────────
+    const lines: string[] = [
+      `You are an expert in Retrieval-Augmented Generation (RAG) systems.`,
+      `A user needs help diagnosing why their knowledge base query is performing poorly.`,
       ``,
-      `## Query & Response`,
-      `Question: ${question}`,
-      `Answer: ${answer}`,
-      `Status: ${formattedStatus}`,
+      `Question asked: "${question}"`,
     ];
 
     if (userExpectation) {
-      sections.push(`User expectation: ${userExpectation}`);
+      lines.push(`User's expectation (use this to guide your diagnosis): ${userExpectation}`);
     }
 
-    if (scoreLines.length > 0) {
-      sections.push(``, `## REMi Quality Scores (scale 0–5)`);
-      sections.push(...scoreLines);
+    lines.push(`Answer received: ${answer || '(none)'}`, `Retrieval status: ${formattedStatus}`);
+
+    if (remiScores) {
+      lines.push(``);
+      lines.push(`Quality scores (scale 0–5, higher is better):`);
+      if (remiScores.answerRelevance !== undefined) {
+        lines.push(
+          `  Answer Relevance ${remiScores.answerRelevance.toFixed(2)}/5 — does the answer address the question?`,
+        );
+      }
+      if (remiScores.contextRelevance !== undefined) {
+        lines.push(
+          `  Context Relevance ${remiScores.contextRelevance.toFixed(2)}/5 — did retrieval find content relevant to the question?`,
+        );
+      }
+      if (remiScores.groundedness !== undefined) {
+        lines.push(
+          `  Groundedness ${remiScores.groundedness.toFixed(2)}/5 — is the answer supported by the retrieved content?`,
+        );
+      }
     }
 
-    if (paramLines.length > 0) {
-      sections.push(``, `## Current RAG Parameters`);
-      sections.push(...paramLines);
+    if (params) {
+      const paramParts: string[] = [];
+      if (params.minScoreSemantic !== undefined) paramParts.push(`min_score_semantic=${params.minScoreSemantic}`);
+      if (params.minScoreBm25 !== undefined) paramParts.push(`min_score_bm25=${params.minScoreBm25}`);
+      if (params.topK !== undefined) paramParts.push(`top_k=${params.topK}`);
+      if (params.ragStrategies?.length) paramParts.push(`rag_strategies=[${params.ragStrategies.join(', ')}]`);
+      if (params.rephrase !== undefined) paramParts.push(`rephrase=${params.rephrase}`);
+      if (paramParts.length > 0) {
+        lines.push(``, `Active pipeline settings: ${paramParts.join(', ')}`);
+      }
     }
 
-    if (truncatedContext) {
-      sections.push(``, `## Retrieved Context (truncated to 1500 chars)`, truncatedContext);
+    if (context) {
+      lines.push(``, `Retrieved context (first 1000 chars):`, context.slice(0, 1000));
     }
 
-    sections.push(
+    // ── Exploration history ───────────────────────────────────────────────────
+    if (iterationHistory && iterationHistory.length > 0) {
+      lines.push(``, `Previous exploration rounds (do not repeat these):`);
+      for (const r of iterationHistory) {
+        const outcome =
+          r.outcome === 'no_context'
+            ? 'NO_CONTEXT — nothing was retrieved (threshold too strict)'
+            : r.outcome === 'no_answer'
+              ? 'no answer generated'
+              : `answer obtained${r.remiAnswerRelevance !== undefined ? ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})` : ''}`;
+        lines.push(`  Round ${r.round}: ${r.paramsDescription} → ${outcome}`);
+        if (r.outcome === 'answer' && r.answer) {
+          lines.push(`    Sample answer: "${r.answer.slice(0, 150)}"`);
+        }
+      }
+    }
+
+    // ── Parameter reference (descriptive, not prescriptive) ───────────────────
+    lines.push(
       ``,
-      `## Nuclia RAG Parameter Reference`,
-      ``,
-      `| Parameter | What it controls | Primary REMi impact |`,
-      `|-----------|-----------------|---------------------|`,
-      `| min_score_semantic | Semantic search quality threshold (0.0–1.0 scale, NOT the REMi 0–5 scale). Too low = noise; too high = NO_CONTEXT | context_relevance |`,
-      `| min_score_bm25 | Keyword search quality threshold | context_relevance |`,
-      `| top_k | Number of context chunks retrieved. Low = missing evidence; high = noisy context | context_relevance, groundedness |`,
-      `| rag_strategies: hierarchy | Includes document titles/headings with each paragraph | answer_relevance, context_relevance |`,
-      `| rag_strategies: neighbouring_paragraphs | Adds N paragraphs before/after each matched paragraph | groundedness (primary) |`,
-      `| rag_strategies: full_resource | Includes the entire source document in context (expensive) | groundedness |`,
-      `| rag_strategies: prequeries | Runs extra search queries to retrieve additional relevant context | context_relevance |`,
-      `| model | The generative LLM. Low answer_relevance with good context = wrong model | answer_relevance |`,
-      ``,
-      `IMPORTANT: For the \`model\` parameter:`,
-      `- ONLY include model in PARAMS_JSON if you have been given a current \`model\` value in the diagnostic data above.`,
-      `- If you suggest a different model, you MUST use one of these exact identifiers ONLY: chatgpt-azure-4o, chatgpt-azure-4-turbo, gemini-1-5-pro-001, claude-3-5-sonnet.`,
-      `- Do NOT invent model names. Do NOT use names like "new model", "gpt-4", "gpt-4o", or any other variant not in the list above.`,
-      `- If unsure, OMIT model from PARAMS_JSON entirely.`,
-      `| systemPrompt | System-level instruction to the LLM. Controls evasion and hallucination | answer_relevance, groundedness |`,
-      `| rephrase | Rewrites the query before retrieval using domain vocabulary | context_relevance |`,
-      ``,
-      `## Diagnostic Rules (apply the FIRST matching rule)`,
-      ``,
-      `RULE 1 — All scores ≤ 1.5 AND status = NO_CONTEXT:`,
-      `  Root cause: Nothing was retrieved. Either the KB lacks content OR min_score_semantic is too strict.`,
-      `  Fix priority: Lower min_score_semantic to 0.4–0.5. Check if filter_expression is over-restricting.`,
-      `  Do NOT suggest model changes.`,
-      ``,
-      `RULE 2 — All scores ≤ 1.5 AND status = SUCCESS (something retrieved but all scores bad):`,
-      `  Root cause: Retrieval failure — wrong content retrieved. The embedded query doesn't match KB content.`,
-      `  Fix priority: 1) Lower min_score_semantic slightly (try 0.4), 2) Add rag_strategies: hierarchy,`,
-      `  3) Enable rephrase if query phrasing might differ from KB vocabulary.`,
-      ``,
-      `RULE 3 — answer_relevance HIGH (≥ 3.5), context_relevance LOW (≤ 2):`,
-      `  Root cause: LLM is answering from its own training knowledge, NOT from the KB. Hallucination pattern.`,
-      `  Fix priority: 1) Add a strong systemPrompt: "Answer ONLY using the provided context. If the answer`,
-      `  is not in the context, say you don't have that information." 2) Check if KB actually contains`,
-      `  information about this topic (may be a content gap).`,
-      `  Do NOT suggest lowering min_score_semantic.`,
-      ``,
-      `RULE 4 — context_relevance HIGH (≥ 3.5), answer_relevance LOW (≤ 2):`,
-      `  Root cause: The KB has the right content, but the LLM is ignoring it or being evasive.`,
-      `  Fix priority: 1) Switch model (the model is the primary suspect), 2) Simplify systemPrompt if one`,
-      `  exists. This is the ONLY pattern where switching model is the primary fix.`,
-      ``,
-      `RULE 5 — context_relevance HIGH (≥ 3.5), answer_relevance HIGH (≥ 3.5), groundedness LOW (≤ 2):`,
-      `  Root cause: LLM answer is relevant but not supported by retrieved text. Either adding claims beyond`,
-      `  context OR the supporting evidence wasn't in the retrieved paragraphs.`,
-      `  Fix priority: 1) Add rag_strategies: neighbouring_paragraphs (evidence may be adjacent),`,
-      `  2) Add systemPrompt grounding instruction, 3) Increase top_k.`,
-      ``,
-      `RULE 6 — All scores medium (2–3.5):`,
-      `  Root cause: Noisy retrieval — mix of relevant and irrelevant content.`,
-      `  Fix priority: 1) Add rag_strategies: hierarchy (cheapest improvement), 2) Increase min_score_semantic`,
-      `  by 0.1 (IMPORTANT: min_score_semantic is on a 0.0–1.0 scale, NOT the REMi 0–5 scale; if the current`,
-      `  value is known, add 0.1 to it; if no current value is set, use 0.55 as the target), 3) Reduce top_k`,
-      `  to 10–12 to concentrate on best matches.`,
-      ``,
-      `RULE 7 — groundedness LOW specifically, answer/context acceptable:`,
-      `  Root cause: Answer makes claims not found in retrieved paragraphs.`,
-      `  Fix priority: Add rag_strategies: neighbouring_paragraphs. Also add systemPrompt grounding constraint.`,
-      `  Do NOT suggest changing minScoreSemantic or minScoreBm25 for this pattern.`,
-      ``,
-      `## Your Task`,
-      ``,
-      `1. Identify which diagnostic RULE above applies to these specific scores.`,
-      `2. Write a DIAGNOSIS that explains the root cause for THIS specific question ("${question}") —`,
-      `   reference the actual score values and explain what they mean for this case.`,
-      `3. Write 2–3 SUGGESTIONS that are specific to this situation. Do not use generic phrases like`,
-      `   "add more content" unless context_relevance is high but the KB actually seems to lack information.`,
-      `   Each suggestion must reference a specific parameter or action.`,
-      `4. Output a PARAMS_JSON block with only the parameters you are recommending changing.`,
-      ``,
-      `IMPORTANT: Do NOT use markdown headers (##). Do NOT bold text with **. Use plain text only.`,
-      ``,
-      `Use EXACTLY this format (copy it verbatim, replacing only the content after the colons):`,
-      ``,
-      `DIAGNOSIS: The retrieval failure (all scores <= 1.5 with SUCCESS status) indicates the wrong content was retrieved. The min_score_semantic threshold of 0.7 is filtering out relevant paragraphs.`,
-      ``,
-      `SUGGESTIONS:`,
-      `1. Lower min_score_semantic from 0.7 to 0.4 to retrieve more context paragraphs.`,
-      `2. Add rag_strategies: hierarchy to include document headings with each paragraph.`,
-      `3. Enable rephrase to rewrite the query in domain vocabulary before retrieval.`,
-      ``,
-      `PARAMS_JSON: {"minScoreSemantic": 0.4, "ragStrategies": ["hierarchy"], "rephrase": true}`,
-      ``,
-      `The PARAMS_JSON line is REQUIRED when you suggest any parameter change. It must be the last line. Do not put it inside a sentence.`,
-      `(Valid keys: minScoreSemantic, minScoreBm25, topK, ragStrategies, model, systemPrompt, rephrase. The opening brace { is REQUIRED. ragStrategies is an array of strings: ["hierarchy", "neighbouring_paragraphs"]. rephrase is a boolean. systemPrompt is a string.)`,
+      `What each parameter controls:`,
+      `  min_score_semantic (0.0–1.0): semantic similarity threshold. Too high → NO_CONTEXT; too low → irrelevant content retrieved.`,
+      `  min_score_bm25 (0.0–10.0): keyword match threshold. Same trade-off.`,
+      `  top_k: number of passages retrieved. Higher = more context but more noise.`,
+      `  rephrase: rewrites the query using KB vocabulary before retrieval. Helps when user phrasing differs from KB content.`,
+      `  rag_strategies:`,
+      `    neighbouring_paragraphs — include passages adjacent to matched ones. Helps when evidence spans multiple paragraphs.`,
+      `    full_resource — include the entire source document. Expensive; use when matched passages are too narrow.`,
+      `    metadata_extension — attach document metadata (labels, categories) to each passage.`,
+      `    graph_beta — graph traversal to find related entities (hops=1). Helps with concept-heavy or relational queries.`,
+      `  systemPrompt: instruction sent to the LLM (e.g. "answer only from the provided context").`,
     );
 
-    return sections.join('\n');
+    // ── Task ──────────────────────────────────────────────────────────────────
+    lines.push(
+      ``,
+      `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? ` Factor in the user's stated expectation.` : ''} Write:`,
+      ``,
+      `DIAGNOSIS: 1–2 sentences explaining what the scores reveal about where the pipeline is failing. Reference the actual values.`,
+      ``,
+      `SUGGESTIONS:`,
+      `1. <specific parameter change with exact value — explain why it addresses the diagnosed failure>`,
+      `2. <second change>`,
+      `3. <third change — omit if only 2 are needed>`,
+      ``,
+      `PARAMS_JSON: {"key": value}`,
+      ``,
+      `PARAMS_JSON rules (follow exactly):`,
+      `- Must be valid JSON with double quotes. Example: PARAMS_JSON: {"minScoreSemantic": 0.3, "rephrase": true}`,
+      `- Required when you suggest any parameter change. Must be the LAST line of your response.`,
+      `- Do NOT embed PARAMS_JSON inside a sentence or paragraph.`,
+      `- Valid keys only: minScoreSemantic, minScoreBm25, topK, ragStrategies, systemPrompt, rephrase`,
+      `- ragStrategies must be a JSON array of strings using double quotes, e.g. ["neighbouring_paragraphs", "metadata_extension"]`,
+      `- Do NOT suggest parameters already tried in previous rounds`,
+      `- Do NOT use markdown headers or bold text in your response`,
+    );
+
+    return lines.join('\n');
   }
 
   private formatStatus(status?: string): string {
@@ -264,8 +309,9 @@ export class RagAdviceService {
 
     // Extract DIAGNOSIS section — try plain `DIAGNOSIS:` first, fall back to `## DIAGNOSIS` header.
     const diagnosisMatch =
-      rawResponse.match(/DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/) ??
-      rawResponse.match(/##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/);
+      rawResponse.match(
+        /DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/,
+      ) ?? rawResponse.match(/##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/);
     const diagnosis = diagnosisMatch ? diagnosisMatch[1].trim() : rawResponse.trim();
 
     // Extract SUGGESTIONS section — try plain `SUGGESTIONS:` first, fall back to `## SUGGESTIONS` header.
@@ -287,17 +333,8 @@ export class RagAdviceService {
     }
 
     // Extract PARAMS_JSON section — two-stage approach to handle well-formed and malformed output.
-    let suggestedParams:
-      | Partial<{
-          minScoreSemantic: number;
-          minScoreBm25: number;
-          topK: number;
-          ragStrategies: string[];
-          model: string;
-          systemPrompt: string;
-          rephrase: boolean;
-        }>
-      | undefined;
+    let suggestedParams: SuggestedAdviceParams | undefined;
+    let rawSuggestedParams: Record<string, unknown> | undefined;
 
     // Grab everything after "PARAMS_JSON:" on its line (single-line content from the LLM).
     const paramsLineMatch = rawResponse.match(/PARAMS_JSON:(.+)/);
@@ -311,8 +348,11 @@ export class RagAdviceService {
       if (jsonBlockMatch) {
         const jsonText = jsonBlockMatch[0].replace(/\/\/[^\n]*/g, '').trim();
         try {
-          suggestedParams = JSON.parse(jsonText);
-          stage1Succeeded = true;
+          const parsed = JSON.parse(jsonText);
+          if (this.isSuggestedParamsRecord(parsed)) {
+            rawSuggestedParams = parsed;
+            stage1Succeeded = true;
+          }
         } catch {
           console.warn('[RagAdviceService] Stage 1: malformed JSON block in PARAMS_JSON:', jsonText);
         }
@@ -324,8 +364,11 @@ export class RagAdviceService {
       if (!stage1Succeeded) {
         const reconstructed = '{"' + lineContent.trim() + '}';
         try {
-          suggestedParams = JSON.parse(reconstructed);
-          stage1Succeeded = true;
+          const parsed = JSON.parse(reconstructed);
+          if (this.isSuggestedParamsRecord(parsed)) {
+            rawSuggestedParams = parsed;
+            stage1Succeeded = true;
+          }
         } catch {
           // Truncated or otherwise unparseable — fall through to Stage 2
         }
@@ -334,7 +377,14 @@ export class RagAdviceService {
       // Stage 2 — fallback: extract individual key-value pairs when no valid {...} block exists.
       // Handles output like `PARAMS_JSON:minScoreSemantic": 0.3` (missing braces, stray quotes).
       if (!stage1Succeeded) {
-        const KNOWN_KEYS = ['minScoreSemantic', 'minScoreBm25', 'topK', 'model', 'ragStrategies', 'systemPrompt', 'rephrase'] as const;
+        const KNOWN_KEYS = [
+          'minScoreSemantic',
+          'minScoreBm25',
+          'topK',
+          'ragStrategies',
+          'systemPrompt',
+          'rephrase',
+        ] as const;
         type KnownKey = (typeof KNOWN_KEYS)[number];
 
         // Match: optional leading junk, word-char key, optional stray `"`, colon+space, value.
@@ -369,7 +419,7 @@ export class RagAdviceService {
         }
 
         if (Object.keys(extracted).length > 0) {
-          suggestedParams = extracted as typeof suggestedParams;
+          rawSuggestedParams = extracted;
         } else {
           console.warn('[RagAdviceService] Stage 2: no known key-value pairs found in PARAMS_JSON line:', lineContent);
         }
@@ -379,7 +429,7 @@ export class RagAdviceService {
     // Inline-value fallback — when PARAMS_JSON is absent entirely (e.g. markdown-format response
     // that never emitted the line), scan all suggestion text for parameter values mentioned inline.
     // Best-effort only: extracts the first matched value for each recognised pattern.
-    if (!suggestedParams && suggestions.length > 0) {
+    if (!rawSuggestedParams && suggestions.length > 0) {
       const allSuggestionText = suggestions.join('\n');
       const inlineExtracted: Record<string, unknown> = {};
 
@@ -399,30 +449,37 @@ export class RagAdviceService {
       }
 
       if (Object.keys(inlineExtracted).length > 0) {
-        suggestedParams = inlineExtracted as unknown as typeof suggestedParams;
+        rawSuggestedParams = inlineExtracted;
       }
     }
 
-    // Post-parse validation: ensure min_score_* params are in 0.0–1.0 range regardless of which
-    // parse stage succeeded. Discards values where the LLM confused the REMi 0–5 scale with the
-    // 0.0–1.0 threshold scale (e.g. it output 2.6 when it meant "current score 2.5 + 0.1").
-    if (suggestedParams) {
-      for (const scoreKey of ['minScoreSemantic', 'minScoreBm25'] as const) {
-        const val = suggestedParams[scoreKey];
-        if (val !== undefined && (val > 1.0 || val < 0.0)) {
-          console.warn(`[RagAdviceService] post-parse: ${scoreKey} value ${val} is out of 0.0–1.0 range, discarding`);
-          delete suggestedParams[scoreKey];
-        }
+    // Post-parse validation: ensure min_score_* params are within their valid ranges regardless
+    // of which parse stage succeeded. minScoreSemantic is in 0.0–1.0; minScoreBm25 is in 0.0–10.0
+    // (BM25 scores are not bounded at 1.0). Discards values where the LLM confused scales
+    // (e.g. it output 2.6 for a semantic score when it meant "current score 2.5 + 0.1").
+    if (rawSuggestedParams) {
+      if (rawSuggestedParams['model'] !== undefined) {
+        console.warn('[RagAdviceService] post-parse: ignoring unsupported advisor model suggestion');
+        delete rawSuggestedParams['model'];
       }
 
-      // Validate model name — strip if it looks hallucinated (contains spaces or is too long)
-      if (suggestedParams.model !== undefined) {
-        const isValidModel = /^[a-z0-9][a-z0-9._/-]*[a-z0-9]$/i.test(suggestedParams.model) && suggestedParams.model.length <= 60;
-        if (!isValidModel) {
-          console.warn(`[RagAdviceService] post-parse: model "${suggestedParams.model}" looks hallucinated, discarding`);
-          suggestedParams.model = undefined;
-        }
+      const semanticVal = rawSuggestedParams['minScoreSemantic'];
+      if (typeof semanticVal === 'number' && (semanticVal > 1.0 || semanticVal < 0.0)) {
+        console.warn(
+          `[RagAdviceService] post-parse: minScoreSemantic value ${semanticVal} is out of 0.0–1.0 range, discarding`,
+        );
+        delete rawSuggestedParams['minScoreSemantic'];
       }
+
+      const bm25Val = rawSuggestedParams['minScoreBm25'];
+      if (typeof bm25Val === 'number' && (bm25Val > 10.0 || bm25Val < 0.0)) {
+        console.warn(
+          `[RagAdviceService] post-parse: minScoreBm25 value ${bm25Val} is out of 0.0–10.0 range, discarding`,
+        );
+        delete rawSuggestedParams['minScoreBm25'];
+      }
+
+      suggestedParams = rawSuggestedParams as SuggestedAdviceParams;
     }
 
     return {
@@ -431,5 +488,9 @@ export class RagAdviceService {
       suggestedParams,
       rawResponse,
     };
+  }
+
+  private isSuggestedParamsRecord(value: unknown): value is Record<string, unknown> {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
   }
 }

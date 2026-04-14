@@ -33,6 +33,12 @@ export interface MetricsColumnDef {
   group?: string;
 
   /**
+   * Optional color tier function for numeric score cells.
+   * Return 'low' (≤2, red), 'mid' (2–4, yellow), 'high' (≥4, green), or null for no coloring.
+   */
+  colorFn?: (item: ActivityLogItem) => 'low' | 'mid' | 'high' | null;
+
+  /**
    * Optional inline action button rendered inside this cell (to the right of the value).
    * When set, the cell content is wrapped in a flex row with the value on the left and the
    * button on the right. The button emits `rowActionTriggered` on the parent metrics-page.

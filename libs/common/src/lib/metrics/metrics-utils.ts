@@ -88,3 +88,17 @@ export function applyNumericConditions(
     filters[c.column] = existing;
   }
 }
+
+/**
+ * Maps a numeric REMi score (0–5 scale) to a colour tier.
+ * low  → ≤2   (red)
+ * mid  → 2–4  (amber)
+ * high → ≥4   (green)
+ * Returns null when the value is absent so callers can skip styling entirely.
+ */
+export function getRemiColorClass(val: number | null | undefined): 'low' | 'mid' | 'high' | null {
+  if (val === null || val === undefined) return null;
+  if (val <= 2) return 'low';
+  if (val >= 4) return 'high';
+  return 'mid';
+}

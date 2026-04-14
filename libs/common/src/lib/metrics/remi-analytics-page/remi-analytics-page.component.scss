@@ -157,39 +157,18 @@
       gap: rhythm(1);
     }
 
-    // Wrapper for positioning the advice button absolutely over the header
-    .accordion-item-wrapper {
-      position: relative;
-
-      .accordion-header-advice-btn {
-        @include reset-button();
-        position: absolute;
-        top: rhythm(2);
-        right: rhythm(2);
-        z-index: $z-index-default + 1;
-        cursor: pointer;
-        padding: rhythm(0.5);
-        border-radius: $border-radius-default;
-        color: $color-primary-regular;
-        display: flex;
-        align-items: center;
-        opacity: 0;
-        transition: opacity 0.15s;
-
-        &:hover {
-          background: $color-primary-lightest;
-        }
-      }
-
-      &:hover .accordion-header-advice-btn {
-        opacity: 1;
-      }
-    }
-
     // Subtle border around each accordion item (host-level — no ::ng-deep)
     pa-accordion-item {
       border: 1px solid $color-neutral-lighter;
       border-radius: $border-radius-default;
+      position: relative;
+
+      .accordion-header-advice-btn {
+        position: absolute;
+        top: rhythm(1);
+        right: rhythm(2);
+        z-index: $z-index-default + 1;
+      }
     }
 
     // Expanded item — header separator + body background (internal — needs ::ng-deep)

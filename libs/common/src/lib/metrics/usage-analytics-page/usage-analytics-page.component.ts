@@ -12,9 +12,10 @@ import {
 } from '../metrics-filters';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-analytics-page.config';
-import { openRagAdviceModal, RagAdviceModalComponent } from '../rag-advice/rag-advice.component';
+import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { SisModalService } from '@nuclia/sistema';
+import { getRemiColorClass } from '../metrics-utils';
 
 @Component({
   selector: 'app-usage-analytics-page',
@@ -94,6 +95,11 @@ export class UsageAnalyticsPageComponent {
     this.service.loadNextPage();
   }
 
+  remiColor(val: number | null): string {
+    const cls = getRemiColorClass(val);
+    return cls ? `remi-${cls}` : '';
+  }
+
   // ── Filter handlers ───────────────────────────────────────────────────────
 
   onFiltersApplied(event: FilterApplyEvent): void {
@@ -110,8 +116,7 @@ export class UsageAnalyticsPageComponent {
     this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
   }
 
-  openAdvice(item: ActivityLogItem): void {
-    this.service
+  openAdvice(item: ActivityLogItem): void {    this.service
       .fetchActivityParams(item.id)
       .pipe(take(1))
       .subscribe((fullItem) => {
@@ -135,6 +140,7 @@ export class UsageAnalyticsPageComponent {
           params: {
             minScoreSemantic: src.min_score_semantic ?? undefined,
             minScoreBm25: src.min_score_bm25 ?? undefined,
+            topK: src.result_per_page ?? undefined,
             ragStrategies: src.rag_strategies_names ?? undefined,
             model: src.model ?? undefined,
             filter: src.filter ?? undefined,

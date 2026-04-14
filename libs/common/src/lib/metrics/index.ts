@@ -2,5 +2,7 @@ export * from './abstract-metrics-page.service';
 export * from './metrics.module';
 export * from './metrics-column.model';
 export * from './metrics-filters';
+export * from './metrics-utils';
+export * from './remi-score-badge';
 export * from './remi-analytics-page';
 export * from './legacy';

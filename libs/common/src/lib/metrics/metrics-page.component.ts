@@ -163,6 +163,7 @@ export class MetricsPageComponent {
       key: col.key,
       label: col.label,
       value: col.value,
+      colorFn: col.colorFn,
       group: col.group || 'query',
       expandable: this.isLargeTextField(col.key),
       isColumn: true,
@@ -172,6 +173,7 @@ export class MetricsPageComponent {
       key: field.key,
       label: field.label,
       value: field.value,
+      colorFn: undefined as ((item: ActivityLogItem) => 'low' | 'mid' | 'high' | null) | undefined,
       group: field.group || 'query',
       expandable: field.expandable || this.isLargeTextField(field.key),
       isColumn: false,
@@ -231,13 +233,18 @@ export class MetricsPageComponent {
   }
 
   isRemiScoreLow(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    const val = col.value(item);
-    return typeof val === 'number' && val <= 2;
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'low';
+  }
+
+  isRemiScoreMid(item: ActivityLogItem, col: MetricsColumnDef): boolean {
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'mid';
   }
 
   isRemiScoreHigh(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    const val = col.value(item);
-    return typeof val === 'number' && val >= 4;
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'high';
   }
 
   // ── Download ──────────────────────────────────────────────────────────────

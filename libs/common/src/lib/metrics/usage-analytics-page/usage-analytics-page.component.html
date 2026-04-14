@@ -33,15 +33,21 @@
     class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().answerRelevance | compactNumber }}</div>
+      <div class="display-s" [class]="remiColor(service.remiScoreAverages().answerRelevance)">
+        {{ service.remiScoreAverages().answerRelevance | compactNumber }}
+      </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-context-relevance' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().contextRelevance | compactNumber }}</div>
+      <div class="display-s" [class]="remiColor(service.remiScoreAverages().contextRelevance)">
+        {{ service.remiScoreAverages().contextRelevance | compactNumber }}
+      </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-groundedness' | translate }}</div>
-      <div class="display-s">{{ service.remiScoreAverages().groundedness | compactNumber }}</div>
+      <div class="display-s" [class]="remiColor(service.remiScoreAverages().groundedness)">
+        {{ service.remiScoreAverages().groundedness | compactNumber }}
+      </div>
     </div>
   </div>
 </app-metrics-page>
