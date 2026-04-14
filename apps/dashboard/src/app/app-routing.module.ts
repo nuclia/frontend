@@ -149,10 +149,12 @@ const routes: Routes = [
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'ai-models',
                 component: AiModelsComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'users',
@@ -167,6 +169,7 @@ const routes: Routes = [
               {
                 path: 'widgets',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'rag-lab',
@@ -259,14 +262,12 @@ const routes: Routes = [
               {
                 path: 'widgets',
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
-              },
-              {
-                path: 'ai-models',
-                component: AiModelsComponent,
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'users',
