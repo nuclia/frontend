@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -71,12 +71,19 @@ export class LoginComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
     private samlService: SAMLService,
+    private featuresService: FeaturesService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
     const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
-    this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
+    this.featuresService.unstable.progressComSignup.subscribe((hasProgressComSignup) => {
+      if (hasProgressComSignup) {
+        this.signUpUrl = 'https://www.progress.com/agentic-rag/free-trial-sign-up';
+      } else {
+        this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
+      }
+    });
     this.route.data.subscribe((data) => {
       if (data['loginData']?.['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
