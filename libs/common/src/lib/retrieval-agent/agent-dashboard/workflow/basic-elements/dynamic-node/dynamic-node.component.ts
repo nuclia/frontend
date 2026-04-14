@@ -112,11 +112,11 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
 
   private formatSourcesValue(value: string[], drivers: Driver[]) {
     return value.map((id) => {
-      const source = drivers?.find((driver) => driver.identifier === id);
+      const source = drivers.find((driver) => driver.identifier === id);
       return {
         value: source?.name || id,
         description: ['nucliadb', 'sync'].includes(source?.provider || '')
-          ? (source as NucliaDBDriver).config.description
+          ? (source as NucliaDBDriver | undefined)?.config.description
           : undefined,
       };
     });
