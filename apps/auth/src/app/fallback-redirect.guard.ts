@@ -27,7 +27,10 @@ export const fallbackRedirectGuard = () => {
     // cameFrom failed validation — show the 404 page rather than guessing a redirect target
     return true;
   }
-  window.location.href = `${safeOrigin}${window.location.pathname}${window.location.search}`;
+  const redirectUrl = new URL(safeOrigin);
+  redirectUrl.pathname = window.location.pathname;
+  redirectUrl.search = window.location.search;
+  window.location.href = redirectUrl.toString();
   return false;
 };
 
