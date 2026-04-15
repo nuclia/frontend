@@ -184,7 +184,9 @@
     }
   }
 
-  .param-field {
+  // Shared indicator bar for param-field and strategy-field
+  .param-field,
+  .param-strategies .strategy-field {
     position: relative;
     padding-left: rhythm(1);
 
@@ -233,27 +235,6 @@
     .strategy-field {
       flex: 1;
       min-width: 200px;
-      position: relative;
-      padding-left: rhythm(1);
-
-      &::before {
-        content: '';
-        display: block;
-        width: 3px;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        border-radius: 2px;
-      }
-
-      &.param-suggested::before {
-        background: var(--color-primary-regular, #4731a7);
-      }
-
-      &.param-modified::before {
-        background: var(--color-secondary-regular, #e06c00);
-      }
     }
   }
 
