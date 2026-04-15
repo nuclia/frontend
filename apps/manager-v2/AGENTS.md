@@ -3,6 +3,7 @@
 ## Overview
 
 **Manager V2** (`apps/manager-v2`) is an internal Angular administration console for Nuclia back-office operators (ROOT, MANAGER, READONLY roles). Manages:
+
 - **Accounts** — create, configure, delete; manage limits, blocked features, KBs, custom AI models.
 - **Users** — global platform user CRUD.
 - **Zones** — NucliaDB deployment zones (cloud regions, subdomain config).
@@ -70,7 +71,9 @@ AppLayoutComponent (canActivate: authGuard)
 ## State Management
 
 ### `ManagerStore` (`src/app/manager.store.ts`)
+
 BehaviorSubject-based reactive store (`providedIn: 'root'`). Central source for:
+
 - `accountDetails`, `kbSummaries`, `zones` — currently loaded account data
 - `canEdit`, `canDelete`, `canManageUsers` — permission observables derived from `UserService.userType`
 - `isReadOnly`, `isManager`, `isRoot` — computed role flags
@@ -78,9 +81,11 @@ BehaviorSubject-based reactive store (`providedIn: 'root'`). Central source for:
 **All UI permission checks use `ManagerStore` observables — never access `UserService.userType` directly from components.**
 
 ### `AccountDetailsStore` (`manage-accounts/account-details/account-details.store.ts`)
+
 Secondary store for the account detail view: `ExtendedAccount`, KB summaries, zones.
 
 ### `ZoneService` (`manage-zones/zone.service.ts`)
+
 Eagerly loads all zones on construction. Exposes `zones` as a BehaviorSubject. Helpers: `getZoneDict()`, `getZoneSlug(id)`.
 
 ---
@@ -88,6 +93,7 @@ Eagerly loads all zones on construction. Exposes `zones` as a BehaviorSubject. H
 ## Service Architecture
 
 **Two-layer account service pattern:**
+
 - `GlobalAccountService` — global (non-zone) API at `/manage/@accounts` (CRUD, limits, blocked features, users, payment links).
 - `RegionalAccountService` — resolves zone slugs from `ZoneService`, instantiates per-zone `Nuclia` client instances for KB data.
 - `AccountService` — composes both, keeps `ManagerStore` in sync after every mutation.
@@ -98,8 +104,8 @@ Grafana/Redash monitoring URLs are built in `RegionalAccountService.getKbList()`
 
 ## Guard Summary
 
-| Guard | Behaviour |
-|---|---|
+| Guard                       | Behaviour                                                                                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `authGuard` (`@flaps/core`) | Checks `JWT_KEY` in localStorage. Redirects to `/user/login` + saves intended URL. Applied to `AppLayoutComponent` and all three child routes. |
 
 ---
@@ -137,7 +143,7 @@ Runtime config: `assets/deployment/app-config.json` (local: `environments_config
 
 ## Important Conventions
 
-1. **NgModule-based with selective standalone** — `TokenConsumptionComponent`, `ModelsComponent`, `AddModelComponent`, `ModelDetailsComponent` are standalone (Angular 19+). Declared in feature module as `imports[]`, not `declarations[]`.
+1. **NgModule-based with selective standalone** — `TokenConsumptionComponent`, `ModelsComponent`, `AddModelComponent`, `ModelDetailsComponent` are standalone (Angular 19+ default). `ZoneListComponent` explicitly opts out with `standalone: false` and is declared in `ManageZonesModule`. Declared standalone components appear in feature module `imports[]`, not `declarations[]`.
 2. **ManagerStore as permissions bus** — always read permissions from `ManagerStore` (`canEdit`, `canDelete`, etc.).
 3. **Lazy-loaded feature modules** — `accounts`, `users`, `zones` all use `loadChildren`. Keep it that way.
 4. **Two-layer account service** — `GlobalAccountService` for global mutations; `RegionalAccountService` for zone-aware reads; `AccountService` orchestrates both.

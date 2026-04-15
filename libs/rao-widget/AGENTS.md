@@ -27,8 +27,8 @@ libs/rao-widget/src/
 │   ├── RaoProvider.tsx   # Core state: auth (ephemeral JWT), WebSocket chat, conversation, sessions
 │   └── RaoContext.ts     # React context + useRaoContext hook
 ├── repository/
-│   ├── auth.ts           # Ephemeral JWT token endpoint
-│   ├── chat.ts           # WebSocket-based streaming ARAG chat
+│   ├── auth.ts           # createAuthApi() factory — ephemeral JWT token endpoint; supports service-account header override
+│   ├── chat.ts           # ChatRepository factory — WebSocket ARAG chat; ChatHandlers, ChatConnectOptions, ChatConnection interfaces
 │   └── sessions.ts       # Catalog API — list/get/create sessions
 └── components/
     ├── Icon/             # SVG sprite <use> icon (sm|md|lg)
@@ -48,22 +48,22 @@ Attribute names are kebab-case; normalized to camelCase before passing to React.
 
 ### Required attributes
 
-| Attribute | Description |
-|---|---|
-| `account` | Progress/Nuclia account ID |
-| `zone` | Deployment zone (e.g., `europe-1`) — prepended to backend hostname |
-| `aragid` (or `arag`) | Knowledge Box / Retrieval Agent UUID |
+| Attribute            | Description                                                        |
+| -------------------- | ------------------------------------------------------------------ |
+| `account`            | Progress/Nuclia account ID                                         |
+| `zone`               | Deployment zone (e.g., `europe-1`) — prepended to backend hostname |
+| `aragid` (or `arag`) | Knowledge Box / Retrieval Agent UUID                               |
 
 ### Key optional attributes
 
-| Attribute | Default | Description |
-|---|---|---|
-| `backend` | `https://rag.progress.cloud/api` | Base HTTP endpoint; zone prefix auto-injected |
-| `apikey` | — | Bearer key; falls back to `localStorage.getItem('JWT_KEY')` |
-| `viewtype` | `"conversation"` | `"conversation"` = inline Standard view; `"floating"` = launcher + overlay |
-| `promptconfig` | — | JSON: `{"prompts":["…"],"usefallbackprompts":false,"visibleprompts":4}` |
-| `recordingconfig` | — | JSON: `{"language":"en-US"}` — enables microphone button |
-| `resources` | `DEFAULT_RESOURCES` | JSON partial override of all UI text labels (see `IResources`) |
+| Attribute         | Default                          | Description                                                                |
+| ----------------- | -------------------------------- | -------------------------------------------------------------------------- |
+| `backend`         | `https://rag.progress.cloud/api` | Base HTTP endpoint; zone prefix auto-injected                              |
+| `apikey`          | —                                | Bearer key; falls back to `localStorage.getItem('JWT_KEY')`                |
+| `viewtype`        | `"conversation"`                 | `"conversation"` = inline Standard view; `"floating"` = launcher + overlay |
+| `promptconfig`    | —                                | JSON: `{"prompts":["…"],"usefallbackprompts":false,"visibleprompts":4}`    |
+| `recordingconfig` | —                                | JSON: `{"language":"en-US"}` — enables microphone button                   |
+| `resources`       | `DEFAULT_RESOURCES`              | JSON partial override of all UI text labels (see `IResources`)             |
 
 ---
 
@@ -95,3 +95,4 @@ nx lint rao-widget
 6. **`version` token** — wrapper div has `data-version="__NUCLIA_DEV_VERSION__"`. This placeholder is replaced at build/release time.
 7. **Kebab-case attrs, camelCase props** — `web-component.tsx` converts `api-key` → `apiKey` via regex. Always define React props camelCase, HTML attrs kebab-case.
 8. **i18n via `resources` attr** — all text sourced from `IResources` (default English in `src/interfaces/const.ts`). Pass partial JSON as `resources` attribute to override labels.
+9. **Repository factory pattern** — `auth.ts` exports `createAuthApi(fetcher, accountId, knowledgeBoxId, config?)` returning `{ createEphemeralToken }`. `chat.ts` exports `ChatRepository` interface with `connect(options)` and `buildSocketUrl(...)`. Both are factory functions, not classes — instantiate per-component in `RaoProvider`.

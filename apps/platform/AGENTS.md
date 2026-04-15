@@ -68,21 +68,21 @@ apps/platform/src/
 
 ## Guards
 
-| Guard | Source | Enforces |
-|---|---|---|
-| `authGuard` | `@flaps/core` | User must be authenticated (`JWT_KEY` in localStorage) |
-| `rootGuard` | `@flaps/common` | Redirects to first account/KB or login |
-| `setAccountGuard` | `@flaps/common` | Loads account from URL slug into `SDKService` |
-| `selectAccountGuard` | `@flaps/common` | Skips selection if account already set |
-| `selectKbGuard` | `@flaps/common` | Redirects based on KB count |
-| `awsGuard` | `@flaps/common` | AWS Marketplace onboarding only |
-| `aragOwnerGuard` | `@flaps/common` | ARAG owner/admin required |
+| Guard                | Source          | Enforces                                               |
+| -------------------- | --------------- | ------------------------------------------------------ |
+| `authGuard`          | `@flaps/core`   | User must be authenticated (`JWT_KEY` in localStorage) |
+| `rootGuard`          | `@flaps/common` | Redirects to first account/KB or login                 |
+| `setAccountGuard`    | `@flaps/common` | Loads account from URL slug into `SDKService`          |
+| `selectAccountGuard` | `@flaps/common` | Skips selection if account already set                 |
+| `selectKbGuard`      | `@flaps/common` | Redirects based on KB count                            |
+| `awsGuard`           | `@flaps/common` | AWS Marketplace onboarding only                        |
 
 ---
 
 ## i18n
 
 `MultiTranslateHttpLoader` merges translations from three buckets (in order):
+
 1. `assets/i18n/user/` — from `@nuclia/user`
 2. `assets/i18n/common/` — from `@flaps/common`
 3. `assets/i18n/sync/` — from `@nuclia/sync`

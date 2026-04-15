@@ -5,6 +5,7 @@
 `libs/user` is an Angular feature library encapsulating all **user-facing auth, identity, and account-setup flows** shared across Nuclia frontend apps.
 
 Exposes:
+
 - `UserModule` — self-registers child routes; used as `loadChildren` target.
 - `userRoutes` — pre-built route array to attach under a parent path (conventionally `/user`).
 - Standalone and non-standalone components re-exported individually.
@@ -56,8 +57,14 @@ import { UserModule, userRoutes } from '@nuclia/user';
 
 // Standalone components for individual use
 import {
-  SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent,
-  FarewellComponent, FeedbackComponent, InviteComponent, RedirectComponent
+  SignupComponent,
+  SsoButtonComponent,
+  CheckMailComponent,
+  OnboardingComponent,
+  FarewellComponent,
+  FeedbackComponent,
+  InviteComponent,
+  RedirectComponent,
 } from '@nuclia/user';
 
 // Guard
@@ -68,22 +75,22 @@ import { inviteGuard } from '@nuclia/user';
 
 ## Route Table (`userRoutes`)
 
-| Path | Component / Redirect | Auth? |
-|---|---|---|
-| `login` | `LoginComponent` | no |
-| `logout` | `LogoutComponent` | no |
-| `signup` | `SignupComponent` | no |
-| `recover` | `RecoverComponent` | no |
-| `reset` | `ResetComponent` | no |
-| `check-mail` | `CheckMailComponent` | no |
-| `callback` | `CallbackComponent` | no |
-| `consent` | `ConsentComponent` | no |
-| `magic` | `MagicComponent` | no |
-| `invite` | `InviteComponent` (canActivate: `inviteGuard`) | no |
-| `farewell` | `FarewellComponent` | no |
-| `redirect` | `RedirectComponent` | no |
-| `onboarding` | `OnboardingComponent` | no |
-| `profile` | `ProfileComponent` | **yes** (`authGuard`) |
+| Path         | Component / Redirect                           | Auth?                 |
+| ------------ | ---------------------------------------------- | --------------------- |
+| `login`      | `LoginComponent`                               | no                    |
+| `logout`     | `LogoutComponent`                              | no                    |
+| `signup`     | `SignupComponent`                              | no                    |
+| `recover`    | `RecoverComponent`                             | no                    |
+| `reset`      | `ResetComponent`                               | no                    |
+| `check-mail` | `CheckMailComponent`                           | no                    |
+| `callback`   | `CallbackComponent`                            | no                    |
+| `consent`    | `ConsentComponent`                             | no                    |
+| `magic`      | `MagicComponent`                               | no                    |
+| `invite`     | `InviteComponent` (canActivate: `inviteGuard`) | no                    |
+| `farewell`   | `FarewellComponent`                            | no                    |
+| `redirect`   | `RedirectComponent`                            | no                    |
+| `onboarding` | `OnboardingComponent`                          | no                    |
+| `profile`    | `ProfileComponent`                             | **yes** (`authGuard`) |
 
 ---
 
@@ -101,12 +108,14 @@ export class LazyUserModule {}
 ```
 
 ### Pattern B — Direct lazy load (manager-v2)
+
 ```ts
 { path: 'user', loadChildren: () => import('../../../../libs/user/src/lib/user.module').then(m => m.UserModule) }
 // Note: uses direct path, not @nuclia/user alias — intentional (suppressed ESLint boundary warning)
 ```
 
 ### reCAPTCHA setup
+
 `UserModule` provides `RECAPTCHA_V3_SITE_KEY` via factory reading `BackendConfigurationService.getRecaptchaKey()`. The app must have `BackendConfigurationService` available (from `@flaps/core`).
 
 ---
@@ -120,8 +129,9 @@ export class LazyUserModule {}
 5. **RAO onboarding step skipping** — `OnboardingService.nextStep()` checks `NavigationService.inRaoApp`; when true, step 2 jumps to step 4 (skips zone step). Maintain this parity when adding steps.
 6. **KB creation retry** — `OnboardingService.createKb` retries 5xx up to 5 times; 4xx fails immediately. Failure reported via Sentry + redirects to account page.
 7. **`signup_token` pre-fills sign-up data** — when `?signup_token=` is present, `authGuard` stores it via `AuthService.setSignUpToken()`. `OnboardingService` later reads it to pre-fill company name and full name in step 1. `SignupComponent` also reads it to skip form fields already populated.
-8. **GEMINI_2 model option** — `user.kb.creation-form.models.options.GEMINI_2` i18n key maps to `'Gemini Embedding 2'`. Present in all locale files.
-7. **Redirect validation** — `RedirectComponent` validates `redirect` query param against `AUTHORIZED_REDIRECTS` and `AUTHORIZED_REDIRECTS_REGEX`. Update both constants when adding new redirect targets.
-8. **Magic action routing** — `MagicService._execute` is the central dispatch table. New backend action types must be added here.
-9. **`authGuard` on profile only** — the only protected route is `profile`. All others are public.
-10. **Strong password validator** — `StrongPassword`: ≥8 chars, uppercase, lowercase, digit, special char from `! @ # $ % ^ & * . _ ( ) + = -`. `SamePassword(field)`: cross-field mismatch.
+8. **GitHub sign-in feature flag** — `SignupComponent.isGitHubEnabled = features.unstable.githubSignin`. Check this flag before showing GitHub social login buttons.
+9. **GEMINI_2 model option** — `user.kb.creation-form.models.options.GEMINI_2` i18n key maps to `'Gemini Embedding 2'`. Present in all locale files.
+10. **Redirect validation** — `RedirectComponent` validates `redirect` query param against `AUTHORIZED_REDIRECTS` and `AUTHORIZED_REDIRECTS_REGEX`. Update both constants when adding new redirect targets.
+11. **Magic action routing** — `MagicService._execute` is the central dispatch table. New backend action types must be added here.
+12. **`authGuard` on profile only** — the only protected route is `profile`. All others are public.
+13. **Strong password validator** — `StrongPassword`: ≥8 chars, uppercase, lowercase, digit, special char from `! @ # $ % ^ & * . _ ( ) + = -`. `SamePassword(field)`: cross-field mismatch.
