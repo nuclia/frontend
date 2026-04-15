@@ -31,7 +31,8 @@ export class MetricsPageService {
     this.visibleColumnKeys()
       .map((key) => {
         const def = this.columnDefs().find((c) => c.key === key);
-        return def?.width ?? '180px';
+        const width = def?.width ?? '180px';
+        return width === '1fr' ? 'minmax(180px, 400px)' : width;
       })
       .join(' '),
   );
@@ -46,9 +47,7 @@ export class MetricsPageService {
     this.columnDefs.set(defs);
     this.hiddenColumns.set(defs.filter((c) => c.defaultHidden).map((c) => c.key));
     const searchable = defs.filter((c) => c.searchable);
-    this.searchModes.set(
-      searchable.map((col) => new ControlModel({ id: col.key, value: col.key, label: col.label })),
-    );
+    this.searchModes.set(searchable.map((col) => new ControlModel({ id: col.key, value: col.key, label: col.label })));
     this.searchMode.set(searchable.length > 0 ? searchable[0].key : '');
   }
 
@@ -89,5 +88,4 @@ export class MetricsPageService {
     const d = new Date(Number(year), Number(month) - 1, 1);
     this.rangeLabel.set(this.datePipe.transform(d, 'MMM yyyy') ?? '');
   }
-
 }

@@ -47,21 +47,27 @@
     <div class="definitions-row">
       <div class="definition-item">
         <span class="definition-term title-xxs">
-          <span class="color-dot" [style.background]="metricColors['answer_relevance']"></span>
+          <span
+            class="color-dot"
+            [style.background]="metricColors['answer_relevance']"></span>
           {{ 'metrics.remi.category-short.answer_relevance' | translate }}
         </span>
         <span class="definition-desc body-s">{{ 'kb.metrics.definition.answer-relevance' | translate }}</span>
       </div>
       <div class="definition-item">
         <span class="definition-term title-xxs">
-          <span class="color-dot" [style.background]="metricColors['context_relevance']"></span>
+          <span
+            class="color-dot"
+            [style.background]="metricColors['context_relevance']"></span>
           {{ 'metrics.remi.category-short.context_relevance' | translate }}
         </span>
         <span class="definition-desc body-s">{{ 'kb.metrics.definition.context-relevance' | translate }}</span>
       </div>
       <div class="definition-item">
         <span class="definition-term title-xxs">
-          <span class="color-dot" [style.background]="metricColors['groundedness']"></span>
+          <span
+            class="color-dot"
+            [style.background]="metricColors['groundedness']"></span>
           {{ 'metrics.remi.category-short.groundedness' | translate }}
         </span>
         <span class="definition-desc body-s">{{ 'kb.metrics.definition.groundedness' | translate }}</span>
@@ -88,8 +94,7 @@
         <div class="chart-container unified-chart">
           <stf-multi-series-evolution-chart
             [series]="(evolutionSeries | async) || []"
-            [height]="400">
-          </stf-multi-series-evolution-chart>
+            [height]="400"></stf-multi-series-evolution-chart>
         </div>
       }
     </div>
@@ -99,7 +104,7 @@
   <div class="download-banner">
     <pa-icon name="download"></pa-icon>
     <span>{{ 'kb.metrics.download.description' | translate }}</span>
-    <a [routerLink]="(kbUrl | async) + '/metrics/cost-token-usage'">
+    <a [routerLink]="(kbUrl | async) + '/metrics/tokens-and-time-usage'">
       {{ 'activity.cost-token.title' | translate }}
     </a>
   </div>
@@ -155,7 +160,9 @@
             <div class="criteria-container">
               <form [formGroup]="noAnswerCriteria">
                 <div class="field-container">
-                  <label for="monthNoAnswer">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
+                  <label for="monthNoAnswer">
+                    {{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}
+                  </label>
                   <pa-input
                     id="monthNoAnswer"
                     externalLabel

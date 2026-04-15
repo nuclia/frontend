@@ -1,7 +1,6 @@
 @let isInAccount = inAccount | async;
 @let isInArag = inArag | async;
 
-
 <div class="app-navbar">
   <div class="navbar-scroll-container">
     @if (!isInAccount) {
@@ -117,7 +116,7 @@
                     <pa-icon name="submenu"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.da-agents' | translate }}</span>
                   </a>
-                  @if(!(isMetricsEnabled | async)) {
+                  @if (!(isMetricsEnabled | async)) {
                     @if (isRemiMetricsEnabled | async) {
                       <a
                         [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
@@ -207,74 +206,89 @@
           }
           @if (!standalone) {
             @if (isMetricsEnabled | async) {
-            <div class="nav-group">
-              <div class="group-items">
-                <a
-                  (click)="toggleMetrics()"
-                  (keyup.enter)="toggleMetrics()"
-                  class="nav-link"
-                  data-cy="go-to-metrics-section"
-                  paFocusable
-                  [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
-                  [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
-                  <pa-icon
-                    name="chevron-right"
-                    [class.expanded]="showMetrics"></pa-icon>
-                  <span class="nav-link-title">{{ 'navbar.metrics.metrics' | translate }}</span>
-                </a>
-              </div>
-            </div>
-            @if (showMetrics) {
               <div class="nav-group">
                 <div class="group-items">
                   <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-remi-analytics"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="image"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
-                  </a>
-                  <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-usage-analytics"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="chart"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.usage-analytics' | translate }}</span>
-                  </a>
-                  <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/cost-token-usage' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-cost-token"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="payment-details"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
-                  </a>
-                  <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/resource-activity' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-resource-activity"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="activity-log"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
-                  </a>
-                  <a
-                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/search-activity' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-search-activity"
-                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                    <pa-icon name="payment-history"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
+                    (click)="toggleMetrics()"
+                    (keyup.enter)="toggleMetrics()"
+                    class="nav-link"
+                    data-cy="go-to-metrics-section"
+                    paFocusable
+                    [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
+                    [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
+                    <pa-icon
+                      name="chevron-right"
+                      [class.expanded]="showMetrics"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.metrics' | translate }}</span>
                   </a>
                 </div>
               </div>
-            }}
+              @if (showMetrics) {
+                <div class="nav-group">
+                  <div class="group-items">
+                    <a
+                      [routerLink]="
+                        (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/remi-analytics' : null
+                      "
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-remi-analytics"
+                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                      <pa-icon name="image"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.metrics.remi-analytics' | translate }}</span>
+                    </a>
+                    <a
+                      [routerLink]="
+                        (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/usage-analytics' : null
+                      "
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-usage-analytics"
+                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                      <pa-icon name="chart"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.metrics.usage-analytics' | translate }}</span>
+                    </a>
+                    <a
+                      [routerLink]="
+                        (isAdminOrContrib | async) && !(invalidKey | async)
+                          ? kbUrl + '/metrics/tokens-and-time-usage'
+                          : null
+                      "
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-cost-token"
+                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                      <pa-icon name="payment-details"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.metrics.cost-token-usage' | translate }}</span>
+                    </a>
+                    <a
+                      [routerLink]="
+                        (isAdminOrContrib | async) && !(invalidKey | async)
+                          ? kbUrl + '/metrics/resource-activity'
+                          : null
+                      "
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-resource-activity"
+                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                      <pa-icon name="activity-log"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.metrics.resource-activity' | translate }}</span>
+                    </a>
+                    <a
+                      [routerLink]="
+                        (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/search-activity' : null
+                      "
+                      routerLinkActive="active"
+                      class="nav-link sub-item"
+                      data-cy="go-to-search-activity"
+                      [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                      <pa-icon name="payment-history"></pa-icon>
+                      <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
+                    </a>
+                  </div>
+                </div>
+              }
+            }
           }
         </div>
       } @else if (isInArag) {
@@ -282,7 +296,7 @@
           <div class="nav-group">
             <div class="group-items">
               <a
-                [routerLink]="(isAragAdmin | async) ? aragUrl + '/workflows'  : null"
+                [routerLink]="(isAragAdmin | async) ? aragUrl + '/workflows' : null"
                 class="nav-link"
                 routerLinkActive="active"
                 data-cy="go-to-agent-workflow"

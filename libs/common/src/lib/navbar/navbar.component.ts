@@ -183,6 +183,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private isOnMetricsPage(path: string): boolean {
-    return /\/metrics\/(remi-analytics|usage-analytics|cost-token-usage|resource-activity|search-activity)/.test(path);
+    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity)/.test(
+      path,
+    );
   }
 }

@@ -32,7 +32,7 @@ import { RemiAnalyticsPageComponent } from './remi-analytics-page';
 
 const ROUTES = [
   { path: 'usage-analytics', component: UsageAnalyticsPageComponent },
-  { path: 'cost-token-usage', component: CostTokenUsagePageComponent },
+  { path: 'tokens-and-time-usage', component: CostTokenUsagePageComponent },
   { path: 'resource-activity', component: ResourceActivityPageComponent },
   { path: 'search-activity', component: SearchActivityPageComponent },
   { path: 'remi-analytics', component: RemiAnalyticsPageComponent },
