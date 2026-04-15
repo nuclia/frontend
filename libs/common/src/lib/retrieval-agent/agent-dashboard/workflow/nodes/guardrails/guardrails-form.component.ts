@@ -65,7 +65,7 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
     return this.configForm.controls.alinia.controls.detection_config;
   }
 
-  driversPath = computed(() => `${aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/sources`);
   providerOptions = signal<OptionModel[] | null>(null);
 
   preconfigOptions = signal<OptionModel[]>([]);

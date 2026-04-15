@@ -69,7 +69,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
   schemas = input<ARAGSchemas | null>(null);
   formReady = output<FormGroup>();
-  driversPath = computed(() => `${aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/sources`);
   sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {

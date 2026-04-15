@@ -44,7 +44,7 @@ AppLayoutComponent (canActivate: authGuard)
 │           │   ├── /           → WorkflowsListComponent
 │           │   └── /:id        → AgentDashboardComponent
 │           ├── /sessions       → SessionsComponent
-│           ├── /drivers        → DriversPageComponent
+│           ├── /sources        → DriversPageComponent
 │           ├── /manage         → KnowledgeBoxSettingsComponent
 │           ├── /ai-models      → AiModelsComponent
 │           ├── /widgets        → WIDGETS_ROUTES (lazy)
@@ -66,36 +66,41 @@ Only four app-level source files exist outside this module: `AppComponent`, `App
 ## Key Services
 
 ### `SDKService` (`@flaps/core`)
+
 Central state + API gateway. Key observables:
 `currentArag`, `currentKb`, `aragList`, `aragListWithMemory`, `aragListNoMemory`, `kbList`, `hasAccount`, `refreshingAragList`
 
 ### `FeaturesService` (`@flaps/core`)
+
 Feature flags used in rao:
+
 - `unstable.retrievalAgents` — gates entire ARAG section (`setAgentGuard`)
 - `isAragAdmin` — admin-only workflow toolbar items
 - `isAragWithMemory` — memory-related UI
 
 ### `WorkflowService` (`@flaps/common`)
+
 Dynamically creates node form components via `createComponent()` + `ApplicationRef.attachView()`. Sidebar panels are rendered this way — **no `@if`/`*ngIf` template slots exist** for sidebar content.
 
 ### `NavigationService` (`@flaps/core`)
+
 `goToLandingPage()`, `homeUrl` observable, `getAccountUrl(slug)`.
 
 ---
 
 ## Guards Summary
 
-| Guard | Source | Purpose |
-|---|---|---|
-| `authGuard` | `@flaps/core` | Checks `JWT_KEY` in `localStorage`. Redirects to `/user/login` + saves intended URL. |
-| `rootGuard` | `@flaps/common` | Calls `NavigationService.goToLandingPage()`. Always returns `false`. |
-| `setAccountGuard` | `@flaps/common` | Sets `SDKService` current account from `:account` slug. |
-| `setAgentGuard` | `@flaps/common` | Requires `FeaturesService.unstable.retrievalAgents`. Loads ARAG list for zone. Redirects to `/select` if missing or flag disabled. |
-| `selectAccountGuard` | `@flaps/common` | No accounts → onboarding; 1 → skip; multiple → selection page. |
-| `selectKbGuard` | `@flaps/common` | Loads KB + ARAG lists; routes based on count. |
-| `aragOwnerGuard` | `@flaps/common` | Requires owner/admin ARAG role. |
-| `awsGuard` | `@flaps/common` | Exchanges `customer_token` query param for `AuthTokens`. |
-| `inviteGuard` | `@nuclia/user` | Validates invite token from query string. |
+| Guard                | Source          | Purpose                                                                                                                            |
+| -------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`          | `@flaps/core`   | Checks `JWT_KEY` in `localStorage`. Redirects to `/user/login` + saves intended URL.                                               |
+| `rootGuard`          | `@flaps/common` | Calls `NavigationService.goToLandingPage()`. Always returns `false`.                                                               |
+| `setAccountGuard`    | `@flaps/common` | Sets `SDKService` current account from `:account` slug.                                                                            |
+| `setAgentGuard`      | `@flaps/common` | Requires `FeaturesService.unstable.retrievalAgents`. Loads ARAG list for zone. Redirects to `/select` if missing or flag disabled. |
+| `selectAccountGuard` | `@flaps/common` | No accounts → onboarding; 1 → skip; multiple → selection page.                                                                     |
+| `selectKbGuard`      | `@flaps/common` | Loads KB + ARAG lists; routes based on count.                                                                                      |
+| `aragOwnerGuard`     | `@flaps/common` | Requires owner/admin ARAG role.                                                                                                    |
+| `awsGuard`           | `@flaps/common` | Exchanges `customer_token` query param for `AuthTokens`.                                                                           |
+| `inviteGuard`        | `@nuclia/user`  | Validates invite token from query string.                                                                                          |
 
 ---
 
@@ -121,11 +126,11 @@ ARAG-specific tokens are in `libs/common/src/lib/retrieval-agent/agent-dashboard
 
 `assets/deployment/app-config.json` loaded at startup from `environments_config/{config}/`.
 
-| Serve config | Backend |
-|---|---|
-| `local-stage` (default) | Nuclia stage server |
-| `local-prod` | `https://rag.progress.cloud` |
-| `production` | Docker `STF_DOCKER_CONFIG_*` placeholders |
+| Serve config            | Backend                                   |
+| ----------------------- | ----------------------------------------- |
+| `local-stage` (default) | Nuclia stage server                       |
+| `local-prod`            | `https://rag.progress.cloud`              |
+| `production`            | Docker `STF_DOCKER_CONFIG_*` placeholders |
 
 ---
 

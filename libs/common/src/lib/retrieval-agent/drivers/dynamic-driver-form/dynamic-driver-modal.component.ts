@@ -45,7 +45,7 @@ export class DynamicDriverModalComponent implements OnInit {
     const isEditing = !!this.existingDriver;
     const schemas = this.driversService.schemas();
     const schema = schemas?.drivers[this.driverKey || '']?.config_schema;
-    const driverName = schema?.title || 'Driver';
+    const driverName = schema?.title || 'Source';
     return isEditing
       ? this.translate.instant('retrieval-agents.drivers.edit-modal-title', { name: driverName })
       : this.translate.instant('retrieval-agents.drivers.add.title', { name: driverName });
