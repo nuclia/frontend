@@ -52,6 +52,12 @@
             </pa-toggle>
           }
 
+          <pa-toggle
+            formControlName="enforce_security"
+            labelOnRight>
+            {{ 'kb.form.enforce-security' | translate }}
+          </pa-toggle>
+
           @if (!standalone) {
             <pa-textarea
               formControlName="allowed_origins"

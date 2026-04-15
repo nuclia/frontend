@@ -31,6 +31,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     allowed_ip_addresses: new FormControl<string | null>(null),
     hidden_resources_enabled: new FormControl<boolean>(false, { nonNullable: true }),
     hidden_resources_hide_on_creation: new FormControl<boolean>(false, { nonNullable: true }),
+    enforce_security: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -90,6 +91,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         allowed_ip_addresses: (this.kb.allowed_ip_addresses || []).join('\n'),
         hidden_resources_enabled: this.kb.hidden_resources_enabled || false,
         hidden_resources_hide_on_creation: this.kb.hidden_resources_hide_on_creation || false,
+        enforce_security: this.kb.enforce_security || false,
       });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
@@ -128,6 +130,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
           ? kbDetails.hidden_resources_hide_on_creation
           : false,
+        enforce_security: kbDetails.enforce_security,
       })
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),

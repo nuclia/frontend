@@ -958,6 +958,7 @@
 	"kb.form.allowed_origins.help": "One domain per line",
 	"kb.form.allowed_origins.label": "Allowed origins (CORS)",
 	"kb.form.description": "Description (optional)",
+	"kb.form.enforce-security": "Hide resources without matching security group",
 	"kb.form.existing-name": "This name already exists in the account.",
 	"kb.form.hidden-resources": "Enable hidden resources",
 	"kb.form.hide-new-resources": "Hide new resources by default",
