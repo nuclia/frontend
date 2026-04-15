@@ -202,6 +202,7 @@
 	"account.token_description": "<strong>Important!</strong> Copieu i deseu la clau de l’API. Desapareixerà un cop afegit.",
 	"account.token_generation_warning": "Si generes un nou codi perdràs l’accés amb la clau actual i es perdran els processos que s’estiguin executant en aquests moments.",
 	"account.total_queries": "Nombre total de cerques",
+	"account.type.cowork": "Compte Cowork Knowledge",
 	"account.type.label": "Nivell",
 	"account.type.stash-trial": "Compte de prova",
 	"account.type.trial-mode": "prova gratuïta",
