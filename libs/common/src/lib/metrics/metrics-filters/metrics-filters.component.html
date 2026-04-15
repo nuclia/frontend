@@ -129,7 +129,7 @@
                     type="date"
                     [value]="condition.dateValue"
                     [min]="selectedMonth() + '-01'"
-                    [max]="getMonthLastDay()"
+                    [max]="getMaxDate()"
                     (change)="updateConditionDateValue(condition.id, $any($event.target).value)" />
                 } @else {
                   <!-- Range mode: ≥ / ≤ with date and time -->
@@ -145,7 +145,7 @@
                     type="date"
                     [value]="condition.dateValue"
                     [min]="selectedMonth() + '-01'"
-                    [max]="getMonthLastDay()"
+                    [max]="getMaxDate()"
                     (change)="updateConditionDateValue(condition.id, $any($event.target).value)" />
                   <pa-input
                     class="condition-time-input"

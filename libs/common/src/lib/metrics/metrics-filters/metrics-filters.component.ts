@@ -8,6 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { endOfMonth, format, min, parseISO } from 'date-fns';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { MetricsFiltersService } from './metrics-filters.service';
@@ -191,12 +192,18 @@ export class MetricsFiltersComponent {
     return this.service.getOperationsForColumn(key, this.filterColumns());
   }
 
+  readonly today = format(new Date(), 'yyyy-MM-dd');
+
   getMonthLastDay(): string {
     const month = this.selectedMonth();
     if (!month) return '';
-    const [year, mo] = month.split('-');
-    const lastDay = new Date(Number(year), Number(mo), 0).getDate();
-    return `${month}-${String(lastDay).padStart(2, '0')}`;
+    return format(endOfMonth(parseISO(`${month}-01`)), 'yyyy-MM-dd');
+  }
+
+  getMaxDate(): string {
+    const month = this.selectedMonth();
+    if (!month) return this.today;
+    return format(min([endOfMonth(parseISO(`${month}-01`)), new Date()]), 'yyyy-MM-dd');
   }
 
   // ── Apply / Reset ────────────────────────────────────────────────────
