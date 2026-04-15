@@ -3,7 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { SDKService, FeaturesService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
@@ -30,6 +30,7 @@ describe('UsageAnalyticsPageComponent', () => {
       imports: [MockModule(TranslateModule)],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(SisModalService, { openModal }),
       ],

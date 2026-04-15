@@ -16,6 +16,8 @@ import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { SisModalService } from '@nuclia/sistema';
 import { getRemiColorClass } from '../metrics-utils';
+import { FeaturesService } from '@flaps/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-usage-analytics-page',
@@ -28,7 +30,28 @@ import { getRemiColorClass } from '../metrics-utils';
 export class UsageAnalyticsPageComponent {
   protected service = inject(UsageAnalyticsPageService);
   private modalService = inject(SisModalService);
-  readonly columns = USAGE_ANALYSIS_COLUMNS;
+  private features = inject(FeaturesService);
+
+  private readonly automaticAdvice = toSignal(this.features.unstable.automaticAdvice, { initialValue: false });
+
+  /**
+   * Columns with the inline advice action gated behind the automatic-advice feature flag.
+   * The visible() fn closes over the signal so Angular picks up flag changes reactively.
+   */
+  readonly columns = USAGE_ANALYSIS_COLUMNS.map((col) => {
+    if (col.key === 'remiScore' && col.inlineAction) {
+      const originalVisible = col.inlineAction.visible;
+      return {
+        ...col,
+        inlineAction: {
+          ...col.inlineAction,
+          visible: (item: ActivityLogItem) =>
+            this.automaticAdvice() && (originalVisible ? originalVisible(item) : true),
+        },
+      };
+    }
+    return col;
+  });
   readonly sidebarFields = USAGE_ANALYSIS_SIDEBAR_FIELDS;
 
   // ── Filter configs ──────────────────────────────────────────────────────────
@@ -116,7 +139,10 @@ export class UsageAnalyticsPageComponent {
     this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
   }
 
-  openAdvice(item: ActivityLogItem): void {    this.service
+  openAdvice(item: ActivityLogItem): void {
+    if (!this.automaticAdvice()) return;
+
+    this.service
       .fetchActivityParams(item.id)
       .pipe(take(1))
       .subscribe((fullItem) => {

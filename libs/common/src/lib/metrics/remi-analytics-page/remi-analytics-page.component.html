@@ -198,13 +198,15 @@
                   [itemTitle]="item.question"
                   (expandedChange)="loadMissingKnowledgeDetails(item.id)">
                   <pa-accordion-item-body>
-                    <pa-button
-                      class="accordion-header-advice-btn"
-                      icon="sparks"
-                      kind="primary"
-                      aspect="basic"
-                      [paTooltip]="'activity.advice.trigger-tooltip' | translate"
-                      (click)="openAdviceForItem(item, $event)"></pa-button>
+                    @if (automaticAdvice$ | async) {
+                      <pa-button
+                        class="accordion-header-advice-btn"
+                        icon="sparks"
+                        kind="primary"
+                        aspect="basic"
+                        [paTooltip]="'activity.advice.trigger-tooltip' | translate"
+                        (click)="openAdviceForItem(item, $event)"></pa-button>
+                    }
 
                     <app-missing-knowledge-details
                       noScore
@@ -342,13 +344,15 @@
                     </pa-accordion-item-extra-description>
 
                     <pa-accordion-item-body>
-                      <pa-button
-                        class="accordion-header-advice-btn"
-                        icon="sparks"
-                        kind="primary"
-                        aspect="basic"
-                        [paTooltip]="'activity.advice.trigger-tooltip' | translate"
-                        (click)="openAdviceForItem(item, $event)"></pa-button>
+                      @if (automaticAdvice$ | async) {
+                        <pa-button
+                          class="accordion-header-advice-btn"
+                          icon="sparks"
+                          kind="primary"
+                          aspect="basic"
+                          [paTooltip]="'activity.advice.trigger-tooltip' | translate"
+                          (click)="openAdviceForItem(item, $event)"></pa-button>
+                      }
 
                       <app-missing-knowledge-details
                         [item]="item"

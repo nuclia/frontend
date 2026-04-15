@@ -76,8 +76,10 @@ export interface EditableParams {
  * Converts editable exploration params into a Widget.SearchConfiguration that can be saved
  * via SearchWidgetService.saveSearchConfig().
  *
- * Note: minScoreSemantic and minScoreBm25 are KB-level thresholds — they are NOT part of
- * widget configurations and must be applied separately in KB defaults.
+ * Note: minScoreSemantic and minScoreBm25 are excluded from the widget SearchConfiguration format —
+ * the widget config has no field for per-request score thresholds. They can only be passed
+ * per-request via the min_score field in individual ask/search calls (which is what the exploration
+ * modal does during test runs). The platform has no UI to persist these values permanently.
  */
 export function suggestedParamsToSearchConfig(
   params: EditableParams,

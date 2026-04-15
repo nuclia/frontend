@@ -13,7 +13,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import {
   AdviceInput,
   AdviceResult,
@@ -70,6 +70,7 @@ interface IterationRecord {
     PaTogglesModule,
     PaTooltipModule,
     InfoCardComponent,
+    NsiSkeletonComponent,
     SisProgressModule,
     RemiScoreBadgeComponent,
   ],
@@ -321,11 +322,14 @@ export class RagAdviceModalComponent {
     };
 
     const findMatch = (kb: any): Observable<RemiQueryResponseItem | null> =>
-      kb.activityMonitor.queryRemiScores(criteria).pipe(
-        map((response: any): RemiQueryResponseItem | null =>
-          (response?.data ?? []).find((item: any) => item.question === question) ?? null,
-        ),
-      );
+      kb.activityMonitor
+        .queryRemiScores(criteria)
+        .pipe(
+          map(
+            (response: any): RemiQueryResponseItem | null =>
+              (response?.data ?? []).find((item: any) => item.question === question) ?? null,
+          ),
+        );
 
     // Attempt immediately, then 10s, 10s, 40s, 2min — stops on first match
     const attempt = (kb: any, delayMs: number): Observable<RemiQueryResponseItem | null> =>
@@ -359,8 +363,7 @@ export class RagAdviceModalComponent {
                 typed.remi.context_relevance.length > 0
                   ? typed.remi.context_relevance.reduce((a, b) => a + b, 0) / typed.remi.context_relevance.length
                   : null;
-              const maxGroundedness =
-                typed.remi.groundedness.length > 0 ? Math.max(...typed.remi.groundedness) : null;
+              const maxGroundedness = typed.remi.groundedness.length > 0 ? Math.max(...typed.remi.groundedness) : null;
               return {
                 ...rec,
                 remiPending: false,

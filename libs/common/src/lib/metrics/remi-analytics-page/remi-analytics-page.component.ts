@@ -40,6 +40,7 @@ import {
 import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
 import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FeaturesService } from '@flaps/core';
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
@@ -105,6 +106,9 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   private navigationService = inject(NavigationService);
   private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
+  private features = inject(FeaturesService);
+
+  automaticAdvice$ = this.features.unstable.automaticAdvice;
 
   private unsubscribeAll: Subject<void> = new Subject();
 
@@ -386,20 +390,25 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   }
 
   onRequestAdvice(item: RemiQueryResponseItem): void {
-    if (this.missingKnowledgeDetails[item.id]) {
-      this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
-      return;
-    }
-    this.remiMetrics
-      .getMissingKnowledgeDetails(item.id)
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe({
-        next: (details) => {
-          this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
-          this.openAdviceModal(item, details);
-          this.cdr.detectChanges();
-        },
-      });
+    // Guard: this event is only emitted from UI visible when automaticAdvice$ is enabled.
+    // Re-check here as belt-and-suspenders in case the event fires after a flag change.
+    this.features.unstable.automaticAdvice.pipe(take(1)).subscribe((enabled) => {
+      if (!enabled) return;
+      if (this.missingKnowledgeDetails[item.id]) {
+        this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
+        return;
+      }
+      this.remiMetrics
+        .getMissingKnowledgeDetails(item.id)
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe({
+          next: (details) => {
+            this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
+            this.openAdviceModal(item, details);
+            this.cdr.detectChanges();
+          },
+        });
+    });
   }
 
   private openAdviceModal(item: RemiQueryResponseItem, details: RemiQueryResponseContextDetails): void {

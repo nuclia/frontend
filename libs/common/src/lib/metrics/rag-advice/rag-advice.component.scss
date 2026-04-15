@@ -59,21 +59,25 @@
   }
 }
 
-.remi-loading {
-  display: flex;
-  align-items: center;
-  gap: rhythm(1);
-  margin-top: rhythm(1);
-  padding: rhythm(0.5) rhythm(1);
-  color: $color-neutral-regular;
-  font-size: 0.8125rem;
-}
-
 .iteration-remi {
   display: flex;
   flex-wrap: wrap;
   gap: rhythm(0.5);
   margin-top: rhythm(1);
+}
+
+.remi-skeleton-row {
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 }
 
 .loading-state {

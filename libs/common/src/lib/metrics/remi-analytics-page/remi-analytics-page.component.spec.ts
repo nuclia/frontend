@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { SDKService, NavigationService } from '@flaps/core';
+import { SDKService, NavigationService, FeaturesService } from '@flaps/core';
 import { PreviewService } from '../../resources';
 import { RemiAnalyticsPageComponent } from './remi-analytics-page.component';
 
@@ -24,6 +24,7 @@ describe('RemiAnalyticsPageComponent', () => {
       imports: [RemiAnalyticsPageComponent],
       providers: [
         MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(FeaturesService, { unstable: { automaticAdvice: of(false) } }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(PreviewService, { viewerWidget: of('') }),
         MockProvider(NavigationService, { kbUrl: '' }),
