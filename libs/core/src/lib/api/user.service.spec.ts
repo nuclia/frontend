@@ -16,7 +16,9 @@ describe('UserService', () => {
           useValue: {
             nuclia: {
               auth: {
-                logout: () => {},
+                logout: () => {
+                  /* empty */
+                },
                 isAuthenticated: () => of(null),
               },
               db: { getWelcome: () => of(null) },
@@ -27,8 +29,12 @@ describe('UserService', () => {
         {
           provide: AuthService,
           useValue: {
-            setNextParams: () => {},
-            setNextUrl: () => {},
+            setNextParams: () => {
+              /* empty */
+            },
+            setNextUrl: () => {
+              /* empty */
+            },
           },
         },
       ],

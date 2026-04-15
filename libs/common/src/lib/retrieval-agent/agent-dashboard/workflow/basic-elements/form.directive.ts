@@ -3,7 +3,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { NodeCategory, NodeConfig } from '../workflow.models';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfigService } from './node-form/field-config.service';
-import { convertNodeTypeToConfigTitle } from '../workflow.utils';
+import { ARAGSchemas } from '@nuclia/core';
 
 /**
    * FormDirective contains 2 abstract FormGroup and an abstract method, as well as two outputs.
@@ -39,8 +39,9 @@ export abstract class FormDirective {
   config?: NodeConfig;
 
   public buildFormFromSchema(
-    aragsSchema: JSONSchema4 | null,
+    aragsSchema: ARAGSchemas | null,
     key: string,
+    category: keyof ARAGSchemas['agents'],
   ): {
     formGroup: FormGroup;
     schema: JSONSchema4;
@@ -52,8 +53,8 @@ export abstract class FormDirective {
       };
     }
 
-    const schemaTitle = convertNodeTypeToConfigTitle(key, aragsSchema);
-    let schema = aragsSchema['$defs'][schemaTitle];
+    const agentSchema = aragsSchema.agents[category][key]?.config_schema;
+    let schema = agentSchema;
 
     // If schema has $ref, resolve it from $defs
     if (schema && schema.$ref && schema['$defs']) {
@@ -79,9 +80,9 @@ export abstract class FormDirective {
     const group: { [key: string]: any } = {};
     for (const [propKey, prop] of Object.entries(schema.properties)) {
       const property = prop as JSONSchema4;
-      const resolvedProperty = this.resolvePropertyForFormCreation(property, schema);
+      const resolvedProperty = this.resolvePropertyForFormCreation(property, agentSchema);
       let type = resolvedProperty.type;
-      let defaultValue = resolvedProperty.default ?? null;
+      const defaultValue = resolvedProperty.default ?? null;
 
       // Handle anyOf
       if (resolvedProperty.anyOf) {
@@ -99,9 +100,9 @@ export abstract class FormDirective {
       const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
       // Check if this is a subform field (contains $ref)
-      if (this.fieldConfigService.isSubformField(property, aragsSchema)) {
+      if (this.fieldConfigService.isSubformField(property, agentSchema)) {
         // Create a nested FormGroup for subform fields
-        group[propKey] = this.createNestedFormGroupForRef(property, aragsSchema);
+        group[propKey] = this.createNestedFormGroupForRef(property, agentSchema);
       } else if (type === 'array' || property.items || isMultiselect) {
         // Prefer config value over default for array fields
         let initialArrayValues: any[] = [];
@@ -140,7 +141,7 @@ export abstract class FormDirective {
     };
   }
 
-  private createNestedFormGroupForRef(property: JSONSchema4, rootSchema: JSONSchema4): FormGroup {
+  private createNestedFormGroupForRef(property: JSONSchema4, agentSchema: JSONSchema4): FormGroup {
     // Get the $ref from the property
     let refPath: string | null = null;
     if (property.$ref) {
@@ -158,7 +159,7 @@ export abstract class FormDirective {
 
     // Resolve the reference
     const defName = refPath.replace('#/$defs/', '');
-    const resolvedSchema = rootSchema['$defs']?.[defName] as JSONSchema4;
+    const resolvedSchema = agentSchema['$defs']?.[defName] as JSONSchema4;
 
     if (!resolvedSchema || !resolvedSchema.properties) {
       return new FormGroup({});
@@ -169,7 +170,7 @@ export abstract class FormDirective {
     for (const [propKey, prop] of Object.entries(resolvedSchema.properties)) {
       const nestedProperty = prop as JSONSchema4;
       let type = nestedProperty.type;
-      let defaultValue = nestedProperty.default ?? null;
+      const defaultValue = nestedProperty.default ?? null;
 
       // Handle anyOf
       if (nestedProperty.anyOf) {
@@ -180,8 +181,8 @@ export abstract class FormDirective {
       }
 
       // Check for nested subforms
-      if (this.fieldConfigService.isSubformField(nestedProperty, rootSchema)) {
-        nestedGroup[propKey] = this.createNestedFormGroupForRef(nestedProperty, rootSchema);
+      if (this.fieldConfigService.isSubformField(nestedProperty, agentSchema)) {
+        nestedGroup[propKey] = this.createNestedFormGroupForRef(nestedProperty, agentSchema);
       } else if (type === 'array') {
         nestedGroup[propKey] = new FormArray([]);
       } else if (type === 'boolean') {

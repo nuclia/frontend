@@ -8,8 +8,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { registeredAgentParams, rootSchema } from '../../workflow.state';
-import { WorkflowService } from '../../workflow.service';
-import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
 import { distinctUntilChanged } from 'rxjs';
 
 @Component({
@@ -30,9 +28,8 @@ export class RegisteredAgentSubformComponent implements OnInit {
     const nodeType = this.nodeType();
     const schemas = rootSchema();
     if (schemas && nodeType) {
-      const schemaName = convertNodeTypeToConfigTitle(nodeType, schemas);
-      const matchingSchema = schemas['$defs'][schemaName];
-      return (matchingSchema?.properties['published_functions'].default || []).map(
+      const matchingSchema = schemas.agents.context[nodeType].config_schema;
+      return ((matchingSchema?.properties?.['published_functions'].default as string[]) || []).map(
         (func: string) => new OptionModel({ id: func, value: func, label: func }),
       );
     } else {

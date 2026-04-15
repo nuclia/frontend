@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityGroup } from '../../edit-resource.helpers';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { EntityComponent } from 'libs/common/src/lib/entities/entity/entity.component';
 import { BehaviorSubject, combineLatest, forkJoin, map, take, tap } from 'rxjs';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { TasksAutomationService } from 'libs/common/src/lib/tasks-automation';
 import { EditResourceService } from '../../edit-resource.service';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';

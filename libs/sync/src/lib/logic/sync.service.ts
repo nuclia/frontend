@@ -18,12 +18,14 @@ import {
   WritableKnowledgeBox,
   SyncConfiguration,
   SyncConfigurationCreate,
+  SyncConfigurationUpdate,
   ExternalConnectionCredentials,
   ExternalConnection,
   StorageSite,
   StorageStructure,
   JobsPage,
 } from '@nuclia/core';
+import { ColoredLabel } from '@flaps/common';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './connectors/folder';
 import { ConfluenceConnector } from './connectors/confluence';
@@ -205,22 +207,28 @@ export class SyncService {
 
   getCurrentSync(): Observable<ISyncEntity> {
     return this.currentSyncId.pipe(
-      filter((id) => !!id),
-      switchMap((id) => this.getSync(id!)),
+      filter((id): id is string => !!id),
+      switchMap((id) => this.getSync(id)),
     );
   }
 
   private syncConfigtoISyncEntity(config: SyncConfiguration): ISyncEntity {
+    const connectorId = this.getConnectorIdForProvider(config.external_connection.provider);
     return {
       id: config.id,
       title: config.name,
+      connectorId,
       connector: {
-        name: config.external_connection.provider,
+        name: connectorId || config.external_connection.provider,
         parameters: config,
       },
       lastSyncGMT: config.last_sync_run || undefined,
       disabled: false,
       isCloud: true,
+      file_filter: config.file_filter,
+      labels: config.labels?.map((l) => ({ ...l, color: undefined })) as ColoredLabel[] | undefined,
+      modified_time_range: config.modified_time_range,
+      extract_strategy: config.extract_strategy,
     };
   }
   getSync(syncId: string): Observable<ISyncEntity> {
@@ -237,6 +245,12 @@ export class SyncService {
             kbId: config.kb_id,
             connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
           })),
+          tap((entity) =>
+            this._syncCache.next({
+              ...this._syncCache.getValue(),
+              [entity.id]: entity,
+            }),
+          ),
         );
       } else {
         return this.http
@@ -287,7 +301,9 @@ export class SyncService {
         this._syncCache.next(syncs);
         this._cacheUpdated.next(new Date().toISOString());
       }),
-      map(() => {}),
+      map(() => {
+        /* empty */
+      }),
     );
   }
 
@@ -324,16 +340,20 @@ export class SyncService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.syncManager.createConfig(config)),
-      tap((sync) => {
-        const syncs = this._syncCache.getValue();
-        syncs[sync.id] = this.syncConfigtoISyncEntity(sync);
-        this._syncCache.next(syncs);
-        this._cacheUpdated.next(new Date().toISOString());
-      }),
+      tap((sync) => this.updateCloudSyncCache(sync)),
     );
   }
 
   updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
+    if (this._useCloudSync.getValue()) {
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) => kb.syncManager.updateConfig(syncId, this.toCloudSyncUpdate(sync))),
+        tap((config) => this.updateCloudSyncCache(config)),
+        map(() => undefined),
+      );
+    }
+
     return this.http
       .patch<void>(
         `${this._syncServer.getValue().serverUrl}/sync/${syncId}`,
@@ -516,9 +536,9 @@ export class SyncService {
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
     return this.http
-      .get<LogEntity[]>(
-        `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
-      )
+      .get<
+        LogEntity[]
+      >(`${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`)
       .pipe(
         map((logs) =>
           logs.sort((a, b) => {
@@ -593,5 +613,27 @@ export class SyncService {
 
   updateUseCloudSync(use: boolean) {
     this._useCloudSync.next(use);
+  }
+
+  private toCloudSyncUpdate(sync: Partial<ISyncEntity>): SyncConfigurationUpdate {
+    return {
+      ...(sync.title ? { name: sync.title } : {}),
+      ...(sync.file_filter ? { file_filter: sync.file_filter } : {}),
+      ...(sync.labels
+        ? {
+            labels: sync.labels.map(({ labelset, label }) => ({ labelset, label })),
+          }
+        : {}),
+      ...(sync.modified_time_range ? { modified_time_range: sync.modified_time_range } : {}),
+      ...(sync.extract_strategy ? { extract_strategy: sync.extract_strategy } : {}),
+    };
+  }
+
+  private updateCloudSyncCache(config: SyncConfiguration) {
+    this._syncCache.next({
+      ...this._syncCache.getValue(),
+      [config.id]: this.syncConfigtoISyncEntity(config),
+    });
+    this._cacheUpdated.next(new Date().toISOString());
   }
 }

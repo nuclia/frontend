@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,6 +16,12 @@ import { ConfigurationFormComponent } from '../configuration-form';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 import { CloudFolderComponent } from '../cloud-folder/cloud-folder.component';
 import { ExternalConnection } from '@nuclia/core';
+import {
+  CloudSyncOptionsPayload,
+  getCloudSyncOptionsPayload,
+  SyncOptions,
+  SyncOptionsFormComponent,
+} from '../sync-options-form';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -33,6 +39,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
     SisProgressModule,
     PaTogglesModule,
     CloudFolderComponent,
+    SyncOptionsFormComponent,
   ],
   templateUrl: './add-sync-page.component.html',
   styleUrl: './add-sync-page.component.scss',
@@ -67,6 +74,7 @@ export class AddSyncPageComponent implements OnInit {
 
   validForm = false;
   configuration?: ISyncEntity;
+  cloudSyncOptions?: CloudSyncOptionsPayload;
   folderSelection: SyncItem[] = [];
   loading = false;
   saving = false;
@@ -186,6 +194,10 @@ export class AddSyncPageComponent implements OnInit {
     this.configuration = data;
   }
 
+  updateCloudSyncOptions(opts: SyncOptions) {
+    this.cloudSyncOptions = getCloudSyncOptionsPayload(opts);
+  }
+
   updateSelection(selection: SyncItem[]) {
     this.folderSelection = selection;
   }
@@ -207,6 +219,7 @@ export class AddSyncPageComponent implements OnInit {
               name: syncEntity.title,
               external_connection_id: this.externalConnection.id,
               ...this.selectedFolder,
+              ...this.cloudSyncOptions,
             })
             .pipe(
               map((sync) => {

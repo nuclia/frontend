@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BaseContextAgent, ChatOptions, SearchOptions, Widget } from '@nuclia/core';
+import { ARAGSchemas, BaseContextAgent, ChatOptions, SearchOptions, Widget } from '@nuclia/core';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { DriverSelectComponent } from '../../basic-elements/node-form/subcomponents/driver-select';
 import { JSONSchema4 } from 'json-schema';
@@ -47,7 +47,7 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
   private workflowService = inject(WorkflowService);
   private cdr = inject(ChangeDetectorRef);
 
-  @Input() schemas?: JSONSchema4 | null;
+  @Input() schemas?: ARAGSchemas | null;
   @Output() formReady = new EventEmitter<FormGroup>();
 
   schema?: JSONSchema4;
@@ -121,7 +121,7 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
   }
 
   ngOnInit() {
-    const { schema } = this.buildFormFromSchema(this.schemas || null, 'advanced_ask');
+    const { schema } = this.buildFormFromSchema(this.schemas || null, 'advanced_ask', 'context');
     this.schema = schema;
     Object.keys(this.configForm.controls).forEach((field) => {
       if (schema.properties?.[field]?.default) {

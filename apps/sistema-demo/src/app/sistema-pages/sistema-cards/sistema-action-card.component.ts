@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 import { RouterLink } from '@angular/router';
 import { ActionCardComponent } from '@nuclia/sistema';
 

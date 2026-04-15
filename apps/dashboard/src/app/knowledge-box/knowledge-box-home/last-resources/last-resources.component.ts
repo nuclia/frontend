@@ -3,11 +3,19 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { RouterModule } from '@angular/router';
 import { searchResources, UploadService } from '@flaps/common';
 import { NavigationService, NotificationService, SDKService } from '@flaps/core';
-import { PaDateTimeModule, PaIconModule, PaTableModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTabsModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { IResource, RESOURCE_STATUS, SortField } from '@nuclia/core';
-import { MimeIconPipe, SisIconsModule } from '@nuclia/sistema';
-import { combineLatest, distinctUntilChanged, map, Observable, startWith, switchMap } from 'rxjs';
+import { IResource, Resource, RESOURCE_STATUS, SortField } from '@nuclia/core';
+import { SisIconsModule, SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Observable, startWith, switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-last-resources',
@@ -16,7 +24,10 @@ import { combineLatest, distinctUntilChanged, map, Observable, startWith, switch
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    PaButtonModule,
+    PaDropdownModule,
     PaIconModule,
+    PaPopupModule,
     PaTableModule,
     PaTabsModule,
     TranslateModule,
@@ -30,6 +41,7 @@ export class LastResourcesComponent implements OnInit {
   private sdk = inject(SDKService);
   private uploadService = inject(UploadService);
   private notificationService = inject(NotificationService);
+  private modalService = inject(SisModalService);
   account = this.sdk.currentAccount;
   currentKb = this.sdk.currentKb;
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
@@ -41,12 +53,9 @@ export class LastResourcesComponent implements OnInit {
   );
   selectedResourcesTab: 'processed' | 'pending' = 'processed';
   statusChanged = combineLatest([
-    this.uploadService.refreshNeeded,
-    this.notificationService.hasNewResourceOperationNotifications,
-  ]).pipe(
-    startWith([true, true]),
-    map(([refresh, newRes]) => refresh && newRes),
-  );
+    this.uploadService.refreshNeeded.pipe(startWith(true)),
+    this.notificationService.hasNewResourceOperationNotifications.pipe(startWith(true)),
+  ]).pipe(map(([refresh, newRes]) => refresh && newRes));
   latestProcessedResources: Observable<IResource[]> = combineLatest([this.currentKb, this.statusChanged]).pipe(
     switchMap(([kb]) =>
       searchResources(kb, {
@@ -73,8 +82,27 @@ export class LastResourcesComponent implements OnInit {
     ),
     map((data) => Object.values(data.results.resources || {})),
   );
+  isAdminOrContrib = this.sdk.isAdminOrContrib;
 
   ngOnInit(): void {
     this.uploadService.updateStatusCount();
+  }
+
+  deleteResource(resourceData: IResource) {
+    this.modalService
+      .openConfirm({
+        title: 'resource.confirm-delete.title',
+        description: 'resource.confirm-delete.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((result) => result),
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        switchMap((kb) => new Resource(this.sdk.nuclia, kb.id, resourceData).delete()),
+      )
+      .subscribe(() => {
+        this.uploadService.updateAfterUploads();
+      });
   }
 }

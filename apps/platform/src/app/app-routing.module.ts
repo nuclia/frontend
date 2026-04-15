@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   aragOwnerGuard,
   BaseComponent,
@@ -62,6 +63,7 @@ const routes: Routes = [
           {
             path: `manage`,
             loadChildren: () =>
+              // eslint-disable-next-line @nx/enforce-module-boundaries
               import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
           },
           {

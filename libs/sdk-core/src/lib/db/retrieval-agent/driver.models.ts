@@ -39,6 +39,7 @@ export type Driver =
   | McpSseDriver
   | McpStdioDriver
   | McpHttpDriver
+  | SyncDriver
   | AliniaDriver;
 export type InternetDriver = BraveDriver | PerplexityDriver | TavilyDriver | GoogleDriver;
 
@@ -85,6 +86,10 @@ export interface McpStdioDriver extends IDriver {
 export interface McpHttpDriver extends IDriver {
   provider: 'mcphttp';
   config: McpHttpConfig;
+}
+export interface SyncDriver extends IDriver {
+  provider: 'sync';
+  config: SyncConfig;
 }
 export interface AliniaDriver extends IDriver {
   provider: 'alinia';
@@ -154,6 +159,7 @@ export interface McpStdioConfig {
   encoding_error_handler?: 'strict' | 'ignore' | 'replace';
 }
 export interface McpHttpConfig {}
+export interface SyncConfig {}
 export interface AliniaConfig {
   key: string;
 }

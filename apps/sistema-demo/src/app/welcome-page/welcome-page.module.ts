@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WelcomePageComponent } from './welcome-page.component';
-import { PaDemoModule } from '../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @NgModule({
   declarations: [WelcomePageComponent],

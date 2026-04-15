@@ -240,7 +240,7 @@ export class ResourceProfileComponent implements OnInit {
       },
       extra: value.extra
         ? { metadata: JSON.parse(value.extra) }
-        : !!this.currentValue.extra
+        : this.currentValue.extra
           ? { metadata: {} }
           : undefined,
       security: security ? { access_groups: security } : undefined,

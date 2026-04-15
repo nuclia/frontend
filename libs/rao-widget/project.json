@@ -14,6 +14,9 @@
       "configurations": {
         "production": {}
       }
+    },
+    "test": {
+      "executor": "nx:noop"
     }
   }
 }

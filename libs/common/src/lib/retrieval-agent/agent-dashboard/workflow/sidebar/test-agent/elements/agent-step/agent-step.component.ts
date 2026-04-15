@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { Memory } from '@nuclia/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
 import { getFormattedCost } from '../../../../../../arag.utils';
 import { BlockquoteComponent } from '../blockquote';

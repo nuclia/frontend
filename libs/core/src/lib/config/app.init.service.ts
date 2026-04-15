@@ -40,7 +40,7 @@ export type StaticEnvironmentConfiguration = {
   standalone?: boolean;
 };
 
-declare var window: any;
+declare let window: any;
 @Injectable()
 export class AppInitService {
   private _ready = new BehaviorSubject(false);

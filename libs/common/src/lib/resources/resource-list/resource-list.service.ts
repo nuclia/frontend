@@ -16,9 +16,12 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  defer,
+  distinctUntilChanged,
   EMPTY,
   expand,
   filter,
+  finalize,
   forkJoin,
   map,
   Observable,
@@ -70,14 +73,20 @@ export class ResourceListService {
   filters = this._filters.asObservable();
   private _ready = new BehaviorSubject<boolean>(false);
   ready = this._ready.asObservable();
+  // Tracks whether updateStatusCount() has resolved at least once per load cycle.
+  // Prevents the empty-KB state from flashing before the status count is known.
+  private _statusCountReady = new BehaviorSubject<boolean>(false);
+  loading = combineLatest([this._ready, this._statusCountReady]).pipe(
+    map(([ready, statusCountReady]) => !ready || !statusCountReady),
+  );
+  private _tableLoading = new BehaviorSubject<boolean>(false);
+  tableLoading = this._tableLoading.asObservable().pipe(distinctUntilChanged());
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
   data = this._data.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
   private _searchMode = new BehaviorSubject<SearchModes>('title');
   searchMode = this._searchMode.asObservable();
-  private _headerHeight = new BehaviorSubject<number>(0);
-  headerHeight = this._headerHeight.asObservable();
   private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
 
   private _page = new BehaviorSubject<number>(0);
@@ -133,6 +142,7 @@ export class ResourceListService {
 
   clear() {
     this._ready.next(false);
+    this._statusCountReady.next(false);
     this._data.next([]);
     this._page.next(0);
     this._totalItems.next(0);
@@ -190,17 +200,28 @@ export class ResourceListService {
     this._searchMode.next(mode);
   }
 
-  setHeaderHeight(height: number) {
-    this._headerHeight.next(height);
-  }
-
   loadResources(replaceData = true, updateCount = true) {
-    return forkJoin([
-      this.status === RESOURCE_STATUS.PENDING
+    if (updateCount) {
+      // Fire status count in background — does not block ready signal, but does
+      // gate the loading state via _statusCountReady to prevent the empty-KB flash.
+      this.uploadService
+        .updateStatusCount()
+        .pipe(
+          take(1),
+          finalize(() => this._statusCountReady.next(true)),
+        )
+        .subscribe();
+    } else if (!this._statusCountReady.value) {
+      this._statusCountReady.next(true);
+    }
+    return defer(() => {
+      if (this._ready.value) {
+        this._tableLoading.next(true);
+      }
+      return this.status === RESOURCE_STATUS.PENDING
         ? this.loadPendingResources(replaceData)
-        : this.loadResourcesFromCatalog(replaceData),
-      updateCount ? this.uploadService.updateStatusCount() : of(undefined),
-    ]).pipe(
+        : this.loadResourcesFromCatalog(replaceData);
+    }).pipe(
       map(() => undefined),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
@@ -208,6 +229,7 @@ export class ResourceListService {
         this._data.next([]);
         return of(undefined);
       }),
+      finalize(() => this._tableLoading.next(false)),
     );
   }
 

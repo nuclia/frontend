@@ -25,7 +25,7 @@
   top: var(--app-topbar-height, 0);
   right: 0;
   bottom: 0;
-  width: 540px;
+  width: 640px;
   max-width: 90vw;
   background: var(--color-neutral-lightest, #fff);
   border-left: 1px solid v.$color-neutral-lighter;
@@ -117,31 +117,38 @@
 }
 
 .condition-op {
-  width: v.rhythm(9);
-  flex-shrink: 0;
+  flex: 1;
 }
 
 .condition-date-op {
-  width: v.rhythm(7.5);
-  flex-shrink: 0;
+  flex: 1;
 }
 
 .condition-bool {
   flex: 1;
 }
 
+.condition-value-input {
+  width: v.rhythm(13);
+  flex-shrink: 0;
+}
+
 .condition-input {
   width: v.rhythm(10);
   flex-shrink: 0;
-  padding: v.rhythm(0.75) v.rhythm(1);
-  border: 1px solid var(--color-neutral-lighter, #ddd);
+  padding: v.rhythm(1) v.rhythm(1);
+  border: 1px solid var(--color-neutral-light);
   border-radius: v.$border-radius-default;
   font-size: var(--font-size-s, 13px);
-  background: var(--color-light, #fff);
+  background: var(--color-light-stronger);
   color: inherit;
 
+  &:hover {
+    border-color: var(--color-neutral-regular);
+  }
+
   &:focus {
-    outline: 2px solid var(--color-primary-regular);
+    border-color: var(--color-primary-regular);
   }
 }
 
@@ -150,8 +157,13 @@
   flex-shrink: 0;
 }
 
+.condition-date-picker {
+  min-width: v.rhythm(19);
+  flex: 1;
+}
+
 .condition-time-input {
-  width: v.rhythm(10);
+  width: v.rhythm(13);
   flex-shrink: 0;
 }
 

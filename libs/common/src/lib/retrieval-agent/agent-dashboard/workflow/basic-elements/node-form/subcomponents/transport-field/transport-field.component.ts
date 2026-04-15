@@ -1,13 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Driver, McpSseDriver, McpStdioDriver, McpHttpDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { switchMap, take } from 'rxjs';
+import { DriversService } from '../../../../../../drivers/drivers.service';
 import { aragUrl } from '../../../../workflow.state';
 
 export type TransportType = string;
@@ -27,7 +37,8 @@ export interface TransportChangeEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransportFieldComponent implements OnInit {
-  private sdk = inject(SDKService);
+  private destroyRef = inject(DestroyRef);
+  private driversService = inject(DriversService);
   private toaster = inject(SisToastService);
 
   // Inputs - updated to match other subcomponents pattern
@@ -105,21 +116,16 @@ export class TransportFieldComponent implements OnInit {
     }
 
     // Load drivers
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers()),
-      )
-      .subscribe({
-        next: (drivers) => {
-          this.drivers.set(drivers);
-          this.updateDriverAvailability(drivers);
+    this.driversService.drivers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (drivers) => {
+        this.drivers.set(drivers);
+        this.updateDriverAvailability(drivers);
 
-          // Emit initial state
-          this.emitTransportChange();
-        },
-        error: () => this.toaster.error('retrieval-agents.workflow.errors.loading-drivers'),
-      });
+        // Emit initial state
+        this.emitTransportChange();
+      },
+      error: () => this.toaster.error('retrieval-agents.workflow.errors.loading-drivers'),
+    });
   }
 
   onTransportChange(transport: TransportType): void {

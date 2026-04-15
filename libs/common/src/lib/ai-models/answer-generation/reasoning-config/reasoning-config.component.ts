@@ -15,6 +15,8 @@ import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReasoningConfig } from '@nuclia/core';
 
+const INITIAL_BUDGET_TOKENS = 15000;
+
 @Component({
   selector: 'stf-reasoning-config',
   imports: [PaTextFieldModule, PaTogglesModule, ReactiveFormsModule, TranslateModule],
@@ -31,7 +33,11 @@ export class ReasoningConfigComponent implements OnDestroy {
   }
   @Input()
   set disabled(value: boolean | undefined) {
-    value ? this.form.disable() : this.form.enable();
+    if (value) {
+      this.form.disable();
+    } else {
+      this.form.enable();
+    }
   }
   @Output() configChange = new EventEmitter<ReasoningConfig>();
 
@@ -41,7 +47,7 @@ export class ReasoningConfigComponent implements OnDestroy {
 
   form = new FormGroup({
     customizeReasoning: new FormControl<boolean>(false, { nonNullable: true }),
-    budget_tokens: new FormControl<number>(0, { nonNullable: true }),
+    budget_tokens: new FormControl<number>(INITIAL_BUDGET_TOKENS, { nonNullable: true }),
     effort: new FormControl<string>('0', { nonNullable: true }), // effort property is integer, but pastanaga select only accept strings
   });
 
@@ -66,16 +72,11 @@ export class ReasoningConfigComponent implements OnDestroy {
   }
 
   updateForm(value: ReasoningConfig | undefined) {
-    const empty = value === undefined;
-    const defaultValue = value && value.budget_tokens === 0 && value.effort === 0 && this.form.pristine;
-    if (empty || defaultValue) {
-      this.form.patchValue({ customizeReasoning: false }, { emitEvent: false });
-      return;
-    } else {
+    if (value) {
       this.form.patchValue(
         {
           customizeReasoning: true,
-          budget_tokens: value.budget_tokens || 0,
+          budget_tokens: value.budget_tokens,
           effort: value.effort?.toString() || '0',
         },
         { emitEvent: false },

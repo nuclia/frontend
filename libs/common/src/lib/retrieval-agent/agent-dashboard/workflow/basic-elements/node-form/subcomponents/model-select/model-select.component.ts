@@ -13,8 +13,8 @@ import { ModelSelectorComponent } from '../../../../../../../ai-models';
   imports: [CommonModule, ModelSelectorComponent, ReactiveFormsModule, TranslateModule],
 })
 export class ModelSelectComponent {
-  @Input() label: string = '';
-  @Input() required: boolean = false;
+  @Input() label = '';
+  @Input() required = false;
   @Input() form?: FormGroup;
   @Input() controlName?: string;
 

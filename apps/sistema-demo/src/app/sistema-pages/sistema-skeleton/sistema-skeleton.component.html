@@ -1,0 +1,96 @@
+<pa-demo-page>
+  <pa-demo-title>Skeleton</pa-demo-title>
+  <pa-demo-description>
+    <p>
+      Skeleton screens are used as loading placeholders to hint at the shape of content before it loads. Use
+      <code>nsi-skeleton</code>
+      with
+      <code>width</code>
+      ,
+      <code>height</code>
+      , and optionally
+      <code>borderRadius</code>
+      inputs.
+    </p>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <h3>Text lines</h3>
+    <div class="skeleton-demo">
+      <nsi-skeleton
+        width="100%"
+        height="1rem"
+        borderRadius="small"></nsi-skeleton>
+      <nsi-skeleton
+        width="80%"
+        height="1rem"
+        borderRadius="small"></nsi-skeleton>
+      <nsi-skeleton
+        width="60%"
+        height="1rem"
+        borderRadius="small"></nsi-skeleton>
+    </div>
+
+    <h3>Avatar + text</h3>
+    <div class="skeleton-row">
+      <nsi-skeleton
+        width="40px"
+        height="40px"
+        borderRadius="round"></nsi-skeleton>
+      <div class="skeleton-demo skeleton-avatar-row">
+        <nsi-skeleton
+          width="100%"
+          height="1rem"
+          borderRadius="small"></nsi-skeleton>
+        <nsi-skeleton
+          width="60%"
+          height="1rem"
+          borderRadius="small"></nsi-skeleton>
+      </div>
+    </div>
+
+    <h3>Card</h3>
+    <nsi-skeleton
+      width="100%"
+      height="120px"
+      borderRadius="medium"></nsi-skeleton>
+
+    <h3>Table rows</h3>
+    <div class="skeleton-demo">
+      @for (_ of [1, 2, 3, 4, 5]; track $index) {
+        <div class="skeleton-row">
+          <nsi-skeleton
+            width="40px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+          <nsi-skeleton
+            width="40%"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+          <nsi-skeleton
+            width="80px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+          <nsi-skeleton
+            width="80px"
+            height="1rem"
+            borderRadius="small"></nsi-skeleton>
+        </div>
+      }
+    </div>
+  </pa-demo-examples>
+
+  <pa-demo-code>
+    Text lines:
+    <pre><code>{{ codeText }}</code></pre>
+
+    Avatar + text:
+    <pre><code>{{ codeAvatar }}</code></pre>
+
+    Card:
+    <pre><code>{{ codeCard }}</code></pre>
+
+    Table rows:
+    <pre><code>{{ codeList }}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

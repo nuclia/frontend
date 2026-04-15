@@ -100,7 +100,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
     }
   }
 
-  private _triggerSearch(query: string, extendedResults: boolean = false) {
+  private _triggerSearch(query: string, extendedResults = false) {
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
       switchMap(([field, resource]) => this.annotationService.searchInField(query, resource, field, extendedResults)),
     );

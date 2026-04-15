@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData, FeaturesService } from '@flaps/core';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
@@ -24,6 +24,7 @@ describe('LoginComponent', () => {
   };
   let reCaptchaV3Service: { execute: jest.Mock };
   let samlService: { checkDomain: jest.Mock; ssoUrl: jest.Mock };
+  const featuresService = { unstable: { progressComSignup: of(false) } };
 
   let routeData$: BehaviorSubject<{ loginData: OAuthLoginData }>;
   let routeQueryParams$: BehaviorSubject<Record<string, string | undefined>>;
@@ -50,6 +51,7 @@ describe('LoginComponent', () => {
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
         { provide: BackendConfigurationService, useValue: config },
         { provide: SAMLService, useValue: samlService },
+        { provide: FeaturesService, useValue: featuresService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -274,5 +276,37 @@ describe('LoginComponent', () => {
     component.loginForm.controls.email.setValue('bruce@wayne.corp');
 
     await expect(ssoPromise).resolves.toBeUndefined();
+  });
+
+  it('should pre-fill email and set account_already_exists message when loginData has email and needs_signup is false', async () => {
+    routeData$.next({
+      loginData: {
+        skip_login: false,
+        needs_signup: false,
+        email: 'test@example.com',
+      } as OAuthLoginData,
+    });
+    routeQueryParams$.next({ login_challenge: 'challenge-1' });
+
+    await buildComponent();
+
+    expect(component.emailControl.value).toBe('test@example.com');
+    expect(component.message).toBe('login.account_already_exists');
+  });
+
+  it('should not pre-fill email and not set account_already_exists message when needs_signup is true', async () => {
+    routeData$.next({
+      loginData: {
+        skip_login: false,
+        needs_signup: true,
+        email: 'test@example.com',
+      } as OAuthLoginData,
+    });
+    routeQueryParams$.next({ login_challenge: 'challenge-1' });
+
+    await buildComponent();
+
+    expect(component.emailControl.value).toBe('');
+    expect(component.message).not.toBe('login.account_already_exists');
   });
 });

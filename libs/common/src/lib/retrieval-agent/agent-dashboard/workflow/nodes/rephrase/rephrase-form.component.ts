@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   forwardRef,
   inject,
   input,
@@ -9,19 +10,20 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { ARAGSchemas, NucliaDBDriver } from '@nuclia/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { map, Observable, switchMap, take } from 'rxjs';
+import { map } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
 import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select';
 import { aragUrl } from '../../workflow.state';
 import { JSONSchema4 } from 'json-schema';
+import { DriversService } from '../../../../drivers/drivers.service';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -42,7 +44,8 @@ import { JSONSchema4 } from 'json-schema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RephraseFormComponent extends FormDirective implements OnInit {
-  private sdk = inject(SDKService);
+  private destroyRef = inject(DestroyRef);
+  private driversService = inject(DriversService);
 
   override form = new FormGroup({
     rephrase: new FormGroup({
@@ -64,18 +67,17 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
     return this.form.controls.rephrase;
   }
 
-  schemas = input<JSONSchema4 | null>(null);
+  schemas = input<ARAGSchemas | null>(null);
   formReady = output<FormGroup>();
   driversPath = computed(() => `${aragUrl()}/drivers`);
   sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
-    this.sdk.currentArag
+    this.driversService.drivers$
       .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
+        takeUntilDestroyed(this.destroyRef),
         map((drivers) =>
-          drivers.map(
+          (drivers.filter((d) => d.provider === 'nucliadb') as NucliaDBDriver[]).map(
             (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
           ),
         ),
@@ -93,7 +95,7 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       );
 
     // Set default model
-    const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase');
+    const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase', 'preprocess');
     const defaultModel = schema?.properties?.['model']?.default as string | undefined;
     this.configForm.controls.model.patchValue(defaultModel || '');
     this.formReady.emit(this.configForm);

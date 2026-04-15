@@ -42,8 +42,9 @@ import {
   TooltipPageComponent,
   TranslatePageComponent,
   TypographyPageComponent,
-} from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
+} from '@guillotinaweb/pastanaga-angular/demo';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { SliderPageComponent } from 'libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import {
   SistemaActionCardComponent,
   SistemaBackButtonComponent,
@@ -54,6 +55,7 @@ import {
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
   SistemaSegmentedButtonsComponent,
+  SistemaSkeletonComponent,
   SistemaSpinnerComponent,
   SistemaStickyFooterComponent,
   SistemaTwoColumnsConfigurationItemComponent,
@@ -103,6 +105,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
       { view: 'country-select', title: 'Country select', type: SistemaCountrySelectComponent },
       { view: 'search-input', title: 'Search input', type: SistemaSearchInputComponent },
+      { view: 'skeleton', title: 'Skeleton', type: SistemaSkeletonComponent },
       { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
       { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },

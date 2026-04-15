@@ -302,9 +302,9 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     const lines = code.split('\n');
-    let indentStack: number[] = [0];
-    let inString = false;
-    let stringChar = '';
+    const indentStack: number[] = [0];
+    const inString = false;
+    const stringChar = '';
 
     lines.forEach((line, index) => {
       const lineNumber = index + 1;
@@ -337,8 +337,8 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       }
 
       // Check for unmatched parentheses, brackets, braces
-      const openChars = (line.match(/[\(\[\{]/g) || []).length;
-      const closeChars = (line.match(/[\)\]\}]/g) || []).length;
+      const openChars = (line.match(/[([{]/g) || []).length;
+      const closeChars = (line.match(/[)\]}]/g) || []).length;
 
       // Basic check for obvious mismatches on single line
       if (trimmedLine.includes('(') && !trimmedLine.includes(')') && openChars > closeChars) {

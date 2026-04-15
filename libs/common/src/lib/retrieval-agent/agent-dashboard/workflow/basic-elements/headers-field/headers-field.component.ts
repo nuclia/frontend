@@ -25,7 +25,7 @@ export class HeadersFieldComponent implements OnInit {
    */
   config = input<ExternalAgentUI | McpSseConfig>();
 
-  get headersGroup(): FormGroup<{}> {
+  get headersGroup(): FormGroup {
     return this.form().controls['headers'] as FormGroup;
   }
 

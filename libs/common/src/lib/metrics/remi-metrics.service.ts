@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
-import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../../charts';
+import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
@@ -26,8 +26,7 @@ interface RawEvolutionResults {
   parameters: RangeParameters;
 }
 
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RemiMetricsService {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
@@ -83,7 +82,7 @@ export class RemiMetricsService {
   private _lowContextPageIds = new BehaviorSubject<number[]>([0]);
   private _noAnswerPageIds = new BehaviorSubject<number[]>([0]);
   private _badFeedbackPageIds = new BehaviorSubject<number[]>([0]);
-  
+
   private _lowContextLoading = new BehaviorSubject<boolean>(false);
   private _noAnswerLoading = new BehaviorSubject<boolean>(false);
   private _badFeedbackLoading = new BehaviorSubject<boolean>(false);

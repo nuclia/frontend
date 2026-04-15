@@ -80,7 +80,7 @@ export interface Field {
   label: string;
   help?: string;
   placeholder?: string;
-  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean' | 'file';
+  type: 'text' | 'select' | 'textarea' | 'table' | 'boolean' | 'file' | 'hint';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   pattern?: string | RegExp;
@@ -99,6 +99,17 @@ export interface Filters {
     from?: string;
     to?: string;
   };
+}
+
+export interface FileFilter {
+  mode: 'include' | 'exclude';
+  extensions?: string[];
+  glob_patterns?: string[];
+}
+
+export interface ModifiedTimeRange {
+  from?: string;
+  to?: string;
 }
 
 export type Connector = {
@@ -122,6 +133,8 @@ export interface ISyncEntity {
   syncSecurityGroups?: boolean;
   extract_strategy?: string;
   isCloud?: boolean;
+  file_filter?: FileFilter;
+  modified_time_range?: ModifiedTimeRange;
 }
 
 export interface SyncBasicData {

@@ -30,7 +30,6 @@ import { find, search } from '../search/search';
 import { retry429Config, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb/kb.models';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
 
 /**

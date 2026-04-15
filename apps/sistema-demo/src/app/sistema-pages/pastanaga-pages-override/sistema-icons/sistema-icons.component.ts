@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ICONS } from '../../../../assets/glyphs';
-import { BaseIconPageComponent } from '../../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { BaseIconPageComponent } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   templateUrl:

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -19,6 +19,7 @@ import { endOfDay } from 'date-fns';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
+import { ResourceCacheService } from '../resource-cache.service';
 import { Filters, formatFiltersFromFacets } from '../resource-filters.utils';
 import { ResourceListService } from './resource-list.service';
 import { SearchModes } from './resource-list.model';
@@ -31,9 +32,10 @@ import { SearchModes } from './resource-list.model';
 })
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
-  @ViewChild('header') header?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
+
+  private resourceCacheService = inject(ResourceCacheService);
 
   statusCount = this.uploadService.statusCount;
   uploadInProgress = this.uploadService.uploadInProgress;
@@ -43,6 +45,7 @@ export class ResourceListComponent implements OnDestroy {
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
   ready = this.resourceListService.ready;
+  loading = this.resourceListService.loading;
   hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   labelSets = this.resourceListService.labelSets;
@@ -50,7 +53,7 @@ export class ResourceListComponent implements OnDestroy {
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   status = this.route.params.pipe(map((params) => this.getStatusFromParam(params['status'] || '')));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
-  andLogicForLabels: boolean = false;
+  andLogicForLabels = false;
   displayedLabelSets: LabelSets = {};
   searchModes = [
     new ControlModel({ id: 'title', value: 'title', label: 'stash.search-modes.title' }),
@@ -93,7 +96,28 @@ export class ResourceListComponent implements OnDestroy {
     });
     this.uploadService.refreshNeeded
       .pipe(
-        switchMap(() => this.resourceListService.loadResources(true, false)),
+        switchMap(() =>
+          this.resourceListService.loadResources(true, false).pipe(
+            switchMap(() => {
+              if (this.isMainView || this.isProcessedView) {
+                return this.loadFilters();
+              }
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
+
+    this.resourceCacheService.resourceDeleted$
+      .pipe(
+        switchMap(() => {
+          if (this.isMainView || this.isProcessedView) {
+            return this.loadFilters();
+          }
+          return of(null);
+        }),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
@@ -114,12 +138,6 @@ export class ResourceListComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
-
-    merge(this.resourceListService.ready, this.resourceListService.filters, this.uploadService.statusCount)
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(() => {
-        this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
-      });
   }
 
   ngOnDestroy() {
@@ -260,14 +278,9 @@ export class ResourceListComponent implements OnDestroy {
     ]).pipe(
       switchMap(([labelSets, queryParams, prevFilters, prevLabelsLogic]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return this.sdk.currentKb.pipe(
-          take(1),
-          switchMap((kb) =>
-            kb
-              .getFacets(faceted)
-              .pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }))),
-          ),
-        );
+        return this.resourceCacheService
+          .requestFacets(faceted)
+          .pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic })));
       }),
       map(({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }) => {
         const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');

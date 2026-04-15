@@ -2,6 +2,7 @@ import { EventEmitter } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { BackendConfigurationService, LabelsService, NavigationService, SDKService } from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';

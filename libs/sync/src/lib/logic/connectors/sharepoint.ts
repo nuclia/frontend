@@ -44,6 +44,12 @@ export class SharepointImpl extends OAuthConnector {
             required: true,
             secret: true,
           },
+          {
+            id: 'permissions',
+            label: 'sync.connectors.sharepoint.permissions.label',
+            help: 'sync.connectors.sharepoint.permissions.help',
+            type: 'hint',
+          },
         ],
       },
     ]);

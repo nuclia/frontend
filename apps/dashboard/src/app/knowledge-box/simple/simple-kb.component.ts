@@ -30,12 +30,12 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
   private sdk = inject(SDKService);
   private uploadService = inject(UploadService);
   widgetPreview = this.searchWidgetService.widgetPreview;
-  emptyKb = combineLatest([this.sdk.counters, this.uploadService.statusCount]).pipe(
-    map(([counters, statusCount]) => {
-      return (
-        (!counters?.resources || counters.resources === 0) &&
-        statusCount.error + statusCount.pending + statusCount.processed === 0
-      );
+  totalResources = this.uploadService.statusCount.pipe(
+    map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
+  );
+  emptyKb = combineLatest([this.sdk.counters, this.totalResources]).pipe(
+    map(([counters, totalResources]) => {
+      return (!counters?.resources || counters.resources === 0) && totalResources === 0;
     }),
   );
   uploadInProgress = this.uploadService.uploadInProgress;
@@ -46,7 +46,7 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, undefined, '#preview');
-    this.uploadService.updateStatusCount();
+    this.uploadService.updateStatusCount().subscribe();
   }
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();

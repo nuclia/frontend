@@ -12,6 +12,7 @@ import {
   Type,
 } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
+import { DriversService } from '../../drivers/drivers.service';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -22,6 +23,7 @@ import {
   SearchConfigs,
   LearningConfigurations,
   GenerativeProviders,
+  ARAGSchemas,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import {
@@ -33,6 +35,7 @@ import {
   map,
   Observable,
   of,
+  startWith,
   switchMap,
   take,
   tap,
@@ -88,8 +91,6 @@ import {
 import { NodeFormComponent } from './basic-elements/node-form/node-form.component';
 import { DynamicNodeComponent } from './basic-elements/dynamic-node/dynamic-node.component';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { JSONSchema4 } from 'json-schema';
-import { convertNodeTypeToConfigTitle } from './workflow.utils';
 import { AdvancedAskFormComponent } from './nodes/advanced-ask';
 import { toObservable } from '@angular/core/rxjs-interop';
 
@@ -111,9 +112,10 @@ export class WorkflowService {
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
   private environmentInjector = this.applicationRef.injector;
+  private driversService = inject(DriversService);
 
   // Shared schemas state
-  private _schemasSubject = new BehaviorSubject<JSONSchema4 | null>(null);
+  private _schemasSubject = new BehaviorSubject<ARAGSchemas | null>(null);
   schemas$ = this._schemasSubject.asObservable();
 
   // Shared Models state
@@ -124,9 +126,11 @@ export class WorkflowService {
   private _generativeProvidersSubject = new BehaviorSubject<GenerativeProviders | null>(null);
   generativeProviders$ = this._generativeProvidersSubject.asObservable();
 
-  // Driver Model state
-  private _driverModelsSubject = new BehaviorSubject<Driver[] | null>(null);
-  driverModels$ = this._driverModelsSubject.asObservable();
+  // Driver state: derived from DriversService so that add/edit/delete operations
+  // automatically propagate here without an additional HTTP call.
+  // startWith(null) preserves the null-initial-value contract for existing consumers
+  // that guard with filter(Boolean) / filter((d) => !!d).
+  driverModels$ = this.driversService.drivers$.pipe(startWith(null));
 
   private columns: HTMLElement[] = [];
 
@@ -508,20 +512,19 @@ export class WorkflowService {
     const nodeCategory = parentNode.nodeCategory;
 
     // Find the schema for this node type
-    const categorySchemas = schemas.properties?.[nodeCategory];
+    const categorySchemas = schemas.agents[nodeCategory];
     if (!categorySchemas) {
       return [];
     }
 
-    const schemaTitle = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-    const matchingSchema = schemas['$defs'][schemaTitle];
+    const matchingSchema = categorySchemas[nodeType];
 
-    if (!matchingSchema?.properties) {
+    if (!matchingSchema?.config_schema?.properties) {
       return [];
     }
 
     // Look for the property that matches this connectable entry
-    const property = matchingSchema.properties[entryId];
+    const property = matchingSchema.config_schema.properties[entryId];
     if (!property) {
       return [];
     }
@@ -600,11 +603,10 @@ export class WorkflowService {
     discriminatorOptions.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType as NodeType);
-      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+      const matchingAgent = this._schemasSubject.getValue()?.agents[originCategory]?.[nodeType];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
-      selectorRef.setInput('description', matchingSchema?.description || '');
+      selectorRef.setInput('nodeTitle', matchingAgent?.title || '');
+      selectorRef.setInput('description', matchingAgent?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType as NodeType]);
       if (NODES_IN_BETA.includes(nodeType)) {
         selectorRef.setInput('badge', 'generic.badge.beta');
@@ -643,11 +645,10 @@ export class WorkflowService {
     categoryConfigs.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       const nodeTypeKey = this.getNodeTypeKey(nodeType);
-      const schemaKey = convertNodeTypeToConfigTitle(nodeType, this._schemasSubject.getValue());
-      const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+      const matchingAgent = this._schemasSubject.getValue()?.agents[nodeCategory]?.[nodeType];
       selectorRef.setInput('nodeType', nodeTypeKey);
-      selectorRef.setInput('nodeTitle', matchingSchema?.title || '');
-      selectorRef.setInput('description', matchingSchema?.description || '');
+      selectorRef.setInput('nodeTitle', matchingAgent?.title || '');
+      selectorRef.setInput('description', matchingAgent?.description || '');
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       if (NODES_IN_BETA.includes(nodeType)) {
         selectorRef.setInput('badge', 'generic.badge.beta');
@@ -671,10 +672,7 @@ export class WorkflowService {
    * Get all node configurations directly from schemas for a specific category
    */
   private getCategoryConfigurations(nodeCategory: NodeCategory): NodeType[] {
-    return Object.keys(
-      (this._schemasSubject.getValue()?.properties?.[nodeCategory].items as JSONSchema4)?.['discriminator'].mapping ||
-        {},
-    ).map((k) => k as NodeType);
+    return Object.keys(this._schemasSubject.getValue()?.agents[nodeCategory] || {}).map((k) => k as NodeType);
   }
 
   /**
@@ -875,7 +873,7 @@ export class WorkflowService {
     if (!section) {
       throw new Error(`Section missing for category ${nodeCategory} in column ${columnIndex}`);
     }
-    let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
+    const nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('type', nodeType);
     nodeRef.setInput('origin', origin);
     nodeRef.setInput('category', nodeCategory);
@@ -901,7 +899,7 @@ export class WorkflowService {
     if (this.columnContainer) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
       newColumn.classList.add(COLUMN_CLASS);
-      for (let category of ['preprocess', 'context', 'generation', 'postprocess']) {
+      for (const category of ['preprocess', 'context', 'generation', 'postprocess']) {
         const section = this.renderer.createElement('div') as HTMLElement;
         section.id = category;
         section.classList.add(COLUMN_SECTION_CLASS);
@@ -926,11 +924,10 @@ export class WorkflowService {
     if (!node) {
       throw new Error(`selectNode: No node with id=${nodeId} in category ${nodeCategory}`);
     }
-    const schemaKey = convertNodeTypeToConfigTitle(node.nodeType, this._schemasSubject.getValue());
-    const matchingSchema = this._schemasSubject.getValue()?.['$defs'][schemaKey];
+    const matchingAgent = this._schemasSubject.getValue()?.agents[nodeCategory]?.[node.nodeType];
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
-      matchingSchema?.title || '',
+      matchingAgent?.title || '',
       undefined,
       NODES_IN_BETA.includes(node.nodeType) ? 'generic.badge.beta' : undefined,
     );
@@ -1076,12 +1073,13 @@ export class WorkflowService {
    * @returns ComponentRef<FormDirective> corresponding to the node type.
    */
   private getFormRef(nodeType: NodeType, nodeCategory: string): ComponentRef<FormDirective> {
-    let nodeTypeOverride: string = nodeType;
+    const nodeTypeOverride: string = nodeType;
     switch (nodeType) {
-      case 'advanced_ask':
+      case 'advanced_ask': {
         const ref = createComponent(AdvancedAskFormComponent, { environmentInjector: this.environmentInjector });
         ref.setInput('schemas', this._schemasSubject.getValue());
         return ref;
+      }
       case 'ask':
         return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
@@ -1089,10 +1087,11 @@ export class WorkflowService {
       case 'preprocess_alinia':
       case 'postprocess_alinia':
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
-      case 'rephrase':
+      case 'rephrase': {
         const refRephrase = createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
         refRephrase.setInput('schemas', this._schemasSubject.getValue());
         return refRephrase;
+      }
     }
 
     const defaultRef = createComponent(NodeFormComponent, { environmentInjector: this.environmentInjector });
@@ -1190,7 +1189,7 @@ export class WorkflowService {
   }
 
   getSchemas() {
-    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getFullSchemas()));
+    return this.sdk.currentArag.pipe(switchMap((arag) => arag.getSchemas()));
   }
 
   /**
@@ -1206,18 +1205,11 @@ export class WorkflowService {
   }
 
   /**
-   * Fetch drivers and update shared state
+   * Trigger a refresh of the shared driver list.
+   * DriversService.drivers$ will re-emit, propagating to all consumers of driverModels$.
    */
   fetchDrivers() {
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => arag.getDrivers()),
-      )
-      .subscribe({
-        next: (drivers) => this._driverModelsSubject.next(drivers),
-        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.load-drivers')),
-      });
+    this.driversService.initialize().pipe(take(1)).subscribe();
   }
 
   private getDriverKnowledgeBox(driverIdentifier: string): Observable<KnowledgeBox | null> {

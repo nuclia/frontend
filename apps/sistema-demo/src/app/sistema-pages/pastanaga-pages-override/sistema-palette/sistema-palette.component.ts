@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { PaDemoModule } from '../../../../../../../libs/pastanaga-angular/projects/demo/src';
+import { PaDemoModule } from '@guillotinaweb/pastanaga-angular/demo';
 
 @Component({
   imports: [PaDemoModule],

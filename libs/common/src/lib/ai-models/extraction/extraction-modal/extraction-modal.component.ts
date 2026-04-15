@@ -102,7 +102,7 @@ export class ExtractionModalComponent implements OnInit {
       return;
     }
     const values = this.configForm.getRawValue();
-    let payload: ExtractConfig = {
+    const payload: ExtractConfig = {
       name: values.name,
     };
     if (values.vllm_config) {

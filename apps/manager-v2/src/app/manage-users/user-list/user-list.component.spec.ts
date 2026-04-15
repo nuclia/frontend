@@ -35,7 +35,13 @@ describe('UserListComponent', () => {
           getUsers: jest.fn(() => of([])),
         }),
         MockProvider(SDKService, {
-          nuclia: { auth: { logout: () => {} } },
+          nuclia: {
+            auth: {
+              logout: () => {
+                /* empty */
+              },
+            },
+          },
         } as SDKService),
         MockProvider(SisModalService),
         MockProvider(SisToastService),

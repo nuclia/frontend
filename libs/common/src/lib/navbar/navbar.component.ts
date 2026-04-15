@@ -72,9 +72,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   showMetrics = false;
-  kbUrl: string = '';
-  aragUrl: string = '';
-  platformUrl: string = '';
+  kbUrl = '';
+  aragUrl = '';
+  platformUrl = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -183,6 +183,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private isOnMetricsPage(path: string): boolean {
-    return /\/metrics\/(remi-analytics|usage-analytics|cost-token-usage|resource-activity|search-activity)/.test(path);
+    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity)/.test(
+      path,
+    );
   }
 }

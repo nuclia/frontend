@@ -88,7 +88,7 @@ export class CreateLinkComponent {
       const isCloudFile = formValue.linkTo === 'file';
       let obs: Observable<{ errors: number }>;
       switch (formValue.type) {
-        case 'multiple':
+        case 'multiple': {
           const links: string[] = formValue.links
             .split('\n')
             .map((link: string) => link.trim())
@@ -115,6 +115,7 @@ export class CreateLinkComponent {
             ),
           );
           break;
+        }
         case 'one':
           obs = this.sdk.currentKb.pipe(
             take(1),
@@ -136,7 +137,7 @@ export class CreateLinkComponent {
             ),
           );
           break;
-        case 'csv':
+        case 'csv': {
           const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
           obs = this.uploadService.createMissingLabels(allLabels).pipe(
             switchMap(() => this.sdk.currentKb.pipe(take(1))),
@@ -160,6 +161,7 @@ export class CreateLinkComponent {
             ),
           );
           break;
+        }
       }
 
       obs.subscribe((res) => {

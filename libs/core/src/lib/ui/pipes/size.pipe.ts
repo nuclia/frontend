@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class SizePipe implements PipeTransform {
   private units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-  transform(bytes: number, precision: number = 2): string {
+  transform(bytes: number, precision = 2): string {
     if (isNaN(parseFloat(String(bytes))) || !isFinite(bytes)) {
       return '?';
     }

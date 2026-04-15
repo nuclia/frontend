@@ -42,7 +42,9 @@ export class SvelteState<STATE> {
   }
 
   action(updateFn: (state: STATE) => STATE): SvelteActionObservable {
-    const selector = this.reader(() => {}) as SvelteActionObservable;
+    const selector = this.reader(() => {
+      /* empty */
+    }) as SvelteActionObservable;
     selector.do = () => {
       const current = this.store.getValue();
       this.store.next(updateFn(current));

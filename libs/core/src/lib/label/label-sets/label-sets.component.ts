@@ -4,6 +4,7 @@ import { LabelSetKind } from '@nuclia/core';
 import { map } from 'rxjs/operators';
 import { LabelsService } from '../labels.service';
 import { LabelSetDisplay } from './model';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { FeaturesService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';

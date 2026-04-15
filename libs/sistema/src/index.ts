@@ -21,3 +21,4 @@ export * from './lib/sis-modal.service';
 export * from './lib/status';
 export * from './lib/sticky-footer';
 export * from './lib/two-columns-configuration-item';
+export * from './lib/skeleton';

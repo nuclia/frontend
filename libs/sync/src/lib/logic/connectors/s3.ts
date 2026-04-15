@@ -26,8 +26,6 @@ export class S3Impl {
   canSyncSecurityGroups = false;
   canSyncLastChanges = false;
 
-  constructor() {}
-
   getParametersSections(): Observable<Section[]> {
     // TODO: at the moment the connector form is too complex to define here
     return of([]);

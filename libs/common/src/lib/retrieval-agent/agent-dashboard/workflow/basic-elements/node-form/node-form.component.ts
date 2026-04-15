@@ -2,12 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  inject,
   Input,
   OnInit,
   OnDestroy,
   Output,
-  Injector,
   signal,
   computed,
 } from '@angular/core';
@@ -47,7 +45,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
   @Input() parentForm?: FormGroup; // When used as a nested component
   @Input() nestedSchema?: JSONSchema4; // When rendering a specific sub-schema
   @Input() isNested?: boolean = false; // Flag to indicate nested usage
-  @Input() schemas?: JSONSchema4 | null; // Provide schemas directly to avoid circular dependency
+  @Input() schemas?: ARAGSchemas | null; // Provide schemas directly to avoid circular dependency
 
   @Output() formReady = new EventEmitter<FormGroup>();
 
@@ -56,6 +54,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
   });
 
   isFormReady = false;
+  agentSchema: JSONSchema4 = {};
   schema: JSONSchema4 = {};
   renderableFields: RenderableField[] = [];
 
@@ -130,6 +129,9 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
   }
 
   ngOnInit() {
+    if (this.schemas) {
+      this.agentSchema = this.schemas.agents[this.agentType][this.agentName].config_schema;
+    }
     if (this.isNested && this.nestedSchema && this.parentForm) {
       // When used as nested component, use provided schema and parent form
       this.schema = this.nestedSchema;
@@ -139,7 +141,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       this.formReady.emit(this.configForm);
       this.setupFormValidationListener();
     } else if (this.schemas) {
-      const formConfig = this.buildFormFromSchema(this.schemas, this.agentName);
+      const formConfig = this.buildFormFromSchema(this.schemas, this.agentName, this.agentType);
       this.schema = formConfig.schema || {};
       this.form = new FormGroup({
         [this.formGroupName as unknown as string]: formConfig.formGroup,
@@ -191,8 +193,8 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
   }
 
   // Get the actual schema for a property (resolving anyOf and $refs)
-  private getPropertySchema(property: any): any {
-    if (property.widget) {
+  private getPropertySchema(property: JSONSchema4): JSONSchema4 {
+    if ((property as any).widget) {
       return property;
     }
     if (property.$ref) {
@@ -204,7 +206,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       const objRef = property.anyOf.find((t: any) => t.$ref);
       if (objRef) {
         // Merge resolved schema with original property
-        return { ...this.resolveRef(objRef.$ref), ...property, anyOf: undefined, type: 'subform' };
+        return { ...(objRef.$ref ? this.resolveRef(objRef.$ref) : {}), ...property, anyOf: undefined, type: 'subform' };
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');
@@ -220,8 +222,8 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
       const defName = ref.replace('#/$defs/', '');
 
       // First try the current schema
-      if (this.schemas?.['$defs']?.[defName]) {
-        return this.schemas['$defs'][defName];
+      if (this.agentSchema?.['$defs']?.[defName]) {
+        return this.agentSchema['$defs'][defName];
       }
     }
     return {};
@@ -240,7 +242,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
     for (const [propKey, prop] of Object.entries(resolvedSchema.properties)) {
       const property = prop as JSONSchema4;
       let type = property.type;
-      let defaultValue = property.default ?? null;
+      const defaultValue = property.default ?? null;
 
       // Handle anyOf
       if (property.anyOf) {

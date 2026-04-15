@@ -126,7 +126,7 @@ export function ask(
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
             .join('');
-          let reasoning = items
+          const reasoning = items
             .filter((item) => item.item.type === 'reasoning')
             .map((item) => (item.item as Ask.ReasoningAskResponseItem).text)
             .join('');
@@ -296,7 +296,7 @@ export function predictAnswer(
               .filter((item) => item.chunk.type === 'text')
               .map((item) => (item.chunk as Ask.TextPredictAnswerResponseItem).text)
               .join('');
-            let reasoning = items
+            const reasoning = items
               .filter((item) => item.chunk.type === 'reasoning')
               .map((item) => (item.chunk as Ask.ReasoningAskResponseItem).text)
               .join('');

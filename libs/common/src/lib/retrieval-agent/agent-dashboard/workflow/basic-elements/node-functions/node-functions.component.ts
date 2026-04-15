@@ -7,7 +7,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { rootSchema } from '../../workflow.state';
-import { convertNodeTypeToConfigTitle } from '../../workflow.utils';
 import { ParentNode } from '../../workflow.models';
 
 @Component({
@@ -26,12 +25,13 @@ export class NodeFunctionsComponent {
     const nodeType = this.node()?.nodeType;
     const schemas = rootSchema();
     if (schemas && nodeType) {
-      const schemaName = convertNodeTypeToConfigTitle(nodeType, schemas);
-      const matchingSchema = schemas['$defs'][schemaName];
-      return matchingSchema?.properties['published_functions'];
+      const matchingSchema = schemas.agents.context[nodeType].config_schema;
+      return matchingSchema?.properties?.['published_functions'];
+    } else {
+      return undefined;
     }
   });
-  functions = computed(() => this.property()?.default || []);
+  functions = computed(() => (this.property()?.default as string[]) || []);
 
   copy() {
     this.copied.set(true);

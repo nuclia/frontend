@@ -5,7 +5,6 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -18,7 +17,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class DropzoneComponent implements OnInit {
+export class DropzoneComponent {
   @Input()
   set isUploading(value: any) {
     this._isUploading = coerceBooleanProperty(value);
@@ -35,8 +34,6 @@ export class DropzoneComponent implements OnInit {
   private _isUploading = false;
 
   constructor(private cdr: ChangeDetectorRef) {}
-
-  ngOnInit(): void {}
 
   fileOverBase(overBase: boolean) {
     if (!this.isUploading) {

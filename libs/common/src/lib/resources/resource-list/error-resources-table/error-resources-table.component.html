@@ -6,9 +6,7 @@
   </div>
 }
 
-<div
-  class="resource-table-header"
-  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+<div class="resource-table-header">
   <div class="header-container">
     @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
       <div class="resource-bulk-actions">
@@ -72,9 +70,7 @@
   }
 </div>
 
-<div
-  class="table-container"
-  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+<div class="table-container">
   <pa-table [columns]="tableLayout | async">
     <pa-table-sortable-header
       noBackground

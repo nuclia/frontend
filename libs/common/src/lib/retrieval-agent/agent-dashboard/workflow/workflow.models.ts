@@ -467,7 +467,7 @@ export function guardrailsUiToCreation(config: GuardrailsAgentUI): GuardrailsAge
     rules: config.rules,
   };
   switch (config.category) {
-    case 'preprocess':
+    case 'preprocess': {
       const preconfig = config.alinia.preconfig;
       if (!(preconfig === 'INAPPROPRIATE' || preconfig === 'CUSTOM')) {
         throw new Error(`Guardrails preconfig ${preconfig} is not allowed for preprocess ${config.provider} agent.`);
@@ -478,6 +478,7 @@ export function guardrailsUiToCreation(config: GuardrailsAgentUI): GuardrailsAge
         ...config.alinia,
         preconfig,
       };
+    }
     case 'postprocess':
       return {
         module: 'postprocess_alinia',

@@ -13,7 +13,6 @@ import {
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
-  LegacyRemiMetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PreviewComponent,
@@ -52,6 +51,7 @@ import {
   SetPasswordComponent,
   AppLoginComponent,
 } from '@nuclia/user';
+
 import { authGuard, metricsEnabledGuard, metricsDisabledGuard } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
@@ -83,8 +83,7 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            loadChildren: () =>
-              import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
+            loadChildren: () => import('./app-routing.lazy').then((m) => m.AccountModule),
           },
           {
             path: `:zone/:kb`,
@@ -103,13 +102,11 @@ const routes: Routes = [
               },
               {
                 path: 'upload',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/upload/upload.module').then((m) => m.UploadModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.UploadModule),
               },
               {
                 path: 'resources',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.ResourcesModule),
               },
               {
                 path: 'search',
@@ -129,27 +126,21 @@ const routes: Routes = [
                 path: 'metrics',
                 canMatch: [metricsDisabledGuard],
                 canActivate: [knowledgeBoxOwnerGuard],
-                component: LegacyRemiMetricsPageComponent,
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.LegacyMetricsModule),
               },
               {
                 path: 'metrics',
                 canMatch: [metricsEnabledGuard],
                 canActivate: [knowledgeBoxOwnerGuard],
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/metrics/metrics.module').then((m) => m.MetricsModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.MetricsModule),
               },
               {
                 path: 'entities',
-                // eslint-disable-next-line @nx/enforce-module-boundaries
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.EntitiesModule),
               },
               {
                 path: 'label-sets',
-                loadChildren: () =>
-                  import('../../../../libs/core/src/lib/label/label-sets/label-sets.module').then(
-                    (m) => m.LabelSetsModule,
-                  ),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.LabelSetsModule),
               },
               {
                 path: 'synonyms',
@@ -158,10 +149,12 @@ const routes: Routes = [
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'ai-models',
                 component: AiModelsComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'users',
@@ -175,10 +168,8 @@ const routes: Routes = [
               },
               {
                 path: 'widgets',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
-                    (m) => m.WIDGETS_ROUTES,
-                  ),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'rag-lab',
@@ -190,10 +181,7 @@ const routes: Routes = [
               },
               {
                 path: 'tasks',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/tasks-automation/tasks-automation.routes').then(
-                    (m) => m.TASK_AUTOMATION_ROUTES,
-                  ),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.TASK_AUTOMATION_ROUTES),
               },
             ],
           },
@@ -273,18 +261,13 @@ const routes: Routes = [
               },
               {
                 path: 'widgets',
-                loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
-                    (m) => m.WIDGETS_ROUTES,
-                  ),
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.WIDGETS_ROUTES),
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
-              },
-              {
-                path: 'ai-models',
-                component: AiModelsComponent,
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'users',

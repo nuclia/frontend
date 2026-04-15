@@ -38,9 +38,9 @@ import { ModelSelectorComponent, ReasoningConfigComponent } from '../../answer-g
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
   @Input() providers: GenerativeProviders = {};
   @Input() learningConfigurations: LearningConfigurations = {};
-  @Input() createMode: boolean = true;
-  @Input() vllmOnly: boolean = false;
-  @Input() isAiTable: boolean = false;
+  @Input() createMode = true;
+  @Input() vllmOnly = false;
+  @Input() isAiTable = false;
   @Input() config: ExtractVLLMConfig | undefined;
   @Input() rulesDescription: string | undefined;
   @Input() rulesPlaceholder: string | undefined;

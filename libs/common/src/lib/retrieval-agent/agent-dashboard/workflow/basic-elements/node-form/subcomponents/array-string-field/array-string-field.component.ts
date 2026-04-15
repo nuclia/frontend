@@ -1,4 +1,3 @@
-
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,8 +15,8 @@ export class ArrayStringFieldComponent {
   @Input() form!: FormGroup;
   @Input() arrayName!: string;
   @Input() config?: NodeConfig | undefined;
-  @Input() label: string = '';
-  @Input() required: boolean = false;
+  @Input() label = '';
+  @Input() required = false;
 
   ngOnInit() {
     // Defensive: config may be undefined, arrayName may not exist

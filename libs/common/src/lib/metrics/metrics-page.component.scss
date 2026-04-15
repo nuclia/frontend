@@ -1,14 +1,20 @@
 @use 'apps/dashboard/src/variables' as *;
 
-// ── Page layout override (flex column so table fills remaining height) ─────
+// ── Page layout override ──────────────────────────────────────────────────
+//
+// Strategy: let <main> (the app scroll container) scroll naturally through the
+// page header → toolbar → stat cards.  Once the table reaches the top of <main>
+// it becomes sticky there, and the CDK virtual-scroll viewport handles row
+// scrolling internally.  This avoids a locked viewport while still giving the
+// table the full remaining height once it is pinned.
 
 .page-spacing {
-  height: calc(100vh - var(--app-topbar-height));
+  height: auto;
   min-height: unset;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
-  padding-bottom: rhythm(1);
+  padding-bottom: rhythm(2);
 }
 
 // ── Page header ───────────────────────────────────────────────────────────
@@ -40,7 +46,6 @@
     display: flex;
     align-items: center;
     gap: rhythm(2);
-    margin-left: auto;
 
     pa-dropdown {
       position: absolute;
@@ -129,7 +134,12 @@
 // ── Table ─────────────────────────────────────────────────────────────────
 
 .table-container {
-  flex: 1;
+  // Stick at the top of the <main> scroll container once the above-table
+  // content has scrolled out of view.
+  position: sticky;
+  top: 0;
+  height: calc(100vh - var(--app-topbar-height) - rhythm(4));
+  flex: none;
   min-height: 200px;
   display: flex;
   flex-direction: column;

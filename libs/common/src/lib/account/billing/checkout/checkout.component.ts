@@ -127,7 +127,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   private _stripe: any;
   @ViewChild('card') private cardContainer?: ElementRef;
   card: any;
-  cardError: string = '';
+  cardError = '';
   validCard = false;
   editCard = false;
   token?: any;
@@ -408,7 +408,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         ? this.translate.instant(message)
         : this.translate.instant('generic.error.oops') +
             '<br>' +
-            this.translate.instant('billing.assistance', { url: 'mailto:sales@nuclia.com' }),
+            this.translate.instant('billing.assistance', { url: 'mailto:Sales.AgenticRAG@progress.com' }),
     );
   }
 

@@ -280,6 +280,10 @@ export class Authentication implements IAuthentication {
     localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
     localStorage.removeItem(LOCALSTORAGE_REFRESH_KEY);
     localStorage.removeItem(LOCALSTORAGE_ID_TOKEN_KEY);
+    if (!id_token) {
+      window.location.assign(window.location.origin);
+      return;
+    }
     const logoutParams = new URLSearchParams({
       id_token_hint: id_token,
       post_logout_redirect_uri: window.location.origin,

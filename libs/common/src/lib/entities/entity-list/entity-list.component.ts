@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Input,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Entity, NerFamily } from '../model';
 
@@ -52,8 +45,6 @@ export class EntityListComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   private _family: NerFamily | undefined;
-
-  constructor() {}
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();

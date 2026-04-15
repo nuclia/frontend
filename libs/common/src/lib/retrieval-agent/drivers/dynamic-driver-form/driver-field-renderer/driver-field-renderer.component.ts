@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { DriverFieldConfig } from '../driver-field-config.service';
@@ -36,7 +36,7 @@ export class KbSelectComponent {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
 }
 
 @Component({
@@ -80,7 +80,7 @@ export class KeyValueFieldComponent {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
 }
 
 @Component({
@@ -97,21 +97,18 @@ export class KeyValueFieldComponent {
     ApiHeadersFieldComponent,
     KbSelectComponent,
     KeyValueFieldComponent,
-    DriverExpandableTextareaComponent
-],
+    DriverExpandableTextareaComponent,
+  ],
 })
-export class DriverFieldRendererComponent implements OnInit {
+export class DriverFieldRendererComponent {
   @Input() fieldConfig!: DriverFieldConfig;
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
   @Input() property!: JSONSchema4;
-  @Input() required: boolean = false;
+  @Input() driverSchema!: JSONSchema4;
+  @Input() required = false;
   @Input() config?: any;
-
-  ngOnInit() {
-    // Component initialization
-  }
 
   getInputType(): any {
     if (this.fieldConfig.type === 'password') return 'password';

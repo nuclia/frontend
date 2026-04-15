@@ -2,6 +2,7 @@ import { ExtraOptions, Routes } from '@angular/router';
 
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   AiModelsComponent,
   BaseComponent,

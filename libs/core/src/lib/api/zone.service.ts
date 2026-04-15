@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Zone } from '../models';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
 import { take } from 'rxjs/operators';
@@ -20,8 +20,12 @@ export class ZoneService {
     private billingService: BillingService,
   ) {}
 
+  // Cache only the raw API response. Filtering depends on mutable account/subscription
+  // state, so that part must stay live per subscriber.
+  private readonly rawZones$: Observable<Zone[]> = this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(shareReplay(1));
+
   getZones(): Observable<Zone[]> {
-    return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
+    return this.rawZones$.pipe(
       switchMap((zones) => {
         return this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
@@ -44,21 +48,19 @@ export class ZoneService {
                     // Early return for non-AWS marketplace or stage/dev environments
                     const isAwsMarketplace = subscription?.provider === 'AWS_MARKETPLACE';
                     const shouldFilterZones = isAwsMarketplace && !this.featureFlagService.isStageOrDev;
-                    
+
                     if (!shouldFilterZones) {
                       return zones;
                     }
 
                     // Filter to AWS zones only
                     const awsZones = zones.filter((zone) => zone.cloud_provider === 'AWS');
-                    
+
                     // Check if Israel zone should be allowed
                     const awsSubscription = subscription.subscription as AwsAccountSubscription;
                     const hasIsraelAccess = awsSubscription.aws_product_code === ISRAEL_ONLY_AWS_PRODUCT_CODE;
-                    
-                    return hasIsraelAccess 
-                      ? awsZones 
-                      : awsZones.filter((zone) => zone.slug !== 'aws-il-central-1-1');
+
+                    return hasIsraelAccess ? awsZones : awsZones.filter((zone) => zone.slug !== 'aws-il-central-1-1');
                   }),
                   catchError(() => of(zones)),
                 )

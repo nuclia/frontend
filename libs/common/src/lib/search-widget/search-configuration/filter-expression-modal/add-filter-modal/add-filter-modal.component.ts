@@ -211,7 +211,7 @@ export class AddFilterModalComponent {
       case 'not':
         expression = { not: undefined };
         break;
-      default:
+      default: {
         const filterParams = Object.fromEntries(
           Object.entries(this.forms[this.prop.value].value).filter(([, value]) => !!value),
         ) as any;
@@ -219,6 +219,7 @@ export class AddFilterModalComponent {
           prop: this.prop.value,
           ...filterParams,
         };
+      }
     }
     this.modal.close(expression);
   }

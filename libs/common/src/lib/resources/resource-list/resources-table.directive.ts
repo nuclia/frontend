@@ -21,6 +21,7 @@ import {
   toArray,
 } from 'rxjs';
 import { ResourceListService } from './resource-list.service';
+import { ResourceCacheService } from '../resource-cache.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ export const COMMON_COLUMNS = [
 })
 export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected resourceListService = inject(ResourceListService);
+  protected resourceCacheService = inject(ResourceCacheService);
   protected sdk: SDKService = inject(SDKService);
   protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   protected router = inject(Router);
@@ -59,7 +61,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   totalKbResources = this.resourceListService.totalKbResources;
   pageSize = this.resourceListService.pageSize;
   pageSizes = PAGE_SIZES;
-  headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   unsubscribeAll = new Subject<void>();
 
@@ -151,13 +152,14 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     switch (cell.id) {
       case SortField.title:
       case SortField.created:
-      case SortField.modified:
+      case SortField.modified: {
         const sorting: SortOption = {
           field: cell.id,
           order: cell.descending ? 'desc' : 'asc',
         };
         this.resourceListService.sortBy(sorting);
         break;
+      }
     }
   }
 
@@ -287,6 +289,8 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
         switchMap(() => this.resourceListService.loadResources()),
         tap(() => {
           this.manageBulkActionResults('deleting');
+          this.resourceCacheService.invalidate();
+          this.resourceCacheService.notifyDeletion();
           this.sdk.refreshCounter(true);
           this.cdr.markForCheck();
         }),

@@ -13,7 +13,13 @@ import {
 import { SisToastService } from '@nuclia/sistema';
 import { NumericCondition, DateCondition } from '../metrics-filters';
 import { CostTokenStats } from '../metrics-column.model';
-import { aggregateUsageMetric, applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import {
+  aggregateUsageMetric,
+  applyNumericConditions,
+  applyDateConditions,
+  applyTextSearchFilter,
+  getMonthRange,
+} from '../metrics-utils';
 import { COST_TOKEN_SHOW_FIELDS } from './cost-token-usage-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -23,7 +29,9 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   private toaster = inject(SisToastService);
 
   private _usageStats = signal<CostTokenStats>({
-    aiTokensUsed: null, nucliaTokens: null, nucliaTokensBilled: null,
+    aiTokensUsed: null,
+    nucliaTokens: null,
+    nucliaTokensBilled: null,
   });
   private _search = signal<{ term: string; column: string } | null>(null);
   private _lastId = signal<number | undefined>(undefined);
@@ -70,7 +78,9 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
       )
       .subscribe({
         next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
-        error: () => {},
+        error: () => {
+          /* empty */
+        },
       });
   }
 
@@ -87,7 +97,9 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     // Boolean sidebar filters
     Object.entries(this._booleanFilters())
       .filter(([, value]) => value !== undefined)
-      .forEach(([key, value]) => { filters[key] = { eq: value }; });
+      .forEach(([key, value]) => {
+        filters[key] = { eq: value };
+      });
 
     // Numeric sidebar filters (status is ActivityLogFilter<string> in the API)
     applyNumericConditions(this._numericConditions(), filters, ['status']);
@@ -166,7 +178,11 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     this._applyFilters();
   }
 
-  applyAllFilters(booleans: Record<string, boolean | undefined>, numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {
+  applyAllFilters(
+    booleans: Record<string, boolean | undefined>,
+    numericConditions: NumericCondition[],
+    dateConditions: DateCondition[] = [],
+  ): void {
     this._booleanFilters.set(booleans);
     this._numericConditions.set(numericConditions);
     this._dateConditions.set(dateConditions);

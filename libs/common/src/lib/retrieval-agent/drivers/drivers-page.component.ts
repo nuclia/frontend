@@ -33,8 +33,8 @@ import { JSONSchema4, JSONSchema7 } from 'json-schema';
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    TranslateModule
-],
+    TranslateModule,
+  ],
   templateUrl: './drivers-page.component.html',
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -57,13 +57,10 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     if (schemas === null) {
       return [];
     } else {
-      const driverSchemaIds = ((schemas.properties?.['drivers'].items as JSONSchema4)?.oneOf || []).map(
-        (ref) => ref.$ref?.split('/').slice(-1)[0],
-      );
-      const options = Object.entries((schemas as JSONSchema7).$defs || {})
-        .filter(([key]) => driverSchemaIds.includes(key))
-        .map(([key, driver]) => ({ key, title: (driver as JSONSchema4)?.title || '' }));
-      return options;
+      return Object.entries(schemas.drivers).map(([key, driver]) => ({
+        key,
+        title: driver.title,
+      }));
     }
   });
   hasAllInternetDrivers = this.driversService.hasAllInternetDrivers;

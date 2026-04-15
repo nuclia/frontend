@@ -17,6 +17,7 @@ import {
   StorageStructure,
   SyncConfiguration,
   SyncConfigurationCreate,
+  SyncConfigurationUpdate,
 } from './sync.models';
 
 export class SyncManager implements ISyncManager {
@@ -88,6 +89,10 @@ export class SyncManager implements ISyncManager {
     return this.nuclia.rest.get<StorageSite>(
       `${this.kb.path}/external_connection/${connectionId}/resolve_site?${params.toString()}`,
     );
+  }
+
+  updateConfig(id: string, config: SyncConfigurationUpdate): Observable<SyncConfiguration> {
+    return this.nuclia.rest.patch<SyncConfiguration>(`${this.kb.path}/sync-config/${id}`, config);
   }
 }
 

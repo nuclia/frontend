@@ -23,7 +23,7 @@ import { filter, map, of, switchMap, take } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 import { getListFromTextarea } from '../../arag.utils';
 import { FilterExpressionModalComponent } from '../../../search-widget/search-configuration/filter-expression-modal';
-import { ArrayStringFieldComponent } from '../../agent-dashboard/workflow';
+import { ArrayStringFieldComponent } from '../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -170,7 +170,9 @@ export class NucliaDriverModalComponent {
       let filterExpression = undefined;
       try {
         filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
-      } catch (e) {}
+      } catch (e) {
+        /* empty */
+      }
       if (custom) {
         const config: NucliaDBConfig | SyncConfig = {
           ...rawConfig,

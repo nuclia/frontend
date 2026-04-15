@@ -14,9 +14,15 @@ describe('Step1Component', () => {
       writable: true,
       configurable: true,
       value: class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
+        observe() {
+          /* empty */
+        }
+        unobserve() {
+          /* empty */
+        }
+        disconnect() {
+          /* empty */
+        }
       },
     });
   });

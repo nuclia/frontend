@@ -60,6 +60,8 @@
     chatPlaceholderInitial,
     DEFAULT_CHAT_PLACEHOLDER,
     previewBaseUrl,
+    widgetBlocked,
+    widgetBlockedMessage,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -286,6 +288,16 @@
     onClosePreview();
   }
 
+  export function block(message: string) {
+    widgetBlocked.set(true);
+    widgetBlockedMessage.set(message);
+  }
+
+  export function unblock() {
+    widgetBlocked.set(false);
+    widgetBlockedMessage.set('');
+  }
+
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
     dispatch(name, detail);
@@ -508,10 +520,10 @@
     hidden>
     {@html svgSprite}
   </div>
-  {#if isBrowserUnsupported}
-    <div class="unsupported body-s">
+  {#if isBrowserUnsupported || $widgetBlocked}
+    <div class="warning">
       <Icon name="warning" />
-      {$_('input.unsupported')}
+      <span class="body-s">{isBrowserUnsupported ? $_('input.unsupported') : $widgetBlockedMessage}</span>
     </div>
   {/if}
 </div>

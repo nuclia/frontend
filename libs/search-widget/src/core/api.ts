@@ -117,7 +117,7 @@ export const initNuclia = (
   if (widgetOptions.features?.hideAnswer) {
     hideAnswer.set(true);
   }
-  CITATIONS = !!widgetOptions.features?.llmCitations ? 'llm_footnotes' : !!widgetOptions.features?.citations;
+  CITATIONS = widgetOptions.features?.llmCitations ? 'llm_footnotes' : !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;
   REPHRASE_PROMPT = widgetOptions.rephrase_prompt;

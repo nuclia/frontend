@@ -38,7 +38,14 @@ describe('ProfileComponent', () => {
           provide: LoginService,
           useValue: { setPreferences: () => of() },
         },
-        { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
+        {
+          provide: SvgIconRegistryService,
+          useValue: {
+            loadSvg: () => {
+              /* empty */
+            },
+          },
+        },
       ],
     }).compileComponents();
   }));

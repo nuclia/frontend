@@ -86,7 +86,6 @@ import { ISyncManager } from '../sync/sync.models';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
 
 /**
@@ -195,7 +194,11 @@ export class KnowledgeBox implements IKnowledgeBox {
     const facetChunks = facets.reduce(
       (chunks, curr) => {
         const lastChunk = chunks[chunks.length - 1];
-        lastChunk.length < MAX_FACETS_PER_REQUEST ? lastChunk.push(curr) : chunks.push([curr]);
+        if (lastChunk.length < MAX_FACETS_PER_REQUEST) {
+          lastChunk.push(curr);
+        } else {
+          chunks.push([curr]);
+        }
         return chunks;
       },
       [[]] as string[][],

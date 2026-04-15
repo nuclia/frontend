@@ -96,7 +96,7 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
   labelView: 'list' | 'grid' = 'list';
   labelInputValue = '';
   labelInputError = '';
-  hasChanges: boolean = false;
+  hasChanges = false;
   labelSetBackup?: LabelSets;
 
   labelSets = this.labelsService.labelSets.pipe(

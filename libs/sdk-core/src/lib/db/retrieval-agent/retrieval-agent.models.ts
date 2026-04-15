@@ -48,20 +48,19 @@ export interface SessionCreation {
   format: 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN' | 'JSON' | 'KEEP_MARKDOWN' | 'JSONL' | 'PLAIN_BLANKLINE_SPLIT';
 }
 
-export interface IRetrievalAgent
-  extends Omit<
-    IWritableKnowledgeBox,
-    | 'getEntities'
-    | 'getEntitiesGroup'
-    | 'getSynonyms'
-    | 'getLabels'
-    | 'createAgenticRAGPipeline'
-    | 'generateRandomQuestionAboutResource'
-    | 'setLabelSet'
-    | 'deleteLabelSet'
-    | 'setSynonyms'
-    | 'deleteAllSynonyms'
-  > {
+export interface IRetrievalAgent extends Omit<
+  IWritableKnowledgeBox,
+  | 'getEntities'
+  | 'getEntitiesGroup'
+  | 'getSynonyms'
+  | 'getLabels'
+  | 'createAgenticRAGPipeline'
+  | 'generateRandomQuestionAboutResource'
+  | 'setLabelSet'
+  | 'deleteLabelSet'
+  | 'setSynonyms'
+  | 'deleteAllSynonyms'
+> {
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
@@ -461,12 +460,27 @@ export interface PostprocessAliniaAgent extends PostprocessAgent, PostprocessAli
 
 export interface ARAGSchemas {
   agents: {
-    context: JSONSchema4[];
-    generation: JSONSchema4[];
-    preprocess: JSONSchema4[];
-    postprocess: JSONSchema4[];
+    context: { [id: string]: ARAGAgent };
+    generation: { [id: string]: ARAGAgent };
+    preprocess: { [id: string]: ARAGAgent };
+    postprocess: { [id: string]: ARAGAgent };
   };
-  drivers: JSONSchema4[];
+  drivers: { [id: string]: ARAGDriver };
+}
+
+export interface ARAGAgent {
+  id: string;
+  agent_type: keyof ARAGSchemas['agents'];
+  title: string;
+  description: string;
+  config_schema: JSONSchema4;
+}
+
+export interface ARAGDriver {
+  id: string;
+  title: string;
+  description: string;
+  config_schema: JSONSchema4;
 }
 
 export interface ExportOptions {

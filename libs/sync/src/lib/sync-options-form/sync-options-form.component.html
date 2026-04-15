@@ -1,0 +1,95 @@
+<nsi-two-columns-configuration-item
+  badge="generic.badge.advanced"
+  itemTitle="sync.add-page.extract-config.title"
+  description="sync.add-page.extract-config.description">
+  <div class="form-container toggle-container">
+    <app-extraction-select
+      [onlyExtract]="true"
+      [extractConfig]="extractStrategy"
+      (extractConfigChange)="updateExtractStrategy($event)"></app-extraction-select>
+  </div>
+</nsi-two-columns-configuration-item>
+
+<nsi-two-columns-configuration-item
+  badge="generic.badge.optional"
+  itemTitle="sync.add-page.add-labels.title"
+  description="sync.add-page.add-labels.description">
+  <div class="form-container">
+    <div class="inline-form full-width">
+      <app-label-dropdown
+        [labelSets]="labelSets"
+        [selection]="labelSelection"
+        [disabled]="!hasLabelSet"
+        (selectionChange)="updateLabelSelection($event)"
+        displayRadioForNonMultiple
+        aspect="basic"
+        fullWidth>
+        {{ 'sync.add-page.add-labels.select-labels' | translate }}
+      </app-label-dropdown>
+    </div>
+    <div class="inline-form small-gap">
+      @for (label of labelSelection; track label.labelset + '_' + label.label) {
+        <nsi-label
+          [color]="label.color"
+          (removeLabel)="removeLabel(label)">
+          {{ label.label }}
+        </nsi-label>
+      }
+    </div>
+  </div>
+</nsi-two-columns-configuration-item>
+
+<form [formGroup]="form">
+  <nsi-two-columns-configuration-item
+    badge="generic.badge.optional"
+    itemTitle="sync.add-page.filter-resources.title"
+    description="sync.add-page.filter-resources.description">
+    <div class="form-container">
+      <nsi-info-card>{{ 'sync.add-page.filter-resources.file-extension.info' | translate }}</nsi-info-card>
+      <div class="inline-form full-width small-gap">
+        <pa-select formControlName="extensionUsage">
+          <pa-option value="include">
+            {{ 'sync.add-page.filter-resources.file-extension.include' | translate }}
+          </pa-option>
+          <pa-option value="exclude">
+            {{ 'sync.add-page.filter-resources.file-extension.exclude' | translate }}
+          </pa-option>
+        </pa-select>
+        <pa-input
+          placeholder="pdf,docx"
+          formControlName="extensions">
+          {{ 'sync.add-page.filter-resources.file-extension.label' | translate }}
+        </pa-input>
+      </div>
+      <div class="inline-form small-gap">
+        @for (ext of extensionList; track $index) {
+          <nsi-label neutral>{{ ext }}</nsi-label>
+        }
+      </div>
+      @if (isCloud) {
+        <nsi-info-card>{{ 'sync.add-page.file-patterns.info' | translate }}</nsi-info-card>
+        <pa-input
+          formControlName="globPatterns"
+          [placeholder]="'sync.add-page.file-patterns.placeholder' | translate">
+          {{ 'sync.add-page.file-patterns.title' | translate }}
+        </pa-input>
+        <div class="inline-form small-gap">
+          @for (pattern of globPatternList; track $index) {
+            <nsi-label neutral>{{ pattern }}</nsi-label>
+          }
+        </div>
+      }
+      <div class="label-field-container">
+        <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
+        <div class="inline-form full-width small-gap">
+          <pa-date-picker
+            formControlName="from"
+            [label]="'sync.add-page.filter-resources.modification-date.from' | translate"></pa-date-picker>
+          <pa-date-picker
+            formControlName="to"
+            [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
+        </div>
+      </div>
+    </div>
+  </nsi-two-columns-configuration-item>
+</form>

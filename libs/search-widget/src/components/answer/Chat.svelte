@@ -12,8 +12,10 @@
     isReasoning,
     isStreaming,
     resetChat,
+    widgetBlocked,
+    widgetBlockedMessage,
   } from '../../core';
-    import { ask } from '../../core/stores/effects';
+  import { ask } from '../../core/stores/effects';
   import Answer from './Answer.svelte';
   import ChatInput from './ChatInput.svelte';
 
@@ -42,7 +44,7 @@
   let isScrolling = $state(false);
 
   function onInput(question: string) {
-    ask.next({ question, reset: false })
+    ask.next({ question, reset: false });
   }
 
   onMount(() => {
@@ -124,9 +126,15 @@
         class:scrolling-behind={isScrolling}>
         <ChatInput
           placeholder={$_($hasChatEntries ? $chatPlaceholderDiscussion : $chatPlaceholderInitial)}
-          disabled={$isStreaming}
-          {fullscreen} onChange={onInput}/>
-        {#if standaloneChat}
+          disabled={$isStreaming || $widgetBlocked}
+          {fullscreen}
+          onChange={onInput} />
+        {#if $widgetBlocked}
+          <div class="warning">
+            <Icon name="warning" />
+            {$widgetBlockedMessage} 
+          </div>
+        {:else if standaloneChat}
           <div class="reset-button">
             <Button
               aspect="basic"

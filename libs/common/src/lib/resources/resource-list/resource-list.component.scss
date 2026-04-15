@@ -10,6 +10,7 @@
   align-items: center;
   background-color: $color-light-stronger;
   margin-top: calc(-1 * #{rhythm(3)});
+  padding-bottom: rhythm(0.5);
   padding-top: rhythm(3);
   position: sticky;
   top: 0;
@@ -80,5 +81,45 @@
   text-align: center;
   stf-upload-button {
     text-align: left;
+  }
+}
+
+.resource-list-skeleton {
+  display: flex;
+  flex-direction: column;
+
+  .skeleton-filters {
+    display: flex;
+    flex-direction: row;
+    gap: rhythm(1);
+    align-items: center;
+    margin-bottom: rhythm(2);
+  }
+
+  .skeleton-table-header {
+    width: 100%;
+    height: 2.5rem;
+    margin-bottom: rhythm(1);
+  }
+
+  .skeleton-table-rows {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+
+  .skeleton-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: rhythm(2);
+    padding: rhythm(1) 0;
+    height: 3rem;
+  }
+
+  .skeleton-pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: rhythm(2);
   }
 }

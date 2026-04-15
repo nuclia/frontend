@@ -37,7 +37,7 @@ import {
   EvolutionSeriesData,
   MultiSeriesEvolutionChartComponent,
 } from '../../charts';
-import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
+import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
 import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { format } from 'date-fns';

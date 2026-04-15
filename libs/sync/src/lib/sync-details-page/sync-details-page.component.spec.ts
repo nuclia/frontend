@@ -89,7 +89,11 @@ describe('SyncDetailsPageComponent', () => {
           ]),
         ),
       }),
-      mockProvider(SvgIconRegistryService, { loadSvg: () => {} }),
+      mockProvider(SvgIconRegistryService, {
+        loadSvg: () => {
+          /* empty */
+        },
+      }),
     ],
   });
 

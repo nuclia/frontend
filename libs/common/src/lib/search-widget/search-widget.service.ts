@@ -143,7 +143,7 @@ export class SearchWidgetService {
       currentConfig.type === 'config'
         ? getWidgetParameters(currentConfig, widgetOptions)
         : ({ features: currentConfig.value.kind === 'ask' ? 'answers' : '' } as { [key: string]: any });
-    const parameters = !!widgetParameters
+    const parameters = widgetParameters
       ? Object.entries(widgetParameters)
           .filter(([, value]) => !!value)
           .map(([key, value]) => {
@@ -187,7 +187,7 @@ export class SearchWidgetService {
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 
-        let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
+        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
           /knowledgebox=/g,
           `audit_metadata='{"config":"${currentConfig.id}","widget":"${widgetId}"}'\n  knowledgebox=`,
         );
@@ -249,7 +249,7 @@ export class SearchWidgetService {
         baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
         baseSnippet += `></${tagName}>\n`;
 
-        let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
+        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
 
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet.replace('zone=', `account="${account.id}" client="dashboard" zone=`).replace(apiKey, ''),

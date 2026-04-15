@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Memory } from '@nuclia/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
 import { BlockquoteComponent } from '../blockquote';
 

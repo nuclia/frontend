@@ -11,34 +11,18 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Filters, IConnector, ISyncEntity, Section } from '../logic';
+import { IConnector, ISyncEntity, Filters, Section } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter, map, Observable, of, startWith, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { AssumeRoleInfo, Classification, LabelSetKind, LabelSets } from '@nuclia/core';
-import {
-  LabelModule,
-  LabelSetFormModalComponent,
-  LabelsService,
-  ParametersTableComponent,
-  SDKService,
-} from '@flaps/core';
-import {
-  InfoCardComponent,
-  SisLabelModule,
-  SisModalService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
-import {
-  ModalConfig,
-  PaButtonModule,
-  PaDatePickerModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { AssumeRoleInfo } from '@nuclia/core';
+import { ParametersTableComponent, SDKService } from '@flaps/core';
+import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ModalConfig, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { AssumeRoleModalComponent, ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
-import { ConfigurationForm, FiltersResources } from './configuration.model';
+import { AssumeRoleModalComponent, HintModule } from '@flaps/common';
+import { ConfigurationForm } from './configuration.model';
 import { S3_IAM_POLICY } from '../logic/connectors/s3';
+import { SyncOptions, SyncOptionsFormComponent } from '../sync-options-form';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
@@ -46,25 +30,22 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
   selector: 'nsy-configuration-form',
   imports: [
     CommonModule,
+    HintModule,
     InfoCardComponent,
     TwoColumnsConfigurationItemComponent,
     ReactiveFormsModule,
     PaTextFieldModule,
     ParametersTableComponent,
-    LabelModule,
     PaButtonModule,
     TranslateModule,
-    PaDatePickerModule,
-    SisLabelModule,
     PaTogglesModule,
-    ExtractionSelectComponent,
+    SyncOptionsFormComponent,
   ],
   templateUrl: './configuration-form.component.html',
   styleUrl: './configuration-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfigurationFormComponent implements OnInit, OnDestroy {
-  private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
   private sdk = inject(SDKService);
@@ -95,28 +76,18 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   private _enterCredentials = false;
   @Input() isCloud?: boolean = false;
   @Input() assumeRole?: boolean = false;
+  syncEntity: ISyncEntity | undefined | null;
   @Input() set sync(value: ISyncEntity | undefined | null) {
+    this.syncEntity = value;
     if (value) {
       this.connectorParametersBackup = value.connector.parameters;
-      const filterResources: FiltersResources = {
-        extensions: value.filters?.fileExtensions?.extensions || '',
-        extensionUsage: value.filters?.fileExtensions?.exclude ? 'exclude' : 'include',
-        from: value.filters?.modified?.from || '',
-        to: value.filters?.modified?.to || '',
-      };
       this.form.patchValue({
         name: value.title,
         syncSecurityGroups: value.syncSecurityGroups,
-        filterResources,
         preserveLabels: value.preserveLabels,
       });
-      this.labelSelection = value.labels || [];
-      this.extensionList = this.formatExtensionList(filterResources.extensions);
-      if (value.extract_strategy) {
-        this.extractStrategy = value.extract_strategy;
-      }
 
-      if (value.connector.parameters) {
+      if (value.connector.parameters && !this.isCloud && !value.isCloud) {
         Object.entries(value.connector.parameters).forEach(([key, value]) => {
           if (typeof value !== 'object') {
             this._extra[key] = value;
@@ -136,12 +107,6 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     syncSecurityGroups: new FormControl<boolean | null>(null),
     preserveLabels: new FormControl<boolean | null>(null),
-    filterResources: new FormGroup({
-      extensions: new FormControl<string>('', { updateOn: 'blur' }),
-      extensionUsage: new FormControl<'include' | 'exclude'>('include', { nonNullable: true }),
-      from: new FormControl(''),
-      to: new FormControl(''),
-    }),
     assumeRole: new FormGroup({
       external_id: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       role_arn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -149,22 +114,13 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     extra: new FormGroup({}),
   });
 
-  labelSets: Observable<LabelSets | null> = this.labelService.resourceLabelSets;
-  hasLabelSet: Observable<boolean> = this.labelService.hasResourceLabelSets;
-  labelSelection: ColoredLabel[] = [];
-
-  extensionList: string[] = [];
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
   invalidTables: string[] = [];
-  extractStrategy: string | undefined = '';
   files: { [id: string]: File } = {};
   assumeRoleInfo?: AssumeRoleInfo;
+  currentOptions?: SyncOptions;
 
   private _extra: { [key: string]: string } = {};
-
-  get extensionsControl() {
-    return this.form.controls.filterResources.controls.extensions;
-  }
 
   get assumeRoleForm() {
     return this.form.controls.assumeRole;
@@ -173,9 +129,6 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.updateExtraSections();
     this.updateValidators();
-    this.extensionsControl.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((value) => (this.extensionList = this.formatExtensionList(value)));
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll), startWith(this.form.value)).subscribe(() => {
       this.validForm.emit(this.form.valid);
       this.emitSyncEntity();
@@ -261,45 +214,9 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     this.emitSyncEntity();
   }
 
-  createLabelSet() {
-    this.modalService.openModal(
-      LabelSetFormModalComponent,
-      new ModalConfig({ data: { kind: LabelSetKind.RESOURCES } }),
-    );
-  }
-
-  updateLabelSelection(labels: Classification[]) {
-    this.labelSets
-      .pipe(
-        take(1),
-        filter((labelSets) => !!labelSets),
-        map((labelSets) => labelSets as LabelSets),
-      )
-      .subscribe((labelSets) => {
-        this.labelSelection = labels.map((label) => ({ ...label, color: labelSets[label.labelset]?.color }));
-        this.emitSyncEntity();
-      });
-  }
-
-  removeExtension(extension: string) {
-    const extensions = this.extensionList.filter((item) => item !== extension);
-    this.extensionsControl.patchValue(extensions.join(', '));
-  }
-
-  removeLabel(label: ColoredLabel) {
-    this.labelSelection = this.labelSelection.filter(
-      (item) => !(item.labelset === label.labelset && item.label === label.label),
-    );
+  onOptionsChange(options: SyncOptions) {
+    this.currentOptions = options;
     this.emitSyncEntity();
-  }
-
-  private formatExtensionList(value: string | null): string[] {
-    return value && value.length > 0
-      ? value
-          .split(',')
-          .map((extension) => extension.trim())
-          .filter((value) => !!value)
-      : [];
   }
 
   private emitSyncEntity() {
@@ -310,21 +227,6 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     const title = config.name;
     const smallHash = (Math.random() + 1).toString(36).substring(7);
     const id = `${this.kbId}-${title?.toLowerCase().replace(SLUGIFY, '-')}-${smallHash}`;
-    const filters: Filters = {
-      fileExtensions: config.filterResources.extensions
-        ? {
-            extensions: config.filterResources.extensions,
-            exclude: config.filterResources.extensionUsage === 'exclude',
-          }
-        : undefined,
-      modified:
-        config.filterResources.from || config.filterResources.to
-          ? {
-              from: config.filterResources.from || undefined,
-              to: config.filterResources.to || undefined,
-            }
-          : undefined,
-    };
     const extraParams: { [key: string]: string } = Object.entries(config.extra || {}).reduce(
       (fields, [key, value]) => {
         return { ...fields, [key]: value };
@@ -333,16 +235,34 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     );
     const tables = Object.entries(this.tables).reduce(
       (validTables, [key, table]) => {
-        validTables[key] = table.filter((row) => !(!row.key.trim() || !row.value.trim()));
+        if (Array.isArray(table)) {
+          validTables[key] = table.filter((row) => !(!row.key.trim() || !row.value.trim()));
+        }
         return validTables;
       },
       {} as { [tableId: string]: { key: string; value: string; secret: boolean }[] },
     );
     const assumeRole = this.assumeRole ? config.assumeRole : {};
+    const opts = this.currentOptions;
+    const filters: Filters = {
+      fileExtensions: opts?.extensions?.length
+        ? {
+            extensions: opts.extensions.join(', '),
+            exclude: opts.extensionMode === 'exclude',
+          }
+        : undefined,
+      modified:
+        opts?.from || opts?.to
+          ? {
+              from: opts.from || undefined,
+              to: opts.to || undefined,
+            }
+          : undefined,
+    };
     const syncEntity: ISyncEntity = {
       id,
       title,
-      labels: this.labelSelection,
+      labels: opts?.labels,
       preserveLabels: config.preserveLabels || false,
       filters,
       connector: {
@@ -355,17 +275,12 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         },
       },
     };
+
     if (config.syncSecurityGroups !== null) {
       syncEntity.syncSecurityGroups = config.syncSecurityGroups;
     }
-    syncEntity.extract_strategy = this.extractStrategy;
+    syncEntity.extract_strategy = opts?.extractStrategy;
     this.configurationChange.emit(syncEntity);
-  }
-
-  updateExtractStrategy(strategy: string | undefined) {
-    this.extractStrategy = strategy;
-    this.validForm.emit(this.form.valid);
-    this.emitSyncEntity();
   }
 
   updateFile(event: Event, fieldId: string, handleFile?: (file: File) => Observable<any>) {

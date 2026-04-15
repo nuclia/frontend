@@ -1,5 +1,58 @@
 <div class="resource-list page-spacing">
-  @if ((emptyKb | async) === true) {
+  @if ((loading | async) === true) {
+    <div class="resource-list-skeleton">
+      <div class="skeleton-filters">
+        @for (_ of [1, 2, 3, 4, 5]; track $index) {
+          <nsi-skeleton
+            width="150px"
+            height="2.25rem"
+            borderRadius="small"></nsi-skeleton>
+        }
+      </div>
+      <div class="skeleton-table-header">
+        <nsi-skeleton
+          width="100%"
+          height="2.5rem"
+          borderRadius="small"></nsi-skeleton>
+      </div>
+      <div class="skeleton-table-rows">
+        @for (_ of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]; track $index) {
+          <div class="skeleton-row">
+            <nsi-skeleton
+              width="40px"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+            <nsi-skeleton
+              width="40%"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+            <nsi-skeleton
+              width="150px"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+            <nsi-skeleton
+              width="80px"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+            <nsi-skeleton
+              width="80px"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+            <nsi-skeleton
+              width="60px"
+              height="1rem"
+              borderRadius="small"></nsi-skeleton>
+          </div>
+        }
+      </div>
+      <div class="skeleton-pagination">
+        <nsi-skeleton
+          width="300px"
+          height="2rem"
+          borderRadius="small"></nsi-skeleton>
+      </div>
+    </div>
+  } @else if ((emptyKb | async) === true) {
     @if (uploadInProgress | async) {
       <nsi-spinner></nsi-spinner>
     } @else {

@@ -100,7 +100,9 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       )
       .subscribe({
         next: (months) => this._availableMonths.set(months),
-        error: () => {},
+        error: () => {
+          /* empty */
+        },
       });
   }
 

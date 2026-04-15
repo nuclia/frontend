@@ -1,4 +1,3 @@
-
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
@@ -26,8 +25,8 @@ import { LLMConfigurationComponent } from '../llm-configuration/llm-configuratio
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
-    LLMConfigurationComponent
-],
+    LLMConfigurationComponent,
+  ],
   templateUrl: './split-modal.component.html',
   styleUrls: ['./split-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,7 +98,7 @@ export class SplitModalComponent implements OnInit {
       return;
     }
     const values = this.configForm.getRawValue();
-    let payload: SplitStrategy = {
+    const payload: SplitStrategy = {
       name: values.name,
       custom_split:
         values.custom_split === 'llm'

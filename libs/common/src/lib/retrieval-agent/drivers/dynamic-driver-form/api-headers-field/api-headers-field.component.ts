@@ -21,7 +21,7 @@ export class ApiHeadersFieldComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() label!: string;
-  @Input() required: boolean = false;
+  @Input() required = false;
 
   headerEntries = signal<HeaderEntry[]>([]);
 

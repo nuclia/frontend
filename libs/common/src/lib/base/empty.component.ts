@@ -4,6 +4,4 @@ import { Component } from '@angular/core';
   template: '<ng-container></ng-container>',
   standalone: true,
 })
-export class EmptyComponent {
-  constructor() {}
-}
+export class EmptyComponent {}
