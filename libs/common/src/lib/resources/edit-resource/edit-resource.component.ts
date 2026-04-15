@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';

@@ -23,9 +23,10 @@ import {
   PaIconModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { combineLatest, EMPTY, fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, catchError, map, takeUntil } from 'rxjs/operators';
+import { auditTime, catchError, map, take, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -37,18 +38,22 @@ import {
   MultiSeriesEvolutionChartComponent,
 } from '../../charts';
 import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
-import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FeaturesService } from '@flaps/core';
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
   RemiQueryResponse,
   RemiQueryResponseContextDetails,
+  RemiQueryResponseItem,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DateAfter } from '../../validators';
 import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
+import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
+import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { PreviewService } from '../../resources';
 import { SafeHtml } from '@angular/platform-browser';
 import { NavigationService } from '@flaps/core';
@@ -87,6 +92,7 @@ const METRIC_COLOR_LIST = [
     MissingKnowledgeDetailsComponent,
     PaButtonModule,
     RouterModule,
+    PaTooltipModule,
   ],
   templateUrl: './remi-analytics-page.component.html',
   styleUrl: './remi-analytics-page.component.scss',
@@ -98,7 +104,11 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   private translate = inject(TranslateService);
   private previewService = inject(PreviewService);
   private navigationService = inject(NavigationService);
+  private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
+  private features = inject(FeaturesService);
+
+  automaticAdvice$ = this.features.unstable.automaticAdvice;
 
   private unsubscribeAll: Subject<void> = new Subject();
 
@@ -185,7 +195,6 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
   noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
   badFeedbackOnError: Observable<boolean> = this.remiMetrics.badFeedbackOnError;
-
   lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
   noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
   badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
@@ -345,5 +354,81 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   updateBadFeedbackPage(event: MouseEvent, next: boolean) {
     event.stopPropagation();
     this.remiMetrics.updateBadFeedbackPage(next);
+  }
+
+  openAdviceForItem(item: RemiQueryResponseItem, event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.missingKnowledgeDetails[item.id]) {
+      this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
+      return;
+    }
+    this.remiMetrics
+      .getMissingKnowledgeDetails(item.id)
+      .pipe(take(1))
+      .subscribe({
+        next: (details) => {
+          this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
+          this.openAdviceModal(item, details);
+        },
+        error: () => {
+          const input: AdviceInput = {
+            question: item.question,
+            answer: item.answer,
+            remiScores: item.remi
+              ? {
+                  answerRelevance: item.remi.answer_relevance.score,
+                  contextRelevance:
+                    item.remi.context_relevance.length > 0 ? Math.max(...item.remi.context_relevance) : undefined,
+                  groundedness: item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
+                }
+              : undefined,
+            params: {},
+          };
+          openRagAdviceModal(this.modalService, input);
+        },
+      });
+  }
+
+  onRequestAdvice(item: RemiQueryResponseItem): void {
+    // Guard: this event is only emitted from UI visible when automaticAdvice$ is enabled.
+    // Re-check here as belt-and-suspenders in case the event fires after a flag change.
+    this.features.unstable.automaticAdvice.pipe(take(1)).subscribe((enabled) => {
+      if (!enabled) return;
+      if (this.missingKnowledgeDetails[item.id]) {
+        this.openAdviceModal(item, this.missingKnowledgeDetails[item.id]);
+        return;
+      }
+      this.remiMetrics
+        .getMissingKnowledgeDetails(item.id)
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe({
+          next: (details) => {
+            this.missingKnowledgeDetails = { ...this.missingKnowledgeDetails, [item.id]: details };
+            this.openAdviceModal(item, details);
+            this.cdr.detectChanges();
+          },
+        });
+    });
+  }
+
+  private openAdviceModal(item: RemiQueryResponseItem, details: RemiQueryResponseContextDetails): void {
+    const context = details.context.map((c) => c.text).join('\n\n');
+    const input: AdviceInput = {
+      question: item.question,
+      answer: item.answer,
+      context,
+      remiScores: item.remi
+        ? {
+            answerRelevance: item.remi.answer_relevance.score,
+            contextRelevance:
+              item.remi.context_relevance.length > 0 ? Math.max(...item.remi.context_relevance) : undefined,
+            groundedness: item.remi.groundedness.length > 0 ? Math.max(...item.remi.groundedness) : undefined,
+          }
+        : undefined,
+      // RemiQueryResponseItem does not carry per-query RAG params. Pass an empty object so
+      // the advisor knows the field was considered rather than silently omitting it.
+      params: {},
+    };
+    openRagAdviceModal(this.modalService, input);
   }
 }

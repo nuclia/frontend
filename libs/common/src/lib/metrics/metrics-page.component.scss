@@ -198,12 +198,17 @@ pa-table {
 }
 
 .remi-score-low {
-  color: var(--color-danger-regular);
+  color: var(--color-danger-regular) !important;
+  font-weight: 600;
+}
+
+.remi-score-mid {
+  color: var(--color-secondary-regular) !important;
   font-weight: 600;
 }
 
 .remi-score-high {
-  color: var(--color-success-regular);
+  color: var(--color-success-regular) !important;
   font-weight: 600;
 }
 
@@ -344,4 +349,31 @@ pa-table {
     word-break: break-word;
     color: var(--color-neutral-dark);
   }
+}
+
+// ── Row action column ─────────────────────────────────────────────────────
+
+.action-col-header,
+.action-col-cell {
+  width: 48px;
+  min-width: 48px;
+  text-align: center;
+}
+
+.inline-action-btn {
+  opacity: 0;
+}
+
+.clickable-row:hover .inline-action-btn {
+  opacity: 1;
+}
+
+// ── Inline action (rendered inside a cell, e.g. remiScore column) ─────────
+
+.cell-inline-action-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
 }

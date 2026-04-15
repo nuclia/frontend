@@ -1,0 +1,351 @@
+@use 'apps/dashboard/src/variables' as *;
+
+// 2× the default pa-modal-advanced width (rhythm(64) ≈ 512px → 900px max)
+::ng-deep pa-modal-advanced .pa-modal.pa-modal-advanced {
+  @media (min-width: 600px) {
+    width: min(800px, 90vw);
+  }
+}
+
+// Make tooltips inside the modal multi-line and readable
+::ng-deep app-rag-advice-modal pa-tooltip-element .pa-tooltip,
+:host ::ng-deep .pa-tooltip {
+  white-space: normal;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.query-summary {
+  background: $color-neutral-lightest;
+  border-radius: $border-radius-default;
+  padding: rhythm(1) rhythm(2);
+  margin-bottom: rhythm(2);
+
+  .summary-field {
+    margin-bottom: rhythm(1);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: $color-neutral-regular;
+      margin-bottom: rhythm(0.25);
+    }
+
+    .summary-value {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      &.truncated {
+        max-height: 80px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+
+  .remi-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+  }
+}
+
+.iteration-remi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(0.5);
+  margin-top: rhythm(1);
+}
+
+.remi-skeleton-row {
+  animation: pulse 1.5s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: rhythm(4) rhythm(2);
+  gap: rhythm(1);
+
+  p {
+    color: $color-neutral-regular;
+    margin: 0;
+  }
+}
+
+.advice-section {
+  margin-top: rhythm(2);
+
+  h4 {
+    margin: rhythm(2) 0 rhythm(1);
+    color: var(--color-primary-strong, #4731a7);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin: 0 0 rhythm(1);
+  }
+
+  .suggestions-list {
+    margin: 0;
+    padding-left: rhythm(3);
+
+    li {
+      margin-bottom: rhythm(1);
+      line-height: 1.5;
+    }
+  }
+}
+
+.editable-params {
+  margin-top: rhythm(2);
+  padding: rhythm(1.5) rhythm(2);
+  background: var(--color-primary-lightest, rgba(71, 49, 167, 0.06));
+  border-radius: $border-radius-default;
+  border-left: 3px solid var(--color-primary-regular, #4731a7);
+
+  .params-header {
+    display: flex;
+    align-items: center;
+    gap: rhythm(2);
+    margin-bottom: rhythm(1.5);
+    flex-wrap: wrap;
+  }
+
+  .params-label {
+    margin: 0;
+    color: var(--color-primary-strong);
+  }
+
+  // Section headers separating logical groups of params
+  .section-label {
+    margin: rhythm(3) 0 rhythm(2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $color-neutral-regular;
+    border-bottom: 1px solid $color-neutral-light;
+    padding-bottom: rhythm(0.5);
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  .param-legend {
+    display: flex;
+    gap: rhythm(2);
+    margin-left: auto;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: rhythm(0.5);
+      font-size: 0.8rem;
+      color: $color-neutral-regular;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+
+      &.suggested {
+        background: var(--color-primary-regular, #4731a7);
+      }
+
+      &.modified {
+        background: var(--color-secondary-regular, #e06c00);
+      }
+    }
+  }
+
+  // Shared indicator bar for param-field and strategy-field
+  .param-field,
+  .param-strategies .strategy-field {
+    position: relative;
+    padding-left: rhythm(1);
+
+    &::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      border-radius: 2px;
+    }
+
+    &.param-suggested::before {
+      background: var(--color-primary-regular, #4731a7);
+    }
+
+    &.param-modified::before {
+      background: var(--color-secondary-regular, #e06c00);
+    }
+  }
+
+  .param-row {
+    display: flex;
+    gap: rhythm(2);
+    flex-wrap: wrap;
+    margin-bottom: rhythm(1.5);
+
+    .param-field {
+      flex: 1;
+      min-width: 120px;
+
+      pa-input {
+        width: 100%;
+      }
+    }
+  }
+
+  .param-strategies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(2) rhythm(2.5);
+    margin-bottom: rhythm(2);
+
+    .strategy-field {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+
+  // Model dropdown row
+  .model-row {
+    margin-top: 0;
+
+    .param-field {
+      flex: 1;
+
+      pa-select,
+      pa-input {
+        width: 100%;
+      }
+    }
+  }
+
+  // System prompt expander spacing
+  .system-prompt-field {
+    margin-top: rhythm(2);
+  }
+
+  .disclaimer {
+    margin-top: rhythm(1.5);
+    color: $color-neutral-regular;
+    font-style: italic;
+  }
+}
+
+.remi-result-row {
+  display: flex;
+  align-items: flex-start;
+  gap: rhythm(1);
+  margin-bottom: rhythm(1);
+  flex-wrap: wrap;
+
+  .remi-sub-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(0.5) rhythm(1);
+    align-items: center;
+  }
+
+  .remi-sub {
+    padding: rhythm(0.125) rhythm(0.5);
+    border-radius: $border-radius-default;
+    background: $color-neutral-lighter;
+
+    &.low {
+      color: var(--color-danger-strong);
+      background: var(--color-danger-lightest);
+    }
+    &.mid {
+      color: var(--color-secondary-strong);
+      background: var(--color-secondary-lightest);
+    }
+    &.high {
+      color: var(--color-success-strong);
+      background: var(--color-success-lightest);
+    }
+  }
+
+  .muted {
+    color: $color-neutral-regular;
+    font-style: italic;
+  }
+}
+
+.iteration-params {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(0.5);
+  margin-bottom: rhythm(1);
+
+  .param-chip {
+    display: inline-block;
+    padding: rhythm(0.125) rhythm(0.5);
+    background: var(--color-primary-lightest, rgba(71, 49, 167, 0.08));
+    border-radius: $border-radius-default;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--color-primary-strong, #4731a7);
+  }
+}
+
+.iteration-answer {
+  color: $color-neutral-regular;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.save-section {
+  margin-top: rhythm(2);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.info-card-title {
+  margin-bottom: rhythm(1);
+}
+
+.expectation-input {
+  margin-top: rhythm(2);
+
+  .summary-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(0.5);
+  }
+}

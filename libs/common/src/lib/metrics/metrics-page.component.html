@@ -97,7 +97,7 @@
           border
           [style.--table-row-height]="rowHeight + 'px'"
           [style.--table-header-top]="-1 * viewportOffset + 'px'"
-          [columns]="service.gridColumns()">
+          [columns]="computedGridColumns()">
           <pa-table-header>
             <pa-table-row>
               @for (col of service.columnDefs(); track col.key) {
@@ -106,6 +106,11 @@
                     {{ col.label | translate }}
                   </pa-table-cell>
                 }
+              }
+              @if (rowAction()) {
+                <pa-table-cell
+                  header
+                  class="action-col-header"></pa-table-cell>
               }
             </pa-table-row>
           </pa-table-header>
@@ -117,15 +122,50 @@
             @for (col of service.columnDefs(); track col.key) {
               @if (isColumnVisible(col.key)) {
                 <pa-table-cell>
-                  <span
-                    class="body-s cell-value"
-                    [class.remi-score-low]="col.key === 'remiScore' && isRemiScoreLow(item, col)"
-                    [class.remi-score-high]="col.key === 'remiScore' && isRemiScoreHigh(item, col)"
-                    [paTooltip]="getCellValue(item, col.key)">
-                    {{ getCellValue(item, col.key) }}
-                  </span>
+                  @if (col.inlineAction) {
+                    <div class="cell-inline-action-wrapper">
+                      <span
+                        class="body-s cell-value"
+                        [class.remi-score-low]="isRemiScoreLow(item, col)"
+                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
+                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
+                        [paTooltip]="getCellValue(item, col.key)">
+                        {{ getCellValue(item, col.key) }}
+                      </span>
+                      @if (col.inlineAction.visible(item)) {
+                        <pa-button
+                          class="inline-action-btn"
+                          [icon]="col.inlineAction.icon"
+                          kind="primary"
+                          aspect="basic"
+                          [paTooltip]="col.inlineAction.tooltip | translate"
+                          (click)="$event.stopPropagation(); rowActionTriggered.emit(item)"></pa-button>
+                      }
+                    </div>
+                  } @else {
+                    <span
+                      class="body-s cell-value"
+                      [class.remi-score-low]="isRemiScoreLow(item, col)"
+                      [class.remi-score-mid]="isRemiScoreMid(item, col)"
+                      [class.remi-score-high]="isRemiScoreHigh(item, col)"
+                      [paTooltip]="getCellValue(item, col.key)">
+                      {{ getCellValue(item, col.key) }}
+                    </span>
+                  }
                 </pa-table-cell>
               }
+            }
+            @if (rowAction()) {
+              <pa-table-cell class="action-col-cell">
+                @if (rowAction()!.visible(item)) {
+                  <button
+                    class="row-action-btn"
+                    [paTooltip]="rowAction()!.tooltip | translate"
+                    (click)="$event.stopPropagation(); rowActionTriggered.emit(item)">
+                    <pa-icon [name]="rowAction()!.icon"></pa-icon>
+                  </button>
+                }
+              </pa-table-cell>
             }
           </pa-table-row>
         </pa-table>
@@ -178,7 +218,13 @@
                   } @else {
                     <div class="detail-row">
                       <span class="detail-label body-s">{{ field.label | translate }}</span>
-                      <span class="detail-value body-s">{{ getFieldValue(selectedItem()!, field) }}</span>
+                      <span
+                        class="detail-value body-s"
+                        [class.remi-score-low]="field.colorFn?.(item) === 'low'"
+                        [class.remi-score-mid]="field.colorFn?.(item) === 'mid'"
+                        [class.remi-score-high]="field.colorFn?.(item) === 'high'">
+                        {{ getFieldValue(selectedItem()!, field) }}
+                      </span>
                     </div>
                   }
                 }

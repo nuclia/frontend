@@ -592,8 +592,8 @@ export function deleteNode(
         (nodeConfig as any)[impactedStringProp] = null;
         updateNode(parentId, nodeCategory, { [impactedStringProp]: undefined, nodeConfig });
       } else {
-        const impactedListProp = ['agents', 'registered_agents', 'then', 'else_'].find(
-          (prop) => (parentNode as any)[prop]?.includes(id),
+        const impactedListProp = ['agents', 'registered_agents', 'then', 'else_'].find((prop) =>
+          (parentNode as any)[prop]?.includes(id),
         );
         if (impactedListProp) {
           const childIds = ((parentNode as any)[impactedListProp] || []).filter((childId: string) => childId !== id);

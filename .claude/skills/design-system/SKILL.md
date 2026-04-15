@@ -40,6 +40,7 @@ Demo pages live in `apps/sistema-demo/src/app/sistema-pages/`. Follow this check
 Create `sistema-pages/<component-name>/` with these files:
 
 **`<component-name>.component.ts`**
+
 ```ts
 @Component({
   selector: 'nsd-sistema-<name>',
@@ -51,6 +52,7 @@ export class Sistema<Name>DemoComponent { ... }
 ```
 
 **`<component-name>.component.html`** — uses the `pa-demo-*` DSL:
+
 ```html
 <pa-demo-page>
   <pa-demo-title>Component Name</pa-demo-title>
@@ -74,12 +76,14 @@ Add `<component-name>.component.scss` only when additional demo-page styles are 
 ### 2 — Register in `sistema-pages.module.ts`
 
 In `apps/sistema-demo/src/app/sistema-pages/sistema-pages.module.ts`:
+
 - Add the demo component class to `declarations`
 - Add any new `NsiXxxComponent` (or module) from `@nuclia/sistema` to `imports`
 
 ### 3 — Export from `index.ts`
 
 Add a barrel export to `apps/sistema-demo/src/app/sistema-pages/index.ts`:
+
 ```ts
 export * from './sistema-<name>/sistema-<name>.component';
 ```
@@ -88,6 +92,7 @@ export * from './sistema-<name>/sistema-<name>.component';
 
 In `apps/sistema-demo/src/app/app.component.ts`, add an entry to the `menu` array under the
 `'Nuclia Sistema'` section, keeping **alphabetical order by `title`**:
+
 ```ts
 { path: 'sistema-<name>', title: '<Display Name>' }
 ```
@@ -104,14 +109,15 @@ In `apps/sistema-demo/src/app/app.component.ts`, add an entry to the `menu` arra
 
 ```scss
 // styles.scss
-@use '@nuclia/sistema/styles/apps-common';  // layout CSS vars, base body, all utility classes
-@use 'path/to/pastanaga-angular/src/styles/core';  // Pastanaga reset + typography
+@use '@nuclia/sistema/styles/apps-common'; // layout CSS vars, base body, all utility classes
+@use 'path/to/pastanaga-angular/src/styles/core'; // Pastanaga reset + typography
 
 // _variables.scss (component-level)
 @forward '@nuclia/sistema/styles/variables'; // tokens + mixins
 ```
 
 In component `.scss` files bind to tokens via the `includePaths` alias:
+
 ```scss
 @use 'variables' as v;
 // then use v.$height-top-bar, v.rhythm(4), etc.
@@ -124,14 +130,24 @@ In component `.scss` files bind to tokens via the `includePaths` alias:
 ```ts
 // Sistema standalone components (import directly):
 import {
-  BadgeComponent, StatusComponent, BackButtonComponent,
-  ButtonMiniComponent, DropdownButtonComponent, SegmentedButtonsComponent,
-  SearchInputComponent, ExpandableTextareaComponent,
-  ActionCardComponent, InfoCardComponent,
-  FolderListComponent, FolderTreeComponent,
-  HomeContainerComponent, StickyFooterComponent,
+  BadgeComponent,
+  StatusComponent,
+  BackButtonComponent,
+  ButtonMiniComponent,
+  DropdownButtonComponent,
+  SegmentedButtonsComponent,
+  SearchInputComponent,
+  ExpandableTextareaComponent,
+  ActionCardComponent,
+  InfoCardComponent,
+  FolderListComponent,
+  FolderTreeComponent,
+  HomeContainerComponent,
+  StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
-  ProgressBarComponent, JsonViewerComponent, LabelsExpanderComponent,
+  ProgressBarComponent,
+  JsonViewerComponent,
+  LabelsExpanderComponent,
   StandaloneMimeIconPipe,
 } from '@nuclia/sistema';
 
@@ -142,11 +158,24 @@ import { SisLabelModule, SisPasswordInputModule, SisProgressModule } from '@nucl
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 // Pastanaga modules (NgModule-based):
-import { PaButtonModule, PaIconModule, PaTableModule, PaTabsModule,
-         PaTextFieldModule, PaTogglesModule, PaDropdownModule,
-         PaModalModule, PaExpanderModule, PaChipsModule,
-         PaScrollModule, PaCardModule, PaAvatarModule,
-         PaPopupModule, PaTranslateModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaTableModule,
+  PaTabsModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaDropdownModule,
+  PaModalModule,
+  PaExpanderModule,
+  PaChipsModule,
+  PaScrollModule,
+  PaCardModule,
+  PaAvatarModule,
+  PaPopupModule,
+  PaTranslateModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 // Pastanaga standalone — accordion only:
 import { AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
@@ -155,8 +184,17 @@ import { AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pasta
 import { ModalService, ToastService, BreakpointObserver } from '@guillotinaweb/pastanaga-angular';
 
 // Pastanaga types:
-import { Kind, Size, Aspect, ViewportMode, ModalRef, ModalConfig,
-         ConfirmationData, ToastConfig, AvatarModel } from '@guillotinaweb/pastanaga-angular';
+import {
+  Kind,
+  Size,
+  Aspect,
+  ViewportMode,
+  ModalRef,
+  ModalConfig,
+  ConfirmationData,
+  ToastConfig,
+  AvatarModel,
+} from '@guillotinaweb/pastanaga-angular';
 ```
 
 ---
@@ -184,23 +222,34 @@ this.modalService.openConfirm({
 ```
 
 Custom modal component pattern:
+
 ```ts
-@Component({ template: `
-  <pa-modal-dialog>
-    <pa-modal-title>My Title</pa-modal-title>
-    <pa-modal-content>{{ modal.config.data.id }}</pa-modal-content>
-    <pa-modal-footer>
-      <pa-button (click)="modal.close(true)">OK</pa-button>
-      <pa-button aspect="basic" (click)="modal.dismiss()">Cancel</pa-button>
-    </pa-modal-footer>
-  </pa-modal-dialog>`
+@Component({
+  template: `
+    <pa-modal-dialog>
+      <pa-modal-title>My Title</pa-modal-title>
+      <pa-modal-content>{{ modal.config.data.id }}</pa-modal-content>
+      <pa-modal-footer>
+        <pa-button (click)="modal.close(true)">OK</pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="modal.dismiss()">
+          Cancel
+        </pa-button>
+      </pa-modal-footer>
+    </pa-modal-dialog>
+  `,
 })
 export class MyDialogComponent extends BaseModalComponent {
-  constructor(public override ref: ModalRef, protected override cdr: ChangeDetectorRef) {
+  constructor(
+    public override ref: ModalRef,
+    protected override cdr: ChangeDetectorRef,
+  ) {
     super(ref, cdr);
   }
 }
 ```
+
 > Import `BaseModalComponent`, `ModalRef`, `ModalConfig`, `PaModalModule` from `@guillotinaweb/pastanaga-angular`.
 
 ---
@@ -225,6 +274,7 @@ Each method auto-sets title, icon, and `closeButtonConf`. Never use `ToastServic
 Always use `<pa-icon name="GLYPH_NAME">`. There are ~110 glyphs in `libs/sistema/glyphs/`.
 
 Key icon names:
+
 ```
 arrow-left  arrow-right  arrow-up  arrow-down
 check  circle-check  circle-dash  cross
@@ -248,24 +298,24 @@ For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` or `St
 
 ## Utility CSS Classes (from `_apps-common.scss` / `styles.scss`)
 
-| Class | Usage |
-|-------|-------|
-| `.page-spacing` | Full-page container with topbar-aware min-height and layout padding |
-| `.page-title` | Inside `.page-spacing` — heading row using display-small typography |
-| `.page-description` | Inside `.page-spacing` — muted body text below title |
-| `.form-container` | `flex column gap-16` — wraps a form's fields |
-| `.form-container.small-gap` | Same but `gap-12` |
-| `.inline-form` | `flex row gap-16` — side-by-side fields |
-| `.inline-form.full-width` | Stretches to 100% width |
-| `.container-with-border` | Rounded bordered box with `padding: 16px` |
-| `.separator-line` | 1px `$color-neutral-lighter` horizontal divider |
-| `.separator-word` | Lowercase grey text separator (e.g. "or") |
-| `a.accent-link` | Blue text link using `$color-text-link-accent` |
-| `.nsi-list` | Styled list — hover states + hidden action buttons on hover |
-| `.close-button` | Absolute top-right close button |
-| `.pa-modal .pa-modal-footer.pa-dual-buttons` | Centred dual-button modal footer |
-| `pa-tab.unauthorized` | Faded, non-interactive locked tab |
-| `pa-radio.unauthorized` / `pa-checkbox.unauthorized` / `pa-toggle.unauthorized` | Locked controls |
+| Class                                                                           | Usage                                                               |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `.page-spacing`                                                                 | Full-page container with topbar-aware min-height and layout padding |
+| `.page-title`                                                                   | Inside `.page-spacing` — heading row using display-small typography |
+| `.page-description`                                                             | Inside `.page-spacing` — muted body text below title                |
+| `.form-container`                                                               | `flex column gap-16` — wraps a form's fields                        |
+| `.form-container.small-gap`                                                     | Same but `gap-12`                                                   |
+| `.inline-form`                                                                  | `flex row gap-16` — side-by-side fields                             |
+| `.inline-form.full-width`                                                       | Stretches to 100% width                                             |
+| `.container-with-border`                                                        | Rounded bordered box with `padding: 16px`                           |
+| `.separator-line`                                                               | 1px `$color-neutral-lighter` horizontal divider                     |
+| `.separator-word`                                                               | Lowercase grey text separator (e.g. "or")                           |
+| `a.accent-link`                                                                 | Blue text link using `$color-text-link-accent`                      |
+| `.nsi-list`                                                                     | Styled list — hover states + hidden action buttons on hover         |
+| `.close-button`                                                                 | Absolute top-right close button                                     |
+| `.pa-modal .pa-modal-footer.pa-dual-buttons`                                    | Centred dual-button modal footer                                    |
+| `pa-tab.unauthorized`                                                           | Faded, non-interactive locked tab                                   |
+| `pa-radio.unauthorized` / `pa-checkbox.unauthorized` / `pa-toggle.unauthorized` | Locked controls                                                     |
 
 ---
 
@@ -298,6 +348,7 @@ For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` or `St
 ## Colour Palette (CSS custom properties)
 
 Brand tokens — override any via `--custom-color-*` hooks in app global styles:
+
 ```css
 /* Primary (blue in default Pastanaga; brand blue #054BFF in Sistema) */
 --color-primary-stronger   --color-primary-strong   --color-primary-regular
@@ -319,6 +370,7 @@ Brand tokens — override any via `--custom-color-*` hooks in app global styles:
 
 **Critical rule: Never hardcode colour hex values (`#666`, `#ccc`, `#f0f0f0`, `#999`, etc.) in
 component SCSS.** Always use theme variables:
+
 - `$color-neutral-regular` for muted text / axis labels
 - `$color-neutral-light` for borders, tick lines, secondary fills
 - `$color-neutral-lighter` for dividers, light borders
@@ -327,6 +379,7 @@ component SCSS.** Always use theme variables:
 - `$color-light-stronger` for text on dark backgrounds
 
 White-label override hooks:
+
 ```css
 --custom-color-primary-regular   /* override brand primary */
 --custom-font-family             /* override font */
@@ -355,11 +408,13 @@ $border-radius-card: rhythm(1)  // 8px
 
 **Critical rule: Never use hardcoded `px` values for spacing (gap, margin, padding, width, height).
 Always use `rhythm(N)`.** For example:
+
 - `gap: rhythm(3)` not `gap: 24px`
 - `margin-bottom: rhythm(2)` not `margin-bottom: 16px`
 - `padding: rhythm(1) rhythm(2)` not `padding: 8px 16px`
 
 To use `rhythm()` in a component SCSS, import the variables:
+
 ```scss
 @use 'apps/dashboard/src/variables' as *;
 // then rhythm(N), $color-*, $font-size-*, etc. are all available
@@ -386,11 +441,11 @@ $z-index-deepdive:       -100
 ## SCSS Mixins (from `_mixins.scss`)
 
 ```scss
-@include dark-mode()                           // dark bg + light text
-@include reset-button()                        // strip browser button styles
-@include text-truncate()                       // ellipsis overflow
-@include scrollbar-style($size, $bg, $bg-hover, $thumb, $thumb-active, $radius, $border)
-@include scrollbar-black($bg: #fff)            // shortcut: thin black scrollbar
+@include dark-mode() // dark bg + light text
+  @include reset-button() // strip browser button styles
+  @include text-truncate() // ellipsis overflow
+  @include scrollbar-style($size, $bg, $bg-hover, $thumb, $thumb-active, $radius, $border) @include
+  scrollbar-black($bg: #fff); // shortcut: thin black scrollbar
 ```
 
 ---
@@ -400,14 +455,15 @@ $z-index-deepdive:       -100
 > These files contain the **complete API** for every component. Load the relevant one before
 > implementing any feature that involves those components.
 
-| File | Contents |
-|------|----------|
-| `references/sistema-components.md` | All 22 `nsi-*` components — selector, inputs, outputs, module, snippet |
-| `references/pastanaga-components.md` | All `pa-*` components grouped by category |
-| `references/tokens.md` | Complete token reference — palette, buttons, table, tabs, textfield, toasts, toggle, shadows, scrollbar, expander, modal, menu, chips, card |
-| `references/patterns.md` | Complete working code recipes for common patterns (modal, toast, settings page layout, table, form, dropdown, tabs) |
+| File                                 | Contents                                                                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `references/sistema-components.md`   | All 22 `nsi-*` components — selector, inputs, outputs, module, snippet                                                                      |
+| `references/pastanaga-components.md` | All `pa-*` components grouped by category                                                                                                   |
+| `references/tokens.md`               | Complete token reference — palette, buttons, table, tabs, textfield, toasts, toggle, shadows, scrollbar, expander, modal, menu, chips, card |
+| `references/patterns.md`             | Complete working code recipes for common patterns (modal, toast, settings page layout, table, form, dropdown, tabs)                         |
 
 **When to load which file:**
+
 - Adding a new `nsi-*` component → `sistema-components.md`
 - Adding a `pa-button`, `pa-input`, `pa-table`, `pa-modal`, etc. → `pastanaga-components.md`
 - Overriding colours, spacing, or component styles via SCSS → `tokens.md`

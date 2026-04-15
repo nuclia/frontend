@@ -23,9 +23,11 @@ const defaultSize = 116;
       </g>
     </svg>
   `,
-  styles: `:host {
-    position: absolute; 
-  }`,
+  styles: `
+    :host {
+      position: absolute;
+    }
+  `,
 })
 export class LinkComponent {
   readonly id = `link-${count++}`;

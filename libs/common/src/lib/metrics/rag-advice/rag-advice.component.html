@@ -1,0 +1,573 @@
+<pa-modal-advanced
+  fitContentHeight
+  class="rag-advice-modal">
+  <pa-modal-title>{{ 'activity.advice.title' | translate }}</pa-modal-title>
+
+  <pa-modal-content>
+    <!-- ── Iteration history (previous rounds, always visible once they exist) ── -->
+    @for (record of previousIterations(); track record.round) {
+      <pa-expander [expanded]="false">
+        <pa-expander-header>
+          {{ 'activity.advice.iteration-round' | translate: { round: record.round } }}
+          @if (record.remiPending) {
+            &nbsp;
+            <nsi-spinner size="small"></nsi-spinner>
+          }
+        </pa-expander-header>
+        <pa-expander-body>
+          <p class="body-s iteration-params">
+            @if (record.paramsUsed.neighbouringParagraphs) {
+              <span class="param-chip">{{ 'activity.advice.param.neighbouring-paragraphs.label' | translate }}</span>
+            }
+            @if (record.paramsUsed.fullResource) {
+              <span class="param-chip">{{ 'activity.advice.param.full-resource.label' | translate }}</span>
+            }
+            @if (record.paramsUsed.metadatas) {
+              <span class="param-chip">{{ 'activity.advice.param.metadatas.label' | translate }}</span>
+            }
+            @if (record.paramsUsed.graph) {
+              <span class="param-chip">{{ 'activity.advice.param.graph.label' | translate }}</span>
+            }
+            @if (record.paramsUsed.rephrase) {
+              <span class="param-chip">{{ 'activity.advice.param.rephrase.label' | translate }}</span>
+            }
+            @if (record.paramsUsed.minScoreSemantic !== null) {
+              <span class="param-chip">sem≥{{ record.paramsUsed.minScoreSemantic }}</span>
+            }
+            @if (record.paramsUsed.topK !== null) {
+              <span class="param-chip">topK={{ record.paramsUsed.topK }}</span>
+            }
+            @if (record.paramsUsed.model) {
+              <span class="param-chip">{{ record.paramsUsed.model }}</span>
+            }
+          </p>
+          @if (
+            record.remiAnswerRelevance !== null ||
+            record.remiContentRelevance !== null ||
+            record.remiGroundedness !== null
+          ) {
+            <div class="remi-scores iteration-remi">
+              <app-remi-score-badge
+                [value]="record.remiAnswerRelevance"
+                [label]="'metrics.remi.answer' | translate" />
+              <app-remi-score-badge
+                [value]="record.remiContentRelevance"
+                [label]="'metrics.remi.context' | translate" />
+              <app-remi-score-badge
+                [value]="record.remiGroundedness"
+                [label]="'metrics.remi.groundedness' | translate" />
+            </div>
+          }
+          <p class="body-m iteration-answer">{{ record.answer }}</p>
+        </pa-expander-body>
+      </pa-expander>
+    }
+
+    <!-- ── Query summary (input / analyzing states) ── -->
+    @if (state() === 'input' || (state() === 'analyzing' && iterations().length === 0)) {
+      <div class="query-summary">
+        <div class="summary-field">
+          <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+          <p class="summary-value">{{ input?.question }}</p>
+        </div>
+        @if (input?.answer) {
+          <div class="summary-field">
+            <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+            <p class="summary-value truncated">{{ input?.answer }}</p>
+          </div>
+        }
+        @if (input?.remiScores) {
+          <div class="remi-scores">
+            <app-remi-score-badge
+              [value]="input?.remiScores?.answerRelevance ?? null"
+              [label]="'metrics.remi.answer' | translate" />
+            <app-remi-score-badge
+              [value]="input?.remiScores?.contextRelevance ?? null"
+              [label]="'metrics.remi.context' | translate" />
+            <app-remi-score-badge
+              [value]="input?.remiScores?.groundedness ?? null"
+              [label]="'metrics.remi.groundedness' | translate" />
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Query summary when re-analyzing a tested iteration ── -->
+    @if (state() === 'analyzing' && latestIteration()) {
+      <div class="query-summary">
+        <div class="summary-field">
+          <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+          <p class="summary-value">{{ input?.question }}</p>
+        </div>
+        @if (latestIteration()!.answer) {
+          <div class="summary-field">
+            <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+            <p class="summary-value truncated">{{ latestIteration()!.answer }}</p>
+          </div>
+        }
+        @if (
+          latestIteration()!.remiAnswerRelevance !== null ||
+          latestIteration()!.remiContentRelevance !== null ||
+          latestIteration()!.remiGroundedness !== null
+        ) {
+          <div class="remi-scores">
+            <app-remi-score-badge
+              [value]="latestIteration()!.remiAnswerRelevance"
+              [label]="'metrics.remi.answer' | translate" />
+            <app-remi-score-badge
+              [value]="latestIteration()!.remiContentRelevance"
+              [label]="'metrics.remi.context' | translate" />
+            <app-remi-score-badge
+              [value]="latestIteration()!.remiGroundedness"
+              [label]="'metrics.remi.groundedness' | translate" />
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Query summary collapsed (advice / tested / saving states) ── -->
+    @if (state() === 'advice' || state() === 'tested' || state() === 'saving') {
+      <pa-expander [expanded]="false">
+        <pa-expander-header>{{ 'activity.advice.query-details' | translate }}</pa-expander-header>
+        <pa-expander-body>
+          <div class="query-summary">
+            <div class="summary-field">
+              <span class="summary-label">{{ 'activity.advice.question' | translate }}</span>
+              <p class="summary-value">{{ input?.question }}</p>
+            </div>
+            @if (input?.answer) {
+              <div class="summary-field">
+                <span class="summary-label">{{ 'activity.advice.answer' | translate }}</span>
+                <p class="summary-value truncated">{{ input?.answer }}</p>
+              </div>
+            }
+            @if (input?.remiScores) {
+              <div class="remi-scores">
+                <app-remi-score-badge
+                  [value]="input?.remiScores?.answerRelevance ?? null"
+                  [label]="'metrics.remi.answer' | translate" />
+                <app-remi-score-badge
+                  [value]="input?.remiScores?.contextRelevance ?? null"
+                  [label]="'metrics.remi.context' | translate" />
+                <app-remi-score-badge
+                  [value]="input?.remiScores?.groundedness ?? null"
+                  [label]="'metrics.remi.groundedness' | translate" />
+              </div>
+            }
+          </div>
+        </pa-expander-body>
+      </pa-expander>
+    }
+
+    <!-- ── User expectation (input state only) ── -->
+    @if (state() === 'input') {
+      <div class="expectation-input">
+        <span class="summary-label">{{ 'activity.advice.expectation-header' | translate }}</span>
+        <pa-textarea
+          [placeholder]="'activity.advice.expectation-placeholder' | translate"
+          [ngModel]="userExpectation()"
+          (ngModelChange)="userExpectation.set($event)"
+          [rows]="3"></pa-textarea>
+      </div>
+    }
+
+    <!-- ── Spinners ── -->
+    @if (state() === 'analyzing') {
+      <div class="loading-state">
+        <nsi-spinner></nsi-spinner>
+        <p>{{ 'activity.advice.analyzing' | translate }}</p>
+      </div>
+    }
+    @if (state() === 'testing') {
+      <div class="loading-state">
+        <nsi-spinner></nsi-spinner>
+        <p>{{ 'activity.advice.testing' | translate }}</p>
+      </div>
+    }
+
+    <!-- ── Advice: diagnosis + suggestions + editable params ── -->
+    @if (state() === 'advice') {
+      <div class="advice-section">
+        <h4 class="title-s">{{ 'activity.advice.diagnosis' | translate }}</h4>
+        <p class="body-m">{{ advice()?.diagnosis }}</p>
+
+        <!-- Hide suggestion bullets once user has already run a test round -->
+        @if ((advice()?.suggestions?.length ?? 0) > 0 && iterations().length === 0) {
+          <h4 class="title-s">{{ 'activity.advice.suggestions' | translate }}</h4>
+          <ul class="suggestions-list">
+            @for (suggestion of advice()?.suggestions; track $index) {
+              <li class="body-m">{{ suggestion }}</li>
+            }
+          </ul>
+        }
+      </div>
+
+      <!-- Editable params panel -->
+      <div class="editable-params">
+        <div class="params-header">
+          <p class="params-label body-s-bold">{{ 'activity.advice.suggested-params' | translate }}</p>
+          @if (originalParams()) {
+            <div class="param-legend">
+              <span class="legend-item">
+                <span class="legend-dot suggested"></span>
+                {{ 'activity.advice.legend.suggested' | translate }}
+              </span>
+              <span class="legend-item">
+                <span class="legend-dot modified"></span>
+                {{ 'activity.advice.legend.modified' | translate }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <!-- ── Section: Retrieval scores ── -->
+        <p class="section-label body-xs-bold">{{ 'activity.advice.section.retrieval' | translate }}</p>
+        <div class="param-row">
+          <div
+            class="param-field"
+            [class.param-suggested]="fieldStates()['minScoreSemantic'] === 'suggested'"
+            [class.param-modified]="fieldStates()['minScoreSemantic'] === 'modified'">
+            <pa-input
+              [type]="'number'"
+              placeholder="e.g. 0.5"
+              min="0"
+              max="1"
+              step="0.1"
+              [paTooltip]="'activity.advice.param.min-score-semantic.help' | translate"
+              [paTooltipType]="'action'"
+              [ngModel]="editableParams()?.minScoreSemantic"
+              (ngModelChange)="updateMinScoreSemantic($event)">
+              {{ 'activity.advice.param.min-score-semantic.label' | translate }}
+            </pa-input>
+          </div>
+          <div
+            class="param-field"
+            [class.param-suggested]="fieldStates()['minScoreBm25'] === 'suggested'"
+            [class.param-modified]="fieldStates()['minScoreBm25'] === 'modified'">
+            <pa-input
+              [type]="'number'"
+              placeholder="e.g. 2"
+              min="0"
+              max="10"
+              step="0.1"
+              [paTooltip]="'activity.advice.param.min-score-bm25.help' | translate"
+              [paTooltipType]="'action'"
+              [ngModel]="editableParams()?.minScoreBm25"
+              (ngModelChange)="updateMinScoreBm25($event)">
+              {{ 'activity.advice.param.min-score-bm25.label' | translate }}
+            </pa-input>
+          </div>
+          <div
+            class="param-field"
+            [class.param-suggested]="fieldStates()['topK'] === 'suggested'"
+            [class.param-modified]="fieldStates()['topK'] === 'modified'">
+            <pa-input
+              [type]="'number'"
+              placeholder="e.g. 20"
+              min="1"
+              step="1"
+              [paTooltip]="'activity.advice.param.top-k.help' | translate"
+              [paTooltipType]="'action'"
+              [ngModel]="editableParams()?.topK"
+              (ngModelChange)="updateTopK($event)">
+              {{ 'activity.advice.param.top-k.label' | translate }}
+            </pa-input>
+          </div>
+        </div>
+
+        <!-- ── Section: Context strategies ── -->
+        <p class="section-label body-xs-bold">{{ 'activity.advice.section.context' | translate }}</p>
+        <div class="param-strategies">
+          <div
+            class="strategy-field"
+            [class.param-suggested]="fieldStates()['neighbouringParagraphs'] === 'suggested'"
+            [class.param-modified]="fieldStates()['neighbouringParagraphs'] === 'modified'"
+            [paTooltip]="'activity.advice.param.neighbouring-paragraphs.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-checkbox
+              [ngModel]="editableParams()?.neighbouringParagraphs ?? false"
+              [disabled]="editableParams()?.fullResource ?? false"
+              (ngModelChange)="editableParams.update((p) => (p ? { ...p, neighbouringParagraphs: $event } : p))">
+              {{ 'activity.advice.param.neighbouring-paragraphs.label' | translate }}
+            </pa-checkbox>
+          </div>
+          <div
+            class="strategy-field"
+            [class.param-suggested]="fieldStates()['fullResource'] === 'suggested'"
+            [class.param-modified]="fieldStates()['fullResource'] === 'modified'"
+            [paTooltip]="'activity.advice.param.full-resource.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-checkbox
+              [ngModel]="editableParams()?.fullResource ?? false"
+              (ngModelChange)="editableParams.update((p) => (p ? { ...p, fullResource: $event } : p))">
+              {{ 'activity.advice.param.full-resource.label' | translate }}
+            </pa-checkbox>
+          </div>
+          <div
+            class="strategy-field"
+            [class.param-suggested]="fieldStates()['metadatas'] === 'suggested'"
+            [class.param-modified]="fieldStates()['metadatas'] === 'modified'"
+            [paTooltip]="'activity.advice.param.metadatas.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-checkbox
+              [ngModel]="editableParams()?.metadatas ?? false"
+              (ngModelChange)="editableParams.update((p) => (p ? { ...p, metadatas: $event } : p))">
+              {{ 'activity.advice.param.metadatas.label' | translate }}
+            </pa-checkbox>
+          </div>
+          <div
+            class="strategy-field"
+            [class.param-suggested]="fieldStates()['graph'] === 'suggested'"
+            [class.param-modified]="fieldStates()['graph'] === 'modified'"
+            [paTooltip]="'activity.advice.param.graph.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-checkbox
+              [ngModel]="editableParams()?.graph ?? false"
+              (ngModelChange)="editableParams.update((p) => (p ? { ...p, graph: $event } : p))">
+              {{ 'activity.advice.param.graph.label' | translate }}
+            </pa-checkbox>
+          </div>
+        </div>
+
+        <!-- ── Section: Query enhancement ── -->
+        <p class="section-label body-xs-bold">{{ 'activity.advice.section.query' | translate }}</p>
+        <div class="param-strategies single-row">
+          <div
+            class="strategy-field"
+            [class.param-suggested]="fieldStates()['rephrase'] === 'suggested'"
+            [class.param-modified]="fieldStates()['rephrase'] === 'modified'"
+            [paTooltip]="'activity.advice.param.rephrase.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-checkbox
+              [ngModel]="editableParams()?.rephrase ?? false"
+              (ngModelChange)="editableParams.update((p) => (p ? { ...p, rephrase: $event } : p))">
+              {{ 'activity.advice.param.rephrase.label' | translate }}
+            </pa-checkbox>
+          </div>
+        </div>
+
+        <!-- ── Section: Answer generation ── -->
+        <p class="section-label body-xs-bold">{{ 'activity.advice.section.generation' | translate }}</p>
+        <div class="param-row model-row">
+          <div
+            class="param-field"
+            [class.param-suggested]="fieldStates()['model'] === 'suggested'"
+            [class.param-modified]="fieldStates()['model'] === 'modified'">
+            @if (availableModels().length > 0) {
+              <pa-select
+                [value]="editableParams()?.model ?? ''"
+                [paTooltip]="'activity.advice.param.model.help' | translate"
+                [paTooltipType]="'action'"
+                [label]="'activity.advice.param.model.label' | translate"
+                (valueChange)="editableParams.update((p) => (p ? { ...p, model: $event ?? '' } : p))">
+                <pa-option value="">{{ 'activity.advice.param.model.default' | translate }}</pa-option>
+                @for (m of availableModels(); track m.value) {
+                  <pa-option [value]="m.value">{{ m.name }}</pa-option>
+                }
+              </pa-select>
+            } @else {
+              <pa-input
+                placeholder="e.g. chatgpt-azure-4o"
+                [paTooltip]="'activity.advice.param.model.help' | translate"
+                [paTooltipType]="'action'"
+                [ngModel]="editableParams()?.model ?? ''"
+                (ngModelChange)="editableParams.update((p) => (p ? { ...p, model: $event ?? '' } : p))">
+                {{ 'activity.advice.param.model.label' | translate }}
+              </pa-input>
+            }
+          </div>
+        </div>
+
+        <div
+          class="param-field system-prompt-field"
+          [class.param-suggested]="fieldStates()['systemPrompt'] === 'suggested'"
+          [class.param-modified]="fieldStates()['systemPrompt'] === 'modified'">
+          <pa-expander
+            [expanded]="!!editableParams()?.systemPrompt"
+            [paTooltip]="'activity.advice.param.system-prompt.help' | translate"
+            [paTooltipType]="'action'">
+            <pa-expander-header>{{ 'activity.advice.param.system-prompt.label' | translate }}</pa-expander-header>
+            <pa-expander-body>
+              <pa-textarea
+                [ngModel]="editableParams()?.systemPrompt ?? ''"
+                (ngModelChange)="editableParams.update((p) => (p ? { ...p, systemPrompt: $event ?? '' } : p))"
+                [rows]="4"></pa-textarea>
+            </pa-expander-body>
+          </pa-expander>
+        </div>
+
+        @if (editableParams()?.fullResource && editableParams()?.neighbouringParagraphs) {
+          <nsi-info-card type="warning">
+            <p class="body-s">{{ 'activity.advice.full-resource-conflict' | translate }}</p>
+          </nsi-info-card>
+        }
+
+        <p class="body-s disclaimer">{{ 'activity.advice.disclaimer' | translate }}</p>
+      </div>
+    }
+    @if (state() === 'tested' && latestIteration()) {
+      <nsi-info-card [type]="latestIteration()!.noContext ? 'warning' : 'default'">
+        <p class="info-card-title body-s-bold">
+          {{ 'activity.advice.iteration-round' | translate: { round: latestIteration()!.round } }}
+        </p>
+
+        @if (latestIteration()!.noContext) {
+          <p class="body-m">{{ 'activity.advice.no-context-result' | translate }}</p>
+        } @else {
+          @if (latestIteration()!.answer) {
+            <p class="body-m">{{ latestIteration()!.answer }}</p>
+          } @else {
+            <p class="body-m muted">{{ 'activity.advice.no-answer-title' | translate }}</p>
+            <p class="body-s">{{ 'activity.advice.no-answer-hint' | translate }}</p>
+          }
+        }
+      </nsi-info-card>
+
+      <!-- REMi scores row — below the card, reactive via direct signal read -->
+      @if (latestIteration()!.remiPending) {
+        <div class="remi-scores iteration-remi remi-skeleton-row">
+          <nsi-skeleton
+            width="110px"
+            height="1.625rem"></nsi-skeleton>
+          <nsi-skeleton
+            width="110px"
+            height="1.625rem"></nsi-skeleton>
+          <nsi-skeleton
+            width="110px"
+            height="1.625rem"></nsi-skeleton>
+        </div>
+      } @else if (
+        !latestIteration()!.noContext &&
+        (latestIteration()!.remiAnswerRelevance !== null ||
+          latestIteration()!.remiContentRelevance !== null ||
+          latestIteration()!.remiGroundedness !== null)
+      ) {
+        <div class="remi-scores iteration-remi">
+          <app-remi-score-badge
+            [value]="latestIteration()!.remiAnswerRelevance"
+            [label]="'metrics.remi.answer' | translate" />
+          <app-remi-score-badge
+            [value]="latestIteration()!.remiContentRelevance"
+            [label]="'metrics.remi.context' | translate" />
+          <app-remi-score-badge
+            [value]="latestIteration()!.remiGroundedness"
+            [label]="'metrics.remi.groundedness' | translate" />
+        </div>
+      }
+    }
+
+    <!-- ── Saving: config name input ── -->
+    @if (state() === 'saving') {
+      <div class="save-section">
+        <pa-input
+          [placeholder]="'activity.advice.config-name-placeholder' | translate"
+          [ngModel]="configName()"
+          (ngModelChange)="configName.set($event ?? '')">
+          {{ 'activity.advice.save-config-name' | translate }}
+        </pa-input>
+        @if (hasMinScoreParams()) {
+          <nsi-info-card type="default">
+            <p class="body-s">{{ 'activity.advice.minscore-note' | translate }}</p>
+          </nsi-info-card>
+        }
+      </div>
+    }
+
+    <!-- ── Done ── -->
+    @if (state() === 'done') {
+      <nsi-info-card type="highlight">
+        <p class="body-m">{{ 'activity.advice.config-saved' | translate }}</p>
+      </nsi-info-card>
+    }
+
+    <!-- ── Error ── -->
+    @if (state() === 'error') {
+      <nsi-info-card type="warning">
+        <p class="body-m">{{ errorMessage() || ('activity.advice.error' | translate) }}</p>
+      </nsi-info-card>
+    }
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    @switch (state()) {
+      @case ('input') {
+        <pa-button
+          kind="primary"
+          (click)="generateAdvice()">
+          {{ 'activity.advice.generate' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="modal.close()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      }
+      @case ('advice') {
+        <pa-button
+          kind="primary"
+          (click)="testSettings()">
+          {{ 'activity.advice.try-settings' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="modal.close()">
+          {{ 'generic.close' | translate }}
+        </pa-button>
+      }
+      @case ('tested') {
+        @if (!latestIteration()?.noContext && latestIteration()?.answer) {
+          <pa-button
+            kind="primary"
+            [disabled]="!!latestIteration()?.remiPending"
+            (click)="analyzeFurther()">
+            {{ 'activity.advice.analyze-further' | translate }}
+          </pa-button>
+        }
+        <pa-button
+          [kind]="latestIteration()?.noContext || !latestIteration()?.answer ? 'primary' : 'secondary'"
+          (click)="reGenerateAdvice()">
+          {{ 'activity.advice.try-different-params' | translate }}
+        </pa-button>
+        @if (!latestIteration()?.noContext && latestIteration()?.answer) {
+          <pa-button
+            kind="secondary"
+            (click)="openSaving()">
+            {{ 'activity.advice.save-as-config' | translate }}
+          </pa-button>
+        }
+      }
+      @case ('saving') {
+        <pa-button
+          kind="primary"
+          [disabled]="!configName() || savingConfig()"
+          (click)="saveConfig()">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="state.set('tested')">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      }
+      @case ('done') {
+        <pa-button
+          kind="primary"
+          (click)="modal.close()">
+          {{ 'generic.done' | translate }}
+        </pa-button>
+      }
+      @case ('error') {
+        <pa-button
+          kind="primary"
+          (click)="state.set('input')">
+          {{ 'generic.retry' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="modal.close()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      }
+    }
+  </pa-modal-footer>
+</pa-modal-advanced>

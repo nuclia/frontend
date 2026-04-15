@@ -161,6 +161,14 @@
     pa-accordion-item {
       border: 1px solid $color-neutral-lighter;
       border-radius: $border-radius-default;
+      position: relative;
+
+      .accordion-header-advice-btn {
+        position: absolute;
+        top: rhythm(1);
+        right: rhythm(2);
+        z-index: $z-index-default + 1;
+      }
     }
 
     // Expanded item — header separator + body background (internal — needs ::ng-deep)

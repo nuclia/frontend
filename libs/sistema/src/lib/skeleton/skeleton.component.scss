@@ -12,9 +12,15 @@
   animation: nsi-shimmer 1.5s infinite;
 }
 
-.nsi-skeleton--small  { border-radius: rhythm(0.5); }
-.nsi-skeleton--medium { border-radius: rhythm(1); }
-.nsi-skeleton--round  { border-radius: 50%; }
+.nsi-skeleton--small {
+  border-radius: rhythm(0.5);
+}
+.nsi-skeleton--medium {
+  border-radius: rhythm(1);
+}
+.nsi-skeleton--round {
+  border-radius: 50%;
+}
 
 @keyframes nsi-shimmer {
   0% {

@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import {
   ACTIVITY_LOG_ASK_SHOW_FIELDS,
+  ActivityLogAskQuery,
+  ActivityLogAskShowFields,
   ActivityLogItem,
   EventType,
   Metric,
@@ -300,6 +302,19 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   }
 
   private _mapToUsageItem(remiItem: RemiQueryResponseItem, status: RemiAnswerStatus | null): UsageAnalyticsItem {
+    const answerRelevance = remiItem.remi?.answer_relevance?.score ?? null;
+    const contentRelevanceArr = remiItem.remi?.context_relevance ?? [];
+    const groundednessArr = remiItem.remi?.groundedness ?? [];
+
+    const contentRelevance =
+      contentRelevanceArr.length > 0
+        ? Math.round((10 * contentRelevanceArr.reduce((a, b) => a + b, 0)) / contentRelevanceArr.length) / 10
+        : null;
+    const groundedness = groundednessArr.length > 0 ? Math.max(...groundednessArr) : null;
+
+    const remiScores = [answerRelevance, contentRelevance, groundedness].filter((v): v is number => v !== null);
+    const remiScore = remiScores.length > 0 ? Math.min(...remiScores) : null;
+
     return {
       ...NULL_ACTIVITY_FIELDS,
       id: remiItem.id,
@@ -307,9 +322,13 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       answer: remiItem.answer,
       date: remiItem.date ?? null,
       status,
-      remi_scores: remiItem.remi?.answer_relevance?.score ?? null,
+      remi_scores: remiScore,
       _displayStatus: status ? this._translateStatus(status) : '—',
-      _remiScore: remiItem.remi?.answer_relevance?.score ?? null,
+      _rawStatus: status ?? null,
+      _remiScore: remiScore,
+      _remiAnswerRelevance: answerRelevance,
+      _remiContextRelevance: contentRelevance,
+      _remiGroundedness: groundedness,
     };
   }
 
@@ -320,6 +339,22 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       NO_CONTEXT: 'activity.remi-analytics.status.no-context',
     };
     return this.translate.instant(statusKeys[status]);
+  }
+
+  fetchActivityParams(id: number): Observable<ActivityLogItem | null> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.activityMonitor.queryActivityLogs(EventType.ASK, {
+          year_month: this._yearMonth(),
+          show: 'all',
+          filters: { id: { eq: id } },
+          pagination: { limit: 1 },
+        } as ActivityLogAskQuery),
+      ),
+      map((items) => items[0] ?? null),
+      catchError(() => of(null)),
+    );
   }
 
   private _computeRemiAverages(items: RemiScoresResponseItem[]): {

@@ -71,6 +71,7 @@ export class FeaturesService {
     progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
     simpleUI: this.featureFlag.isFeatureEnabled('simple-ui'),
     metrics: this.featureFlag.isFeatureEnabled('metrics'),
+    automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
   };
 
   /**

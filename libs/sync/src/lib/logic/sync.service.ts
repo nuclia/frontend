@@ -536,9 +536,9 @@ export class SyncService {
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
     return this.http
-      .get<LogEntity[]>(
-        `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
-      )
+      .get<
+        LogEntity[]
+      >(`${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`)
       .pipe(
         map((logs) =>
           logs.sort((a, b) => {

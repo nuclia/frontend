@@ -36,8 +36,13 @@
   --color-remi-context-relevance: hsl(217, 100%, 60%);
   --color-remi-groundedness: hsl(154, 100%, 37%);
 
+  --color-success-strong: var(--color-tertiary-strong, hsl(2251, 100%, 40%));
   --color-success-regular: var(--color-tertiary-strong, hsl(2251, 100%, 40%));
+  --color-success-lightest: var(--color-tertiary-lightest, hsl(2251, 100%, 96%));
+
+  --color-danger-strong: var(--custom-secondary-strong, hsl(16, 100%, 59%));
   --color-danger-regular: var(--custom-secondary-regular, hsl(7, 90%, 59%));
+  --color-danger-lightest: var(--custom-secondary-lightest, hsl(7, 90%, 95%));
 }
 
 // Success

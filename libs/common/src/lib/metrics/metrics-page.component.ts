@@ -42,6 +42,11 @@ export class MetricsPageComponent {
   availableMonths = input<string[]>([]);
   showDownload = input(true);
   showSearch = input(true);
+  readonly rowAction = input<{
+    icon: string;
+    tooltip: string;
+    visible: (item: ActivityLogItem) => boolean;
+  } | null>(null);
 
   // ── Outputs ───────────────────────────────────────────────────────────────
 
@@ -50,6 +55,7 @@ export class MetricsPageComponent {
   searchChange = output<{ term: string; column: string }>();
   loadNextPage = output<void>();
   downloadRequested = output<{ format: DownloadFormat; columns: string[] }>();
+  rowActionTriggered = output<ActivityLogItem>();
 
   // ── Internal state ────────────────────────────────────────────────────────
 
@@ -166,6 +172,7 @@ export class MetricsPageComponent {
       key: col.key,
       label: col.label,
       value: col.value,
+      colorFn: col.colorFn,
       group: col.group || 'query',
       expandable: this.isLargeTextField(col.key),
       isColumn: true,
@@ -175,6 +182,7 @@ export class MetricsPageComponent {
       key: field.key,
       label: field.label,
       value: field.value,
+      colorFn: undefined as ((item: ActivityLogItem) => 'low' | 'mid' | 'high' | null) | undefined,
       group: field.group || 'query',
       expandable: field.expandable || this.isLargeTextField(field.key),
       isColumn: false,
@@ -194,6 +202,11 @@ export class MetricsPageComponent {
       labelKey: `activity.detail.group.${group}`,
       fields,
     }));
+  });
+
+  readonly computedGridColumns = computed(() => {
+    const base = this.service.gridColumns();
+    return this.rowAction() ? `${base} 48px` : base;
   });
 
   getFieldValue(
@@ -229,13 +242,18 @@ export class MetricsPageComponent {
   }
 
   isRemiScoreLow(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    const val = col.value(item);
-    return typeof val === 'number' && val <= 2;
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'low';
+  }
+
+  isRemiScoreMid(item: ActivityLogItem, col: MetricsColumnDef): boolean {
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'mid';
   }
 
   isRemiScoreHigh(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    const val = col.value(item);
-    return typeof val === 'number' && val >= 4;
+    if (!col.colorFn) return false;
+    return col.colorFn(item) === 'high';
   }
 
   // ── Download ──────────────────────────────────────────────────────────────

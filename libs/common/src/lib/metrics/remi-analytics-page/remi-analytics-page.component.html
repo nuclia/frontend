@@ -198,12 +198,23 @@
                   [itemTitle]="item.question"
                   (expandedChange)="loadMissingKnowledgeDetails(item.id)">
                   <pa-accordion-item-body>
+                    @if (automaticAdvice$ | async) {
+                      <pa-button
+                        class="accordion-header-advice-btn"
+                        icon="sparks"
+                        kind="primary"
+                        aspect="basic"
+                        [paTooltip]="'activity.advice.trigger-tooltip' | translate"
+                        (click)="openAdviceForItem(item, $event)"></pa-button>
+                    }
+
                     <app-missing-knowledge-details
                       noScore
                       [item]="item"
                       [missingKnowledgeDetails]="missingKnowledgeDetails"
                       [missingKnowledgeError]="missingKnowledgeError"
-                      (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                      (openViewer)="openViewer($event)"
+                      (requestAdvice)="onRequestAdvice($event)"></app-missing-knowledge-details>
                   </pa-accordion-item-body>
                 </pa-accordion-item>
               }
@@ -333,11 +344,22 @@
                     </pa-accordion-item-extra-description>
 
                     <pa-accordion-item-body>
+                      @if (automaticAdvice$ | async) {
+                        <pa-button
+                          class="accordion-header-advice-btn"
+                          icon="sparks"
+                          kind="primary"
+                          aspect="basic"
+                          [paTooltip]="'activity.advice.trigger-tooltip' | translate"
+                          (click)="openAdviceForItem(item, $event)"></pa-button>
+                      }
+
                       <app-missing-knowledge-details
                         [item]="item"
                         [missingKnowledgeDetails]="missingKnowledgeDetails"
                         [missingKnowledgeError]="missingKnowledgeError"
-                        (openViewer)="openViewer($event)"></app-missing-knowledge-details>
+                        (openViewer)="openViewer($event)"
+                        (requestAdvice)="onRequestAdvice($event)"></app-missing-knowledge-details>
                     </pa-accordion-item-body>
                   </pa-accordion-item>
                 }
