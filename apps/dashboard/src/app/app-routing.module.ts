@@ -252,7 +252,7 @@ const routes: Routes = [
                 ],
               },
               {
-                path: 'drivers',
+                path: 'sources',
                 component: DriversPageComponent,
               },
               {

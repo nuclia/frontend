@@ -67,7 +67,7 @@ export class AskFormComponent extends FormDirective implements OnInit {
   }
 
   aragUrl = aragUrl;
-  driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  driversPath = computed(() => `${this.aragUrl()}/sources`);
   sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {

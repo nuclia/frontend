@@ -66,7 +66,7 @@ export class TransportFieldComponent implements OnInit {
     return form.get(controlName) as FormControl<TransportType>;
   });
 
-  driversPath = computed(() => `${aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/sources`);
 
   // Helper method to generate provider type from transport type
   private getProviderType(transport: string): string {

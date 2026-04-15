@@ -39,7 +39,7 @@ export class FilteredSourceSelectComponent implements OnInit {
     return allDrivers.filter((driver) => driver.provider.includes(transport.toLowerCase()));
   });
 
-  driversPath = computed(() => `${aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/sources`);
 
   // Computed property to check if there are no valid driver options
   hasNoValidOptions = computed(() => {

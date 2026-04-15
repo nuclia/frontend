@@ -37,7 +37,7 @@ export class DriverSelectComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private driversService = inject(DriversService);
 
-  driversPath = computed(() => `${aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/sources`);
   options = signal<OptionModel[] | null>(null);
   selectedValues: string[] = []; // Initialize as empty array to prevent undefined issues
 
