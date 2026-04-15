@@ -14,6 +14,25 @@
         help="validation.required"
         externalLabel></pa-input>
     </div>
+    @if (!inRaoApp && (coworkAccountEnabled | async)) {
+      <div class="field">
+        <label
+          for="workflow"
+          class="title-s">
+          {{ 'onboarding.step2.mode' | translate }}
+        </label>
+        <div>
+          @if (translationsReady | async) {
+            <pa-radio-group
+              id="workflow"
+              formControlName="workflow">
+              <pa-radio value="classic">{{ 'onboarding.step2.mode-classic' | translate }}</pa-radio>
+              <pa-radio value="cowork">{{ 'onboarding.step2.mode-cowork' | translate }}</pa-radio>
+            </pa-radio-group>
+          }
+        </div>
+      </div>
+    }
   </div>
   <nsi-sticky-footer>
     <pa-button

@@ -12,13 +12,13 @@ import {
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
-import { Account, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
+import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnboardingService {
-  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(2);
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
     creating: false,
     accountCreated: false,
@@ -121,6 +121,10 @@ export class OnboardingService {
         }),
       );
     }
+  }
+
+  modifyAccount(accountSlug: string, data: AccountModification): Observable<void> {
+    return this.sdk.nuclia.db.modifyAccount(accountSlug, data);
   }
 
   createKb(
