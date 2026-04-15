@@ -1,8 +1,8 @@
 <div class="page-spacing simple-kb">
   <div class="column-container wide-column">
     <nsi-home-container>
-      <div class="title-m">
-        <div class="title-with-icon">
+      <div class="block-container">
+        <div class="title-with-icon title-m">
           <pa-icon name="search"></pa-icon>
           {{ 'search.title' | translate }}
         </div>
@@ -43,6 +43,22 @@
         <div class="stats">
           <div class="title-s">{{ 'dashboard-home.kb-storage.total.resources' | translate }}</div>
           <div class="title-l">{{ totalResources }}</div>
+        </div>
+      </nsi-home-container>
+      <nsi-home-container>
+        <div class="block-container">
+          <div class="title-with-icon title-m">
+            <pa-icon name="link"></pa-icon>
+            {{ 'dashboard-home.kb-details.mcp-server' | translate }}
+          </div>
+          <div class="details-block">
+            <pre><code>{{ endpoint | async }}</code></pre>
+          </div>
+          <nsi-button-mini
+            [icon]="copied() ? 'check' : 'copy'"
+            (click)="copyEndpoint()">
+            {{ (copied() ? 'generic.copied' : 'generic.copy') | translate }}
+          </nsi-button-mini>
         </div>
       </nsi-home-container>
     }

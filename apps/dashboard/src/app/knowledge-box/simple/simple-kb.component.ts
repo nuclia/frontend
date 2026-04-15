@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { ResourceListService, SearchWidgetService, UploadDialogService, UploadService } from '@flaps/common';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { SearchWidgetService, UploadDialogService, UploadService } from '@flaps/common';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { HomeContainerComponent, SisProgressModule } from '@nuclia/sistema';
+import { HomeContainerComponent, SisProgressModule, ButtonMiniComponent } from '@nuclia/sistema';
 import { LastResourcesComponent } from '../knowledge-box-home/last-resources/last-resources.component';
 import { CommonModule } from '@angular/common';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 
 @Component({
@@ -14,6 +14,7 @@ import { SDKService } from '@flaps/core';
   templateUrl: './simple-kb.component.html',
   styleUrls: ['./simple-kb.component.scss'],
   imports: [
+    ButtonMiniComponent,
     TranslateModule,
     PaButtonModule,
     HomeContainerComponent,
@@ -40,6 +41,9 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
   );
   uploadInProgress = this.uploadService.uploadInProgress;
 
+  endpoint = this.sdk.currentKb.pipe(map((kb) => kb.fullpath + '/mcp'));
+  copied = signal(false);
+
   uploadFiles() {
     this.upload.upload('files');
   }
@@ -50,5 +54,13 @@ export class SimpleKBComponent implements OnDestroy, OnInit {
   }
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
+  }
+
+  copyEndpoint() {
+    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
+      this.copied.set(true);
+      navigator.clipboard.writeText(endpoint);
+      setTimeout(() => this.copied.set(false), 2000);
+    });
   }
 }
