@@ -120,7 +120,6 @@
     max_tokens?: number | string | undefined;
     max_output_tokens?: number | string | undefined;
     max_paragraphs?: number | string | undefined;
-    query_prepend?: string;
     json_schema?: string;
     vectorset?: string;
     chat_placeholder?: string;
@@ -174,7 +173,6 @@
   let max_tokens = $derived(componentProps.max_tokens || config.max_tokens);
   let max_output_tokens = $derived(componentProps.max_output_tokens || config.max_output_tokens);
   let max_paragraphs = $derived(componentProps.max_paragraphs || config.max_paragraphs);
-  let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
   let json_schema = $derived(componentProps.json_schema || config.json_schema);
   let vectorset = $derived(componentProps.vectorset || config.vectorset);
   let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder || '');
@@ -409,7 +407,6 @@
           max_tokens: _max_tokens,
           max_output_tokens: _max_output_tokens,
           max_paragraphs: _max_paragraphs,
-          query_prepend,
           vectorset,
           audit_metadata,
           reranker,

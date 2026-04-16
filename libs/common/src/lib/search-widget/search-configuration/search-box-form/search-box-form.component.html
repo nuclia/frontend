@@ -55,7 +55,7 @@
         </pa-checkbox>
         <pa-checkbox formControlName="path">
           {{ 'search.configuration.search-box.filters.filter-by-path' | translate }}
-        </pa-checkbox>        
+        </pa-checkbox>
       </div>
     </div>
     @if (filterEnabled) {
@@ -265,25 +265,6 @@
           externalLabel
           formControlName="paragraphsLimit"
           type="number"></pa-input>
-      </div>
-    </div>
-    <div class="config-form-field">
-      <pa-toggle
-        formControlName="prependTheQuery"
-        withBackground
-        spaceBetweenLabelAndToggle
-        (valueChange)="heightChanged.emit()">
-        <span class="toggle-label">{{ 'search.configuration.search-box.queryprepend.toggle-label' | translate }}</span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.search-box.queryprepend.toggle-description' | translate }}
-      </div>
-      <div
-        class="extra-fields"
-        [class.visible]="prependTheQuery">
-        <pa-input formControlName="queryPrepend">
-          {{ 'search.configuration.search-box.queryprepend.input-label' | translate }}
-        </pa-input>
       </div>
     </div>
     @if (hiddenResourcesEnabled | async) {

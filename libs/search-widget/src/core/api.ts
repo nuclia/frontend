@@ -64,7 +64,6 @@ let REPHRASE_PROMPT: string | undefined = undefined;
 let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
 let MAX_PARAGRAPHS: number | undefined = undefined;
-let QUERY_PREPEND = '';
 let NOT_ENOUGH_DATA_MESSAGE = '';
 let NO_CHAT_HISTORY = false;
 let DEBUG = false;
@@ -205,7 +204,6 @@ export const initNuclia = (
   if (SECURITY_GROUPS) {
     SEARCH_OPTIONS.security = { groups: SECURITY_GROUPS };
   }
-  QUERY_PREPEND = widgetOptions.query_prepend || '';
   CITATION_THRESHOLD = widgetOptions.citation_threshold;
   RRF_BOOSTING = widgetOptions.rrf_boosting;
   STATE = state;
@@ -226,10 +224,6 @@ export const find = (query: string, options: SearchOptions): Observable<Search.F
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (QUERY_PREPEND) {
-    query = QUERY_PREPEND + ' ' + query;
-  }
-
   return searchConfigId.pipe(
     take(1),
     switchMap((search_configuration) =>
@@ -288,9 +282,6 @@ export const getAnswer = (
   }
   if (DEBUG) {
     defaultOptions.show_consumption = true;
-  }
-  if (QUERY_PREPEND) {
-    query = QUERY_PREPEND + ' ' + query;
   }
   if (searchConfigOverride) {
     options = { show: ASK_SHOW, search_configuration: searchConfigOverride };
@@ -355,10 +346,6 @@ export const searchInResource = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (QUERY_PREPEND) {
-    query = QUERY_PREPEND + ' ' + query;
-  }
-
   return nucliaApi.knowledgeBox
     .getResourceFromData(resource)
     .find(query, features, { ...options, ...DEFAULT_SEARCH_OPTIONS })

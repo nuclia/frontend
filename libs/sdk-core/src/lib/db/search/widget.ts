@@ -30,8 +30,6 @@ export namespace Widget {
     preselectedFilterExpression: string;
     filters: FilterSelectionType;
     labelSetsExcludedFromFilters: string;
-    prependTheQuery: boolean;
-    queryPrepend: string;
     rephraseQuery: boolean;
     useRephrasePrompt: boolean;
     rephrasePrompt: string;
@@ -284,8 +282,6 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   autocompleteFromNERs: false,
   useSynonyms: false,
   highlight: false,
-  prependTheQuery: false,
-  queryPrepend: '',
   rephraseQuery: true,
   useRephrasePrompt: false,
   rephrasePrompt: '',
@@ -553,7 +549,6 @@ export function getWidgetParameters(
     max_paragraphs: getMaxParagraphs(searchConfig.searchBox),
     generativemodel: searchConfig.generativeAnswer.generativeModel ? searchConfig.generativeAnswer.generativeModel : '',
     vectorset: searchConfig.searchBox.vectorset ? searchConfig.searchBox.vectorset : '',
-    query_prepend: getQueryPrepend(searchConfig.searchBox),
     json_schema: getJsonSchema(searchConfig.resultDisplay),
     metadata: getMetadata(searchConfig.resultDisplay),
     reranker: getReranker(searchConfig.searchBox),
@@ -835,9 +830,6 @@ function getMaxOutputTokens(config: Widget.GenerativeAnswerConfig): string | und
 }
 function getMaxParagraphs(config: Widget.SearchBoxConfig): string | undefined {
   return config.limitParagraphs && !!config.paragraphsLimit ? config.paragraphsLimit.toString() : undefined;
-}
-function getQueryPrepend(config: Widget.SearchBoxConfig): string {
-  return config.prependTheQuery && !!config.queryPrepend.trim() ? config.queryPrepend.trim() : '';
 }
 export function getJsonSchemaValue(config: Widget.ResultDisplayConfig) {
   if (config.jsonOutput && !!config.jsonSchema.trim()) {

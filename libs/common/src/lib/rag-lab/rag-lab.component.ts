@@ -220,14 +220,10 @@ export class RagLabComponent implements OnChanges {
         if (!searchConfig) {
           return null;
         }
-        let queries: string[] = this.queries;
-        if (searchConfig.searchBox.prependTheQuery && searchConfig.searchBox.queryPrepend) {
-          queries = this.queries.map((query) => `${searchConfig.searchBox.queryPrepend} ${query}`);
-        }
 
         const requestConfig: RequestConfigAndQueries = {
           searchConfigId: configId,
-          queries,
+          queries: this.queries,
           ...getChatOptions(searchConfig, defaultGenerativeModel),
         };
         return requestConfig;

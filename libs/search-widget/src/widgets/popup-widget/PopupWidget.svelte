@@ -55,7 +55,6 @@
     max_tokens?: number | undefined;
     max_output_tokens?: number | undefined;
     max_paragraphs?: number | undefined;
-    query_prepend?: string;
     json_schema?: string;
     vectorset?: string;
     chat_placeholder?: string;
@@ -104,7 +103,6 @@
     max_tokens = undefined,
     max_output_tokens = undefined,
     max_paragraphs = undefined,
-    query_prepend = '',
     json_schema = '',
     vectorset = '',
     chat_placeholder = '',
@@ -246,7 +244,6 @@
           {max_tokens}
           {max_output_tokens}
           {max_paragraphs}
-          {query_prepend}
           {json_schema}
           {vectorset}
           {chat_placeholder}
