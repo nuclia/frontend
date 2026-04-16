@@ -2402,6 +2402,8 @@
 	"tasks-automation.form.labels-selection.labelset-description-help": "Esta descripción ayuda al LLM a comprender el propósito del conjunto de etiquetas seleccionado.",
 	"tasks-automation.form.labels-selection.multiple-labels": "Permitir que el agente establezca múltiples etiquetas en el mismo recurso",
 	"tasks-automation.form.labels-selection.title": "Seleccionar etiquetas",
+	"tasks-automation.form.llm-selection.confirm-dialog.description": "¿Estás seguro de que quieres usar un programa de Maestría en Derecho (LLM) diferente? Podría aumentar significativamente tus costos.",
+	"tasks-automation.form.llm-selection.confirm-dialog.title": "¿Utilizar un máster en derecho diferente?",
 	"tasks-automation.form.llm-selection.description": "El LLM elegido realizará la tarea.",
 	"tasks-automation.form.llm-selection.title": "Seleccionar el LLM",
 	"tasks-automation.form.llm-selection.warning": "El LLM predeterminado es el más económico; elegir un LLM diferente puede aumentar significativamente el consumo de tokens.",

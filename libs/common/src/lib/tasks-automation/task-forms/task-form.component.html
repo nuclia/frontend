@@ -155,13 +155,13 @@
             <stf-model-selector
               formControlName="model"
               [providers]="generativeProviders"
-              [learningConfigurations]="learningConfigurations"></stf-model-selector>
+              [learningConfigurations]="learningConfigurations"
+              (modelSelected)="onModelSelected($event)"></stf-model-selector>
             <stf-user-keys
               [learningConfigurations]="learningConfigurations"
               [generativeModel]="generativeModel"
               (formReady)="initUserKeysForm($event)"></stf-user-keys>
-            <stf-reasoning-config
-              [(config)]="reasoningConfig"></stf-reasoning-config>
+            <stf-reasoning-config [(config)]="reasoningConfig"></stf-reasoning-config>
           }
           <nsi-info-card
             type="warning"

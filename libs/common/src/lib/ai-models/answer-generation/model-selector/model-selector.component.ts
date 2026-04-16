@@ -63,6 +63,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
   disclaimerExpanded = input<boolean>(false);
   externalLabel = input<boolean>(false);
   heightChanged = output<void>();
+  modelSelected = output<string>();
 
   selectedModel = signal<string>('');
   term = signal('');
@@ -179,6 +180,7 @@ export class ModelSelectorComponent implements ControlValueAccessor {
       this.showDisclaimer.set(true);
     }
     this.updateControl();
+    this.modelSelected.emit(value);
 
     setTimeout(() => {
       this.heightChanged.emit();

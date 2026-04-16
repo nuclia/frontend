@@ -2402,6 +2402,8 @@
 	"tasks-automation.form.labels-selection.labelset-description-help": "Aquesta descripció ajuda el LLM a entendre el propòsit del conjunt d'etiquetes seleccionat",
 	"tasks-automation.form.labels-selection.multiple-labels": "Permet que l'agent estableixi diverses etiquetes al mateix recurs",
 	"tasks-automation.form.labels-selection.title": "Seleccionar etiquetes",
+	"tasks-automation.form.llm-selection.confirm-dialog.description": "Esteu segur que voleu utilitzar un LLM diferent? Podria augmentar els vostres costos significativament.",
+	"tasks-automation.form.llm-selection.confirm-dialog.title": "Utilitzar un altre LLM?",
 	"tasks-automation.form.llm-selection.description": "El LLM escollit realitzarà la tasca.",
 	"tasks-automation.form.llm-selection.title": "Seleccionar el LLM",
 	"tasks-automation.form.llm-selection.warning": "El LLM predeterminat és el més econòmic, triar un LLM diferent pot augmentar significativament el consum de tokens.",
