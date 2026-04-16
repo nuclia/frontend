@@ -2405,6 +2405,8 @@
 	"tasks-automation.form.labels-selection.labelset-description-help": "Cette description aide le LLM à comprendre le but de l'ensemble d'étiquettes sélectionné",
 	"tasks-automation.form.labels-selection.multiple-labels": "Autoriser l'agent à définir plusieurs étiquettes sur la même ressource",
 	"tasks-automation.form.labels-selection.title": "Sélectionnez les étiquettes",
+	"tasks-automation.form.llm-selection.confirm-dialog.description": "Êtes-vous sûr de vouloir faire appel à un autre LLM ? Cela pourrait augmenter considérablement vos coûts.",
+	"tasks-automation.form.llm-selection.confirm-dialog.title": "Utiliser un autre LLM ?",
 	"tasks-automation.form.llm-selection.description": "Le LLM choisi effectuera la tâche.",
 	"tasks-automation.form.llm-selection.title": "Sélectionner le LLM",
 	"tasks-automation.form.llm-selection.warning": "Le LLM par défaut est le plus économique, choisir un LLM différent peut augmenter considérablement votre consommation de jetons.",

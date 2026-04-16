@@ -181,6 +181,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   formInitialized = new BehaviorSubject(false);
   selectedFilters = new BehaviorSubject<string[]>([]);
   hasFilters = false;
+  recommendedLLM = '';
+  currentLLM = '';
 
   get generativeModel() {
     return this.learningConfigurations?.['generative_model'].options?.find(
@@ -257,10 +259,14 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         const models = schema?.['generative_model'].options || [];
         const hasCheapLLM = models.some((option) => option.value === DEFAULT_CHEAP_LLM);
         const hasDefaultLLM = models.some((option) => option.value === schema?.['generative_model']?.default);
+        if (hasCheapLLM) {
+          this.recommendedLLM = DEFAULT_CHEAP_LLM;
+        } else if (hasDefaultLLM) {
+          this.recommendedLLM = schema?.['generative_model']?.default ?? '';
+        }
         if (!this.form.controls.llm.controls.model.value) {
-          this.form.controls.llm.controls.model.setValue(
-            hasCheapLLM ? DEFAULT_CHEAP_LLM : hasDefaultLLM ? schema?.['generative_model']?.default : '',
-          );
+          this.form.controls.llm.controls.model.setValue(this.recommendedLLM);
+          this.currentLLM = this.recommendedLLM;
         }
         this.cdr.markForCheck();
       });
@@ -305,6 +311,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       },
       webhook: { url: triggers?.url || '' },
     });
+    this.currentLLM = task.parameters.llm?.model || '';
     this.hasFilters = hasFilters(task.parameters);
     this.fieldTypeFilters.forEach((option) => {
       option.selected = (task.parameters.filter.field_types || []).includes(option.id);
@@ -372,6 +379,32 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   onToggleFilter() {
     this.selectedFilters.next(this.selectedFieldTypes.concat(this.labelFilters));
+  }
+
+  onModelSelected(value: string) {
+    if (!value) {
+      // User clicked the "edit" button to clear the selection and open the search box.
+      // Don't update currentLLM — it should stay as the last confirmed selection
+      // so cancel can correctly revert to it.
+      return;
+    }
+    if (!this.recommendedLLM || value === this.recommendedLLM || value === this.currentLLM) {
+      this.currentLLM = value;
+      return;
+    }
+    this.modalService
+      .openConfirm({
+        title: 'tasks-automation.form.llm-selection.confirm-dialog.title',
+        description: 'tasks-automation.form.llm-selection.confirm-dialog.description',
+      })
+      .onClose.pipe(take(1))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.currentLLM = value;
+          return;
+        }
+        this.form.controls.llm.controls.model.setValue(this.recommendedLLM, { emitEvent: false });
+      });
   }
 
   onSave() {

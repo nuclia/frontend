@@ -705,6 +705,8 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 
 | Mistake | Correct approach |
 |---|---|
+| Nested ternary (`a ? b : c ? d : e`) | Use `if / else if` blocks — flat branching is always clearer |
+| `if (cond) { doX(); } else { doY(); }` when one branch returns | Use guard-clause / early-return: `if (!cond) { doY(); return; } doX();` |
 | `constructor(private svc: Service)` | `private svc = inject(Service)` |
 | `@Input() value: string` | `value = input.required<string>()` |
 | `@Output() changed = new EventEmitter<string>()` | `changed = output<string>()` |
