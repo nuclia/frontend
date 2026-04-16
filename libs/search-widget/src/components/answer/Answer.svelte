@@ -169,7 +169,7 @@ ${paragraphs.join('\n<hr>\n')}`;
       </div>
     {/if}
     {#if answer.inError}
-      <div class="answer-text error">
+      <div class="answer-text error" class:debug-error={$debug}>
         <Icon name="warning" />
         {answer.error}
       </div>

@@ -115,6 +115,7 @@ import {
 } from './viewer.store';
 import {
   disableRAG,
+  debug,
   hasQueryImage,
   isDefaultCitationsEnabled,
   isLLMCitationsEnabled,
@@ -496,6 +497,7 @@ export function askQuestion(
   options: BaseSearchOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
   let hasError = false;
+  let isDebugMode = false;
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(() =>
@@ -517,6 +519,7 @@ export function askQuestion(
           take(1),
           switchMap((routing) => (routing ? getRouting(question, routing).pipe(take(1)) : of(undefined))),
         ),
+        debug.pipe(take(1)),
       ]),
     ),
     switchMap(
@@ -532,7 +535,9 @@ export function askQuestion(
         _hasQueryImage,
         search_configuration,
         routedConfig,
+        _isDebug,
       ]) => {
+        isDebugMode = _isDebug;
         if (routedConfig?.config && routedConfig.config !== 'FALLBACK') {
           return getAnswer(question, entries, {}, routedConfig.config);
         } else if (routedConfig?.config === 'FALLBACK' && routedConfig?.answer) {
@@ -575,9 +580,10 @@ export function askQuestion(
         if (!hasError) {
           // error is set only once
           hasError = true;
-          const error = translateInstant(
+          const translatedError = translateInstant(
             result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`] || 'error.search',
           );
+          const error = isDebugMode && result.detail ? result.detail : translatedError;
           const answer = currentAnswer.getValue();
           appendChatEntry.set({
             question,

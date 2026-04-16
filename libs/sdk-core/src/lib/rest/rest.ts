@@ -295,36 +295,56 @@ export class Rest implements IRest {
         body: JSON.stringify(body),
       }).then(
         (res) => {
-          const reader = res.body?.getReader();
           const headers = res.headers;
           const status = res.status;
-          if (!reader || !res.ok) {
+          if (!res.ok) {
             console.error(`getStreamedResponse: error ${status} on POST ${path}`);
-            observer.error({ status });
-            observer.complete();
+            res.json().then(
+              (body) => {
+                const rawDetail = body?.detail;
+                let detail = '';
+                if (typeof rawDetail === 'string') {
+                  detail = rawDetail;
+                } else if (rawDetail) {
+                  detail = JSON.stringify(rawDetail);
+                }
+                observer.error({ status, detail });
+                observer.complete();
+              },
+              () => {
+                observer.error({ status });
+                observer.complete();
+              },
+            );
           } else {
-            let data = new Uint8Array();
-            const readMore = () => {
-              reader.read().then(
-                ({ done, value }) => {
-                  if (done) {
-                    observer.next({ data, incomplete: false, headers });
+            const reader = res.body?.getReader();
+            if (!reader) {
+              observer.error({ status });
+              observer.complete();
+            } else {
+              let data = new Uint8Array();
+              const readMore = () => {
+                reader.read().then(
+                  ({ done, value }) => {
+                    if (done) {
+                      observer.next({ data, incomplete: false, headers });
+                      observer.complete();
+                    }
+                    if (value) {
+                      data = this.concat(data, value);
+                      observer.next({ data, incomplete: true, headers });
+                      readMore();
+                    }
+                  },
+                  (reason) => {
+                    console.error(`getStreamedResponse: read error on POST ${path}`);
+                    observer.error(reason);
                     observer.complete();
-                  }
-                  if (value) {
-                    data = this.concat(data, value);
-                    observer.next({ data, incomplete: true, headers });
-                    readMore();
-                  }
-                },
-                (reason) => {
-                  console.error(`getStreamedResponse: read error on POST ${path}`);
-                  observer.error(reason);
-                  observer.complete();
-                },
-              );
-            };
-            readMore();
+                  },
+                );
+              };
+              readMore();
+            }
           }
         },
         (reason) => {
