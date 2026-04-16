@@ -33,15 +33,19 @@ apps/sistema-demo/src/
 
 Routes are auto-derived from the `menu` array in `app.component.ts` — **no `app-routing.module.ts` edits needed when adding new demos**.
 
-Top-level route groups: `Sistema Components`, `Sistema Services`, `Pastanaga Overrides`.
+Top-level route groups (as of current `menu` array):
 
-Includes a demo page for `nsi-country-select` (added in `sistema-pages/`).
+- **Core** — icons, palette, typography, containers, grid, scrollbar, etc.
+- **Nuclia Sistema** — all `nsi-*` component demos (action-card, badge, info-card, back-button, button-mini, dropdown-button, expandable-textarea, folder-tree, label, password-input, country-select, search-input, skeleton, segmented-buttons, spinner, sticky-footer, two-columns-config-item)
+- **Pastanaga components** — all `pa-*` component demos with Sistema overrides (confirmation-dialog, modal, toast, etc.)
+- **Pastanaga Form elements** — form control demos
 
 ---
 
 ## Component Quick Reference
 
 All demo pages follow the `<pa-demo-page>` scaffold:
+
 ```html
 <pa-demo-page>
   <pa-demo-title>…</pa-demo-title>

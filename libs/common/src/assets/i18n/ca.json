@@ -958,6 +958,7 @@
 	"kb.form.allowed_origins.help": "Un domini per línia",
 	"kb.form.allowed_origins.label": "Orígens permesos (CORS)",
 	"kb.form.description": "Descripció (opcional)",
+	"kb.form.enforce-security": "Amaga els recursos sense grup de seguretat coincident",
 	"kb.form.existing-name": "Aquest nom ja existeix al compte.",
 	"kb.form.hidden-resources": "Habilitar recursos ocults",
 	"kb.form.hide-new-resources": "Amaga recursos nous de manera predeterminada",

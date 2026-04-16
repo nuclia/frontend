@@ -50,10 +50,14 @@ libs/core/src/lib/
 │   ├── navigation.service.ts       # ★ URL builder + navigation helpers for all routes
 │   └── select-account-kb.service.ts # Account list loader
 ├── ui/
-│   ├── sidebar.service.ts          # Sidebar instance registry
-│   └── pipes/size.pipe.ts          # Human-readable file size (`size` pipe)
+│   ├── sidebar.service.ts          # Sidebar instance registry (register/unregister/getSidebar)
+│   ├── pipes/size.pipe.ts          # Human-readable file size (`size` pipe)
+│   └── file-upload/
+│       ├── file-drop.directive.ts  # [stfFileDrop] directive — drag-and-drop file handling (accepts file type specifiers)
+│       └── file-drop.utils.ts      # getDroppedFiles() utility
 ├── unauthorized-feature/
-│   └── unauthorized-feature.directive.ts  # [stfUnauthorizedFeature] standalone directive
+│   ├── unauthorized-feature.directive.ts  # [stfUnauthorizedFeature] standalone directive
+│   └── unauthorized-feature-modal.component.ts  # Standalone modal — shows tier-upgrade CTA with feature list + icons; navigates to billing
 └── utils/
     └── utils.ts                    # STFUtils, injectScript(), deepEqual(), MD5, countries
 ```
@@ -67,14 +71,14 @@ Central source of truth for the currently active account/KB/ARAG. Application-le
 
 **Key observables (read-only):**
 
-| Observable | Type | Description |
-|---|---|---|
-| `currentAccount` | `Observable<Account>` | Currently selected account |
-| `currentKb` | `Observable<WritableKnowledgeBox>` | Auto-loaded when `_kb` + `_account` both emit |
-| `currentArag` | `Observable<RetrievalAgent>` | Auto-loaded when `_arag` + `_account` both emit |
-| `kbList` | `Observable<IKnowledgeBoxItem[]>` | All KBs for current account |
-| `aragList` | `Observable<IRetrievalAgentItem[]>` | All ARAGs for current account |
-| `isAdminOrContrib` | `Observable<boolean>` | True in standalone mode or admin/contrib role |
+| Observable         | Type                                | Description                                     |
+| ------------------ | ----------------------------------- | ----------------------------------------------- |
+| `currentAccount`   | `Observable<Account>`               | Currently selected account                      |
+| `currentKb`        | `Observable<WritableKnowledgeBox>`  | Auto-loaded when `_kb` + `_account` both emit   |
+| `currentArag`      | `Observable<RetrievalAgent>`        | Auto-loaded when `_arag` + `_account` both emit |
+| `kbList`           | `Observable<IKnowledgeBoxItem[]>`   | All KBs for current account                     |
+| `aragList`         | `Observable<IRetrievalAgentItem[]>` | All ARAGs for current account                   |
+| `isAdminOrContrib` | `Observable<boolean>`               | True in standalone mode or admin/contrib role   |
 
 **Key methods:** `setCurrentAccount(slug)`, `setCurrentKb(accountId, kbId, zone?)`, `setCurrentRetrievalAgent(...)`, `refreshKbList()`, `refreshAragList()`, `cleanAccount()`
 
@@ -98,16 +102,16 @@ High-level service combining `FeatureFlagService` (CDN MD5 rollout) with account
 
 Never hard-code route paths in components. Use `NavigationService`:
 
-| Method | Path produced |
-|---|---|
-| `getAccountUrl(slug)` | `/at/:slug` |
-| `getKbUrl(account, kb)` | `/at/:account/:zone/:kb` (omits zone in standalone) |
-| `getRetrievalAgentUrl(account, agent)` | `/at/:account/:zone/arag/:agent` |
-| `getKbManageUrl(account, kb)` | `.../manage` |
-| `getAragSessionsUrl(account, agent)` | `.../sessions` |
-| `getBillingUrl(account)` | `/at/:account/manage/billing` |
-| `goToLandingPage()` | navigates to pre-auth destination or `/select` |
-| `resetState()` | clears SDK state + navigates to `/select` |
+| Method                                 | Path produced                                       |
+| -------------------------------------- | --------------------------------------------------- |
+| `getAccountUrl(slug)`                  | `/at/:slug`                                         |
+| `getKbUrl(account, kb)`                | `/at/:account/:zone/:kb` (omits zone in standalone) |
+| `getRetrievalAgentUrl(account, agent)` | `/at/:account/:zone/arag/:agent`                    |
+| `getKbManageUrl(account, kb)`          | `.../manage`                                        |
+| `getAragSessionsUrl(account, agent)`   | `.../sessions`                                      |
+| `getBillingUrl(account)`               | `/at/:account/manage/billing`                       |
+| `goToLandingPage()`                    | navigates to pre-auth destination or `/select`      |
+| `resetState()`                         | clears SDK state + navigates to `/select`           |
 
 Reactive helpers: `homeUrl`, `kbUrl`, `inArag()`, `inKbSettings()`.
 
@@ -117,19 +121,19 @@ Reactive helpers: `homeUrl`, `kbUrl`, `inArag()`, `inKbSettings()`.
 
 Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app routing:
 
-| Guard | Enforces |
-|---|---|
-| `authGuard` | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=` |
-| `setAccountGuard` | Calls `SDKService.setCurrentAccount()` from route param |
-| `setKbGuard` | Calls `SDKService.setCurrentKb()` from route params |
-| `setAgentGuard` | Calls `SDKService.setCurrentRetrievalAgent()` from route params |
-| `accountOwnerGuard` | Account-owner role required |
-| `knowledgeBoxOwnerGuard` | KB owner (SOWNER) required |
-| `aragOwnerGuard` | ARAG owner required |
-| `selectAccountGuard` | Redirects if account already selected |
-| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents` |
-| `metricsEnabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`) |
-| `metricsDisabledGuard` | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`) |
+| Guard                      | Enforces                                                                                  |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| `authGuard`                | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=` |
+| `setAccountGuard`          | Calls `SDKService.setCurrentAccount()` from route param                                   |
+| `setKbGuard`               | Calls `SDKService.setCurrentKb()` from route params                                       |
+| `setAgentGuard`            | Calls `SDKService.setCurrentRetrievalAgent()` from route params                           |
+| `accountOwnerGuard`        | Account-owner role required                                                               |
+| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) required                                                                |
+| `aragOwnerGuard`           | ARAG owner required                                                                       |
+| `selectAccountGuard`       | Redirects if account already selected                                                     |
+| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                         |
+| `metricsEnabledGuard`      | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`)        |
+| `metricsDisabledGuard`     | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`)       |
 
 ---
 

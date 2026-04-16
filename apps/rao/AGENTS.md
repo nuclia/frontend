@@ -31,26 +31,39 @@ apps/rao/src/
 ## Routing Architecture
 
 ```
-/user                → LazyUserModule (login, logout, SSO callbacks — no authGuard)
-
-AppLayoutComponent (canActivate: authGuard)
-├── /select          → SelectAccountComponent (selectAccountGuard)
-│   └── /:account    → SelectKbComponent (selectKbGuard)
-├── /at/:account
-│   └── [setAccountGuard]
-│       └── /:zone/arag/:agent  [setAgentGuard]
-│           ├── /               → redirect to /workflows
-│           ├── /workflows      → WorkflowsComponent
-│           │   ├── /           → WorkflowsListComponent
-│           │   └── /:id        → AgentDashboardComponent
-│           ├── /sessions       → SessionsComponent
-│           ├── /sources        → DriversPageComponent
-│           ├── /manage         → KnowledgeBoxSettingsComponent
-│           ├── /ai-models      → AiModelsComponent
-│           ├── /widgets        → WIDGETS_ROUTES (lazy)
-│           ├── /users          → KnowledgeBoxUsersComponent (aragOwnerGuard)
-│           └── /keys           → KnowledgeBoxKeysComponent (aragOwnerGuard)
-└── /** → PageNotFoundComponent
+/                          → BaseComponent (canActivate: authGuard)
+  /                        → EmptyComponent (canActivate: rootGuard)
+  /redirect                → RedirectComponent
+  /at/:account             [canActivate: setAccountGuard]
+    /                      → redirect to /manage
+    /manage                → AccountModule (lazy)
+    /:zone/arag/:agent     [canActivate: setAgentGuard]
+      /                    → redirect to /workflows
+      /workflows           → WorkflowsComponent
+        /                  → WorkflowsListComponent
+        /:id               → AgentDashboardComponent
+      /sessions            → SessionsComponent
+        /                  → SessionsListComponent
+        /:id/edit          → EditResourceComponent (data: { mode: 'arag' })
+      /drivers             → DriversPageComponent
+      /search              → SearchPageComponent
+      /widgets             → WIDGETS_ROUTES (lazy)
+      /manage              → KnowledgeBoxSettingsComponent
+      /ai-models           → AiModelsComponent
+      /activity            → AgentActivityComponent
+      /users               → KnowledgeBoxUsersComponent (aragOwnerGuard)
+      /keys                → KnowledgeBoxKeysComponent (aragOwnerGuard)
+/select                    [authGuard, selectAccountGuard]
+  /:account                → SelectKbComponent [selectKbGuard]
+/feedback                  → FeedbackComponent [authGuard]
+/farewell                  → FarewellComponent
+/setup_account             → AwsOnboardingComponent [awsGuard]
+/user/profile              → ProfileComponent [authGuard]
+/user/callback             → CallbackComponent
+/user/login-redirect       → AppLoginComponent
+/user/signup               → TemporaryAppSignupComponent  ← TEMPORARY (progress.com migration)
+/user/onboarding           → OnboardingComponent
+/**                        → PageNotFoundComponent
 ```
 
 ---
@@ -60,6 +73,8 @@ AppLayoutComponent (canActivate: authGuard)
 Configures: `RouterModule.forRoot`, `STFConfigModule.forRoot(environment)`, `TranslateModule.forRoot` with `MultiTranslateHttpLoader` (merges `user` + `common` + `sync` i18n files), `AngularSvgIconModule`, `PaToastModule`.
 
 Only four app-level source files exist outside this module: `AppComponent`, `AppRoutingModule`, `AppTitleStrategy`, `LazyUserModule`. Everything else comes from libs.
+
+Auth-related paths (`/user/callback`, `/user/login-redirect`, `/user/signup`, `/user/onboarding`, `/user/profile`) are declared as flat top-level routes — there is no `LazyUserModule` wrapper in this app. The `LazyUserModule` file exists but is not used in routing.
 
 ---
 
@@ -163,4 +178,4 @@ nx test rao
 8. **SCSS tokens** — always use `@use 'variables'`. Never hard-code colors/spacing/fonts.
 9. **Feature flags** — ARAG availability gated by `FeaturesService.unstable.retrievalAgents`.
 10. **`setAgentGuard`** — guards the entire ARAG section. If the feature flag is off, the guard redirects to `/select`.
-11. **ARAG root redirects to `/workflows`** — `/:zone/arag/:agent/` no longer renders `AgentDashboardComponent` directly. It redirects to `./workflows` where `WorkflowsListComponent` lists all workflows. Individual workflow canvas is at `./workflows/:id`.
+11. **ARAG root redirects to `/workflows`** — `/:zone/arag/:agent/` redirects to `./workflows` where `WorkflowsListComponent` lists all workflows. Individual workflow canvas is at `./workflows/:id`. ARAG also exposes `/search`, `/activity`, `/sessions` (with nested edit view), `/drivers`, `/widgets`, `/manage`, `/ai-models`, `/users`, `/keys`.

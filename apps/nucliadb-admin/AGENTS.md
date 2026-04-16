@@ -3,6 +3,7 @@
 ## Overview
 
 `nucliadb-admin` is an Angular 21 admin UI for **self-hosted NucliaDB** instances. Key characteristics:
+
 - Deployed at `/admin/` with **hash-based routing** (`useHash: true`).
 - OAuth post-redirect URL repair: `AppComponent` rewrites `/admin/admin/` → `/#/admin/`.
 - Always `environment.standalone = true` — no Nuclia cloud account needed.
@@ -70,28 +71,29 @@ All URLs are hash-prefixed: `http://localhost:4200/admin/#/at/local/my-kb-id/res
 
 ## Key App-level Components
 
-| Component | Selector | Responsibility |
-|---|---|---|
-| `AppComponent` | `nad-root` | i18n init, drag-drop prevention, version string, OAuth URL repair |
-| `HomePageComponent` | `nad-home-page` | NUA API key validity status + NucliaDB/admin-assets version checks (`StandaloneService`) |
-| `MainContainerComponent` | `nad-main-container` | Thin `<router-outlet>` wrapper (standalone, OnPush) |
+| Component                | Selector             | Responsibility                                                                                                                          |
+| ------------------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppComponent`           | `nad-root`           | i18n init, drag-drop prevention, version string, OAuth URL repair                                                                       |
+| `HomePageComponent`      | `nad-home-page`      | NUA API key validity status + NucliaDB/admin-assets version checks (`StandaloneService`). **Not standalone** — declared in `AppModule`. |
+| `MainContainerComponent` | `nad-main-container` | Thin `<router-outlet>` wrapper (**standalone**, OnPush)                                                                                 |
 
 ---
 
 ## Guards Summary
 
-| Guard | Applied To | Behaviour |
-|---|---|---|
-| `rootGuard` | `''` | Calls `NavigationService.goToLandingPage()`, always returns `false`. |
-| `setAccountGuard` | `at/:account` | Sets SDK current account from slug. Redirects to `/select` if missing. |
-| `setLocalKbGuard` | `at/:account/:kb` | Sets SDK current KB; standalone-aware (`'local'` account placeholder). |
-| `selectKbGuard` | `select/:account` | Waits for KB/ARAG lists. Standalone: always returns `true`; cloud: routes by count. |
+| Guard             | Applied To        | Behaviour                                                                           |
+| ----------------- | ----------------- | ----------------------------------------------------------------------------------- |
+| `rootGuard`       | `''`              | Calls `NavigationService.goToLandingPage()`, always returns `false`.                |
+| `setAccountGuard` | `at/:account`     | Sets SDK current account from slug. Redirects to `/select` if missing.              |
+| `setLocalKbGuard` | `at/:account/:kb` | Sets SDK current KB; standalone-aware (`'local'` account placeholder).              |
+| `selectKbGuard`   | `select/:account` | Waits for KB/ARAG lists. Standalone: always returns `true`; cloud: routes by count. |
 
 ---
 
 ## Standalone Mode (Always Active)
 
 `environment.standalone = true` affects:
+
 - **`StandaloneService`** — activates NUA key validity check via `/config-check` and version check via `/versions`.
 - **`selectKbGuard`** — skips zone API calls; uses `'local'` as account slug.
 - **`setLocalKbGuard`** — uses account slug as placeholder (KB identified by ID only).

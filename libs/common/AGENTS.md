@@ -24,6 +24,8 @@ charts/            ← Reusable chart components (bar, line, range) using base-c
 entities/          ← NER entity group management
 guards/            ← All route guards (functional, not class-based)
 metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5 sub-pages)
+  rag-advice/      ← AI-generated advice on how to improve RAG scores (RagAdviceService + RagAdviceComponent)
+  remi-score-badge/← Coloured badge for REMI score display (RemiScoreBadgeComponent)
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
 resources/         ← Resource CRUD, editor, list with pending/processed/error tabs
 retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
@@ -133,3 +135,7 @@ Unlike most services in this lib (`providedIn: 'root'`), metrics services are pr
 ### REMI analytics page
 
 `RemiAnalyticsPageComponent` is **standalone** (not declared in `MetricsModule`). Uses `RemiMetricsService` (BehaviorSubject-based, not the abstract service pattern).
+
+### RAG Advice
+
+`RagAdviceService` (in `metrics/rag-advice/`) provides AI-generated suggestions for improving REMI scores. It accepts an `AdviceInput` object (question, answer, context, REMI scores, RAG params, iteration history) and posts to an advice endpoint. The response includes structured advice and may be called iteratively — `iterationHistory` tracks previous rounds to refine suggestions. `RagAdviceComponent` renders the advice alongside the REMI analytics page.

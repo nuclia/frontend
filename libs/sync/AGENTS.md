@@ -3,6 +3,7 @@
 ## Library Overview
 
 `libs/sync` provides a complete UI + service layer for synchronising external data sources into a Nuclia KB. Supports two modes:
+
 - **Desktop/Server** — locally-running sync-agent HTTP server (default `http://localhost:8090`)
 - **Cloud** — Nuclia cloud sync API, gated by `FeaturesService.unstable.cloudSyncService`
 
@@ -25,6 +26,9 @@ libs/sync/src/lib/
 │   └── sync-settings/       # Settings panel + logs-modal (paginated cloud jobs)
 ├── cloud-folder/            # Folder browser for cloud connectors (SharePoint, etc.)
 ├── configuration-form/      # Shared form: name, labels, filters, connector-specific fields
+├── sync-options-form/       # Reusable sync options panel: extension filters, glob patterns, date range, labels, extract strategy
+│   ├── sync-options-form.component.ts  # SyncOptionsFormComponent (standalone)
+│   └── sync-options.model.ts           # SyncOptions interface, CloudSyncOptionsPayload, getCloudSyncOptionsPayload()
 └── logic/
     ├── sync.service.ts      # SyncService (providedIn: 'root')
     ├── models.ts            # All domain interfaces and enums
@@ -43,9 +47,10 @@ libs/sync/src/lib/
 ## Public API
 
 ```ts
-export * from './lib/home-page';   // HomePageComponent, ConnectorComponent
-export * from './lib/logic';        // SyncService + all models/interfaces/enums
-export * from './lib/utils';        // getURLParams()
+export * from './lib/home-page'; // HomePageComponent, ConnectorComponent
+export * from './lib/logic'; // SyncService + all models/interfaces/enums
+export * from './lib/utils'; // getURLParams()
+export * from './lib/sync-options-form'; // SyncOptionsFormComponent, SyncOptions, CloudSyncOptionsPayload, getCloudSyncOptionsPayload
 // SYNC_ROUTES is NOT exported from barrel; apps import directly for lazy loading
 ```
 
@@ -68,14 +73,15 @@ Apps use: `loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes
 
 ## `SyncService` State (BehaviorSubjects)
 
-| Subject | Description |
-|---|---|
-| `_useCloudSync` | Whether to use cloud API vs desktop agent |
-| `_syncCache` | Client-side cache of fetched sync entities |
-| `_cacheUpdated` | Bump signal — triggers re-fetch in subscribed components |
-| `connectors$` | Observable list of available connectors (filters deprecated, feature-flagged) |
+| Subject         | Description                                                                   |
+| --------------- | ----------------------------------------------------------------------------- |
+| `_useCloudSync` | Whether to use cloud API vs desktop agent                                     |
+| `_syncCache`    | Client-side cache of fetched sync entities                                    |
+| `_cacheUpdated` | Bump signal — triggers re-fetch in subscribed components                      |
+| `connectors$`   | Observable list of available connectors (filters deprecated, feature-flagged) |
 
 **localStorage keys** (non-obvious — must stay in sync across files):
+
 - `PENDING_NEW_CONNECTOR` — used by both `libs/sync` and `apps/dashboard/app.component` to resume OAuth flows after redirect. Changing this key requires updating both locations.
 
 ---
@@ -83,6 +89,7 @@ Apps use: `loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes
 ## `IConnector` Interface (minimum impl)
 
 Each connector must implement:
+
 - `getParameters()` — returns `ConnectorParameters` for the config form
 - `handleOAuth(params)` → `Observable<void>` — handles OAuth redirect
 - `authenticate(params)` → `Observable<ExternalConnectionCredentials>` — returns credentials
@@ -123,8 +130,8 @@ nx lint sync
 4. **Deprecated connectors** — `connectorsObs` filters `deprecated: true` from display; existing syncs continue to work.
 5. **Feature-flagged connector** — `sitefinity` filtered unless `features.unstable.sitefinityConnector`.
 6. **S3 Assume Role connector** — `s3.ts` exports `S3Impl` plus a separate AWS Assume Role implementation. The assume-role variant uses an IAM policy modal (`assume-role-modal`) to guide users through the bucket policy setup. Both share the same connector ID pattern.
-6. **`PENDING_NEW_CONNECTOR` localStorage key** — stays in sync with `apps/dashboard/app.component` to resume OAuth flows after redirect.
-7. **Server polling** — `SyncRootComponent` uses dual-rate timer: 5 s when server down, skips 12 ticks when up (effectively ~60 s). Logic resets `count` on each actual poll.
-8. **Standalone components only** — no NgModules in this library.
-9. **Translation key namespace** — all i18n keys prefixed `sync.` (e.g., `sync.add-page.title`).
-10. **Sync ID generation** — `{kbId}-{slugified-title}-{random5chars}`, finalised only when `addSync`/`addCloudSync` is called.
+7. **`PENDING_NEW_CONNECTOR` localStorage key** — stays in sync with `apps/dashboard/app.component` to resume OAuth flows after redirect.
+8. **Server polling** — `SyncRootComponent` uses dual-rate timer: 5 s when server down, skips 12 ticks when up (effectively ~60 s). Logic resets `count` on each actual poll.
+9. **Standalone components only** — no NgModules in this library.
+10. **Translation key namespace** — all i18n keys prefixed `sync.` (e.g., `sync.add-page.title`).
+11. **Sync ID generation** — `{kbId}-{slugified-title}-{random5chars}`, finalised only when `addSync`/`addCloudSync` is called.

@@ -31,6 +31,7 @@ export interface IKnowledgeBoxBase {
   search_configs?: { [key: string]: any };
   hidden_resources_enabled?: boolean;
   hidden_resources_hide_on_creation?: boolean;
+  enforce_security?: boolean;
   external_index_provider?: string;
 }
 

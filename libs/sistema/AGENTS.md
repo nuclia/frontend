@@ -31,31 +31,32 @@ libs/sistema/
 
 ## Component Catalog
 
-| Selector | Module / Standalone | Brief purpose |
-|---|---|---|
-| `<nsi-home-container>` | standalone | Full-width layout wrapper for home pages |
-| `<nsi-sticky-footer>` | standalone | Projected footer sticky to scroll area bottom |
-| `<nsi-two-columns-configuration-item>` | standalone | title/description + action row for settings pages |
-| `<nsi-back-button>` | standalone | Router back-nav icon button |
-| `<nsi-button-mini>` | standalone | Compact icon button with optional tooltip, destructive variant |
-| `<nsi-country-select>` | standalone | Searchable country dropdown wrapping `pa-typeahead-select`; full `ControlValueAccessor`; emoji flags (🇺🇸 🇬🇧); signal inputs (`id`, `readonly`, `errorMessages`, `externalLabel`) |
-| `<nsi-dropdown-button>` | standalone | Button wired to `pa-dropdown` |
-| `<nsi-segmented-buttons>` | standalone | Two-option pill toggle |
-| `<nsi-password-input>` | standalone | Password field with show/hide toggle; integrates with `NgControl` |
-| `<nsi-search-input>` | standalone | Text search field with optional mode-selector badge dropdown |
-| `<nsi-expandable-textarea>` | standalone | Textarea with expand button → full-screen modal via `SisModalService` |
-| `<nsi-badge>` | standalone | Info chip/badge (count, icon, short text); 3 `kind` variants |
-| `<nsi-status>` | standalone | Coloured icon for 3 resource states |
-| `<nsi-json-viewer>` | standalone | Formatted JSON in `PaTableModule` |
-| `<nsi-label>` | `SisLabelModule` | Colour-coded classification chip; removal support |
-| `<nsi-labels-expander>` | standalone | Expander per label set with search + checkboxes |
-| `<nsi-action-card>` | standalone | CTA card with tag-line, title, description, router link |
-| `<nsi-info-card>` | standalone | Content card with optional icon and colour variant |
-| `<nsi-folder-list>` | standalone | Ordered folder path tiles inside `nsi-info-card` |
-| `<nsi-folder-tree>` | standalone | Recursive selectable tree (each instance owns `FolderTreeState`) |
-| `<nsi-progress-bar>` | standalone | Horizontal progress; `null` → indeterminate mode |
-| `<nsi-spinner>` | `SisProgressModule` | Circular spinner |
-| `<nsi-delayed-spinner>` | `SisProgressModule` | Spinner that appears after 1500 ms delay |
+| Selector                               | Module / Standalone | Brief purpose                                                                                                                                                                    |
+| -------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<nsi-home-container>`                 | standalone          | Full-width layout wrapper for home pages                                                                                                                                         |
+| `<nsi-sticky-footer>`                  | standalone          | Projected footer sticky to scroll area bottom                                                                                                                                    |
+| `<nsi-two-columns-configuration-item>` | standalone          | title/description + action row for settings pages                                                                                                                                |
+| `<nsi-back-button>`                    | standalone          | Router back-nav icon button                                                                                                                                                      |
+| `<nsi-button-mini>`                    | standalone          | Compact icon button with optional tooltip, destructive variant                                                                                                                   |
+| `<nsi-country-select>`                 | standalone          | Searchable country dropdown wrapping `pa-typeahead-select`; full `ControlValueAccessor`; emoji flags (🇺🇸 🇬🇧); signal inputs (`id`, `readonly`, `errorMessages`, `externalLabel`) |
+| `<nsi-dropdown-button>`                | standalone          | Button wired to `pa-dropdown`                                                                                                                                                    |
+| `<nsi-segmented-buttons>`              | standalone          | Two-option pill toggle                                                                                                                                                           |
+| `<nsi-password-input>`                 | standalone          | Password field with show/hide toggle; integrates with `NgControl`                                                                                                                |
+| `<nsi-search-input>`                   | standalone          | Text search field with optional mode-selector badge dropdown                                                                                                                     |
+| `<nsi-expandable-textarea>`            | standalone          | Textarea with expand button → full-screen modal via `SisModalService`                                                                                                            |
+| `<nsi-badge>`                          | standalone          | Info chip/badge (count, icon, short text); 3 `kind` variants                                                                                                                     |
+| `<nsi-status>`                         | standalone          | Coloured icon for 3 resource states                                                                                                                                              |
+| `<nsi-json-viewer>`                    | standalone          | Formatted JSON in `PaTableModule`                                                                                                                                                |
+| `<nsi-label>`                          | `SisLabelModule`    | Colour-coded classification chip; removal support                                                                                                                                |
+| `<nsi-labels-expander>`                | standalone          | Expander per label set with search + checkboxes                                                                                                                                  |
+| `<nsi-action-card>`                    | standalone          | CTA card with tag-line, title, description, router link                                                                                                                          |
+| `<nsi-info-card>`                      | standalone          | Content card with optional icon and colour variant                                                                                                                               |
+| `<nsi-folder-list>`                    | standalone          | Ordered folder path tiles inside `nsi-info-card`                                                                                                                                 |
+| `<nsi-folder-tree>`                    | standalone          | Recursive selectable tree (each instance owns `FolderTreeState`)                                                                                                                 |
+| `<nsi-progress-bar>`                   | standalone          | Horizontal progress; `null` → indeterminate mode                                                                                                                                 |
+| `<nsi-skeleton>`                       | standalone          | Placeholder content block with configurable `width`, `height`, and `borderRadius` (`'small'`\|`'medium'`\|`'round'`); signal inputs                                              |
+| `<nsi-spinner>`                        | `SisProgressModule` | Circular spinner                                                                                                                                                                 |
+| `<nsi-delayed-spinner>`                | `SisProgressModule` | Spinner that appears after 1500 ms delay                                                                                                                                         |
 
 **NgModules** (legacy): `SisLabelModule`, `SisPasswordInputModule`, `SisProgressModule`, `SisIconsModule` (`MimeIconPipe`).  
 All newer components are standalone — import them directly.
@@ -65,6 +66,7 @@ All newer components are standalone — import them directly.
 ## Services
 
 ### `SisModalService`
+
 Wraps Pastanaga `ModalService` with Nuclia defaults (`cancelAspect: 'basic'`).
 
 ```ts
@@ -75,10 +77,11 @@ this.modal.openConfirm({ title: 'Delete?', cancelLabel: 'Cancel', confirmLabel: 
 ```
 
 ### `SisToastService`
+
 Wraps Pastanaga `ToastService` with fixed icon/title conventions. `warning` and `error` toasts get close buttons automatically.
 
 ```ts
-this.toast.success('Resource created!');  // info | success | warning | error
+this.toast.success('Resource created!'); // info | success | warning | error
 this.toast.error('Something went wrong.');
 ```
 
@@ -87,6 +90,7 @@ this.toast.error('Something went wrong.');
 ## Pipes
 
 ### `mimeIcon`
+
 Converts MIME type string → Pastanaga icon name (`'application/pdf'` → `'file-pdf'`, unknown → `'file-empty'`).
 
 - `MimeIconPipe` — NgModule (`SisIconsModule`), `standalone: false`
@@ -97,19 +101,22 @@ Converts MIME type string → Pastanaga icon name (`'application/pdf'` → `'fil
 ## SCSS Design Tokens
 
 ### Token Files (`theme/tokens/`)
+
 `_palette` · `_spacing` · `_typography` · `_buttons` · `_body` · `_card` · `_chips` · `_expander` · `_menu` · `_modal` · `_popover` · `_scrollbar` · `_shadows` · `_table` · `_tabs` · `_textfield` · `_toasts` · `_toggle` · `_z-index`
 
 ### How to import in apps
+
 ```scss
 // Global stylesheet
-@use '@nuclia/sistema/styles/overrides';    // all tokens + Pastanaga utils
-@use '@nuclia/sistema/styles/apps-common';  // root CSS vars, base typography
+@use '@nuclia/sistema/styles/overrides'; // all tokens + Pastanaga utils
+@use '@nuclia/sistema/styles/apps-common'; // root CSS vars, base typography
 
 // Component stylesheet (via includePaths)
-@use 'variables';  // app-level SCSS alias
+@use 'variables'; // app-level SCSS alias
 ```
 
 ### White-label override hook
+
 ```css
 :root {
   --custom-color-primary-regular: hsl(200, 90%, 50%);
@@ -118,6 +125,7 @@ Converts MIME type string → Pastanaga icon name (`'application/pdf'` → `'fil
 ```
 
 ### Icon consumption
+
 Use `<pa-icon name="circle-check">`. Never reference SVG paths directly.
 
 ---
