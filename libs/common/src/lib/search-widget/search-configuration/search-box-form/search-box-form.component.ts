@@ -89,8 +89,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     preselectedFilterExpression: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     highlight: new FormControl<boolean>(false, { nonNullable: true }),
-    prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),
-    queryPrepend: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
     useRephrasePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     rephrasePrompt: new FormControl<string>('', { nonNullable: true }),
@@ -140,9 +138,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
   get suggestionsEnabled() {
     return this.form.controls.suggestions.value;
-  }
-  get prependTheQuery() {
-    return this.form.controls.prependTheQuery.value;
   }
   get rephraseQueryEnabled() {
     return this.form.controls.rephraseQuery.value;
