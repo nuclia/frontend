@@ -45,10 +45,9 @@ import {
   FarewellComponent,
   FeedbackComponent,
   CallbackComponent,
-  TemporaryAppSignupComponent,
   AppLoginComponent,
 } from '@nuclia/user';
-import { authGuard } from '@flaps/core';
+import { authGuard, redirectToSignUp } from '@flaps/core';
 
 const routes: Routes = [
   {
@@ -224,8 +223,7 @@ const routes: Routes = [
   },
   { path: 'user/callback', component: CallbackComponent },
   { path: 'user/login-redirect', component: AppLoginComponent },
-  // TEMPORARY, will be removed once the signup form goes to progress.com
-  { path: 'user/signup', component: TemporaryAppSignupComponent },
+  { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   { path: 'user/onboarding', component: OnboardingComponent },
   { path: '**', component: PageNotFoundComponent },
 ];
