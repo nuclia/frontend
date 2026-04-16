@@ -28,3 +28,8 @@ export const authGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnaps
   router.navigate(['/user/login-redirect'], { queryParams });
   return false;
 };
+
+export const redirectToSignUp = () => {
+  location.href = 'https://www.progress.com/agentic-rag/free-trial-sign-up';
+  return false;
+};

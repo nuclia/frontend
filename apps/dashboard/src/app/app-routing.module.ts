@@ -47,12 +47,11 @@ import {
   FarewellComponent,
   FeedbackComponent,
   CallbackComponent,
-  TemporaryAppSignupComponent,
   SetPasswordComponent,
   AppLoginComponent,
 } from '@nuclia/user';
 
-import { authGuard, metricsEnabledGuard, metricsDisabledGuard } from '@flaps/core';
+import { authGuard, metricsEnabledGuard, metricsDisabledGuard, redirectToSignUp } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
 
@@ -332,8 +331,7 @@ const routes: Routes = [
   // Remove once those clients are updated to use the auth app's URL.
   { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
   { path: 'user/login-redirect', component: AppLoginComponent },
-  // TEMPORARY, will be removed once the signup form goes to progress.com
-  { path: 'user/signup', component: TemporaryAppSignupComponent },
+  { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   { path: 'user/onboarding', component: OnboardingComponent },
   { path: 'user/set-password', component: SetPasswordComponent },
   {
