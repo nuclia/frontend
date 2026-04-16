@@ -301,7 +301,14 @@ export class Rest implements IRest {
             console.error(`getStreamedResponse: error ${status} on POST ${path}`);
             res.json().then(
               (body) => {
-                observer.error({ status, detail: body?.detail || '' });
+                const rawDetail = body?.detail;
+                let detail = '';
+                if (typeof rawDetail === 'string') {
+                  detail = rawDetail;
+                } else if (rawDetail) {
+                  detail = JSON.stringify(rawDetail);
+                }
+                observer.error({ status, detail });
                 observer.complete();
               },
               () => {
