@@ -10,7 +10,7 @@
       <div class="main-container">
         <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
         <nus-kb-name-step
-          [data]="kbName"
+          [data]="kbNamePayload"
           (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
       </div>
     }
