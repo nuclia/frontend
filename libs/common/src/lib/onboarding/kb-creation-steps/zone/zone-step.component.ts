@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZoneService } from '@flaps/core';
-import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StickyFooterComponent } from '@nuclia/sistema';
-import { tap } from 'rxjs';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'nus-zone-step',
@@ -32,17 +32,17 @@ export class ZoneStepComponent {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<string>();
 
-  zones = this.zoneService.getZones().pipe(
-    tap((zones) => {
-      if (zones.length === 1) {
-        this.form.controls.region.patchValue(zones[0].slug);
-      }
-    }),
-  );
+  zones = this.zoneService
+    .getZones()
+    .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
 
   form = new FormGroup({
     region: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+
+  validationMessages: IErrorMessages = {
+    required: 'validation.required',
+  };
 
   goBack() {
     this.back.emit();

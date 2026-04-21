@@ -53,13 +53,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   standalone = this.sdk.nuclia.options.standalone;
   zones = this.standalone
     ? of([])
-    : this.zoneService.getZones().pipe(
-        tap((zones) => {
-          if (zones && zones.length > 0) {
-            this.form.patchValue({ zone: zones[0].slug });
-          }
-        }),
-      );
+    : this.zoneService
+        .getZones()
+        .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
   account = this.sdk.currentAccount;
   backPath = this.sdk.nuclia.options.standalone ? `/select/${standaloneSimpleAccount.slug}` : '..';
 
@@ -74,6 +70,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   });
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
+      required: 'validation.required',
+    },
+    zone: {
       required: 'validation.required',
     },
   };
