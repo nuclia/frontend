@@ -88,7 +88,6 @@
 	"account.kb.creation-form.anonymization.toggle-label": "Apply GDPR compliant anonymization",
 	"account.kb.creation-form.back-button": "Back to Knowledge Boxes",
 	"account.kb.creation-form.description": "A Knowledge Box is a container that stores and organizes data inside your Agentic RAG account. Knowledge Boxes represent isolated workspaces (such as projects, teams, or clients) and operate independently with their own access permissions to keep information secured and organized.",
-	"account.kb.creation-form.enforce-security.title": "Security",
 	"account.kb.creation-form.kb-info.description": "Set the name and description of the Knowledge Box.",
 	"account.kb.creation-form.kb-info.title": "Knowledge Box information",
 	"account.kb.creation-form.title": "Create a Knowledge Box",

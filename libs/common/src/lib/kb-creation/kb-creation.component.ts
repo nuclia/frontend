@@ -71,7 +71,6 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       validators: this.sdk.nuclia.options.standalone ? [] : [Validators.required],
     }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
-    enforce_security: new FormControl<boolean>(true, { nonNullable: true }),
   });
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
@@ -162,6 +161,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           }
           const kb: KnowledgeBoxCreation = {
             ...kbConfig,
+            enforce_security: true,
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',

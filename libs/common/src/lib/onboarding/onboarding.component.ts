@@ -109,6 +109,7 @@ export class OnboardingComponent {
       title: this.kbName,
       learning_configuration: this.learningConfig,
       zone: this.zone,
+      enforce_security: true,
     };
 
     this.onboardingService
