@@ -1,0 +1,45 @@
+<div>
+  @if (translationsReady | async) {
+    <pa-radio-group
+      id="workflow"
+      [formControl]="workflow">
+      <div class="options">
+        <div>
+          <pa-radio
+            value="classic"
+            noEllipsis>
+            <strong>{{ 'onboarding.account-workflow.classic' | translate }}</strong>
+            <span>: {{ 'onboarding.account-workflow.classic-description' | translate }}</span>
+          </pa-radio>
+          @if (workflow.value === 'classic') {
+            <img
+              src="assets/images/advanced.svg"
+              [alt]="'onboarding.account-workflow.classic' | translate" />
+          }
+        </div>
+        <div>
+          <pa-radio
+            value="cowork"
+            noEllipsis>
+            <strong>{{ 'onboarding.account-workflow.cowork' | translate }}</strong>
+            <span>: {{ 'onboarding.account-workflow.cowork-description' | translate }}</span>
+          </pa-radio>
+          @if (workflow.value === 'cowork') {
+            <img
+              src="assets/images/simplified.svg"
+              [alt]="'onboarding.account-workflow.cowork' | translate" />
+          }
+        </div>
+      </div>
+    </pa-radio-group>
+  }
+</div>
+
+<nsi-sticky-footer>
+  <pa-button
+    type="submit"
+    kind="primary"
+    (click)="submit()">
+    {{ 'onboarding.next-button' | translate }}
+  </pa-button>
+</nsi-sticky-footer>

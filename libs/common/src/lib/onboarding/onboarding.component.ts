@@ -9,13 +9,9 @@ import { CommonModule } from '@angular/common';
 import { UserContainerComponent } from '@nuclia/user';
 import { TranslateModule } from '@ngx-translate/core';
 import { Step1Component } from './step1/step1.component';
-import {
-  EmbeddingModelStepComponent,
-  KbNamePayload,
-  KbNameStepComponent,
-  ZoneStepComponent,
-} from './kb-creation-steps';
+import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
 import { SettingUpComponent } from './setting-up/setting-up.component';
+import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
 
 @Component({
   selector: 'nus-onboarding',
@@ -23,6 +19,7 @@ import { SettingUpComponent } from './setting-up/setting-up.component';
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AccountWorkflowComponent,
     CommonModule,
     UserContainerComponent,
     TranslateModule,
@@ -35,10 +32,10 @@ import { SettingUpComponent } from './setting-up/setting-up.component';
 })
 export class OnboardingComponent {
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
-  lastStep = 5;
+  lastStep = 6;
 
   onboardingInquiryPayload?: OnboardingPayload;
-  kbNamePayload: KbNamePayload = { kbName: '', workflow: 'classic' };
+  kbName = '';
   zone = '';
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
@@ -79,20 +76,15 @@ export class OnboardingComponent {
       });
   }
 
-  storeKbNameAndGoNext(data: KbNamePayload) {
-    this.kbNamePayload = data;
-    this.features.unstable.coworkAccount
-      .pipe(
-        take(1),
-        switchMap((enabled) =>
-          enabled
-            ? this.onboardingService.modifyAccount(this.account?.slug || '', { workflow: data.workflow })
-            : of(undefined),
-        ),
-      )
-      .subscribe(() => {
-        this.onboardingService.nextStep();
-      });
+  storeKbNameAndGoNext($event: string) {
+    this.kbName = $event;
+    this.onboardingService.nextStep();
+  }
+
+  storeWorkflowAndGoNext(workflow: WorkflowType) {
+    this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
+      this.onboardingService.nextStep();
+    });
   }
 
   storeZoneAndGoNext(zone: string) {
@@ -122,8 +114,8 @@ export class OnboardingComponent {
     }
 
     const kbConfig: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(this.kbNamePayload.kbName),
-      title: this.kbNamePayload.kbName,
+      slug: STFUtils.generateSlug(this.kbName),
+      title: this.kbName,
       learning_configuration: this.learningConfig,
       zone: this.zone,
     };

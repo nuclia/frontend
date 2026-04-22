@@ -11,7 +11,6 @@ import { AwsSetupAccountComponent } from './aws-setup-account/aws-setup-account.
 import { UserContainerComponent } from '@nuclia/user';
 import {
   EmbeddingModelStepComponent,
-  KbNamePayload,
   KbNameStepComponent,
   LearningConfigurationForm,
   ZoneStepComponent,
@@ -38,7 +37,7 @@ export class AwsOnboardingComponent {
   step = -1;
 
   account = this.sdk.currentAccount;
-  kbNamePayload: KbNamePayload = { kbName: '', workflow: 'classic' };
+  kbName = '';
   zone = '';
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
@@ -78,8 +77,8 @@ export class AwsOnboardingComponent {
     });
   }
 
-  storeKbNameAndGoNext($event: KbNamePayload) {
-    this.kbNamePayload = $event;
+  storeKbNameAndGoNext($event: string) {
+    this.kbName = $event;
     this.step++;
   }
 
@@ -118,8 +117,8 @@ export class AwsOnboardingComponent {
         take(1),
         switchMap((account) => {
           const kbConfig: KnowledgeBoxCreation = {
-            slug: STFUtils.generateSlug(this.kbNamePayload.kbName),
-            title: this.kbNamePayload.kbName,
+            slug: STFUtils.generateSlug(this.kbName),
+            title: this.kbName,
             learning_configuration: this.learningConfig,
           };
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(

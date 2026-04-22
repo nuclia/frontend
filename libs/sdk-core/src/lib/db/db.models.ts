@@ -39,6 +39,7 @@ export interface Account {
   trial_expiration_date?: string;
   creation_date: string;
   type: AccountTypes;
+  workflow?: WorkflowType;
   zone: string;
 }
 

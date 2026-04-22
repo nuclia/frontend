@@ -223,4 +223,8 @@ export class NavigationService {
     this.sdk.cleanAccount();
     this.router.navigate([this.getAccountSelectUrl()]);
   }
+
+  setSimpleMode(value: boolean) {
+    this.simpleMode.next(value);
+  }
 }

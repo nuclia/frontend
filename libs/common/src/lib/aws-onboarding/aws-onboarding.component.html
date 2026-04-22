@@ -10,16 +10,16 @@
       <div class="main-container">
         <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
         <nus-kb-name-step
-          [data]="kbNamePayload"
+          [data]="kbName"
           (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
       </div>
     }
     @case (4) {
       <div class="main-container">
-        <h1>{{ 'onboarding.step3.title' | translate }}</h1>
+        <h1>{{ 'onboarding.step4.title' | translate }}</h1>
         <p
           class="page-description"
-          [innerHTML]="'onboarding.step3.subtitle' | translate"></p>
+          [innerHTML]="'onboarding.step4.subtitle' | translate"></p>
         <nus-zone-step
           [data]="zone"
           (back)="goBack()"
@@ -28,10 +28,10 @@
     }
     @case (5) {
       <div class="main-container">
-        <h1>{{ 'onboarding.step4.title' | translate }}</h1>
+        <h1>{{ 'onboarding.step5.title' | translate }}</h1>
         <p
           class="page-description"
-          [innerHTML]="'onboarding.step4.subtitle' | translate"></p>
+          [innerHTML]="'onboarding.step5.subtitle' | translate"></p>
         <nus-embedding-model-step
           [schema]="learningSchema | async"
           [data]="learningConfig"

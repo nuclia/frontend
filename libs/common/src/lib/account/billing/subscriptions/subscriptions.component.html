@@ -40,7 +40,7 @@
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }
-              @if ((accountType | async) === 'cowork') {
+              @if (isCowork | async) {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
                 <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>

@@ -11,7 +11,7 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { AccountService, BillingService, Currency, FeaturesService } from '@flaps/core';
+import { AccountService, BillingService, Currency, FeaturesService, SDKService } from '@flaps/core';
 import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountTypes } from '@nuclia/core';
@@ -44,7 +44,7 @@ export class SubscriptionsComponent implements OnDestroy {
   isManuallySubscribed = this.billing.isManuallySubscribed;
   unsubscribeAll = new Subject<void>();
   isTrial = this.features.isTrial;
-  isCowork = this.accountType.pipe(map((type) => type === 'cowork'));
+  isCowork = this.sdk.currentAccount.pipe(map((account) => account.workflow === 'cowork'));
   tiers: Observable<AccountTypes[]> = this.isCowork.pipe(
     map((isCowork) =>
       isCowork ? ['cowork', 'v3starter', 'v3pro', 'v3enterprise'] : ['v3starter', 'v3pro', 'v3enterprise'],
@@ -57,6 +57,7 @@ export class SubscriptionsComponent implements OnDestroy {
     private accountService: AccountService,
     private subscriptionService: SubscriptionService,
     private features: FeaturesService,
+    private sdk: SDKService,
     @Inject(WINDOW) private window: Window,
   ) {
     combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])

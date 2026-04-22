@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
   SDKService,
   STFUtils,
@@ -8,6 +8,7 @@ import {
   GETTING_STARTED_DONE_KEY,
   NavigationService,
   AuthService,
+  FeaturesService,
 } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
@@ -18,7 +19,7 @@ import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreat
   providedIn: 'root',
 })
 export class OnboardingService {
-  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(2);
+  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
     creating: false,
     accountCreated: false,
@@ -29,26 +30,36 @@ export class OnboardingService {
   onboardingState: Observable<OnboardingStatus> = this._onboardingState.asObservable();
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
+  dashboardSteps = this.features.unstable.coworkAccount.pipe(
+    map((coworkEnabled) => (coworkEnabled ? [1, 2, 3, 4, 5, 6] : [1, 3, 4, 5, 6])),
+  );
+  raoSteps = of([1, 3, 5, 6]);
+
   constructor(
     private sdk: SDKService,
     private router: Router,
     private toaster: SisToastService,
     private user: UserService,
     private navigation: NavigationService,
+    private features: FeaturesService,
     private authService: AuthService,
   ) {}
 
   nextStep() {
-    const step = this._onboardingStep.value;
-    const next = this.navigation.inRaoApp && step === 2 ? step + 2 : step + 1;
-    this._onboardingStep.next(next);
+    (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
+      const step = this._onboardingStep.value;
+      const next = steps[steps.findIndex((s) => s === step) + 1];
+      this._onboardingStep.next(next);
+    });
   }
   previousStep() {
-    const step = this._onboardingStep.value;
-    if (step > 1) {
-      const previous = this.navigation.inRaoApp && step === 4 ? step - 2 : step - 1;
-      this._onboardingStep.next(previous);
-    }
+    (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
+      const step = this._onboardingStep.value;
+      if (step > 1) {
+        const previous = steps[steps.findIndex((s) => s === step) - 1];
+        this._onboardingStep.next(previous);
+      }
+    });
   }
 
   saveOnboardingInquiry(payload: OnboardingPayload) {
