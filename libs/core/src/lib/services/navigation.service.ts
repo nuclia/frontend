@@ -6,13 +6,13 @@ import {
   BehaviorSubject,
   combineLatest,
   defer,
+  distinctUntilChanged,
   filter,
   forkJoin,
   map,
   merge,
   Observable,
   of,
-  switchMap,
   take,
 } from 'rxjs';
 
@@ -34,29 +34,23 @@ export class NavigationService {
     private authService: AuthService,
     private sdk: SDKService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
-  ) {
-    if (this.inDashboard) {
-      combineLatest([this.simpleMode, this.inArag()])
-        .pipe(switchMap(([simple, inArag]) => this.kbUrl.pipe(map((kbUrl) => ({ simple, inArag, kbUrl })))))
-        .subscribe((res) => {
-          if (!res.inArag) {
-            if (res.simple) {
-              this.router.navigateByUrl(`${res.kbUrl}/simple`);
-            }
-          }
-        });
-    }
-  }
+  ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.arag]).pipe(
-    map(([account, kb, arag]) => {
+  homeUrl: Observable<string> = combineLatest([
+    this.sdk.currentAccount,
+    this.sdk.currentKb,
+    this.sdk.arag,
+    this.simpleMode,
+  ]).pipe(
+    map(([account, kb, arag, simpleMode]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
       } else if (account && arag) {
         return this.getRetrievalAgentUrl(account.slug, arag.slug);
       } else if (account && kb) {
         const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
-        return this.getKbUrl(account.slug, kbSlug);
+        const kbUrl = this.getKbUrl(account.slug, kbSlug);
+        return simpleMode ? `${kbUrl}/simple` : kbUrl;
       } else if (account) {
         return this.getKbSelectUrl(account.slug);
       } else {
@@ -78,7 +72,7 @@ export class NavigationService {
       filter((event) => event instanceof NavigationEnd),
       map((event) => this.inAccountManagement((event as NavigationEnd).url)),
     ),
-  );
+  ).pipe(distinctUntilChanged());
 
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
@@ -93,7 +87,7 @@ export class NavigationService {
         filter((event) => event instanceof NavigationEnd),
         map((event) => this.inAragSpace((event as NavigationEnd).url)),
       ),
-    );
+    ).pipe(distinctUntilChanged());
   }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard

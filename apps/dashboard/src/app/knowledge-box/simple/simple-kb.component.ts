@@ -1,66 +1,91 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { SearchWidgetService, UploadDialogService, UploadService } from '@flaps/common';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { HomeContainerComponent, SisProgressModule, ButtonMiniComponent } from '@nuclia/sistema';
-import { LastResourcesComponent } from '../knowledge-box-home/last-resources/last-resources.component';
 import { CommonModule } from '@angular/common';
+import { take, of, delay } from 'rxjs';
+import { DroppedFile, FileUploadModule } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { combineLatest, map, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
+import { SimpleKBService } from './simple-kb.service';
+import { McpEndpointModalComponent } from './mcp-endpoint/mcp-endpoint-modal.component';
+import { ResourceTableComponent } from './resource-table/resource-table.component';
 
 @Component({
   selector: 'app-simple-kb',
   templateUrl: './simple-kb.component.html',
   styleUrls: ['./simple-kb.component.scss'],
-  imports: [
-    ButtonMiniComponent,
-    TranslateModule,
-    PaButtonModule,
-    HomeContainerComponent,
-    LastResourcesComponent,
-    PaIconModule,
-    CommonModule,
-    SisProgressModule,
-  ],
+  imports: [CommonModule, FileUploadModule, PaButtonModule, PaIconModule, ResourceTableComponent, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SimpleKBComponent implements OnDestroy, OnInit {
-  private upload = inject(UploadDialogService);
+export class SimpleKBComponent {
+  private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
-  private sdk = inject(SDKService);
-  private uploadService = inject(UploadService);
+  private modalService = inject(SisModalService);
+
   widgetPreview = this.searchWidgetService.widgetPreview;
-  totalResources = this.uploadService.statusCount.pipe(
-    map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
-  );
-  emptyKb = combineLatest([this.sdk.counters, this.totalResources]).pipe(
-    map(([counters, totalResources]) => {
-      return (!counters?.resources || counters.resources === 0) && totalResources === 0;
-    }),
-  );
-  uploadInProgress = this.uploadService.uploadInProgress;
+  uploadInProgress = this.simpleKBService.uploadInProgress;
+  maxFiles = this.simpleKBService.maxFiles;
+  resourceCounter = this.simpleKBService.resourceCounter;
 
-  endpoint = this.sdk.currentKb.pipe(map((kb) => kb.fullpath + '/mcp'));
-  copied = signal(false);
+  step = signal<number>(-1);
+  hideResources = signal(false);
+  fileOver = signal(false);
 
-  uploadFiles() {
-    this.upload.upload('files');
+  constructor() {
+    this.simpleKBService.resources.pipe(take(1)).subscribe((resources) => {
+      if (resources.length === 0) {
+        this.step.set(1);
+      } else {
+        this.goToStep3();
+      }
+    });
   }
 
-  ngOnInit(): void {
-    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, undefined, '#preview');
-    this.uploadService.updateStatusCount().subscribe();
-  }
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();
   }
 
-  copyEndpoint() {
-    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
-      this.copied.set(true);
-      navigator.clipboard.writeText(endpoint);
-      setTimeout(() => this.copied.set(false), 2000);
-    });
+  uploadFiles(files: File[]) {
+    if (this.step() === 1) {
+      this.step.set(2);
+    }
+    if (this.step() === 3 && this.hideResources()) {
+      this.hideResources.set(false);
+    }
+    this.simpleKBService.uploadFiles(files);
+  }
+
+  onFilesSelected(files: File[] | FileList | DroppedFile[]) {
+    const fileTypes = getFilesGroupedByType(files);
+    this.uploadFiles([...fileTypes.mediaFiles, ...fileTypes.nonMediaFiles]);
+  }
+
+  goToStep3() {
+    this.step.set(3);
+    this.initWidget();
+  }
+
+  initWidget() {
+    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG);
+    of(true)
+      .pipe(
+        delay(1000), // Wait for the widget to be rendered
+      )
+      .subscribe(() => {
+        const element = document.querySelector('nuclia-search-bar');
+        element?.addEventListener('search', () => this.hideResources.set(true));
+        element?.addEventListener('resetQuery', () => this.hideResources.set(false));
+      });
+  }
+
+  resetSearch() {
+    this.searchWidgetService.resetSearchQuery();
+    this.initWidget();
+    this.hideResources.set(false);
+  }
+
+  showMcpEndpoint() {
+    this.modalService.openModal(McpEndpointModalComponent);
   }
 }

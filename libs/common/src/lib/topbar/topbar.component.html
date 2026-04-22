@@ -15,7 +15,7 @@
   </button>
 
   <div class="topbar-buttons">
-    @if (!inPlatformApp) {
+    @if (!inPlatformApp && !(simpleMode | async)) {
       @if (showDemo && (hasDemoButton | async)) {
         <pa-button
           kind="primary"

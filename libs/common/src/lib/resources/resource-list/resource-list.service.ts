@@ -50,6 +50,7 @@ import {
   SearchModes,
   searchResources,
 } from './resource-list.model';
+import { getResourceErrors } from '../edit-resource';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -349,13 +350,9 @@ export class ResourceListService {
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
     }
-    const errors = resource
-      .getFields()
-      .reduce((errors, field) => errors.concat(field.errors || field.error || []), [] as IError[])
-      .map((error) => error?.body || '')
-      .filter((error) => !!error);
+    const errors = getResourceErrors(resource);
     if (errors.length > 0) {
-      resourceWithLabels.errors = errors.join('. ');
+      resourceWithLabels.errors = errors;
     }
 
     return resourceWithLabels;

@@ -1,0 +1,21 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    {{ 'simple.mcp.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-description>
+    {{ 'simple.mcp.description' | translate }}
+  </pa-modal-description>
+
+  <pa-modal-content>
+    <div class="endpoint">
+      <pre><code>{{ endpoint | async }}</code></pre>
+      <pa-button
+        aspect="basic"
+        iconAndText
+        [icon]="copied() ? 'check' : 'copy'"
+        (click)="copyEndpoint()">
+        {{ (copied() ? 'generic.copied' : 'generic.copy') | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-content>
+</pa-modal-dialog>

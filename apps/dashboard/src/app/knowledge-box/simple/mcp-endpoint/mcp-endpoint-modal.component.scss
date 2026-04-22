@@ -1,0 +1,15 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.endpoint {
+  border: 1px solid $color-neutral-lighter;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  padding: rhythm(2) rhythm(3);
+
+  pre {
+    margin-bottom: 0;
+    white-space: normal;
+    word-break: break-all;
+  }
+}
