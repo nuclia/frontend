@@ -113,8 +113,10 @@ export class TaskTestingComponent {
           );
           this.cdr.markForCheck();
         },
-        error: () => {
-          this.toaster.error('tasks-automation.testing.error');
+        error: (error) => {
+          this.toaster.error(
+            error?.status === 504 ? 'tasks-automation.testing.timeout' : 'tasks-automation.testing.error',
+          );
           this.loading = false;
           this.cdr.markForCheck();
         },

@@ -2515,6 +2515,7 @@
 	"tasks-automation.testing.results.title": "Résultats des tests",
 	"tasks-automation.testing.search": "Rechercher le nom de la ressource",
 	"tasks-automation.testing.test-agent": "Tester l'agent",
+	"tasks-automation.testing.timeout": "Le test a expiré. Veuillez réessayer avec un fichier de test plus petit.",
 	"tasks-automation.testing.title": "Testez votre agent",
 	"tasks-automation.testing.tokens.action": "Action",
 	"tasks-automation.testing.tokens.description": "La consommation totale de vos tests vous donne une idée de l'utilisation potentielle des jetons lors de l'exécution de l'agent, mais la consommation réelle dépend de chaque ressource traitée.",
