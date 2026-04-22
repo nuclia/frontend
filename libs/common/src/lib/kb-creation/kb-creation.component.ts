@@ -201,6 +201,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   updateModel(learningConfig: LearningConfigurationForm) {
     this.semanticModels = learningConfig.semantic_models;
     this.userKeys = learningConfig.user_keys;
+    this.cdr.detectChanges();
   }
 
   cancel() {
