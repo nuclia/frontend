@@ -2515,6 +2515,7 @@
 	"tasks-automation.testing.results.title": "Test results",
 	"tasks-automation.testing.search": "Search resource name",
 	"tasks-automation.testing.test-agent": "Test agent",
+	"tasks-automation.testing.timeout": "The test run timed out, please try again with a smaller test file.",
 	"tasks-automation.testing.title": "Test your agent",
 	"tasks-automation.testing.tokens.action": "Action",
 	"tasks-automation.testing.tokens.description": "Total consumption from your tests gives you an idea of the potential token usage when running the agent, but the real consumption is dependent of each resource processed.",
