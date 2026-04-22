@@ -5,7 +5,8 @@
     <div class="field">
       <pa-radio-group
         id="region"
-        formControlName="region">
+        formControlName="region"
+        [errorMessages]="validationMessages">
         @for (zone of zones | async; track zone.id) {
           <pa-radio [value]="zone.slug">
             {{ zone.title || zone.slug }}

@@ -45,7 +45,9 @@
         <nsi-two-columns-configuration-item
           itemTitle="user.kb.creation-form.zone.title"
           description="user.kb.creation-form.zone.description">
-          <pa-radio-group formControlName="zone">
+          <pa-radio-group
+            formControlName="zone"
+            [errorMessages]="validationMessages['zone']">
             @for (zone of zones | async; track zone.slug) {
               <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
             }
