@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { WritableKnowledgeBox } from '@nuclia/core';
+import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
 import { KnowledgeBoxComponent } from './knowledge-box.component';
@@ -20,6 +20,7 @@ describe('KnowledgeBoxComponent', () => {
         MockProvider(SDKService, {
           counters: of({ resources: 0 }),
           currentKb: of({ id: 'kb', getServiceAccounts: () => of([]) } as unknown as WritableKnowledgeBox),
+          currentAccount: of({ workflow: 'classic' }),
         } as SDKService),
         MockProvider(SisModalService),
         MockProvider(FeaturesService, { isKbAdmin: of(true) }),

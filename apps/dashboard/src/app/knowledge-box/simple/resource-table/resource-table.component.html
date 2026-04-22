@@ -1,0 +1,87 @@
+<pa-table
+  border
+  columns="2fr 140px 1.5fr 140px 70px">
+  <pa-table-header>
+    <pa-table-cell header>
+      <span class="title-s">{{ 'simple.column.file' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-s">{{ 'simple.column.type' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-s">{{ 'simple.column.status' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-s">{{ 'simple.column.date-added' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-s">{{ 'simple.column.delete' | translate }}</span>
+    </pa-table-cell>
+  </pa-table-header>
+  @for (row of rows | async; track row.title) {
+    <pa-table-row>
+      <pa-table-cell>
+        <span class="body-m">{{ row.title }}</span>
+      </pa-table-cell>
+      <pa-table-cell>
+        <span class="body-s">
+          @if (row.icon | mimeIcon; as icon) {
+            <pa-icon [name]="icon"></pa-icon>
+          }
+          @if (row.extension) {
+            <span class="extension">.{{ row.extension.toLowerCase() }}</span>
+          }
+        </span>
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (row.status === 'success') {
+          <span class="title-xxs success">
+            {{ 'simple.ready' | translate }}
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </span>
+        } @else if (row.status === 'pending') {
+          <span class="body-s">
+            @if (row.rank) {
+              {{ 'simple.position-in-queue' | translate }}:
+              <strong class="rank">{{ row.rank }}</strong>
+            } @else {
+              {{ 'simple.processing' | translate }}
+            }
+          </span>
+        } @else if (row.status === 'error') {
+          <span class="error">
+            <span class="title-xxs">{{ 'simple.failed' | translate }}</span>
+            @if (row.errorMessage) {
+              <span class="body-s">
+                <span>:</span>
+                @if (row.errorMessage.length > 120) {
+                  {{ row.errorMessage.substring(0, 120) }}…
+                } @else {
+                  {{ row.errorMessage | translate}}
+                }
+              </span>
+            }
+          </span>
+        } @else if (row.status === 'uploading') {
+          <span class="body-s">{{ 'simple.uploading' | translate }}</span>
+        }
+      </pa-table-cell>
+      <pa-table-cell>
+        <span class="body-s">{{ (row.created | date: 'mediumDate') || '-' }}</span>
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (row.id) {
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            (click)="deleteResource(row.id)"
+            size="small">
+            {{ 'simple.delete' | translate }}
+          </pa-button>
+        }
+      </pa-table-cell>
+    </pa-table-row>
+  }
+</pa-table>

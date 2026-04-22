@@ -102,5 +102,8 @@ export class TopbarComponent {
 
   switchMode(value: boolean) {
     this.navigationService.simpleMode.next(!value);
+    this.navigationService.homeUrl.pipe(take(1)).subscribe((homeUrl) => {
+      this.router.navigateByUrl(homeUrl);
+    });
   }
 }

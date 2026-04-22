@@ -516,3 +516,12 @@ export function removeLabels(resource: Resource, labels: Classification[]): Clas
     resourceLabels.map((label) => ({ ...label, cancelled_by_user: false })),
   );
 }
+
+export function getResourceErrors(resource: Resource): string {
+  return resource
+    .getFields()
+    .reduce((errors, field) => errors.concat(field.errors || field.error || []), [] as IError[])
+    .map((error) => error?.body || '')
+    .filter((error) => !!error)
+    .join('. ');
+}

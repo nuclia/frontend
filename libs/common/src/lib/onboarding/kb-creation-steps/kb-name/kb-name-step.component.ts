@@ -24,6 +24,7 @@ import { NavigationService } from '@flaps/core';
 })
 export class KbNameStepComponent {
   private navigation = inject(NavigationService);
+
   inRaoApp = this.navigation.inRaoApp;
 
   @Input() set data(value: string) {

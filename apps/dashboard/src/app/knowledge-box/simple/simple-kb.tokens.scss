@@ -1,0 +1,6 @@
+@use 'apps/dashboard/src/variables' as *;
+
+$footer-height: rhythm(16);
+$success-color: #03a76c;
+$error-color: #f4364c;
+$content-width: rhythm(90) + rhythm(32);

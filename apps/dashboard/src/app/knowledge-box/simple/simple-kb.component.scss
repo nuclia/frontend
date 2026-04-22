@@ -1,28 +1,72 @@
 @use 'apps/dashboard/src/variables' as *;
+@use 'simple-kb.tokens' as tokens;
 
 .simple-kb {
+  align-items: center;
   display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  padding: rhythm(8) rhythm(4);
+  min-height: calc(100vh - var(--app-topbar-height) - tokens.$footer-height);
+}
+
+.counters {
+  align-items: center;
+  display: flex;
+  font-size: font-size(m);
   gap: rhythm(2);
+  height: rhythm(6);
+}
+
+.footer {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border-top: 1px solid $color-neutral-light;
+  display: flex;
+  gap: rhythm(4);
+  height: tokens.$footer-height;
   justify-content: center;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
 
-  .column-container {
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(2);
+.preview {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: tokens.$content-width;
 
-    &.wide-column {
-      width: 75%;
-    }
+  ::ng-deep nuclia-search-bar {
+    margin-bottom: rhythm(5);
   }
-
-  .preview-content {
-    margin-top: rhythm(2);
+  ::ng-deep nuclia-search-results {
+    width: tokens.$content-width;
   }
+}
 
-  .stats {
-    .title-s {
-      color: $color-neutral-regular;
-    }
+.dropzone {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border: 2px dashed $color-neutral-light;
+  color: $color-neutral-regular;
+  font-size: font-size(xl);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  height: rhythm(45);
+  justify-content: center;
+  padding: rhythm(4);
+  width: rhythm(90);
+  &.file-over {
+    border: 2px dashed $color-primary-regular;
   }
+}
+
+.success {
+  color: tokens.$success-color;
+}
+.error {
+  color: tokens.$error-color;
 }

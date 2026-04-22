@@ -1,0 +1,23 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../simple-kb.tokens' as tokens;
+
+pa-table {
+  display: block;
+  width: tokens.$content-width;
+}
+
+.extension {
+  margin-left: rhythm(1);
+}
+
+.rank {
+  color: $color-primary-regular;
+}
+
+.success {
+  color: tokens.$success-color;
+}
+
+.error {
+  color: tokens.$error-color;
+}

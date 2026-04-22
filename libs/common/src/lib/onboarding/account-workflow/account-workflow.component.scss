@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  margin-bottom: rhythm(4);
+}
+
+img {
+  margin-top: rhythm(3);
+}

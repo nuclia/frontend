@@ -5,6 +5,7 @@ export type AccountTypes =
   | 'v3growth'
   | 'v3pro'
   | 'v3enterprise'
+  | 'cowork'
 
   // Deprecated
   | 'stash-basic'
@@ -38,6 +39,7 @@ export interface Account {
   trial_expiration_date?: string;
   creation_date: string;
   type: AccountTypes;
+  workflow?: WorkflowType;
   zone: string;
 }
 
@@ -92,12 +94,15 @@ export enum BlockedFeature {
   PUBLIC_GENERATIVE = 'public_generative',
 }
 
+export type WorkflowType = 'classic' | 'cowork';
+
 export interface AccountCreation {
   slug: string;
   title: string;
   description?: string;
   email?: string;
   zone?: string;
+  workflow?: WorkflowType;
 }
 
 export interface SamlConfig {
@@ -113,6 +118,7 @@ export interface AccountModification {
   description?: string;
   saml_config?: SamlConfig | null;
   slug?: string;
+  workflow?: WorkflowType;
 }
 
 export interface AccountStatus {

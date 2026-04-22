@@ -1,50 +1,137 @@
-<div class="page-spacing simple-kb">
-  <div class="column-container wide-column">
-    <nsi-home-container>
-      <div class="title-m">
-        <div class="title-with-icon">
-          <pa-icon name="search"></pa-icon>
-          {{ 'search.title' | translate }}
-        </div>
-        @if (widgetPreview | async; as widgetPreview) {
-          <div
-            id="preview"
-            class="preview-content"
-            [innerHtml]="widgetPreview.preview"></div>
-        }
-      </div>
-    </nsi-home-container>
-
-    <nsi-home-container>
-      <app-last-resources></app-last-resources>
-    </nsi-home-container>
+@let counter = resourceCounter | async;
+<div class="simple-kb">
+  <div class="display-m">
+    @if (step() === 1) {
+      {{ 'simple.title.first-files' | translate }}
+    } @else if (step() === 2) {
+      @if ((counter?.pending || 0) > 0 || (uploadInProgress | async)) {
+        {{ 'simple.title.uploading' | translate }}
+      } @else {
+        <span class="success">
+          <pa-icon
+            name="circle-check"
+            size="large"></pa-icon>
+        </span>
+        {{ 'simple.title.ready' | translate }}
+      }
+    } @else if (step() === 3) {
+      {{ 'simple.title.testing' | translate }}
+    }
   </div>
 
-  <div class="column-container">
-    <nsi-home-container>
-      <pa-button
-        icon="upload"
-        iconAndText
-        kind="primary"
-        alignPopupOnLeft
-        (click)="uploadFiles()">
-        {{ 'upload.files' | translate }}
-      </pa-button>
-      @if ((emptyKb | async) === true) {
-        @if (uploadInProgress | async) {
-          <nsi-spinner></nsi-spinner>
-        } @else {
-          <h2>{{ 'simple.empty' | translate }}</h2>
+  <div class="counters">
+    @if (step() === 2) {
+      <div>
+        <strong [class.success]="counter?.pending === 0">{{ 'simple.ready' | translate }}</strong>
+        <span>: {{ counter?.processed || 0 }}</span>
+      </div>
+      @if ((counter?.pending || 0) > 0 || (uploadInProgress | async)) {
+        <div>
+          <strong class="title-m">{{ 'simple.in-queue' | translate }}</strong>
+          <span>: {{ counter?.pending || 0 }}</span>
+        </div>
+      }
+      <div>
+        <strong
+          class="title-m"
+          [class.error]="counter?.pending === 0">
+          {{ 'simple.failed' | translate }}
+        </strong>
+        <span>: {{ counter?.error || 0 }}</span>
+      </div>
+    } @else if (step() === 3) {
+      @if (hideResources()) {
+        <pa-button
+          kind="primary"
+          icon="folder"
+          (click)="resetSearch()">
+          {{ 'generic.back' | translate }}
+        </pa-button>
+      }
+      <div>
+        <strong>{{ 'simple.your-resources' | translate }}</strong>
+        <span>: {{ counter?.processed || 0 }}</span>
+      </div>
+    }
+  </div>
+
+  <div>
+    @if (step() === 1) {
+      <div
+        stfFileDrop
+        class="dropzone"
+        [class.file-over]="fileOver()"
+        (fileOver)="fileOver.set($event)"
+        (atFileDrop)="onFilesSelected($event)">
+        <div>{{ 'simple.drop-files' | translate }}</div>
+        <div>{{ 'simple.or' | translate }}</div>
+        <pa-button
+          kind="primary"
+          icon="upload"
+          iconAndText
+          (click)="fileInput.click()">
+          {{ 'upload.files' | translate }}
+        </pa-button>
+        <div class="body-m">{{ 'simple.max-files' | translate: { num: maxFiles } }}</div>
+      </div>
+    } @else if (step() > 1) {
+      @if (step() === 3) {
+        @if (widgetPreview | async; as widgetPreview) {
+          <div
+            #preview
+            class="preview"
+            [innerHtml]="widgetPreview.preview"></div>
         }
       }
-    </nsi-home-container>
-    @if (totalResources | async; as totalResources) {
-      <nsi-home-container>
-        <div class="stats">
-          <div class="title-s">{{ 'dashboard-home.kb-storage.total.resources' | translate }}</div>
-          <div class="title-l">{{ totalResources }}</div>
-        </div>
-      </nsi-home-container>
+      @if (!hideResources()) {
+        <app-resource-table></app-resource-table>
+      }
     }
   </div>
 </div>
+@if (step() > 1) {
+  <div class="footer">
+    @if (step() === 2) {
+      @if (counter?.pending === 0 && !(uploadInProgress | async)) {
+        <pa-button
+          kind="primary"
+          icon="search"
+          iconAndText
+          (click)="goToStep3()">
+          {{ 'simple.test-files' | translate }}
+        </pa-button>
+      }
+      <pa-button
+        aspect="basic"
+        icon="upload"
+        iconAndText
+        [disabled]="uploadInProgress | async"
+        (click)="fileInput.click()">
+        {{ 'simple.add-more' | translate }}
+      </pa-button>
+    } @else if (step() === 3) {
+      <pa-button
+        kind="primary"
+        icon="upload"
+        iconAndText
+        [disabled]="uploadInProgress | async"
+        (click)="fileInput.click()">
+        {{ 'upload.files' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="basic"
+        icon="info"
+        iconAndText
+        (click)="showMcpEndpoint()">
+        {{ 'simple.get-mcp-url' | translate }}
+      </pa-button>
+    }
+  </div>
+}
+<input
+  #fileInput
+  type="file"
+  stfFileSelect
+  (atFileSelect)="onFilesSelected($event)"
+  multiple
+  hidden />

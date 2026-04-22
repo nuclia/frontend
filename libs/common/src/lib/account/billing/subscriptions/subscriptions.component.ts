@@ -1,6 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
-import { AccountService, BillingService, Currency, FeaturesService } from '@flaps/core';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
+import { AccountService, BillingService, Currency, FeaturesService, SDKService } from '@flaps/core';
 import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountTypes } from '@nuclia/core';
@@ -29,13 +40,16 @@ export class SubscriptionsComponent implements OnDestroy {
         customer ? this.billing.getCurrency(customer.billing_details?.country || '') : of(null),
       ),
     );
-  // temporarily hiding the starter plan
-  disableStarterPlan = true;
-  tiers: AccountTypes[] = ['v3starter', 'v3pro', 'v3enterprise'];
   isSubscribedToAws = this.billing.isSubscribedToAws;
   isManuallySubscribed = this.billing.isManuallySubscribed;
   unsubscribeAll = new Subject<void>();
   isTrial = this.features.isTrial;
+  isCowork = this.sdk.currentAccount.pipe(map((account) => account.workflow === 'cowork'));
+  tiers: Observable<AccountTypes[]> = this.isCowork.pipe(
+    map((isCowork) =>
+      isCowork ? ['cowork', 'v3starter', 'v3pro', 'v3enterprise'] : ['v3starter', 'v3pro', 'v3enterprise'],
+    ),
+  );
 
   constructor(
     private billing: BillingService,
@@ -43,6 +57,7 @@ export class SubscriptionsComponent implements OnDestroy {
     private accountService: AccountService,
     private subscriptionService: SubscriptionService,
     private features: FeaturesService,
+    private sdk: SDKService,
     @Inject(WINDOW) private window: Window,
   ) {
     combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])

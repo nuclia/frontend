@@ -33,6 +33,7 @@ import {
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
+  simpleModeGuard,
   awsGuard,
   AwsOnboardingComponent,
   KnowledgeBoxKeysComponent,
@@ -92,6 +93,7 @@ const routes: Routes = [
               {
                 path: '',
                 component: KnowledgeBoxHomeComponent,
+                canActivate: [simpleModeGuard],
                 resolve: {},
               },
               {

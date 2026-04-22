@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { AnalyticsService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { Observable, of, ReplaySubject, take, tap } from 'rxjs';
+import { AnalyticsService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
-import { Account, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { Account, KnowledgeBoxCreation, LearningConfigurations, WorkflowType } from '@nuclia/core';
 import { LearningConfigurationForm } from './embeddings-model-form';
 import { CommonModule } from '@angular/common';
 import { UserContainerComponent } from '@nuclia/user';
@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Step1Component } from './step1/step1.component';
 import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
 import { SettingUpComponent } from './setting-up/setting-up.component';
+import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
 
 @Component({
   selector: 'nus-onboarding',
@@ -18,6 +19,7 @@ import { SettingUpComponent } from './setting-up/setting-up.component';
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AccountWorkflowComponent,
     CommonModule,
     UserContainerComponent,
     TranslateModule,
@@ -30,7 +32,7 @@ import { SettingUpComponent } from './setting-up/setting-up.component';
 })
 export class OnboardingComponent {
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
-  lastStep = 5;
+  lastStep = 6;
 
   onboardingInquiryPayload?: OnboardingPayload;
   kbName = '';
@@ -50,6 +52,7 @@ export class OnboardingComponent {
     private cdr: ChangeDetectorRef,
     private analytics: AnalyticsService,
     private navigation: NavigationService,
+    private features: FeaturesService,
   ) {}
 
   goBack(): void {
@@ -76,6 +79,12 @@ export class OnboardingComponent {
   storeKbNameAndGoNext($event: string) {
     this.kbName = $event;
     this.onboardingService.nextStep();
+  }
+
+  storeWorkflowAndGoNext(workflow: WorkflowType) {
+    this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
+      this.onboardingService.nextStep();
+    });
   }
 
   storeZoneAndGoNext(zone: string) {
