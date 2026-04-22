@@ -283,6 +283,7 @@ export interface KnowledgeBoxCreation {
   description?: string;
   learning_configuration?: { [configId: string]: any };
   external_index_provider?: any;
+  enforce_security?: boolean;
 }
 
 export interface Entities {

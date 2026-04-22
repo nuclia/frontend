@@ -120,6 +120,7 @@ export class AwsOnboardingComponent {
             slug: STFUtils.generateSlug(this.kbName),
             title: this.kbName,
             learning_configuration: this.learningConfig,
+            enforce_security: true,
           };
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
             tap(() => {
