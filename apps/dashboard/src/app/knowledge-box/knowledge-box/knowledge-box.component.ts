@@ -34,15 +34,19 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const gettingStartedDone = localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true';
     if (!gettingStartedDone) {
-      forkJoin([this.sdk.counters.pipe(take(1)), this.features.isKbAdmin.pipe(take(1))]).subscribe(
-        ([counters, isKbAdmin]) => {
+      forkJoin([
+        this.sdk.counters.pipe(take(1)),
+        this.features.isKbAdmin.pipe(take(1)),
+        this.sdk.currentAccount.pipe(take(1)),
+      ])
+        .pipe(filter(([, , account]) => account.workflow !== 'cowork'))
+        .subscribe(([counters, isKbAdmin]) => {
           if (counters?.resources === 0 && isKbAdmin) {
             this.modalService.openModal(GettingStartedComponent);
           } else if (!isKbAdmin) {
             this.modalService.openModal(WelcomeInExistingKBComponent);
           }
-        },
-      );
+        });
     }
     this.sdk.currentKb
       .pipe(
@@ -57,13 +61,12 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
         filter(({ isAdmin }) => isAdmin),
         switchMap(({ kb }) => kb.getServiceAccounts()),
         filter((serviceAccounts) =>
-          serviceAccounts.some(
-            (serviceAccount) =>
-              (serviceAccount.keys || [])?.some((key) => {
-                const now = new Date();
-                const expiration = new Date(`${key.expires}Z`);
-                return expiration > now && addDays(expiration, -15) < now;
-              }),
+          serviceAccounts.some((serviceAccount) =>
+            (serviceAccount.keys || [])?.some((key) => {
+              const now = new Date();
+              const expiration = new Date(`${key.expires}Z`);
+              return expiration > now && addDays(expiration, -15) < now;
+            }),
           ),
         ),
       )
