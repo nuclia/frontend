@@ -1,25 +1,33 @@
-name: SonarQube Scan
+name: SonarQube Scan Trigger
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
+    branches: [main]
+  push:
+    branches: [main]
 
 jobs:
-  build:
-    name: Build and analyze
+  trigger-sonar-scan:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan with Azure Access
-        uses: prgs-community/githubactions-reusableworkflows/actions/sonarqube/cli@main
-        with:
-          sonarqube-token: ${{ secrets.SONAR_TOKEN }}
-          akeyless-access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-          use-local-runner: 'false'
-          project-key: 'nuclia-frontend'
+      - name: Dispatch to security-workflows
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          REPO: ${{ github.repository }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          curl --fail-with-body -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.SECURITY_WORKFLOWS_TRIGGER_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            https://api.github.com/repos/nuclia/security-workflows/dispatches \
+            -d "$(jq -n \
+              --arg repo "$REPO" \
+              --arg event "$EVENT" \
+              --argjson pr "$PR_NUMBER" \
+              --arg sha "$HEAD_SHA" \
+              '{event_type:"sonar-scan", client_payload:{repository:$repo, event:$event, pr_number:$pr, head_sha:$sha}}')"
