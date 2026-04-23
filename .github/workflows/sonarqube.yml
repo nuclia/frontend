@@ -14,21 +14,20 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GHAPP_NUCLIA_SERVICE_BOT_ID }}
+          private-key: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
+          owner: nuclia
+          repositories: security-workflows
+
       - name: Dispatch to security-workflows
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-          REPO: ${{ github.repository }}
-          EVENT: ${{ github.event_name }}
-        run: |
-          curl --fail-with-body -sS -X POST \
-            -H "Authorization: Bearer ${{ secrets.SECURITY_WORKFLOWS_TRIGGER_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "Content-Type: application/json" \
-            https://api.github.com/repos/nuclia/security-workflows/dispatches \
-            -d "$(jq -n \
-              --arg repo "$REPO" \
-              --arg event "$EVENT" \
-              --argjson pr "$PR_NUMBER" \
-              --arg sha "$HEAD_SHA" \
-              '{event_type:"sonar-scan", client_payload:{repository:$repo, event:$event, pr_number:$pr, head_sha:$sha}}')"
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          repository: nuclia/security-workflows
+          event-type: sonar-scan
+          client-payload: >-
+            {"repository":"${{ github.repository }}","event":"${{ github.event_name }}","pr_number":${{ github.event.pull_request.number || 0 }},"head_sha":"${{ github.event.pull_request.head.sha || github.sha }}"}
