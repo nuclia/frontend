@@ -19,6 +19,7 @@ export class ConsentComponent implements OnInit {
   brandName = this.backendConfig.getBrandName();
 
   @ViewChild('form') form: ElementRef | undefined;
+  @ViewChild('rejectForm') rejectForm: ElementRef | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,5 +56,9 @@ export class ConsentComponent implements OnInit {
 
   acceptConsent() {
     this.form?.nativeElement.submit();
+  }
+
+  rejectConsent() {
+    this.rejectForm?.nativeElement.submit();
   }
 }

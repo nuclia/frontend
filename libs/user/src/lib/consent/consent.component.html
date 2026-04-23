@@ -49,6 +49,7 @@
     </div>
     <div class="consent-buttons">
       <form
+        #rejectForm
         method="POST"
         [action]="oAuthConsentUrl()">
         <input
@@ -60,8 +61,8 @@
           name="reject"
           [value]="true" />
         <pa-button
-          type="submit"
-          aspect="basic">
+          aspect="basic"
+          (click)="rejectConsent()">
           {{ 'generic.cancel' | translate }}
         </pa-button>
       </form>
@@ -73,13 +74,15 @@
           type="hidden"
           name="consent_challenge"
           [value]="consentChallenge" />
-        <input
-          type="hidden"
-          name="grant_scope"
-          [value]="acceptedScopes()" />
+        @for (scope of consentData?.requested_scope || []; track scope) {
+          <input
+            type="hidden"
+            name="grant_scope"
+            [value]="scope" />
+        }
         <pa-button
           kind="primary"
-          type="submit">
+          (click)="acceptConsent()">
           {{ 'generic.allow' | translate }}
         </pa-button>
       </form>
