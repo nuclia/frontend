@@ -16,7 +16,7 @@ interface TableRow {
   extension?: string;
   icon?: string;
   created?: string;
-  status?: 'success' | 'error' | 'pending' | 'uploading';
+  status?: RESOURCE_STATUS | 'uploading';
   rank?: number;
   errorMessage?: string;
 }
@@ -34,6 +34,9 @@ export class ResourceTableComponent {
   modalService = inject(SisModalService);
   uploadService = inject(UploadService);
 
+  columns = ['file', 'type', 'status', 'date-added', 'delete'];
+  RESOURCE_STATUS = RESOURCE_STATUS;
+
   rows: Observable<TableRow[]> = combineLatest([
     this.simpleKBService.resources,
     this.simpleKBService.visibleUploads,
@@ -45,11 +48,7 @@ export class ResourceTableComponent {
         extension: this.splitTitle(resource.title || '').extension,
         icon: resource.icon,
         created: resource.created + 'Z',
-        status: (resource.metadata?.status === RESOURCE_STATUS.ERROR
-          ? 'error'
-          : resource.metadata?.status === RESOURCE_STATUS.PENDING
-            ? 'pending'
-            : 'success') as TableRow['status'],
+        status: resource.metadata?.status,
         rank: resource.rank,
         errorMessage:
           resource.metadata?.status === RESOURCE_STATUS.ERROR
@@ -61,7 +60,7 @@ export class ResourceTableComponent {
         extension: this.splitTitle(upload.file.name || '').extension,
         icon: upload.file.type,
         created: addMinutes(new Date(), 5).toISOString(), // Display uploads at the top of the list
-        status: (this.simpleKBService.isUploadFailed(upload) ? 'error' : 'uploading') as TableRow['status'],
+        status: (this.simpleKBService.isUploadFailed(upload) ? RESOURCE_STATUS.ERROR : 'uploading') as TableRow['status'],
         errorMessage: this.simpleKBService.isUploadFailed(upload) ? 'simple.upload-error' : '',
       })),
     ]),

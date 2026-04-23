@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,10 +25,11 @@ export class SimpleKBComponent {
   private modalService = inject(SisModalService);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
-  uploadInProgress = this.simpleKBService.uploadInProgress;
   maxFiles = this.simpleKBService.maxFiles;
-  resourceCounter = this.simpleKBService.resourceCounter;
 
+  uploadInProgress = toSignal(this.simpleKBService.uploadInProgress, { initialValue: false });
+  counter = toSignal(this.simpleKBService.resourceCounter);
+  pendingResources = computed(() => (this.counter()?.pending || 0) > 0 || this.uploadInProgress());
   step = signal<number>(-1);
   hideResources = signal(false);
   fileOver = signal(false);

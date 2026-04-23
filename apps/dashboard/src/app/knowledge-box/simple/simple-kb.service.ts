@@ -112,12 +112,11 @@ export class SimpleKBService {
       switchMap((kb) => kb.processingStatus(undefined, undefined, this.maxFiles)),
       map((processingStatus) =>
         processingStatus.results
+          .filter((status) => status.schedule_order !== -1)
           .reduce((resources, status) => {
-            if (status.schedule_order > -1) {
-              const index = resources.findIndex((resource) => resource.id === status.resource_id);
-              if (index > -1) {
-                resources[index] = { ...resources[index], rank: status.schedule_order };
-              }
+            const index = resources.findIndex((resource) => resource.id === status.resource_id);
+            if (index > -1) {
+              resources[index] = { ...resources[index], rank: status.schedule_order };
             }
             return resources;
           }, resources as rankedResource[])
