@@ -26,6 +26,8 @@ export type AragModule =
   | 'tavily'
   | 'google'
   | 'sql'
+  | 'pandas'
+  | 'snowflake'
   | 'cypher'
   | 'mcp'
   | 'restricted'
@@ -71,6 +73,8 @@ const CONTEXT_MODULE: AragModule[] = [
   'tavily',
   'google',
   'sql',
+  'pandas',
+  'snowflake',
   'mcp',
   'cypher',
   'basic_ask',
