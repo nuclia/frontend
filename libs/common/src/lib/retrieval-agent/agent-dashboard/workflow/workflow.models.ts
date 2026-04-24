@@ -146,7 +146,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   sync: 'database',
 };
 
-export const NODES_IN_BETA = ['marklogic', 'sitefinity'];
+export const NODES_IN_BETA = ['marklogic', 'sitefinity', 'sql', 'pandas'];
 
 export interface CommonAgentConfig {
   rules: string[] | null;
