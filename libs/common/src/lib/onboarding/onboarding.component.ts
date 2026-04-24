@@ -82,6 +82,7 @@ export class OnboardingComponent {
   }
 
   storeWorkflowAndGoNext(workflow: WorkflowType) {
+    this.kbName = 'Cowork';
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
     });
