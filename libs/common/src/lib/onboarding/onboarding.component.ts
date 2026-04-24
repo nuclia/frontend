@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
 import { AnalyticsService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { Observable, of, ReplaySubject, take, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations, WorkflowType } from '@nuclia/core';
 import { LearningConfigurationForm } from './embeddings-model-form';
@@ -72,6 +72,9 @@ export class OnboardingComponent {
       .subscribe((account) => {
         this.account = account;
         this.creatingAccount = false;
+        if (this.account.workflow === 'cowork') {
+          this.onboardingService.switchToPreset();
+        }
         this.onboardingService.nextStep();
       });
   }
@@ -82,7 +85,9 @@ export class OnboardingComponent {
   }
 
   storeWorkflowAndGoNext(workflow: WorkflowType) {
-    this.kbName = 'Cowork';
+    if (workflow === 'cowork') {
+      this.kbName = 'ContextBox';
+    }
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
     });
