@@ -50,6 +50,7 @@ import {
   CallbackComponent,
   SetPasswordComponent,
   AppLoginComponent,
+  TestingAppSignupComponent,
 } from '@nuclia/user';
 
 import { authGuard, metricsEnabledGuard, metricsDisabledGuard, redirectToSignUp } from '@flaps/core';
@@ -334,6 +335,7 @@ const routes: Routes = [
   { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
   { path: 'user/login-redirect', component: AppLoginComponent },
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
+  { path: 'user/test-signup', component: TestingAppSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
   { path: 'user/set-password', component: SetPasswordComponent },
   {
