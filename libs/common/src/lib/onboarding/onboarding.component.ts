@@ -73,6 +73,7 @@ export class OnboardingComponent {
         this.account = account;
         this.creatingAccount = false;
         if (this.account.workflow === 'cowork') {
+          this.kbName = 'ContextBox';
           this.onboardingService.switchToPreset();
         }
         this.onboardingService.nextStep();

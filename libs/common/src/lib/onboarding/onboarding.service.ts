@@ -110,6 +110,7 @@ export class OnboardingService {
                 .createAccount({
                   slug: accountSlug,
                   title: data.company,
+                  workflow: data.workflow,
                 })
                 .pipe(
                   catchError((error) => {
