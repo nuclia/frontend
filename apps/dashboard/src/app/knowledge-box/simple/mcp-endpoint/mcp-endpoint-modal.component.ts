@@ -4,6 +4,7 @@ import { ModalRef, PaModalModule, PaButtonModule } from '@guillotinaweb/pastanag
 import { TranslateModule } from '@ngx-translate/core';
 import { SDKService } from '@flaps/core';
 import { map, take } from 'rxjs';
+import { setZoneInRegionalUrl } from '@nuclia/core';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaModalModule, TranslateModule],
@@ -15,7 +16,9 @@ export class McpEndpointModalComponent {
   sdk = inject(SDKService);
   modal = inject(ModalRef);
 
-  endpoint = this.sdk.currentKb.pipe(map((kb) => kb.fullpath + '/mcp'));
+  endpoint = this.sdk.currentKb.pipe(
+    map((kb) => setZoneInRegionalUrl(this.sdk.nuclia.options.backend, kb.zone, 'dp') + `/v1${kb.path}/mcp`),
+  );
   copied = signal(false);
 
   constructor() {}
