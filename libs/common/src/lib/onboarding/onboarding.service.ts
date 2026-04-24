@@ -31,7 +31,7 @@ export class OnboardingService {
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
   dashboardSteps = this.features.unstable.coworkAccount.pipe(
-    map((coworkEnabled) => (coworkEnabled ? [1, 2, 3, 4, 5, 6] : [1, 3, 4, 5, 6])),
+    map((coworkEnabled) => (coworkEnabled ? [1, 2, 4, 5, 6] : [1, 3, 4, 5, 6])),
   );
   raoSteps = of([1, 3, 5, 6]);
 
