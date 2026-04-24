@@ -15,6 +15,9 @@ import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
 import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
+const CLASSIC_STEPS = [1, 3, 4, 5, 6];
+const COWORK_STEPS = [1, 2, 4, 5, 6];
+const PRESET_COWORK_STEPS = [1, 4, 5, 6];
 @Injectable({
   providedIn: 'root',
 })
@@ -31,7 +34,7 @@ export class OnboardingService {
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
   dashboardSteps = this.features.unstable.coworkAccount.pipe(
-    map((coworkEnabled) => (coworkEnabled ? [1, 2, 4, 5, 6] : [1, 3, 4, 5, 6])),
+    map((coworkEnabled) => (coworkEnabled ? COWORK_STEPS : CLASSIC_STEPS)),
   );
   raoSteps = of([1, 3, 5, 6]);
 
@@ -60,6 +63,10 @@ export class OnboardingService {
         this._onboardingStep.next(previous);
       }
     });
+  }
+
+  switchToPreset() {
+    this.dashboardSteps = of(PRESET_COWORK_STEPS);
   }
 
   saveOnboardingInquiry(payload: OnboardingPayload) {
