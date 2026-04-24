@@ -85,7 +85,9 @@ export class OnboardingComponent {
   }
 
   storeWorkflowAndGoNext(workflow: WorkflowType) {
-    this.kbName = 'ContextBox';
+    if (workflow === 'cowork') {
+      this.kbName = 'ContextBox';
+    }
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
     });
