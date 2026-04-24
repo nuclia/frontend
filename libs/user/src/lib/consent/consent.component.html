@@ -28,21 +28,9 @@
         @for (scope of visibleScopes(); track scope) {
           <li
             class="consent-scopes-item"
-            >
+            [attr.data-scope]="scope">
             <pa-icon name="check"></pa-icon>
-            <span>
-              @switch (scope) {
-                @case ('flaps.kbs:read') {
-                  <span>{{ 'login.scope.kbs_read' | translate }}</span>
-                }
-                @case ('flaps.kbs:write') {
-                  <span>{{ 'login.scope.kbs_write' | translate }}</span>
-                }
-                @default {
-                  <span>{{ scope }}</span>
-                }
-              }
-            </span>
+            <span>{{ 'consent.scope.' + scopeKey(scope) | translate }}</span>
           </li>
         }
       </ul>
