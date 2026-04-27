@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { AppService, ChartData, MetricsService, RangeChartData, RemiMetricsService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { BlockedFeature, Counters, UsageType } from '@nuclia/core';
+import { BlockedFeature, Counters, setZoneInRegionalUrl, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -31,7 +31,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
   uid = this.currentKb.pipe(map((kb) => kb.id));
-  mcp = this.endpoint.pipe(map((endpoint) => endpoint + '/mcp'));
+  mcp = this.currentKb.pipe(
+    map((kb) => setZoneInRegionalUrl(this.sdk.nuclia.options.backend, kb.zone, 'dp') + `/v1${kb.path}/mcp`),
+  );
   zone = combineLatest([this.currentKb, this.zoneService.getZones()]).pipe(
     map(([kb, zones]) => {
       const zone = zones.find((zone) => zone.slug === kb.zone);
