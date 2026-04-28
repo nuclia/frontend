@@ -41,6 +41,7 @@ export class GlobalAccountService {
       kbs: data.maxKbs,
       memories: data.maxMemories,
       agents: data.maxAgents,
+      workflow: data.workflow ?? undefined,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }

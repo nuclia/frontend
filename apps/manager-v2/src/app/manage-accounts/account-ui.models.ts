@@ -5,6 +5,7 @@ import {
   BlockedFeature,
   KBRoles,
   KnowledgeBoxMode,
+  WorkflowType,
 } from '@nuclia/core';
 import { ZoneSummary } from '../manage-zones/zone.models';
 
@@ -25,6 +26,7 @@ export interface AccountDetails extends AccountSummary {
   maxMemories: number;
   trialExpirationDate?: string;
   users: AccountUser[];
+  workflow?: WorkflowType;
 }
 
 export interface KbSummary {
@@ -83,4 +85,5 @@ export interface AccountConfigurationPayload {
   slug: string;
   trialExpirationDate?: string | null;
   type: AccountTypes;
+  workflow?: WorkflowType | null;
 }

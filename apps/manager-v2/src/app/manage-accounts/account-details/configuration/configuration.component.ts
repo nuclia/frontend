@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
-import { AccountTypes } from '@nuclia/core';
+import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -49,6 +49,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
+    workflow: new FormControl<WorkflowType | null>(null),
   });
   free_tokens_per_billing_cycle = 0;
   provider?: SubscriptionProvider;
@@ -122,6 +123,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               : {
                   trialExpirationDate,
                   type: rawValue.type,
+                  workflow: rawValue.workflow,
                 };
             payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
             return this.accountService.updateAccount(accountBackup.id, payload);
