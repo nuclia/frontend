@@ -21,8 +21,6 @@ export class McpEndpointModalComponent {
   );
   copied = signal(false);
 
-  constructor() {}
-
   copyEndpoint() {
     this.endpoint.pipe(take(1)).subscribe((endpoint) => {
       navigator.clipboard.writeText(endpoint).then(() => {
