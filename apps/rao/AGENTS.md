@@ -45,7 +45,7 @@ apps/rao/src/
       /sessions            → SessionsComponent
         /                  → SessionsListComponent
         /:id/edit          → EditResourceComponent (data: { mode: 'arag' })
-      /drivers             → DriversPageComponent
+      /sources             → DriversPageComponent
       /search              → SearchPageComponent
       /widgets             → WIDGETS_ROUTES (lazy)
       /manage              → KnowledgeBoxSettingsComponent
@@ -61,7 +61,7 @@ apps/rao/src/
 /user/profile              → ProfileComponent [authGuard]
 /user/callback             → CallbackComponent
 /user/login-redirect       → AppLoginComponent
-/user/signup               → TemporaryAppSignupComponent  ← TEMPORARY (progress.com migration)
+/user/signup               → PageNotFoundComponent (canActivate: [redirectToSignUp])
 /user/onboarding           → OnboardingComponent
 /**                        → PageNotFoundComponent
 ```

@@ -1,3 +1,12 @@
+---
+name: product-knowledge
+description: >
+  Domain knowledge about the Nuclia / Progress Agentic RAG platform. Use this skill when
+  discussing product features, platform capabilities, API behaviour, UX decisions, or how
+  the platform works end-to-end. Also use when planning a new feature to validate it against
+  the platform's existing capabilities and constraints before building.
+---
+
 # Product Knowledge Skill
 
 ## Purpose

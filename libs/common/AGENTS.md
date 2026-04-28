@@ -43,20 +43,21 @@ Other small areas: `aws-onboarding/`, `directives/`, `features/`, `hint/`, `kb-c
 
 All functional guards in `libs/common/src/lib/guards/`:
 
-| Guard                      | Enforces                                                              |
-| -------------------------- | --------------------------------------------------------------------- |
-| `rootGuard`                | Redirects unauthenticated users to login                              |
-| `setAccountGuard`          | Loads account from URL param via `SDKService.setCurrentAccount()`     |
-| `setKbGuard`               | Loads KB from URL param via `SDKService.setCurrentKb()`               |
-| `setAgentGuard`            | Loads ARAG from URL param via `SDKService.setCurrentRetrievalAgent()` |
-| `setLocalKbGuard`          | Like `setKbGuard` but for NucliaDB standalone mode                    |
-| `selectAccountGuard`       | Redirects if account already selected                                 |
-| `selectKbGuard`            | Redirects if KB already selected                                      |
-| `accountOwnerGuard`        | Account-owner role required                                           |
-| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) role required                                       |
-| `aragOwnerGuard`           | ARAG owner role required                                              |
-| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                     |
-| `AuthInterceptor`          | HTTP interceptor — injects `Authorization` header from JWT            |
+| Guard                      | Enforces                                                                                             |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `rootGuard`                | Redirects unauthenticated users to login                                                             |
+| `setAccountGuard`          | Loads account from URL param via `SDKService.setCurrentAccount()`                                    |
+| `setKbGuard`               | Loads KB from URL param via `SDKService.setCurrentKb()`                                              |
+| `setAgentGuard`            | Loads ARAG from URL param via `SDKService.setCurrentRetrievalAgent()`                                |
+| `setLocalKbGuard`          | Like `setKbGuard` but for NucliaDB standalone mode                                                   |
+| `simpleModeGuard`          | `CanActivateFn` — when `NavigationService.simpleMode` is true, redirects KB home (`/`) to `./simple` |
+| `selectAccountGuard`       | Redirects if account already selected                                                                |
+| `selectKbGuard`            | Redirects if KB already selected                                                                     |
+| `accountOwnerGuard`        | Account-owner role required                                                                          |
+| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) role required                                                                      |
+| `aragOwnerGuard`           | ARAG owner role required                                                                             |
+| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                    |
+| `AuthInterceptor`          | HTTP interceptor — injects `Authorization` header from JWT                                           |
 
 ---
 

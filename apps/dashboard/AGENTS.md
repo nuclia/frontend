@@ -122,21 +122,22 @@ apps/dashboard/src/app/
 
 ## Guards Summary
 
-| Guard                    | Purpose                                                          |
-| ------------------------ | ---------------------------------------------------------------- |
-| `authGuard`              | Requires authenticated user (`JWT_KEY` in localStorage)          |
-| `rootGuard`              | Redirects to first account/KB or login                           |
-| `setAccountGuard`        | Sets active account in SDK                                       |
-| `setKbGuard`             | Sets active KB in SDK                                            |
-| `setAgentGuard`          | Sets active ARAG in SDK                                          |
-| `selectAccountGuard`     | Ensures account selection flow                                   |
-| `selectKbGuard`          | Ensures KB selection flow                                        |
-| `knowledgeBoxOwnerGuard` | KB owner/admin required                                          |
-| `aragOwnerGuard`         | ARAG owner/admin required                                        |
-| `awsGuard`               | AWS Marketplace onboarding                                       |
-| `inviteGuard`            | Validates invite token                                           |
-| `metricsEnabledGuard`    | `canMatch` — true when `FeaturesService.unstable.metrics` is on  |
-| `metricsDisabledGuard`   | `canMatch` — true when `FeaturesService.unstable.metrics` is off |
+| Guard                    | Purpose                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `authGuard`              | Requires authenticated user (`JWT_KEY` in localStorage)                              |
+| `rootGuard`              | Redirects to first account/KB or login                                               |
+| `setAccountGuard`        | Sets active account in SDK                                                           |
+| `setKbGuard`             | Sets active KB in SDK                                                                |
+| `setAgentGuard`          | Sets active ARAG in SDK                                                              |
+| `selectAccountGuard`     | Ensures account selection flow                                                       |
+| `selectKbGuard`          | Ensures KB selection flow                                                            |
+| `knowledgeBoxOwnerGuard` | KB owner/admin required                                                              |
+| `aragOwnerGuard`         | ARAG owner/admin required                                                            |
+| `awsGuard`               | AWS Marketplace onboarding                                                           |
+| `inviteGuard`            | Validates invite token                                                               |
+| `metricsEnabledGuard`    | `canMatch` — true when `FeaturesService.unstable.metrics` is on                      |
+| `metricsDisabledGuard`   | `canMatch` — true when `FeaturesService.unstable.metrics` is off                     |
+| `simpleModeGuard`        | On KB home (`/`): redirects to `/simple` when `NavigationService.simpleMode` is true |
 
 ---
 
