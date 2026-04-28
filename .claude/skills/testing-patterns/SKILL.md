@@ -1,4 +1,3 @@
-````skill
 ---
 name: testing-patterns
 description: >
@@ -28,11 +27,11 @@ when they decide the feature is stable enough. Agents must follow these rules:
 
 Two separate test stacks live in this repo. Match the stack to the project:
 
-| Projects | Runner | Config |
-|---|---|---|
+| Projects                                                                                                                                   | Runner                              | Config                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | ----------------------------------------------- |
 | Angular apps & libs (`dashboard`, `rao`, `manager-v2`, `nucliadb-admin`, `core`, `common`, `sistema`, `user`, `sync`, `pastanaga-angular`) | **Jest 30** + `jest-preset-angular` | `jest.config.js` / `jest.config.ts` per project |
-| `libs/search-widget` (Svelte 5) | **Vitest 4** | `libs/search-widget/vite.config.mjs` |
-| `libs/rao-widget` (React 19) | **Vitest 4** | `libs/rao-widget/vite.config.ts` |
+| `libs/search-widget` (Svelte 5)                                                                                                            | **Vitest 4**                        | `libs/search-widget/vite.config.mjs`            |
+| `libs/rao-widget` (React 19)                                                                                                               | **Vitest 4**                        | `libs/rao-widget/vite.config.ts`                |
 
 Run with `nx test <project-name>` in all cases.
 
@@ -75,12 +74,10 @@ describe('MyFeatureComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        MyFeatureComponent,          // standalone component under test
+        MyFeatureComponent, // standalone component under test
         MockModule(TranslateModule), // mock heavy modules
       ],
-      providers: [
-        MockProvider(SomeService, { items$: of([]) }),
-      ],
+      providers: [MockProvider(SomeService, { items$: of([]) })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MyFeatureComponent);
@@ -122,7 +119,7 @@ For `input.required<T>()` you must call `setInput` before the first `detectChang
 ```ts
 it('shows updated label', () => {
   fixture.componentRef.setInput('label', 'New Label');
-  fixture.detectChanges();                    // ← required!
+  fixture.detectChanges(); // ← required!
   const el = fixture.nativeElement.querySelector('[data-cy="label"]');
   expect(el.textContent).toBe('New Label');
 });
@@ -136,8 +133,8 @@ import { fakeAsync, tick } from '@angular/core/testing';
 it('debounces search', fakeAsync(() => {
   component.searchTerm.set('hello');
   fixture.detectChanges();
-  tick(300);                // advance virtual clock
-  fixture.detectChanges();  // re-render after async work
+  tick(300); // advance virtual clock
+  fixture.detectChanges(); // re-render after async work
   expect(component.results().length).toBeGreaterThan(0);
 }));
 ```
@@ -148,17 +145,17 @@ it('debounces search', fakeAsync(() => {
 
 The entire codebase uses **[ng-mocks](https://ng-mocks.sudo.eu/)** for test doubles. Key helpers:
 
-| Helper | Usage |
-|---|---|
+| Helper                             | Usage                                                          |
+| ---------------------------------- | -------------------------------------------------------------- |
 | `MockProvider(Service, overrides)` | Provide a mock service with specific method/property overrides |
-| `MockModule(SomeModule)` | Replace an NgModule with empty mocks of all its declarations |
-| `MockComponent(SomeComponent)` | Replace a specific standalone component with a stub |
+| `MockModule(SomeModule)`           | Replace an NgModule with empty mocks of all its declarations   |
+| `MockComponent(SomeComponent)`     | Replace a specific standalone component with a stub            |
 
 ```ts
 providers: [
   // Override specific properties/methods only — rest are auto-mocked
   MockProvider(SDKService, {
-    currentKb: of(mockKb),    // BehaviorSubject / Observable override
+    currentKb: of(mockKb), // BehaviorSubject / Observable override
     nuclia: { options: { standalone: false }, db: {} },
   }),
 
@@ -175,7 +172,7 @@ providers: [
       getZones: () => of([{ slug: 'eu', title: 'Europe' }]),
     },
   },
-]
+];
 ```
 
 Never import the real `HttpClientModule` or call real network in unit tests; use `MockProvider` with stub return values instead.
@@ -196,9 +193,7 @@ describe('SomeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        MockProvider(SDKService, { currentKb: of(mockKb) }),
-      ],
+      providers: [MockProvider(SDKService, { currentKb: of(mockKb) })],
     });
     service = TestBed.inject(SomeService);
   });
@@ -214,6 +209,7 @@ describe('SomeService', () => {
 ```
 
 Key patterns:
+
 - `skip(1)` + `take(1)` to assert on the _next_ emission from a `BehaviorSubject`
 - `// @ts-ignore access to private member` when seeding internal state directly
 - `jest.fn()` for methods that should be called (not `vi.fn()` — that's Vitest)
@@ -245,7 +241,7 @@ beforeEach(() => {
 
 For components that use `TranslateModule`, use either:
 
-1. **`MockModule(TranslateModule)`** — all translations return the key string. Simple and fast.  
+1. **`MockModule(TranslateModule)`** — all translations return the key string. Simple and fast.
 2. **`TranslateModule.forRoot({ loader: { provide: TranslateLoader, useFactory: () => ({ getTranslation: () => of(EN) }) } })`** — loads real translations. Use only when the test asserts on translated text.
 
 ---
@@ -293,7 +289,7 @@ describe('Button', () => {
     const component = mount(Modal, {
       target: document.body,
       props: { show: true },
-      events: { close: mock },   // Svelte 5 event binding
+      events: { close: mock }, // Svelte 5 event binding
     });
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     expect(mock).toHaveBeenCalled();
@@ -303,6 +299,7 @@ describe('Button', () => {
 ```
 
 **Key points:**
+
 - `events: { eventName: handler }` in `mount()` binds DOM/custom events
 - Direct DOM queries (`document.querySelector`) are the primary assertion mechanism
 - Stores (e.g., `searchQuery`, `typeAhead`) can be set directly in tests to seed state
@@ -331,12 +328,11 @@ describe('MyWidget', () => {
 
 ## Common Pitfalls
 
-| Symptom | Cause | Fix |
-|---|---|---|
-| `NullInjectorError: No provider for X` | Forgot to mock a transitive dependency | Add `MockProvider(X)` to providers |
-| Template renders stale data | OnPush not re-checked | Call `fixture.detectChanges()` after mutation |
-| `ExpressionChangedAfterItHasBeenCheckedError` | State mutated after CD | Move initialization to `ngOnInit` or use signals |
-| Signal input throws required input error | `setInput` called after first `detectChanges` | Set all required signal inputs before first `detectChanges` |
-| `Cannot read property 'subscribe' of undefined` | `MockProvider` missing an Observable property | Pass `{ myObs$: of(value) }` as the override |
-| `ERROR: 'describe' is not defined` in Vitest | `globals: true` missing in vite config | Already set in both widget configs — check you're running `nx test`, not `vitest` directly |
-````
+| Symptom                                         | Cause                                         | Fix                                                                                        |
+| ----------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `NullInjectorError: No provider for X`          | Forgot to mock a transitive dependency        | Add `MockProvider(X)` to providers                                                         |
+| Template renders stale data                     | OnPush not re-checked                         | Call `fixture.detectChanges()` after mutation                                              |
+| `ExpressionChangedAfterItHasBeenCheckedError`   | State mutated after CD                        | Move initialization to `ngOnInit` or use signals                                           |
+| Signal input throws required input error        | `setInput` called after first `detectChanges` | Set all required signal inputs before first `detectChanges`                                |
+| `Cannot read property 'subscribe' of undefined` | `MockProvider` missing an Observable property | Pass `{ myObs$: of(value) }` as the override                                               |
+| `ERROR: 'describe' is not defined` in Vitest    | `globals: true` missing in vite config        | Already set in both widget configs — check you're running `nx test`, not `vitest` directly |

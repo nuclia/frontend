@@ -115,25 +115,28 @@ Never hard-code route paths in components. Use `NavigationService`:
 
 Reactive helpers: `homeUrl`, `kbUrl`, `inArag()`, `inKbSettings()`.
 
+`simpleMode` — `BehaviorSubject<boolean>` (default `false`). When `true`, `kbUrl` appends `/simple` to the KB URL. Set via `setSimpleMode(value: boolean)`. Read by `simpleModeGuard` in `libs/common` to auto-redirect the KB home page.
+
 ---
 
 ## Guards (from `@flaps/common`)
 
 Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app routing:
 
-| Guard                      | Enforces                                                                                  |
-| -------------------------- | ----------------------------------------------------------------------------------------- |
-| `authGuard`                | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=` |
-| `setAccountGuard`          | Calls `SDKService.setCurrentAccount()` from route param                                   |
-| `setKbGuard`               | Calls `SDKService.setCurrentKb()` from route params                                       |
-| `setAgentGuard`            | Calls `SDKService.setCurrentRetrievalAgent()` from route params                           |
-| `accountOwnerGuard`        | Account-owner role required                                                               |
-| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) required                                                                |
-| `aragOwnerGuard`           | ARAG owner required                                                                       |
-| `selectAccountGuard`       | Redirects if account already selected                                                     |
-| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                         |
-| `metricsEnabledGuard`      | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`)        |
-| `metricsDisabledGuard`     | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`)       |
+| Guard                      | Enforces                                                                                                                                                                                                        |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`                | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=`                                                                                                                       |
+| `setAccountGuard`          | Calls `SDKService.setCurrentAccount()` from route param                                                                                                                                                         |
+| `setKbGuard`               | Calls `SDKService.setCurrentKb()` from route params                                                                                                                                                             |
+| `setAgentGuard`            | Calls `SDKService.setCurrentRetrievalAgent()` from route params                                                                                                                                                 |
+| `accountOwnerGuard`        | Account-owner role required                                                                                                                                                                                     |
+| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) required                                                                                                                                                                                      |
+| `aragOwnerGuard`           | ARAG owner required                                                                                                                                                                                             |
+| `selectAccountGuard`       | Redirects if account already selected                                                                                                                                                                           |
+| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                               |
+| `metricsEnabledGuard`      | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`)                                                                                                                              |
+| `metricsDisabledGuard`     | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`)                                                                                                                             |
+| `redirectToSignUp`         | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in platform + rao after signup migrated away from the monorepo. |
 
 ---
 

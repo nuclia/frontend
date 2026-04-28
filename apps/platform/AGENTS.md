@@ -59,7 +59,7 @@ apps/platform/src/
 /user/profile              → ProfileComponent [authGuard]
 /user/callback             → CallbackComponent
 /user/login-redirect       → AppLoginComponent
-/user/signup               → TemporaryAppSignupComponent  ← TEMPORARY (progress.com migration)
+/user/signup               → PageNotFoundComponent (canActivate: [redirectToSignUp])
 /user/onboarding           → OnboardingComponent
 /**                        → PageNotFoundComponent
 ```
@@ -97,8 +97,7 @@ apps/platform/src/
 
 ## Gotchas
 
-- **`/user/signup` is temporary.** The `TemporaryAppSignupComponent` route exists while the
-  signup form is being migrated to `progress.com`. Remove once migration is complete.
+- **`/user/signup` redirects to `progress.com`.** The `redirectToSignUp` guard sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. The component slot is `PageNotFoundComponent` and is never rendered.
 - **`/at/:account` redirects to `/manage`**, not to a KB dashboard. This app is account-scoped
   (no `/at/:account/:zone/:kb` pattern). All KB routes live in `apps/dashboard`.
 - **`PlatformComponent` is standalone** (`imports: [RouterOutlet]`) but used inside an NgModule
