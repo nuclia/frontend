@@ -99,8 +99,6 @@ export class OnboardingService {
       });
       console.error('No signup data');
       throw new Error('No signup data');
-      // redirect to sign up form
-      location.href = 'https://www.progress.com/agentic-rag';
     } else {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
