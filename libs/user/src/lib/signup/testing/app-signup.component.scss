@@ -16,6 +16,12 @@
     text-align: center;
   }
 
+  .gate-form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
   .signup-error {
     background-color: $color-secondary-regular;
     padding: rhythm(0.5) rhythm(1);
