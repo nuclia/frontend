@@ -82,11 +82,12 @@
     }
 
     @if (!standalone) {
-      <stf-notification-button
-        [count]="notificationsCount | async"
-        [active]="isNotificationPanelOpen"
-        (click)="toggleNotificationPanel.emit()"></stf-notification-button>
-
+      @if (!(simpleMode | async)) {
+        <stf-notification-button
+          [count]="notificationsCount | async"
+          [active]="isNotificationPanelOpen"
+          (click)="toggleNotificationPanel.emit()"></stf-notification-button>
+      }
       <app-user-menu
         data-cy="user-menu"
         [userInfo]="userInfo | async" />

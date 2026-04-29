@@ -39,17 +39,42 @@
         <span>: {{ counter()?.error || 0 }}</span>
       </div>
     } @else if (step() === 3) {
-      @if (hideResources()) {
-        <pa-button
-          kind="primary"
-          icon="folder"
-          (click)="resetSearch()">
-          {{ 'generic.back' | translate }}
-        </pa-button>
-      }
-      <div>
-        <strong>{{ 'simple.your-resources' | translate }}</strong>
-        <span>: {{ counter()?.processed || 0 }}</span>
+      <div class="nav">
+        @if (view() === 'resources') {
+          <pa-icon
+            name="folder"
+            color="white"></pa-icon>
+        } @else {
+          <pa-button
+            kind="secondary"
+            aspect="basic"
+            icon="folder"
+            (click)="changeView('resources')">
+            {{ 'simple.your-resources' | translate }}
+          </pa-button>
+        }
+        <div>
+          <strong>{{ 'simple.your-resources' | translate }}</strong>
+          <span>: {{ counter()?.processed || 0 }}</span>
+        </div>
+      </div>
+      <div class="nav">
+        @if (view() === 'history') {
+          <pa-icon
+            name="clock-dash"
+            color="white"></pa-icon>
+        } @else {
+          <pa-button
+            kind="secondary"
+            aspect="basic"
+            icon="clock-dash"
+            (click)="changeView('history')">
+            {{ 'simple.history' | translate }}
+          </pa-button>
+        }
+        <div>
+          <strong>{{ 'simple.history' | translate }}</strong>
+        </div>
       </div>
     }
   </div>
@@ -82,8 +107,11 @@
             [innerHtml]="widgetPreview.preview"></div>
         }
       }
-      @if (!hideResources()) {
+      @if (view() === 'resources') {
         <app-resource-table></app-resource-table>
+      }
+      @if (view() === 'history') {
+        <app-history-table></app-history-table>
       }
     }
   </div>

@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { SimpleKBService } from '../simple-kb.service';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
-import { getResourceErrors, UploadService } from '@flaps/common';
+import { getResourceErrors } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { addMinutes } from 'date-fns';
 import { SisIconsModule, SisModalService } from '@nuclia/sistema';
@@ -32,7 +32,6 @@ export class ResourceTableComponent {
   simpleKBService = inject(SimpleKBService);
   sdk = inject(SDKService);
   modalService = inject(SisModalService);
-  uploadService = inject(UploadService);
 
   columns = ['file', 'type', 'status', 'date-added', 'delete'];
   RESOURCE_STATUS = RESOURCE_STATUS;
@@ -81,8 +80,7 @@ export class ResourceTableComponent {
         switchMap((kb) => new Resource(this.sdk.nuclia, kb.id, { id }).delete()),
       )
       .subscribe(() => {
-        this.simpleKBService.refresh();
-        this.uploadService.updateAfterUploads();
+        this.simpleKBService.forceRefresh();
       });
   }
 

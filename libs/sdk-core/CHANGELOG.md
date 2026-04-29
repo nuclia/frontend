@@ -1,3 +1,9 @@
+# 1.32.1 (unreleased)
+
+### Improvements
+
+- Support endpoint to append messages to a conversation field
+
 # 1.32.0 (2026-03-13)
 
 ### Breaking changes

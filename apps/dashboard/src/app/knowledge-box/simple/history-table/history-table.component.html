@@ -1,0 +1,101 @@
+<pa-table
+  border
+  columns="1fr 1fr 140px 140px 70px">
+  <pa-table-header>
+    @for (column of columns; track column) {
+      <pa-table-cell header>
+        <span class="title-s">{{ 'simple.column.' + column | translate }}</span>
+      </pa-table-cell>
+    }
+  </pa-table-header>
+  @for (row of rows | async; track row.resourceId + row.questionIdent) {
+    @let rowId = row.resourceId + row.questionIdent;
+    <pa-table-row>
+      <pa-table-cell>
+        @if (expanded()['question-' + rowId]) {
+          <span class="body-m">{{ row.question }}</span>
+        } @else {
+          <span class="body-m">{{ row.questionShort || row.question }}</span>
+        }
+        @if (!!row.questionShort) {
+          <pa-button
+            class="expander"
+            size="small"
+            [icon]="expanded()['question-' + rowId] ? 'chevron-up' : 'chevron-down'"
+            (click)="toggleExpanded('question-' + rowId)"
+            aspect="basic"></pa-button>
+        }
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (expanded()['answer-' + rowId]) {
+          <span class="body-s">{{ row.answer }}</span>
+        } @else {
+          <span class="body-s">{{ row.answerShort || row.answer || '-' }}</span>
+        }
+        @if (!!row.answerShort) {
+          <pa-button
+            class="expander"
+            aspect="basic"
+            size="small"
+            [icon]="expanded()['answer-' + rowId] ? 'chevron-up' : 'chevron-down'"
+            (click)="toggleExpanded('answer-' + rowId)"></pa-button>
+        }
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (row.failed) {
+          <span class="title-xxs error">
+            {{ 'simple.failed' | translate }}
+          </span>
+        } @else {
+          <span class="title-xxs success">
+            {{ 'simple.successful' | translate }}
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </span>
+        }
+      </pa-table-cell>
+      <pa-table-cell>
+        <span class="body-s">{{ (row.created | date: 'mediumDate') || '-' }}</span>
+      </pa-table-cell>
+      <pa-table-cell>
+        <pa-button
+          aspect="basic"
+          icon="trash"
+          (click)="deleteQuestion(row)"
+          size="small">
+          {{ 'simple.delete' | translate }}
+        </pa-button>
+      </pa-table-cell>
+    </pa-table-row>
+  }
+</pa-table>
+@if (loading()) {
+  <div class="skeletons">
+    <nsi-skeleton
+      width="100%"
+      height="2.5rem"
+      borderRadius="small"></nsi-skeleton>
+    <nsi-skeleton
+      width="100%"
+      height="2.5rem"
+      borderRadius="small"></nsi-skeleton>
+    <nsi-skeleton
+      width="100%"
+      height="2.5rem"
+      borderRadius="small"></nsi-skeleton>
+  </div>
+}
+@if (!loading() && ((rows | async) || []).length === 0) {
+  <div class="empty body-m">{{ 'simple.no-questions' | translate }}</div>
+}
+@if ((conversations | async)?.hasMore) {
+  <div class="load-more">
+    <pa-button
+      aspect="basic"
+      [disabled]="loading()"
+      (click)="loadPage(page() + 1)">
+      {{ 'generic.show_more' | translate }}
+    </pa-button>
+  </div>
+}
