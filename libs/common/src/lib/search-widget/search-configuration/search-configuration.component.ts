@@ -466,7 +466,13 @@ export class SearchConfigurationComponent {
       return;
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
-    this.currentConfig = { ...currentConfig, routing: config };
+    const cleanConfig: Widget.RoutingConfig = config.routing
+      ? {
+          ...config,
+          routing: { ...config.routing, rules: config.routing.rules.filter((rule) => !!rule.search_config) },
+        }
+      : config;
+    this.currentConfig = { ...currentConfig, routing: cleanConfig };
     this.isConfigModified =
       !this.ignoreNextRoutingRefresh && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
