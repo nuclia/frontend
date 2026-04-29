@@ -5,8 +5,8 @@ import type { IErrorResponse, INuclia } from '../../models';
 import type {
   Classification,
   CloudLink,
+  ConversationField,
   ExtractedText,
-  FIELD_TYPE,
   FileField,
   FileFieldData,
   ICreateResource,
@@ -14,6 +14,7 @@ import type {
   IResource,
   LinkField,
   LinkFieldData,
+  Message,
   Paragraph,
   PositionedNER,
   ResourceData,
@@ -22,7 +23,7 @@ import type {
   TaskResults,
   TextField,
 } from './resource.models';
-import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
+import { ExtractedDataTypes, FIELD_TYPE, ResourceFieldProperties } from './resource.models';
 import type { ChatOptions, Search, SearchOptions } from '../search/search.models';
 import type { Ask } from '../search/ask.models';
 import { ask } from '../search/ask';
@@ -293,8 +294,17 @@ export class Resource extends ReadableResource implements IResource {
       });
     ```
   */
-  setField(type: FIELD_TYPE, field: string, data: TextField | LinkField | FileField): Observable<void> {
+  setField(
+    type: FIELD_TYPE,
+    field: string,
+    data: TextField | LinkField | FileField | ConversationField,
+  ): Observable<void> {
     return defer(() => this.nuclia.rest.put<void>(`${this.path}/${type}/${field}`, data)).pipe(retry(retry429Config()));
+  }
+
+  /** Appends messages to a conversation field */
+  appendMessages(field: string, messages: Message[]): Observable<void> {
+    return this.nuclia.rest.put<void>(`${this.path}/${FIELD_TYPE.conversation}/${field}/messages`, messages);
   }
 
   /**
