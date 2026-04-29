@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
 const CLASSIC_STEPS = [1, 3, 4, 5, 6];
-const COWORK_STEPS = [1, 2, 4, 5, 6];
+const COWORK_STEPS = [1, 2, 3, 4, 5, 6];
 const PRESET_COWORK_STEPS = [1, 4, 5, 6];
 @Injectable({
   providedIn: 'root',
