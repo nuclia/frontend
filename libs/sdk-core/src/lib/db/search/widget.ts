@@ -190,8 +190,6 @@ export namespace Widget {
     name: string;
     creationDate: string;
     searchConfigId?: string;
-    generativeModel?: string;
-    vectorset?: string;
     widgetConfig?: WidgetConfiguration;
     raoWidgetConfig?: RaoWidgetConfiguration;
   }
