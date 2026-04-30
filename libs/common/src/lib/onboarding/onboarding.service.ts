@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import {
   SDKService,
   STFUtils,
@@ -98,7 +98,7 @@ export class OnboardingService {
         creationFailed: true,
       });
       console.error('No signup data');
-      throw new Error('No signup data');
+      return throwError(() => new Error('No signup data'));
     } else {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
