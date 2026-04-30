@@ -293,15 +293,12 @@ export class Authentication implements IAuthentication {
     if (!this.nuclia.options.oauth) {
       return throwError(() => new Error('OAuth parameters are missing.'));
     }
-    return this.fetch<AuthTokens>(
-      `${this.getHydraUrl()}/oauth2/token`,
-      {
-        grant_type: 'refresh_token',
-        client_id: this.nuclia.options.oauth.client_id,
-        refresh_token: this.getRefreshToken(),
-      },
-      {},
-    ).pipe(
+    const body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: this.nuclia.options.oauth.client_id,
+      refresh_token: this.getRefreshToken(),
+    });
+    return this.fetch<AuthTokens>(`${this.getHydraUrl()}/oauth2/token`, body, {}, true).pipe(
       catchError((e) => {
         this.logout();
         return throwError(e);
