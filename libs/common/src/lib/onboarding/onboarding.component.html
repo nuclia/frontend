@@ -51,5 +51,14 @@
         }
       }
     }
+    @if (showLogout) {
+      <footer>
+        <pa-button
+          aspect="basic"
+          (click)="logout()">
+          {{ 'generic.logout' | translate }}
+        </pa-button>
+      </footer>
+    }
   </div>
 </nus-user-container>
