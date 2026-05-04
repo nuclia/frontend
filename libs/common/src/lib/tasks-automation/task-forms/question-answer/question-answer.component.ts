@@ -5,7 +5,7 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { QAOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { filter, map, take } from 'rxjs';
 
@@ -25,9 +25,15 @@ import { filter, map, take } from 'rxjs';
 export class QuestionAnswerComponent extends TaskRouteDirective {
   type: TaskName = 'synthetic-questions';
 
+  readonly MAX_QUESTIONS = { min: 5, max: 200, default: 20 };
+
   questionAnswerForm = new FormGroup({
     generate_answers_prompt: new FormControl<string>('', { nonNullable: true }),
     question_generator_prompt: new FormControl<string>('', { nonNullable: true }),
+    max_questions: new FormControl<number>(this.MAX_QUESTIONS.default, {
+      nonNullable: true,
+      validators: [Validators.min(this.MAX_QUESTIONS.min), Validators.max(this.MAX_QUESTIONS.max)],
+    }),
   });
 
   qaOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.qa)?.qa));
@@ -45,11 +51,14 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
   }
 
   onSave(commonConfig: TaskFormCommonConfig) {
-    const operation: QAOperation =
-      !!this.questionAnswerForm.value.generate_answers_prompt?.trim() ||
-      !!this.questionAnswerForm.value.question_generator_prompt?.trim()
-        ? this.questionAnswerForm.getRawValue()
-        : {};
+    const { generate_answers_prompt, question_generator_prompt, max_questions } = this.questionAnswerForm.getRawValue();
+    const operation: QAOperation = { max_questions };
+    if (generate_answers_prompt?.trim()) {
+      operation.generate_answers_prompt = generate_answers_prompt;
+    }
+    if (question_generator_prompt?.trim()) {
+      operation.question_generator_prompt = question_generator_prompt;
+    }
     operation.triggers = commonConfig.webhook && [commonConfig.webhook];
     const parameters = {
       name: commonConfig.name,
