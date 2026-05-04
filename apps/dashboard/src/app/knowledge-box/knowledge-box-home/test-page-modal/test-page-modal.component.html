@@ -3,6 +3,16 @@
   fitContentHeight>
   <pa-modal-title>
     {{ 'dashboard-home.test-page.title' | translate }}
+    <pa-button
+      icon="info"
+      aspect="basic"
+      size="small"
+      [paPopup]="testPageInfoDropdown"></pa-button>
+    <pa-dropdown
+      #testPageInfoDropdown
+      class="info-dropdown">
+      <pa-option [readonly]="true">{{ 'test-page-modal.info.text' | translate }}</pa-option>
+    </pa-dropdown>
   </pa-modal-title>
   <pa-modal-content>
     <div
@@ -32,7 +42,7 @@
       }
       @if (url()) {
         <div>
-          <div class="title-xs">{{ 'dashboard-home.test-page.generated-url'| translate }}</div>
+          <div class="title-xs">{{ 'dashboard-home.test-page.generated-url' | translate }}</div>
           <div class="generated-url">
             <pa-textarea
               rows="6"

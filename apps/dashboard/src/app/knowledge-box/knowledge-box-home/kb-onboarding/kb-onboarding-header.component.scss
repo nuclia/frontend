@@ -1,0 +1,96 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: block;
+  width: 100%;
+  height: fit-content;
+}
+
+.kb-onboarding-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: rhythm(1) 0 rhythm(3);
+}
+
+.onboarding-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: rhythm(2.5);
+  max-width: calc(rhythm(80) + rhythm(16));
+  width: 100%;
+
+  nsi-info-card {
+    width: 100%;
+    max-width: rhythm(80);
+    text-align: left;
+
+    &.processing-info {
+      max-width: 100%;
+    }
+  }
+
+  &--done {
+    gap: rhythm(3);
+  }
+}
+
+.onboarding-title-row {
+  display: flex;
+  align-items: center;
+  gap: rhythm(5);
+}
+
+.onboarding-title {
+  margin: 0;
+  font-size: var(--font-size-xxxl);
+  font-weight: var(--font-weight-semi-bold);
+  line-height: var(--line-height-xxl);
+  color: var(--color-dark-stronger);
+  white-space: nowrap;
+}
+
+.onboarding-actions {
+  display: flex;
+  gap: rhythm(2);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  li {
+    pointer-events: none;
+  }
+
+  pa-checkbox {
+    ::ng-deep .pa-toggle-label {
+      font-size: var(--font-size-l);
+      font-weight: var(--font-weight-semi-bold);
+      line-height: var(--line-height-l);
+      color: var(--color-dark-stronger);
+      white-space: normal;
+    }
+  }
+
+  &__item--done pa-checkbox {
+    ::ng-deep .pa-toggle-control:checked {
+      border-color: var(--color-success-regular) !important;
+      background-color: var(--color-success-regular) !important;
+    }
+  }
+}
+
+.align-center-2 {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+}

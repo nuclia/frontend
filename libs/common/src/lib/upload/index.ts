@@ -1,3 +1,4 @@
+export * from './resource-handling-banner/resource-handling-banner.component';
 export * from './create-link/create-link.component';
 export * from './csv-select/csv-select.component';
 export * from './desktop-upload.service';

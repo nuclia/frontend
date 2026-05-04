@@ -11,6 +11,7 @@ import {
   PaButtonModule,
   PaDateTimeModule,
   PaDropdownModule,
+  PaExpanderModule,
   PaIconModule,
   PaPopupModule,
   PaTableModule,
@@ -20,6 +21,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisIconsModule } from '@nuclia/sistema';
+import { KbOnboardingHeaderComponent } from './knowledge-box-home/kb-onboarding/kb-onboarding-header.component';
 
 import {
   ChartsModule,
@@ -37,6 +39,7 @@ import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts
 
 import { STFPipesModule } from '@flaps/core';
 import { LastResourcesComponent } from './knowledge-box-home/last-resources/last-resources.component';
+import { ContentPlaceholderComponent } from './knowledge-box-home/content-placeholder/content-placeholder.component';
 
 @NgModule({
   imports: [
@@ -52,6 +55,7 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
     HintModule,
     UsersManageModule,
     PaButtonModule,
+    PaExpanderModule,
     PaTextFieldModule,
     PaDropdownModule,
     PaTooltipModule,
@@ -77,6 +81,8 @@ import { LastResourcesComponent } from './knowledge-box-home/last-resources/last
     STFPipesModule,
     RangeChartComponent,
     LastResourcesComponent,
+    ContentPlaceholderComponent,
+    KbOnboardingHeaderComponent,
   ],
   declarations: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],
   exports: [KnowledgeBoxComponent, KnowledgeBoxHomeComponent],

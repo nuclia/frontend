@@ -4,8 +4,14 @@
   --width-small-column: #{rhythm(48)};
   --gap-size: #{rhythm(2)};
 
-  display: flex;
+  display: grid;
+  grid-template-rows: min-content;
+  grid-template-columns: 1fr 1fr;
   gap: var(--gap-size);
+
+  .fullwidth-container {
+    grid-column: span 2;
+  }
 
   .column-container {
     display: flex;
@@ -33,7 +39,7 @@
     align-items: center;
     display: flex;
     gap: rhythm(1);
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
 
   .title-with-icon {
@@ -42,13 +48,19 @@
     }
   }
 
-  .title-with-action {
+  .title-with-actions {
     align-items: center;
     display: flex;
     justify-content: space-between;
 
-    pa-button {
-      margin-right: calc(-1 * #{rhythm(1)});
+    .actions {
+      display: flex;
+      gap: rhythm(1);
+      align-items: center;
+
+      &:has(pa-button) {
+        margin-right: calc(-1 * #{rhythm(1)});
+      }
     }
   }
 
@@ -149,6 +161,21 @@
   .blocked-features {
     .title-with-icon {
       margin-bottom: rhythm(1);
+    }
+  }
+
+  .info-text {
+    color: $color-neutral-regular;
+    margin: 0;
+  }
+
+  .resources-info-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: calc(-1 * #{rhythm(1)});
+
+    pa-button {
+      margin-right: calc(-1 * #{rhythm(1)});
     }
   }
 }

@@ -1,20 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FeaturesService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import {
-  catchError,
-  distinctUntilKeyChanged,
-  filter,
-  forkJoin,
-  map,
-  of,
-  Subject,
-  switchMap,
-  take,
-  takeUntil,
-} from 'rxjs';
-import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
-import { WelcomeInExistingKBComponent } from '../../onboarding/welcome-in-existing-kb/welcome-in-existing-kb.component';
+import { FeaturesService, SDKService } from '@flaps/core';
+import { SisToastService } from '@nuclia/sistema';
+import { catchError, distinctUntilKeyChanged, filter, map, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { addDays } from 'date-fns';
 
 @Component({
@@ -27,27 +14,10 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   constructor(
     private sdk: SDKService,
     private features: FeaturesService,
-    private modalService: SisModalService,
     private toaster: SisToastService,
   ) {}
 
   ngOnInit() {
-    const gettingStartedDone = localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true';
-    if (!gettingStartedDone) {
-      forkJoin([
-        this.sdk.counters.pipe(take(1)),
-        this.features.isKbAdmin.pipe(take(1)),
-        this.sdk.currentAccount.pipe(take(1)),
-      ])
-        .pipe(filter(([, , account]) => account.workflow !== 'cowork'))
-        .subscribe(([counters, isKbAdmin]) => {
-          if (counters?.resources === 0 && isKbAdmin) {
-            this.modalService.openModal(GettingStartedComponent);
-          } else if (!isKbAdmin) {
-            this.modalService.openModal(WelcomeInExistingKBComponent);
-          }
-        });
-    }
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),

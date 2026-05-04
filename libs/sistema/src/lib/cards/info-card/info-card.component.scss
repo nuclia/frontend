@@ -10,6 +10,7 @@
   border-radius: rhythm(1);
   color: var(--info-card-color);
   display: flex;
+  align-items: center;
   gap: rhythm(1);
   padding: rhythm(1.5) rhythm(2);
 
@@ -22,6 +23,13 @@
     --info-card-background: #{$color-tertiary-lightest};
     --info-card-border-color: #{$color-tertiary-lighter};
     --info-card-color: #{$color-tertiary-strong};
+  }
+  &.transparent {
+    --info-card-background: transparent;
+    --info-card-border-color: transparent;
+    --info-card-color: #{$color-neutral-regular};
+    padding: 0;
+    border-radius: 0;
   }
 
   .body-m {
