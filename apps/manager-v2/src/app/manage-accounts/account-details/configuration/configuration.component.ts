@@ -49,6 +49,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
+    allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
+    labels: new FormGroup<{ progress_account: FormControl<boolean> } | null>({
+      progress_account: new FormControl<boolean>(false, { nonNullable: true }),
+    }),
   });
   free_tokens_per_billing_cycle = 0;
   provider?: SubscriptionProvider;

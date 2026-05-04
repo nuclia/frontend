@@ -39,6 +39,8 @@ export interface Account {
   trial_expiration_date?: string;
   type: AccountTypes;
   users: AccountUser[];
+  allow_access_non_enterprise_models: boolean;
+  labels: AccountLabels | null;
 }
 
 export interface Kb {
@@ -64,4 +66,8 @@ export interface AccountModelPayload {
 export interface ZoneModels {
   zone: ZoneSummary;
   models: CustomModelItem[];
+}
+
+export interface AccountLabels {
+  progress_account: boolean;
 }
