@@ -32,12 +32,13 @@
               </code>
             </blockquote>
           </nsi-info-card>
-          <pa-textarea
+          <nsi-expandable-textarea
             rows="4"
             formControlName="question"
+            modalTitle="tasks-automation.generator.your-question.json-schema"
             [errorMessages]="errorMessages">
             {{ 'tasks-automation.generator.your-question.json-schema' | translate }}
-          </pa-textarea>
+          </nsi-expandable-textarea>
         } @else {
           @if (customPrompt) {
             <nsi-info-card>
@@ -46,9 +47,14 @@
           } @else {
             <nsi-info-card>{{ 'tasks-automation.generator.your-question.info-question' | translate }}</nsi-info-card>
           }
-          <pa-textarea
+          <nsi-expandable-textarea
             rows="4"
             formControlName="question"
+            [modalTitle]="
+              customPrompt
+                ? 'tasks-automation.generator.your-question.prompt-label'
+                : 'tasks-automation.generator.your-question.question-label'
+            "
             [errorMessages]="errorMessages">
             {{
               (customPrompt
@@ -56,7 +62,7 @@
                 : 'tasks-automation.generator.your-question.question-label'
               ) | translate
             }}
-          </pa-textarea>
+          </nsi-expandable-textarea>
         }
       </div>
     </nsi-two-columns-configuration-item>
