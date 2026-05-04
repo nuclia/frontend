@@ -32,4 +32,6 @@ export const ACCOUNT_DETAILS: AccountDetails = {
       storage_limit_max_resources_per_kb: -1,
     },
   },
+  allowAccessNonEnterpriseModels: false,
+  labels: null,
 };

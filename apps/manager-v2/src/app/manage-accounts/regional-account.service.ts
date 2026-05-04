@@ -221,6 +221,8 @@ export class RegionalAccountService {
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
       created: account.created,
+      allowAccessNonEnterpriseModels: account.allow_access_non_enterprise_models,
+      labels: account.labels,
     };
   }
 

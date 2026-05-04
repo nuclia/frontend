@@ -145,6 +145,18 @@
         }
       </div>
     </div>
+    <pa-toggle
+      labelOnRight
+      formControlName="allowAccessNonEnterpriseModels">
+      Allow access to non-enterprise models
+    </pa-toggle>
+    <ng-container formGroupName="labels">
+      <pa-toggle
+        labelOnRight
+        formControlName="progress_account">
+        Progress account
+      </pa-toggle>
+    </ng-container>
   }
   <nma-form-footer
     [disabled]="configForm.pristine || configForm.invalid || isSaving"
