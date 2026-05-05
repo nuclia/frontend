@@ -49,7 +49,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }),
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
-    workflow: new FormControl<WorkflowType | null>(null),
+    workflow: new FormControl<WorkflowType>('classic'),
     allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
     labels: new FormGroup({
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
