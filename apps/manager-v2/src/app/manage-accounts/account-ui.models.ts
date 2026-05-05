@@ -8,6 +8,7 @@ import {
   WorkflowType,
 } from '@nuclia/core';
 import { ZoneSummary } from '../manage-zones/zone.models';
+import { AccountLabels } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -16,6 +17,7 @@ export interface AccountSummary {
   type: AccountTypes;
   created: string;
   email: string;
+  labels: AccountLabels | null;
 }
 
 export interface AccountDetails extends AccountSummary {
@@ -27,6 +29,7 @@ export interface AccountDetails extends AccountSummary {
   trialExpirationDate?: string;
   users: AccountUser[];
   workflow?: WorkflowType;
+  allowAccessNonEnterpriseModels: boolean;
 }
 
 export interface KbSummary {
@@ -86,4 +89,6 @@ export interface AccountConfigurationPayload {
   trialExpirationDate?: string | null;
   type: AccountTypes;
   workflow?: WorkflowType | null;
+  allowAccessNonEnterpriseModels: boolean;
+  labels: AccountLabels | null;
 }

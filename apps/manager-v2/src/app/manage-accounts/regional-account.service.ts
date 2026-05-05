@@ -222,6 +222,8 @@ export class RegionalAccountService {
       users: account.users,
       created: account.created,
       workflow: account.workflow,
+      allowAccessNonEnterpriseModels: account.allow_access_non_enterprise_models,
+      labels: account.labels,
     };
   }
 

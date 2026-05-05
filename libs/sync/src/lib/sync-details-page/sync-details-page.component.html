@@ -2,6 +2,9 @@
   <nsi-back-button [link]="(editMode | async) ? '../..' : '..'">
     {{ 'sync.add-page.back-button' | translate }}
   </nsi-back-button>
+  @if (syncStarted() && isOnboardingActive()) {
+    <app-resource-handling-banner [kbUrl]="kbUrl()"></app-resource-handling-banner>
+  }
   @if (sync | async; as sync) {
     @if (connectorDef | async; as connectorDef) {
       <div class="details-header">

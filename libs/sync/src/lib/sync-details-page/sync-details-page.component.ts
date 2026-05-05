@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -22,9 +22,11 @@ import {
 } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { ConfigurationFormComponent } from '../configuration-form';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService, UploadEventService } from '@flaps/core';
 import { Job } from '@nuclia/core';
 import { getCloudSyncOptionsPayload, SyncOptions, SyncOptionsFormComponent } from '../sync-options-form';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ResourceHandlingBannerComponent } from '@flaps/common';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -42,6 +44,7 @@ import { getCloudSyncOptionsPayload, SyncOptions, SyncOptionsFormComponent } fro
     StickyFooterComponent,
     ConfigurationFormComponent,
     SyncOptionsFormComponent,
+    ResourceHandlingBannerComponent,
   ],
   templateUrl: './sync-details-page.component.html',
   styleUrl: './sync-details-page.component.scss',
@@ -55,9 +58,15 @@ export class SyncDetailsPageComponent implements OnDestroy {
   private sdk = inject(SDKService);
   private modalService = inject(SisModalService);
   private translate = inject(TranslateService);
+  private uploadEventService = inject(UploadEventService);
+  private navigationService = inject(NavigationService);
 
   private unsubscribeAll = new Subject<void>();
   private isDeleted = new Subject<void>();
+
+  kbUrl = toSignal(this.navigationService.kbUrl, { initialValue: '' });
+  syncStarted = toSignal(this.uploadEventService.processingStarted$, { initialValue: false });
+  isOnboardingActive = toSignal(this.uploadEventService.onboardingActive$, { initialValue: false });
 
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
   syncId: Observable<string> = this.currentRoute.params.pipe(
@@ -140,7 +149,10 @@ export class SyncDetailsPageComponent implements OnDestroy {
         ),
       )
       .subscribe({
-        next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
+        next: () => {
+          this.toaster.success('sync.details.toast.triggering-sync-success');
+          this.uploadEventService.notifyProcessingStarted();
+        },
         error: () => this.toaster.error('sync.details.toast.triggering-sync-failed'),
       });
   }

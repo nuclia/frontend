@@ -9,7 +9,7 @@ import {
   WelcomeUser,
   WorkflowType,
 } from '@nuclia/core';
-import { DedicatedProcessorsState } from './regional-account.models';
+import { AccountLabels, DedicatedProcessorsState } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -70,6 +70,8 @@ export interface AccountPatchPayload {
   blocking_state?: AccountBlockingState;
   limits?: AccountLimitsPatchPayload;
   trial_expiration_date?: string | null;
+  allow_access_non_enterprise_models?: boolean;
+  labels?: AccountLabels | null;
   workflow?: WorkflowType;
 }
 

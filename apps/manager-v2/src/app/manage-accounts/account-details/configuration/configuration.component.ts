@@ -50,6 +50,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     zone: new FormControl<string>(''),
     trialExpirationDate: new FormControl<string>(''),
     workflow: new FormControl<WorkflowType | null>(null),
+    allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
+    labels: new FormGroup({
+      progress_account: new FormControl<boolean>(false, { nonNullable: true }),
+    }),
   });
   free_tokens_per_billing_cycle = 0;
   provider?: SubscriptionProvider;
@@ -179,7 +183,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   private patchConfigForm(accountDetails: AccountDetails) {
-    this.configForm.patchValue(accountDetails);
+    const { labels, ...details } = accountDetails;
+    this.configForm.patchValue(details);
     this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');
     this.configForm.controls.kbs.controls.maxKbs.patchValue(accountDetails.maxKbs);
     this.configForm.controls.agents.controls.agents_radio.patchValue(
@@ -190,6 +195,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       accountDetails.maxMemories === -1 ? 'unlimited' : 'limit',
     );
     this.configForm.controls.memories.controls.maxMemories.patchValue(accountDetails.maxMemories);
+    if (labels !== null) {
+      this.configForm.controls.labels.patchValue(labels);
+    }
     this.cdr.markForCheck();
   }
 

@@ -32,6 +32,7 @@ import { UploadOptionComponent } from './upload-data/upload-option/upload-option
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
 import { UploadRoutingModule } from './upload-routing.module';
 import { ExtractionSelectComponent } from './extraction-select/extraction-select.component';
+import { ResourceHandlingBannerComponent } from './resource-handling-banner/resource-handling-banner.component';
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { ExtractionSelectComponent } from './extraction-select/extraction-select
     InfoCardComponent,
     BadgeComponent,
     ExtractionSelectComponent,
+    ResourceHandlingBannerComponent,
   ],
   declarations: [
     CreateLinkComponent,

@@ -1,13 +1,38 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AppService, ChartData, MetricsService, RangeChartData, RemiMetricsService } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import {
+  FeaturesService,
+  GETTING_STARTED_DONE_KEY,
+  NavigationService,
+  SDKService,
+  UploadEventService,
+  ZoneService,
+} from '@flaps/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { BlockedFeature, Counters, setZoneInRegionalUrl, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  repeat,
+  shareReplay,
+  Subject,
+  switchMap,
+  take,
+  timer,
+} from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { TestPageModalComponent } from './test-page-modal/test-page-modal.component';
+
+const POLLING_DELAY = 30000; // 30 seconds
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -114,6 +139,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   );
 
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+  developerExpanded = false;
   copyIcon = {
     endpoint: 'copy',
     uid: 'copy',
@@ -143,17 +169,133 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     private remiMetrics: RemiMetricsService,
   ) {}
 
+  private onboardingService = inject(KbOnboardingStateService);
+  private uploadEventService = inject(UploadEventService);
+  onboardingState$ = this.onboardingService.onboardingState$;
+
   ngOnInit() {
     // We want the health status on the last 7 days
     this.remiMetrics.updatePeriod('7d');
     this.metrics.period.pipe(take(1)).subscribe((period) => {
       this.currentPeriod.next(period);
     });
+
+    // Initial state detection — KB admin only
+    this.features.isKbAdmin.pipe(take(1), filter(Boolean)).subscribe(() => {
+      this.detectAndAdvanceStep();
+    });
+
+    // Processing-step polling: start once when entering processing-data, stop when leaving it.
+    // We must NOT re-trigger on every updateState() emission (which happens each poll tick while
+    // still processing), because switchMap would cancel+restart the inner repeat and the 30s timer
+    // would never elapse. Using filter+take(1) avoids that reset.
+    this.onboardingState$
+      .pipe(
+        filter((state) => !!state && state.currentStep === 'processing-data'),
+        take(1),
+        switchMap(() =>
+          this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) => kb.processingStatus()),
+            repeat({ delay: () => timer(POLLING_DELAY) }),
+            takeUntil(this.onboardingState$.pipe(filter((state) => !state || state.currentStep !== 'processing-data'))),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => this.detectAndAdvanceStep());
+
+    // Searching-step live metrics check for account managers
+    this.onboardingState$
+      .pipe(
+        filter((state) => !!state && state.currentStep === 'searching-data'),
+        take(1),
+        switchMap(() => this.features.isAccountManager.pipe(take(1))),
+        filter((isManager) => isManager),
+        switchMap(() =>
+          this.searchQueriesCounts.pipe(
+            filter((counts) => counts.month.search > 0 || counts.month.chat > 0),
+            take(1),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => this.onboardingService.markDone());
+
+    this.uploadEventService.processingStarted$
+      .pipe(
+        filter((triggered) => triggered),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.onboardingService.updateState({ currentStep: 'processing-data' });
+        this.sdk.refreshCounter(true); // Keep the counter badge in sync after first upload
+        this.uploadEventService.clearProcessingStarted();
+      });
+
+    this.uploadEventService.searchPerformed$
+      .pipe(
+        filter((searched) => searched),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.onboardingState$.pipe(take(1)).subscribe((state) => {
+          if (state?.currentStep === 'searching-data') {
+            this.onboardingService.markDone();
+          }
+          this.uploadEventService.clearSearchPerformed();
+        });
+      });
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  private detectAndAdvanceStep(): void {
+    if (localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true') {
+      return;
+    }
+
+    combineLatest([this.features.isAccountManager.pipe(take(1)), this.currentKb.pipe(take(1))])
+      .pipe(
+        switchMap(([isManager, kb]) => {
+          const searchCount$ = isManager ? this.metrics.getSearchCount().pipe(catchError(() => of(null))) : of(null);
+          // Use fresh kb.counters() instead of sdk.counters (cached ReplaySubject that may be
+          // stale after a first-ever upload, causing hasResources to remain false).
+          return forkJoin([kb.counters(), kb.processingStatus(), searchCount$, this.onboardingState$.pipe(take(1))]);
+        }),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(([counters, processingStatus, searchCount, state]) => {
+        if (state === null) {
+          return; // Already done
+        }
+
+        const hasResources = (counters?.resources ?? 0) > 0;
+        const isProcessing = (processingStatus.results?.length ?? 0) > 0;
+        const hasSearched = searchCount ? searchCount.month.search > 0 || searchCount.month.chat > 0 : false;
+
+        // Special skipped completion
+        if (
+          state.skipped &&
+          ((state.currentStep === 'processing-data' && !isProcessing && hasResources) ||
+            state.currentStep === 'searching-data')
+        ) {
+          this.onboardingService.markDone();
+          return;
+        }
+
+        if (hasResources && hasSearched) {
+          this.onboardingService.markDone();
+        } else if (hasResources && isProcessing) {
+          this.onboardingService.updateState({ currentStep: 'processing-data' });
+        } else if (hasResources && !isProcessing) {
+          this.onboardingService.updateState({ currentStep: 'searching-data' });
+        }
+        // else: stay at uploading-data — no action needed
+      });
   }
 
   copyEndpoint() {

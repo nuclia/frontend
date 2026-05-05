@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import {
   ModalRef,
+  PaDropdownModule,
   PaModalModule,
   PaDatePickerModule,
   PaTextFieldModule,
   PaButtonModule,
+  PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateAfter, SearchWidgetService } from '@flaps/common';
@@ -20,10 +22,12 @@ import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
     InfoCardComponent,
     PaButtonModule,
     PaDatePickerModule,
+    PaDropdownModule,
     PaModalModule,
     PaTextFieldModule,
     ReactiveFormsModule,
     TranslateModule,
+    PaPopupModule,
   ],
   templateUrl: './test-page-modal.component.html',
   styleUrl: './test-page-modal.component.scss',
@@ -78,7 +82,7 @@ export class TestPageModalComponent {
       params.append('widget_id', values.widget);
       params.append('mode', selectedWidget?.widgetConfig?.widgetMode || '');
       params.append('knowledgebox_name', kb.title);
-      params.append('widget_name', selectedWidget?.name || '');      
+      params.append('widget_name', selectedWidget?.name || '');
       if (expiration) {
         params.append('expiration', expiration + '000');
       }

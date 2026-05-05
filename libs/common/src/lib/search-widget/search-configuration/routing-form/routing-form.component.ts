@@ -43,17 +43,30 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private searchWidgetStorage = inject(SearchWidgetStorageService);
   private cdr = inject(ChangeDetectorRef);
+  private configPatchTimer: ReturnType<typeof setTimeout> | null = null;
   searchConfigs = this.searchWidgetStorage.searchAPIConfigs.pipe(
     map((configs) => Object.entries(configs).map(([id, config]) => ({ id, kind: config.kind }))),
   );
 
   @Input() set config(value: Widget.RoutingConfig | undefined) {
+    const rulesArray = this.form.controls.routing.controls.rules;
+    // Always clear first to prevent accumulation across config switches
+    rulesArray.clear({ emitEvent: false });
+
+    // Cancel any pending delayed patch (race condition guard)
+    if (this.configPatchTimer) {
+      clearTimeout(this.configPatchTimer);
+      this.configPatchTimer = null;
+    }
+
     if (value) {
       for (let i = 0; i < (value.routing?.rules || []).length; i++) {
-        this.addRule();
+        // emitEvent: false — no intermediate configChanged emissions during setup
+        rulesArray.push(this.createRuleGroup(), { emitEvent: false });
       }
-      // delay the value patch so the config selects are updated according the kind
-      setTimeout(() => {
+      // Delay the value patch so the config selects are updated according to the kind
+      this.configPatchTimer = setTimeout(() => {
+        this.configPatchTimer = null;
         this.form.patchValue(value);
         this.cdr.markForCheck();
       }, 500);
@@ -107,18 +120,23 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    if (this.configPatchTimer) {
+      clearTimeout(this.configPatchTimer);
+    }
   }
 
   addRule() {
-    this.form.controls.routing.controls.rules.push(
-      new FormGroup({
-        search_config: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        prompt: new FormControl<string>('', { nonNullable: true }),
-      }),
-    );
+    this.form.controls.routing.controls.rules.push(this.createRuleGroup());
   }
 
   removeRule(index: number) {
     this.form.controls.routing.controls.rules.removeAt(index);
+  }
+
+  private createRuleGroup() {
+    return new FormGroup({
+      search_config: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      prompt: new FormControl<string>('', { nonNullable: true }),
+    });
   }
 }

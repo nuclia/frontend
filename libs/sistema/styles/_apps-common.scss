@@ -12,6 +12,9 @@
   --app-zindex-topbar: 1000;
 
   --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{variables.rhythm(16)}));
+
+  // Extended font sizes (beyond pastanaga-angular's --font-size-xxl: 24px)
+  --font-size-xxxl: #{variables.$font-size-base * 2}; // 32px
 }
 
 html,
@@ -52,6 +55,13 @@ pa-button.full-width {
   .pa-button {
     flex: 1 0 auto;
   }
+}
+
+// Adds a visible border to icon-only pa-button[aspect=basic] buttons.
+// Apply class="icon-bordered" on the <pa-button> host element.
+pa-button.icon-bordered .pa-button {
+  border: 1px solid var(--color-neutral-lighter) !important;
+  border-radius: 50%;
 }
 
 .page-spacing {
@@ -228,4 +238,17 @@ pa-option pa-icon {
     min-width: variables.rhythm(16);
     width: unset;
   }
+}
+
+// Info dropdowns: remove max-width cap and allow text to wrap.
+// Apply class="info-dropdown" on the <pa-dropdown> host element.
+pa-dropdown.info-dropdown .pa-popup-wrapper {
+  max-width: 420px;
+  min-width: 280px;
+}
+
+pa-dropdown.info-dropdown .pa-option-content {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
 }

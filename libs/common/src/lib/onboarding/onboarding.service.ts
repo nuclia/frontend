@@ -1,22 +1,14 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import {
-  SDKService,
-  STFUtils,
-  UserService,
-  GETTING_STARTED_DONE_KEY,
-  NavigationService,
-  AuthService,
-  FeaturesService,
-} from '@flaps/core';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { SDKService, STFUtils, UserService, NavigationService, AuthService, FeaturesService } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
 import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
 const CLASSIC_STEPS = [1, 3, 4, 5, 6];
-const COWORK_STEPS = [1, 2, 4, 5, 6];
+const COWORK_STEPS = [1, 2, 3, 4, 5, 6];
 const PRESET_COWORK_STEPS = [1, 4, 5, 6];
 @Injectable({
   providedIn: 'root',
@@ -98,7 +90,7 @@ export class OnboardingService {
         creationFailed: true,
       });
       console.error('No signup data');
-      throw new Error('No signup data');
+      return throwError(() => new Error('No signup data'));
     } else {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
@@ -243,7 +235,6 @@ export class OnboardingService {
     });
     // creation failed but account creation worked, so we redirect to account management page to unblock people
     const path = `/at/${accountSlug}`;
-    localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
     this.router.navigate([path]);
   }
 

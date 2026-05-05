@@ -41,6 +41,8 @@ export interface Account {
   type: AccountTypes;
   users: AccountUser[];
   workflow?: WorkflowType;
+  allow_access_non_enterprise_models: boolean;
+  labels: AccountLabels | null;
 }
 
 export interface Kb {
@@ -66,4 +68,8 @@ export interface AccountModelPayload {
 export interface ZoneModels {
   zone: ZoneSummary;
   models: CustomModelItem[];
+}
+
+export interface AccountLabels {
+  progress_account: boolean;
 }

@@ -11,12 +11,16 @@
     color: $color-dark-stronger;
   }
 
-  .title-with-action {
+  .title-with-actions {
     align-items: center;
     display: flex;
     justify-content: space-between;
 
-    pa-button {
+    .actions {
+      display: flex;
+      gap: rhythm(1);
+      align-items: center;
+      white-space: nowrap;
       margin-right: calc(-1 * #{rhythm(1)});
     }
   }

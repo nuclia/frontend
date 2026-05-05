@@ -24,7 +24,7 @@ export class AccountDeleteComponent implements OnInit {
   );
   userEmail$ = this.user.userPrefs.pipe(map((prefs) => prefs?.email ?? ''));
 
-  step = signal<'otp' | 'confirm'>('confirm');
+  step = signal<'otp' | 'confirm' | 'reauth'>('confirm');
   otpCode = signal<string | undefined>(undefined);
   otpSent = signal(false);
   otpSending = signal(false);
@@ -46,8 +46,7 @@ export class AccountDeleteComponent implements OnInit {
       if (this.accountVerification.isRecentlyVerified()) {
         this.step.set('confirm');
       } else {
-        this.modal.close();
-        this.accountVerification.forceReauth(window.location.href);
+        this.step.set('reauth');
       }
     } else {
       this.step.set('otp');
@@ -86,6 +85,11 @@ export class AccountDeleteComponent implements OnInit {
     this.step.set('confirm');
   }
 
+  forceReauth() {
+    this.modal.close();
+    this.accountVerification.forceReauth(window.location.href);
+  }
+
   delete(): void {
     this.loading.set(true);
     const keepUser = this.keepUser() === 'yes';
@@ -101,6 +105,7 @@ export class AccountDeleteComponent implements OnInit {
         next: () => {
           this.sdk.cleanAccount();
           if (keepUser) {
+            this.toaster.success('account.delete.success');
             this.router.navigate([this.navigation.getAccountSelectUrl()]);
           } else {
             this.router.navigate(['/farewell']);

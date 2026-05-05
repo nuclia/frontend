@@ -101,15 +101,13 @@ describe('AccountDeleteComponent', () => {
     });
 
     describe('reauth path — expired verification', () => {
-      it('closes the modal and calls forceReauth when supportsForceReauth is true but isRecentlyVerified is false', () => {
+      it('set step to "reauth" when supportsForceReauth is true but isRecentlyVerified is false', () => {
         verificationService.supportsForceReauth.mockReturnValue(true);
         verificationService.isRecentlyVerified.mockReturnValue(false);
-        const closeSpy = jest.spyOn(modalRef, 'close');
 
         fixture.detectChanges(); // triggers ngOnInit
 
-        expect(closeSpy).toHaveBeenCalled();
-        expect(verificationService.forceReauth).toHaveBeenCalledWith(window.location.href);
+        expect(component.step()).toBe('reauth');
       });
     });
 

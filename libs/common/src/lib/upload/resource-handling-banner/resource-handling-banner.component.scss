@@ -1,0 +1,25 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.banner {
+  width: fit-content;
+
+  ::ng-deep pa-icon svg {
+    fill: var(--color-success-strong);
+  }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+  flex-wrap: wrap;
+}
+
+.banner-text {
+  max-width: 680px;
+}

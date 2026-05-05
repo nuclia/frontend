@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -10,12 +10,16 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { CreateWidgetDialogComponent } from './dialogs';
-import { filter, forkJoin, map, Observable, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_RAO_WIDGET_CONFIG, DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
 import { NavigationService, SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
+
+interface WidgetWithModel extends Widget.Widget {
+  generativeModel: string;
+}
 
 @Component({
   selector: 'stf-widget-list',
@@ -34,7 +38,7 @@ import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
   styleUrl: './widget-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetListComponent implements OnInit {
+export class WidgetListComponent {
   private sdk = inject(SDKService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -43,27 +47,43 @@ export class WidgetListComponent implements OnInit {
   private navigationService = inject(NavigationService);
 
   inArag = this.navigationService.inArag();
-  widgetList = this.searchWidgetService.widgetList;
-  emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
-  modelNames: { [key: string]: string } = {};
 
-  ngOnInit() {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.getLearningSchema().pipe(map((schema) => ({ kb, schema })))),
-      )
-      .subscribe(({ kb, schema }) => {
-        this.modelNames =
-          schema['generative_model']?.options?.reduce(
-            (acc, model) => {
-              acc[model.value] = model.name;
-              return acc;
-            },
-            {} as { [key: string]: string },
-          ) || {};
-      });
-  }
+  defaultModel = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getConfiguration()),
+    map((config) => config['generative_model'] || ''),
+    shareReplay(1),
+  );
+
+  widgetList: Observable<WidgetWithModel[]> = combineLatest([
+    this.searchWidgetService.widgetList,
+    this.searchWidgetService.supportedSearchConfigurations,
+    this.defaultModel,
+  ]).pipe(
+    map(([widgets, searchConfigs, defaultModel]) =>
+      widgets.map((widget) => ({
+        ...widget,
+        generativeModel:
+          searchConfigs.find((config) => config.id === widget.searchConfigId)?.generativeAnswer?.generativeModel ||
+          defaultModel,
+      })),
+    ),
+  );
+  emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
+
+  modelNames = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getLearningSchema()),
+    map(
+      (schema) =>
+        schema['generative_model']?.options?.reduce(
+          (acc, model) => {
+            acc[model.value] = model.name;
+            return acc;
+          },
+          {} as { [key: string]: string },
+        ) || {},
+    ),
+    shareReplay(1),
+  );
 
   createWidget() {
     this.modalService

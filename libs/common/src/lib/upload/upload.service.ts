@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, NotificationService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
+import { LabelsService, md5, NotificationService, SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -512,9 +512,6 @@ export class UploadService {
     }
     if (conflicts) {
       this.toaster.error('upload.toast.conflicts');
-    }
-    if (success) {
-      localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
     }
     timer(1000)
       .pipe(switchMap(() => this.updateAfterUploads()))
