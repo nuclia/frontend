@@ -7,6 +7,7 @@ import {
   AccountTypes,
   UserType,
   WelcomeUser,
+  WorkflowType,
 } from '@nuclia/core';
 import { AccountLabels, DedicatedProcessorsState } from './regional-account.models';
 
@@ -71,6 +72,7 @@ export interface AccountPatchPayload {
   trial_expiration_date?: string | null;
   allow_access_non_enterprise_models?: boolean;
   labels?: AccountLabels | null;
+  workflow?: WorkflowType;
 }
 
 export interface AccountKbList {

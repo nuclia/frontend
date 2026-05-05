@@ -59,7 +59,9 @@ export class ResourceTableComponent {
         extension: this.splitTitle(upload.file.name || '').extension,
         icon: upload.file.type,
         created: addMinutes(new Date(), 5).toISOString(), // Display uploads at the top of the list
-        status: (this.simpleKBService.isUploadFailed(upload) ? RESOURCE_STATUS.ERROR : 'uploading') as TableRow['status'],
+        status: (this.simpleKBService.isUploadFailed(upload)
+          ? RESOURCE_STATUS.ERROR
+          : 'uploading') as TableRow['status'],
         errorMessage: this.simpleKBService.isUploadFailed(upload) ? 'simple.upload-error' : '',
       })),
     ]),
