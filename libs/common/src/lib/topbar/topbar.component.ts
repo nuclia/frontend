@@ -89,7 +89,7 @@ export class TopbarComponent {
   }
 
   bookDemo() {
-    window.open('https://nuclia.com/book-a-demo/', 'blank', 'noreferrer');
+    window.open('https://www.progress.com/agentic-rag/book-a-demo', 'blank', 'noreferrer');
   }
 
   goToTutorial() {
