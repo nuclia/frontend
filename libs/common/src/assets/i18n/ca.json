@@ -2611,7 +2611,7 @@
 	"tasks-automation.type.synthetic-questions.description": "Enriquir els vostres recursos afegint-hi preguntes i respostes automàticament.",
 	"tasks-automation.type.synthetic-questions.title": "Generar preguntes i respostes",
 	"tasks-automation.your-agents": "Els teus agents",
-	"test-page-modal.info.text": "",
+	"test-page-modal.info.text": "La pàgina de prova us permet provar el vostre widget de cerca Knowledge Box en un entorn de proves sense haver d'integrar-lo en un lloc web real.",
 	"training.history": "Historial d’entrenaments",
 	"training.status.failed": "Error",
 	"training.status.header": "Estat",

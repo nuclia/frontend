@@ -1,7 +1,7 @@
 import { Injectable, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
-import { FeaturesService, SDKService, GETTING_STARTED_DONE_KEY } from '@flaps/core';
+import { FeaturesService, SDKService, GETTING_STARTED_DONE_KEY, UploadEventService } from '@flaps/core';
 import { KbOnboardingEntry, KbOnboardingStateMap, OnboardingStep } from './kb-onboarding-state.model';
 
 const KB_ONBOARDING_STATE = 'KB_ONBOARDING_STATE';
@@ -17,6 +17,7 @@ export class KbOnboardingStateService {
   private sdk = inject(SDKService);
   private features = inject(FeaturesService);
   private destroyRef = inject(DestroyRef);
+  private uploadEventService = inject(UploadEventService);
 
   private _state$ = new BehaviorSubject<KbOnboardingEntry | null>(null);
 
@@ -45,6 +46,14 @@ export class KbOnboardingStateService {
         const existingEntry = this._getExistingEntry(kbId);
         this._state$.next(existingEntry ?? this._getOrInitEntry(kbId));
       });
+
+    this.isOnboardingDone$
+      .pipe(
+        map((isDone) => !isDone),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((isActive) => this.uploadEventService.setOnboardingActive(isActive));
   }
 
   updateState(partial: Partial<KbOnboardingEntry>): void {

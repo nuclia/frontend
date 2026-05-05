@@ -66,6 +66,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
 
   kbUrl = toSignal(this.navigationService.kbUrl, { initialValue: '' });
   syncStarted = toSignal(this.uploadEventService.processingStarted$, { initialValue: false });
+  isOnboardingActive = toSignal(this.uploadEventService.onboardingActive$, { initialValue: false });
 
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
   syncId: Observable<string> = this.currentRoute.params.pipe(

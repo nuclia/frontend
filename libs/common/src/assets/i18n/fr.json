@@ -2611,7 +2611,7 @@
 	"tasks-automation.type.synthetic-questions.description": "Enrichir vos ressources en y ajoutant automatiquement des questions et des réponses.",
 	"tasks-automation.type.synthetic-questions.title": "Générer des questions et des réponses",
 	"tasks-automation.your-agents": "Vos agents",
-	"test-page-modal.info.text": "",
+	"test-page-modal.info.text": "La page de test vous permet d'essayer votre widget de recherche Knowledge Box dans un environnement isolé sans l'intégrer à un véritable site web.",
 	"training.history": "Historique de la formation",
 	"training.status.failed": "Erreur",
 	"training.status.header": "Statut",

@@ -18,6 +18,7 @@ export class UploadDataComponent {
 
   kbUrl = toSignal(this.navigationService.kbUrl, { initialValue: '' });
   uploadStarted = signal(false);
+  isOnboardingActive = toSignal(this.uploadEventService.onboardingActive$, { initialValue: false });
 
   constructor(
     private uploadService: UploadDialogService,
@@ -30,8 +31,12 @@ export class UploadDataComponent {
       .upload(type)
       .onClose.pipe(filter((data) => !data || !data.cancel))
       .subscribe(() => {
-        this.uploadStarted.set(true);
-        this.uploadEventService.notifyProcessingStarted();
+        if (this.isOnboardingActive()) {
+          this.uploadStarted.set(true);
+          this.uploadEventService.notifyProcessingStarted();
+        } else {
+          this.router.navigate(['../resources/pending'], { relativeTo: this.route });
+        }
       });
   }
 }
