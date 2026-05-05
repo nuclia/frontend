@@ -484,17 +484,19 @@
               <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
             </a>
           </div>
-          <div class="group-items">
-            <a
-              [routerLink]="(accountUrl | async) + '/nua'"
-              routerLinkActive="active"
-              data-cy="go-to-nua-keys"
-              class="nav-link">
-              <pa-icon name="key"></pa-icon>
-              <span class="nav-link-title">{{ 'navbar.nua-keys' | translate }}</span>
-            </a>
-          </div>
-          @if ((isRetrievalAgentsEnabled | async) && (inDashboard || inRaoApp)) {
+          @if (!(simpleMode | async)) {
+            <div class="group-items">
+              <a
+                [routerLink]="(accountUrl | async) + '/nua'"
+                routerLinkActive="active"
+                data-cy="go-to-nua-keys"
+                class="nav-link">
+                <pa-icon name="key"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.nua-keys' | translate }}</span>
+              </a>
+            </div>
+          }
+          @if ((isRetrievalAgentsEnabled | async) && (inDashboard || inRaoApp) && !(simpleMode | async)) {
             <div class="group-items">
               <a
                 [routerLink]="(accountUrl | async) + '/arag'"
@@ -506,7 +508,7 @@
               </a>
             </div>
           }
-          @if (isModelManagementEnabled | async) {
+          @if ((isModelManagementEnabled | async) && !(simpleMode | async)) {
             <div class="group-items">
               <a
                 [routerLink]="(accountUrl | async) + '/models'"

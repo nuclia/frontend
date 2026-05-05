@@ -32,7 +32,7 @@
                 {{ 'account.kb.users' | translate }}
               </pa-button>
 
-              @if (!!kb.role_on_kb) {
+              @if (!!kb.role_on_kb && !(simpleMode | async)) {
                 <pa-button
                   class="icon-button"
                   icon="edit"

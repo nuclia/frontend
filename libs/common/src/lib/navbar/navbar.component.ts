@@ -70,6 +70,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
+  simpleMode = this.navigationService.simpleMode;
   showSettings = false;
   showMetrics = false;
   kbUrl = '';
