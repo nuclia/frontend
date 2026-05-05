@@ -103,6 +103,7 @@ export interface QAOperation extends BaseOperation {
   question_generator_prompt?: string;
   summary_prompt?: string;
   system_question_generator_prompt?: string;
+  max_questions?: number;
 }
 
 export interface AskOperation extends BaseOperation {
