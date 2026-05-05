@@ -1,10 +1,9 @@
-@let counter = resourceCounter | async;
 <div class="simple-kb">
   <div class="display-m">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
-      @if ((counter?.pending || 0) > 0 || (uploadInProgress | async)) {
+      @if (pendingResources()) {
         {{ 'simple.title.uploading' | translate }}
       } @else {
         <span class="success">
@@ -22,35 +21,60 @@
   <div class="counters">
     @if (step() === 2) {
       <div>
-        <strong [class.success]="counter?.pending === 0">{{ 'simple.ready' | translate }}</strong>
-        <span>: {{ counter?.processed || 0 }}</span>
+        <strong [class.success]="!pendingResources()">{{ 'simple.ready' | translate }}</strong>
+        <span>: {{ counter()?.processed || 0 }}</span>
       </div>
-      @if ((counter?.pending || 0) > 0 || (uploadInProgress | async)) {
+      @if (pendingResources()) {
         <div>
           <strong class="title-m">{{ 'simple.in-queue' | translate }}</strong>
-          <span>: {{ counter?.pending || 0 }}</span>
+          <span>: {{ counter()?.pending || 0 }}</span>
         </div>
       }
       <div>
         <strong
           class="title-m"
-          [class.error]="counter?.pending === 0">
+          [class.error]="!pendingResources()">
           {{ 'simple.failed' | translate }}
         </strong>
-        <span>: {{ counter?.error || 0 }}</span>
+        <span>: {{ counter()?.error || 0 }}</span>
       </div>
     } @else if (step() === 3) {
-      @if (hideResources()) {
-        <pa-button
-          kind="primary"
-          icon="folder"
-          (click)="resetSearch()">
-          {{ 'generic.back' | translate }}
-        </pa-button>
-      }
-      <div>
-        <strong>{{ 'simple.your-resources' | translate }}</strong>
-        <span>: {{ counter?.processed || 0 }}</span>
+      <div class="nav">
+        @if (view() === 'resources') {
+          <pa-icon
+            name="folder"
+            color="white"></pa-icon>
+        } @else {
+          <pa-button
+            kind="secondary"
+            aspect="basic"
+            icon="folder"
+            (click)="changeView('resources')">
+            {{ 'simple.your-resources' | translate }}
+          </pa-button>
+        }
+        <div>
+          <strong>{{ 'simple.your-resources' | translate }}</strong>
+          <span>: {{ counter()?.processed || 0 }}</span>
+        </div>
+      </div>
+      <div class="nav">
+        @if (view() === 'history') {
+          <pa-icon
+            name="clock-dash"
+            color="white"></pa-icon>
+        } @else {
+          <pa-button
+            kind="secondary"
+            aspect="basic"
+            icon="clock-dash"
+            (click)="changeView('history')">
+            {{ 'simple.history' | translate }}
+          </pa-button>
+        }
+        <div>
+          <strong>{{ 'simple.history' | translate }}</strong>
+        </div>
       </div>
     }
   </div>
@@ -83,8 +107,11 @@
             [innerHtml]="widgetPreview.preview"></div>
         }
       }
-      @if (!hideResources()) {
+      @if (view() === 'resources') {
         <app-resource-table></app-resource-table>
+      }
+      @if (view() === 'history') {
+        <app-history-table></app-history-table>
       }
     }
   </div>
@@ -92,7 +119,7 @@
 @if (step() > 1) {
   <div class="footer">
     @if (step() === 2) {
-      @if (counter?.pending === 0 && !(uploadInProgress | async)) {
+      @if (!pendingResources()) {
         <pa-button
           kind="primary"
           icon="search"
@@ -105,7 +132,7 @@
         aspect="basic"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress | async"
+        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'simple.add-more' | translate }}
       </pa-button>
@@ -114,7 +141,7 @@
         kind="primary"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress | async"
+        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'upload.files' | translate }}
       </pa-button>

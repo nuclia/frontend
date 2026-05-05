@@ -226,6 +226,7 @@ export interface SignUpInfo {
   company: string;
   email: string;
   fullname: string;
+  workflow?: WorkflowType;
 }
 
 export type UserType = 'ROOT' | 'DEALER' | 'MANAGER' | 'SALES' | 'READONLY' | 'USER';

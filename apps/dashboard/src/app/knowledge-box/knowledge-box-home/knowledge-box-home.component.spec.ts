@@ -14,7 +14,14 @@ import {
   UploadModule,
   UploadService,
 } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, ZoneService, STFPipesModule } from '@flaps/core';
+import {
+  FeaturesService,
+  NavigationService,
+  SDKService,
+  UploadEventService,
+  ZoneService,
+  STFPipesModule,
+} from '@flaps/core';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 import {
@@ -26,6 +33,9 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { RouterModule } from '@angular/router';
+import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';
+import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
+import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
 
 function createTranslateLoader() {
   return {
@@ -62,6 +72,8 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockComponent(AccountStatusComponent),
           MockComponent(HomeContainerComponent),
           MockComponent(UsageChartsComponent),
+          MockComponent(KbOnboardingHeaderComponent),
+          MockComponent(ContentPlaceholderComponent),
         ],
         providers: [
           MockProvider(AppService, {
@@ -76,6 +88,8 @@ describe('KnowledgeBoxHomeComponent', () => {
               fullpath: 'http://somewhere/api',
               getConfiguration: () => of({}),
               catalog: () => of({ type: 'searchResults' }),
+              counters: () => of({ resources: 0, paragraphs: 0, fields: 0, sentences: 0 }),
+              processingStatus: () => of({ results: [] }),
             } as unknown as WritableKnowledgeBox),
             currentAccount: of({
               id: 'test-id',
@@ -93,8 +107,9 @@ describe('KnowledgeBoxHomeComponent', () => {
               creation_date: '2023-01-01',
             } as Account),
             counters: of({}),
+            refreshCounter: jest.fn(),
             nuclia: {
-              options: { standalone: false },
+              options: { standalone: false, backend: 'https://nuclia.cloud' },
               db: {},
             },
           } as SDKService),
@@ -118,9 +133,11 @@ describe('KnowledgeBoxHomeComponent', () => {
               getUsageCharts: () => of({}),
               getSearchCharts: () => of({ search: {}, ask: {} }),
               getUsageCount: () => of(0),
-              getSearchCount: () => of(0),
+              getSearchCount: () => of({ month: { search: 0, chat: 0 }, year: { search: 0, chat: 0 } }),
               isSubscribedToStripe: of(false),
               period: of({ start: new Date(), end: new Date() }),
+              getLastMonths: () => [{ start: new Date(), end: new Date() }],
+              getLastStripePeriods: () => [{ start: new Date(), end: new Date() }],
             },
           },
           MockProvider(SisModalService),
@@ -133,7 +150,23 @@ describe('KnowledgeBoxHomeComponent', () => {
                 ]),
             },
           },
-          MockProvider(RemiMetricsService),
+          MockProvider(RemiMetricsService, {
+            healthCheckData: of([]),
+            updatePeriod: jest.fn(),
+          }),
+          MockProvider(KbOnboardingStateService, {
+            onboardingState$: of(null),
+            updateState: jest.fn(),
+            skip: jest.fn(),
+            restart: jest.fn(),
+            markDone: jest.fn(),
+          }),
+          MockProvider(UploadEventService, {
+            processingStarted$: of(false),
+            searchPerformed$: of(false),
+            clearProcessingStarted: jest.fn(),
+            clearSearchPerformed: jest.fn(),
+          }),
         ],
       }).compileComponents();
     }),
@@ -150,8 +183,27 @@ describe('KnowledgeBoxHomeComponent', () => {
   });
 
   it('should translate properly', () => {
+    component.developerExpanded = true;
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('[data-cy="nucliadb-endpoint"]').textContent).toContain('NucliaDB API endpoint');
+  });
+
+  it('should render onboarding header', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('app-kb-onboarding-header')).toBeTruthy();
+  });
+
+  it('should not render onboarding header for non-admin users', () => {
+    const features = TestBed.inject(FeaturesService);
+    (features.isKbAdmin as unknown) = of(false);
+
+    fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('app-kb-onboarding-header')).toBeFalsy();
   });
 });

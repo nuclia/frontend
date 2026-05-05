@@ -22,8 +22,7 @@
         <p class="otp-sent-message">{{ 'account.delete.otp_sent' | translate }}</p>
         <app-otp-input
           (otpComplete)="onOtpComplete($event)"
-          (otpChange)="onOtpChange($event)">
-        </app-otp-input>
+          (otpChange)="onOtpChange($event)"></app-otp-input>
       }
     </pa-modal-content>
     <pa-modal-footer>
@@ -42,6 +41,28 @@
     </pa-modal-footer>
   </pa-modal-dialog>
 }
+@if (step() === 'reauth') {
+  <pa-modal-dialog>
+    <pa-modal-title>
+      {{ 'account.delete.verify_identity_title' | translate }}
+    </pa-modal-title>
+    <pa-modal-content>
+      <p>{{ 'account.delete.reauth_explanation' | translate }}</p>
+    </pa-modal-content>
+    <pa-modal-footer>
+      <div class="pa-modal-footer pa-dual-buttons">
+        <pa-button
+          aspect="basic"
+          (click)="modal.close()">
+          {{ 'pastanaga.cancel' | translate }}
+        </pa-button>
+        <pa-button (click)="forceReauth()">
+          {{ 'generic.continue' | translate }}
+        </pa-button>
+      </div>
+    </pa-modal-footer>
+  </pa-modal-dialog>
+}
 @if (step() === 'confirm') {
   <pa-modal-dialog>
     <pa-modal-title>
@@ -51,7 +72,8 @@
       <div>
         <pa-checkbox
           noEllipsis
-          [value]="deleteAccount()" (valueChange)="deleteAccount.set($event)">
+          [value]="deleteAccount()"
+          (valueChange)="deleteAccount.set($event)">
           {{ 'account.delete_account_confirm' | translate }}
         </pa-checkbox>
       </div>
@@ -59,7 +81,8 @@
         <div class="delete-user">
           <label for="group-keep-user">{{ 'account.delete.keep_user_title' | translate }}</label>
           <pa-radio-group
-            [value]="keepUser()" (valueChange)="keepUser.set($event)"
+            [value]="keepUser()"
+            (valueChange)="keepUser.set($event)"
             id="group-keep-user">
             <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
             <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>

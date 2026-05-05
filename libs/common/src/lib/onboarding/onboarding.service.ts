@@ -1,20 +1,15 @@
 import { Injectable } from '@angular/core';
 import { OnboardingPayload, OnboardingStatus } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import {
-  SDKService,
-  STFUtils,
-  UserService,
-  GETTING_STARTED_DONE_KEY,
-  NavigationService,
-  AuthService,
-  FeaturesService,
-} from '@flaps/core';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { SDKService, STFUtils, UserService, NavigationService, AuthService, FeaturesService } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
 import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
 
+const CLASSIC_STEPS = [1, 3, 4, 5, 6];
+const COWORK_STEPS = [1, 2, 3, 4, 5, 6];
+const PRESET_COWORK_STEPS = [1, 4, 5, 6];
 @Injectable({
   providedIn: 'root',
 })
@@ -31,7 +26,7 @@ export class OnboardingService {
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
   dashboardSteps = this.features.unstable.coworkAccount.pipe(
-    map((coworkEnabled) => (coworkEnabled ? [1, 2, 3, 4, 5, 6] : [1, 3, 4, 5, 6])),
+    map((coworkEnabled) => (coworkEnabled ? COWORK_STEPS : CLASSIC_STEPS)),
   );
   raoSteps = of([1, 3, 5, 6]);
 
@@ -60,6 +55,10 @@ export class OnboardingService {
         this._onboardingStep.next(previous);
       }
     });
+  }
+
+  switchToPreset() {
+    this.dashboardSteps = of(PRESET_COWORK_STEPS);
   }
 
   saveOnboardingInquiry(payload: OnboardingPayload) {
@@ -91,9 +90,7 @@ export class OnboardingService {
         creationFailed: true,
       });
       console.error('No signup data');
-      throw new Error('No signup data');
-      // redirect to sign up form
-      location.href = 'https://www.progress.com/agentic-rag';
+      return throwError(() => new Error('No signup data'));
     } else {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
@@ -103,6 +100,7 @@ export class OnboardingService {
                 .createAccount({
                   slug: accountSlug,
                   title: data.company,
+                  workflow: data.workflow,
                 })
                 .pipe(
                   catchError((error) => {
@@ -237,7 +235,6 @@ export class OnboardingService {
     });
     // creation failed but account creation worked, so we redirect to account management page to unblock people
     const path = `/at/${accountSlug}`;
-    localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
     this.router.navigate([path]);
   }
 

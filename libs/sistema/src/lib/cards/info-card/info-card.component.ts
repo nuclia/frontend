@@ -10,7 +10,7 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoCardComponent {
-  @Input() type: 'default' | 'warning' | 'highlight' = 'default';
+  @Input() type: 'default' | 'warning' | 'highlight' | 'transparent' = 'default';
   @Input() icon?: string;
 
   @HostBinding('class.warning') get warning() {
@@ -18,5 +18,8 @@ export class InfoCardComponent {
   }
   @HostBinding('class.highlight') get highlight() {
     return this.type === 'highlight';
+  }
+  @HostBinding('class.transparent') get transparent() {
+    return this.type === 'transparent';
   }
 }

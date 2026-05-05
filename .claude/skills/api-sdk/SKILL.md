@@ -1,4 +1,3 @@
-````skill
 ---
 name: api-sdk
 description: >
@@ -46,13 +45,13 @@ libs/sdk-core/src/lib/
 
 The `Nuclia` class is the entry point. It exposes three main namespaces:
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `nuclia.rest` | `Rest` | Raw HTTP calls (adds auth headers automatically) |
-| `nuclia.db` | `Db` | Account / KB / ARAG CRUD |
-| `nuclia.auth` | `Authentication` | Login, logout, tokens |
-| `nuclia.knowledgeBox` | `KnowledgeBox` | Shortcut (requires `knowledgeBox` + `zone` in options) |
-| `nuclia.arag` | `RetrievalAgent` | Shortcut (requires `knowledgeBox` + `zone` in options) |
+| Property              | Type             | Purpose                                                |
+| --------------------- | ---------------- | ------------------------------------------------------ |
+| `nuclia.rest`         | `Rest`           | Raw HTTP calls (adds auth headers automatically)       |
+| `nuclia.db`           | `Db`             | Account / KB / ARAG CRUD                               |
+| `nuclia.auth`         | `Authentication` | Login, logout, tokens                                  |
+| `nuclia.knowledgeBox` | `KnowledgeBox`   | Shortcut (requires `knowledgeBox` + `zone` in options) |
+| `nuclia.arag`         | `RetrievalAgent` | Shortcut (requires `knowledgeBox` + `zone` in options) |
 
 **Every SDK method returns an `Observable<T>`.** Never use Promises internally — use `asyncKnowledgeBox` only when a Promise-based API is required by an external caller.
 
@@ -62,10 +61,10 @@ The `Nuclia` class is the entry point. It exposes three main namespaces:
 
 The Nuclia API has two base URLs:
 
-| Scope | Base URL | When to use |
-|-------|----------|-------------|
-| **Global** | `nuclia.backend` → `https://rag.progress.cloud/api` | Account CRUD, zones list, NUA clients |
-| **Regional** | `nuclia.regionalBackend` → `https://<zone>.rag.progress.cloud/api` | KB-level & ARAG operations |
+| Scope        | Base URL                                                           | When to use                           |
+| ------------ | ------------------------------------------------------------------ | ------------------------------------- |
+| **Global**   | `nuclia.backend` → `https://rag.progress.cloud/api`                | Account CRUD, zones list, NUA clients |
+| **Regional** | `nuclia.regionalBackend` → `https://<zone>.rag.progress.cloud/api` | KB-level & ARAG operations            |
 
 `nuclia.rest.get(path)` targets the **global** backend by default.
 To target the regional backend, pass the `zoneSlug` as the 4th argument OR use `kb.path`/`kb.fullpath`:
@@ -265,13 +264,13 @@ export class MyKbFeatureService {
 
 ### Where to add the call
 
-| Operation type | Where to add |
-|---------------|--------------|
-| New KB read operation used in multiple apps | `KnowledgeBox` in `libs/sdk-core/src/lib/db/kb/kb.ts` |
-| New KB write operation | `WritableKnowledgeBox` in same file |
-| New account/global operation needed in the SDK | `Db` in `libs/sdk-core/src/lib/db/db.ts` |
-| App-specific or composed endpoint (Angular-only) | New/existing service in `libs/core/src/lib/api/` |
-| One-off call inside a component (avoid) | Prefer a service; only inline if truly trivial |
+| Operation type                                   | Where to add                                          |
+| ------------------------------------------------ | ----------------------------------------------------- |
+| New KB read operation used in multiple apps      | `KnowledgeBox` in `libs/sdk-core/src/lib/db/kb/kb.ts` |
+| New KB write operation                           | `WritableKnowledgeBox` in same file                   |
+| New account/global operation needed in the SDK   | `Db` in `libs/sdk-core/src/lib/db/db.ts`              |
+| App-specific or composed endpoint (Angular-only) | New/existing service in `libs/core/src/lib/api/`      |
+| One-off call inside a component (avoid)          | Prefer a service; only inline if truly trivial        |
 
 ---
 
@@ -324,7 +323,7 @@ const EXCLUDED: ActivityShowField[] = ['user'];
 const MY_FIELDS = ACTIVITY_SHOW_FIELDS.filter((f) => !EXCLUDED.includes(f));
 
 // ❌ Wrong: re-listing values that already exist in the SDK
-const MY_FIELDS = ['date', 'action', 'resource'];  // drifts when SDK adds new fields
+const MY_FIELDS = ['date', 'action', 'resource']; // drifts when SDK adds new fields
 ```
 
 This ensures consumers automatically pick up new fields added to the SDK without code changes.
@@ -333,13 +332,12 @@ This ensures consumers automatically pick up new fields added to the SDK without
 
 ## Common Mistakes to Avoid
 
-| Mistake | Correct pattern |
-|---------|----------------|
-| `new Nuclia(...)` inside a component or service | Inject `SDKService`; use `this.sdk.nuclia` |
-| `firstValueFrom(...)` for a call that should stay reactive | Use `Observable` and subscribe/pipe normally |
-| Forgetting `zoneSlug` on regional endpoints | Use `kb.path` inside KB methods, or pass `zoneSlug` to `rest.*` |
-| Not checking `result.type === 'error'` on search results | Always guard search/ask responses |
-| Adding a raw `fetch()` call bypassing the SDK | Use `sdk.nuclia.rest.*` instead |
-| Importing `@nuclia/core` models from a relative path | Always import from the `@nuclia/core` alias |
-| Subscribing in a service without unsubscribing | Use `takeUntilDestroyed()` or delegate to `SDKService` streams |
-````
+| Mistake                                                    | Correct pattern                                                 |
+| ---------------------------------------------------------- | --------------------------------------------------------------- |
+| `new Nuclia(...)` inside a component or service            | Inject `SDKService`; use `this.sdk.nuclia`                      |
+| `firstValueFrom(...)` for a call that should stay reactive | Use `Observable` and subscribe/pipe normally                    |
+| Forgetting `zoneSlug` on regional endpoints                | Use `kb.path` inside KB methods, or pass `zoneSlug` to `rest.*` |
+| Not checking `result.type === 'error'` on search results   | Always guard search/ask responses                               |
+| Adding a raw `fetch()` call bypassing the SDK              | Use `sdk.nuclia.rest.*` instead                                 |
+| Importing `@nuclia/core` models from a relative path       | Always import from the `@nuclia/core` alias                     |
+| Subscribing in a service without unsubscribing             | Use `takeUntilDestroyed()` or delegate to `SDKService` streams  |

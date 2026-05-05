@@ -5,8 +5,10 @@ import {
   BlockedFeature,
   KBRoles,
   KnowledgeBoxMode,
+  WorkflowType,
 } from '@nuclia/core';
 import { ZoneSummary } from '../manage-zones/zone.models';
+import { AccountLabels } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -15,6 +17,7 @@ export interface AccountSummary {
   type: AccountTypes;
   created: string;
   email: string;
+  labels: AccountLabels | null;
 }
 
 export interface AccountDetails extends AccountSummary {
@@ -25,6 +28,8 @@ export interface AccountDetails extends AccountSummary {
   maxMemories: number;
   trialExpirationDate?: string;
   users: AccountUser[];
+  workflow?: WorkflowType;
+  allowAccessNonEnterpriseModels: boolean;
 }
 
 export interface KbSummary {
@@ -83,4 +88,7 @@ export interface AccountConfigurationPayload {
   slug: string;
   trialExpirationDate?: string | null;
   type: AccountTypes;
+  workflow?: WorkflowType | null;
+  allowAccessNonEnterpriseModels: boolean;
+  labels: AccountLabels | null;
 }

@@ -1,4 +1,3 @@
-```skill
 ---
 name: code-review
 description: >
@@ -210,6 +209,7 @@ Each finding on one line:
 `**[SEVERITY]** path/to/file.ts (~L42) — what is wrong. Suggested fix.`
 
 Severity labels:
+
 - **ERROR** — non-negotiable rule violation (OnPush missing, memory leak, cross-app import, unguarded IErrorResponse, hardcoded secret)
 - **WARN** — pattern mismatch that should be fixed before merging but won't crash immediately
 - **STYLE** — minor style / redundancy issue; fix if easy
@@ -228,4 +228,3 @@ Skip files with zero findings — do not write a "looks good" line per file.
 - Stylistic choices not covered by repo rules above.
 - Product or feature decisions.
 - Issues already caught by a failing lint rule.
-```

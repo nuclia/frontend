@@ -2,21 +2,11 @@
   border
   columns="2fr 140px 1.5fr 140px 70px">
   <pa-table-header>
-    <pa-table-cell header>
-      <span class="title-s">{{ 'simple.column.file' | translate }}</span>
-    </pa-table-cell>
-    <pa-table-cell header>
-      <span class="title-s">{{ 'simple.column.type' | translate }}</span>
-    </pa-table-cell>
-    <pa-table-cell header>
-      <span class="title-s">{{ 'simple.column.status' | translate }}</span>
-    </pa-table-cell>
-    <pa-table-cell header>
-      <span class="title-s">{{ 'simple.column.date-added' | translate }}</span>
-    </pa-table-cell>
-    <pa-table-cell header>
-      <span class="title-s">{{ 'simple.column.delete' | translate }}</span>
-    </pa-table-cell>
+    @for (column of columns; track column) {
+      <pa-table-cell header>
+        <span class="title-s">{{ 'simple.column.' + column | translate }}</span>
+      </pa-table-cell>
+    }
   </pa-table-header>
   @for (row of rows | async; track row.title) {
     <pa-table-row>
@@ -34,14 +24,14 @@
         </span>
       </pa-table-cell>
       <pa-table-cell>
-        @if (row.status === 'success') {
+        @if (row.status === RESOURCE_STATUS.PROCESSED) {
           <span class="title-xxs success">
             {{ 'simple.ready' | translate }}
             <pa-icon
               name="check"
               size="small"></pa-icon>
           </span>
-        } @else if (row.status === 'pending') {
+        } @else if (row.status === RESOURCE_STATUS.PENDING) {
           <span class="body-s">
             @if (row.rank) {
               {{ 'simple.position-in-queue' | translate }}:
@@ -50,7 +40,7 @@
               {{ 'simple.processing' | translate }}
             }
           </span>
-        } @else if (row.status === 'error') {
+        } @else if (row.status === RESOURCE_STATUS.ERROR) {
           <span class="error">
             <span class="title-xxs">{{ 'simple.failed' | translate }}</span>
             @if (row.errorMessage) {
@@ -59,7 +49,7 @@
                 @if (row.errorMessage.length > 120) {
                   {{ row.errorMessage.substring(0, 120) }}…
                 } @else {
-                  {{ row.errorMessage | translate}}
+                  {{ row.errorMessage | translate }}
                 }
               </span>
             }

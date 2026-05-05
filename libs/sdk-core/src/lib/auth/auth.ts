@@ -10,10 +10,8 @@ import { replaceSubdomainInUrl, setZoneInRegionalUrl } from '../rest/utils';
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
 const LOCALSTORAGE_ID_TOKEN_KEY = 'JWT_ID_TOKEN_KEY';
-// Restore the 6 hours delay as 5 minutes is too painful for the desktop
-// (temporary until we have the Deno agent)
-const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
-// const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
+const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours — cap for long-lived tokens (e.g. legacy 120h)
+const REFRESH_BUFFER = 60_000; // refresh 1 minute before expiry
 
 /**
  * It manages authentication to the Nuclia backend.
@@ -295,15 +293,12 @@ export class Authentication implements IAuthentication {
     if (!this.nuclia.options.oauth) {
       return throwError(() => new Error('OAuth parameters are missing.'));
     }
-    return this.fetch<AuthTokens>(
-      `${this.getHydraUrl()}/oauth2/token`,
-      {
-        grant_type: 'refresh_token',
-        client_id: this.nuclia.options.oauth.client_id,
-        refresh_token: this.getRefreshToken(),
-      },
-      {},
-    ).pipe(
+    const body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: this.nuclia.options.oauth.client_id,
+      refresh_token: this.getRefreshToken(),
+    });
+    return this.fetch<AuthTokens>(`${this.getHydraUrl()}/oauth2/token`, body, {}, true).pipe(
       catchError((e) => {
         this.logout();
         return throwError(e);
@@ -436,9 +431,10 @@ export class Authentication implements IAuthentication {
         this.logout();
       } else {
         this._isAuthenticated.next(true);
-        // we refresh the token in 6 hours (or immediately if it should expire sooner)
-        // note: expiration might be undefined when running e2e tests, if so, we just use the default delay
-        const timeout = expiration && expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
+        // Schedule refresh 1 minute before expiry, capped at REFRESH_DELAY for long-lived tokens.
+        // Falls back to REFRESH_DELAY when expiration is undefined (e.g. e2e tests).
+        const timeToExpiry = expiration ? expiration - now : REFRESH_DELAY;
+        const timeout = Math.max(Math.min(timeToExpiry - REFRESH_BUFFER, REFRESH_DELAY), 0);
         this.timerSubscription?.unsubscribe();
         this.timerSubscription = timer(timeout)
           .pipe(switchMap(() => (this.getRefreshToken() ? this.refresh() : of(false))))

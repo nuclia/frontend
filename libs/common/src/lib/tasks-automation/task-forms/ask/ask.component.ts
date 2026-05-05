@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -12,6 +12,7 @@ import { filter, map, take } from 'rxjs';
 @Component({
   imports: [
     CommonModule,
+    ExpandableTextareaComponent,
     InfoCardComponent,
     PaTextFieldModule,
     ReactiveFormsModule,

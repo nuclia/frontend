@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { SimpleKBService } from '../simple-kb.service';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
-import { getResourceErrors, UploadService } from '@flaps/common';
+import { getResourceErrors } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { addMinutes } from 'date-fns';
 import { SisIconsModule, SisModalService } from '@nuclia/sistema';
@@ -16,7 +16,7 @@ interface TableRow {
   extension?: string;
   icon?: string;
   created?: string;
-  status?: 'success' | 'error' | 'pending' | 'uploading';
+  status?: RESOURCE_STATUS | 'uploading';
   rank?: number;
   errorMessage?: string;
 }
@@ -32,7 +32,9 @@ export class ResourceTableComponent {
   simpleKBService = inject(SimpleKBService);
   sdk = inject(SDKService);
   modalService = inject(SisModalService);
-  uploadService = inject(UploadService);
+
+  columns = ['file', 'type', 'status', 'date-added', 'delete'];
+  RESOURCE_STATUS = RESOURCE_STATUS;
 
   rows: Observable<TableRow[]> = combineLatest([
     this.simpleKBService.resources,
@@ -45,11 +47,7 @@ export class ResourceTableComponent {
         extension: this.splitTitle(resource.title || '').extension,
         icon: resource.icon,
         created: resource.created + 'Z',
-        status: (resource.metadata?.status === RESOURCE_STATUS.ERROR
-          ? 'error'
-          : resource.metadata?.status === RESOURCE_STATUS.PENDING
-            ? 'pending'
-            : 'success') as TableRow['status'],
+        status: resource.metadata?.status,
         rank: resource.rank,
         errorMessage:
           resource.metadata?.status === RESOURCE_STATUS.ERROR
@@ -61,7 +59,9 @@ export class ResourceTableComponent {
         extension: this.splitTitle(upload.file.name || '').extension,
         icon: upload.file.type,
         created: addMinutes(new Date(), 5).toISOString(), // Display uploads at the top of the list
-        status: (this.simpleKBService.isUploadFailed(upload) ? 'error' : 'uploading') as TableRow['status'],
+        status: (this.simpleKBService.isUploadFailed(upload)
+          ? RESOURCE_STATUS.ERROR
+          : 'uploading') as TableRow['status'],
         errorMessage: this.simpleKBService.isUploadFailed(upload) ? 'simple.upload-error' : '',
       })),
     ]),
@@ -82,8 +82,7 @@ export class ResourceTableComponent {
         switchMap((kb) => new Resource(this.sdk.nuclia, kb.id, { id }).delete()),
       )
       .subscribe(() => {
-        this.simpleKBService.refresh();
-        this.uploadService.updateAfterUploads();
+        this.simpleKBService.forceRefresh();
       });
   }
 

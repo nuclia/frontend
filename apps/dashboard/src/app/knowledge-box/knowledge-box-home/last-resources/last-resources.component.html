@@ -7,17 +7,20 @@
   as data
 ) {
   <div class="last-resources">
-    <div class="title-m title-with-action">
+    <div class="title-m title-with-actions">
       <div class="title-with-icon">
         <pa-icon name="list"></pa-icon>
         {{ 'dashboard-home.resources.title' | translate }}
       </div>
 
-      <a
-        class="title-xxs accent-link"
-        [routerLink]="data.kbUrl + '/resources'">
-        {{ 'dashboard-home.go-to.resource-list' | translate }}
-      </a>
+      <div class="actions">
+        <a
+          class="title-xxs accent-link"
+          [routerLink]="data.kbUrl + '/resources'">
+          {{ 'dashboard-home.go-to.resource-list' | translate }}
+        </a>
+        <ng-content></ng-content>
+      </div>
     </div>
 
     <pa-tabs notFullWidth>

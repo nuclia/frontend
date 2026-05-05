@@ -1,0 +1,76 @@
+<nus-user-container>
+  <div class="main-container with-gap">
+    @if (!unlocked()) {
+      <div class="form-header">
+        <h1>{{ 'signup.testing.gate.heading' | translate }}</h1>
+      </div>
+      <div class="gate-form">
+        <pa-input
+          type="password"
+          [value]="passwordInput()"
+          (valueChange)="passwordInput.set($event)">
+          {{ 'signup.testing.gate.password_label' | translate }}
+        </pa-input>
+        @if (wrongPassword()) {
+          <p class="signup-error">{{ 'signup.testing.gate.error' | translate }}</p>
+        }
+        <pa-button
+          class="full-width"
+          kind="primary"
+          (click)="unlock()">
+          {{ 'signup.testing.gate.unlock_button' | translate }}
+        </pa-button>
+      </div>
+    }
+
+    @if (unlocked()) {
+      <div class="form-header">
+        <h1>SIGNUP FORM FOR TESTING PURPOSE ONLY</h1>
+      </div>
+      <form
+        data-cy="signup-form"
+        class="signup-form"
+        method="POST"
+        [action]="postUrl">
+        <pa-input
+          type="email"
+          name="email"
+          stfLowerCaseInput>
+          Email
+        </pa-input>
+        <pa-input name="fullname">Fullname</pa-input>
+        <pa-input
+          name="company"
+          stfLowerCaseInput>
+          Company
+        </pa-input>
+        <pa-input
+          name="workflow"
+          value="cowork">
+          Workflow ('classic' or 'cowork')
+        </pa-input>
+        <input
+          name="app"
+          type="hidden"
+          [value]="appUrl" />
+
+        <pa-button
+          class="full-width"
+          type="submit"
+          kind="primary">
+          Sign up
+        </pa-button>
+      </form>
+
+      <p class="centered">
+        Already have an account?
+        <a
+          href="#"
+          (click)="login()"
+          class="accent-link">
+          Login
+        </a>
+      </p>
+    }
+  </div>
+</nus-user-container>

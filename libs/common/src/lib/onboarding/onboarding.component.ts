@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { AnalyticsService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
-import { Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { AnalyticsService, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { Observable, of, ReplaySubject, take, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations, WorkflowType } from '@nuclia/core';
 import { LearningConfigurationForm } from './embeddings-model-form';
@@ -12,6 +12,7 @@ import { Step1Component } from './step1/step1.component';
 import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './kb-creation-steps';
 import { SettingUpComponent } from './setting-up/setting-up.component';
 import { AccountWorkflowComponent } from './account-workflow/account-workflow.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nus-onboarding',
@@ -28,6 +29,7 @@ import { AccountWorkflowComponent } from './account-workflow/account-workflow.co
     SettingUpComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
+    PaButtonModule,
   ],
 })
 export class OnboardingComponent {
@@ -45,6 +47,7 @@ export class OnboardingComponent {
   account?: Account;
   creatingAccount = false;
   inRaoApp = this.navigation.inRaoApp;
+  showLogout = false;
 
   constructor(
     private onboardingService: OnboardingService,
@@ -52,7 +55,6 @@ export class OnboardingComponent {
     private cdr: ChangeDetectorRef,
     private analytics: AnalyticsService,
     private navigation: NavigationService,
-    private features: FeaturesService,
   ) {}
 
   goBack(): void {
@@ -69,10 +71,20 @@ export class OnboardingComponent {
     this.onboardingService
       .createAccount()
       .pipe(take(1))
-      .subscribe((account) => {
-        this.account = account;
-        this.creatingAccount = false;
-        this.onboardingService.nextStep();
+      .subscribe({
+        next: (account) => {
+          this.account = account;
+          this.creatingAccount = false;
+          if (this.account.workflow === 'cowork') {
+            this.kbName = 'ContextBox';
+            this.onboardingService.switchToPreset();
+          }
+          this.onboardingService.nextStep();
+        },
+        error: () => {
+          this.showLogout = true;
+          this.cdr.markForCheck();
+        },
       });
   }
 
@@ -82,6 +94,9 @@ export class OnboardingComponent {
   }
 
   storeWorkflowAndGoNext(workflow: WorkflowType) {
+    if (workflow === 'cowork') {
+      this.kbName = 'ContextBox';
+    }
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
     });
@@ -106,6 +121,10 @@ export class OnboardingComponent {
     this.learningConfig = config;
     this.onboardingService.nextStep();
     this.finalStepDone();
+  }
+
+  logout() {
+    this.sdk.nuclia.auth.logout();
   }
 
   private finalStepDone() {

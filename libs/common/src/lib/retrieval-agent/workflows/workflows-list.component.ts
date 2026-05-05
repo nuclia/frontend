@@ -8,7 +8,7 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Workflow } from '@nuclia/core';
+import { setZoneInRegionalUrl, Workflow } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, map, of, switchMap, take } from 'rxjs';
 import { WorkflowModalComponent } from './workflow-modal';
@@ -43,7 +43,15 @@ export class WorkflowsListComponent {
   workflows = this.workflowsService.workflows.pipe(
     map((workflows) => [...workflows].sort((a, b) => a.name.localeCompare(b.name))),
   );
-  endpoint = this.sdk.currentArag.pipe(map((arag) => arag.fullpath + '/session/default/mcp'));
+
+  endpoint = this.sdk.currentArag.pipe(
+    map(
+      (arag) =>
+        setZoneInRegionalUrl(this.sdk.nuclia.options.backend, arag.zone, 'dp') +
+        `/v1${arag.path}/session/ephemeral/mcp`,
+    ),
+  );
+
   copied = signal(false);
 
   goToWorkflow(workflow: Workflow) {

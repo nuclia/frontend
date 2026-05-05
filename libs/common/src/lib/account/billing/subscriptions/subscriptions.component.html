@@ -31,7 +31,7 @@
         [class]="accountType | async">
         <tr>
           <th></th>
-          @if (isCowork | async) {
+          @if (showCowork | async) {
             <th class="plan">
               <div class="plan-name">Cowork Knowledge</div>
               @if ((prices | async)?.['cowork']; as cowork) {
@@ -40,7 +40,14 @@
                   <span class="unit">/{{ 'billing.month' | translate }}</span>
                 </div>
               }
-              @if (isCowork | async) {
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  routerLink="../checkout"
+                  [queryParams]="{ type: 'cowork' }">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'cowork') {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
                 <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
@@ -130,7 +137,7 @@
         </tr>
         <tr>
           <td>{{ 'billing.preprocessing' | translate }}</td>
-          @if (isCowork | async) {
+          @if (showCowork | async) {
             <td>Cloud</td>
           }
           <td>Cloud</td>
@@ -139,7 +146,7 @@
         </tr>
         <tr>
           <td>{{ 'billing.support' | translate }}</td>
-          @if (isCowork | async) {
+          @if (showCowork | async) {
             <td>Community Support</td>
           }
           <td>Community Support</td>
@@ -148,7 +155,7 @@
         </tr>
         <tr>
           <td>{{ 'billing.da-agents' | translate }}</td>
-          @if (isCowork | async) {
+          @if (showCowork | async) {
             <td>-</td>
           }
           <td>
@@ -169,7 +176,7 @@
         </tr>
         <tr>
           <td>{{ 'billing.audit-log' | translate }}</td>
-          @if (isCowork | async) {
+          @if (showCowork | async) {
             <td>
               <pa-icon
                 name="check"

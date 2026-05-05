@@ -1,4 +1,3 @@
-````skill
 ---
 name: angular-patterns
 description: >
@@ -36,11 +35,11 @@ many features; this covers only what the team has adopted. When in doubt, match 
 
 Every non-trivial page or feature component **must** be split into three files:
 
-| File | Responsibility | Class/export type |
-|---|---|---|
-| `feature-name.component.ts` | Template wiring, host element, signals bound to service state | `@Component` class — no business logic, no HTTP calls, no inline data |
-| `feature-name.service.ts` | All business logic, API calls, derived state | `@Injectable()` class — scoped to the component via `providers: [FeatureNameService]` in the `@Component` decorator |
-| `feature-name.config.ts` | Static configuration: column defs, dropdown options, constants | Exported `const` values and types — no class, no DI |
+| File                        | Responsibility                                                 | Class/export type                                                                                                   |
+| --------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `feature-name.component.ts` | Template wiring, host element, signals bound to service state  | `@Component` class — no business logic, no HTTP calls, no inline data                                               |
+| `feature-name.service.ts`   | All business logic, API calls, derived state                   | `@Injectable()` class — scoped to the component via `providers: [FeatureNameService]` in the `@Component` decorator |
+| `feature-name.config.ts`    | Static configuration: column defs, dropdown options, constants | Exported `const` values and types — no class, no DI                                                                 |
 
 ### Rules
 
@@ -71,22 +70,27 @@ export class MyPageService {
   private sdk = inject(SDKService);
 
   // ── State (signals) ───────────────────────────────────────────────
-  private _items   = signal<MyItem[]>([]);
+  private _items = signal<MyItem[]>([]);
   private _loading = signal(false);
 
-  items   = this._items.asReadonly();
+  items = this._items.asReadonly();
   loading = this._loading.asReadonly();
   isEmpty = computed(() => this._items().length === 0);
 
   loadData(month: string): void {
     this._loading.set(true);
-    this.sdk.currentKb.pipe(
-      switchMap((kb) => kb.getActivityLog(month)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (rows) => { this._items.set(rows); this._loading.set(false); },
-      error: () => this._loading.set(false),
-    });
+    this.sdk.currentKb
+      .pipe(
+        switchMap((kb) => kb.getActivityLog(month)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (rows) => {
+          this._items.set(rows);
+          this._loading.set(false);
+        },
+        error: () => this._loading.set(false),
+      });
   }
 }
 ```
@@ -98,11 +102,11 @@ export class MyPageService {
   templateUrl: './my-page.component.html',
   styleUrl: './my-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [MyPageService],   // ← scopes service to this component tree
+  providers: [MyPageService], // ← scopes service to this component tree
 })
 export class MyPageComponent {
   protected service = inject(MyPageService);
-  readonly columns = MY_PAGE_COLUMNS;     // ← from config, not computed here
+  readonly columns = MY_PAGE_COLUMNS; // ← from config, not computed here
 }
 ```
 
@@ -143,6 +147,7 @@ activity/
 ### Module-root exception
 
 A component **stays at the module root** (not in a subfolder) when it is:
+
 - The "spine" or wrapper/template component that other components in the module are routed into, **or**
 - A component that is directly used (`<stf-foo>`) by other components in the same module.
 
@@ -177,7 +182,7 @@ to sibling module-level files use the `../` prefix:
 // Inside cost-token-page/cost-token-page.component.ts
 import { ActivityColumnModel } from '../activity-column.model';
 import { ActivityLogPageComponent } from '../activity-log-page.component';
-import { COST_TOKEN_COLUMNS } from './cost-token-page.config';  // sibling in same subfolder
+import { COST_TOKEN_COLUMNS } from './cost-token-page.config'; // sibling in same subfolder
 ```
 
 ---
@@ -185,25 +190,17 @@ import { COST_TOKEN_COLUMNS } from './cost-token-page.config';  // sibling in sa
 ## Component Skeleton
 
 ```ts
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { SomeService } from './some.service';
 
 @Component({
-  selector: 'stf-my-feature',      // prefix from project.json
+  selector: 'stf-my-feature', // prefix from project.json
   imports: [TranslateModule, PaButtonModule],
   templateUrl: './my-feature.component.html',
-  styleUrl: './my-feature.component.scss',   // singular string, NOT styleUrls: [...]
+  styleUrl: './my-feature.component.scss', // singular string, NOT styleUrls: [...]
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyFeatureComponent {
@@ -211,11 +208,11 @@ export class MyFeatureComponent {
   private someService = inject(SomeService);
 
   // ── Inputs (signal-based) ────────────────────────────────────────
-  itemId  = input.required<string>();
-  label   = input('', { transform: (v: string) => v.trim() });
+  itemId = input.required<string>();
+  label = input('', { transform: (v: string) => v.trim() });
 
   // ── Outputs ──────────────────────────────────────────────────────
-  deleted = output<string>();        // emit the id, never 'onDeleted'
+  deleted = output<string>(); // emit the id, never 'onDeleted'
 
   // ── Local state ──────────────────────────────────────────────────
   private loading = signal(false);
@@ -228,9 +225,7 @@ export class MyFeatureComponent {
 
   // ── Cleanup (new style) ──────────────────────────────────────────
   constructor() {
-    this.someService.events$
-      .pipe(takeUntilDestroyed())
-      .subscribe((event) => this.handleEvent(event));
+    this.someService.events$.pipe(takeUntilDestroyed()).subscribe((event) => this.handleEvent(event));
   }
 
   delete(): void {
@@ -241,11 +236,14 @@ export class MyFeatureComponent {
     });
   }
 
-  private handleEvent(event: unknown): void { /* ... */ }
+  private handleEvent(event: unknown): void {
+    /* ... */
+  }
 }
 ```
 
 **Key points:**
+
 - `inject()` at property level, not in constructor parameter list
 - `input.required<T>()` enforces non-optional at compile time
 - Output names are **verbs in past tense** (`deleted`, `saved`), never prefixed with `on`
@@ -280,7 +278,7 @@ export function setLoading(value: boolean): void {
 
 // For objects with multiple sub-properties
 const sidebar = signal<SidebarState>({ open: false, title: '' });
-export const sidebarOpen  = computed(() => sidebar().open);
+export const sidebarOpen = computed(() => sidebar().open);
 export const sidebarTitle = computed(() => sidebar().title);
 export function openSidebar(title: string): void {
   sidebar.update((s) => ({ ...s, open: true, title }));
@@ -299,24 +297,24 @@ See `libs/common/src/lib/retrieval-agent/drivers/drivers.service.ts`.
 ```ts
 @Injectable({ providedIn: 'root' })
 export class DriversService {
-  private sdk   = inject(SDKService);
+  private sdk = inject(SDKService);
   private toast = inject(SisToastService);
 
   // ── Private state ────────────────────────────────────────────────
-  private _drivers        = signal<Driver[]>([]);
+  private _drivers = signal<Driver[]>([]);
   private _refreshTrigger = new BehaviorSubject<void>(undefined); // NOT Subject!
 
   // ── Public RxJS pipeline (writes to signal as side effect) ───────
   drivers$ = this._refreshTrigger.pipe(
     switchMap(() => this.sdk.currentArag),
     switchMap((arag) => arag.getDrivers()),
-    catchError(() => of([])),               // REQUIRED — don't skip
-    tap((drivers) => this._drivers.set(drivers)),  // ← bridge: tap writes signal
-    shareReplay(1),                         // REQUIRED — prevent duplicate requests
+    catchError(() => of([])), // REQUIRED — don't skip
+    tap((drivers) => this._drivers.set(drivers)), // ← bridge: tap writes signal
+    shareReplay(1), // REQUIRED — prevent duplicate requests
   );
 
   // ── Expose as readonly signal (for template, computed, toSignal) ──
-  drivers = this._drivers.asReadonly();     // NOT computed(() => this._drivers())
+  drivers = this._drivers.asReadonly(); // NOT computed(() => this._drivers())
 
   // ── Computed values ───────────────────────────────────────────────
   hasDrivers = computed(() => this._drivers().length > 0);
@@ -329,13 +327,13 @@ export class DriversService {
 
 **Critical Tier 2 rules — these are the most common mistakes:**
 
-| ❌ Wrong | ✅ Correct | Why |
-|---|---|---|
-| `new Subject<void>()` as trigger | `new BehaviorSubject<void>(undefined)` | `Subject` has no initial emission — data never loads until manual `refresh()` |
-| `toSignal(this.drivers$)` in service | `tap((d) => this._drivers.set(d))` in pipeline | `toSignal` creates a separate hidden subscription, bypassing `shareReplay` cache |
-| `computed(() => this._drivers())` for readonly | `this._drivers.asReadonly()` | `computed` adds unnecessary wrapper overhead; `asReadonly()` is the direct API |
-| Skipping `catchError` | Always include `catchError(() => of(fallback))` | Uncaught errors complete the observable permanently — no more refreshes |
-| Skipping `shareReplay(1)` | Always include at end of pipeline | Each `async` pipe or subscriber triggers a new HTTP request without it |
+| ❌ Wrong                                       | ✅ Correct                                      | Why                                                                              |
+| ---------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| `new Subject<void>()` as trigger               | `new BehaviorSubject<void>(undefined)`          | `Subject` has no initial emission — data never loads until manual `refresh()`    |
+| `toSignal(this.drivers$)` in service           | `tap((d) => this._drivers.set(d))` in pipeline  | `toSignal` creates a separate hidden subscription, bypassing `shareReplay` cache |
+| `computed(() => this._drivers())` for readonly | `this._drivers.asReadonly()`                    | `computed` adds unnecessary wrapper overhead; `asReadonly()` is the direct API   |
+| Skipping `catchError`                          | Always include `catchError(() => of(fallback))` | Uncaught errors complete the observable permanently — no more refreshes          |
+| Skipping `shareReplay(1)`                      | Always include at end of pipeline               | Each `async` pipe or subscriber triggers a new HTTP request without it           |
 
 ---
 
@@ -462,13 +460,13 @@ because the signal reference is unchanged. Always replace the whole value:
 ```ts
 // ❌ Silent failure — Angular sees same array reference, no update scheduled
 const arr = this._items();
-arr[i] = updatedItem;           // mutates in place
+arr[i] = updatedItem; // mutates in place
 // this._items has NOT changed — no re-render
 
 // ✅ Correct — create new array so signal reference changes
 const copy = [...this._items()];
 copy[i] = updatedItem;
-this._items.set(copy);          // new reference → re-render scheduled
+this._items.set(copy); // new reference → re-render scheduled
 
 // ✅ Also correct for objects
 this._config.update((c) => ({ ...c, pageSize: 25 }));
@@ -519,15 +517,13 @@ import { SDKService, NavigationService } from '@flaps/core';
 import { map } from 'rxjs';
 
 export const myFeatureGuard: CanActivateFn = (route) => {
-  const sdk        = inject(SDKService);
+  const sdk = inject(SDKService);
   const navigation = inject(NavigationService);
-  const router     = inject(Router);
+  const router = inject(Router);
 
   return sdk.currentKb.pipe(
     map((kb) =>
-      kb.someFeature
-        ? true
-        : router.createUrlTree([navigation.getKbUrl(route.paramMap.get('account')!, kb.slug!)]),
+      kb.someFeature ? true : router.createUrlTree([navigation.getKbUrl(route.paramMap.get('account')!, kb.slug!)]),
     ),
   );
 };
@@ -550,9 +546,7 @@ steps into named variables** before assembling the final `signal.set()` call. In
 this._stats.set({
   avgRetrievalTimeMs:
     withRetrieval.length > 0
-      ? Math.round(
-          withRetrieval.reduce((sum, i) => sum + i.retrieval_time!, 0) / withRetrieval.length,
-        )
+      ? Math.round(withRetrieval.reduce((sum, i) => sum + i.retrieval_time!, 0) / withRetrieval.length)
       : 0,
 });
 
@@ -631,6 +625,7 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
 ```
 
 **Rules for abstract base classes:**
+
 - Place at the module root (e.g., `metrics/abstract-metrics-page.service.ts`)
 - Use generics for item types: `AbstractMetricsPageService<T, R = T[]>`
 - Provide protected hook methods (`_resetPaginationState()`) that subclasses can override
@@ -644,12 +639,12 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
 In addition to the Component / Service / Config trinity, complex components use a
 **`.model.ts`** file for interfaces, types, and data models:
 
-| File | Content |
-|---|---|
-| `feature-name.model.ts` | Interfaces, type aliases, enums, and small data-shape classes |
-| `feature-name.service.ts` | Business logic: state management, data transformation, condition CRUD |
-| `feature-name.component.ts` | Thin UI shell that delegates all logic to the service |
-| `feature-name.config.ts` | Static column defs, dropdown options, constants |
+| File                        | Content                                                               |
+| --------------------------- | --------------------------------------------------------------------- |
+| `feature-name.model.ts`     | Interfaces, type aliases, enums, and small data-shape classes         |
+| `feature-name.service.ts`   | Business logic: state management, data transformation, condition CRUD |
+| `feature-name.component.ts` | Thin UI shell that delegates all logic to the service                 |
+| `feature-name.config.ts`    | Static column defs, dropdown options, constants                       |
 
 **When to split:** This applies to complex components with significant logic. Simple components
 with 1–2 interfaces can keep them inline or in the service file.
@@ -703,31 +698,31 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 
 ## Common Mistakes to Avoid
 
-| Mistake | Correct approach |
-|---|---|
-| Nested ternary (`a ? b : c ? d : e`) | Use `if / else if` blocks — flat branching is always clearer |
-| `if (cond) { doX(); } else { doY(); }` when one branch returns | Use guard-clause / early-return: `if (!cond) { doY(); return; } doX();` |
-| `constructor(private svc: Service)` | `private svc = inject(Service)` |
-| `@Input() value: string` | `value = input.required<string>()` |
-| `@Output() changed = new EventEmitter<string>()` | `changed = output<string>()` |
-| `standalone: true` explicitly written | Omit it — defaults to `true` in Angular 19+ |
-| `styleUrls: ['./foo.component.scss']` (array) | `styleUrl: './foo.component.scss'` (singular string) |
-| Empty `.scss` file committed for a component | Omit `styleUrl` entirely when no styles are needed |
-| Page component files at the module root | Put each page component in a named subfolder (`feature-name/`) |
-| Missing `changeDetection: ChangeDetectionStrategy.OnPush` | Always include it |
-| `effect()` to derive values | Use `computed()` for derived state |
-| `this.signal.set(x)` inside `computed()` | Never write inside computed |
-| `inject()` inside `ngOnInit` | Move to property initializer or constructor |
-| Plain property read in template (`isLoading = false`) | `isLoading = signal(false)` — OnPush won't re-render otherwise |
-| `this.cdr.markForCheck()` after every mutation | Convert state to `signal()` and remove `ChangeDetectorRef` |
-| `[(value)]="name"` with nsi-/pa- components | `[value]="name()" (valueChange)="name.set($event)"` |
-| `arr[i] = val` on a signal array | `const copy = [...arr()]; copy[i] = val; arr.set(copy)` |
-| `new Subject<void>()` as Tier 2 refresh trigger | `new BehaviorSubject<void>(undefined)` |
-| `toSignal(obs$)` inside a Tier 2 service | Use `tap((v) => this._sig.set(v))` in the pipeline |
-| Omit `shareReplay(1)` on service pipelines | Always include — prevents duplicate HTTP requests |
-| Omit `catchError` on service pipelines | Always include — otherwise errors permanently kill the stream |
-| Adding NgRx `signalStore` | Not used in this codebase — use one of the 3 tiers |
-| Forgetting `takeUntilDestroyed()` on subscriptions in components | Always unsubscribe |
+| Mistake                                                          | Correct approach                                                        |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Nested ternary (`a ? b : c ? d : e`)                             | Use `if / else if` blocks — flat branching is always clearer            |
+| `if (cond) { doX(); } else { doY(); }` when one branch returns   | Use guard-clause / early-return: `if (!cond) { doY(); return; } doX();` |
+| `constructor(private svc: Service)`                              | `private svc = inject(Service)`                                         |
+| `@Input() value: string`                                         | `value = input.required<string>()`                                      |
+| `@Output() changed = new EventEmitter<string>()`                 | `changed = output<string>()`                                            |
+| `standalone: true` explicitly written                            | Omit it — defaults to `true` in Angular 19+                             |
+| `styleUrls: ['./foo.component.scss']` (array)                    | `styleUrl: './foo.component.scss'` (singular string)                    |
+| Empty `.scss` file committed for a component                     | Omit `styleUrl` entirely when no styles are needed                      |
+| Page component files at the module root                          | Put each page component in a named subfolder (`feature-name/`)          |
+| Missing `changeDetection: ChangeDetectionStrategy.OnPush`        | Always include it                                                       |
+| `effect()` to derive values                                      | Use `computed()` for derived state                                      |
+| `this.signal.set(x)` inside `computed()`                         | Never write inside computed                                             |
+| `inject()` inside `ngOnInit`                                     | Move to property initializer or constructor                             |
+| Plain property read in template (`isLoading = false`)            | `isLoading = signal(false)` — OnPush won't re-render otherwise          |
+| `this.cdr.markForCheck()` after every mutation                   | Convert state to `signal()` and remove `ChangeDetectorRef`              |
+| `[(value)]="name"` with nsi-/pa- components                      | `[value]="name()" (valueChange)="name.set($event)"`                     |
+| `arr[i] = val` on a signal array                                 | `const copy = [...arr()]; copy[i] = val; arr.set(copy)`                 |
+| `new Subject<void>()` as Tier 2 refresh trigger                  | `new BehaviorSubject<void>(undefined)`                                  |
+| `toSignal(obs$)` inside a Tier 2 service                         | Use `tap((v) => this._sig.set(v))` in the pipeline                      |
+| Omit `shareReplay(1)` on service pipelines                       | Always include — prevents duplicate HTTP requests                       |
+| Omit `catchError` on service pipelines                           | Always include — otherwise errors permanently kill the stream           |
+| Adding NgRx `signalStore`                                        | Not used in this codebase — use one of the 3 tiers                      |
+| Forgetting `takeUntilDestroyed()` on subscriptions in components | Always unsubscribe                                                      |
 
 ---
 
@@ -735,8 +730,7 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 
 Load these when you need more depth — don't load proactively, only when relevant:
 
-| File | When to load |
-|------|-------------|
-| `references/api-cheatsheet.md` | Need full API signatures for `input()`, `output()`, `signal()`, `computed()`, `effect()` |
-| `references/codebase-patterns.md` | Want complete, annotated code examples lifted verbatim from this repo |
-````
+| File                              | When to load                                                                             |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| `references/api-cheatsheet.md`    | Need full API signatures for `input()`, `output()`, `signal()`, `computed()`, `effect()` |
+| `references/codebase-patterns.md` | Want complete, annotated code examples lifted verbatim from this repo                    |

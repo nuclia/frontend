@@ -124,12 +124,13 @@ export interface ChatOptions extends BaseSearchOptions {
     b64encoded: string;
   };
   reasoning?: ReasoningParam;
-  show_consumption?: boolean;  
+  show_consumption?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {
   faceted?: string[];
   sort?: SortOption;
+  offset?: number;
   /**
    * @deprecated use top_k
    */

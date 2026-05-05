@@ -1,4 +1,3 @@
-```skill
 ---
 name: bug-finder
 description: >
@@ -41,6 +40,7 @@ A subscription that is never cleaned up will keep running after the component/se
 causing stale state updates, duplicate side-effects, and memory pressure.
 
 **Flag when:**
+
 - `.subscribe()` is called inside a component or directive without any of:
   - `takeUntilDestroyed()` (modern Angular)
   - `take(1)` / `first()` (valid only for single-emission streams)
@@ -58,6 +58,7 @@ Choosing the wrong higher-order mapping operator (switchMap / mergeMap / concatM
 can cause stale responses to overwrite fresh ones, or duplicate side-effects.
 
 **Flag when:**
+
 - `mergeMap` (or `flatMap`) is used to call an API that should cancel the previous request when a
   new one comes in (e.g., a search-as-you-type, a page navigation). Should be `switchMap`.
 - `switchMap` is used for a write operation (POST, PUT, DELETE) where all calls must complete in
@@ -72,6 +73,7 @@ can cause stale responses to overwrite fresh ones, or duplicate side-effects.
 Errors that are swallowed without logging or user notification make bugs invisible in production.
 
 **Flag when:**
+
 - `catchError` returns `EMPTY` or `of([])` with no `console.error`, no toast, and no Sentry/logging call.
 - A `try/catch` block has an empty `catch` body or only a comment.
 - A Promise rejection is not handled (`.then(fn)` without `.catch(fn)` and without `await` in a
@@ -85,6 +87,7 @@ OnPush components only re-render when their inputs change, a signal they read ch
 `markForCheck()` / `detectChanges()` is called. Forgetting this causes stale UI.
 
 **Flag when:**
+
 - An OnPush component holds a mutable object reference and mutates it in-place
   (e.g., `this.items.push(x)` instead of `this.items = [...this.items, x]`). The template will
   not re-render because the reference did not change.
@@ -98,6 +101,7 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Null / Undefined Dereference
 
 **Flag when:**
+
 - A property is accessed on a value that the types say can be `null | undefined`, without a
   preceding null check or the optional-chaining operator (`?.`).
 - A non-null assertion `!` is used on a value that is observably nullable at that point in the
@@ -112,13 +116,14 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Signal Bugs (Angular Signals)
 
 **Flag when:**
+
 - A `computed()` call contains a side-effect (`computed(() => { this.service.fetch(); return x; })`).
   Computed signals must be pure; side-effects won't run reliably and can cause infinite loops.
 - An `effect()` writes to a signal it also reads, creating a circular update cycle, unless
   `allowSignalWrites` is intentionally set and the cycle is bounded.
 - `toSignal()` is called outside an injection context (e.g., inside `ngOnInit` or a method) without
   passing `{ injector }`. Throws a runtime error.
-- A signal's value is compared with `===` against an object/array literal inline 
+- A signal's value is compared with `===` against an object/array literal inline
   (e.g., `if (mySignal() === [])`) — always false; likely a bug.
 
 ---
@@ -126,7 +131,8 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Form Bugs (Angular Reactive Forms)
 
 **Flag when:**
-- `formGroup.value` is used where the full model is needed but some controls are `disabled` — 
+
+- `formGroup.value` is used where the full model is needed but some controls are `disabled` —
   disabled controls are excluded from `.value`. Use `formGroup.getRawValue()` instead.
 - A `FormControl` is initialised with `null` but its type annotation doesn't include `null`
   (strict mode will flag this; non-strict silently allows it, causing runtime type errors downstream).
@@ -139,6 +145,7 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Router / Navigation Bugs
 
 **Flag when:**
+
 - `router.navigate(['../sibling'])` is called from a service (not a component) without providing
   a `relativeTo` `ActivatedRoute` — relative navigation from a service always fails silently.
 - `router.navigateByUrl` is used with a relative URL (not starting with `/`) — this resolves
@@ -151,6 +158,7 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Async / Promise Bugs
 
 **Flag when:**
+
 - `async` function result is not `await`ed and the error path is therefore unhandled.
 - A `Promise.all([...])` call is missing `await`, so the promise is discarded.
 - `setTimeout` / `setInterval` is used inside an Angular component without being cleared in
@@ -163,6 +171,7 @@ OnPush components only re-render when their inputs change, a signal they read ch
 ### Type Coercion / Comparison Bugs
 
 **Flag when:**
+
 - `==` is used instead of `===` in a context where type coercion could cause false positives
   (e.g., `0 == ''` is `true`).
 - A numeric template binding receives a string from `<input>` without `parseInt`/`parseFloat`
@@ -182,6 +191,7 @@ Each finding is one line:
 ```
 
 Severity labels (choose one):
+
 - **CRASH** — will throw at runtime or cause an irrecoverable error under normal usage
 - **BUG** — incorrect behaviour that users will observe, but the app keeps running
 - **LEAK** — resource/memory leak that degrades the app over time
@@ -204,4 +214,3 @@ If nothing is found, output: `No bugs found.`
   compiler misses (e.g., `any` casting that hides a null).
 - Hypothetical bugs that require highly unlikely input combinations without evidence in the code
   that such inputs are possible.
-```

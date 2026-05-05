@@ -1,0 +1,18 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'onboarding.restart-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <p>{{ 'onboarding.restart-modal.body' | translate }}</p>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      (click)="confirmRestart()">
+      {{ 'onboarding.restart-modal.confirm' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'onboarding.restart-modal.cancel' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

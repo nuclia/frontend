@@ -29,10 +29,12 @@ export class SearchWidgetService {
 
   private currentQuery = '';
   private currentFilters: string[] = [];
+  private _searchTriggered = new Subject<void>();
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string; synchSnippet?: string }>();
   private _logs = new Subject<any>();
   widgetPreview = this._widgetPreview.asObservable();
   logs = this._logs.asObservable();
+  searchTriggered = this._searchTriggered.asObservable();
   private _generateWidgetSnippetSubject = new Subject<{
     currentConfig: Widget.AnySearchConfiguration;
     widgetOptions: Widget.WidgetConfiguration;
@@ -278,6 +280,7 @@ export class SearchWidgetService {
     searchWidget?.addEventListener('search', (event: { detail: { query: string; filters: string[] } }) => {
       this.currentQuery = event.detail.query;
       this.currentFilters = event.detail.filters;
+      this._searchTriggered.next();
     });
     searchWidget?.addEventListener('resetQuery', () => {
       this.currentQuery = '';

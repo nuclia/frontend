@@ -54,6 +54,10 @@ export class ConsentComponent implements OnInit {
     return JSON.stringify(this.consentData?.requested_scope || []);
   }
 
+  scopeKey(scope: string): string {
+    return scope.replace(/:/g, '.');
+  }
+
   acceptConsent() {
     this.form?.nativeElement.submit();
   }

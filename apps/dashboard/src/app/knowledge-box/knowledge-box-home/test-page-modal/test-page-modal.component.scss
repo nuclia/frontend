@@ -20,3 +20,10 @@
     width: 100%;
   }
 }
+
+pa-modal-title {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  white-space: nowrap;
+}
