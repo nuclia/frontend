@@ -100,6 +100,7 @@
 	"account.kb-description": "Una caja de conocimiento es una colección de contenido en la que Agentic RAG busca. Algunos motores de búsqueda lo llaman \"índice\" o \"corpus\". En la mayoría de los casos, solo necesita un Knowledge Box para su aplicación.",
 	"account.knowledgeboxes": "Knowledge Boxes",
 	"account.manage": "Gestión de la cuenta",
+	"account.manage_users": "Administrar usuarios",
 	"account.models.bedrock.delete-confirm.description": "¿Está seguro de que quieres eliminar esta integración?",
 	"account.models.bedrock.delete-confirm.title": "Eliminar integración AWS Bedrock",
 	"account.models.bedrock.description": "Integra el teu AWS Bedrock a Agentic RAG",

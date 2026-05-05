@@ -100,6 +100,7 @@
 	"account.kb-description": "Une boîte à connaissances est un ensemble de contenus sur lesquels Agentic RAG effectue des recherches. Certains moteurs de recherche l’appellent \"index\" ou \"corpus\".  Dans la plupart des cas, vous n’avez besoin que d’une seule boîte de connaissances pour votre application.",
 	"account.knowledgeboxes": "Knowledge Boxes",
 	"account.manage": "Gérer le compte",
+	"account.manage_users": "Gérer les utilisateurs",
 	"account.models.bedrock.delete-confirm.description": "Êtes-vous sûr de vouloir supprimer cette intégration ?",
 	"account.models.bedrock.delete-confirm.title": "Supprimer intégration AWS Bedrock",
 	"account.models.bedrock.description": "Intégrez votre AWS Bedrock à Agentic RAG",

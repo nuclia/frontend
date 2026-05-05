@@ -1,13 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { BackButtonComponent } from '@nuclia/sistema';
+import { map } from 'rxjs';
 import { UsersManageModule } from '../users-manage';
 
 @Component({
   selector: 'app-knowledge-box-users',
   template: `
     <div class="knowledge-box-users page-spacing">
+      @if (simpleMode | async) {
+        <nsi-back-button [link]="backLink | async">{{ 'generic.back_to_home' | translate }}</nsi-back-button>
+      }
       <h2 class="display-s">{{ 'navbar.users' | translate }}</h2>
       @if (kb | async; as kb) {
         <app-users-manage [kb]="kb"></app-users-manage>
@@ -21,11 +26,16 @@ import { UsersManageModule } from '../users-manage';
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [CommonModule, TranslateModule, UsersManageModule],
+  imports: [CommonModule, TranslateModule, UsersManageModule, BackButtonComponent],
 })
 export class KnowledgeBoxUsersComponent {
   kb = this.sdk.currentKb;
   arag = this.sdk.currentArag;
+  simpleMode = this.navigation.simpleMode;
+  backLink = this.navigation.kbUrl.pipe(map((url) => `${url}/simple`));
 
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    private navigation: NavigationService,
+  ) {}
 }
