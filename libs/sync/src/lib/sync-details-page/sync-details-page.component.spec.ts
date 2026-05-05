@@ -3,7 +3,7 @@ import { SyncDetailsPageComponent } from './sync-details-page.component';
 import { SyncService } from '../logic';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { of } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { TranslateFakeLoader, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 
@@ -93,6 +93,9 @@ describe('SyncDetailsPageComponent', () => {
         loadSvg: () => {
           /* empty */
         },
+      }),
+      mockProvider(NavigationService, {
+        kbUrl: of('/test-kb-url'),
       }),
     ],
   });

@@ -1,0 +1,163 @@
+<div class="kb-onboarding-header">
+  @if (state(); as s) {
+    @if (!s.skipped) {
+      <!-- Standard onboarding -->
+      <div class="onboarding-content">
+        <!-- Title row: heading + dismiss button inline -->
+        <div class="onboarding-title-row">
+          @switch (s.currentStep) {
+            @case ('uploading-data') {
+              <h2 class="onboarding-title">{{ 'onboarding.header.step1.title' | translate }}</h2>
+            }
+            @case ('processing-data') {
+              <h2 class="onboarding-title">{{ 'onboarding.header.step2.title' | translate }}</h2>
+            }
+            @case ('searching-data') {
+              <h2 class="onboarding-title">{{ 'onboarding.header.step3.title' | translate }}</h2>
+            }
+          }
+          <pa-button
+            class="icon-bordered"
+            aspect="basic"
+            icon="cross"
+            [paTooltip]="'onboarding.header.skip-btn' | translate"
+            (click)="openSkipModal()"></pa-button>
+        </div>
+
+        <!-- Primary action button -->
+        <div class="onboarding-actions">
+          @switch (s.currentStep) {
+            @case ('uploading-data') {
+              <pa-button
+                kind="primary"
+                icon="upload"
+                iconAndText
+                [routerLink]="kbUrl() + '/upload'">
+                {{ 'onboarding.header.step1.upload-btn' | translate }}
+              </pa-button>
+            }
+            @case ('processing-data') {
+              <nsi-info-card
+                class="processing-info"
+                icon="clock-dash">
+                <div class="align-center-2">
+                  {{ 'onboarding.header.step2.description2' | translate }}
+                  <pa-button
+                    aspect="basic"
+                    size="small"
+                    [routerLink]="kbUrl() + '/resources'">
+                    {{ 'onboarding.header.step2.check-files' | translate }}
+                  </pa-button>
+                </div>
+              </nsi-info-card>
+            }
+            @case ('searching-data') {
+              <pa-button
+                kind="primary"
+                icon="search"
+                iconAndText
+                [routerLink]="kbUrl() + '/search'">
+                {{ 'onboarding.header.step3.try-search' | translate }}
+              </pa-button>
+            }
+          }
+        </div>
+
+        <!-- Vertical checklist -->
+        <ul class="onboarding-steps">
+          <li [class.onboarding-steps__item--done]="s.currentStep !== 'uploading-data'">
+            <pa-checkbox
+              noEllipsis
+              [value]="s.currentStep !== 'uploading-data'">
+              {{ 'onboarding.header.step1.steps.upload' | translate }}
+            </pa-checkbox>
+          </li>
+          <li [class.onboarding-steps__item--done]="s.currentStep === 'searching-data'">
+            <pa-checkbox
+              noEllipsis
+              [value]="s.currentStep === 'searching-data'">
+              {{ 'onboarding.header.step1.steps.process' | translate }}
+            </pa-checkbox>
+          </li>
+          <li>
+            <pa-checkbox
+              noEllipsis
+              [value]="false">
+              {{ 'onboarding.header.step1.steps.search' | translate }}
+            </pa-checkbox>
+          </li>
+        </ul>
+      </div>
+    } @else {
+      <!-- Skipped onboarding -->
+      <div class="onboarding-content">
+        @switch (s.currentStep) {
+          @case ('uploading-data') {
+            <div class="onboarding-title-row">
+              <h2 class="onboarding-title">{{ 'onboarding.header.skipped.step1.title' | translate }}</h2>
+              <pa-button
+                class="icon-bordered"
+                aspect="basic"
+                icon="help"
+                [paTooltip]="'onboarding.header.restart-btn-tooltip' | translate"
+                (click)="openRestartModal()"></pa-button>
+            </div>
+            <div class="onboarding-actions">
+              <pa-button
+                kind="primary"
+                icon="upload"
+                iconAndText
+                [routerLink]="kbUrl() + '/upload'">
+                {{ 'onboarding.header.skipped.step1.upload-btn' | translate }}
+              </pa-button>
+            </div>
+          }
+
+          @case ('processing-data') {
+            <div class="onboarding-title-row">
+              <h2 class="onboarding-title">{{ 'onboarding.header.skipped.step2.title' | translate }}</h2>
+              <pa-button
+                class="icon-bordered"
+                aspect="basic"
+                icon="help"
+                [paTooltip]="'onboarding.header.restart-btn-tooltip' | translate"
+                (click)="openRestartModal()"></pa-button>
+            </div>
+
+            <nsi-info-card
+              class="processing-info"
+              icon="clock-dash">
+              <div class="align-center-2">
+                <span class="banner-text">{{ 'onboarding.header.step2.description2' | translate }}</span>
+                <pa-button
+                  size="small"
+                  aspect="basic"
+                  [routerLink]="kbUrl() + '/resources'">
+                  {{ 'onboarding.header.step2.check-files' | translate }}
+                </pa-button>
+              </div>
+            </nsi-info-card>
+          }
+        }
+      </div>
+    }
+  } @else {
+    <!-- KB Ready / done state -->
+    <div class="onboarding-content onboarding-content--done">
+      <div class="onboarding-title-row">
+        <h2 class="onboarding-title">{{ 'onboarding.header.done.title' | translate }}</h2>
+        <div class="align-center-2">
+          <pa-button
+            kind="primary"
+            icon="search"
+            [routerLink]="kbUrl() + '/search'"></pa-button>
+          <pa-button
+            class="icon-bordered"
+            aspect="basic"
+            icon="plus"
+            [routerLink]="kbUrl() + '/upload'"></pa-button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

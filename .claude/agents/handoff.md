@@ -1,3 +1,11 @@
+---
+name: handoff
+description: >
+  Reference document for generating handoff blocks between agents in the Nuclia frontend monorepo.
+  The orchestrator uses this format whenever Agent A's output is a direct input to Agent B.
+  Do NOT send a handoff block to quality-inspector — it reads git diff directly.
+---
+
 # Agent Handoff Format
 
 A **handoff block** is passed from one agent to the next whenever work is sequential and the
@@ -9,6 +17,7 @@ blocks — agents do not write them for themselves.
 ## When to generate a handoff block
 
 Generate one whenever:
+
 - Agent A's output is an **input** to Agent B (not just background context).
 - The receiving agent is about to touch files or make decisions that depend on specific choices
   Agent A made (class names, method signatures, translation keys, file paths).
@@ -16,6 +25,7 @@ Generate one whenever:
   to understand what's already done.
 
 Do NOT generate one when:
+
 - Delegating the very first agent in a session (use the session context instead).
 - The task is a clean parallel assignment with no shared state (give each agent its own brief).
 - The receiving agent is `quality-inspector` — it reads the diff directly, not a handoff.
@@ -162,10 +172,10 @@ Component renders in nx serve dashboard with no console errors.
 
 ## Handoff anti-patterns
 
-| Anti-pattern | Why it breaks |
-|---|---|
-| Omitting "Assumptions Made" | Receiving agent contradicts a file path or class name, producing inconsistent code |
-| Pasting 200-line files inline | Bloats context; use a file path reference instead |
-| Writing "see previous messages" | Stateless sessions have no previous messages — always be explicit |
-| Skipping "Definition of Done" | Agent doesn't know when to stop; may over-engineer or under-deliver |
-| Sending a handoff to `quality-inspector` | It reads the diff; it doesn't need a handoff |
+| Anti-pattern                             | Why it breaks                                                                      |
+| ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| Omitting "Assumptions Made"              | Receiving agent contradicts a file path or class name, producing inconsistent code |
+| Pasting 200-line files inline            | Bloats context; use a file path reference instead                                  |
+| Writing "see previous messages"          | Stateless sessions have no previous messages — always be explicit                  |
+| Skipping "Definition of Done"            | Agent doesn't know when to stop; may over-engineer or under-deliver                |
+| Sending a handoff to `quality-inspector` | It reads the diff; it doesn't need a handoff                                       |

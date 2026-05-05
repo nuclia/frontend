@@ -1,0 +1,19 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: contents;
+}
+
+.content-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  padding: rhythm(1) 0;
+
+  .placeholder-line {
+    height: rhythm(2.5);
+    background: $color-neutral-lightest;
+    border: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(0.5);
+  }
+}

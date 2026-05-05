@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -53,6 +53,7 @@ export class AddSyncPageComponent implements OnInit {
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+  private uploadEventService = inject(UploadEventService);
   selectedFolder?: { sync_root_path: string; drive_id: string };
 
   connectorId = this.currentRoute.params.pipe(
@@ -271,8 +272,11 @@ export class AddSyncPageComponent implements OnInit {
         this.router.navigate([path], { relativeTo: this.currentRoute });
       }),
       switchMap(() => {
-        this.toaster.success('sync.details.toast.triggering-sync-success');
         return this.syncService.triggerSync(syncId).pipe(
+          tap(() => {
+            this.uploadEventService.notifyProcessingStarted();
+            this.toaster.success('sync.details.toast.triggering-sync-success');
+          }),
           catchError(() => {
             this.toaster.error('sync.details.toast.triggering-sync-failed');
             return of();

@@ -3,19 +3,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
   signal,
   viewChild,
   ViewEncapsulation,
-  DOCUMENT
+  DOCUMENT,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
+import { UploadEventService } from '@flaps/core';
 import { filter, map, switchMap } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
 import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
@@ -31,11 +34,13 @@ import { CreateWidgetDialogComponent } from './widgets';
   encapsulation: ViewEncapsulation.None,
 })
 export class SearchPageComponent implements OnDestroy {
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
   private document = inject(DOCUMENT);
+  private uploadEventService = inject(UploadEventService);
 
   configurationContainerElement = viewChild<ElementRef>('configurationContainer');
   searchConfigurationComponent = viewChild(SearchConfigurationComponent);
@@ -49,6 +54,14 @@ export class SearchPageComponent implements OnDestroy {
   panelTop = signal(0);
   panelWidth = signal(480);
   cssVariables = computed(() => `--panel-width:${this.panelWidth()}px; --panel-top:${this.panelTop()}px`);
+
+  constructor() {
+    this.searchWidgetService.searchTriggered.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.route.snapshot.paramMap.has('kb')) {
+        this.uploadEventService.notifySearchPerformed();
+      }
+    });
+  }
 
   ngOnDestroy() {
     this.searchWidgetService.resetSearchQuery();

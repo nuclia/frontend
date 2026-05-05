@@ -1,5 +1,9 @@
 <div class="page-spacing">
   <div class="upload-data-page">
+    @if (uploadStarted()) {
+      <app-resource-handling-banner [kbUrl]="kbUrl()"></app-resource-handling-banner>
+    }
+
     <h1>{{ 'stash.upload_data' | translate }}</h1>
     <p class="body-m">{{ 'stash.upload.page-subtitle' | translate }}</p>
 
@@ -32,6 +36,7 @@
       </div>
     </div>
   </div>
+
   <nsi-info-card>
     {{ 'stash.upload.go-to-synchronize' | translate }}
     <pa-button
