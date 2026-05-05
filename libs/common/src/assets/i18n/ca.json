@@ -100,6 +100,7 @@
 	"account.kb-description": "Un Knowledge Box és una col·lecció de contingut en què cerca Agentic RAG. Alguns motors de cerca l’anomenen \"índex\" o \"corpus\". En la majoria dels casos, només necessiteu un Knowledge Box per a la vostra aplicació.",
 	"account.knowledgeboxes": "Knowledge Boxes",
 	"account.manage": "Gestió del compte",
+	"account.manage_users": "Gestiona els usuaris",
 	"account.models.bedrock.delete-confirm.description": "Estàs segur que vols eliminar aquesta integració?",
 	"account.models.bedrock.delete-confirm.title": "Eliminar integració AWS Bedrock",
 	"account.models.bedrock.description": "Integra tu AWS Bedrock en Agentic RAG",

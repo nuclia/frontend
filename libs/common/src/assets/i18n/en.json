@@ -100,6 +100,7 @@
 	"account.kb-description": "A Knowledge Box is a collection of content that Agentic RAG searches on. Some search engines call it an \"index\" or \"corpus\".  In most cases, you only need one Knowledge Box for your application.",
 	"account.knowledgeboxes": "Knowledge Boxes",
 	"account.manage": "Manage account",
+	"account.manage_users": "Manage users",
 	"account.models.bedrock.delete-confirm.description": "Are you sure you want to delete this integration?",
 	"account.models.bedrock.delete-confirm.title": "Delete AWS Bedrock integration",
 	"account.models.bedrock.description": "Integrate your AWS Bedrock into Agentic RAG",

@@ -47,9 +47,12 @@ export class UserMenuComponent implements OnDestroy {
   accounts: string[] = [];
   account: Account | null = null;
   isAccountManager = this.features.isAccountManager;
+  isKbAdmin = this.features.isKbAdmin;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
   standalone = this.sdk.nuclia.options.standalone;
+  simpleMode = this.navigation.simpleMode;
+  kbUrl = '';
 
   private unsubscribeAll = new Subject<void>();
 
@@ -64,6 +67,9 @@ export class UserMenuComponent implements OnDestroy {
     this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
       this.account = account;
       this.cdr.markForCheck();
+    });
+    this.navigation.kbUrl.pipe(takeUntil(this.unsubscribeAll)).subscribe((url) => {
+      this.kbUrl = url;
     });
   }
 
@@ -102,5 +108,10 @@ export class UserMenuComponent implements OnDestroy {
     if (this.account) {
       this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home']);
     }
+  }
+
+  goToManageUsers() {
+    this.close.emit();
+    this.router.navigate([this.kbUrl + '/users']);
   }
 }

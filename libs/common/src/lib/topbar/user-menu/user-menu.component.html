@@ -25,6 +25,14 @@
       {{ 'generic.switch_account' | translate }}
     </pa-option>
   }
+  @if ((simpleMode | async) && (isKbAdmin | async)) {
+    <pa-option
+      data-cy="go-to-manage-users"
+      icon="users"
+      (click)="goToManageUsers()">
+      {{ 'account.manage_users' | translate }}
+    </pa-option>
+  }
   @if (!standalone && (isAccountManager | async) === true) {
     <pa-option
       data-cy="go-to-manage-account"
