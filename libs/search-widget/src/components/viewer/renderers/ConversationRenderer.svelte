@@ -32,10 +32,9 @@
       return 'messages' in field.value
         ? field.value.messages.map((message) => ({
             ...message,
-            paragraphIds:
-              field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) =>
-                getParagraphId(fieldId, message.ident, paragraph),
-              ) || [],
+            paragraphIds: (field.extracted?.metadata?.split_metadata?.[message.ident]?.paragraphs || []).map(
+              (paragraph) => getParagraphId(fieldId, message.ident, paragraph),
+            ),
           }))
         : [];
     }),
