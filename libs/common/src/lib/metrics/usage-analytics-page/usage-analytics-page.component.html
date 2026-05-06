@@ -12,20 +12,31 @@
   (monthRangeChange)="onMonthRangeChange($event)"
   (loadNextPage)="onLoadNextPage()"
   (rowActionTriggered)="openAdvice($event)">
-  <!-- Filter button in toolbar (projected into toolbar-extra slot) -->
-  <app-metrics-filters
-    toolbar-extra
-    [showSyntheticStatus]="true"
-    [syntheticStatuses]="syntheticStatuses"
-    [syntheticStatusLabels]="syntheticStatusLabelsMap"
-    [activeSyntheticStatuses]="service.activeStatuses()"
-    [syntheticStatusDisabled]="syntheticStatusDisabled()"
-    [filterColumns]="filterColumns"
-    [activeBooleanConditions]="activeBooleanConditions()"
-    [activeNumericConditions]="activeNumericConditions()"
-    [selectedMonth]="selectedMonth()"
-    [activeDateConditions]="activeDateConditions()"
-    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
+  <!-- Filter button + download button in toolbar (projected into toolbar-extra slot) -->
+  <ng-container toolbar-extra>
+    <app-metrics-filters
+      [showSyntheticStatus]="true"
+      [syntheticStatuses]="syntheticStatuses"
+      [syntheticStatusLabels]="syntheticStatusLabelsMap"
+      [activeSyntheticStatuses]="service.activeStatuses()"
+      [syntheticStatusDisabled]="syntheticStatusDisabled()"
+      [filterColumns]="filterColumns"
+      [activeBooleanConditions]="activeBooleanConditions()"
+      [activeNumericConditions]="activeNumericConditions()"
+      [selectedMonth]="selectedMonth()"
+      [activeDateConditions]="activeDateConditions()"
+      (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
+
+    <pa-button
+      class="download-button"
+      icon="download"
+      aspect="basic"
+      [iconAndText]="true"
+      [paTooltip]="'activity.usage-analysis.download-tooltip' | translate: { period: formattedSelectedMonth() }"
+      (click)="downloadLogs()">
+      {{ 'activity.download' | translate }}
+    </pa-button>
+  </ng-container>
 
   <!-- Stat cards -->
   <div
@@ -33,19 +44,25 @@
     class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
-      <div class="display-s" [class]="remiColor(service.remiScoreAverages().answerRelevance)">
+      <div
+        class="display-s"
+        [class]="remiColor(service.remiScoreAverages().answerRelevance)">
         {{ service.remiScoreAverages().answerRelevance | compactNumber }}
       </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-context-relevance' | translate }}</div>
-      <div class="display-s" [class]="remiColor(service.remiScoreAverages().contextRelevance)">
+      <div
+        class="display-s"
+        [class]="remiColor(service.remiScoreAverages().contextRelevance)">
         {{ service.remiScoreAverages().contextRelevance | compactNumber }}
       </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-groundedness' | translate }}</div>
-      <div class="display-s" [class]="remiColor(service.remiScoreAverages().groundedness)">
+      <div
+        class="display-s"
+        [class]="remiColor(service.remiScoreAverages().groundedness)">
         {{ service.remiScoreAverages().groundedness | compactNumber }}
       </div>
     </div>

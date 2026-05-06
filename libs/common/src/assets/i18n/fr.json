@@ -424,6 +424,7 @@
 	"activity.usage-analysis.avg-context-relevance": "Pertinence contextuelle moyenne",
 	"activity.usage-analysis.avg-groundedness": "Enracinement moyen",
 	"activity.usage-analysis.avg-remi-score": "Score REMi moyen",
+	"activity.usage-analysis.download-tooltip": "Télécharger les journaux d'utilisation au format NDJSON pour {{period}}",
 	"activity.usage-analysis.high-quality-pct": "Pourcentage de réponses de haute qualité",
 	"activity.usage-analysis.subtitle": "Analysez les requêtes des utilisateurs, les réponses des agents et les indicateurs de pertinence pour suivre les performances et identifier les opportunités d'amélioration.",
 	"activity.usage-analysis.title": "Analyse de l'utilisation",

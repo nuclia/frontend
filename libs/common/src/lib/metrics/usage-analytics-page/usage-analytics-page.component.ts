@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { format, parseISO, endOfMonth } from 'date-fns';
 import { take } from 'rxjs';
 import { ActivityLogItem, RemiAnswerStatus } from '@nuclia/core';
 import { MetricsMonthRange, UsageAnalyticsItem } from '../metrics-column.model';
@@ -17,7 +19,9 @@ import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { SisModalService } from '@nuclia/sistema';
 import { getRemiColorClass } from '../metrics-utils';
 import { FeaturesService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MetricsPageComponent } from '../metrics-page.component';
 
 @Component({
   selector: 'app-usage-analytics-page',
@@ -31,6 +35,10 @@ export class UsageAnalyticsPageComponent {
   protected service = inject(UsageAnalyticsPageService);
   private modalService = inject(SisModalService);
   private features = inject(FeaturesService);
+  private datePipe = inject(DatePipe);
+  private translate = inject(TranslateService);
+
+  @ViewChild(MetricsPageComponent) private metricsPage!: MetricsPageComponent;
 
   private readonly automaticAdvice = toSignal(this.features.unstable.automaticAdvice, { initialValue: false });
 
@@ -98,6 +106,24 @@ export class UsageAnalyticsPageComponent {
   protected selectedMonth = signal<string>(this._currentMonth());
   protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
 
+  readonly formattedSelectedMonth = computed(() => {
+    const dateCond = this.service.dateConditions().find((c) => c.column === 'date');
+    const month = this.selectedMonth();
+
+    if (dateCond && (dateCond.from || dateCond.to)) {
+      const fmt = (d: Date) => format(d, 'dd.MM.yyyy');
+      const [year, m] = month.split('-').map(Number);
+      const monthStart = new Date(year, m - 1, 1);
+      const fromDate = dateCond.from ? parseISO(dateCond.from) : monthStart;
+      const toDate = dateCond.to ? parseISO(dateCond.to) : endOfMonth(monthStart);
+      return `${fmt(fromDate)} - ${fmt(toDate)}`;
+    }
+
+    if (!month) return '';
+    const [year, m] = month.split('-');
+    return this.datePipe.transform(new Date(Number(year), Number(m) - 1, 1), 'MMMM yyyy') ?? month;
+  });
+
   private _currentMonth(): string {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -137,6 +163,13 @@ export class UsageAnalyticsPageComponent {
         }
       : undefined;
     this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
+  }
+
+  // ── Download ──────────────────────────────────────────────────────────────
+
+  downloadLogs(): void {
+    if (!this.metricsPage) return;
+    this.service.download(this.metricsPage.service.visibleColumnKeys());
   }
 
   openAdvice(item: ActivityLogItem): void {

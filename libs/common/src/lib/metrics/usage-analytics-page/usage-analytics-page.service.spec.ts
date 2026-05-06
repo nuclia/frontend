@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MockProvider } from 'ng-mocks';
-import { SDKService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
+import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 
 describe('UsageAnalyticsPageService', () => {
@@ -24,6 +25,8 @@ describe('UsageAnalyticsPageService', () => {
         UsageAnalyticsPageService,
         MockProvider(SDKService, { currentKb: of(mockKb as any) }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
+        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
+        MockProvider(SisToastService),
       ],
     });
     service = TestBed.inject(UsageAnalyticsPageService);

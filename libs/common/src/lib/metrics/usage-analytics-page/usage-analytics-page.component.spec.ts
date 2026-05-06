@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { SDKService, FeaturesService } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
+import { SDKService, FeaturesService, UserService } from '@flaps/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page.component';
 import { UsageAnalyticsPageService } from './usage-analytics-page.service';
 import { CompactNumberPipe } from '../../pipes/compact-number.pipe';
@@ -33,6 +34,9 @@ describe('UsageAnalyticsPageComponent', () => {
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(true) } }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(SisModalService, { openModal }),
+        MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
+        MockProvider(SisToastService),
+        DatePipe,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     }).compileComponents();
