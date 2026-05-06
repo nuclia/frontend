@@ -74,8 +74,8 @@ export class CostTokenUsagePageComponent {
     this.service.loadNextPage();
   }
 
-  onDownloadRequested(event: { format: DownloadFormat; columns: string[] }): void {
-    this.service.download(event.format, event.columns);
+  onDownloadRequested(event: { format: DownloadFormat }): void {
+    this.service.download(event.format);
   }
 
   onFiltersApplied(event: FilterApplyEvent): void {

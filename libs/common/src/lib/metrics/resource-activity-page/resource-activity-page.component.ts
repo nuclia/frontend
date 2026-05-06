@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { EventType } from '@nuclia/core';
 import { MetricsMonthRange } from '../metrics-column.model';
 import { DateCondition, FilterApplyEvent, FilterColumnConfig } from '../metrics-filters';
@@ -77,8 +71,8 @@ export class ResourceActivityPageComponent {
     this.service.loadNextPage();
   }
 
-  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat; columns: string[] }): void {
-    this.service.download(event.format, event.columns);
+  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat }): void {
+    this.service.download(event.format);
   }
 
   onFiltersApplied(event: FilterApplyEvent): void {

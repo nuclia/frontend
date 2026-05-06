@@ -52,8 +52,8 @@ export class SearchActivityPageComponent {
     this.service.loadNextPage();
   }
 
-  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat; columns: string[] }): void {
-    this.service.download(event.format, event.columns);
+  onDownloadRequested(event: { format: import('@nuclia/core').DownloadFormat }): void {
+    this.service.download(event.format);
   }
 
   onFiltersApplied(event: FilterApplyEvent): void {

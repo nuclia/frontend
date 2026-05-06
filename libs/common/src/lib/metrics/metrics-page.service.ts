@@ -32,7 +32,7 @@ export class MetricsPageService {
       .map((key) => {
         const def = this.columnDefs().find((c) => c.key === key);
         const width = def?.width ?? '180px';
-        return width === '1fr' ? 'minmax(180px, 400px)' : width;
+        return width === '1fr' ? 'minmax(220px, max(400px, 50vw))' : width;
       })
       .join(' '),
   );

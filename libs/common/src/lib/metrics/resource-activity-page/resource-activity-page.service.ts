@@ -235,9 +235,8 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._applyFilters();
   }
 
-  download(format: DownloadFormat, columns: string[]): void {
+  download(format: DownloadFormat): void {
     const sources = this._getFilteredSources();
-    const apiShowFields = columns.filter((col) => (PROCESSING_ACTIVITY_SHOW_FIELDS as string[]).includes(col));
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -248,9 +247,9 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
                 eventType,
                 {
                   year_month: this._yearMonth(),
-                  filters: this._buildFilters(),
+                  filters: {},
                   notify_via_email: true,
-                  show: apiShowFields,
+                  show: 'all',
                 },
                 format,
               ),
