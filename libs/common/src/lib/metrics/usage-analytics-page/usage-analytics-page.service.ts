@@ -1,10 +1,10 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import {
   ACTIVITY_LOG_ASK_SHOW_FIELDS,
+  ActivityLogAskFilters,
   ActivityLogAskQuery,
-  ActivityLogAskShowFields,
   ActivityLogItem,
   EventType,
   Metric,
@@ -14,12 +14,32 @@ import {
   RemiQueryResponseItem,
   RemiScoresResponseItem,
 } from '@nuclia/core';
+import { UserService } from '@flaps/core';
+import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsItem } from '../metrics-column.model';
-import { getMonthRange } from '../metrics-utils';
+import { applyDateConditions, getMonthRange } from '../metrics-utils';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 import { DateCondition } from '../metrics-filters';
 
 const STATUSES: RemiAnswerStatus[] = ['SUCCESS', 'ERROR', 'NO_CONTEXT'];
+
+/** Maps the RemiAnswerStatus label to the numeric status code used in ActivityLog filters. */
+const REMI_STATUS_CODE_MAP: Record<RemiAnswerStatus, string> = {
+  SUCCESS: '0',
+  ERROR: '-1',
+  NO_CONTEXT: '-2',
+};
+
+/** Maps visible column keys to download `show` fields. */
+const COLUMN_TO_SHOW_FIELD: Record<string, string> = {
+  date: 'date',
+  question: 'question',
+  answer: 'answer',
+  status: 'status',
+};
+
+/** Column keys whose data is exposed via the `remi_scores` download field. */
+const REMI_COLUMN_KEYS = new Set(['remiScore', 'answerRelevance', 'contentRelevance', 'groundedness']);
 
 interface StatusPageState {
   hasMore: boolean;
@@ -39,6 +59,8 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
 
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
+  private user = inject(UserService);
+  private toaster = inject(SisToastService);
   private _remiScoreAverages = signal<{
     answerRelevance: number | null;
     contextRelevance: number | null;
@@ -339,6 +361,68 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       NO_CONTEXT: 'activity.remi-analytics.status.no-context',
     };
     return this.translate.instant(statusKeys[status]);
+  }
+
+  download(visibleColumns: string[]): void {
+    const show = this._buildShowFields(visibleColumns);
+    const filters = this._buildDownloadFilters();
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.activityMonitor.createActivityLogDownload(
+            EventType.ASK,
+            { year_month: this._yearMonth(), show, filters, notify_via_email: true },
+            'application/x-ndjson',
+          ),
+        ),
+        switchMap(() => this.user.userPrefs),
+        map((u) => u?.email ?? ''),
+        take(1),
+        catchError((err) => {
+          console.error('[UsageAnalyticsPageService] download failed', err);
+          this.toaster.error('activity.download-error');
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((email) => {
+        this.toaster.success(this.translate.instant('activity.email-sent', { email }));
+      });
+  }
+
+  private _buildShowFields(visibleColumns: string[]): string[] {
+    const fields = new Set<string>();
+    for (const key of visibleColumns) {
+      if (COLUMN_TO_SHOW_FIELD[key]) {
+        fields.add(COLUMN_TO_SHOW_FIELD[key]);
+      }
+      if (REMI_COLUMN_KEYS.has(key)) {
+        fields.add('remi_scores');
+      }
+    }
+    return Array.from(fields);
+  }
+
+  private _buildDownloadFilters(): ActivityLogAskFilters {
+    const filters: Record<string, unknown> = {};
+
+    applyDateConditions(this._dateConditions(), filters);
+
+    // Status filter: skip when content-relevance filter is active (API constraint) or all 3 statuses selected.
+    // 1 active → eq; 2 active → ne on the excluded one (note: ne may include rare -3/NO_RETRIEVAL_DATA rows).
+    if (!this._contentRelevanceFilter()) {
+      const active = this._activeStatuses();
+      if (active.size === 1) {
+        const [singleStatus] = active;
+        filters['status'] = { eq: REMI_STATUS_CODE_MAP[singleStatus] };
+      } else if (active.size === 2) {
+        const [excluded] = STATUSES.filter((s) => !active.has(s));
+        filters['status'] = { ne: REMI_STATUS_CODE_MAP[excluded] };
+      }
+    }
+
+    return filters as ActivityLogAskFilters;
   }
 
   fetchActivityParams(id: number): Observable<ActivityLogItem | null> {

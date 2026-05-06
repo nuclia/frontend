@@ -424,6 +424,7 @@
 	"activity.usage-analysis.avg-context-relevance": "Rellevància mitjana del context",
 	"activity.usage-analysis.avg-groundedness": "Terra mitjana",
 	"activity.usage-analysis.avg-remi-score": "Puntuació mitjana de REMi",
+	"activity.usage-analysis.download-tooltip": "Baixa els registres d'ús com a NDJSON per a {{period}}",
 	"activity.usage-analysis.high-quality-pct": "% de resposta d'alta qualitat",
 	"activity.usage-analysis.subtitle": "Exploreu les consultes dels usuaris, les respostes dels agents i les mètriques de rellevància per supervisar el rendiment i identificar oportunitats de millora.",
 	"activity.usage-analysis.title": "Anàlisi d'ús",

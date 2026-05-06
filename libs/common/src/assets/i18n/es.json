@@ -424,6 +424,7 @@
 	"activity.usage-analysis.avg-context-relevance": "Relevancia del contexto promedio",
 	"activity.usage-analysis.avg-groundedness": "Sentido de la tierra promedio",
 	"activity.usage-analysis.avg-remi-score": "Puntuación media de REMi",
+	"activity.usage-analysis.download-tooltip": "Descargar registros de uso como NDJSON para {{period}}",
 	"activity.usage-analysis.high-quality-pct": "Respuesta de alta calidad %",
 	"activity.usage-analysis.subtitle": "Analice las consultas de los usuarios, las respuestas de los agentes y las métricas de relevancia para supervisar el rendimiento e identificar oportunidades de mejora.",
 	"activity.usage-analysis.title": "Análisis de uso",
