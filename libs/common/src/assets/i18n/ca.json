@@ -2319,6 +2319,8 @@
 	"simple.or": "O",
 	"simple.position-in-queue": "Posició a la cua",
 	"simple.processing": "Processant…",
+	"simple.reader.description": "Feu servir la cerca RAG d'Agentic als vostres recursos.",
+	"simple.reader.info": "Cerca recursos disponibles, consulta fonts citades d'origen aprovat i previsualitza les cerques recents.",
 	"simple.ready": "Llest",
 	"simple.successful": "Èxit",
 	"simple.test-files": "Prova els teus fitxers",

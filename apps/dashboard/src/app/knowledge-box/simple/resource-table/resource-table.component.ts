@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
-import { SimpleKBService } from '../simple-kb.service';
+import { SimpleKBService } from '../simple-kb/simple-kb.service';
 import { Resource, RESOURCE_STATUS } from '@nuclia/core';
 import { getResourceErrors } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { addMinutes } from 'date-fns';
-import { SisIconsModule, SisModalService } from '@nuclia/sistema';
+import { SisModalService } from '@nuclia/sistema';
 
 interface TableRow {
   id?: string;
@@ -25,8 +22,8 @@ interface TableRow {
   selector: 'app-resource-table',
   templateUrl: './resource-table.component.html',
   styleUrl: './resource-table.component.scss',
+  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, PaButtonModule, PaIconModule, PaTableModule, SisIconsModule, TranslateModule],
 })
 export class ResourceTableComponent {
   simpleKBService = inject(SimpleKBService);

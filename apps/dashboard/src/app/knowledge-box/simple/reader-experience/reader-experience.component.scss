@@ -1,0 +1,79 @@
+@use 'apps/dashboard/src/variables' as *;
+
+$topPadding: calc(rhythm(12) + rhythm(0.5));
+$headerHeight: 180px;
+$headerWidth: calc(rhythm(80) + rhythm(2));
+
+.reader-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 rhythm(4) rhythm(8);
+  min-height: calc(100vh - var(--app-topbar-height));
+}
+
+.reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: $headerWidth;
+  width: 100%;
+  margin-top: $topPadding;
+}
+
+.reader-title-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.title-with-actions {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
+.reader-subtitle {
+  color: $color-neutral-regular;
+}
+
+.reader-header-actions {
+  margin-left: auto;
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+}
+
+.reader-info-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: rhythm(1);
+  width: 420px;
+  height: calc(100vh - var(--app-topbar-height) - $headerHeight - 2 * $topPadding);
+  text-align: center;
+  font-size: $font-size-body-m;
+}
+
+.preview {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  max-width: $headerWidth;
+  width: 100%;
+  margin-top: rhythm(5);
+
+  ::ng-deep {
+    nuclia-search-bar {
+      width: 100%;
+      margin-bottom: rhythm(3.5);
+    }
+
+    nuclia-search-results {
+      max-width: $width-large-screen;
+    }
+  }
+}

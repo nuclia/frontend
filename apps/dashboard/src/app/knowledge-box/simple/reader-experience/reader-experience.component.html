@@ -1,0 +1,45 @@
+<div class="reader-layout">
+  <div class="reader-header">
+    <div class="reader-title-block">
+      <div class="title-with-actions display-m">
+        {{ 'search.title' | translate }}
+        @if (view() === 'search') {
+          <pa-button
+            icon="info"
+            aspect="basic"
+            size="small"
+            [paPopup]="readerInfoDropdown"></pa-button>
+          <pa-dropdown
+            #readerInfoDropdown
+            class="info-dropdown">
+            <pa-option [readonly]="true">{{ 'simple.reader.info' | translate }}</pa-option>
+          </pa-dropdown>
+        }
+        <div class="reader-header-actions">
+          <pa-select
+            [formControl]="readerConfigControl"
+            [options]="configOptions()"
+            (valueChange)="onConfigSelect($event)">
+            {{ 'search.configuration.label' | translate }}
+          </pa-select>
+        </div>
+      </div>
+      <div class="body-m reader-subtitle">{{ 'simple.reader.description' | translate }}</div>
+    </div>
+  </div>
+
+  @if (widgetPreview | async; as widgetPreview) {
+    <div
+      class="preview"
+      [innerHtml]="widgetPreview.preview"></div>
+  }
+
+  @if (view() !== 'search') {
+    <div class="reader-info-block">
+      <pa-icon
+        name="info"
+        size="medium"></pa-icon>
+      <p>{{ 'simple.reader.info' | translate }}</p>
+    </div>
+  }
+</div>

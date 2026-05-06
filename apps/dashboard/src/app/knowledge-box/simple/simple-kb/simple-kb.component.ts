@@ -1,31 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
-import { DroppedFile, FileUploadModule, SDKService } from '@flaps/core';
+import { DroppedFile, SDKService } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { SimpleKBService } from './simple-kb.service';
-import { McpEndpointModalComponent } from './mcp-endpoint/mcp-endpoint-modal.component';
-import { ResourceTableComponent } from './resource-table/resource-table.component';
-import { HistoryTableComponent } from './history-table/history-table.component';
+import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
 
 @Component({
+  standalone: false,
   selector: 'app-simple-kb',
   templateUrl: './simple-kb.component.html',
   styleUrls: ['./simple-kb.component.scss'],
-  imports: [
-    CommonModule,
-    FileUploadModule,
-    HistoryTableComponent,
-    PaButtonModule,
-    PaIconModule,
-    ResourceTableComponent,
-    TranslateModule,
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleKBComponent {

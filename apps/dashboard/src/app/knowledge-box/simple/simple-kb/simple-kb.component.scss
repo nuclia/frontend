@@ -1,5 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
-@use 'simple-kb.tokens' as tokens;
+@use '../simple-page.tokens' as tokens;
 
 .simple-kb {
   align-items: center;
