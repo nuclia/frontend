@@ -262,6 +262,17 @@
                     <pa-icon name="payment-history"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.metrics.search-activity' | translate }}</span>
                   </a>
+                  <a
+                    [routerLink]="
+                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/detailed' : null
+                    "
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-detailed-logs"
+                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                    <pa-icon name="activity-log"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.detailed-logs' | translate }}</span>
+                  </a>
                 </div>
               </div>
             }
