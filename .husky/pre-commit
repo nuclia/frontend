@@ -1,5 +1,5 @@
 #!/bin/sh
 
 yarn lint-staged
-yarn nx affected --target=lint --uncommitted
-yarn nx affected --target=test --uncommitted
+yarn nx affected --target=lint --uncommitted --skip-nx-cache
+yarn nx affected --target=test --uncommitted --skip-nx-cache

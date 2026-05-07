@@ -189,7 +189,7 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     this._applyFilters();
   }
 
-  download(format: DownloadFormat, columns: string[]): void {
+  download(format: DownloadFormat): void {
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -198,9 +198,9 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
             EventType.ASK,
             {
               year_month: this._yearMonth(),
-              filters: this._buildFilters(),
               notify_via_email: true,
-              show: columns,
+              filters: {},
+              show: 'all',
             },
             format,
           ),

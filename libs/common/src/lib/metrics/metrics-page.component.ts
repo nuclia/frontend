@@ -54,7 +54,7 @@ export class MetricsPageComponent {
   rowClick = output<ActivityLogItem>();
   searchChange = output<{ term: string; column: string }>();
   loadNextPage = output<void>();
-  downloadRequested = output<{ format: DownloadFormat; columns: string[] }>();
+  downloadRequested = output<{ format: DownloadFormat }>();
   rowActionTriggered = output<ActivityLogItem>();
 
   // ── Internal state ────────────────────────────────────────────────────────
@@ -259,10 +259,7 @@ export class MetricsPageComponent {
   // ── Download ──────────────────────────────────────────────────────────────
 
   onDownload(format: DownloadFormat): void {
-    this.downloadRequested.emit({
-      format,
-      columns: this.service.visibleColumnKeys(),
-    });
+    this.downloadRequested.emit({ format });
   }
 
   // ── Scroll ────────────────────────────────────────────────────────────────

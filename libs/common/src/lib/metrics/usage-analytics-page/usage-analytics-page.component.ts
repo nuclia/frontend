@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, ViewChild, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { format, parseISO, endOfMonth } from 'date-fns';
 import { take } from 'rxjs';
 import { ActivityLogItem, RemiAnswerStatus } from '@nuclia/core';
 import { MetricsMonthRange, UsageAnalyticsItem } from '../metrics-column.model';
@@ -107,18 +106,7 @@ export class UsageAnalyticsPageComponent {
   protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
 
   readonly formattedSelectedMonth = computed(() => {
-    const dateCond = this.service.dateConditions().find((c) => c.column === 'date');
     const month = this.selectedMonth();
-
-    if (dateCond && (dateCond.from || dateCond.to)) {
-      const fmt = (d: Date) => format(d, 'dd.MM.yyyy');
-      const [year, m] = month.split('-').map(Number);
-      const monthStart = new Date(year, m - 1, 1);
-      const fromDate = dateCond.from ? parseISO(dateCond.from) : monthStart;
-      const toDate = dateCond.to ? parseISO(dateCond.to) : endOfMonth(monthStart);
-      return `${fmt(fromDate)} - ${fmt(toDate)}`;
-    }
-
     if (!month) return '';
     const [year, m] = month.split('-');
     return this.datePipe.transform(new Date(Number(year), Number(m) - 1, 1), 'MMMM yyyy') ?? month;
@@ -168,8 +156,7 @@ export class UsageAnalyticsPageComponent {
   // ── Download ──────────────────────────────────────────────────────────────
 
   downloadLogs(): void {
-    if (!this.metricsPage) return;
-    this.service.download(this.metricsPage.service.visibleColumnKeys());
+    this.service.download();
   }
 
   openAdvice(item: ActivityLogItem): void {
