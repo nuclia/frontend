@@ -40,4 +40,4 @@ export {
   WorkflowsListComponent,
 } from '@flaps/common';
 
-export { authGuard, metricsDisabledGuard, metricsEnabledGuard } from '@flaps/core';
+export { authGuard } from '@flaps/core';

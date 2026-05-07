@@ -53,7 +53,7 @@ import {
   TestingAppSignupComponent,
 } from '@nuclia/user';
 
-import { authGuard, metricsEnabledGuard, metricsDisabledGuard, redirectToSignUp } from '@flaps/core';
+import { authGuard, redirectToSignUp } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
 import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
 
@@ -120,19 +120,7 @@ const routes: Routes = [
                 loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
               },
               {
-                path: 'activity',
-                canMatch: [metricsDisabledGuard],
-                loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
-              },
-              {
                 path: 'metrics',
-                canMatch: [metricsDisabledGuard],
-                canActivate: [knowledgeBoxOwnerGuard],
-                loadChildren: () => import('./app-routing.lazy').then((m) => m.LegacyMetricsModule),
-              },
-              {
-                path: 'metrics',
-                canMatch: [metricsEnabledGuard],
                 canActivate: [knowledgeBoxOwnerGuard],
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.MetricsModule),
               },

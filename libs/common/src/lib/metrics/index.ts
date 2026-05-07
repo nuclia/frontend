@@ -5,5 +5,4 @@ export * from './metrics-filters';
 export * from './metrics-utils';
 export * from './remi-score-badge';
 export * from './remi-analytics-page';
-export * from './legacy';
 export * from './remi-metrics.service';
