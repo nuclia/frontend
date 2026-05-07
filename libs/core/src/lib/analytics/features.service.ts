@@ -71,7 +71,6 @@ export class FeaturesService {
     progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
     simpleUI: this.featureFlag.isFeatureEnabled('simple-ui'),
     coworkAccount: this.featureFlag.isFeatureEnabled('cowork-account'),
-    metrics: this.featureFlag.isFeatureEnabled('metrics'),
     automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
   };
 

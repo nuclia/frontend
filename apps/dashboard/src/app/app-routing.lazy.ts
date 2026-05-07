@@ -1,7 +1,6 @@
 export {
   AccountModule,
   EntitiesModule,
-  LegacyMetricsModule,
   MetricsModule,
   ResourcesModule,
   TASK_AUTOMATION_ROUTES,
