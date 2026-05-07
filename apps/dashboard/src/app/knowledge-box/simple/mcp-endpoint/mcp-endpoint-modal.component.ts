@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ModalRef, PaModalModule, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
 import { map, take } from 'rxjs';
 import { setZoneInRegionalUrl } from '@nuclia/core';
 
 @Component({
-  imports: [CommonModule, PaButtonModule, PaModalModule, TranslateModule],
+  standalone: false,
   templateUrl: './mcp-endpoint-modal.component.html',
   styleUrl: './mcp-endpoint-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

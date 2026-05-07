@@ -2319,6 +2319,8 @@
 	"simple.or": "Ou",
 	"simple.position-in-queue": "Position dans la file d'attente",
 	"simple.processing": "Traitement…",
+	"simple.reader.description": "Utilisez la recherche Agentic RAG sur vos ressources.",
+	"simple.reader.info": "Recherchez les ressources disponibles, consultez les sources citées provenant d'origine approuvée et prévisualisez les recherches récentes.",
 	"simple.ready": "Prêt",
 	"simple.successful": "Succès",
 	"simple.test-files": "Testez vos fichiers",

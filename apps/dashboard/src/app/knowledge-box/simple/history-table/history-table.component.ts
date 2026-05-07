@@ -1,11 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, filter, map, Observable, switchMap } from 'rxjs';
-import { ConversationsPage, SimpleKBService } from '../simple-kb.service';
+import { ConversationsPage, SimpleKBService } from '../simple-kb/simple-kb.service';
 import { SDKService } from '@flaps/core';
-import { NsiSkeletonComponent, SisModalService } from '@nuclia/sistema';
+import { SisModalService } from '@nuclia/sistema';
 
 interface TableRow {
   resourceId: string;
@@ -24,8 +21,8 @@ interface TableRow {
   selector: 'app-history-table',
   templateUrl: './history-table.component.html',
   styleUrl: './history-table.component.scss',
+  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, NsiSkeletonComponent, PaButtonModule, PaIconModule, PaTableModule, TranslateModule],
 })
 export class HistoryTableComponent {
   simpleKBService = inject(SimpleKBService);

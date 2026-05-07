@@ -55,7 +55,6 @@ import {
 
 import { authGuard, redirectToSignUp } from '@flaps/core';
 import { KnowledgeBoxComponent, KnowledgeBoxHomeComponent } from './knowledge-box';
-import { SimpleKBComponent } from './knowledge-box/simple/simple-kb.component';
 
 const routes: Routes = [
   {
@@ -99,8 +98,7 @@ const routes: Routes = [
               },
               {
                 path: 'simple',
-                component: SimpleKBComponent,
-                resolve: {},
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.SimplePageModule),
               },
               {
                 path: 'upload',
