@@ -36,6 +36,7 @@ const ROUTES = [
   { path: 'resource-activity', component: ResourceActivityPageComponent },
   { path: 'search-activity', component: SearchActivityPageComponent },
   { path: 'remi-analytics', component: RemiAnalyticsPageComponent },
+  { path: 'detailed', loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule) },
 ];
 
 @NgModule({
