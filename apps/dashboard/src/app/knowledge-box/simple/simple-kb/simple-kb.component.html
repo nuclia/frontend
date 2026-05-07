@@ -3,16 +3,7 @@
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
-      @if (pendingResources()) {
-        {{ 'simple.title.uploading' | translate }}
-      } @else {
-        <span class="success">
-          <pa-icon
-            name="circle-check"
-            size="large"></pa-icon>
-        </span>
-        {{ 'simple.title.ready' | translate }}
-      }
+      {{ 'simple.title.uploading' | translate }}
     } @else if (step() === 3) {
       {{ 'simple.title.testing' | translate }}
     }
@@ -21,21 +12,15 @@
   <div class="counters">
     @if (step() === 2) {
       <div>
-        <strong [class.success]="!pendingResources()">{{ 'simple.ready' | translate }}</strong>
+        <strong>{{ 'simple.ready' | translate }}</strong>
         <span>: {{ counter()?.processed || 0 }}</span>
       </div>
-      @if (pendingResources()) {
-        <div>
-          <strong class="title-m">{{ 'simple.in-queue' | translate }}</strong>
-          <span>: {{ counter()?.pending || 0 }}</span>
-        </div>
-      }
       <div>
-        <strong
-          class="title-m"
-          [class.error]="!pendingResources()">
-          {{ 'simple.failed' | translate }}
-        </strong>
+        <strong class="title-m">{{ 'simple.in-queue' | translate }}</strong>
+        <span>: {{ counter()?.pending || 0 }}</span>
+      </div>
+      <div>
+        <strong class="title-m">{{ 'simple.failed' | translate }}</strong>
         <span>: {{ counter()?.error || 0 }}</span>
       </div>
     } @else if (step() === 3) {
@@ -123,15 +108,6 @@
 @if (step() > 1) {
   <div class="footer">
     @if (step() === 2) {
-      @if (!pendingResources()) {
-        <pa-button
-          kind="primary"
-          icon="search"
-          iconAndText
-          (click)="goToStep3()">
-          {{ 'simple.test-files' | translate }}
-        </pa-button>
-      }
       <pa-button
         aspect="basic"
         icon="upload"

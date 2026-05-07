@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
@@ -27,7 +27,6 @@ export class SimpleKBComponent {
 
   uploadInProgress = toSignal(this.simpleKBService.uploadInProgress, { initialValue: false });
   counter = toSignal(this.simpleKBService.resourceCounter);
-  pendingResources = computed(() => (this.counter()?.pending || 0) > 0 || this.uploadInProgress());
   step = signal<number>(-1);
   fileOver = signal(false);
 
@@ -42,6 +41,16 @@ export class SimpleKBComponent {
         this.goToStep3();
       }
     });
+
+    // Auto-advance from step 2 to step 3 once resources are confirmed processed.
+    this.simpleKBService.resourceCounter
+      .pipe(
+        filter(() => this.step() === 2),
+        filter((counter) => counter.pending === 0 && (counter.processed > 0 || counter.error > 0)),
+        take(1),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.goToStep3());
 
     // Make sure that enforce_security is enabled.
     // It's required to prevent external agents using the MCP endpoint from retrieving conversation resources.
