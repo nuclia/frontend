@@ -1,3 +1,13 @@
+@if (vllmOnly && useCustomModel) {
+  <nsi-info-card type="warning">
+    {{ 'kb.ai-models.extraction.extract.processing.vllm_config.warning' | translate }}
+  </nsi-info-card>
+}
+@if (isAiTable) {
+  <nsi-info-card type="warning">
+    <span [innerHTML]="'kb.ai-models.extraction.extract.processing.ai_tables.warning' | translate"></span>
+  </nsi-info-card>
+}
 <div [formGroup]="configForm">
   <div class="title-s">{{ 'kb.ai-models.extraction.llm-configuration.generative-model' | translate }}</div>
   <pa-radio-group

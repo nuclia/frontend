@@ -66,7 +66,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   hasPagehound = computed(
     () =>
       !!this.learningConfigurations()['generative_model'].options?.some((model) => model.value === this.pagehoundModel),
-  );  
+  );
   visualProviders = computed(() =>
     Object.fromEntries(
       Object.entries(this.providers()).map(([key, provider]) => [
