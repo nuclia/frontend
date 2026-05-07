@@ -21447,29 +21447,6 @@
 																<name>vllm_config</name>
 																<children>
 																	<concept_node>
-																		<name>custom-model-warning</name>
-																		<description/>
-																		<comment/>
-																		<translations>
-																			<translation>
-																				<language>ca-ES</language>
-																				<approved>false</approved>
-																			</translation>
-																			<translation>
-																				<language>en-US</language>
-																				<approved>false</approved>
-																			</translation>
-																			<translation>
-																				<language>es-ES</language>
-																				<approved>false</approved>
-																			</translation>
-																			<translation>
-																				<language>fr-FR</language>
-																				<approved>false</approved>
-																			</translation>
-																		</translations>
-																	</concept_node>
-																	<concept_node>
 																		<name>help</name>
 																		<description/>
 																		<comment/>
@@ -21617,7 +21594,7 @@
 												<name>llm-configuration</name>
 												<children>
 													<concept_node>
-														<name>custom-prompt</name>
+														<name>custom-model</name>
 														<description/>
 														<comment/>
 														<translations>
@@ -21640,7 +21617,53 @@
 														</translations>
 													</concept_node>
 													<concept_node>
-														<name>customize-model</name>
+														<name>custom-model-description</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<concept_node>
+														<name>default-model</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<concept_node>
+														<name>default-model-description</name>
 														<description/>
 														<comment/>
 														<translations>
@@ -21685,11 +21708,103 @@
 															</translation>
 														</translations>
 													</concept_node>
+													<concept_node>
+														<name>options</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<concept_node>
+														<name>pagehound-info</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
 													<folder_node>
 														<name>rules</name>
 														<children>
 															<concept_node>
 																<name>add-rule</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+															<concept_node>
+																<name>define-rules</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+															<concept_node>
+																<name>disabled</name>
 																<description/>
 																<comment/>
 																<translations>
