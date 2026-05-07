@@ -39,7 +39,10 @@
         <span>: {{ counter()?.error || 0 }}</span>
       </div>
     } @else if (step() === 3) {
-      <div class="nav">
+      <div
+        class="nav"
+        [class.active]="view() === 'resources'"
+        (click)="view() !== 'resources' ? changeView('resources') : null">
         @if (view() === 'resources') {
           <pa-icon
             name="folder"
@@ -48,8 +51,7 @@
           <pa-button
             kind="secondary"
             aspect="basic"
-            icon="folder"
-            (click)="changeView('resources')">
+            icon="folder">
             {{ 'simple.your-resources' | translate }}
           </pa-button>
         }
@@ -58,7 +60,10 @@
           <span>: {{ counter()?.processed || 0 }}</span>
         </div>
       </div>
-      <div class="nav">
+      <div
+        class="nav"
+        [class.active]="view() === 'history'"
+        (click)="view() !== 'history' ? changeView('history') : null">
         @if (view() === 'history') {
           <pa-icon
             name="clock-dash"
@@ -67,8 +72,7 @@
           <pa-button
             kind="secondary"
             aspect="basic"
-            icon="clock-dash"
-            (click)="changeView('history')">
+            icon="clock-dash">
             {{ 'simple.history' | translate }}
           </pa-button>
         }
