@@ -15,14 +15,16 @@
             <pa-option [readonly]="true">{{ 'simple.reader.info' | translate }}</pa-option>
           </pa-dropdown>
         }
-        <div class="reader-header-actions">
-          <pa-select
-            [formControl]="readerConfigControl"
-            [options]="configOptions()"
-            (valueChange)="onConfigSelect($event)">
-            {{ 'search.configuration.label' | translate }}
-          </pa-select>
-        </div>
+        @if (configOptions().length > 1) {
+          <div class="reader-header-actions">
+            <pa-select
+              [formControl]="readerConfigControl"
+              [options]="configOptions()"
+              (valueChange)="onConfigSelect($event)">
+              {{ 'search.configuration.label' | translate }}
+            </pa-select>
+          </div>
+        }
       </div>
       <div class="body-m reader-subtitle">{{ 'simple.reader.description' | translate }}</div>
     </div>
