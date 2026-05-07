@@ -1,15 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   EventEmitter,
-  inject,
+  input,
   Input,
   OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
 import { FormArray, FormControl, FormControlStatus, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExtractVLLMConfig, GenerativeProviders, LearningConfigurations, ReasoningConfig } from '@nuclia/core';
@@ -36,8 +36,8 @@ import { ModelSelectorComponent, ReasoningConfigComponent } from '../../answer-g
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LLMConfigurationComponent implements OnDestroy, OnInit {
-  @Input() providers: GenerativeProviders = {};
-  @Input() learningConfigurations: LearningConfigurations = {};
+  providers = input<GenerativeProviders>({});
+  learningConfigurations = input<LearningConfigurations>({});
   @Input() createMode = true;
   @Input() vllmOnly = false;
   @Input() isAiTable = false;
@@ -51,9 +51,10 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
 
   configForm = new FormGroup({
     rules: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
+    customRules: new FormControl<boolean>(false, { nonNullable: true }),
     merge_pages: new FormControl<boolean>(false, { nonNullable: true }),
     max_pages_to_merge: new FormControl<number>(3, { nonNullable: true }),
-    customLLM: new FormControl<boolean>(false, { nonNullable: true }),
+    modelType: new FormControl<'default' | 'custom'>('default', { nonNullable: true }),
     llm: new FormGroup({
       generative_model: new FormControl<string>('', { nonNullable: true }),
     }),
@@ -61,11 +62,37 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   reasoningConfig?: ReasoningConfig;
   reasoningDisabled = false;
 
+  pagehoundModel = 'pagehound-v1';
+  hasPagehound = computed(
+    () =>
+      !!this.learningConfigurations()['generative_model'].options?.some((model) => model.value === this.pagehoundModel),
+  );  
+  visualProviders = computed(() =>
+    Object.fromEntries(
+      Object.entries(this.providers()).map(([key, provider]) => [
+        key,
+        {
+          ...provider,
+          models: Object.fromEntries(Object.entries(provider.models).filter(([, model]) => !!model.features.vision)),
+        },
+      ]),
+    ),
+  );
+
   get useCustomModel() {
-    return this.configForm.controls.customLLM.value;
+    return this.configForm.controls.modelType.value === 'custom';
+  }
+  get modelTypeControl() {
+    return this.configForm.controls.modelType;
   }
   get generativeModelControl() {
     return this.configForm.controls.llm.controls.generative_model;
+  }
+  get useCustomRules() {
+    return this.configForm.controls.customRules.value;
+  }
+  get rulesDisabled() {
+    return !this.useCustomModel && this.vllmOnly;
   }
   get rules() {
     return this.configForm.controls.rules;
@@ -82,19 +109,23 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   ngOnInit() {
     if (this.config) {
       this.rules.clear();
-      (this.config?.rules || []).forEach(() => {
+      (this.config.rules || []).forEach(() => {
         this.addRule();
       });
+      const isDefaultModel = this.vllmOnly
+        ? this.config.llm?.generative_model === this.pagehoundModel
+        : !this.config.llm;
       this.configForm.patchValue({
-        customLLM: !!this.config?.llm,
-        merge_pages: this.config?.merge_pages || false,
-        max_pages_to_merge: this.config?.max_pages_to_merge || 3,
-        rules: this.config?.rules,
+        modelType: isDefaultModel ? 'default' : 'custom',
+        merge_pages: this.config.merge_pages || false,
+        max_pages_to_merge: this.config.max_pages_to_merge || 3,
+        rules: this.config.rules,
+        customRules: (this.config.rules || []).length > 0,
         llm: {
-          generative_model: this.config?.llm?.generative_model || '',
+          generative_model: this.config.llm?.generative_model || '',
         },
       });
-      this.reasoningConfig = this.config?.llm?.reasoning_config;
+      this.reasoningConfig = this.config.llm?.reasoning_config;
       this.reasoningDisabled = true;
       this.configForm.disable();
     }
@@ -104,7 +135,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
       .subscribe(() => {
         const values = this.configForm.getRawValue();
         this.valueChange.emit({
-          llm: values.customLLM
+          llm: this.useCustomModel
             ? {
                 generative_model: values.llm.generative_model,
                 reasoning_config: this.reasoningConfig,
@@ -112,9 +143,12 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
             : undefined,
           merge_pages: this.isAiTable ? values.merge_pages : undefined,
           max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
-          rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
+          rules:
+            values.customRules && !this.rulesDisabled
+              ? values.rules.map((line) => line.trim()).filter((line) => !!line)
+              : [],
         });
-        this.generativeModelControl.setValidators(values.customLLM ? [Validators.required] : []);
+        this.generativeModelControl.setValidators(this.useCustomModel ? [Validators.required] : []);
         this.generativeModelControl.updateValueAndValidity({ emitEvent: false });
       });
 
@@ -136,5 +170,11 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   onReasoningChange() {
     // Emit updated value
     this.configForm.updateValueAndValidity();
+  }
+
+  onTypeChanges(type: 'default' | 'custom') {
+    if (type === 'default' && this.vllmOnly) {
+      this.configForm.controls.customRules.setValue(false);
+    }
   }
 }
