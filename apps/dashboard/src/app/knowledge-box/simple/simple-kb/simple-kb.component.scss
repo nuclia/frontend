@@ -22,6 +22,11 @@
   align-items: center;
   display: flex;
   gap: rhythm(1.5);
+
+  &:not(.active) {
+    cursor: pointer;
+  }
+
   pa-icon {
     background-color: tokens.$success-color;
     border-radius: 100%;
