@@ -161,11 +161,11 @@ export class Rest implements IRest {
               } catch (e) {
                 console.error(logMessage);
               }
-              throw { status: res.status, body };
+              throw Object.assign(new Error(`${res.status} error on ${method} ${path}`), { status: res.status, body });
             },
             () => {
               console.error(`${res.status} error on ${method} ${path}`);
-              throw { status: res.status };
+              throw Object.assign(new Error(`${res.status} error on ${method} ${path}`), { status: res.status });
             },
           );
         }

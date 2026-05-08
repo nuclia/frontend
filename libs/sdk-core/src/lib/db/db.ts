@@ -377,7 +377,7 @@ export class Db implements IDb {
     return creation.pipe(
       switchMap((id) => {
         if (!id) {
-          throw 'Knowledge Box creation failed';
+          throw new Error('Knowledge Box creation failed');
         }
         return this.getKnowledgeBox(accountId, id, zone);
       }),
@@ -407,7 +407,7 @@ export class Db implements IDb {
         map((res) => res.id),
         switchMap((id) => {
           if (!id) {
-            throw 'Retrieval Agent creation failed';
+            throw new Error('Retrieval Agent creation failed');
           }
           return this.getRetrievalAgent(accountId, id, zone);
         }),

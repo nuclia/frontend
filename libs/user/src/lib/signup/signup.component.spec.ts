@@ -36,11 +36,6 @@ describe('SignupComponent', () => {
   let router: Router;
   let analytics: AnalyticsService;
 
-  const signupData = {
-    email: 'bruce@wayne.corp',
-    fullname: 'Bruce Wayne',
-  };
-
   const signupResponse = new BehaviorSubject<SignupResponse>({ action: 'check-mail' });
 
   beforeEach(async () => {

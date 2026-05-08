@@ -302,9 +302,6 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     const lines = code.split('\n');
-    const indentStack: number[] = [0];
-    const inString = false;
-    const stringChar = '';
 
     lines.forEach((line, index) => {
       const lineNumber = index + 1;

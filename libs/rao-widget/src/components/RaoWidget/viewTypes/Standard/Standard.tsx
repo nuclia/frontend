@@ -30,7 +30,7 @@ export const Standard: FC<StandardProps> = ({
   viewtype = 'conversation',
   onCloseFloating,
 }) => {
-  const { activeView, visibleViewType, onChat, setVisibleViewType, resources, conversation, onFeedbackResponse } =
+  const { activeView, visibleViewType, onChat, setVisibleViewType, resources } =
     useRaoContext();
   const {
     hasSupport: canUseVoice,

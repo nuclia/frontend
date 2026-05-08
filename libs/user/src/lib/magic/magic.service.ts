@@ -84,7 +84,7 @@ export class MagicService {
   validateToken(token: string, zone?: string) {
     return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
-        throw { tokenError: error };
+        throw Object.assign(new Error('Token validation error'), { tokenError: error });
       }),
     );
   }

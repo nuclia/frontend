@@ -48,10 +48,10 @@ export const find = (
         return from(
           res.json().then(
             (body) => {
-              throw { status: res.status, body };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status, body });
             },
             () => {
-              throw { status: res.status };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status });
             },
           ),
         );
