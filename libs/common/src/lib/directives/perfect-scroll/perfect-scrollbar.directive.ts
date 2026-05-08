@@ -12,7 +12,7 @@ import PerfectScrollbar from 'perfect-scrollbar';
 export class STFPerfectScrollbarDirective implements AfterViewInit, OnDestroy {
   isInitialized: boolean;
   isMobile: boolean;
-  ps: PerfectScrollbar | any;
+  ps: any;
 
   // Private
   private _enabled: boolean | '';

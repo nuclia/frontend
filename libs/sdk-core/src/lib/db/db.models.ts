@@ -460,7 +460,7 @@ export interface CustomModelItem extends BaseCustomModel {
 export interface CustomModel extends BaseCustomModel {
   log: string | null;
   kbids: string[];
-  openai_compat: any | null;
+  openai_compat: any;
 }
 
 export interface ModelConfigurationItem {

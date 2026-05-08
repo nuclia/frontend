@@ -382,7 +382,7 @@ export class WorkflowService {
    * Get child agents for a specific connectable entry by examining the agent's configuration
    * This method is completely generic and works with any agent structure
    */
-  private getChildAgentsForEntry(agent: SomeAgent, entryId: string): any[] | any | null {
+  private getChildAgentsForEntry(agent: SomeAgent, entryId: string): any {
     // Direct property match (e.g., 'fallback' entry maps to agent.fallback)
     const child = (agent as unknown as any)[entryId];
     if (child && this.isValidChildAgent(child)) {

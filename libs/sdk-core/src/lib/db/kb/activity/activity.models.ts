@@ -180,7 +180,7 @@ export interface ActivityLogResponseSearchItem extends ActivityLogResponseItem {
   filter: string | null;
   retrieval_rephrased_question: string | null;
   vectorset: string | null;
-  security: unknown | null;
+  security: unknown;
   min_score_bm25: number | null;
   min_score_semantic: number | null;
   result_per_page: number | null;
@@ -221,16 +221,16 @@ export interface ActivityLogResponseChatItem extends ActivityLogResponseItem {
   rephrased_question: string | null;
   answer: string | null;
   learning_id: string | null;
-  retrieved_context: unknown | null;
-  chat_history: unknown | null;
+  retrieved_context: unknown;
+  chat_history: unknown;
   feedback_good: boolean | null;
   feedback_comment: string | null;
   feedback_good_all: boolean | null;
   feedback_good_any: boolean | null;
-  feedback: unknown | null;
+  feedback: unknown;
   model: string | null;
   rag_strategies_names: string[] | null;
-  rag_strategies: unknown | null;
+  rag_strategies: unknown;
   /** AnswerStatusCode: '0'=SUCCESS, '-1'=ERROR, '-2'=NO_CONTEXT, '-3'=NO_RETRIEVAL_DATA. Null on resource events. */
   status: string | null;
   generative_answer_first_chunk_time: number | null;
@@ -293,7 +293,7 @@ export interface ActivityLogResponseAskItem extends ActivityLogResponseChatItem 
   filter: string | null;
   retrieval_rephrased_question: string | null;
   vectorset: string | null;
-  security: unknown | null;
+  security: unknown;
   min_score_bm25: number | null;
   min_score_semantic: number | null;
   result_per_page: number | null;
