@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { LabelsService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  IError,
   IResource,
   KnowledgeBox,
   LabelSets,

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';

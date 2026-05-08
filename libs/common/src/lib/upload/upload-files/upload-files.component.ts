@@ -7,7 +7,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
+import { take } from 'rxjs';
 import { DroppedFile, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
