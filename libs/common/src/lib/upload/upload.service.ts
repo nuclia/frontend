@@ -297,7 +297,7 @@ export class UploadService {
             )?.[0];
             return fieldId
               ? resource.setField(FIELD_TYPE.link, fieldId, { uri, ...linkField })
-              : throwError(() => new Error());
+              : throwError(() => new Error('Upload failed'));
           }),
         ),
       ),
@@ -326,7 +326,7 @@ export class UploadService {
                   split_strategy,
                   language,
                 })
-              : throwError(() => new Error());
+              : throwError(() => new Error('Upload failed'));
           }),
         ),
       ),

@@ -352,7 +352,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
                   this.editCustomer = true;
                   throw new Error('billing.invalid_address');
                 }
-                throw new Error();
+                throw new Error('billing.unknown_error');
               }),
             ),
         ),
