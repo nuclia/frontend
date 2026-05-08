@@ -20,9 +20,7 @@ import { Driver } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject, takeUntil, finalize } from 'rxjs';
 
-import { DriversService, DriverType } from './drivers.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { JSONSchema4, JSONSchema7 } from 'json-schema';
+import { DriversService } from './drivers.service';
 
 @Component({
   selector: 'app-drivers-panel',

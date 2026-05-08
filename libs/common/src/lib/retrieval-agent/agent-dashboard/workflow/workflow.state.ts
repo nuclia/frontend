@@ -10,7 +10,6 @@ import {
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import {
   AragAnswerUi,
-  AskAgentUI,
   isCategory,
   NodeCategory,
   NodeConfig,
@@ -22,7 +21,6 @@ import {
   SmartAgentUI,
   TEMP_CHILD_ID,
 } from './workflow.models';
-import { JSONSchema4 } from 'json-schema';
 
 /**
  * Global state

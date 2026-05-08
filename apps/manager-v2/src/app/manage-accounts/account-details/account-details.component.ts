@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountService } from '../account.service';
 import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';

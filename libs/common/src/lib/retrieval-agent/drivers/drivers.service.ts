@@ -22,7 +22,6 @@ import {
 // Import modal components
 import { NucliaDriverModalComponent } from './nuclia-driver';
 import { DynamicDriverModalComponent } from './dynamic-driver-form';
-import { JSONSchema4, JSONSchema7 } from 'json-schema';
 
 export type DriverType = string; // Now accepts any string (driver title from schema)
 

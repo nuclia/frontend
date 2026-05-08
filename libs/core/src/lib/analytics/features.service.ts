@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountTypes } from '@nuclia/core';
-import { combineLatest, map, Observable, of } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
-const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial'];
+const UPGRADABLE_ACCOUNT_TYPES: Set<AccountTypes> = new Set(['stash-trial']);
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class FeaturesService {
     map((account) => ['v3fly', 'v3starter', 'v3growth', 'v3pro', 'v3enterprise'].includes(account.type)),
   );
   canUpgrade = combineLatest([this.isAccountManager, this._account]).pipe(
-    map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
+    map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.has(account.type)),
   );
 
   /**

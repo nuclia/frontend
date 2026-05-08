@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({

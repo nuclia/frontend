@@ -22,7 +22,7 @@ import {
   type LearningConfigurations,
 } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { keyProviders } from '../../ai-models.utils';
 
 export type UserKeysForm = FormGroup<{

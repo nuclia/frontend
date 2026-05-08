@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
+import { filter, forkJoin, map, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';

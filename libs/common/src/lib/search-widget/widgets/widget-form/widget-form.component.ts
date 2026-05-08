@@ -10,8 +10,8 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { deepEqual, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
@@ -27,7 +27,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, map, merge, Observable, of, startWith, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';

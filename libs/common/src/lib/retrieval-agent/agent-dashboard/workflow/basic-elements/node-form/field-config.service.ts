@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ARAGSchemas } from '@nuclia/core';
 import { JSONSchema4 } from 'json-schema';
 
 export enum WidgetType {

@@ -17,7 +17,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { ManagerStore } from '../../../manager.store';
 import { ACCOUNT_DETAILS } from '../../test-utils';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;

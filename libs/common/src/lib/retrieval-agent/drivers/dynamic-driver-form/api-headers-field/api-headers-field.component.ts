@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, inject, ChangeDetectionStrategy, signal } from '@angular/core';
-import { FormGroup, FormArray, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Input, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { PaTextFieldModule, PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';

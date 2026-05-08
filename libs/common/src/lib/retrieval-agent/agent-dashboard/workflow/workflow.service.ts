@@ -16,7 +16,6 @@ import { DriversService } from '../../drivers/drivers.service';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Driver,
   SomeAgent,
   NucliaDBDriver,
   KnowledgeBox,
