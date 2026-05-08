@@ -314,9 +314,9 @@ export class Rest implements IRest {
                       readMore();
                     }
                   },
-                  (reason) => {
+                  (error_) => {
                     console.error(`getStreamedResponse: read error on POST ${path}`);
-                    observer.error(reason);
+                    observer.error(error_);
                     observer.complete();
                   },
                 );
@@ -347,14 +347,14 @@ export class Rest implements IRest {
             );
           }
         },
-        (reason) => {
+        (error_) => {
           const logMessage = `getStreamedResponse: error on POST ${path}`;
           try {
-            console.error(`${logMessage}\n${JSON.stringify(reason)}`);
+            console.error(`${logMessage}\n${JSON.stringify(error_)}`);
           } catch (e) {
             console.error(logMessage);
           }
-          observer.error(reason);
+          observer.error(error_);
           observer.complete();
         },
       );
@@ -405,8 +405,8 @@ export class Rest implements IRest {
                   this.fetchStream(path, observer, controller);
                 }
               },
-              (reason) => {
-                observer.error(reason);
+              (error_) => {
+                observer.error(error_);
                 observer.complete();
               },
             );
@@ -414,24 +414,24 @@ export class Rest implements IRest {
           readMore();
         }
       },
-      (reason) => {
+      (error_) => {
         // when aborting the fetch using the AbortController, we provide the ABORT_STREAMING_REASON
         // allowing us to know we should not raise an error in the observer
-        if (reason === ABORT_STREAMING_REASON) {
+        if (error_ === ABORT_STREAMING_REASON) {
           observer.complete();
           // Error on fetch can be caused by the backend not closing gracefully the stream on time (causing errors like NS_ERROR_NET_PARTIAL_TRANSFER, or CORS error)
           // If there was no error before, or last error was more than 10s ago, we reconnect
-          // except if the error reason is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
+          // except if the error error_ is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
         } else if (
-            reason.toString() !== NS_BINDING_ABORTED_ERROR &&
+            error_.toString() !== NS_BINDING_ABORTED_ERROR &&
             (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
           ) {
-            console.warn(`Message stream lost: "${reason}". Reconnecting at ${new Date()}`);
+            console.warn(`Message stream lost: "${error_}". Reconnecting at ${new Date()}`);
             this.streamErrorAt = Date.now();
             this.fetchStream(path, observer, controller);
           } else {
-            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${reason}`);
-            observer.error(`Message stream lost: ${reason}`);
+            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${error_}`);
+            observer.error(`Message stream lost: ${error_}`);
             observer.complete();
           }
         },
