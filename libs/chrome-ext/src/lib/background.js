@@ -6,7 +6,7 @@ try {
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
 const TITLE_REGEX = /<title>([^<>]+?)<\/title>/;
-const IMG_REGEX = /<img[^<>]+?src\=["|'](.+?)["|'][^<>]*?>/gi;
+const IMG_REGEX = /<img[^<>]+?src=["'](.+?)["'][^<>]*?>/gi;
 
 const MENU_TYPES = [
   {
@@ -179,7 +179,7 @@ function replaceImages(html, pageUrl) {
         .from(
           fetch(absoluteUrl).then((res) => {
             if (!res.ok || !(res.headers.get('Content-Type') || '').startsWith('image')) {
-              throw 'error';
+              throw new Error('fetch error: non-ok response or non-image content type');
             }
             return res.blob();
           }),
