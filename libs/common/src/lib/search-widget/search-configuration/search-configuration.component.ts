@@ -9,6 +9,8 @@ import {
   HostBinding,
   inject,
   Input,
+  OnDestroy,
+  OnInit,
   Output,
   Pipe,
   PipeTransform,
@@ -90,7 +92,7 @@ export class IsTypedConfigPipe implements PipeTransform {
   styleUrl: './search-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchConfigurationComponent {
+export class SearchConfigurationComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private sdk = inject(SDKService);
   private translate = inject(TranslateService);

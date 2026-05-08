@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -17,7 +25,7 @@ import { ResourceNavigationService } from '../resource-navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class ResourceProfileComponent implements OnInit {
+export class ResourceProfileComponent implements OnInit, OnDestroy {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
 
   unsubscribeAll = new Subject<void>();

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Directive, inject } from '@angular/core';
+import { ChangeDetectorRef, Directive, inject, OnDestroy } from '@angular/core';
 import { WINDOW } from '@ng-web-apis/common';
 
 // Height from which the menu get smaller (prevents scrollbar to appear)
@@ -8,7 +8,7 @@ export const heightMediaQuery = '(max-height: 856px)';
   selector: '[appSmallNavbar]',
   standalone: false,
 })
-export class SmallNavbarDirective {
+export class SmallNavbarDirective implements OnDestroy {
   private mediaQueryList;
 
   window: Window;
