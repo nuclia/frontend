@@ -16,9 +16,9 @@ import {
   take,
 } from 'rxjs';
 
-const IN_ARAG = new RegExp('at/[^/]+/[^/]+/arag');
-const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
-const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
+const IN_ARAG = /at\/[^/]+\/[^/]+\/arag/;
+const IN_ACCOUNT_MANAGEMENT = /\/at\/[^/]+\/manage/;
+const IN_ACCOUNT_BILLING = /\/at\/[^/]+\/manage\/billing/;
 
 @Injectable({
   providedIn: 'root',
