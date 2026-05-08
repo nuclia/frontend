@@ -158,7 +158,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   visibleGroups = this.details.pipe(
     map((details) => {
-      const types = Object.values(groups).reduce((acc, curr) => acc.concat(curr), []);
+      const types = Object.values(groups).flat();
       const otherDetails = details.filter((detail) => !types.includes(detail.identifier.type));
       return Object.entries(groups)
         .map(([key, types]) => {
