@@ -155,7 +155,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
   private handlePythonEnter(textarea: HTMLTextAreaElement, start: number, value: string) {
     const lineStart = value.lastIndexOf('\n', start - 1) + 1;
     const currentLine = value.substring(lineStart, start);
-    const indent = /^[ ]*/.exec(currentLine)?.[0] || '';
+    const indent = /^ */.exec(currentLine)?.[0] || '';
 
     // Check if current line ends with colon (function, class, if, etc.)
     const shouldIncreaseIndent = currentLine.trim().endsWith(':');

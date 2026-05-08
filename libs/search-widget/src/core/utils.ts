@@ -220,7 +220,7 @@ export function slugify(text: string): string {
     text
       .toLowerCase()
       // Strip non allowed characters
-      .replace(/[^\w\s-_]+/gi, '')
+      .replace(/[^\w\s-]+/gi, '')
       // Replace white spaces
       .trim()
       .replace(/\s+/gi, '-')

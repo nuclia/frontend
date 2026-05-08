@@ -78,11 +78,11 @@ export class STFUtils {
     let slug = latinize(text);
 
     // Strip non allowed characters
-    slug = slug.replace(/[^\w\s-_]+/g, '');
+    slug = slug.replace(/[^\w\s-]+/g, '');
 
     // Replace white spaces
     slug = slug.trim();
-    slug = slug.replace(/[\s]+/g, '-');
+    slug = slug.replace(/\s+/g, '-');
 
     if (!slug) {
       slug = crypto.randomUUID();
