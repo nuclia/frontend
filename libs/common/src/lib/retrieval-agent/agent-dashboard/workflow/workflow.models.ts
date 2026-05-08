@@ -588,7 +588,7 @@ export function formatExtraConfig(extra: { [property: string]: { property: strin
 } {
   return Object.values(extra).reduce(
     (config, entry) => {
-      const intValue = parseInt(entry.value, 10);
+      const intValue = Number.parseInt(entry.value, 10);
       config[entry.property] = isNaN(intValue) ? entry.value : intValue;
       return config;
     },

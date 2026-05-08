@@ -414,7 +414,7 @@ export class RagAdviceService {
           } else if (rawVal.startsWith('"')) {
             extracted[key] = rawVal.slice(1, -1);
           } else if (key === 'topK') {
-            extracted[key] = parseInt(rawVal, 10);
+            extracted[key] = Number.parseInt(rawVal, 10);
           } else {
             extracted[key] = parseFloat(rawVal);
           }
@@ -447,7 +447,7 @@ export class RagAdviceService {
 
       const topKMatch = allSuggestionText.match(/top_k\s+(?:from\s+\d+\s+)?to\s+(\d+)/i);
       if (topKMatch) {
-        inlineExtracted['topK'] = parseInt(topKMatch[1], 10);
+        inlineExtracted['topK'] = Number.parseInt(topKMatch[1], 10);
       }
 
       if (Object.keys(inlineExtracted).length > 0) {

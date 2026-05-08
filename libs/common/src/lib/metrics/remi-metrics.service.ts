@@ -55,7 +55,7 @@ export class RemiMetricsService {
         from = subHours(today.toISOString(), 24).toISOString();
         to = today.toISOString();
       } else {
-        const days = parseInt(period.substring(0, period.indexOf('d')), 10);
+        const days = Number.parseInt(period.substring(0, period.indexOf('d')), 10);
         from = startOfDay(subDays(today.toISOString(), days).toISOString()).toISOString();
         to = endOfDay(today.toISOString()).toISOString();
       }
@@ -290,8 +290,8 @@ export class RemiMetricsService {
               }, [] as string[]);
             plotData[item.id] = groups
               .sort((a, b) => {
-                const aValue = parseInt(a.slice(0, -1), 10);
-                const bValue = parseInt(b.slice(0, -1), 10);
+                const aValue = Number.parseInt(a.slice(0, -1), 10);
+                const bValue = Number.parseInt(b.slice(0, -1), 10);
                 return aValue > bValue ? 1 : -1;
               })
               .map((group) => ({

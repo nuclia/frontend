@@ -117,7 +117,7 @@ export class BarChartComponent extends BaseChartDirective implements AfterViewIn
               return false;
             }
             // display future dates of the month in light gray
-            return parseInt(value, 10) > getDate(Date.now());
+            return Number.parseInt(value, 10) > getDate(Date.now());
           })
           .style('color', '#c4c4c4'),
       )

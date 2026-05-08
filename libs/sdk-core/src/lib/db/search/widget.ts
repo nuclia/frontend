@@ -397,7 +397,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       if (name === RagStrategyName.FULL_RESOURCE) {
         const fullResourceStartegy: FullResourceStrategy = { name };
         if (rest.length >= 1) {
-          fullResourceStartegy.count = parseInt(rest[0], 10);
+          fullResourceStartegy.count = Number.parseInt(rest[0], 10);
         }
         if (rest.length >= 2) {
           fullResourceStartegy.include_remaining_text_blocks = rest[1] === 'true';
@@ -409,7 +409,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       } else if (name === RagStrategyName.HIERARCHY) {
         const hierarchyStartegy: HierarchyStrategy = { name };
         if (rest.length === 1) {
-          hierarchyStartegy.count = parseInt(rest[0], 10);
+          hierarchyStartegy.count = Number.parseInt(rest[0], 10);
         }
         return hierarchyStartegy;
       } else if (name === RagStrategyName.FIELD_EXTENSION) {
@@ -423,9 +423,9 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       } else if (name === RagStrategyName.METADATAS) {
         return { name, types: rest };
       } else if (name === RagStrategyName.NEIGHBOURING_PARAGRAPHS) {
-        return { name, before: parseInt(rest[0]) || 0, after: parseInt(rest[1]) || 0 };
+        return { name, before: Number.parseInt(rest[0]) || 0, after: Number.parseInt(rest[1]) || 0 };
       } else if (name === RagStrategyName.CONVERSATION) {
-        const maxMessages = parseInt(rest[rest.length - 1], 10);
+        const maxMessages = Number.parseInt(rest[rest.length - 1], 10);
         return {
           name,
           attachments_text: rest.includes('attachments_text'),
@@ -434,7 +434,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
           max_messages: rest.includes('full') || isNaN(maxMessages) ? undefined : maxMessages,
         };
       } else if (name === RagStrategyName.GRAPH) {
-        const strategy: Partial<GraphStrategy> = { name, hops: parseInt(rest[0], 10), top_k: parseInt(rest[1], 10) };
+        const strategy: Partial<GraphStrategy> = { name, hops: Number.parseInt(rest[0], 10), top_k: Number.parseInt(rest[1], 10) };
         if (rest.length > 2) {
           strategy.exclude_processor_relations = rest[2] === 'true';
         }
@@ -479,7 +479,7 @@ export function parseRAGImageStrategies(ragImageStrategies: string): RAGImageStr
     .map((strategy) => {
       const [name, ...rest] = strategy.split('|');
       if (name === RagImageStrategyName.PAGE_IMAGE) {
-        return { name, count: parseInt(rest[0], 10) };
+        return { name, count: Number.parseInt(rest[0], 10) };
       } else if (name === RagImageStrategyName.PARAGRAPH_IMAGE) {
         return { name };
       } else {

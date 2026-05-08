@@ -163,7 +163,7 @@ export class AgentActivityComponent implements OnDestroy {
 
   parseDate(value: string) {
     const [year, month] = value.split('-');
-    return new Date(parseInt(year), parseInt(month) - 1, 2);
+    return new Date(Number.parseInt(year), Number.parseInt(month) - 1, 2);
   }
 
   parseNdjson(ndjson: string) {

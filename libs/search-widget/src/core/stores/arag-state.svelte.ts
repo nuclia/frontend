@@ -185,8 +185,8 @@ export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
     labels: [],
     position: {
       index: 0,
-      start: position?.[0] ? parseInt(position?.[0]) : 0,
-      end: position?.[1] ? parseInt(position?.[1]) : 0,
+      start: position?.[0] ? Number.parseInt(position?.[0]) : 0,
+      end: position?.[1] ? Number.parseInt(position?.[1]) : 0,
     },
     fuzzy_result: false,
     page_with_visual: false,

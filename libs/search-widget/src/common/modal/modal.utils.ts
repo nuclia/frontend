@@ -22,7 +22,7 @@ export function unblockBackground(fullscreenModal = false) {
 }
 
 function scrollBackTo(scrollY: string) {
-  window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  window.scrollTo(0, Number.parseInt(scrollY || '0') * -1);
 }
 
 function getFixedRootParent(element: any): HTMLElement | undefined {

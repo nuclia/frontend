@@ -1028,8 +1028,8 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
     labels: [],
     position: {
       index: paragraph.position?.index || 0,
-      start: parseInt(position?.[0] || ''),
-      end: parseInt(position?.[1] || ''),
+      start: Number.parseInt(position?.[0] || ''),
+      end: Number.parseInt(position?.[1] || ''),
       page_number: paragraph.position?.page_number,
       start_seconds: paragraph.position?.start_seconds,
       end_seconds: paragraph.position?.end_seconds,
@@ -1047,7 +1047,7 @@ export function parseFootenotes(text: string): { block: string; index: number }[
   const references = (text || '').matchAll(FOOTNOTES_REF);
   const refIndexes: { block: string; index: number }[] = [];
   for (const match of references) {
-    refIndexes.push({ block: match[2], index: parseInt(match[1]) });
+    refIndexes.push({ block: match[2], index: Number.parseInt(match[1]) });
   }
   refIndexes.sort((entry1, entry2) => entry1.index - entry2.index);
   return refIndexes;

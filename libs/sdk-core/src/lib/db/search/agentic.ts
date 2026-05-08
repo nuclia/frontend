@@ -390,7 +390,7 @@ export function getObjectValue(obj: object, path: string): any {
       key = key.replace('[', '').replace(']', '');
       if (Array.isArray(acc)) {
         try {
-          const index = parseInt(key, 10);
+          const index = Number.parseInt(key, 10);
           return acc[index];
         } catch (e) {
           return undefined;
@@ -400,7 +400,7 @@ export function getObjectValue(obj: object, path: string): any {
           return acc[key];
         } else {
           try {
-            const index = parseInt(key, 10);
+            const index = Number.parseInt(key, 10);
             return Object.values(acc)[index];
           } catch (e) {
             return undefined;

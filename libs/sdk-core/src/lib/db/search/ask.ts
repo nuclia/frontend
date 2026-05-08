@@ -116,7 +116,7 @@ export function ask(
           const statusItem = items.find((item) => item.item.type === 'status');
           if (statusItem) {
             const item = statusItem.item as Ask.StatusAskResponseItem;
-            const status = parseInt(item.code, 10);
+            const status = Number.parseInt(item.code, 10);
             const hasResults = items.some((item) => item.item.type === 'retrieval');
             if (!Number.isNaN(status) && status !== 0 && !canIgnoreStatus(item.status, body, hasResults)) {
               return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
@@ -235,14 +235,14 @@ export function predictAnswer(
                         acc.jsonAnswer = obj.object;
                       }
                       if (obj.type === 'status') {
-                        acc.status = parseInt(obj.code);
+                        acc.status = Number.parseInt(obj.code);
                       }
                       return acc;
                     },
                     { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
                   );
                 } else {
-                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
+                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: Number.parseInt(text.slice(-1)) };
                 }
               }),
             );
@@ -283,7 +283,7 @@ export function predictAnswer(
             const statusItem = items.find((item) => item.chunk.type === 'status');
             if (statusItem) {
               const item = statusItem.chunk as Ask.StatusPredictAnswerResponseItem;
-              const status = parseInt(item.code, 10);
+              const status = Number.parseInt(item.code, 10);
               if (!Number.isNaN(status) && status !== 0) {
                 return { type: 'error', status } as IErrorResponse;
               }

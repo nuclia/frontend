@@ -213,7 +213,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     return this.lowContextMonthControl.value;
   }
   get criteriaPercentValue() {
-    return parseInt(this.lowContextCriteria.controls.value.getRawValue(), 10) * 20 + '%';
+    return Number.parseInt(this.lowContextCriteria.controls.value.getRawValue(), 10) * 20 + '%';
   }
   get noAnswerMonthControl() {
     return this.noAnswerCriteria.controls.month;
@@ -318,7 +318,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
       const criteria: RemiQueryCriteria = {
         month: data.month,
         context_relevance: {
-          value: parseInt(data.value, 10),
+          value: Number.parseInt(data.value, 10),
           operation: 'lt',
           aggregation: 'max',
         },

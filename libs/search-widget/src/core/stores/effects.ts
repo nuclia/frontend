@@ -423,7 +423,7 @@ function initStoreFromUrlParams() {
                     const fieldFullId = data.fieldFullId;
                     const [start, end] = initialParagraph?.split('-') || ['0', '0'];
                     const paragraph = data.currentResult?.fieldData?.extracted?.metadata?.metadata.paragraphs.find(
-                      (paragraph) => paragraph.start == parseInt(start) && paragraph.end === parseInt(end),
+                      (paragraph) => paragraph.start == Number.parseInt(start) && paragraph.end === Number.parseInt(end),
                     );
                     if (paragraph && fieldFullId) {
                       resultParagraphs.set([getFindParagraphFromParagraph(paragraph, fieldFullId, text)]);
