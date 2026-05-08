@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BaseContextAgent,
   ContextAgentCreation,
   GenerationAgentCreation,
   PostprocessAgentCreation,
