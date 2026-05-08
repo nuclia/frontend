@@ -419,11 +419,10 @@ export class Rest implements IRest {
         // allowing us to know we should not raise an error in the observer
         if (reason === ABORT_STREAMING_REASON) {
           observer.complete();
-        } else {
           // Error on fetch can be caused by the backend not closing gracefully the stream on time (causing errors like NS_ERROR_NET_PARTIAL_TRANSFER, or CORS error)
           // If there was no error before, or last error was more than 10s ago, we reconnect
           // except if the error reason is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
-          if (
+        } else if (
             reason.toString() !== NS_BINDING_ABORTED_ERROR &&
             (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
           ) {
@@ -435,8 +434,7 @@ export class Rest implements IRest {
             observer.error(`Message stream lost: ${reason}`);
             observer.complete();
           }
-        }
-      },
+        },
     );
   }
 

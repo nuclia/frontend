@@ -330,8 +330,7 @@ export const getNavigationUrl = (
 export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field?: ResourceField) => {
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
-  } else {
-    if (field && field.field_type === FIELD_TYPE.link) {
+  } else if (field && field.field_type === FIELD_TYPE.link) {
       return (field.value as LinkField)?.uri;
     } else if (field && field.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
       return (field.value as FileField)?.file?.uri;
@@ -342,7 +341,6 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
     }
   }
 };
-
 export const getPreviewUrl = (
   resourceId: string,
   field: FieldId,

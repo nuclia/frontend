@@ -395,17 +395,15 @@ export function getObjectValue(obj: object, path: string): any {
         } catch (e) {
           return undefined;
         }
+      } else if (acc[key]) {
+        return acc[key];
       } else {
-        if (acc[key]) {
-          return acc[key];
-        } else {
           try {
             const index = Number.parseInt(key, 10);
             return Object.values(acc)[index];
           } catch (e) {
             return undefined;
           }
-        }
       }
     } else if (acc[key]) {
       return acc[key];

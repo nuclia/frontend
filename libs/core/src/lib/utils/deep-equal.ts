@@ -34,11 +34,9 @@ export function deepEqual(object1: object, object2: object, deepIncluded?: boole
     if (keys1.length > keys2.length) {
       return false;
     }
-  } else {
     // Compares if the number of keys of the objects is different
-    if (keys1.length !== keys2.length) {
-      return false;
-    }
+  } else if (keys1.length !== keys2.length) {
+    return false;
   }
 
   // loop for-of: To loop through the values of an iterable object
@@ -49,15 +47,13 @@ export function deepEqual(object1: object, object2: object, deepIncluded?: boole
     if (isObject(value1) && isObject(value2)) {
       // Both are objects, so compare them using deepEqual
       if (!deepEqual(value1, value2, deepIncluded)) return false;
-    } else {
-      // Both aren't objects, so compare them using equality operator
-      if (value1 !== value2) {
-        // we consider undefined and null as equivalent
-        if (value1 === undefined || value1 === null) {
-          return value1 == value2;
-        }
-        return false;
+    // Both aren't objects, so compare them using equality operator
+    } else if (value1 !== value2) {
+      // we consider undefined and null as equivalent
+      if (value1 === undefined || value1 === null) {
+        return value1 == value2;
       }
+      return false;
     }
   }
 
@@ -95,10 +91,8 @@ export function deepIncluded(object1: object, object2: object): boolean {
       } else {
         return value1.every((prop, index) => deepEqual(prop, value2[index]));
       }
-    } else {
-      // Both aren't objects nor array, so compare them using equality operator
-      if (value1 !== value2) return false;
-    }
+    // Both aren't objects nor array, so compare them using equality operator
+    } else if (value1 !== value2) return false;
   }
 
   return true;

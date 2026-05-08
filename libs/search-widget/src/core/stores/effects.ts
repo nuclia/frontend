@@ -599,15 +599,13 @@ export function askQuestion(
           chatError.set(result);
           pendingResults.set(false);
         }
-      } else {
-        if (result.incomplete) {
+      } else if (result.incomplete) {
           currentAnswer.set(result);
         } else {
           appendChatEntry.set({ question, answer: result });
           pendingResults.set(false);
         }
-      }
-    }),
+      }),
   );
 }
 
