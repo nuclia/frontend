@@ -234,7 +234,10 @@ export class RagAdviceService {
         } else if (r.outcome === 'no_answer') {
           outcome = 'no answer generated';
         } else {
-          outcome = `answer obtained${r.remiAnswerRelevance === undefined ? '' : ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})`}`;
+          const scores = r.remiAnswerRelevance === undefined
+              ? ''
+              : ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})`;
+          outcome = `answer obtained${scores}`;
         }
         lines.push(`  Round ${r.round}: ${r.paramsDescription} → ${outcome}`);
         if (r.outcome === 'answer' && r.answer) {
@@ -259,7 +262,7 @@ export class RagAdviceService {
       `  systemPrompt: instruction sent to the LLM (e.g. "answer only from the provided context").`,
       // ── Task ─────────────────────────────────────────────────────────────────
       ``,
-      `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? ` Factor in the user's stated expectation.` : ''} Write:`,
+      `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? ' Factor in the user\'s stated expectation.' : ''} Write:`,
       ``,
       `DIAGNOSIS: 1–2 sentences explaining what the scores reveal about where the pipeline is failing. Reference the actual values.`,
       ``,

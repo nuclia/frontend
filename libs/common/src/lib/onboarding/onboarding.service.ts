@@ -254,6 +254,6 @@ export class OnboardingService {
     const existingIncrement = Number.parseInt(slug.split('_').pop() || '');
     return isNaN(existingIncrement)
       ? `${slug}_1`
-      : `${slug.slice(0, -1 - `${existingIncrement}`.length)}_${existingIncrement + 1}`;
+      : `${slug.slice(0, -1 - String(existingIncrement).length)}_${existingIncrement + 1}`;
   }
 }
