@@ -20,10 +20,8 @@ import { SisToastService } from '@nuclia/sistema';
 import { DriversService } from '../../../../../../drivers/drivers.service';
 import { aragUrl } from '../../../../workflow.state';
 
-export type TransportType = string;
-
 export interface TransportChangeEvent {
-  transport: TransportType;
+  transport: string;
   hasDrivers: boolean;
   availableDrivers: (McpHttpDriver | McpSseDriver | McpStdioDriver)[];
 }
@@ -128,7 +126,7 @@ export class TransportFieldComponent implements OnInit {
     });
   }
 
-  onTransportChange(transport: TransportType): void {
+  onTransportChange(transport: string): void {
     this.transport.set(transport);
     this.transportControl().patchValue(transport);
     this.emitTransportChange();

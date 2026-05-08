@@ -130,8 +130,6 @@ export type ActivityLogResponseItemUnion =
   | ActivityLogResponseChatItem
   | ActivityLogResponseAskItem;
 
-/** @deprecated Use {@link ActivityLogResponseItemUnion} instead. */
-export type ActvityLogResponseItem = ActivityLogResponseItemUnion;
 
 export interface ActivityLogResponseItem {
   id: number;
@@ -175,8 +173,6 @@ export const ACTIVITY_LOG_SHOW_FIELDS = [
 ] as const;
 export type ActivityLogShowFields = (typeof ACTIVITY_LOG_SHOW_FIELDS)[number];
 
-/** @deprecated Use {@link ActivityLogShowFields} instead. */
-export type ActivityLogBaseShowField = ActivityLogShowFields;
 
 export interface ActivityLogResponseSearchItem extends ActivityLogResponseItem {
   question: string | null;

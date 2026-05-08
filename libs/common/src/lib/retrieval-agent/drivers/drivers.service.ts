@@ -22,8 +22,6 @@ import {
 import { NucliaDriverModalComponent } from './nuclia-driver';
 import { DynamicDriverModalComponent } from './dynamic-driver-form';
 
-export type DriverType = string; // Now accepts any string (driver title from schema)
-
 @Injectable({
   providedIn: 'root',
 })
