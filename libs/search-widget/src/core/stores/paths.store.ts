@@ -37,7 +37,7 @@ export const paths = pathState.writer<PathTree, Search.FacetsResult>(
       if (elements.length === 1) {
         state.paths[label] = newNode;
       } else {
-        const parent = getPathNode(state.paths, elements.slice(0, elements.length - 1));
+        const parent = getPathNode(state.paths, elements.slice(0, -1));
         if (parent) {
           parent.children[label] = newNode;
         }

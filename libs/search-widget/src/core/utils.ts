@@ -267,7 +267,7 @@ function getTextFragment(paragraphText: string) {
 }
 
 export function getFieldType(fieldType: string): FIELD_TYPE {
-  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
+  return (fieldType.endsWith('s') ? fieldType.slice(0, -1) : fieldType) as FIELD_TYPE;
 }
 
 export function getExtractedTexts(data: IFieldData | null): { shortId: string; text: string }[] {

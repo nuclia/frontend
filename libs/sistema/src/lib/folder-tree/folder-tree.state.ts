@@ -99,7 +99,7 @@ export class FolderTreeState {
 
   private getParentPath(path: string): string {
     const ids = path.split('/');
-    return ids.slice(0, ids.length - 1).join('/') || '/';
+    return ids.slice(0, -1).join('/') || '/';
   }
 
   private getFolder(path: string): FolderTree | undefined {
