@@ -228,7 +228,7 @@ export class MetricsFiltersService {
         const dateCondition: DateCondition = { column };
         if (geRows.length > 0) {
           const sorted = geRows.map(buildDateTime).sort((a, b) => a.localeCompare(b));
-          dateCondition.from = sorted[sorted.length - 1];
+          dateCondition.from = sorted.at(-1)!;
         }
         if (leRows.length > 0) {
           const sorted = leRows.map(buildDateTime).sort((a, b) => a.localeCompare(b));

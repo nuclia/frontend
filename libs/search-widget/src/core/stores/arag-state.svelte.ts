@@ -44,10 +44,10 @@ export const aragAnswerState = $state<AragAnswerState>({
 });
 
 export function getCurrentEntry(): AragChatEntry | undefined {
-  return aragAnswerState.entries.slice(-1)[0];
+  return aragAnswerState.entries.at(-1);
 }
 export function getEntryAnswer(entry: AragChatEntry) {
-  return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+  return entry.answers.filter((a) => !!a.answer).at(-1);
 }
 export function getEntryVisualizations(entry: AragChatEntry) {
   return entry.answers.filter((a) => !!a.data_visualizations).slice(-1)[0];

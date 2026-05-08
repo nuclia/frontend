@@ -195,7 +195,7 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
       let before = sliceUnicode(rawText, 0, ref.end);
       let after = sliceUnicode(rawText, ref.end);
       const lines = before.split('\n');
-      const lastLine = lines[lines.length - 1];
+      const lastLine = lines.at(-1)!;
       const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
       // if the citation marker has been positioned on a table border, we need to move it to the previous line
       // so it does not break the table

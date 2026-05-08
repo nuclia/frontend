@@ -26,7 +26,7 @@ export const paths = pathState.writer<PathTree, Search.FacetsResult>(
   (state, facets) => {
     Object.entries(facets).forEach(([key, value]) => {
       const elements = key.slice(1).split('/');
-      const label = elements[elements.length - 1];
+      const label = elements.at(-1)!;
       const newNode = {
         label,
         path: key,

@@ -193,7 +193,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     // catalog endpoint has a limit on the number of facets that can be retrieved per request
     const facetChunks = facets.reduce(
       (chunks, curr) => {
-        const lastChunk = chunks[chunks.length - 1];
+        const lastChunk = chunks.at(-1)!;
         if (lastChunk.length < MAX_FACETS_PER_REQUEST) {
           lastChunk.push(curr);
         } else {

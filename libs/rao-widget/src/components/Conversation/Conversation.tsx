@@ -94,7 +94,7 @@ const deriveTitleFromUrl = (candidate?: string | null): string | null => {
     if (segments.length === 0) {
       return hostname;
     }
-    return `${hostname}/${segments[segments.length - 1]}`;
+    return `${hostname}/${segments.at(-1)}`;
   } catch (error) {
     return candidate;
   }
@@ -506,7 +506,7 @@ export const Conversation: React.FC<IConversation> = () => {
           const articleClass = `rao-react__message rao-react__message--${message.role}`;
 
           if (message.feedback) {
-            const { question, options, status, selectedOptionId, error } = message.feedback;
+            const { question, options, status, selectedOptionId } = message.feedback;
             const questionContent = isNonEmptyString(question) ? question : null;
             const isSubmitting = status === 'submitting';
             const isCompleted = status === 'completed';
