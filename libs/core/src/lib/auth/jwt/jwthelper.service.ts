@@ -47,7 +47,7 @@ export class JwtHelperService {
 
     let bc = 0, bs: any, buffer: any;
     let idx = 0;
-    while ((buffer = str.charAt(idx++))) {
+    while ((buffer = str.charAt(idx++))) { // NOSONAR
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
       // tslint:disable-next-line:no-bitwise
@@ -55,7 +55,7 @@ export class JwtHelperService {
         // tslint:disable-next-line:no-bitwise
         bs = bc % 4 ? bs * 64 + buffer : buffer;
         // tslint:disable-next-line:no-bitwise
-        if (bc++ % 4) {
+        if (bc++ % 4) { // NOSONAR
           // tslint:disable-next-line:no-bitwise
           output += String.fromCodePoint(255 & (bs >> ((-2 * bc) & 6)));
         }
