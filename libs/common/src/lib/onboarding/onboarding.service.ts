@@ -43,7 +43,7 @@ export class OnboardingService {
   nextStep() {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
-      const next = steps[steps.findIndex((s) => s === step) + 1];
+      const next = steps[steps.indexOf(step) + 1];
       this._onboardingStep.next(next);
     });
   }
@@ -51,7 +51,7 @@ export class OnboardingService {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
       if (step > 1) {
-        const previous = steps[steps.findIndex((s) => s === step) - 1];
+        const previous = steps[steps.indexOf(step) - 1];
         this._onboardingStep.next(previous);
       }
     });

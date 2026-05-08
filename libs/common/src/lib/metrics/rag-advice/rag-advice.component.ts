@@ -155,7 +155,7 @@ export class RagAdviceModalComponent {
       const origVal = orig[field];
       if (currVal === origVal) {
         states[field] = 'original';
-      } else if (field in accSugg && currVal === accSugg[field as keyof EditableParams]) {
+      } else if (field in accSugg && currVal === accSugg[field]) {
         states[field] = 'suggested';
       } else {
         states[field] = 'modified';
@@ -634,7 +634,7 @@ export class RagAdviceModalComponent {
   }
 
   private compactSystemPrompt(prompt: string): string {
-    return prompt.replace(/\s+/g, ' ').trim().slice(0, 80);
+    return prompt.replaceAll(/\s+/g, ' ').trim().slice(0, 80);
   }
 
   private defaultConfigName(): string {

@@ -55,7 +55,7 @@ export class ConsentComponent implements OnInit {
   }
 
   scopeKey(scope: string): string {
-    return scope.replace(/:/g, '.');
+    return scope.replaceAll(':', '.');
   }
 
   acceptConsent() {

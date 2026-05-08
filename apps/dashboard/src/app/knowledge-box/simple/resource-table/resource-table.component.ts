@@ -86,7 +86,7 @@ export class ResourceTableComponent {
   splitTitle(title: string): { name: string; extension: string } {
     const parts = title.split('.');
     if (parts.length > 1) {
-      return { name: parts.slice(0, -1).join('.'), extension: parts[parts.length - 1] };
+      return { name: parts.slice(0, -1).join('.'), extension: parts.at(-1)! };
     } else {
       return { name: title, extension: '' };
     }
