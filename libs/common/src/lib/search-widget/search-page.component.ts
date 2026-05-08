@@ -70,21 +70,13 @@ export class SearchPageComponent implements OnDestroy {
   createWidget() {
     if (this.searchConfig?.type === 'config') {
       const searchConfigId = this.searchConfig.id;
-      const generativeModel = this.searchConfig.generativeAnswer.generativeModel;
-      const vectorset = this.searchConfig.searchBox.vectorset;
       this.modalService
         .openModal(CreateWidgetDialogComponent)
         .onClose.pipe(
           filter((widgetName) => !!widgetName),
           map((widgetName) => widgetName as string),
           switchMap((widgetName) =>
-            this.searchWidgetService.createWidget(
-              widgetName,
-              DEFAULT_WIDGET_CONFIG,
-              searchConfigId,
-              generativeModel,
-              vectorset,
-            ),
+            this.searchWidgetService.createWidget(widgetName, DEFAULT_WIDGET_CONFIG, searchConfigId),
           ),
           switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),
         )

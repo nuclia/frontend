@@ -14,17 +14,19 @@
   } @else {
     <pa-table
       border
-      columns="repeat(4, 1fr) 72px">
+      [columns]="(inArag | async) ? '3fr 1fr 72px' : 'repeat(4, 1fr) 72px'">
       <pa-table-header>
         <pa-table-cell header>
           <span class="title-xxs">{{ 'search.widgets.table-columns.name' | translate }}</span>
         </pa-table-cell>
-        <pa-table-cell header>
-          <span class="title-xxs">{{ 'search.widgets.table-columns.search-config' | translate }}</span>
-        </pa-table-cell>
-        <pa-table-cell header>
-          <span class="title-xxs">{{ 'search.widgets.table-columns.model' | translate }}</span>
-        </pa-table-cell>
+        @if (!(inArag | async)) {
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.search-config' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="title-xxs">{{ 'search.widgets.table-columns.model' | translate }}</span>
+          </pa-table-cell>
+        }
         <pa-table-cell header>
           <span class="title-xxs">{{ 'search.widgets.table-columns.date' | translate }}</span>
         </pa-table-cell>
@@ -42,14 +44,18 @@
               {{ widget.name }}
             </a>
           </pa-table-cell>
-          <pa-table-cell>
-            <span class="body-s">{{ widget.searchConfigId }}</span>
-          </pa-table-cell>
-          <pa-table-cell>
-            <span class="body-s">
-              {{ (modelNames | async)?.[widget.generativeModel] || widget.generativeModel }}
-            </span>
-          </pa-table-cell>
+          @if (!(inArag | async)) {
+            <pa-table-cell>
+              <span class="body-s">{{ widget.searchConfigId }}</span>
+            </pa-table-cell>
+            <pa-table-cell>
+              @if (widget.generativeModel) {
+                <span class="body-s">
+                  {{ (modelNames | async)?.[widget.generativeModel] || widget.generativeModel }}
+                </span>
+              }
+            </pa-table-cell>
+          }
           <pa-table-cell>
             <span class="body-s"><pa-datetime [datetime]="widget.creationDate"></pa-datetime></span>
           </pa-table-cell>
