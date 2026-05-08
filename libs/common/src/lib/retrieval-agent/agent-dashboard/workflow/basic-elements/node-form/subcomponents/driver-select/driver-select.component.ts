@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
-import { FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormArray, FormControl, FormsModule } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProviderType } from '@nuclia/core';
@@ -8,7 +8,6 @@ import { map } from 'rxjs';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { RouterLink } from '@angular/router';
 import { aragUrl } from '../../../../workflow.state';
-import { FormsModule } from '@angular/forms';
 import { DriversService } from '../../../../../../drivers/drivers.service';
 
 @Component({

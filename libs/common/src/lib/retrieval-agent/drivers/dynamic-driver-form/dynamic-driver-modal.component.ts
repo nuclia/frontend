@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild, signal, computed } from '@angular/core';
-import { PaModalModule, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaModalModule, PaButtonModule, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Driver, DriverCreation } from '@nuclia/core';
 
 import { FormGroup } from '@angular/forms';
 import { DynamicDriverFormComponent } from './dynamic-driver-form.component';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { JSONSchema4, JSONSchema7 } from 'json-schema';
 import { DriversService } from '../drivers.service';
 
 export interface DynamicDriverModalData {

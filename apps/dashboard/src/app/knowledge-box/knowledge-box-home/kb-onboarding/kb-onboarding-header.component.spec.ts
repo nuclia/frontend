@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BehaviorSubject } from 'rxjs';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';

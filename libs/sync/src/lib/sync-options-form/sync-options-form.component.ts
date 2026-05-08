@@ -21,8 +21,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { LabelModule, LabelsService } from '@flaps/core';
-import { LabelSets } from '@nuclia/core';
-import { Classification } from '@nuclia/core';
+import { LabelSets, Classification } from '@nuclia/core';
 import { ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
 import { ISyncEntity } from '../logic';
 import { SyncOptions } from './sync-options.model';

@@ -40,7 +40,7 @@ import {
 import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
 import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService } from '@flaps/core';
+import { FeaturesService, NavigationService } from '@flaps/core';
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
@@ -56,7 +56,6 @@ import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { PreviewService } from '../../resources';
 import { SafeHtml } from '@angular/platform-browser';
-import { NavigationService } from '@flaps/core';
 
 /** Shared color palette for the 3 REMI metrics — keep in sync with the evolution chart. */
 const METRIC_COLORS: Record<string, string> = {
