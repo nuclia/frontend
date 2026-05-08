@@ -222,15 +222,7 @@
     </nsi-two-columns-configuration-item>
 
     <nsi-sticky-footer>
-      <!--
-      <span footerNote>
-        @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
-          {{ footerNoteAutomation | translate }}
-        } @else if (resourceCount !== undefined) {
-          {{ footerNoteOneTime | translate: { count: resourceCount } }}
-        }
-      </span>
-      -->
+
       <pa-button
         aspect="basic"
         (click)="taskCancel.emit()">
