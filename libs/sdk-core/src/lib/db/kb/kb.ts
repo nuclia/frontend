@@ -666,7 +666,7 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /** Lists all the resources stored in the Knowledge Box. */
   listResources(page?: number, size?: number): Observable<ResourceList> {
-    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter(Boolean).join('&');
     return this.nuclia.rest
       .get<{
         resources: IResource[];
@@ -935,16 +935,12 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    * Entry point to task manager
    */
   get taskManager(): TaskManager {
-    if (!this._taskManager) {
-      this._taskManager = new TaskManager(this, this.nuclia);
-    }
+    this._taskManager ??= new TaskManager(this, this.nuclia);
     return this._taskManager;
   }
 
   get syncManager(): ISyncManager {
-    if (!this._syncManager) {
-      this._syncManager = new SyncManager(this, this.nuclia);
-    }
+    this._syncManager ??= new SyncManager(this, this.nuclia);
     return this._syncManager;
   }
 
@@ -952,15 +948,11 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    * @deprecated
    */
   get training(): Training {
-    if (!this._training) {
-      this._training = new Training(this, this.nuclia);
-    }
+    this._training ??= new Training(this, this.nuclia);
     return this._training;
   }
   get activityMonitor(): ActivityMonitor {
-    if (!this._activityMonitor) {
-      this._activityMonitor = new ActivityMonitor(this, this.nuclia);
-    }
+    this._activityMonitor ??= new ActivityMonitor(this, this.nuclia);
     return this._activityMonitor;
   }
 

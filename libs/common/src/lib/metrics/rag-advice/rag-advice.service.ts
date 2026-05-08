@@ -229,12 +229,14 @@ export class RagAdviceService {
     if (iterationHistory && iterationHistory.length > 0) {
       lines.push(``, `Previous exploration rounds (do not repeat these):`);
       for (const r of iterationHistory) {
-        const outcome =
-          r.outcome === 'no_context'
-            ? 'NO_CONTEXT — nothing was retrieved (threshold too strict)'
-            : r.outcome === 'no_answer'
-              ? 'no answer generated'
-              : `answer obtained${r.remiAnswerRelevance !== undefined ? ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})` : ''}`;
+        let outcome: string;
+        if (r.outcome === 'no_context') {
+          outcome = 'NO_CONTEXT — nothing was retrieved (threshold too strict)';
+        } else if (r.outcome === 'no_answer') {
+          outcome = 'no answer generated';
+        } else {
+          outcome = `answer obtained${r.remiAnswerRelevance !== undefined ? ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})` : ''}`;
+        }
         lines.push(`  Round ${r.round}: ${r.paramsDescription} → ${outcome}`);
         if (r.outcome === 'answer' && r.answer) {
           lines.push(`    Sample answer: "${r.answer.slice(0, 150)}"`);
@@ -311,21 +313,20 @@ export class RagAdviceService {
 
     // Extract DIAGNOSIS section — try plain `DIAGNOSIS:` first, fall back to `## DIAGNOSIS` header.
     const diagnosisMatch =
-      rawResponse.match(
-        /DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/,
-      ) ?? rawResponse.match(/##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/);
+      /DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse) ??
+      /##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse);
     const diagnosis = diagnosisMatch ? diagnosisMatch[1].trim() : rawResponse.trim();
 
     // Extract SUGGESTIONS section — try plain `SUGGESTIONS:` first, fall back to `## SUGGESTIONS` header.
     // Capture numbered list items; strip **bold** markdown from each item before storing.
     const suggestionsBlockMatch =
-      rawResponse.match(/SUGGESTIONS:\s*\n([\s\S]+?)(?=\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/) ??
-      rawResponse.match(/##\s*SUGGESTIONS\s*\n([\s\S]+?)(?=\n##\s*\w|\nPARAMS_JSON:|$)/);
+      /SUGGESTIONS:\s*\n([\s\S]+?)(?=\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse) ??
+      /##\s*SUGGESTIONS\s*\n([\s\S]+?)(?=\n##\s*\w|\nPARAMS_JSON:|$)/.exec(rawResponse);
     const suggestions: string[] = [];
     if (suggestionsBlockMatch) {
       const lines = suggestionsBlockMatch[1].split('\n');
       for (const line of lines) {
-        const itemMatch = line.match(/^\s*\d+\.\s+(.+)/);
+        const itemMatch = /^\s*\d+\.\s+(.+)/.exec(line);
         if (itemMatch) {
           // Strip **bold** markers (replace **text** with text)
           const cleaned = itemMatch[1].trim().replace(/\*\*(.+?)\*\*/g, '$1');
@@ -339,14 +340,14 @@ export class RagAdviceService {
     let rawSuggestedParams: Record<string, unknown> | undefined;
 
     // Grab everything after "PARAMS_JSON:" on its line (single-line content from the LLM).
-    const paramsLineMatch = rawResponse.match(/PARAMS_JSON:(.+)/);
+    const paramsLineMatch = /PARAMS_JSON:(.+)/.exec(rawResponse);
 
     if (paramsLineMatch) {
       const lineContent = paramsLineMatch[1];
 
       // Stage 1 — well-formed path: locate a {...} block, strip inline comments, JSON.parse.
       let stage1Succeeded = false;
-      const jsonBlockMatch = lineContent.match(/\{[^}]*\}/);
+      const jsonBlockMatch = /\{[^}]*\}/.exec(lineContent);
       if (jsonBlockMatch) {
         const jsonText = jsonBlockMatch[0].replace(/\/\/[^\n]*/g, '').trim();
         try {
@@ -435,17 +436,17 @@ export class RagAdviceService {
       const allSuggestionText = suggestions.join('\n');
       const inlineExtracted: Record<string, unknown> = {};
 
-      const semanticMatch = allSuggestionText.match(/min_score_semantic\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i);
+      const semanticMatch = /min_score_semantic\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i.exec(allSuggestionText);
       if (semanticMatch) {
         inlineExtracted['minScoreSemantic'] = parseFloat(semanticMatch[1]);
       }
 
-      const bm25Match = allSuggestionText.match(/min_score_bm25\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i);
+      const bm25Match = /min_score_bm25\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i.exec(allSuggestionText);
       if (bm25Match) {
         inlineExtracted['minScoreBm25'] = parseFloat(bm25Match[1]);
       }
 
-      const topKMatch = allSuggestionText.match(/top_k\s+(?:from\s+\d+\s+)?to\s+(\d+)/i);
+      const topKMatch = /top_k\s+(?:from\s+\d+\s+)?to\s+(\d+)/i.exec(allSuggestionText);
       if (topKMatch) {
         inlineExtracted['topK'] = Number.parseInt(topKMatch[1], 10);
       }

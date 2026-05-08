@@ -75,10 +75,10 @@ export class NavigationService {
   ).pipe(distinctUntilChanged());
 
   inAccountManagement(path: string): boolean {
-    return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
+    return IN_ACCOUNT_MANAGEMENT.test(path);
   }
   inAragSpace(path: string): boolean {
-    return path.match(IN_ARAG) !== null;
+    return IN_ARAG.test(path);
   }
   inArag() {
     return merge(
@@ -95,24 +95,24 @@ export class NavigationService {
 
     if (path.startsWith('#')) {
       const pattern = `/(${commonPages.join('|')})$`;
-      return path.match(new RegExp(pattern)) !== null;
+      return new RegExp(pattern).test(path);
     } else {
       const settingsPages = commonPages.concat(['synonyms', 'training', 'users', 'keys', 'rag-lab', 'tasks']);
       const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
-      return path.match(new RegExp(pattern)) !== null;
+      return new RegExp(pattern).test(path);
     }
   }
   inAragSettings(path: string, aragUrl: string): boolean {
     const settingsPages = ['ai-models', 'manage', 'activity', 'users', 'keys', 'rag-lab'];
     const pattern = `${aragUrl}/(${settingsPages.join('|')})`;
-    return path.match(new RegExp(pattern)) !== null;
+    return new RegExp(pattern).test(path);
   }
   inKbUpload(path: string, kbUrl: string): boolean {
     const pattern = `${kbUrl}/upload`;
-    return path.match(new RegExp(pattern)) !== null;
+    return new RegExp(pattern).test(path);
   }
   inAccountBilling(path: string): boolean {
-    return path.match(IN_ACCOUNT_BILLING) !== null;
+    return IN_ACCOUNT_BILLING.test(path);
   }
 
   getAccountUrl(accountSlug: string): string {

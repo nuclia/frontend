@@ -100,7 +100,7 @@ export function ask(
           const rows = new TextDecoder()
             .decode(data.buffer)
             .split('\n')
-            .filter((d) => d);
+            .filter(Boolean);
           const items: Ask.AskResponseItem[] = rows.reduce((acc, row) => {
             previous += row;
             try {
@@ -227,7 +227,7 @@ export function predictAnswer(
             return from(res.text()).pipe(
               map((text) => {
                 if (options?.json_schema) {
-                  const rows = text.split('\n').filter((d) => d);
+                  const rows = text.split('\n').filter(Boolean);
                   return rows.reduce(
                     (acc, row) => {
                       const obj = JSON.parse(row).chunk;
@@ -268,7 +268,7 @@ export function predictAnswer(
             const rows = new TextDecoder()
               .decode(data.buffer)
               .split('\n')
-              .filter((d) => d);
+              .filter(Boolean);
             const items = rows.reduce((acc, row) => {
               previous += row;
               try {

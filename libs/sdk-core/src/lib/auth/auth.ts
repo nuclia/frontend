@@ -45,13 +45,15 @@ export class Authentication implements IAuthentication {
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
   getAuthHeaders(method?: string, path?: string): { [key: string]: string } {
-    return this.nuclia.options.standalone
-      ? { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) }
-      : this.nuclia.options.apiKey
-        ? { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` }
-        : this.getToken()
-          ? { Authorization: `Bearer ${this.getToken()}` }
-          : {};
+    if (this.nuclia.options.standalone) {
+      return { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) };
+    } else if (this.nuclia.options.apiKey) {
+      return { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` };
+    } else if (this.getToken()) {
+      return { Authorization: `Bearer ${this.getToken()}` };
+    } else {
+      return {};
+    }
   }
 
   private getNucliaDbRole(method?: string, path?: string): NucliaDBRole {
@@ -128,9 +130,7 @@ export class Authentication implements IAuthentication {
   }
 
   redirectToOAuth(queryParams?: { [key: string]: string | boolean }, oauthUrlParams?: { [key: string]: string }) {
-    if (!queryParams) {
-      queryParams = {};
-    }
+    queryParams ??= {};
     const oauthParams = this.nuclia.options.oauth;
     if (!oauthParams) {
       throw new Error('OAuth parameters are missing.');

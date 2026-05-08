@@ -189,9 +189,7 @@ export class SyncService {
 
   getConnector(connector: string, instance: string): IConnector {
     const source = this.connectors[connector];
-    if (!source.instances) {
-      source.instances = {};
-    }
+    source.instances ??= {};
     const instances = source.instances as { [key: string]: IConnector };
     if (!instances[instance]) {
       instances[instance] = source.definition.factory({ id: instance });

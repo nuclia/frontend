@@ -188,7 +188,7 @@ export namespace Agentic {
             return nextSteps.length === 0
               ? of(true)
               : forkJoin(nextSteps.map((nextStepId) => this.runStep(nextStepId).pipe(take(1)))).pipe(
-                  map((results) => results.every((r) => r)),
+                  map((results) => results.every(Boolean)),
                 );
           } else {
             this._status.next({ stepId, status: 'error' });

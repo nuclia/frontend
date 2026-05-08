@@ -595,13 +595,13 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         normalizeText(answer.agent_request),
       ];
 
-      const messageText = candidateTexts.find((entry) => entry);
+      const messageText = candidateTexts.find(Boolean);
 
       if (messageText) {
         appendAssistantContent(messageText);
       } else if (answer.step) {
         const fallbackFromStep = normalizeText(answer.step.value);
-        if (fallbackFromStep && fallbackFromStep.endsWith('?')) {
+        if (fallbackFromStep?.endsWith('?')) {
           appendAssistantContent(fallbackFromStep);
         }
       }
@@ -929,7 +929,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       // Resolve the selected option and schema from the latest state to avoid races
       const currentMessages = conversationRef.current ?? [];
       const target = currentMessages.find((m) => m.id === messageId && m.feedback);
-      if (!target || !target.feedback) {
+      if (!target?.feedback) {
         return;
       }
       if (target.feedback.status === 'submitting' || target.feedback.status === 'completed') {

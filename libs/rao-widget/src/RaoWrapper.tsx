@@ -15,8 +15,7 @@ let spriteMarkupCache: string | null = null;
 let spriteLoadingPromise: Promise<string> | null = null;
 
 const loadSprite = async () => {
-  if (!spriteLoadingPromise) {
-    spriteLoadingPromise = fetch(SPRITE_URL)
+  spriteLoadingPromise ??= fetch(SPRITE_URL)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Unable to load icon sprite: ${response.status} ${response.statusText}`);
@@ -31,7 +30,6 @@ const loadSprite = async () => {
         spriteLoadingPromise = null;
         throw error;
       });
-  }
 
   return spriteLoadingPromise;
 };

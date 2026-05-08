@@ -453,7 +453,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
         return undefined;
       }
     })
-    .filter((s) => s) as RAGStrategy[];
+    .filter(Boolean) as RAGStrategy[];
   const strategiesNames = new Set(strategies.map((s) => s.name));
   if (
     (strategiesNames.has(RagStrategyName.FIELD_EXTENSION) ||
@@ -487,7 +487,7 @@ export function parseRAGImageStrategies(ragImageStrategies: string): RAGImageStr
         return undefined;
       }
     })
-    .filter((s) => s) as RAGImageStrategy[];
+    .filter(Boolean) as RAGImageStrategy[];
   return strategies as RAGImageStrategy[];
 }
 
@@ -504,7 +504,7 @@ export function parsePreselectedFilters(preselectedFilters: string): string[] | 
             return undefined;
           }
         })
-        .filter((filter) => filter)
+        .filter(Boolean)
     : preselectedFilters.split(',');
 }
 

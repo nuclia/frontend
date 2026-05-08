@@ -110,7 +110,7 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
 
 export function getUrlParams(): URLSearchParams {
   const params =
-    window.location.hash && window.location.hash.includes('?')
+    window.location.hash?.includes('?')
       ? window.location.hash.slice(window.location.hash.indexOf('?'))
       : window.location.search;
   return new URLSearchParams(params);
@@ -138,8 +138,8 @@ export const coerceBooleanProperty = (value: any): boolean => {
 export const getYoutubeId = (url: string) => {
   // From https://stackoverflow.com/a/9102270
   const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  if (match && match[2].length === 11) {
+  const match = regExp.exec(url);
+  if (match?.[2].length === 11) {
     return match[2];
   } else {
     return '';
@@ -330,9 +330,9 @@ export const getNavigationUrl = (
 export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field?: ResourceField) => {
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
-  } else if (field && field.field_type === FIELD_TYPE.link) {
+  } else if (field?.field_type === FIELD_TYPE.link) {
       return (field.value as LinkField)?.uri;
-    } else if (field && field.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
+    } else if (field?.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
       return (field.value as FileField)?.file?.uri;
     } else if (resource.origin?.url) {
       return resource.origin.url;
@@ -537,7 +537,7 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
 }
 
 function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
 
 function getMetadata(metadata: ResultMetadataItem[], obj: any): DisplayableMetadata[] {

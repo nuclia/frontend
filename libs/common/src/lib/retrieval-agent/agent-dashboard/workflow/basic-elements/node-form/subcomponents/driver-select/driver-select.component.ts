@@ -97,7 +97,7 @@ export class DriverSelectComponent implements OnInit {
         ? selectedValue
             .split(',')
             .map((v) => v.trim())
-            .filter((v) => v)
+            .filter(Boolean)
         : [];
     } else {
       selectedValues = selectedValue || [];

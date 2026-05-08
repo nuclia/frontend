@@ -57,20 +57,20 @@ export abstract class FormDirective {
     let schema = agentSchema;
 
     // If schema has $ref, resolve it from $defs
-    if (schema && schema.$ref && schema['$defs']) {
+    if (schema?.$ref && schema?.['$defs']) {
       // $ref format: '#/$defs/PreprocessConditionalAgentConfig'
       const refMatch = schema.$ref.match(/#\/\$defs\/(.+)/);
       if (refMatch) {
         const refName = refMatch[1];
         const defSchema = schema['$defs'][refName];
-        if (defSchema && defSchema.properties) {
+        if (defSchema?.properties) {
           schema = defSchema;
         }
       }
     }
 
     // If still not found, return empty form
-    if (!schema || !schema.properties) {
+    if (!schema?.properties) {
       return {
         formGroup: new FormGroup({}),
         schema: {} as JSONSchema4,
@@ -117,7 +117,7 @@ export abstract class FormDirective {
               ? configValue
                   .split(',')
                   .map((v) => v.trim())
-                  .filter((v) => v)
+                  .filter(Boolean)
               : [];
           }
         } else if (Array.isArray(defaultValue)) {
@@ -148,12 +148,12 @@ export abstract class FormDirective {
       refPath = property.$ref;
     } else if (property.anyOf) {
       const refObj = property.anyOf.find((item: any) => item.$ref);
-      if (refObj && refObj.$ref) {
+      if (refObj?.$ref) {
         refPath = refObj.$ref;
       }
     }
 
-    if (!refPath || !refPath.startsWith('#/$defs/')) {
+    if (!refPath?.startsWith('#/$defs/')) {
       return new FormGroup({});
     }
 
@@ -161,7 +161,7 @@ export abstract class FormDirective {
     const defName = refPath.replace('#/$defs/', '');
     const resolvedSchema = agentSchema['$defs']?.[defName] as JSONSchema4;
 
-    if (!resolvedSchema || !resolvedSchema.properties) {
+    if (!resolvedSchema?.properties) {
       return new FormGroup({});
     }
 
@@ -206,7 +206,7 @@ export abstract class FormDirective {
     if (property.anyOf) {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
-      if (objRef && objRef.$ref) {
+      if (objRef?.$ref) {
         // Merge resolved schema with original property
         return { ...this.resolveRefInFormDirective(objRef.$ref, schema), ...property, anyOf: undefined };
       }

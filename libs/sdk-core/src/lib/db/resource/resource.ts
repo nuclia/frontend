@@ -49,9 +49,7 @@ export class ReadableResource implements IResource {
    * Note: Usually you will not need to create a `Resource` object yourself.
    * It is returned by the `getResource` method of the `KnowledgeBox` object. */
   constructor(data: IResource) {
-    if (!data.data) {
-      data.data = {};
-    }
+    data.data ??= {};
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 

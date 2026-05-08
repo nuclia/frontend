@@ -42,9 +42,7 @@ export class WorkflowModalComponent {
           this.workflows.map((item) => item.id),
         );
       }
-      if (!values.parameters) {
-        values.parameters = {};
-      }
+      values.parameters ??= {};
       this.modal.close(this.isEdit ? { ...this.workflow, ...values } : values);
     }
   }

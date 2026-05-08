@@ -543,7 +543,7 @@ export const getFileUrls = (paths: string[], inline = false): Observable<string[
     map((token) =>
       paths.map((path) => {
         if (path.startsWith('/')) {
-          const params = [token ? `eph-token=${token}` : '', inline ? 'inline=true' : ''].filter((p) => p).join('&');
+          const params = [token ? `eph-token=${token}` : '', inline ? 'inline=true' : ''].filter(Boolean).join('&');
           const fullpath = `${getRegionalBackend()}${path}`;
           return params ? `${fullpath}?${params}` : fullpath;
         } else {
