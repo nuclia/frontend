@@ -11,7 +11,6 @@ describe('Search input', () => {
     });
     const searchInput = document.querySelector('textarea');
     expect(searchInput).toBeTruthy();
-    // await new Promise((r) => setTimeout(r, 200));
     if (searchInput) {
       // I could not succeed in triggering the value update in the Textarea component
       // so I cheat, using typeAhead to set the value…

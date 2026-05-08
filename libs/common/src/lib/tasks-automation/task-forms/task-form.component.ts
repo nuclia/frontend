@@ -270,27 +270,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         }
         this.cdr.markForCheck();
       });
-
-    /*
-    combineLatest([this.form.valueChanges, this.selectedFilters])
-      .pipe(
-        filter(([data]) => data.applyTaskTo === 'EXISTING'),
-        debounceTime(300),
-        switchMap(([data, filters]) =>
-          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filter?.contains || '', { filters }))),
-        ),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe({
-        next: (results) => {
-          if (results.type !== 'error') {
-            this.resourceCount = results.fulltext?.total;
-            this.cdr.markForCheck();
-          }
-        },
-        error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
-      });
-    */
   }
 
   ngOnDestroy() {
