@@ -52,7 +52,7 @@ class FolderImpl implements IConnector {
           {
             id: 'path',
             label: 'sync.connectors.folder.local-path.field-label',
-            placeholder: '/Users/alice/Documents or C:\\Users\\Alice\\Documents',
+            placeholder: String.raw`/Users/alice/Documents or C:\Users\Alice\Documents`,
             type: 'text',
             required: true,
           },
