@@ -79,8 +79,8 @@
           }
         </div>
       }
-      <div class="label-field-container">
-        <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
+      <div class="label-field-container" role="group" aria-labelledby="mod-date-label">
+        <span id="mod-date-label">{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</span>
         <div class="inline-form full-width small-gap">
           <pa-date-picker
             formControlName="from"

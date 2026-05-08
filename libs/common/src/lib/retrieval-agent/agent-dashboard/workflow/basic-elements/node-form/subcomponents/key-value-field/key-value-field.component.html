@@ -1,13 +1,15 @@
 <div
   class="form-entry"
+  role="group"
+  aria-labelledby="kv-field-label"
   [formGroup]="keyValueForm">
   <div class="label-and-button">
-    <label>
+    <span id="kv-field-label">
       {{ label }}
       @if (required) {
         <span style="color: red">*</span>
       }
-    </label>
+    </span>
     <pa-button
       size="small"
       aspect="basic"
