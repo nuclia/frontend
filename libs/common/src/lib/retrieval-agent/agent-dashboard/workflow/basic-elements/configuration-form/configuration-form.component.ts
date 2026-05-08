@@ -28,7 +28,7 @@ export class ConfigurationFormComponent {
   headerHeight = input();
   submitButton = input('');
   triggerSubmit = output();
-  cancel = output();
+  formCancel = output();
 
   showRegisteredAgentForm = showRegisteredAgentForm;
   currentNode = computed(() => selectedNodeData());

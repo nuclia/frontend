@@ -26,7 +26,7 @@
     <app-csv-select
       [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
       [fields]="4"
-    (select)="checkCsv($event)"></app-csv-select>
+    (csvSelect)="checkCsv($event)"></app-csv-select>
     @if (csv.length > 0) {
       <div
         class="uploads"

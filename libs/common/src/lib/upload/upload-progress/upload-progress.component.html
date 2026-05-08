@@ -53,7 +53,7 @@
   <pa-modal-footer>
     <div class="progress-footer">
       <div class="queue-length">{{ 'modal.upload.queue_length' | translate }}: {{ (files | async)?.length }}</div>
-      <pa-button (click)="close.emit()">
+      <pa-button (click)="progressClose.emit()">
         {{ 'generic.close' | translate }}
       </pa-button>
     </div>

@@ -5,7 +5,7 @@
   footerNoteAutomation="tasks-automation.graph-extraction.footer.apply-automation"
   footerNoteOneTime="tasks-automation.graph-extraction.footer.apply-one-time"
   [validFormInside]="validForm"
-  (cancel)="backToTaskList()"
+  (taskCancel)="backToTaskList()"
   (save)="onSave($event)">
   <nsi-two-columns-configuration-item
     itemTitle="tasks-automation.graph-extraction.ner-types.title"

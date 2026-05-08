@@ -15,12 +15,12 @@ export class ThumbnailComponent {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) noDeletion = false;
 
-  @Output() select = new EventEmitter<string>();
+  @Output() thumbnailSelect = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
 
   onSelect() {
     if (this.url) {
-      this.select.emit(this.url as string);
+      this.thumbnailSelect.emit(this.url as string);
     }
   }
 

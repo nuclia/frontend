@@ -614,7 +614,7 @@ export class WorkflowService {
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => {
+      selectorRef.instance.nodeSelect.subscribe(() => {
         const nodeRef = this.addNode(origin, columnIndex, nodeType as NodeType, originCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id, originCategory);
@@ -656,7 +656,7 @@ export class WorkflowService {
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => {
+      selectorRef.instance.nodeSelect.subscribe(() => {
         const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id, nodeCategory);
@@ -768,7 +768,7 @@ export class WorkflowService {
     this.applicationRef.attachView(panelRef.hostView);
     container.appendChild(panelRef.location.nativeElement);
     panelRef.changeDetectorRef.detectChanges();
-    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    panelRef.instance.panelCancel.subscribe(() => this.closeSidebar());
     setTimeout(() => {
       if (this.sidebarHeader) {
         const headerHeight = this.sidebarHeader.nativeElement.getBoundingClientRect().height;
@@ -812,7 +812,7 @@ export class WorkflowService {
     this.applicationRef.attachView(panelRef.hostView);
     container.appendChild(panelRef.location.nativeElement);
     panelRef.changeDetectorRef.detectChanges();
-    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    panelRef.instance.panelCancel.subscribe(() => this.closeSidebar());
     this._currentPanel = panelRef;
   }
 
@@ -961,7 +961,7 @@ export class WorkflowService {
     formRef.instance.submitForm.subscribe((config) =>
       this.saveNodeConfiguration(config, nodeId, nodeCategory, node.nodeType, columnIndex),
     );
-    formRef.instance.cancel.subscribe(() => this.closeSidebar());
+    formRef.instance.formCancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
   }
 

@@ -38,7 +38,7 @@
             <app-label-dropdown
               [labelSets]="labelSets | async"
               (selectionChange)="updateAddLabelList($event)"
-              (close)="addLabelsToSelection()"
+              (dropdownClose)="addLabelsToSelection()"
               displayRadioForNonMultiple
               aspect="basic"
               size="small">
@@ -47,7 +47,7 @@
             <app-label-dropdown
               [labelSets]="labelSets | async"
               (selectionChange)="updateRemoveLabelList($event)"
-              (close)="removeLabelsToSelection()"
+              (dropdownClose)="removeLabelsToSelection()"
               multiple
               aspect="basic"
               size="small">

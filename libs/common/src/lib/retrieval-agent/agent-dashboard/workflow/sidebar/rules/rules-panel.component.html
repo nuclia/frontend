@@ -1,7 +1,7 @@
 <app-configuration-form
   [form]="form"
   [headerHeight]="headerHeight()"
-  (cancel)="cancel.emit()"
+  (formCancel)="panelCancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
     @for (rule of rules; track rule) {

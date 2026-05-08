@@ -5,7 +5,7 @@
   footerNoteAutomation="tasks-automation.generator.footer.apply-automation"
   footerNoteOneTime="tasks-automation.generator.footer.apply-one-time"
   [validFormInside]="askForm.valid"
-  (cancel)="backToTaskList()"
+  (taskCancel)="backToTaskList()"
   (save)="onSave($event)">
   <div [formGroup]="askForm">
     <nsi-two-columns-configuration-item

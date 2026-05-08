@@ -32,7 +32,7 @@ export class ImportPanelComponent {
 
   selectedFile = signal<File | undefined>(undefined);
   loading = signal(false);
-  cancel = output();
+  panelCancel = output();
 
   handleFile(event: Event) {
     this.selectedFile.set((event.target as HTMLInputElement).files?.[0] || undefined);
@@ -52,7 +52,7 @@ export class ImportPanelComponent {
       .subscribe({
         next: () => {
           this.toaster.success('retrieval-agents.workflow.sidebar.import.import-sucess');
-          this.cancel.emit();
+          this.panelCancel.emit();
         },
         error: (error) => {
           const message = error?.body?.detail;

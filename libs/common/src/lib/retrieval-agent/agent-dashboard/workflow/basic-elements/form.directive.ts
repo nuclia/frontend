@@ -13,7 +13,7 @@ import { ARAGSchemas } from '@nuclia/core';
    * This way, in the template of the components extending this directive, we can have:
 <app-configuration-form
   [form]="form"
-  (cancel)="cancel.emit()"
+  (formCancel)="formCancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
     <!-- Here the different fields can use formControlName attribute -->
@@ -32,7 +32,7 @@ export abstract class FormDirective {
 
   category = input.required<NodeCategory>();
   submitForm = output<NodeConfig>();
-  cancel = output<void>();
+  formCancel = output<void>();
 
   protected fieldConfigService = inject(FieldConfigService);
 

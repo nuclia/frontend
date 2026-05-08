@@ -57,7 +57,7 @@ export class LabelDropdownComponent {
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() labelSetSelected = new EventEmitter<{ id: string; labelSet: LabelSet }>();
-  @Output() close = new EventEmitter<void>();
+  @Output() dropdownClose = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
   @ViewChild('level2') level2Popup?: PopupComponent;
@@ -97,7 +97,7 @@ export class LabelDropdownComponent {
     this.labelSetExpanded = undefined;
     this.labelSetInSelection = false;
     this.radioValue = '';
-    this.close.emit();
+    this.dropdownClose.emit();
   }
 
   private setRadioModel(labelSetType: string) {

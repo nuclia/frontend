@@ -154,7 +154,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   private _task?: DataAugmentationTaskOnGoing;
 
-  @Output() cancel = new EventEmitter<void>();
+  @Output() taskCancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
