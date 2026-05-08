@@ -736,7 +736,7 @@ export class WorkflowService {
     if (!section) {
       throw new Error(`Section ${category} not found in column`);
     }
-    section.removeChild(nodeRef.location.nativeElement);
+    nodeRef.location.nativeElement.remove();
     this.applicationRef.detachView(nodeRef.hostView);
   }
 

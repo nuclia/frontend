@@ -163,7 +163,7 @@ export class LinkService {
     }
 
     if (this.container?.nativeElement?.contains(linkRef.location.nativeElement)) {
-      this.container.nativeElement.removeChild(linkRef.location.nativeElement);
+      linkRef.location.nativeElement.remove();
     }
     this.applicationRef.detachView(linkRef.hostView);
   }

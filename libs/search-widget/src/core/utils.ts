@@ -481,7 +481,7 @@ const TxtRenderer = {
   table: (data: { header: { text: string }[]; rows: { text: string }[][] }) =>
     data.header
       .map((header) => header)
-      .concat(data.rows.reduce((acc, row) => acc.concat(row), []))
+      .concat(data.rows.flat())
       .map(inline)
       .join('\n'),
   tablerow: line,
@@ -581,7 +581,7 @@ function supportsCSSNesting() {
   `;
   document.head.appendChild(style);
   const isSupported = style.sheet && style.sheet.cssRules.length > 0;
-  document.head.removeChild(style);
+  style.remove();
   return !!isSupported;
 }
 
