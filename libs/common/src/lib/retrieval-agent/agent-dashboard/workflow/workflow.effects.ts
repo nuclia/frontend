@@ -160,7 +160,6 @@ export class WorkflowEffectService {
       );
       return { request, nodeId, log: ' - Update agent' };
     }
-    return;
   }
 
   private checkForChildrenUpdates(

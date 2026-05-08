@@ -327,7 +327,6 @@ export class ResourceListService {
           resourceIdList: newData.map((data) => data.resource.id),
           hasMore,
         };
-        return;
       }),
     );
   }

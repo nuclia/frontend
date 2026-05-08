@@ -688,7 +688,6 @@ function getTitle(value: string): string | undefined {
   if (parts.length === 4) {
     return parts[3];
   }
-  return;
 }
 export const displayedMetadata = searchState.writer<ResultMetadata, string>(
   (state) => state.metadata,
