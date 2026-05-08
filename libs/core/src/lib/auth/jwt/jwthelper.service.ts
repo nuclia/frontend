@@ -119,6 +119,6 @@ export class JwtHelperService {
       return true;
     }
 
-    return !(date.valueOf() > new Date().valueOf() + offsetSeconds * 1000);
+    return !(date.valueOf() > Date.now() + offsetSeconds * 1000);
   }
 }

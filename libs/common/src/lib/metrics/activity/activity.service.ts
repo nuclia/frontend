@@ -49,7 +49,7 @@ export class ActivityService {
       activity[kbId] = {};
     }
     activity[kbId][event] = {
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
       data,
     };
     this._storeActivity(activity);

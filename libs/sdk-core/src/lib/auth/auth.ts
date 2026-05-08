@@ -427,7 +427,7 @@ export class Authentication implements IAuthentication {
     if (token) {
       const helper = new JwtHelper(token);
       const expiration = helper.getTokenExpirationDate()?.getTime();
-      const now = new Date().getTime();
+      const now = Date.now();
       if (expiration && expiration < now) {
         this.logout();
       } else {
