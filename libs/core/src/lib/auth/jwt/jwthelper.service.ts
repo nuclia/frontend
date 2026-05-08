@@ -98,7 +98,7 @@ export class JwtHelperService {
   public getTokenExpirationDate(token: string = this.tokenGetter()): Date | null {
     const decoded: any = this.decodeToken(token);
 
-    if (!Object.prototype.hasOwnProperty.call(decoded, 'exp')) {
+    if (!Object.hasOwn(decoded, 'exp')) {
       return null;
     }
 

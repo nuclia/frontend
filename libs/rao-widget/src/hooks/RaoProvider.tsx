@@ -399,7 +399,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     const uniqueId = `${baseName}-${index}`;
     const title = typeof record.title === 'string' && record.title.trim().length > 0 ? record.title.trim() : baseName;
     const description = typeof record.description === 'string' ? record.description : undefined;
-    const args = Object.prototype.hasOwnProperty.call(record, 'arguments') ? record.arguments : undefined;
+    const args = Object.hasOwn(record, 'arguments') ? record.arguments : undefined;
     const metaValue =
       record.meta && typeof record.meta === 'object' && record.meta !== null
         ? (record.meta as Record<string, unknown>)
@@ -429,15 +429,15 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
             return acc;
           }
 
-          if (Object.prototype.hasOwnProperty.call(record, 'value')) {
+          if (Object.hasOwn(record, 'value')) {
             acc[key] = (record as { value: unknown }).value;
             return acc;
           }
-          if (Object.prototype.hasOwnProperty.call(record, 'default')) {
+          if (Object.hasOwn(record, 'default')) {
             acc[key] = (record as { default: unknown }).default;
             return acc;
           }
-          if (Object.prototype.hasOwnProperty.call(record, 'example')) {
+          if (Object.hasOwn(record, 'example')) {
             acc[key] = (record as { example: unknown }).example;
             return acc;
           }
