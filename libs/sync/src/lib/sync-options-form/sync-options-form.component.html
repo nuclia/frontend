@@ -7,6 +7,9 @@
       [onlyExtract]="true"
       [extractConfig]="extractStrategy"
       (extractConfigChange)="updateExtractStrategy($event)"></app-extraction-select>
+    @if (isCloud && editMode) {
+      <nsi-info-card icon="info">{{ 'sync.edit.info.extract-strategy' | translate }}</nsi-info-card>
+    }
   </div>
 </nsi-two-columns-configuration-item>
 
@@ -36,6 +39,9 @@
         </nsi-label>
       }
     </div>
+    @if (isCloud && editMode) {
+      <nsi-info-card icon="info">{{ 'sync.edit.info.labels' | translate }}</nsi-info-card>
+    }
   </div>
 </nsi-two-columns-configuration-item>
 
@@ -90,6 +96,9 @@
             [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
         </div>
       </div>
+      @if (isCloud && editMode) {
+        <nsi-info-card icon="info">{{ 'sync.edit.info.file-filter' | translate }}</nsi-info-card>
+      }
     </div>
   </nsi-two-columns-configuration-item>
 </form>

@@ -199,10 +199,11 @@ export class SyncDetailsPageComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
         switchMap(([sync, syncId]) => {
           if (sync.isCloud) {
-            return this.syncService.updateSync(syncId, {
+            const updates: Partial<ISyncEntity> = {
               ...(this.updatedConfig?.title ? { title: this.updatedConfig.title } : {}),
               ...getCloudSyncOptionsPayload(this.cloudOptions),
-            });
+            };
+            return this.syncService.updateCloudSync(syncId, updates, sync);
           }
           if (!this.updatedConfig && !this.updatedSelection) {
             return EMPTY;

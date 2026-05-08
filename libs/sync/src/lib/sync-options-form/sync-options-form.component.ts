@@ -53,6 +53,7 @@ export class SyncOptionsFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   @Input() isCloud = false;
+  @Input() editMode = false;
 
   @Input() set existingConfig(value: ISyncEntity | null | undefined) {
     if (!value) {
