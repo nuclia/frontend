@@ -18,7 +18,7 @@ export function StrongPassword(control: AbstractControl<string>): ValidationErro
   const hasRequiredLength = value.length >= MIN_LENGTH;
   const hasUpperCase = /[A-Z]+/.test(value);
   const hasLowerCase = /[a-z]+/.test(value);
-  const hasNumeric = /[0-9]+/.test(value);
+  const hasNumeric = /\d+/.test(value);
   const hasSpecialChars = Array.from(value).some((char) => SPECIAL_CHARS.has(char));
   const passwordValid = hasRequiredLength && hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChars;
   return passwordValid ? null : { strongPassword: true };

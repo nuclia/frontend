@@ -217,7 +217,7 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
   return rawText;
 }
 
-const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\sblock-[A-Z]{2}(-[0-9]+)?/g);
+const FOOTNOTES_REF = new RegExp(/\[(\d+)\]:\sblock-[A-Z]{2}(-\d+)?/g);
 
 export function addLLMCitationReferences(rawText: string, html: boolean) {
   const references = rawText.matchAll(FOOTNOTES_REF);

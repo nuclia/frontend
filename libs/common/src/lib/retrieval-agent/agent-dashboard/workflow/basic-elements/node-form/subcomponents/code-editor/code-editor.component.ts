@@ -343,7 +343,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       }
 
       // Check for invalid characters in Python identifiers
-      const invalidIdentifier = /^\s*[0-9]+[a-zA-Z]/.exec(trimmedLine);
+      const invalidIdentifier = /^\s*\d+[a-zA-Z]/.exec(trimmedLine);
       if (invalidIdentifier) {
         errors.push(`Line ${lineNumber}: Invalid identifier starting with number`);
       }
