@@ -13,7 +13,7 @@ import { NodeCategory, NodeType } from '../../workflow.models';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ARAGSchemas, Driver, NucliaDBDriver } from '@nuclia/core';
 
-const CONNECTABLES = ['then', 'else_', 'next_agent', 'alternative', 'fallback', 'agents', 'registered_agents'];
+const CONNECTABLES = new Set(['then', 'else_', 'next_agent', 'alternative', 'fallback', 'agents', 'registered_agents']);
 
 // Extend JSONSchema4 to include show_in_node property
 interface ExtendedJSONSchema4 extends JSONSchema4 {
@@ -415,7 +415,7 @@ export class DynamicNodeComponent extends NodeDirective implements OnInit {
         hasDiscriminator = true;
       }
 
-      if (CONNECTABLES.includes(key) && !fallbackEntries.some((entry) => entry.id === key)) {
+      if (CONNECTABLES.has(key) && !fallbackEntries.some((entry) => entry.id === key)) {
         fallbackEntries.push({
           id: key,
           title: prop.title || this.formatPropertyName(key),

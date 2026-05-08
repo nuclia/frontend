@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SDKService } from '@flaps/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 
-const OMITTED_HEADERS = ['Authorization', 'x-ndb-client'];
+const OMITTED_HEADERS = new Set(['Authorization', 'x-ndb-client']);
 
 @Component({
   imports: [
@@ -36,7 +36,7 @@ export class SearchRequestModalComponent {
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as any);
 
   headers = Object.entries(this.modal.config?.data?.['headers'] || {})
-    .filter(([key]) => !OMITTED_HEADERS.includes(key))
+    .filter(([key]) => !OMITTED_HEADERS.has(key))
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as any);
 
   payloadJson = JSON.stringify(this.modal.config?.data?.['params'] || {}, undefined, 4);

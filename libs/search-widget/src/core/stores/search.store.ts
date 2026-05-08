@@ -949,12 +949,12 @@ export function getResultUniqueKey(result: Search.FieldResult): string {
     : result.id;
 }
 
-const SpreadsheetContentTypes = [
+const SpreadsheetContentTypes = new Set([
   'text/csv',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.oasis.opendocument.spreadsheet',
-];
+]);
 export function getResultType(result: Search.FieldResult): { resultType: ResultType; resultIcon: string } {
   const fieldType = result?.field?.field_type;
   const fieldDataValue = result?.fieldData?.value;
@@ -980,7 +980,7 @@ export function getResultType(result: Search.FieldResult): { resultType: ResultT
       resultType = 'image';
     } else if (file?.content_type?.startsWith('text')) {
       resultType = 'text';
-    } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
+    } else if (SpreadsheetContentTypes.has(file?.content_type || '')) {
       resultType = 'spreadsheet';
     } else if (file?.content_type?.startsWith('application/octet-stream')) {
       resultType = 'text';

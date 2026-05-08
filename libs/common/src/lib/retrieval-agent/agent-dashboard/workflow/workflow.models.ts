@@ -83,9 +83,9 @@ export function isCondionalNode(x: any): x is CondionalNodeType {
 export type NodeCategory = 'preprocess' | 'context' | 'generation' | 'postprocess';
 export type NodeState = 'default' | 'unsaved' | 'selected' | 'processing' | 'processed';
 
-const CATEGORY_LIST: NodeCategory[] = ['preprocess', 'context', 'generation', 'postprocess'];
+const CATEGORY_LIST: Set<NodeCategory> = new Set(['preprocess', 'context', 'generation', 'postprocess']);
 export function isCategory(x: any): x is NodeCategory {
-  return CATEGORY_LIST.includes(x);
+  return CATEGORY_LIST.has(x);
 }
 
 export interface ParentNode {

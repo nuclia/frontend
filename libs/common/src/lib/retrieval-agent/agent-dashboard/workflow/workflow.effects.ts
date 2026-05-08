@@ -95,10 +95,10 @@ export class WorkflowEffectService {
     }
 
     // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
-    const singleFallbackLinked = ['fallback', 'next_agent'];
+    const singleFallbackLinked = new Set(['fallback', 'next_agent']);
     const fallbackEntries = node.nodeRef.instance.boxComponent.connectableEntries?.filter((entry) => {
       const hasContent = !!(node.nodeConfig as any)?.[entry.id()]?.module;
-      return hasContent && singleFallbackLinked.includes(entry.id());
+      return hasContent && singleFallbackLinked.has(entry.id());
     });
     if (fallbackEntries?.length) {
       fallbackEntries.forEach((fallbackEntry) => {

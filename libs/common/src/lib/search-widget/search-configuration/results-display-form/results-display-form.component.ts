@@ -20,7 +20,7 @@ import { takeUntil } from 'rxjs/operators';
 import { JsonValidator } from '../../../validators';
 
 // TODO remove when all LLMs support JSON output
-const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
+const LLM_WITH_JSON_OUTPUT_SUPPORT: Set<string> = new Set([
   'chatgpt-azure',
   'chatgpt-azure-4-turbo',
   'chatgpt-azure-4o',
@@ -33,7 +33,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
   'chatgpt4o-mini',
   'gemini-1-5-pro',
   'azure-mistral',
-];
+]);
 
 @Component({
   selector: 'stf-results-display-form',
@@ -75,7 +75,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Input() set generativeModel(model: string | undefined) {
     if (model) {
       this._generativeModel = model;
-      if (!LLM_WITH_JSON_OUTPUT_SUPPORT.includes(model)) {
+      if (!LLM_WITH_JSON_OUTPUT_SUPPORT.has(model)) {
         this.jsonOutputControl.patchValue(false);
         this.jsonOutputControl.disable();
         this.isJsonOutputDisabled = true;

@@ -160,7 +160,7 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   },
 ];
 
-const EXCLUDED_COST_TOKEN_FIELDS: readonly string[] = [
+const EXCLUDED_COST_TOKEN_FIELDS: ReadonlySet<string> = new Set([
   'id',
   'user_id',
   'user_type',
@@ -181,9 +181,9 @@ const EXCLUDED_COST_TOKEN_FIELDS: readonly string[] = [
   'retrieval_rephrased_question',
   'security',
   'result_per_page',
-];
+]);
 export const COST_TOKEN_SHOW_FIELDS = ACTIVITY_LOG_ASK_SHOW_FIELDS.filter(
-  (f) => !EXCLUDED_COST_TOKEN_FIELDS.includes(f),
+  (f) => !EXCLUDED_COST_TOKEN_FIELDS.has(f),
 );
 
 export const COST_TOKEN_SIDEBAR_FIELDS: MetricsSidebarField[] = [];

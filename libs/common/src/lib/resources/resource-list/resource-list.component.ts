@@ -169,9 +169,9 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   updateClassifications(selection: Classification[]) {
-    const filters = selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase());
+    const filters = new Set(selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase()));
     this.filterOptions.classification.forEach((option) => {
-      option.selected = filters.includes(option.id.toLocaleLowerCase());
+      option.selected = filters.has(option.id.toLocaleLowerCase());
     });
     this.cdr.markForCheck();
     this.onToggleFilter();

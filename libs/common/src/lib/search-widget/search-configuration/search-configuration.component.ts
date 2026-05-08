@@ -54,7 +54,7 @@ import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
 
-const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
+const NUCLIA_SEMANTIC_MODELS = new Set(['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']);
 
 @Pipe({ name: 'isTypedConfig' })
 export class IsTypedConfigPipe implements PipeTransform {
@@ -264,7 +264,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       {} as { [value: string]: string },
     );
     this.semanticModels = (config['semantic_models'] || []).map((model: string) => {
-      const isNucliaModel = NUCLIA_SEMANTIC_MODELS.includes(semanticModelsName[model]);
+      const isNucliaModel = NUCLIA_SEMANTIC_MODELS.has(semanticModelsName[model]);
       const help = isNucliaModel
         ? this.translate.instant('user.kb.creation-form.models.options.' + semanticModelsName[model])
         : model;

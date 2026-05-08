@@ -454,12 +454,12 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       }
     })
     .filter((s) => s) as RAGStrategy[];
-  const strategiesNames = strategies.map((s) => s.name);
+  const strategiesNames = new Set(strategies.map((s) => s.name));
   if (
-    (strategiesNames.includes(RagStrategyName.FIELD_EXTENSION) ||
-      strategiesNames.includes(RagStrategyName.HIERARCHY) ||
-      strategiesNames.includes(RagStrategyName.NEIGHBOURING_PARAGRAPHS)) &&
-    strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
+    (strategiesNames.has(RagStrategyName.FIELD_EXTENSION) ||
+      strategiesNames.has(RagStrategyName.HIERARCHY) ||
+      strategiesNames.has(RagStrategyName.NEIGHBOURING_PARAGRAPHS)) &&
+    strategiesNames.has(RagStrategyName.FULL_RESOURCE)
   ) {
     console.error(
       `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension', 'hierarchy' or 'neighbouring_paragraphs'`,

@@ -10,7 +10,7 @@ export function SamePassword(passwordField: string): ValidatorFn {
 
 export function StrongPassword(control: AbstractControl<string>): ValidationErrors | null {
   const MIN_LENGTH = 8;
-  const SPECIAL_CHARS = ['!', '@', '#', '$', '%', '^', '&', '*', '.', '_', '(', ')', '+', '=', '-'];
+  const SPECIAL_CHARS = new Set(['!', '@', '#', '$', '%', '^', '&', '*', '.', '_', '(', ')', '+', '=', '-']);
   const value = control.value;
   if (!value) {
     return null;
@@ -19,7 +19,7 @@ export function StrongPassword(control: AbstractControl<string>): ValidationErro
   const hasUpperCase = /[A-Z]+/.test(value);
   const hasLowerCase = /[a-z]+/.test(value);
   const hasNumeric = /[0-9]+/.test(value);
-  const hasSpecialChars = Array.from(value).some((char) => SPECIAL_CHARS.includes(char));
+  const hasSpecialChars = Array.from(value).some((char) => SPECIAL_CHARS.has(char));
   const passwordValid = hasRequiredLength && hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChars;
   return passwordValid ? null : { strongPassword: true };
 }

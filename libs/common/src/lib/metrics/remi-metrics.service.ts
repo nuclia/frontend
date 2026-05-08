@@ -289,7 +289,7 @@ export class RemiMetricsService {
                 return deduplicatedGroups;
               }, [] as string[]);
             plotData[item.id] = groups
-              .sort((a, b) => {
+              .toSorted((a, b) => {
                 const aValue = Number.parseInt(a.slice(0, -1), 10);
                 const bValue = Number.parseInt(b.slice(0, -1), 10);
                 return aValue > bValue ? 1 : -1;

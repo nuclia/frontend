@@ -13,6 +13,6 @@ import { BaseIconPageComponent } from '@guillotinaweb/pastanaga-angular/demo';
 })
 export class SistemaIconsComponent extends BaseIconPageComponent implements OnInit {
   ngOnInit(): void {
-    this.icons = ICONS.sort((a, b) => a.localeCompare(b));
+    this.icons = ICONS.toSorted((a, b) => a.localeCompare(b));
   }
 }
