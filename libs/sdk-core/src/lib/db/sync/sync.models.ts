@@ -87,7 +87,8 @@ export interface SyncConfigurationCreate extends SyncConfigurationOptions {
   external_connection_id: string;
 }
 
-export interface SyncConfigurationUpdate extends SyncConfigurationOptions {
+type INullable<T> = { [P in keyof T]: T[P] | null };
+export interface SyncConfigurationUpdate extends INullable<SyncConfigurationOptions> {
   name?: string;
 }
 
