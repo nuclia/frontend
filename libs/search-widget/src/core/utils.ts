@@ -151,9 +151,8 @@ export const isYoutubeUrl = (url: string) => {
 };
 
 export const formatTitle = (title?: string): string => {
-  title = title || '–';
   try {
-    return decodeURIComponent(title);
+    return decodeURIComponent(title || '–');
   } catch (e) {
     return title;
   }

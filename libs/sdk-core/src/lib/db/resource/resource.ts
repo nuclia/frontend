@@ -149,9 +149,8 @@ export class ReadableResource implements IResource {
   }
 
   private formatTitle(title?: string): string {
-    title = title || '–';
     try {
-      return decodeURIComponent(title);
+      return decodeURIComponent(title || '–');
     } catch (e) {
       return title;
     }

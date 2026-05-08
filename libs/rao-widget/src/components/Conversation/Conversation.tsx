@@ -442,23 +442,27 @@ const markdownSanitizeOptions = { schema: markdownSanitizeSchema };
 
 const markdownComponents: Components = {
   p: createParagraphRenderer('rao-react__message-content'),
-  a: ({ node: _node, ...props }) => (
+  a: ({ node: _node, children, ...props }) => (
     <a
       {...props}
       target="_blank"
       rel="noopener noreferrer"
-    />
+    >
+      {children}
+    </a>
   ),
 };
 
 const feedbackMarkdownComponents: Components = {
   p: createParagraphRenderer('rao-react__feedback-option-description'),
-  a: ({ node: _node, ...props }) => (
+  a: ({ node: _node, children, ...props }) => (
     <a
       {...props}
       target="_blank"
       rel="noopener noreferrer"
-    />
+    >
+      {children}
+    </a>
   ),
 };
 

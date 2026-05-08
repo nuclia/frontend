@@ -129,7 +129,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
                   type: rawValue.type,
                   workflow: rawValue.workflow,
                 };
-            payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
+            payload.trialExpirationDate = trialExpirationDate ?? null;
             return this.accountService.updateAccount(accountBackup.id, payload);
           }),
         )

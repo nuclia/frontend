@@ -118,7 +118,7 @@ export const catalog = (
   const catalogPath = options ? serialize({ query: (query as string) || '' }, options) : '';
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${catalogPath}`)
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...{ query: query || '' }, ...options });
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { query: query || '', ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 

@@ -66,7 +66,7 @@ export class InviteCollaboratorsModalComponent {
   }
 
   removeUser(email: string) {
-    this.toBeInvited = [...this.toBeInvited.filter((user) => user !== email)];
+    this.toBeInvited = this.toBeInvited.filter((user) => user !== email);
   }
 
   onDone() {

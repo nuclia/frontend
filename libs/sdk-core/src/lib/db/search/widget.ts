@@ -842,7 +842,7 @@ export function getJsonSchemaValue(config: Widget.ResultDisplayConfig) {
 }
 function getJsonSchema(config: Widget.ResultDisplayConfig): string {
   const schema = getJsonSchemaValue(config);
-  return schema ? schema : '';
+  return schema ?? '';
 }
 function getMetadata(config: Widget.ResultDisplayConfig): string {
   return config.displayMetadata && (config.metadatas || []).length > 0 ? (config.metadatas || []).join(',') : '';
