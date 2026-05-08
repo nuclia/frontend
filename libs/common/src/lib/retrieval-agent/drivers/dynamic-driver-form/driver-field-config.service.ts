@@ -160,7 +160,7 @@ export class DriverFieldConfigService {
     if (property.anyOf) {
       // Check if any anyOf contains a $ref (subform)
       const refObj = property.anyOf.find((t: any) => t.$ref);
-      if (refObj && refObj.$ref && schema) {
+      if (refObj?.$ref && schema) {
         // Resolve the ref and check if it's an enum
         const resolved = this.resolveRef(refObj.$ref, schema);
         if (resolved?.enum) return 'enum';
@@ -179,7 +179,7 @@ export class DriverFieldConfigService {
 
       // Prefer first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');
-      if (typeObj && typeObj.type) {
+      if (typeObj?.type) {
         const type = Array.isArray(typeObj.type) ? typeObj.type[0] : typeObj.type;
         if (type === 'array' && typeObj.items) {
           return 'array';
@@ -210,7 +210,7 @@ export class DriverFieldConfigService {
     // anyOf containing $ref
     if (property.anyOf) {
       const refObj = property.anyOf.find((item: any) => item.$ref);
-      if (refObj && refObj.$ref) {
+      if (refObj?.$ref) {
         return this.resolveRef(refObj.$ref, schema);
       }
     }

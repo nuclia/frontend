@@ -7,7 +7,7 @@ export class JwtHelperService {
 
   constructor(@Inject(JWT_OPTIONS) config: any = null) {
     this.tokenGetter =
-      (config && config.tokenGetter) ||
+      config?.tokenGetter ||
       function () {
         /* empty */
       };
@@ -51,12 +51,15 @@ export class JwtHelperService {
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
       // tslint:disable-next-line:no-bitwise
-      ~buffer &&
-        ((bs = bc % 4 ? bs * 64 + buffer : buffer),
-        bc++ % 4)
-          ? // tslint:disable-next-line:no-bitwise
-            (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
-          : 0;
+      if (~buffer) {
+        // tslint:disable-next-line:no-bitwise
+        bs = bc % 4 ? bs * 64 + buffer : buffer;
+        // tslint:disable-next-line:no-bitwise
+        if (bc++ % 4) {
+          // tslint:disable-next-line:no-bitwise
+          output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6)));
+        }
+      }
     }
     return output;
   }

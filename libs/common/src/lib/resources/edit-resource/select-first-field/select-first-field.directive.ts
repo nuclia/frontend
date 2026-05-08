@@ -50,8 +50,12 @@ export class SelectFirstFieldDirective implements OnDestroy {
         notGenericFields.sort((a, b) => {
           if (a.value && b.value && 'added' in a.value && 'added' in b.value) {
             return (a.value.added || '').localeCompare(b.value?.added || '');
+          } else if (a.field_id.startsWith('da-')) {
+            return 1;
+          } else if (b.field_id.startsWith('da-')) {
+            return -1;
           } else {
-            return a.field_id.startsWith('da-') ? 1 : b.field_id.startsWith('da-') ? -1 : 0;
+            return 0;
           }
         });
         const field: ResourceField = notGenericFields[0];

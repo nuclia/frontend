@@ -178,7 +178,7 @@ export const testAgentAnswersByCategory = computed(() => {
     let previousAnswer: AragAnswerUi | undefined;
     sortedAnswers[category].forEach((answer) => {
       const currentAnswer = aragAnswerToUi(answer);
-      if (previousAnswer && currentAnswer.agentId === previousAnswer.agentId) {
+      if (currentAnswer.agentId === previousAnswer?.agentId) {
         // grouping steps of a same module together
         if (answer.step) {
           previousAnswer.steps.push(answer.step);
@@ -697,7 +697,7 @@ export function updateNode(
       throw new Error('No id');
     }
     const parent = getNode(node.parentId, 'context');
-    if (parent && parent.nodeType === 'smart' && parent.nodeConfig) {
+    if (parent?.nodeType === 'smart' && parent?.nodeConfig) {
       (parent.nodeConfig as SmartAgentUI).registered_agents_descriptions = {
         ...(parent.nodeConfig as SmartAgentUI).registered_agents_descriptions,
         [id]: registeredAgentParams().description,
@@ -714,7 +714,7 @@ export function updateNode(
   const childrenKeys = ['then', 'else_', 'agents', 'registered_agents'];
   if (node.parentId && node.parentLinkType) {
     const parent = getNode(node.parentId, nodeCategory);
-    if (parent && parent.nodeConfig && node.nodeConfig) {
+    if (parent?.nodeConfig && node.nodeConfig) {
       if (childKeys.includes(node.parentLinkType)) {
         (parent.nodeConfig as any)[node.parentLinkType] = node.nodeConfig;
       }

@@ -335,12 +335,14 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   getStatusFromParam(param: string): RESOURCE_STATUS | undefined {
-    return param === 'processed'
-      ? RESOURCE_STATUS.PROCESSED
-      : param === 'pending'
-        ? RESOURCE_STATUS.PENDING
-        : param === 'error'
-          ? RESOURCE_STATUS.ERROR
-          : undefined;
+    if (param === 'processed') {
+      return RESOURCE_STATUS.PROCESSED;
+    } else if (param === 'pending') {
+      return RESOURCE_STATUS.PENDING;
+    } else if (param === 'error') {
+      return RESOURCE_STATUS.ERROR;
+    } else {
+      return undefined;
+    }
   }
 }

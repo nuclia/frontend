@@ -224,7 +224,7 @@ export class WorkflowEffectService {
     }
     const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
     const updatedChildren: { id: string; childIndex?: number }[] = [];
-    if (!parentNode || !parentNode.nodeConfig) {
+    if (!parentNode?.nodeConfig) {
       return;
     }
     const childId = childNode.nodeRef.instance.id;
@@ -238,8 +238,11 @@ export class WorkflowEffectService {
     } else if ((parentNode.registered_agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
     } else {
-      const childKey =
-        parentNode.fallback === childId ? 'fallback' : parentNode.next_agent === childId ? 'next_agent' : '';
+      const childKey = (() => {
+        if (parentNode.fallback === childId) return 'fallback';
+        if (parentNode.next_agent === childId) return 'next_agent';
+        return '';
+      })();
       if (childKey) {
         const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
         const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childKey;
@@ -275,12 +278,11 @@ export class WorkflowEffectService {
     property: 'then' | 'else_' | 'agents' | 'registered_agents',
   ): { id: string; childIndex: number } {
     const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI | RestrictedAgentUI | SmartAgentUI;
-    const children =
-      property === 'agents'
-        ? (parentConfig as RestrictedAgentUI).agents || []
-        : property === 'registered_agents'
-          ? (parentConfig as SmartAgentUI).registered_agents || []
-          : (parentConfig as BaseConditionalAgentUI)[property] || [];
+    const children = (() => {
+      if (property === 'agents') return (parentConfig as RestrictedAgentUI).agents || [];
+      if (property === 'registered_agents') return (parentConfig as SmartAgentUI).registered_agents || [];
+      return (parentConfig as BaseConditionalAgentUI)[property] || [];
+    })();
     const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig, childNode.agentId);
     let updatedChild;
     if (typeof childNode.childIndex === 'number') {

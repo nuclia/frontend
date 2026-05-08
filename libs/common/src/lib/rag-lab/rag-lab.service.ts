@@ -231,12 +231,14 @@ export class RagLabService {
     const entries = results.value;
     const entryIndex = entries.findIndex((entry) => entry.query === query);
     const queryEntry = entryIndex > -1 ? entries[entryIndex] : null;
-    const answer =
-      typeof result === 'string'
-        ? result
-        : result.type === 'answer'
-          ? (result as Ask.Answer).text
-          : `Error: ${result.detail}`;
+    let answer: string;
+    if (typeof result === 'string') {
+      answer = result;
+    } else if (result.type === 'answer') {
+      answer = (result as Ask.Answer).text;
+    } else {
+      answer = `Error: ${result.detail}`;
+    }
     if (queryEntry) {
       queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered, tokens, timings });
       entries.splice(entryIndex, 1, queryEntry);

@@ -111,16 +111,16 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
 }
 
 export function getChatOptions(searchConfig: Widget.SearchConfiguration, defaultGenerativeModel?: string): ChatOptions {
+  const citations = (() => {
+    if (searchConfig.resultDisplay.showResultType === 'citations') return true;
+    if (searchConfig.resultDisplay.showResultType === 'llmCitations') return 'llm_footnotes' as const;
+    return false;
+  })();
   const requestOptions: ChatOptions = {
     ...getBaseSearchOptions(searchConfig),
     generative_model: searchConfig.generativeAnswer.generativeModel || defaultGenerativeModel,
     prefer_markdown: searchConfig.generativeAnswer.preferMarkdown,
-    citations:
-      searchConfig.resultDisplay.showResultType === 'citations'
-        ? true
-        : searchConfig.resultDisplay.showResultType === 'llmCitations'
-          ? 'llm_footnotes'
-          : false,
+    citations,
   };
   if (
     (searchConfig.generativeAnswer.usePrompt && searchConfig.generativeAnswer.prompt.trim()) ||
@@ -234,14 +234,14 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
   }
   if (searchOptions.kind === 'ask') {
     const askOptions = options as ChatOptions;
+    const showResultType = (() => {
+      if (askOptions.citations === true || askOptions.citations == 'default') return 'citations' as const;
+      if (!askOptions.citations || askOptions.citations == 'none') return 'all-resources' as const;
+      return 'llmCitations' as const;
+    })();
     config.resultDisplay = {
       ...config.resultDisplay,
-      showResultType:
-        askOptions.citations === true || askOptions.citations == 'default'
-          ? 'citations'
-          : !askOptions.citations || askOptions.citations == 'none'
-            ? 'all-resources'
-            : 'llmCitations',
+      showResultType,
       jsonOutput: !!askOptions.answer_json_schema,
       jsonSchema: askOptions.answer_json_schema ? JSON.stringify(askOptions.answer_json_schema, null, 2) : '',
       customizeThreshold: typeof askOptions.citation_threshold === 'number',

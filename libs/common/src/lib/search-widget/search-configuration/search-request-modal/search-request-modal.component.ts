@@ -55,7 +55,14 @@ export class SearchRequestModalComponent {
   ) {}
 
   private getPythonCode(endpoint: string, params: { [key: string]: any }): string {
-    const method = endpoint.endsWith('/ask') ? 'ask' : endpoint.endsWith('/find') ? 'find' : '';
+    let method: string;
+    if (endpoint.endsWith('/ask')) {
+      method = 'ask';
+    } else if (endpoint.endsWith('/find')) {
+      method = 'find';
+    } else {
+      method = '';
+    }
     if (!method) {
       return 'Unknown method';
     }

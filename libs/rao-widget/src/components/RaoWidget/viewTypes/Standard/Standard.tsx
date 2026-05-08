@@ -161,6 +161,15 @@ export const Standard: FC<StandardProps> = ({
     onCloseFloating();
   }, [onCloseFloating, stopRecording]);
 
+  let recordingTitle: string;
+  if (!canUseVoice) {
+    recordingTitle = resources.aria_notsupported;
+  } else if (isRecording) {
+    recordingTitle = resources.aria_stoprecording;
+  } else {
+    recordingTitle = resources.aria_startrecording;
+  }
+
   return (
     <>
       <style>{styles}</style>
@@ -265,13 +274,7 @@ export const Standard: FC<StandardProps> = ({
                 type="button"
                 className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
                 aria-label={isRecording ? resources.aria_stoprecording : resources.aria_startrecording}
-                title={
-                  canUseVoice
-                    ? isRecording
-                      ? resources.aria_stoprecording
-                      : resources.aria_startrecording
-                    : resources.aria_notsupported
-                }
+                title={recordingTitle}
                 onClick={toggleRecording}
                 aria-pressed={isRecording}
                 disabled={!canUseVoice}>

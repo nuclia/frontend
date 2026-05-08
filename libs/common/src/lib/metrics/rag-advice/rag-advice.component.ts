@@ -386,7 +386,12 @@ export class RagAdviceModalComponent {
 
     const usedParams = latest.paramsUsed;
     // Pass the actual status of the last tested result so the LLM can see what happened
-    const resultStatus = latest.noContext ? '-2' : latest.answer ? '0' : undefined;
+    let resultStatus: string | undefined;
+    if (latest.noContext) {
+      resultStatus = '-2';
+    } else if (latest.answer) {
+      resultStatus = '0';
+    }
 
     const newInput: AdviceInput = {
       question: inp.question,
@@ -620,10 +625,18 @@ export class RagAdviceModalComponent {
         rec.paramsUsed.model ? `model=${rec.paramsUsed.model}` : null,
         rec.paramsUsed.systemPrompt ? `system_prompt="${this.compactSystemPrompt(rec.paramsUsed.systemPrompt)}"` : null,
       ].filter((v): v is string => v !== null);
+      let outcome: string;
+      if (rec.noContext) {
+        outcome = 'no_context';
+      } else if (rec.answer) {
+        outcome = 'answer';
+      } else {
+        outcome = 'no_answer';
+      }
       return {
         round: rec.round,
         paramsDescription: paramParts.length > 0 ? paramParts.join(', ') : 'default parameters',
-        outcome: rec.noContext ? 'no_context' : rec.answer ? 'answer' : 'no_answer',
+        outcome,
         answer: rec.answer ? rec.answer.slice(0, 300) : undefined,
         remiScore: rec.remiScore ?? undefined,
         remiAnswerRelevance: rec.remiAnswerRelevance ?? undefined,

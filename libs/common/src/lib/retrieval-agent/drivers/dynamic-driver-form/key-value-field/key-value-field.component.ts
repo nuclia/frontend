@@ -185,7 +185,7 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
     // Check if number type is supported
     const supportsNumber =
       additionalProps.type === 'number' ||
-      (additionalProps.anyOf && additionalProps.anyOf.some((item: any) => item.type === 'number'));
+      (additionalProps.anyOf?.some((item: any) => item.type === 'number'));
 
     if (supportsNumber && !isNaN(Number(value))) {
       return Number(value);

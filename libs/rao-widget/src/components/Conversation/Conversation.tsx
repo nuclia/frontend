@@ -160,7 +160,7 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string, re
   const sources = new Map<string, SourceItem>();
 
   entries.forEach((rawEntry, entryIndex) => {
-    if (!rawEntry || !rawEntry.context) {
+    if (!rawEntry?.context) {
       return;
     }
 
@@ -196,11 +196,14 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string, re
         }
       }
 
-      const title = isNonEmptyString(chunk.title)
-        ? chunk.title
-        : isNonEmptyString(contextData.title)
-          ? contextData.title
-          : deriveTitleFromUrl(primaryUrl) ?? `${resources.meta_source} ${sources.size + 1}`;
+      let title: string;
+      if (isNonEmptyString(chunk.title)) {
+        title = chunk.title;
+      } else if (isNonEmptyString(contextData.title)) {
+        title = contextData.title;
+      } else {
+        title = deriveTitleFromUrl(primaryUrl) ?? `${resources.meta_source} ${sources.size + 1}`;
+      }
 
       const description = isNonEmptyString(chunk.text) ? truncateText(chunk.text, 200) : undefined;
       const displayUrl = formatDisplayUrl(primaryUrl);
@@ -281,11 +284,12 @@ const humanizeDebugEntries = (
     if (step) {
       const moduleLabel = isNonEmptyString(step.module) ? step.module.replace(/_/g, ' ') : resources.meta_step;
       const title = isNonEmptyString(step.title) ? step.title : moduleLabel;
-      const description = isNonEmptyString(step.reason)
-        ? step.reason
-        : isNonEmptyString(step.value)
-          ? step.value
-          : undefined;
+      let description: string | undefined;
+      if (isNonEmptyString(step.reason)) {
+        description = step.reason;
+      } else if (isNonEmptyString(step.value)) {
+        description = step.value;
+      }
 
       const notes: string[] = [];
       if (isNonEmptyString(step.value) && step.value !== description) {
@@ -644,6 +648,52 @@ export const Conversation: React.FC<IConversation> = () => {
             const hasSources = sources.length > 0;
             const isSourcesExpanded = Boolean(expandedSources[message.id]);
             const messageContent = isNonEmptyString(message.content) ? message.content : null;
+            const reasoningContent = (() => {
+              if (reasoningItems.length > 0) {
+                return (
+                  <ol className="rao-react__message-reasoning-steps">
+                    {reasoningItems.map((item) => (
+                      <li
+                        key={item.id}
+                        className={`rao-react__message-reasoning-item rao-react__message-reasoning-item--${item.type}`}>
+                        <div className="rao-react__message-reasoning-header">
+                          <span className="rao-react__message-reasoning-badge">{item.badge}</span>
+                          <span className="rao-react__message-reasoning-item-title">{item.title}</span>
+                        </div>
+                        {item.description && (
+                          <p className="rao-react__message-reasoning-description">{item.description}</p>
+                        )}
+                        {item.notes && item.notes.length > 0 && (
+                          <ul className="rao-react__message-reasoning-notes">
+                            {item.notes.map((note, noteIndex) => (
+                              <li key={`${item.id}-note-${noteIndex}`}>{note}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                );
+              } else if (message.list && message.list.length > 0) {
+                return (
+                  <ol className="rao-react__message-reasoning-list">
+                    {message.list.map((item, index) => (
+                      <li key={`${message.id}-reason-${index}`}>{item}</li>
+                    ))}
+                  </ol>
+                );
+              } else {
+                return (
+                  <div
+                    className="rao-react__reasoning-skeleton"
+                    aria-hidden="true">
+                    <span className="rao-react__reasoning-skeleton-line" />
+                    <span className="rao-react__reasoning-skeleton-line" />
+                    <span className="rao-react__reasoning-skeleton-line" />
+                  </div>
+                );
+              }
+            })();
 
             return (
               <article
@@ -671,44 +721,7 @@ export const Conversation: React.FC<IConversation> = () => {
                   {canToggleReasoning && isExpanded && (
                     <div className="rao-react__message-reasoning">
                       <span className="rao-react__message-reasoning-title">{resources.meta_reasoning}</span>
-                      {reasoningItems.length > 0 ? (
-                        <ol className="rao-react__message-reasoning-steps">
-                          {reasoningItems.map((item) => (
-                            <li
-                              key={item.id}
-                              className={`rao-react__message-reasoning-item rao-react__message-reasoning-item--${item.type}`}>
-                              <div className="rao-react__message-reasoning-header">
-                                <span className="rao-react__message-reasoning-badge">{item.badge}</span>
-                                <span className="rao-react__message-reasoning-item-title">{item.title}</span>
-                              </div>
-                              {item.description && (
-                                <p className="rao-react__message-reasoning-description">{item.description}</p>
-                              )}
-                              {item.notes && item.notes.length > 0 && (
-                                <ul className="rao-react__message-reasoning-notes">
-                                  {item.notes.map((note, noteIndex) => (
-                                    <li key={`${item.id}-note-${noteIndex}`}>{note}</li>
-                                  ))}
-                                </ul>
-                              )}
-                            </li>
-                          ))}
-                        </ol>
-                      ) : message.list && message.list.length > 0 ? (
-                        <ol className="rao-react__message-reasoning-list">
-                          {message.list.map((item, index) => (
-                            <li key={`${message.id}-reason-${index}`}>{item}</li>
-                          ))}
-                        </ol>
-                      ) : (
-                        <div
-                          className="rao-react__reasoning-skeleton"
-                          aria-hidden="true">
-                          <span className="rao-react__reasoning-skeleton-line" />
-                          <span className="rao-react__reasoning-skeleton-line" />
-                          <span className="rao-react__reasoning-skeleton-line" />
-                        </div>
-                      )}
+                      {reasoningContent}
                     </div>
                   )}
 

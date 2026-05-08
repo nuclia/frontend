@@ -49,7 +49,7 @@ function getFixedRootParent(element: any): HTMLElement | undefined {
       return getFixedRootParent(parent);
     } else {
       const parentNode = element.parentNode;
-      if (parentNode && parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+      if (parentNode?.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
         return getFixedRootParent((parentNode as ShadowRoot).host as HTMLElement);
       } else {
         return element;

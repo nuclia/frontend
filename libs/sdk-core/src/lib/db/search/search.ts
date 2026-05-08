@@ -115,10 +115,9 @@ export const catalog = (
     throw new Error('Advanced catahog query is not supported with GET');
   }
   const path = `/kb/${kbid}`;
+  const catalogPath = options ? serialize({ query: (query as string) || '' }, options) : '';
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(
-        `${path}/catalog?${options ? serialize({ query: (query as string) || '' }, options) : ''}`,
-      )
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${catalogPath}`)
     : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...{ query: query || '' }, ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };

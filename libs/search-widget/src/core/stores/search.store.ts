@@ -205,7 +205,13 @@ export const resultList = searchState.reader<TypedResult[]>((state) => {
     list.sort((a, b) => {
       const createdA = a.origin?.created || a.created || '';
       const createdB = b.origin?.created || b.created || '';
-      return createdA === createdB ? 0 : createdA < createdB ? 1 : -1;
+      if (createdA === createdB) {
+        return 0;
+      } else if (createdA < createdB) {
+        return 1;
+      } else {
+        return -1;
+      }
     });
   }
   return list;
@@ -450,24 +456,20 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     ) {
       return filterExpression;
     }
+    const field = (() => {
+      if (filterExpression?.field && hasFieldFilters) return { and: [filterExpression.field, fieldFilters] };
+      if (hasFieldFilters) return fieldFilters;
+      return filterExpression?.field;
+    })();
+    const paragraph = (() => {
+      if (filterExpression?.paragraph && hasParagraphFilters) return { and: [filterExpression.paragraph, paragraphFilters] };
+      if (hasParagraphFilters) return paragraphFilters;
+      return filterExpression?.paragraph;
+    })();
     return {
       ...(filterExpression || {}),
-      field:
-        filterExpression?.field && hasFieldFilters
-          ? {
-              and: [filterExpression.field, fieldFilters],
-            }
-          : hasFieldFilters
-            ? fieldFilters
-            : filterExpression?.field,
-      paragraph:
-        filterExpression?.paragraph && hasParagraphFilters
-          ? {
-              and: [filterExpression.paragraph, paragraphFilters],
-            }
-          : hasParagraphFilters
-            ? paragraphFilters
-            : filterExpression?.paragraph,
+      field,
+      paragraph,
     };
   }),
 );

@@ -234,14 +234,18 @@ export class SyncDetailsPageComponent implements OnDestroy {
 
   getLogEntitiesFromJobs(jobs: Job[]) {
     return jobs.reduce((acc, curr) => {
-      acc = acc.concat([
+    let message: string;
+    if (['pending', 'in_progress'].includes(curr.status)) {
+      message = 'Checking for changes...';
+    } else if (curr.status === 'completed') {
+      message = 'Synchronization complete';
+    } else {
+      message = 'Synchronization with errors';
+    }
+    acc = acc.concat([
         {
           level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
-          message: ['pending', 'in_progress'].includes(curr.status)
-            ? 'Checking for changes...'
-            : curr.status === 'completed'
-              ? 'Synchronization complete'
-              : 'Synchronization with errors',
+          message,
           createdAt: curr.created_at,
           origin: '',
           action: '',

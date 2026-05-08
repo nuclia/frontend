@@ -37,7 +37,7 @@ export class ParagraphService {
     this._searchResults.asObservable(),
   ]).pipe(
     map(([allParagraphs, searchResults]) => {
-      if (!searchResults || !searchResults.paragraphs?.results) {
+      if (!searchResults?.paragraphs?.results) {
         return allParagraphs;
       }
       return allParagraphs
@@ -107,7 +107,7 @@ export class ParagraphService {
 
   appendSearchResults(results: Search.Results) {
     const currentResults: Search.Results | null = this._searchResults.value;
-    if (!currentResults || !currentResults.paragraphs) {
+    if (!currentResults?.paragraphs) {
       this._searchResults.next(results);
     } else {
       const paragraphs = (currentResults.paragraphs.results || []).concat(results.paragraphs?.results || []);

@@ -74,7 +74,15 @@ export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !
 export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === 'answerAndResults'));
 
 export const expandedCitations: Observable<boolean | undefined> = widgetFeatures.pipe(
-  map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
+  map((features) => {
+    if (features?.expandCitations) {
+      return true;
+    } else if (features?.collapseCitations) {
+      return false;
+    } else {
+      return undefined;
+    }
+  }),
 );
 export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));
 export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));

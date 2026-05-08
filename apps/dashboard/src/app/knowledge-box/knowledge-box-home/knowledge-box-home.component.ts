@@ -138,7 +138,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     ),
   );
 
-  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+  clipboardSupported = !!(navigator.clipboard?.writeText);
   developerExpanded = false;
   copyIcon = {
     endpoint: 'copy',
@@ -198,7 +198,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
             take(1),
             switchMap((kb) => kb.processingStatus()),
             repeat({ delay: () => timer(POLLING_DELAY) }),
-            takeUntil(this.onboardingState$.pipe(filter((state) => !state || state.currentStep !== 'processing-data'))),
+            takeUntil(this.onboardingState$.pipe(filter((state) => state?.currentStep !== 'processing-data'))),
           ),
         ),
         takeUntil(this.unsubscribeAll),

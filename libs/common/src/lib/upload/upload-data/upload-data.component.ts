@@ -29,7 +29,7 @@ export class UploadDataComponent {
   selectUpload(type: UploadType) {
     this.uploadService
       .upload(type)
-      .onClose.pipe(filter((data) => !data || !data.cancel))
+      .onClose.pipe(filter((data) => !data?.cancel))
       .subscribe(() => {
         if (this.isOnboardingActive()) {
           this.uploadStarted.set(true);

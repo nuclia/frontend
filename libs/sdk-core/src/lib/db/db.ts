@@ -288,13 +288,14 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
+      const zoneSlugArg = this.nuclia.options.proxy ? undefined : zoneSlug;
       const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
         ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
         : this.nuclia.rest.get<IKnowledgeBoxBase>(
             `/account/${accountID}/kb/${kbId}`,
             undefined,
             undefined,
-            this.nuclia.options.proxy ? undefined : zoneSlug,
+            zoneSlugArg,
           );
 
       return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));

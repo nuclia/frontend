@@ -202,7 +202,13 @@ export class FilterExpressionModalComponent {
   }
 
   private getChildren(expression: AnyFilterExpression): AnyFilterExpression[] | undefined {
-    return 'and' in expression ? expression.and : 'or' in expression ? expression.or : undefined;
+    if ('and' in expression) {
+      return expression.and;
+    } else if ('or' in expression) {
+      return expression.or;
+    } else {
+      return undefined;
+    }
   }
 
   private hasEmptyExpressions(expressions: AnyFilterExpression[]): boolean {

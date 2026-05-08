@@ -59,12 +59,15 @@ export class JwtHelper {
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
       // tslint:disable-next-line:no-bitwise
-      ~buffer &&
-        ((bs = bc % 4 ? bs * 64 + buffer : buffer),
-        bc++ % 4)
-          ? // tslint:disable-next-line:no-bitwise
-            (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
-          : 0;
+      if (~buffer) {
+        // tslint:disable-next-line:no-bitwise
+        bs = bc % 4 ? bs * 64 + buffer : buffer;
+        // tslint:disable-next-line:no-bitwise
+        if (bc++ % 4) {
+          // tslint:disable-next-line:no-bitwise
+          output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6)));
+        }
+      }
     }
     return output;
   }
@@ -113,7 +116,7 @@ export class JwtHelper {
 
   public getTokenExpirationDate(token: string = this.token): Date | null {
     const user = this.getJWTUser(token);
-    if (!user || !user.exp) {
+    if (!user?.exp) {
       return null;
     }
     const date = new Date(0);

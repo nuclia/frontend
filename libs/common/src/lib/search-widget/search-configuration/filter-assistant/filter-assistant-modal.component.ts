@@ -187,7 +187,7 @@ export class FilterAssistantModalComponent implements OnInit {
 
   private checkFiltersValidity() {
     if (this.activeTab === 'simple') {
-      this.invalidFilters = !this.simpleFilter || !this.simpleFilter.type || !this.simpleFilter.value;
+      this.invalidFilters = !this.simpleFilter?.type || !this.simpleFilter?.value;
     } else if (this.activeTab === 'advanced') {
       this.invalidFilters =
         this.filterExpressions.length === 0 ||

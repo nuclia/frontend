@@ -454,7 +454,12 @@ export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
   const { call_schema, call_obj, ...uiConfig } = agent;
   return {
     ...uiConfig,
-    payload: agent.context ? 'context' : agent.call_obj ? 'call_obj' : agent.call_schema ? 'call_schema' : 'none',
+    payload: (() => {
+      if (agent.context) return 'context';
+      if (agent.call_obj) return 'call_obj';
+      if (agent.call_schema) return 'call_schema';
+      return 'none';
+    })() as 'context' | 'call_obj' | 'call_schema' | 'none',
     rules: agent.rules || null,
     call_schema: JSON.stringify(call_schema),
     call_obj: JSON.stringify(call_obj),

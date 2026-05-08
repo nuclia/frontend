@@ -100,7 +100,7 @@ export class Rest implements IRest {
     synchronous = false,
     formData = false,
   ): { [key: string]: string } {
-    const auth = extraHeaders && extraHeaders['x-nuclia-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
+    const auth = extraHeaders?.['x-nuclia-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
@@ -135,7 +135,7 @@ export class Rest implements IRest {
     insertAuthorizer?: boolean,
   ): Observable<T> {
     const isFormData = body instanceof FormData;
-    const specialContentType = (extraHeaders && extraHeaders['content-type']) || isFormData;
+    const specialContentType = extraHeaders?.['content-type'] || isFormData;
     const payload = specialContentType ? body : JSON.stringify(body);
     return from(
       fetch(this.getFullUrl(path, zoneSlug, insertAuthorizer), {

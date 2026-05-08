@@ -96,7 +96,7 @@ export class ResourceNavigationService {
 
   private loadMoreResources() {
     const currentData = this._navigationData?.value;
-    if (currentData && currentData.hasMore && !this._loadingMore) {
+    if (currentData?.hasMore && !this._loadingMore) {
       this._loadingMore = true;
       const newPageData = {
         ...currentData,

@@ -80,14 +80,17 @@ export class SplitModalComponent implements OnInit {
   ngOnInit() {
     if (this.config) {
       const { custom_split, ...rest } = this.config;
+      let customSplitValue: string;
+      if (custom_split === CustomSplitStrategy.LLM) {
+        customSplitValue = 'llm';
+      } else if (custom_split === CustomSplitStrategy.MANUAL) {
+        customSplitValue = 'manual';
+      } else {
+        customSplitValue = 'default';
+      }
       this.configForm.patchValue({
         ...rest,
-        custom_split:
-          custom_split === CustomSplitStrategy.LLM
-            ? 'llm'
-            : custom_split === CustomSplitStrategy.MANUAL
-              ? 'manual'
-              : 'default',
+        custom_split: customSplitValue,
       });
       this.configForm.disable();
     }
@@ -98,14 +101,17 @@ export class SplitModalComponent implements OnInit {
       return;
     }
     const values = this.configForm.getRawValue();
+    let customSplitStrategy: CustomSplitStrategy;
+    if (values.custom_split === 'llm') {
+      customSplitStrategy = CustomSplitStrategy.LLM;
+    } else if (values.custom_split === 'manual') {
+      customSplitStrategy = CustomSplitStrategy.MANUAL;
+    } else {
+      customSplitStrategy = CustomSplitStrategy.NONE;
+    }
     const payload: SplitStrategy = {
       name: values.name,
-      custom_split:
-        values.custom_split === 'llm'
-          ? CustomSplitStrategy.LLM
-          : values.custom_split === 'manual'
-            ? CustomSplitStrategy.MANUAL
-            : CustomSplitStrategy.NONE,
+      custom_split: customSplitStrategy,
     };
     if (this.type === 'manual') {
       payload.manual_split = values.manual_split;

@@ -211,6 +211,12 @@ export class ResourceProfileComponent implements OnInit, OnDestroy {
       value.security.access_groups.split('\n'),
       this.currentValue.security?.access_groups,
     );
+    let extra;
+    if (value.extra) {
+      extra = { metadata: JSON.parse(value.extra) };
+    } else if (this.currentValue.extra) {
+      extra = { metadata: {} };
+    }
     return {
       slug: value.slug || undefined,
       title: value.title || undefined,
@@ -246,11 +252,7 @@ export class ResourceProfileComponent implements OnInit, OnDestroy {
           {} as { [key: string]: string },
         ),
       },
-      extra: value.extra
-        ? { metadata: JSON.parse(value.extra) }
-        : this.currentValue.extra
-          ? { metadata: {} }
-          : undefined,
+        extra,
       security: security ? { access_groups: security } : undefined,
     };
   }

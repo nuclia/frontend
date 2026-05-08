@@ -353,7 +353,7 @@ export function getSubSchema(
   property: LearningConfigurationProperty,
 ): LearningConfigurationSchema | undefined {
   const key = property.$ref?.split('/').pop();
-  if (key && schema.$defs && schema.$defs[key]) {
+  if (key && schema.$defs?.[key]) {
     return schema.$defs[key];
   }
   return undefined;
