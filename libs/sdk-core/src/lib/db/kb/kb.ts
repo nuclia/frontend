@@ -214,7 +214,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       map((results) =>
         results
           .filter((result) => result.type !== 'error')
-          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
+          .reduce((acc, curr) => ({ ...acc, ...curr.fulltext?.facets }), {}),
       ),
     );
   }

@@ -92,7 +92,7 @@ export class SearchWidgetStorageService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.modify({ search_configs: { ...(kb.search_configs || {}), ragLabQuestions: updatedQuestions } }),
+        kb.modify({ search_configs: { ...kb.search_configs, ragLabQuestions: updatedQuestions } }),
       ),
       switchMap(() => this.sdk.refreshCurrentKb()),
       tap(() => this.storageUpdated.next()),

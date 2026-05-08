@@ -183,7 +183,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
                   }),
                 );
               } else if (feedback.question === 'Send credentials') {
-                this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
+                this.oauthCredentials = { ...this.oauthCredentials, ...feedback.credentials };
                 ws.send(
                   JSON.stringify({
                     request_id: feedback.request_id,

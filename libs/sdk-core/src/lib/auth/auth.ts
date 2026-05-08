@@ -239,7 +239,7 @@ export class Authentication implements IAuthentication {
   }
 
   private base64URLEncode(buffer: Uint8Array<ArrayBuffer>) {
-    return btoa(String.fromCharCode(...buffer))
+    return btoa(String.fromCodePoint(...buffer))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=/g, '');
@@ -455,7 +455,7 @@ export class Authentication implements IAuthentication {
   ): Observable<T> {
     const headers: { [key: string]: string } = {
       'content-type': formUrlencoded ? 'application/x-www-form-urlencoded' : 'application/json',
-      ...(extraHeaders || {}),
+      ...extraHeaders,
     };
     return fromFetch(url, {
       method: 'POST',

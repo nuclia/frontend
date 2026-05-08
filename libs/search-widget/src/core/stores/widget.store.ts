@@ -65,7 +65,7 @@ export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
 export const preferMarkdown: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.preferMarkdown));
 export const jsonSchemaEnabled: Observable<boolean> = widgetJsonSchema.pipe(map((schema) => !!schema));
 export const disableAnswers = () => {
-  widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
+  widgetFeatures.set({ ...widgetFeatures.value, answers: false });
 };
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));

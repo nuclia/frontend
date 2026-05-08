@@ -65,7 +65,7 @@ export class JwtHelper {
         // tslint:disable-next-line:no-bitwise
         if (bc++ % 4) {
           // tslint:disable-next-line:no-bitwise
-          output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6)));
+          output += String.fromCodePoint(255 & (bs >> ((-2 * bc) & 6)));
         }
       }
     }
@@ -76,7 +76,7 @@ export class JwtHelper {
     return decodeURIComponent(
       Array.prototype.map
         .call(this.b64decode(str), (c: string) => {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          return '%' + ('00' + c.codePointAt(0)!.toString(16)).slice(-2);
         })
         .join(''),
     );

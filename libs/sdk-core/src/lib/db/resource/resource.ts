@@ -420,7 +420,7 @@ export class Resource extends ReadableResource implements IResource {
     options?: ChatOptions,
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
-    options = { ...(options || {}), rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
+    options = { ...options, rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
     return this.ask(query, context, features, options, callback);
   }
 

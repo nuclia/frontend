@@ -467,17 +467,17 @@ export class RagAdviceService {
       }
 
       const semanticVal = rawSuggestedParams['minScoreSemantic'];
-      if (typeof semanticVal === 'number' && (semanticVal > 1.0 || semanticVal < 0.0)) {
+      if (typeof semanticVal === 'number' && (semanticVal > 1 || semanticVal < 0)) {
         console.warn(
-          `[RagAdviceService] post-parse: minScoreSemantic value ${semanticVal} is out of 0.0–1.0 range, discarding`,
+          `[RagAdviceService] post-parse: minScoreSemantic value ${semanticVal} is out of 0–1 range, discarding`,
         );
         delete rawSuggestedParams['minScoreSemantic'];
       }
 
       const bm25Val = rawSuggestedParams['minScoreBm25'];
-      if (typeof bm25Val === 'number' && (bm25Val > 10.0 || bm25Val < 0.0)) {
+      if (typeof bm25Val === 'number' && (bm25Val > 10 || bm25Val < 0)) {
         console.warn(
-          `[RagAdviceService] post-parse: minScoreBm25 value ${bm25Val} is out of 0.0–10.0 range, discarding`,
+          `[RagAdviceService] post-parse: minScoreBm25 value ${bm25Val} is out of 0–10 range, discarding`,
         );
         delete rawSuggestedParams['minScoreBm25'];
       }

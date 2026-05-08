@@ -47,7 +47,7 @@ export class ConsentComponent implements OnInit {
   }
 
   visibleScopes(): string[] {
-    return (this.consentData?.requested_scope || []).filter((scope: string) => INVISIBLE_SCOPES.indexOf(scope) == -1);
+    return (this.consentData?.requested_scope || []).filter((scope: string) => !INVISIBLE_SCOPES.includes(scope));
   }
 
   acceptedScopes(): string {
