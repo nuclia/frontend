@@ -81,7 +81,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   currentRemoveLabelList: Classification[] = [];
   deletingLabel = false;
   fullLabels = false;
-  skeletonRows = Array(20);
+  skeletonRows = new Array(20);
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,

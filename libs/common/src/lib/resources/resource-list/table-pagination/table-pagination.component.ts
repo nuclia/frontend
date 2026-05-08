@@ -78,7 +78,7 @@ export class TablePaginationComponent implements OnInit {
       [0, 1].concat([this.page - 1, this.page, this.page + 1]).concat([this.totalPages - 1, this.totalPages]),
     );
 
-    this.pages = [...Array(this.totalPages).keys()]
+    this.pages = [...new Array(this.totalPages).keys()]
       .map((page) => (visiblePages.has(page) ? page : '…'))
       .filter((page, index, pages) => pages[index - 1] !== page);
   }

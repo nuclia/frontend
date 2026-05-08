@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
 export class EmptyChartComponent {
   @Input()
   set numLines(value: number) {
-    this._numLines = Array(value).fill(1);
+    this._numLines = new Array(value).fill(1);
   }
   _numLines: number[] = [];
 }
