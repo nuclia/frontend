@@ -403,7 +403,7 @@ export class EditResourceService {
     return dataKey
       ? {
           ...currentData,
-          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce(reduceCallback, {} as any),
+          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce((acc, val) => reduceCallback(acc, val), {} as any),
         }
       : currentData;
   }

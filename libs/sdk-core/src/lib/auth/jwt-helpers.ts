@@ -53,24 +53,18 @@ export class JwtHelper {
       throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
     }
 
-    for (
-      // initialize result and counters
-      let bc = 0, bs: any, buffer: any, idx = 0;
-      // get next character
-      (buffer = str.charAt(idx++));
-      // character found in table? initialize bit storage and add its ascii value;
-      // tslint:disable-next-line:no-bitwise
-      ~buffer &&
-      ((bs = bc % 4 ? bs * 64 + buffer : buffer),
-      // and if not first of each 4 characters,
-      // convert the first 8 bits to one ascii character
-      bc++ % 4)
-        ? // tslint:disable-next-line:no-bitwise
-          (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
-        : 0
-    ) {
+    let bc = 0, bs: any, buffer: any;
+    let idx = 0;
+    while ((buffer = str.charAt(idx++))) {
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
+      // tslint:disable-next-line:no-bitwise
+      ~buffer &&
+        ((bs = bc % 4 ? bs * 64 + buffer : buffer),
+        bc++ % 4)
+          ? // tslint:disable-next-line:no-bitwise
+            (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
+          : 0;
     }
     return output;
   }
