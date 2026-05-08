@@ -383,10 +383,11 @@ export function basicAskUiToCreation(config: BasicAskAgentUI): BasicAskAgentCrea
   };
 }
 export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
+  const { sources, rules, ...rest } = agent;
   return {
-    ...agent,
-    sources: agent.sources.join(','),
-    rules: agent.rules || null,
+    ...rest,
+    sources: sources.join(','),
+    rules: rules || null,
   };
 }
 export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {

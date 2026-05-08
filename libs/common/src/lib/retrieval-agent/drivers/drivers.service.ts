@@ -16,7 +16,6 @@ import {
   tap,
   throwError,
   shareReplay,
-  timeout,
 } from 'rxjs';
 
 // Import modal components
@@ -104,6 +103,34 @@ export class DriversService {
     return combineLatest([this.drivers$, this.schemas$]);
   }
 
+  private _modalRefToObservable(modalRef: ModalRef, handleResult: (result: any) => Observable<any>): Observable<any> {
+    return new Observable((observer) => {
+      let completed = false;
+      const complete = (result: any) => {
+        if (!completed) {
+          completed = true;
+          handleResult(result).subscribe({
+            next: (value) => observer.next(value),
+            error: (err) => observer.error(err),
+            complete: () => observer.complete(),
+          });
+        }
+      };
+      const closeSub = modalRef.onClose.subscribe({
+        next: (result) => complete(result),
+        error: () => complete(null),
+      });
+      const dismissSub = modalRef.onDismiss.subscribe({
+        next: () => complete(null),
+        error: () => complete(null),
+      });
+      return () => {
+        closeSub.unsubscribe();
+        dismissSub.unsubscribe();
+      };
+    });
+  }
+
   /**
    * Handle driver addition result from modal
    */
@@ -174,45 +201,7 @@ export class DriversService {
         return modalRef$.pipe(
           switchMap((modalRef) => {
             const handleResult = (driver: any) => this.handleAddDriverResult(driver);
-
-            // Use merge to handle both onClose and onDismiss simultaneously
-            return new Observable((observer) => {
-              let completed = false;
-
-              const complete = (result: any) => {
-                if (!completed) {
-                  completed = true;
-                  handleResult(result).subscribe({
-                    next: (value) => observer.next(value),
-                    error: (err) => observer.error(err),
-                    complete: () => observer.complete(),
-                  });
-                }
-              };
-
-              // Handle normal close (Cancel/Save buttons)
-              const closeSub = modalRef.onClose.pipe(timeout(300000)).subscribe({
-                next: (result) => complete(result),
-                error: (error) => {
-                  complete(null);
-                },
-              });
-
-              // Handle dismiss (X button, ESC key, etc.)
-              const dismissSub = modalRef.onDismiss.subscribe({
-                next: () => complete(null), // Treat dismiss as cancel
-                error: (error) => {
-                  console.error('Modal onDismiss error:', error);
-                  complete(null);
-                },
-              });
-
-              // Cleanup function
-              return () => {
-                closeSub.unsubscribe();
-                dismissSub.unsubscribe();
-              };
-            });
+            return this._modalRefToObservable(modalRef, handleResult);
           }),
         );
       }),
@@ -279,44 +268,7 @@ export class DriversService {
 
         const handleResult = (driver: any) => this.handleEditDriverResult(driver, driverToEdit);
 
-        // Use merge to handle both onClose and onDismiss simultaneously
-        return new Observable((observer) => {
-          let completed = false;
-
-          const complete = (result: any) => {
-            if (!completed) {
-              completed = true;
-              handleResult(result).subscribe({
-                next: (value) => observer.next(value),
-                error: (err) => observer.error(err),
-                complete: () => observer.complete(),
-              });
-            }
-          };
-
-          // Handle normal close (Cancel/Save buttons)
-          const closeSub = modalRef.onClose.subscribe({
-            next: (result) => complete(result),
-            error: (error) => {
-              console.error('Modal onClose error:', error);
-              complete(null);
-            },
-          });
-
-          // Handle dismiss (X button, ESC key, etc.)
-          const dismissSub = modalRef.onDismiss.subscribe({
-            next: () => complete(null), // Treat dismiss as cancel
-            error: (error) => {
-              complete(null);
-            },
-          });
-
-          // Cleanup function
-          return () => {
-            closeSub.unsubscribe();
-            dismissSub.unsubscribe();
-          };
-        });
+        return this._modalRefToObservable(modalRef, handleResult);
       }),
     );
   }

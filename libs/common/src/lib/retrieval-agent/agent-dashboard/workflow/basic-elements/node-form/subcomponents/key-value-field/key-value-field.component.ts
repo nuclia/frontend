@@ -5,6 +5,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
+import { getKeyValueInputType } from '../../../../../../../arag.utils';
 
 let keyValueIndex = 0;
 
@@ -55,22 +56,8 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   /**
    * Get properly typed input type for template
    */
-  getValueInputType(): any {
-    if (!this.property?.additionalProperties) return 'text';
-
-    const additionalProps = this.property.additionalProperties as JSONSchema4;
-
-    // Check if it's a direct type
-    if (additionalProps.type === 'number') return 'number';
-    if (additionalProps.type === 'string') return 'text';
-
-    // Check anyOf for number type
-    if (additionalProps.anyOf) {
-      const hasNumber = additionalProps.anyOf.some((item: any) => item.type === 'number');
-      if (hasNumber) return 'number';
-    }
-
-    return 'text';
+  getValueInputType(): string {
+    return getKeyValueInputType(this.property);
   }
 
   getFormGroupFromControl(control: any): FormGroup {
