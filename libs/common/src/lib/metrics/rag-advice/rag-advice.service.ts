@@ -190,8 +190,7 @@ export class RagAdviceService {
     lines.push(`Answer received: ${answer || '(none)'}`, `Retrieval status: ${formattedStatus}`);
 
     if (remiScores) {
-      lines.push(``);
-      lines.push(`Quality scores (scale 0–5, higher is better):`);
+      lines.push(``, `Quality scores (scale 0–5, higher is better):`);
       if (remiScores.answerRelevance !== undefined) {
         lines.push(
           `  Answer Relevance ${remiScores.answerRelevance.toFixed(2)}/5 — does the answer address the question?`,
@@ -258,10 +257,7 @@ export class RagAdviceService {
       `    metadata_extension — attach document metadata (labels, categories) to each passage.`,
       `    graph_beta — graph traversal to find related entities (hops=1). Helps with concept-heavy or relational queries.`,
       `  systemPrompt: instruction sent to the LLM (e.g. "answer only from the provided context").`,
-    );
-
-    // ── Task ──────────────────────────────────────────────────────────────────
-    lines.push(
+      // ── Task ─────────────────────────────────────────────────────────────────
       ``,
       `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? ` Factor in the user's stated expectation.` : ''} Write:`,
       ``,

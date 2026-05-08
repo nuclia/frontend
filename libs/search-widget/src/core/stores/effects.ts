@@ -250,8 +250,6 @@ export function initAnswer() {
         take(1),
       )
       .subscribe(() => SpeechSettings.init()),
-  );
-  subscriptions.push(
     combineLatest([isSpeechOn, SpeechStore.isStarted])
       .pipe(distinctUntilChanged())
       .subscribe(([on, started]) => {
@@ -261,8 +259,6 @@ export function initAnswer() {
           SpeechSettings.stop();
         }
       }),
-  );
-  subscriptions.push(
     combineLatest([lastSpeakableFullAnswer, isSpeechSynthesisEnabled])
       .pipe(
         filter(([answer, enabled]) => !!answer && !!enabled),

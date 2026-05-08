@@ -251,8 +251,7 @@ export const getAnswer = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question });
-        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push({ author: Ask.Author.USER, text: curr.question }, { author: Ask.Author.NUCLIA, text: curr.answer.text });
         return acc;
       }, [] as Ask.ContextEntry[]);
 
@@ -310,8 +309,7 @@ export const getAnswerWithoutRAG = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question });
-        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push({ author: Ask.Author.USER, text: curr.question }, { author: Ask.Author.NUCLIA, text: curr.answer.text });
         return acc;
       }, [] as Ask.ContextEntry[]);
 
