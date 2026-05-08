@@ -100,6 +100,7 @@ export class FilterAssistantModalComponent implements OnInit {
               }
             } catch (e) {
               // if the JSON is malformed, we just ignore the entry
+              console.warn(e);
             }
             return expressions;
           },

@@ -272,6 +272,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
               previous = '';
             } catch (e) {
               // block is not complete yet
+              console.warn(e);
             }
             return list;
           }, [] as AragAnswer[]);

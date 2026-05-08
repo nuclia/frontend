@@ -109,6 +109,7 @@ export function ask(
               previous = '';
             } catch (e) {
               // block is not complete yet
+              console.warn(e);
             }
             return acc;
           }, [] as Ask.AskResponseItem[]);
@@ -277,6 +278,7 @@ export function predictAnswer(
                 previous = '';
               } catch (e) {
                 // block is not complete yet
+                console.warn(e);
               }
               return acc;
             }, [] as Ask.PredictAnswerResponseItem[]);

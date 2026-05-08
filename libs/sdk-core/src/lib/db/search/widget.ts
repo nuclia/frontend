@@ -686,6 +686,7 @@ export function getPreselectedFilterValue(config: Widget.SearchBoxConfig): strin
         formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
       } catch (e) {
         // do nothing more if the filter wasn't in JSON format
+        console.warn(e);
       }
       return formattedFilter;
     })
