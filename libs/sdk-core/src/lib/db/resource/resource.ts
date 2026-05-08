@@ -191,7 +191,7 @@ export class Resource extends ReadableResource implements IResource {
     if (!this.uuid && !this.slug) {
       throw new Error('Resource must have either uuid or slug');
     }
-    return !this.uuid ? `${this.kbPath}/slug/${this.slug}` : `${this.kbPath}/resource/${this.uuid}`;
+    return this.uuid ? `${this.kbPath}/resource/${this.uuid}` : `${this.kbPath}/slug/${this.slug}`;
   }
 
   constructor(nuclia: INuclia, kb: string, data: IResource) {

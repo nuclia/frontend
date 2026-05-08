@@ -683,10 +683,7 @@ export class WorkflowService {
     const category = nodeRef.instance.category();
     const node = getNode(nodeRef.instance.id, category);
     const agent = node?.agentId;
-    if (!agent) {
-      this.closeSidebar();
-      this._removeNodeAndLinks(nodeRef, column);
-    } else {
+    if (agent) {
       this.modalService
         .openConfirm({
           title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
@@ -702,6 +699,9 @@ export class WorkflowService {
           },
           error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
         });
+    } else {
+      this.closeSidebar();
+      this._removeNodeAndLinks(nodeRef, column);
     }
   }
 
@@ -1218,14 +1218,14 @@ export class WorkflowService {
       map((drivers) => {
         const kbDrivers = (drivers?.filter((driver) => driver.provider === 'nucliadb') || []) as NucliaDBDriver[];
         const driver = kbDrivers.find((driver) => driverIdentifier === driver.identifier);
-        return !driver
-          ? null
-          : new KnowledgeBox(this.sdk.nuclia, '', {
+        return driver
+          ? new KnowledgeBox(this.sdk.nuclia, '', {
               id: driver.config.kbid,
               slug: '',
               title: '',
               zone: this.sdk.nuclia.options.zone || '',
-            });
+            })
+          : null;
       }),
     );
   }

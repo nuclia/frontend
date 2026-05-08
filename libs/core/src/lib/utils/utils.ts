@@ -52,10 +52,10 @@ export function getSemanticModels(
   semanticModelNames.forEach((name) => {
     const semanticModel = learningConfiguration['semantic_model'].options?.find((model) => model.name === name);
 
-    if (!semanticModel) {
-      console.warn(`Semantic model ${name} not found.`);
-    } else {
+    if (semanticModel) {
       semanticModels.push(semanticModel.value);
+    } else {
+      console.warn(`Semantic model ${name} not found.`);
     }
   });
 

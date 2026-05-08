@@ -297,31 +297,9 @@ export class Rest implements IRest {
         (res) => {
           const headers = res.headers;
           const status = res.status;
-          if (!res.ok) {
-            console.error(`getStreamedResponse: error ${status} on POST ${path}`);
-            res.json().then(
-              (body) => {
-                const rawDetail = body?.detail;
-                let detail = '';
-                if (typeof rawDetail === 'string') {
-                  detail = rawDetail;
-                } else if (rawDetail) {
-                  detail = JSON.stringify(rawDetail);
-                }
-                observer.error({ status, detail });
-                observer.complete();
-              },
-              () => {
-                observer.error({ status });
-                observer.complete();
-              },
-            );
-          } else {
+          if (res.ok) {
             const reader = res.body?.getReader();
-            if (!reader) {
-              observer.error({ status });
-              observer.complete();
-            } else {
+            if (reader) {
               let data = new Uint8Array();
               const readMore = () => {
                 reader.read().then(
@@ -344,7 +322,29 @@ export class Rest implements IRest {
                 );
               };
               readMore();
+            } else {
+              observer.error({ status });
+              observer.complete();
             }
+          } else {
+            console.error(`getStreamedResponse: error ${status} on POST ${path}`);
+            res.json().then(
+              (body) => {
+                const rawDetail = body?.detail;
+                let detail = '';
+                if (typeof rawDetail === 'string') {
+                  detail = rawDetail;
+                } else if (rawDetail) {
+                  detail = JSON.stringify(rawDetail);
+                }
+                observer.error({ status, detail });
+                observer.complete();
+              },
+              () => {
+                observer.error({ status });
+                observer.complete();
+              },
+            );
           }
         },
         (reason) => {

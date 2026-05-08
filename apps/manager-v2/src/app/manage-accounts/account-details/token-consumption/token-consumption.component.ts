@@ -94,7 +94,7 @@ export class TokenConsumptionComponent implements OnInit {
 
   changeTab(tab: string) {
     this.selectedTab = tab;
-    this.kbId = tab !== 'account' ? tab : undefined;
+    this.kbId = tab === 'account' ? undefined : tab;
     this.loadTokenConsumption();
   }
 

@@ -128,10 +128,10 @@ export class ActivityDownloadComponent implements OnDestroy {
                 take(1),
                 concatMap(() => {
                   const url = this.downloads[key].url;
-                  if (!url) {
-                    return of(null);
-                  } else {
+                  if (url) {
                     return from(fetch(url).then((res) => res.text()));
+                  } else {
+                    return of(null);
                   }
                 }),
                 tap((ndjson) => {

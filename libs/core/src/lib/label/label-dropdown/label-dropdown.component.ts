@@ -116,15 +116,15 @@ export class LabelDropdownComponent {
     const checkboxValue = `${labelValue.labelset}${labelValue.label}`;
     let newSelectedLabels;
 
-    if (!this.checkboxSelection.includes(checkboxValue)) {
+    if (this.checkboxSelection.includes(checkboxValue)) {
+      newSelectedLabels = this.selection.filter(
+        (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
+      );
+    } else {
       const isMultiple = this.labelSets[labelValue.labelset]?.multiple || this.multiple;
       newSelectedLabels = isMultiple
         ? this.selection.concat([labelValue])
         : this.selection.filter((item) => item.labelset !== labelValue.labelset).concat([labelValue]);
-    } else {
-      newSelectedLabels = this.selection.filter(
-        (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
-      );
     }
     this.selection = newSelectedLabels;
     this.setRadioModel(labelValue.labelset);

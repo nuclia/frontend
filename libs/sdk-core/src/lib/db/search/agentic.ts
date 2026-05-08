@@ -249,11 +249,11 @@ export namespace Agentic {
         )
         .pipe(
           map((res) => {
-            if (res.type !== 'findResults') {
-              return false;
-            } else {
+            if (res.type === 'findResults') {
               this.context = { ...this.context, [stepId]: { results: res } };
               return true;
+            } else {
+              return false;
             }
           }),
         );
@@ -278,12 +278,12 @@ export namespace Agentic {
         })
         .pipe(
           map((res) => {
-            if (res.type !== 'answer') {
-              return false;
-            } else {
+            if (res.type === 'answer') {
               const outputs = res.jsonAnswer || {};
               this.context = { ...this.context, [stepId]: { results: res, ...outputs } };
               return true;
+            } else {
+              return false;
             }
           }),
         );

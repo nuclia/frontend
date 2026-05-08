@@ -326,7 +326,7 @@ export class ResourceProfileComponent implements OnInit, OnDestroy {
       const filename = this.thumbnailFileInput.nativeElement.files[0]?.name;
       return this.currentValue.batchUpload(this.thumbnailFileInput.nativeElement.files).pipe(
         filter((status) => status.completed),
-        switchMap(() => (!this.form.pristine ? this.editResource.savePartialResource(data, false) : of(null))),
+        switchMap(() => (this.form.pristine ? of(null) : this.editResource.savePartialResource(data, false))),
         delay(1000), // wait a bit so the new thumbnail can be found in resource data after loading
         switchMap(() => this.editResource.loadResource(this.currentValue!.id)),
         switchMap((resource) => {

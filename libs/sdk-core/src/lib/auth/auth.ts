@@ -262,13 +262,13 @@ export class Authentication implements IAuthentication {
       ```
    */
   authenticate(tokens: AuthTokens): boolean {
-    if (!tokens.access_token) {
-      this._isAuthenticated.next(false);
-      return false;
-    } else {
+    if (tokens.access_token) {
       this.storeTokens(tokens);
       this._isAuthenticated.next(true);
       return true;
+    } else {
+      this._isAuthenticated.next(false);
+      return false;
     }
   }
 
@@ -325,6 +325,7 @@ export class Authentication implements IAuthentication {
       token = this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
     } catch (e) {
       // Local storage is disabled
+      console.error(e);
     }
     return token;
   }

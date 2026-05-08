@@ -101,9 +101,7 @@ export class AddSyncPageComponent implements OnInit {
   }
 
   cancel() {
-    if (!this.syncId) {
-      this.router.navigate([this.backPath], { relativeTo: this.currentRoute });
-    } else {
+    if (this.syncId) {
       this.modalService
         .openConfirm({
           title: 'sync.confirm.cancel-oauth.title',
@@ -119,6 +117,8 @@ export class AddSyncPageComponent implements OnInit {
         .subscribe({
           next: () => this.router.navigate([this.backPath], { relativeTo: this.currentRoute }),
         });
+    } else {
+      this.router.navigate([this.backPath], { relativeTo: this.currentRoute });
     }
   }
 

@@ -228,7 +228,7 @@ export class SearchWidgetService {
 
     const tagName = 'nuclia-arag-widget';
     const scriptSrc = `${this.backendConfig.getCDN()}/nuclia-arag-widget.umd.js`;
-    const workflow = widgetOptions.workflow !== 'default' ? `\n  workflow="${widgetOptions.workflow}"` : '';
+    const workflow = widgetOptions.workflow === 'default' ? '' : `\n  workflow="${widgetOptions.workflow}"`;
     const darkMode = widgetOptions.darkMode === 'dark' ? '\n  mode="dark"' : '';
     const parameters = `${workflow}${darkMode}`;
 

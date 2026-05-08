@@ -162,16 +162,16 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     $event.event.preventDefault();
 
     let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
-    if (!labelToRemove.immutable) {
-      classifications = classifications.filter(
-        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
-      );
-    } else {
+    if (labelToRemove.immutable) {
       classifications.push({
         label: labelToRemove.label,
         labelset: labelToRemove.labelset,
         cancelled_by_user: true,
       });
+    } else {
+      classifications = classifications.filter(
+        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
+      );
     }
     resource
       .modify({

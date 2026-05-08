@@ -95,9 +95,7 @@ export class ActivityLogTableComponent {
 
   search(rows: LogEntry[], term: string) {
     term = term.toLocaleLowerCase();
-    if (!term) {
-      return rows;
-    } else {
+    if (term) {
       return rows.filter((row) => {
         return (
           row.date.includes(term) ||
@@ -109,6 +107,8 @@ export class ActivityLogTableComponent {
           })
         );
       });
+    } else {
+      return rows;
     }
   }
 

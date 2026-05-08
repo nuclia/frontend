@@ -91,7 +91,7 @@ export const upload = (
   metadata: FileMetadata = {},
 ): Observable<UploadResponse> => {
   if (!metadata.contentType && !(data instanceof ArrayBuffer)) {
-    metadata.contentType = (data as FileWithMetadata).contentType || (data.type !== 'null' ? data.type : undefined);
+    metadata.contentType = (data as FileWithMetadata).contentType || (data.type === 'null' ? undefined : data.type);
   }
   if (!metadata.filename && !(data instanceof ArrayBuffer)) {
     metadata.filename = data.name;
@@ -240,15 +240,15 @@ export const TUSuploadFile = (
                       retry(retry429Config(maxWaitOn429)),
                       retry(uploadRetryConfig),
                       map((res) => {
-                        if (res.status !== 200) {
-                          failed = true;
-                          return { failed };
-                        } else {
+                        if (res.status === 200) {
                           i += CHUNK_SIZE;
                           return {
                             completed: count === loops,
                             progress: i >= totalLength ? 100 : Math.min(Math.floor((i / totalLength) * 100), 100),
                           };
+                        } else {
+                          failed = true;
+                          return { failed };
                         }
                       }),
                       catchError(() => {

@@ -86,10 +86,10 @@ export function deepIncluded(object1: object, object2: object): boolean {
       if (!deepEqual(value1, value2)) return false;
     } else if (Array.isArray(value1) && Array.isArray(value2)) {
       // Both are arrays, so compare length and each items using deepEqual
-      if (value1.length !== value2.length) {
-        return false;
-      } else {
+      if (value1.length === value2.length) {
         return value1.every((prop, index) => deepEqual(prop, value2[index]));
+      } else {
+        return false;
       }
     // Both aren't objects nor array, so compare them using equality operator
     } else if (value1 !== value2) return false;

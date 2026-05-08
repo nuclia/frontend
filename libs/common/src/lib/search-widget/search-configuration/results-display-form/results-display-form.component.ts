@@ -75,13 +75,13 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Input() set generativeModel(model: string | undefined) {
     if (model) {
       this._generativeModel = model;
-      if (!LLM_WITH_JSON_OUTPUT_SUPPORT.has(model)) {
+      if (LLM_WITH_JSON_OUTPUT_SUPPORT.has(model)) {
+        this.jsonOutputControl.enable();
+        this.isJsonOutputDisabled = false;
+      } else {
         this.jsonOutputControl.patchValue(false);
         this.jsonOutputControl.disable();
         this.isJsonOutputDisabled = true;
-      } else {
-        this.jsonOutputControl.enable();
-        this.isJsonOutputDisabled = false;
       }
     }
   }

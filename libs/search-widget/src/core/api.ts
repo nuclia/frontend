@@ -193,9 +193,9 @@ export const initNuclia = (
     noScroll.set(true);
   }
 
-  MAX_TOKENS = !widgetOptions.max_output_tokens
-    ? widgetOptions.max_tokens
-    : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
+  MAX_TOKENS = widgetOptions.max_output_tokens
+    ? { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens }
+    : widgetOptions.max_tokens;
   MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
   if (MAX_PARAGRAPHS) {
     SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
@@ -440,7 +440,9 @@ export const getEntities = (): Observable<EntityGroup[]> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (!_entities) {
+  if (_entities) {
+    return of(_entities as EntityGroup[]);
+  } else {
     return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
       map(([entityMap, translate]) =>
         Object.entries(entityMap)
@@ -459,8 +461,6 @@ export const getEntities = (): Observable<EntityGroup[]> => {
       ),
       tap((entities) => (_entities = entities || [])),
     );
-  } else {
-    return of(_entities as EntityGroup[]);
   }
 };
 

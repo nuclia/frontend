@@ -114,14 +114,14 @@ export class BillingService {
       ),
       map((data) => {
         let subscription: AccountSubscription;
-        if (!Object.prototype.hasOwnProperty.call(data, 'provider')) {
+        if (Object.prototype.hasOwnProperty.call(data, 'provider')) {
+          subscription = data as AccountSubscription;
+        } else {
           // Backward compatibility: when there is no provider, it's an old STRIPE subscription
           subscription = {
             provider: 'STRIPE',
             subscription: data,
           } as AccountSubscription;
-        } else {
-          subscription = data as AccountSubscription;
         }
 
         this._accountSubscriptionInit = true;

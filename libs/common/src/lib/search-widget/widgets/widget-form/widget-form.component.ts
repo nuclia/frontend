@@ -209,14 +209,14 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ kbId, widget, widgetSlug }) => {
-        if (!widget) {
-          this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
-          this.router.navigate(['..'], { relativeTo: this.route });
-        } else {
+        if (widget) {
           if (widget.searchConfigId) {
             this.searchWidgetService.saveSelectedSearchConfig(kbId, widget.searchConfigId);
           }
           this.initWidget(widget);
+        } else {
+          this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
+          this.router.navigate(['..'], { relativeTo: this.route });
         }
       });
 
@@ -411,11 +411,11 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateSpeechSynthesis(speechOn: boolean) {
-    if (!speechOn) {
+    if (speechOn) {
+      this.form.controls.speechSynthesis.enable();
+    } else {
       this.form.controls.speechSynthesis.setValue(false);
       this.form.controls.speechSynthesis.disable();
-    } else {
-      this.form.controls.speechSynthesis.enable();
     }
   }
 }

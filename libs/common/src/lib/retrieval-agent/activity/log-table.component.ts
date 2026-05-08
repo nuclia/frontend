@@ -78,9 +78,7 @@ export class ActivityLogTableComponent {
 
   search(rows: LogEntry[], term: string) {
     term = term.toLocaleLowerCase();
-    if (!term) {
-      return rows;
-    } else {
+    if (term) {
       return rows.filter((row) =>
         row.data.some(([_, value]) => {
           if (value.type === 'string') {
@@ -89,6 +87,8 @@ export class ActivityLogTableComponent {
           return JSON.stringify(value.value).toLocaleLowerCase().includes(term);
         }),
       );
+    } else {
+      return rows;
     }
   }
 

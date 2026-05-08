@@ -329,7 +329,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   private _getPath(uuid?: string, slug?: string): string {
-    return !uuid ? `${this.path}/slug/${slug}` : `${this.path}/resource/${uuid}`;
+    return uuid ? `${this.path}/resource/${uuid}` : `${this.path}/slug/${slug}`;
   }
 
   getResourceFromData(data: IResource): Resource {
@@ -626,13 +626,13 @@ export class KnowledgeBox implements IKnowledgeBox {
           ) || []
         ).length > 0,
     );
-    if (!firstFieldWithEntitiesRelations) {
-      return of('');
-    } else {
+    if (firstFieldWithEntitiesRelations) {
       const relation = firstFieldWithEntitiesRelations.extracted?.metadata?.metadata.relations?.find(
         (rel) => rel.from?.type === 'entity' && rel.to.type === 'entity',
       );
       return this.rephrase(`${relation?.from?.value} ${relation?.label} ${relation?.to.value}`);
+    } else {
+      return of('');
     }
   }
 
@@ -708,7 +708,9 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _getTempToken(payload?: any): Observable<{ token: string }> {
-    if (!this.nuclia.options.standalone) {
+    if (this.nuclia.options.standalone) {
+      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
+    } else {
       const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
       if (!accountId || !zone) {
@@ -722,8 +724,6 @@ export class KnowledgeBox implements IKnowledgeBox {
         undefined,
         zone,
       );
-    } else {
-      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

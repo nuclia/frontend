@@ -189,7 +189,7 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
       (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
       [] as { index: number; end: number }[],
     )
-    .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
+    .sort((a, b) => (a.end - b.end === 0 ? a.index - b.index : a.end - b.end))
     .reverse()
     .forEach((ref) => {
       let before = sliceUnicode(rawText, 0, ref.end);

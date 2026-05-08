@@ -337,35 +337,35 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
             classification: getLabelFromFilter(filter),
             kind: LabelSetKind.PARAGRAPHS,
           };
-          if (!filters.labels) {
-            filters.labels = [labelFilter];
-          } else {
+          if (filters.labels) {
             filters.labels.push(labelFilter);
+          } else {
+            filters.labels = [labelFilter];
           }
         } else {
           const labelSetFilter = {
             id: getLabelSetFromFilter(filter),
             kind: LabelSetKind.PARAGRAPHS,
           };
-          if (!filters.labelSets) {
-            filters.labelSets = [labelSetFilter];
-          } else {
+          if (filters.labelSets) {
             filters.labelSets.push(labelSetFilter);
+          } else {
+            filters.labelSets = [labelSetFilter];
           }
         }
       } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
         const entityFilter = getEntityFromFilter(filter);
-        if (!filters.entities) {
-          filters.entities = [entityFilter];
-        } else {
+        if (filters.entities) {
           filters.entities.push(entityFilter);
+        } else {
+          filters.entities = [entityFilter];
         }
       } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
         const mimeFilter = getMimeFromFilter(filter);
-        if (!filters.mimeTypes) {
-          filters.mimeTypes = [mimeFilter];
-        } else {
+        if (filters.mimeTypes) {
           filters.mimeTypes.push(mimeFilter);
+        } else {
+          filters.mimeTypes = [mimeFilter];
         }
       } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
         filters.path = filter;
@@ -759,10 +759,10 @@ export const entityRelations = searchState.reader((state) =>
         .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
         .reduce(
           (acc, current) => {
-            if (!acc[current.relation_label]) {
-              acc[current.relation_label] = [current.entity];
-            } else {
+            if (acc[current.relation_label]) {
               acc[current.relation_label].push(current.entity);
+            } else {
+              acc[current.relation_label] = [current.entity];
             }
             return acc;
           },
@@ -908,11 +908,11 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
         const uniqueKey = getResultUniqueKey(typedResult);
-        if (!keyList.includes(uniqueKey)) {
+        if (keyList.includes(uniqueKey)) {
+          return null;
+        } else {
           keyList.push(uniqueKey);
           return typedResult;
-        } else {
-          return null;
         }
       })
       .filter((typedResult) => !!typedResult)
@@ -1111,7 +1111,9 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
             };
           }
           const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-          if (!existing) {
+          if (existing) {
+            existing.paragraphs!.push(paragraph);
+          } else {
             const fieldData = getFieldDataFromResource(resource, field);
             const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
             const resultMetadata = getResultMetadata(metadata, resource, fieldData);
@@ -1124,15 +1126,15 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
               paragraphs: [paragraph],
               resultMetadata,
             });
-          } else {
-            existing.paragraphs!.push(paragraph);
           }
         }
       } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
         // the citation is about a resource or a relation
         const res = resources[resourceId] || graphPrequeryResource;
         const existing = acc.find((r) => r.id === res.id);
-        if (!existing) {
+        if (existing) {
+          existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
+        } else {
           const field = {
             field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
             field_id: fieldId,
@@ -1150,8 +1152,6 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
             resultMetadata,
             ranks: [index + 1],
           });
-        } else {
-          existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
         }
       }
     }

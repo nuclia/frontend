@@ -16,7 +16,7 @@ import {
   trimLabelSets,
 } from '@nuclia/core';
 import { endOfDay } from 'date-fns';
-import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
+import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceCacheService } from '../resource-cache.service';
@@ -249,7 +249,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   get selectedVisibility() {
-    return this.filterOptions.hidden !== undefined ? getFilterFromVisibility(this.filterOptions.hidden) : [];
+    return this.filterOptions.hidden === undefined ? [] : getFilterFromVisibility(this.filterOptions.hidden);
   }
 
   get selectedDates() {

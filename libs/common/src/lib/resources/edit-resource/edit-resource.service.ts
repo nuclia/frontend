@@ -10,7 +10,6 @@ import {
   FieldId,
   FileFieldData,
   getDataKeyFromFieldType,
-  IFieldData,
   LinkField,
   Paragraph,
   Resource,
@@ -273,12 +272,12 @@ export class EditResourceService {
     }
 
     const resourceData: ResourceData = this.getUpdatedData(fieldType, currentResource.data, (fields, [id, field]) => {
-      if (id !== fieldId) {
-        fields[id] = field;
-      } else {
+      if (id === fieldId) {
         fields[id] = {
           value: fieldData,
         };
+      } else {
+        fields[id] = field;
       }
       return fields;
     });
@@ -325,10 +324,10 @@ export class EditResourceService {
       FIELD_TYPE.file,
       currentResource.data,
       (fields, [id, field]) => {
-        if (id !== fieldId) {
-          fields[id] = field;
-        } else {
+        if (id === fieldId) {
           fields[id] = this.getFileFieldData(file);
+        } else {
+          fields[id] = field;
         }
         return fields;
       },

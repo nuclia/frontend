@@ -145,7 +145,7 @@ export class NucliaTokensComponent implements OnDestroy {
               undefined,
             totalRequests: Object.values(detail.requests).reduce((acc: number, curr) => acc + (curr || 0), 0),
             average: 0,
-            help: this.translate.instant(helpTextKey) !== helpTextKey ? this.translate.instant(helpTextKey) : undefined,
+            help: this.translate.instant(helpTextKey) === helpTextKey ? undefined : this.translate.instant(helpTextKey),
           };
           if (enhancedDetail.totalRequests > 0) {
             enhancedDetail.average = enhancedDetail.total / enhancedDetail.totalRequests;

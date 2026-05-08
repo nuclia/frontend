@@ -507,9 +507,7 @@ export function addNode(
   if (nodeConfig) {
     node.nodeRef.setInput('config', nodeConfig);
   }
-  if (!parentId) {
-    _addNode(nodeId, nodeCategory, node);
-  } else {
+  if (parentId) {
     const property = origin.id();
 
     node.parentId = parentId;
@@ -545,6 +543,8 @@ export function addNode(
         isSaved,
       });
     }
+  } else {
+    _addNode(nodeId, nodeCategory, node);
   }
 }
 

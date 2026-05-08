@@ -217,7 +217,9 @@ export class UploadService {
         }
         const labelSets: { [id: string]: LabelSet } = {};
         missingLabels.forEach((missingLabel) => {
-          if (!labelSets[missingLabel.labelset]) {
+          if (labelSets[missingLabel.labelset]) {
+            labelSets[missingLabel.labelset].labels.push({ title: missingLabel.label });
+          } else {
             labelSets[missingLabel.labelset] = existingLabels[missingLabel.labelset]
               ? {
                   ...existingLabels[missingLabel.labelset],
@@ -230,8 +232,6 @@ export class UploadService {
                   kind: [LabelSetKind.RESOURCES],
                   labels: [{ title: missingLabel.label }],
                 };
-          } else {
-            labelSets[missingLabel.labelset].labels.push({ title: missingLabel.label });
           }
         });
         return combineLatest(

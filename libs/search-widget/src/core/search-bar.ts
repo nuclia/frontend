@@ -100,8 +100,8 @@ export const setupTriggerSearch = (
                       show,
                       filters: filterExpression ? undefined : combinedFilters,
                       filter_expression: filterExpression ? combinedFilterExpression : undefined,
-                      range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
-                      range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
+                      range_creation_start: filterExpression ? undefined : rangeCreation?.start,
+                      range_creation_end: filterExpression ? undefined : rangeCreation?.end,
                     };
                     if (isAnswerEnabled && !trigger?.more) {
                       const chatOptions: ChatOptions = currentOptions;

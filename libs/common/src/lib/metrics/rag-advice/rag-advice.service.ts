@@ -235,7 +235,7 @@ export class RagAdviceService {
         } else if (r.outcome === 'no_answer') {
           outcome = 'no answer generated';
         } else {
-          outcome = `answer obtained${r.remiAnswerRelevance !== undefined ? ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})` : ''}`;
+          outcome = `answer obtained${r.remiAnswerRelevance === undefined ? '' : ` (AR=${r.remiAnswerRelevance.toFixed(1)}, CR=${r.remiContentRelevance?.toFixed(1) ?? '?'}, GR=${r.remiGroundedness?.toFixed(1) ?? '?'})`}`;
         }
         lines.push(`  Round ${r.round}: ${r.paramsDescription} → ${outcome}`);
         if (r.outcome === 'answer' && r.answer) {
