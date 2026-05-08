@@ -35,7 +35,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
   ) {
-    this.initTranslate(undefined);
+    this.initTranslate();
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });

@@ -29,7 +29,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {
     this.unsubscribeAll = new Subject();
 
-    this.initTranslate(undefined);
+    this.initTranslate();
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
