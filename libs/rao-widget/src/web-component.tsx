@@ -20,8 +20,7 @@ class RaoWebComponent extends HTMLElement {
   private getPropsFromAttributes<T>(): T {
     const props: Record<string, string> = {};
 
-    for (let index = 0; index < this.attributes.length; index++) {
-      const attribute = this.attributes[index];
+    for (const attribute of this.attributes) {
       props[normalizeAttribute(attribute.name)] = attribute.value;
     }
 

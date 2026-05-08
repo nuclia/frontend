@@ -60,7 +60,7 @@ export class RoutingFormComponent implements OnInit, OnDestroy {
     }
 
     if (value) {
-      for (let i = 0; i < (value.routing?.rules || []).length; i++) {
+      for (const _ of value.routing?.rules ?? []) {
         // emitEvent: false — no intermediate configChanged emissions during setup
         rulesArray.push(this.createRuleGroup(), { emitEvent: false });
       }
