@@ -55,6 +55,9 @@ interface IterationRecord {
  * RAG exploration modal — opened via SisModalService.openModal(RagAdviceModalComponent, new ModalConfig({ data: adviceInput })).
  * The AdviceInput is passed through ModalRef config data.
  */
+type NumericInput = string | number | null;
+type NumericInputOrUndefined = string | number | null | undefined;
+
 @Component({
   selector: 'app-rag-advice-modal',
   standalone: true,
@@ -552,19 +555,19 @@ export class RagAdviceModalComponent {
     return this.normalizeEditableParams({ ...base, ...delta } as EditableParams);
   }
 
-  updateMinScoreSemantic(value: string | number | null): void {
+  updateMinScoreSemantic(value: NumericInput): void {
     this.updateEditableParams({
       minScoreSemantic: this.clampNullableDecimal(value, 0, 1),
     });
   }
 
-  updateMinScoreBm25(value: string | number | null): void {
+  updateMinScoreBm25(value: NumericInput): void {
     this.updateEditableParams({
       minScoreBm25: this.clampNullableDecimal(value, 0, 10),
     });
   }
 
-  updateTopK(value: string | number | null): void {
+  updateTopK(value: NumericInput): void {
     this.updateEditableParams({
       topK: this.normalizeTopK(value),
     });
@@ -583,7 +586,7 @@ export class RagAdviceModalComponent {
     };
   }
 
-  private parseNullableNumber(value: string | number | null | undefined): number | null {
+  private parseNullableNumber(value: NumericInputOrUndefined): number | null {
     if (value === null || value === undefined || value === '') {
       return null;
     }
@@ -591,7 +594,7 @@ export class RagAdviceModalComponent {
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  private clampNullableDecimal(value: string | number | null | undefined, min: number, max: number): number | null {
+  private clampNullableDecimal(value: NumericInputOrUndefined, min: number, max: number): number | null {
     const parsed = this.parseNullableNumber(value);
     if (parsed === null) {
       return null;
@@ -599,7 +602,7 @@ export class RagAdviceModalComponent {
     return Math.min(max, Math.max(min, parsed));
   }
 
-  private normalizeTopK(value: string | number | null | undefined): number | null {
+  private normalizeTopK(value: NumericInputOrUndefined): number | null {
     const parsed = this.parseNullableNumber(value);
     if (parsed === null) {
       return null;

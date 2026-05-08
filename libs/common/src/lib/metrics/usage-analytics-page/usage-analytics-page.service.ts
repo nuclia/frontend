@@ -38,6 +38,8 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
   ]),
 ) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
+type ScoreFilter = ScoreFilter;
+
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
   private user = inject(UserService);
@@ -57,7 +59,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   private _activeStatuses = signal<Set<RemiAnswerStatus>>(new Set(STATUSES));
   private _feedbackGoodFilter = signal<boolean | undefined>(undefined);
   private _contentRelevanceFilter = signal<
-    { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
+    ScoreFilter | undefined
   >(undefined);
   private _dateConditions = signal<DateCondition[]>([]);
 
@@ -135,7 +137,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   }
 
   updateContentRelevanceFilter(
-    filter: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
+    filter: ScoreFilter | undefined,
   ): void {
     this._contentRelevanceFilter.set(filter);
     this._applyFilters();
@@ -145,7 +147,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     statuses: RemiAnswerStatus[],
     feedbackGood: boolean | undefined,
     contentRelevance:
-      | { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' }
+      | ScoreFilter
       | undefined,
     dateConditions: DateCondition[] = [],
   ): void {
@@ -249,7 +251,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     yearMonth: string,
     isAppend: boolean,
     feedbackGood: boolean | undefined,
-    contextRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' },
+    contextRelevance: ScoreFilter,
     dateConditions: DateCondition[] = [],
   ) {
     // Use 'SUCCESS' page state as shared pagination tracker

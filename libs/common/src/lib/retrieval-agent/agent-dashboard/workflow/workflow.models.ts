@@ -267,10 +267,12 @@ export interface McpAgentUI extends CommonAgentConfig {
   tool_choice_model?: string;
 }
 
+export type AgentStepUI = BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent;
+
 export interface BaseConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
-  then?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
-  else_?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
+  then?: AgentStepUI[];
+  else_?: AgentStepUI[];
 }
 export interface SmartAgentUI extends CommonAgentConfig {
   registered_agents?: BaseContextAgent[];
