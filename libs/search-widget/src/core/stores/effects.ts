@@ -496,20 +496,25 @@ export function setupTriggerGraphNerSearch() {
   );
 }
 
+interface RagAnswerOpts {
+  reasoning: unknown;
+  disableRAG: boolean;
+  filterExpression: boolean;
+  filters: ChatOptions['filters'];
+  combinedFilterExpr: ChatOptions['filter_expression'];
+  rangeCreation: { start?: string; end?: string } | undefined;
+  _images: string[];
+  _hasQueryImage: boolean;
+  search_configuration: string | undefined;
+}
+
 function buildRagAnswerObservable(
   question: string,
   entries: Ask.Entry[],
   options: BaseSearchOptions,
-  reasoning: unknown,
-  disableRAG: boolean,
-  filterExpression: boolean,
-  filters: ChatOptions['filters'],
-  combinedFilterExpr: ChatOptions['filter_expression'],
-  rangeCreation: { start?: string; end?: string } | undefined,
-  _images: string[],
-  _hasQueryImage: boolean,
-  search_configuration: string | undefined,
+  ragOpts: RagAnswerOpts,
 ): ReturnType<typeof getAnswer> {
+  const { reasoning, disableRAG, filterExpression, filters, combinedFilterExpr, rangeCreation, _images, _hasQueryImage, search_configuration } = ragOpts;
   const chatOptions: ChatOptions = { ...options, reasoning: reasoning as ChatOptions['reasoning'] || undefined };
   if (disableRAG) {
     return getAnswerWithoutRAG(question, entries, chatOptions);
@@ -525,6 +530,12 @@ function buildRagAnswerObservable(
     query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
     reasoning: reasoning as ChatOptions['reasoning'],
   });
+}
+
+function _getTranslatedError(status: number): string {
+  return translateInstant(
+    status === -2 ? getNotEngoughDataMessage() : ASK_ERROR_MESSAGES[`${status}`] || 'error.search',
+  );
 }
 
 export function askQuestion(
@@ -586,8 +597,9 @@ export function askQuestion(
           } as Ask.Answer);
         } else {
           return buildRagAnswerObservable(
-            question, entries, options, reasoning, disableRAG, filterExpression, filters,
-            combinedFilterExpression, rangeCreation, _images, _hasQueryImage, search_configuration,
+            question, entries, options,
+            { reasoning, disableRAG, filterExpression, filters,
+              combinedFilterExpr: combinedFilterExpression, rangeCreation, _images, _hasQueryImage, search_configuration },
           );
         }
       },
@@ -598,9 +610,7 @@ export function askQuestion(
         if (!hasError) {
           // error is set only once
           hasError = true;
-          const translatedError = translateInstant(
-            result.status === -2 ? getNotEngoughDataMessage() : ASK_ERROR_MESSAGES[`${result.status}`] || 'error.search',
-          );
+          const translatedError = _getTranslatedError(result.status);
           const error = isDebugMode && result.detail ? result.detail : translatedError;
           const answer = currentAnswer.getValue();
           appendChatEntry.set({
