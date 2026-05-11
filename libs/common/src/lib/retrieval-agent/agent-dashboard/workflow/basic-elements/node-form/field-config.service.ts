@@ -208,65 +208,43 @@ export class FieldConfigService {
   private determineFieldType(property: ExtendedJSONSchema4, schema?: JSONSchema4): string {
     if (property['const']) return 'const';
     if (property.enum) return 'enum';
-    if (property.$ref && schema) {
-      // Resolve the $ref and check what type it actually is
-      const resolved = this.resolveRef(property.$ref, schema);
-
-      if (resolved) {
-        // Check if the resolved schema is an enum
-        if (resolved.enum) return 'enum';
-        // Check if it has other simple types
-        if (resolved.type === 'string' && resolved.enum) return 'enum';
-        if (resolved.type && !resolved.properties) return resolved.type;
-        // Otherwise treat as subform
-        return 'ref';
-      }
-      // Fallback to subform if can't resolve
-      return 'ref';
-    }
-
     if (property.$ref) {
-      // Any $ref without schema context should be treated as a subform
-      return 'ref';
+      return schema ? this.resolveRefType(property.$ref, schema) : 'ref';
     }
-
     if (property.type) {
-      // Handle array of types or single type
-      const type = Array.isArray(property.type) ? property.type[0] : property.type;
-      return type as string;
+      return Array.isArray(property.type) ? (property.type[0] as string) : (property.type as string);
     }
-
     if (property.anyOf) {
-      // Check if any anyOf contains a $ref (subform)
-      const refObj = property.anyOf.find((t: any) => t.$ref);
-      if (refObj?.$ref && schema) {
-        // Resolve the ref and check if it's an enum
+      return this.determineFieldTypeFromAnyOf(property.anyOf, schema);
+    }
+    return 'string';
+  }
+
+  private resolveRefType(ref: string, schema: JSONSchema4): string {
+    const resolved = this.resolveRef(ref, schema);
+    if (!resolved) return 'ref';
+    if (resolved.enum) return 'enum';
+    if (resolved.type && !resolved.properties) return resolved.type;
+    return 'ref';
+  }
+
+  private determineFieldTypeFromAnyOf(anyOf: any[], schema?: JSONSchema4): string {
+    const refObj = anyOf.find((t: any) => t.$ref);
+    if (refObj?.$ref) {
+      if (schema) {
         const resolved = this.resolveRef(refObj.$ref, schema);
         if (resolved?.enum) return 'enum';
-        return 'ref';
       }
-
-      if (refObj) {
-        return 'ref';
-      }
-
-      // Check if it's an array type with references
-      const arrayObj = property.anyOf.find((t: any) => t.type === 'array' && t.items?.$ref);
-      if (arrayObj) {
-        return 'array'; // Keep as array but items might be subforms
-      }
-
-      // Prefer first non-null type
-      const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');
-      if (typeObj?.type) {
-        const type = Array.isArray(typeObj.type) ? typeObj.type[0] : typeObj.type;
-        if (type === 'array' && typeObj.items) {
-          return 'array';
-        }
-        return type as string;
-      }
+      return 'ref';
     }
-
+    const arrayObj = anyOf.find((t: any) => t.type === 'array' && t.items?.$ref);
+    if (arrayObj) return 'array';
+    const typeObj = anyOf.find((t: any) => t.type && t.type !== 'null');
+    if (typeObj?.type) {
+      const type = Array.isArray(typeObj.type) ? typeObj.type[0] : typeObj.type;
+      if (type === 'array' && typeObj.items) return 'array';
+      return type as string;
+    }
     return 'string';
   }
 

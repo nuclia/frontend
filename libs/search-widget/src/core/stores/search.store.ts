@@ -1021,6 +1021,65 @@ export function parseFootenotes(text: string): { block: string; index: number }[
   return refIndexes;
 }
 
+function processParagraphCitation(
+  acc: TypedResult[],
+  resource: Search.FindResource,
+  citationId: string,
+  shortFieldType: string,
+  fieldId: string,
+  index: number,
+  augmentedContext: Ask.Answer['augmentedContext'],
+  metadata: ReturnType<typeof displayedMetadata.getValue>,
+): void {
+  let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
+  if (!paragraph) {
+    const augmentedParagraph = augmentedContext?.paragraphs[citationId];
+    if (augmentedParagraph) {
+      paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
+    }
+  }
+  if (!paragraph) return;
+  paragraph.rank = index + 1;
+  const field: FieldId =
+    shortFieldType === SHORT_FIELD_TYPE.generic
+      ? getNonGenericField(resource.data || {})
+      : { field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic, field_id: fieldId };
+
+  const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+  if (existing) {
+    existing.paragraphs!.push(paragraph);
+  } else {
+    const fieldData = getFieldDataFromResource(resource, field);
+    const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
+    const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+    acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph], resultMetadata });
+  }
+}
+
+function processResourceCitation(
+  acc: TypedResult[],
+  res: Search.FindResource,
+  resource: Search.FindResource | undefined,
+  shortFieldType: string,
+  fieldId: string,
+  index: number,
+  metadata: ReturnType<typeof displayedMetadata.getValue>,
+): void {
+  const existing = acc.find((r) => r.id === res.id);
+  if (existing) {
+    existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
+    return;
+  }
+  const field = {
+    field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+    field_id: fieldId,
+  };
+  const fieldData = getFieldDataFromResource(res, field);
+  const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
+  const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+  acc.push({ ...res, resultType, resultIcon, field, fieldData, paragraphs: [], resultMetadata, ranks: [index + 1] });
+}
+
 export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   if (!answer.citations && !answer.citation_footnote_to_context) {
     return [];
@@ -1032,13 +1091,6 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   if (answer.citations) {
     citationIds = Object.keys(answer.citations);
   } else if (answer.citation_footnote_to_context) {
-    // With llm_footnotes, the generated answer contains numbered markers (like `[1]`)
-    // directly in the text. And at the end of the generated answer, there is a list of
-    // references, like `[1]: block-AB`.
-    // The `footnote_to_context` entry gives the mapping between theses block ids and the
-    // actual paragraph ids.
-    // To attribute the proper citation to the proper marker, we extract the marker numbers from the
-    // generated answer, and we sort the list of sources accordingly.
     const orderedBlocks = parseFootenotes(answer.text || '').map((entry) => entry.block);
     citationIds = Object.entries(answer.citation_footnote_to_context)
       .sort((entry1, entry2) => orderedBlocks.indexOf(entry1[0]) - orderedBlocks.indexOf(entry2[0]))
@@ -1046,80 +1098,16 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   }
   const augmentedContext = answer.augmentedContext;
   return citationIds.reduce((acc, citationId, index) => {
-    // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
-    // Note: the widget does not support extra_context, but a proxy could be injecting some
-    // and it must not break the widget. The objective is not to display the citations properly in this case
-    // (as customer should implement their own widget to handle this case), but just to not break the widget.
-    if (citationId.includes('/')) {
-      const citationPath = citationId.split('/');
-      const [resourceId, shortFieldType, fieldId] = citationPath;
-      const resource = resources[resourceId];
-      const graphPrequeryResource = graphPrequeryResources[resourceId];
-      if (resource && citationPath.length === 4) {
-        // the citation is about a paragraph
-        let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
-        if (!paragraph) {
-          const augmentedParagraph = augmentedContext?.paragraphs[citationId];
-          if (augmentedParagraph) {
-            paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
-          }
-        }
-        if (paragraph) {
-          paragraph.rank = index + 1;
-          let field: FieldId;
-          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-            // we take the first other field that is not generic
-            field = getNonGenericField(resource.data || {});
-          } else {
-            field = {
-              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-              field_id: fieldId,
-            };
-          }
-          const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-          if (existing) {
-            existing.paragraphs!.push(paragraph);
-          } else {
-            const fieldData = getFieldDataFromResource(resource, field);
-            const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-            const resultMetadata = getResultMetadata(metadata, resource, fieldData);
-            acc.push({
-              ...resource,
-              resultType,
-              resultIcon,
-              field,
-              fieldData,
-              paragraphs: [paragraph],
-              resultMetadata,
-            });
-          }
-        }
-      } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
-        // the citation is about a resource or a relation
-        const res = resources[resourceId] || graphPrequeryResource;
-        const existing = acc.find((r) => r.id === res.id);
-        if (existing) {
-          existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
-        } else {
-          const field = {
-            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-            field_id: fieldId,
-          };
-          const fieldData = getFieldDataFromResource(res, field);
-          const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
-          const resultMetadata = getResultMetadata(metadata, resource, fieldData);
-          acc.push({
-            ...res,
-            resultType,
-            resultIcon,
-            field,
-            fieldData,
-            paragraphs: [],
-            resultMetadata,
-            ranks: [index + 1],
-          });
-        }
-      }
+    if (!citationId.includes('/')) return acc;
+    const citationPath = citationId.split('/');
+    const [resourceId, shortFieldType, fieldId] = citationPath;
+    const resource = resources[resourceId];
+    const graphPrequeryResource = graphPrequeryResources[resourceId];
+    if (resource && citationPath.length === 4) {
+      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, augmentedContext, metadata);
+    } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+      const res = resources[resourceId] || graphPrequeryResource;
+      processResourceCitation(acc, res, resource, shortFieldType, fieldId, index, metadata);
     }
     return acc;
   }, [] as TypedResult[]);
