@@ -520,6 +520,50 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     [finalizeAssistantMessage, handleChatClose],
   );
 
+  const handleFeedbackRequest = useCallback(
+    (answer: AragAnswer, feedback: NonNullable<AragAnswer['feedback']>) => {
+      const targetId = assistantMessageIdRef.current ?? lastAssistantMessageIdRef.current;
+      if (targetId) {
+        setConversation((prev) => (prev ? prev.filter((m) => m.id !== targetId) : prev));
+      }
+      const rawOptions = Array.isArray(feedback.data) ? feedback.data : [];
+      const options = rawOptions
+        .map((entry, index) => toFeedbackOption(entry, index))
+        .filter(Boolean) as IMessageFeedbackOption[];
+
+      const questionText =
+        typeof feedback.question === 'string' && feedback.question.trim().length > 0
+          ? feedback.question.trim()
+          : text.feedback_choose;
+
+      appendMessage({
+        id: createMessageId('assistant-feedback'),
+        role: 'assistant',
+        content: questionText,
+        meta: text.meta_agentrequest,
+        debug: [answer],
+        feedback: {
+          feedbackId: feedback.feedback_id,
+          requestId: feedback.request_id,
+          question: questionText,
+          module: feedback.module ?? undefined,
+          agentId: feedback.agent_id ?? undefined,
+          timeoutMs: feedback.timeout_ms ?? undefined,
+          responseSchema: feedback.response_schema ?? undefined,
+          options,
+          status: options.length > 0 ? 'pending' : 'error',
+          selectedOptionId: undefined,
+          error: options.length > 0 ? null : text.feedback_error,
+        },
+      });
+
+      assistantMessageIdRef.current = null;
+      lastAssistantMessageIdRef.current = null;
+      lastAssistantTextRef.current = null;
+    },
+    [appendMessage, text, toFeedbackOption],
+  );
+
   const handleAnswerMessage = useCallback(
     (answer: AragAnswer) => {
       if (answer.operation === AnswerOperation.start) {
@@ -529,46 +573,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       }
 
       if (answer.operation === AnswerOperation.agent_request && answer.feedback) {
-        const feedback = answer.feedback;
-        // Remove the in-progress assistant placeholder, we're switching to feedback interaction
-        const targetId = assistantMessageIdRef.current ?? lastAssistantMessageIdRef.current;
-        if (targetId) {
-          setConversation((prev) => (prev ? prev.filter((m) => m.id !== targetId) : prev));
-        }
-        const rawOptions = Array.isArray(feedback.data) ? feedback.data : [];
-        const options = rawOptions
-          .map((entry, index) => toFeedbackOption(entry, index))
-          .filter(Boolean) as IMessageFeedbackOption[];
-
-        const questionText =
-          typeof feedback.question === 'string' && feedback.question.trim().length > 0
-            ? feedback.question.trim()
-            : text.feedback_choose;
-
-        appendMessage({
-          id: createMessageId('assistant-feedback'),
-          role: 'assistant',
-          content: questionText,
-          meta: text.meta_agentrequest,
-          debug: [answer],
-          feedback: {
-            feedbackId: feedback.feedback_id,
-            requestId: feedback.request_id,
-            question: questionText,
-            module: feedback.module ?? undefined,
-            agentId: feedback.agent_id ?? undefined,
-            timeoutMs: feedback.timeout_ms ?? undefined,
-            responseSchema: feedback.response_schema ?? undefined,
-            options,
-            status: options.length > 0 ? 'pending' : 'error',
-            selectedOptionId: undefined,
-            error: options.length > 0 ? null : text.feedback_error,
-          },
-        });
-
-        assistantMessageIdRef.current = null;
-        lastAssistantMessageIdRef.current = null;
-        lastAssistantTextRef.current = null;
+        handleFeedbackRequest(answer, answer.feedback);
         return;
       }
 
@@ -610,11 +615,9 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       appendAssistantContent,
       appendAssistantEvent,
       appendAssistantStep,
-      appendMessage,
       finalizeAssistantMessage,
+      handleFeedbackRequest,
       startAssistantResponse,
-      text,
-      toFeedbackOption,
     ],
   );
 
