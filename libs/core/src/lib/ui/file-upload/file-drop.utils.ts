@@ -9,7 +9,7 @@ async function getAllFileEntries(dataTransferItemList: DataTransferItemList) {
   const fileEntries: DroppedFile[] = [];
   // Use BFS to traverse entire directory/file structure
   const queue: { entry: FileSystemEntry; path: string }[] = [];
-  for (const item of dataTransferItemList) {
+  for (const item of Array.from(dataTransferItemList)) {
     const entry = item.webkitGetAsEntry();
     if (entry) {
       queue.push({ entry, path: '' });

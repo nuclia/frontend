@@ -21,6 +21,7 @@ import { DriversService } from '../../../../../../drivers/drivers.service';
 import { aragUrl } from '../../../../workflow.state';
 
 export type McpDriver = McpHttpDriver | McpSseDriver | McpStdioDriver;
+export type TransportType = string;
 
 export interface TransportChangeEvent {
   transport: string;

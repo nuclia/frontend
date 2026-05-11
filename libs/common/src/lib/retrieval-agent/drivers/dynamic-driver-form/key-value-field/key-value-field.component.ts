@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, TextInputType } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
@@ -55,8 +55,8 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
   /**
    * Get properly typed input type for template
    */
-  getValueInputType(): string {
-    return getKeyValueInputType(this.property);
+  getValueInputType(): TextInputType {
+    return getKeyValueInputType(this.property) as TextInputType;
   }
 
   getFormGroupFromControl(control: any): FormGroup {
@@ -184,8 +184,7 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
 
     // Check if number type is supported
     const supportsNumber =
-      additionalProps.type === 'number' ||
-      (additionalProps.anyOf?.some((item: any) => item.type === 'number'));
+      additionalProps.type === 'number' || additionalProps.anyOf?.some((item: any) => item.type === 'number');
 
     if (supportsNumber && !isNaN(Number(value))) {
       return Number(value);

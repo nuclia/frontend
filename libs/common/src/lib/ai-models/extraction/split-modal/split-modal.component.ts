@@ -90,7 +90,7 @@ export class SplitModalComponent implements OnInit {
       }
       this.configForm.patchValue({
         ...rest,
-        custom_split: customSplitValue,
+        custom_split: customSplitValue as 'default' | 'llm' | 'manual',
       });
       this.configForm.disable();
     }

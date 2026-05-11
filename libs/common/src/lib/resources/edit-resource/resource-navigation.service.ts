@@ -40,10 +40,7 @@ export class ResourceNavigationService {
 
   isFirstResource: Observable<boolean> = combineLatest([this._navigationData, this._currentResourceId]).pipe(
     filter(([data, resourceId]) => !!data && !!resourceId),
-    map(
-      ([data, resourceId]) =>
-        (data as ResourceNavigationModel).resourceIdList.indexOf(resourceId) === 0,
-    ),
+    map(([data, resourceId]) => (data as ResourceNavigationModel).resourceIdList.indexOf(resourceId!) === 0),
   );
 
   isLastResource: Observable<boolean> = combineLatest([this._navigationData, this._currentResourceId]).pipe(
