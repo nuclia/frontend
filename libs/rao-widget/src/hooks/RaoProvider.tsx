@@ -61,6 +61,22 @@ const injectZoneIntoBackend = (backend: string, zone?: string): string => {
   }
 };
 
+const normalizeText = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const extractPossibleAnswerText = (candidate: unknown): string | null => {
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+  const record = candidate as Record<string, unknown>;
+  return normalizeText(record.answer);
+};
+
 export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   children,
   nuclia,
@@ -571,22 +587,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       if (answer.step) {
         appendAssistantStep(answer.step);
       }
-
-      const normalizeText = (value: unknown): string | null => {
-        if (typeof value !== 'string') {
-          return null;
-        }
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? trimmed : null;
-      };
-
-      const extractPossibleAnswerText = (candidate: unknown): string | null => {
-        if (!candidate || typeof candidate !== 'object') {
-          return null;
-        }
-        const record = candidate as Record<string, unknown>;
-        return normalizeText(record.answer);
-      };
 
       const candidateTexts: Array<string | null> = [
         normalizeText(answer.generated_text),

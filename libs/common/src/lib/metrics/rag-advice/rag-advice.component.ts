@@ -611,24 +611,33 @@ export class RagAdviceModalComponent {
     return normalized >= 1 ? normalized : null;
   }
 
+  private buildStrategyList(paramsUsed: EditableParams): string[] {
+    const list: string[] = [];
+    if (paramsUsed.neighbouringParagraphs && !paramsUsed.fullResource) list.push('neighbouring_paragraphs');
+    if (paramsUsed.fullResource) list.push('full_resource');
+    if (paramsUsed.metadatas) list.push('metadata_extension');
+    if (paramsUsed.graph) list.push('graph_beta');
+    return list;
+  }
+
+  private buildParamPartList(paramsUsed: EditableParams): string[] {
+    const strategies = this.buildStrategyList(paramsUsed);
+    const parts: Array<string | null> = [
+      paramsUsed.minScoreSemantic !== null ? `min_score_semantic=${paramsUsed.minScoreSemantic}` : null,
+      paramsUsed.minScoreBm25 !== null ? `min_score_bm25=${paramsUsed.minScoreBm25}` : null,
+      paramsUsed.topK !== null ? `top_k=${paramsUsed.topK}` : null,
+      strategies.length > 0 ? `strategies=[${strategies.join(', ')}]` : null,
+      paramsUsed.rephrase ? 'rephrase=true' : null,
+      paramsUsed.model ? `model=${paramsUsed.model}` : null,
+      paramsUsed.systemPrompt ? `system_prompt="${this.compactSystemPrompt(paramsUsed.systemPrompt)}"` : null,
+    ];
+    return parts.filter((v): v is string => v !== null);
+  }
+
   private buildIterationHistory(): IterationHistoryEntry[] {
     return this.iterations().map((rec) => {
-      const strategies = [
-        ...(rec.paramsUsed.neighbouringParagraphs && !rec.paramsUsed.fullResource ? ['neighbouring_paragraphs'] : []),
-        ...(rec.paramsUsed.fullResource ? ['full_resource'] : []),
-        ...(rec.paramsUsed.metadatas ? ['metadata_extension'] : []),
-        ...(rec.paramsUsed.graph ? ['graph_beta'] : []),
-      ];
-      const paramParts = [
-        rec.paramsUsed.minScoreSemantic !== null ? `min_score_semantic=${rec.paramsUsed.minScoreSemantic}` : null,
-        rec.paramsUsed.minScoreBm25 !== null ? `min_score_bm25=${rec.paramsUsed.minScoreBm25}` : null,
-        rec.paramsUsed.topK !== null ? `top_k=${rec.paramsUsed.topK}` : null,
-        strategies.length > 0 ? `strategies=[${strategies.join(', ')}]` : null,
-        rec.paramsUsed.rephrase ? 'rephrase=true' : null,
-        rec.paramsUsed.model ? `model=${rec.paramsUsed.model}` : null,
-        rec.paramsUsed.systemPrompt ? `system_prompt="${this.compactSystemPrompt(rec.paramsUsed.systemPrompt)}"` : null,
-      ].filter((v): v is string => v !== null);
-      let outcome: string;
+      const paramParts = this.buildParamPartList(rec.paramsUsed);
+      let outcome: 'no_context' | 'no_answer' | 'answer';
       if (rec.noContext) {
         outcome = 'no_context';
       } else if (rec.answer) {

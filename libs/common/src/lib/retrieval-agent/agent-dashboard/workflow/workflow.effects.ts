@@ -236,11 +236,7 @@ export class WorkflowEffectService {
     } else if ((parentNode.registered_agents || []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
     } else {
-      const childKey = (() => {
-        if (parentNode.fallback === childId) return 'fallback';
-        if (parentNode.next_agent === childId) return 'next_agent';
-        return '';
-      })();
+      const childKey = this.getChildRelationshipKey(parentNode, childId);
       if (childKey) {
         const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
         const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childKey;
@@ -261,6 +257,12 @@ export class WorkflowEffectService {
     } else {
       return { parentNode, children: updatedChildren };
     }
+  }
+
+  private getChildRelationshipKey(parentNode: ParentNode, childId: string): string {
+    if (parentNode.fallback === childId) return 'fallback';
+    if (parentNode.next_agent === childId) return 'next_agent';
+    return '';
   }
 
   /**
