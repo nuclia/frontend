@@ -2320,6 +2320,7 @@
 	"simple.in-queue": "A la cua",
 	"simple.max-files": "{{num}} fitxers com a màxim",
 	"simple.mcp.description": "Aquesta URL permet que els agents d'IA es connectin als vostres fitxers",
+	"simple.mcp.how-to": "Com utilitzar el vostre Content Box a través de MCP?",
 	"simple.mcp.title": "URL del servidor MCP",
 	"simple.no-questions": "Encara no has fet cap pregunta.",
 	"simple.or": "O",
