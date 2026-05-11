@@ -843,7 +843,7 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
   }
 
   const keyList: string[] = [];
-  return resources.reduce((resultList, resource) => {
+  return resources.reduce<TypedResult[]>((resultList, resource) => {
     const fieldCount = Object.keys(resource.fields).length;
     const dataFieldCount = Object.keys(resource.fields).filter((fid) => !fid.startsWith('/a/')).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
@@ -889,11 +889,10 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
           return typedResult;
         }
       })
-      .filter((typedResult) => !!typedResult)
-      .map((typedResult) => typedResult as TypedResult);
+      .filter((typedResult): typedResult is TypedResult => !!typedResult);
     resultList = resultList.concat(fieldEntries);
     return resultList;
-  }, [] as TypedResult[]);
+  }, []);
 }
 
 function excludeResults(results: TypedResult[], excluded: TypedResult[]): TypedResult[] {
@@ -1097,7 +1096,7 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
       .map((entry) => entry[1]);
   }
   const augmentedContext = answer.augmentedContext;
-  return citationIds.reduce((acc, citationId, index) => {
+  return citationIds.reduce<TypedResult[]>((acc, citationId, index) => {
     if (!citationId.includes('/')) return acc;
     const citationPath = citationId.split('/');
     const [resourceId, shortFieldType, fieldId] = citationPath;
@@ -1110,5 +1109,5 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
       processResourceCitation(acc, res, resource, shortFieldType, fieldId, index, metadata);
     }
     return acc;
-  }, [] as TypedResult[]);
+  }, []);
 }
