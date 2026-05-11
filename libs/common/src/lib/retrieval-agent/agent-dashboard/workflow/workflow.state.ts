@@ -497,9 +497,9 @@ function _linkNodeToParent(
   property: string,
   nodeType: NodeType,
   node: ParentNode,
-  isSaved: boolean,
-  childIndex?: number,
+  opts: { isSaved: boolean; childIndex?: number },
 ) {
+  const { isSaved, childIndex } = opts;
   const parent = getNode(parentId, nodeCategory);
   if (!parent) {
     throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
@@ -529,16 +529,21 @@ function _linkNodeToParent(
   }
 }
 
+export interface AddNodeOptions {
+  nodeConfig?: NodeConfig;
+  agentId?: string;
+  isSaved?: boolean;
+  childIndex?: number;
+}
+
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
   nodeType: NodeType,
   nodeCategory: NodeCategory,
   origin: ConnectableEntryComponent,
-  nodeConfig?: NodeConfig,
-  agentId?: string,
-  isSaved = false,
-  childIndex?: number,
+  opts: AddNodeOptions = {},
 ) {
+  const { nodeConfig, agentId, isSaved = false, childIndex } = opts;
   const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved, childIndex };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
@@ -551,7 +556,7 @@ export function addNode(
     node.parentId = parentId;
     node.parentLinkType = property;
     node.parentLinkConfigProperty = property;
-    _linkNodeToParent(nodeId, nodeCategory, parentId, property, nodeType, node, isSaved, childIndex);
+    _linkNodeToParent(nodeId, nodeCategory, parentId, property, nodeType, node, { isSaved, childIndex });
   } else {
     _addNode(nodeId, nodeCategory, node);
   }
@@ -713,7 +718,7 @@ function _updateParentNodeConfig(node: ParentNode, nodeCategory: NodeCategory): 
   if (childrenKeys.includes(node.parentLinkType)) {
     const existings: NodeConfigWithId[] = (parent.nodeConfig as any)[node.parentLinkType] || [];
     const nodeId = (node.nodeConfig as NodeConfigWithId).id;
-    if (existings.find((a) => a.id === nodeId)) {
+    if (existings.some((a) => a.id === nodeId)) {
       (parent.nodeConfig as any)[node.parentLinkType] = existings.map((a) =>
         a.id === nodeId ? node.nodeConfig : { ...a },
       );

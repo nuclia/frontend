@@ -1027,9 +1027,9 @@ function processParagraphCitation(
   shortFieldType: string,
   fieldId: string,
   index: number,
-  augmentedContext: Ask.Answer['augmentedContext'],
-  metadata: ReturnType<typeof displayedMetadata.getValue>,
+  context: { augmentedContext: Ask.Answer['augmentedContext']; metadata: ReturnType<typeof displayedMetadata.getValue> },
 ): void {
+  const { augmentedContext, metadata } = context;
   let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
   if (!paragraph) {
     const augmentedParagraph = augmentedContext?.paragraphs[citationId];
@@ -1046,7 +1046,7 @@ function processParagraphCitation(
 
   const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
   if (existing) {
-    existing.paragraphs!.push(paragraph);
+    existing.paragraphs.push(paragraph);
   } else {
     const fieldData = getFieldDataFromResource(resource, field);
     const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
@@ -1103,7 +1103,7 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
     const resource = resources[resourceId];
     const graphPrequeryResource = graphPrequeryResources[resourceId];
     if (resource && citationPath.length === 4) {
-      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, augmentedContext, metadata);
+      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, { augmentedContext, metadata });
     } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
       const res = resources[resourceId] || graphPrequeryResource;
       processResourceCitation(acc, res, resource, shortFieldType, fieldId, index, metadata);

@@ -623,9 +623,9 @@ export class RagAdviceModalComponent {
   private buildParamPartList(paramsUsed: EditableParams): string[] {
     const strategies = this.buildStrategyList(paramsUsed);
     const parts: Array<string | null> = [
-      paramsUsed.minScoreSemantic !== null ? `min_score_semantic=${paramsUsed.minScoreSemantic}` : null,
-      paramsUsed.minScoreBm25 !== null ? `min_score_bm25=${paramsUsed.minScoreBm25}` : null,
-      paramsUsed.topK !== null ? `top_k=${paramsUsed.topK}` : null,
+      paramsUsed.minScoreSemantic === null ? null : `min_score_semantic=${paramsUsed.minScoreSemantic}`,
+      paramsUsed.minScoreBm25 === null ? null : `min_score_bm25=${paramsUsed.minScoreBm25}`,
+      paramsUsed.topK === null ? null : `top_k=${paramsUsed.topK}`,
       strategies.length > 0 ? `strategies=[${strategies.join(', ')}]` : null,
       paramsUsed.rephrase ? 'rephrase=true' : null,
       paramsUsed.model ? `model=${paramsUsed.model}` : null,

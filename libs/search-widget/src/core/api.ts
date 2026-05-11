@@ -85,7 +85,7 @@ const _applySearchModeOptions = (widgetOptions: WidgetOptions) => {
     SEARCH_MODE.push(Search.Features.RELATIONS);
     CHAT_MODE.push(Ask.Features.RELATIONS);
   }
-  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
+  if (widgetOptions.features?.semanticOnly) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
   }
   if (widgetOptions.features?.semanticOnly) {
@@ -117,7 +117,7 @@ const _applyWidgetSearchOptions = (widgetOptions: WidgetOptions) => {
     AUDIT_METADATA = metadata;
     SEARCH_OPTIONS.audit_metadata = metadata;
   } catch (e) {
-    console.error('Invalid audit metadata');
+    console.error('Invalid audit metadata', e);
   }
   if (REPHRASE && REPHRASE_PROMPT) {
     SEARCH_OPTIONS.rephrase_prompt = REPHRASE_PROMPT;

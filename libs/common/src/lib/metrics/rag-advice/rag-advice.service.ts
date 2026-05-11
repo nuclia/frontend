@@ -322,7 +322,7 @@ export class RagAdviceService {
     return suggestionsBlockMatch[1]
       .split('\n')
       .filter((line) => /^\s*\d+\.\s+/.test(line))
-      .map((line) => (/^\s*\d+\.\s+(.+)/.exec(line) as RegExpExecArray)[1].trim().replace(/\*\*(.+?)\*\*/g, '$1'));
+      .map((line) => (/^\s*\d+\.\s+(.+)/.exec(line) as RegExpExecArray)[1].trim().replaceAll(/\*\*(.+?)\*\*/g, '$1'));
   }
 
   private parseParamsJson(rawResponse: string): Record<string, unknown> | undefined {
@@ -386,9 +386,9 @@ export class RagAdviceService {
     const text = suggestions.join('\n');
     const extracted: Record<string, unknown> = {};
     const semanticMatch = /min_score_semantic\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i.exec(text);
-    if (semanticMatch) extracted['minScoreSemantic'] = parseFloat(semanticMatch[1]);
+    if (semanticMatch) extracted['minScoreSemantic'] = Number.parseFloat(semanticMatch[1]);
     const bm25Match = /min_score_bm25\s+(?:from\s+[\d.]+\s+)?to\s+([\d.]+)/i.exec(text);
-    if (bm25Match) extracted['minScoreBm25'] = parseFloat(bm25Match[1]);
+    if (bm25Match) extracted['minScoreBm25'] = Number.parseFloat(bm25Match[1]);
     const topKMatch = /top_k\s+(?:from\s+\d+\s+)?to\s+(\d+)/i.exec(text);
     if (topKMatch) extracted['topK'] = Number.parseInt(topKMatch[1], 10);
     return Object.keys(extracted).length > 0 ? extracted : undefined;

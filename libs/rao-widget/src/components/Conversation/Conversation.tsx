@@ -244,7 +244,7 @@ const convertExceptionEntry = (id: string, entry: DebugEntry, resources: IResour
 };
 
 const convertStepEntry = (id: string, step: AragAnswer['step'], resources: IResources): ReasoningItem => {
-  const moduleLabel = isNonEmptyString(step!.module) ? step!.module.replace(/_/g, ' ') : resources.meta_step;
+  const moduleLabel = isNonEmptyString(step!.module) ? step!.module.replaceAll('_', ' ') : resources.meta_step;
   const title = isNonEmptyString(step!.title) ? step!.title : moduleLabel;
   let description: string | undefined;
   if (isNonEmptyString(step!.reason)) description = step!.reason;
