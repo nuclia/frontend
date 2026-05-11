@@ -230,190 +230,81 @@ const extractSources = (entries: AragAnswer[] | undefined, messageId: string, re
   return Array.from(sources.values());
 };
 
+type DebugEntry = Partial<AragAnswer> & { context?: unknown; possible_answer?: unknown };
+
+const convertExceptionEntry = (id: string, entry: DebugEntry, resources: IResources): ReasoningItem => {
+  const description = isNonEmptyString((entry.exception as { detail?: unknown })?.detail)
+    ? String((entry.exception as { detail: unknown }).detail)
+    : resources.meta_unexpectedissue;
+  const fallback = isNonEmptyString(entry.answer) ? entry.answer : undefined;
+  return {
+    id, type: 'error', badge: 'Error', title: 'Assistant error',
+    description: fallback ? `${description} (${fallback})` : description,
+  };
+};
+
+const convertStepEntry = (id: string, step: AragAnswer['step'], resources: IResources): ReasoningItem => {
+  const moduleLabel = isNonEmptyString(step!.module) ? step!.module.replace(/_/g, ' ') : resources.meta_step;
+  const title = isNonEmptyString(step!.title) ? step!.title : moduleLabel;
+  let description: string | undefined;
+  if (isNonEmptyString(step!.reason)) description = step!.reason;
+  else if (isNonEmptyString(step!.value)) description = step!.value;
+  const notes: string[] = [];
+  if (isNonEmptyString(step!.value) && step!.value !== description) notes.push(step!.value);
+  if (isNonEmptyString(step!.agent_path)) notes.push(`${resources.meta_agent}: ${step!.agent_path}`);
+  const duration = formatDuration(step!.timeit);
+  if (duration) notes.push(`${resources.meta_duration}: ${duration}`);
+  const inputTokens = formatNumericValue((step as { input_nuclia_tokens?: unknown })?.input_nuclia_tokens);
+  if (inputTokens) notes.push(`${resources.meta_inputtokens}: ${inputTokens}`);
+  const outputTokens = formatNumericValue((step as { output_nuclia_tokens?: unknown })?.output_nuclia_tokens);
+  if (outputTokens) notes.push(`${resources.meta_outputtokens}: ${outputTokens}`);
+  return { id, type: 'step', badge: moduleLabel, title, description, notes: notes.length ? notes : undefined };
+};
+
+type ContextData = { agent?: string; title?: string; summary?: string; question?: string; chunks?: Array<{ text?: string; url?: string[]; title?: string | null }>; citations?: unknown[] };
+
+const convertContextEntry = (id: string, context: unknown, resources: IResources): ReasoningItem => {
+  const cd = context as ContextData;
+  const badge = isNonEmptyString(cd.agent) ? cd.agent : resources.meta_context;
+  const title = isNonEmptyString(cd.title) ? cd.title : resources.meta_contextgathered;
+  const description = isNonEmptyString(cd.summary) ? cd.summary : resources.meta_supportingevidence;
+  const notes: string[] = [];
+  if (isNonEmptyString(cd.question)) notes.push(`${resources.meta_questionanalysed}: ${cd.question}`);
+  (Array.isArray(cd.chunks) ? cd.chunks : []).slice(0, 2).forEach((chunk) => {
+    if (isNonEmptyString(chunk.text)) notes.push(`${resources.meta_evidence}: ${truncateText(chunk.text)}`);
+    if (Array.isArray(chunk.url) && chunk.url.length > 0) notes.push(`${resources.meta_sources}: ${chunk.url.slice(0, 3).join(', ')}`);
+  });
+  if (Array.isArray(cd.citations) && cd.citations.length > 0) notes.push(`${resources.meta_citations}: ${cd.citations.join(', ')}`);
+  return { id, type: 'context', badge, title, description, notes: notes.length ? notes : undefined };
+};
+
 const humanizeDebugEntries = (
   entries: AragAnswer[] | undefined,
   messageId: string,
   resources: IResources,
 ): ReasoningItem[] => {
-  if (!entries || entries.length === 0) {
-    return [];
-  }
-
+  if (!entries || entries.length === 0) return [];
   const items: ReasoningItem[] = [];
-
   entries.forEach((rawEntry, index) => {
-    if (!rawEntry) {
-      return;
-    }
-
-    const entry = rawEntry as Partial<AragAnswer> & {
-      context?: unknown;
-      possible_answer?: unknown;
-    };
-
+    if (!rawEntry) return;
+    const entry = rawEntry as DebugEntry;
+    const { exception, step, context, possible_answer: possibleAnswer, answer, generated_text: generatedText, agent_request: agentRequest } = entry;
+    if (!exception && !step && !context && !possibleAnswer && !answer && !generatedText && !agentRequest) return;
     const id = `${messageId}-reason-${index}`;
-    const {
-      exception,
-      step,
-      context,
-      possible_answer: possibleAnswer,
-      answer,
-      generated_text: generatedText,
-      agent_request: agentRequest,
-    } = entry;
-
-    if (!exception && !step && !context && !possibleAnswer && !answer && !generatedText && !agentRequest) {
-      return;
-    }
-
-    if (exception) {
-      const description = isNonEmptyString((exception as { detail?: unknown }).detail)
-        ? String((exception as { detail: unknown }).detail)
-        : resources.meta_unexpectedissue;
-      const fallback = isNonEmptyString(answer) ? answer : undefined;
-      items.push({
-        id,
-        type: 'error',
-        badge: 'Error',
-        title: 'Assistant error',
-        description: fallback ? `${description} (${fallback})` : description,
-      });
-      return;
-    }
-
-    if (step) {
-      const moduleLabel = isNonEmptyString(step.module) ? step.module.replace(/_/g, ' ') : resources.meta_step;
-      const title = isNonEmptyString(step.title) ? step.title : moduleLabel;
-      let description: string | undefined;
-      if (isNonEmptyString(step.reason)) {
-        description = step.reason;
-      } else if (isNonEmptyString(step.value)) {
-        description = step.value;
-      }
-
-      const notes: string[] = [];
-      if (isNonEmptyString(step.value) && step.value !== description) {
-        notes.push(step.value);
-      }
-      if (isNonEmptyString(step.agent_path)) {
-        notes.push(`${resources.meta_agent}: ${step.agent_path}`);
-      }
-      const duration = formatDuration(step.timeit);
-      if (duration) {
-        notes.push(`${resources.meta_duration}: ${duration}`);
-      }
-      const inputTokens = formatNumericValue((step as { input_nuclia_tokens?: unknown }).input_nuclia_tokens);
-      if (inputTokens) {
-        notes.push(`${resources.meta_inputtokens}: ${inputTokens}`);
-      }
-      const outputTokens = formatNumericValue((step as { output_nuclia_tokens?: unknown }).output_nuclia_tokens);
-      if (outputTokens) {
-        notes.push(`${resources.meta_outputtokens}: ${outputTokens}`);
-      }
-
-      items.push({
-        id,
-        type: 'step',
-        badge: moduleLabel,
-        title,
-        description,
-        notes: notes.length ? notes : undefined,
-      });
-      return;
-    }
-
-    if (context) {
-      const contextData = context as {
-        agent?: string;
-        title?: string;
-        summary?: string;
-        question?: string;
-        chunks?: Array<{ text?: string; url?: string[]; title?: string | null }>;
-        citations?: unknown[];
-      };
-
-      const badge = isNonEmptyString(contextData.agent) ? contextData.agent : resources.meta_context;
-      const title = isNonEmptyString(contextData.title) ? contextData.title : resources.meta_contextgathered;
-      const description = isNonEmptyString(contextData.summary)
-        ? contextData.summary
-        : resources.meta_supportingevidence;
-      const notes: string[] = [];
-      if (isNonEmptyString(contextData.question)) {
-        notes.push(`${resources.meta_questionanalysed}: ${contextData.question}`);
-      }
-
-      const chunks = Array.isArray(contextData.chunks) ? contextData.chunks : [];
-      chunks.slice(0, 2).forEach((chunk) => {
-        if (isNonEmptyString(chunk.text)) {
-          notes.push(`${resources.meta_evidence}: ${truncateText(chunk.text)}`);
-        }
-        if (Array.isArray(chunk.url) && chunk.url.length > 0) {
-          notes.push(`${resources.meta_sources}: ${chunk.url.slice(0, 3).join(', ')}`);
-        }
-      });
-
-      if (Array.isArray(contextData.citations) && contextData.citations.length > 0) {
-        notes.push(`${resources.meta_citations}: ${contextData.citations.join(', ')}`);
-      }
-
-      items.push({
-        id,
-        type: 'context',
-        badge,
-        title,
-        description,
-        notes: notes.length ? notes : undefined,
-      });
-      return;
-    }
-
+    if (exception) { items.push(convertExceptionEntry(id, entry, resources)); return; }
+    if (step) { items.push(convertStepEntry(id, step, resources)); return; }
+    if (context) { items.push(convertContextEntry(id, context, resources)); return; }
     if (possibleAnswer && typeof possibleAnswer === 'object' && possibleAnswer !== null) {
       const draftAnswer = (possibleAnswer as { answer?: unknown }).answer;
       if (isNonEmptyString(draftAnswer)) {
-        items.push({
-          id,
-          type: 'info',
-          badge: 'Draft',
-          title: 'Draft response',
-          description: draftAnswer,
-        });
+        items.push({ id, type: 'info', badge: 'Draft', title: 'Draft response', description: draftAnswer });
         return;
       }
     }
-
-    if (isNonEmptyString(answer)) {
-      items.push({
-        id,
-        type: 'answer',
-        badge: 'Answer',
-        title: 'Assistant response',
-        description: answer,
-      });
-      return;
-    }
-
-    if (isNonEmptyString(generatedText)) {
-      items.push({
-        id,
-        type: 'info',
-        badge: 'Generated',
-        title: 'Generated text',
-        description: generatedText,
-      });
-      return;
-    }
-
-    if (isNonEmptyString(agentRequest)) {
-      items.push({
-        id,
-        type: 'info',
-        badge: 'Request',
-        title: 'Agent request',
-        description: agentRequest,
-      });
-    }
+    if (isNonEmptyString(answer)) { items.push({ id, type: 'answer', badge: 'Answer', title: 'Assistant response', description: answer }); return; }
+    if (isNonEmptyString(generatedText)) { items.push({ id, type: 'info', badge: 'Generated', title: 'Generated text', description: generatedText }); return; }
+    if (isNonEmptyString(agentRequest)) { items.push({ id, type: 'info', badge: 'Request', title: 'Agent request', description: agentRequest }); }
   });
-
   return items;
 };
 

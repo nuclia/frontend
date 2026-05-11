@@ -496,6 +496,37 @@ export function setupTriggerGraphNerSearch() {
   );
 }
 
+function buildRagAnswerObservable(
+  question: string,
+  entries: Ask.Entry[],
+  options: BaseSearchOptions,
+  reasoning: unknown,
+  disableRAG: boolean,
+  filterExpression: boolean,
+  filters: ChatOptions['filters'],
+  combinedFilterExpr: ChatOptions['filter_expression'],
+  rangeCreation: { start?: string; end?: string } | undefined,
+  _images: string[],
+  _hasQueryImage: boolean,
+  search_configuration: string | undefined,
+): ReturnType<typeof getAnswer> {
+  const chatOptions: ChatOptions = { ...options, reasoning: reasoning as ChatOptions['reasoning'] || undefined };
+  if (disableRAG) {
+    return getAnswerWithoutRAG(question, entries, chatOptions);
+  }
+  return getAnswer(question, entries, {
+    ...chatOptions,
+    search_configuration,
+    filters: filterExpression ? undefined : filters,
+    filter_expression: filterExpression ? combinedFilterExpr : undefined,
+    range_creation_start: filterExpression ? undefined : rangeCreation?.start,
+    range_creation_end: filterExpression ? undefined : rangeCreation?.end,
+    extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
+    query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
+    reasoning: reasoning as ChatOptions['reasoning'],
+  });
+}
+
 export function askQuestion(
   question: string,
   reset: boolean,
@@ -554,20 +585,10 @@ export function askQuestion(
             inError: false,
           } as Ask.Answer);
         } else {
-          const chatOptions = { ...options, reasoning: reasoning || undefined };
-          return disableRAG
-            ? getAnswerWithoutRAG(question, entries, chatOptions)
-            : getAnswer(question, entries, {
-                ...chatOptions,
-                search_configuration,
-                filters: filterExpression ? undefined : filters,
-                filter_expression: filterExpression ? combinedFilterExpression : undefined,
-                range_creation_start: filterExpression ? undefined : rangeCreation?.start,
-                range_creation_end: filterExpression ? undefined : rangeCreation?.end,
-                extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
-                query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
-                reasoning,
-              });
+          return buildRagAnswerObservable(
+            question, entries, options, reasoning, disableRAG, filterExpression, filters,
+            combinedFilterExpression, rangeCreation, _images, _hasQueryImage, search_configuration,
+          );
         }
       },
     ),
