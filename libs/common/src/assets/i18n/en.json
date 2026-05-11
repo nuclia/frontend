@@ -2320,6 +2320,7 @@
 	"simple.in-queue": "In Queue",
 	"simple.max-files": "{{num}} files max",
 	"simple.mcp.description": "This URL allows AI agents to connect to your files",
+	"simple.mcp.how-to": "How to use your Content Box via MCP?",
 	"simple.mcp.title": "MCP server URL",
 	"simple.no-questions": "You haven't asked any questions yet.",
 	"simple.or": "Or",
