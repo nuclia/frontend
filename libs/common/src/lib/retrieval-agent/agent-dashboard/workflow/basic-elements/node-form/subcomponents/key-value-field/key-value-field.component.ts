@@ -5,7 +5,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { TranslateModule } from '@ngx-translate/core';
 import { JSONSchema4 } from 'json-schema';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
-import { getKeyValueInputType } from '../../../../../../../arag.utils';
+import { getKeyValueInputType } from '../../../../../../arag.utils';
 
 let keyValueIndex = 0;
 
@@ -177,8 +177,7 @@ export class KeyValueFieldComponent implements OnInit, OnDestroy {
 
     // Check if number type is supported
     const supportsNumber =
-      additionalProps.type === 'number' ||
-      (additionalProps.anyOf?.some((item: any) => item.type === 'number'));
+      additionalProps.type === 'number' || additionalProps.anyOf?.some((item: any) => item.type === 'number');
 
     if (supportsNumber && !isNaN(Number(value))) {
       return Number(value);

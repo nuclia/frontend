@@ -152,7 +152,7 @@ export class ReadableResource implements IResource {
     try {
       return decodeURIComponent(title || '–');
     } catch (e) {
-      return title;
+      return title || '–';
     }
   }
 

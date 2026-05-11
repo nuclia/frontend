@@ -109,10 +109,9 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
 };
 
 export function getUrlParams(): URLSearchParams {
-  const params =
-    window.location.hash?.includes('?')
-      ? window.location.hash.slice(window.location.hash.indexOf('?'))
-      : window.location.search;
+  const params = window.location.hash?.includes('?')
+    ? window.location.hash.slice(window.location.hash.indexOf('?'))
+    : window.location.search;
   return new URLSearchParams(params);
 }
 
@@ -330,14 +329,13 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
   } else if (field?.field_type === FIELD_TYPE.link) {
-      return (field.value as LinkField)?.uri;
-    } else if (field?.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
-      return (field.value as FileField)?.file?.uri;
-    } else if (resource.origin?.url) {
-      return resource.origin.url;
-    } else {
-      return undefined;
-    }
+    return (field.value as LinkField)?.uri;
+  } else if (field?.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
+    return (field.value as FileField)?.file?.uri;
+  } else if (resource.origin?.url) {
+    return resource.origin.url;
+  } else {
+    return undefined;
   }
 };
 export const getPreviewUrl = (
