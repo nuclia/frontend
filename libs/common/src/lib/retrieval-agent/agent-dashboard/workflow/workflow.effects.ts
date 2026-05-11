@@ -227,13 +227,13 @@ export class WorkflowEffectService {
     }
     const childId = childNode.nodeRef.instance.id;
 
-    if ((parentNode.then || []).includes(childId)) {
+    if ((parentNode.then ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'then'));
-    } else if ((parentNode.else_ || []).includes(childId)) {
+    } else if ((parentNode.else_ ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'else_'));
-    } else if ((parentNode.agents || []).includes(childId)) {
+    } else if ((parentNode.agents ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'agents'));
-    } else if ((parentNode.registered_agents || []).includes(childId)) {
+    } else if ((parentNode.registered_agents ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
     } else {
       const childKey = this.getChildRelationshipKey(parentNode, childId);

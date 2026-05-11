@@ -64,6 +64,7 @@ import {
 } from './workflow.models';
 import {
   addNode,
+  AddNodeOptions,
   deleteNode,
   getAllNodes,
   getNode,
@@ -886,7 +887,7 @@ export class WorkflowService {
     nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved, childIndex);
+    addNode(nodeRef, nodeType, nodeCategory, origin, { nodeConfig, agentId, isSaved, childIndex });
     origin.activeState.set(false);
     return nodeRef;
   }
