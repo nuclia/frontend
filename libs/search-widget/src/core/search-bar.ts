@@ -33,6 +33,29 @@ import {
 } from './stores';
 import { NO_RESULT_LIST } from './models';
 
+function buildAskChatOptions(
+  baseOptions: SearchOptions,
+  ragStrategies: string[],
+  ragImageStrategies: string[],
+  preferMarkdown: boolean,
+  jsonSchema: unknown,
+): ChatOptions {
+  const chatOptions: ChatOptions = { ...baseOptions };
+  if (ragStrategies.length > 0) {
+    chatOptions.rag_strategies = ragStrategies;
+  }
+  if (ragImageStrategies.length > 0) {
+    chatOptions.rag_images_strategies = ragImageStrategies;
+  }
+  if (preferMarkdown) {
+    chatOptions.prefer_markdown = preferMarkdown;
+  }
+  if (jsonSchema) {
+    chatOptions.answer_json_schema = jsonSchema;
+  }
+  return chatOptions;
+}
+
 const subscriptions: Subscription[] = [];
 
 export function unsubscribeTriggerSearch() {
@@ -104,19 +127,7 @@ export const setupTriggerSearch = (
                       range_creation_end: filterExpression ? undefined : rangeCreation?.end,
                     };
                     if (isAnswerEnabled && !trigger?.more) {
-                      const chatOptions: ChatOptions = currentOptions;
-                      if (ragStrategies.length > 0) {
-                        chatOptions.rag_strategies = ragStrategies;
-                      }
-                      if (ragImageStrategies.length > 0) {
-                        chatOptions.rag_images_strategies = ragImageStrategies;
-                      }
-                      if (preferMarkdown) {
-                        chatOptions.prefer_markdown = preferMarkdown;
-                      }
-                      if (jsonSchema) {
-                        chatOptions.answer_json_schema = jsonSchema;
-                      }
+                      const chatOptions = buildAskChatOptions(currentOptions, ragStrategies, ragImageStrategies, preferMarkdown, jsonSchema);
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
                           if (res.type === 'error' && res.status === 402 && !hideResults) {

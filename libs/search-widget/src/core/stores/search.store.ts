@@ -319,6 +319,29 @@ export const resultsOrder = searchState.writer<ResultsOrder>(
   }),
 );
 
+function parseSearchFilters(filterStrings: string[]): SearchFilters {
+  const filters: SearchFilters = {};
+  filterStrings.forEach((filter) => {
+    const spreadFilter = filter.split('/').filter((val) => !!val);
+    if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
+      if (spreadFilter.length === 3) {
+        const labelFilter = { classification: getLabelFromFilter(filter), kind: LabelSetKind.PARAGRAPHS };
+        filters.labels = [...(filters.labels || []), labelFilter];
+      } else {
+        const labelSetFilter = { id: getLabelSetFromFilter(filter), kind: LabelSetKind.PARAGRAPHS };
+        filters.labelSets = [...(filters.labelSets || []), labelSetFilter];
+      }
+    } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
+      filters.entities = [...(filters.entities || []), getEntityFromFilter(filter)];
+    } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
+      filters.mimeTypes = [...(filters.mimeTypes || []), getMimeFromFilter(filter)];
+    } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
+      filters.path = filter;
+    }
+  });
+  return filters;
+}
+
 export const searchFilters = searchState.writer<string[], { filters: string[] }>(
   (state) => [
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
@@ -327,55 +350,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
     ...(state.filters.mimeTypes || []).map((filter) => filter.key),
     ...(state.filters.path ? [state.filters.path] : []),
   ],
-  (state, data) => {
-    const filters: SearchFilters = {};
-    data.filters.forEach((filter) => {
-      const spreadFilter = filter.split('/').filter((val) => !!val);
-      if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
-        if (spreadFilter.length === 3) {
-          const labelFilter = {
-            classification: getLabelFromFilter(filter),
-            kind: LabelSetKind.PARAGRAPHS,
-          };
-          if (filters.labels) {
-            filters.labels.push(labelFilter);
-          } else {
-            filters.labels = [labelFilter];
-          }
-        } else {
-          const labelSetFilter = {
-            id: getLabelSetFromFilter(filter),
-            kind: LabelSetKind.PARAGRAPHS,
-          };
-          if (filters.labelSets) {
-            filters.labelSets.push(labelSetFilter);
-          } else {
-            filters.labelSets = [labelSetFilter];
-          }
-        }
-      } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
-        const entityFilter = getEntityFromFilter(filter);
-        if (filters.entities) {
-          filters.entities.push(entityFilter);
-        } else {
-          filters.entities = [entityFilter];
-        }
-      } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
-        const mimeFilter = getMimeFromFilter(filter);
-        if (filters.mimeTypes) {
-          filters.mimeTypes.push(mimeFilter);
-        } else {
-          filters.mimeTypes = [mimeFilter];
-        }
-      } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
-        filters.path = filter;
-      }
-    });
-    return {
-      ...state,
-      filters,
-    };
-  },
+  (state, data) => ({ ...state, filters: parseSearchFilters(data.filters) }),
 );
 
 export const rangeCreationISO = searchState.reader<{ start?: string; end?: string } | undefined>((state) => ({
@@ -956,45 +931,37 @@ const SpreadsheetContentTypes = new Set([
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.oasis.opendocument.spreadsheet',
 ]);
+function getFileResultType(file: FileFieldData['value']['file']): { resultType: ResultType; resultIcon: string } {
+  const contentType = file?.content_type || '';
+  if (contentType.startsWith('audio')) return { resultType: 'audio', resultIcon: 'audio' };
+  if (contentType.startsWith('video')) return { resultType: 'video', resultIcon: 'video' };
+  if (contentType.startsWith('image')) return { resultType: 'image', resultIcon: 'image' };
+  if (contentType.startsWith('text')) return { resultType: 'text', resultIcon: 'text' };
+  if (SpreadsheetContentTypes.has(contentType)) return { resultType: 'spreadsheet', resultIcon: 'spreadsheet' };
+  if (contentType.startsWith('application/octet-stream')) return { resultType: 'text', resultIcon: 'text' };
+  if (contentType.startsWith('application')) {
+    const icon = contentType === 'application/pdf' ? 'file-pdf' : 'file-empty';
+    return { resultType: 'pdf', resultIcon: icon };
+  }
+  return { resultType: 'text', resultIcon: 'text' };
+}
+
 export function getResultType(result: Search.FieldResult): { resultType: ResultType; resultIcon: string } {
   const fieldType = result?.field?.field_type;
   const fieldDataValue = result?.fieldData?.value;
-  let resultType: ResultType;
-  let icon = '';
   if (fieldType === FIELD_TYPE.link && !!fieldDataValue) {
     const url = (result.fieldData as LinkFieldData).value?.uri;
-    resultType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
-  } else if (fieldType === FIELD_TYPE.conversation) {
-    resultType = 'conversation';
-  } else if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
-    const file = (result.fieldData as FileFieldData).value?.file;
-    // for audio, video, image or text, we have a corresponding tile
-    // for mimetype starting with 'application/', it is more complex:
-    // - anything like a spreadsheet is a spreadsheet
-    // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
-    // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
-    if (file?.content_type?.startsWith('audio')) {
-      resultType = 'audio';
-    } else if (file?.content_type?.startsWith('video')) {
-      resultType = 'video';
-    } else if (file?.content_type?.startsWith('image')) {
-      resultType = 'image';
-    } else if (file?.content_type?.startsWith('text')) {
-      resultType = 'text';
-    } else if (SpreadsheetContentTypes.has(file?.content_type || '')) {
-      resultType = 'spreadsheet';
-    } else if (file?.content_type?.startsWith('application/octet-stream')) {
-      resultType = 'text';
-    } else if (file?.content_type?.startsWith('application')) {
-      resultType = 'pdf';
-      icon = file?.content_type === 'application/pdf' ? 'file-pdf' : 'file-empty';
-    } else {
-      resultType = 'text';
-    }
-  } else {
-    resultType = 'text';
+    const resultType: ResultType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+    return { resultType, resultIcon: resultType };
   }
-  return { resultType, resultIcon: icon || resultType };
+  if (fieldType === FIELD_TYPE.conversation) {
+    return { resultType: 'conversation', resultIcon: 'conversation' };
+  }
+  if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
+    const file = (result.fieldData as FileFieldData).value?.file;
+    return getFileResultType(file);
+  }
+  return { resultType: 'text', resultIcon: 'text' };
 }
 
 export function getNonGenericField(data: ResourceData) {

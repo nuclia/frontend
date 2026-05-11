@@ -490,6 +490,45 @@ export function getAllNodes(includeChildren = false): ParentNode[] {
  * @param agentId Optional agent identifier corresponding to the node
  * @param childIndex Index of the child in parent’s then/else list (optional)
  */
+function _linkNodeToParent(
+  nodeId: string,
+  nodeCategory: NodeCategory,
+  parentId: string,
+  property: string,
+  nodeType: NodeType,
+  node: ParentNode,
+  isSaved: boolean,
+  childIndex?: number,
+) {
+  const parent = getNode(parentId, nodeCategory);
+  if (!parent) {
+    throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
+  }
+  if (property === 'registered_agents') {
+    registeredAgentParams.set({ description: '', functions: [], nodeType });
+  }
+  if (property === 'then' || property === 'else_' || property === 'agents') {
+    const existing = (parent as any)?.[property];
+    const childIds = Array.isArray(existing) ? [...existing] : [];
+    const currentIndex = childIds.indexOf(nodeId);
+    if (currentIndex !== -1) {
+      childIds.splice(currentIndex, 1);
+    }
+    const insertionIndex =
+      typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
+        ? childIndex
+        : childIds.length;
+    childIds.splice(insertionIndex, 0, nodeId);
+    node.childIndex = insertionIndex;
+  }
+  childNodes.update((children) => ({ ...children, [nodeId]: node }));
+  if (property === 'registered_agents' || property === 'agents' || property === 'then' || property === 'else_') {
+    updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
+  } else {
+    updateNode(parentId, nodeCategory, { [property]: nodeId, isSaved });
+  }
+}
+
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
   nodeType: NodeType,
@@ -509,40 +548,10 @@ export function addNode(
   }
   if (parentId) {
     const property = origin.id();
-
     node.parentId = parentId;
     node.parentLinkType = property;
     node.parentLinkConfigProperty = property;
-    const parent = getNode(parentId, nodeCategory);
-    if (!parent) {
-      throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
-    }
-    if (property === 'registered_agents') {
-      registeredAgentParams.set({ description: '', functions: [], nodeType });
-    }
-    if (property === 'then' || property === 'else_' || property === 'agents') {
-      const existing = (parent as any)?.[property];
-      const childIds = Array.isArray(existing) ? [...existing] : [];
-      const currentIndex = childIds.indexOf(nodeId);
-      if (currentIndex !== -1) {
-        childIds.splice(currentIndex, 1);
-      }
-      const insertionIndex =
-        typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
-          ? childIndex
-          : childIds.length;
-      childIds.splice(insertionIndex, 0, nodeId);
-      node.childIndex = insertionIndex;
-    }
-    childNodes.update((children) => ({ ...children, [nodeId]: node }));
-    if (property === 'registered_agents' || property === 'agents' || property === 'then' || property === 'else_') {
-      updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
-    } else {
-      updateNode(parentId, nodeCategory, {
-        [property]: nodeId,
-        isSaved,
-      });
-    }
+    _linkNodeToParent(nodeId, nodeCategory, parentId, property, nodeType, node, isSaved, childIndex);
   } else {
     _addNode(nodeId, nodeCategory, node);
   }

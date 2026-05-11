@@ -130,6 +130,15 @@ const subscriptions: Subscription[] = [];
 
 const CHAT_HISTORY_KEY = 'nuclia.chat.history';
 
+const ASK_ERROR_MESSAGES: Record<string, string> = {
+  '-3': 'answer.error.no_retrieval_data',
+  '-2': 'answer.error.llm_cannot_answer',
+  '-1': 'answer.error.llm_error',
+  '402': 'anwer.error.feature-blocked',
+  '412': 'answer.error.rephrasing',
+  '529': 'answer.error.service-overloaded',
+};
+
 function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
   unsubscribeTriggerSearch();
@@ -565,19 +574,11 @@ export function askQuestion(
     tap((result) => {
       hasNotEnoughData.set(result.type === 'error' && result.status === -2);
       if (result.type === 'error') {
-        const messages: { [key: string]: string } = {
-          '-3': 'answer.error.no_retrieval_data',
-          '-2': 'answer.error.llm_cannot_answer',
-          '-1': 'answer.error.llm_error',
-          '402': 'anwer.error.feature-blocked',
-          '412': 'answer.error.rephrasing',
-          '529': 'answer.error.service-overloaded',
-        };
         if (!hasError) {
           // error is set only once
           hasError = true;
           const translatedError = translateInstant(
-            result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`] || 'error.search',
+            result.status === -2 ? getNotEngoughDataMessage() : ASK_ERROR_MESSAGES[`${result.status}`] || 'error.search',
           );
           const error = isDebugMode && result.detail ? result.detail : translatedError;
           const answer = currentAnswer.getValue();
