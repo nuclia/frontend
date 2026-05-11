@@ -300,28 +300,7 @@ export class Rest implements IRest {
           if (res.ok) {
             const reader = res.body?.getReader();
             if (reader) {
-              let data = new Uint8Array();
-              const readMore = () => {
-                reader.read().then(
-                  ({ done, value }) => {
-                    if (done) {
-                      observer.next({ data, incomplete: false, headers });
-                      observer.complete();
-                    }
-                    if (value) {
-                      data = this.concat(data, value);
-                      observer.next({ data, incomplete: true, headers });
-                      readMore();
-                    }
-                  },
-                  (error_) => {
-                    console.error(`getStreamedResponse: read error on POST ${path}`);
-                    observer.error(error_);
-                    observer.complete();
-                  },
-                );
-              };
-              readMore();
+              this._readStreamChunk(reader, { value: new Uint8Array() }, observer, headers, path);
             } else {
               observer.error({ status });
               observer.complete();
@@ -435,6 +414,33 @@ export class Rest implements IRest {
             observer.complete();
           }
         },
+    );
+  }
+
+  private _readStreamChunk(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    dataRef: { value: Uint8Array },
+    observer: Subscriber<{ data: Uint8Array; incomplete: boolean; headers: Headers }>,
+    headers: Headers,
+    path: string,
+  ): void {
+    reader.read().then(
+      ({ done, value }) => {
+        if (done) {
+          observer.next({ data: dataRef.value, incomplete: false, headers });
+          observer.complete();
+        }
+        if (value) {
+          dataRef.value = this.concat(dataRef.value, value);
+          observer.next({ data: dataRef.value, incomplete: true, headers });
+          this._readStreamChunk(reader, dataRef, observer, headers, path);
+        }
+      },
+      (error_) => {
+        console.error(`getStreamedResponse: read error on POST ${path}`);
+        observer.error(error_);
+        observer.complete();
+      },
     );
   }
 
