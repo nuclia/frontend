@@ -425,7 +425,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       } else if (name === RagStrategyName.NEIGHBOURING_PARAGRAPHS) {
         return { name, before: Number.parseInt(rest[0]) || 0, after: Number.parseInt(rest[1]) || 0 };
       } else if (name === RagStrategyName.CONVERSATION) {
-        const maxMessages = Number.parseInt(rest[rest.length - 1], 10);
+        const maxMessages = Number.parseInt(rest.at(-1) ?? '', 10);
         return {
           name,
           attachments_text: rest.includes('attachments_text'),

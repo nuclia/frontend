@@ -439,7 +439,7 @@ export const getEntities = (): Observable<EntityGroup[]> => {
     throw new Error('Nuclia API not initialized');
   }
   if (_entities) {
-    return of(_entities as EntityGroup[]);
+    return of(_entities);
   } else {
     return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
       map(([entityMap, translate]) =>

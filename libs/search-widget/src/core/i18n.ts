@@ -54,7 +54,7 @@ const translate = (
       if (typeof paramValue === 'string') {
         paramValue = paramValue.replace(HTML_TAG_DELIMITERS, (c) => '&#' + c.codePointAt(0) + ';');
       }
-      value = value.replace(new RegExp(`{{${param}}}`, 'g'), paramValue as string);
+      value = value.replaceAll(`{{${param}}}`, paramValue as string);
     });
   }
   return value || key;

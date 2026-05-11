@@ -30,7 +30,7 @@ export class SearchRequestModalComponent {
       if (typeof value === 'object') {
         return [key, JSON.stringify(value)];
       } else {
-        return [key, String(value)];
+        return [key, String(value as string | number | boolean)];
       }
     })
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as any);

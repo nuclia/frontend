@@ -235,7 +235,7 @@ export class RagLabService {
     if (typeof result === 'string') {
       answer = result;
     } else if (result.type === 'answer') {
-      answer = (result as Ask.Answer).text;
+      answer = result.text;
     } else {
       answer = `Error: ${result.detail}`;
     }

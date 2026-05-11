@@ -142,10 +142,10 @@ export class BillingService {
   getStripeSubscription(): Observable<StripeAccountSubscription | null> {
     return this.getSubscription().pipe(
       map((data) => {
-        if (data?.provider !== 'STRIPE') {
-          return null;
-        } else {
+        if (data?.provider === 'STRIPE') {
           return data.subscription as StripeAccountSubscription;
+        } else {
+          return null;
         }
       }),
       catchError(() => of(null)),
@@ -155,10 +155,10 @@ export class BillingService {
   getAwsSubscription(): Observable<AwsAccountSubscription | null> {
     return this.getSubscription().pipe(
       map((data) => {
-        if (data?.provider !== 'AWS_MARKETPLACE') {
-          return null;
-        } else {
+        if (data?.provider === 'AWS_MARKETPLACE') {
           return data.subscription as AwsAccountSubscription;
+        } else {
+          return null;
         }
       }),
     );

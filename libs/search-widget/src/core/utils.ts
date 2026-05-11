@@ -218,10 +218,10 @@ export function slugify(text: string): string {
     text
       .toLowerCase()
       // Strip non allowed characters
-      .replace(/[^\w\s-]+/gi, '')
+      .replaceAll(/[^\w\s-]+/gi, '')
       // Replace white spaces
       .trim()
-      .replace(/\s+/gi, '-')
+      .replaceAll(/\s+/gi, '-')
   );
 }
 

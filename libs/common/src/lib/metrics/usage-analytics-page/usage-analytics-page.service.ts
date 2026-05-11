@@ -38,7 +38,7 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
   ]),
 ) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
-type ScoreFilter = ScoreFilter;
+type ScoreFilter = { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' };
 
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {

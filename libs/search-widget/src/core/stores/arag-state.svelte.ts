@@ -47,7 +47,7 @@ export function getCurrentEntry(): AragChatEntry | undefined {
   return aragAnswerState.entries.at(-1);
 }
 export function getEntryAnswer(entry: AragChatEntry) {
-  return entry.answers.filter((a) => !!a.answer).at(-1);
+  return entry.answers.findLast((a) => !!a.answer);
 }
 export function getEntryVisualizations(entry: AragChatEntry) {
   return entry.answers.filter((a) => !!a.data_visualizations).slice(-1)[0];

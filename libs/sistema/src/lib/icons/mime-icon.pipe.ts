@@ -17,4 +17,4 @@ export class MimeIconPipe implements PipeTransform {
 @Pipe({
   name: 'mimeIcon',
 })
-export class StandaloneMimeIconPipe extends MimeIconPipe {}
+export class StandaloneMimeIconPipe extends MimeIconPipe implements PipeTransform {}
