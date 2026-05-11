@@ -18,7 +18,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 
 interface WidgetWithModel extends Widget.Widget {
-  generativeModel: string;
+  generativeModel?: string;
 }
 
 @Component({
@@ -54,7 +54,7 @@ export class WidgetListComponent {
     shareReplay(1),
   );
 
-  widgetList: Observable<WidgetWithModel[]> = combineLatest([
+  kbWidgetList: Observable<WidgetWithModel[]> = combineLatest([
     this.searchWidgetService.widgetList,
     this.searchWidgetService.supportedSearchConfigurations,
     this.defaultModel,
@@ -68,6 +68,10 @@ export class WidgetListComponent {
       })),
     ),
   );
+  widgetList: Observable<WidgetWithModel[]> = this.inArag.pipe(
+    switchMap((inArag) => (inArag ? this.searchWidgetService.widgetList : this.kbWidgetList)),
+  );
+
   emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
 
   modelNames = this.sdk.currentKb.pipe(
@@ -92,10 +96,9 @@ export class WidgetListComponent {
         filter((confirmed) => !!confirmed),
         map((widgetName) => widgetName as string),
         switchMap((widgetName) =>
-          this.sdk.currentKb.pipe(
+          this.inArag.pipe(
             take(1),
-            switchMap((kb) => forkJoin([kb.getConfiguration(), this.inArag.pipe(take(1))])),
-            switchMap(([configuration, inArag]) => {
+            switchMap((inArag) => {
               if (inArag) {
                 return this.searchWidgetService.createRaoWidget(widgetName, DEFAULT_RAO_WIDGET_CONFIG);
               }
@@ -103,8 +106,6 @@ export class WidgetListComponent {
                 widgetName,
                 DEFAULT_WIDGET_CONFIG,
                 NUCLIA_STANDARD_SEARCH_CONFIG.id,
-                configuration['generative_model'] || '',
-                configuration['default_semantic_model'] || '',
               );
             }),
             switchMap((widgetSlug) => this.router.navigate(['.', widgetSlug], { relativeTo: this.route })),
