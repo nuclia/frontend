@@ -52,7 +52,7 @@ const translate = (
     Object.keys(args).forEach((param) => {
       let paramValue = args[param];
       if (typeof paramValue === 'string') {
-        paramValue = paramValue.replace(HTML_TAG_DELIMITERS, (c) => '&#' + c.codePointAt(0) + ';');
+        paramValue = paramValue.replaceAll(HTML_TAG_DELIMITERS, (c) => '&#' + c.codePointAt(0) + ';');
       }
       value = value.replaceAll(`{{${param}}}`, paramValue as string);
     });

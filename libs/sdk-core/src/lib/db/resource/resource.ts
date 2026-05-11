@@ -151,7 +151,9 @@ export class ReadableResource implements IResource {
   private formatTitle(title?: string): string {
     try {
       return decodeURIComponent(title || '–');
-    } catch (_e) {
+    } catch (e) {
+      // malformed URI sequence — return raw title
+      console.warn('Unable to decode resource title:', e);
       return title || '–';
     }
   }
