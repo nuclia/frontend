@@ -250,7 +250,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig);
       });
 
-    this.updateSpeechSynthesis(this.speechOn);
+    this.speechOn ? this.enableSpeechSynthesis() : this.disableSpeechSynthesis();
   }
 
   ngAfterViewInit() {
@@ -410,12 +410,12 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  updateSpeechSynthesis(speechOn: boolean) {
-    if (speechOn) {
-      this.form.controls.speechSynthesis.enable();
-    } else {
-      this.form.controls.speechSynthesis.setValue(false);
-      this.form.controls.speechSynthesis.disable();
-    }
+  enableSpeechSynthesis() {
+    this.form.controls.speechSynthesis.enable();
+  }
+
+  disableSpeechSynthesis() {
+    this.form.controls.speechSynthesis.setValue(false);
+    this.form.controls.speechSynthesis.disable();
   }
 }
