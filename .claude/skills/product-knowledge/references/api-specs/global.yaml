@@ -31,6 +31,7 @@ paths:
   /api/auth/oauth/consent: {}
   /api/auth/oauth/login: {}
   /api/auth/oauth/logout: {}
+  /api/auth/otp/email: {}
   /api/auth/recover: {}
   /api/auth/refresh: {}
   /api/auth/reset: {}
@@ -42,6 +43,7 @@ paths:
   /api/auth/setpassword: {}
   /api/auth/setupuser: {}
   /api/auth/signup: {}
+  /api/auth/signup/info: {}
   /api/auth/signup/start: {}
   /api/billing/account/{account_id}/aws/current_usage: {}
   /api/billing/account/{account_id}/aws/manual-agreement: {}
@@ -277,7 +279,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-03-13T07:56:59.426946'
+          default: '2026-05-04T16:24:23.082739'
           title: To
       responses:
         '200':
@@ -811,48 +813,63 @@ paths:
   /api/zone/user: {}
   /api/zone/user/token: {}
   /api/zone/users: {}
+  /oauth2/register:
+    post:
+      tags:
+      - Authentication - OAuth
+      summary: Register Oauth Client
+      description: Dynamic Client Registration - create (RFC 7591)
+      operationId: register_oauth_client_oauth2_register_post
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Register Oauth Client Oauth2 Register Post
+  /oauth2/register/{client_id}:
+    put:
+      tags:
+      - Authentication - OAuth
+      summary: Update Oauth Client
+      description: Dynamic Client Registration - update (RFC 7591)
+      operationId: update_oauth_client_oauth2_register__client_id__put
+      parameters:
+      - name: client_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Client Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Update Oauth Client Oauth2 Register  Client Id  Put
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  zone_hub:
-    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
-    last_updated: '2026-03-10T12:18:15.759952'
   accounting:
-    commit: eb3b330d565c8e34e335d110e478a86dad63a2a5
-    last_updated: '2026-03-13T07:56:59.904438'
+    commit: d0001ff3da06bccef3a650f4eb4911f5bccece7d
+    last_updated: '2026-05-04T16:24:23.650978'
+  zone_hub:
+    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
+    last_updated: '2026-05-04T14:48:12.375783'
   idp:
-    commit: 4bbc77ec242883671dfd97c2f8d65e257ca5fed6
-    last_updated: '2026-03-12T16:52:53.042705'
+    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
+    last_updated: '2026-05-04T14:53:32.801512'
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     AWSMarketplaceCustomerData:
       properties:
         first_name:
@@ -1169,6 +1186,7 @@ components:
       - v3starter
       - v3pro
       - v3enterprise
+      - cowork
       - v3fly
       - v3growth
       title: AccountType
@@ -1950,6 +1968,15 @@ components:
       - service
       - version
       title: FlatIdentifier
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     IntervalType:
       type: string
       enum:
@@ -3015,6 +3042,27 @@ components:
       required:
       - account_type
       title: UpgradeStripeSubscription
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     nuclia_accounting__api__models__InvoiceItem:
       properties:
         id:
@@ -3184,6 +3232,9 @@ components:
           anyOf:
           - $ref: '#/components/schemas/SAMLConfig'
           - type: 'null'
+        workflow:
+          $ref: '#/components/schemas/WorkflowMode'
+          default: classic
       type: object
       required:
       - id
@@ -3236,6 +3287,9 @@ components:
           - type: string
           - type: 'null'
           title: Zone
+        workflow:
+          $ref: '#/components/schemas/WorkflowMode'
+          default: classic
       type: object
       required:
       - slug
@@ -3255,6 +3309,16 @@ components:
       - id
       - slug
       title: AccountId
+    AccountLabels:
+      properties:
+        progress_account:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Progress Account
+      additionalProperties: false
+      type: object
+      title: AccountLabels
     AccountLimits:
       properties:
         upload:
@@ -3332,6 +3396,10 @@ components:
           - type: string
           - type: 'null'
           title: Avatar
+        labels:
+          anyOf:
+          - $ref: '#/components/schemas/AccountLabels'
+          - type: 'null'
         blocked_features:
           items:
             $ref: '#/components/schemas/BlockedFeature'
@@ -3381,9 +3449,17 @@ components:
             format: date-time
           - type: 'null'
           title: Trial Expiration Date
+        allow_access_non_enterprise_models:
+          type: boolean
+          title: Allow Access Non Enterprise Models
+          default: true
         saml_config:
           anyOf:
           - $ref: '#/components/schemas/SAMLConfig'
+          - type: 'null'
+        workflow:
+          anyOf:
+          - $ref: '#/components/schemas/WorkflowMode'
           - type: 'null'
       type: object
       required:
@@ -3479,6 +3555,19 @@ components:
             format: date-time
           - type: 'null'
           title: Trial Expiration Date
+        allow_access_non_enterprise_models:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Allow Access Non Enterprise Models
+        workflow:
+          anyOf:
+          - $ref: '#/components/schemas/WorkflowMode'
+          - type: 'null'
+        labels:
+          anyOf:
+          - $ref: '#/components/schemas/AccountLabels'
+          - type: 'null'
       type: object
       title: AccountManagerPatch
     AccountManagerSetBlocking:
@@ -3550,6 +3639,10 @@ components:
           - type: string
           - type: 'null'
           title: Avatar
+        labels:
+          anyOf:
+          - $ref: '#/components/schemas/AccountLabels'
+          - type: 'null'
       type: object
       required:
       - id
@@ -3654,6 +3747,10 @@ components:
             pattern: ^[a-z0-9_-]+$
           - type: 'null'
           title: Slug
+        workflow:
+          anyOf:
+          - $ref: '#/components/schemas/WorkflowMode'
+          - type: 'null'
       type: object
       title: AccountModification
     AccountRole:
@@ -3749,6 +3846,10 @@ components:
         upload_limit_max_non_media_file_size:
           type: integer
           title: Upload Limit Max Non Media File Size
+        allow_access_non_enterprise_models:
+          type: boolean
+          title: Allow Access Non Enterprise Models
+          default: true
       type: object
       required:
       - max_kbs
@@ -3896,6 +3997,10 @@ components:
           title: Blocked Features
         upload_limits:
           $ref: '#/components/schemas/AccountUploadLimits'
+        allow_access_non_enterprise_models:
+          type: boolean
+          title: Allow Access Non Enterprise Models
+          default: true
       type: object
       required:
       - account_type
@@ -4003,6 +4108,20 @@ components:
         app:
           type: string
           title: App
+        fullname:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Fullname
+        company:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Company
+        workflow:
+          anyOf:
+          - $ref: '#/components/schemas/WorkflowMode'
+          - type: 'null'
       type: object
       required:
       - email
@@ -4258,6 +4377,9 @@ components:
           - type: string
           - type: 'null'
           title: Zone
+        workflow:
+          $ref: '#/components/schemas/WorkflowMode'
+          default: classic
         type:
           $ref: '#/components/schemas/AccountType'
       type: object
@@ -4695,11 +4817,15 @@ components:
     SignupRequest:
       properties:
         name:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Name
         email:
-          type: string
-          format: email
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
           title: Email
         password:
           type: string
@@ -4711,8 +4837,6 @@ components:
           title: Login Challenge
       type: object
       required:
-      - name
-      - email
       - password
       title: SignupRequest
     SignupResponse:
@@ -5012,6 +5136,12 @@ components:
       - email
       - type
       title: WelcomeUser
+    WorkflowMode:
+      type: string
+      enum:
+      - classic
+      - cowork
+      title: WorkflowMode
     Zone:
       properties:
         id:

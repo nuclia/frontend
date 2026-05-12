@@ -4,7 +4,8 @@ import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { DroppedFile, SDKService } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 import { SimpleKBService } from './simple-kb.service';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
 
@@ -19,6 +20,8 @@ export class SimpleKBComponent {
   private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
+  private toaster = inject(SisToastService);
+  private translate = inject(TranslateService);
   private sdk = inject(SDKService);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
@@ -111,7 +114,14 @@ export class SimpleKBComponent {
 
   onFilesSelected(files: File[] | FileList | DroppedFile[]) {
     const fileTypes = getFilesGroupedByType(files);
-    this.uploadFiles([...fileTypes.mediaFiles, ...fileTypes.nonMediaFiles]);
+    const allowedMediaFiles = fileTypes.mediaFiles.filter((file) => {
+      const type = file.type?.split('/')[0];
+      return type !== 'audio' && type !== 'video';
+    });
+    if (allowedMediaFiles.length < fileTypes.mediaFiles.length) {
+      this.toaster.warning(this.translate.instant('simple.no-video-audio'));
+    }
+    this.uploadFiles([...allowedMediaFiles, ...fileTypes.nonMediaFiles]);
   }
 
   goToStep3() {
