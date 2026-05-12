@@ -70,7 +70,7 @@
           </pa-select>
         </div>
         @if (isSyncDriver) {
-          @if (kb && (syncConfigs | async)?.length === 0) {
+          @if (kb && !loadingSyncs() && (syncConfigs | async)?.length === 0) {
             <nsi-info-card
               type="warning"
               icon="warning">
@@ -121,7 +121,7 @@
               [label]="'retrieval-agents.drivers.form.nuclia.connections.ids' | translate"></app-array-string-field>
           } @else {
             @let options = syncConfigOptions | async;
-            @if ((options || []).length > 0) {
+            @if (!loadingSyncs() && (options || []).length > 0) {
               <label>{{ 'retrieval-agents.drivers.form.nuclia.connections.label' | translate }}</label>
               <div class="connections-container">
                 @for (control of form.controls.connection_ids.controls; track control) {

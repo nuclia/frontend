@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import {
@@ -20,7 +20,7 @@ import {
   SyncDriver,
 } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { catchError, combineLatest, defer, filter, map, merge, of, shareReplay, startWith, switchMap, take } from 'rxjs';
+import { combineLatest, defer, filter, map, merge, of, shareReplay, startWith, switchMap, take, tap } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 import { getListFromTextarea } from '../../arag.utils';
 import { FilterExpressionModalComponent } from '../../../search-widget/search-configuration/filter-expression-modal';
@@ -67,6 +67,7 @@ export class NucliaDriverModalComponent {
 
   isEdit: boolean;
   isSyncDriver: boolean;
+  loadingSyncs = signal(false);
 
   get keyControl() {
     return this.form.controls.key;
@@ -104,12 +105,10 @@ export class NucliaDriverModalComponent {
       this.kbList.map((kb) => kb.id).includes(kbid)
         ? this.sdk.currentAccount.pipe(
             take(1),
+            tap(() => this.loadingSyncs.set(true)),
             switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.id, kbid)),
             switchMap((kb) => kb.syncManager.getConfigs()),
-            catchError(() => {
-              // User has no permissions on the Knowledege Box
-              return of([]);
-            }),
+            tap(() => this.loadingSyncs.set(false)),
           )
         : of([]),
     ),

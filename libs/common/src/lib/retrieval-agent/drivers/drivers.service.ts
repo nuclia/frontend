@@ -68,7 +68,7 @@ export class DriversService {
   );
 
   kbList$ = combineLatest([this.sdk.currentArag, this.sdk.kbList]).pipe(
-    map(([arag, kbList]) => kbList.filter((kb) => kb.zone === arag.zone)),
+    map(([arag, kbList]) => kbList.filter((kb) => kb.zone === arag.zone && !!kb.role_on_kb)),
   );
 
   // Computed properties (accessible as signals)
