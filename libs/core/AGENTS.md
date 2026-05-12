@@ -34,7 +34,6 @@ libs/core/src/lib/
 │   ├── auth.guard.ts               # authGuard (functional) — checks JWT_KEY or ?token= or ?signup_token=
 │   ├── auth.service.ts             # Stores pre-login redirect URL in localStorage; setSignUpToken()
 │   ├── login.service.ts            # Password auth REST calls
-│   ├── metrics.guards.ts           # metricsEnabledGuard / metricsDisabledGuard (CanMatchFn)
 │   ├── oauth.service.ts            # OAuth/Hydra consent
 │   ├── saml.service.ts             # SAML/SSO token exchange
 │   └── account-verification.service.ts  # Force-reauth support; reads last_verified_at from JWT
@@ -134,8 +133,6 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 | `aragOwnerGuard`           | ARAG owner required                                                                                                                                                                                             |
 | `selectAccountGuard`       | Redirects if account already selected                                                                                                                                                                           |
 | `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                               |
-| `metricsEnabledGuard`      | `canMatch` — true when `FeaturesService.unstable.metrics` is on (in `@flaps/core`)                                                                                                                              |
-| `metricsDisabledGuard`     | `canMatch` — true when `FeaturesService.unstable.metrics` is off (in `@flaps/core`)                                                                                                                             |
 | `redirectToSignUp`         | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in platform + rao after signup migrated away from the monorepo. |
 
 ---
@@ -161,4 +158,4 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 
 8. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.
 
-9. **`metricsEnabledGuard` / `metricsDisabledGuard`** live in `libs/core/src/lib/auth/metrics.guards.ts` (not in `libs/common`). They are `CanMatchFn` guards, not `CanActivateFn`. Use them to serve two different route configurations for the same `/metrics` path.
+9. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.

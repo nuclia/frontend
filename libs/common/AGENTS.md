@@ -24,6 +24,7 @@ charts/            ← Reusable chart components (bar, line, range) using base-c
 entities/          ← NER entity group management
 guards/            ← All route guards (functional, not class-based)
 metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5 sub-pages)
+  activity/        ← "Detailed logs" — ActivityModule (lazy inside MetricsModule at /metrics/detailed)
   rag-advice/      ← AI-generated advice on how to improve RAG scores (RagAdviceService + RagAdviceComponent)
   remi-score-badge/← Coloured badge for REMI score display (RemiScoreBadgeComponent)
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
@@ -102,16 +103,22 @@ Apps import modules directly from `libs/common/src/lib/...` in `loadChildren` ca
 
 ## Metrics Module — Gotchas
 
-Dashboard-only feature at `libs/common/src/lib/metrics/` lazy-loaded via `MetricsModule` (guarded by `knowledgeBoxOwnerGuard` + `metricsEnabledGuard`).
+Dashboard-only feature at `libs/common/src/lib/metrics/` lazy-loaded via `MetricsModule` (guarded by `knowledgeBoxOwnerGuard` in app routing).
 
-### Legacy vs New metrics
+### Sub-pages
 
-Two parallel implementations exist:
+`MetricsModule` has 6 child routes:
 
-- **`metrics/legacy/`** — `LegacyRemiMetricsPageComponent` + `LegacyRemiMetricsModule`. Used when `FeaturesService.unstable.metrics` is **off**. The original REMI-only view.
-- **`metrics/`** (new) — `MetricsModule` with full sub-pages. Used when `FeaturesService.unstable.metrics` is **on**.
+| Route                   | Component                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| `usage-analytics`       | `UsageAnalyticsPageComponent`                                                            |
+| `tokens-and-time-usage` | `CostTokenUsagePageComponent`                                                            |
+| `resource-activity`     | `ResourceActivityPageComponent`                                                          |
+| `search-activity`       | `SearchActivityPageComponent`                                                            |
+| `remi-analytics`        | `RemiAnalyticsPageComponent`                                                             |
+| `detailed`              | `ActivityModule` (lazy) — "Detailed Logs": CSV/NDJSON download with resource/search tabs |
 
-Routes are split with `canMatch` guards (`metricsEnabledGuard` / `metricsDisabledGuard`) in the app routing; `ActivityModule` is also disabled when metrics are enabled (activity lives inside the new `MetricsModule`).
+`ActivityModule` (`metrics/activity/`) contains `ActivityDownloadComponent`, `ActivityLogTableComponent`, and `ActivityService` (polls `DownloadStatus: 'pending' | 'ready'`). This module replaces the former standalone `/activity` app-level route.
 
 ### Abstract service pattern
 

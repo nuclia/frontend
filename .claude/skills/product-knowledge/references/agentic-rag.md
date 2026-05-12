@@ -25,12 +25,14 @@ A **Retrieval Agent** is an advanced RAG orchestration layer that goes beyond a 
 
 A driver exposes a specific information source to the agent. The driver's **name and description** matter — the agent uses them to decide which source is relevant for a given query.
 
-| Driver type    | Source                                                                       |
-| -------------- | ---------------------------------------------------------------------------- |
-| **NucliaDB**   | One of your Agentic RAG Knowledge Boxes; auto-creates API key if same region |
-| **Google**     | Gemini via Google API or Vertex AI                                           |
-| **Perplexity** | Internet search via Perplexity API                                           |
-| **MCP server** | Any MCP server via endpoint URL + auth                                       |
+| Driver type    | Source                                                                          |
+| -------------- | ------------------------------------------------------------------------------- |
+| **NucliaDB**   | One of your Agentic RAG Knowledge Boxes; auto-creates API key if same region    |
+| **Google**     | Gemini via Google API or Vertex AI                                              |
+| **Perplexity** | Internet search via Perplexity API                                              |
+| **MCP server** | Any MCP server via endpoint URL + auth                                          |
+| **SQL**        | Any relational database via connection URI (PostgreSQL, MySQL, etc.)            |
+| **Snowflake**  | Snowflake database (account + user + warehouse + database; password or PEM key) |
 
 ### Workflow
 
@@ -50,6 +52,9 @@ Preprocess → Retrieval context → Generation → Postprocess
 - **Perplexity**: Internet search via Perplexity driver.
 - **Google**: Gemini search via Google driver.
 - **MCP**: Calls tools on configured MCP servers.
+- **SQL** _(beta)_: Natural-language queries over a relational database (via SQL driver). Configurable: conversion model, dynamic table selection, `include_tables`/`ignore_tables`, sample rows, index info, retry count.
+- **Snowflake** _(beta)_: Natural-language queries over Snowflake (via Snowflake driver). Works like SQL agent with Snowflake-specific dialect guidance; supports `max_result_rows`, schema override, dynamic table selection.
+- **Pandas** _(beta)_: Queries over a `.csv` dataframe. Configurable: conversion model, sample rows, retry count.
 
 #### 3. Generation
 

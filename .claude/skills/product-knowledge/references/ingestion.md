@@ -11,7 +11,7 @@ _Source: `../docs/docs/ingestion/`_
 | REST API / Python SDK / JS SDK        | Automated / repeatable ingestion                                      |
 | Agentic RAG Dashboard (upload / sync) | One-time or manual ingestion                                          |
 | CLI (`nuclia` command)                | Scripted one-time ingestion                                           |
-| Sync Agent                            | Continuous watch of external sources (Google Drive, SharePoint, etc.) |
+| Sync Agent / Cloud Storage Sync       | Continuous watch of external sources (Google Drive, SharePoint, etc.) |
 
 **Regions:** Europe or USA. Chosen at KB creation time. Storage limits vary by account tier.
 
@@ -118,6 +118,18 @@ Reusable configurations controlling how content is chunked.
 
 - Same lifecycle as extract strategies (create, list, delete — no update).
 - Applied per-upload via `split_strategy` ID parameter.
+
+---
+
+## Cloud Storage Sync
+
+Automatic, scheduled synchronisation of documents from external cloud storage into a Knowledge Box. Supported providers: Google Drive, Microsoft SharePoint & OneDrive, Dropbox, AWS S3, ShareFile.
+
+- **Initial sync**: All files from the configured source are imported into the KB.
+- **Incremental sync**: Subsequent runs only process new/modified files.
+- **Deletion handling**: Automatic deletion in the KB when source files are deleted is supported for Google Drive, SharePoint/OneDrive, and Dropbox. AWS S3 and ShareFile do **not** auto-delete — removed source files remain in the KB.
+
+SharePoint/OneDrive supports two auth modes: **OAuth** (user-delegated, `Sites.Selected` scope — admin must grant per-site) and **Certificate credentials** (app-only OAuth 2.0 client credentials flow using a `.pfx` certificate + Azure App Registration).
 
 ---
 
