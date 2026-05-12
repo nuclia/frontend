@@ -59,7 +59,7 @@
             id="kb"
             externalLabel
             formControlName="kbid"
-            (valueChange)="form.value.kbid === $event ? null : resetConnections($event)">
+            (valueChange)="form.value.kbid === $event ? null : resetConnections()">
             @for (kb of kbList; track kb.id) {
               <pa-option
                 [value]="kb.id"
