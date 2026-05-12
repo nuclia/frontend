@@ -21,7 +21,7 @@ describe('RagAdviceService', () => {
   it('ignores advisor model suggestions while keeping supported params', async () => {
     post.mockReturnValue(
       of(
-        String.raw`{"item":{"type":"answer","text":"DIAGNOSIS: Retrieval needs more context.\nSUGGESTIONS:\n1. Increase top_k.\nPARAMS_JSON: \u007B\"model\":\"chatgpt-azure-4o\",\"topK\":12\u007D"}}`,
+        '{"item":{"type":"answer","text":"DIAGNOSIS: Retrieval needs more context.\\nSUGGESTIONS:\\n1. Increase top_k.\\nPARAMS_JSON: \\u007B\\"model\\":\\"chatgpt-azure-4o\\",\\"topK\\":12\\u007D"}}',
       ),
     );
 

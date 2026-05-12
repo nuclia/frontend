@@ -172,19 +172,19 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
     month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/\d{4}-\d{2}/), DateAfter('2024-08')],
+      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
   noAnswerCriteria = new FormGroup({
     month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/\d{4}-\d{2}/), DateAfter('2024-08')],
+      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
   badFeedbackCriteria = new FormGroup({
     month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(/\d{4}-\d{2}/), DateAfter('2024-08')],
+      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
 
