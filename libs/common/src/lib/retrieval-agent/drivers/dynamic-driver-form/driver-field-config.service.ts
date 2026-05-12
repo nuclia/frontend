@@ -130,36 +130,47 @@ export class DriverFieldConfigService {
     if (property['const']) return 'const';
     if (property.enum) return 'enum';
     if (property.$ref) {
+      // Any $ref without schema context should be treated as a subform
       return schema ? this.resolveRefType(property.$ref, schema) : 'ref';
     }
     if (property.type) {
+      // Handle array of types or single type
       return Array.isArray(property.type) ? (property.type[0] as string) : (property.type as string);
     }
     if (property.anyOf) {
+      // Check if any anyOf contains a $ref (subform)
       return this.determineFieldTypeFromAnyOf(property.anyOf, schema);
     }
     return 'string';
   }
 
   private resolveRefType(ref: string, schema: JSONSchema4): string {
+    // Resolve the $ref and check what type it actually is
     const resolved = this.resolveRef(ref, schema);
+    // Fallback to subform if can't resolve
     if (!resolved) return 'ref';
+    // Check if the resolved schema is an enum
     if (resolved.enum) return 'enum';
+    // Check if it has other simple types
     if (resolved.type && !resolved.properties) return resolved.type;
+    // Otherwise treat as subform
     return 'ref';
   }
 
   private determineFieldTypeFromAnyOf(anyOf: any[], schema?: JSONSchema4): string {
     const refObj = anyOf.find((t: any) => t.$ref);
     if (refObj?.$ref) {
+      // Resolve the ref and check if it's an enum
       if (schema) {
         const resolved = this.resolveRef(refObj.$ref, schema);
         if (resolved?.enum) return 'enum';
       }
       return 'ref';
     }
+    // Check if it's an array type with references
     const arrayObj = anyOf.find((t: any) => t.type === 'array' && t.items?.$ref);
-    if (arrayObj) return 'array';
+    if (arrayObj) return 'array'; // Keep as array but items might be subforms
+    // Prefer first non-null type
     const typeObj = anyOf.find((t: any) => t.type && t.type !== 'null');
     if (typeObj?.type) {
       const type = Array.isArray(typeObj.type) ? typeObj.type[0] : typeObj.type;

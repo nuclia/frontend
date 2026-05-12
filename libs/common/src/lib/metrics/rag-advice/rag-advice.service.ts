@@ -175,6 +175,7 @@ export class RagAdviceService {
     const { question, answer, context, remiScores, params, status, userExpectation, iterationHistory } = input;
     const formattedStatus = this.formatStatus(status);
 
+    // ── Situation block ───────────────────────────────────────────────────────
     const lines: string[] = [
       `You are an expert in Retrieval-Augmented Generation (RAG) systems.`,
       `A user needs help diagnosing why their knowledge base query is performing poorly.`,
@@ -192,8 +193,10 @@ export class RagAdviceService {
     if (context) {
       lines.push(``, `Retrieved context (first 1000 chars):`, context.slice(0, 1000));
     }
+    // ── Exploration history ───────────────────────────────────────────────────
     this.appendIterationHistory(lines, iterationHistory);
 
+    // ── Parameter reference (descriptive, not prescriptive) ───────────────────
     lines.push(
       ``,
       `What each parameter controls:`,
@@ -207,8 +210,9 @@ export class RagAdviceService {
       `    metadata_extension — attach document metadata (labels, categories) to each passage.`,
       `    graph_beta — graph traversal to find related entities (hops=1). Helps with concept-heavy or relational queries.`,
       `  systemPrompt: instruction sent to the LLM (e.g. "answer only from the provided context").`,
+      // ── Task ─────────────────────────────────────────────────────────────────
       ``,
-      `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? ' Factor in the user\'s stated expectation.' : ''} Write:`,
+      `Look at the scores and what happened in previous rounds, then reason about which part of the pipeline is failing for this specific question.${userExpectation ? " Factor in the user's stated expectation." : ''} Write:`,
       ``,
       `DIAGNOSIS: 1–2 sentences explaining what the scores reveal about where the pipeline is failing. Reference the actual values.`,
       ``,
@@ -236,13 +240,19 @@ export class RagAdviceService {
     if (!remiScores) return;
     lines.push(``, `Quality scores (scale 0–5, higher is better):`);
     if (remiScores.answerRelevance !== undefined) {
-      lines.push(`  Answer Relevance ${remiScores.answerRelevance.toFixed(2)}/5 — does the answer address the question?`);
+      lines.push(
+        `  Answer Relevance ${remiScores.answerRelevance.toFixed(2)}/5 — does the answer address the question?`,
+      );
     }
     if (remiScores.contextRelevance !== undefined) {
-      lines.push(`  Context Relevance ${remiScores.contextRelevance.toFixed(2)}/5 — did retrieval find content relevant to the question?`);
+      lines.push(
+        `  Context Relevance ${remiScores.contextRelevance.toFixed(2)}/5 — did retrieval find content relevant to the question?`,
+      );
     }
     if (remiScores.groundedness !== undefined) {
-      lines.push(`  Groundedness ${remiScores.groundedness.toFixed(2)}/5 — is the answer supported by the retrieved content?`);
+      lines.push(
+        `  Groundedness ${remiScores.groundedness.toFixed(2)}/5 — is the answer supported by the retrieved content?`,
+      );
     }
   }
 
@@ -308,29 +318,38 @@ export class RagAdviceService {
   }
 
   private extractDiagnosis(rawResponse: string): string {
+    // Extract DIAGNOSIS section — try plain `DIAGNOSIS:` first, fall back to `## DIAGNOSIS` header.
     const diagnosisMatch =
-      /DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse) ??
-      /##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse);
+      /DIAGNOSIS:\s*([\s\S]+?)(?=\n\nSUGGESTIONS:|\nSUGGESTIONS:|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(
+        rawResponse,
+      ) ?? /##\s*DIAGNOSIS\s*\n([\s\S]+?)(?=\n##\s*SUGGESTIONS|\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse);
     return diagnosisMatch ? diagnosisMatch[1].trim() : rawResponse.trim();
   }
 
   private extractSuggestions(rawResponse: string): string[] {
+    // Extract SUGGESTIONS section — try plain `SUGGESTIONS:` first, fall back to `## SUGGESTIONS` header.
+    // Capture numbered list items; strip **bold** markdown from each item before storing.
     const suggestionsBlockMatch =
       /SUGGESTIONS:\s*\n([\s\S]+?)(?=\n\nPARAMS_JSON:|\nPARAMS_JSON:|$)/.exec(rawResponse) ??
       /##\s*SUGGESTIONS\s*\n([\s\S]+?)(?=\n##\s*\w|\nPARAMS_JSON:|$)/.exec(rawResponse);
     if (!suggestionsBlockMatch) return [];
-    return suggestionsBlockMatch[1]
-      .split('\n')
-      .filter((line) => /^\s*\d+\.\s+/.test(line))
-      .map((line) => (/^\s*\d+\.\s+(.+)/.exec(line) as RegExpExecArray)[1].trim().replaceAll(/\*\*(.+?)\*\*/g, '$1'));
+    return (
+      suggestionsBlockMatch[1]
+        .split('\n')
+        .filter((line) => /^\s*\d+\.\s+/.test(line))
+        // Strip **bold** markers (replace **text** with text)
+        .map((line) => (/^\s*\d+\.\s+(.+)/.exec(line) as RegExpExecArray)[1].trim().replaceAll(/\*\*(.+?)\*\*/g, '$1'))
+    );
   }
 
   private parseParamsJson(rawResponse: string): Record<string, unknown> | undefined {
+    // Extract PARAMS_JSON section — two-stage approach to handle well-formed and malformed output.
+    // Grab everything after "PARAMS_JSON:" on its line (single-line content from the LLM).
     const paramsLineMatch = /PARAMS_JSON:(.+)/.exec(rawResponse);
     if (!paramsLineMatch) return undefined;
     const lineContent = paramsLineMatch[1];
 
-    // Stage 1: well-formed JSON block
+    // Stage 1 — well-formed path: locate a {...} block, strip inline comments, JSON.parse.
     const jsonBlockMatch = /\{[^}]*\}/.exec(lineContent);
     if (jsonBlockMatch) {
       const jsonText = jsonBlockMatch[0].replace(/\/\/[^\n]*/g, '').trim();
@@ -342,19 +361,34 @@ export class RagAdviceService {
       }
     }
 
-    // Stage 1.5: missing opening brace pattern
+    // Stage 1.5 — handle the KB's consistent "missing opening {" pattern.
+    // The KB always outputs `PARAMS_JSON: firstKey": value, "key2": value2` (opening `{` and first `"`
+    // are stripped). Wrap the line content and try parsing before the full Stage 2 scan.
     try {
       const reconstructed = '{"' + lineContent.trim() + '}';
       const parsed = JSON.parse(reconstructed);
       if (this.isSuggestedParamsRecord(parsed)) return parsed;
-    } catch { /* fall through to Stage 2 */ }
+    } catch {
+      /* Truncated or otherwise unparseable — fall through to Stage 2 */
+    }
 
     return this.parseParamsJsonStage2(lineContent);
   }
 
   private parseParamsJsonStage2(lineContent: string): Record<string, unknown> | undefined {
-    const KNOWN_KEYS = ['minScoreSemantic', 'minScoreBm25', 'topK', 'ragStrategies', 'systemPrompt', 'rephrase'] as const;
+    // Stage 2 — fallback: extract individual key-value pairs when no valid {...} block exists.
+    // Handles output like `PARAMS_JSON:minScoreSemantic": 0.3` (missing braces, stray quotes).
+    const KNOWN_KEYS = [
+      'minScoreSemantic',
+      'minScoreBm25',
+      'topK',
+      'ragStrategies',
+      'systemPrompt',
+      'rephrase',
+    ] as const;
     type KnownKey = (typeof KNOWN_KEYS)[number];
+    // Match: optional leading junk, word-char key, optional stray `"`, colon+space, value.
+    // Value may be: a JSON array [...], a quoted string "...", a bare boolean, or a bare number.
     const kvRegex = /[^,\w]*(\w+)"?\s*:\s*(\[[^\]]*\]|"[^"]*"|true|false|-?\d+(?:\.\d+)?)/g;
     const extracted: Record<string, unknown> = {};
     let kvMatch: RegExpExecArray | null;
@@ -363,7 +397,11 @@ export class RagAdviceService {
       if (!(KNOWN_KEYS as readonly string[]).includes(key)) continue;
       const rawVal = kvMatch[2];
       if (rawVal.startsWith('[')) {
-        try { extracted[key] = JSON.parse(rawVal); } catch { /* skip */ }
+        try {
+          extracted[key] = JSON.parse(rawVal);
+        } catch {
+          /* Unparseable array — skip this key */
+        }
       } else if (rawVal === 'true') {
         extracted[key] = true;
       } else if (rawVal === 'false') {
@@ -382,6 +420,9 @@ export class RagAdviceService {
   }
 
   private extractInlineParams(suggestions: string[]): Record<string, unknown> | undefined {
+    // Inline-value fallback — when PARAMS_JSON is absent entirely (e.g. markdown-format response
+    // that never emitted the line), scan all suggestion text for parameter values mentioned inline.
+    // Best-effort only: extracts the first matched value for each recognised pattern.
     if (suggestions.length === 0) return undefined;
     const text = suggestions.join('\n');
     const extracted: Record<string, unknown> = {};
@@ -395,13 +436,19 @@ export class RagAdviceService {
   }
 
   private validateSuggestedParams(raw: Record<string, unknown>): SuggestedAdviceParams {
+    // Post-parse validation: ensure min_score_* params are within their valid ranges regardless
+    // of which parse stage succeeded. minScoreSemantic is in 0.0–1.0; minScoreBm25 is in 0.0–10.0
+    // (BM25 scores are not bounded at 1.0). Discards values where the LLM confused scales
+    // (e.g. it output 2.6 for a semantic score when it meant "current score 2.5 + 0.1").
     if (raw['model'] !== undefined) {
       console.warn('[RagAdviceService] post-parse: ignoring unsupported advisor model suggestion');
       delete raw['model'];
     }
     const semanticVal = raw['minScoreSemantic'];
     if (typeof semanticVal === 'number' && (semanticVal > 1 || semanticVal < 0)) {
-      console.warn(`[RagAdviceService] post-parse: minScoreSemantic value ${semanticVal} is out of 0–1 range, discarding`);
+      console.warn(
+        `[RagAdviceService] post-parse: minScoreSemantic value ${semanticVal} is out of 0–1 range, discarding`,
+      );
       delete raw['minScoreSemantic'];
     }
     const bm25Val = raw['minScoreBm25'];
@@ -416,4 +463,3 @@ export class RagAdviceService {
     return !!value && typeof value === 'object' && !Array.isArray(value);
   }
 }
-

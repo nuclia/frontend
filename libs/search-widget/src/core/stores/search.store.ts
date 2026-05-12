@@ -437,7 +437,8 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
       return filterExpression?.field;
     })();
     const paragraph = (() => {
-      if (filterExpression?.paragraph && hasParagraphFilters) return { and: [filterExpression.paragraph, paragraphFilters] };
+      if (filterExpression?.paragraph && hasParagraphFilters)
+        return { and: [filterExpression.paragraph, paragraphFilters] };
       if (hasParagraphFilters) return paragraphFilters;
       return filterExpression?.paragraph;
     })();
@@ -931,6 +932,11 @@ const SpreadsheetContentTypes = new Set([
   'application/vnd.oasis.opendocument.spreadsheet',
 ]);
 function getFileResultType(file: FileFieldData['value']['file']): { resultType: ResultType; resultIcon: string } {
+  // for audio, video, image or text, we have a corresponding tile
+  // for mimetype starting with 'application/', it is more complex:
+  // - anything like a spreadsheet is a spreadsheet
+  // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
+  // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
   const contentType = file?.content_type || '';
   if (contentType.startsWith('audio')) return { resultType: 'audio', resultIcon: 'audio' };
   if (contentType.startsWith('video')) return { resultType: 'video', resultIcon: 'video' };
@@ -1027,7 +1033,10 @@ function processParagraphCitation(
   shortFieldType: string,
   fieldId: string,
   index: number,
-  context: { augmentedContext: Ask.Answer['augmentedContext']; metadata: ReturnType<typeof displayedMetadata.getValue> },
+  context: {
+    augmentedContext: Ask.Answer['augmentedContext'];
+    metadata: ReturnType<typeof displayedMetadata.getValue>;
+  },
 ): void {
   const { augmentedContext, metadata } = context;
   let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
@@ -1041,8 +1050,11 @@ function processParagraphCitation(
   paragraph.rank = index + 1;
   const field: FieldId =
     shortFieldType === SHORT_FIELD_TYPE.generic
-      ? getNonGenericField(resource.data || {})
-      : { field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic, field_id: fieldId };
+      ? getNonGenericField(resource.data || {}) // we take the first other field that is not generic
+      : {
+          field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+          field_id: fieldId,
+        };
 
   const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
   if (existing) {
@@ -1090,6 +1102,13 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   if (answer.citations) {
     citationIds = Object.keys(answer.citations);
   } else if (answer.citation_footnote_to_context) {
+    // With llm_footnotes, the generated answer contains numbered markers (like `[1]`)
+    // directly in the text. And at the end of the generated answer, there is a list of
+    // references, like `[1]: block-AB`.
+    // The `footnote_to_context` entry gives the mapping between theses block ids and the
+    // actual paragraph ids.
+    // To attribute the proper citation to the proper marker, we extract the marker numbers from the
+    // generated answer, and we sort the list of sources accordingly.
     const orderedBlocks = parseFootenotes(answer.text || '').map((entry) => entry.block);
     citationIds = Object.entries(answer.citation_footnote_to_context)
       .sort((entry1, entry2) => orderedBlocks.indexOf(entry1[0]) - orderedBlocks.indexOf(entry2[0]))
@@ -1097,14 +1116,23 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
   }
   const augmentedContext = answer.augmentedContext;
   return citationIds.reduce<TypedResult[]>((acc, citationId, index) => {
+    // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
+    // Note: the widget does not support extra_context, but a proxy could be injecting some
+    // and it must not break the widget. The objective is not to display the citations properly in this case
+    // (as customer should implement their own widget to handle this case), but just to not break the widget.
     if (!citationId.includes('/')) return acc;
     const citationPath = citationId.split('/');
     const [resourceId, shortFieldType, fieldId] = citationPath;
     const resource = resources[resourceId];
     const graphPrequeryResource = graphPrequeryResources[resourceId];
     if (resource && citationPath.length === 4) {
-      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, { augmentedContext, metadata });
+      // the citation is about a paragraph
+      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, {
+        augmentedContext,
+        metadata,
+      });
     } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+      // the citation is about a resource or a relation
       const res = resources[resourceId] || graphPrequeryResource;
       processResourceCitation(acc, res, resource, shortFieldType, fieldId, index, metadata);
     }

@@ -99,6 +99,7 @@ export abstract class FormDirective {
     let type = resolvedProperty.type;
     const defaultValue = resolvedProperty.default ?? null;
 
+    // Handle anyOf
     if (resolvedProperty.anyOf) {
       const firstType = resolvedProperty.anyOf.find((t: any) => t.type && t.type !== 'null');
       if (firstType) {
@@ -109,9 +110,11 @@ export abstract class FormDirective {
       }
     }
 
+    // Check if this field should be a multiselect (has additionalProps.multiselect)
     const fieldConfig = this.fieldConfigService.getFieldConfig(propKey, resolvedProperty, schema, key);
     const isMultiselect = fieldConfig.additionalProps?.['multiselect'] === true;
 
+    // Check if this is a subform field (contains $ref)
     if (this.fieldConfigService.isSubformField(property, agentSchema)) {
       return this.createNestedFormGroupForRef(property, agentSchema);
     } else if (type === 'array' || property.items || isMultiselect) {
@@ -126,13 +129,21 @@ export abstract class FormDirective {
   }
 
   private createArrayControl(propKey: string, defaultValue: any, isMultiselect: boolean): FormArray<FormControl<any>> {
+    // Prefer config value over default for array fields
     let initialArrayValues: any[] = [];
+    // If config exists and has a value for this key, use it
     if (this.config && (this.config as any)[propKey] !== undefined) {
       const configValue = (this.config as any)[propKey];
       if (Array.isArray(configValue)) {
         initialArrayValues = configValue;
       } else if (typeof configValue === 'string' && isMultiselect) {
-        initialArrayValues = configValue ? configValue.split(',').map((v) => v.trim()).filter(Boolean) : [];
+        // For multiselect fields, convert comma-separated string to array
+        initialArrayValues = configValue
+          ? configValue
+              .split(',')
+              .map((v) => v.trim())
+              .filter(Boolean)
+          : [];
       }
     } else if (Array.isArray(defaultValue)) {
       initialArrayValues = defaultValue;
@@ -143,13 +154,16 @@ export abstract class FormDirective {
   }
 
   private createNestedFormGroupForRef(property: JSONSchema4, agentSchema: JSONSchema4): FormGroup {
+    // Get the $ref from the property
     const refPath = property.$ref ?? property.anyOf?.find((item: any) => item.$ref)?.$ref ?? null;
     if (!refPath?.startsWith('#/$defs/')) return new FormGroup({});
 
+    // Resolve the reference
     const defName = refPath.replace('#/$defs/', '');
     const resolvedSchema = agentSchema['$defs']?.[defName] as JSONSchema4;
     if (!resolvedSchema?.properties) return new FormGroup({});
 
+    // Create form controls for the resolved schema
     const nestedGroup: { [key: string]: any } = {};
     for (const [propKey, prop] of Object.entries(resolvedSchema.properties)) {
       nestedGroup[propKey] = this.createNestedFormControl(propKey, prop as JSONSchema4, agentSchema);
@@ -161,11 +175,13 @@ export abstract class FormDirective {
     let type = nestedProperty.type;
     const defaultValue = nestedProperty.default ?? null;
 
+    // Handle anyOf
     if (nestedProperty.anyOf) {
       const firstType = nestedProperty.anyOf.find((t: any) => t.type && t.type !== 'null');
       if (firstType) type = firstType.type;
     }
 
+    // Check for nested subforms
     if (this.fieldConfigService.isSubformField(nestedProperty, agentSchema)) {
       return this.createNestedFormGroupForRef(nestedProperty, agentSchema);
     } else if (type === 'array') {
