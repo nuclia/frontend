@@ -1,0 +1,17 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.connections-container {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.connection {
+  display: flex;
+  gap: rhythm(1);
+  width: 100%;
+  pa-select {
+    flex: 1 0 auto;
+  }
+}

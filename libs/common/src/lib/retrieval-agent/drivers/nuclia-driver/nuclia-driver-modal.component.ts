@@ -4,6 +4,7 @@ import { SDKService } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
+  OptionModel,
   PaButtonModule,
   PaModalModule,
   PaTextFieldModule,
@@ -19,17 +20,19 @@ import {
   SyncDriver,
 } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { filter, map, of, switchMap, take } from 'rxjs';
+import { catchError, combineLatest, defer, filter, map, merge, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 import { getListFromTextarea } from '../../arag.utils';
 import { FilterExpressionModalComponent } from '../../../search-widget/search-configuration/filter-expression-modal';
 import { ArrayStringFieldComponent } from '../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
   imports: [
     ArrayStringFieldComponent,
+    CommonModule,
     PaButtonModule,
     PaModalModule,
     PaTextFieldModule,
@@ -40,7 +43,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ExpandableTextareaComponent,
   ],
   templateUrl: './nuclia-driver-modal.component.html',
-  styleUrl: '../driver-form.scss',
+  styleUrls: ['./nuclia-driver-modal.component.scss', '../driver-form.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -92,6 +95,46 @@ export class NucliaDriverModalComponent {
   private getKb(kbId: string): IKnowledgeBoxItem | undefined {
     return this.kbList.find((kb) => kb.id === kbId);
   }
+
+  syncConfigs = merge(
+    defer(() => of(this.form.controls.kbid.getRawValue())),
+    this.form.controls.kbid.valueChanges,
+  ).pipe(
+    switchMap((kbid) =>
+      this.kbList.map((kb) => kb.id).includes(kbid)
+        ? this.sdk.currentAccount.pipe(
+            take(1),
+            switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.id, kbid)),
+            switchMap((kb) => kb.syncManager.getConfigs()),
+            catchError(() => {
+              // User has no permissions on the Knowledege Box
+              return of([]);
+            }),
+          )
+        : of([]),
+    ),
+    shareReplay(1),
+  );
+
+  syncConfigOptions = combineLatest([
+    this.syncConfigs,
+    this.form.controls.connection_ids.valueChanges.pipe(startWith([])),
+  ]).pipe(
+    map(([configs, selected]) =>
+      configs.map(
+        (config) =>
+          new OptionModel({
+            id: config.id,
+            label: config.name,
+            value: config.id,
+            filtered: selected.some((item) => item === config.id),
+          }),
+      ),
+    ),
+  );
+
+  syncConfigIds = this.syncConfigs.pipe(map((configs) => configs.map((config) => config.id)));
+  canAddConnections = this.syncConfigOptions.pipe(map((options) => options.some((option) => !option.filtered)));
 
   constructor(
     public modal: ModalRef<{
@@ -167,6 +210,7 @@ export class NucliaDriverModalComponent {
       const { name, filters, filter_expression, custom, keepExistingKey, connection_ids, ...rawConfig } =
         this.form.getRawValue();
       const filterList = getListFromTextarea(filters || '');
+      const connections = connection_ids?.filter((id) => id.trim());
       let filterExpression = undefined;
       try {
         filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
@@ -178,7 +222,7 @@ export class NucliaDriverModalComponent {
           ...rawConfig,
           filters: filterList,
           filter_expression: filterExpression,
-          connection_ids: this.isSyncDriver ? connection_ids : undefined,
+          connection_ids: this.isSyncDriver ? connections : undefined,
         };
         this.submitConfig(name, config);
       } else {
@@ -219,7 +263,7 @@ export class NucliaDriverModalComponent {
                 key,
                 filters: filterList,
                 filter_expression: filterExpression,
-                connection_ids: this.isSyncDriver ? connection_ids : undefined,
+                connection_ids: this.isSyncDriver ? connections : undefined,
               };
               this.submitConfig(name, config);
             },
@@ -235,5 +279,17 @@ export class NucliaDriverModalComponent {
       config,
     };
     this.modal.close(driver);
+  }
+
+  removeConnection(index: number) {
+    this.form.controls.connection_ids.removeAt(index);
+  }
+
+  addConnection() {
+    this.form.controls.connection_ids.push(new FormControl<string>('', { nonNullable: true }));
+  }
+
+  resetConnections() {
+    this.form.controls.connection_ids.clear();
   }
 }
