@@ -148,22 +148,10 @@
                   formControlName="country"
                   [readonly]="!!customer"
                   [errorMessages]="errors"
-                  [externalLabel]="true">
-                </nsi-country-select>
+                  [externalLabel]="true"></nsi-country-select>
               </div>
             </div>
             <div class="field-line">
-              <div class="field-block">
-                <label
-                  class="title-s"
-                  for="state">
-                  {{ 'billing.state' | translate }}
-                </label>
-                <pa-input
-                  id="state"
-                  formControlName="state"
-                  externalLabel></pa-input>
-              </div>
               <div class="field-block">
                 <label
                   class="title-s"
@@ -174,6 +162,17 @@
                   id="city"
                   formControlName="city"
                   [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="state">
+                  {{ 'billing.state' | translate }}
+                </label>
+                <pa-input
+                  id="state"
+                  formControlName="state"
                   externalLabel></pa-input>
               </div>
               <div class="field-block">
@@ -283,51 +282,58 @@
     </div>
   </div>
 
-  <div>
-    <div class="section-header">
-      <div class="section-title">
-        <pa-icon
-          name="circle-dash"
-          [class.disabled]="!token"></pa-icon>
-        {{ 'billing.budget' | translate }}
+  @if (!(isCowork | async)) {
+    <div>
+      <div class="section-header">
+        <div class="section-title">
+          <pa-icon
+            name="circle-dash"
+            [class.disabled]="!token"></pa-icon>
+          {{ 'billing.budget' | translate }}
+        </div>
       </div>
-    </div>
-    <div class="section-body">
-      <div class="budget-form">
-        <div [innerHTML]="'billing.budget_description' | translate"></div>
-        @if (subscribeMode | async) {
-          @if (currency$ | async; as currency) {
+      <div class="section-body">
+        <div class="budget-form">
+          <div [innerHTML]="'billing.budget_description' | translate"></div>
+          @if (subscribeMode | async) {
+            @if (currency$ | async; as currency) {
+              <app-budget
+                [currency]="currency"
+                [showActions]="false"
+                [defaultBudget]="true"
+                (budgetChange)="budget = $event"></app-budget>
+            }
+          } @else {
             <app-budget
-              [currency]="currency"
-              [showActions]="false"
-              [defaultBudget]="true"
+              [currency]="(usage | async)?.currency"
               (budgetChange)="budget = $event"></app-budget>
             <div class="submit">
               <pa-button
-                (click)="doSubscribe()"
-                [disabled]="editCustomer || editCard || !budget || loading"
-                kind="primary">
-                {{ 'billing.review_confirm' | translate }}
+                kind="primary"
+                [disabled]="!budget"
+                (click)="modifyBudget()">
+                {{ 'generic.save' | translate }}
               </pa-button>
-              @if (loading) {
-                <nsi-spinner></nsi-spinner>
-              }
             </div>
           }
-        } @else {
-          <app-budget
-            [currency]="(usage | async)?.currency"
-            (budgetChange)="budget = $event"></app-budget>
-          <div class="submit">
-            <pa-button
-              kind="primary"
-              [disabled]="!budget"
-              (click)="modifyBudget()">
-              {{ 'generic.save' | translate }}
-            </pa-button>
-          </div>
-        }
+        </div>
       </div>
     </div>
-  </div>
+  }
+
+  @if (subscribeMode | async) {
+    @if (currency$ | async) {
+      <div class="submit">
+        <pa-button
+          (click)="doSubscribe()"
+          [disabled]="editCustomer || editCard || loading"
+          kind="primary">
+          {{ 'billing.review_confirm' | translate }}
+        </pa-button>
+        @if (loading) {
+          <nsi-spinner></nsi-spinner>
+        }
+      </div>
+    }
+  }
 </div>

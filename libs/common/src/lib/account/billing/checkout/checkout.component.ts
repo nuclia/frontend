@@ -86,6 +86,16 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(1),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
+  isCowork = combineLatest([
+    this.sdk.currentAccount.pipe(
+      take(1),
+      map((account) => account.type === 'cowork'),
+    ),
+    this.route.queryParams.pipe(map((params) => params['type'] === 'cowork')),
+  ]).pipe(
+    map(([currentIsCowork, nextIsCowork]) => currentIsCowork || nextIsCowork),
+    shareReplay(1),
+  );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
 
   updateCurrency = new Subject<string>();
