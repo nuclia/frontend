@@ -2323,7 +2323,7 @@
 	"simple.mcp.how-to": "Comment utiliser votre Content Box via MCP ?",
 	"simple.mcp.title": "URL du serveur MCP",
 	"simple.no-questions": "Vous n'avez encore posé aucune question.",
-	"simple.no-video-audio": "Les fichiers vidéo et audio ne sont pas pris en charge.",
+	"simple.no-video-audio": "Les fichiers vidéo et audio ne sont pas autorisés dans votre abonnement actuel.",
 	"simple.or": "Ou",
 	"simple.position-in-queue": "Position dans la file d'attente",
 	"simple.processing": "Traitement…",
