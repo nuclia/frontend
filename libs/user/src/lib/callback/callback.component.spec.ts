@@ -4,6 +4,7 @@ import { BackendConfigurationService, SAMLService, SDKService, SsoService } from
 import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { CallbackComponent } from './callback.component';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -23,6 +24,7 @@ describe('CallbackComponent', () => {
     };
   };
   let toaster: { error: jest.Mock };
+  let translate: { instant: jest.Mock };
 
   let snapshotQueryParams: Record<string, any>;
   let snapshotData: Record<string, any>;
@@ -39,6 +41,7 @@ describe('CallbackComponent', () => {
         { provide: BackendConfigurationService, useValue: config },
         { provide: SDKService, useValue: sdk },
         { provide: SisToastService, useValue: toaster },
+        { provide: TranslateService, useValue: translate },
       ],
     }).compileComponents();
 
@@ -84,6 +87,7 @@ describe('CallbackComponent', () => {
       },
     };
     toaster = { error: jest.fn() };
+    translate = { instant: jest.fn((key) => key) };
     jest.clearAllMocks();
   });
 
@@ -298,6 +302,16 @@ describe('CallbackComponent', () => {
       relativeTo: route,
       queryParams: { error: 'oops' },
     });
+  });
+
+  it('should display a message in ssoLogin when detail is user_not_registered', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'state-1' };
+    ssoService.login.mockReturnValue(throwError(() => ({ status: 403, body: { detail: 'user_not_registered' } })));
+    await createComponent();
+
+    component.ssoLogin();
+
+    expect(component.message).not.toBeUndefined();
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {

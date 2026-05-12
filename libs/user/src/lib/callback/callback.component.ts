@@ -148,10 +148,10 @@ export class CallbackComponent implements OnInit {
           }
         },
         error: (error) => {
-          let errorCode = 'oops';
           if (error.status === 403 && error.body?.detail === 'user_not_registered') {
             this.message = this.translate.instant('login.error.user_not_registered', { provider: this.getProvider() });
           } else {
+            let errorCode = 'oops';
             if (error.status === 412) {
               errorCode = 'no_personal_email';
             } else if (error.message === 'Invalid state') {
@@ -159,7 +159,7 @@ export class CallbackComponent implements OnInit {
               this.toaster.error('Authentication configuration error. Please contact support if this persists.');
             }
 
-            this.router.navigate(['/'], {
+            this.router.navigate(['/user/signup'], {
               relativeTo: this.route,
               queryParams: { error: errorCode },
             });
