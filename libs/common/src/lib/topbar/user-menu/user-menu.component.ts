@@ -19,7 +19,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Account, Welcome } from '@nuclia/core';
-import { Subject, takeUntil } from 'rxjs';
+import { map, shareReplay, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-menu',
@@ -47,6 +47,10 @@ export class UserMenuComponent implements OnDestroy {
   accounts: string[] = [];
   account: Account | null = null;
   isAccountManager = this.features.isAccountManager;
+  isCowork = this.sdk.currentAccount.pipe(
+    map((account) => account.workflow === 'cowork'),
+    shareReplay(1),
+  );
   isKbAdmin = this.features.isKbAdmin;
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
