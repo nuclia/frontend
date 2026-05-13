@@ -7,7 +7,7 @@ import {
   NavigationService,
   SDKService,
 } from '@flaps/core';
-import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, merge, Observable, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 
 @Component({
@@ -85,6 +85,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isAragAdmin = this.features.isAragAdmin;
   isAccountManager = this.features.isAccountManager;
+  isCowork = this.sdk.currentAccount.pipe(
+    map((account) => account.workflow === 'cowork'),
+    shareReplay(1),
+  );
+  showAccountNav = combineLatest([this.isCowork, this.isAccountManager]).pipe(
+    map(([isCowork, isAccountManager]) => isAccountManager && !isCowork),
+    shareReplay(1),
+  );
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
   isSynonymsEnabled = this.features.unstable.synonyms;
