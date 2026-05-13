@@ -5,10 +5,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
+import { UserContainerComponent } from '../user-container';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-user-callback',
-  template: '<div class="user-background" style="height: 100%"></div>',
+  templateUrl: './callback.component.html',
+  styleUrls: ['../_user-layout.scss'],
+  imports: [UserContainerComponent],
 })
 export class CallbackComponent implements OnInit {
   constructor(
@@ -20,7 +24,10 @@ export class CallbackComponent implements OnInit {
     private sdk: SDKService,
     private router: Router,
     private toaster: SisToastService,
+    private translate: TranslateService,
   ) {}
+
+  message?: string;
 
   ngOnInit() {
     const queryParams = this.route.snapshot.queryParams;
@@ -141,22 +148,36 @@ export class CallbackComponent implements OnInit {
           }
         },
         error: (error) => {
-          let errorCode = 'oops';
+          if (error.status === 403 && error.body?.detail === 'user_not_registered') {
+            this.message = this.translate.instant('login.error.user_not_registered', { provider: this.getProvider() });
+          } else {
+            let errorCode = 'oops';
+            if (error.status === 412) {
+              errorCode = 'no_personal_email';
+            } else if (error.message === 'Invalid state') {
+              errorCode = 'invalid_configuration';
+              this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+            }
 
-          if (error.status === 412) {
-            errorCode = 'no_personal_email';
-          } else if (error.message === 'Invalid state') {
-            errorCode = 'invalid_configuration';
-            this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+            this.router.navigate(['/user/signup'], {
+              relativeTo: this.route,
+              queryParams: { error: errorCode },
+            });
           }
-
-          this.router.navigate(['/user/signup'], {
-            relativeTo: this.route,
-            queryParams: { error: errorCode },
-          });
         },
       });
     }
+  }
+
+  private getProvider() {
+    if (this.route.snapshot.data['google']) {
+      return 'Google';
+    } else if (this.route.snapshot.data['github']) {
+      return 'GitHub';
+    } else if (this.route.snapshot.data['microsoft']) {
+      return 'Microsoft';
+    }
+    return undefined;
   }
 
   private authenticate(token: AuthTokens, state?: string): void {
