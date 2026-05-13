@@ -397,12 +397,19 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           ),
         ),
         switchMap((account) => this.sdk.nuclia.db.getAccount(account.slug)),
-        tap((newAccount) => (this.sdk.account = newAccount)),
+        switchMap((newAccount) => {
+          this.sdk.account = newAccount;
+          return this.isCowork.pipe(
+            switchMap((isCowork) =>
+              isCowork ? this.navigation.kbUrl : of(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`),
+            ),
+          );
+        }),
       )
       .subscribe({
-        next: (newAccount) => {
+        next: (backUrl) => {
           this.toaster.success('billing.success');
-          this.router.navigateByUrl(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
+          this.router.navigateByUrl(backUrl);
         },
         error: (error) => {
           this.loading = false;
