@@ -613,4 +613,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/workflow/${workflowId}`, data);
   }
+
+  /**
+   * Delete a workflow
+   */
+  deleteWorkflow(workflowId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}`);
+  }
 }

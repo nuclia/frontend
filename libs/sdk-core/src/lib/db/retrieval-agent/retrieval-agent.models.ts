@@ -113,6 +113,7 @@ export interface IRetrievalAgent extends Omit<
   getWorkflows(): Observable<Workflow[]>;
   createWorkflow(data: Workflow): Observable<void>;
   patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void>;
+  deleteWorkflow(workflowId: string): Observable<void>;
 }
 
 export interface BaseAgent {
