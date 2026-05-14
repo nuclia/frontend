@@ -41,6 +41,14 @@
       {{ 'account.manage' | translate }}
     </pa-option>
   }
+  @if ((isCowork | async) && (isAccountManager | async)) {
+    <pa-option
+      data-cy="delete-account"
+      icon="trash"
+      (click)="openDeleteAccount()">
+      {{ 'account.delete_account' | translate }}
+    </pa-option>
+  }
 
   <pa-separator></pa-separator>
   <pa-option

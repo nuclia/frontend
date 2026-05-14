@@ -6,10 +6,17 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
+  OnInit,
   Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import {
+  AccountVerificationService,
+  BackendConfigurationService,
+  FeaturesService,
+  NavigationService,
+  SDKService,
+} from '@flaps/core';
 import {
   AvatarModel,
   PaAvatarModule,
@@ -19,16 +26,26 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Account, Welcome } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
 import { map, shareReplay, Subject, takeUntil } from 'rxjs';
+import { AccountDeleteComponent } from '../../account/account-manage/account-delete/account-delete.component';
 
 @Component({
   selector: 'app-user-menu',
-  imports: [CommonModule, TranslateModule, PaIconModule, PaAvatarModule, PaDropdownModule, PaPopupModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    PaIconModule,
+    PaAvatarModule,
+    PaDropdownModule,
+    PaPopupModule,
+    AccountDeleteComponent,
+  ],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserMenuComponent implements OnDestroy {
+export class UserMenuComponent implements OnInit, OnDestroy {
   @Input() set userInfo(userInfo: Welcome | undefined | null) {
     if (userInfo) {
       this.accounts = userInfo.accounts || [];
@@ -67,6 +84,8 @@ export class UserMenuComponent implements OnDestroy {
     private features: FeaturesService,
     private cdr: ChangeDetectorRef,
     private backendConfig: BackendConfigurationService,
+    private accountVerification: AccountVerificationService,
+    private modalService: SisModalService,
   ) {
     this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
       this.account = account;
@@ -75,6 +94,13 @@ export class UserMenuComponent implements OnDestroy {
     this.navigation.kbUrl.pipe(takeUntil(this.unsubscribeAll)).subscribe((url) => {
       this.kbUrl = url;
     });
+  }
+
+  ngOnInit(): void {
+    if (this.accountVerification.hasPendingDelete() && this.accountVerification.isRecentlyVerified()) {
+      this.accountVerification.clearPendingDelete();
+      this.modalService.openModal(AccountDeleteComponent);
+    }
   }
 
   ngOnDestroy(): void {
@@ -117,5 +143,10 @@ export class UserMenuComponent implements OnDestroy {
   goToManageUsers() {
     this.close.emit();
     this.router.navigate([this.kbUrl + '/users']);
+  }
+
+  openDeleteAccount() {
+    this.close.emit();
+    this.modalService.openModal(AccountDeleteComponent);
   }
 }
