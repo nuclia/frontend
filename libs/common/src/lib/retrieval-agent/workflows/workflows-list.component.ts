@@ -10,7 +10,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { setZoneInRegionalUrl, Workflow } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { filter, map, of, switchMap, take } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs';
 import { WorkflowModalComponent } from './workflow-modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkflowsService } from './workflows.service';
@@ -118,11 +118,7 @@ export class WorkflowsListComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => {
-          // TODO: delete endpoint is not available yet
-          //return this.workflowsService.deleteWorkflow(workflow.id)
-          return of(undefined);
-        }),
+        switchMap(() => this.workflowsService.deleteWorkflow(workflow.id)),
       )
       .subscribe({
         error: () => {
