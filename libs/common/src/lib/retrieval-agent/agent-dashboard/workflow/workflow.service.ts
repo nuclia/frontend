@@ -1120,8 +1120,11 @@ export class WorkflowService {
         if (Array.isArray(value)) {
           arrayValue = value;
         } else if (typeof value === 'string' && value.trim() !== '') {
-          // Convert string to single-item array
-          arrayValue = [value];
+          // Split comma-separated string into individual items (e.g. sources: "id1,id2" → ["id1", "id2"])
+          arrayValue = value
+            .split(',')
+            .map((v) => v.trim())
+            .filter((v) => v);
         } else if (value === null || value === undefined || value === '') {
           // Handle null/undefined/empty values as empty array
           arrayValue = [];
