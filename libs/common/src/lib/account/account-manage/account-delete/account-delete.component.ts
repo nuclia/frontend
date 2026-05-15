@@ -1,17 +1,28 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { ModalRef, PaButtonModule, PaModalModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { AccountVerificationService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { map, shareReplay, switchMap, take } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
+import { SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { TranslateModule } from '@ngx-translate/core';
+import { OtpInputComponent } from './otp-input/otp-input.component';
 
 @Component({
   selector: 'app-account-delete',
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    PaModalModule,
+    PaButtonModule,
+    PaTogglesModule,
+    SisProgressModule,
+    OtpInputComponent,
+  ],
   templateUrl: './account-delete.component.html',
   styleUrls: ['./account-delete.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
 })
 export class AccountDeleteComponent implements OnInit {
   loading = signal(false);

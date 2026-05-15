@@ -180,6 +180,7 @@ const routes: Routes = [
     NucliaTokensComponent,
     LowerCaseInputDirective,
     OtpInputComponent,
+    AccountDeleteComponent,
   ],
   declarations: [
     AccountHomeComponent,
@@ -190,7 +191,6 @@ const routes: Routes = [
     AccountNUAComponent,
     ClientDialogComponent,
     AccountUsersComponent,
-    AccountDeleteComponent,
     NuaActivityComponent,
   ],
   exports: [AccountHomeComponent, AccountManageComponent],

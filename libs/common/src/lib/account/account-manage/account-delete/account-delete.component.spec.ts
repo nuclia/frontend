@@ -1,4 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { ModalRef, ModalConfig } from '@guillotinaweb/pastanaga-angular';
@@ -46,8 +47,7 @@ describe('AccountDeleteComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [AccountDeleteComponent],
-      imports: [MockModule(TranslateModule)],
+      imports: [AccountDeleteComponent, MockModule(TranslateModule)],
       providers: [
         { provide: ModalRef, useValue: modalRef },
         MockProvider(SDKService, {
@@ -75,7 +75,14 @@ describe('AccountDeleteComponent', () => {
         { provide: AccountVerificationService, useValue: verificationService },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
+    })
+      .overrideComponent(AccountDeleteComponent, {
+        set: {
+          imports: [AsyncPipe, MockModule(TranslateModule)],
+          schemas: [CUSTOM_ELEMENTS_SCHEMA],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AccountDeleteComponent);
     component = fixture.componentInstance;
