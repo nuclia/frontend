@@ -400,9 +400,18 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         switchMap((newAccount) => {
           this.sdk.account = newAccount;
           return this.isCowork.pipe(
-            switchMap((isCowork) =>
-              isCowork ? this.navigation.kbUrl : of(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`),
-            ),
+            take(1),
+            switchMap((isCowork) => {
+              if (isCowork) {
+                if (this.sdk.isKbLoaded) {
+                  return this.navigation.kbUrl.pipe(take(1));
+                } else {
+                  return of(`${this.navigation.getKbSelectUrl(newAccount.slug)}`);
+                }
+              } else {
+                return of(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
+              }
+            }),
           );
         }),
       )
