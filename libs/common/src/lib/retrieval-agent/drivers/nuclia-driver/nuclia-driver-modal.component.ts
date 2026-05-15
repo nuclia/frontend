@@ -115,10 +115,12 @@ export class NucliaDriverModalComponent {
     shareReplay(1),
   );
 
-  syncConfigOptions = combineLatest([
-    this.syncConfigs,
-    this.form.controls.connection_ids.valueChanges.pipe(startWith([])),
-  ]).pipe(
+  selectedConnections = merge(
+    defer(() => of(this.form.controls.connection_ids.getRawValue())),
+    this.form.controls.connection_ids.valueChanges,
+  );
+
+  syncConfigOptions = combineLatest([this.syncConfigs, this.selectedConnections]).pipe(
     map(([configs, selected]) =>
       configs.map(
         (config) =>
