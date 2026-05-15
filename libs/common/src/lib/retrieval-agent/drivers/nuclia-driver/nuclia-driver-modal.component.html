@@ -16,7 +16,9 @@
           formControlName="name"></pa-input>
       </div>
       <div class="form-entry">
-        <pa-checkbox formControlName="custom">
+        <pa-checkbox
+          formControlName="custom"
+          (change)="resetConnections()">
           {{ 'retrieval-agents.drivers.form.nuclia.custom' | translate }}
         </pa-checkbox>
       </div>
@@ -56,7 +58,8 @@
           <pa-select
             id="kb"
             externalLabel
-            formControlName="kbid">
+            formControlName="kbid"
+            (valueChange)="form.value.kbid === $event ? null : resetConnections()">
             @for (kb of kbList; track kb.id) {
               <pa-option
                 [value]="kb.id"
@@ -66,7 +69,15 @@
             }
           </pa-select>
         </div>
-
+        @if (isSyncDriver) {
+          @if (kb && !loadingSyncs() && (syncConfigs | async)?.length === 0) {
+            <nsi-info-card
+              type="warning"
+              icon="warning">
+              {{ 'retrieval-agents.drivers.form.nuclia.connections.empty' | translate }}
+            </nsi-info-card>
+          }
+        }
         @if (isEdit) {
           <pa-toggle
             formControlName="keepExistingKey"
@@ -103,10 +114,47 @@
 
       @if (isSyncDriver) {
         <div class="form-entry">
-          <app-array-string-field
-            [form]="form"
-            arrayName="connection_ids"
-            [label]="'retrieval-agents.drivers.form.nuclia.connection-ids' | translate"></app-array-string-field>
+          @if (customConfig) {
+            <app-array-string-field
+              [form]="form"
+              arrayName="connection_ids"
+              [label]="'retrieval-agents.drivers.form.nuclia.connections.ids' | translate"></app-array-string-field>
+          } @else {
+            @let options = syncConfigOptions | async;
+            @if (!loadingSyncs() && (options || []).length > 0) {
+              <label>{{ 'retrieval-agents.drivers.form.nuclia.connections.label' | translate }}</label>
+              <div class="connections-container">
+                @for (control of form.controls.connection_ids.controls; track control) {
+                  @let notFound = control.value && !(syncConfigIds | async)?.includes(control.value);
+                  <div class="connection">
+                    <pa-select
+                      [options]="options"
+                      [formControl]="control"
+                      [help]="
+                        notFound ? ('retrieval-agents.drivers.form.nuclia.connections.not-found' | translate) : ''
+                      "
+                      externalLabel></pa-select>
+                    <pa-button
+                      aspect="basic"
+                      icon="trash"
+                      size="small"
+                      (click)="removeConnection($index)"></pa-button>
+                  </div>
+                }
+                <div>
+                  <pa-button
+                    aspect="basic"
+                    icon="plus"
+                    iconAndText
+                    size="small"
+                    (click)="addConnection()"
+                    [disabled]="!(canAddConnections | async)">
+                    {{ 'generic.add' | translate }}
+                  </pa-button>
+                </div>
+              </div>
+            }
+          }
         </div>
       }
 
