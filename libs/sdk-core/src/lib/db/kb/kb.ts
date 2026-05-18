@@ -637,7 +637,30 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   catalog(query: string | CatalogQuery, options?: CatalogOptions): Observable<Search.Results | IErrorResponse> {
-    return catalog(this.nuclia, this.id, query, options);
+    if (options?.page_size && options.page_size > 200) {
+      const page_number = options?.page_number || 0;
+      return catalog(this.nuclia, this.id, query, { ...(options || {}), page_number, page_size: 200 }).pipe(
+        switchMap((result) =>
+          result.type === 'searchResults' && result.fulltext?.next_page
+            ? catalog(this.nuclia, this.id, query, {
+                ...(options || {}),
+                page_number: page_number + 1,
+                page_size: 200,
+              }).pipe(
+                map((nextPage) => {
+                  if (nextPage.type === 'searchResults') {
+                    return { ...result, resources: { ...result.resources, ...nextPage.resources } };
+                  } else {
+                    return result;
+                  }
+                }),
+              )
+            : of(result),
+        ),
+      );
+    } else {
+      return catalog(this.nuclia, this.id, query, options);
+    }
   }
 
   /** Suggests paragraphs based on the given query. */
