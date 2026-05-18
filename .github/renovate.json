@@ -26,5 +26,13 @@
         "tools/**",
         ".github/workflows/bd_sca_scanner.yaml",
         ".github/workflows/polaris.yaml"
+    ],
+    "packageRules": [
+        {
+            "matchDepTypes": [
+                "action"
+            ],
+            "pinDigests": true
+        }
     ]
 }
