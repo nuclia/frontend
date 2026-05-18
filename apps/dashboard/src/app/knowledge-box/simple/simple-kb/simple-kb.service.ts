@@ -55,7 +55,7 @@ export class SimpleKBService {
   private notificationService = inject(NotificationService);
   private userService = inject(UserService);
 
-  maxFiles = 200;
+  maxFiles = 250;
 
   uploadStatus = new BehaviorSubject<UploadStatus>({
     files: [],
