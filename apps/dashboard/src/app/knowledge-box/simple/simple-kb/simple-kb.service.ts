@@ -80,19 +80,8 @@ export class SimpleKBService {
     ),
   );
 
-  resources: Observable<rankedResource[]> = combineLatest([this.sdk.currentKb, this.refreshResources]).pipe(
-    switchMap(([kb]) =>
-      kb.catalog('', {
-        page_number: 0,
-        page_size: this.maxFiles,
-        filter_expression: {
-          resource: {
-            not: { prop: 'label', ...HISTORY_LABEL },
-          },
-        },
-        sort: { field: SortField.created, order: 'desc' },
-      }),
-    ),
+  resources: Observable<rankedResource[]> = this.refreshResources.pipe(
+    switchMap(() => this.catalog()),
     map((res) => (res.type === 'error' ? [] : Object.values(res.resources || {}))),
     switchMap((resources) => {
       if (resources.some((resource) => resource.metadata?.status === RESOURCE_STATUS.PENDING)) {
