@@ -3,10 +3,12 @@ import { UploadService } from '@flaps/common';
 import { NotificationService, SDKService, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  CatalogOptions,
   Classification,
   ConversationField,
   FIELD_TYPE,
   FileUploadStatus,
+  IErrorResponse,
   IResource,
   Message,
   Resource,
@@ -273,6 +275,35 @@ export class SimpleKBService {
           }),
         );
       }),
+    );
+  }
+
+  catalog(page_number = 0): Observable<Search.Results | IErrorResponse> {
+    const options: CatalogOptions = {
+      page_number,
+      page_size: this.maxFiles > 200 ? 200 : this.maxFiles,
+      filter_expression: {
+        resource: {
+          not: { prop: 'label', ...HISTORY_LABEL },
+        },
+      },
+      sort: { field: SortField.created, order: 'desc' },
+    };
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.catalog('', options)),
+      switchMap((result) =>
+        result.type === 'searchResults' && result.fulltext?.next_page
+          ? this.catalog(page_number + 1).pipe(
+              map((nextPage) => {
+                if (nextPage.type === 'searchResults') {
+                  return { ...result, resources: { ...result.resources, ...nextPage.resources } };
+                } else {
+                  return result;
+                }
+              }),
+            )
+          : of(result),
+      ),
     );
   }
 }
