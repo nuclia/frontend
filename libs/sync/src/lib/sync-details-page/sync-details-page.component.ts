@@ -199,10 +199,11 @@ export class SyncDetailsPageComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
         switchMap(([sync, syncId]) => {
           if (sync.isCloud) {
-            return this.syncService.updateSync(syncId, {
+            const updates: Partial<ISyncEntity> = {
               ...(this.updatedConfig?.title ? { title: this.updatedConfig.title } : {}),
               ...getCloudSyncOptionsPayload(this.cloudOptions),
-            });
+            };
+            return this.syncService.updateCloudSync(syncId, updates, sync);
           }
           if (!this.updatedConfig && !this.updatedSelection) {
             return EMPTY;
@@ -234,15 +235,15 @@ export class SyncDetailsPageComponent implements OnDestroy {
 
   getLogEntitiesFromJobs(jobs: Job[]) {
     return jobs.reduce((acc, curr) => {
-    let message: string;
-    if (['pending', 'in_progress'].includes(curr.status)) {
-      message = 'Checking for changes...';
-    } else if (curr.status === 'completed') {
-      message = 'Synchronization complete';
-    } else {
-      message = 'Synchronization with errors';
-    }
-    acc = acc.concat([
+      let message: string;
+      if (['pending', 'in_progress'].includes(curr.status)) {
+        message = 'Checking for changes...';
+      } else if (curr.status === 'completed') {
+        message = 'Synchronization complete';
+      } else {
+        message = 'Synchronization with errors';
+      }
+      acc = acc.concat([
         {
           level: curr.status === 'failed' ? LogSeverityLevel.medium : LogSeverityLevel.low,
           message,

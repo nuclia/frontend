@@ -178,4 +178,4 @@ nx test rao
 8. **SCSS tokens** — always use `@use 'variables'`. Never hard-code colors/spacing/fonts.
 9. **Feature flags** — ARAG availability gated by `FeaturesService.unstable.retrievalAgents`.
 10. **`setAgentGuard`** — guards the entire ARAG section. If the feature flag is off, the guard redirects to `/select`.
-11. **ARAG root redirects to `/workflows`** — `/:zone/arag/:agent/` redirects to `./workflows` where `WorkflowsListComponent` lists all workflows. Individual workflow canvas is at `./workflows/:id`. ARAG also exposes `/search`, `/activity`, `/sessions` (with nested edit view), `/drivers`, `/widgets`, `/manage`, `/ai-models`, `/users`, `/keys`.
+11. **ARAG root redirects to `/workflows`** — `/:zone/arag/:agent/` redirects to `./workflows` where `WorkflowsListComponent` lists all workflows. Individual workflow canvas is at `./workflows/:id`. ARAG also exposes `/search`, `/activity`, `/sessions` (with nested edit view), `/sources`, `/widgets`, `/manage`, `/ai-models`, `/users`, `/keys`.

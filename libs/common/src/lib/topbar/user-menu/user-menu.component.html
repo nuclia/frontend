@@ -33,12 +33,20 @@
       {{ 'account.manage_users' | translate }}
     </pa-option>
   }
-  @if (!standalone && (isAccountManager | async) === true) {
+  @if (!standalone && (isAccountManager | async) === true && !(isCowork | async)) {
     <pa-option
       data-cy="go-to-manage-account"
       icon="account"
       (click)="goToManageAccount()">
       {{ 'account.manage' | translate }}
+    </pa-option>
+  }
+  @if ((isCowork | async) && (isAccountManager | async)) {
+    <pa-option
+      data-cy="delete-account"
+      icon="trash"
+      (click)="openDeleteAccount()">
+      {{ 'account.delete_account' | translate }}
     </pa-option>
   }
 

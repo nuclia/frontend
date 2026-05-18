@@ -1037,14 +1037,14 @@ paths:
       tags:
       - Knowledge Boxes
       summary: Create Ephemeral Token From Sa
-      description: Create an ephemeral token to access the Knowledge Box using a Service
-        Account
+      description: Create an ephemeral token scoped to a Knowledge Box (service account)
+        or a path (OAuth user)
       operationId: create_ephemeral_token_from_sa_api_v1_ephemeral_token_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EphemeralTokenProperties'
+              $ref: '#/components/schemas/EphemeralTokenRequestPayload'
         required: true
       responses:
         '201':
@@ -1129,7 +1129,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-03-10T12:19:00.445103'
+          default: '2026-05-04T14:49:07.651623'
           title: To
       responses:
         '200':
@@ -1636,6 +1636,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/kb/{kb_id}/remi/query:
+    post:
+      tags:
+      - Knowledgebox activity
+      summary: Query Rag Requests By Scores
+      description: Get a list of rag request that matches a remi scores query
+      operationId: Query_rag_requests_by_scores_api_v1_kb__kb_id__remi_query_post
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Kb Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemiQuery'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemiQueryResults'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/kb/{kb_id}/sync_config/{config_id}:
     get:
       tags:
@@ -1693,6 +1726,45 @@ paths:
       responses:
         '204':
           description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Sync Configs
+      summary: Update Config
+      operationId: update_config_api_v1_kb__kb_id__sync_config__config_id__patch
+      parameters:
+      - name: kb_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Kb Id
+      - name: config_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Config Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncConfigUpdateInput'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncConfigOutput'
         '422':
           description: Validation Error
           content:
@@ -2112,39 +2184,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /api/v1/kb/{kb_uuid}/remi/query:
-    post:
-      tags:
-      - Knowledgebox activity
-      summary: Query Rag Requests By Scores
-      description: Get a list of rag request that matches a remi scores query
-      operationId: Query_rag_requests_by_scores_api_v1_kb__kb_uuid__remi_query_post
-      parameters:
-      - name: kb_uuid
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Kb Uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RemiQuery'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RemiQueryResults'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /api/v1/kb/{kb_uuid}/remi/scores:
     get:
       tags:
@@ -2180,7 +2219,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-03-10T12:19:00.450189'
+          default: '2026-05-04T14:49:07.661754'
           title: To
       responses:
         '200':
@@ -2257,17 +2296,2480 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  idp_regional:
-    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
-    last_updated: '2026-03-10T12:21:13.270559'
-  events:
-    commit: e3996d9e72b01b2c6948f435b5ae648120c4213c
-    last_updated: '2026-03-10T12:19:00.779831'
   cloud_storage_sync:
-    commit: 9e06ef555db0a026605aff3e1ac8e3e9d180434d
-    last_updated: '2026-03-12T12:40:01.220751+00:00'
+    commit: 4f8e068bfe64fcfdd6e8c18007ed561f56b1ef9a
+    last_updated: '2026-05-05T14:45:47.200288+00:00'
+  events:
+    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
+    last_updated: '2026-05-04T14:49:08.170348'
+  idp_regional:
+    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
+    last_updated: '2026-05-04T14:50:16.687047'
 components:
   schemas:
+    AWSS3AssumeRoleCredentials:
+      properties:
+        role_arn:
+          type: string
+          title: Role Arn
+        external_id:
+          type: string
+          title: External Id
+      type: object
+      required:
+      - role_arn
+      - external_id
+      title: AWSS3AssumeRoleCredentials
+    AuthorizeUrlOutput:
+      properties:
+        authorize_url:
+          type: string
+          title: Authorize Url
+      type: object
+      required:
+      - authorize_url
+      title: AuthorizeUrlOutput
+    AzureCertificateCredentials:
+      properties:
+        tenant_id:
+          type: string
+          title: Tenant Id
+        client_id:
+          type: string
+          title: Client Id
+        pfx_base64:
+          type: string
+          title: Pfx Base64
+        pfx_password:
+          type: string
+          title: Pfx Password
+      type: object
+      required:
+      - tenant_id
+      - client_id
+      - pfx_base64
+      - pfx_password
+      title: AzureCertificateCredentials
+      description: 'Credentials for Azure/SharePoint certificate-based authentication.
+
+
+        This uses the client credentials flow with a certificate instead of a client
+        secret.
+
+        The certificate must be registered in the Azure App Registration.
+
+
+        Users provide a .pfx file (base64-encoded) and its password. The private key
+        and
+
+        certificate are extracted server-side and stored for authentication.'
+    BrowseCapabilities:
+      properties:
+        has_sites:
+          type: boolean
+          title: Has Sites
+          description: Whether the provider supports site browsing (SharePoint only).
+          default: false
+        requires_site_search:
+          type: boolean
+          title: Requires Site Search
+          description: Whether site_search is required (True) or can list all sites
+            (False). Only applicable for certificate auth connections.
+          default: false
+        requires_site_url_resolution:
+          type: boolean
+          title: Requires Site Url Resolution
+          description: Whether the client must use the /resolve_site endpoint to obtain
+            a site_id from a site URL before browsing drives. Applies to OAuth connections
+            using Sites.Selected permission.
+          default: false
+      type: object
+      title: BrowseCapabilities
+      description: Capabilities for browsing storage in this external connection.
+    BrowseStorageOutput:
+      properties:
+        sites:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageSiteOutput'
+            type: array
+          - type: 'null'
+          title: Sites
+        drives:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageDriveOutput'
+            type: array
+          - type: 'null'
+          title: Drives
+        folders:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageFolderOutput'
+            type: array
+          - type: 'null'
+          title: Folders
+        next_page_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Page Token
+      type: object
+      title: BrowseStorageOutput
+      description: Result of browsing storage, containing sites, drives or folders.
+    ExternalAuthorizationInput:
+      properties:
+        widget_redirect_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Widget Redirect Url
+        rao_redirect_url:
+          type: string
+          title: Rao Redirect Url
+      type: object
+      required:
+      - rao_redirect_url
+      title: ExternalAuthorizationInput
+      description: Input schema for external connection authorization with additional
+        parameters.
+    ExternalConnectionInput:
+      properties:
+        provider:
+          $ref: '#/components/schemas/Provider'
+        credentials:
+          anyOf:
+          - $ref: '#/components/schemas/AWSS3AssumeRoleCredentials'
+          - $ref: '#/components/schemas/AzureCertificateCredentials'
+          - type: 'null'
+          title: Credentials
+      type: object
+      required:
+      - provider
+      title: ExternalConnectionInput
+      description: 'Input schema for creating an external connection.
+
+
+        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth): only provider
+        is required.
+
+        The response will contain an authorize_url to complete the OAuth flow.
+
+
+        For providers aws_s3_assume_role, azure_certificate_credentials:
+
+        provider and credentials are required.
+
+        The response will contain the created ExternalConnection directly.'
+    ExternalConnectionOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        provider:
+          $ref: '#/components/schemas/Provider'
+        capabilities:
+          $ref: '#/components/schemas/BrowseCapabilities'
+      type: object
+      required:
+      - id
+      - kb_id
+      - created_by
+      - created_at
+      - updated_at
+      - provider
+      - capabilities
+      title: ExternalConnectionOutput
+      description: External connection output without sensitive credential data.
+    FileFilterInput:
+      properties:
+        mode:
+          type: string
+          enum:
+          - include
+          - exclude
+          title: Mode
+        extensions:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            uniqueItems: true
+          - type: 'null'
+          title: Extensions
+        glob_patterns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            uniqueItems: true
+          - type: 'null'
+          title: Glob Patterns
+      type: object
+      required:
+      - mode
+      title: FileFilterInput
+    FileFilterOutput:
+      properties:
+        mode:
+          type: string
+          enum:
+          - include
+          - exclude
+          title: Mode
+        extensions:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Extensions
+        glob_patterns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Glob Patterns
+      type: object
+      required:
+      - mode
+      title: FileFilterOutput
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InvalidResource:
+      properties:
+        resource:
+          $ref: '#/components/schemas/ResourceIdentifier'
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - resource
+      - reason
+      title: InvalidResource
+      description: Details about a resource that failed validation.
+    LabelInput:
+      properties:
+        labelset:
+          type: string
+          title: Labelset
+        label:
+          type: string
+          title: Label
+      type: object
+      required:
+      - labelset
+      - label
+      title: LabelInput
+    LabelOutput:
+      properties:
+        labelset:
+          type: string
+          title: Labelset
+        label:
+          type: string
+          title: Label
+      type: object
+      required:
+      - labelset
+      - label
+      title: LabelOutput
+    LogEntryOutput:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier for the log entry
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the log entry
+        level:
+          type: string
+          title: Level
+          description: Log level (INFO, WARNING, ERROR, etc.)
+        message:
+          type: string
+          title: Message
+          description: Log message
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+          description: Additional context data for the log entry
+      type: object
+      required:
+      - id
+      - timestamp
+      - level
+      - message
+      title: LogEntryOutput
+      description: A single log entry from a sync job.
+    LogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - EXCEPTION
+      - CRITICAL
+      title: LogLevel
+      description: Log level for filtering sync job logs.
+    ModifiedTimeRangeInput:
+      properties:
+        from:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From
+        to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To
+      type: object
+      title: ModifiedTimeRangeInput
+    ModifiedTimeRangeOutput:
+      properties:
+        from:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From
+        to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To
+      type: object
+      title: ModifiedTimeRangeOutput
+    PaginatedLogsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LogEntryOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor (log ID) to fetch the next page of results. None if
+            no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedLogsOutput
+      description: Paginated list of log entries.
+    PaginatedSyncJobsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SyncJobOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor to fetch the next page of results. None if no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedSyncJobsOutput
+      description: Paginated list of sync jobs.
+    Provider:
+      type: string
+      enum:
+      - google_oauth
+      - azure_oauth
+      - azure_certificate_credentials
+      - aws_s3_assume_role
+      - sharefile_oauth
+      - dropbox_oauth
+      title: Provider
+    ResourceIdentifier:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: ResourceIdentifier
+      description: 'Identifier for an external resource.
+
+
+        The meaning of ``file_id`` depends on the provider (determined by the sync
+        config):
+
+        - Google Drive: the Drive file id
+
+        - SharePoint / OneDrive: the item id
+
+        - S3: the object key
+
+        - ShareFile: the item id
+
+        - Dropbox: the full file path including filename (e.g. ``/Documents/report.pdf``)'
+    ResourceValidationInput:
+      properties:
+        credentials:
+          type: string
+          title: Credentials
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - credentials
+      - resources
+      title: ResourceValidationInput
+      description: 'Input schema for validating multiple resources with existing external
+        connection.
+
+
+        Credentials should be a Fernet-encrypted string containing the JSON-serialized
+
+        credentials dict, encrypted with the same key used for external connections.'
+    ResourceValidationOutput:
+      properties:
+        valid_resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Valid Resources
+        invalid_resources:
+          items:
+            $ref: '#/components/schemas/InvalidResource'
+          type: array
+          title: Invalid Resources
+      type: object
+      required:
+      - valid_resources
+      - invalid_resources
+      title: ResourceValidationOutput
+      description: Output schema for validated resources.
+    S3AssumeRoleInfoOutput:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+          description: The external ID to use in the IAM role trust policy condition.
+        role_name:
+          type: string
+          title: Role Name
+          description: The role name that should be created in the client's AWS account.
+        aws_account_id:
+          type: string
+          title: Aws Account Id
+          description: Nuclia's AWS account ID that will assume the role.
+      type: object
+      required:
+      - external_id
+      - role_name
+      - aws_account_id
+      title: S3AssumeRoleInfoOutput
+      description: Information the client needs to configure an IAM role for Nuclia
+        S3 sync.
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Sort order for paginated queries.
+    StorageDriveOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        drive_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Type
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageDriveOutput
+      description: Represents a drive/storage location that can be selected for syncing.
+    StorageFolderOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      - path
+      title: StorageFolderOutput
+      description: Represents a folder that can be selected for syncing.
+    StorageSiteOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageSiteOutput
+      description: Represents a SharePoint site that can be selected for browsing
+        drives.
+    SyncConfigInput:
+      properties:
+        name:
+          type: string
+          title: Name
+        sync_root_path:
+          type: string
+          title: Sync Root Path
+        external_connection_id:
+          type: string
+          format: uuid
+          title: External Connection Id
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterInput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelInput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+      type: object
+      required:
+      - name
+      - sync_root_path
+      - external_connection_id
+      title: SyncConfigInput
+    SyncConfigOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        sync_root_path:
+          type: string
+          title: Sync Root Path
+        sync_interval_minutes:
+          type: integer
+          title: Sync Interval Minutes
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        external_connection:
+          $ref: '#/components/schemas/ExternalConnectionOutput'
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterOutput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelOutput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeOutput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+        last_sync_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Sync Run
+      type: object
+      required:
+      - id
+      - name
+      - kb_id
+      - created_at
+      - updated_at
+      - sync_root_path
+      - sync_interval_minutes
+      - created_by
+      - external_connection
+      title: SyncConfigOutput
+    SyncConfigUpdateInput:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterInput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelInput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+      additionalProperties: false
+      type: object
+      title: SyncConfigUpdateInput
+      description: 'Partial update model for SyncConfig.
+
+
+        Omitted fields are left unchanged. Fields explicitly set to null
+
+        clear that entry from extra_configuration.'
+    SyncJobOptionsOutput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          default: false
+      type: object
+      title: SyncJobOptionsOutput
+      description: Options for a sync job.
+    SyncJobOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Finished At
+        config_id:
+          type: string
+          format: uuid
+          title: Config Id
+        status:
+          $ref: '#/components/schemas/SyncJobStatus'
+        options:
+          $ref: '#/components/schemas/SyncJobOptionsOutput'
+          default:
+            full_sync: false
+      type: object
+      required:
+      - id
+      - created_at
+      - finished_at
+      - config_id
+      - status
+      title: SyncJobOutput
+    SyncJobStatus:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - completed
+      - failed
+      title: SyncJobStatus
+    TriggerSyncInput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          description: 'If True, ignore incremental sync state and perform a full
+            sync. Note: S3 and ShareFile providers always perform full syncs as they
+            don''t support delta tracking.'
+          default: false
+      type: object
+      title: TriggerSyncInput
+      description: Input for triggering a sync job.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ActivityLogsAskQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+          - rephrased_question
+          - answer
+          - rag_strategies_names
+          - question
+          - resources_count
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsAskQuery
+    ActivityLogsChatQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - date
+          - answer
+          - id
+          - rag_strategies_names
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsChatQuery
+    ActivityLogsQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsQuery
+    ActivityLogsSearchQuery:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - question
+          - resources_count
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: ActivityLogsSearchQuery
+    ActivityUsageResponse:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        search:
+          type: integer
+          title: Search
+        chat:
+          type: integer
+          title: Chat
+          deprecated: true
+        ask:
+          type: integer
+          title: Ask
+      type: object
+      required:
+      - timestamp
+      - search
+      - chat
+      - ask
+      title: ActivityUsageResponse
+    AggregatedRemiScoreMetric:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        metrics:
+          items:
+            $ref: '#/components/schemas/AggregatedRemiScoreValues'
+          type: array
+          title: Metrics
+      type: object
+      required:
+      - timestamp
+      - metrics
+      title: AggregatedRemiScoreMetric
+    AggregatedRemiScoreValues:
+      properties:
+        name:
+          type: string
+          title: Name
+        min:
+          type: number
+          title: Min
+        max:
+          type: number
+          title: Max
+        average:
+          type: number
+          title: Average
+      type: object
+      required:
+      - name
+      - min
+      - max
+      - average
+      title: AggregatedRemiScoreValues
+    Aggregation:
+      type: string
+      enum:
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+      - millennium
+      title: Aggregation
+    AuditMetadata:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+        key:
+          type: string
+          title: Key
+      additionalProperties: false
+      type: object
+      required:
+      - key
+      title: AuditMetadata
+    ClientType:
+      type: string
+      enum:
+      - api
+      - widget
+      - web
+      - dashboard
+      - desktop
+      - chrome_extension
+      title: ClientType
+    ContextRelevanceQuery:
+      properties:
+        value:
+          type: integer
+          title: Value
+        operation:
+          type: string
+          enum:
+          - gt
+          - lt
+          - eq
+          title: Operation
+        aggregation:
+          type: string
+          enum:
+          - average
+          - max
+          - min
+          title: Aggregation
+      type: object
+      required:
+      - value
+      - operation
+      - aggregation
+      title: ContextRelevanceQuery
+    DownloadActivityLogsAskQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - id
+          - date
+          - rephrased_question
+          - answer
+          - rag_strategies_names
+          - question
+          - resources_count
+        filters:
+          $ref: '#/components/schemas/QueryFiltersAsk'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsAskQuery
+    DownloadActivityLogsChatQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - rephrased_question
+              - answer
+              - learning_id
+              - retrieved_context
+              - chat_history
+              - feedback_good
+              - feedback_comment
+              - feedback_good_all
+              - feedback_good_any
+              - feedback
+              - model
+              - rag_strategies_names
+              - rag_strategies
+              - status
+              - generative_answer_first_chunk_time
+              - generative_reasoning_first_chunk_time
+              - generative_answer_time
+              - remi_scores
+              - user_request
+              - reasoning
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - rephrased_question
+          - date
+          - answer
+          - id
+          - rag_strategies_names
+          - question
+        filters:
+          $ref: '#/components/schemas/QueryFiltersChat'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsChatQuery
+    DownloadActivityLogsQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersCommon'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsQuery
+    DownloadActivityLogsSearchQuery:
+      properties:
+        year_month:
+          type: string
+          title: Year Month
+        show:
+          anyOf:
+          - items:
+              type: string
+              enum:
+              - question
+              - id
+              - date
+              - user_id
+              - user_type
+              - client_type
+              - total_duration
+              - audit_metadata
+              - resource_id
+              - nuclia_tokens
+              - token_details
+              - resources_count
+              - filter
+              - retrieval_rephrased_question
+              - vectorset
+              - security
+              - min_score_bm25
+              - min_score_semantic
+              - result_per_page
+              - retrieval_time
+            type: array
+            uniqueItems: true
+          - type: string
+            const: all
+          title: Show
+          default:
+          - date
+          - question
+          - resources_count
+          - id
+        filters:
+          $ref: '#/components/schemas/QueryFiltersSearch'
+        email_address:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email Address
+        notify_via_email:
+          type: boolean
+          title: Notify Via Email
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - year_month
+      - filters
+      title: DownloadActivityLogsSearchQuery
+    DownloadFormat:
+      type: string
+      enum:
+      - ndjson
+      - csv
+      title: DownloadFormat
+    DownloadRequest:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        download_type:
+          $ref: '#/components/schemas/DownloadRequestType'
+        download_format:
+          $ref: '#/components/schemas/DownloadFormat'
+        event_type:
+          $ref: '#/components/schemas/EventType'
+        requested_at:
+          type: string
+          format: date-time
+          title: Requested At
+        kb_id:
+          type: string
+          title: Kb Id
+        download_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Download Url
+      type: object
+      required:
+      - request_id
+      - download_type
+      - download_format
+      - event_type
+      - requested_at
+      - kb_id
+      - download_url
+      title: DownloadRequest
+    DownloadRequestType:
+      type: string
+      enum:
+      - query
+      title: DownloadRequestType
+    EventDownloadsList:
+      properties:
+        downloads:
+          items:
+            type: string
+          type: array
+          title: Downloads
+      type: object
+      required:
+      - downloads
+      title: EventDownloadsList
+    EventType:
+      type: string
+      enum:
+      - visited
+      - modified
+      - deleted
+      - new
+      - search
+      - suggest
+      - indexed
+      - chat
+      - ask
+      - retrieve
+      - augment
+      - started
+      - stopped
+      - processed
+      title: EventType
+    GenericFilter_ClientType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/ClientType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[ClientType]
+    GenericFilter_UserType_:
+      properties:
+        eq:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        gt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ge:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        lt:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        le:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        ne:
+          anyOf:
+          - $ref: '#/components/schemas/UserType'
+          - type: 'null'
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[UserType]
+    GenericFilter_bool_:
+      properties:
+        eq:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[bool]
+    GenericFilter_datetime_:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[datetime]
+    GenericFilter_float_:
+      properties:
+        eq:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[float]
+    GenericFilter_int_:
+      properties:
+        eq:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[int]
+    GenericFilter_str_:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+      additionalProperties: false
+      type: object
+      title: GenericFilter[str]
+    Pagination:
+      properties:
+        limit:
+          type: integer
+          maximum: 1000.0
+          minimum: 0.0
+          title: Limit
+          default: 10
+        starting_after:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Starting After
+        ending_before:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ending Before
+      type: object
+      title: Pagination
+    QueryFiltersAsk:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersAsk
+    QueryFiltersChat:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        rephrased_question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        answer:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        learning_id:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        feedback_good:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if the feedback provided for the main question is positive.
+          cast_to: bool
+        feedback_comment:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+          description: User-provided comment on the feedback for the question.
+        feedback_good_all:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if all feedback, including that on the main question and
+            each related text block, is positive.
+          cast_to: bool
+        feedback_good_any:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_bool_'
+          - type: 'null'
+          description: True if there is any positive feedback on the question itself
+            or any related text block.
+          cast_to: bool
+        model:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        generative_answer_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first answer chunk of data was returned by the generative model.
+          cast_to: int
+        generative_reasoning_first_chunk_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds from when the user made the request to
+            when the first reasoning chunk of data was returned by the generative
+            model.
+          cast_to: int
+        generative_answer_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds elapsed between the answer streaming request
+            is done to the generative model until the last chunk of the answer is
+            returned.
+          cast_to: int
+        reasoning:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersChat
+    QueryFiltersCommon:
+      properties:
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: QueryFiltersCommon
+    QueryFiltersSearch:
+      properties:
+        question:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        date:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_datetime_'
+          - type: 'null'
+        user_id:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_str_'
+          - type: 'null'
+        user_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_UserType_'
+          - type: 'null'
+        client_type:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_ClientType_'
+          - type: 'null'
+        total_duration:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+        audit_metadata:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditMetadata'
+            type: array
+          - type: 'null'
+          title: Audit Metadata
+        nuclia_tokens:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+        resources_count:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        vectorset:
+          anyOf:
+          - $ref: '#/components/schemas/StringFilter'
+          - type: 'null'
+        min_score_bm25:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        min_score_semantic:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_float_'
+          - type: 'null'
+          cast_to: float
+        result_per_page:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          cast_to: int
+        retrieval_time:
+          anyOf:
+          - $ref: '#/components/schemas/GenericFilter_int_'
+          - type: 'null'
+          description: Time in milliseconds spent on the NucliaDB side for retrieval,
+            including retrieval rephrase, calculation of query embedding, index search
+            and results hydration
+          cast_to: int
+      additionalProperties: false
+      type: object
+      title: QueryFiltersSearch
+    RemiAnswerRelevance:
+      properties:
+        score:
+          type: integer
+          title: Score
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - score
+      - reason
+      title: RemiAnswerRelevance
+    RemiQuery:
+      properties:
+        context_relevance:
+          anyOf:
+          - $ref: '#/components/schemas/ContextRelevanceQuery'
+          - type: 'null'
+        month:
+          type: string
+          title: Month
+        from_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From Date
+        to_date:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To Date
+        feedback_good:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Feedback Good
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/Status'
+          - type: 'null'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          default:
+            limit: 10
+      type: object
+      required:
+      - month
+      title: RemiQuery
+    RemiQueryResult:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        date:
+          type: string
+          format: date-time
+          title: Date
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - question
+      - date
+      - answer
+      - remi
+      title: RemiQueryResult
+    RemiQueryResultWithContext:
+      properties:
+        id:
+          type: integer
+          title: Id
+        question:
+          type: string
+          title: Question
+        date:
+          type: string
+          format: date-time
+          title: Date
+        answer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Answer
+        remi:
+          anyOf:
+          - $ref: '#/components/schemas/RemiScores'
+          - type: 'null'
+        context:
+          items:
+            $ref: '#/components/schemas/RetrievedContext'
+          type: array
+          title: Context
+      type: object
+      required:
+      - id
+      - question
+      - date
+      - answer
+      - remi
+      - context
+      title: RemiQueryResultWithContext
+    RemiQueryResults:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/RemiQueryResult'
+          type: array
+          title: Data
+        has_more:
+          type: boolean
+          title: Has More
+      type: object
+      required:
+      - data
+      - has_more
+      title: RemiQueryResults
+    RemiScores:
+      properties:
+        answer_relevance:
+          $ref: '#/components/schemas/RemiAnswerRelevance'
+        context_relevance:
+          items:
+            type: integer
+          type: array
+          title: Context Relevance
+        groundedness:
+          items:
+            type: integer
+          type: array
+          title: Groundedness
+      type: object
+      required:
+      - answer_relevance
+      - context_relevance
+      - groundedness
+      title: RemiScores
+    RetrievedContext:
+      properties:
+        text:
+          type: string
+          title: Text
+        text_block_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Text Block Id
+      type: object
+      required:
+      - text
+      title: RetrievedContext
+    ShowOnly:
+      properties: {}
+      additionalProperties: false
+      type: object
+      title: ShowOnly
+      description: 'Marker class to indicate that a field is for display purposes
+        only.
+
+
+        Fields wrapped in this class are excluded from OpenAPI documentation to prevent
+        confusion,
+
+        as they are not intended for filtering. Instead, they are only used in the
+        "show" parameter.
+
+
+        This behavior is enforced in the FastAPI application through introspection,
+
+        ensuring these fields are removed from the generated API documentation.'
+    Status:
+      type: string
+      enum:
+      - SUCCESS
+      - ERROR
+      - NO_CONTEXT
+      title: Status
+    StringFilter:
+      properties:
+        eq:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Eq
+        gt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gt
+        ge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ge
+        lt:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lt
+        le:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Le
+        ne:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ne
+        isnull:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isnull
+        like:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Like
+        ilike:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ilike
+      additionalProperties: false
+      type: object
+      title: StringFilter
+    UserType:
+      type: string
+      enum:
+      - user
+      - nuakey
+      title: UserType
     AccountType:
       type: string
       enum:
@@ -2275,6 +4777,7 @@ components:
       - v3starter
       - v3pro
       - v3enterprise
+      - cowork
       - v3fly
       - v3growth
       title: AccountType
@@ -2417,6 +4920,28 @@ components:
           title: Ttl
       type: object
       title: EphemeralTokenProperties
+    EphemeralTokenRequestPayload:
+      properties:
+        agent_session:
+          anyOf:
+          - type: string
+            const: ephemeral
+          - type: string
+            format: uuid4
+          - type: 'null'
+          title: Agent Session
+        path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Path
+        ttl:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ttl
+      type: object
+      title: EphemeralTokenRequestPayload
     EphemeralTokenResponse:
       properties:
         token:
@@ -2426,15 +4951,6 @@ components:
       required:
       - token
       title: EphemeralTokenResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     InviteKnowledgeBoxPayload:
       properties:
         email:
@@ -2629,6 +5145,11 @@ components:
           - type: string
           - type: 'null'
           title: External Index Provider
+        enforce_security:
+          type: boolean
+          title: Enforce Security
+          description: Whether security is enforced by default on all requests to
+            this Knowledge Box.
       type: object
       required:
       - id
@@ -2638,6 +5159,7 @@ components:
       - title
       - state
       - created
+      - enforce_security
       title: KnowledgeBox
     KnowledgeBoxCreation:
       properties:
@@ -2694,6 +5216,12 @@ components:
           type: object
           title: Search Configs
           default: {}
+        enforce_security:
+          type: boolean
+          title: Enforce Security
+          description: Whether security is enforced by default on all requests to
+            this Knowledge Box.
+          default: false
       type: object
       required:
       - slug
@@ -2766,6 +5294,11 @@ components:
           - type: string
           - type: 'null'
           title: External Index Provider
+        enforce_security:
+          type: boolean
+          title: Enforce Security
+          description: Whether security is enforced by default on all requests to
+            this Knowledge Box.
       type: object
       required:
       - id
@@ -2774,6 +5307,7 @@ components:
       - title
       - state
       - search_configs
+      - enforce_security
       title: KnowledgeBoxSummary
     KnowledgeBoxUpdate:
       properties:
@@ -2821,6 +5355,14 @@ components:
             type: object
           - type: 'null'
           title: Search Configs
+        enforce_security:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Enforce Security
+          description: Whether security is enforced by default on all requests to
+            this Knowledge Box. Leaving this as None means no change, while setting
+            it to True or False will update the setting accordingly.
       type: object
       title: KnowledgeBoxUpdate
     NUAClient:
@@ -3081,2188 +5623,3 @@ components:
       - id
       - role
       title: UpdateKbUser
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    ActivityLogsAskQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - answer
-          - date
-          - rag_strategies_names
-          - rephrased_question
-          - question
-          - resources_count
-        filters:
-          $ref: '#/components/schemas/QueryFiltersAsk'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsAskQuery
-    ActivityLogsChatQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - date
-          - rephrased_question
-          - answer
-          - rag_strategies_names
-          - question
-          - id
-        filters:
-          $ref: '#/components/schemas/QueryFiltersChat'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsChatQuery
-    ActivityLogsQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - date
-          - id
-        filters:
-          $ref: '#/components/schemas/QueryFiltersCommon'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsQuery
-    ActivityLogsSearchQuery:
-      properties:
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - resources_count
-          - date
-          - id
-          - question
-        filters:
-          $ref: '#/components/schemas/QueryFiltersSearch'
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: ActivityLogsSearchQuery
-    ActivityUsageResponse:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        search:
-          type: integer
-          title: Search
-        chat:
-          type: integer
-          title: Chat
-          deprecated: true
-        ask:
-          type: integer
-          title: Ask
-      type: object
-      required:
-      - timestamp
-      - search
-      - chat
-      - ask
-      title: ActivityUsageResponse
-    AggregatedRemiScoreMetric:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-        metrics:
-          items:
-            $ref: '#/components/schemas/AggregatedRemiScoreValues'
-          type: array
-          title: Metrics
-      type: object
-      required:
-      - timestamp
-      - metrics
-      title: AggregatedRemiScoreMetric
-    AggregatedRemiScoreValues:
-      properties:
-        name:
-          type: string
-          title: Name
-        min:
-          type: number
-          title: Min
-        max:
-          type: number
-          title: Max
-        average:
-          type: number
-          title: Average
-      type: object
-      required:
-      - name
-      - min
-      - max
-      - average
-      title: AggregatedRemiScoreValues
-    Aggregation:
-      type: string
-      enum:
-      - hour
-      - day
-      - week
-      - month
-      - quarter
-      - year
-      - millennium
-      title: Aggregation
-    AuditMetadata:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        like:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Like
-        ilike:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ilike
-        key:
-          type: string
-          title: Key
-      additionalProperties: false
-      type: object
-      required:
-      - key
-      title: AuditMetadata
-    ClientType:
-      type: string
-      enum:
-      - api
-      - widget
-      - web
-      - dashboard
-      - desktop
-      - chrome_extension
-      title: ClientType
-    ContextRelevanceQuery:
-      properties:
-        value:
-          type: integer
-          title: Value
-        operation:
-          type: string
-          enum:
-          - gt
-          - lt
-          - eq
-          title: Operation
-        aggregation:
-          type: string
-          enum:
-          - average
-          - max
-          - min
-          title: Aggregation
-      type: object
-      required:
-      - value
-      - operation
-      - aggregation
-      title: ContextRelevanceQuery
-    DownloadActivityLogsAskQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - id
-          - answer
-          - date
-          - rag_strategies_names
-          - rephrased_question
-          - question
-          - resources_count
-        filters:
-          $ref: '#/components/schemas/QueryFiltersAsk'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsAskQuery
-    DownloadActivityLogsChatQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - rephrased_question
-              - answer
-              - learning_id
-              - retrieved_context
-              - chat_history
-              - feedback_good
-              - feedback_comment
-              - feedback_good_all
-              - feedback_good_any
-              - feedback
-              - model
-              - rag_strategies_names
-              - rag_strategies
-              - status
-              - generative_answer_first_chunk_time
-              - generative_reasoning_first_chunk_time
-              - generative_answer_time
-              - remi_scores
-              - user_request
-              - reasoning
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - date
-          - rephrased_question
-          - answer
-          - rag_strategies_names
-          - question
-          - id
-        filters:
-          $ref: '#/components/schemas/QueryFiltersChat'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsChatQuery
-    DownloadActivityLogsQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - date
-          - id
-        filters:
-          $ref: '#/components/schemas/QueryFiltersCommon'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsQuery
-    DownloadActivityLogsSearchQuery:
-      properties:
-        year_month:
-          type: string
-          title: Year Month
-        show:
-          anyOf:
-          - items:
-              type: string
-              enum:
-              - question
-              - id
-              - date
-              - user_id
-              - user_type
-              - client_type
-              - total_duration
-              - audit_metadata
-              - resource_id
-              - nuclia_tokens
-              - token_details
-              - resources_count
-              - filter
-              - retrieval_rephrased_question
-              - vectorset
-              - security
-              - min_score_bm25
-              - min_score_semantic
-              - result_per_page
-              - retrieval_time
-            type: array
-            uniqueItems: true
-          - type: string
-            const: all
-          title: Show
-          default:
-          - resources_count
-          - date
-          - id
-          - question
-        filters:
-          $ref: '#/components/schemas/QueryFiltersSearch'
-        email_address:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email Address
-        notify_via_email:
-          type: boolean
-          title: Notify Via Email
-          default: false
-      additionalProperties: false
-      type: object
-      required:
-      - year_month
-      - filters
-      title: DownloadActivityLogsSearchQuery
-    DownloadFormat:
-      type: string
-      enum:
-      - ndjson
-      - csv
-      title: DownloadFormat
-    DownloadRequest:
-      properties:
-        request_id:
-          type: string
-          title: Request Id
-        download_type:
-          $ref: '#/components/schemas/DownloadRequestType'
-        download_format:
-          $ref: '#/components/schemas/DownloadFormat'
-        event_type:
-          $ref: '#/components/schemas/EventType'
-        requested_at:
-          type: string
-          format: date-time
-          title: Requested At
-        kb_id:
-          type: string
-          title: Kb Id
-        download_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Download Url
-      type: object
-      required:
-      - request_id
-      - download_type
-      - download_format
-      - event_type
-      - requested_at
-      - kb_id
-      - download_url
-      title: DownloadRequest
-    DownloadRequestType:
-      type: string
-      enum:
-      - query
-      title: DownloadRequestType
-    EventDownloadsList:
-      properties:
-        downloads:
-          items:
-            type: string
-          type: array
-          title: Downloads
-      type: object
-      required:
-      - downloads
-      title: EventDownloadsList
-    EventType:
-      type: string
-      enum:
-      - visited
-      - modified
-      - deleted
-      - new
-      - search
-      - suggest
-      - indexed
-      - chat
-      - ask
-      - retrieve
-      - augment
-      - started
-      - stopped
-      - processed
-      title: EventType
-    GenericFilter_ClientType_:
-      properties:
-        eq:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        gt:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        ge:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        lt:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        le:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        ne:
-          anyOf:
-          - $ref: '#/components/schemas/ClientType'
-          - type: 'null'
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[ClientType]
-    GenericFilter_UserType_:
-      properties:
-        eq:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        gt:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        ge:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        lt:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        le:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        ne:
-          anyOf:
-          - $ref: '#/components/schemas/UserType'
-          - type: 'null'
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[UserType]
-    GenericFilter_bool_:
-      properties:
-        eq:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[bool]
-    GenericFilter_float_:
-      properties:
-        eq:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: number
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[float]
-    GenericFilter_int_:
-      properties:
-        eq:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[int]
-    GenericFilter_str_:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-      additionalProperties: false
-      type: object
-      title: GenericFilter[str]
-    Pagination:
-      properties:
-        limit:
-          type: integer
-          maximum: 1000.0
-          minimum: 0.0
-          title: Limit
-          default: 10
-        starting_after:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Starting After
-        ending_before:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Ending Before
-      type: object
-      title: Pagination
-    QueryFiltersAsk:
-      properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        rephrased_question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        answer:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        learning_id:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        feedback_good:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if the feedback provided for the main question is positive.
-          cast_to: bool
-        feedback_comment:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-          description: User-provided comment on the feedback for the question.
-        feedback_good_all:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if all feedback, including that on the main question and
-            each related text block, is positive.
-          cast_to: bool
-        feedback_good_any:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if there is any positive feedback on the question itself
-            or any related text block.
-          cast_to: bool
-        model:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        generative_answer_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first answer chunk of data was returned by the generative model.
-          cast_to: int
-        generative_reasoning_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first reasoning chunk of data was returned by the generative
-            model.
-          cast_to: int
-        generative_answer_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds elapsed between the answer streaming request
-            is done to the generative model until the last chunk of the answer is
-            returned.
-          cast_to: int
-        reasoning:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        resources_count:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        vectorset:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        min_score_bm25:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        min_score_semantic:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        result_per_page:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        retrieval_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds spent on the NucliaDB side for retrieval,
-            including retrieval rephrase, calculation of query embedding, index search
-            and results hydration
-          cast_to: int
-      additionalProperties: false
-      type: object
-      title: QueryFiltersAsk
-    QueryFiltersChat:
-      properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        rephrased_question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        answer:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        learning_id:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        feedback_good:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if the feedback provided for the main question is positive.
-          cast_to: bool
-        feedback_comment:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-          description: User-provided comment on the feedback for the question.
-        feedback_good_all:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if all feedback, including that on the main question and
-            each related text block, is positive.
-          cast_to: bool
-        feedback_good_any:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_bool_'
-          - type: 'null'
-          description: True if there is any positive feedback on the question itself
-            or any related text block.
-          cast_to: bool
-        model:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        generative_answer_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first answer chunk of data was returned by the generative model.
-          cast_to: int
-        generative_reasoning_first_chunk_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds from when the user made the request to
-            when the first reasoning chunk of data was returned by the generative
-            model.
-          cast_to: int
-        generative_answer_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds elapsed between the answer streaming request
-            is done to the generative model until the last chunk of the answer is
-            returned.
-          cast_to: int
-        reasoning:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: QueryFiltersChat
-    QueryFiltersCommon:
-      properties:
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-      additionalProperties: false
-      type: object
-      title: QueryFiltersCommon
-    QueryFiltersSearch:
-      properties:
-        question:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        user_id:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_str_'
-          - type: 'null'
-        user_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_UserType_'
-          - type: 'null'
-        client_type:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_ClientType_'
-          - type: 'null'
-        total_duration:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-        audit_metadata:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/AuditMetadata'
-            type: array
-          - type: 'null'
-          title: Audit Metadata
-        nuclia_tokens:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-        resources_count:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        vectorset:
-          anyOf:
-          - $ref: '#/components/schemas/StringFilter'
-          - type: 'null'
-        min_score_bm25:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        min_score_semantic:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_float_'
-          - type: 'null'
-          cast_to: float
-        result_per_page:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          cast_to: int
-        retrieval_time:
-          anyOf:
-          - $ref: '#/components/schemas/GenericFilter_int_'
-          - type: 'null'
-          description: Time in milliseconds spent on the NucliaDB side for retrieval,
-            including retrieval rephrase, calculation of query embedding, index search
-            and results hydration
-          cast_to: int
-      additionalProperties: false
-      type: object
-      title: QueryFiltersSearch
-    RemiAnswerRelevance:
-      properties:
-        score:
-          type: integer
-          title: Score
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - score
-      - reason
-      title: RemiAnswerRelevance
-    RemiQuery:
-      properties:
-        context_relevance:
-          anyOf:
-          - $ref: '#/components/schemas/ContextRelevanceQuery'
-          - type: 'null'
-        month:
-          type: string
-          title: Month
-        feedback_good:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Feedback Good
-        status:
-          anyOf:
-          - $ref: '#/components/schemas/Status'
-          - type: 'null'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-          default:
-            limit: 10
-      type: object
-      required:
-      - month
-      title: RemiQuery
-    RemiQueryResult:
-      properties:
-        id:
-          type: integer
-          title: Id
-        question:
-          type: string
-          title: Question
-        answer:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Answer
-        remi:
-          anyOf:
-          - $ref: '#/components/schemas/RemiScores'
-          - type: 'null'
-      type: object
-      required:
-      - id
-      - question
-      - answer
-      - remi
-      title: RemiQueryResult
-    RemiQueryResultWithContext:
-      properties:
-        id:
-          type: integer
-          title: Id
-        question:
-          type: string
-          title: Question
-        answer:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Answer
-        remi:
-          anyOf:
-          - $ref: '#/components/schemas/RemiScores'
-          - type: 'null'
-        context:
-          items:
-            $ref: '#/components/schemas/RetrievedContext'
-          type: array
-          title: Context
-      type: object
-      required:
-      - id
-      - question
-      - answer
-      - remi
-      - context
-      title: RemiQueryResultWithContext
-    RemiQueryResults:
-      properties:
-        data:
-          items:
-            $ref: '#/components/schemas/RemiQueryResult'
-          type: array
-          title: Data
-        has_more:
-          type: boolean
-          title: Has More
-      type: object
-      required:
-      - data
-      - has_more
-      title: RemiQueryResults
-    RemiScores:
-      properties:
-        answer_relevance:
-          $ref: '#/components/schemas/RemiAnswerRelevance'
-        context_relevance:
-          items:
-            type: integer
-          type: array
-          title: Context Relevance
-        groundedness:
-          items:
-            type: integer
-          type: array
-          title: Groundedness
-      type: object
-      required:
-      - answer_relevance
-      - context_relevance
-      - groundedness
-      title: RemiScores
-    RetrievedContext:
-      properties:
-        text:
-          type: string
-          title: Text
-        text_block_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Text Block Id
-      type: object
-      required:
-      - text
-      title: RetrievedContext
-    ShowOnly:
-      properties: {}
-      additionalProperties: false
-      type: object
-      title: ShowOnly
-      description: 'Marker class to indicate that a field is for display purposes
-        only.
-
-
-        Fields wrapped in this class are excluded from OpenAPI documentation to prevent
-        confusion,
-
-        as they are not intended for filtering. Instead, they are only used in the
-        "show" parameter.
-
-
-        This behavior is enforced in the FastAPI application through introspection,
-
-        ensuring these fields are removed from the generated API documentation.'
-    Status:
-      type: string
-      enum:
-      - SUCCESS
-      - ERROR
-      - NO_CONTEXT
-      title: Status
-    StringFilter:
-      properties:
-        eq:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Eq
-        gt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Gt
-        ge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ge
-        lt:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Lt
-        le:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Le
-        ne:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ne
-        isnull:
-          anyOf:
-          - type: boolean
-          - type: 'null'
-          title: Isnull
-        like:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Like
-        ilike:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Ilike
-      additionalProperties: false
-      type: object
-      title: StringFilter
-    UserType:
-      type: string
-      enum:
-      - user
-      - nuakey
-      title: UserType
-    AWSS3AssumeRoleCredentials:
-      properties:
-        role_arn:
-          type: string
-          title: Role Arn
-        external_id:
-          type: string
-          title: External Id
-      type: object
-      required:
-      - role_arn
-      - external_id
-      title: AWSS3AssumeRoleCredentials
-    AuthorizeUrlOutput:
-      properties:
-        authorize_url:
-          type: string
-          title: Authorize Url
-      type: object
-      required:
-      - authorize_url
-      title: AuthorizeUrlOutput
-    AzureCertificateCredentials:
-      properties:
-        tenant_id:
-          type: string
-          title: Tenant Id
-        client_id:
-          type: string
-          title: Client Id
-        pfx_base64:
-          type: string
-          title: Pfx Base64
-        pfx_password:
-          type: string
-          title: Pfx Password
-      type: object
-      required:
-      - tenant_id
-      - client_id
-      - pfx_base64
-      - pfx_password
-      title: AzureCertificateCredentials
-      description: 'Credentials for Azure/SharePoint certificate-based authentication.
-
-
-        This uses the client credentials flow with a certificate instead of a client
-        secret.
-
-        The certificate must be registered in the Azure App Registration.
-
-
-        Users provide a .pfx file (base64-encoded) and its password. The private key
-        and
-
-        certificate are extracted server-side and stored for authentication.'
-    BrowseCapabilities:
-      properties:
-        has_sites:
-          type: boolean
-          title: Has Sites
-          description: Whether the provider supports site browsing (SharePoint only).
-          default: false
-        requires_site_search:
-          type: boolean
-          title: Requires Site Search
-          description: Whether site_search is required (True) or can list all sites
-            (False). Only applicable for certificate auth connections.
-          default: false
-        requires_site_url_resolution:
-          type: boolean
-          title: Requires Site Url Resolution
-          description: Whether the client must use the /resolve_site endpoint to obtain
-            a site_id from a site URL before browsing drives. Applies to OAuth connections
-            using Sites.Selected permission.
-          default: false
-      type: object
-      title: BrowseCapabilities
-      description: Capabilities for browsing storage in this external connection.
-    BrowseStorageOutput:
-      properties:
-        sites:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageSiteOutput'
-            type: array
-          - type: 'null'
-          title: Sites
-        drives:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageDriveOutput'
-            type: array
-          - type: 'null'
-          title: Drives
-        folders:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageFolderOutput'
-            type: array
-          - type: 'null'
-          title: Folders
-        next_page_token:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next Page Token
-      type: object
-      title: BrowseStorageOutput
-      description: Result of browsing storage, containing sites, drives or folders.
-    ExternalAuthorizationInput:
-      properties:
-        widget_redirect_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Widget Redirect Url
-        rao_redirect_url:
-          type: string
-          title: Rao Redirect Url
-      type: object
-      required:
-      - rao_redirect_url
-      title: ExternalAuthorizationInput
-      description: Input schema for external connection authorization with additional
-        parameters.
-    ExternalConnectionInput:
-      properties:
-        provider:
-          $ref: '#/components/schemas/Provider'
-        credentials:
-          anyOf:
-          - $ref: '#/components/schemas/AWSS3AssumeRoleCredentials'
-          - $ref: '#/components/schemas/AzureCertificateCredentials'
-          - type: 'null'
-          title: Credentials
-      type: object
-      required:
-      - provider
-      title: ExternalConnectionInput
-      description: 'Input schema for creating an external connection.
-
-
-        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth): only provider
-        is required.
-
-        The response will contain an authorize_url to complete the OAuth flow.
-
-
-        For providers aws_s3_assume_role, azure_certificate_credentials:
-
-        provider and credentials are required.
-
-        The response will contain the created ExternalConnection directly.'
-    ExternalConnectionOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        kb_id:
-          type: string
-          format: uuid
-          title: Kb Id
-        created_by:
-          type: string
-          format: uuid
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        provider:
-          $ref: '#/components/schemas/Provider'
-        capabilities:
-          $ref: '#/components/schemas/BrowseCapabilities'
-      type: object
-      required:
-      - id
-      - kb_id
-      - created_by
-      - created_at
-      - updated_at
-      - provider
-      - capabilities
-      title: ExternalConnectionOutput
-      description: External connection output without sensitive credential data.
-    InvalidResource:
-      properties:
-        resource:
-          $ref: '#/components/schemas/ResourceIdentifier'
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - resource
-      - reason
-      title: InvalidResource
-      description: Details about a resource that failed validation.
-    LogEntryOutput:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique identifier for the log entry
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-          description: Timestamp of the log entry
-        level:
-          type: string
-          title: Level
-          description: Log level (INFO, WARNING, ERROR, etc.)
-        message:
-          type: string
-          title: Message
-          description: Log message
-        extra:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Extra
-          description: Additional context data for the log entry
-      type: object
-      required:
-      - id
-      - timestamp
-      - level
-      - message
-      title: LogEntryOutput
-      description: A single log entry from a sync job.
-    LogLevel:
-      type: string
-      enum:
-      - DEBUG
-      - INFO
-      - WARNING
-      - ERROR
-      - EXCEPTION
-      - CRITICAL
-      title: LogLevel
-      description: Log level for filtering sync job logs.
-    PaginatedLogsOutput:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/LogEntryOutput'
-          type: array
-          title: Items
-        next_cursor:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Next Cursor
-          description: Cursor (log ID) to fetch the next page of results. None if
-            no more results.
-      type: object
-      required:
-      - items
-      title: PaginatedLogsOutput
-      description: Paginated list of log entries.
-    PaginatedSyncJobsOutput:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SyncJobOutput'
-          type: array
-          title: Items
-        next_cursor:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next Cursor
-          description: Cursor to fetch the next page of results. None if no more results.
-      type: object
-      required:
-      - items
-      title: PaginatedSyncJobsOutput
-      description: Paginated list of sync jobs.
-    Provider:
-      type: string
-      enum:
-      - google_oauth
-      - azure_oauth
-      - azure_certificate_credentials
-      - aws_s3_assume_role
-      - sharefile_oauth
-      - dropbox_oauth
-      title: Provider
-    ResourceIdentifier:
-      properties:
-        file_id:
-          type: string
-          title: File Id
-      type: object
-      required:
-      - file_id
-      title: ResourceIdentifier
-      description: 'Identifier for an external resource.
-
-
-        The meaning of ``file_id`` depends on the provider (determined by the sync
-        config):
-
-        - Google Drive: the Drive file id
-
-        - SharePoint / OneDrive: the item id
-
-        - S3: the object key
-
-        - ShareFile: the item id
-
-        - Dropbox: the full file path including filename (e.g. ``/Documents/report.pdf``)'
-    ResourceValidationInput:
-      properties:
-        credentials:
-          additionalProperties: true
-          type: object
-          title: Credentials
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceIdentifier'
-          type: array
-          title: Resources
-      type: object
-      required:
-      - credentials
-      - resources
-      title: ResourceValidationInput
-      description: 'Input schema for validating multiple resources with existing external
-        connection.
-
-
-        Credentials should be encrypted using the same encryption secret used for
-
-        external_connection credential storage.'
-    ResourceValidationOutput:
-      properties:
-        valid_resources:
-          items:
-            $ref: '#/components/schemas/ResourceIdentifier'
-          type: array
-          title: Valid Resources
-        invalid_resources:
-          items:
-            $ref: '#/components/schemas/InvalidResource'
-          type: array
-          title: Invalid Resources
-      type: object
-      required:
-      - valid_resources
-      - invalid_resources
-      title: ResourceValidationOutput
-      description: Output schema for validated resources.
-    S3AssumeRoleInfoOutput:
-      properties:
-        external_id:
-          type: string
-          title: External Id
-          description: The external ID to use in the IAM role trust policy condition.
-        role_name:
-          type: string
-          title: Role Name
-          description: The role name that should be created in the client's AWS account.
-        aws_account_id:
-          type: string
-          title: Aws Account Id
-          description: Nuclia's AWS account ID that will assume the role.
-      type: object
-      required:
-      - external_id
-      - role_name
-      - aws_account_id
-      title: S3AssumeRoleInfoOutput
-      description: Information the client needs to configure an IAM role for Nuclia
-        S3 sync.
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-      description: Sort order for paginated queries.
-    StorageDriveOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        drive_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Type
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      title: StorageDriveOutput
-      description: Represents a drive/storage location that can be selected for syncing.
-    StorageFolderOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      - path
-      title: StorageFolderOutput
-      description: Represents a folder that can be selected for syncing.
-    StorageSiteOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      title: StorageSiteOutput
-      description: Represents a SharePoint site that can be selected for browsing
-        drives.
-    SyncConfigInput:
-      properties:
-        name:
-          type: string
-          title: Name
-        sync_root_path:
-          type: string
-          title: Sync Root Path
-        external_connection_id:
-          type: string
-          format: uuid
-          title: External Connection Id
-        drive_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Id
-      type: object
-      required:
-      - name
-      - sync_root_path
-      - external_connection_id
-      title: SyncConfigInput
-    SyncConfigOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        name:
-          type: string
-          title: Name
-        kb_id:
-          type: string
-          format: uuid
-          title: Kb Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        sync_root_path:
-          type: string
-          title: Sync Root Path
-        sync_interval_minutes:
-          type: integer
-          title: Sync Interval Minutes
-        created_by:
-          type: string
-          format: uuid
-          title: Created By
-        external_connection:
-          $ref: '#/components/schemas/ExternalConnectionOutput'
-        drive_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Id
-        last_sync_run:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Sync Run
-      type: object
-      required:
-      - id
-      - name
-      - kb_id
-      - created_at
-      - updated_at
-      - sync_root_path
-      - sync_interval_minutes
-      - created_by
-      - external_connection
-      title: SyncConfigOutput
-    SyncJobOptionsOutput:
-      properties:
-        full_sync:
-          type: boolean
-          title: Full Sync
-          default: false
-      type: object
-      title: SyncJobOptionsOutput
-      description: Options for a sync job.
-    SyncJobOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        finished_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Finished At
-        config_id:
-          type: string
-          format: uuid
-          title: Config Id
-        status:
-          $ref: '#/components/schemas/SyncJobStatus'
-        options:
-          $ref: '#/components/schemas/SyncJobOptionsOutput'
-          default:
-            full_sync: false
-      type: object
-      required:
-      - id
-      - created_at
-      - finished_at
-      - config_id
-      - status
-      title: SyncJobOutput
-    SyncJobStatus:
-      type: string
-      enum:
-      - pending
-      - in_progress
-      - completed
-      - failed
-      title: SyncJobStatus
-    TriggerSyncInput:
-      properties:
-        full_sync:
-          type: boolean
-          title: Full Sync
-          description: 'If True, ignore incremental sync state and perform a full
-            sync. Note: S3 and ShareFile providers always perform full syncs as they
-            don''t support delta tracking.'
-          default: false
-      type: object
-      title: TriggerSyncInput
-      description: Input for triggering a sync job.

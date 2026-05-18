@@ -144,5 +144,6 @@
   "validation.password_mismatch": "Ups! La contraseña no coincide",
   "validation.password_required": "Elije una contraseña",
   "validation.required": "Campo requerido",
-  "validation.required_short": "Necesario"
+  "validation.required_short": "Necesario",
+  "login.error.user_not_registered": "No pudimos encontrar una cuenta vinculada a esta cuenta de {{provider}}. Puedes <a href=\"https://www.progress.com/agentic-rag/free-trial-sign-up\" rel=\"noopener noreferrer\">registrarte</a> para comenzar."
 }

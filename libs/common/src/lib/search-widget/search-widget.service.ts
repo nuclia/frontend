@@ -312,16 +312,8 @@ export class SearchWidgetService {
    * @param name
    * @param widgetConfig
    * @param searchConfigId
-   * @param generativeModel Generative model to be used for answering the query
-   * @param vectorset Semantic model to be used for answering the query
    */
-  createWidget(
-    name: string,
-    widgetConfig: Widget.WidgetConfiguration,
-    searchConfigId: string,
-    generativeModel: string,
-    vectorset: string,
-  ): Observable<string> {
+  createWidget(name: string, widgetConfig: Widget.WidgetConfiguration, searchConfigId: string): Observable<string> {
     return this.widgetList.pipe(
       take(1),
       switchMap((storedWidgets) => {
@@ -334,11 +326,9 @@ export class SearchWidgetService {
           slug,
           name,
           searchConfigId,
-          generativeModel,
           widgetConfig,
-          vectorset,
           creationDate: new Date().toISOString(),
-        } as Widget.Widget);
+        });
         return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
       }),
     );
@@ -363,7 +353,7 @@ export class SearchWidgetService {
           name,
           raoWidgetConfig,
           creationDate: new Date().toISOString(),
-        } as Widget.Widget);
+        });
         return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
       }),
     );

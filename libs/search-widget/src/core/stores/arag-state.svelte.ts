@@ -39,6 +39,8 @@ interface AragAnswerState {
   entries: AragChatEntry[];
 }
 
+const ASK_AGENTS = ['ask', 'basic_ask', 'advanced_ask'];
+
 export const aragAnswerState = $state<AragAnswerState>({
   entries: [],
 });
@@ -91,7 +93,9 @@ export function getEntrySources(entry: AragChatEntry): AragSource[] {
       const chunks = typeof value.chunk_index === 'number' ? [context.chunks[value.chunk_index]] : context.chunks || [];
       const rank = blocks.find((item) => item.block === block)?.index || 0;
       const rankedChunks = chunks.map((chunk) => ({ ...chunk, rank }));
-      const fromAskAgent = ['ask', 'basic_ask', 'advanced_ask'].includes(context.agent);
+      const fromAskAgent =
+        ASK_AGENTS.includes(context.agent) ||
+        rankedChunks.every((chunk) => ASK_AGENTS.includes(chunk.origin_agent || ''));
       if (fromAskAgent) {
         kbChunks = kbChunks.concat(rankedChunks);
       } else {

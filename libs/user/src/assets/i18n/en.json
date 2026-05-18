@@ -145,5 +145,6 @@
   "validation.password_mismatch": "Password does not match",
   "validation.password_required": "Choose a password",
   "validation.required": "Required field",
-  "validation.required_short": "Required"
+  "validation.required_short": "Required",
+  "login.error.user_not_registered": "We couldn't find an account linked to this {{provider}} account. You can <a href=\"https://www.progress.com/agentic-rag/free-trial-sign-up\" rel=\"noopener noreferrer\">sign up</a> to get started."
 }

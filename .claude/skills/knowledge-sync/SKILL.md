@@ -17,11 +17,12 @@ description: >
 The goal is to keep every piece of AI-agent documentation accurate and up-to-date so that any
 agent can work confidently in any project without re-discovering facts that are already known.
 
-**Three layers of documentation to maintain:**
+**Four layers of documentation to maintain:**
 
 1. **Root `AGENTS.md`** — workspace-wide: apps list, libs list, run commands, shared conventions
 2. **Per-project `AGENTS.md`** — in `apps/<name>/` and `libs/<name>/`: routing, services, state, gotchas
 3. **Skills & agents** in `.claude/skills/` and `.claude/agents/` — patterns, idioms, workflows
+4. **Product knowledge** in `.claude/skills/product-knowledge/` — docs repo (`../docs`) + live API specs. Has its own external source of truth; **always check as part of every sync**.
 
 ---
 
@@ -60,6 +61,30 @@ for dir in apps/*/  libs/*/; do
 done
 ```
 
+### Step 2b — Check Product Knowledge Staleness (ALWAYS RUN)
+
+This is **mandatory** on every sync — product knowledge has an external source of truth that is invisible to `git diff` on this repo.
+
+```bash
+# 1. Check docs repo for new commits since last sync
+LAST_COMMIT=$(python3 -c "import json; d=json.load(open('.claude/skills/product-knowledge/meta.json')); print(d['docs_repo']['last_commit'])")
+if [ -d "../docs" ]; then
+  cd ../docs && git fetch && git log ${LAST_COMMIT}..origin/main --oneline
+  cd -
+else
+  echo "docs repo not found at ../docs — skipping docs staleness check"
+fi
+
+# 2. Check if API spec ETags have changed (always runs, even without docs repo)
+for spec in global nua nucliadb zone; do
+  STORED=$(python3 -c "import json; d=json.load(open('.claude/skills/product-knowledge/meta.json')); print(d['api_specs']['${spec}']['etag'])")
+  CURRENT=$(curl -sI "https://cdn.rag.progress.cloud/api/${spec}/v1/api.yaml" | grep -i 'etag:' | tr -d '\r' | awk '{print $2}')
+  echo "${spec}: stored=${STORED} current=${CURRENT}"
+done
+```
+
+If either check shows changes, add the affected `references/` files to your work queue (see the Product Knowledge Staleness table in Step 3 for the full mapping). If both are up to date, proceed to Step 3.
+
 ### Step 3 — Build the Staleness Map
 
 Given the list of changed files, populate this map:
@@ -84,30 +109,7 @@ Given the list of changed files, populate this map:
 
 #### Product Knowledge Staleness
 
-The `product-knowledge` skill has an **external** source of truth — the docs repo and API specs.
-It does **not** use git diffs from the frontend monorepo to detect staleness. Check it separately.
-
-**The docs repo is expected at `../docs` (sibling to the frontend repo). If it does not exist, skip the docs-repo check entirely** — only update API specs.
-
-```bash
-# 1. Check if docs repo exists and has new commits since last sync
-LAST_COMMIT=$(python3 -c "import json; d=json.load(open('.claude/skills/product-knowledge/meta.json')); print(d['docs_repo']['last_commit'])")
-if [ -d "../docs" ]; then
-  cd ../docs && git fetch && git log ${LAST_COMMIT}..origin/main --oneline
-  cd -
-else
-  echo "docs repo not found at ../docs — skipping docs staleness check"
-fi
-
-# 2. Check if API specs have changed (ETag comparison, always runs)
-for spec in global nua nucliadb zone; do
-  STORED=$(python3 -c "import json; d=json.load(open('.claude/skills/product-knowledge/meta.json')); print(d['api_specs']['${spec}']['etag'])")
-  CURRENT=$(curl -sI "https://cdn.rag.progress.cloud/api/${spec}/v1/api.yaml" | grep -i 'etag:' | tr -d '\r' | awk '{print $2}')
-  echo "${spec}: stored=${STORED} current=${CURRENT}"
-done
-```
-
-If the docs repo has new commits **or** any API spec ETag differs:
+Handled in **Step 2b** above. If new docs commits or changed ETags were found there, use this table to map them to the correct reference files:
 
 | Stale source                                                               | Action                                           | Priority |
 | -------------------------------------------------------------------------- | ------------------------------------------------ | -------- |

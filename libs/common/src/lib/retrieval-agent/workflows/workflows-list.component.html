@@ -64,8 +64,14 @@
                   </pa-option>
                   <pa-option (selectOption)="editToolParameters(workflow, $event)">
                     {{ 'retrieval-agents.workflows-list.tool-parameters.title' | translate }}
-                  </pa-option>                  
-
+                  </pa-option>
+                  @if (workflow.id !== 'default') {
+                    <pa-option
+                      destructive=""
+                      (selectOption)="delete(workflow, $event)">
+                      {{ 'retrieval-agents.workflows-list.delete' | translate }}
+                    </pa-option>
+                  }
                 </pa-dropdown>
               </div>
             </pa-table-cell-menu>

@@ -94,6 +94,7 @@ export namespace Memory {
     metadata?: { [key: string]: any } | null;
     action?: string | null;
     origin_url?: string | null;
+    origin_agent?: string | null;
   }
 
   export interface Context {

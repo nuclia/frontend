@@ -13,7 +13,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { CountrySelectComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, CountrySelectComponent, SisProgressModule } from '@nuclia/sistema';
 import { STFPipesModule } from '@flaps/core';
 import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
@@ -45,6 +45,7 @@ import { BudgetComponent } from './usage/budget.component';
     PaTogglesModule,
     SisProgressModule,
     CountrySelectComponent,
+    BackButtonComponent,
     STFPipesModule,
     BudgetComponent,
   ],

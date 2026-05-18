@@ -66,6 +66,7 @@
         @if (sync.isCloud) {
           <nsy-sync-options-form
             [isCloud]="true"
+            [editMode]="true"
             [existingConfig]="sync"
             (optionsChange)="updateCloudOptions($event)"></nsy-sync-options-form>
         }
@@ -78,7 +79,6 @@
           </pa-button>
           <pa-button
             kind="primary"
-            [disabled]="sync.isCloud"
             (click)="saveChanges()">
             {{ 'sync.details.buttons.save-changes' | translate }}
           </pa-button>

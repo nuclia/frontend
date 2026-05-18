@@ -68,6 +68,10 @@ export class TopbarComponent {
   logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
+  isCowork = this.sdk.currentAccount.pipe(
+    map((account) => account.workflow === 'cowork'),
+    shareReplay(1),
+  );
   hasSimpleUI = this.features.unstable.simpleUI;
 
   constructor(
@@ -83,8 +87,12 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
-    this.navigationService.homeUrl.pipe(take(1)).subscribe((url) => {
-      this.router.navigate([url]);
+    combineLatest([
+      this.isCowork.pipe(take(1)),
+      this.navigationService.kbUrl.pipe(take(1)),
+      this.navigationService.homeUrl.pipe(take(1)),
+    ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
+      this.router.navigate([isCowork ? kbUrl : homeUrl]);
     });
   }
 

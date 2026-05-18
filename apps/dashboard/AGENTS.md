@@ -19,8 +19,11 @@ apps/dashboard/src/app/
 ├── app-title.strategy.ts
 ├── lazy-user.module.ts        # Lazy @nuclia/user wrapper
 ├── knowledge-box/             # KB feature module + KnowledgeBoxHomeComponent
-│   └── knowledge-box-home/    # UsageChartsComponent, UsageModalComponent
-├── activity/                  # ActivityDownloadComponent, LogTableComponent, ActivityService
+│   ├── knowledge-box-home/    # UsageChartsComponent, UsageModalComponent
+│   └── simple/                # SimplePageModule (lazy) — frictionless UI
+│       ├── simple-page.component.ts   # Routes to ReaderExperienceComponent (reader) or SimpleKBComponent (admin/contrib)
+│       ├── simple-kb/                 # SimpleKBComponent — upload + search for admins
+│       └── reader-experience/         # ReaderExperienceComponent — search-only view for readers
 ├── onboarding/                # GettingStartedComponent, WelcomeInExistingKBComponent
 └── synonyms/                  # SynonymsComponent, SynonymsService
 ```
@@ -37,12 +40,13 @@ apps/dashboard/src/app/
   /manage                  → AccountModule (lazy) — billing, users, ARAGs list
   /:zone/:kb  [setKbGuard]
     /                      → KnowledgeBoxHomeComponent
-    /simple                → SimpleKBComponent  ← frictionless UI (simpleUI feature flag)
+    /simple                → SimplePageModule (lazy) → SimplePageComponent
+                             ├─ reader role  → ReaderExperienceComponent
+                             └─ admin/contrib → SimpleKBComponent
     /upload                → UploadModule (lazy)
     /resources             → ResourcesModule (lazy)
     /search                → SearchPageComponent
     /sync                  → SYNC_ROUTES (lazy)
-    /activity              [canMatch: metricsDisabledGuard] → ActivityModule (lazy)
     /entities              → EntitiesModule (lazy)
     /label-sets            → LabelSetsModule (lazy)
     /synonyms              → SynonymsModule (lazy)
@@ -54,8 +58,8 @@ apps/dashboard/src/app/
     /rag-lab               → RagLabPageComponent
     /prompt-lab            → redirectTo: 'rag-lab'
     /tasks                 → TASK_AUTOMATION_ROUTES (lazy)
-    /metrics               [canMatch: metricsDisabledGuard, knowledgeBoxOwnerGuard] → LegacyRemiMetricsPageComponent
-    /metrics               [canMatch: metricsEnabledGuard, knowledgeBoxOwnerGuard]  → MetricsModule (lazy)
+    /metrics               [knowledgeBoxOwnerGuard] → MetricsModule (lazy)
+      /detailed            → ActivityModule (lazy) ← "Detailed logs" CSV/NDJSON download
   /:zone/arag/:agent  [setAgentGuard]
     /                      → redirect to /workflows
     /workflows             → WorkflowsComponent
@@ -64,7 +68,7 @@ apps/dashboard/src/app/
     /sessions              → SessionsComponent
       /                    → SessionsListComponent
       /:id/edit            → EditResourceComponent (data: { mode: 'arag' })
-    /drivers               → DriversPageComponent
+    /sources               → DriversPageComponent
     /search                → SearchPageComponent
     /widgets               [aragOwnerGuard] → WIDGETS_ROUTES (lazy)
     /manage                [aragOwnerGuard] → KnowledgeBoxSettingsComponent
@@ -91,11 +95,7 @@ apps/dashboard/src/app/
 
 ### `KnowledgeBoxModule`
 
-`KnowledgeBoxComponent` (thin router-outlet wrapper) + `KnowledgeBoxHomeComponent` (KB dashboard: usage charts, status counts, trial info, REMI metrics) + `SimpleKBComponent` (frictionless upload-and-search UI, gated by `unstable.simpleUI` feature flag, shown at `/simple`). Lazy-loaded heavy UI.
-
-### `ActivityModule`
-
-`ActivityDownloadComponent` (tabs: Resource / Search activity, date pickers, CSV/JSON download), `LogTableComponent`, `ActivityService` (polls backend for `DownloadStatus: 'pending' | 'ready'`).
+`KnowledgeBoxComponent` (thin router-outlet wrapper) + `KnowledgeBoxHomeComponent` (KB dashboard: usage charts, status counts, trial info, REMI metrics) + `SimplePageModule` (lazy, at `/simple`, gated by `unstable.simpleUI` feature flag). `SimplePageComponent` (inside `SimplePageModule`) routes to `ReaderExperienceComponent` for read-only KB users or `SimpleKBComponent` for admins/contributors.
 
 ---
 
@@ -135,8 +135,6 @@ apps/dashboard/src/app/
 | `aragOwnerGuard`         | ARAG owner/admin required                                                            |
 | `awsGuard`               | AWS Marketplace onboarding                                                           |
 | `inviteGuard`            | Validates invite token                                                               |
-| `metricsEnabledGuard`    | `canMatch` — true when `FeaturesService.unstable.metrics` is on                      |
-| `metricsDisabledGuard`   | `canMatch` — true when `FeaturesService.unstable.metrics` is off                     |
 | `simpleModeGuard`        | On KB home (`/`): redirects to `/simple` when `NavigationService.simpleMode` is true |
 
 ---
@@ -174,12 +172,13 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
 4. **Module-based** — app uses NgModules; imported lib components may be standalone.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
-6. **Lazy modules** — `AccountModule`, `UploadModule`, `ResourcesModule`, `ActivityModule`, `WIDGETS_ROUTES`, `TASK_AUTOMATION_ROUTES`, `LazyUserModule` are all lazy-loaded.
-7. **Metrics route is feature-flag-split** — `/metrics` has two `canMatch` entries: `metricsDisabledGuard` → `LegacyRemiMetricsPageComponent`, `metricsEnabledGuard` → `MetricsModule` (lazy). Angular evaluates them in order; only one renders.
-8. **`/activity` is also gated by `metricsDisabledGuard`** — when the `metrics` flag is on, activity is handled inside `MetricsModule`; the standalone `ActivityModule` route is disabled.
+6. **Lazy modules** — `AccountModule`, `UploadModule`, `ResourcesModule`, `MetricsModule` (+ `ActivityModule` inside it), `WIDGETS_ROUTES`, `TASK_AUTOMATION_ROUTES`, `LazyUserModule` are all lazy-loaded.
+7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
+8. **Activity logs moved to `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no longer a standalone `/activity` route on the KB.
 9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.
-10. **`/simple` frictionless UI** — `SimpleKBComponent` is a lightweight upload+search page gated by `FeaturesService.unstable.simpleUI`. It uses `LastResourcesComponent` (standalone) for the resource table.
+10. **`/simple` frictionless UI** — `SimplePageModule` is lazy-loaded; `SimplePageComponent` inspects the user role and routes to `ReaderExperienceComponent` (reader: search-only) or `SimpleKBComponent` (admin/contrib: upload + search). Gated by `FeaturesService.unstable.simpleUI`.
 11. **ARAG routes now under `/workflows`** — `/:zone/arag/:agent` redirects to `./workflows`. `WorkflowsListComponent` shows all workflows; `AgentDashboardComponent` is at `./workflows/:id`.
 12. **`/user/set-password`** — `SetPasswordComponent` is a dedicated route for setting a password after being invited or after signup. Distinct from `/user/reset` (which uses a magic token from an email link).
 13. **KB routes guarded by `knowledgeBoxOwnerGuard`** — `/manage`, `/ai-models`, `/widgets`, `/users`, `/keys` under `/:zone/:kb` all require `knowledgeBoxOwnerGuard` (KB owner/admin). ARAG equivalents use `aragOwnerGuard`.
 14. **`/prompt-lab` redirect** — permanently redirects to `/rag-lab`. Old bookmarks continue to work.
+15. **ARAG `/sources` route** — previously named `/drivers`, renamed to `/sources`. `DriversPageComponent` (name unchanged) renders data sources.

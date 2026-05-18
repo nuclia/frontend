@@ -341,15 +341,6 @@ export class SyncService {
   }
 
   updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
-    if (this._useCloudSync.getValue()) {
-      return this.sdk.currentKb.pipe(
-        take(1),
-        switchMap((kb) => kb.syncManager.updateConfig(syncId, this.toCloudSyncUpdate(sync))),
-        tap((config) => this.updateCloudSyncCache(config)),
-        map(() => undefined),
-      );
-    }
-
     return this.http
       .patch<void>(
         `${this._syncServer.getValue().serverUrl}/sync/${syncId}`,
@@ -611,18 +602,54 @@ export class SyncService {
     this._useCloudSync.next(use);
   }
 
-  private toCloudSyncUpdate(sync: Partial<ISyncEntity>): SyncConfigurationUpdate {
-    return {
-      ...(sync.title ? { name: sync.title } : {}),
-      ...(sync.file_filter ? { file_filter: sync.file_filter } : {}),
-      ...(sync.labels
-        ? {
-            labels: sync.labels.map(({ labelset, label }) => ({ labelset, label })),
-          }
-        : {}),
-      ...(sync.modified_time_range ? { modified_time_range: sync.modified_time_range } : {}),
-      ...(sync.extract_strategy ? { extract_strategy: sync.extract_strategy } : {}),
-    };
+  updateCloudSync(syncId: string, updates: Partial<ISyncEntity>, originalSync: ISyncEntity): Observable<void> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.syncManager.updateConfig(syncId, this.buildCloudPatchPayload(updates, originalSync))),
+      tap((config) => this.updateCloudSyncCache(config)),
+      map(() => undefined),
+    );
+  }
+
+  private buildCloudPatchPayload(updates: Partial<ISyncEntity>, original: ISyncEntity): SyncConfigurationUpdate {
+    const payload: SyncConfigurationUpdate = {};
+
+    // name: only include if changed
+    if (updates.title !== undefined) payload.name = updates.title;
+
+    // file_filter: send null to clear if original had it but new is empty
+    if (updates.file_filter !== undefined) {
+      payload.file_filter = updates.file_filter;
+    } else if (original.file_filter) {
+      payload.file_filter = null; // explicitly clear
+    }
+
+    // labels: send null to clear if original had any but new is empty array
+    if (updates.labels !== undefined) {
+      if (updates.labels.length === 0 && (original.labels?.length ?? 0) > 0) {
+        payload.labels = null;
+      } else if (updates.labels.length > 0) {
+        payload.labels = updates.labels.map(({ labelset, label }) => ({ labelset, label }));
+      }
+    } else if ((original.labels?.length ?? 0) > 0) {
+      payload.labels = null;
+    }
+
+    // modified_time_range: send null to clear if original had it but new is empty
+    if (updates.modified_time_range !== undefined) {
+      payload.modified_time_range = updates.modified_time_range;
+    } else if (original.modified_time_range) {
+      payload.modified_time_range = null;
+    }
+
+    // extract_strategy: send null to clear if original had it but new is empty
+    if (updates.extract_strategy !== undefined) {
+      payload.extract_strategy = updates.extract_strategy;
+    } else if (original.extract_strategy) {
+      payload.extract_strategy = null;
+    }
+
+    return payload;
   }
 
   private updateCloudSyncCache(config: SyncConfiguration) {

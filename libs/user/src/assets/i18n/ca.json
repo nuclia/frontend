@@ -144,5 +144,6 @@
   "validation.password_mismatch": "Ep! La contrasenya no coincideix",
   "validation.password_required": "Escull una contrasenya",
   "validation.required": "Camp necessari",
-  "validation.required_short": "Obligatori"
+  "validation.required_short": "Obligatori",
+  "login.error.user_not_registered": "No hem trobat cap compte vinculat a aquest compte de {{provider}}. Et pots <a href=\"https://www.progress.com/agentic-rag/free-trial-sign-up\" rel=\"noopener noreferrer\">registrar</a> per començar."
 }

@@ -8,18 +8,18 @@ _Source: `../docs/docs/rag/llms.md`, `rag/advanced/models.md`, `develop/openai_c
 
 ### OpenAI
 
-- ChatGPT-4, ChatGPT-4o, ChatGPT-4o-mini, o1, o3, o3-mini, o4-mini
-- ChatGPT-4.1, ChatGPT-5, ChatGPT-5 Mini, ChatGPT-5 Nano, ChatGPT-5 Chat
+- GPT-4, GPT-4o, GPT-4o Mini, o1, o3, o3 Mini, o4 Mini
+- GPT-4.1, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat
 - OpenAI API Compatible Model (BYOM)
 
 ### OpenAI via Azure
 
-- ChatGPT-4o, 4o-mini, o1, o3-mini, o3, o4-mini, ChatGPT-5 variants (Mini, Nano, Chat)
-- Azure gpt-oss 120B
+- GPT-4o, GPT-4o Mini, o1, o3, o3 Mini, o4 Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat
+- Azure GPT OSS 120B
 
 ### Anthropic (direct)
 
-- Claude 3 Opus, Claude 3.5 Sonnet, Claude 4 Opus, Claude 4 Sonnet, Claude 4.5 Sonnet, Claude 3.5 Haiku
+- Claude 4 Sonnet, Claude 4 Opus, Claude 4.5 Sonnet, Claude 4.5 Haiku, Claude 4.6 Sonnet, Claude 4.6 Opus
 
 ### Anthropic via GCP (Vertex AI)
 

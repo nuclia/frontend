@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
-import { DroppedFile, SDKService } from '@flaps/core';
+import { DroppedFile, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 import { SimpleKBService } from './simple-kb.service';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
 
@@ -14,12 +15,16 @@ import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.co
   templateUrl: './simple-kb.component.html',
   styleUrls: ['./simple-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [SizePipe],
 })
 export class SimpleKBComponent implements OnDestroy {
   private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
+  private toaster = inject(SisToastService);
+  private translate = inject(TranslateService);
   private sdk = inject(SDKService);
+  private sizePipe = inject(SizePipe);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   maxFiles = this.simpleKBService.maxFiles;
@@ -29,6 +34,8 @@ export class SimpleKBComponent implements OnDestroy {
   counter = toSignal(this.simpleKBService.resourceCounter);
   step = signal<number>(-1);
   fileOver = signal(false);
+  maxFileSize = -1;
+  maxMediaFileSize = -1;
 
   view = signal<'resources' | 'history' | 'search'>('resources');
   prevQuestionId?: string;
@@ -93,6 +100,11 @@ export class SimpleKBComponent implements OnDestroy {
         takeUntilDestroyed(),
       )
       .subscribe();
+
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.maxFileSize = account.limits?.upload.upload_limit_max_non_media_file_size || -1;
+      this.maxMediaFileSize = account.limits?.upload.upload_limit_max_media_file_size || -1;
+    });
   }
 
   ngOnDestroy() {
@@ -111,7 +123,32 @@ export class SimpleKBComponent implements OnDestroy {
 
   onFilesSelected(files: File[] | FileList | DroppedFile[]) {
     const fileTypes = getFilesGroupedByType(files);
-    this.uploadFiles([...fileTypes.mediaFiles, ...fileTypes.nonMediaFiles]);
+    const allowedMediaFiles = fileTypes.mediaFiles.filter((file) => {
+      const type = file.type?.split('/')[0];
+      return type !== 'audio' && type !== 'video';
+    });
+    if (allowedMediaFiles.length < fileTypes.mediaFiles.length) {
+      this.toaster.warning(this.translate.instant('simple.no-video-audio'));
+    }
+    const filesWithinLimits = fileTypes.nonMediaFiles.filter(
+      (file) => this.maxFileSize === -1 || file.size <= this.maxFileSize,
+    );
+    const mediaFilesWithinLimits = allowedMediaFiles.filter(
+      (file) => this.maxMediaFileSize === -1 || file.size <= this.maxMediaFileSize,
+    );
+    if (filesWithinLimits.length < fileTypes.nonMediaFiles.length) {
+      this.toaster.warning(
+        this.translate.instant('simple.file-size-limit', { size: this.sizePipe.transform(this.maxFileSize) }),
+      );
+    }
+    if (mediaFilesWithinLimits.length < allowedMediaFiles.length) {
+      this.toaster.warning(
+        this.translate.instant('simple.media-file-size-limit', {
+          size: this.sizePipe.transform(this.maxMediaFileSize),
+        }),
+      );
+    }
+    this.uploadFiles([...mediaFilesWithinLimits, ...filesWithinLimits]);
   }
 
   goToStep3() {

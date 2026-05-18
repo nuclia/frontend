@@ -250,7 +250,11 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig);
       });
 
-    this.speechOn ? this.enableSpeechSynthesis() : this.disableSpeechSynthesis();
+    if (this.speechOn) {
+      this.enableSpeechSynthesis();
+    } else {
+      this.disableSpeechSynthesis();
+    }
   }
 
   ngAfterViewInit() {

@@ -85,6 +85,16 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(1),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
+  isCowork = combineLatest([
+    this.sdk.currentAccount.pipe(
+      take(1),
+      map((account) => account.type === 'cowork'),
+    ),
+    this.route.queryParams.pipe(map((params) => params['type'] === 'cowork')),
+  ]).pipe(
+    map(([currentIsCowork, nextIsCowork]) => currentIsCowork || nextIsCowork),
+    shareReplay(1),
+  );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
 
   updateCurrency = new Subject<string>();
@@ -386,12 +396,28 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           ),
         ),
         switchMap((account) => this.sdk.nuclia.db.getAccount(account.slug)),
-        tap((newAccount) => (this.sdk.account = newAccount)),
+        switchMap((newAccount) => {
+          this.sdk.account = newAccount;
+          return this.isCowork.pipe(
+            take(1),
+            switchMap((isCowork) => {
+              if (isCowork) {
+                if (this.sdk.isKbLoaded) {
+                  return this.navigation.kbUrl.pipe(take(1));
+                } else {
+                  return of(`${this.navigation.getKbSelectUrl(newAccount.slug)}`);
+                }
+              } else {
+                return of(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
+              }
+            }),
+          );
+        }),
       )
       .subscribe({
-        next: (newAccount) => {
+        next: (backUrl) => {
           this.toaster.success('billing.success');
-          this.router.navigateByUrl(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
+          this.router.navigateByUrl(backUrl);
         },
         error: (error) => {
           this.loading = false;

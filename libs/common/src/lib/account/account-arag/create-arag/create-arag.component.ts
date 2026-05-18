@@ -11,7 +11,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { combineLatest, map, take, tap } from 'rxjs';
+import { combineLatest, map, take } from 'rxjs';
 
 @Component({
   imports: [
@@ -46,13 +46,9 @@ export class CreateAragComponent {
     map(([account, numAragsWithMemory]) => account.max_memories === -1 || account.max_memories > numAragsWithMemory),
   );
 
-  zones = this.zoneService.getZones().pipe(
-    tap((zones) => {
-      if (zones && zones.length > 0) {
-        this.form.patchValue({ zone: zones[0].slug });
-      }
-    }),
-  );
+  zones = this.zoneService
+    .getZones()
+    .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
 
   constructor(public modal: ModalRef) {
     this.canAddAragsWithMemory.pipe(take(1)).subscribe((canAdd) => {

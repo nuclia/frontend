@@ -259,10 +259,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
       })
       .pipe(
         switchMap(({ data }) => {
-          const rows = new TextDecoder()
-            .decode(data.buffer)
-            .split('\n')
-            .filter(Boolean);
+          const rows = new TextDecoder().decode(data.buffer).split('\n').filter(Boolean);
           let previous = '';
           const items: AragAnswer[] = rows.slice(nextIndex).reduce((list, row) => {
             previous += row;
@@ -613,5 +610,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   patchWorkflow(workflowId: string, data: Omit<Workflow, 'id'>): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/workflow/${workflowId}`, data);
+  }
+
+  /**
+   * Delete a workflow
+   */
+  deleteWorkflow(workflowId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/workflow/${workflowId}`);
   }
 }

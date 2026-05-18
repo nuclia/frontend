@@ -92,7 +92,7 @@ export class SyncManager implements ISyncManager {
   }
 
   updateConfig(id: string, config: SyncConfigurationUpdate): Observable<SyncConfiguration> {
-    return this.nuclia.rest.patch<SyncConfiguration>(`${this.kb.path}/sync-config/${id}`, config);
+    return this.nuclia.rest.patch<SyncConfiguration>(`${this.kb.path}/sync_config/${id}`, config);
   }
 }
 
