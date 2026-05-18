@@ -85,7 +85,7 @@ const _applySearchModeOptions = (widgetOptions: WidgetOptions) => {
     SEARCH_MODE.push(Search.Features.RELATIONS);
     CHAT_MODE.push(Ask.Features.RELATIONS);
   }
-  if (widgetOptions.features?.semanticOnly) {
+  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
   }
   if (widgetOptions.features?.semanticOnly) {
@@ -259,7 +259,10 @@ export const getAnswer = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question }, { author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push(
+          { author: Ask.Author.USER, text: curr.question },
+          { author: Ask.Author.NUCLIA, text: curr.answer.text },
+        );
         return acc;
       }, [] as Ask.ContextEntry[]);
 
@@ -317,7 +320,10 @@ export const getAnswerWithoutRAG = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question }, { author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push(
+          { author: Ask.Author.USER, text: curr.question },
+          { author: Ask.Author.NUCLIA, text: curr.answer.text },
+        );
         return acc;
       }, [] as Ask.ContextEntry[]);
 
