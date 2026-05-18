@@ -84,14 +84,6 @@ export namespace Memory {
     page?: string | null;
   }
 
-  // Field types union - TODO: Define specific field data interfaces when available
-  export type FieldTypes =
-    | any // TextFieldData
-    | any // ConversationFieldData
-    | any // FileFieldData
-    | any // LinkFieldData
-    | any; // GenericFieldData
-
   export interface Chunk {
     chunk_id: string;
     title?: string | null;

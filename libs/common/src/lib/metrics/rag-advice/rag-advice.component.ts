@@ -55,6 +55,9 @@ interface IterationRecord {
  * RAG exploration modal — opened via SisModalService.openModal(RagAdviceModalComponent, new ModalConfig({ data: adviceInput })).
  * The AdviceInput is passed through ModalRef config data.
  */
+type NumericInput = string | number | null;
+type NumericInputOrUndefined = string | number | null | undefined;
+
 @Component({
   selector: 'app-rag-advice-modal',
   standalone: true,
@@ -155,7 +158,7 @@ export class RagAdviceModalComponent {
       const origVal = orig[field];
       if (currVal === origVal) {
         states[field] = 'original';
-      } else if (field in accSugg && currVal === accSugg[field as keyof EditableParams]) {
+      } else if (field in accSugg && currVal === accSugg[field]) {
         states[field] = 'suggested';
       } else {
         states[field] = 'modified';
@@ -386,7 +389,12 @@ export class RagAdviceModalComponent {
 
     const usedParams = latest.paramsUsed;
     // Pass the actual status of the last tested result so the LLM can see what happened
-    const resultStatus = latest.noContext ? '-2' : latest.answer ? '0' : undefined;
+    let resultStatus: string | undefined;
+    if (latest.noContext) {
+      resultStatus = '-2';
+    } else if (latest.answer) {
+      resultStatus = '0';
+    }
 
     const newInput: AdviceInput = {
       question: inp.question,
@@ -547,19 +555,19 @@ export class RagAdviceModalComponent {
     return this.normalizeEditableParams({ ...base, ...delta } as EditableParams);
   }
 
-  updateMinScoreSemantic(value: string | number | null): void {
+  updateMinScoreSemantic(value: NumericInput): void {
     this.updateEditableParams({
       minScoreSemantic: this.clampNullableDecimal(value, 0, 1),
     });
   }
 
-  updateMinScoreBm25(value: string | number | null): void {
+  updateMinScoreBm25(value: NumericInput): void {
     this.updateEditableParams({
       minScoreBm25: this.clampNullableDecimal(value, 0, 10),
     });
   }
 
-  updateTopK(value: string | number | null): void {
+  updateTopK(value: NumericInput): void {
     this.updateEditableParams({
       topK: this.normalizeTopK(value),
     });
@@ -578,7 +586,7 @@ export class RagAdviceModalComponent {
     };
   }
 
-  private parseNullableNumber(value: string | number | null | undefined): number | null {
+  private parseNullableNumber(value: NumericInputOrUndefined): number | null {
     if (value === null || value === undefined || value === '') {
       return null;
     }
@@ -586,7 +594,7 @@ export class RagAdviceModalComponent {
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  private clampNullableDecimal(value: string | number | null | undefined, min: number, max: number): number | null {
+  private clampNullableDecimal(value: NumericInputOrUndefined, min: number, max: number): number | null {
     const parsed = this.parseNullableNumber(value);
     if (parsed === null) {
       return null;
@@ -594,7 +602,7 @@ export class RagAdviceModalComponent {
     return Math.min(max, Math.max(min, parsed));
   }
 
-  private normalizeTopK(value: string | number | null | undefined): number | null {
+  private normalizeTopK(value: NumericInputOrUndefined): number | null {
     const parsed = this.parseNullableNumber(value);
     if (parsed === null) {
       return null;
@@ -603,27 +611,44 @@ export class RagAdviceModalComponent {
     return normalized >= 1 ? normalized : null;
   }
 
+  private buildStrategyList(paramsUsed: EditableParams): string[] {
+    const list: string[] = [];
+    if (paramsUsed.neighbouringParagraphs && !paramsUsed.fullResource) list.push('neighbouring_paragraphs');
+    if (paramsUsed.fullResource) list.push('full_resource');
+    if (paramsUsed.metadatas) list.push('metadata_extension');
+    if (paramsUsed.graph) list.push('graph_beta');
+    return list;
+  }
+
+  private buildParamPartList(paramsUsed: EditableParams): string[] {
+    const strategies = this.buildStrategyList(paramsUsed);
+    const parts: Array<string | null> = [
+      paramsUsed.minScoreSemantic === null ? null : `min_score_semantic=${paramsUsed.minScoreSemantic}`,
+      paramsUsed.minScoreBm25 === null ? null : `min_score_bm25=${paramsUsed.minScoreBm25}`,
+      paramsUsed.topK === null ? null : `top_k=${paramsUsed.topK}`,
+      strategies.length > 0 ? `strategies=[${strategies.join(', ')}]` : null,
+      paramsUsed.rephrase ? 'rephrase=true' : null,
+      paramsUsed.model ? `model=${paramsUsed.model}` : null,
+      paramsUsed.systemPrompt ? `system_prompt="${this.compactSystemPrompt(paramsUsed.systemPrompt)}"` : null,
+    ];
+    return parts.filter((v): v is string => v !== null);
+  }
+
   private buildIterationHistory(): IterationHistoryEntry[] {
     return this.iterations().map((rec) => {
-      const strategies = [
-        ...(rec.paramsUsed.neighbouringParagraphs && !rec.paramsUsed.fullResource ? ['neighbouring_paragraphs'] : []),
-        ...(rec.paramsUsed.fullResource ? ['full_resource'] : []),
-        ...(rec.paramsUsed.metadatas ? ['metadata_extension'] : []),
-        ...(rec.paramsUsed.graph ? ['graph_beta'] : []),
-      ];
-      const paramParts = [
-        rec.paramsUsed.minScoreSemantic !== null ? `min_score_semantic=${rec.paramsUsed.minScoreSemantic}` : null,
-        rec.paramsUsed.minScoreBm25 !== null ? `min_score_bm25=${rec.paramsUsed.minScoreBm25}` : null,
-        rec.paramsUsed.topK !== null ? `top_k=${rec.paramsUsed.topK}` : null,
-        strategies.length > 0 ? `strategies=[${strategies.join(', ')}]` : null,
-        rec.paramsUsed.rephrase ? 'rephrase=true' : null,
-        rec.paramsUsed.model ? `model=${rec.paramsUsed.model}` : null,
-        rec.paramsUsed.systemPrompt ? `system_prompt="${this.compactSystemPrompt(rec.paramsUsed.systemPrompt)}"` : null,
-      ].filter((v): v is string => v !== null);
+      const paramParts = this.buildParamPartList(rec.paramsUsed);
+      let outcome: 'no_context' | 'no_answer' | 'answer';
+      if (rec.noContext) {
+        outcome = 'no_context';
+      } else if (rec.answer) {
+        outcome = 'answer';
+      } else {
+        outcome = 'no_answer';
+      }
       return {
         round: rec.round,
         paramsDescription: paramParts.length > 0 ? paramParts.join(', ') : 'default parameters',
-        outcome: rec.noContext ? 'no_context' : rec.answer ? 'answer' : 'no_answer',
+        outcome,
         answer: rec.answer ? rec.answer.slice(0, 300) : undefined,
         remiScore: rec.remiScore ?? undefined,
         remiAnswerRelevance: rec.remiAnswerRelevance ?? undefined,
@@ -634,7 +659,7 @@ export class RagAdviceModalComponent {
   }
 
   private compactSystemPrompt(prompt: string): string {
-    return prompt.replace(/\s+/g, ' ').trim().slice(0, 80);
+    return prompt.replaceAll(/\s+/g, ' ').trim().slice(0, 80);
   }
 
   private defaultConfigName(): string {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
@@ -17,7 +17,7 @@ import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SizePipe],
 })
-export class SimpleKBComponent {
+export class SimpleKBComponent implements OnDestroy {
   private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);

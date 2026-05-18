@@ -68,7 +68,7 @@ export class MetricsFiltersService {
   removeCondition(id: number): void {
     const row = this.conditions().find((c) => c.id === id);
     this.conditions.update((list) => list.filter((c) => c.id !== id));
-    if (row && row.columnType === 'date' && row.column) {
+    if (row?.columnType === 'date' && row?.column) {
       const remaining = this.conditions().filter((c) => c.column === row.column && c.columnType === 'date');
       if (remaining.length === 0) {
         this.dateColumnModes.update((modes) => {
@@ -87,7 +87,7 @@ export class MetricsFiltersService {
       list.map((c) => (c.id === id ? { ...c, column: columnKey, columnType: colConfig?.type ?? null } : c)),
     );
     // Clear date mode for the old column if it was a date column and has no remaining rows
-    if (oldRow && oldRow.columnType === 'date' && oldRow.column && oldRow.column !== columnKey) {
+    if (oldRow?.columnType === 'date' && oldRow?.column && oldRow?.column !== columnKey) {
       const remaining = this.conditions().filter((c) => c.column === oldRow.column && c.columnType === 'date');
       if (remaining.length === 0) {
         this.dateColumnModes.update((modes) => {
@@ -227,11 +227,11 @@ export class MetricsFiltersService {
         };
         const dateCondition: DateCondition = { column };
         if (geRows.length > 0) {
-          const sorted = geRows.map(buildDateTime).sort();
-          dateCondition.from = sorted[sorted.length - 1];
+          const sorted = geRows.map(buildDateTime).sort((a, b) => a.localeCompare(b));
+          dateCondition.from = sorted.at(-1)!;
         }
         if (leRows.length > 0) {
-          const sorted = leRows.map(buildDateTime).sort();
+          const sorted = leRows.map(buildDateTime).sort((a, b) => a.localeCompare(b));
           dateCondition.to = sorted[0];
         }
         event.dateConditions.push(dateCondition);

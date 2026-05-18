@@ -107,12 +107,10 @@ export class FilterExpressionModalComponent {
           } else if ('not' in parent) {
             parent.not = result;
           }
+        } else if (target === 'field') {
+          this.filterExpression.field = result;
         } else {
-          if (target === 'field') {
-            this.filterExpression.field = result;
-          } else {
-            this.filterExpression.paragraph = result;
-          }
+          this.filterExpression.paragraph = result;
         }
         this.updateMainOperator();
         this.cdr.markForCheck();
@@ -158,12 +156,10 @@ export class FilterExpressionModalComponent {
         const siblings = this.getChildren(parent);
         siblings?.splice(index, 1);
       }
+    } else if (target === 'field') {
+      this.filterExpression.field = undefined;
     } else {
-      if (target === 'field') {
-        this.filterExpression.field = undefined;
-      } else {
-        this.filterExpression.paragraph = undefined;
-      }
+      this.filterExpression.paragraph = undefined;
     }
     this.updateMainOperator();
     this.cdr.markForCheck();
@@ -187,12 +183,10 @@ export class FilterExpressionModalComponent {
         const siblings = this.getChildren(parent);
         siblings?.splice(index, 1, expression);
       }
+    } else if (target === 'field') {
+      this.filterExpression.field = expression as FieldFilterExpression;
     } else {
-      if (target === 'field') {
-        this.filterExpression.field = expression as FieldFilterExpression;
-      } else {
-        this.filterExpression.paragraph = expression as ParagraphFilterExpression;
-      }
+      this.filterExpression.paragraph = expression as ParagraphFilterExpression;
     }
   }
 
@@ -208,7 +202,13 @@ export class FilterExpressionModalComponent {
   }
 
   private getChildren(expression: AnyFilterExpression): AnyFilterExpression[] | undefined {
-    return 'and' in expression ? expression.and : 'or' in expression ? expression.or : undefined;
+    if ('and' in expression) {
+      return expression.and;
+    } else if ('or' in expression) {
+      return expression.or;
+    } else {
+      return undefined;
+    }
   }
 
   private hasEmptyExpressions(expressions: AnyFilterExpression[]): boolean {

@@ -21,5 +21,5 @@ export class PaginationComponent {
 
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
-  @Output() change = new EventEmitter<number>();
+  @Output() pageChange = new EventEmitter<number>();
 }

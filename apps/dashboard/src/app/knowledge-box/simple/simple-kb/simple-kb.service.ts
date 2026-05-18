@@ -68,7 +68,7 @@ export class SimpleKBService {
   userName = this.userService.userPrefs.pipe(map((userPrefs) => userPrefs?.name || ''));
   visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
   uploadInProgress = this.visibleUploads.pipe(
-    map((uploads) => uploads.filter((upload) => !this.isUploadFailed(upload)).length > 0),
+    map((uploads) => uploads.some((upload) => !this.isUploadFailed(upload))),
   );
 
   private _forceRefresh = new Subject<void>();

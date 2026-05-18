@@ -216,7 +216,7 @@ export class NucliaDriverModalComponent {
       try {
         filterExpression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {
-        /* empty */
+        console.error(e);
       }
       if (custom) {
         const config: NucliaDBConfig | SyncConfig = {

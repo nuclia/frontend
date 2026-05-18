@@ -1,4 +1,4 @@
-import { AccountTypes, UsageMetric, NucliaTokensMetric } from '@nuclia/core';
+import { AccountTypes } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
 export type BillingUsageType =

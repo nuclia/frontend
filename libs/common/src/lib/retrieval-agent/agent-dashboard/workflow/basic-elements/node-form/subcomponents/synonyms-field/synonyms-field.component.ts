@@ -123,7 +123,7 @@ export class SynonymsFieldComponent implements ControlValueAccessor, OnInit, OnD
         const values: string[] = (valuesArray?.controls || [])
           .map((c) => c.value)
           .filter((v) => v !== undefined && v !== null && String(v).trim() !== '')
-          .map((v) => String(v));
+          .map(String);
 
         if (key && values.length > 0) {
           result[key] = values;

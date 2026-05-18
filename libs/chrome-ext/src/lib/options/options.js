@@ -9,7 +9,7 @@ let data = {
 };
 
 function init() {
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(globalThis.location.search);
   const token = urlParams.get('access_token');
   data.showWelcome = urlParams.has('access_token');
   if (token) {
@@ -70,7 +70,7 @@ function fetchData() {
 }
 
 function initUI() {
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(globalThis.location.search);
   if (urlParams.has('error')) {
     document.getElementById('error').classList.remove('hidden');
   }
@@ -137,7 +137,7 @@ function saveForm() {
 }
 
 function login() {
-  window.location.href = getLoginUrl();
+  globalThis.location.href = getLoginUrl();
 }
 
 function close() {

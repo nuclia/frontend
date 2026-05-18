@@ -89,10 +89,10 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
 
       if (value.connector.parameters && !this.isCloud && !value.isCloud) {
         Object.entries(value.connector.parameters).forEach(([key, value]) => {
-          if (typeof value !== 'object') {
-            this._extra[key] = value;
-          } else {
+          if (typeof value === 'object') {
             this.tables[key] = value;
+          } else {
+            this._extra[key] = value;
           }
         });
       }

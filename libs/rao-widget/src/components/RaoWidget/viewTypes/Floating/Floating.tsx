@@ -59,7 +59,18 @@ export const Floating: FC<FloatingProps> = ({
     <>
       <style>{styles}</style>
       <div className="rao-floating">
-        {!isOpen ? (
+        {isOpen ? (
+          <div
+            className="rao-floating__panel"
+            role="dialog"
+            aria-modal="false">
+            <Standard
+              {...props}
+              viewtype="floating"
+              onCloseFloating={closeWidget}
+            />
+          </div>
+        ) : (
           <button
             type="button"
             className="rao-floating__launcher"
@@ -73,20 +84,7 @@ export const Floating: FC<FloatingProps> = ({
               className="rao-floating__launcher-icon"
             />
           </button>
-        ) : null}
-
-        {isOpen ? (
-          <div
-            className="rao-floating__panel"
-            role="dialog"
-            aria-modal="false">
-            <Standard
-              {...props}
-              viewtype="floating"
-              onCloseFloating={closeWidget}
-            />
-          </div>
-        ) : null}
+        )}
       </div>
     </>
   );

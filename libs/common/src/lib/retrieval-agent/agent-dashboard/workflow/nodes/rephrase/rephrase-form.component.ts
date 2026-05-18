@@ -22,7 +22,6 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
 import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
 import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select';
 import { aragUrl } from '../../workflow.state';
-import { JSONSchema4 } from 'json-schema';
 import { DriversService } from '../../../../drivers/drivers.service';
 
 @Component({

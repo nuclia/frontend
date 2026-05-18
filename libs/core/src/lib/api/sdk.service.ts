@@ -166,7 +166,7 @@ export class SDKService {
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
     const currentAccount = this._account.value;
-    if (currentAccount && currentAccount.slug === accountSlug) {
+    if (currentAccount?.slug === accountSlug) {
       return of(currentAccount);
     } else {
       const getAccount = this.config.staticConf.standalone
@@ -184,7 +184,7 @@ export class SDKService {
   ): Observable<RetrievalAgent> {
     // returns the current arag and set it if not set
     const currentRa = this._arag.value;
-    if (!force && currentRa && currentRa.id === aragId) {
+    if (!force && currentRa?.id === aragId) {
       return of(currentRa as RetrievalAgent);
     } else {
       this.nuclia.options.zone = zone;
@@ -205,7 +205,7 @@ export class SDKService {
   ): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
     const currentKb = this._kb.value;
-    if (!force && currentKb && currentKb.id === kbId) {
+    if (!force && currentKb?.id === kbId) {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       this.nuclia.options.zone = zone;
@@ -222,7 +222,7 @@ export class SDKService {
     const currentKb = this._kb.value;
     const currentAccount = this._account.value;
     this.nuclia.options.zone = zone;
-    if (currentKb && currentKb.slug === kbSlug) {
+    if (currentKb?.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else if (zone) {
       return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
@@ -255,7 +255,7 @@ export class SDKService {
     const currentRa = this._arag.value;
     const currentAccount = this._account.value;
     this.nuclia.options.zone = zone;
-    if (currentRa && currentRa.slug === agentSlug) {
+    if (currentRa?.slug === agentSlug) {
       return of(currentRa as RetrievalAgent);
     } else if (zone) {
       return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(

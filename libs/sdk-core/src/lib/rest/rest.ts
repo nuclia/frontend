@@ -100,7 +100,7 @@ export class Rest implements IRest {
     synchronous = false,
     formData = false,
   ): { [key: string]: string } {
-    const auth = extraHeaders && extraHeaders['x-nuclia-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
+    const auth = extraHeaders?.['x-nuclia-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
@@ -135,7 +135,7 @@ export class Rest implements IRest {
     insertAuthorizer?: boolean,
   ): Observable<T> {
     const isFormData = body instanceof FormData;
-    const specialContentType = (extraHeaders && extraHeaders['content-type']) || isFormData;
+    const specialContentType = extraHeaders?.['content-type'] || isFormData;
     const payload = specialContentType ? body : JSON.stringify(body);
     return from(
       fetch(this.getFullUrl(path, zoneSlug, insertAuthorizer), {
@@ -161,11 +161,11 @@ export class Rest implements IRest {
               } catch (e) {
                 console.error(logMessage);
               }
-              throw { status: res.status, body };
+              throw Object.assign(new Error(`${res.status} error on ${method} ${path}`), { status: res.status, body });
             },
             () => {
               console.error(`${res.status} error on ${method} ${path}`);
-              throw { status: res.status };
+              throw Object.assign(new Error(`${res.status} error on ${method} ${path}`), { status: res.status });
             },
           );
         }
@@ -297,7 +297,15 @@ export class Rest implements IRest {
         (res) => {
           const headers = res.headers;
           const status = res.status;
-          if (!res.ok) {
+          if (res.ok) {
+            const reader = res.body?.getReader();
+            if (reader) {
+              this._readStreamChunk(reader, { value: new Uint8Array() }, observer, headers, path);
+            } else {
+              observer.error({ status });
+              observer.complete();
+            }
+          } else {
             console.error(`getStreamedResponse: error ${status} on POST ${path}`);
             res.json().then(
               (body) => {
@@ -316,45 +324,16 @@ export class Rest implements IRest {
                 observer.complete();
               },
             );
-          } else {
-            const reader = res.body?.getReader();
-            if (!reader) {
-              observer.error({ status });
-              observer.complete();
-            } else {
-              let data = new Uint8Array();
-              const readMore = () => {
-                reader.read().then(
-                  ({ done, value }) => {
-                    if (done) {
-                      observer.next({ data, incomplete: false, headers });
-                      observer.complete();
-                    }
-                    if (value) {
-                      data = this.concat(data, value);
-                      observer.next({ data, incomplete: true, headers });
-                      readMore();
-                    }
-                  },
-                  (reason) => {
-                    console.error(`getStreamedResponse: read error on POST ${path}`);
-                    observer.error(reason);
-                    observer.complete();
-                  },
-                );
-              };
-              readMore();
-            }
           }
         },
-        (reason) => {
+        (error_) => {
           const logMessage = `getStreamedResponse: error on POST ${path}`;
           try {
-            console.error(`${logMessage}\n${JSON.stringify(reason)}`);
+            console.error(`${logMessage}\n${JSON.stringify(error_)}`);
           } catch (e) {
             console.error(logMessage);
           }
-          observer.error(reason);
+          observer.error(error_);
           observer.complete();
         },
       );
@@ -405,8 +384,8 @@ export class Rest implements IRest {
                   this.fetchStream(path, observer, controller);
                 }
               },
-              (reason) => {
-                observer.error(reason);
+              (error_) => {
+                observer.error(error_);
                 observer.complete();
               },
             );
@@ -414,28 +393,53 @@ export class Rest implements IRest {
           readMore();
         }
       },
-      (reason) => {
+      (error_) => {
         // when aborting the fetch using the AbortController, we provide the ABORT_STREAMING_REASON
         // allowing us to know we should not raise an error in the observer
-        if (reason === ABORT_STREAMING_REASON) {
+        if (error_ === ABORT_STREAMING_REASON) {
           observer.complete();
-        } else {
           // Error on fetch can be caused by the backend not closing gracefully the stream on time (causing errors like NS_ERROR_NET_PARTIAL_TRANSFER, or CORS error)
           // If there was no error before, or last error was more than 10s ago, we reconnect
-          // except if the error reason is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
-          if (
-            reason.toString() !== NS_BINDING_ABORTED_ERROR &&
+          // except if the error error_ is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
+        } else if (
+            error_.toString() !== NS_BINDING_ABORTED_ERROR &&
             (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
           ) {
-            console.warn(`Message stream lost: "${reason}". Reconnecting at ${new Date()}`);
+            console.warn(`Message stream lost: "${error_}". Reconnecting at ${new Date()}`);
             this.streamErrorAt = Date.now();
             this.fetchStream(path, observer, controller);
           } else {
-            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${reason}`);
-            observer.error(`Message stream lost: ${reason}`);
+            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${error_}`);
+            observer.error(`Message stream lost: ${error_}`);
             observer.complete();
           }
+        },
+    );
+  }
+
+  private _readStreamChunk(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    dataRef: { value: Uint8Array },
+    observer: Subscriber<{ data: Uint8Array; incomplete: boolean; headers: Headers }>,
+    headers: Headers,
+    path: string,
+  ): void {
+    reader.read().then(
+      ({ done, value }) => {
+        if (done) {
+          observer.next({ data: dataRef.value, incomplete: false, headers });
+          observer.complete();
         }
+        if (value) {
+          dataRef.value = this.concat(dataRef.value, value);
+          observer.next({ data: dataRef.value, incomplete: true, headers });
+          this._readStreamChunk(reader, dataRef, observer, headers, path);
+        }
+      },
+      (error_) => {
+        console.error(`getStreamedResponse: read error on POST ${path}`);
+        observer.error(error_);
+        observer.complete();
       },
     );
   }

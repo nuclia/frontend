@@ -23,7 +23,8 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "vitest -r=apps/search-widget-demo --run --passWithNoTests"
+        "command": "vitest -r=apps/search-widget-demo --run --passWithNoTests",
+        "forwardAllArgs": false
       }
     }
   }

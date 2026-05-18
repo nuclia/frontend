@@ -27,7 +27,7 @@ export class NotificationsPanelComponent implements OnDestroy {
   private notificationsService = inject(NotificationService);
 
   @Input({ transform: booleanAttribute }) isOpen = false;
-  @Output() close = new EventEmitter<void>();
+  @Output() panelClose = new EventEmitter<void>();
 
   notifications: Observable<NotificationUI[]> = this.notificationsService.notifications;
   hasNotifications = this.notifications.pipe(map((notifications) => notifications.length > 0));
@@ -38,7 +38,7 @@ export class NotificationsPanelComponent implements OnDestroy {
 
   onClose() {
     this.notificationsService.markAllAsRead();
-    this.close.emit();
+    this.panelClose.emit();
   }
 
   ngOnDestroy() {

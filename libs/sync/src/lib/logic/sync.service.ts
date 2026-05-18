@@ -189,9 +189,7 @@ export class SyncService {
 
   getConnector(connector: string, instance: string): IConnector {
     const source = this.connectors[connector];
-    if (!source.instances) {
-      source.instances = {};
-    }
+    source.instances ??= {};
     const instances = source.instances as { [key: string]: IConnector };
     if (!instances[instance]) {
       instances[instance] = source.definition.factory({ id: instance });
@@ -235,35 +233,33 @@ export class SyncService {
     const syncs = this._syncCache.getValue();
     if (syncs[syncId]) {
       return of(syncs[syncId]);
+    } else if (this._useCloudSync.getValue()) {
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) => kb.syncManager.getConfig(syncId)),
+        map((config) => ({
+          ...this.syncConfigtoISyncEntity(config),
+          kbId: config.kb_id,
+          connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
+        })),
+        tap((entity) =>
+          this._syncCache.next({
+            ...this._syncCache.getValue(),
+            [entity.id]: entity,
+          }),
+        ),
+      );
     } else {
-      if (this._useCloudSync.getValue()) {
-        return this.sdk.currentKb.pipe(
-          take(1),
-          switchMap((kb) => kb.syncManager.getConfig(syncId)),
-          map((config) => ({
-            ...this.syncConfigtoISyncEntity(config),
-            kbId: config.kb_id,
-            connectorId: this.getConnectorIdForProvider(config.external_connection.provider),
-          })),
-          tap((entity) =>
-            this._syncCache.next({
-              ...this._syncCache.getValue(),
-              [entity.id]: entity,
-            }),
-          ),
+      return this.http
+        .get<ISyncEntity>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
+          headers: this.serverHeaders,
+        })
+        .pipe(
+          tap((sync) => {
+            syncs[syncId] = sync;
+            this._syncCache.next(syncs);
+          }),
         );
-      } else {
-        return this.http
-          .get<ISyncEntity>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
-            headers: this.serverHeaders,
-          })
-          .pipe(
-            tap((sync) => {
-              syncs[syncId] = sync;
-              this._syncCache.next(syncs);
-            }),
-          );
-      }
     }
   }
 

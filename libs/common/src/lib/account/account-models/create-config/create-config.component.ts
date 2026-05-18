@@ -146,10 +146,8 @@ export class CreateConfigComponent implements OnInit {
         const prompts = (this.config?.user_prompts || {})[model.user_prompt || ''];
         this.promptsForm.patchValue(prompts || {});
       });
-    } else {
-      if (!this.configForm.value.zone && this.zones[0]) {
-        this.configForm.controls.zone.setValue(this.zones[0].slug);
-      }
+    } else if (!this.configForm.value.zone && this.zones[0]) {
+      this.configForm.controls.zone.setValue(this.zones[0].slug);
     }
   }
 

@@ -12,10 +12,10 @@ import { FileUploadStatus } from '@nuclia/core';
   standalone: false,
 })
 export class UploadProgressComponent {
-  @Output() close = new EventEmitter<void>();
+  @Output() progressClose = new EventEmitter<void>();
   files: Observable<FileUploadStatus[]> = this.uploadService.progress.pipe(
     map((progress) => progress.files || []),
-    takeUntil(this.close),
+    takeUntil(this.progressClose),
   );
 
   constructor(private uploadService: UploadService) {}

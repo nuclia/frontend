@@ -1,9 +1,8 @@
-import { Component, Input, forwardRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { FieldConfig } from '../field-config.service';
 
-import { ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import {
   ArrayStringFieldComponent,

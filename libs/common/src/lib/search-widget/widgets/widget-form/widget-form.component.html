@@ -370,7 +370,7 @@
                     formControlName="speech"
                     withBackground
                     spaceBetweenLabelAndToggle
-                    (valueChange)="updateSpeechSynthesis($event)">
+                    (valueChange)="$event ? enableSpeechSynthesis() : disableSpeechSynthesis()">
                     <span class="toggle-label">
                       {{ 'search.widgets.form.widget-options.speech.toggle-label' | translate }}
                       <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>

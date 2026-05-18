@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { DriverFieldConfig } from '../driver-field-config.service';
-
-import { ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ArrayStringFieldComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/array-string-field/array-string-field.component';
 import { EnumSelectComponent } from '../../../agent-dashboard/workflow/basic-elements/node-form/subcomponents/enum-select/enum-select.component';

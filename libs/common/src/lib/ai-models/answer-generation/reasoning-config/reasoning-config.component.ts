@@ -59,7 +59,7 @@ export class ReasoningConfigComponent implements OnDestroy {
         values.customizeReasoning
           ? {
               budget_tokens: typeof values.budget_tokens === 'number' ? values.budget_tokens : undefined,
-              effort: typeof values.effort === 'string' ? parseInt(values.effort) : undefined,
+              effort: typeof values.effort === 'string' ? Number.parseInt(values.effort) : undefined,
             }
           : undefined,
       );

@@ -22,7 +22,7 @@ import {
   type LearningConfigurations,
 } from '@nuclia/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { keyProviders } from '../../ai-models.utils';
 
 export type UserKeysForm = FormGroup<{
@@ -144,7 +144,7 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       newUserKeys.forEach((key) => {
         if (!this.userKeysGroup.get(key)) {
           const subSchema = userKeysConfig && getSubSchema(userKeysConfig, userKeysConfig?.properties?.[key]);
-          if (subSchema && subSchema.properties) {
+          if (subSchema?.properties) {
             const subForm = new FormGroup({});
             Object.entries(subSchema.properties).forEach(([subKey, prop]) => {
               const subKeyType = getLearningConfigPropType(prop);

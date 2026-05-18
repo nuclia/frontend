@@ -127,7 +127,7 @@ export class CloudFolderComponent implements OnInit {
         this.currentPath.set('');
         this.loadFolders();
       } else if (chunks.length > 2) {
-        const path = chunks.slice(0, chunks.length - 1).join('/');
+        const path = chunks.slice(0, -1).join('/');
         this.browseFolder(path);
       }
     } else if (this.currentDrive()) {

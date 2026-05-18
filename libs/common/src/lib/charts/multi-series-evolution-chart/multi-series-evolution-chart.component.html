@@ -1,10 +1,10 @@
 <div class="chart-legend">
   @for (s of _series; track s.key) {
-    <label class="legend-item" [class.dimmed]="!s.visible">
+    <div class="legend-item" [class.dimmed]="!s.visible">
       <pa-checkbox [value]="s.visible" (valueChange)="onToggleSeries(s.key)"></pa-checkbox>
       <span class="legend-color" [style.background]="s.color"></span>
       <span class="legend-label body-s">{{ s.label }}</span>
-    </label>
+    </div>
   }
 </div>
 <div

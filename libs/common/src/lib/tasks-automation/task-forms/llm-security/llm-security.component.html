@@ -6,7 +6,7 @@
   footerNoteOneTime="tasks-automation.llm-security.footer.apply-one-time"
   [validFormInside]="form.valid"
   [modelsHidden]="true"
-  (cancel)="backToTaskList()"
+  (taskCancel)="backToTaskList()"
   (save)="onSave($event)">
   <div [formGroup]="form">
     <nsi-two-columns-configuration-item

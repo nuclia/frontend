@@ -60,17 +60,17 @@ describe('OtpInputComponent', () => {
 
   // ─── onPaste ────────────────────────────────────────────────────────────────
 
-  describe('onPaste()', () => {
-    function paste(text: string): void {
-      // ClipboardEvent is not available in jsdom — call onPaste directly with a mock.
-      const mockEvent = {
-        preventDefault: jest.fn(),
-        clipboardData: { getData: jest.fn().mockReturnValue(text) },
-      } as unknown as ClipboardEvent;
-      component.onPaste(mockEvent);
-      fixture.detectChanges();
-    }
+  function paste(text: string): void {
+    // ClipboardEvent is not available in jsdom — call onPaste directly with a mock.
+    const mockEvent = {
+      preventDefault: jest.fn(),
+      clipboardData: { getData: jest.fn().mockReturnValue(text) },
+    } as unknown as ClipboardEvent;
+    component.onPaste(mockEvent);
+    fixture.detectChanges();
+  }
 
+  describe('onPaste()', () => {
     it('pasting 6 digits fills all boxes and emits otpComplete', () => {
       const otpCompleteSpy = jest.fn();
       component.otpComplete.subscribe(otpCompleteSpy);

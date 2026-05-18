@@ -83,9 +83,7 @@ export class LabelsService {
   }
 
   private filterByKind(labels: LabelSets | null, kind: LabelSetKind): LabelSets | null {
-    if (!labels) {
-      return labels;
-    } else {
+    if (labels) {
       const filtered: LabelSets = {};
       Object.entries(labels).forEach(([key, labelSet]) => {
         if (labelSet.kind.length === 0 || labelSet.kind.includes(kind)) {
@@ -93,6 +91,8 @@ export class LabelsService {
         }
       });
       return filtered;
+    } else {
+      return labels;
     }
   }
 

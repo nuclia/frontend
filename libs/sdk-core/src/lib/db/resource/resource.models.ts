@@ -1,4 +1,3 @@
-import { Operation } from '../task';
 
 export interface IResource {
   id: string;

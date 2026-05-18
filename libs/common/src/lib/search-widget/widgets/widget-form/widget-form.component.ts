@@ -10,8 +10,8 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { deepEqual, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
@@ -27,7 +27,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Widget } from '@nuclia/core';
 import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { combineLatest, filter, forkJoin, map, merge, Observable, of, startWith, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { SearchWidgetService } from '../../search-widget.service';
@@ -209,14 +209,14 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ kbId, widget, widgetSlug }) => {
-        if (!widget) {
-          this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
-          this.router.navigate(['..'], { relativeTo: this.route });
-        } else {
+        if (widget) {
           if (widget.searchConfigId) {
             this.searchWidgetService.saveSelectedSearchConfig(kbId, widget.searchConfigId);
           }
           this.initWidget(widget);
+        } else {
+          this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
+          this.router.navigate(['..'], { relativeTo: this.route });
         }
       });
 
@@ -250,7 +250,11 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
         this.searchWidgetService.generateRaoWidgetSnippet(widgetConfig);
       });
 
-    this.updateSpeechSynthesis(this.speechOn);
+    if (this.speechOn) {
+      this.enableSpeechSynthesis();
+    } else {
+      this.disableSpeechSynthesis();
+    }
   }
 
   ngAfterViewInit() {
@@ -410,12 +414,12 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  updateSpeechSynthesis(speechOn: boolean) {
-    if (!speechOn) {
-      this.form.controls.speechSynthesis.setValue(false);
-      this.form.controls.speechSynthesis.disable();
-    } else {
-      this.form.controls.speechSynthesis.enable();
-    }
+  enableSpeechSynthesis() {
+    this.form.controls.speechSynthesis.enable();
+  }
+
+  disableSpeechSynthesis() {
+    this.form.controls.speechSynthesis.setValue(false);
+    this.form.controls.speechSynthesis.disable();
   }
 }

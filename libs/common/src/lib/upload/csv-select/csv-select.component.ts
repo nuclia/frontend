@@ -44,7 +44,7 @@ export class CsvSelectComponent<T> {
   }
 
   @Input() help: string[] = [];
-  @Output() select = new EventEmitter<string[][]>();
+  @Output() csvSelect = new EventEmitter<string[][]>();
 
   @ViewChild('fileUpload') fileUpload?: ElementRef;
 
@@ -76,7 +76,7 @@ export class CsvSelectComponent<T> {
         const csv = parseCsv(reader.result as string);
         const isValid = csv.every((row) => row.length === this.fields);
         if (isValid) {
-          this.select.emit(csv);
+          this.csvSelect.emit(csv);
         } else {
           this.toaster.error(this.translate.instant('upload.invalid_csv', { num: this.fields }));
         }

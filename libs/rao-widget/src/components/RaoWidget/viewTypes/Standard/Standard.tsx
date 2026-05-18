@@ -3,7 +3,7 @@ import { Icon } from '../../../Icon';
 import { useRaoContext, useVoiceRecorder } from '../../../../hooks';
 import { SessionDrawer } from '../../../SessionDrawer';
 import { Conversation } from '../../../Conversation';
-import type { IRaoWidget } from '../../RaoWidget.interface';
+import type { IResources, IRaoWidget } from '../../RaoWidget.interface';
 
 // @ts-expect-error - inline CSS imports are handled by the bundler
 import styles from './Standard.css?inline';
@@ -24,13 +24,32 @@ export interface StandardProps extends IRaoWidget {
   onCloseFloating?: () => void;
 }
 
+function computeDisplayCards(promptconfig: StandardProps['promptconfig']): string[] {
+  if (!promptconfig?.prompts || promptconfig.prompts.length === 0) {
+    return promptconfig?.usefallbackprompts ? fallbackCards : [];
+  }
+  if (promptconfig.prompts.length < 4 && promptconfig.usefallbackprompts) {
+    return [
+      ...promptconfig.prompts,
+      ...fallbackCards.slice(promptconfig.prompts.length, promptconfig.visibleprompts ?? 4),
+    ];
+  }
+  return promptconfig.prompts.slice(0, promptconfig.visibleprompts ?? 4);
+}
+
+function getRecordingTitle(canUseVoice: boolean, isRecording: boolean, resources: IResources): string {
+  if (!canUseVoice) return resources.aria_notsupported;
+  if (isRecording) return resources.aria_stoprecording;
+  return resources.aria_startrecording;
+}
+
 export const Standard: FC<StandardProps> = ({
   promptconfig,
   recordingconfig,
   viewtype = 'conversation',
   onCloseFloating,
 }) => {
-  const { activeView, visibleViewType, onChat, setVisibleViewType, resources, conversation, onFeedbackResponse } =
+  const { activeView, visibleViewType, onChat, setVisibleViewType, resources } =
     useRaoContext();
   const {
     hasSupport: canUseVoice,
@@ -97,25 +116,7 @@ export const Standard: FC<StandardProps> = ({
     setQuery(transcript);
   }, [transcript]);
 
-  const displayCards = useMemo(() => {
-    if (!promptconfig?.prompts || promptconfig.prompts.length === 0) {
-      if (promptconfig?.usefallbackprompts) {
-        return fallbackCards;
-      }
-      return [];
-    }
-
-    if (promptconfig.prompts.length < 4) {
-      if (promptconfig.usefallbackprompts) {
-        return [
-          ...promptconfig.prompts,
-          ...fallbackCards.slice(promptconfig.prompts.length, promptconfig.visibleprompts ?? 4),
-        ];
-      }
-    }
-
-    return promptconfig.prompts.slice(0, promptconfig.visibleprompts ?? 4);
-  }, [promptconfig]);
+  const displayCards = useMemo(() => computeDisplayCards(promptconfig), [promptconfig]);
 
   const handleCardClick = (event: MouseEvent<HTMLButtonElement>) => {
     const value = event.currentTarget.dataset.value ?? '';
@@ -160,6 +161,8 @@ export const Standard: FC<StandardProps> = ({
     stopRecording();
     onCloseFloating();
   }, [onCloseFloating, stopRecording]);
+
+  const recordingTitle = getRecordingTitle(canUseVoice, isRecording, resources);
 
   return (
     <>
@@ -265,13 +268,7 @@ export const Standard: FC<StandardProps> = ({
                 type="button"
                 className={`rao-react__ghost-button${isRecording ? ' rao-react__ghost-button--recording' : ''}`}
                 aria-label={isRecording ? resources.aria_stoprecording : resources.aria_startrecording}
-                title={
-                  canUseVoice
-                    ? isRecording
-                      ? resources.aria_stoprecording
-                      : resources.aria_startrecording
-                    : resources.aria_notsupported
-                }
+                title={recordingTitle}
                 onClick={toggleRecording}
                 aria-pressed={isRecording}
                 disabled={!canUseVoice}>

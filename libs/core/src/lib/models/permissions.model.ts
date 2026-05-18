@@ -51,10 +51,10 @@ export class Permissions {
   permissions: string[];
 
   get contrib(): boolean {
-    return this.permissions.indexOf('CONTRIB') > -1;
+    return this.permissions.includes('CONTRIB');
   }
   get admin(): boolean {
-    return this.permissions.indexOf('ADMIN') > -1;
+    return this.permissions.includes('ADMIN');
   }
   get sidebar(): boolean {
     return this.contrib || this.admin;

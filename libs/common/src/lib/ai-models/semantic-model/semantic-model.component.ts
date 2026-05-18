@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -40,13 +40,13 @@ const HUGGING_FACE_MODEL = 'hf_embedding';
     ReactiveFormsModule,
     StickyFooterComponent,
     TranslateModule,
-    TwoColumnsConfigurationItemComponent
-],
+    TwoColumnsConfigurationItemComponent,
+  ],
   templateUrl: './semantic-model.component.html',
   styleUrl: './semantic-model.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SemanticModelComponent extends LearningConfigurationDirective {
+export class SemanticModelComponent extends LearningConfigurationDirective implements OnDestroy {
   configForm = new FormGroup({
     default_semantic_model: new FormControl<string>('', { nonNullable: true }),
   });

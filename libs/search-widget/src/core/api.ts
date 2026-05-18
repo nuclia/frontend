@@ -77,6 +77,59 @@ let RRF_BOOSTING: number | undefined = undefined;
 let SECURITY_GROUPS: string[] | undefined;
 const ASK_SHOW: ResourceProperties[] = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
 
+const _applySearchModeOptions = (widgetOptions: WidgetOptions) => {
+  if (widgetOptions.fuzzyOnly || widgetOptions.features?.useSynonyms) {
+    SEARCH_MODE = [Search.Features.KEYWORD];
+  }
+  if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
+    SEARCH_MODE.push(Search.Features.RELATIONS);
+    CHAT_MODE.push(Ask.Features.RELATIONS);
+  }
+  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
+    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
+  }
+  if (widgetOptions.features?.semanticOnly) {
+    SEARCH_MODE = SEARCH_MODE.filter((feature) => feature !== Search.Features.KEYWORD);
+  }
+  if (widgetOptions.features?.suggestions) {
+    SUGGEST_MODE.push(Search.SuggestionFeatures.PARAGRAPH);
+  }
+  if (widgetOptions.features?.autocompleteFromNERs) {
+    SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
+  }
+};
+
+const _applyWidgetSearchOptions = (widgetOptions: WidgetOptions) => {
+  if (widgetOptions.features?.useSynonyms) {
+    SEARCH_OPTIONS.with_synonyms = true;
+  }
+  if (widgetOptions.features?.showHidden) {
+    SEARCH_OPTIONS.show_hidden = true;
+  }
+  if (widgetOptions.rrf_boosting) {
+    SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
+  }
+  if (RERANKER) {
+    SEARCH_OPTIONS.reranker = RERANKER;
+  }
+  try {
+    const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
+    AUDIT_METADATA = metadata;
+    SEARCH_OPTIONS.audit_metadata = metadata;
+  } catch (e) {
+    console.error('Invalid audit metadata', e);
+  }
+  if (REPHRASE && REPHRASE_PROMPT) {
+    SEARCH_OPTIONS.rephrase_prompt = REPHRASE_PROMPT;
+  }
+  if (MAX_PARAGRAPHS) {
+    SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
+  }
+  if (SECURITY_GROUPS) {
+    SEARCH_OPTIONS.security = { groups: SECURITY_GROUPS };
+  }
+};
+
 export const initNuclia = (
   options: NucliaOptions,
   state: KBStates,
@@ -98,45 +151,29 @@ export const initNuclia = (
   if (widgetOptions.features?.useSynonyms && widgetOptions.features?.relations) {
     throw new Error('Cannot use synonyms and relations at the same time');
   }
-  if (widgetOptions.fuzzyOnly || widgetOptions.features?.useSynonyms) {
-    SEARCH_MODE = [Search.Features.KEYWORD];
-  }
-  if (widgetOptions.features?.useSynonyms) {
-    SEARCH_OPTIONS.with_synonyms = true;
-  }
-  if (widgetOptions.features?.showHidden) {
-    SEARCH_OPTIONS.show_hidden = true;
-  }
-  if (widgetOptions.rrf_boosting) {
-    SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
-  }
-  if (widgetOptions.not_enough_data_message) {
-    NOT_ENOUGH_DATA_MESSAGE = widgetOptions.not_enough_data_message;
-  }
-  if (widgetOptions.features?.hideAnswer) {
-    hideAnswer.set(true);
-  }
+
   CITATIONS = widgetOptions.features?.llmCitations ? 'llm_footnotes' : !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;
   REPHRASE_PROMPT = widgetOptions.rephrase_prompt;
-  if (REPHRASE && REPHRASE_PROMPT) {
-    SEARCH_OPTIONS.rephrase_prompt = REPHRASE_PROMPT;
-  }
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
   DEBUG = !!widgetOptions.features?.debug;
   SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
   RERANKER = widgetOptions.reranker;
-  if (RERANKER) {
-    SEARCH_OPTIONS.reranker = RERANKER;
+  MAX_TOKENS = widgetOptions.max_output_tokens
+    ? { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens }
+    : widgetOptions.max_tokens;
+  MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
+  SECURITY_GROUPS = (widgetOptions.security_groups?.length || 0) > 0 ? widgetOptions.security_groups : undefined;
+  CITATION_THRESHOLD = widgetOptions.citation_threshold;
+  RRF_BOOSTING = widgetOptions.rrf_boosting;
+
+  if (widgetOptions.not_enough_data_message) {
+    NOT_ENOUGH_DATA_MESSAGE = widgetOptions.not_enough_data_message;
   }
-  try {
-    const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
-    AUDIT_METADATA = metadata;
-    SEARCH_OPTIONS.audit_metadata = metadata;
-  } catch (e) {
-    console.error('Invalid audit metadata');
+  if (widgetOptions.features?.hideAnswer) {
+    hideAnswer.set(true);
   }
   if (widgetOptions.copy_disclaimer) {
     disclaimer.set(widgetOptions.copy_disclaimer);
@@ -146,6 +183,15 @@ export const initNuclia = (
     if (widgetOptions.metadata.includes('extra:')) {
       ASK_SHOW.push(ResourceProperties.EXTRA);
     }
+  }
+
+  _applySearchModeOptions(widgetOptions);
+  _applyWidgetSearchOptions(widgetOptions);
+
+  SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
+  showAttachedImages.set(SHOW_ATTACHED_IMAGES);
+  if (widgetOptions.features?.noScroll) {
+    noScroll.set(true);
   }
 
   nucliaApi = new Nuclia(options);
@@ -159,10 +205,7 @@ export const initNuclia = (
     });
   }
 
-  searchOptions.set({
-    highlight: HIGHLIGHT,
-    rephrase: REPHRASE,
-  });
+  searchOptions.set({ highlight: HIGHLIGHT, rephrase: REPHRASE });
   prompt = widgetOptions.prompt;
   systemPrompt = widgetOptions.system_prompt;
   generative_model = widgetOptions.generative_model;
@@ -171,41 +214,6 @@ export const initNuclia = (
     SEARCH_OPTIONS.vectorset = vectorset;
   }
 
-  if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
-    SEARCH_MODE.push(Search.Features.RELATIONS);
-    CHAT_MODE.push(Ask.Features.RELATIONS);
-  }
-  if (widgetOptions.features?.suggestions) {
-    SUGGEST_MODE.push(Search.SuggestionFeatures.PARAGRAPH);
-  }
-  if (widgetOptions.features?.autocompleteFromNERs) {
-    SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
-  }
-  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
-    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
-  }
-  if (widgetOptions.features?.semanticOnly) {
-    SEARCH_MODE = SEARCH_MODE.filter((feature) => feature !== Search.Features.KEYWORD);
-  }
-  SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
-  showAttachedImages.set(SHOW_ATTACHED_IMAGES);
-  if (widgetOptions.features?.noScroll) {
-    noScroll.set(true);
-  }
-
-  MAX_TOKENS = !widgetOptions.max_output_tokens
-    ? widgetOptions.max_tokens
-    : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
-  MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
-  if (MAX_PARAGRAPHS) {
-    SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
-  }
-  SECURITY_GROUPS = (widgetOptions.security_groups?.length || 0) > 0 ? widgetOptions.security_groups : undefined;
-  if (SECURITY_GROUPS) {
-    SEARCH_OPTIONS.security = { groups: SECURITY_GROUPS };
-  }
-  CITATION_THRESHOLD = widgetOptions.citation_threshold;
-  RRF_BOOSTING = widgetOptions.rrf_boosting;
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -251,8 +259,10 @@ export const getAnswer = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question });
-        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push(
+          { author: Ask.Author.USER, text: curr.question },
+          { author: Ask.Author.NUCLIA, text: curr.answer.text },
+        );
         return acc;
       }, [] as Ask.ContextEntry[]);
 
@@ -310,8 +320,10 @@ export const getAnswerWithoutRAG = (
   const context = NO_CHAT_HISTORY
     ? undefined
     : chat?.reduce((acc, curr) => {
-        acc.push({ author: Ask.Author.USER, text: curr.question });
-        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        acc.push(
+          { author: Ask.Author.USER, text: curr.question },
+          { author: Ask.Author.NUCLIA, text: curr.answer.text },
+        );
         return acc;
       }, [] as Ask.ContextEntry[]);
 
@@ -440,7 +452,9 @@ export const getEntities = (): Observable<EntityGroup[]> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (!_entities) {
+  if (_entities) {
+    return of(_entities);
+  } else {
     return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
       map(([entityMap, translate]) =>
         Object.entries(entityMap)
@@ -459,8 +473,6 @@ export const getEntities = (): Observable<EntityGroup[]> => {
       ),
       tap((entities) => (_entities = entities || [])),
     );
-  } else {
-    return of(_entities as EntityGroup[]);
   }
 };
 
@@ -543,7 +555,7 @@ export const getFileUrls = (paths: string[], inline = false): Observable<string[
     map((token) =>
       paths.map((path) => {
         if (path.startsWith('/')) {
-          const params = [token ? `eph-token=${token}` : '', inline ? 'inline=true' : ''].filter((p) => p).join('&');
+          const params = [token ? `eph-token=${token}` : '', inline ? 'inline=true' : ''].filter(Boolean).join('&');
           const fullpath = `${getRegionalBackend()}${path}`;
           return params ? `${fullpath}?${params}` : fullpath;
         } else {

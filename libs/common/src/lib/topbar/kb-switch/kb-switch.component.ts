@@ -14,7 +14,7 @@ import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
 export class KbSwitchComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
 
-  @Output() close = new EventEmitter<void>();
+  @Output() switchClose = new EventEmitter<void>();
 
   kb$ = this.sdk.currentKb;
   account: Observable<Account> = this.sdk.currentAccount;
@@ -42,14 +42,14 @@ export class KbSwitchComponent implements OnDestroy {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = kb.zone;
       this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id)]);
-      this.close.emit();
+      this.switchClose.emit();
     });
   }
   goToArag(arag: IRetrievalAgentItem) {
     this.account.pipe(take(1)).subscribe((account) => {
       this.sdk.nuclia.options.zone = arag.zone;
       this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, arag.slug)]);
-      this.close.emit();
+      this.switchClose.emit();
     });
   }
 }

@@ -18,7 +18,6 @@ import {
   ExternalAgentCreation,
   GenerationAgentCreation,
   GoogleAgent,
-  GoogleAgentCreation,
   GuardrailsProviderType,
   InternetProviderType,
   McpAgentCreation,
@@ -83,9 +82,9 @@ export function isCondionalNode(x: any): x is CondionalNodeType {
 export type NodeCategory = 'preprocess' | 'context' | 'generation' | 'postprocess';
 export type NodeState = 'default' | 'unsaved' | 'selected' | 'processing' | 'processed';
 
-const CATEGORY_LIST: NodeCategory[] = ['preprocess', 'context', 'generation', 'postprocess'];
+const CATEGORY_LIST: Set<NodeCategory> = new Set(['preprocess', 'context', 'generation', 'postprocess']);
 export function isCategory(x: any): x is NodeCategory {
-  return CATEGORY_LIST.includes(x);
+  return CATEGORY_LIST.has(x);
 }
 
 export interface ParentNode {
@@ -268,10 +267,12 @@ export interface McpAgentUI extends CommonAgentConfig {
   tool_choice_model?: string;
 }
 
+export type AgentStepUI = BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent;
+
 export interface BaseConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
-  then?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
-  else_?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
+  then?: AgentStepUI[];
+  else_?: AgentStepUI[];
 }
 export interface SmartAgentUI extends CommonAgentConfig {
   registered_agents?: BaseContextAgent[];
@@ -383,10 +384,11 @@ export function basicAskUiToCreation(config: BasicAskAgentUI): BasicAskAgentCrea
   };
 }
 export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
+  const { sources, rules, ...rest } = agent;
   return {
-    ...agent,
-    sources: agent.sources.join(','),
-    rules: agent.rules || null,
+    ...rest,
+    sources: sources.join(','),
+    rules: rules || null,
   };
 }
 export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {
@@ -453,7 +455,12 @@ export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
   const { call_schema, call_obj, ...uiConfig } = agent;
   return {
     ...uiConfig,
-    payload: agent.context ? 'context' : agent.call_obj ? 'call_obj' : agent.call_schema ? 'call_schema' : 'none',
+    payload: (() => {
+      if (agent.context) return 'context';
+      if (agent.call_obj) return 'call_obj';
+      if (agent.call_schema) return 'call_schema';
+      return 'none';
+    })() as 'context' | 'call_obj' | 'call_schema' | 'none',
     rules: agent.rules || null,
     call_schema: JSON.stringify(call_schema),
     call_obj: JSON.stringify(call_obj),
@@ -588,7 +595,7 @@ export function formatExtraConfig(extra: { [property: string]: { property: strin
 } {
   return Object.values(extra).reduce(
     (config, entry) => {
-      const intValue = parseInt(entry.value, 10);
+      const intValue = Number.parseInt(entry.value, 10);
       config[entry.property] = isNaN(intValue) ? entry.value : intValue;
       return config;
     },

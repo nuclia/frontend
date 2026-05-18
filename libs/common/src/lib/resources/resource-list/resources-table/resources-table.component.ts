@@ -81,7 +81,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   currentRemoveLabelList: Classification[] = [];
   deletingLabel = false;
   fullLabels = false;
-  skeletonRows = Array(20);
+  skeletonRows = new Array(20);
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,
@@ -162,16 +162,16 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     $event.event.preventDefault();
 
     let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
-    if (!labelToRemove.immutable) {
-      classifications = classifications.filter(
-        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
-      );
-    } else {
+    if (labelToRemove.immutable) {
       classifications.push({
         label: labelToRemove.label,
         labelset: labelToRemove.labelset,
         cancelled_by_user: true,
       });
+    } else {
+      classifications = classifications.filter(
+        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
+      );
     }
     resource
       .modify({

@@ -128,10 +128,10 @@ export class ActivityDownloadComponent implements OnDestroy {
                 take(1),
                 concatMap(() => {
                   const url = this.downloads[key].url;
-                  if (!url) {
-                    return of(null);
-                  } else {
+                  if (url) {
                     return from(fetch(url).then((res) => res.text()));
+                  } else {
+                    return of(null);
                   }
                 }),
                 tap((ndjson) => {
@@ -200,7 +200,7 @@ export class ActivityDownloadComponent implements OnDestroy {
 
   parseDate(value: string) {
     const [year, month] = value.split('-');
-    return new Date(parseInt(year), parseInt(month) - 1, 2);
+    return new Date(Number.parseInt(year), Number.parseInt(month) - 1, 2);
   }
 
   parseNdjson(ndjson: string) {

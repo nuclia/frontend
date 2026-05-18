@@ -29,9 +29,6 @@
   .sw-metadata-section-header {
     .metadata-expander-header-title {
       cursor: pointer;
-    }
-
-    .metadata-expander-header-title {
       transition: background var(--transition-superfast);
 
       &:hover {

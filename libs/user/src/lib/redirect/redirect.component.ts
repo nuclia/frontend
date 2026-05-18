@@ -6,9 +6,9 @@ import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pa
 import { TranslateModule } from '@ngx-translate/core';
 import { Account } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { take, map, filter, switchMap, combineLatest, from, tap } from 'rxjs';
+import { take, map, filter, switchMap, combineLatest, from } from 'rxjs';
 
-const AUTHORIZED_REDIRECTS = ['http://localhost:4200'];
+const AUTHORIZED_REDIRECTS = new Set(['http://localhost:4200']);
 const AUTHORIZED_REDIRECTS_REGEX = [/^chrome-extension:\/\/[a-z]+\/options\/options\.html$/];
 
 @Component({
@@ -63,7 +63,7 @@ export class RedirectComponent {
         let redirectUrl: string = params['redirect'] || '';
         if (redirectUrl) {
           const matchRegex = AUTHORIZED_REDIRECTS_REGEX.some((regex) => regex.test(redirectUrl));
-          if (!matchRegex && !AUTHORIZED_REDIRECTS.includes(redirectUrl)) {
+          if (!matchRegex && !AUTHORIZED_REDIRECTS.has(redirectUrl)) {
             console.warn('Redirect URL not authorized');
             return;
           }

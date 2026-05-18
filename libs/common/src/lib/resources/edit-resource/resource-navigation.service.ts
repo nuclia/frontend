@@ -40,10 +40,7 @@ export class ResourceNavigationService {
 
   isFirstResource: Observable<boolean> = combineLatest([this._navigationData, this._currentResourceId]).pipe(
     filter(([data, resourceId]) => !!data && !!resourceId),
-    map(
-      ([data, resourceId]) =>
-        (data as ResourceNavigationModel).resourceIdList.findIndex((id) => resourceId === id) === 0,
-    ),
+    map(([data, resourceId]) => (data as ResourceNavigationModel).resourceIdList.indexOf(resourceId!) === 0),
   );
 
   isLastResource: Observable<boolean> = combineLatest([this._navigationData, this._currentResourceId]).pipe(
@@ -51,7 +48,7 @@ export class ResourceNavigationService {
     map(([data, resourceId]) => [data, resourceId] as [ResourceNavigationModel, string]),
     map(([data, resourceId]) => {
       const resourceIdList = (data as ResourceNavigationModel).resourceIdList;
-      return resourceIdList.findIndex((id) => resourceId === id) === resourceIdList.length - 1 && !data.hasMore;
+      return resourceIdList.indexOf(resourceId) === resourceIdList.length - 1 && !data.hasMore;
     }),
   );
 
@@ -59,7 +56,7 @@ export class ResourceNavigationService {
     const currentData = this._navigationData.value;
     const currentId = this._currentResourceId.value;
     if (currentData && currentId) {
-      const previousIndex = currentData.resourceIdList.findIndex((id) => id === currentId) - 1;
+      const previousIndex = currentData.resourceIdList.indexOf(currentId) - 1;
       if (previousIndex > -1) {
         this.navigateToNextResource(currentData, previousIndex);
       }
@@ -69,7 +66,7 @@ export class ResourceNavigationService {
     const currentData = this._navigationData.value;
     const currentId = this._currentResourceId.value;
     if (currentData && currentId) {
-      const nextIndex = currentData.resourceIdList.findIndex((id) => id === currentId) + 1;
+      const nextIndex = currentData.resourceIdList.indexOf(currentId) + 1;
 
       // arriving to the end of the list, if there is more we load it so user can navigate till the end seamlessly
       if (nextIndex === currentData.resourceIdList.length - 2 && currentData.hasMore) {
@@ -96,7 +93,7 @@ export class ResourceNavigationService {
 
   private loadMoreResources() {
     const currentData = this._navigationData?.value;
-    if (currentData && currentData.hasMore && !this._loadingMore) {
+    if (currentData?.hasMore && !this._loadingMore) {
       this._loadingMore = true;
       const newPageData = {
         ...currentData,

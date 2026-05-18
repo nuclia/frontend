@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SDKService } from '@flaps/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 
-const OMITTED_HEADERS = ['Authorization', 'x-ndb-client'];
+const OMITTED_HEADERS = new Set(['Authorization', 'x-ndb-client']);
 
 @Component({
   imports: [
@@ -30,13 +30,13 @@ export class SearchRequestModalComponent {
       if (typeof value === 'object') {
         return [key, JSON.stringify(value)];
       } else {
-        return [key, `${value}`];
+        return [key, String(value as string | number | boolean)];
       }
     })
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as any);
 
   headers = Object.entries(this.modal.config?.data?.['headers'] || {})
-    .filter(([key]) => !OMITTED_HEADERS.includes(key))
+    .filter(([key]) => !OMITTED_HEADERS.has(key))
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as any);
 
   payloadJson = JSON.stringify(this.modal.config?.data?.['params'] || {}, undefined, 4);
@@ -55,7 +55,14 @@ export class SearchRequestModalComponent {
   ) {}
 
   private getPythonCode(endpoint: string, params: { [key: string]: any }): string {
-    const method = endpoint.endsWith('/ask') ? 'ask' : endpoint.endsWith('/find') ? 'find' : '';
+    let method: string;
+    if (endpoint.endsWith('/ask')) {
+      method = 'ask';
+    } else if (endpoint.endsWith('/find')) {
+      method = 'find';
+    } else {
+      method = '';
+    }
     if (!method) {
       return 'Unknown method';
     }

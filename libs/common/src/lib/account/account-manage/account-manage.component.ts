@@ -97,7 +97,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   }
 
   initSamlForm() {
-    if (this.account && this.account.saml_config) {
+    if (this.account?.saml_config) {
       const config = this.account.saml_config;
       this.samlForm.reset({ ...config, domains: config.domains.join(', ') });
     }

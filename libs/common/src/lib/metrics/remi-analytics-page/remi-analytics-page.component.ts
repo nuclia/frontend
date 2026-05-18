@@ -40,7 +40,7 @@ import {
 import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
 import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService } from '@flaps/core';
+import { FeaturesService, NavigationService } from '@flaps/core';
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
@@ -56,7 +56,6 @@ import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { PreviewService } from '../../resources';
 import { SafeHtml } from '@angular/platform-browser';
-import { NavigationService } from '@flaps/core';
 
 /** Shared color palette for the 3 REMI metrics — keep in sync with the evolution chart. */
 const METRIC_COLORS: Record<string, string> = {
@@ -213,7 +212,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     return this.lowContextMonthControl.value;
   }
   get criteriaPercentValue() {
-    return parseInt(this.lowContextCriteria.controls.value.getRawValue(), 10) * 20 + '%';
+    return Number.parseInt(this.lowContextCriteria.controls.value.getRawValue(), 10) * 20 + '%';
   }
   get noAnswerMonthControl() {
     return this.noAnswerCriteria.controls.month;
@@ -318,7 +317,7 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
       const criteria: RemiQueryCriteria = {
         month: data.month,
         context_relevance: {
-          value: parseInt(data.value, 10),
+          value: Number.parseInt(data.value, 10),
           operation: 'lt',
           aggregation: 'max',
         },

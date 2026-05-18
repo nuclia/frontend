@@ -32,13 +32,15 @@ export const awsGuard: CanActivateFn = (route, state) => {
             return sdk.nuclia.db
               .getAccounts()
               .pipe(
-                switchMap((accounts) =>
-                  accounts.length === 0
-                    ? of(true)
-                    : accounts.length === 1
-                      ? router.navigate([navigation.getAccountManageUrl(accounts[0].slug)])
-                      : router.navigate([navigation.getAccountSelectUrl()]),
-                ),
+                switchMap((accounts) => {
+                  if (accounts.length === 0) {
+                    return of(true);
+                  } else if (accounts.length === 1) {
+                    return router.navigate([navigation.getAccountManageUrl(accounts[0].slug)]);
+                  } else {
+                    return router.navigate([navigation.getAccountSelectUrl()]);
+                  }
+                }),
               );
           }
         }),

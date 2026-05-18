@@ -136,7 +136,7 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
       .concat(this.selectedVisibility);
   }
   get selectedVisibility() {
-    return this.filterOptions.hidden !== undefined ? getFilterFromVisibility(this.filterOptions.hidden) : [];
+    return this.filterOptions.hidden === undefined ? [] : getFilterFromVisibility(this.filterOptions.hidden);
   }
 
   ngAfterViewInit(): void {

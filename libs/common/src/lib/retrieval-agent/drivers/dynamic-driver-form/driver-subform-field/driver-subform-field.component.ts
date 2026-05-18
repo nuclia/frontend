@@ -121,12 +121,12 @@ export class DriverSubformFieldComponent implements OnInit, OnDestroy {
       refPath = this.property.$ref;
     } else if (this.property.anyOf) {
       const refObj = this.property.anyOf.find((item: any) => item.$ref);
-      if (refObj && refObj.$ref) {
+      if (refObj?.$ref) {
         refPath = refObj.$ref;
       }
     }
 
-    if (refPath && refPath.startsWith('#/$defs/')) {
+    if (refPath?.startsWith('#/$defs/')) {
       const defName = refPath.replace('#/$defs/', '');
       const resolved = this.resolveRefFromAllSchemas(defName);
 

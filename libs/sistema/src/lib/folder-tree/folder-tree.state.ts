@@ -34,7 +34,7 @@ export class FolderTreeState {
     const updatedTree = this.updateAllParents(updatedFolder, true);
     if (updatedTree) {
       this._tree.next({ ...updatedTree });
-    } else if (updatedFolder && updatedFolder.path === '/') {
+    } else if (updatedFolder?.path === '/') {
       // updatedTree is undefined when folder is actually the root
       this._tree.next({ ...updatedFolder });
     }
@@ -99,7 +99,7 @@ export class FolderTreeState {
 
   private getParentPath(path: string): string {
     const ids = path.split('/');
-    return ids.slice(0, ids.length - 1).join('/') || '/';
+    return ids.slice(0, -1).join('/') || '/';
   }
 
   private getFolder(path: string): FolderTree | undefined {
@@ -110,7 +110,7 @@ export class FolderTreeState {
       return this._tree.value;
     }
 
-    const ids = path.split('/').filter((id) => id);
+    const ids = path.split('/').filter(Boolean);
     let parent = this._tree.value;
     let folder: FolderTree | undefined;
     ids.forEach((id) => {

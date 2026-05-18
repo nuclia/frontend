@@ -188,7 +188,7 @@ export namespace Agentic {
             return nextSteps.length === 0
               ? of(true)
               : forkJoin(nextSteps.map((nextStepId) => this.runStep(nextStepId).pipe(take(1)))).pipe(
-                  map((results) => results.every((r) => r)),
+                  map((results) => results.every(Boolean)),
                 );
           } else {
             this._status.next({ stepId, status: 'error' });
@@ -249,11 +249,11 @@ export namespace Agentic {
         )
         .pipe(
           map((res) => {
-            if (res.type !== 'findResults') {
-              return false;
-            } else {
+            if (res.type === 'findResults') {
               this.context = { ...this.context, [stepId]: { results: res } };
               return true;
+            } else {
+              return false;
             }
           }),
         );
@@ -278,12 +278,12 @@ export namespace Agentic {
         })
         .pipe(
           map((res) => {
-            if (res.type !== 'answer') {
-              return false;
-            } else {
+            if (res.type === 'answer') {
               const outputs = res.jsonAnswer || {};
               this.context = { ...this.context, [stepId]: { results: res, ...outputs } };
               return true;
+            } else {
+              return false;
             }
           }),
         );
@@ -390,22 +390,20 @@ export function getObjectValue(obj: object, path: string): any {
       key = key.replace('[', '').replace(']', '');
       if (Array.isArray(acc)) {
         try {
-          const index = parseInt(key, 10);
+          const index = Number.parseInt(key, 10);
           return acc[index];
         } catch (e) {
           return undefined;
         }
+      } else if (acc[key]) {
+        return acc[key];
       } else {
-        if (acc[key]) {
-          return acc[key];
-        } else {
           try {
-            const index = parseInt(key, 10);
+            const index = Number.parseInt(key, 10);
             return Object.values(acc)[index];
           } catch (e) {
             return undefined;
           }
-        }
       }
     } else if (acc[key]) {
       return acc[key];

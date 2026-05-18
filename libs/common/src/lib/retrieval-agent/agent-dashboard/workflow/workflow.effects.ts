@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BaseContextAgent,
   ContextAgentCreation,
   GenerationAgentCreation,
   PostprocessAgentCreation,
@@ -95,10 +94,10 @@ export class WorkflowEffectService {
     }
 
     // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
-    const singleFallbackLinked = ['fallback', 'next_agent'];
+    const singleFallbackLinked = new Set(['fallback', 'next_agent']);
     const fallbackEntries = node.nodeRef.instance.boxComponent.connectableEntries?.filter((entry) => {
       const hasContent = !!(node.nodeConfig as any)?.[entry.id()]?.module;
-      return hasContent && singleFallbackLinked.includes(entry.id());
+      return hasContent && singleFallbackLinked.has(entry.id());
     });
     if (fallbackEntries?.length) {
       fallbackEntries.forEach((fallbackEntry) => {
@@ -161,7 +160,7 @@ export class WorkflowEffectService {
       );
       return { request, nodeId, log: ' - Update agent' };
     }
-    return;
+    return undefined;
   }
 
   private checkForChildrenUpdates(
@@ -224,22 +223,21 @@ export class WorkflowEffectService {
     }
     const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
     const updatedChildren: { id: string; childIndex?: number }[] = [];
-    if (!parentNode || !parentNode.nodeConfig) {
+    if (!parentNode?.nodeConfig) {
       return;
     }
     const childId = childNode.nodeRef.instance.id;
 
-    if ((parentNode.then || []).includes(childId)) {
+    if ((parentNode.then ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'then'));
-    } else if ((parentNode.else_ || []).includes(childId)) {
+    } else if ((parentNode.else_ ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'else_'));
-    } else if ((parentNode.agents || []).includes(childId)) {
+    } else if ((parentNode.agents ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'agents'));
-    } else if ((parentNode.registered_agents || []).includes(childId)) {
+    } else if ((parentNode.registered_agents ?? []).includes(childId)) {
       updatedChildren.push(this.updateChildrenConfig(parentNode, childNode, 'registered_agents'));
     } else {
-      const childKey =
-        parentNode.fallback === childId ? 'fallback' : parentNode.next_agent === childId ? 'next_agent' : '';
+      const childKey = this.getChildRelationshipKey(parentNode, childId);
       if (childKey) {
         const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
         const configKey = childNode.parentLinkConfigProperty || childNode.parentLinkType || childKey;
@@ -262,6 +260,12 @@ export class WorkflowEffectService {
     }
   }
 
+  private getChildRelationshipKey(parentNode: ParentNode, childId: string): string {
+    if (parentNode.fallback === childId) return 'fallback';
+    if (parentNode.next_agent === childId) return 'next_agent';
+    return '';
+  }
+
   /**
    * Update parent node children with child config for the given property. The corresponding children list will be updated.
    * @param parentNode
@@ -275,12 +279,11 @@ export class WorkflowEffectService {
     property: 'then' | 'else_' | 'agents' | 'registered_agents',
   ): { id: string; childIndex: number } {
     const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI | RestrictedAgentUI | SmartAgentUI;
-    const children =
-      property === 'agents'
-        ? (parentConfig as RestrictedAgentUI).agents || []
-        : property === 'registered_agents'
-          ? (parentConfig as SmartAgentUI).registered_agents || []
-          : (parentConfig as BaseConditionalAgentUI)[property] || [];
+    const children = (() => {
+      if (property === 'agents') return (parentConfig as RestrictedAgentUI).agents || [];
+      if (property === 'registered_agents') return (parentConfig as SmartAgentUI).registered_agents || [];
+      return (parentConfig as BaseConditionalAgentUI)[property] || [];
+    })();
     const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig, childNode.agentId);
     let updatedChild;
     if (typeof childNode.childIndex === 'number') {

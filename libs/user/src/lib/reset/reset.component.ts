@@ -6,7 +6,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { StrongPassword, SamePassword } from '../password.validator';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'nus-reset',

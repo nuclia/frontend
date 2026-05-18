@@ -39,6 +39,7 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
       dnsPolicy: ClusterFirst
+      automountServiceAccountToken: false
       containers:
       - name: {{ .Release.Name }}
         image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"

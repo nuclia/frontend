@@ -26,7 +26,7 @@ export const paths = pathState.writer<PathTree, Search.FacetsResult>(
   (state, facets) => {
     Object.entries(facets).forEach(([key, value]) => {
       const elements = key.slice(1).split('/');
-      const label = elements[elements.length - 1];
+      const label = elements.at(-1)!;
       const newNode = {
         label,
         path: key,
@@ -37,7 +37,7 @@ export const paths = pathState.writer<PathTree, Search.FacetsResult>(
       if (elements.length === 1) {
         state.paths[label] = newNode;
       } else {
-        const parent = getPathNode(state.paths, elements.slice(0, elements.length - 1));
+        const parent = getPathNode(state.paths, elements.slice(0, -1));
         if (parent) {
           parent.children[label] = newNode;
         }

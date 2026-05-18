@@ -48,10 +48,10 @@ export const find = (
         return from(
           res.json().then(
             (body) => {
-              throw { status: res.status, body };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status, body });
             },
             () => {
-              throw { status: res.status };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status });
             },
           ),
         );
@@ -115,11 +115,10 @@ export const catalog = (
     throw new Error('Advanced catahog query is not supported with GET');
   }
   const path = `/kb/${kbid}`;
+  const catalogPath = options ? serialize({ query: (query as string) || '' }, options) : '';
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(
-        `${path}/catalog?${options ? serialize({ query: (query as string) || '' }, options) : ''}`,
-      )
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...{ query: query || '' }, ...options });
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${catalogPath}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { query: query || '', ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 

@@ -43,7 +43,7 @@ export class OnboardingService {
   nextStep() {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
-      const next = steps[steps.findIndex((s) => s === step) + 1];
+      const next = steps[steps.indexOf(step) + 1];
       this._onboardingStep.next(next);
     });
   }
@@ -51,7 +51,7 @@ export class OnboardingService {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
       if (step > 1) {
-        const previous = steps[steps.findIndex((s) => s === step) - 1];
+        const previous = steps[steps.indexOf(step) - 1];
         this._onboardingStep.next(previous);
       }
     });
@@ -82,16 +82,7 @@ export class OnboardingService {
       creationFailed: false,
     });
     const signupToken = this.authService.getSignUpToken();
-    if (!signupToken) {
-      this._onboardingState.next({
-        creating: false,
-        accountCreated: false,
-        kbCreated: false,
-        creationFailed: true,
-      });
-      console.error('No signup data');
-      return throwError(() => new Error('No signup data'));
-    } else {
+    if (signupToken) {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
           this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
@@ -129,6 +120,15 @@ export class OnboardingService {
           });
         }),
       );
+    } else {
+      this._onboardingState.next({
+        creating: false,
+        accountCreated: false,
+        kbCreated: false,
+        creationFailed: true,
+      });
+      console.error('No signup data');
+      return throwError(() => new Error('No signup data'));
     }
   }
 
@@ -251,9 +251,9 @@ export class OnboardingService {
   }
 
   private getIncrementedSlug(slug: string): string {
-    const existingIncrement = parseInt(slug.split('_').pop() || '');
+    const existingIncrement = Number.parseInt(slug.split('_').pop() || '');
     return isNaN(existingIncrement)
       ? `${slug}_1`
-      : `${slug.slice(0, -1 - `${existingIncrement}`.length)}_${existingIncrement + 1}`;
+      : `${slug.slice(0, -1 - String(existingIncrement).length)}_${existingIncrement + 1}`;
   }
 }

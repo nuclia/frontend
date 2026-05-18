@@ -22,7 +22,7 @@
   description="sync.details.settings.description">
   <div class="sync-settings-container">
     <div class="body-s settings-item">
-      <label>{{ 'sync.details.settings.name' | translate }}</label>
+      <span>{{ 'sync.details.settings.name' | translate }}</span>
       <div>{{ sync.title }}</div>
     </div>
 
@@ -30,7 +30,7 @@
 
     @if (!sync.isCloud && connector?.canSyncSecurityGroups) {
       <div class="body-s settings-item">
-        <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
+        <span>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</span>
         <div style="text-transform: capitalize">
           {{
             (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
@@ -42,7 +42,7 @@
     }
 
     <div class="body-s settings-item">
-      <label>{{ 'sync.details.settings.labels' | translate }}</label>
+      <span>{{ 'sync.details.settings.labels' | translate }}</span>
       <div class="row-container">
         @for (label of coloredLabels; track label.labelset + '_' + label.label) {
           <nsi-label
@@ -57,14 +57,14 @@
     </div>
 
     <div class="separator-line"></div>
-    <label>
+    <span>
       {{
         ((sync.isCloud ? sync.file_filter?.mode === 'exclude' : sync.filters?.fileExtensions?.exclude)
           ? 'sync.details.settings.file-extensions.excluded'
           : 'sync.details.settings.file-extensions.included'
         ) | translate
       }}
-    </label>
+    </span>
     <div class="body-s settings-item">
       @if (sync.isCloud) {
         <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.extensions }"></ng-container>
@@ -89,14 +89,14 @@
 
     @if (sync.isCloud) {
       <div class="separator-line"></div>
-      <label>{{ 'sync.add-page.file-patterns.title' | translate }}</label>
+      <span>{{ 'sync.add-page.file-patterns.title' | translate }}</span>
       <div class="body-s settings-item">
         <ng-container *ngTemplateOutlet="tagList; context: { items: sync.file_filter?.glob_patterns }"></ng-container>
       </div>
     }
 
     <div class="separator-line"></div>
-    <label>{{ 'sync.details.settings.modification-date.label' | translate }}</label>
+    <span>{{ 'sync.details.settings.modification-date.label' | translate }}</span>
     <div class="body-s row-container">
       @if (sync.isCloud ? sync.modified_time_range : sync.filters?.modified; as dates) {
         {{ 'sync.details.settings.modification-date.from' | translate }}
@@ -123,7 +123,7 @@
         <div class="sync-settings-container">
           @for (field of section.fields; track field.id) {
             <div class="body-s settings-item">
-              <label>{{ field.label | translate }}</label>
+              <span>{{ field.label | translate }}</span>
               @if (field.type !== 'table') {
                 @if (field.secret) {
                   <div>*****</div>

@@ -109,15 +109,18 @@ export class ModelSelectorComponent implements ControlValueAccessor {
 
   selectedModelData = computed(() => {
     const isCustomModel = this.selectedModel()?.includes('/');
-    const model = this.selectedModel()
-      ? isCustomModel
-        ? this.modelList()
-            .filter((model) => model.providerKey === 'default')
-            .find((model) => model.model.name === this.selectedModel())
-        : this.modelList()
-            .filter((model) => model.providerKey !== 'default')
-            .find((model) => model.modelKey === this.selectedModel())
-      : undefined;
+    let model;
+    if (!this.selectedModel()) {
+      model = undefined;
+    } else if (isCustomModel) {
+      model = this.modelList()
+        .filter((model) => model.providerKey === 'default')
+        .find((model) => model.model.name === this.selectedModel());
+    } else {
+      model = this.modelList()
+        .filter((model) => model.providerKey !== 'default')
+        .find((model) => model.modelKey === this.selectedModel());
+    }
     return { title: model?.model.title, description: model?.model.description, provider: model?.provider };
   });
 

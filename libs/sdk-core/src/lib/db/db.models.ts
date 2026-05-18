@@ -353,7 +353,7 @@ export function getSubSchema(
   property: LearningConfigurationProperty,
 ): LearningConfigurationSchema | undefined {
   const key = property.$ref?.split('/').pop();
-  if (key && schema.$defs && schema.$defs[key]) {
+  if (key && schema.$defs?.[key]) {
     return schema.$defs[key];
   }
   return undefined;
@@ -460,7 +460,7 @@ export interface CustomModelItem extends BaseCustomModel {
 export interface CustomModel extends BaseCustomModel {
   log: string | null;
   kbids: string[];
-  openai_compat: any | null;
+  openai_compat: any;
 }
 
 export interface ModelConfigurationItem {

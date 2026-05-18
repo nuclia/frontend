@@ -205,7 +205,13 @@ export const resultList = searchState.reader<TypedResult[]>((state) => {
     list.sort((a, b) => {
       const createdA = a.origin?.created || a.created || '';
       const createdB = b.origin?.created || b.created || '';
-      return createdA === createdB ? 0 : createdA < createdB ? 1 : -1;
+      if (createdA === createdB) {
+        return 0;
+      } else if (createdA < createdB) {
+        return 1;
+      } else {
+        return -1;
+      }
     });
   }
   return list;
@@ -313,6 +319,29 @@ export const resultsOrder = searchState.writer<ResultsOrder>(
   }),
 );
 
+function parseSearchFilters(filterStrings: string[]): SearchFilters {
+  const filters: SearchFilters = {};
+  filterStrings.forEach((filter) => {
+    const spreadFilter = filter.split('/').filter((val) => !!val);
+    if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
+      if (spreadFilter.length === 3) {
+        const labelFilter = { classification: getLabelFromFilter(filter), kind: LabelSetKind.PARAGRAPHS };
+        filters.labels = [...(filters.labels || []), labelFilter];
+      } else {
+        const labelSetFilter = { id: getLabelSetFromFilter(filter), kind: LabelSetKind.PARAGRAPHS };
+        filters.labelSets = [...(filters.labelSets || []), labelSetFilter];
+      }
+    } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
+      filters.entities = [...(filters.entities || []), getEntityFromFilter(filter)];
+    } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
+      filters.mimeTypes = [...(filters.mimeTypes || []), getMimeFromFilter(filter)];
+    } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
+      filters.path = filter;
+    }
+  });
+  return filters;
+}
+
 export const searchFilters = searchState.writer<string[], { filters: string[] }>(
   (state) => [
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
@@ -321,55 +350,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
     ...(state.filters.mimeTypes || []).map((filter) => filter.key),
     ...(state.filters.path ? [state.filters.path] : []),
   ],
-  (state, data) => {
-    const filters: SearchFilters = {};
-    data.filters.forEach((filter) => {
-      const spreadFilter = filter.split('/').filter((val) => !!val);
-      if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
-        if (spreadFilter.length === 3) {
-          const labelFilter = {
-            classification: getLabelFromFilter(filter),
-            kind: LabelSetKind.PARAGRAPHS,
-          };
-          if (!filters.labels) {
-            filters.labels = [labelFilter];
-          } else {
-            filters.labels.push(labelFilter);
-          }
-        } else {
-          const labelSetFilter = {
-            id: getLabelSetFromFilter(filter),
-            kind: LabelSetKind.PARAGRAPHS,
-          };
-          if (!filters.labelSets) {
-            filters.labelSets = [labelSetFilter];
-          } else {
-            filters.labelSets.push(labelSetFilter);
-          }
-        }
-      } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
-        const entityFilter = getEntityFromFilter(filter);
-        if (!filters.entities) {
-          filters.entities = [entityFilter];
-        } else {
-          filters.entities.push(entityFilter);
-        }
-      } else if (spreadFilter[0] === MIME_FILTER_PREFIX) {
-        const mimeFilter = getMimeFromFilter(filter);
-        if (!filters.mimeTypes) {
-          filters.mimeTypes = [mimeFilter];
-        } else {
-          filters.mimeTypes.push(mimeFilter);
-        }
-      } else if (spreadFilter[0] === PATH_FILTER_PREFIX) {
-        filters.path = filter;
-      }
-    });
-    return {
-      ...state,
-      filters,
-    };
-  },
+  (state, data) => ({ ...state, filters: parseSearchFilters(data.filters) }),
 );
 
 export const rangeCreationISO = searchState.reader<{ start?: string; end?: string } | undefined>((state) => ({
@@ -450,24 +431,21 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     ) {
       return filterExpression;
     }
+    const field = (() => {
+      if (filterExpression?.field && hasFieldFilters) return { and: [filterExpression.field, fieldFilters] };
+      if (hasFieldFilters) return fieldFilters;
+      return filterExpression?.field;
+    })();
+    const paragraph = (() => {
+      if (filterExpression?.paragraph && hasParagraphFilters)
+        return { and: [filterExpression.paragraph, paragraphFilters] };
+      if (hasParagraphFilters) return paragraphFilters;
+      return filterExpression?.paragraph;
+    })();
     return {
       ...(filterExpression || {}),
-      field:
-        filterExpression?.field && hasFieldFilters
-          ? {
-              and: [filterExpression.field, fieldFilters],
-            }
-          : hasFieldFilters
-            ? fieldFilters
-            : filterExpression?.field,
-      paragraph:
-        filterExpression?.paragraph && hasParagraphFilters
-          ? {
-              and: [filterExpression.paragraph, paragraphFilters],
-            }
-          : hasParagraphFilters
-            ? paragraphFilters
-            : filterExpression?.paragraph,
+      field,
+      paragraph,
     };
   }),
 );
@@ -686,7 +664,6 @@ function getTitle(value: string): string | undefined {
   if (parts.length === 4) {
     return parts[3];
   }
-  return;
 }
 export const displayedMetadata = searchState.writer<ResultMetadata, string>(
   (state) => state.metadata,
@@ -757,10 +734,10 @@ export const entityRelations = searchState.reader((state) =>
         .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
         .reduce(
           (acc, current) => {
-            if (!acc[current.relation_label]) {
-              acc[current.relation_label] = [current.entity];
-            } else {
+            if (acc[current.relation_label]) {
               acc[current.relation_label].push(current.entity);
+            } else {
+              acc[current.relation_label] = [current.entity];
             }
             return acc;
           },
@@ -867,7 +844,7 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
   }
 
   const keyList: string[] = [];
-  return resources.reduce((resultList, resource) => {
+  return resources.reduce<TypedResult[]>((resultList, resource) => {
     const fieldCount = Object.keys(resource.fields).length;
     const dataFieldCount = Object.keys(resource.fields).filter((fid) => !fid.startsWith('/a/')).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
@@ -906,18 +883,17 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
         const uniqueKey = getResultUniqueKey(typedResult);
-        if (!keyList.includes(uniqueKey)) {
+        if (keyList.includes(uniqueKey)) {
+          return null;
+        } else {
           keyList.push(uniqueKey);
           return typedResult;
-        } else {
-          return null;
         }
       })
-      .filter((typedResult) => !!typedResult)
-      .map((typedResult) => typedResult as TypedResult);
+      .filter((typedResult): typedResult is TypedResult => !!typedResult);
     resultList = resultList.concat(fieldEntries);
     return resultList;
-  }, [] as TypedResult[]);
+  }, []);
 }
 
 function excludeResults(results: TypedResult[], excluded: TypedResult[]): TypedResult[] {
@@ -945,55 +921,52 @@ export function getFieldDataFromResource(resource: IResource, field: FieldId): I
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
   return result.paragraphs && result.paragraphs.length > 0
-    ? `${result.paragraphs.reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`
+    ? result.paragraphs.reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')
     : result.id;
 }
 
-const SpreadsheetContentTypes = [
+const SpreadsheetContentTypes = new Set([
   'text/csv',
   'application/vnd.ms-excel',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.oasis.opendocument.spreadsheet',
-];
+]);
+function getFileResultType(file: FileFieldData['value']['file']): { resultType: ResultType; resultIcon: string } {
+  // for audio, video, image or text, we have a corresponding tile
+  // for mimetype starting with 'application/', it is more complex:
+  // - anything like a spreadsheet is a spreadsheet
+  // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
+  // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
+  const contentType = file?.content_type || '';
+  if (contentType.startsWith('audio')) return { resultType: 'audio', resultIcon: 'audio' };
+  if (contentType.startsWith('video')) return { resultType: 'video', resultIcon: 'video' };
+  if (contentType.startsWith('image')) return { resultType: 'image', resultIcon: 'image' };
+  if (contentType.startsWith('text')) return { resultType: 'text', resultIcon: 'text' };
+  if (SpreadsheetContentTypes.has(contentType)) return { resultType: 'spreadsheet', resultIcon: 'spreadsheet' };
+  if (contentType.startsWith('application/octet-stream')) return { resultType: 'text', resultIcon: 'text' };
+  if (contentType.startsWith('application')) {
+    const icon = contentType === 'application/pdf' ? 'file-pdf' : 'file-empty';
+    return { resultType: 'pdf', resultIcon: icon };
+  }
+  return { resultType: 'text', resultIcon: 'text' };
+}
+
 export function getResultType(result: Search.FieldResult): { resultType: ResultType; resultIcon: string } {
   const fieldType = result?.field?.field_type;
   const fieldDataValue = result?.fieldData?.value;
-  let resultType: ResultType;
-  let icon = '';
   if (fieldType === FIELD_TYPE.link && !!fieldDataValue) {
     const url = (result.fieldData as LinkFieldData).value?.uri;
-    resultType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
-  } else if (fieldType === FIELD_TYPE.conversation) {
-    resultType = 'conversation';
-  } else if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
-    const file = (result.fieldData as FileFieldData).value?.file;
-    // for audio, video, image or text, we have a corresponding tile
-    // for mimetype starting with 'application/', it is more complex:
-    // - anything like a spreadsheet is a spreadsheet
-    // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
-    // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
-    if (file?.content_type?.startsWith('audio')) {
-      resultType = 'audio';
-    } else if (file?.content_type?.startsWith('video')) {
-      resultType = 'video';
-    } else if (file?.content_type?.startsWith('image')) {
-      resultType = 'image';
-    } else if (file?.content_type?.startsWith('text')) {
-      resultType = 'text';
-    } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
-      resultType = 'spreadsheet';
-    } else if (file?.content_type?.startsWith('application/octet-stream')) {
-      resultType = 'text';
-    } else if (file?.content_type?.startsWith('application')) {
-      resultType = 'pdf';
-      icon = file?.content_type === 'application/pdf' ? 'file-pdf' : 'file-empty';
-    } else {
-      resultType = 'text';
-    }
-  } else {
-    resultType = 'text';
+    const resultType: ResultType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+    return { resultType, resultIcon: resultType };
   }
-  return { resultType, resultIcon: icon || resultType };
+  if (fieldType === FIELD_TYPE.conversation) {
+    return { resultType: 'conversation', resultIcon: 'conversation' };
+  }
+  if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
+    const file = (result.fieldData as FileFieldData).value?.file;
+    return getFileResultType(file);
+  }
+  return { resultType: 'text', resultIcon: 'text' };
 }
 
 export function getNonGenericField(data: ResourceData) {
@@ -1028,8 +1001,8 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
     labels: [],
     position: {
       index: paragraph.position?.index || 0,
-      start: parseInt(position?.[0] || ''),
-      end: parseInt(position?.[1] || ''),
+      start: Number.parseInt(position?.[0] || ''),
+      end: Number.parseInt(position?.[1] || ''),
       page_number: paragraph.position?.page_number,
       start_seconds: paragraph.position?.start_seconds,
       end_seconds: paragraph.position?.end_seconds,
@@ -1041,16 +1014,81 @@ export function getFindParagraphFromAugmentedParagraph(paragraph: Ask.AugmentedC
   };
 }
 
-const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\s(block-[A-Z]{2}(-[0-9]+)?)/g);
+const FOOTNOTES_REF = new RegExp(/\[(\d+)\]:\s(block-[A-Z]{2}(-\d+)?)/g);
 
 export function parseFootenotes(text: string): { block: string; index: number }[] {
   const references = (text || '').matchAll(FOOTNOTES_REF);
   const refIndexes: { block: string; index: number }[] = [];
   for (const match of references) {
-    refIndexes.push({ block: match[2], index: parseInt(match[1]) });
+    refIndexes.push({ block: match[2], index: Number.parseInt(match[1]) });
   }
   refIndexes.sort((entry1, entry2) => entry1.index - entry2.index);
   return refIndexes;
+}
+
+function processParagraphCitation(
+  acc: TypedResult[],
+  resource: Search.FindResource,
+  citationId: string,
+  shortFieldType: string,
+  fieldId: string,
+  index: number,
+  context: {
+    augmentedContext: Ask.Answer['augmentedContext'];
+    metadata: ReturnType<typeof displayedMetadata.getValue>;
+  },
+): void {
+  const { augmentedContext, metadata } = context;
+  let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
+  if (!paragraph) {
+    const augmentedParagraph = augmentedContext?.paragraphs[citationId];
+    if (augmentedParagraph) {
+      paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
+    }
+  }
+  if (!paragraph) return;
+  paragraph.rank = index + 1;
+  const field: FieldId =
+    shortFieldType === SHORT_FIELD_TYPE.generic
+      ? getNonGenericField(resource.data || {}) // we take the first other field that is not generic
+      : {
+          field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+          field_id: fieldId,
+        };
+
+  const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+  if (existing) {
+    existing.paragraphs.push(paragraph);
+  } else {
+    const fieldData = getFieldDataFromResource(resource, field);
+    const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
+    const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+    acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph], resultMetadata });
+  }
+}
+
+function processResourceCitation(
+  acc: TypedResult[],
+  res: Search.FindResource,
+  resource: Search.FindResource | undefined,
+  shortFieldType: string,
+  fieldId: string,
+  index: number,
+  metadata: ReturnType<typeof displayedMetadata.getValue>,
+): void {
+  const existing = acc.find((r) => r.id === res.id);
+  if (existing) {
+    existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
+    return;
+  }
+  const field = {
+    field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+    field_id: fieldId,
+  };
+  const fieldData = getFieldDataFromResource(res, field);
+  const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
+  const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+  acc.push({ ...res, resultType, resultIcon, field, fieldData, paragraphs: [], resultMetadata, ranks: [index + 1] });
 }
 
 export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
@@ -1077,82 +1115,27 @@ export function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
       .map((entry) => entry[1]);
   }
   const augmentedContext = answer.augmentedContext;
-  return citationIds.reduce((acc, citationId, index) => {
+  return citationIds.reduce<TypedResult[]>((acc, citationId, index) => {
     // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
     // Note: the widget does not support extra_context, but a proxy could be injecting some
     // and it must not break the widget. The objective is not to display the citations properly in this case
     // (as customer should implement their own widget to handle this case), but just to not break the widget.
-    if (citationId.includes('/')) {
-      const citationPath = citationId.split('/');
-      const [resourceId, shortFieldType, fieldId] = citationPath;
-      const resource = resources[resourceId];
-      const graphPrequeryResource = graphPrequeryResources[resourceId];
-      if (resource && citationPath.length === 4) {
-        // the citation is about a paragraph
-        let paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[citationId] as RankedParagraph;
-        if (!paragraph) {
-          const augmentedParagraph = augmentedContext?.paragraphs[citationId];
-          if (augmentedParagraph) {
-            paragraph = getFindParagraphFromAugmentedParagraph(augmentedParagraph);
-          }
-        }
-        if (paragraph) {
-          paragraph.rank = index + 1;
-          let field: FieldId;
-          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-            // we take the first other field that is not generic
-            field = getNonGenericField(resource.data || {});
-          } else {
-            field = {
-              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-              field_id: fieldId,
-            };
-          }
-          const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-          if (!existing) {
-            const fieldData = getFieldDataFromResource(resource, field);
-            const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-            const resultMetadata = getResultMetadata(metadata, resource, fieldData);
-            acc.push({
-              ...resource,
-              resultType,
-              resultIcon,
-              field,
-              fieldData,
-              paragraphs: [paragraph],
-              resultMetadata,
-            });
-          } else {
-            existing.paragraphs!.push(paragraph);
-          }
-        }
-      } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
-        // the citation is about a resource or a relation
-        const res = resources[resourceId] || graphPrequeryResource;
-        const existing = acc.find((r) => r.id === res.id);
-        if (!existing) {
-          const field = {
-            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-            field_id: fieldId,
-          };
-          const fieldData = getFieldDataFromResource(res, field);
-          const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
-          const resultMetadata = getResultMetadata(metadata, resource, fieldData);
-          acc.push({
-            ...res,
-            resultType,
-            resultIcon,
-            field,
-            fieldData,
-            paragraphs: [],
-            resultMetadata,
-            ranks: [index + 1],
-          });
-        } else {
-          existing.ranks = existing.ranks ? existing.ranks.concat([index + 1]) : [index + 1];
-        }
-      }
+    if (!citationId.includes('/')) return acc;
+    const citationPath = citationId.split('/');
+    const [resourceId, shortFieldType, fieldId] = citationPath;
+    const resource = resources[resourceId];
+    const graphPrequeryResource = graphPrequeryResources[resourceId];
+    if (resource && citationPath.length === 4) {
+      // the citation is about a paragraph
+      processParagraphCitation(acc, resource, citationId, shortFieldType, fieldId, index, {
+        augmentedContext,
+        metadata,
+      });
+    } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+      // the citation is about a resource or a relation
+      const res = resources[resourceId] || graphPrequeryResource;
+      processResourceCitation(acc, res, resource, shortFieldType, fieldId, index, metadata);
     }
     return acc;
-  }, [] as TypedResult[]);
+  }, []);
 }

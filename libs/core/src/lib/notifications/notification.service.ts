@@ -62,9 +62,8 @@ export class NotificationService {
                     };
                     // we group notifications happening within 30 seconds only for unread notification of the same operation type
                     if (
-                      lastNotification &&
-                      lastNotification.unread &&
-                      lastNotification.operation === newNotif.operation &&
+                      lastNotification?.unread &&
+                      lastNotification?.operation === newNotif.operation &&
                       differenceInSeconds(new Date(newNotif.timestamp), new Date(lastNotification.timestamp)) <= 30 &&
                       newNotif.success === !lastNotification.failure
                     ) {

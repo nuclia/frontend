@@ -1,13 +1,15 @@
 <div
   class="synonyms-field"
+  role="group"
+  aria-labelledby="synonyms-label"
   [formGroup]="synonymsForm">
   <div class="label-and-button">
-    <label>
+    <span id="synonyms-label">
       {{ label }}
       @if (required) {
         <span style="color: red">*</span>
       }
-    </label>
+    </span>
     <pa-button
       size="small"
       aspect="basic"

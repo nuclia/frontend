@@ -218,7 +218,7 @@ export class Db implements IDb {
     zone: string,
     mode: KnowledgeBoxMode = 'kb',
   ): Observable<IKnowledgeBoxItem[]> {
-    const modeParam = mode !== 'kb' ? `?mode=${mode}` : '';
+    const modeParam = mode === 'kb' ? '' : `?mode=${mode}`;
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
       `/account/${accountId}/kbs${modeParam}`,
       undefined,
@@ -288,13 +288,14 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
+      const zoneSlugArg = this.nuclia.options.proxy ? undefined : zoneSlug;
       const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
         ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
         : this.nuclia.rest.get<IKnowledgeBoxBase>(
             `/account/${accountID}/kb/${kbId}`,
             undefined,
             undefined,
-            this.nuclia.options.proxy ? undefined : zoneSlug,
+            zoneSlugArg,
           );
 
       return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
@@ -377,7 +378,7 @@ export class Db implements IDb {
     return creation.pipe(
       switchMap((id) => {
         if (!id) {
-          throw 'Knowledge Box creation failed';
+          throw new Error('Knowledge Box creation failed');
         }
         return this.getKnowledgeBox(accountId, id, zone);
       }),
@@ -407,7 +408,7 @@ export class Db implements IDb {
         map((res) => res.id),
         switchMap((id) => {
           if (!id) {
-            throw 'Retrieval Agent creation failed';
+            throw new Error('Retrieval Agent creation failed');
           }
           return this.getRetrievalAgent(accountId, id, zone);
         }),

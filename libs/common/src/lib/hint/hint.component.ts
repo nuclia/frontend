@@ -31,7 +31,7 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   @ViewChild('content') content?: ElementRef;
   @ViewChild('container') container?: ElementRef;
 
-  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+  clipboardSupported = !!(navigator.clipboard?.writeText);
   hasCodeExample = false;
 
   containerWidth = '100%';

@@ -41,7 +41,12 @@ export interface OneTimeTask extends BaseTask {
 export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTimeTask {
   return {
     type: 'one-time',
-    status: task.completed ? 'completed' : task.failed ? 'error' : task.stopped ? 'stopped' : 'progress',
+    status: (() => {
+      if (task.completed) return 'completed';
+      if (task.failed) return 'error';
+      if (task.stopped) return 'stopped';
+      return 'progress';
+    })() as 'completed' | 'error' | 'stopped' | 'progress',
     task_config_id: task.task_config_id,
     ...getBaseTask(task),
   };

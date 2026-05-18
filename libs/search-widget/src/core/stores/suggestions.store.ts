@@ -97,7 +97,7 @@ export const selectPrevEntity = suggestionState.action((state) => {
 
 export const autocomplete = (suggestion: string) => {
   let query = typeAhead.getValue();
-  const words = query.split(/\s+/).filter((word) => word);
+  const words = query.split(/\s+/).filter(Boolean);
   const index = query.lastIndexOf(words[words.length - 1]);
   query = query.substring(0, index) + suggestion;
   typeAhead.set(query);

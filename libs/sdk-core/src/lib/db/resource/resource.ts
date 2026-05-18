@@ -49,9 +49,7 @@ export class ReadableResource implements IResource {
    * Note: Usually you will not need to create a `Resource` object yourself.
    * It is returned by the `getResource` method of the `KnowledgeBox` object. */
   constructor(data: IResource) {
-    if (!data.data) {
-      data.data = {};
-    }
+    data.data ??= {};
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 
@@ -151,11 +149,12 @@ export class ReadableResource implements IResource {
   }
 
   private formatTitle(title?: string): string {
-    title = title || '–';
     try {
-      return decodeURIComponent(title);
+      return decodeURIComponent(title || '–');
     } catch (e) {
-      return title;
+      // malformed URI sequence — return raw title
+      console.warn('Unable to decode resource title:', e);
+      return title || '–';
     }
   }
 
@@ -193,7 +192,7 @@ export class Resource extends ReadableResource implements IResource {
     if (!this.uuid && !this.slug) {
       throw new Error('Resource must have either uuid or slug');
     }
-    return !this.uuid ? `${this.kbPath}/slug/${this.slug}` : `${this.kbPath}/resource/${this.uuid}`;
+    return this.uuid ? `${this.kbPath}/resource/${this.uuid}` : `${this.kbPath}/slug/${this.slug}`;
   }
 
   constructor(nuclia: INuclia, kb: string, data: IResource) {
@@ -422,7 +421,7 @@ export class Resource extends ReadableResource implements IResource {
     options?: ChatOptions,
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
-    options = { ...(options || {}), rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
+    options = { ...options, rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
     return this.ask(query, context, features, options, callback);
   }
 

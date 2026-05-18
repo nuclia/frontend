@@ -70,7 +70,7 @@ export class AccountStatusComponent {
         const ids = localStorage.getItem(TRIAL_ALERT) || '';
         if (!ids.split(',').includes(account.id)) {
           this.showEndOfTrialAlert();
-          localStorage.setItem(TRIAL_ALERT, !ids ? account.id : `${ids},${account.id}`);
+          localStorage.setItem(TRIAL_ALERT, ids ? `${ids},${account.id}` : account.id);
         }
       });
   }

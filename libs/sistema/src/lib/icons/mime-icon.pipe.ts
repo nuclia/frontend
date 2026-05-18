@@ -17,11 +17,4 @@ export class MimeIconPipe implements PipeTransform {
 @Pipe({
   name: 'mimeIcon',
 })
-export class StandaloneMimeIconPipe implements PipeTransform {
-  transform(mime: string | undefined): string | undefined {
-    if (!mime) {
-      return;
-    }
-    return getMimeIcon(mime.split('+')[0].toLowerCase());
-  }
-}
+export class StandaloneMimeIconPipe extends MimeIconPipe implements PipeTransform {}

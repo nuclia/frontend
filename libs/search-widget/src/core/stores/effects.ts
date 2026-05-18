@@ -130,6 +130,15 @@ const subscriptions: Subscription[] = [];
 
 const CHAT_HISTORY_KEY = 'nuclia.chat.history';
 
+const ASK_ERROR_MESSAGES: Record<string, string> = {
+  '-3': 'answer.error.no_retrieval_data',
+  '-2': 'answer.error.llm_cannot_answer',
+  '-1': 'answer.error.llm_error',
+  '402': 'anwer.error.feature-blocked',
+  '412': 'answer.error.rephrasing',
+  '529': 'answer.error.service-overloaded',
+};
+
 function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
   unsubscribeTriggerSearch();
@@ -250,8 +259,6 @@ export function initAnswer() {
         take(1),
       )
       .subscribe(() => SpeechSettings.init()),
-  );
-  subscriptions.push(
     combineLatest([isSpeechOn, SpeechStore.isStarted])
       .pipe(distinctUntilChanged())
       .subscribe(([on, started]) => {
@@ -261,8 +268,6 @@ export function initAnswer() {
           SpeechSettings.stop();
         }
       }),
-  );
-  subscriptions.push(
     combineLatest([lastSpeakableFullAnswer, isSpeechSynthesisEnabled])
       .pipe(
         filter(([answer, enabled]) => !!answer && !!enabled),
@@ -423,7 +428,7 @@ function initStoreFromUrlParams() {
                     const fieldFullId = data.fieldFullId;
                     const [start, end] = initialParagraph?.split('-') || ['0', '0'];
                     const paragraph = data.currentResult?.fieldData?.extracted?.metadata?.metadata.paragraphs.find(
-                      (paragraph) => paragraph.start == parseInt(start) && paragraph.end === parseInt(end),
+                      (paragraph) => paragraph.start == Number.parseInt(start) && paragraph.end === Number.parseInt(end),
                     );
                     if (paragraph && fieldFullId) {
                       resultParagraphs.set([getFindParagraphFromParagraph(paragraph, fieldFullId, text)]);
@@ -491,6 +496,48 @@ export function setupTriggerGraphNerSearch() {
   );
 }
 
+interface RagAnswerOpts {
+  reasoning: unknown;
+  disableRAG: boolean;
+  filterExpression: boolean;
+  filters: ChatOptions['filters'];
+  combinedFilterExpr: ChatOptions['filter_expression'];
+  rangeCreation: { start?: string; end?: string } | undefined;
+  _images: string[];
+  _hasQueryImage: boolean;
+  search_configuration: string | undefined;
+}
+
+function buildRagAnswerObservable(
+  question: string,
+  entries: Ask.Entry[],
+  options: BaseSearchOptions,
+  ragOpts: RagAnswerOpts,
+): ReturnType<typeof getAnswer> {
+  const { reasoning, disableRAG, filterExpression, filters, combinedFilterExpr, rangeCreation, _images, _hasQueryImage, search_configuration } = ragOpts;
+  const chatOptions: ChatOptions = { ...options, reasoning: reasoning as ChatOptions['reasoning'] || undefined };
+  if (disableRAG) {
+    return getAnswerWithoutRAG(question, entries, chatOptions);
+  }
+  return getAnswer(question, entries, {
+    ...chatOptions,
+    search_configuration,
+    filters: filterExpression ? undefined : filters,
+    filter_expression: filterExpression ? combinedFilterExpr : undefined,
+    range_creation_start: filterExpression ? undefined : rangeCreation?.start,
+    range_creation_end: filterExpression ? undefined : rangeCreation?.end,
+    extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
+    query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
+    reasoning: reasoning as ChatOptions['reasoning'],
+  });
+}
+
+function _getTranslatedError(status: number): string {
+  return translateInstant(
+    status === -2 ? getNotEngoughDataMessage() : ASK_ERROR_MESSAGES[`${status}`] || 'error.search',
+  );
+}
+
 export function askQuestion(
   question: string,
   reset: boolean,
@@ -549,40 +596,21 @@ export function askQuestion(
             inError: false,
           } as Ask.Answer);
         } else {
-          const chatOptions = { ...options, reasoning: reasoning || undefined };
-          return disableRAG
-            ? getAnswerWithoutRAG(question, entries, chatOptions)
-            : getAnswer(question, entries, {
-                ...chatOptions,
-                search_configuration,
-                filters: filterExpression ? undefined : filters,
-                filter_expression: filterExpression ? combinedFilterExpression : undefined,
-                range_creation_start: !filterExpression ? rangeCreation?.start : undefined,
-                range_creation_end: !filterExpression ? rangeCreation?.end : undefined,
-                extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
-                query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
-                reasoning,
-              });
+          return buildRagAnswerObservable(
+            question, entries, options,
+            { reasoning, disableRAG, filterExpression, filters,
+              combinedFilterExpr: combinedFilterExpression, rangeCreation, _images, _hasQueryImage, search_configuration },
+          );
         }
       },
     ),
     tap((result) => {
       hasNotEnoughData.set(result.type === 'error' && result.status === -2);
       if (result.type === 'error') {
-        const messages: { [key: string]: string } = {
-          '-3': 'answer.error.no_retrieval_data',
-          '-2': 'answer.error.llm_cannot_answer',
-          '-1': 'answer.error.llm_error',
-          '402': 'anwer.error.feature-blocked',
-          '412': 'answer.error.rephrasing',
-          '529': 'answer.error.service-overloaded',
-        };
         if (!hasError) {
           // error is set only once
           hasError = true;
-          const translatedError = translateInstant(
-            result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`] || 'error.search',
-          );
+          const translatedError = _getTranslatedError(result.status);
           const error = isDebugMode && result.detail ? result.detail : translatedError;
           const answer = currentAnswer.getValue();
           appendChatEntry.set({
@@ -599,15 +627,13 @@ export function askQuestion(
           chatError.set(result);
           pendingResults.set(false);
         }
-      } else {
-        if (result.incomplete) {
+      } else if (result.incomplete) {
           currentAnswer.set(result);
         } else {
           appendChatEntry.set({ question, answer: result });
           pendingResults.set(false);
         }
-      }
-    }),
+      }),
   );
 }
 

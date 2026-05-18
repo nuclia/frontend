@@ -295,7 +295,7 @@ function getMarkWithSelectedAnnotations(
 }
 
 function combineOverlaps(annotations: EntityAnnotation[]) {
-  return annotations.sort(sortByPosition).reduce(
+  return annotations.toSorted(sortByPosition).reduce(
     (acc, curr) => {
       const previous = acc[acc.length - 1];
       const isOverlapping = curr.start >= previous?.start && curr.start <= previous?.end;
@@ -493,12 +493,14 @@ export function mergeExistingAndNewLabels(
   labelSets: LabelSets,
   labels: Classification[],
 ): Classification[] {
-  const exclusiveLabelSets = Object.entries(labelSets)
-    .filter(([, labelSet]) => !labelSet.multiple)
-    .filter(([id]) => labels.some((label) => label.labelset === id))
-    .map(([id]) => id);
+  const exclusiveLabelSets = new Set(
+    Object.entries(labelSets)
+      .filter(([, labelSet]) => !labelSet.multiple)
+      .filter(([id]) => labels.some((label) => label.labelset === id))
+      .map(([id]) => id),
+  );
 
-  const resourceLabels = resource.getClassifications().filter((label) => !exclusiveLabelSets.includes(label.labelset));
+  const resourceLabels = resource.getClassifications().filter((label) => !exclusiveLabelSets.has(label.labelset));
 
   return getClassificationsPayload(
     resource,
