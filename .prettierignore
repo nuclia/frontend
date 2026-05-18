@@ -7,3 +7,7 @@
 
 /.nx/cache
 /.nx/workspace-data
+
+# index.html files contain inline scripts with SHA-256 hashes in nginx CSP headers.
+# Reformatting these files changes the script content and invalidates the hashes.
+apps/*/src/index.html
