@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZoneService } from '@flaps/core';
 import { IErrorMessages, PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -6,6 +14,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
+
+const COWORK_ZONES: { slug: string; title: string }[] = [
+  { slug: 'europe-1', title: 'Europe' },
+  { slug: 'aws-us-east-2-1', title: 'US' },
+];
 
 @Component({
   selector: 'nus-zone-step',
@@ -29,12 +42,22 @@ export class ZoneStepComponent {
     this.form.patchValue({ region: value });
   }
 
+  @Input({ transform: booleanAttribute }) cowork = false;
+
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<string>();
 
-  zones = this.zoneService
-    .getZones()
-    .pipe(map((zones) => [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''))));
+  zones = this.zoneService.getZones().pipe(
+    map((zones) => {
+      if (this.cowork) {
+        return COWORK_ZONES.filter((cz) => zones.some((z) => z.slug === cz.slug)).map((cz) => ({
+          ...zones.find((z) => z.slug === cz.slug)!,
+          title: cz.title,
+        }));
+      }
+      return [...zones].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
+    }),
+  );
 
   form = new FormGroup({
     region: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),

@@ -39,6 +39,7 @@ export class OnboardingComponent {
   onboardingInquiryPayload?: OnboardingPayload;
   kbName = '';
   zone = '';
+  isCowork = false;
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
@@ -77,6 +78,7 @@ export class OnboardingComponent {
           this.creatingAccount = false;
           if (this.account.workflow === 'cowork') {
             this.kbName = 'ContextBox';
+            this.isCowork = true;
             this.onboardingService.switchToPreset();
           }
           this.onboardingService.nextStep();
@@ -96,6 +98,7 @@ export class OnboardingComponent {
   storeWorkflowAndGoNext(workflow: WorkflowType) {
     if (workflow === 'cowork') {
       this.kbName = 'ContextBox';
+      this.isCowork = true;
     }
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
