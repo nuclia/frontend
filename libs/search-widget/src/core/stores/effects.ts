@@ -213,7 +213,7 @@ export function activateTypeAheadSuggestions() {
 
 export const ask = new Subject<{ question: string; reset: boolean }>();
 
-export function initAnswer() {
+export function initAnswer(dispatch?: (event: string, details: { query: string }) => void) {
   subscriptions.push(
     ask
       .pipe(
@@ -236,6 +236,7 @@ export function initAnswer() {
               } else if (isDefaultCitationsEnabled) {
                 chatOptions.citations = true;
               }
+              dispatch?.('chat', { query: question });
               return askQuestion(question, reset, chatOptions);
             }),
           ),

@@ -177,6 +177,7 @@ export namespace Widget {
     textBlocksVisibility: 'expanded' | 'collapsed';
     customizeCitationVisibility: boolean;
     citationVisibility: 'expanded' | 'collapsed';
+    hideReset: boolean;
     fabPosition: 'bottom-right' | 'bottom-left';
     fabSize: 'small' | 'medium' | 'large';
     fabOffsetBottom: number;
@@ -254,6 +255,7 @@ export namespace Widget {
     queryImage?: boolean;
     sortResults?: boolean;
     noScroll?: boolean;
+    hideReset?: boolean;
   }
 }
 
@@ -626,6 +628,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
       widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'collapsed',
     expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
+    hideReset: widgetOptions.hideReset,
   };
   return Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)

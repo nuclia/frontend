@@ -2336,6 +2336,7 @@
 	"simple.reader.description": "Use Agentic RAG search on your resources.",
 	"simple.reader.info": "Search available resources, see cited sources from approved origin, and preview recent searches.",
 	"simple.ready": "Ready",
+	"simple.search-placeholder": "Type your question here",
 	"simple.successful": "Successful",
 	"simple.title.first-files": "Let’s upload your files first:",
 	"simple.title.ready": "Your files are ready!",

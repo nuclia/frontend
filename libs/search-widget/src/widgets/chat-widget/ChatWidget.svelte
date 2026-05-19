@@ -360,7 +360,7 @@
         routingParam.set(_routing);
       }
 
-      initAnswer();
+      initAnswer(dispatchCustomEvent);
       initViewer();
       initUsageTracking(no_tracking);
       if (_features.persistChatHistory) {
