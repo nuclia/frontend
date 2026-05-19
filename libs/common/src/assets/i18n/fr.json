@@ -2336,6 +2336,7 @@
 	"simple.reader.description": "Utilisez la recherche Agentic RAG sur vos ressources.",
 	"simple.reader.info": "Recherchez les ressources disponibles, consultez les sources citées provenant d'origine approuvée et prévisualisez les recherches récentes.",
 	"simple.ready": "Prêt",
+	"simple.search-placeholder": "Posez votre question ici",
 	"simple.successful": "Succès",
 	"simple.title.first-files": "Commençons par télécharger vos fichiers :",
 	"simple.title.ready": "Vos fichiers sont prêts !",

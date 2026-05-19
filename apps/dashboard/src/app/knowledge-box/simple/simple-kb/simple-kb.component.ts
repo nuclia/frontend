@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
+import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { DroppedFile, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
@@ -157,15 +157,21 @@ export class SimpleKBComponent {
   }
 
   initWidget() {
-    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG);
+    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, {
+      ...DEFAULT_WIDGET_CONFIG,
+      displaySearchButton: true,
+      widgetMode: 'chat',
+      hideReset: true,
+      customizeChatPlaceholder: true,
+      chatPlaceholder: this.translate.instant('simple.search-placeholder'),
+    });
     of(true)
       .pipe(
         delay(1000), // Wait for the widget to be rendered
       )
       .subscribe(() => {
-        const element = document.querySelector('nuclia-search-bar');
-        element?.addEventListener('search', () => this.view.set('search'));
-        element?.addEventListener('resetQuery', () => this.view.set('resources'));
+        const element = document.querySelector('nuclia-chat');
+        element?.addEventListener('chat', () => this.view.set('search'));
         element?.addEventListener('logs', (event: any) => this.logs.next(event.detail));
       });
   }

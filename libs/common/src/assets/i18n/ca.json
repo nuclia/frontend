@@ -2336,6 +2336,7 @@
 	"simple.reader.description": "Feu servir la cerca RAG d'Agentic als vostres recursos.",
 	"simple.reader.info": "Cerca recursos disponibles, consulta fonts citades d'origen aprovat i previsualitza les cerques recents.",
 	"simple.ready": "Llest",
+	"simple.search-placeholder": "Escriu la teva pregunta aquí",
 	"simple.successful": "Èxit",
 	"simple.title.first-files": "Primerament, puja els teus fitxers:",
 	"simple.title.ready": "Els vostres fitxers estan a punt!",

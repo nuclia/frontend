@@ -1,5 +1,9 @@
-<div class="simple-kb">
-  <div class="display-m">
+<div
+  class="simple-kb"
+  [class.search-view]="view() === 'search'">
+  <div
+    class="display-m"
+    [hidden]="view() === 'search'">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
@@ -67,7 +71,25 @@
       </div>
     }
   </div>
-
+  @if (step() === 3) {
+    @if (widgetPreview | async; as widgetPreview) {
+      @if (view() === 'search') {
+        <div class="close-widget">
+          <pa-button
+            aspect="basic"
+            icon="cross"
+            (click)="changeView('resources')">
+            {{ 'generic.close' | translate }}
+          </pa-button>
+        </div>
+      }
+      <div
+        #preview
+        [class.open]="view() === 'search'"
+        class="preview"
+        [innerHtml]="widgetPreview.preview"></div>
+    }
+  }
   <div>
     @if (step() === 1) {
       <div
@@ -88,14 +110,6 @@
         <div class="body-m">{{ 'simple.max-files' | translate: { num: maxFiles } }}</div>
       </div>
     } @else if (step() > 1) {
-      @if (step() === 3) {
-        @if (widgetPreview | async; as widgetPreview) {
-          <div
-            #preview
-            class="preview"
-            [innerHtml]="widgetPreview.preview"></div>
-        }
-      }
       @if (view() === 'resources') {
         <app-resource-table></app-resource-table>
       }
