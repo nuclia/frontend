@@ -47,6 +47,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -243,6 +244,7 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Push dashboard image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -382,6 +384,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -416,12 +420,13 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-app
         run: |
           VERSION=`cat apps/dashboard/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -456,6 +461,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -490,12 +497,13 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-manager
         run: |
           VERSION=`cat apps/manager-v2/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -530,6 +538,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -564,12 +574,13 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-rao
         run: |
           VERSION=`cat apps/rao/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -604,6 +615,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -638,12 +651,13 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-platform
         run: |
           VERSION=`cat apps/platform/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -678,6 +692,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
@@ -712,12 +728,13 @@ jobs:
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-auth
         run: |
           VERSION=`cat apps/auth/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -759,6 +776,11 @@ jobs:
           PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
           TEAM: ${{ secrets.TEAM_NAME }}
           SLACK_TEAM: ${{ secrets.SLACK_TEAM }}
+          NEEDS_DEPLOY_RAO_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-rao.outputs.json-summary }}
+          NEEDS_DEPLOY_PLATFORM_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-platform.outputs.json-summary }}
+          NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-manager.outputs.json-summary }}
+          NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-app.outputs.json-summary }}
+          NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-auth.outputs.json-summary }}
         run: |
           MERGED_JSON=$(jq -cs \
             --arg environment "$ENVIRONMENT" \
@@ -790,11 +812,11 @@ jobs:
             } + {
               "commit-sha": $commit_sha
             }' \
-            <(echo '${{ needs.deploy-rao.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-platform.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-app.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-auth.outputs.json-summary }}')
+            <(echo "${NEEDS_DEPLOY_RAO_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_PLATFORM_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY}")
           )
 
           echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV
