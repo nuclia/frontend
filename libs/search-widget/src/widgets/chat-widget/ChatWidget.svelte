@@ -39,6 +39,7 @@
     searchConfigId,
     widgetBlocked,
     widgetBlockedMessage,
+    widgetCache,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -107,6 +108,7 @@
     height?: string;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
   let { ...componentProps } = $props();
   let config = $state(new Props());
@@ -158,6 +160,7 @@
   let height = $derived(componentProps.height || config.height);
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let routing = $derived(componentProps.routing || config.routing);
+  let cache = $derived(componentProps.cache || config.cache);
 
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
@@ -228,6 +231,7 @@
   let _securityGroups: string[] | undefined;
   let _filters: WidgetFilters = {};
   let _filter_expression: FilterExpression | undefined;
+  let _cache: number | string | undefined;
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -273,6 +277,9 @@
       account,
       accountId: account,
     };
+    _cache = (typeof cache === 'string' ? parseInt(cache, 10) : cache) as number | undefined;
+    widgetCache.set(_cache); // Set cache before making any call
+
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
       config = { ...config, ...loadedProperties };
 

@@ -62,6 +62,7 @@
     previewBaseUrl,
     widgetBlocked,
     widgetBlockedMessage,
+    widgetCache,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -135,6 +136,7 @@
     security_groups?: string | undefined;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
 
   let { ...componentProps } = $props();
@@ -189,6 +191,7 @@
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let routing = $derived(componentProps.routing || config.routing);
   let darkMode = $derived(mode === 'dark');
+  let cache = $derived(componentProps.cache || config.cache);
 
   $effect(() => {
     let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
@@ -213,6 +216,7 @@
   let _filter_expression: FilterExpression | undefined;
   let _reasoning: ReasoningParam | undefined;
   let _routing: Routing | undefined;
+  let _cache: number | string | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -275,6 +279,7 @@
       search_config_id,
       _reasoning,
       _routing,
+      _cache,
     });
   }
 
@@ -347,6 +352,9 @@
       account,
       accountId: account,
     };
+    _cache = (typeof cache === 'string' ? parseInt(cache, 10) : cache) as number | undefined;
+    widgetCache.set(_cache); // Set cache before making any call
+
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
       config = { ...config, ...loadedProperties };
 
