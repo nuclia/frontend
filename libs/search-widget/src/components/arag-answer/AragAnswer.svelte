@@ -4,6 +4,7 @@
     getEntryAnswer,
     getEntryAnswerText,
     getEntryDetails,
+    getEntryFeedback,
     getEntrySources,
     getEntryVisualizations,
     type AragChatEntry,
@@ -13,34 +14,39 @@
   import AragSource from './AragSource.svelte';
   import { MarkdownRendering } from '../viewer';
   import VegaChart from './VegaChart.svelte';
+  import AragFeedback from './AragFeedback.svelte';
 
   interface Props {
     entry: AragChatEntry;
     expanded: boolean;
     container: HTMLElement;
+    onSubmit: (requestId: string, data: { [key: string]: any }) => void;
   }
 
-  let { entry, expanded, container }: Props = $props();
+  let { entry, expanded, container, onSubmit }: Props = $props();
 
   const answer = $derived(getEntryAnswer(entry));
   const visualizations = $derived(getEntryVisualizations(entry));
   const details = $derived(getEntryDetails(entry));
   const answerText = $derived(getEntryAnswerText(entry));
   const sources = $derived(getEntrySources(entry));
+  const feedback = $derived(getEntryFeedback(entry));
 
   let detailsElement: HTMLElement | undefined = $state(undefined);
   const expanderDuration = 300;
 
   $effect(() => {
     if (details && !answer) {
+      // Scroll to the new details as they arrive
       setTimeout(() => {
         detailsElement?.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
-      }, expanderDuration);
+      }, expanderDuration + 25);
     }
     if (answer) {
+      // Scroll to the answer when it's complete
       setTimeout(() => {
         container?.scrollIntoView({ behavior: 'smooth' });
-      }, expanderDuration);
+      }, expanderDuration + 25);
     }
   });
 </script>
@@ -123,6 +129,13 @@
           </div>
         {/each}
       </div>
+      {#if feedback}
+        <div class="feedback">
+          <AragFeedback
+            {feedback}
+            {onSubmit} />
+        </div>
+      {/if}
     </Expander>
   {/if}
 </div>
