@@ -158,20 +158,30 @@ export class NucliaTokensComponent implements OnDestroy {
 
   visibleGroups = this.details.pipe(
     map((details) => {
+      const raoDetails = details.filter((detail) => detail.identifier.service === 'rao');
+      const nonRaoDetails = details.filter((detail) => detail.identifier.service !== 'rao');
       const types = Object.values(groups).reduce((acc, curr) => acc.concat(curr), []);
-      const otherDetails = details.filter((detail) => !types.includes(detail.identifier.type));
-      return Object.entries(groups)
-        .map(([key, types]) => {
-          const groupDetails = types.reduce(
-            (acc, type) => acc.concat(details.filter((detail) => detail.identifier.type === type)),
-            [] as NucliaTokensDetailsEnhanced[],
-          );
-          return {
-            title: key,
-            details: groupDetails,
-            total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
-          };
-        })
+      const otherDetails = nonRaoDetails.filter((detail) => !types.includes(detail.identifier.type));
+      return [
+        {
+          title: 'rao',
+          details: raoDetails,
+          total: raoDetails.reduce((acc, curr) => acc + curr.total, 0),
+        },
+      ]
+        .concat(
+          Object.entries(groups).map(([key, types]) => {
+            const groupDetails = types.reduce(
+              (acc, type) => acc.concat(nonRaoDetails.filter((detail) => detail.identifier.type === type)),
+              [] as NucliaTokensDetailsEnhanced[],
+            );
+            return {
+              title: key,
+              details: groupDetails,
+              total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
+            };
+          }),
+        )
         .concat([
           {
             title: 'other',
