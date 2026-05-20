@@ -8,7 +8,7 @@ import {
   ModelType,
   WorkflowType,
 } from '@nuclia/core';
-import { ZoneSummary } from '../manage-zones/zone.models';
+import { ZoneSummary, ZoneVisibility } from '../manage-zones/zone.models';
 import { AccountUser } from './global-account.models';
 
 export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
@@ -41,6 +41,7 @@ export interface Account {
   type: AccountTypes;
   users: AccountUser[];
   workflow?: WorkflowType;
+  zone_visibility?: ZoneVisibility;
   allow_access_non_enterprise_models: boolean;
   labels: AccountLabels | null;
 }

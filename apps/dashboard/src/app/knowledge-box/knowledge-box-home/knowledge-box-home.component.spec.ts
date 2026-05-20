@@ -146,8 +146,16 @@ describe('KnowledgeBoxHomeComponent', () => {
             useValue: {
               getZones: () =>
                 of([
-                  { slug: 'test-zone', title: 'Test Zone', id: 'test-id', cloud_provider: 'test', subdomain: 'test' },
+                  {
+                    slug: 'test-zone',
+                    title: 'Test Zone',
+                    id: 'test-id',
+                    cloud_provider: 'test',
+                    private: false,
+                    origin: null,
+                  },
                 ]),
+              buildZoneUrl: () => of('https://test-zone.nuclia.cloud'),
             },
           },
           MockProvider(RemiMetricsService, {

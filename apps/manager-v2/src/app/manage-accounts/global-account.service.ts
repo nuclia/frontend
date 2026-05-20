@@ -44,6 +44,7 @@ export class GlobalAccountService {
       workflow: data.workflow ?? undefined,
       allow_access_non_enterprise_models: data.allowAccessNonEnterpriseModels,
       labels: data.labels,
+      zone_visibility: data.zoneVisibility,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }

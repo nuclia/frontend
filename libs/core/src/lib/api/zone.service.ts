@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Zone } from '../models';
-import { catchError, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
-import { take } from 'rxjs/operators';
 import { BillingService } from './billing.service';
 import { AwsAccountSubscription } from '../models/billing.model';
+import { setZoneInRegionalUrl } from '@nuclia/core';
 
 const ZONES = 'zones';
 const ISRAEL_ONLY_AWS_PRODUCT_CODE = '6wzshxho7p76djrciqtz577dy';
@@ -20,9 +20,12 @@ export class ZoneService {
     private billingService: BillingService,
   ) {}
 
-  // Cache only the raw API response. Filtering depends on mutable account/subscription
-  // state, so that part must stay live per subscriber.
-  private readonly rawZones$: Observable<Zone[]> = this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(shareReplay(1));
+  // Account-scoped: zones are fetched per account so the user only sees zones their account
+  // can actually use. Re-fetches automatically when the active account changes.
+  private readonly rawZones$: Observable<Zone[]> = this.sdk.currentAccount.pipe(
+    switchMap((account) => this.sdk.nuclia.rest.get<Zone[]>(`/account/${account.slug}/${ZONES}`)),
+    shareReplay(1),
+  );
 
   getZones(): Observable<Zone[]> {
     return this.rawZones$.pipe(
@@ -68,6 +71,21 @@ export class ZoneService {
           ),
         ),
       ),
+    );
+  }
+
+  /**
+   * Returns the base API URL for a zone slug.
+   * Uses `origin` directly when set on the zone, otherwise constructs the URL
+   * via subdomain substitution: https://{prefix}.{zone}.nuclia.cloud
+   */
+  buildZoneUrl(zoneSlug: string, backend: string, prefix: string): Observable<string> {
+    return this.getZones().pipe(
+      take(1),
+      map((zones) => {
+        const zone = zones.find((z) => z.slug === zoneSlug);
+        return zone?.origin ? `${zone.origin}/api` : setZoneInRegionalUrl(backend, zoneSlug, prefix);
+      }),
     );
   }
 }

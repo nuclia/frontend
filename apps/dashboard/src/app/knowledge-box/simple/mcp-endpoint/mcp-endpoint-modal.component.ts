@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SDKService } from '@flaps/core';
-import { map, take } from 'rxjs';
-import { setZoneInRegionalUrl } from '@nuclia/core';
+import { SDKService, ZoneService } from '@flaps/core';
+import { map, switchMap, take } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -12,10 +11,15 @@ import { setZoneInRegionalUrl } from '@nuclia/core';
 })
 export class McpEndpointModalComponent {
   sdk = inject(SDKService);
+  private zoneService = inject(ZoneService);
   modal = inject(ModalRef);
 
   endpoint = this.sdk.currentKb.pipe(
-    map((kb) => setZoneInRegionalUrl(this.sdk.nuclia.options.backend, kb.zone, 'dp') + `/v1${kb.path}/mcp`),
+    switchMap((kb) =>
+      this.zoneService
+        .buildZoneUrl(kb.zone, this.sdk.nuclia.options.backend, 'dp')
+        .pipe(map((baseUrl) => `${baseUrl}/v1${kb.path}/mcp`)),
+    ),
   );
   copied = signal(false);
 

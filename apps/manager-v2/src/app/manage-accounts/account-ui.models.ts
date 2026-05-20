@@ -7,7 +7,7 @@ import {
   KnowledgeBoxMode,
   WorkflowType,
 } from '@nuclia/core';
-import { ZoneSummary } from '../manage-zones/zone.models';
+import { ZoneSummary, ZoneVisibility } from '../manage-zones/zone.models';
 import { AccountLabels } from './regional-account.models';
 
 export interface AccountSummary {
@@ -30,6 +30,7 @@ export interface AccountDetails extends AccountSummary {
   users: AccountUser[];
   workflow?: WorkflowType;
   allowAccessNonEnterpriseModels: boolean;
+  zoneVisibility: ZoneVisibility;
 }
 
 export interface KbSummary {
@@ -90,5 +91,6 @@ export interface AccountConfigurationPayload {
   type: AccountTypes;
   workflow?: WorkflowType | null;
   allowAccessNonEnterpriseModels: boolean;
+  zoneVisibility?: ZoneVisibility;
   labels: AccountLabels | null;
 }

@@ -110,7 +110,8 @@ nav {
 }
 
 form,
-form section {
+form section,
+.form-section {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
@@ -140,9 +141,14 @@ form section {
   }
 }
 
-form section {
+form section,
+.form-section {
   margin-bottom: rhythm(3);
   h3 {
     margin-bottom: 0;
   }
+}
+
+.form-section {
+  margin-top: rhythm(3);
 }

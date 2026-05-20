@@ -3,5 +3,6 @@ export interface Zone {
   slug: string;
   title?: string;
   cloud_provider: 'AWS' | 'GCP';
-  subdomain: string;
+  private: boolean;
+  origin: string | null;
 }
