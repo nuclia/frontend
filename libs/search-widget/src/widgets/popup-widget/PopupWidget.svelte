@@ -70,6 +70,7 @@
     security_groups?: string | undefined;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
 
   let {
@@ -118,6 +119,7 @@
     security_groups = undefined,
     reasoning = undefined,
     routing = undefined,
+    cache = undefined,
   }: Props = $props();
 
   let searchBar: any = $state();
@@ -258,7 +260,8 @@
           {search_config_id}
           {security_groups}
           {reasoning}
-          {routing} />
+          {routing}
+          {cache} />
       </div>
       <div class="search-results-container">
         <SearchResults scrollableContainerSelector=".nuclia-widget .search-container" />
