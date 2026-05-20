@@ -1,6 +1,11 @@
 name: SonarQube Scan Trigger
 
 on:
+  # zizmor: ignore[dangerous-triggers]
+  # `pull_request_target` is required so the GitHub App token can be minted for
+  # PRs coming from forks. This workflow never checks out PR code; it only
+  # dispatches a repository_dispatch event whose payload contains controlled,
+  # non-injectable values (numeric PR number, commit SHA, repo name, event name).
   pull_request_target:
     types: [opened, synchronize, reopened]
     branches: [main]
@@ -22,6 +27,7 @@ jobs:
           private-key: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
           owner: nuclia
           repositories: security-workflows
+          permission-contents: write
 
       - name: Dispatch to security-workflows
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
