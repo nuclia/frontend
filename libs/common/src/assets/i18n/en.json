@@ -163,6 +163,7 @@
 	"account.nuclia-tokens.service.answers": "Generative answers services",
 	"account.nuclia-tokens.service.other": "Other services",
 	"account.nuclia-tokens.service.processing": "Processing services",
+	"account.nuclia-tokens.service.rao": "RAO services",
 	"account.nuclia-tokens.service.searches": "Basic Search services",
 	"account.nuclia-tokens.service.suggestions": "Suggestion services",
 	"account.nuclia-tokens.service.summarization": "Summarization services",
