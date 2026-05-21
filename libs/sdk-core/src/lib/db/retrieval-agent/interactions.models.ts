@@ -1,3 +1,4 @@
+import { JSONSchema4 } from 'json-schema';
 import { IErrorResponse } from '../../models';
 import { Memory } from './memory.models';
 
@@ -42,7 +43,7 @@ export interface Feedback {
   agent_id: string;
   data: any;
   timeout_ms: number;
-  response_schema: any;
+  response_schema?: JSONSchema4;
   get_credentials?: { [key: string]: string };
   credentials?: OAuthCredentials;
 }
