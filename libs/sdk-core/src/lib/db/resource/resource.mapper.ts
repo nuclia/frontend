@@ -10,6 +10,7 @@ export const getDataKeyFromFieldType = (fieldType: FIELD_TYPE): keyof ResourceDa
     case FIELD_TYPE.file:
     case FIELD_TYPE.link:
     case FIELD_TYPE.conversation:
+    case FIELD_TYPE.key_value:
       return `${fieldType}s`;
     default:
       return null;
@@ -17,7 +18,7 @@ export const getDataKeyFromFieldType = (fieldType: FIELD_TYPE): keyof ResourceDa
 };
 
 export function longToShortFieldType(fieldType: FIELD_TYPE): SHORT_FIELD_TYPE {
-  return SHORT_FIELD_TYPE[fieldType];
+  return SHORT_FIELD_TYPE[fieldType as keyof typeof SHORT_FIELD_TYPE];
 }
 
 export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | null {
@@ -32,6 +33,8 @@ export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | 
       return FIELD_TYPE.text;
     case SHORT_FIELD_TYPE.generic:
       return FIELD_TYPE.generic;
+    case SHORT_FIELD_TYPE.key_value:
+      return FIELD_TYPE.key_value;
     default:
       return null;
   }
@@ -49,6 +52,8 @@ export function getFieldTypeFromString(type: string): FIELD_TYPE | null {
       return FIELD_TYPE.conversation;
     case FIELD_TYPE.generic:
       return FIELD_TYPE.generic;
+    case FIELD_TYPE.key_value:
+      return FIELD_TYPE.key_value;
     default:
       return null;
   }
