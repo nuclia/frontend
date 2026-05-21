@@ -1372,6 +1372,7 @@
 	"resource.field-file-dropzone-label": "Per substituir el fitxer actual <strong>{{filename}}</strong>, deixeu anar el fitxer o feu clic a continuació per seleccionar-lo",
 	"resource.field-file-new-file": "Nou fitxer:",
 	"resource.field-generic": "Camp genèric",
+	"resource.field-key_value": "Camp de valor-clau",
 	"resource.field-link": "Camp d’Enllaç",
 	"resource.field-no-paragraph": "No s’ha extret cap bloc de text per a aquest camp.",
 	"resource.field-text": "Camp de Text",

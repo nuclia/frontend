@@ -22,6 +22,8 @@ import {
   ExtractedDataTypes,
   ICreateResource,
   IResource,
+  KBKVSchemas,
+  KVSchema,
   LinkField,
   Origin,
   Resource,
@@ -182,6 +184,16 @@ export class KnowledgeBox implements IKnowledgeBox {
       map((res) => res?.labelsets || {}),
       catchError(() => of({})),
     );
+  }
+
+  /** Returns all the KV schemas defined in the Knowledge Box. */
+  getKVSchemas(): Observable<KBKVSchemas> {
+    return this.nuclia.rest.get<KBKVSchemas>(`${this.path}/kv-schemas`);
+  }
+
+  /** Returns the KV schema with the given name. */
+  getKVSchema(name: string): Observable<KVSchema> {
+    return this.nuclia.rest.get<KVSchema>(`${this.path}/kv-schemas/${name}`);
   }
 
   /**

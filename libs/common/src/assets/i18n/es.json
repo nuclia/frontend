@@ -1372,6 +1372,7 @@
 	"resource.field-file-dropzone-label": "Para reemplazar el archivo actual <strong>{{filename}}</strong>, suelte su archivo o haga clic a continuación para seleccionarlo",
 	"resource.field-file-new-file": "Archivo nuevo:",
 	"resource.field-generic": "Campo genérico",
+	"resource.field-key_value": "Campo clave-valor",
 	"resource.field-link": "Campo de Enlace",
 	"resource.field-no-paragraph": "No hay bloque de texto extraído para este campo.",
 	"resource.field-text": "Campo de Texto",

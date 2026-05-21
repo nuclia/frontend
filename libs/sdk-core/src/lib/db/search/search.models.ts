@@ -311,6 +311,7 @@ export enum SHORT_FIELD_TYPE {
   link = 'u',
   generic = 'a',
   conversation = 'c',
+  key_value = 'kv',
 }
 
 export enum Reranker {

@@ -1372,6 +1372,7 @@
 	"resource.field-file-dropzone-label": "Pour remplacer le fichier actuel <strong>{{filename}}</strong>, déposez votre fichier ou cliquez ci-dessous pour le sélectionner",
 	"resource.field-file-new-file": "Nouveau fichier:",
 	"resource.field-generic": "Champ générique",
+	"resource.field-key_value": "Champ clé-valeur",
 	"resource.field-link": "Champ de lien",
 	"resource.field-no-paragraph": "Aucun bloc de texte extrait pour ce champ.",
 	"resource.field-text": "Champ de texte",
