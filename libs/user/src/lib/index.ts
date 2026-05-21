@@ -16,3 +16,4 @@ export * from './sso/sso-button.component';
 export * from './user-container';
 export * from './auth-user.module';
 export * from './signup/testing/app-signup.component';
+export * from './signup/temporary/temporary-signup.component';
