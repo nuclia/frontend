@@ -10,6 +10,7 @@ import {
   WorkflowType,
 } from '@nuclia/core';
 import { AccountLabels, DedicatedProcessorsState } from './regional-account.models';
+import { ZoneVisibility } from '../manage-zones/zone.models';
 
 export interface AccountSummary {
   id: string;
@@ -73,6 +74,7 @@ export interface AccountPatchPayload {
   allow_access_non_enterprise_models?: boolean;
   labels?: AccountLabels | null;
   workflow?: WorkflowType;
+  zone_visibility?: ZoneVisibility;
 }
 
 export interface AccountKbList {

@@ -63,7 +63,7 @@ export class CustomModelsComponent implements OnInit {
   hasCustomModels = false;
   isSaving = false;
 
-  customModels = forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zoneService.getZones()]).pipe(
+  customModels = forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zoneService.getZones().pipe(take(1))]).pipe(
     switchMap(([account, zones]) =>
       forkJoin(
         zones.map((zone) =>

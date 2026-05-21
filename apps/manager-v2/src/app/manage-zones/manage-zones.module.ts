@@ -7,6 +7,7 @@ import {
   PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ManageZonesComponent } from './manage-zones.component';
@@ -39,6 +40,7 @@ const ROUTES: Routes = [
     PaTableModule,
     PaTextFieldModule,
     PaIconModule,
+    PaTogglesModule,
     ReactiveFormsModule,
     PaScrollModule,
     TranslateModule,

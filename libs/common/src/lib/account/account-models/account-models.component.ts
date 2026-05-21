@@ -116,7 +116,7 @@ export class AccountModelsComponent {
 
   displayConfig(config: ModelConfigurationWithZone) {
     return forkJoin([
-      this.zones,
+      this.zones.pipe(take(1)),
       this.bedrockZones.pipe(take(1)),
       this.sdk.currentAccount.pipe(
         take(1),
@@ -165,7 +165,7 @@ export class AccountModelsComponent {
   }
 
   updateModelConfigs() {
-    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones]).pipe(
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones.pipe(take(1))]).pipe(
       switchMap(([account, zones]) =>
         forkJoin(
           zones.map((zone) =>
@@ -269,7 +269,7 @@ export class AccountModelsComponent {
   updateBedrockIntegrations() {
     this.loadingBedrock = true;
     this.cdr.markForCheck();
-    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.awsZones]).pipe(
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.awsZones.pipe(take(1))]).pipe(
       switchMap(([account, zones]) =>
         zones.length === 0
           ? of([])
