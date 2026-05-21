@@ -51,6 +51,7 @@ import {
   SetPasswordComponent,
   AppLoginComponent,
   TestingAppSignupComponent,
+  TemporaryContextBoxSignupComponent,
 } from '@nuclia/user';
 
 import { authGuard, redirectToSignUp } from '@flaps/core';
@@ -322,6 +323,7 @@ const routes: Routes = [
   { path: 'user/login-redirect', component: AppLoginComponent },
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
   { path: 'user/test-signup', component: TestingAppSignupComponent },
+  { path: 'user/contextbox-signup', component: TemporaryContextBoxSignupComponent },
   { path: 'user/onboarding', component: OnboardingComponent },
   { path: 'user/set-password', component: SetPasswordComponent },
   {
