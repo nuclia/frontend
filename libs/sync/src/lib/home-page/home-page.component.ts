@@ -77,7 +77,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
   connectors = this.syncService.connectors;
-  currentZone = forkJoin([this.zoneService.getZones(), this.sdk.currentKb.pipe(take(1))]).pipe(
+  currentZone = forkJoin([this.zoneService.getZones().pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
     map(([zones, kb]) => zones.find((zone) => zone.slug === kb.zone)),
   );
 
