@@ -104,7 +104,7 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   schema = this.sdk.currentAccount.pipe(
-    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
     switchMap((kbs) => {
       if (kbs.length === 0) {
         return of({} as LearningConfigurations);

@@ -154,8 +154,16 @@ export interface IDb {
   getAccount(accountIdOrSlug?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
   getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(
+    accountSlug: string,
+    accountId: string,
+    includeSearchConfigs?: boolean,
+  ): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxesForZone(
+    accountId: string,
+    zone: string,
+    includeSearchConfigs?: boolean,
+  ): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(accountId: string, knowledgeBoxId: string, zone?: string): Observable<WritableKnowledgeBox>;
   createKnowledgeBox(
@@ -169,11 +177,13 @@ export interface IDb {
     accountSlug: string,
     accountId: string,
     mode?: KnowledgeBoxMode,
+    includeSearchConfigs?: boolean,
   ): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgentsForZone(
     accountId: string,
     zone: string,
     mode?: KnowledgeBoxMode,
+    includeSearchConfigs?: boolean,
   ): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgent(): Observable<RetrievalAgent>;
   getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
