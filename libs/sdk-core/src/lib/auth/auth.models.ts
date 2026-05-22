@@ -1,3 +1,5 @@
+import { UserType } from "../db/db.models";
+
 export interface AuthTokens {
   access_token: string;
   refresh_token: string;
@@ -42,5 +44,14 @@ export interface MagicAction {
   consent_url?: string;
   came_from?: string;
 }
+
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  email: string;
+  language?: string;
+  type: UserType;
+  last_login?: string;
+}  
 
 export type MagicActionError = 'local_user_already_exists' | 'user_registered_as_external_user';

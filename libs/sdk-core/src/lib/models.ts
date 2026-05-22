@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { AuthInfo, AuthTokens, JwtUser, MagicAction, NucliaDBRole } from './auth';
+import type { AuthenticatedUser, AuthInfo, AuthTokens, JwtUser, MagicAction, NucliaDBRole } from './auth';
 import {
   Account,
   AccountCreation,
@@ -64,6 +64,7 @@ export interface IAuthentication {
   getRefreshToken(): string;
   authenticate(tokens: AuthTokens): boolean;
   setPassword(password: string): Observable<boolean>;
+  getAuthenticatedUser(): Observable<AuthenticatedUser>;
   deleteAuthenticatedUser(): Observable<void>;
   requestEmailOtp(): Observable<void>;
   getJWTUser(): JwtUser | null;
