@@ -1,6 +1,8 @@
 <div class="checkout">
+  <nsi-back-button [link]="backToSettingsLink | async">{{ 'generic.back_to_settings' | translate }}</nsi-back-button>
   <div>
-    <h2>{{ 'billing.payment_details' | translate }}</h2>
+    <h1>{{ 'billing.payment_details' | translate }}</h1>
+    <p class="page-description">Add billing details, payment method and budget.</p>
   </div>
 
   @if (subscribeMode | async) {

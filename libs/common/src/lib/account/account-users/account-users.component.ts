@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subject, take } from 'rxjs';
@@ -22,6 +22,8 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
   standalone: false,
 })
 export class AccountUsersComponent implements OnDestroy, OnInit {
+  @Input({ transform: booleanAttribute }) embedded = false;
+
   account?: Account;
   users: FullAccountUser[] = [];
   invitations: PendingInvitation[] = [];

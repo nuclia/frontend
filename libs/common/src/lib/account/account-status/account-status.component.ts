@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,9 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountStatusComponent {
+  @Input({ transform: booleanAttribute }) scrollToSubscriptions = false;
+  @Output() upgradeClick = new EventEmitter<void>();
+
   isTrial = this.features.isTrial;
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
@@ -57,6 +60,17 @@ export class AccountStatusComponent {
 
   contact() {
     this.window.location.href = 'mailto:Sales.AgenticRAG@progress.com';
+  }
+
+  onUpgrade() {
+    if (this.scrollToSubscriptions) {
+      this.upgradeClick.emit();
+      return;
+    }
+
+    this.upgradeUrl.pipe(take(1)).subscribe((upgradeUrl) => {
+      this.router.navigate([upgradeUrl]);
+    });
   }
 
   checkIfTrialExpired() {

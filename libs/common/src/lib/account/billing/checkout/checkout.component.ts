@@ -97,6 +97,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(1),
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
+  backToSettingsLink = this.sdk.currentAccount.pipe(
+    map((account) => `${this.navigation.getAccountManageUrl(account.slug)}/home`),
+  );
 
   updateCurrency = new Subject<string>();
   currency$ = merge(

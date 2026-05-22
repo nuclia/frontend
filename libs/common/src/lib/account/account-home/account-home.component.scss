@@ -1,7 +1,79 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .account-home {
+  margin: 0 auto;
   max-width: calc(#{rhythm(90)} * 2);
+  width: 100%;
+
+  .trial-status-top {
+    background: $color-light-stronger;
+    border: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(1);
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: rhythm(4);
+    padding: rhythm(2) rhythm(2.5) rhythm(1.5);
+    width: fit-content;
+  }
+
+  .settings-header {
+    margin-bottom: rhythm(3);
+
+    .page-title {
+      margin-bottom: rhythm(1);
+    }
+
+    .page-description {
+      color: $color-neutral-regular;
+      margin-bottom: 0;
+    }
+  }
+
+  .settings-navigation {
+    background: $color-light-stronger;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+    margin-bottom: rhythm(6);
+    padding-top: rhythm(2);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    &::after {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.78) 45%, rgba(255, 255, 255, 0) 100%);
+      content: '';
+      height: rhythm(5);
+      left: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      transform: translateY(-1px);
+    }
+  }
+
+  .back-home-button {
+    display: block;
+  }
+
+  .settings-tabs {
+    background: $color-light-stronger;
+  }
+
+  .settings-section {
+    border-top: 1px solid $color-neutral-light;
+    padding: rhythm(8) 0;
+
+    &:first-of-type {
+      border-top: 0;
+      padding-top: rhythm(3);
+    }
+  }
+
+  .bottom-spacing {
+    height: rhythm(4);
+  }
 
   .container-row {
     display: flex;
@@ -14,6 +86,8 @@
     flex-direction: column;
     gap: rhythm(3);
     h2 {
+      font-size: 1.125rem;
+      line-height: 1.5;
       margin-bottom: 0;
     }
   }
@@ -61,6 +135,16 @@
       .count > .title-xxs {
         color: $color-neutral-regular;
       }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .container-row {
+      flex-direction: column;
+    }
+
+    .right-column {
+      width: 100%;
     }
   }
 }

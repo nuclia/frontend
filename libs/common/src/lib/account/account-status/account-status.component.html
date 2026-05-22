@@ -1,40 +1,47 @@
 <div class="account-status">
   <div class="title-m account-type-container">
-    <div>
-      @if ((accountType | async) === 'stash-trial') {
-        {{ 'account.free_trial' | translate }}
-      } @else {
-        {{ 'account.type.' + (accountType | async) | translate }}
-      }
+    <div class="trial-info">
+      <div>
+        @if ((accountType | async) === 'stash-trial') {
+          {{ 'account.free_trial' | translate }}
+        } @else {
+          {{ 'account.type.' + (accountType | async) | translate }}
+        }
+      </div>
+      <div class="expiration">
+        @if (trialExpired | async) {
+          <span>{{ 'account.expired' | translate }}</span>
+        } @else {
+          <span>
+            {{
+              (daysLeft | async) === 1
+                ? ('account.day_left' | translate)
+                : ('account.days_left' | translate: { days: (daysLeft | async) })
+            }}
+          </span>
+        }
+      </div>
     </div>
-    <div class="expiration">
-      @if (trialExpired | async) {
-        <span>{{ 'account.expired' | translate }}</span>
-      } @else {
-        <span>
-          {{
-            (daysLeft | async) === 1
-              ? ('account.day_left' | translate)
-              : ('account.days_left' | translate: { days: (daysLeft | async) })
-          }}
-        </span>
-      }
-    </div>
-  </div>
-  <div class="buttons">
+
     @if (canUpgrade | async) {
       <pa-button
-        [routerLink]="upgradeUrl | async"
+        class="upgrade-inline"
+        (click)="onUpgrade()"
         [class.full-width]="canExtendTrial | async">
         {{ 'billing.upgrade' | translate }}
       </pa-button>
     }
-    @if (canExtendTrial | async) {
-      <pa-button
-        aspect="basic"
-        (click)="contact()">
-        {{ 'account.extend_trial' | translate }}
-      </pa-button>
-    }
+  </div>
+
+  <div class="buttons">
+    <div>
+      @if (canExtendTrial | async) {
+        <pa-button
+          aspect="basic"
+          (click)="contact()">
+          {{ 'account.extend_trial' | translate }}
+        </pa-button>
+      }
+    </div>
   </div>
 </div>

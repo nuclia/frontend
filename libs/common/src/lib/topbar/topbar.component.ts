@@ -92,6 +92,13 @@ export class TopbarComponent {
       this.navigationService.kbUrl.pipe(take(1)),
       this.navigationService.homeUrl.pipe(take(1)),
     ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
+      if (this.inDashboard && !isCowork) {
+        // The logo should always take dashboard users back to the default (simple) home UI.
+        this.navigationService.setSimpleMode(true);
+        this.router.navigateByUrl(`${kbUrl}/simple`);
+        return;
+      }
+
       this.router.navigate([isCowork ? kbUrl : homeUrl]);
     });
   }

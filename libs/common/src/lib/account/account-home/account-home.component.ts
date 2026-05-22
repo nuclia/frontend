@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, UsagePoint, UsageType } from '@nuclia/core';
@@ -26,17 +26,26 @@ import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class AccountHomeComponent implements OnInit, OnDestroy {
+export class AccountHomeComponent implements OnInit, AfterViewInit, OnDestroy {
+  selectedTab: 'consumption' | 'subscriptions' | 'users' | 'preferences' = 'consumption';
   unsubscribeAll = new Subject<void>();
   account$ = this.metrics.account$;
   isTrial = this.features.isTrial;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
   selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
   inRaoApp = this.navigation.inRaoApp;
+  backLink = this.navigation.kbUrl.pipe(map((url) => `${url}/simple`));
 
   kbs = this.sdk.kbList;
   usage?: { [key: string]: UsagePoint[] };
   tokensCount?: { [key: string]: number };
+  private sectionObserver?: IntersectionObserver;
+  private readonly sectionTabs: Array<'consumption' | 'subscriptions' | 'users' | 'preferences'> = [
+    'consumption',
+    'subscriptions',
+    'users',
+    'preferences',
+  ];
 
   constructor(
     private sdk: SDKService,
@@ -83,8 +92,13 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.sectionObserver?.disconnect();
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  ngAfterViewInit(): void {
+    this.initSectionObserver();
   }
 
   getUsageMap() {
@@ -119,5 +133,53 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
   goToKb(account: string, kb: IKnowledgeBoxItem) {
     this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbUrl(account, kb.slug || '')]);
+  }
+
+  goToSection(section: 'consumption' | 'subscriptions' | 'users' | 'preferences') {
+    this.selectedTab = section;
+    this.cdr.markForCheck();
+    const target = document.getElementById(`settings-${section}`);
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  private initSectionObserver() {
+    if (typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
+    this.sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible.length === 0) {
+          return;
+        }
+
+        const section = visible[0].target.id.replace('settings-', '') as
+          | 'consumption'
+          | 'subscriptions'
+          | 'users'
+          | 'preferences';
+
+        if (this.selectedTab !== section) {
+          this.selectedTab = section;
+          this.cdr.markForCheck();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '-140px 0px -45% 0px',
+        threshold: [0.2, 0.4, 0.6],
+      },
+    );
+
+    this.sectionTabs.forEach((section) => {
+      const element = document.getElementById(`settings-${section}`);
+      if (element) {
+        this.sectionObserver?.observe(element);
+      }
+    });
   }
 }

@@ -2,7 +2,14 @@
 
 .account-users {
   h2 {
+    font-size: 1.125rem;
+    line-height: 1.5;
     margin-bottom: rhythm(4);
+  }
+
+  .page-description {
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(3);
   }
   .users-left,
   .users-amount {
@@ -29,5 +36,18 @@
 
   .pending-icon {
     color: $color-neutral-regular;
+  }
+
+  &.embedded {
+    margin: 0;
+    padding: 0;
+
+    h2 {
+      margin-bottom: rhythm(1);
+    }
+
+    .add-user {
+      margin: rhythm(3) 0 rhythm(4);
+    }
   }
 }

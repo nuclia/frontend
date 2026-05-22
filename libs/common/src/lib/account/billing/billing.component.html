@@ -1,5 +1,5 @@
 <div class="billing page-spacing">
-  @if (isCowork | async) {
+  @if (showBackToHome | async) {
     <nsi-back-button [link]="backLink | async">{{ 'generic.back_to_home' | translate }}</nsi-back-button>
   }
   <router-outlet></router-outlet>

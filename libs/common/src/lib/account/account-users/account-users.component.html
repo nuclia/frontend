@@ -1,6 +1,14 @@
 @if (users) {
-  <div class="account-users page-spacing">
-    <h1>{{ 'navbar.users' | translate }}</h1>
+  <div
+    class="account-users"
+    [class.page-spacing]="!embedded"
+    [class.embedded]="embedded">
+    @if (!embedded) {
+      <h1>{{ 'navbar.users' | translate }}</h1>
+    } @else {
+      <h2 class="page-title">{{ 'account.manage_users' | translate }}</h2>
+      <p class="page-description">Manage collaborators and account access permissions.</p>
+    }
 
     <div>
       <div class="users-amount">

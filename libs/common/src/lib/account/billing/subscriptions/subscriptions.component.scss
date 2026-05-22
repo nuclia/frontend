@@ -3,9 +3,17 @@
 .header {
   margin-bottom: rhythm(5);
   width: rhythm(90);
+
+  .page-title {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-bottom: rhythm(1);
+  }
 }
 
 h2 {
+  font-size: 1.125rem;
+  line-height: 1.5;
   margin-bottom: rhythm(1);
 }
 

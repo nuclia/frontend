@@ -19,7 +19,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../users-manage';
 import { AccountAragComponent } from './account-arag/account-arag.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
@@ -53,6 +53,7 @@ import { ChartsModule } from '../charts';
 import { NavbarModule } from '../navbar';
 import { HintModule } from '../hint';
 import { KnowledgeBoxSettingsModule } from '../knowledge-box-settings';
+import { ProfileComponent } from '../profile/profile.component';
 
 const routes: Routes = [
   {
@@ -166,6 +167,7 @@ const routes: Routes = [
     PaTogglesModule,
     PaIconModule,
     DropdownButtonComponent,
+    BackButtonComponent,
     PaDropdownModule,
     SisProgressModule,
     PaTableModule,
@@ -181,6 +183,7 @@ const routes: Routes = [
     LowerCaseInputDirective,
     OtpInputComponent,
     AccountDeleteComponent,
+    ProfileComponent,
   ],
   declarations: [
     AccountHomeComponent,

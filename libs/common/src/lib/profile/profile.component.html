@@ -1,15 +1,24 @@
-<div class="profile">
+<div
+  class="profile"
+  [class.embedded]="embedded">
   <div class="profile-container">
-    <pa-button
-      class="close-button"
-      icon="cross"
-      aspect="basic"
-      (click)="goBack()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
+    @if (!embedded) {
+      <pa-button
+        class="close-button"
+        icon="cross"
+        aspect="basic"
+        (click)="goBack()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    }
 
     <form [formGroup]="profileForm">
-      <h1>{{ 'generic.user_preferences' | translate }}</h1>
+      @if (!embedded) {
+        <h1>{{ 'generic.user_preferences' | translate }}</h1>
+      } @else {
+        <h2 class="page-title">Preferences</h2>
+        <p class="page-description">Update your profile information and personal preferences.</p>
+      }
 
       <div class="field">
         <pa-input

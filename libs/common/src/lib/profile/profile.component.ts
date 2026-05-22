@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,6 +15,8 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
   imports: [TranslateModule, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
+  @Input({ transform: booleanAttribute }) embedded = false;
+
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
@@ -82,7 +84,9 @@ export class ProfileComponent implements OnInit {
           if (this.language) {
             this.translate.use(this.language);
           }
-          this.goBack();
+          if (!this.embedded) {
+            this.goBack();
+          }
         });
     }
   }

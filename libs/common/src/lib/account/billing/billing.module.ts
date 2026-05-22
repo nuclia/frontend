@@ -63,5 +63,6 @@ import { BudgetComponent } from './usage/budget.component';
     AwsSubscriptionComponent,
     ManualSubscriptionComponent,
   ],
+  exports: [SubscriptionsComponent],
 })
 export class BillingModule {}
