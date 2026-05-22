@@ -76,6 +76,8 @@ export class OnboardingComponent {
         next: (account) => {
           this.account = account;
           this.creatingAccount = false;
+          // Register the new account in SDKService so zone-scoped API calls (e.g. zone list) work
+          this.sdk.setCurrentAccount(account.slug).pipe(take(1)).subscribe();
           if (this.account.workflow === 'cowork') {
             this.kbName = 'ContextBox';
             this.isCowork = true;
