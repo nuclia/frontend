@@ -65,10 +65,8 @@ export class SimpleKBService {
     failed: 0,
   });
 
-  userId = this.sdk.nuclia.auth.getAuthenticatedUser().pipe(
-    map((user) => user.id),
-    shareReplay({ refCount: true, bufferSize: 1 }),
-  );
+  userId = this.sdk.nuclia.auth.getJWTUser()?.sub || '';
+
   visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
   uploadInProgress = this.visibleUploads.pipe(
     map((uploads) => uploads.filter((upload) => !this.isUploadFailed(upload)).length > 0),
@@ -148,13 +146,13 @@ export class SimpleKBService {
 
   getConversationsPage(page = 0): Observable<ConversationsPage> {
     const pageSize = 40;
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userId.pipe(take(1))]).pipe(
-      switchMap(([kb, userId]) =>
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb
           .search('', [Search.Features.FULLTEXT], {
             top_k: pageSize,
             offset: page * pageSize,
-            security: { groups: [userId] },
+            security: { groups: [this.userId] },
             filter_expression: {
               field: { prop: 'label', ...HISTORY_LABEL },
             },
@@ -208,14 +206,14 @@ export class SimpleKBService {
         ],
       },
     };
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userId.pipe(take(1))]).pipe(
-      switchMap(([kb, userId]) =>
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb.createResource({
           title,
           conversations,
           usermetadata: { classifications: [HISTORY_LABEL] },
           security: {
-            access_groups: [userId],
+            access_groups: [this.userId],
           },
         }),
       ),

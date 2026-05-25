@@ -4,7 +4,7 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import { type AuthenticatedUser, type AuthInfo, type AuthTokens, type MagicAction, type NucliaDBRole } from './auth.models';
+import { type AuthInfo, type AuthTokens, type MagicAction, type NucliaDBRole } from './auth.models';
 import { replaceSubdomainInUrl, setZoneInRegionalUrl } from '../rest/utils';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
@@ -353,20 +353,6 @@ export class Authentication implements IAuthentication {
     return this.fetch<AuthTokens>(`${this.getAuthUrl()}/setpassword`, { password }).pipe(
       map((tokens) => this.authenticate(tokens)),
     );
-  }
-
-  /**
-   * Get current user
-   *
-   * Example:
-    ```ts
-    nuclia.auth.getAuthenticatedUser().subscribe(() => {
-      console.log('User retrieved');
-    });
-    ```
-   */
-  getAuthenticatedUser(): Observable<AuthenticatedUser> {
-    return this.nuclia.rest.get('/user');
   }
 
   /**
