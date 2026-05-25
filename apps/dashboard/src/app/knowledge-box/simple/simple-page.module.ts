@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { FileUploadModule } from '@flaps/core';
-import { NsiSkeletonComponent, SisIconsModule } from '@nuclia/sistema';
+import { NsiSkeletonComponent, SisIconsModule, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -46,6 +46,7 @@ import { SimplePageRoutingModule } from './simple-page-routing.module';
     PaPopupModule,
     PaTableModule,
     PaTextFieldModule,
+    SisProgressModule,
   ],
 })
 export class SimplePageModule {}
