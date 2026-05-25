@@ -23,6 +23,9 @@ $counters-height: rhythm(6);
   align-items: center;
   display: flex;
   gap: rhythm(3);
+  &.hidden {
+    display: none;
+  }
   nsi-spinner {
     width: rhythm(4);
   }

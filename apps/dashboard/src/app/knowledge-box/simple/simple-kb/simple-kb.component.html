@@ -3,7 +3,7 @@
   [class.search-view]="view() === 'search'">
   <div
     class="title display-m"
-    [hidden]="view() === 'search'">
+    [class.hidden]="view() === 'search'">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
