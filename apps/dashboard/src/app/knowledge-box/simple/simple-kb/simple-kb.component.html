@@ -2,11 +2,12 @@
   class="simple-kb"
   [class.search-view]="view() === 'search'">
   <div
-    class="display-m"
-    [hidden]="view() === 'search'">
+    class="title display-m"
+    [class.hidden]="view() === 'search'">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
+      <nsi-spinner size="small"></nsi-spinner>
       {{ 'simple.title.uploading' | translate }}
     } @else if (step() === 3) {
       {{ 'simple.title.testing' | translate }}
