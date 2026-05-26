@@ -1,6 +1,10 @@
 <div
   class="simple-kb"
-  [class.search-view]="view() === 'search'">
+  [class.search-view]="view() === 'search'"
+  [class.with-banner]="isCoworkTrial() && isAtEquator()">
+  @if (isCoworkTrial()) {
+    <app-trial-equator-banner></app-trial-equator-banner>
+  }
   <div
     class="title display-m"
     [class.hidden]="view() === 'search'">
@@ -144,6 +148,7 @@
         aspect="basic"
         icon="info"
         iconAndText
+        [disabled]="isAtEquator()"
         (click)="showMcpEndpoint()">
         {{ 'simple.get-mcp-url' | translate }}
       </pa-button>

@@ -16,6 +16,19 @@ $counters-height: rhythm(6);
     padding-bottom: 0;
     padding-top: $search-view-padding-top;
     gap: 0;
+
+    &.with-banner {
+      min-height: calc(100vh - var(--app-topbar-height) - tokens.$footer-height - 70px - #{rhythm(2)});
+
+      .preview {
+        &.open {
+          --custom-height-container: calc(
+            100vh - var(--app-topbar-height) - #{$search-view-padding-top} - #{$counters-height} -
+              #{tokens.$footer-height} - #{rhythm(1)} - 70px - #{rhythm(2)}
+          );
+        }
+      }
+    }
   }
 }
 

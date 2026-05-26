@@ -2,14 +2,14 @@
 name: angular-patterns
 description: >
   Angular 21 patterns as used in the Nuclia frontend monorepo — covering OnPush change detection,
-  inject() dependency injection, standalone components, signal-based state, RxJS↔Signal bridges,
-  functional guards, and lazy routing. Activate this skill for ANY Angular task in this repo:
-  creating or modifying components, writing services, managing state, adding routes or guards,
-  refactoring legacy code to modern patterns, debugging change detection issues, or deciding which
-  state management tier to use. Do not wait to be asked about "Angular patterns" specifically —
-  if the task involves TypeScript files in apps/ or Angular libs/, this skill applies. Also use
-  when migrating from @Input/@Output decorators, constructor injection, or NgModules to the modern
-  Angular 21 style.
+  inject() dependency injection, NgModule-based components (default), signal-based state,
+  RxJS↔Signal bridges, functional guards, and lazy routing. Activate this skill for ANY Angular
+  task in this repo: creating or modifying components, writing services, managing state, adding
+  routes or guards, refactoring legacy code to modern patterns, debugging change detection issues,
+  or deciding which state management tier to use. Do not wait to be asked about "Angular patterns"
+  specifically — if the task involves TypeScript files in apps/ or Angular libs/, this skill
+  applies. Also use when migrating from @Input/@Output decorators or constructor injection to the
+  modern Angular 21 style.
 ---
 
 # Angular Patterns — Nuclia Frontend Monorepo
@@ -23,8 +23,8 @@ many features; this covers only what the team has adopted. When in doubt, match 
 
 1. **`ChangeDetectionStrategy.OnPush` on every component** — enforced by `nx.json` generator defaults. Never omit it.
 2. **`inject()` instead of constructor injection** — all new services and components use `inject()` as property initializers. Constructor injection is legacy only.
-3. **Standalone components by default** — only add `standalone: false` when a component must live inside an existing NgModule for backward compatibility. New code is always standalone.
-4. **Do NOT write `standalone: true`** — in Angular 19+ standalone defaults to `true`. Writing it explicitly is redundant noise. Omit it.
+3. **NgModule-based components by default** — always add new components to the nearest existing NgModule using `standalone: false`. Only leave a component standalone (no `standalone` property) when it is genuinely reusable across multiple NgModules that cannot all share a single NgModule, or when there is no NgModule context at all (e.g. bootstrapped app root).
+4. **Do NOT write `standalone: true`** — in Angular 19+ standalone defaults to `true`. Writing it explicitly is redundant noise. Omit it. When you want a standalone component, simply omit the `standalone` property entirely.
 5. **`@Input()`/`@Output()` decorators are legacy** — use `input()` / `output()` signal APIs for new components.
 6. **`styleUrl` (singular string), not `styleUrls` (array)** — since Angular 17 the shorthand `styleUrl: './foo.component.scss'` replaces `styleUrls: ['./foo.component.scss']`. Always use the singular form in new code.
 7. **No NgRx `signalStore`** — this codebase does not use `@ngrx/signals`. See state management section below.
@@ -98,7 +98,7 @@ export class MyPageService {
 ```ts
 // my-page.component.ts  — thin wrapper, template wiring only
 @Component({
-  selector: 'app-my-page',
+  selector: 'app-my-page', // app components always use app- prefix (see Selector Prefix section)
   templateUrl: './my-page.component.html',
   styleUrl: './my-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -192,13 +192,11 @@ import { COST_TOKEN_COLUMNS } from './cost-token-page.config'; // sibling in sam
 ```ts
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { SomeService } from './some.service';
 
 @Component({
-  selector: 'stf-my-feature', // prefix from project.json
-  imports: [TranslateModule, PaButtonModule],
+  selector: 'app-my-feature', // app components always use app- prefix; libs use their lib prefix (nsi-, stf-, etc.)
+  standalone: false, // declared in the nearest NgModule (default for app components)
   templateUrl: './my-feature.component.html',
   styleUrl: './my-feature.component.scss', // singular string, NOT styleUrls: [...]
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -249,6 +247,51 @@ export class MyFeatureComponent {
 - Output names are **verbs in past tense** (`deleted`, `saved`), never prefixed with `on`
 - `takeUntilDestroyed()` requires being called in injection context (constructor or initializer)
 - Legacy cleanup (`Subject + takeUntil + ngOnDestroy`) is still acceptable to maintain in existing files
+
+---
+
+## Selector Prefix Convention
+
+Selector prefixes differ per project. **Always use the prefix that matches the project.** Never
+omit a prefix, never mix prefixes across projects, and never use a lib prefix inside an app or
+vice-versa.
+
+### Rule of thumb
+
+- **App components** (`apps/*`) always use the prefix defined in that app's `project.json`.
+- **Lib components** (`libs/*`) always use the prefix defined in that lib's `project.json`.
+
+### Per-project prefix table (verified from `project.json` and actual source)
+
+| Project                                                       | Location | Prefix | Example selector           |
+| ------------------------------------------------------------- | -------- | ------ | -------------------------- |
+| `apps/dashboard`                                              | App      | `app-` | `'app-knowledge-box-home'` |
+| `apps/rao`                                                    | App      | `app-` | `'app-root'`               |
+| `apps/manager-v2`                                             | App      | `nma-` | `'nma-form-footer'`        |
+| `apps/nucliadb-admin`                                         | App      | `nad-` | `'nad-home-page'`          |
+| `libs/sistema` (`@nuclia/sistema`)                            | Lib      | `nsi-` | `'nsi-button'`             |
+| `libs/common` (`@flaps/common`)                               | Lib      | `stf-` | `'stf-my-feature'`         |
+| `libs/user` (`@nuclia/user`)                                  | Lib      | `nus-` | `'nus-sidebar'`            |
+| `libs/sync` (`@nuclia/sync`)                                  | Lib      | `nsy-` | `'nsy-icon'`               |
+| `libs/pastanaga-angular` (`@guillotinaweb/pastanaga-angular`) | Lib      | `pa-`  | `'pa-button'`              |
+
+> **Note on `apps/dashboard`:** The `project.json` for dashboard has `"prefix": ""` (an empty
+> string, likely an oversight). Despite this, **all existing dashboard components use `app-`**
+> (e.g. `app-root`, `app-synonyms`, `app-knowledge-box-home`). New components in
+> `apps/dashboard` must follow the same `app-` convention.
+
+```ts
+// ✅ Correct — app- prefix for apps/dashboard
+@Component({ selector: 'app-trial-equator-banner', ... })
+
+// ❌ Wrong — do NOT omit the prefix for dashboard components
+@Component({ selector: 'trial-equator-banner', ... })
+```
+
+### For any other project
+
+Look up the `"prefix"` field in the project's `project.json` and use that prefix (followed by
+`-`) on every selector.
 
 ---
 

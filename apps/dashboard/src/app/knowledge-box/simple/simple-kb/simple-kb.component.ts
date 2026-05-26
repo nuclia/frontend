@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
+import { map, take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
 import { DroppedFile, FeaturesService, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { SimpleKBService } from './simple-kb.service';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
+import { getCoworkTrialState } from '../simple.utils';
 
 @Component({
   standalone: false,
@@ -40,6 +41,13 @@ export class SimpleKBComponent {
 
   view = signal<'resources' | 'history' | 'search'>('resources');
   prevQuestionId?: string;
+
+  private trialState = toSignal(this.sdk.currentAccount.pipe(map(getCoworkTrialState)), {
+    initialValue: { isCoworkTrial: false, isTrialExpired: false, isAtEquator: false, daysLeft: 0 },
+  });
+
+  isCoworkTrial = computed(() => this.trialState().isCoworkTrial);
+  isAtEquator = computed(() => this.trialState().isAtEquator);
 
   constructor() {
     this.simpleKBService.resources.pipe(take(1)).subscribe((resources) => {
