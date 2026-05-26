@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { UploadService } from '@flaps/common';
-import { NotificationService, SDKService, UserService } from '@flaps/core';
+import { NotificationService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   CatalogOptions,
@@ -20,7 +20,6 @@ import {
 import { SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
-  combineLatest,
   forkJoin,
   map,
   merge,
@@ -55,7 +54,6 @@ export class SimpleKBService {
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
   private notificationService = inject(NotificationService);
-  private userService = inject(UserService);
 
   maxFiles = 250;
 
@@ -67,7 +65,8 @@ export class SimpleKBService {
     failed: 0,
   });
 
-  userName = this.userService.userPrefs.pipe(map((userPrefs) => userPrefs?.name || ''));
+  userId = this.sdk.nuclia.auth.getJWTUser()?.sub || '';
+
   visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
   uploadInProgress = this.visibleUploads.pipe(
     map((uploads) => uploads.filter((upload) => !this.isUploadFailed(upload)).length > 0),
@@ -147,13 +146,13 @@ export class SimpleKBService {
 
   getConversationsPage(page = 0): Observable<ConversationsPage> {
     const pageSize = 40;
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userName.pipe(take(1))]).pipe(
-      switchMap(([kb, userName]) =>
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb
           .search('', [Search.Features.FULLTEXT], {
             top_k: pageSize,
             offset: page * pageSize,
-            security: { groups: [userName] },
+            security: { groups: [this.userId] },
             filter_expression: {
               field: { prop: 'label', ...HISTORY_LABEL },
             },
@@ -207,14 +206,14 @@ export class SimpleKBService {
         ],
       },
     };
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userName.pipe(take(1))]).pipe(
-      switchMap(([kb, userName]) =>
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb.createResource({
           title,
           conversations,
           usermetadata: { classifications: [HISTORY_LABEL] },
           security: {
-            access_groups: [userName],
+            access_groups: [this.userId],
           },
         }),
       ),

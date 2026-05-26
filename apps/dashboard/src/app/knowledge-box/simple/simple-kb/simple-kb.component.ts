@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
-import { DroppedFile, SDKService, SizePipe } from '@flaps/core';
+import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
+import { DroppedFile, FeaturesService, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,6 +25,7 @@ export class SimpleKBComponent {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
   private sizePipe = inject(SizePipe);
+  private features = inject(FeaturesService);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   maxFiles = this.simpleKBService.maxFiles;
@@ -61,11 +62,11 @@ export class SimpleKBComponent {
 
     // Make sure that enforce_security is enabled.
     // It's required to prevent external agents using the MCP endpoint from retrieving conversation resources.
-    this.sdk.currentKb
+    combineLatest([this.sdk.currentKb, this.features.isKbAdmin])
       .pipe(
         take(1),
-        filter((kb) => kb.enforce_security === false),
-        switchMap((kb) => kb.modify({ enforce_security: true })),
+        filter(([kb, isAdmin]) => kb.enforce_security === false && isAdmin),
+        switchMap(([kb]) => kb.modify({ enforce_security: true })),
       )
       .subscribe(() => {
         this.sdk.refreshKbList(true);
