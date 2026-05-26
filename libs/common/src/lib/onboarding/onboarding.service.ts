@@ -5,11 +5,11 @@ import { SDKService, STFUtils, UserService, NavigationService, AuthService, Feat
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
-import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation } from '@nuclia/core';
+import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation, WorkflowType } from '@nuclia/core';
 
+const STEPS = [1, 2, 3, 4, 5, 6];
 const CLASSIC_STEPS = [1, 3, 4, 5, 6];
-const COWORK_STEPS = [1, 2, 3, 4, 5, 6];
-const PRESET_COWORK_STEPS = [1, 4, 5, 6];
+const COWORK_STEPS = [1, 4, 5, 6];
 @Injectable({
   providedIn: 'root',
 })
@@ -26,7 +26,7 @@ export class OnboardingService {
   onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
   dashboardSteps = this.features.unstable.coworkAccount.pipe(
-    map((coworkEnabled) => (coworkEnabled ? COWORK_STEPS : CLASSIC_STEPS)),
+    map((canChooseWorkflow) => (canChooseWorkflow ? STEPS : CLASSIC_STEPS)),
   );
   raoSteps = of([1, 3, 5, 6]);
 
@@ -43,7 +43,7 @@ export class OnboardingService {
   nextStep() {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
-      const next = steps[steps.findIndex((s) => s === step) + 1];
+      const next = Math.min(...steps.filter((s) => s > step));
       this._onboardingStep.next(next);
     });
   }
@@ -51,14 +51,14 @@ export class OnboardingService {
     (this.navigation.inRaoApp ? this.raoSteps : this.dashboardSteps).pipe(take(1)).subscribe((steps) => {
       const step = this._onboardingStep.value;
       if (step > 1) {
-        const previous = steps[steps.findIndex((s) => s === step) - 1];
+        const previous = Math.max(...steps.filter((s) => s < step));
         this._onboardingStep.next(previous);
       }
     });
   }
 
-  switchToPreset() {
-    this.dashboardSteps = of(PRESET_COWORK_STEPS);
+  setSteps(workflow: WorkflowType) {
+    this.dashboardSteps = workflow === 'cowork' ? of(COWORK_STEPS) : of(CLASSIC_STEPS);
   }
 
   saveOnboardingInquiry(payload: OnboardingPayload) {
@@ -95,8 +95,11 @@ export class OnboardingService {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
           this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
-            switchMap((accountSlug) =>
-              this.sdk.nuclia.db
+            switchMap((accountSlug) => {
+              if (data.workflow) {
+                this.setSteps(data.workflow);
+              }
+              return this.sdk.nuclia.db
                 .createAccount({
                   slug: accountSlug,
                   title: data.company,
@@ -114,8 +117,8 @@ export class OnboardingService {
                     this.toaster.error('Account creation failed');
                     throw error;
                   }),
-                ),
-            ),
+                );
+            }),
           ),
         ),
         switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
