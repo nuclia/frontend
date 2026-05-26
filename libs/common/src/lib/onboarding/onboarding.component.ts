@@ -81,7 +81,6 @@ export class OnboardingComponent {
           if (this.account.workflow === 'cowork') {
             this.kbName = 'ContextBox';
             this.isCowork = true;
-            this.onboardingService.switchToPreset();
           }
           this.onboardingService.nextStep();
         },
@@ -102,6 +101,7 @@ export class OnboardingComponent {
       this.kbName = 'ContextBox';
       this.isCowork = true;
     }
+    this.onboardingService.setSteps(workflow);
     this.onboardingService.modifyAccount(this.account?.slug || '', { workflow }).subscribe(() => {
       this.onboardingService.nextStep();
     });
