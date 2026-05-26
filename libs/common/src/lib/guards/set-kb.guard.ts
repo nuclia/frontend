@@ -16,7 +16,7 @@ export const setKbGuard = (route: ActivatedRouteSnapshot) => {
 
   return sdk.currentAccount.pipe(
     switchMap((account) => {
-      return sdk.nuclia.db.getKnowledgeBoxesForZone(account.id, zone).pipe(
+      return sdk.nuclia.db.getKnowledgeBoxesForZone(account.id, zone, false).pipe(
         switchMap((kbs) => {
           const kb = kbs.find((item) => item.slug === kbSlug);
           if (!kb) {

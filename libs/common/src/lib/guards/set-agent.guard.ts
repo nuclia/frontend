@@ -22,7 +22,7 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
         ? of(router.createUrlTree(['/select']))
         : sdk.currentAccount.pipe(
             switchMap((account) => {
-              return sdk.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
+              return sdk.nuclia.db.getRetrievalAgentsForZone(account.id, zone, 'agents', false).pipe(
                 switchMap((arags) => {
                   const arag = arags.find((item) => item.slug === agentSlug);
                   if (!arag) {
