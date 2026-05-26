@@ -1,0 +1,27 @@
+<pa-modal-dialog>
+  <pa-modal-content>
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      <b>{{ 'simple.trial.expired.modal.info-card' | translate }}</b>
+    </nsi-info-card>
+    <h6 class="modal-title">{{ 'simple.trial.expired.modal.title' | translate }}</h6>
+    <p class="body-text-bold">{{ 'simple.trial.expired.modal.description' | translate }}</p>
+    <p
+      class="body-text-dimmed"
+      [innerHTML]="'simple.trial.expired.modal.upgrade-info' | translate"></p>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      (click)="upgradeNow()">
+      {{ 'simple.trial.expired.modal.upgrade' | translate }}
+    </pa-button>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="contactSales()">
+      {{ 'simple.trial.expired.modal.contact-sales' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>
