@@ -96,7 +96,7 @@ export namespace Widget {
     askSpecificResource: boolean;
     specificResourceSlug: string;
     showReasoning: boolean;
-    reasoningEffort: 'low' | 'medium' | 'high';
+    reasoningEffort: 'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
     reasoningBudget: number;
     limitTokenConsumption: boolean;
     tokenConsumptionLimit: number | null;

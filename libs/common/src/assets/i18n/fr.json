@@ -1984,6 +1984,8 @@
 	"search.configuration.generative-answer.reasoning.effort-low": "Faible",
 	"search.configuration.generative-answer.reasoning.effort-medium": "Moyen",
 	"search.configuration.generative-answer.reasoning.effort-minimal": "Minimal",
+	"search.configuration.generative-answer.reasoning.effort-none": "Aucun",
+	"search.configuration.generative-answer.reasoning.effort-xhigh": "Très haut",
 	"search.configuration.generative-answer.reasoning.toggle-description": "Afficher les étapes de raisonnement (si fournies par le modèle génératif).",
 	"search.configuration.generative-answer.reasoning.toggle-label": "Montrer le raisonnement",
 	"search.configuration.generative-answer.section-description": "Options pour produire la réponse.",
