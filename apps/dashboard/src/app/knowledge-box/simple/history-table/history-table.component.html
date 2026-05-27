@@ -10,7 +10,9 @@
   </pa-table-header>
   @for (row of rows | async; track row.resourceId + row.questionIdent) {
     @let rowId = row.resourceId + row.questionIdent;
-    <pa-table-row>
+    <pa-table-row
+      clickable
+      (click)="openConversation.emit(row.resourceId)">
       <pa-table-cell>
         @if (expanded()['question-' + rowId]) {
           <span class="body-m">{{ row.question }}</span>
@@ -22,7 +24,7 @@
             class="expander"
             size="small"
             [icon]="expanded()['question-' + rowId] ? 'chevron-up' : 'chevron-down'"
-            (click)="toggleExpanded('question-' + rowId)"
+            (click)="toggleExpanded('question-' + rowId, $event)"
             aspect="basic"></pa-button>
         }
       </pa-table-cell>
@@ -38,7 +40,7 @@
             aspect="basic"
             size="small"
             [icon]="expanded()['answer-' + rowId] ? 'chevron-up' : 'chevron-down'"
-            (click)="toggleExpanded('answer-' + rowId)"></pa-button>
+            (click)="toggleExpanded('answer-' + rowId, $event)"></pa-button>
         }
       </pa-table-cell>
       <pa-table-cell>
@@ -62,7 +64,7 @@
         <pa-button
           aspect="basic"
           icon="trash"
-          (click)="deleteQuestion(row)"
+          (click)="deleteQuestion(row, $event)"
           size="small">
           {{ 'simple.delete' | translate }}
         </pa-button>
