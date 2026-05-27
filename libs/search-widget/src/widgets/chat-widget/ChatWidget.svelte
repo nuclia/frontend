@@ -12,6 +12,7 @@
     parseRAGImageStrategies,
     parseRAGStrategies,
     Reranker,
+    type Ask,
     type FilterExpression,
     type KBStates,
     type Nuclia,
@@ -27,6 +28,7 @@
   import { Viewer } from '../../components';
   import Chat from '../../components/answer/Chat.svelte';
   import {
+    chat,
     chatInput,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
@@ -216,6 +218,10 @@
   export function unblock() {
     widgetBlocked.set(false);
     widgetBlockedMessage.set('');
+  }
+
+  export function setChat(entries: Ask.Entry[]) {
+    chat.set(entries);
   }
 
   export const onError = getApiErrors();

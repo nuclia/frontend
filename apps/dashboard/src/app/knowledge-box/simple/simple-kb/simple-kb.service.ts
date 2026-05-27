@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { UploadService } from '@flaps/common';
-import { NotificationService, SDKService } from '@flaps/core';
+import { NotificationService, SDKService, STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Ask,
   CatalogOptions,
   Classification,
   ConversationField,
@@ -13,6 +14,7 @@ import {
   Message,
   Resource,
   RESOURCE_STATUS,
+  ResourceProperties,
   Search,
   SortField,
   UploadStatus,
@@ -189,7 +191,12 @@ export class SimpleKBService {
     );
   }
 
-  createQuestion(title: string, question: string, answer: string): Observable<{ uuid: string }> {
+  createQuestion(
+    title: string,
+    question: string,
+    answer: string,
+    answerData?: Ask.Answer,
+  ): Observable<{ uuid: string }> {
     const conversations: { [HISTORY_FIELD]: ConversationField } = {
       [HISTORY_FIELD]: {
         messages: [
@@ -200,17 +207,30 @@ export class SimpleKBService {
           },
           {
             ident: `answer1`,
-            content: { text: answer, format: 'MARKDOWN' },
+            content: {
+              text: answer,
+              format: 'MARKDOWN',
+              attachments_fields: answerData
+                ? [
+                    {
+                      field_type: FIELD_TYPE.text,
+                      field_id: 'answer1',
+                    },
+                  ]
+                : undefined,
+            },
             type: 'ANSWER',
           },
         ],
       },
     };
+    const { promptContext, ...answerDataToSave } = answerData || {}; // Exclude promptContext
     return this.sdk.currentKb.pipe(take(1)).pipe(
       switchMap((kb) =>
         kb.createResource({
           title,
           conversations,
+          texts: answerData ? { answer1: { body: JSON.stringify(answerDataToSave), format: 'JSON' } } : undefined,
           usermetadata: { classifications: [HISTORY_LABEL] },
           security: {
             access_groups: [this.userId],
@@ -220,7 +240,7 @@ export class SimpleKBService {
     );
   }
 
-  appendQuestion(resourceId: string, question: string, answer: string) {
+  appendQuestion(resourceId: string, question: string, answer: string, answerData?: Ask.Answer) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
@@ -228,18 +248,41 @@ export class SimpleKBService {
         return resource.getField(FIELD_TYPE.conversation, HISTORY_FIELD).pipe(
           switchMap((field) => {
             const index = (field.value as ConversationField).messages.length / 2 + 1;
-            return resource.appendMessages(HISTORY_FIELD, [
-              {
-                ident: `question${index}`,
-                content: { text: question, format: 'PLAIN' },
-                type: 'QUESTION',
-              },
-              {
-                ident: `answer${index}`,
-                content: { text: answer, format: 'MARKDOWN' },
-                type: 'ANSWER',
-              },
-            ]);
+            const { promptContext, ...answerDataToSave } = answerData || {}; // Exclude promptContext
+            return (
+              answerData
+                ? resource.setField(FIELD_TYPE.text, `answer${index}`, {
+                    body: JSON.stringify(answerDataToSave),
+                    format: 'JSON',
+                  })
+                : of(undefined)
+            ).pipe(
+              switchMap(() =>
+                resource.appendMessages(HISTORY_FIELD, [
+                  {
+                    ident: `question${index}`,
+                    content: { text: question, format: 'PLAIN' },
+                    type: 'QUESTION',
+                  },
+                  {
+                    ident: `answer${index}`,
+                    content: {
+                      text: answer,
+                      format: 'MARKDOWN',
+                      attachments_fields: answerData
+                        ? [
+                            {
+                              field_type: FIELD_TYPE.text,
+                              field_id: `answer${index}`,
+                            },
+                          ]
+                        : undefined,
+                    },
+                    type: 'ANSWER',
+                  },
+                ]),
+              ),
+            );
           }),
         );
       }),
@@ -262,6 +305,46 @@ export class SimpleKBService {
               : resource.delete();
           }),
         );
+      }),
+    );
+  }
+
+  getChatEntries(resourceId: string): Observable<Ask.Entry[]> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        forkJoin([
+          kb.getResource(resourceId, [ResourceProperties.VALUES]),
+          new Resource(this.sdk.nuclia, kb.id, { id: resourceId }).getField(FIELD_TYPE.conversation, HISTORY_FIELD),
+        ]),
+      ),
+      map(([resource, field]) => {
+        const messages = (field.value as ConversationField).messages || [];
+        return messages.reduce((acc, message) => {
+          if (message.type === 'QUESTION') {
+            acc.push({ question: message.content.text, answer: {} as Ask.Answer });
+          } else if (message.type === 'ANSWER') {
+            const answerData = resource.data.texts?.[message.ident]?.value?.body;
+            let answerDataJSON: Ask.Answer | undefined;
+            if (answerData) {
+              try {
+                answerDataJSON = JSON.parse(answerData);
+              } catch (e) {}
+            }
+            if (answerDataJSON) {
+              acc[acc.length - 1].answer = answerDataJSON;
+            } else {
+              acc[acc.length - 1].answer = {
+                type: 'answer',
+                text: message.content.text,
+                id: STFUtils.generateRandomSlugSuffix(),
+                inError: !message.content.text,
+                error: message.content.text ? undefined : this.translate.instant('simple.failed'),
+              };
+            }
+          }
+          return acc;
+        }, [] as Ask.Entry[]);
       }),
     );
   }

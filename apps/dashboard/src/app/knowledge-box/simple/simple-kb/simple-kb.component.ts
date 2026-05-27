@@ -40,7 +40,7 @@ export class SimpleKBComponent {
   maxMediaFileSize = -1;
 
   view = signal<'resources' | 'history' | 'search'>('resources');
-  prevQuestionId?: string;
+  currentConversation?: string;
 
   private trialState = toSignal(this.sdk.currentAccount.pipe(map(getCoworkTrialState)), {
     initialValue: { isCoworkTrial: false, isTrialExpired: false, isAtEquator: false, daysLeft: 0 },
@@ -94,17 +94,19 @@ export class SimpleKBComponent {
         switchMap((event) =>
           (event['lastQuery']?.params?.context || []).length > 0
             ? this.simpleKBService.appendQuestion(
-                this.prevQuestionId || '',
+                this.currentConversation || '',
                 event['lastQuery'].params.query,
                 event['lastResults']?.text || '',
+                event['lastResults']?.text ? event['lastResults'] : undefined,
               )
             : this.simpleKBService
                 .createQuestion(
                   'Question ' + Date.now(),
                   event['lastQuery'].params.query,
                   event['lastResults']?.text || '',
+                  event['lastResults']?.text ? event['lastResults'] : undefined,
                 )
-                .pipe(tap(({ uuid }) => (this.prevQuestionId = uuid))),
+                .pipe(tap(({ uuid }) => (this.currentConversation = uuid))),
         ),
         takeUntilDestroyed(),
       )
@@ -199,5 +201,14 @@ export class SimpleKBComponent {
 
   showMcpEndpoint() {
     this.modalService.openModal(McpEndpointModalComponent);
+  }
+
+  openConversation(resourceId: string) {
+    this.simpleKBService.getChatEntries(resourceId).subscribe((entries) => {
+      const element = document.querySelector('nuclia-chat');
+      (element as any)?.setChat(entries);
+      this.currentConversation = resourceId;
+      this.view.set('search');
+    });
   }
 }
