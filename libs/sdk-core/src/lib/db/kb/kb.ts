@@ -43,6 +43,7 @@ import {
   Search,
   SearchOptions,
   suggest,
+  SuggestOptions,
 } from '../search';
 import { Agentic } from '../search/agentic';
 import { Ask, PredictAnswerOptions } from '../search/ask.models';
@@ -657,8 +658,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     query: string,
     inTitleOnly = false,
     features: Search.SuggestionFeatures[] = [],
+    options?: SuggestOptions,
   ): Observable<Search.Suggestions | IErrorResponse> {
-    return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
+    return suggest(this.nuclia, this.path, query, inTitleOnly, features, options);
   }
 
   feedback(answerId: string, good: boolean, feedback = '', text_block_id?: string): Observable<void> {
