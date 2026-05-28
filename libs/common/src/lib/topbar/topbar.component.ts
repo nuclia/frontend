@@ -65,7 +65,6 @@ export class TopbarComponent {
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
   isCowork = this.sdk.currentAccount.pipe(
@@ -73,6 +72,17 @@ export class TopbarComponent {
     shareReplay(1),
   );
   hasSimpleUI = this.features.unstable.simpleUI;
+  logoPath = this.isCowork.pipe(
+    map((isCowork) => {
+      if (isCowork) {
+        return 'assets/logos/logo-context-box.svg';
+      } else if (this.standalone) {
+        return 'assets/logos/nucliadb.svg';
+      } else {
+        return this.backendConfig.getLogoPath();
+      }
+    }),
+  );
 
   constructor(
     private router: Router,
