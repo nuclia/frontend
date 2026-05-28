@@ -14,6 +14,7 @@ import type {
   ResourceField,
   Routing,
   SearchOptions,
+  SuggestOptions,
 } from '@nuclia/core';
 import {
   Ask,
@@ -371,8 +372,10 @@ export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-
-  return nucliaApi.knowledgeBox.suggest(query, true, SUGGEST_MODE).pipe(
+  const options: SuggestOptions = {
+    security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
+  };
+  return nucliaApi.knowledgeBox.suggest(query, true, SUGGEST_MODE, options).pipe(
     filter((res) => {
       if (res.type === 'error') {
         suggestionError.set(res);
