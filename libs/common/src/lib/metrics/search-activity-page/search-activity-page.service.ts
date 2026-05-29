@@ -12,7 +12,13 @@ import {
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { NumericCondition, DateCondition } from '../metrics-filters';
-import { applyNumericConditions, applyDateConditions, applyTextSearchFilter, getMonthRange } from '../metrics-utils';
+import {
+  applyNumericConditions,
+  applyDateConditions,
+  applyTextSearchFilter,
+  getMonthRange,
+  getMonthsSinceDate,
+} from '../metrics-utils';
 import { SEARCH_ACTIVITY_SHOW_FIELDS } from './search-activity-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 
@@ -64,17 +70,12 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
   }
 
   protected loadAvailableMonths(): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(EventType.SEARCH)),
-      )
-      .subscribe({
-        next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
-        error: () => {
-          /* empty */
-        },
-      });
+    // Returns all months instead of calling /search/months.
+    // The endpoint is too slow for kb with a lot of activity.
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      this._availableMonths.set(getMonthsSinceDate(creationDate));
+    });
   }
 
   protected override _resetPaginationState(): void {

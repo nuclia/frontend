@@ -6,6 +6,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivityLogItem } from '@nuclia/core';
 import { SearchActivityPageService } from './search-activity-page.service';
+import { MetricsService } from '../../account';
 
 const MOCK_ROWS: ActivityLogItem[] = [
   { retrieval_time: 100, resources_count: 3, date: '2024-01-01', id: 1 } as any,
@@ -16,23 +17,24 @@ const MOCK_ROWS: ActivityLogItem[] = [
 describe('SearchActivityPageService', () => {
   let service: SearchActivityPageService;
   let queryActivityLogs: jest.Mock;
-  let getMonthsWithActivity: jest.Mock;
 
   beforeEach(() => {
     queryActivityLogs = jest.fn();
-    getMonthsWithActivity = jest.fn().mockReturnValue(of({ downloads: [] }));
     const mockKb = {
       activityMonitor: {
         queryActivityLogs,
-        getMonthsWithActivity,
         getSearchMetrics: jest.fn().mockReturnValue(of([])),
       },
+    };
+    const mockAccount = {
+      creation_date: '2026-02-20T09:19:05.819155',
     };
 
     TestBed.configureTestingModule({
       providers: [
         SearchActivityPageService,
-        MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
+        MockProvider(MetricsService),
         MockProvider(UserService),
         MockProvider(SisToastService),
         MockProvider(TranslateService, { instant: (key: string) => key }),
@@ -80,59 +82,18 @@ describe('SearchActivityPageService', () => {
   });
 
   describe('availableMonths signal', () => {
-    it('starts as an empty array', () => {
-      expect(service.availableMonths()).toEqual([]);
+    beforeAll(() => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-04-15T12:00:00Z'));
     });
 
-    it('is populated with months from getMonthsWithActivity, sorted descending', () => {
-      TestBed.resetTestingModule();
-      const months = ['2024-01', '2024-03', '2024-02'];
-      getMonthsWithActivity = jest.fn().mockReturnValue(of({ downloads: months }));
-      queryActivityLogs = jest.fn().mockReturnValue(of([]));
-      const freshKb = {
-        activityMonitor: {
-          queryActivityLogs,
-          getMonthsWithActivity,
-          getSearchMetrics: jest.fn().mockReturnValue(of([])),
-        },
-      };
-      TestBed.configureTestingModule({
-        providers: [
-          SearchActivityPageService,
-          MockProvider(SDKService, { currentKb: of(freshKb as any) }),
-          MockProvider(UserService),
-          MockProvider(SisToastService),
-          MockProvider(TranslateService, { instant: (key: string) => key }),
-        ],
-      });
-      const freshService = TestBed.inject(SearchActivityPageService);
-
-      expect(freshService.availableMonths()).toEqual(['2024-03', '2024-02', '2024-01']);
+    afterAll(() => {
+      jest.useRealTimers();
     });
 
-    it('remains empty when getMonthsWithActivity errors', () => {
+    it('is populated with months from since account creation, sorted descending', () => {
       TestBed.resetTestingModule();
-      getMonthsWithActivity = jest.fn().mockReturnValue(throwError(() => new Error('network error')));
-      queryActivityLogs = jest.fn().mockReturnValue(of([]));
-      const freshKb = {
-        activityMonitor: {
-          queryActivityLogs,
-          getMonthsWithActivity,
-          getSearchMetrics: jest.fn().mockReturnValue(of([])),
-        },
-      };
-      TestBed.configureTestingModule({
-        providers: [
-          SearchActivityPageService,
-          MockProvider(SDKService, { currentKb: of(freshKb as any) }),
-          MockProvider(UserService),
-          MockProvider(SisToastService),
-          MockProvider(TranslateService, { instant: (key: string) => key }),
-        ],
-      });
-      const freshService = TestBed.inject(SearchActivityPageService);
-
-      expect(freshService.availableMonths()).toEqual([]);
+      expect(service.availableMonths()).toEqual(['2026-04', '2026-03', '2026-02']);
     });
   });
 });
