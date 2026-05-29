@@ -1,3 +1,4 @@
+export * from './connections.service';
 export * from './search-configuration';
 export * from './search-page.component';
 export * from './search-widget.models';

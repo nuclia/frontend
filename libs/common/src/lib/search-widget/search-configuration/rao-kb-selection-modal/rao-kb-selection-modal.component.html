@@ -1,0 +1,40 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'search.configuration.rao.kb-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-description>{{ 'search.configuration.rao.kb-modal.description' | translate }}</pa-modal-description>
+
+  <pa-modal-content>
+    <div class="kb-selection-list">
+      @for (kb of kbs | async; track trackByKbId($index, kb)) {
+        <button
+          type="button"
+          class="kb-option"
+          [class.selected]="selectedKbId() === kb.id"
+          (click)="selectKb(kb.id)">
+          <pa-icon
+            size="small"
+            name="knowledge-box"></pa-icon>
+          <span class="kb-title">{{ kb.title }}</span>
+          <pa-icon
+            size="small"
+            [name]="selectedKbId() === kb.id ? 'check' : 'chevron-right'"></pa-icon>
+        </button>
+      } @empty {
+        <div class="kb-empty">{{ 'search.configuration.rao.kb-modal.empty' | translate }}</div>
+      }
+    </div>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="!selectedKbId()"
+      (click)="continue()">
+      {{ 'search.configuration.action.continue' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

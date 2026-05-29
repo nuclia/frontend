@@ -57,6 +57,40 @@
     gap: rhythm(1);
   }
 
+  .rao-config-flow {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+  }
+
+  .rao-sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .rao-source-row {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-radio {
+      flex: 1;
+    }
+  }
+
+  .rao-no-source {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+  }
+
+  .rao-config-flow .config-form-help {
+    @include body-m();
+    color: $color-neutral-regular;
+  }
+
   @container (max-width: 400px) {
     .current-config-title {
       align-items: flex-start;

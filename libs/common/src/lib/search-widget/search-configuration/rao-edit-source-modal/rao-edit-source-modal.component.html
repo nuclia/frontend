@@ -1,0 +1,33 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'search.configuration.rao.edit-source-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <div class="form-fields">
+      <pa-input
+        [(value)]="label"
+        [placeholder]="'search.configuration.rao.edit-source-modal.name-placeholder' | translate">
+        {{ 'search.configuration.rao.edit-source-modal.name-label' | translate }}<span class="required-asterisk"> *</span>
+      </pa-input>
+      <pa-textarea
+        [(value)]="description"
+        [resizable]="false"
+        [rows]="5"
+        [help]="'search.configuration.rao.edit-source-modal.help' | translate"
+        [placeholder]="'search.configuration.rao.edit-source-modal.description-placeholder' | translate">
+        {{ 'search.configuration.rao.edit-source-modal.description-label' | translate }}<span class="required-asterisk"> *</span>
+      </pa-textarea>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="!label || !description"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

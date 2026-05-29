@@ -1,193 +1,228 @@
 <div class="page-spacing">
-  <div>
-    <h1 class="page-title">{{ 'navbar.sync' | translate }}</h1>
-    <p class="page-description">{{ 'sync.home-page.description' | translate }}</p>
-  </div>
+  <pa-tabs class="tab-bar">
+    <pa-tab
+      [active]="selectedTab === 'connect'"
+      (click)="goToSection('connect')">
+      {{ 'sync.tab.connect' | translate }}
+    </pa-tab>
+    <pa-tab
+      [active]="selectedTab === 'synchronize'"
+      (click)="goToSection('synchronize')">
+      {{ 'sync.tab.synchronize' | translate }}
+    </pa-tab>
+  </pa-tabs>
 
-  <section>
-    <div class="section-description">
-      <div class="title-l">{{ 'sync.home-page.setup-server.title' | translate }}</div>
-      <div class="page-description">{{ 'sync.home-page.setup-server.description' | translate }}</div>
+  <section
+    class="sync-section"
+    id="sync-connect">
+    <div>
+      <h2 class="page-title">{{ 'sync.home-page.connect.title' | translate }}</h2>
+      <p class="page-description">{{ 'sync.home-page.connect.description' | translate }}</p>
     </div>
 
-    <form
-      class="setup-sync-agent"
-      [formGroup]="syncAgentForm"
-      (ngSubmit)="saveSyncServer()">
-      <pa-radio-group formControlName="type">
-        @if (hasCloudSync | async) {
-          <div class="radio-config-row">
-            <pa-radio
-              [help]="'sync.home-page.setup-server.on-cloud.radio-help' | translate"
-              value="cloud">
-              <span class="title-m">{{ 'sync.home-page.setup-server.on-cloud.radio-label' | translate }}</span>
-            </pa-radio>
-            <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
-          </div>
-          <div class="separator-line"></div>
-        }
+    <div class="setup-sync-agent">
+      <pa-radio-group [formControl]="connectSourceControl">
         <div class="radio-config-row">
           <pa-radio
-            [help]="'sync.home-page.setup-server.on-desktop.radio-help' | translate"
-            value="desktop">
-            <span class="title-m">{{ 'sync.home-page.setup-server.on-desktop.radio-label' | translate }}</span>
+            value="kb"
+            [help]="'sync.home-page.connect.source.kb-help' | translate">
+            <span class="title-m">{{ 'sync.home-page.connect.source.kb' | translate }}</span>
           </pa-radio>
-
-          @if (syncAgentOnDesktop) {
-            @if (inactiveServer | async) {
-              <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
-
-              @if (downloadSyncAgentFeature) {
-                <nsi-dropdown-button aspect="basic">
-                  {{ 'sync.home-page.setup-server.on-desktop.download-dropdown' | translate }}
-                </nsi-dropdown-button>
-              }
-            } @else {
-              <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
-            }
-          }
         </div>
         <div class="separator-line"></div>
         <div class="radio-config-row">
           <pa-radio
-            [help]="'sync.home-page.setup-server.on-server.radio-help' | translate"
-            value="server">
-            <span class="title-m">{{ 'sync.home-page.setup-server.on-server.radio-label' | translate }}</span>
+            value="mcp"
+            [help]="'sync.home-page.connect.source.mcp-help' | translate">
+            <span class="title-m">{{ 'sync.home-page.connect.source.mcp' | translate }}</span>
           </pa-radio>
+        </div>
+        <div class="separator-line"></div>
+        <div class="radio-config-row">
+          <pa-radio
+            value="perplexity"
+            [help]="'sync.home-page.connect.source.third-party-help' | translate">
+            <span class="title-m">{{ 'sync.home-page.connect.source.third-party' | translate }}</span>
+          </pa-radio>
+        </div>
+      </pa-radio-group>
+    </div>
 
-          @if (syncAgentOnServer) {
-            <div class="inline-form">
-              @if (inactiveServer | async) {
-                <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
-              } @else {
-                <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+    @if (connectSourceControl.value === 'kb') {
+      @if (currentKb | async; as kb) {
+        <div class="connect-detail">
+          <div>
+            <div class="title-l">{{ 'sync.home-page.connect.kb.detail-title' | translate }}</div>
+            <p class="page-description">{{ 'sync.home-page.connect.kb.detail-description' | translate }}</p>
+          </div>
+
+          <div class="kb-card">
+            <pa-icon name="knowledge-box"></pa-icon>
+            <div class="kb-card-info">
+              <span class="title-m">{{ kb.title }}</span>
+              @if (kb.state === 'PRIVATE') {
+                <pa-icon
+                  size="small"
+                  name="lock"></pa-icon>
               }
-              <pa-input
-                class="server-url"
-                formControlName="serverUrl">
-                Server URL
-              </pa-input>
-              <pa-button
-                [disabled]="!serverUrlChanged"
-                type="submit">
-                {{ 'generic.save' | translate }}
+              @if (connectedKbIds().has(kb.id)) {
+                <nsi-status status="processed"></nsi-status>
+              }
+            </div>
+          </div>
+
+          @if (!connectedKbIds().has(kb.id)) {
+            <pa-textarea
+              [formControl]="kbDescriptionControl"
+              [rows]="5"
+              [resizable]="false"
+              [help]="'sync.home-page.connect.kb.description-help' | translate"
+              [placeholder]="'sync.home-page.connect.kb.description-placeholder' | translate">
+              {{ 'sync.home-page.connect.kb.description-label' | translate }}<span class="required-asterisk"> *</span>
+            </pa-textarea>
+
+            <div>
+              <pa-button kind="primary" [disabled]="!kbDescriptionControl.value" (click)="connectKb(kb)">
+                {{ 'sync.home-page.connect.kb.connect-button' | translate }}
               </pa-button>
             </div>
           }
         </div>
-      </pa-radio-group>
-    </form>
-  </section>
-
-  <div class="separator-line"></div>
-
-  <section>
-    <div class="section-description">
-      <div class="title-l">{{ 'sync.home-page.add-sources.title' | translate }}</div>
-      <div class="page-description">{{ 'sync.home-page.add-sources.description' | translate }}</div>
-    </div>
-    <div class="connector-list">
-      @for (
-        connector of syncAgentTypeControl.value !== 'cloud' ? (connectorList | async) : (cloudConnectorList | async);
-        track connector.id
-      ) {
-        <nsy-connector
-          [paTooltip]="
-            (syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)
-              ? 'sync.home-page.add-sources.disabled-source-tooltip'
-              : ''
-            ) | translate
-          "
-          [disabled]="syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)"
-          [title]="connector.title"
-          [logo]="connector.logo"
-          (selectConnector)="onSelectConnector(connector)"></nsy-connector>
       }
-    </div>
-  </section>
+    }
 
-  <section>
-    <div class="section-description">
-      <div class="title-l">{{ 'sync.home-page.sync-list.title' | translate }}</div>
-      <div class="page-description">{{ 'sync.home-page.sync-list.description' | translate }}</div>
-    </div>
+    @if (connectSourceControl.value === 'perplexity') {
+      <div class="connect-detail">
+        <div>
+          <div class="title-l">{{ 'sync.home-page.connect.third-party.section-title' | translate }}</div>
+          <p class="page-description">{{ 'sync.home-page.connect.third-party.section-description' | translate }}</p>
+        </div>
+        <div class="third-party-app-list">
+          <nsy-connector
+            [title]="'sync.home-page.connect.third-party.perplexity.title' | translate"
+            logo="assets/connector-logos/perplexity.svg"
+            (selectConnector)="selectThirdParty('perplexity')">
+          </nsy-connector>
+        </div>
+      </div>
+    }
 
-    @if (syncs | async; as syncs) {
-      @if (syncs.length === 0) {
-        <nsi-info-card icon="info">{{ 'sync.home-page.sync-list.empty-info' | translate }}</nsi-info-card>
+    @if (connectSourceControl.value === 'mcp') {
+      <div class="connect-detail">
+        <div>
+          <div class="title-l">{{ 'sync.home-page.connect.mcp.detail-title' | translate }}</div>
+          <p class="page-description">{{ 'sync.home-page.connect.mcp.detail-description' | translate }}</p>
+        </div>
+
+        <form
+          class="mcp-form"
+          [formGroup]="mcpForm">
+          <pa-input
+            formControlName="name"
+            [placeholder]="'sync.home-page.connect.mcp.name-placeholder' | translate">
+            {{ 'sync.home-page.connect.mcp.name-label' | translate }}<span class="required-asterisk"> *</span>
+          </pa-input>
+
+          <pa-textarea
+            formControlName="description"
+            [rows]="4"
+            [resizable]="false"
+            [help]="'sync.home-page.connect.mcp.description-help' | translate"
+            [placeholder]="'sync.home-page.connect.mcp.description-placeholder' | translate">
+            {{ 'sync.home-page.connect.mcp.description-label' | translate }}<span class="required-asterisk"> *</span>
+          </pa-textarea>
+
+          <pa-input
+            formControlName="url"
+            [placeholder]="'sync.home-page.connect.mcp.url-placeholder' | translate">
+            {{ 'sync.home-page.connect.mcp.url-label' | translate }}<span class="required-asterisk"> *</span>
+          </pa-input>
+
+          <pa-input
+            formControlName="key"
+            type="password"
+            [placeholder]="'sync.home-page.connect.mcp.key-placeholder' | translate">
+            {{ 'sync.home-page.connect.mcp.key-label' | translate }}
+          </pa-input>
+
+          <pa-input
+            formControlName="timeout"
+            type="number"
+            [placeholder]="'sync.home-page.connect.mcp.timeout-placeholder' | translate">
+            {{ 'sync.home-page.connect.mcp.timeout-label' | translate }}
+          </pa-input>
+        </form>
+
+        <div>
+          <pa-button
+            kind="primary"
+            [disabled]="mcpForm.invalid"
+            (click)="connectMcp()">
+            {{ 'sync.home-page.connect.mcp.connect-button' | translate }}
+          </pa-button>
+        </div>
+      </div>
+    }
+
+    <div class="sub-section">
+      <div class="section-description">
+        <div class="title-l">{{ 'sync.home-page.connections.title' | translate }}</div>
+        <div class="page-description">{{ 'sync.home-page.connections.description' | translate }}</div>
+      </div>
+
+      @if (connections().length === 0) {
+        <nsi-info-card icon="info">{{ 'sync.home-page.connections.empty-info' | translate }}</nsi-info-card>
       } @else {
         <pa-table
           border
-          columns="repeat(5, 1fr) 96px">
-          <pa-table-sortable-header [cells]="syncTableHeader"></pa-table-sortable-header>
+          columns="1fr 1fr 2fr 96px">
+          <pa-table-sortable-header [cells]="connectionsTableHeader"></pa-table-sortable-header>
 
-          @for (sync of syncs; track sync.id) {
+          @for (connection of connections(); track connection.id) {
             <pa-table-row>
+              <pa-table-cell>{{ connection.label }}</pa-table-cell>
               <pa-table-cell>
-                <a
-                  [routerLink]="'./' + sync.id"
-                  class="body-m black-link">
-                  {{ sync.title }}
-                </a>
-              </pa-table-cell>
-              <pa-table-cell>
-                @if (sync.connectorId && connectors[sync.connectorId]?.definition; as connector) {
+                @let typeLogo = connectionTypeLogos[connection.type];
+                @if (typeLogo) {
                   <div class="logo-title">
                     <pa-icon
                       size="small"
-                      [path]="connector.logo"></pa-icon>
-                    {{ connector.title }}
+                      [path]="typeLogo"></pa-icon>
+                    {{ 'sync.home-page.connections.type.' + connection.type | translate }}
                   </div>
+                } @else {
+                  {{ 'sync.home-page.connections.type.' + connection.type | translate }}
                 }
               </pa-table-cell>
               <pa-table-cell>
-                <div class="body-s">{{ sync.totalSyncedResources }}</div>
-              </pa-table-cell>
-              <pa-table-cell>
-                @if (!(useCloudSync | async)) {
-                  <pa-toggle
-                    labelOnRight
-                    [value]="!sync.disabled"
-                    (valueChange)="toggleSync(sync.id, $event)">
-                    {{ sync.disabled ? 'Off' : 'On' }}
-                  </pa-toggle>
+                @let isExpanded = expandedConnections()[connection.id];
+                @let isTruncated = connection.description.length > SHORT_DESC_LENGTH;
+                {{ isExpanded || !isTruncated ? connection.description : (connection.description | slice:0:SHORT_DESC_LENGTH) + '...' }}
+                @if (isTruncated) {
+                  <pa-button
+                    class="expander"
+                    aspect="basic"
+                    size="small"
+                    [icon]="isExpanded ? 'chevron-up' : 'chevron-down'"
+                    (click)="toggleConnectionDesc(connection.id)"></pa-button>
                 }
-              </pa-table-cell>
-              <pa-table-cell>
-                <div class="body-s">
-                  @if (sync.lastSyncGMT !== '1970-01-01') {
-                    <pa-datetime [datetime]="sync.lastSyncGMT"></pa-datetime>
-                  } @else {
-                    –
-                  }
-                </div>
               </pa-table-cell>
               <pa-table-cell-menu>
                 <pa-button
                   icon="more-vertical"
                   aspect="basic"
                   size="small"
-                  [paPopup]="syncMenu">
+                  [paPopup]="connectionMenu">
                   Menu
                 </pa-button>
-                <pa-dropdown #syncMenu>
-                  <pa-option [routerLink]="'./' + sync.id + '/edit'">
-                    {{ 'sync.home-page.sync-list.menu.edit-settings' | translate }}
-                  </pa-option>
-                  @if (sync.connector?.allowToSelectFolders) {
-                    <pa-option [routerLink]="'./' + sync.id + '/edit'">
-                      {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
-                    </pa-option>
-                  }
-                  <pa-option
-                    [routerLink]="'./' + sync.id"
-                    [queryParams]="{ section: 'activity' }">
-                    {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
+                <pa-dropdown #connectionMenu>
+                  <pa-option (selectOption)="editConnection(connection)">
+                    {{ 'sync.home-page.connections.menu.edit' | translate }}
                   </pa-option>
                   <pa-option
                     destructive
-                    (selectOption)="deleteSync(sync)">
-                    {{ 'sync.home-page.sync-list.menu.delete' | translate }}
+                    (selectOption)="deleteConnection(connection)">
+                    {{ 'sync.home-page.connections.menu.delete' | translate }}
                   </pa-option>
                 </pa-dropdown>
               </pa-table-cell-menu>
@@ -195,6 +230,209 @@
           }
         </pa-table>
       }
-    }
+    </div>
+  </section>
+
+  <section
+    class="sync-section"
+    id="sync-synchronize">
+    <div>
+      <h2 class="page-title">{{ 'sync.home-page.synchronize.title' | translate }}</h2>
+      <p class="page-description">{{ 'sync.home-page.description' | translate }}</p>
+    </div>
+
+    <div class="sub-section">
+      <div class="section-description">
+        <div class="title-l">{{ 'sync.home-page.setup-server.title' | translate }}</div>
+        <div class="page-description">{{ 'sync.home-page.setup-server.description' | translate }}</div>
+      </div>
+
+      <form
+        class="setup-sync-agent"
+        [formGroup]="syncAgentForm"
+        (ngSubmit)="saveSyncServer()">
+        <pa-radio-group formControlName="type">
+          @if (hasCloudSync | async) {
+            <div class="radio-config-row">
+              <pa-radio
+                [help]="'sync.home-page.setup-server.on-cloud.radio-help' | translate"
+                value="cloud">
+                <span class="title-m">{{ 'sync.home-page.setup-server.on-cloud.radio-label' | translate }}</span>
+              </pa-radio>
+              <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+            </div>
+            <div class="separator-line"></div>
+          }
+          <div class="radio-config-row">
+            <pa-radio
+              [help]="'sync.home-page.setup-server.on-desktop.radio-help' | translate"
+              value="desktop">
+              <span class="title-m">{{ 'sync.home-page.setup-server.on-desktop.radio-label' | translate }}</span>
+            </pa-radio>
+
+            @if (syncAgentOnDesktop) {
+              @if (inactiveServer | async) {
+                <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
+
+                @if (downloadSyncAgentFeature) {
+                  <nsi-dropdown-button aspect="basic">
+                    {{ 'sync.home-page.setup-server.on-desktop.download-dropdown' | translate }}
+                  </nsi-dropdown-button>
+                }
+              } @else {
+                <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+              }
+            }
+          </div>
+          <div class="separator-line"></div>
+          <div class="radio-config-row">
+            <pa-radio
+              [help]="'sync.home-page.setup-server.on-server.radio-help' | translate"
+              value="server">
+              <span class="title-m">{{ 'sync.home-page.setup-server.on-server.radio-label' | translate }}</span>
+            </pa-radio>
+
+            @if (syncAgentOnServer) {
+              <div class="inline-form">
+                @if (inactiveServer | async) {
+                  <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
+                } @else {
+                  <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+                }
+                <pa-input
+                  class="server-url"
+                  formControlName="serverUrl">
+                  Server URL
+                </pa-input>
+                <pa-button
+                  [disabled]="!serverUrlChanged"
+                  type="submit">
+                  {{ 'generic.save' | translate }}
+                </pa-button>
+              </div>
+            }
+          </div>
+        </pa-radio-group>
+      </form>
+    </div>
+
+    <div class="separator-line"></div>
+
+    <div class="sub-section">
+      <div class="section-description">
+        <div class="title-l">{{ 'sync.home-page.add-sources.title' | translate }}</div>
+        <div class="page-description">{{ 'sync.home-page.add-sources.description' | translate }}</div>
+      </div>
+      <div class="connector-list">
+        @for (
+          connector of syncAgentTypeControl.value !== 'cloud' ? (connectorList | async) : (cloudConnectorList | async);
+          track connector.id
+        ) {
+          <nsy-connector
+            [paTooltip]="
+              (syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)
+                ? 'sync.home-page.add-sources.disabled-source-tooltip'
+                : ''
+              ) | translate
+            "
+            [disabled]="syncAgentTypeControl.value !== 'cloud' && (inactiveServer | async)"
+            [title]="connector.title"
+            [logo]="connector.logo"
+            (selectConnector)="onSelectConnector(connector)"></nsy-connector>
+        }
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="section-description">
+        <div class="title-l">{{ 'sync.home-page.sync-list.title' | translate }}</div>
+        <div class="page-description">{{ 'sync.home-page.sync-list.description' | translate }}</div>
+      </div>
+
+      @if (syncs | async; as syncs) {
+        @if (syncs.length === 0) {
+          <nsi-info-card icon="info">{{ 'sync.home-page.sync-list.empty-info' | translate }}</nsi-info-card>
+        } @else {
+          <pa-table
+            border
+            columns="repeat(5, 1fr) 96px">
+            <pa-table-sortable-header [cells]="syncTableHeader"></pa-table-sortable-header>
+
+            @for (sync of syncs; track sync.id) {
+              <pa-table-row>
+                <pa-table-cell>
+                  <a
+                    [routerLink]="'./' + sync.id"
+                    class="body-m black-link">
+                    {{ sync.title }}
+                  </a>
+                </pa-table-cell>
+                <pa-table-cell>
+                  @if (sync.connectorId && connectors[sync.connectorId]?.definition; as connector) {
+                    <div class="logo-title">
+                      <pa-icon
+                        size="small"
+                        [path]="connector.logo"></pa-icon>
+                      {{ connector.title }}
+                    </div>
+                  }
+                </pa-table-cell>
+                <pa-table-cell>
+                  <div class="body-s">{{ sync.totalSyncedResources }}</div>
+                </pa-table-cell>
+                <pa-table-cell>
+                  @if (!(useCloudSync | async)) {
+                    <pa-toggle
+                      labelOnRight
+                      [value]="!sync.disabled"
+                      (valueChange)="toggleSync(sync.id, $event)">
+                      {{ sync.disabled ? 'Off' : 'On' }}
+                    </pa-toggle>
+                  }
+                </pa-table-cell>
+                <pa-table-cell>
+                  <div class="body-s">
+                    @if (sync.lastSyncGMT !== '1970-01-01') {
+                      <pa-datetime [datetime]="sync.lastSyncGMT"></pa-datetime>
+                    } @else {
+                      –
+                    }
+                  </div>
+                </pa-table-cell>
+                <pa-table-cell-menu>
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="syncMenu">
+                    Menu
+                  </pa-button>
+                  <pa-dropdown #syncMenu>
+                    <pa-option [routerLink]="'./' + sync.id + '/edit'">
+                      {{ 'sync.home-page.sync-list.menu.edit-settings' | translate }}
+                    </pa-option>
+                    @if (sync.connector?.allowToSelectFolders) {
+                      <pa-option [routerLink]="'./' + sync.id + '/edit'">
+                        {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
+                      </pa-option>
+                    }
+                    <pa-option
+                      [routerLink]="'./' + sync.id"
+                      [queryParams]="{ section: 'activity' }">
+                      {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
+                    </pa-option>
+                    <pa-option
+                      destructive
+                      (selectOption)="deleteSync(sync)">
+                      {{ 'sync.home-page.sync-list.menu.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </pa-table-cell-menu>
+              </pa-table-row>
+            }
+          </pa-table>
+        }
+      }
+    </div>
   </section>
 </div>

@@ -12,10 +12,11 @@ import {
   Output,
   Pipe,
   PipeTransform,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
@@ -25,7 +26,9 @@ import {
   OptionModel,
   OptionSeparator,
   OptionType,
+  PaButtonModule,
   PaDropdownModule,
+  PaIconModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -51,6 +54,8 @@ import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
+import { RaoEditSourceModalComponent, EditSourceModalData, EditSourceModalResult } from './rao-edit-source-modal/rao-edit-source-modal.component';
+import { KbConnectionsService } from '../connections.service';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
@@ -70,7 +75,9 @@ export class IsTypedConfigPipe implements PipeTransform {
     AccordionItemComponent,
     ButtonMiniComponent,
     InfoCardComponent,
+    PaButtonModule,
     PaDropdownModule,
+    PaIconModule,
     PaPopupModule,
     PaTextFieldModule,
     PaTooltipModule,
@@ -93,11 +100,14 @@ export class IsTypedConfigPipe implements PipeTransform {
 export class SearchConfigurationComponent {
   private cdr = inject(ChangeDetectorRef);
   private sdk = inject(SDKService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
   private toaster = inject(SisToastService);
   private features = inject(FeaturesService);
+  private connectionsService = inject(KbConnectionsService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -150,6 +160,9 @@ export class SearchConfigurationComponent {
   ignoreChanges = false;
   ignoreNextRoutingRefresh = false;
 
+  readonly connections = this.connectionsService.connections;
+  selectedRaoSourceId = signal<string>('');
+
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
   }
@@ -192,6 +205,7 @@ export class SearchConfigurationComponent {
       .subscribe({
         error: () => this.toaster.error('search.configuration.loading-error'),
       });
+
     this.searchWidgetService.logs
       .pipe(
         takeUntil(this.unsubscribeAll),
@@ -341,6 +355,29 @@ export class SearchConfigurationComponent {
     } else {
       this.createWidget.emit();
     }
+  }
+
+  selectRaoSource(id: string) {
+    this.selectedRaoSourceId.set(id);
+  }
+
+  editRaoSource(event: Event, source: { id: string; label: string; description: string }) {
+    event.stopPropagation();
+    this.modalService
+      .openModal(
+        RaoEditSourceModalComponent,
+        new ModalConfig<EditSourceModalData>({
+          data: { sourceLabel: source.label, description: source.description },
+        }),
+      )
+      .onClose.pipe(filter((result): result is EditSourceModalResult => !!result && typeof result === 'object'))
+      .subscribe(({ label, description }) => {
+        this.connectionsService.update(source.id, { label, description });
+      });
+  }
+
+  navigateToSync() {
+    this.router.navigate(['../sync'], { relativeTo: this.route });
   }
 
   resetConfig() {

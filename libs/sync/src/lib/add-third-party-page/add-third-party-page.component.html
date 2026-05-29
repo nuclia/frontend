@@ -1,0 +1,57 @@
+<div class="page-spacing">
+  <nsi-back-button [link]="backPath">
+    {{ 'sync.add-page.back-button' | translate }}
+  </nsi-back-button>
+
+  @if (app) {
+    <h1 class="page-title">
+      <pa-icon
+        [path]="app.logo"
+        size="large"></pa-icon>
+      {{ app.titleKey | translate }}
+    </h1>
+    <p class="page-description">{{ app.descriptionKey | translate }}</p>
+  }
+
+  @if (authenticated()) {
+    <form
+      class="connect-form"
+      [formGroup]="connectForm">
+      <pa-input
+        formControlName="name"
+        [placeholder]="'sync.home-page.connect.third-party.name-placeholder' | translate">
+        {{ 'sync.home-page.connect.third-party.name-label' | translate }}<span class="required-asterisk"> *</span>
+      </pa-input>
+      <pa-textarea
+        formControlName="description"
+        [rows]="4"
+        [resizable]="false"
+        [help]="'sync.home-page.connect.third-party.description-help' | translate"
+        [placeholder]="'sync.home-page.connect.third-party.description-placeholder' | translate">
+        {{ 'sync.home-page.connect.third-party.description-label' | translate }}<span class="required-asterisk"> *</span>
+      </pa-textarea>
+    </form>
+  }
+
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    @if (!authenticated()) {
+      <pa-button
+        kind="primary"
+        (click)="authenticate()">
+        {{ 'sync.home-page.connect.third-party.authenticate' | translate }}
+      </pa-button>
+    } @else {
+      <pa-button
+        kind="primary"
+        [disabled]="connectForm.invalid"
+        (click)="connect()">
+        {{ 'sync.home-page.connect.third-party.connect-button' | translate }}
+      </pa-button>
+    }
+  </nsi-sticky-footer>
+</div>

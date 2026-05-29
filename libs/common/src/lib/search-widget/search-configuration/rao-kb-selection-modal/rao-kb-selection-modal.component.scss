@@ -1,0 +1,48 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.kb-selection-list {
+  display: flex;
+  flex-direction: column;
+  max-height: rhythm(30);
+  min-height: rhythm(14);
+  overflow-y: auto;
+  @include scrollbar-black();
+}
+
+.kb-option {
+  @include body-m();
+
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid $color-border-menu-separator;
+  color: $color-dark-stronger;
+  cursor: pointer;
+  display: flex;
+  gap: rhythm(1);
+  min-height: rhythm(5);
+  padding: 0 rhythm(1);
+  text-align: left;
+  width: 100%;
+
+  .kb-title {
+    flex: 1;
+  }
+
+  &:hover {
+    background-color: $color-background-menu-option-hover;
+  }
+
+  &.selected {
+    background-color: $color-neutral-lightest;
+  }
+}
+
+.kb-empty {
+  @include body-m();
+
+  color: $color-neutral-regular;
+  font-style: italic;
+  padding: rhythm(3) 0;
+  text-align: center;
+}

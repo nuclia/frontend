@@ -122,6 +122,46 @@
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
       <pa-accordion (toggleAccordion)="scrollOnTop()">
         <pa-accordion-item
+          id="rao-predefined-flow"
+          [itemTitle]="'search.configuration.rao.section-title' | translate"
+          [description]="'search.configuration.rao.section-description' | translate">
+          <pa-accordion-item-body>
+            <div class="rao-config-flow">
+              <div class="config-form-help">{{ 'search.configuration.rao.choose-source' | translate }}</div>
+              @if (connections().length > 0) {
+                <pa-radio-group
+                  class="rao-sources-list"
+                  noBackground
+                  [value]="selectedRaoSourceId()"
+                  (valueChange)="selectRaoSource($event)">
+                  @for (source of connections(); track source.id) {
+                    <div class="rao-source-row">
+                      <pa-radio [value]="source.id">{{ source.label }}</pa-radio>
+                      <pa-button
+                        aspect="basic"
+                        size="small"
+                        icon="edit"
+                        (click)="editRaoSource($event, source)"></pa-button>
+                    </div>
+                  }
+                </pa-radio-group>
+              } @else {
+                <div class="rao-no-source">
+                  <span class="config-form-help rao-no-source-text">
+                    {{ 'search.configuration.rao.no-source-message' | translate }}
+                  </span>
+                  <pa-button
+                    kind="primary"
+                    size="small"
+                    (click)="navigateToSync()">
+                    {{ 'search.configuration.rao.connect-source-button' | translate }}
+                  </pa-button>
+                </div>
+              }
+            </div>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
           #searchBox
           id="search-box"
           [itemTitle]="'search.configuration.search-box.section-title' | translate"
