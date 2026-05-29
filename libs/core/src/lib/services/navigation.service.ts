@@ -216,7 +216,22 @@ export class NavigationService {
     this.router.navigate([this.getAccountSelectUrl()]);
   }
 
-  setSimpleMode(value: boolean) {
-    this.simpleMode.next(value);
+  private modeManuallyOverridden = false;
+  private lastAccountSlug: string | null = null;
+
+  setSimpleMode(value: boolean, manual = false): void {
+    if (manual) {
+      this.modeManuallyOverridden = true;
+      this.simpleMode.next(value);
+    } else if (!this.modeManuallyOverridden) {
+      this.simpleMode.next(value);
+    }
+  }
+
+  resetModeOverride(accountSlug: string): void {
+    if (this.lastAccountSlug !== accountSlug) {
+      this.lastAccountSlug = accountSlug;
+      this.modeManuallyOverridden = false;
+    }
   }
 }

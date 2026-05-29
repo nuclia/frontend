@@ -55,7 +55,7 @@
         kind="primary"
         aspect="basic"
         size="small"
-        [routerLink]="billingUrl | async">
+        (click)="goToSubscriptions()">
         {{ 'account.type.' + (accountType | async) | translate }}
         @if (showTrial | async) {
           ({{ 'account.type.trial-mode' | translate }})

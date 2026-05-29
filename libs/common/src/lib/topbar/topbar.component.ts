@@ -102,6 +102,13 @@ export class TopbarComponent {
       this.navigationService.kbUrl.pipe(take(1)),
       this.navigationService.homeUrl.pipe(take(1)),
     ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
+      if (this.inDashboard && !isCowork) {
+        // The logo should always take dashboard users back to the simple home UI.
+        this.navigationService.setSimpleMode(true, true);
+        this.router.navigateByUrl(`${kbUrl}/simple`);
+        return;
+      }
+
       this.router.navigate([isCowork ? kbUrl : homeUrl]);
     });
   }
@@ -118,10 +125,23 @@ export class TopbarComponent {
     );
   }
 
+  goToSubscriptions() {
+    combineLatest([this.simpleMode.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(
+      ([isSimple, account]) => {
+        if (isSimple) {
+          const homeUrl = this.navigationService.getAccountManageUrl(account.slug) + '/home';
+          this.router.navigate([homeUrl], { queryParams: { tab: 'subscriptions' } });
+        } else {
+          this.router.navigate([this.navigationService.getAccountManageUrl(account.slug) + '/billing']);
+        }
+      },
+    );
+  }
+
   switchMode(value: boolean) {
-    this.navigationService.simpleMode.next(!value);
-    this.navigationService.homeUrl.pipe(take(1)).subscribe((homeUrl) => {
-      this.router.navigateByUrl(homeUrl);
+    this.navigationService.setSimpleMode(!value, true);
+    this.navigationService.kbUrl.pipe(take(1)).subscribe((kbUrl) => {
+      this.router.navigateByUrl(value ? kbUrl : `${kbUrl}/simple`);
     });
   }
 }

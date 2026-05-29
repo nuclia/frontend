@@ -97,6 +97,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(1),
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
+  simpleMode = this.navigation.simpleMode;
+  backToSettingsLink = combineLatest([this.navigation.simpleMode, this.sdk.currentAccount]).pipe(
+    map(([isSimple, account]) => this.navigation.getAccountManageUrl(account.slug) + (isSimple ? '/home' : '/billing')),
+  );
 
   updateCurrency = new Subject<string>();
   currency$ = merge(

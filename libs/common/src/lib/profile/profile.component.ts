@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,6 +23,10 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
   imports: [TranslateModule, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
+  @Output() saved = new EventEmitter<void>();
+
+  private location = inject(Location);
+
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
@@ -44,7 +56,6 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
-    private location: Location,
     private loginService: LoginService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -62,6 +73,10 @@ export class ProfileComponent implements OnInit {
         this.profileForm.get('email')?.setValue(prefs?.email);
         this.cdr?.markForCheck();
       });
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   save() {
@@ -82,12 +97,11 @@ export class ProfileComponent implements OnInit {
           if (this.language) {
             this.translate.use(this.language);
           }
-          this.goBack();
+          this.saved.emit();
+          if (!this.saved.observed) {
+            this.goBack();
+          }
         });
     }
-  }
-
-  goBack() {
-    this.location.back();
   }
 }

@@ -6,5 +6,6 @@ export * from './set-account.guard';
 export * from './set-agent.guard';
 export * from './set-kb.guard';
 export * from './set-local-kb.guard';
+export * from './can-match-simple-mode.guard';
 export * from './simple-mode.guard';
 export * from './agent-feature-enabled.guard';

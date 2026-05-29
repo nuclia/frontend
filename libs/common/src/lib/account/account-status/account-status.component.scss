@@ -1,17 +1,28 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .account-status {
-  align-items: center;
   display: flex;
+  flex-direction: column;
   gap: rhythm(1);
-  justify-content: space-between;
+}
+
+.upgrade-inline {
+  flex-shrink: 0;
 }
 
 .account-type-container {
+  align-items: center;
+  column-gap: rhythm(3);
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: rhythm(1);
+}
+
+.trial-info {
+  align-items: center;
   column-gap: rhythm(1);
   display: flex;
   flex-wrap: wrap;
-  row-gap: 0;
 }
 
 .expiration {
@@ -19,11 +30,17 @@
 }
 
 .buttons {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
-  flex-direction: column;
-  gap: rhythm(1);
+  flex-direction: row;
+  gap: rhythm(1.5);
   pa-button.full-width {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .upgrade-inline {
     width: 100%;
   }
 }

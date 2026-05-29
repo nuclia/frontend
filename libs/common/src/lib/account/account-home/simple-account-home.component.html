@@ -1,0 +1,65 @@
+<div class="simple-account-home page-spacing">
+  @if (isTrial | async) {
+    <div class="trial-status-top">
+      <app-account-status (upgradeClick)="goToSection('subscriptions')"></app-account-status>
+    </div>
+  }
+
+  <div class="settings-header">
+    <h1 class="page-title">{{ 'generic.settings' | translate }}</h1>
+    <p class="page-description">{{ 'account.settings-description' | translate }}</p>
+  </div>
+
+  <div class="settings-navigation">
+    <nsi-back-button
+      class="back-home-button"
+      [link]="backLink | async">
+      {{ 'generic.back_to_home' | translate }}
+    </nsi-back-button>
+
+    <pa-tabs class="settings-tabs">
+      <pa-tab
+        [active]="selectedTab === 'consumption'"
+        (click)="goToSection('consumption')">
+        {{ 'account.consumption' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="selectedTab === 'subscriptions'"
+        (click)="goToSection('subscriptions')">
+        {{ 'account.subscriptions' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="selectedTab === 'users'"
+        (click)="goToSection('users')">
+        {{ 'account.manage_users' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="selectedTab === 'preferences'"
+        (click)="goToSection('preferences')">
+        {{ 'account.preferences' | translate }}
+      </pa-tab>
+    </pa-tabs>
+  </div>
+
+  <div class="settings-section">
+    @switch (selectedTab) {
+      @case ('consumption') {
+        <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
+        <p class="page-description">{{ 'account.consumption-description' | translate }}</p>
+        <app-nuclia-tokens
+          [usage]="usage"
+          [selectedPeriod]="selectedPeriod | async"
+          (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
+      }
+      @case ('subscriptions') {
+        <app-subscriptions></app-subscriptions>
+      }
+      @case ('users') {
+        <app-account-users></app-account-users>
+      }
+      @case ('preferences') {
+        <nus-profile></nus-profile>
+      }
+    }
+  </div>
+</div>
