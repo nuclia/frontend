@@ -16,7 +16,7 @@ import {
 import { UserService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsItem } from '../metrics-column.model';
-import { getMonthRange } from '../metrics-utils';
+import { getMonthRange, getMonthsSinceDate } from '../metrics-utils';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 import { DateCondition } from '../metrics-filters';
 
@@ -95,18 +95,10 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   }
 
   protected loadAvailableMonths(): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(EventType.ASK)),
-        map((res) => [...res.downloads].sort((a, b) => b.localeCompare(a))),
-      )
-      .subscribe({
-        next: (months) => this._availableMonths.set(months),
-        error: () => {
-          /* empty */
-        },
-      });
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      this._availableMonths.set(getMonthsSinceDate(creationDate));
+    });
   }
 
   protected override _resetPaginationState(): void {

@@ -1,5 +1,6 @@
 import { UsagePoint } from '@nuclia/core';
 import { DateCondition, NumericCondition } from './metrics-filters';
+import { differenceInCalendarMonths } from 'date-fns';
 
 /**
  * Converts a YYYY-MM string into a date range spanning that full month.
@@ -101,4 +102,25 @@ export function getRemiColorClass(val: number | null | undefined): 'low' | 'mid'
   if (val <= 2) return 'low';
   if (val >= 4) return 'high';
   return 'mid';
+}
+
+/**
+ * Converts a Date object into a YYYY-MM string.
+ */
+export function formatDateToYearMonth(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/**
+ * Returns an array of YYYY-MM strings representing each month from the given date to the current month.
+ */
+export function getMonthsSinceDate(date: Date): string[] {
+  const diff = differenceInCalendarMonths(new Date(), date) + 1;
+  const months = [];
+  for (let i = 0; i < diff; i++) {
+    const prevMonth = new Date();
+    prevMonth.setUTCMonth(prevMonth.getUTCMonth() - i);
+    months.push(prevMonth);
+  }
+  return months.map((month) => formatDateToYearMonth(month));
 }
