@@ -254,7 +254,7 @@
     initHook(nucliaAPI);
     if (_features.filter) {
       if (_filters.labels || _filters.labelFamilies) {
-        initLabelStore(labelsets_excluded_from_filters);
+        initLabelStore(labelsets_excluded_from_filters, _filter_expression);
       }
       if (_filters.entities) {
         initEntitiesStore();
