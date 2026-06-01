@@ -242,6 +242,7 @@ export class BillingService {
             {} as { [key in AccountTypes]: Prices },
           );
         }),
+        catchError(() => of({} as { [key in AccountTypes]: Prices })),
       );
   }
 

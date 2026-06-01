@@ -19,7 +19,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../users-manage';
 import { AccountAragComponent } from './account-arag/account-arag.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
@@ -35,6 +35,7 @@ import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
+import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
 import { BillingComponent } from './billing/billing.component';
 import { BillingModule } from './billing/billing.module';
 import { CheckoutComponent } from './billing/checkout/checkout.component';
@@ -45,7 +46,7 @@ import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.co
 import { UsageTableComponent } from './billing/usage/usage-table.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
 import { AccountModelsComponent } from './account-models/account-models.component';
-import { accountOwnerGuard, agentFeatureEnabledGuard } from '../guards';
+import { accountOwnerGuard, agentFeatureEnabledGuard, canMatchSimpleMode } from '../guards';
 import { KbCreationComponent } from '../kb-creation';
 import { PipesModule } from '../pipes';
 import { TokenDialogModule } from '../token-dialog';
@@ -53,6 +54,7 @@ import { ChartsModule } from '../charts';
 import { NavbarModule } from '../navbar';
 import { HintModule } from '../hint';
 import { KnowledgeBoxSettingsModule } from '../knowledge-box-settings';
+import { ProfileComponent } from '../profile/profile.component';
 
 const routes: Routes = [
   {
@@ -63,6 +65,12 @@ const routes: Routes = [
   {
     path: 'settings',
     component: AccountManageComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'home',
+    canMatch: [canMatchSimpleMode],
+    component: SimpleAccountHomeComponent,
     canActivate: [accountOwnerGuard],
   },
   {
@@ -166,6 +174,7 @@ const routes: Routes = [
     PaTogglesModule,
     PaIconModule,
     DropdownButtonComponent,
+    BackButtonComponent,
     PaDropdownModule,
     SisProgressModule,
     PaTableModule,
@@ -181,6 +190,7 @@ const routes: Routes = [
     LowerCaseInputDirective,
     OtpInputComponent,
     AccountDeleteComponent,
+    ProfileComponent,
   ],
   declarations: [
     AccountHomeComponent,
@@ -192,7 +202,8 @@ const routes: Routes = [
     ClientDialogComponent,
     AccountUsersComponent,
     NuaActivityComponent,
+    SimpleAccountHomeComponent,
   ],
-  exports: [AccountHomeComponent, AccountManageComponent],
+  exports: [AccountHomeComponent, AccountManageComponent, SimpleAccountHomeComponent],
 })
 export class AccountModule {}

@@ -559,7 +559,7 @@
             </div>
           }
         </div>
-        @if (kb | async) {
+        @if ((kb | async) || (inAccount | async)) {
           <div class="nav-group">
             <div class="group-items">
               <a

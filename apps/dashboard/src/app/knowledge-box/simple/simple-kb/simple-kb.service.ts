@@ -329,7 +329,9 @@ export class SimpleKBService {
             if (answerData) {
               try {
                 answerDataJSON = JSON.parse(answerData);
-              } catch (e) {}
+              } catch (e) {
+                console.error('Failed to parse answer data JSON', e);
+              }
             }
             if (answerDataJSON) {
               acc[acc.length - 1].answer = answerDataJSON;

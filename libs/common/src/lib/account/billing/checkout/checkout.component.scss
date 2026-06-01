@@ -4,11 +4,19 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(6);
+  margin: 0 auto;
   max-width: calc(rhythm(90) + rhythm(32));
+  width: 100%;
 }
 
+h1,
 h2 {
   margin: 0;
+}
+
+.page-description {
+  color: $color-neutral-regular;
+  margin: rhythm(1) 0 0;
 }
 
 .section-header {

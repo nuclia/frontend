@@ -7,10 +7,9 @@
       (click)="goBack()">
       {{ 'generic.close' | translate }}
     </pa-button>
-
+    <h1 class="page-title">{{ 'account.preferences' | translate }}</h1>
+    <p class="page-description">{{ 'account.preferences-description' | translate }}</p>
     <form [formGroup]="profileForm">
-      <h1>{{ 'generic.user_preferences' | translate }}</h1>
-
       <div class="field">
         <pa-input
           formControlName="name"

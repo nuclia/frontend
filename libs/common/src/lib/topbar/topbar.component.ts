@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
+import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -97,13 +97,17 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
-    combineLatest([
-      this.isCowork.pipe(take(1)),
-      this.navigationService.kbUrl.pipe(take(1)),
-      this.navigationService.homeUrl.pipe(take(1)),
-    ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
-      this.router.navigate([isCowork ? kbUrl : homeUrl]);
-    });
+    const simpleHomeUrl$ = this.sdk.isKbLoaded
+      ? this.navigationService.kbUrl
+      : of(this.navigationService.getAccountSelectUrl());
+
+    this.simpleMode
+      .pipe(
+        take(1),
+        switchMap((simpleMode) => (simpleMode ? simpleHomeUrl$ : this.navigationService.homeUrl)),
+        take(1),
+      )
+      .subscribe((url) => this.router.navigate([url]));
   }
 
   bookDemo() {
@@ -118,10 +122,23 @@ export class TopbarComponent {
     );
   }
 
+  goToSubscriptions() {
+    combineLatest([this.simpleMode.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(
+      ([isSimple, account]) => {
+        if (isSimple) {
+          const homeUrl = this.navigationService.getAccountManageUrl(account.slug) + '/home';
+          this.router.navigate([homeUrl], { queryParams: { tab: 'subscriptions' } });
+        } else {
+          this.router.navigate([this.navigationService.getAccountManageUrl(account.slug) + '/billing']);
+        }
+      },
+    );
+  }
+
   switchMode(value: boolean) {
-    this.navigationService.simpleMode.next(!value);
-    this.navigationService.homeUrl.pipe(take(1)).subscribe((homeUrl) => {
-      this.router.navigateByUrl(homeUrl);
+    this.navigationService.setSimpleMode(!value, true);
+    this.navigationService.kbUrl.pipe(take(1)).subscribe((kbUrl) => {
+      this.router.navigateByUrl(value ? kbUrl : `${kbUrl}/simple`);
     });
   }
 }

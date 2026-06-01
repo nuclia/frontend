@@ -3,11 +3,9 @@
 } @else if ((isManuallySubscribed | async) === true) {
   <app-manual-subscription></app-manual-subscription>
 } @else {
+  <h1 class="page-title">{{ 'billing.subscription.title' | translate }}</h1>
+  <p class="page-description">{{ 'billing.subscription.help' | translate }}</p>
   <div class="header">
-    <h2>{{ 'billing.subscription.title' | translate }}</h2>
-    @if (!(showCowork | async)) {
-      <div class="body-m">{{ 'billing.subscription.help' | translate }}</div>
-    }
     @if (canSelectCurrency) {
       <div>
         <button
@@ -45,8 +43,7 @@
               @if (!!(isTrial | async)) {
                 <pa-button
                   kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'cowork' }">
+                  (click)="goToPaymentDetails('cowork')">
                   {{ 'billing.upgrade' | translate }}
                 </pa-button>
               } @else if ((accountType | async) === 'cowork') {
@@ -67,8 +64,7 @@
               @if (!!(isTrial | async)) {
                 <pa-button
                   kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'v3starter' }">
+                  (click)="goToPaymentDetails('v3starter')">
                   {{ 'billing.upgrade' | translate }}
                 </pa-button>
               } @else if ((accountType | async) === 'v3starter') {
@@ -88,8 +84,7 @@
               @if (!!(isTrial | async)) {
                 <pa-button
                   kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'v3pro' }">
+                  (click)="goToPaymentDetails('v3pro')">
                   {{ 'billing.upgrade' | translate }}
                 </pa-button>
               } @else if ((accountType | async) === 'v3pro') {

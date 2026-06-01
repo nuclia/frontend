@@ -9,12 +9,14 @@ import {
   shareReplay,
   Subject,
   switchMap,
+  take,
   takeUntil,
 } from 'rxjs';
-import { AccountService, BillingService, Currency, FeaturesService, SDKService } from '@flaps/core';
+import { AccountService, BillingService, Currency, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountTypes } from '@nuclia/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-subscriptions',
@@ -59,6 +61,8 @@ export class SubscriptionsComponent implements OnDestroy {
     private subscriptionService: SubscriptionService,
     private features: FeaturesService,
     private sdk: SDKService,
+    private navigation: NavigationService,
+    private router: Router,
     @Inject(WINDOW) private window: Window,
   ) {
     combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])
@@ -80,6 +84,14 @@ export class SubscriptionsComponent implements OnDestroy {
 
   contact() {
     window.open('https://www.progress.com/agentic-rag/contact-us', 'blank', 'noreferrer');
+  }
+
+  goToPaymentDetails(type: AccountTypes) {
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/billing/checkout`], {
+        queryParams: { type },
+      });
+    });
   }
 
   ngOnDestroy() {
