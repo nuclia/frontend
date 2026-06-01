@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
+import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -97,20 +97,17 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
-    combineLatest([
-      this.isCowork.pipe(take(1)),
-      this.navigationService.kbUrl.pipe(take(1)),
-      this.navigationService.homeUrl.pipe(take(1)),
-    ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
-      if (this.inDashboard && !isCowork) {
-        // The logo should always take dashboard users back to the simple home UI.
-        this.navigationService.setSimpleMode(true, true);
-        this.router.navigateByUrl(`${kbUrl}/simple`);
-        return;
-      }
+    const simpleHomeUrl$ = this.sdk.isKbLoaded
+      ? this.navigationService.kbUrl
+      : of(this.navigationService.getAccountSelectUrl());
 
-      this.router.navigate([isCowork ? kbUrl : homeUrl]);
-    });
+    this.simpleMode
+      .pipe(
+        take(1),
+        switchMap((simpleMode) => (simpleMode ? simpleHomeUrl$ : this.navigationService.homeUrl)),
+        take(1),
+      )
+      .subscribe((url) => this.router.navigate([url]));
   }
 
   bookDemo() {
