@@ -103,8 +103,6 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
-  getSynonyms(): Observable<Synonyms>;
-
   getFacets(facets: string[]): Observable<Search.FacetsResult>;
 
   getLabels(): Observable<LabelSets>;
@@ -222,17 +220,6 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   setLabelSet(setId: string, labelSet: LabelSet): Observable<void>;
 
   deleteLabelSet(setId: string): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * @param synonyms
-   */
-  setSynonyms(synonyms: Synonyms): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   */
-  deleteAllSynonyms(): Observable<void>;
 
   createResource(resource: IResource, synchronous: boolean): Observable<{ uuid: string }>;
 
@@ -477,20 +464,6 @@ export interface ServiceAccount {
 export interface ServiceAccountCreation {
   title: string;
   role: KBRoles;
-}
-
-/**
- * @deprecated
- */
-export interface SynonymsPayload {
-  synonyms: Synonyms;
-}
-
-/**
- * @deprecated
- */
-export interface Synonyms {
-  [main: string]: string[];
 }
 
 export interface SentenceToken {

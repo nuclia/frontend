@@ -13,15 +13,6 @@ export const find = (
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {
   options = options || {};
-  if (
-    options?.with_synonyms &&
-    (features.includes(Search.Features.SEMANTIC) || features.includes(Search.Features.RELATIONS))
-  ) {
-    console.warn(`with_synonyms option cannot work with SEMANTIC and RELATIONS features`);
-    features = features.filter(
-      (feature) => feature !== Search.Features.SEMANTIC && feature !== Search.Features.RELATIONS,
-    );
-  }
   const params: { [key: string]: string | string[] } = {
     query: query || '',
     features,

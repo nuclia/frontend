@@ -130,7 +130,6 @@
           <pa-accordion-item-body>
             <stf-search-box-form
               [config]="savedConfig?.searchBox"
-              [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
               [semanticModels]="semanticModels"
               (configChanged)="updateSearchBoxConfig($event)"
               (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
@@ -164,7 +163,6 @@
           <pa-accordion-item-body>
             <stf-results-display-form
               [config]="savedConfig?.resultDisplay"
-              [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
               [modelNames]="generativeModelNames"
               [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
               [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"

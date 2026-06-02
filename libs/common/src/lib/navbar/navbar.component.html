@@ -148,17 +148,6 @@
                 </a>
 
                 @if (!standalone) {
-                  @if (isSynonymsEnabled | async) {
-                    <a
-                      [routerLink]="kbUrl + '/synonyms'"
-                      routerLinkActive="active"
-                      data-cy="go-to-synonyms"
-                      class="nav-link sub-item">
-                      <pa-icon name="synonyms"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
-                    </a>
-                  }
-
                   @if (isKbAdmin | async) {
                     <a
                       [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"

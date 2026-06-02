@@ -95,7 +95,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
-  isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;

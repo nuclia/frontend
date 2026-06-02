@@ -24,7 +24,7 @@
   const backend = 'https://accounts.stashify.cloud/api';
   // const backend = 'https://accounts.progress.cloud/api';
   const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,persistChatHistory';
-  const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
+  const findFeatures = 'filter,autofilter,permalink,hideThumbnails,autocompleteFromNERs,displayMetadata';
   const filters = 'labels,created,mime';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';

@@ -55,7 +55,6 @@ export class FeaturesService {
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
-    synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
     speech: this.featureFlag.isFeatureEnabled('speech'),
     promptSafetyTask: this.featureFlag.isFeatureEnabled('prompt-safety-task'),
     contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
