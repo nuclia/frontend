@@ -177,7 +177,6 @@ export function getChatOptions(searchConfig: Widget.SearchConfiguration, default
 export function getFindOptions(searchConfig: Widget.SearchConfiguration): SearchOptions {
   const options: SearchOptions = {
     ...getBaseSearchOptions(searchConfig),
-    with_synonyms: searchConfig.searchBox.useSynonyms,
   };
   if (searchConfig.searchBox.generateAnswerWith === 'only-semantic') {
     options.features = [Search.Features.SEMANTIC];
@@ -292,7 +291,6 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
   }
   if (searchOptions.kind === 'find') {
     const findOptions = options as SearchOptions;
-    config.searchBox.useSynonyms = !!findOptions.with_synonyms;
     config.searchBox.useRephrasePrompt = !!findOptions.rephrase_prompt;
     config.searchBox.rephrasePrompt = findOptions.rephrase_prompt || '';
     config.searchBox.generateAnswerWith =

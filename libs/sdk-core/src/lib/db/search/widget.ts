@@ -22,7 +22,6 @@ export namespace Widget {
     filterLogic: 'and' | 'or';
     setPreselectedFilters: boolean;
     suggestions: boolean;
-    useSynonyms: boolean;
     highlight: boolean;
     suggestResults: boolean;
     autocompleteFromNERs: boolean;
@@ -224,7 +223,6 @@ export namespace Widget {
     hideThumbnails?: boolean;
     displayFieldList?: boolean;
     knowledgeGraph?: boolean;
-    useSynonyms?: boolean;
     /**
      * @deprecated use semanticOnly
      */
@@ -280,7 +278,6 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   suggestions: false,
   suggestResults: false,
   autocompleteFromNERs: false,
-  useSynonyms: false,
   highlight: false,
   rephraseQuery: true,
   useRephrasePrompt: false,
@@ -587,7 +584,6 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
-    useSynonyms: config.searchBox.useSynonyms,
     highlight: config.searchBox.highlight,
     suggestions: config.searchBox.suggestions,
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,

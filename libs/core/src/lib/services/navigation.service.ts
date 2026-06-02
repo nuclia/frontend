@@ -97,7 +97,7 @@ export class NavigationService {
       const pattern = `/(${commonPages.join('|')})$`;
       return new RegExp(pattern).test(path);
     } else {
-      const settingsPages = commonPages.concat(['synonyms', 'training', 'users', 'keys', 'rag-lab', 'tasks']);
+      const settingsPages = commonPages.concat(['training', 'users', 'keys', 'rag-lab', 'tasks']);
       const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
       return new RegExp(pattern).test(path);
     }

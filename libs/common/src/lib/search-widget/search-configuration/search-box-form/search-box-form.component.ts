@@ -57,13 +57,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       this.form.patchValue(value);
     }
   }
-  @Input() set relationsEnabled(value: boolean) {
-    if (value) {
-      this.form.controls.useSynonyms.disable();
-    } else {
-      this.form.controls.useSynonyms.enable();
-    }
-  }
   @Input({ required: true }) semanticModels: OptionModel[] = [];
 
   @Output() heightChanged = new EventEmitter<void>();
@@ -87,7 +80,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     preselectedFilterExpression: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-    useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     highlight: new FormControl<boolean>(false, { nonNullable: true }),
     rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
     useRephrasePrompt: new FormControl<boolean>(false, { nonNullable: true }),
@@ -107,7 +99,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     securityGroups: new FormControl<string>('', { nonNullable: true }),
   });
 
-  synonymsEnabled = this.featuresService.unstable.synonyms;
   autocompleteFromNerEnabled = this.featuresService.authorized.suggestEntities;
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 

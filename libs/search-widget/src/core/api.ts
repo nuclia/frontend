@@ -86,7 +86,7 @@ let SECURITY_GROUPS: string[] | undefined;
 const ASK_SHOW: ResourceProperties[] = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
 
 const _applySearchModeOptions = (widgetOptions: WidgetOptions) => {
-  if (widgetOptions.fuzzyOnly || widgetOptions.features?.useSynonyms) {
+  if (widgetOptions.fuzzyOnly) {
     SEARCH_MODE = [Search.Features.KEYWORD];
   }
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
@@ -108,9 +108,6 @@ const _applySearchModeOptions = (widgetOptions: WidgetOptions) => {
 };
 
 const _applyWidgetSearchOptions = (widgetOptions: WidgetOptions) => {
-  if (widgetOptions.features?.useSynonyms) {
-    SEARCH_OPTIONS.with_synonyms = true;
-  }
   if (widgetOptions.features?.showHidden) {
     SEARCH_OPTIONS.show_hidden = true;
   }
@@ -156,10 +153,6 @@ export const initNuclia = (
     console.error('Cannot exist more than one Nuclia widget at the same time. Cancelling the first instance.');
     resetNuclia();
   }
-  if (widgetOptions.features?.useSynonyms && widgetOptions.features?.relations) {
-    throw new Error('Cannot use synonyms and relations at the same time');
-  }
-
   CITATIONS = widgetOptions.features?.llmCitations ? 'llm_footnotes' : !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;

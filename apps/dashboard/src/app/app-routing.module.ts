@@ -132,10 +132,6 @@ const routes: Routes = [
                 loadChildren: () => import('./app-routing.lazy').then((m) => m.LabelSetsModule),
               },
               {
-                path: 'synonyms',
-                loadChildren: () => import('./synonyms/synonyms.module').then((m) => m.SynonymsModule),
-              },
-              {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
                 canActivate: [knowledgeBoxOwnerGuard],

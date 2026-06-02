@@ -81,8 +81,6 @@ import {
   ServiceAccountCreation,
   SplitStrategies,
   SplitStrategy,
-  Synonyms,
-  SynonymsPayload,
 } from './kb.models';
 import { SyncManager } from '../sync/sync';
 import { ISyncManager } from '../sync/sync.models';
@@ -173,10 +171,6 @@ export class KnowledgeBox implements IKnowledgeBox {
   /** Returns the NER family with the given id. */
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup> {
     return this.nuclia.rest.get<EntitiesGroup>(`${this.path}/entitiesgroup/${groupId}`);
-  }
-
-  getSynonyms(): Observable<Synonyms> {
-    return this.nuclia.rest.get<SynonymsPayload>(`${this.path}/custom-synonyms`).pipe(map((result) => result.synonyms));
   }
 
   /** Returns all the labels defined in the Knowledge Box. */
@@ -1040,21 +1034,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** Deletes a label set. */
   deleteLabelSet(setId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
-  }
-
-  /**
-   * @deprecated
-   * @param synonyms
-   */
-  setSynonyms(synonyms: Synonyms): Observable<void> {
-    return this.nuclia.rest.put<void>(`${this.path}/custom-synonyms`, { synonyms });
-  }
-
-  /**
-   * @deprecated
-   */
-  deleteAllSynonyms(): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/custom-synonyms`);
   }
 
   /** Creates and indexes a new resource in the Knowledge Box. */

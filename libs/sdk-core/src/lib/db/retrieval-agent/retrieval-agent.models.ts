@@ -52,14 +52,11 @@ export interface IRetrievalAgent extends Omit<
   IWritableKnowledgeBox,
   | 'getEntities'
   | 'getEntitiesGroup'
-  | 'getSynonyms'
   | 'getLabels'
   | 'createAgenticRAGPipeline'
   | 'generateRandomQuestionAboutResource'
   | 'setLabelSet'
   | 'deleteLabelSet'
-  | 'setSynonyms'
-  | 'deleteAllSynonyms'
 > {
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;

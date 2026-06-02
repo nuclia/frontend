@@ -141,7 +141,6 @@ export interface SearchOptions extends BaseSearchOptions {
   page_size?: number;
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
-  with_synonyms?: boolean;
   rephrase_prompt?: string;
   features?: Search.Features[];
 }

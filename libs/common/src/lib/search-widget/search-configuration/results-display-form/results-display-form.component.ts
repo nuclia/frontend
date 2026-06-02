@@ -63,13 +63,6 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       this.form.patchValue({ ...rest, metadatas: formattedMetadata });
     }
   }
-  @Input() set useSynonymsEnabled(value: boolean) {
-    if (value) {
-      this.form.controls.relations.disable();
-    } else {
-      this.form.controls.relations.enable();
-    }
-  }
   // TODO remove when all LLMs support JSON output
   @Input() modelNames: { [key: string]: string } = {};
   @Input() set generativeModel(model: string | undefined) {
