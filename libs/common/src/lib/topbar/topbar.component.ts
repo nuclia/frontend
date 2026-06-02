@@ -71,7 +71,6 @@ export class TopbarComponent {
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
   );
-  hasSimpleUI = this.features.unstable.simpleUI;
   logoPath = this.isCowork.pipe(
     map((isCowork) => {
       if (isCowork) {
@@ -133,12 +132,5 @@ export class TopbarComponent {
         }
       },
     );
-  }
-
-  switchMode(value: boolean) {
-    this.navigationService.setSimpleMode(!value, true);
-    this.navigationService.kbUrl.pipe(take(1)).subscribe((kbUrl) => {
-      this.router.navigateByUrl(value ? kbUrl : `${kbUrl}/simple`);
-    });
   }
 }

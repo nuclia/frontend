@@ -69,7 +69,6 @@ export class FeaturesService {
     cloudSyncSharepoint: this.featureFlag.isFeatureEnabled('cloud-sync-sharepoint'),
     raoWidget: this.featureFlag.isFeatureEnabled('rao-widget'),
     progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
-    simpleUI: this.featureFlag.isFeatureEnabled('simple-ui'),
     coworkAccount: this.featureFlag.isFeatureEnabled('cowork-account'),
     automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
   };

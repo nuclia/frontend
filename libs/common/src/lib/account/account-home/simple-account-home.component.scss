@@ -58,6 +58,10 @@
       margin-bottom: rhythm(1);
     }
 
+    ::ng-deep .account-users {
+      padding: 0;
+    }
+
     ::ng-deep nus-profile .profile .profile-container {
       padding: 0;
       margin: 0;
