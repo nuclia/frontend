@@ -158,25 +158,15 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      const {
-        labelSetsExcludedFromFilters: filterExcludedLabelSets,
-        initialFilters,
-        ...config
-      } = this.form.getRawValue();
+      const { labelSetsExcludedFromFilters: filterExcludedLabelSets, ...config } = this.form.getRawValue();
       const filterExcludedLabelSetsFormatted = filterExcludedLabelSets
         .split('\n')
         .map((item) => item.trim())
         .filter((item) => !!item)
         .join(',');
-      const initialFiltersFormatted = initialFilters
-        .split('\n')
-        .map((item) => (item.trim().split('/').length === 2 ? item.trim() : undefined))
-        .filter((item) => !!item)
-        .join(',');
       this.configChanged.emit({
         ...config,
         labelSetsExcludedFromFilters: filterExcludedLabelSetsFormatted,
-        initialFilters: initialFiltersFormatted,
       });
     });
   }

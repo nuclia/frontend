@@ -371,7 +371,7 @@
       } else if (_filter_expression) {
         filterExpression.set(_filter_expression);
       }
-      if (_initial_filters) {
+      if (_features.filter && _initial_filters) {
         addInitialLabelFilters(_initial_filters);
       }
       if (_reasoning) {

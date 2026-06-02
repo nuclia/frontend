@@ -684,10 +684,14 @@ function getLabelSetsExcludedFromFilters(config: Widget.SearchBoxConfig): string
   return config.labelSetsExcludedFromFilters;
 }
 function getInitialFilters(config: Widget.SearchBoxConfig): string {
-  if (!config.filter || (!config.filters.labels)) {
+  if (!config.filter || !config.filters.labels || !config.initialFilters.trim()) {
     return '';
   }
-  return config.initialFilters;
+  return config.initialFilters
+    .split('\n')
+    .map((filter) => filter.trim())
+    .filter((filter) => !!filter)
+    .join(',');
 }
 export function getPreselectedFilterValue(config: Widget.SearchBoxConfig): string {
   return config.preselectedFilters
