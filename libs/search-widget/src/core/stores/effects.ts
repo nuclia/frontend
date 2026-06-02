@@ -3,6 +3,7 @@ import type {
   BaseSearchOptions,
   ChatOptions,
   FieldFullId,
+  FilterExpression,
   IErrorResponse,
   LabelSets,
   Search,
@@ -75,7 +76,7 @@ import {
 } from './answers.store';
 import { entities, entitiesState } from './entities.store';
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
-import { labelSets, labelState } from './labels.store';
+import { getLabelsInPrefilters, labelSets, labelState } from './labels.store';
 import { mimeFacets } from './mime.store';
 import {
   combinedFilterExpression,
@@ -156,13 +157,25 @@ reset.subscribe(() => resetStatesAndEffects());
 /**
  * Initialise label sets in the store
  */
-export function initLabelStore(labelsetsExcludedFromFilters?: string) {
-  const excludedLabelSets = (labelsetsExcludedFromFilters || '').split(',');
+export function initLabelStore(labelsetsExcludedFromFilters?: string, prefilters?: FilterExpression) {
+  // Exclude any label set or label referenced in the prefilters
+  const prefilterLabels = getLabelsInPrefilters(prefilters || {});
+  const excludedLabelSets = (labelsetsExcludedFromFilters || '').split(',').concat(prefilterLabels.labelSets);
+  const excludedLabels = prefilterLabels.labels;
+
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
   getLabelSets().subscribe((labelSetMap) => {
     const filteredLabelSets = Object.entries(labelSetMap).reduce((filteredMap, [labelSetKey, labelSet]) => {
       if (!excludedLabelSets.includes(labelSetKey)) {
-        filteredMap = { ...filteredMap, [labelSetKey]: labelSet };
+        const filteredlabelSet = {
+          ...labelSet,
+          labels: labelSet.labels.filter(
+            (label) => !excludedLabels.some((l) => l.labelset === labelSetKey && l.label === label.title),
+          ),
+        };
+        if (filteredlabelSet.labels.length > 0) {
+          filteredMap[labelSetKey] = filteredlabelSet;
+        }
       }
       return filteredMap;
     }, {} as LabelSets);
