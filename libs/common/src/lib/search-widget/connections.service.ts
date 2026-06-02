@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type KbConnectionType = 'kb' | 'mcp' | 'perplexity';
+export type KbConnectionType = 'kb' | 'mcp' | 'perplexity' | 'perplexity-search' | 'perplexity-answer' | 'gemini';
 
 export interface KbConnection {
   id: string;

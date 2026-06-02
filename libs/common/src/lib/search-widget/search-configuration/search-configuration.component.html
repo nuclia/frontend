@@ -120,81 +120,118 @@
         [value]="currentJsonConfig"
         (valueChange)="updateJsonConfig($event)"></nsi-expandable-textarea>
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
+      <div class="search-mode-container">
+        <pa-radio-group noBackground [value]="searchMode()" (valueChange)="searchMode.set($event)">
+          <pa-radio
+            value="agentic"
+            [help]="'search.configuration.search-mode.agentic-description' | translate">
+            <span class="title-m">{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+          </pa-radio>
+          <pa-radio
+            value="simple-rag"
+            [help]="'search.configuration.search-mode.simple-rag-description' | translate">
+            <span class="title-m">{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
+          </pa-radio>
+          <pa-radio
+            value="search"
+            [help]="'search.configuration.search-mode.search-description' | translate">
+            <span class="title-m">{{ 'search.configuration.search-mode.search' | translate }}</span>
+          </pa-radio>
+        </pa-radio-group>
+      </div>
       <pa-accordion (toggleAccordion)="scrollOnTop()">
-        <pa-accordion-item
-          id="rao-predefined-flow"
-          [itemTitle]="'search.configuration.rao.section-title' | translate"
-          [description]="'search.configuration.rao.section-description' | translate">
-          <pa-accordion-item-body>
-            <div class="rao-config-flow">
-              <div class="config-form-help">{{ 'search.configuration.rao.choose-source' | translate }}</div>
-              @if (connections().length > 0) {
-                <pa-radio-group
-                  class="rao-sources-list"
-                  noBackground
-                  [value]="selectedRaoSourceId()"
-                  (valueChange)="selectRaoSource($event)">
-                  @for (source of connections(); track source.id) {
-                    <div class="rao-source-row">
-                      <pa-radio [value]="source.id">{{ source.label }}</pa-radio>
-                      <pa-button
-                        aspect="basic"
-                        size="small"
-                        icon="edit"
-                        (click)="editRaoSource($event, source)"></pa-button>
-                    </div>
-                  }
-                </pa-radio-group>
-              } @else {
-                <div class="rao-no-source">
-                  <span class="config-form-help rao-no-source-text">
-                    {{ 'search.configuration.rao.no-source-message' | translate }}
-                  </span>
-                  <pa-button
-                    kind="primary"
-                    size="small"
-                    (click)="navigateToSync()">
-                    {{ 'search.configuration.rao.connect-source-button' | translate }}
-                  </pa-button>
-                </div>
-              }
-            </div>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-        <pa-accordion-item
-          #searchBox
-          id="search-box"
-          [itemTitle]="'search.configuration.search-box.section-title' | translate"
-          [description]="'search.configuration.search-box.section-description' | translate"
-          (expandedChange)="updateSearchBoxHeight()">
-          <pa-accordion-item-body>
-            <stf-search-box-form
-              [config]="savedConfig?.searchBox"
-              [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
-              [semanticModels]="semanticModels"
-              (configChanged)="updateSearchBoxConfig($event)"
-              (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-        <pa-accordion-item
-          #generativeAnswer
-          id="generative-answer"
-          [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
-          [description]="'search.configuration.generative-answer.section-description' | translate"
-          (expandedChange)="updateGenerativeAnswerHeight()">
-          <pa-accordion-item-body>
-            <stf-generative-answer-form
-              [config]="savedConfig?.generativeAnswer"
-              [defaultPrompt]="defaultPromptFromSettings"
-              [defaultSystemPrompt]="defaultSystemPromptFromSettings"
-              [promptInfos]="promptInfos"
-              [generativeProviders]="generativeProviders"
-              [learningConfigurations]="learningConfigurations"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
-              (configChanged)="updateGenerativeAnswerConfig($event)"
-              (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
+        @if (searchMode() === 'agentic') {
+          <pa-accordion-item
+            id="rao-predefined-flow"
+            [itemTitle]="'search.configuration.agentic.section-title' | translate"
+            [description]="'search.configuration.agentic.section-description' | translate">
+            <pa-accordion-item-body>
+              <div class="rao-config-flow">
+                @if (currentKbSource()) {
+                  <div class="rao-source-row">
+                    <pa-checkbox
+                      [value]="selectedSourceIds().includes(currentKbSource()!.id)"
+                      (valueChange)="toggleSource(currentKbSource()!.id)">
+                      {{ currentKbSource()!.label }}
+                    </pa-checkbox>
+                    <nsi-badge kind="neutral">{{ connectionTypeLabels['kb'] }}</nsi-badge>
+                    <pa-button
+                      aspect="basic"
+                      size="small"
+                      icon="edit"
+                      (click)="editKbSource($event)"></pa-button>
+                  </div>
+                }
+                @for (source of connections(); track source.id) {
+                  <div class="rao-source-row">
+                    <pa-checkbox
+                      [value]="selectedSourceIds().includes(source.id)"
+                      (valueChange)="toggleSource(source.id)">
+                      {{ source.label }}
+                    </pa-checkbox>
+                    <nsi-badge kind="neutral">{{ connectionTypeLabels[source.type] }}</nsi-badge>
+                    <pa-button
+                      aspect="basic"
+                      size="small"
+                      icon="edit"
+                      (click)="editRaoSource($event, source)"></pa-button>
+                  </div>
+                }
+                @if (connections().length === 0) {
+                  <div class="rao-no-source">
+                    <span class="config-form-help rao-no-source-text">
+                      {{ 'search.configuration.agentic.connect-other-sources' | translate }}
+                    </span>
+                    <pa-button
+                      kind="primary"
+                      size="small"
+                      (click)="navigateToSync()">
+                      {{ 'search.configuration.agentic.connect-source-button' | translate }}
+                    </pa-button>
+                  </div>
+                }
+              </div>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (searchMode() === 'search') {
+          <pa-accordion-item
+            #searchBox
+            id="search-box"
+            [itemTitle]="'search.configuration.search-box.section-title' | translate"
+            [description]="'search.configuration.search-box.section-description' | translate"
+            (expandedChange)="updateSearchBoxHeight()">
+            <pa-accordion-item-body>
+              <stf-search-box-form
+                [config]="savedConfig?.searchBox"
+                [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+                [semanticModels]="semanticModels"
+                (configChanged)="updateSearchBoxConfig($event)"
+                (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (searchMode() === 'simple-rag') {
+          <pa-accordion-item
+            #generativeAnswer
+            id="generative-answer"
+            [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
+            [description]="'search.configuration.generative-answer.section-description' | translate"
+            (expandedChange)="updateGenerativeAnswerHeight()">
+            <pa-accordion-item-body>
+              <stf-generative-answer-form
+                [config]="savedConfig?.generativeAnswer"
+                [defaultPrompt]="defaultPromptFromSettings"
+                [defaultSystemPrompt]="defaultSystemPromptFromSettings"
+                [promptInfos]="promptInfos"
+                [generativeProviders]="generativeProviders"
+                [learningConfigurations]="learningConfigurations"
+                [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+                (configChanged)="updateGenerativeAnswerConfig($event)"
+                (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
         <pa-accordion-item
           #results
           id="results"
@@ -213,7 +250,7 @@
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>
         </pa-accordion-item>
-        @if (isRoutingEnabled | async) {
+        @if ((isRoutingEnabled | async) && searchMode() === 'search') {
           <pa-accordion-item
             #routing
             id="routing"

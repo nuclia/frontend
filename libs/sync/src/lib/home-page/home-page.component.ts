@@ -79,8 +79,9 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
-  selectedTab: 'connect' | 'synchronize' = 'connect';
+  selectedTab: 'connect' | 'synchronize' = 'synchronize';
   connectSourceControl = new FormControl<string>('kb', { nonNullable: true });
+  kbNameControl = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
   kbDescriptionControl = new FormControl<string>('', { nonNullable: true });
   currentKb = this.sdk.currentKb;
 
@@ -106,9 +107,12 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly connectionTypeLogos: Partial<Record<string, string>> = {
     perplexity: 'assets/connector-logos/perplexity.svg',
+    'perplexity-search': 'assets/connector-logos/perplexity.svg',
+    'perplexity-answer': 'assets/connector-logos/perplexity.svg',
+    gemini: 'assets/connector-logos/gemini.svg',
   };
   private sectionObserver?: IntersectionObserver;
-  private readonly sectionTabs: Array<'connect' | 'synchronize'> = ['connect', 'synchronize'];
+  private readonly sectionTabs: Array<'connect' | 'synchronize'> = ['synchronize', 'connect'];
 
   // TODO: download dropdown is placed in the layout but will be implemented in https://app.shortcut.com/flaps/story/9739/setup-sync-agent-download-dropdown
   downloadSyncAgentFeature = false;
@@ -204,6 +208,11 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.initSectionObserver();
+    this.currentRoute.queryParams.pipe(take(1)).subscribe((params) => {
+      if (params['tab'] === 'connect') {
+        this.goToSection('connect');
+      }
+    });
   }
 
   goToSection(section: 'connect' | 'synchronize') {
@@ -271,9 +280,10 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.connectionsService.addOrUpdate({
       id: kb.id,
       type: 'kb',
-      label: kb.title,
+      label: this.kbNameControl.value,
       description: this.kbDescriptionControl.value,
     });
+    this.kbNameControl.reset('');
     this.kbDescriptionControl.reset('');
   }
 

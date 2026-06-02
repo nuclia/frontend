@@ -38,6 +38,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LearningConfigurations, GenerativeProviders, SearchConfig, Widget } from '@nuclia/core';
 import {
   ButtonMiniComponent,
+  BadgeComponent,
   ExpandableTextareaComponent,
   InfoCardComponent,
   SisModalService,
@@ -69,6 +70,7 @@ export class IsTypedConfigPipe implements PipeTransform {
 @Component({
   selector: 'stf-search-configuration',
   imports: [
+    BadgeComponent,
     CommonModule,
     AccordionComponent,
     AccordionBodyDirective,
@@ -160,8 +162,19 @@ export class SearchConfigurationComponent {
   ignoreChanges = false;
   ignoreNextRoutingRefresh = false;
 
+  readonly connectionTypeLabels: Record<string, string> = {
+    kb: 'Knowledge Box',
+    mcp: 'MCP',
+    perplexity: 'Perplexity',
+    'perplexity-search': 'Perplexity Search',
+    'perplexity-answer': 'Perplexity Answer',
+    gemini: 'Google Gemini',
+  };
+
   readonly connections = this.connectionsService.connections;
-  selectedRaoSourceId = signal<string>('');
+  searchMode = signal<'agentic' | 'simple-rag' | 'search'>('agentic');
+  selectedSourceIds = signal<string[]>([]);
+  currentKbSource = signal<{ id: string; label: string } | null>(null);
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
@@ -171,6 +184,7 @@ export class SearchConfigurationComponent {
     this.sdk.currentKb
       .pipe(
         take(1),
+        tap((kb) => this.currentKbSource.set({ id: kb.id, label: kb.title })),
         switchMap((kb) => {
           return forkJoin([kb.getLearningSchema(), kb.getConfiguration(), kb.getGenerativeProviders()]).pipe(
             map(
@@ -357,8 +371,27 @@ export class SearchConfigurationComponent {
     }
   }
 
-  selectRaoSource(id: string) {
-    this.selectedRaoSourceId.set(id);
+  toggleSource(id: string) {
+    this.selectedSourceIds.update((ids) =>
+      ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id],
+    );
+  }
+
+  editKbSource(event: Event) {
+    event.stopPropagation();
+    const kb = this.currentKbSource();
+    if (!kb) return;
+    this.modalService
+      .openModal(
+        RaoEditSourceModalComponent,
+        new ModalConfig<EditSourceModalData>({
+          data: { sourceLabel: kb.label, description: '' },
+        }),
+      )
+      .onClose.pipe(filter((result): result is EditSourceModalResult => !!result && typeof result === 'object'))
+      .subscribe(({ label }) => {
+        this.currentKbSource.set({ ...kb, label });
+      });
   }
 
   editRaoSource(event: Event, source: { id: string; label: string; description: string }) {
@@ -377,7 +410,7 @@ export class SearchConfigurationComponent {
   }
 
   navigateToSync() {
-    this.router.navigate(['../sync'], { relativeTo: this.route });
+    this.router.navigate(['../sync'], { relativeTo: this.route, queryParams: { tab: 'connect' } });
   }
 
   resetConfig() {
