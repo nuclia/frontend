@@ -21,11 +21,7 @@ export const canMatchSimpleMode: CanMatchFn = () => {
   // (canActivate) has had a chance to run.
   return sdk.setCurrentAccount(accountSlug).pipe(
     first(),
-    map((account) => {
-      // Simple mode is active when the account is a cowork workflow OR the user
-      // has manually toggled simple mode on. Both conditions must be evaluated.
-      return account.workflow === 'cowork' || navigation.simpleMode.getValue();
-    }),
+    map((account) => account.workflow === 'cowork'),
     catchError(() => navigation.simpleMode.pipe(first())),
   );
 };

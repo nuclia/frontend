@@ -1,6 +1,9 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .account-users {
+  padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
+    var(--app-layout-padding-left);
+
   .page-description {
     color: $color-neutral-regular;
     margin-bottom: rhythm(3);
