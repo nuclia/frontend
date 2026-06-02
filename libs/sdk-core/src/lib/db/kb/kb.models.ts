@@ -3,7 +3,15 @@ import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
-import type { Ask, CatalogOptions, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
+import type {
+  Ask,
+  CatalogOptions,
+  ChatOptions,
+  PredictAnswerOptions,
+  Search,
+  SearchOptions,
+  SuggestOptions,
+} from '../search';
 import { Agentic } from '../search/agentic';
 import { TaskManager } from '../task';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
@@ -157,7 +165,12 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse>;
 
-  suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
+  suggest(
+    query: string,
+    inTitleOnly?: boolean,
+    features?: Search.SuggestionFeatures[],
+    options?: SuggestOptions,
+  ): Observable<Search.Suggestions | IErrorResponse>;
 
   feedback(answerId: string, good: boolean, feedback?: string, text_block_id?: string): Observable<void>;
 

@@ -44,7 +44,7 @@
         @let extractId = extractConfigId | async;
         @let extractName = (extractConfig | async)?.name;
         @let splitId = splitConfigId | async;
-        @let splitName = (splitConfig | async)?.name;        
+        @let splitName = (splitConfig | async)?.name;
         @if (extractId || splitId) {
           <nsi-info-card>
             <div class="body-s">
@@ -214,6 +214,15 @@
             <pre><code>{{ jsonTextField | async }}</code></pre>
           </div>
         }
+
+        @if (keyValues | async; as kvFields) {
+          @for (entry of kvFields | keyvalue; track entry.key) {
+            <stf-key-value-field
+              [fieldId]="entry.key"
+              [data]="entry.value.data"
+              [schemaFields]="entry.value.schemaFields"></stf-key-value-field>
+          }
+        }
       } @else {
         @if (questionsAnswers | async; as questionsAnswers) {
           @for (item of questionsAnswers; track item.question.text) {
@@ -356,7 +365,7 @@
   </div>
   <div class="buttons-container">
     <div class="buttons">
-      @if (currentFieldId && !(isArag | async)) {
+      @if (currentFieldId && currentFieldId.field_type !== 'key_value' && !(isArag | async)) {
         <pa-button
           [disabled]="loadingPreview"
           (click)="openViewer()">

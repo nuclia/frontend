@@ -5,7 +5,9 @@
 } @else {
   <div class="header">
     <h2>{{ 'billing.subscription.title' | translate }}</h2>
-    <div class="body-m">{{ 'billing.subscription.help' | translate }}</div>
+    @if (!(showCowork | async)) {
+      <div class="body-m">{{ 'billing.subscription.help' | translate }}</div>
+    }
     @if (canSelectCurrency) {
       <div>
         <button
@@ -33,7 +35,7 @@
           <th></th>
           @if (showCowork | async) {
             <th class="plan">
-              <div class="plan-name">Cowork Knowledge</div>
+              <div class="plan-name">Context Box</div>
               @if ((prices | async)?.['cowork']; as cowork) {
                 <div class="price">
                   <span>{{ cowork?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
@@ -53,60 +55,61 @@
                 <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
               }
             </th>
+          } @else {
+            <th class="plan">
+              <div class="plan-name">Starter</div>
+              @if ((prices | async)?.['v3starter']; as starter) {
+                <div class="price">
+                  <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span class="unit">/{{ 'billing.month' | translate }}</span>
+                </div>
+              }
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  routerLink="../checkout"
+                  [queryParams]="{ type: 'v3starter' }">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'v3starter') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+              }
+            </th>
+            <th class="plan">
+              <div class="plan-name">Pro</div>
+              @if ((prices | async)?.['v3pro']; as pro) {
+                <div class="price">
+                  <span>{{ pro?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                  <span class="unit">/{{ 'billing.month' | translate }}</span>
+                </div>
+              }
+              @if (!!(isTrial | async)) {
+                <pa-button
+                  kind="primary"
+                  routerLink="../checkout"
+                  [queryParams]="{ type: 'v3pro' }">
+                  {{ 'billing.upgrade' | translate }}
+                </pa-button>
+              } @else if ((accountType | async) === 'v3pro') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+              }
+            </th>
+            <th class="plan">
+              <div class="plan-name">Enterprise</div>
+              <div class="price">
+                <span class="unit">-</span>
+              </div>
+              @if ((accountType | async) === 'v3enterprise') {
+                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+              } @else {
+                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+              }
+            </th>
           }
-          <th class="plan">
-            <div class="plan-name">Starter</div>
-            @if ((prices | async)?.['v3starter']; as starter) {
-              <div class="price">
-                <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-                <span class="unit">/{{ 'billing.month' | translate }}</span>
-              </div>
-            }
-            @if (!!(isTrial | async)) {
-              <pa-button
-                kind="primary"
-                routerLink="../checkout"
-                [queryParams]="{ type: 'v3starter' }">
-                {{ 'billing.upgrade' | translate }}
-              </pa-button>
-            } @else if ((accountType | async) === 'v3starter') {
-              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-            } @else {
-              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-            }
-          </th>
-          <th class="plan">
-            <div class="plan-name">Pro</div>
-            @if ((prices | async)?.['v3pro']; as pro) {
-              <div class="price">
-                <span>{{ pro?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-                <span class="unit">/{{ 'billing.month' | translate }}</span>
-              </div>
-            }
-            @if (!!(isTrial | async)) {
-              <pa-button
-                kind="primary"
-                routerLink="../checkout"
-                [queryParams]="{ type: 'v3pro' }">
-                {{ 'billing.upgrade' | translate }}
-              </pa-button>
-            } @else if ((accountType | async) === 'v3pro') {
-              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-            } @else {
-              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-            }
-          </th>
-          <th class="plan">
-            <div class="plan-name">Enterprise</div>
-            <div class="price">
-              <span class="unit">-</span>
-            </div>
-            @if ((accountType | async) === 'v3enterprise') {
-              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-            } @else {
-              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-            }
-          </th>
         </tr>
         <tr>
           <td>{{ 'billing.max-file-size' | translate }}</td>
@@ -139,40 +142,43 @@
           <td>{{ 'billing.preprocessing' | translate }}</td>
           @if (showCowork | async) {
             <td>Cloud</td>
+          } @else {
+            <td>Cloud</td>
+            <td>Cloud</td>
+            <td>Cloud / Hybrid</td>
           }
-          <td>Cloud</td>
-          <td>Cloud</td>
-          <td>Cloud / Hybrid</td>
         </tr>
         <tr>
           <td>{{ 'billing.support' | translate }}</td>
           @if (showCowork | async) {
             <td>Community Support</td>
+          } @else {
+            <td>Community Support</td>
+            <td>Community Support + ZenDesk</td>
+            <td>Private Slack Channel + Zendesk</td>
           }
-          <td>Community Support</td>
-          <td>Community Support + ZenDesk</td>
-          <td>Private Slack Channel + Zendesk</td>
         </tr>
         <tr>
           <td>{{ 'billing.da-agents' | translate }}</td>
           @if (showCowork | async) {
             <td>-</td>
+          } @else {
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
           }
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
         </tr>
         <tr>
           <td>{{ 'billing.audit-log' | translate }}</td>
@@ -182,22 +188,23 @@
                 name="check"
                 size="small"></pa-icon>
             </td>
+          } @else {
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
+            <td>
+              <pa-icon
+                name="check"
+                size="small"></pa-icon>
+            </td>
           }
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
-          <td>
-            <pa-icon
-              name="check"
-              size="small"></pa-icon>
-          </td>
         </tr>
         <ng-template #subscribed>
           <div class="subscribed">

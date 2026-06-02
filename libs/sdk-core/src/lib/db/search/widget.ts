@@ -177,6 +177,7 @@ export namespace Widget {
     textBlocksVisibility: 'expanded' | 'collapsed';
     customizeCitationVisibility: boolean;
     citationVisibility: 'expanded' | 'collapsed';
+    hideReset: boolean;
     fabPosition: 'bottom-right' | 'bottom-left';
     fabSize: 'small' | 'medium' | 'large';
     fabOffsetBottom: number;
@@ -254,6 +255,7 @@ export namespace Widget {
     queryImage?: boolean;
     sortResults?: boolean;
     noScroll?: boolean;
+    hideReset?: boolean;
   }
 }
 
@@ -434,7 +436,11 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
           max_messages: rest.includes('full') || isNaN(maxMessages) ? undefined : maxMessages,
         };
       } else if (name === RagStrategyName.GRAPH) {
-        const strategy: Partial<GraphStrategy> = { name, hops: Number.parseInt(rest[0], 10), top_k: Number.parseInt(rest[1], 10) };
+        const strategy: Partial<GraphStrategy> = {
+          name,
+          hops: Number.parseInt(rest[0], 10),
+          top_k: Number.parseInt(rest[1], 10),
+        };
         if (rest.length > 2) {
           strategy.exclude_processor_relations = rest[2] === 'true';
         }
@@ -626,6 +632,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
       widgetOptions.customizeTextBlocksVisibility && widgetOptions.textBlocksVisibility === 'collapsed',
     expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
+    hideReset: widgetOptions.hideReset,
   };
   return Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)

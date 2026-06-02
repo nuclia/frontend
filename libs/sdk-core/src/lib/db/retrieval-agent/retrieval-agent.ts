@@ -127,6 +127,17 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     }
   }
 
+  sendMessage(sessionId: string, requestId: string, message: any) {
+    if (this.wsConnections[sessionId]) {
+      this.wsConnections[sessionId].send(
+        JSON.stringify({
+          request_id: requestId,
+          response: JSON.stringify(message),
+        }),
+      );
+    }
+  }
+
   wsOpeningCount = 0;
   private _interactThroughWs(
     sessionId: string,
@@ -176,20 +187,10 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
                 const existingCredentials = Object.fromEntries(
                   Object.entries(this.oauthCredentials || {}).filter(([key]) => syncConfigIds.includes(key)),
                 );
-                ws.send(
-                  JSON.stringify({
-                    request_id: feedback.request_id,
-                    response: JSON.stringify({ existing_credentials: existingCredentials }),
-                  }),
-                );
+                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: existingCredentials });
               } else if (feedback.question === 'Send credentials') {
-                this.oauthCredentials = { ...this.oauthCredentials, ...feedback.credentials };
-                ws.send(
-                  JSON.stringify({
-                    request_id: feedback.request_id,
-                    response: JSON.stringify({ existing_credentials: feedback.credentials }),
-                  }),
-                );
+                this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
+                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: feedback.credentials });
               }
             } else if (lastMessage.oauth) {
               window.open(lastMessage.oauth.oauth_url, 'blank', 'noreferrer');

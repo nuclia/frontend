@@ -104,7 +104,7 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   schema = this.sdk.currentAccount.pipe(
-    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
     switchMap((kbs) => {
       if (kbs.length === 0) {
         return of({} as LearningConfigurations);
@@ -158,20 +158,30 @@ export class NucliaTokensComponent implements OnDestroy {
 
   visibleGroups = this.details.pipe(
     map((details) => {
-      const types = new Set(Object.values(groups).flat());
-      const otherDetails = details.filter((detail) => !types.has(detail.identifier.type));
-      return Object.entries(groups)
-        .map(([key, types]) => {
-          const groupDetails = types.reduce(
-            (acc, type) => acc.concat(details.filter((detail) => detail.identifier.type === type)),
-            [] as NucliaTokensDetailsEnhanced[],
-          );
-          return {
-            title: key,
-            details: groupDetails,
-            total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
-          };
-        })
+      const raoDetails = details.filter((detail) => detail.identifier.service === 'rao');
+      const nonRaoDetails = details.filter((detail) => detail.identifier.service !== 'rao');
+      const types = Object.values(groups).reduce((acc, curr) => acc.concat(curr), []);
+      const otherDetails = nonRaoDetails.filter((detail) => !types.includes(detail.identifier.type));
+      return [
+        {
+          title: 'rao',
+          details: raoDetails,
+          total: raoDetails.reduce((acc, curr) => acc + curr.total, 0),
+        },
+      ]
+        .concat(
+          Object.entries(groups).map(([key, types]) => {
+            const groupDetails = types.reduce(
+              (acc, type) => acc.concat(nonRaoDetails.filter((detail) => detail.identifier.type === type)),
+              [] as NucliaTokensDetailsEnhanced[],
+            );
+            return {
+              title: key,
+              details: groupDetails,
+              total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
+            };
+          }),
+        )
         .concat([
           {
             title: 'other',

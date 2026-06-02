@@ -17,6 +17,7 @@ export const widgetFeedback = writableSubject<Widget.WidgetFeedback>('answer');
 export const widgetViewerEnabled = writableSubject<boolean>(true);
 export const widgetBlocked = writableSubject<boolean>(false);
 export const widgetBlockedMessage = writableSubject<string>('');
+export const widgetCache = writableSubject<number | undefined>(undefined);
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
@@ -92,3 +93,4 @@ export const disableRAG: Observable<boolean> = widgetFeatures.pipe(map((features
 export const hasContextImages = widgetFeatures.pipe(map((features) => !!features?.contextImages));
 export const hasQueryImage = widgetFeatures.pipe(map((features) => !!features?.queryImage));
 export const hasSortButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.sortResults));
+export const hideReset: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideReset));

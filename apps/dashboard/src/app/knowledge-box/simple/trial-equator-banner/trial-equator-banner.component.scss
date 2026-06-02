@@ -1,0 +1,18 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: contents;
+}
+
+.banner {
+  margin-top: calc(-1 * rhythm(4));
+}
+
+:host-context(.search-view) .banner {
+  margin-top: 0;
+  margin-bottom: rhythm(2);
+}
+
+.banner-action {
+  margin-left: rhythm(2.5);
+}

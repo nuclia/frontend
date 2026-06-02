@@ -1,4 +1,3 @@
-
 export interface IResource {
   id: string;
   slug?: string;
@@ -30,6 +29,7 @@ export type ResourceData = {
   texts?: { [key: string]: TextFieldData };
   conversations?: { [key: string]: ConversationFieldData };
   generics?: { [key: string]: GenericFieldData };
+  key_values?: { [key: string]: KeyValueFieldData };
 };
 
 export interface ICreateResource {
@@ -57,6 +57,7 @@ export enum FIELD_TYPE {
   link = 'link',
   conversation = 'conversation',
   generic = 'generic',
+  key_value = 'key_value',
 }
 
 export enum RESOURCE_STATUS {
@@ -576,4 +577,31 @@ export interface AppliedDataAugmentation {
     text_field: TextField;
     destination: string;
   }[];
+}
+
+// --- key_value field type ---
+
+export type KVValue = string | number | boolean;
+
+export type KVFieldType = 'text' | 'integer' | 'float' | 'boolean' | 'date';
+
+export interface KVSchemaField {
+  key: string;
+  type: KVFieldType;
+  description?: string;
+  required?: boolean;
+}
+
+export interface KVSchema {
+  name: string;
+  description?: string;
+  fields: KVSchemaField[];
+}
+
+export interface KBKVSchemas {
+  schemas: { [name: string]: KVSchema };
+}
+
+export interface KeyValueFieldData extends IFieldDataBase {
+  value?: { [key: string]: KVValue };
 }

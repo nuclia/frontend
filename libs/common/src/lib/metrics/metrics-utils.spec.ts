@@ -1,4 +1,11 @@
-import { getMonthRange, aggregateUsageMetric, applyTextSearchFilter, applyNumericConditions } from './metrics-utils';
+import {
+  getMonthRange,
+  aggregateUsageMetric,
+  applyTextSearchFilter,
+  applyNumericConditions,
+  formatDateToYearMonth,
+  getMonthsSinceDate,
+} from './metrics-utils';
 import { UsagePoint } from '@nuclia/core';
 import { NumericCondition } from './metrics-filters';
 
@@ -31,16 +38,19 @@ describe('metrics-utils', () => {
   describe('aggregateUsageMetric()', () => {
     it('sums the named metric across all usage points', () => {
       const points: UsagePoint[] = [
-        { metrics: [{ name: 'cpu', value: 10 }, { name: 'mem', value: 5 }] },
+        {
+          metrics: [
+            { name: 'cpu', value: 10 },
+            { name: 'mem', value: 5 },
+          ],
+        },
         { metrics: [{ name: 'cpu', value: 20 }] },
       ] as any;
       expect(aggregateUsageMetric(points, 'cpu')).toBe(30);
     });
 
     it('returns 0 when no metrics match the name', () => {
-      const points: UsagePoint[] = [
-        { metrics: [{ name: 'cpu', value: 10 }] },
-      ] as any;
+      const points: UsagePoint[] = [{ metrics: [{ name: 'cpu', value: 10 }] }] as any;
       expect(aggregateUsageMetric(points, 'nonexistent')).toBe(0);
     });
 
@@ -121,6 +131,29 @@ describe('metrics-utils', () => {
       const filters: Record<string, unknown> = {};
       applyNumericConditions([], filters);
       expect(filters).toEqual({});
+    });
+  });
+
+  describe('formatDateToYearMonth()', () => {
+    it('formats a date to YYYY-MM', () => {
+      const date = new Date(2026, 4, 28);
+      const yearMonth = formatDateToYearMonth(date);
+      expect(yearMonth).toEqual('2026-05');
+    });
+  });
+
+  describe('getMonthsSinceDate()', () => {
+    beforeAll(() => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-02-15T00:00:00.000Z'));
+    });
+
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    it('returns months from now back to the given month', () => {
+      expect(getMonthsSinceDate(new Date('2025-12-01T00:00:00.000Z'))).toEqual(['2026-02', '2026-01', '2025-12']);
     });
   });
 });

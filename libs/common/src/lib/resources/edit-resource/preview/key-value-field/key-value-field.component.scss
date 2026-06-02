@@ -1,0 +1,8 @@
+@use 'variables' as v;
+
+.key-value-field {
+  display: flex;
+  flex-direction: column;
+  gap: v.rhythm(1);
+  margin-bottom: v.rhythm(2);
+}

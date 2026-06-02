@@ -84,7 +84,7 @@ export class ClientDialogComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    forkJoin([this.zoneService.getZones(), this.account.pipe(take(1))])
+    forkJoin([this.zoneService.getZones().pipe(take(1)), this.account.pipe(take(1))])
       .pipe(
         tap(([zones]) => {
           this.zones = zones;

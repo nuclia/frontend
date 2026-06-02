@@ -19,6 +19,7 @@ import {
   applyDateConditions,
   applyTextSearchFilter,
   getMonthRange,
+  getMonthsSinceDate,
 } from '../metrics-utils';
 import { COST_TOKEN_SHOW_FIELDS } from './cost-token-usage-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
@@ -71,17 +72,10 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   }
 
   protected loadAvailableMonths(): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(EventType.ASK)),
-      )
-      .subscribe({
-        next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
-        error: () => {
-          /* empty */
-        },
-      });
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      this._availableMonths.set(getMonthsSinceDate(creationDate));
+    });
   }
 
   protected override _resetPaginationState(): void {

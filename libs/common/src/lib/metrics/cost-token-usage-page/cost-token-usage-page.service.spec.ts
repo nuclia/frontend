@@ -15,7 +15,6 @@ describe('CostTokenUsagePageService', () => {
     const mockKb = {
       activityMonitor: {
         queryActivityLogs,
-        getMonthsWithActivity: jest.fn().mockReturnValue(of({ downloads: [] })),
       },
     };
 

@@ -161,6 +161,12 @@ export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'>
   };
 }
 
+export interface SuggestOptions {
+  highlight?: boolean;
+  show_hidden?: boolean;
+  security?: { groups: string[] };
+}
+
 export interface And<T> {
   and: T[];
 }
@@ -311,6 +317,7 @@ export enum SHORT_FIELD_TYPE {
   link = 'u',
   generic = 'a',
   conversation = 'c',
+  key_value = 'kv',
 }
 
 export enum Reranker {
@@ -336,7 +343,6 @@ export namespace Search {
   export enum SuggestionFeatures {
     PARAGRAPH = 'paragraph',
     ENTITIES = 'entities',
-    INTENT = 'intent',
   }
 
   export interface FindResults {

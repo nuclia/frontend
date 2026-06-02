@@ -19,12 +19,15 @@ describe('SearchActivityPageComponent', () => {
         getSearchMetrics: jest.fn().mockReturnValue(of([])),
       },
     };
+    const mockAccount = {
+      creation_date: '2026-02-20T09:00:00.000000',
+    };
 
     await TestBed.configureTestingModule({
       declarations: [SearchActivityPageComponent],
       imports: [MockModule(TranslateModule)],
       providers: [
-        MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(UserService),
         MockProvider(SisToastService),
         MockProvider(TranslateService, { instant: (key: string) => key }),

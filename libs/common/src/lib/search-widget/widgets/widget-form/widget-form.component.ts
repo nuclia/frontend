@@ -117,6 +117,7 @@ export class WidgetFormComponent implements AfterViewInit, OnInit, OnDestroy {
     textBlocksVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
     customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
     citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
+    hideReset: new FormControl<boolean>(false, { nonNullable: true }),
     // Floating chat options
     fabPosition: new FormControl<'bottom-right' | 'bottom-left'>('bottom-right', { nonNullable: true }),
     fabSize: new FormControl<'small' | 'medium' | 'large'>('medium', { nonNullable: true }),

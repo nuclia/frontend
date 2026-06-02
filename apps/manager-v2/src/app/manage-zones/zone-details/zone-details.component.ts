@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ZoneService } from '../zone.service';
-import { Zone } from '../zone.models';
+import { Zone, ZoneAccountEntry } from '../zone.models';
 import { UserService } from '../../manage-users/user.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
@@ -22,8 +22,9 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     id: new FormControl('', { nonNullable: true }),
     slug: new FormControl('', { nonNullable: true, validators: [Validators.required, ValidSlug()] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    subdomain: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     cloud_provider: new FormControl<'AWS' | 'GCP'>('GCP', { nonNullable: true, validators: [Validators.required] }),
+    private: new FormControl(false, { nonNullable: true }),
+    origin: new FormControl<string | null>(null, { nonNullable: false }),
     creator: new FormControl('', { nonNullable: true }),
     created: new FormControl('', { nonNullable: true }),
     modified: new FormControl('', { nonNullable: true }),
@@ -31,6 +32,10 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
   addZone = false;
   zoneTitle = '';
   isSaving = false;
+  zoneId = '';
+  grantedAccounts: ZoneAccountEntry[] = [];
+  newAccountId = '';
+  isGranting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,7 +53,13 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
       .pipe(
         filter((params) => !!params['zoneId']),
         map((params) => params['zoneId'] as string),
-        switchMap((zoneId) => (zoneId === 'add' ? of(undefined) : this.zoneService.getZone(zoneId))),
+        switchMap((zoneId) => {
+          if (zoneId === 'add') {
+            return of(undefined);
+          }
+          this.zoneId = zoneId;
+          return this.zoneService.getZone(zoneId);
+        }),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((zone) => {
@@ -56,6 +67,7 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           this.zoneTitle = zone.title;
           this.zoneBackup = { ...zone };
           this.zoneForm.patchValue(zone);
+          this.loadGrantedAccounts();
         } else {
           this.addZone = true;
         }
@@ -63,14 +75,60 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
+  loadGrantedAccounts() {
+    if (!this.zoneId) return;
+    this.zoneService.getZoneAccounts(this.zoneId).subscribe({
+      next: (accounts) => {
+        this.grantedAccounts = accounts;
+        this.cdr.markForCheck();
+      },
+      error: () => this.toast.error('Failed to load granted accounts'),
+    });
+  }
+
+  grantAccount() {
+    const accountId = this.newAccountId.trim();
+    if (!accountId || !this.zoneId) return;
+    this.isGranting = true;
+    this.zoneService.grantZoneToAccount(this.zoneId, accountId).subscribe({
+      next: () => {
+        this.newAccountId = '';
+        this.isGranting = false;
+        this.loadGrantedAccounts();
+      },
+      error: () => {
+        this.isGranting = false;
+        this.toast.error('Failed to grant account access');
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  revokeAccount(accountId: string) {
+    if (!this.zoneId) return;
+    this.zoneService.revokeZoneFromAccount(this.zoneId, accountId).subscribe({
+      next: () => this.loadGrantedAccounts(),
+      error: () => this.toast.error('Failed to revoke account access'),
+    });
+  }
+
   save() {
     this.isSaving = true;
     if (this.addZone) {
-      const { slug, title, subdomain, cloud_provider } = this.zoneForm.getRawValue();
+      const { slug, title, cloud_provider, private: isPrivate, origin } = this.zoneForm.getRawValue();
       this.userService
         .getAuthenticatedUser()
         .pipe(
-          switchMap((user) => this.zoneService.addZone({ slug, title, creator: user.id, subdomain, cloud_provider })),
+          switchMap((user) =>
+            this.zoneService.addZone({
+              slug,
+              title,
+              creator: user.id,
+              cloud_provider,
+              private: isPrivate,
+              origin: origin || null,
+            }),
+          ),
           tap((token) => {
             this.modalService.openModal(TokenDialogComponent, {
               dismissable: true,
@@ -94,9 +152,9 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      const { id, slug, title } = this.zoneForm.getRawValue();
+      const { id, slug, title, private: isPrivate, origin } = this.zoneForm.getRawValue();
       this.zoneService
-        .updateZone(id, { slug, title })
+        .updateZone(id, { slug, title, private: isPrivate, origin: origin || null })
         .pipe(switchMap(() => this.zoneService.getZone(id)))
         .subscribe({
           next: (zone) => {

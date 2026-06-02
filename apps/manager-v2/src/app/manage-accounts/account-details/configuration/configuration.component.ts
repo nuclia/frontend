@@ -8,6 +8,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
+import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -21,6 +22,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   canFullyEditAccount = this.store.canFullyEditAccount;
   canEdit = this.store.canEdit;
+  readonly zoneVisibilityOptions = ZONE_VISIBILITY_OPTIONS;
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -51,6 +53,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     trialExpirationDate: new FormControl<string>(''),
     workflow: new FormControl<WorkflowType>('classic'),
     allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
+    zoneVisibility: new FormControl<ZoneVisibility>('DEFAULT', { nonNullable: true }),
     labels: new FormGroup({
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
     }),
@@ -128,6 +131,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
                   trialExpirationDate,
                   type: rawValue.type,
                   workflow: rawValue.workflow,
+                  zoneVisibility: rawValue.zoneVisibility,
                 };
             payload.trialExpirationDate = trialExpirationDate ?? null;
             return this.accountService.updateAccount(accountBackup.id, payload);

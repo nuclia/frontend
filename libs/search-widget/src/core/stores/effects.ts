@@ -222,7 +222,7 @@ export function activateTypeAheadSuggestions() {
 
 export const ask = new Subject<{ question: string; reset: boolean }>();
 
-export function initAnswer() {
+export function initAnswer(dispatch?: (event: string, details: { query: string }) => void) {
   subscriptions.push(
     ask
       .pipe(
@@ -245,6 +245,7 @@ export function initAnswer() {
               } else if (isDefaultCitationsEnabled) {
                 chatOptions.citations = true;
               }
+              dispatch?.('chat', { query: question });
               return askQuestion(question, reset, chatOptions);
             }),
           ),
@@ -428,7 +429,8 @@ function initStoreFromUrlParams() {
                     const fieldFullId = data.fieldFullId;
                     const [start, end] = initialParagraph?.split('-') || ['0', '0'];
                     const paragraph = data.currentResult?.fieldData?.extracted?.metadata?.metadata.paragraphs.find(
-                      (paragraph) => paragraph.start == Number.parseInt(start) && paragraph.end === Number.parseInt(end),
+                      (paragraph) =>
+                        paragraph.start == Number.parseInt(start) && paragraph.end === Number.parseInt(end),
                     );
                     if (paragraph && fieldFullId) {
                       resultParagraphs.set([getFindParagraphFromParagraph(paragraph, fieldFullId, text)]);
@@ -514,8 +516,18 @@ function buildRagAnswerObservable(
   options: BaseSearchOptions,
   ragOpts: RagAnswerOpts,
 ): ReturnType<typeof getAnswer> {
-  const { reasoning, disableRAG, filterExpression, filters, combinedFilterExpr, rangeCreation, _images, _hasQueryImage, search_configuration } = ragOpts;
-  const chatOptions: ChatOptions = { ...options, reasoning: reasoning as ChatOptions['reasoning'] || undefined };
+  const {
+    reasoning,
+    disableRAG,
+    filterExpression,
+    filters,
+    combinedFilterExpr,
+    rangeCreation,
+    _images,
+    _hasQueryImage,
+    search_configuration,
+  } = ragOpts;
+  const chatOptions: ChatOptions = { ...options, reasoning: (reasoning as ChatOptions['reasoning']) || undefined };
   if (disableRAG) {
     return getAnswerWithoutRAG(question, entries, chatOptions);
   }
@@ -596,11 +608,17 @@ export function askQuestion(
             inError: false,
           } as Ask.Answer);
         } else {
-          return buildRagAnswerObservable(
-            question, entries, options,
-            { reasoning, disableRAG, filterExpression, filters,
-              combinedFilterExpr: combinedFilterExpression, rangeCreation, _images, _hasQueryImage, search_configuration },
-          );
+          return buildRagAnswerObservable(question, entries, options, {
+            reasoning,
+            disableRAG,
+            filterExpression,
+            filters,
+            combinedFilterExpr: combinedFilterExpression,
+            rangeCreation,
+            _images,
+            _hasQueryImage,
+            search_configuration,
+          });
         }
       },
     ),
@@ -628,12 +646,12 @@ export function askQuestion(
           pendingResults.set(false);
         }
       } else if (result.incomplete) {
-          currentAnswer.set(result);
-        } else {
-          appendChatEntry.set({ question, answer: result });
-          pendingResults.set(false);
-        }
-      }),
+        currentAnswer.set(result);
+      } else {
+        appendChatEntry.set({ question, answer: result });
+        pendingResults.set(false);
+      }
+    }),
   );
 }
 

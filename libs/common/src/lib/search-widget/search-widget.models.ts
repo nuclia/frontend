@@ -59,6 +59,7 @@ export const DEFAULT_WIDGET_CONFIG: Widget.WidgetConfiguration = {
   textBlocksVisibility: 'expanded',
   customizeCitationVisibility: false,
   citationVisibility: 'expanded',
+  hideReset: false,
   fabPosition: 'bottom-right',
   fabSize: 'medium',
   fabOffsetBottom: 24,

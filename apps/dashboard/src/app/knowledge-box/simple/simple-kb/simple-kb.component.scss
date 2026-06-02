@@ -1,6 +1,9 @@
 @use 'apps/dashboard/src/variables' as *;
 @use '../simple-page.tokens' as tokens;
 
+$search-view-padding-top: rhythm(3);
+$counters-height: rhythm(6);
+
 .simple-kb {
   align-items: center;
   display: flex;
@@ -8,6 +11,37 @@
   gap: rhythm(4);
   padding: rhythm(8) rhythm(4);
   min-height: calc(100vh - var(--app-topbar-height) - tokens.$footer-height);
+
+  &.search-view {
+    padding-bottom: 0;
+    padding-top: $search-view-padding-top;
+    gap: 0;
+
+    &.with-banner {
+      min-height: calc(100vh - var(--app-topbar-height) - tokens.$footer-height - 70px - #{rhythm(2)});
+
+      .preview {
+        &.open {
+          --custom-height-container: calc(
+            100vh - var(--app-topbar-height) - #{$search-view-padding-top} - #{$counters-height} -
+              #{tokens.$footer-height} - #{rhythm(1)} - 70px - #{rhythm(2)}
+          );
+        }
+      }
+    }
+  }
+}
+
+.title {
+  align-items: center;
+  display: flex;
+  gap: rhythm(3);
+  &.hidden {
+    display: none;
+  }
+  nsi-spinner {
+    width: rhythm(4);
+  }
 }
 
 .counters {
@@ -52,17 +86,32 @@
   z-index: 1;
 }
 
+.close-widget {
+  pa-button {
+    position: absolute;
+    padding-right: rhythm(2);
+    right: calc((100vw - #{tokens.$content-width}) / 2);
+  }
+}
+
 .preview {
   align-items: center;
   display: flex;
-  flex-direction: column;
-  width: tokens.$content-width;
 
-  ::ng-deep nuclia-search-bar {
-    margin-bottom: rhythm(5);
-  }
-  ::ng-deep nuclia-search-results {
-    width: tokens.$content-width;
+  // Customize chat widget
+  --custom-width-input-container: #{rhythm(80)};
+  --custom-margin-side-input-container: auto;
+  --custom-height-container: auto;
+
+  &.open {
+    ::ng-deep nuclia-chat {
+      width: 100vw !important;
+    }
+    --custom-padding-side-entries-container: calc((100vw - #{tokens.$content-width}) / 2);
+    --custom-height-container: calc(
+      100vh - var(--app-topbar-height) - #{$search-view-padding-top} - #{$counters-height} - #{tokens.$footer-height} -
+        #{rhythm(1)}
+    );
   }
 }
 

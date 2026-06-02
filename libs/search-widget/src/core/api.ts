@@ -14,6 +14,7 @@ import type {
   ResourceField,
   Routing,
   SearchOptions,
+  SuggestOptions,
 } from '@nuclia/core';
 import {
   Ask,
@@ -41,7 +42,14 @@ import {
 import { suggestionError } from './stores/suggestions.store';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { initTracking, logEvent } from './tracking';
-import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor } from './utils';
+import {
+  downloadAsJSON,
+  entitiesDefaultColor,
+  generatedEntitiesColor,
+  getCachedRequest,
+  storeCachedRequest,
+} from './utils';
+import { widgetCache } from './stores';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -376,8 +384,10 @@ export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-
-  return nucliaApi.knowledgeBox.suggest(query, true, SUGGEST_MODE).pipe(
+  const options: SuggestOptions = {
+    security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
+  };
+  return nucliaApi.knowledgeBox.suggest(query, true, SUGGEST_MODE, options).pipe(
     filter((res) => {
       if (res.type === 'error') {
         suggestionError.set(res);
@@ -493,7 +503,19 @@ export const getLabelSets = (): Observable<LabelSets> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getLabels();
+  const useCache = !!widgetCache.getValue();
+  const cache = getCachedRequest(nucliaApi.knowledgeBox.id, 'labels');
+  if (cache && useCache) {
+    return of(cache);
+  } else {
+    return nucliaApi.knowledgeBox.getLabels().pipe(
+      tap((res) => {
+        if (useCache) {
+          storeCachedRequest(nucliaApi!.knowledgeBox.id, 'labels', res);
+        }
+      }),
+    );
+  }
 };
 export const getMimeFacets = (): Observable<Search.FacetsResult> => {
   if (!nucliaApi) {

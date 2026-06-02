@@ -41,6 +41,16 @@
     </pa-select>
   </div>
 
+  <div class="field-button-container">
+    <pa-select
+      label="Zone visibility"
+      formControlName="zoneVisibility">
+      @for (option of zoneVisibilityOptions; track option.value) {
+        <pa-option [value]="option.value">{{ option.label }}</pa-option>
+      }
+    </pa-select>
+  </div>
+
   <pa-date-picker
     label="Trial expiration date"
     [readonly]="!(canEdit | async)"

@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support endpoint to append messages to a conversation field
+- Add `include_search_configs` option to control inclusion of `search_configs` property
 
 # 1.32.0 (2026-03-13)
 

@@ -26,13 +26,13 @@
       }
       <pa-input formControlName="slug">Slug</pa-input>
       <pa-input formControlName="title">Title</pa-input>
-      <pa-input formControlName="subdomain">Subdomain</pa-input>
       <pa-select
         formControlName="cloud_provider"
         label="Cloud provider">
         <pa-option value="GCP">GCP</pa-option>
         <pa-option value="AWS">AWS</pa-option>
       </pa-select>
+      <pa-input formControlName="origin">Origin (optional — overrides zone URL)</pa-input>
       @if (!addZone) {
         <pa-input
           readonly
@@ -50,6 +50,8 @@
           Modified
         </pa-input>
       }
+      <pa-checkbox formControlName="private">Private</pa-checkbox>
+
       <footer>
         <pa-button
           type="submit"
@@ -66,5 +68,39 @@
         }
       </footer>
     </form>
+
+    @if (!addZone) {
+      <section class="form-section">
+        <h3>Account whitelist</h3>
+
+        @if (grantedAccounts.length > 0) {
+          <span>Accounts explicitly granted access to this zone:</span>
+        }
+
+        <ul>
+          @for (entry of grantedAccounts; track entry.account_id) {
+            <li>
+              <span>{{ entry.account_id }}</span>
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                (click)="revokeAccount(entry.account_id)"></pa-button>
+            </li>
+          }
+        </ul>
+        @if (grantedAccounts.length === 0) {
+          <p class="body-s">No accounts granted access.</p>
+        }
+
+        <pa-input [(value)]="newAccountId">Account ID</pa-input>
+        <pa-button
+          kind="primary"
+          [disabled]="!newAccountId.trim() || isGranting"
+          (click)="grantAccount()">
+          Grant access
+        </pa-button>
+      </section>
+    }
   </div>
 </div>

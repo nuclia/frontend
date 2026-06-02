@@ -133,6 +133,9 @@
     searchQuery.set(question);
     triggerSearch.next();
   }
+  function sendMessage(requestId: string, data: any) {
+    nucliaAPI.arag.sendMessage(session, requestId, data);
+  }
 </script>
 
 <svelte:element this={'style'}>{@html globalCss}</svelte:element>
@@ -171,6 +174,7 @@
                   <AragAnswer
                     expanded={i === entries.length - 1}
                     container={entriesElements[i]}
+                    onSubmit={sendMessage}
                     {entry} />
                 {/if}
               </div>

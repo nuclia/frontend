@@ -6,6 +6,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
   type AragAnswer,
+  type Feedback,
   type IErrorResponse,
 } from '@nuclia/core';
 import { addLLMCitationReferences } from './answers.store';
@@ -77,6 +78,9 @@ export function getEntryDetails(entry: AragChatEntry) {
 }
 export function getEntryAnswerText(entry: AragChatEntry) {
   return addLLMCitationReferences(getEntryAnswer(entry)?.answer || '', true);
+}
+export function getEntryFeedback(entry: AragChatEntry) {
+  return entry.answers.at(-1)?.feedback;
 }
 
 export function getEntrySources(entry: AragChatEntry): AragSource[] {
@@ -197,5 +201,28 @@ export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
     is_a_table: false,
     reference: '',
     rank: chunk.rank,
+  };
+}
+
+export function getFeedbackFields(feedback: Feedback) {
+  const schema = feedback.response_schema;
+  const supportedTypes = ['string'];
+  const required = Array.isArray(schema?.required) ? schema.required : [];
+
+  // Return undefined if schema is not supported
+  if (schema?.type !== 'object' || !schema?.properties) {
+    return undefined;
+  }
+  // Only support simple fields, no nested objects or arrays
+  const fields = Object.entries(schema.properties).filter(
+    ([, property]) => typeof property.type === 'string' && supportedTypes.includes(property.type),
+  );
+
+  if (fields.length === 0) {
+    return undefined;
+  }
+  return {
+    fields: Object.fromEntries(fields),
+    required,
   };
 }

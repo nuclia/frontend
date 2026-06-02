@@ -21,9 +21,10 @@ import {
 } from '@nuclia/core';
 import { from, map, Observable, of } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { getFileUrls } from './api';
 import type { DisplayableMetadata, ResultMetadata, ResultMetadataItem, TypedResult } from './models';
+import { widgetCache } from './stores';
 
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -508,9 +509,9 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
     console.error('Account id, Knowledge Box id and zone must be provided to load the widget configuration');
     return of({});
   }
-  return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
-    map((kb) => {
-      const widget = (kb.search_configs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
+  return getSearchConfigs(options).pipe(
+    map((searchConfigs) => {
+      const widget = (searchConfigs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
       if (!widget) {
         console.error(`Widget not found: "${id}"`);
         return of({});
@@ -519,7 +520,7 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
       if (widget.searchConfigId === NUCLIA_STANDARD_SEARCH_CONFIG_ID) {
         searchConfig = NUCLIA_STANDARD_SEARCH_CONFIG;
       } else {
-        searchConfig = (kb.search_configs?.['searchConfigurations'] || []).find(
+        searchConfig = (searchConfigs?.['searchConfigurations'] || []).find(
           (config: Widget.SearchConfiguration) => config.id === widget.searchConfigId,
         );
       }
@@ -531,6 +532,26 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
       return Object.fromEntries(Object.entries(params).filter(([_, value]) => value !== null && value !== ''));
     }),
   );
+}
+
+function getSearchConfigs(options: NucliaOptions) {
+  if (!options.account || !options.knowledgeBox || !options.zone) {
+    throw new Error('Account id, Knowledge Box id and zone must be provided');
+  }
+  const useCache = !!widgetCache.getValue();
+  const cache = getCachedRequest(options.knowledgeBox, 'searchConfigs');
+  if (cache && useCache) {
+    return of(cache);
+  } else {
+    return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
+      map((kb) => kb.search_configs),
+      tap((searchConfigs) => {
+        if (useCache) {
+          storeCachedRequest(options.knowledgeBox || '', 'searchConfigs', searchConfigs);
+        }
+      }),
+    );
+  }
 }
 
 function getNestedValue(obj: any, path: string): any {
@@ -583,3 +604,30 @@ function supportsCSSNesting() {
 }
 
 export const isBrowserUnsupported = !supportsCSSNesting();
+
+const REQUESTS_CACHE_KEY = 'agentic-rag-widget-cache';
+
+export function getCachedRequest(kbId: string, type: 'labels' | 'searchConfigs') {
+  try {
+    const cache = JSON.parse(window.localStorage.getItem(REQUESTS_CACHE_KEY) || '{}');
+    const entry = cache[`${kbId}-${type}`];
+    if (typeof entry?.expires === 'number' && entry.expires > Date.now()) {
+      return entry.value;
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function storeCachedRequest(kbId: string, type: 'labels' | 'searchConfigs', response: any) {
+  const ttl = (widgetCache.getValue() || 0) * 1000;
+  let current;
+  try {
+    current = JSON.parse(window.localStorage.getItem(REQUESTS_CACHE_KEY) || '{}');
+  } catch (e) {
+    current = {};
+  }
+  current[`${kbId}-${type}`] = { value: response, expires: Date.now() + ttl };
+  window.localStorage.setItem(REQUESTS_CACHE_KEY, JSON.stringify(current));
+}

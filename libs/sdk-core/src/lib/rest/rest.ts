@@ -28,6 +28,7 @@ const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fet
 export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
+  private zoneOrigins?: { [slug: string]: string | null };
   private streamErrorAt?: number;
   private webSockets: { [path: string]: WebSocket } = {};
 
@@ -208,7 +209,10 @@ export class Rest implements IRest {
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
-      backend = setZoneInRegionalUrl(this.nuclia.backend, zoneSlug, this.nuclia.options.regionalPrefix);
+      const zoneOrigin = this.zoneOrigins?.[zoneSlug];
+      backend = zoneOrigin
+        ? `${zoneOrigin}/api`
+        : setZoneInRegionalUrl(this.nuclia.backend, zoneSlug, this.nuclia.options.regionalPrefix);
     } else {
       backend =
         isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy
@@ -246,13 +250,17 @@ export class Rest implements IRest {
     if (this.zones) {
       return of(this.zones);
     }
-    return this.get<{ id: string; slug: string }[]>('/zones').pipe(
+    return this.get<{ id: string; slug: string; origin?: string | null }[]>('/zones').pipe(
       map((zoneList) => {
         const zones = zoneList.reduce((all: { [key: string]: string }, zone) => {
           all[zone.id] = zone.slug;
           return all;
         }, {});
         this.zones = zones;
+        this.zoneOrigins = zoneList.reduce((all: { [slug: string]: string | null }, zone) => {
+          all[zone.slug] = zone.origin ?? null;
+          return all;
+        }, {});
         return zones;
       }),
     );
@@ -402,18 +410,18 @@ export class Rest implements IRest {
           // If there was no error before, or last error was more than 10s ago, we reconnect
           // except if the error error_ is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
         } else if (
-            error_.toString() !== NS_BINDING_ABORTED_ERROR &&
-            (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
-          ) {
-            console.warn(`Message stream lost: "${error_}". Reconnecting at ${new Date()}`);
-            this.streamErrorAt = Date.now();
-            this.fetchStream(path, observer, controller);
-          } else {
-            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${error_}`);
-            observer.error(`Message stream lost: ${error_}`);
-            observer.complete();
-          }
-        },
+          error_.toString() !== NS_BINDING_ABORTED_ERROR &&
+          (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
+        ) {
+          console.warn(`Message stream lost: "${error_}". Reconnecting at ${new Date()}`);
+          this.streamErrorAt = Date.now();
+          this.fetchStream(path, observer, controller);
+        } else {
+          console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${error_}`);
+          observer.error(`Message stream lost: ${error_}`);
+          observer.complete();
+        }
+      },
     );
   }
 

@@ -36,12 +36,14 @@
         @case (4) {
           <nus-zone-step
             [data]="zone"
+            [cowork]="isCowork"
             (back)="goBack()"
             (next)="storeZoneAndGoNext($event)"></nus-zone-step>
         }
         @case (5) {
           <nus-embedding-model-step
             [schema]="learningSchema | async"
+            [cowork]="isCowork"
             [isLastStep]="true"
             (back)="goBack()"
             (next)="storeLearningConfigAndGoNext($event)"></nus-embedding-model-step>

@@ -1,0 +1,14 @@
+@if (isAtEquator()) {
+  <nsi-info-card
+    class="banner"
+    icon="warning"
+    type="warning">
+    <span [innerHTML]="'simple.trial.equator.banner.title' | translate: { days: daysLeft() }"></span>
+    <pa-button
+      class="banner-action"
+      kind="primary"
+      (click)="onBannerClick()">
+      {{ 'simple.trial.equator.banner.learn-more' | translate }}
+    </pa-button>
+  </nsi-info-card>
+}
