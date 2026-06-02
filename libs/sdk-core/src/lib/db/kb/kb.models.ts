@@ -629,6 +629,8 @@ export enum ReasoningEffort {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
+  NONE = 'none',
+  XHIGH = 'xhigh',
 }
 
 export enum NumericReasoningEffort {
@@ -636,6 +638,8 @@ export enum NumericReasoningEffort {
   LOW = 1,
   MEDIUM = 2,
   HIGH = 3,
+  NONE = 4,
+  XHIGH = 5,
 }
 
 export interface ReasoningConfig {
