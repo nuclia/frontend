@@ -47,10 +47,10 @@ export const aragAnswerState = $state<AragAnswerState>({
 });
 
 export function getCurrentEntry(): AragChatEntry | undefined {
-  return aragAnswerState.entries.slice(-1)[0];
+  return aragAnswerState.entries.at(-1);
 }
 export function getEntryAnswer(entry: AragChatEntry) {
-  return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+  return entry.answers.findLast((a) => !!a.answer);
 }
 export function getEntryVisualizations(entry: AragChatEntry) {
   return entry.answers.filter((a) => !!a.data_visualizations).slice(-1)[0];
@@ -193,8 +193,8 @@ export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
     labels: [],
     position: {
       index: 0,
-      start: position?.[0] ? parseInt(position?.[0]) : 0,
-      end: position?.[1] ? parseInt(position?.[1]) : 0,
+      start: position?.[0] ? Number.parseInt(position?.[0]) : 0,
+      end: position?.[1] ? Number.parseInt(position?.[1]) : 0,
     },
     fuzzy_result: false,
     page_with_visual: false,

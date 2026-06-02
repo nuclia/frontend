@@ -12,7 +12,7 @@ import {
   injectScript,
 } from '@flaps/core';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
-import { map, Subject, switchMap } from 'rxjs';
+import { Subject } from 'rxjs';
 import { StrongPassword } from '../password.validator';
 
 @Component({

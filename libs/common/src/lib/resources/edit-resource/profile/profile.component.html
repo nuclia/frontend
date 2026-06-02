@@ -49,9 +49,9 @@
                 }
                 <div>
                   <div>
-                    <label class="title-s">
+                    <span class="title-s">
                       {{ 'resource.thumbnail.label' | translate }}
-                    </label>
+                    </span>
                     <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
                   </div>
                   <div class="thumbnails-container">
@@ -81,7 +81,7 @@
                         alt="New thumbnail"
                         [url]="newThumbnail"
                         [selected]="newThumbnail === selectedThumbnail"
-                        (select)="selectThumbnail(newThumbnail)"
+                        (thumbnailSelect)="selectThumbnail(newThumbnail)"
                         (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
                     }
                     @for (thumb of thumbnailsLoaded | async; track thumb.uri) {
@@ -91,7 +91,7 @@
                           [url]="thumb.blob"
                           [selected]="thumb.uri === selectedThumbnail"
                           [alt]="'Thumbnail ' + $index"
-                          (select)="selectThumbnail(thumb.uri)"
+                          (thumbnailSelect)="selectThumbnail(thumb.uri)"
                           (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
                       </div>
                     }
@@ -212,7 +212,7 @@
                 </pa-toggle>
                 @if (editExtraMetadata) {
                   <nsi-expandable-textarea
-                    id="extra"
+                    id="extra-metadata"
                     formControlName="extra"
                     resizable
                     modalTitle="resource.extra-metadata.label"

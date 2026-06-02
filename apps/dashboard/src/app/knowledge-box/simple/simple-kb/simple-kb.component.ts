@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, computed, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import { map, take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
@@ -18,7 +18,7 @@ import { getCoworkTrialState } from '../simple.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SizePipe],
 })
-export class SimpleKBComponent {
+export class SimpleKBComponent implements OnDestroy {
   private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);

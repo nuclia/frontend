@@ -19,11 +19,11 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
     return selectService.accounts.pipe(
       switchMap((accounts) => {
         const selectAccount$ = selectService.selectAccount(selectedAccount);
-        if (!accounts) {
+        if (accounts) {
+          return selectAccount$;
+        } else {
           // on reload, we need to load accounts list
           return selectService.loadAccounts().pipe(switchMap(() => selectAccount$));
-        } else {
-          return selectAccount$;
         }
       }),
       map(() => true),

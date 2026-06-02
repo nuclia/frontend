@@ -92,7 +92,7 @@ export class SearchWidgetStorageService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.modify({ search_configs: { ...(kb.search_configs || {}), ragLabQuestions: updatedQuestions } }),
+        kb.modify({ search_configs: { ...kb.search_configs, ragLabQuestions: updatedQuestions } }),
       ),
       switchMap(() => this.sdk.refreshCurrentKb()),
       tap(() => this.storageUpdated.next()),
@@ -104,7 +104,6 @@ export class SearchWidgetStorageService {
       return forkJoin([this._storeSearchOptions(name, config.value), this._deleteSearchConfig(name)]).pipe(
         map(() => {
           this.storageUpdated.next();
-          return;
         }),
       );
     } else {
@@ -118,7 +117,6 @@ export class SearchWidgetStorageService {
       return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, searchOptions)]).pipe(
         map(() => {
           this.storageUpdated.next();
-          return;
         }),
       );
     }

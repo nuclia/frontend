@@ -44,7 +44,7 @@ export class RulesPanelComponent implements OnInit, OnDestroy {
     }),
   });
   headerHeight = input<string>('');
-  cancel = output();
+  panelCancel = output();
 
   get configForm() {
     return this.form.controls.config;
@@ -101,7 +101,7 @@ export class RulesPanelComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.sdk.refreshCurrentArag();
-          this.cancel.emit();
+          this.panelCancel.emit();
         },
         error: () => {
           this.toaster.error(this.translate.instant('retrieval-agents.workflow.sidebar.rules.errors.set-rules'));

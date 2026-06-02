@@ -2,7 +2,7 @@
   <app-configuration-form
     [form]="form"
     submitButton="retrieval-agents.workflow.toolbar-buttons.export"
-    (cancel)="cancel.emit()"
+    (formCancel)="panelCancel.emit()"
     (triggerSubmit)="submit()">
     <div class="form-entry">
       <label for="passphrase">{{ 'generic.password' | translate }}</label>

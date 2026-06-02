@@ -1,7 +1,7 @@
 <app-configuration-form
   [form]="form"
   [submitDisabled]="form.invalid"
-  (cancel)="cancel.emit()"
+  (formCancel)="formCancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
     <app-driver-select

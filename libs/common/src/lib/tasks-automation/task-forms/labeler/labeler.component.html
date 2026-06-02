@@ -6,7 +6,7 @@
   footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
   [validFormInside]="labelingConfig?.valid"
   (save)="onSave($event)"
-  (cancel)="backToTaskList()">
+  (taskCancel)="backToTaskList()">
   <stf-labeling-configuration
     [task]="task | async"
     (configurationChange)="onConfigurationChange($event)">

@@ -3,7 +3,7 @@
     [form]="form"
     [submitDisabled]="!selectedFile() || loading() || undefined"
     submitButton="retrieval-agents.workflow.toolbar-buttons.import"
-    (cancel)="cancel.emit()"
+    (formCancel)="panelCancel.emit()"
     (triggerSubmit)="submit()">
     <div class="form-entry">
       <pa-button

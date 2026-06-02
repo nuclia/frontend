@@ -35,8 +35,7 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { COUNTRIES } from '@nuclia/sistema';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { COUNTRIES, SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';
 import { SubscriptionService } from '../subscription.service';
@@ -367,7 +366,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
                   this.editCustomer = true;
                   throw new Error('billing.invalid_address');
                 }
-                throw new Error();
+                throw new Error('billing.unknown_error');
               }),
             ),
         ),

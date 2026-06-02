@@ -103,11 +103,11 @@ export class ClientDialogComponent implements OnInit {
 
   save() {
     if (this.clientForm.invalid) return;
-    if (!this.editMode) {
-      this.create();
-    } else {
+    if (this.editMode) {
       // TODO: edit
       this.modal.close(true);
+    } else {
+      this.create();
     }
   }
 

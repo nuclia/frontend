@@ -5,25 +5,25 @@ function apply_path {
     jsonFile=/dist/assets/deployment/app-config.json
 
     echo "Check that we have SITE_KEY vars"
-    test -n "$SITE_KEY"
+    [[ -n "$SITE_KEY" ]]
     echo "Check that we have APP_NAME vars"
-    test -n "$APP_NAME"
+    [[ -n "$APP_NAME" ]]
     echo "Check that we have API_ORIGIN vars"
-    test -n "$API_ORIGIN"
+    [[ -n "$API_ORIGIN" ]]
     echo "Check that we have CDN vars"
-    test -n "$CDN"
+    [[ -n "$CDN" ]]
     echo "Check that we have SENTRY_ENV vars"
-    test -n "$SENTRY_ENV"
+    [[ -n "$SENTRY_ENV" ]]
     echo "Check that we have SENTRY_URL vars"
-    test -n "$SENTRY_URL"
+    [[ -n "$SENTRY_URL" ]]
     echo "Check that we have STF_VERSION vars"
-    test -n "$STF_VERSION"
+    [[ -n "$STF_VERSION" ]]
     echo "Check that we have SAML_ENABLED vars"
-    test -n "$SAML_ENABLED"
+    [[ -n "$SAML_ENABLED" ]]
     echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
-    test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
+    [[ -n "$STF_DOCKER_CONFIG_NO_STRIPE" ]]
     echo "Check that we have oauth params vars"
-    test -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID"
+    [[ -n "$STF_DOCKER_CONFIG_OAUTH_CLIENT_ID" ]]
 
     echo "Configuring SITE_KEY vars"
     sed -i "s#STF_DOCKER_CONFIG_SITE_KEY#${SITE_KEY}#g" $jsonFile
@@ -59,11 +59,11 @@ function apply_path {
     sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html
 
     echo "Check that we have BRAND_NAME vars"
-    test -n "$BRAND_NAME"
+    [[ -n "$BRAND_NAME" ]]
     sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
 
     echo "Check that we have ASSETS_PATH vars"
-    test -n "$ASSETS_PATH"
+    [[ -n "$ASSETS_PATH" ]]
 
     echo "Using assets from '$ASSETS_PATH'";
     sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
@@ -71,6 +71,6 @@ function apply_path {
 }
 
 # Should we monkey patch?
-test -n "$APP_NAME" && apply_path
+[[ -n "$APP_NAME" ]] && apply_path
 
 echo "Configured"

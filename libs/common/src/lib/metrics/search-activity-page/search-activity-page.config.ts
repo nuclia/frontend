@@ -91,7 +91,7 @@ export const SEARCH_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
   },
 ];
 
-const EXCLUDED_SEARCH_FIELDS: readonly string[] = [
+const EXCLUDED_SEARCH_FIELDS: ReadonlySet<string> = new Set([
   'user_id',
   'user_type',
   'audit_metadata',
@@ -100,9 +100,9 @@ const EXCLUDED_SEARCH_FIELDS: readonly string[] = [
   'filter',
   'security',
   'result_per_page',
-];
+]);
 export const SEARCH_ACTIVITY_SHOW_FIELDS = ACTIVITY_LOG_SEARCH_SHOW_FIELDS.filter(
-  (f) => !EXCLUDED_SEARCH_FIELDS.includes(f),
+  (f) => !EXCLUDED_SEARCH_FIELDS.has(f),
 );
 
 export const SEARCH_ACTIVITY_SIDEBAR_FIELDS: MetricsSidebarField[] = [

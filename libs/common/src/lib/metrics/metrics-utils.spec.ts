@@ -38,16 +38,19 @@ describe('metrics-utils', () => {
   describe('aggregateUsageMetric()', () => {
     it('sums the named metric across all usage points', () => {
       const points: UsagePoint[] = [
-        { metrics: [{ name: 'cpu', value: 10 }, { name: 'mem', value: 5 }] },
+        {
+          metrics: [
+            { name: 'cpu', value: 10 },
+            { name: 'mem', value: 5 },
+          ],
+        },
         { metrics: [{ name: 'cpu', value: 20 }] },
       ] as any;
       expect(aggregateUsageMetric(points, 'cpu')).toBe(30);
     });
 
     it('returns 0 when no metrics match the name', () => {
-      const points: UsagePoint[] = [
-        { metrics: [{ name: 'cpu', value: 10 }] },
-      ] as any;
+      const points: UsagePoint[] = [{ metrics: [{ name: 'cpu', value: 10 }] }] as any;
       expect(aggregateUsageMetric(points, 'nonexistent')).toBe(0);
     });
 

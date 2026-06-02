@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { SearchWidgetService } from '@flaps/common';
@@ -15,7 +23,7 @@ import { NUCLIA_STANDARD_SEARCH_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG_ID, Widget
   styleUrls: ['./reader-experience.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReaderExperienceComponent {
+export class ReaderExperienceComponent implements OnDestroy {
   private el = inject(ElementRef);
   private searchWidgetService = inject(SearchWidgetService);
   private sdk = inject(SDKService);

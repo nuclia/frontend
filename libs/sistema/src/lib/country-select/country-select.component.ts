@@ -90,7 +90,7 @@ export class CountrySelectComponent implements ControlValueAccessor {
     return code
       .toUpperCase()
       .split('')
-      .map((char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
+      .map((char) => String.fromCodePoint(char.codePointAt(0)! + 127397))
       .join('');
   }
 }

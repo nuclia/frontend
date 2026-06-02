@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { COMMON_COLUMNS, ResourcesTableDirective } from '../resources-table.directive';
 import { ColumnHeader } from '../resource-list.model';
 import { UploadService } from '../../../upload';
-import { map, of } from 'rxjs';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'stf-pending-resources-table',

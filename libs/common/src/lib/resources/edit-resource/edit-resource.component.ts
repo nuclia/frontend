@@ -49,18 +49,23 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     map(([resource, fields]) =>
       fields
         .filter((field) => field.field_type !== FIELD_TYPE.generic)
-        .map((field) => ({
-          ...field,
-          icon:
-            field.field_type === FIELD_TYPE.text
-              ? 'file'
-              : field.field_type === FIELD_TYPE.conversation
-                ? 'chat'
-                : field.field_type,
-          hasError:
-            !!resource &&
-            getErrors(field, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR).length > 0,
-        })),
+        .map((field) => {
+          let icon: string;
+          if (field.field_type === FIELD_TYPE.text) {
+            icon = 'file';
+          } else if (field.field_type === FIELD_TYPE.conversation) {
+            icon = 'chat';
+          } else {
+            icon = field.field_type;
+          }
+          return {
+            ...field,
+            icon,
+            hasError:
+              !!resource &&
+              getErrors(field, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR).length > 0,
+          };
+        }),
     ),
   );
   originalFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(

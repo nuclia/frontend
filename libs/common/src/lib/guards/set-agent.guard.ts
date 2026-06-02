@@ -18,9 +18,8 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
 
   return isRetrievalAgentsEnabled.pipe(
     switchMap((enabled) => {
-      return !enabled
-        ? of(router.createUrlTree(['/select']))
-        : sdk.currentAccount.pipe(
+      return enabled
+        ? sdk.currentAccount.pipe(
             switchMap((account) => {
               return sdk.nuclia.db.getRetrievalAgentsForZone(account.id, zone, 'agents', false).pipe(
                 switchMap((arags) => {
@@ -39,7 +38,8 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
             filter((arag) => arag.slug === agentSlug),
             take(1),
             map(() => true),
-          );
+          )
+        : of(router.createUrlTree(['/select']));
     }),
   );
 };

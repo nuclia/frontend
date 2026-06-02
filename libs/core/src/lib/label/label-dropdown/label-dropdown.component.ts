@@ -57,7 +57,7 @@ export class LabelDropdownComponent {
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() labelSetSelected = new EventEmitter<{ id: string; labelSet: LabelSet }>();
-  @Output() close = new EventEmitter<void>();
+  @Output() dropdownClose = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
   @ViewChild('level2') level2Popup?: PopupComponent;
@@ -97,7 +97,7 @@ export class LabelDropdownComponent {
     this.labelSetExpanded = undefined;
     this.labelSetInSelection = false;
     this.radioValue = '';
-    this.close.emit();
+    this.dropdownClose.emit();
   }
 
   private setRadioModel(labelSetType: string) {
@@ -116,15 +116,15 @@ export class LabelDropdownComponent {
     const checkboxValue = `${labelValue.labelset}${labelValue.label}`;
     let newSelectedLabels;
 
-    if (!this.checkboxSelection.includes(checkboxValue)) {
+    if (this.checkboxSelection.includes(checkboxValue)) {
+      newSelectedLabels = this.selection.filter(
+        (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
+      );
+    } else {
       const isMultiple = this.labelSets[labelValue.labelset]?.multiple || this.multiple;
       newSelectedLabels = isMultiple
         ? this.selection.concat([labelValue])
         : this.selection.filter((item) => item.labelset !== labelValue.labelset).concat([labelValue]);
-    } else {
-      newSelectedLabels = this.selection.filter(
-        (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
-      );
     }
     this.selection = newSelectedLabels;
     this.setRadioModel(labelValue.labelset);

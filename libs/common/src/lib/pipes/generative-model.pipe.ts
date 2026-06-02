@@ -10,6 +10,6 @@ export class GenerativeModelPipe implements PipeTransform {
   transform(model: string): string {
     const key = `kb.settings.learning-options.${model}`;
     const translation = this.translate.instant(key);
-    return translation !== key ? translation : model.toLowerCase();
+    return translation === key ? model.toLowerCase() : translation;
   }
 }

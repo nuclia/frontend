@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   BedrockService,
   BedrockStatus,
@@ -59,7 +59,7 @@ interface BedrockIntegration extends BedrockStatus {
   styleUrl: './account-models.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountModelsComponent {
+export class AccountModelsComponent implements OnInit {
   private sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
   private modalService = inject(SisModalService);

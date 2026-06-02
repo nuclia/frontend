@@ -100,7 +100,7 @@ export function ask(
           const rows = new TextDecoder()
             .decode(data.buffer)
             .split('\n')
-            .filter((d) => d);
+            .filter(Boolean);
           const items: Ask.AskResponseItem[] = rows.reduce((acc, row) => {
             previous += row;
             try {
@@ -109,6 +109,7 @@ export function ask(
               previous = '';
             } catch (e) {
               // block is not complete yet
+              console.warn(e);
             }
             return acc;
           }, [] as Ask.AskResponseItem[]);
@@ -116,7 +117,7 @@ export function ask(
           const statusItem = items.find((item) => item.item.type === 'status');
           if (statusItem) {
             const item = statusItem.item as Ask.StatusAskResponseItem;
-            const status = parseInt(item.code, 10);
+            const status = Number.parseInt(item.code, 10);
             const hasResults = items.some((item) => item.item.type === 'retrieval');
             if (!Number.isNaN(status) && status !== 0 && !canIgnoreStatus(item.status, body, hasResults)) {
               return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
@@ -227,7 +228,7 @@ export function predictAnswer(
             return from(res.text()).pipe(
               map((text) => {
                 if (options?.json_schema) {
-                  const rows = text.split('\n').filter((d) => d);
+                  const rows = text.split('\n').filter(Boolean);
                   return rows.reduce(
                     (acc, row) => {
                       const obj = JSON.parse(row).chunk;
@@ -235,14 +236,14 @@ export function predictAnswer(
                         acc.jsonAnswer = obj.object;
                       }
                       if (obj.type === 'status') {
-                        acc.status = parseInt(obj.code);
+                        acc.status = Number.parseInt(obj.code);
                       }
                       return acc;
                     },
                     { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
                   );
                 } else {
-                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
+                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: Number.parseInt(text.slice(-1)) };
                 }
               }),
             );
@@ -268,7 +269,7 @@ export function predictAnswer(
             const rows = new TextDecoder()
               .decode(data.buffer)
               .split('\n')
-              .filter((d) => d);
+              .filter(Boolean);
             const items = rows.reduce((acc, row) => {
               previous += row;
               try {
@@ -277,13 +278,14 @@ export function predictAnswer(
                 previous = '';
               } catch (e) {
                 // block is not complete yet
+                console.warn(e);
               }
               return acc;
             }, [] as Ask.PredictAnswerResponseItem[]);
             const statusItem = items.find((item) => item.chunk.type === 'status');
             if (statusItem) {
               const item = statusItem.chunk as Ask.StatusPredictAnswerResponseItem;
-              const status = parseInt(item.code, 10);
+              const status = Number.parseInt(item.code, 10);
               if (!Number.isNaN(status) && status !== 0) {
                 return { type: 'error', status } as IErrorResponse;
               }

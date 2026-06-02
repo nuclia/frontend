@@ -5,7 +5,7 @@
       addNew
       inModal
       [kind]="modal.config.data?.['kind']"
-      (cancel)="modal.close(null)"
+      (formCancel)="modal.close(null)"
       (done)="modal.close($event)"></stf-label-set-form>
   </pa-modal-content>
 </pa-modal-advanced>

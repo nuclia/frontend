@@ -17,9 +17,9 @@ export class NodeSelectorComponent {
   icon = input<string>();
   badge = input<string>();
 
-  select = output<void>();
+  nodeSelect = output<void>();
 
   @HostListener('click') onClick() {
-    this.select.emit();
+    this.nodeSelect.emit();
   }
 }

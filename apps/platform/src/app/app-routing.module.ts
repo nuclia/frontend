@@ -3,7 +3,6 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
-  aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
@@ -17,8 +16,6 @@ import {
   setAccountGuard,
   awsGuard,
   AwsOnboardingComponent,
-  KnowledgeBoxKeysComponent,
-  KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
 } from '@flaps/common';

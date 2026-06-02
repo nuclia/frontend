@@ -20,7 +20,7 @@ export class FormFooterComponent {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) secondary = false;
 
-  @Output() cancel: EventEmitter<void> = new EventEmitter<void>();
+  @Output() footerCancel: EventEmitter<void> = new EventEmitter<void>();
 
   private store = inject(ManagerStore);
   canEdit = this.store.canEdit;

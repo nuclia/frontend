@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
 import { BulkAction, ColumnHeader, MenuAction, PAGE_SIZES } from './resource-list.model';
 import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
-import { delay, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
+import { delay, map, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
 import {

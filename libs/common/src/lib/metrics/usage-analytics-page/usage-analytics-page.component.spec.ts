@@ -26,7 +26,7 @@ describe('UsageAnalyticsPageComponent', () => {
     };
     const mockAccount = {
       creation_date: '2026-02-20T09:00:00.000000',
-    };    
+    };
 
     await TestBed.configureTestingModule({
       declarations: [UsageAnalyticsPageComponent, MockPipe(CompactNumberPipe)],

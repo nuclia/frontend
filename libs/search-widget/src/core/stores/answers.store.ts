@@ -189,13 +189,13 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
       (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
       [] as { index: number; end: number }[],
     )
-    .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
+    .sort((a, b) => (a.end - b.end === 0 ? a.index - b.index : a.end - b.end))
     .reverse()
     .forEach((ref) => {
       let before = sliceUnicode(rawText, 0, ref.end);
       let after = sliceUnicode(rawText, ref.end);
       const lines = before.split('\n');
-      const lastLine = lines[lines.length - 1];
+      const lastLine = lines.at(-1)!;
       const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
       // if the citation marker has been positioned on a table border, we need to move it to the previous line
       // so it does not break the table
@@ -217,7 +217,7 @@ function addCitationReferences(rawText: string, citations: Citations, html: bool
   return rawText;
 }
 
-const FOOTNOTES_REF = new RegExp(/\[([0-9]+)\]:\sblock-[A-Z]{2}(-[0-9]+)?/g);
+const FOOTNOTES_REF = new RegExp(/\[(\d+)\]:\sblock-[A-Z]{2}(-\d+)?/g);
 
 export function addLLMCitationReferences(rawText: string, html: boolean) {
   const references = rawText.matchAll(FOOTNOTES_REF);

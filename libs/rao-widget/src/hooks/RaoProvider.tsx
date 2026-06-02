@@ -61,6 +61,22 @@ const injectZoneIntoBackend = (backend: string, zone?: string): string => {
   }
 };
 
+const normalizeText = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
+const extractPossibleAnswerText = (candidate: unknown): string | null => {
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+  const record = candidate as Record<string, unknown>;
+  return normalizeText(record.answer);
+};
+
 export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   children,
   nuclia,
@@ -399,7 +415,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     const uniqueId = `${baseName}-${index}`;
     const title = typeof record.title === 'string' && record.title.trim().length > 0 ? record.title.trim() : baseName;
     const description = typeof record.description === 'string' ? record.description : undefined;
-    const args = Object.prototype.hasOwnProperty.call(record, 'arguments') ? record.arguments : undefined;
+    const args = Object.hasOwn(record, 'arguments') ? record.arguments : undefined;
     const metaValue =
       record.meta && typeof record.meta === 'object' && record.meta !== null
         ? (record.meta as Record<string, unknown>)
@@ -429,15 +445,15 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
             return acc;
           }
 
-          if (Object.prototype.hasOwnProperty.call(record, 'value')) {
+          if (Object.hasOwn(record, 'value')) {
             acc[key] = (record as { value: unknown }).value;
             return acc;
           }
-          if (Object.prototype.hasOwnProperty.call(record, 'default')) {
+          if (Object.hasOwn(record, 'default')) {
             acc[key] = (record as { default: unknown }).default;
             return acc;
           }
-          if (Object.prototype.hasOwnProperty.call(record, 'example')) {
+          if (Object.hasOwn(record, 'example')) {
             acc[key] = (record as { example: unknown }).example;
             return acc;
           }
@@ -504,6 +520,50 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
     [finalizeAssistantMessage, handleChatClose],
   );
 
+  const handleFeedbackRequest = useCallback(
+    (answer: AragAnswer, feedback: NonNullable<AragAnswer['feedback']>) => {
+      const targetId = assistantMessageIdRef.current ?? lastAssistantMessageIdRef.current;
+      if (targetId) {
+        setConversation((prev) => (prev ? prev.filter((m) => m.id !== targetId) : prev));
+      }
+      const rawOptions = Array.isArray(feedback.data) ? feedback.data : [];
+      const options = rawOptions
+        .map((entry, index) => toFeedbackOption(entry, index))
+        .filter(Boolean) as IMessageFeedbackOption[];
+
+      const questionText =
+        typeof feedback.question === 'string' && feedback.question.trim().length > 0
+          ? feedback.question.trim()
+          : text.feedback_choose;
+
+      appendMessage({
+        id: createMessageId('assistant-feedback'),
+        role: 'assistant',
+        content: questionText,
+        meta: text.meta_agentrequest,
+        debug: [answer],
+        feedback: {
+          feedbackId: feedback.feedback_id,
+          requestId: feedback.request_id,
+          question: questionText,
+          module: feedback.module ?? undefined,
+          agentId: feedback.agent_id ?? undefined,
+          timeoutMs: feedback.timeout_ms ?? undefined,
+          responseSchema: feedback.response_schema ?? undefined,
+          options,
+          status: options.length > 0 ? 'pending' : 'error',
+          selectedOptionId: undefined,
+          error: options.length > 0 ? null : text.feedback_error,
+        },
+      });
+
+      assistantMessageIdRef.current = null;
+      lastAssistantMessageIdRef.current = null;
+      lastAssistantTextRef.current = null;
+    },
+    [appendMessage, text, toFeedbackOption],
+  );
+
   const handleAnswerMessage = useCallback(
     (answer: AragAnswer) => {
       if (answer.operation === AnswerOperation.start) {
@@ -513,46 +573,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       }
 
       if (answer.operation === AnswerOperation.agent_request && answer.feedback) {
-        const feedback = answer.feedback;
-        // Remove the in-progress assistant placeholder, we're switching to feedback interaction
-        const targetId = assistantMessageIdRef.current ?? lastAssistantMessageIdRef.current;
-        if (targetId) {
-          setConversation((prev) => (prev ? prev.filter((m) => m.id !== targetId) : prev));
-        }
-        const rawOptions = Array.isArray(feedback.data) ? feedback.data : [];
-        const options = rawOptions
-          .map((entry, index) => toFeedbackOption(entry, index))
-          .filter(Boolean) as IMessageFeedbackOption[];
-
-        const questionText =
-          typeof feedback.question === 'string' && feedback.question.trim().length > 0
-            ? feedback.question.trim()
-            : text.feedback_choose;
-
-        appendMessage({
-          id: createMessageId('assistant-feedback'),
-          role: 'assistant',
-          content: questionText,
-          meta: text.meta_agentrequest,
-          debug: [answer],
-          feedback: {
-            feedbackId: feedback.feedback_id,
-            requestId: feedback.request_id,
-            question: questionText,
-            module: feedback.module ?? undefined,
-            agentId: feedback.agent_id ?? undefined,
-            timeoutMs: feedback.timeout_ms ?? undefined,
-            responseSchema: feedback.response_schema ?? undefined,
-            options,
-            status: options.length > 0 ? 'pending' : 'error',
-            selectedOptionId: undefined,
-            error: options.length > 0 ? null : text.feedback_error,
-          },
-        });
-
-        assistantMessageIdRef.current = null;
-        lastAssistantMessageIdRef.current = null;
-        lastAssistantTextRef.current = null;
+        handleFeedbackRequest(answer, answer.feedback);
         return;
       }
 
@@ -572,22 +593,6 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         appendAssistantStep(answer.step);
       }
 
-      const normalizeText = (value: unknown): string | null => {
-        if (typeof value !== 'string') {
-          return null;
-        }
-        const trimmed = value.trim();
-        return trimmed.length > 0 ? trimmed : null;
-      };
-
-      const extractPossibleAnswerText = (candidate: unknown): string | null => {
-        if (!candidate || typeof candidate !== 'object') {
-          return null;
-        }
-        const record = candidate as Record<string, unknown>;
-        return normalizeText(record.answer);
-      };
-
       const candidateTexts: Array<string | null> = [
         normalizeText(answer.generated_text),
         normalizeText(answer.answer),
@@ -595,13 +600,13 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
         normalizeText(answer.agent_request),
       ];
 
-      const messageText = candidateTexts.find((entry) => entry);
+      const messageText = candidateTexts.find(Boolean);
 
       if (messageText) {
         appendAssistantContent(messageText);
       } else if (answer.step) {
         const fallbackFromStep = normalizeText(answer.step.value);
-        if (fallbackFromStep && fallbackFromStep.endsWith('?')) {
+        if (fallbackFromStep?.endsWith('?')) {
           appendAssistantContent(fallbackFromStep);
         }
       }
@@ -610,11 +615,9 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       appendAssistantContent,
       appendAssistantEvent,
       appendAssistantStep,
-      appendMessage,
       finalizeAssistantMessage,
+      handleFeedbackRequest,
       startAssistantResponse,
-      text,
-      toFeedbackOption,
     ],
   );
 
@@ -929,7 +932,7 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
       // Resolve the selected option and schema from the latest state to avoid races
       const currentMessages = conversationRef.current ?? [];
       const target = currentMessages.find((m) => m.id === messageId && m.feedback);
-      if (!target || !target.feedback) {
+      if (!target?.feedback) {
         return;
       }
       if (target.feedback.status === 'submitting' || target.feedback.status === 'completed') {

@@ -8,6 +8,7 @@ import {
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -47,7 +48,7 @@ const KINDS = [
   styleUrl: './label-set-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelSetFormComponent implements OnInit, OnChanges {
+export class LabelSetFormComponent implements OnInit, OnChanges, OnDestroy {
   private labelsService = inject(LabelsService);
   private cdr = inject(ChangeDetectorRef);
   private toaster = inject(SisToastService);
@@ -59,7 +60,7 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
   @Input() kind?: LabelSetKind;
   @Input() labelSetId?: string;
 
-  @Output() cancel = new EventEmitter<void>();
+  @Output() formCancel = new EventEmitter<void>();
   @Output() done = new EventEmitter<{ id: string; labelSet: LabelSet }>();
 
   @ViewChild('labelList', { read: ElementRef }) labelListElement?: ElementRef;

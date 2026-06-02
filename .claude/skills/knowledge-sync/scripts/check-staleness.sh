@@ -35,13 +35,13 @@ MISSING=()
 
 for dir in apps/*/ libs/*/; do
   # Skip dirs that are just build artifacts or don't have a project.json
-  [ ! -f "${dir}project.json" ] && continue
-  if [ ! -f "${dir}AGENTS.md" ]; then
+  [[ ! -f "${dir}project.json" ]] && continue
+  if [[ ! -f "${dir}AGENTS.md" ]]; then
     MISSING+=("$dir")
   fi
 done
 
-if [ ${#MISSING[@]} -eq 0 ]; then
+if [[ ${#MISSING[@]} -eq 0 ]]; then
   echo -e "  ${GREEN}✓ All projects have AGENTS.md${NC}"
 else
   echo -e "  ${RED}✗ Missing AGENTS.md (CRITICAL — create these first):${NC}"
@@ -57,23 +57,23 @@ echo -e "${BLUE}[2/3] Checking for stale AGENTS.md files...${NC}"
 STALE_FILES=()
 
 for dir in apps/*/ libs/*/; do
-  [ ! -f "${dir}project.json" ] && continue
+  [[ ! -f "${dir}project.json" ]] && continue
   agents_md="${dir}AGENTS.md"
-  [ ! -f "$agents_md" ] && continue  # already flagged above
+  [[ ! -f "$agents_md" ]] && continue  # already flagged above
 
   # Find any .ts, .html, .scss file in src/ newer than AGENTS.md
   newer_count=$(find "${dir}src" -newer "$agents_md" \( -name "*.ts" -o -name "*.html" -o -name "*.scss" \) 2>/dev/null | wc -l | tr -d ' ')
 
-  if [ "$newer_count" -gt 0 ]; then
+  if [[ "$newer_count" -gt 0 ]]; then
     STALE_FILES+=("$dir ($newer_count source files newer)")
-    if [ "$VERBOSE" = "--verbose" ]; then
+    if [[ "$VERBOSE" = "--verbose" ]]; then
       echo -e "  ${YELLOW}⚠  ${dir}AGENTS.md — ${newer_count} newer source files:${NC}"
       find "${dir}src" -newer "$agents_md" \( -name "*.ts" -o -name "*.html" -o -name "*.scss" \) 2>/dev/null | head -5 | sed 's/^/       /'
     fi
   fi
 done
 
-if [ ${#STALE_FILES[@]} -eq 0 ]; then
+if [[ ${#STALE_FILES[@]} -eq 0 ]]; then
   echo -e "  ${GREEN}✓ All AGENTS.md files appear up-to-date${NC}"
 else
   echo -e "  ${YELLOW}⚠  Potentially stale AGENTS.md files:${NC}"
@@ -90,7 +90,7 @@ echo -e "${BLUE}[3/3] Checking recent commits (last 7 days) for un-synced change
 # Get commits from last 7 days
 recent_commits=$(git log --since="7 days ago" --oneline 2>/dev/null | head -10)
 
-if [ -z "$recent_commits" ]; then
+if [[ -z "$recent_commits" ]]; then
   echo -e "  ${GREEN}✓ No commits in the last 7 days${NC}"
 else
   # Find projects touched by recent commits but whose AGENTS.md wasn't touched
@@ -101,21 +101,21 @@ else
 
   unsynced=()
   while IFS= read -r project; do
-    [ -z "$project" ] && continue
+    [[ -z "$project" ]] && continue
     agents_path="${project}/AGENTS.md"
-    [ ! -f "$agents_path" ] && continue  # already flagged
+    [[ ! -f "$agents_path" ]] && continue  # already flagged
 
     # Check if AGENTS.md was itself touched in recent commits
     agents_touched=$(git log --since="7 days ago" -- "$agents_path" 2>/dev/null | wc -l | tr -d ' ')
     source_touched=$(git log --since="7 days ago" -- "${project}/src" 2>/dev/null | wc -l | tr -d ' ')
 
-    if [ "$source_touched" -gt 0 ] && [ "$agents_touched" -eq 0 ]; then
+    if [[ "$source_touched" -gt 0 ]] && [[ "$agents_touched" -eq 0 ]]; then
       last_commit_msg=$(git log --since="7 days ago" --oneline -- "${project}/src" 2>/dev/null | head -1)
       unsynced+=("$project — last: $last_commit_msg")
     fi
   done <<< "$touched_projects"
 
-  if [ ${#unsynced[@]} -eq 0 ]; then
+  if [[ ${#unsynced[@]} -eq 0 ]]; then
     echo -e "  ${GREEN}✓ No un-synced source changes in last 7 days${NC}"
   else
     echo -e "  ${YELLOW}⚠  Source changed without updating AGENTS.md (last 7 days):${NC}"
@@ -129,7 +129,7 @@ echo ""
 
 # ─── Summary ──────────────────────────────────────────────────────────────────
 echo -e "${BLUE}═══════════════════════════════════════════════════════${NC}"
-if [ "$STALE" -eq 0 ]; then
+if [[ "$STALE" -eq 0 ]]; then
   echo -e "${GREEN}  ✓ Knowledge is up-to-date. Nothing to sync.${NC}"
 else
   echo -e "${YELLOW}  ⚠  Action needed. Ask Claude:${NC}"

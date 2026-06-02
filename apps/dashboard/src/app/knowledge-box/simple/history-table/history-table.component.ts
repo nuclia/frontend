@@ -62,9 +62,9 @@ export class HistoryTableComponent {
     ),
     map((rows) =>
       rows.sort((a, b) =>
-        a.created !== b.created
-          ? new Date(b.created).getTime() - new Date(a.created).getTime()
-          : b.questionIndex - a.questionIndex,
+        a.created === b.created
+          ? b.questionIndex - a.questionIndex
+          : new Date(b.created).getTime() - new Date(a.created).getTime(),
       ),
     ),
   );

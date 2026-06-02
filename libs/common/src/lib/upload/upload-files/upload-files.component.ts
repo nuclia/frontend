@@ -7,7 +7,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
+import { take } from 'rxjs';
 import { DroppedFile, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
@@ -26,7 +26,7 @@ const GENERAL_LABELSET = 'General';
 })
 export class UploadFilesComponent {
   @Input() folderMode = false;
-  @Output() close = new EventEmitter<{ cancel: boolean }>();
+  @Output() uploadClose = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
 
   navigationService = inject(NavigationService);
@@ -140,7 +140,7 @@ export class UploadFilesComponent {
       }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
     } else {
-      this.close.emit();
+      this.uploadClose.emit();
     }
   }
 
@@ -180,6 +180,6 @@ export class UploadFilesComponent {
   }
 
   cancel() {
-    this.close.emit({ cancel: true });
+    this.uploadClose.emit({ cancel: true });
   }
 }

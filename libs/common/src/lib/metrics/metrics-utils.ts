@@ -9,7 +9,7 @@ import { differenceInCalendarMonths } from 'date-fns';
  */
 export function getMonthRange(yearMonth: string): { from: string; to: string } {
   const [year, month] = yearMonth.split('-');
-  const lastDay = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+  const lastDay = new Date(Number.parseInt(year, 10), Number.parseInt(month, 10), 0).getDate();
   return {
     from: `${yearMonth}-01`,
     to: `${yearMonth}-${String(lastDay).padStart(2, '0')}`,
@@ -42,7 +42,7 @@ export function applyTextSearchFilter(
 ): void {
   if (!search?.term) return;
   if (search.column === 'id') {
-    const parsed = parseInt(search.term, 10);
+    const parsed = Number.parseInt(search.term, 10);
     if (!isNaN(parsed)) {
       filters['id'] = { eq: parsed };
     }
@@ -58,10 +58,7 @@ export function applyTextSearchFilter(
  * Each condition maps to { date: { ge?: string, le?: string } }.
  * Multiple conditions on the same column are merged.
  */
-export function applyDateConditions(
-  conditions: DateCondition[],
-  filters: Record<string, unknown>,
-): void {
+export function applyDateConditions(conditions: DateCondition[], filters: Record<string, unknown>): void {
   for (const c of conditions) {
     if (!c.from && !c.to) continue;
     const existing = (filters[c.column] as Record<string, unknown>) ?? {};

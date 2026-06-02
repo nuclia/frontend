@@ -2,12 +2,12 @@
   class="driver-subform-field"
   [formGroup]="form">
   <div class="subform-header">
-    <label class="subform-label">
+    <span id="drv-subform-label" class="subform-label">
       {{ label }}
       @if (required) {
         <span class="required-indicator">*</span>
       }
-    </label>
+    </span>
   </div>
 
   <div class="subform-content">

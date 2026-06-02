@@ -16,7 +16,7 @@ import {
   trimLabelSets,
 } from '@nuclia/core';
 import { endOfDay } from 'date-fns';
-import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
+import { distinctUntilChanged, filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceCacheService } from '../resource-cache.service';
@@ -169,9 +169,9 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   updateClassifications(selection: Classification[]) {
-    const filters = selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase());
+    const filters = new Set(selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase()));
     this.filterOptions.classification.forEach((option) => {
-      option.selected = filters.includes(option.id.toLocaleLowerCase());
+      option.selected = filters.has(option.id.toLocaleLowerCase());
     });
     this.cdr.markForCheck();
     this.onToggleFilter();
@@ -249,7 +249,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   get selectedVisibility() {
-    return this.filterOptions.hidden !== undefined ? getFilterFromVisibility(this.filterOptions.hidden) : [];
+    return this.filterOptions.hidden === undefined ? [] : getFilterFromVisibility(this.filterOptions.hidden);
   }
 
   get selectedDates() {
@@ -335,12 +335,14 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   getStatusFromParam(param: string): RESOURCE_STATUS | undefined {
-    return param === 'processed'
-      ? RESOURCE_STATUS.PROCESSED
-      : param === 'pending'
-        ? RESOURCE_STATUS.PENDING
-        : param === 'error'
-          ? RESOURCE_STATUS.ERROR
-          : undefined;
+    if (param === 'processed') {
+      return RESOURCE_STATUS.PROCESSED;
+    } else if (param === 'pending') {
+      return RESOURCE_STATUS.PENDING;
+    } else if (param === 'error') {
+      return RESOURCE_STATUS.ERROR;
+    } else {
+      return undefined;
+    }
   }
 }

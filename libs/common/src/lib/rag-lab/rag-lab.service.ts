@@ -76,7 +76,7 @@ export class RagLabService {
         this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));
         this._kbConfigBackup.next(config);
         // Only models present in both schema and providers are allowed
-        const allowedModels = (schema[GENERATIVE_MODEL_KEY]?.options || []).map((option) => option.value);
+        const allowedModels = new Set((schema[GENERATIVE_MODEL_KEY]?.options || []).map((option) => option.value));
         const allowedProviders = Object.entries(providers)
           .map(([providerKey, provider]) => ({
             ...provider,
@@ -87,7 +87,7 @@ export class RagLabService {
                   providerKey === 'default' ? [value.name, { ...value, name: key }] : [key, value],
                 )
                 .map((value) => value as [string, ModelInfo])
-                .filter(([key]) => allowedModels.includes(key) && key !== 'generative-multilingual-2023'),
+                .filter(([key]) => allowedModels.has(key) && key !== 'generative-multilingual-2023'),
             ),
           }))
           .filter((provider) => Object.keys(provider.models || {}).length > 0);
@@ -231,12 +231,14 @@ export class RagLabService {
     const entries = results.value;
     const entryIndex = entries.findIndex((entry) => entry.query === query);
     const queryEntry = entryIndex > -1 ? entries[entryIndex] : null;
-    const answer =
-      typeof result === 'string'
-        ? result
-        : result.type === 'answer'
-          ? (result as Ask.Answer).text
-          : `Error: ${result.detail}`;
+    let answer: string;
+    if (typeof result === 'string') {
+      answer = result;
+    } else if (result.type === 'answer') {
+      answer = result.text;
+    } else {
+      answer = `Error: ${result.detail}`;
+    }
     if (queryEntry) {
       queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered, tokens, timings });
       entries.splice(entryIndex, 1, queryEntry);

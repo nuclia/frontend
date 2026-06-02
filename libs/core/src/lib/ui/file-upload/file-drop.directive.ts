@@ -32,7 +32,7 @@ export class FileDropDirective {
             specifier === 'audio/*' ||
             specifier === 'video/*' ||
             specifier === 'image/*' ||
-            specifier.match(extensionRegexp),
+            extensionRegexp.test(specifier),
         )
         .map((specifier) => {
           if (specifier.includes('/*')) {
@@ -122,7 +122,7 @@ export class FileDropDirective {
     }
 
     if (types.indexOf) {
-      return types.indexOf('Files') !== -1;
+      return types.includes('Files');
     } else if (types.contains) {
       return types.contains('Files');
     } else {

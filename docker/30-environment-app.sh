@@ -61,7 +61,7 @@ function apply_path {
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"
     sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
-    if [ "$BRAND_NAME" == Nuclia ]; then
+    if [[ "$BRAND_NAME" == Nuclia ]]; then
       echo "No re-branding";
     else
       echo "Re-branding to '$BRAND_NAME'";
@@ -69,7 +69,7 @@ function apply_path {
       sed -i "s/<title>Agentic RAG<\/title>/<title>$BRAND_NAME<\/title>/" /dist/index.html
     fi
 
-    if [ "$BRAND_DOMAIN" == nuclia.cloud ]; then
+    if [[ "$BRAND_DOMAIN" == nuclia.cloud ]]; then
       echo "No re-branding domain";
     else
       echo "Re-branding to '$BRAND_DOMAIN'";

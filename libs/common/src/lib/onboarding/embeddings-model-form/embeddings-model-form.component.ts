@@ -302,7 +302,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
         extraFields['matryoshka'] = extraFields['matryoshka']
           .split(',')
           .filter((value) => !!value.trim())
-          .map((value) => parseInt(value, 10));
+          .map((value) => Number.parseInt(value, 10));
       }
       userKeys = {
         hf_embedding: extraFields,

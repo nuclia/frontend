@@ -10,7 +10,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { CreateWidgetDialogComponent } from './dialogs';
-import { combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_RAO_WIDGET_CONFIG, DEFAULT_WIDGET_CONFIG } from '../search-widget.models';
 import { NavigationService, SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';

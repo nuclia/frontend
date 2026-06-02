@@ -19,7 +19,7 @@ export function getFilesGroupedByType(filesOrFileList: File[] | FileList | Dropp
 } {
   const files = Array.from(filesOrFileList)
     .filter(
-      (file) => !FILES_TO_IGNORE.includes(file.name) && !PATTERNS_TO_IGNORE.some((pattern) => file.name.match(pattern)),
+      (file) => !FILES_TO_IGNORE.includes(file.name) && !PATTERNS_TO_IGNORE.some((pattern) => pattern.test(file.name)),
     )
     .map((file) => {
       if (file.type) {

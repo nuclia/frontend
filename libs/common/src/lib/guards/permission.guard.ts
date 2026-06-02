@@ -10,9 +10,7 @@ export const accountOwnerGuard = (route: ActivatedRouteSnapshot, routerState: Ro
   const sdk: SDKService = inject(SDKService);
 
   const slug = routerState.root.firstChild?.firstChild?.paramMap.get('account');
-  if (!slug) {
-    return of(false);
-  } else {
+  if (slug) {
     return sdk
       .setCurrentAccount(slug)
       .pipe(
@@ -20,6 +18,8 @@ export const accountOwnerGuard = (route: ActivatedRouteSnapshot, routerState: Ro
           account.can_manage_account ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))),
         ),
       );
+  } else {
+    return of(false);
   }
 };
 

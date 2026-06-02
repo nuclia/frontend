@@ -1,11 +1,11 @@
-<div class="form-entry">
+<div class="form-entry" role="group" aria-labelledby="kv-drv-label">
   <div class="label-and-button">
-    <label>
+    <span id="kv-drv-label">
       {{ label }}
       @if (required) {
         <span style="color: red">*</span>
       }
-    </label>
+    </span>
     <pa-button
       size="small"
       aspect="basic"

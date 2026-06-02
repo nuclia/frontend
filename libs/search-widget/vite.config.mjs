@@ -1,5 +1,5 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import * as path from 'path';
+import * as path from 'node:path';
 import { sveltePreprocess } from 'svelte-preprocess';
 import { defineConfig } from 'vite';
 

@@ -1,6 +1,6 @@
 import { getSubSchema, LearningConfigurations, LearningConfigurationSchema } from '@nuclia/core';
 
-const DEPRECATED_MODELS = ['chatgpt-azure-3'];
+const DEPRECATED_MODELS = new Set(['chatgpt-azure-3']);
 
 export function removeDeprecatedModels(learningSchema: LearningConfigurations) {
   return {
@@ -8,12 +8,12 @@ export function removeDeprecatedModels(learningSchema: LearningConfigurations) {
     generative_model: {
       ...learningSchema['generative_model'],
       options: learningSchema['generative_model'].options?.filter(
-        (option) => !DEPRECATED_MODELS.includes(option.value),
+        (option) => !DEPRECATED_MODELS.has(option.value),
       ),
     },
     summary_model: {
       ...learningSchema['summary_model'],
-      options: learningSchema['summary_model'].options?.filter((option) => !DEPRECATED_MODELS.includes(option.value)),
+      options: learningSchema['summary_model'].options?.filter((option) => !DEPRECATED_MODELS.has(option.value)),
     },
   };
 }

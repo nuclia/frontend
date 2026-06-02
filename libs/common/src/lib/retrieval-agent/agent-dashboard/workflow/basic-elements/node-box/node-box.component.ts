@@ -12,6 +12,7 @@ import {
   HostBinding,
   inject,
   input,
+  OnDestroy,
   output,
   QueryList,
   signal,
@@ -33,7 +34,7 @@ let boxIndex = 0;
   styleUrl: './node-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, AfterViewInit {
+export class NodeBoxComponent implements AfterContentInit, AfterContentChecked, AfterViewInit, OnDestroy {
   protected linkService = inject(LinkService);
   protected unsubscribeAll = new Subject<void>();
   readonly id = `box-${boxIndex++}`;

@@ -81,7 +81,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @returns Paginated sessions list
    */
   listSessions(page?: number, size?: number): Observable<SessionList> {
-    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter(Boolean).join('&');
     return this.nuclia.rest
       .get<{
         resources: ISession[];
@@ -260,10 +260,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
       })
       .pipe(
         switchMap(({ data }) => {
-          const rows = new TextDecoder()
-            .decode(data.buffer)
-            .split('\n')
-            .filter((d) => d);
+          const rows = new TextDecoder().decode(data.buffer).split('\n').filter(Boolean);
           let previous = '';
           const items: AragAnswer[] = rows.slice(nextIndex).reduce((list, row) => {
             previous += row;
@@ -273,6 +270,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
               previous = '';
             } catch (e) {
               // block is not complete yet
+              console.warn(e);
             }
             return list;
           }, [] as AragAnswer[]);

@@ -12,7 +12,7 @@ import { SisModalService, StickyFooterComponent } from '@nuclia/sistema';
 import { TaskSettingsComponent } from './task-settings/task-settings.component';
 import { TaskTestingComponent } from './task-testing/task-testing.component';
 import { TaskName } from '@nuclia/core';
-import { combineLatest, filter, map, of, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { TaskExecutionComponent } from './task-execution/task-execution.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';

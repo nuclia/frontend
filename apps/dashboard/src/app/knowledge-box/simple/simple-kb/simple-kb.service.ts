@@ -70,9 +70,7 @@ export class SimpleKBService {
   userId = this.sdk.nuclia.auth.getJWTUser()?.sub || '';
 
   visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
-  uploadInProgress = this.visibleUploads.pipe(
-    map((uploads) => uploads.filter((upload) => !this.isUploadFailed(upload)).length > 0),
-  );
+  uploadInProgress = this.visibleUploads.pipe(map((uploads) => uploads.some((upload) => !this.isUploadFailed(upload))));
 
   private _forceRefresh = new Subject<void>();
   refreshResources = merge(

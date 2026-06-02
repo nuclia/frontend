@@ -40,9 +40,6 @@
 
   input:checked + .slider {
     background-color: var(--color-primary-regular);
-  }
-
-  input:checked + .slider {
     box-shadow: 0 0 1px var(--color-primary-regular);
   }
 

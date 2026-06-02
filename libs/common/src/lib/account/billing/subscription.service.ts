@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AccountTypes } from '@nuclia/core';
 import { Currency } from '@flaps/core';
 
 @Injectable({ providedIn: 'root' })

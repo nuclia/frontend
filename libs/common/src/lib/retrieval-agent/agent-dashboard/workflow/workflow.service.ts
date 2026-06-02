@@ -16,7 +16,6 @@ import { DriversService } from '../../drivers/drivers.service';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Driver,
   SomeAgent,
   NucliaDBDriver,
   KnowledgeBox,
@@ -65,6 +64,7 @@ import {
 } from './workflow.models';
 import {
   addNode,
+  AddNodeOptions,
   deleteNode,
   getAllNodes,
   getNode,
@@ -383,7 +383,7 @@ export class WorkflowService {
    * Get child agents for a specific connectable entry by examining the agent's configuration
    * This method is completely generic and works with any agent structure
    */
-  private getChildAgentsForEntry(agent: SomeAgent, entryId: string): any[] | any | null {
+  private getChildAgentsForEntry(agent: SomeAgent, entryId: string): any {
     // Direct property match (e.g., 'fallback' entry maps to agent.fallback)
     const child = (agent as unknown as any)[entryId];
     if (child && this.isValidChildAgent(child)) {
@@ -614,7 +614,7 @@ export class WorkflowService {
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => {
+      selectorRef.instance.nodeSelect.subscribe(() => {
         const nodeRef = this.addNode(origin, columnIndex, nodeType as NodeType, originCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id, originCategory);
@@ -656,7 +656,7 @@ export class WorkflowService {
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => {
+      selectorRef.instance.nodeSelect.subscribe(() => {
         const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id, nodeCategory);
@@ -684,10 +684,7 @@ export class WorkflowService {
     const category = nodeRef.instance.category();
     const node = getNode(nodeRef.instance.id, category);
     const agent = node?.agentId;
-    if (!agent) {
-      this.closeSidebar();
-      this._removeNodeAndLinks(nodeRef, column);
-    } else {
+    if (agent) {
       this.modalService
         .openConfirm({
           title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
@@ -703,6 +700,9 @@ export class WorkflowService {
           },
           error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
         });
+    } else {
+      this.closeSidebar();
+      this._removeNodeAndLinks(nodeRef, column);
     }
   }
 
@@ -737,7 +737,7 @@ export class WorkflowService {
     if (!section) {
       throw new Error(`Section ${category} not found in column`);
     }
-    section.removeChild(nodeRef.location.nativeElement);
+    nodeRef.location.nativeElement.remove();
     this.applicationRef.detachView(nodeRef.hostView);
   }
 
@@ -768,7 +768,7 @@ export class WorkflowService {
     this.applicationRef.attachView(panelRef.hostView);
     container.appendChild(panelRef.location.nativeElement);
     panelRef.changeDetectorRef.detectChanges();
-    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    panelRef.instance.panelCancel.subscribe(() => this.closeSidebar());
     setTimeout(() => {
       if (this.sidebarHeader) {
         const headerHeight = this.sidebarHeader.nativeElement.getBoundingClientRect().height;
@@ -812,7 +812,7 @@ export class WorkflowService {
     this.applicationRef.attachView(panelRef.hostView);
     container.appendChild(panelRef.location.nativeElement);
     panelRef.changeDetectorRef.detectChanges();
-    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    panelRef.instance.panelCancel.subscribe(() => this.closeSidebar());
     this._currentPanel = panelRef;
   }
 
@@ -887,7 +887,7 @@ export class WorkflowService {
     nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved, childIndex);
+    addNode(nodeRef, nodeType, nodeCategory, origin, { nodeConfig, agentId, isSaved, childIndex });
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -961,7 +961,7 @@ export class WorkflowService {
     formRef.instance.submitForm.subscribe((config) =>
       this.saveNodeConfiguration(config, nodeId, nodeCategory, node.nodeType, columnIndex),
     );
-    formRef.instance.cancel.subscribe(() => this.closeSidebar());
+    formRef.instance.formCancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
   }
 
@@ -1222,14 +1222,14 @@ export class WorkflowService {
       map((drivers) => {
         const kbDrivers = (drivers?.filter((driver) => driver.provider === 'nucliadb') || []) as NucliaDBDriver[];
         const driver = kbDrivers.find((driver) => driverIdentifier === driver.identifier);
-        return !driver
-          ? null
-          : new KnowledgeBox(this.sdk.nuclia, '', {
+        return driver
+          ? new KnowledgeBox(this.sdk.nuclia, '', {
               id: driver.config.kbid,
               slug: '',
               title: '',
               zone: this.sdk.nuclia.options.zone || '',
-            });
+            })
+          : null;
       }),
     );
   }

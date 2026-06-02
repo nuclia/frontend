@@ -31,15 +31,14 @@ export const createAuthApi = (
     const apiKey = jwtKey ?? config?.serviceAccountKey;
     let authorizationHeader: string | undefined = apiKey ? `Bearer ${apiKey}` : undefined;
 
-    const headers: Record<string, string> | undefined = authorizationHeader
-      ? useServiceAccountHeader
-        ? {
-            'x-nuclia-serviceaccount': authorizationHeader,
-          }
-        : {
-            Authorization: authorizationHeader,
-          }
-      : undefined;
+    let headers: Record<string, string> | undefined;
+    if (!authorizationHeader) {
+      headers = undefined;
+    } else if (useServiceAccountHeader) {
+      headers = { 'x-nuclia-serviceaccount': authorizationHeader };
+    } else {
+      headers = { Authorization: authorizationHeader };
+    }
 
     const body = options?.payload;
 

@@ -218,7 +218,7 @@ export class Db implements IDb {
     accountId: string,
     zone: string,
     mode: KnowledgeBoxMode = 'kb',
-    includeSearchConfigs: boolean = true,
+    includeSearchConfigs = true,
   ): Observable<IKnowledgeBoxItem[]> {
     const params = [];
     if (mode !== 'kb') {
@@ -260,7 +260,7 @@ export class Db implements IDb {
   getKnowledgeBoxesForZone(
     accountId: string,
     zone: string,
-    includeSearchConfigs: boolean = true,
+    includeSearchConfigs = true,
   ): Observable<IKnowledgeBoxItem[]> {
     return this._getKnowledgeBoxesForZone(accountId, zone, 'kb', includeSearchConfigs);
   }
@@ -315,13 +315,14 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
+      const zoneSlugArg = this.nuclia.options.proxy ? undefined : zoneSlug;
       const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
         ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
         : this.nuclia.rest.get<IKnowledgeBoxBase>(
             `/account/${accountID}/kb/${kbId}`,
             undefined,
             undefined,
-            this.nuclia.options.proxy ? undefined : zoneSlug,
+            zoneSlugArg,
           );
 
       return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
@@ -404,7 +405,7 @@ export class Db implements IDb {
     return creation.pipe(
       switchMap((id) => {
         if (!id) {
-          throw 'Knowledge Box creation failed';
+          throw new Error('Knowledge Box creation failed');
         }
         return this.getKnowledgeBox(accountId, id, zone);
       }),
@@ -434,7 +435,7 @@ export class Db implements IDb {
         map((res) => res.id),
         switchMap((id) => {
           if (!id) {
-            throw 'Retrieval Agent creation failed';
+            throw new Error('Retrieval Agent creation failed');
           }
           return this.getRetrievalAgent(accountId, id, zone);
         }),
@@ -603,14 +604,10 @@ export class Db implements IDb {
     }
 
     return this.nuclia.rest
-      .post<{ client_id: string; token: string }>(
-        `/account/${accountId}/nua_clients`,
-        payload,
-        undefined,
-        undefined,
-        undefined,
-        zone,
-      )
+      .post<{
+        client_id: string;
+        token: string;
+      }>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
       .pipe(
         catchError((err) => {
           if (err.status === 409 && data.client_id) {

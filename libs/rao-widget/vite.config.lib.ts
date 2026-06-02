@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import * as path from 'path';
+import * as path from 'node:path';
 
 const sdkCoreEntry = path.resolve(__dirname, '../sdk-core/src/index.ts');
 

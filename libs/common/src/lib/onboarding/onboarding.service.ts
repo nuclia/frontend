@@ -82,16 +82,7 @@ export class OnboardingService {
       creationFailed: false,
     });
     const signupToken = this.authService.getSignUpToken();
-    if (!signupToken) {
-      this._onboardingState.next({
-        creating: false,
-        accountCreated: false,
-        kbCreated: false,
-        creationFailed: true,
-      });
-      console.error('No signup data');
-      return throwError(() => new Error('No signup data'));
-    } else {
+    if (signupToken) {
       return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
         switchMap((data) =>
           this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
@@ -132,6 +123,15 @@ export class OnboardingService {
           });
         }),
       );
+    } else {
+      this._onboardingState.next({
+        creating: false,
+        accountCreated: false,
+        kbCreated: false,
+        creationFailed: true,
+      });
+      console.error('No signup data');
+      return throwError(() => new Error('No signup data'));
     }
   }
 
@@ -254,9 +254,9 @@ export class OnboardingService {
   }
 
   private getIncrementedSlug(slug: string): string {
-    const existingIncrement = parseInt(slug.split('_').pop() || '');
+    const existingIncrement = Number.parseInt(slug.split('_').pop() || '');
     return isNaN(existingIncrement)
       ? `${slug}_1`
-      : `${slug.slice(0, -1 - `${existingIncrement}`.length)}_${existingIncrement + 1}`;
+      : `${slug.slice(0, -1 - String(existingIncrement).length)}_${existingIncrement + 1}`;
   }
 }

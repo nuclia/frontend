@@ -20,12 +20,13 @@ import { SisToastService } from '@nuclia/sistema';
 import { DriversService } from '../../../../../../drivers/drivers.service';
 import { aragUrl } from '../../../../workflow.state';
 
+export type McpDriver = McpHttpDriver | McpSseDriver | McpStdioDriver;
 export type TransportType = string;
 
 export interface TransportChangeEvent {
-  transport: TransportType;
+  transport: string;
   hasDrivers: boolean;
-  availableDrivers: (McpHttpDriver | McpSseDriver | McpStdioDriver)[];
+  availableDrivers: McpDriver[];
 }
 
 @Component({
@@ -73,7 +74,7 @@ export class TransportFieldComponent implements OnInit {
     return `mcp${transport.toLowerCase()}`;
   }
 
-  mcpList = computed<(McpHttpDriver | McpSseDriver | McpStdioDriver)[]>(() => {
+  mcpList = computed<McpDriver[]>(() => {
     const currentTransport = this.transport();
     if (!currentTransport) return [];
 
@@ -128,7 +129,7 @@ export class TransportFieldComponent implements OnInit {
     });
   }
 
-  onTransportChange(transport: TransportType): void {
+  onTransportChange(transport: string): void {
     this.transport.set(transport);
     this.transportControl().patchValue(transport);
     this.emitTransportChange();

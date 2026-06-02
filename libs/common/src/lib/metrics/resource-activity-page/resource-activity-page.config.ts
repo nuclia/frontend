@@ -58,9 +58,9 @@ export const PROCESSING_ACTIVITY_COLUMNS: MetricsColumnDef[] = [
   },
 ];
 
-const EXCLUDED_PROCESSING_FIELDS: readonly string[] = ['user_id', 'user_type', 'audit_metadata'];
+const EXCLUDED_PROCESSING_FIELDS: ReadonlySet<string> = new Set(['user_id', 'user_type', 'audit_metadata']);
 export const PROCESSING_ACTIVITY_SHOW_FIELDS = ACTIVITY_LOG_SHOW_FIELDS.filter(
-  (f) => !EXCLUDED_PROCESSING_FIELDS.includes(f),
+  (f) => !EXCLUDED_PROCESSING_FIELDS.has(f),
 );
 
 export const PROCESSING_ACTIVITY_SIDEBAR_FIELDS: MetricsSidebarField[] = [];

@@ -66,7 +66,7 @@ export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
 export const preferMarkdown: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.preferMarkdown));
 export const jsonSchemaEnabled: Observable<boolean> = widgetJsonSchema.pipe(map((schema) => !!schema));
 export const disableAnswers = () => {
-  widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
+  widgetFeatures.set({ ...widgetFeatures.value, answers: false });
 };
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));
@@ -75,7 +75,15 @@ export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !
 export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === 'answerAndResults'));
 
 export const expandedCitations: Observable<boolean | undefined> = widgetFeatures.pipe(
-  map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
+  map((features) => {
+    if (features?.expandCitations) {
+      return true;
+    } else if (features?.collapseCitations) {
+      return false;
+    } else {
+      return undefined;
+    }
+  }),
 );
 export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));
 export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));

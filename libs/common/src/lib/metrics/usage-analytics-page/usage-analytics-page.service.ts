@@ -38,6 +38,8 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
   ]),
 ) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
+type ScoreFilter = { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' };
+
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
   private user = inject(UserService);
@@ -56,9 +58,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   // Filter state
   private _activeStatuses = signal<Set<RemiAnswerStatus>>(new Set(STATUSES));
   private _feedbackGoodFilter = signal<boolean | undefined>(undefined);
-  private _contentRelevanceFilter = signal<
-    { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
-  >(undefined);
+  private _contentRelevanceFilter = signal<ScoreFilter | undefined>(undefined);
   private _dateConditions = signal<DateCondition[]>([]);
 
   readonly remiScoreAverages = this._remiScoreAverages.asReadonly();
@@ -126,9 +126,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     this._applyFilters();
   }
 
-  updateContentRelevanceFilter(
-    filter: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
-  ): void {
+  updateContentRelevanceFilter(filter: ScoreFilter | undefined): void {
     this._contentRelevanceFilter.set(filter);
     this._applyFilters();
   }
@@ -136,9 +134,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   applyAllFilters(
     statuses: RemiAnswerStatus[],
     feedbackGood: boolean | undefined,
-    contentRelevance:
-      | { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' }
-      | undefined,
+    contentRelevance: ScoreFilter | undefined,
     dateConditions: DateCondition[] = [],
   ): void {
     // If contentRelevance is set, we cannot filter by status (API constraint)
@@ -241,7 +237,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     yearMonth: string,
     isAppend: boolean,
     feedbackGood: boolean | undefined,
-    contextRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' },
+    contextRelevance: ScoreFilter,
     dateConditions: DateCondition[] = [],
   ) {
     // Use 'SUCCESS' page state as shared pagination tracker

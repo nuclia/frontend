@@ -35,14 +35,12 @@ export class Nuclia implements INuclia {
     if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone && !this.options.proxy)) {
       throw new Error('zone and knowledge box id must be defined in the Nuclia options');
     }
-    if (!this.readKb) {
-      this.readKb = new KnowledgeBox(this, '', {
-        id: this.options.knowledgeBox,
-        zone: this.options.zone || '',
-        slug: this.options.kbSlug || '',
-        title: '',
-      });
-    }
+    this.readKb ??= new KnowledgeBox(this, '', {
+      id: this.options.knowledgeBox,
+      zone: this.options.zone || '',
+      slug: this.options.kbSlug || '',
+      title: '',
+    });
     return this.readKb;
   }
 
@@ -55,14 +53,12 @@ export class Nuclia implements INuclia {
     } else if (!this.options.knowledgeBox || !this.options.zone) {
       throw new Error('zone and knowledge box (ie. retrieval agent) id must be defined in the Nuclia options');
     }
-    if (!this._arag) {
-      this._arag = new RetrievalAgent(this, '', {
-        id: this.options.knowledgeBox,
-        zone: this.options.zone || '',
-        slug: this.options.kbSlug || '',
-        title: '',
-      });
-    }
+    this._arag ??= new RetrievalAgent(this, '', {
+      id: this.options.knowledgeBox,
+      zone: this.options.zone || '',
+      slug: this.options.kbSlug || '',
+      title: '',
+    });
     return this._arag;
   }
 
