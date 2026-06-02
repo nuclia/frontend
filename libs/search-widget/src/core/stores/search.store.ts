@@ -794,6 +794,15 @@ export const removeLabelSetFilter = (id: string) => {
   labelSetFilters.set(currentFilters.filter((filter) => filter.id !== id));
 };
 
+export const addInitialLabelFilters = (labels: string[]) => {
+  labels.forEach((item) => {
+    const [labelset, label] = item.split('/');
+    if (labelset && label) {
+      addLabelFilter({ labelset, label }, []);
+    }
+  });
+};
+
 export const addEntityFilter = (entity: EntityFilter) => {
   const currentFilters = entityFilters.getValue();
   if (!currentFilters.find((filter) => filter.family === entity.family && filter.entity === entity.entity)) {

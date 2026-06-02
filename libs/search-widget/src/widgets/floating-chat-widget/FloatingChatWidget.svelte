@@ -30,6 +30,7 @@
   import Chat from '../../components/answer/Chat.svelte';
   import {
     _,
+    addInitialLabelFilters,
     chatInput,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
@@ -87,6 +88,7 @@
     generativemodel?: string;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     no_tracking = false;
@@ -146,6 +148,7 @@
   let labelsets_excluded_from_filters = $derived(
     componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
   );
+  let initial_filters = $derived(componentProps.initial_filters || config.initial_filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
@@ -240,6 +243,7 @@
   let _features: Widget.WidgetFeatures = {};
   let _securityGroups: string[] | undefined;
   let _filters: WidgetFilters = {};
+  let _initial_filters: string[] | undefined;
   let _filter_expression: FilterExpression | undefined;
 
   const dispatch = createEventDispatcher();
@@ -333,6 +337,7 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      _initial_filters = initial_filters?.split(',').filter((filter: string) => !!filter);
       try {
         _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {
@@ -387,6 +392,9 @@
       } else if (_filter_expression) {
         filterExpression.set(_filter_expression);
       }
+      if (_initial_filters) {
+        addInitialLabelFilters(_initial_filters);
+      }      
       if (_reasoning) {
         reasoningParam.set(_reasoning);
       }

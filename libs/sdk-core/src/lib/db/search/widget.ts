@@ -29,6 +29,7 @@ export namespace Widget {
     preselectedFilterExpression: string;
     filters: FilterSelectionType;
     labelSetsExcludedFromFilters: string;
+    initialFilters: string;
     rephraseQuery: boolean;
     useRephrasePrompt: boolean;
     rephrasePrompt: string;
@@ -275,6 +276,7 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   setPreselectedFilters: false,
   preselectedFilters: '',
   preselectedFilterExpression: '',
+  initialFilters: '',
   suggestions: false,
   suggestResults: false,
   autocompleteFromNERs: false,
@@ -538,6 +540,7 @@ export function getWidgetParameters(
     rephrase_prompt: getRephrasePrompt(searchConfig.searchBox),
     filters: getFilters(searchConfig.searchBox),
     labelsets_excluded_from_filters: getLabelSetsExcludedFromFilters(searchConfig.searchBox),
+    initial_filters: getInitialFilters(searchConfig.searchBox),
     preselected_filters: getPreselectedFilters(searchConfig.searchBox),
     filter_expression: getPreselectedFilterExpression(searchConfig.searchBox),
     rag_strategies: ragProperties,
@@ -679,6 +682,12 @@ function getLabelSetsExcludedFromFilters(config: Widget.SearchBoxConfig): string
     return '';
   }
   return config.labelSetsExcludedFromFilters;
+}
+function getInitialFilters(config: Widget.SearchBoxConfig): string {
+  if (!config.filter || (!config.filters.labels)) {
+    return '';
+  }
+  return config.initialFilters;
 }
 export function getPreselectedFilterValue(config: Widget.SearchBoxConfig): string {
   return config.preselectedFilters

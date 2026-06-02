@@ -10,7 +10,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, LabelsService, SDKService } from '@flaps/core';
 import {
   ModalConfig,
   OptionModel,
@@ -27,6 +27,7 @@ import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { FilterAssistantModalComponent } from '../filter-assistant';
 import { FilterExpressionModalComponent } from '../filter-expression-modal';
+import { SearchWidgetService } from '../../search-widget.service';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -51,6 +52,8 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private featuresService = inject(FeaturesService);
   private modalService = inject(SisModalService);
   private sdk = inject(SDKService);
+  private searchWidgetService = inject(SearchWidgetService);
+  private labelsService = inject(LabelsService);
 
   @Input() set config(value: Widget.SearchBoxConfig | undefined) {
     if (value) {
@@ -66,6 +69,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     filterLogic: new FormControl<'and' | 'or'>('and', { nonNullable: true }),
     labelSetsExcludedFromFilters: new FormControl<string>('', { nonNullable: true }),
+    initialFilters: new FormControl<string>('', { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
     filters: new FormGroup({
@@ -101,6 +105,12 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   autocompleteFromNerEnabled = this.featuresService.authorized.suggestEntities;
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
+  labelExample = this.labelsService.labelSets.pipe(
+    map((labelSets) => {
+      const labelSet = Object.entries(labelSets || {}).find(([, labelset]) => labelset.labels.length > 0);
+      return labelSet ? `${labelSet[0]}/${labelSet[1].labels[0].title}` : undefined;
+    }),
+  );
 
   get useSearchResults() {
     return this.form.controls.useSearchResults.value;
@@ -148,13 +158,26 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      const { labelSetsExcludedFromFilters: filterExcludedLabelSets, ...config } = this.form.getRawValue();
+      const {
+        labelSetsExcludedFromFilters: filterExcludedLabelSets,
+        initialFilters,
+        ...config
+      } = this.form.getRawValue();
       const filterExcludedLabelSetsFormatted = filterExcludedLabelSets
         .split('\n')
         .map((item) => item.trim())
         .filter((item) => !!item)
         .join(',');
-      this.configChanged.emit({ ...config, labelSetsExcludedFromFilters: filterExcludedLabelSetsFormatted });
+      const initialFiltersFormatted = initialFilters
+        .split('\n')
+        .map((item) => (item.trim().split('/').length === 2 ? item.trim() : undefined))
+        .filter((item) => !!item)
+        .join(',');
+      this.configChanged.emit({
+        ...config,
+        labelSetsExcludedFromFilters: filterExcludedLabelSetsFormatted,
+        initialFilters: initialFiltersFormatted,
+      });
     });
   }
 
@@ -178,5 +201,10 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       )
       .onClose.pipe(filter((filters) => !!filters))
       .subscribe((filters: string) => this.preselectedFilterExpressionControl.patchValue(filters));
+  }
+
+  onInitialFiltersChange() {
+    // Reset the previous query, so the previous selected filters are not preserved
+    this.searchWidgetService.resetSearchQuery();
   }
 }
