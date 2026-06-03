@@ -34,6 +34,7 @@ export interface AragChatEntry {
   question: string;
   answers: AragAnswer[];
   error?: IErrorResponse;
+  streamingAnswer?: string;
 }
 
 interface AragAnswerState {
@@ -130,6 +131,12 @@ export function addAragAnswer(answer: AragAnswer) {
     if (answer.operation === AnswerOperation.error) {
       stopAgent();
     }
+  }
+}
+export function addAnswerChunk(answer: AragAnswer) {
+  const current = aragAnswerState.entries.at(-1);
+  if (current) {
+    current.streamingAnswer = (current.streamingAnswer || '') + (answer.streaming_response_chunk?.text || '');
   }
 }
 export function setAragError(error: IErrorResponse) {

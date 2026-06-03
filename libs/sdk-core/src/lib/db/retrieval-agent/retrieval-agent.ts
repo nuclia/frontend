@@ -110,12 +110,13 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     workflowId = 'default',
     method: 'POST' | 'WS' = 'WS',
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     switch (method) {
       case 'POST':
-        return this._interactThroughPost(sessionId, question, workflowId, headers);
+        return this._interactThroughPost(sessionId, question, workflowId, headers, streaming);
       case 'WS':
-        return this._interactThroughWs(sessionId, question, workflowId, headers);
+        return this._interactThroughWs(sessionId, question, workflowId, headers, streaming);
     }
   }
 
@@ -144,10 +145,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     question: string,
     workflowId: string,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     const answerSubject = new Subject<AragResponse | IErrorResponse>();
     this.wsOpeningCount = 0;
-    this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
+    this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers, streaming);
 
     return answerSubject.asObservable();
   }
@@ -159,6 +161,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     answerSubject: Subject<AragResponse | IErrorResponse>,
     fromCursor?: number,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ) {
     let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, workflowId, fromCursor).subscribe({
@@ -166,7 +169,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         const ws = new WebSocket(wsUrl);
         this.wsConnections[sessionId] = ws;
         ws.onopen = () => {
-          const message = { question, operation: InteractionOperation.question, headers };
+          const message = { question, operation: InteractionOperation.question, headers, streaming };
           // and send the question
           ws.send(JSON.stringify(message));
         };
@@ -248,6 +251,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     question: string,
     workflowId: string,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     let fullPath = this.getInteractionPath(sessionId);
     fullPath += fullPath.includes('?') ? '&' : '?' + `workflow_id=${workflowId}`;
@@ -257,6 +261,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         question,
         operation: InteractionOperation.question,
         headers,
+        streaming,
       })
       .pipe(
         switchMap(({ data }) => {

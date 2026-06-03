@@ -4,7 +4,7 @@
   }} />
 
 <script lang="ts">
-  import { Nuclia, type NucliaOptions } from '@nuclia/core';
+  import { AnswerOperation, Nuclia, type NucliaOptions } from '@nuclia/core';
   import { BehaviorSubject, filter, firstValueFrom, switchMap, take, tap } from 'rxjs';
   import { onMount } from 'svelte';
   import { Button, Icon, LoadingDots } from '../../common';
@@ -28,6 +28,7 @@
     _,
     widgetFeatures,
     widgetViewerEnabled,
+    addAnswerChunk,
   } from '../../core';
   import AragAnswer from '../../components/arag-answer/AragAnswer.svelte';
 
@@ -100,14 +101,18 @@
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((question) => setAragQuestion(question)),
-            switchMap((question) => nucliaAPI.arag.interact(session, question, workflow, 'WS')),
+            switchMap((question) => nucliaAPI.arag.interact(session, question, workflow, 'WS', undefined, true)),
           ),
         ),
       )
       .subscribe({
         next: (data) => {
           if (data.type === 'answer') {
-            addAragAnswer(data.answer);
+            if (data.answer.operation === AnswerOperation.answer_chunk) {
+              addAnswerChunk(data.answer);
+            } else {
+              addAragAnswer(data.answer);
+            }
           } else {
             setAragError(data);
           }
