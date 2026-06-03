@@ -40,6 +40,7 @@
     proxy?: boolean;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -89,6 +90,7 @@
     proxy = false,
     filters = '',
     labelsets_excluded_from_filters = '',
+    initial_filters = '',
     preselected_filters = '',
     filter_expression = '',
     csspath = '',
@@ -231,6 +233,7 @@
           {proxy}
           {filters}
           {labelsets_excluded_from_filters}
+          {initial_filters}
           {preselected_filters}
           {filter_expression}
           {csspath}

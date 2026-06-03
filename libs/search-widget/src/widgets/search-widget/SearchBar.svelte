@@ -44,6 +44,7 @@
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import {
+    addInitialLabelFilters,
     entityRelations,
     filterExpression,
     preselectedFilters,
@@ -106,6 +107,7 @@
     mode?: string;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -160,6 +162,7 @@
   let labelsets_excluded_from_filters = $derived(
     componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
   );
+  let initial_filters = $derived(componentProps.initial_filters || config.initial_filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let csspath = $derived(componentProps.csspath || config.csspath);
@@ -213,6 +216,7 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let _initial_filters: string[] | undefined;
   let _filter_expression: FilterExpression | undefined;
   let _reasoning: ReasoningParam | undefined;
   let _routing: Routing | undefined;
@@ -256,6 +260,7 @@
       system_prompt,
       rephrase_prompt,
       generativemodel,
+      _initial_filters,
       preselected_filters,
       _filter_expression,
       mode,
@@ -331,6 +336,9 @@
       if (_filters.path) {
         initPathsStore();
       }
+      if (_initial_filters) {
+        addInitialLabelFilters(_initial_filters);
+      }
     }
     if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
@@ -386,6 +394,7 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      _initial_filters = initial_filters?.split(',').filter((filter: string) => !!filter);
       try {
         _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {

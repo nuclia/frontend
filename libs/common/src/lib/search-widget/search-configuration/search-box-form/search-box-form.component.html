@@ -74,6 +74,28 @@
             {{ 'search.configuration.search-box.filters.exclude-labelset.textarea-label' | translate }}
           </nsi-expandable-textarea>
         </div>
+        <div class="config-form-field">
+          <div class="title-xs">{{ 'search.configuration.search-box.filters.initial-filters.title' | translate }}</div>
+          <div class="config-form-help">
+            {{ 'search.configuration.search-box.filters.initial-filters.description' | translate }}
+          </div>
+          @let example = labelExample | async;
+          <nsi-expandable-textarea
+            formControlName="initialFilters"
+            rows="2"
+            resizable
+            [placeholder]="
+              example
+                ? ('search.configuration.search-box.filters.initial-filters.textarea-placeholder'
+                  | translate: { example })
+                : undefined
+            "
+            (valueChange)="onInitialFiltersChange()"
+            help="search.configuration.search-box.filters.initial-filters.textarea-help"
+            modalTitle="search.configuration.search-box.filters.initial-filters.textarea-label">
+            {{ 'search.configuration.search-box.filters.initial-filters.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
       }
 
       <div class="config-form-field">
