@@ -190,7 +190,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private isOnMetricsPage(path: string): boolean {
-    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|detailed)/.test(
+    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|user-feedback|detailed)/.test(
       path,
     );
   }

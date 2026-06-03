@@ -54,6 +54,19 @@ export interface MetricsColumnDef {
     /** Return true to show the button for a given row item */
     visible: (item: ActivityLogItem) => boolean;
   };
+
+  /**
+   * Optional icon function for table cell icon rendering.
+   * Return a pa-icon glyph name (e.g. 'thumb-up', 'thumb-down') or null to show the text value.
+   * When provided, table cells render a pa-icon instead of text.
+   */
+  iconFn?: (item: ActivityLogItem) => string | null;
+
+  /**
+   * Optional CSS class applied to the pa-icon rendered by iconFn.
+   * Use for color styling (e.g. 'feedback-positive', 'feedback-negative').
+   */
+  iconColorClass?: (item: ActivityLogItem) => string | null;
 }
 
 /** Extra fields shown only in the detail side panel, not tied to column definitions */
@@ -65,6 +78,10 @@ export interface MetricsSidebarField {
   expandable?: boolean;
   /** Group name for sidebar section grouping */
   group?: string;
+  /** Optional icon function for sidebar rows. */
+  iconFn?: (item: ActivityLogItem) => string | null;
+  /** Optional CSS class applied to the sidebar icon. */
+  iconColorClass?: (item: ActivityLogItem) => string | null;
 }
 
 /** Month range selected in the toolbar date picker.  Both values are YYYY-MM strings. */

@@ -1,5 +1,5 @@
 import { UsagePoint } from '@nuclia/core';
-import { DateCondition, NumericCondition } from './metrics-filters';
+import { BooleanCondition, DateCondition, NumericCondition } from './metrics-filters';
 import { differenceInCalendarMonths } from 'date-fns';
 
 /**
@@ -84,6 +84,16 @@ export function applyNumericConditions(
     const existing = (filters[c.column] as Record<string, unknown>) ?? {};
     existing[c.operation] = stringColumns.includes(c.column) ? String(c.value) : c.value;
     filters[c.column] = existing;
+  }
+}
+
+/**
+ * Applies an array of boolean filter conditions to the filters object.
+ * Each condition maps to { eq: boolean }.
+ */
+export function applyBooleanConditions(conditions: BooleanCondition[], filters: Record<string, unknown>): void {
+  for (const c of conditions) {
+    filters[c.column] = { eq: c.value };
   }
 }
 
