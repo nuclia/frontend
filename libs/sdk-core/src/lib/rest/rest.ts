@@ -257,10 +257,11 @@ export class Rest implements IRest {
           return all;
         }, {});
         this.zones = zones;
-        this.zoneOrigins = zoneList.reduce((all: { [slug: string]: string | null }, zone) => {
+        const zoneOrigins = zoneList.reduce((all: { [slug: string]: string | null }, zone) => {
           all[zone.slug] = zone.origin ?? null;
           return all;
         }, {});
+        this.setZoneOrigins(zoneOrigins);
         return zones;
       }),
     );
@@ -268,6 +269,25 @@ export class Rest implements IRest {
 
   getZoneSlug(zoneId: string): Observable<string> {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
+  }
+
+  /** Returns the custom origin URL for the given zone slug, or null/undefined if not set. */
+  getZoneOrigin(slug: string): string | null | undefined {
+    return this.zoneOrigins?.[slug];
+  }
+
+  /**
+   * Merges the provided slug→origin map into the cached zoneOrigins.
+   * Uses "prefer non-null" semantics: a non-null incoming value always wins;
+   * an incoming null/undefined does not overwrite an already-known non-null origin.
+   */
+  setZoneOrigins(origins: { [slug: string]: string | null }): void {
+    const existing = this.zoneOrigins ?? {};
+    const merged: { [slug: string]: string | null } = { ...existing };
+    for (const [slug, origin] of Object.entries(origins)) {
+      merged[slug] = origin ?? existing[slug] ?? null;
+    }
+    this.zoneOrigins = merged;
   }
 
   /**
