@@ -60,6 +60,10 @@
     margin-left: var(--reasoning-margin);
   }
 
+  .details {
+    padding-top: var(--rhythm-0_25);
+  }
+
   .feedback {
     margin: var(--rhythm-2) 0 var(--rhythm-2) var(--reasoning-margin);
   }
