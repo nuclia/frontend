@@ -1,0 +1,23 @@
+<app-metrics-page
+  pageTitle="activity.user-feedback.title"
+  pageSubtitle="activity.user-feedback.subtitle"
+  [columns]="columns"
+  [sidebarFields]="sidebarFields"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [loadingMore]="service.loadingMore()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)"
+  (searchChange)="onSearchChange($event)"
+  (loadNextPage)="onLoadNextPage()"
+  (downloadRequested)="onDownloadRequested($event)">
+  <app-metrics-filters
+    toolbar-extra
+    [showSyntheticStatus]="false"
+    [filterColumns]="filterColumns"
+    [activeBooleanConditions]="service.booleanConditions()"
+    [activeNumericConditions]="[]"
+    [selectedMonth]="selectedMonth()"
+    [activeDateConditions]="activeDateConditions()"
+    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
+</app-metrics-page>

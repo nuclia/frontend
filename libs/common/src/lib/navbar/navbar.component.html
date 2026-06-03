@@ -231,6 +231,17 @@
                   </a>
                   <a
                     [routerLink]="
+                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/user-feedback' : null
+                    "
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-user-feedback"
+                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                    <pa-icon name="thumb-up"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.user-feedback' | translate }}</span>
+                  </a>
+                  <a
+                    [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/resource-activity' : null
                     "
                     routerLinkActive="active"
