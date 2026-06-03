@@ -116,7 +116,7 @@
             formControlName="specificResourceSlug"
             pattern="[\w-]+"
             [errorMessages]="{
-              pattern: 'search.configuration.generative-answer.ask-resource.pattern-error'
+              pattern: 'search.configuration.generative-answer.ask-resource.pattern-error',
             }">
             {{ 'search.configuration.generative-answer.ask-resource.input-label' | translate }}
           </pa-input>
@@ -148,6 +148,12 @@
           formControlName="reasoningEffort"
           [label]="'search.configuration.generative-answer.reasoning.effort-label' | translate"
           [help]="'search.configuration.generative-answer.reasoning.effort-help' | translate">
+          <pa-option value="none">
+            {{ 'search.configuration.generative-answer.reasoning.effort-none' | translate }}
+          </pa-option>
+          <pa-option value="minimal">
+            {{ 'search.configuration.generative-answer.reasoning.effort-minimal' | translate }}
+          </pa-option>
           <pa-option value="low">
             {{ 'search.configuration.generative-answer.reasoning.effort-low' | translate }}
           </pa-option>
@@ -156,6 +162,9 @@
           </pa-option>
           <pa-option value="high">
             {{ 'search.configuration.generative-answer.reasoning.effort-high' | translate }}
+          </pa-option>
+          <pa-option value="xhigh">
+            {{ 'search.configuration.generative-answer.reasoning.effort-xhigh' | translate }}
           </pa-option>
         </pa-select>
       </div>

@@ -1984,6 +1984,8 @@
 	"search.configuration.generative-answer.reasoning.effort-low": "Baixa",
 	"search.configuration.generative-answer.reasoning.effort-medium": "Mitjana",
 	"search.configuration.generative-answer.reasoning.effort-minimal": "Mínim",
+	"search.configuration.generative-answer.reasoning.effort-none": "Cap",
+	"search.configuration.generative-answer.reasoning.effort-xhigh": "Extra alt",
 	"search.configuration.generative-answer.reasoning.toggle-description": "Mostra els passos del raonament (si els proporciona el model generatiu).",
 	"search.configuration.generative-answer.reasoning.toggle-label": "Mostra el raonament",
 	"search.configuration.generative-answer.section-description": "Opcions per produir la resposta.",

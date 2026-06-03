@@ -76,7 +76,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       updateOn: 'blur',
     }),
     showReasoning: new FormControl<boolean>(false, { nonNullable: true }),
-    reasoningEffort: new FormControl<'low' | 'medium' | 'high'>('medium', {
+    reasoningEffort: new FormControl<'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'>('medium', {
       nonNullable: true,
       updateOn: 'blur',
     }),
