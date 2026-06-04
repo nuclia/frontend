@@ -23,9 +23,11 @@
     filterByMime,
     filterByPath,
     hasRangeCreation,
+    labelFacets,
     labelFilters,
     labelSetFilters,
     type LabelSetWithId,
+    loadLabelFacets,
     type MimeFacet,
     mimeTypesfilters,
     orderedLabelSetList,
@@ -101,8 +103,17 @@
 
   function onClickLabelExpander(id: string, event: Event) {
     if ((event?.target as HTMLElement).tagName === 'DIV') {
-      toggleExpander(id);
+      toggleLabelSet(id);
     }
+  }
+
+  function toggleLabelSet(labelSetId: string) {
+    toggleExpander(labelSetId);
+    labelFacets.pipe(take(1)).subscribe((facets) => {
+      if (!facets[labelSetId]) {
+        loadLabelFacets(labelSetId);
+      }
+    });
   }
 
   onMount(() => {
@@ -261,7 +272,7 @@
       {#if $filterByLabels}
         <span class="header-button">
           <IconButton
-            on:click={() => toggleExpander(labelSet.id)}
+            on:click={() => toggleLabelSet(labelSet.id)}
             icon="chevron-down"
             size="small"
             aspect="basic" />
@@ -281,6 +292,9 @@
                 $preselection.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title }))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
+              {#if $labelFacets[labelSet.id]?.[label.title]}
+                ({$labelFacets[labelSet.id]?.[label.title]})
+              {/if}
             </Checkbox>
           </div>
         {/each}

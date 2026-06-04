@@ -19,6 +19,7 @@ import type {
 import {
   Ask,
   ExtractedDataTypes,
+  getFilterFromLabelSet,
   MIME_FACETS,
   Nuclia,
   ResourceFieldProperties,
@@ -509,6 +510,12 @@ export const getLabelSets = (): Observable<LabelSets> => {
       }),
     );
   }
+};
+export const getLabelFacets = (labelSet: string): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getFacets([getFilterFromLabelSet(labelSet)]);
 };
 export const getMimeFacets = (): Observable<Search.FacetsResult> => {
   if (!nucliaApi) {
