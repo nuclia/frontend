@@ -1,6 +1,6 @@
 <app-configuration-form
   [form]="form"
-  (cancel)="cancel.emit()"
+  (formCancel)="formCancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
     <div class="form-entry field-list">
@@ -57,19 +57,7 @@
           modalTitle="retrieval-agents.workflow.node-types.ask.form.rephrase_lexical_custom_prompt"
           resizable="true"></nsi-expandable-textarea>
       </div>
-      <!-- FIXME: we don't know what this field is for, to be checked with Ramon -->
-      <!-- <div class="form-entry">
-      <label for="keywords_custom_prompt">
-        {{ 'retrieval-agents.workflow.node-types.ask.form.keywords_custom_prompt' | translate }}
-      </label>
-      <nsi-expandable-textarea
-        id="keywords_custom_prompt"
-        formControlName="keywords_custom_prompt"
-        externalLabel=""
-        rows="2"
-        modalTitle="retrieval-agents.workflow.node-types.ask.form.keywords_custom_prompt"
-        resizable="true"></nsi-expandable-textarea>
-    </div> -->
+
 
       <div class="form-entry field-list">
         <pa-toggle

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
@@ -17,7 +25,7 @@ import { ResourceNavigationService } from '../resource-navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class ResourceProfileComponent implements OnInit {
+export class ResourceProfileComponent implements OnInit, OnDestroy {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
@@ -203,6 +211,12 @@ export class ResourceProfileComponent implements OnInit {
       value.security.access_groups.split('\n'),
       this.currentValue.security?.access_groups,
     );
+    let extra;
+    if (value.extra) {
+      extra = { metadata: JSON.parse(value.extra) };
+    } else if (this.currentValue.extra) {
+      extra = { metadata: {} };
+    }
     return {
       slug: value.slug || undefined,
       title: value.title || undefined,
@@ -238,11 +252,7 @@ export class ResourceProfileComponent implements OnInit {
           {} as { [key: string]: string },
         ),
       },
-      extra: value.extra
-        ? { metadata: JSON.parse(value.extra) }
-        : this.currentValue.extra
-          ? { metadata: {} }
-          : undefined,
+        extra,
       security: security ? { access_groups: security } : undefined,
     };
   }
@@ -316,7 +326,7 @@ export class ResourceProfileComponent implements OnInit {
       const filename = this.thumbnailFileInput.nativeElement.files[0]?.name;
       return this.currentValue.batchUpload(this.thumbnailFileInput.nativeElement.files).pipe(
         filter((status) => status.completed),
-        switchMap(() => (!this.form.pristine ? this.editResource.savePartialResource(data, false) : of(null))),
+        switchMap(() => (this.form.pristine ? of(null) : this.editResource.savePartialResource(data, false))),
         delay(1000), // wait a bit so the new thumbnail can be found in resource data after loading
         switchMap(() => this.editResource.loadResource(this.currentValue!.id)),
         switchMap((resource) => {

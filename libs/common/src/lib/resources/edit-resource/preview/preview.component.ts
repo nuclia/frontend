@@ -11,6 +11,7 @@ import {
   FileField,
   FileFieldData,
   IError,
+  KVSchemaField,
   LinkFieldData,
   MessageAttachment,
   Resource,
@@ -21,8 +22,10 @@ import {
 import { SisModalService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   filter,
+  forkJoin,
   map,
   Observable,
   of,
@@ -113,6 +116,33 @@ export class PreviewComponent implements OnInit, OnDestroy {
   extraMetadata = this.resource.pipe(map((resource) => JSON.stringify(resource.extra?.metadata, null, 2)));
   extraMetadataFullscreen = false;
   summary = this.resource.pipe(map((resource) => (resource.summary || '').replace(/\n/g, '<br>')));
+  keyValues = combineLatest([this.resource, this.sdk.currentKb]).pipe(
+    switchMap(([resource, kb]) => {
+      const kvFields = resource?.data?.key_values;
+      if (!kvFields || Object.keys(kvFields).length === 0) return of(null);
+
+      const schemaFetches = Object.keys(kvFields).map((fieldId) =>
+        kb.getKVSchema(fieldId).pipe(
+          catchError(() => of(null)),
+          map((schema) => ({ fieldId, data: kvFields[fieldId]?.value, schemaFields: schema?.fields ?? [] })),
+        ),
+      );
+      return forkJoin(schemaFetches).pipe(
+        map((entries) =>
+          entries.reduce(
+            (acc, entry) => {
+              acc[entry.fieldId] = { data: entry.data, schemaFields: entry.schemaFields };
+              return acc;
+            },
+            {} as Record<
+              string,
+              { data: Record<string, string | number | boolean> | undefined; schemaFields: KVSchemaField[] }
+            >,
+          ),
+        ),
+      );
+    }),
+  );
 
   private _noField = new ReplaySubject<boolean>(1);
   noField: Observable<boolean> = this._noField.asObservable();

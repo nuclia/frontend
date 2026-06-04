@@ -1,16 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { UploadService } from '@flaps/common';
-import { NotificationService, SDKService, UserService } from '@flaps/core';
+import { NotificationService, SDKService, STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Ask,
+  CatalogOptions,
   Classification,
   ConversationField,
   FIELD_TYPE,
   FileUploadStatus,
+  IErrorResponse,
   IResource,
   Message,
   Resource,
   RESOURCE_STATUS,
+  ResourceProperties,
   Search,
   SortField,
   UploadStatus,
@@ -18,7 +22,6 @@ import {
 import { SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
-  combineLatest,
   forkJoin,
   map,
   merge,
@@ -53,9 +56,8 @@ export class SimpleKBService {
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
   private notificationService = inject(NotificationService);
-  private userService = inject(UserService);
 
-  maxFiles = 200;
+  maxFiles = 250;
 
   uploadStatus = new BehaviorSubject<UploadStatus>({
     files: [],
@@ -65,11 +67,10 @@ export class SimpleKBService {
     failed: 0,
   });
 
-  userName = this.userService.userPrefs.pipe(map((userPrefs) => userPrefs?.name || ''));
+  userId = this.sdk.nuclia.auth.getJWTUser()?.sub || '';
+
   visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
-  uploadInProgress = this.visibleUploads.pipe(
-    map((uploads) => uploads.filter((upload) => !this.isUploadFailed(upload)).length > 0),
-  );
+  uploadInProgress = this.visibleUploads.pipe(map((uploads) => uploads.some((upload) => !this.isUploadFailed(upload))));
 
   private _forceRefresh = new Subject<void>();
   refreshResources = merge(
@@ -78,19 +79,8 @@ export class SimpleKBService {
     ),
   );
 
-  resources: Observable<rankedResource[]> = combineLatest([this.sdk.currentKb, this.refreshResources]).pipe(
-    switchMap(([kb]) =>
-      kb.catalog('', {
-        page_number: 0,
-        page_size: this.maxFiles,
-        filter_expression: {
-          resource: {
-            not: { prop: 'label', ...HISTORY_LABEL },
-          },
-        },
-        sort: { field: SortField.created, order: 'desc' },
-      }),
-    ),
+  resources: Observable<rankedResource[]> = this.refreshResources.pipe(
+    switchMap(() => this.catalog()),
     map((res) => (res.type === 'error' ? [] : Object.values(res.resources || {}))),
     switchMap((resources) => {
       if (resources.some((resource) => resource.metadata?.status === RESOURCE_STATUS.PENDING)) {
@@ -156,13 +146,13 @@ export class SimpleKBService {
 
   getConversationsPage(page = 0): Observable<ConversationsPage> {
     const pageSize = 40;
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userName.pipe(take(1))]).pipe(
-      switchMap(([kb, userName]) =>
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb
           .search('', [Search.Features.FULLTEXT], {
             top_k: pageSize,
             offset: page * pageSize,
-            security: { groups: [userName] },
+            security: { groups: [this.userId] },
             filter_expression: {
               field: { prop: 'label', ...HISTORY_LABEL },
             },
@@ -199,7 +189,12 @@ export class SimpleKBService {
     );
   }
 
-  createQuestion(title: string, question: string, answer: string): Observable<{ uuid: string }> {
+  createQuestion(
+    title: string,
+    question: string,
+    answer: string,
+    answerData?: Ask.Answer,
+  ): Observable<{ uuid: string }> {
     const conversations: { [HISTORY_FIELD]: ConversationField } = {
       [HISTORY_FIELD]: {
         messages: [
@@ -210,27 +205,40 @@ export class SimpleKBService {
           },
           {
             ident: `answer1`,
-            content: { text: answer, format: 'MARKDOWN' },
+            content: {
+              text: answer,
+              format: 'MARKDOWN',
+              attachments_fields: answerData
+                ? [
+                    {
+                      field_type: FIELD_TYPE.text,
+                      field_id: 'answer1',
+                    },
+                  ]
+                : undefined,
+            },
             type: 'ANSWER',
           },
         ],
       },
     };
-    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.userName.pipe(take(1))]).pipe(
-      switchMap(([kb, userName]) =>
+    const { promptContext, ...answerDataToSave } = answerData || {}; // Exclude promptContext
+    return this.sdk.currentKb.pipe(take(1)).pipe(
+      switchMap((kb) =>
         kb.createResource({
           title,
           conversations,
+          texts: answerData ? { answer1: { body: JSON.stringify(answerDataToSave), format: 'JSON' } } : undefined,
           usermetadata: { classifications: [HISTORY_LABEL] },
           security: {
-            access_groups: [userName],
+            access_groups: [this.userId],
           },
         }),
       ),
     );
   }
 
-  appendQuestion(resourceId: string, question: string, answer: string) {
+  appendQuestion(resourceId: string, question: string, answer: string, answerData?: Ask.Answer) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
@@ -238,18 +246,41 @@ export class SimpleKBService {
         return resource.getField(FIELD_TYPE.conversation, HISTORY_FIELD).pipe(
           switchMap((field) => {
             const index = (field.value as ConversationField).messages.length / 2 + 1;
-            return resource.appendMessages(HISTORY_FIELD, [
-              {
-                ident: `question${index}`,
-                content: { text: question, format: 'PLAIN' },
-                type: 'QUESTION',
-              },
-              {
-                ident: `answer${index}`,
-                content: { text: answer, format: 'MARKDOWN' },
-                type: 'ANSWER',
-              },
-            ]);
+            const { promptContext, ...answerDataToSave } = answerData || {}; // Exclude promptContext
+            return (
+              answerData
+                ? resource.setField(FIELD_TYPE.text, `answer${index}`, {
+                    body: JSON.stringify(answerDataToSave),
+                    format: 'JSON',
+                  })
+                : of(undefined)
+            ).pipe(
+              switchMap(() =>
+                resource.appendMessages(HISTORY_FIELD, [
+                  {
+                    ident: `question${index}`,
+                    content: { text: question, format: 'PLAIN' },
+                    type: 'QUESTION',
+                  },
+                  {
+                    ident: `answer${index}`,
+                    content: {
+                      text: answer,
+                      format: 'MARKDOWN',
+                      attachments_fields: answerData
+                        ? [
+                            {
+                              field_type: FIELD_TYPE.text,
+                              field_id: `answer${index}`,
+                            },
+                          ]
+                        : undefined,
+                    },
+                    type: 'ANSWER',
+                  },
+                ]),
+              ),
+            );
           }),
         );
       }),
@@ -273,6 +304,77 @@ export class SimpleKBService {
           }),
         );
       }),
+    );
+  }
+
+  getChatEntries(resourceId: string): Observable<Ask.Entry[]> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        forkJoin([
+          kb.getResource(resourceId, [ResourceProperties.VALUES]),
+          new Resource(this.sdk.nuclia, kb.id, { id: resourceId }).getField(FIELD_TYPE.conversation, HISTORY_FIELD),
+        ]),
+      ),
+      map(([resource, field]) => {
+        const messages = (field.value as ConversationField).messages || [];
+        return messages.reduce((acc, message) => {
+          if (message.type === 'QUESTION') {
+            acc.push({ question: message.content.text, answer: {} as Ask.Answer });
+          } else if (message.type === 'ANSWER') {
+            const answerData = resource.data.texts?.[message.ident]?.value?.body;
+            let answerDataJSON: Ask.Answer | undefined;
+            if (answerData) {
+              try {
+                answerDataJSON = JSON.parse(answerData);
+              } catch (e) {
+                console.error('Failed to parse answer data JSON', e);
+              }
+            }
+            if (answerDataJSON) {
+              acc[acc.length - 1].answer = answerDataJSON;
+            } else {
+              acc[acc.length - 1].answer = {
+                type: 'answer',
+                text: message.content.text,
+                id: STFUtils.generateRandomSlugSuffix(),
+                inError: !message.content.text,
+                error: message.content.text ? undefined : this.translate.instant('simple.failed'),
+              };
+            }
+          }
+          return acc;
+        }, [] as Ask.Entry[]);
+      }),
+    );
+  }
+
+  catalog(page_number = 0): Observable<Search.Results | IErrorResponse> {
+    const options: CatalogOptions = {
+      page_number,
+      page_size: this.maxFiles > 200 ? 200 : this.maxFiles,
+      filter_expression: {
+        resource: {
+          not: { prop: 'label', ...HISTORY_LABEL },
+        },
+      },
+      sort: { field: SortField.created, order: 'desc' },
+    };
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.catalog('', options)),
+      switchMap((result) =>
+        result.type === 'searchResults' && result.fulltext?.next_page
+          ? this.catalog(page_number + 1).pipe(
+              map((nextPage) => {
+                if (nextPage.type === 'searchResults') {
+                  return { ...result, resources: { ...result.resources, ...nextPage.resources } };
+                } else {
+                  return result;
+                }
+              }),
+            )
+          : of(result),
+      ),
     );
   }
 }

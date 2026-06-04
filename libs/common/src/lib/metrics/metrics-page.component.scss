@@ -212,6 +212,14 @@ pa-table {
   font-weight: 600;
 }
 
+.feedback-positive {
+  color: var(--color-success-regular) !important;
+}
+
+.feedback-negative {
+  color: var(--color-danger-regular) !important;
+}
+
 // ── Side panel overlay ────────────────────────────────────────────────────
 
 .side-panel-backdrop {

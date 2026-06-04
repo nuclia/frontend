@@ -44,6 +44,7 @@
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import {
+    addInitialLabelFilters,
     entityRelations,
     filterExpression,
     preselectedFilters,
@@ -62,6 +63,7 @@
     previewBaseUrl,
     widgetBlocked,
     widgetBlockedMessage,
+    widgetCache,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -105,6 +107,7 @@
     mode?: string;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -135,6 +138,7 @@
     security_groups?: string | undefined;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
 
   let { ...componentProps } = $props();
@@ -158,6 +162,7 @@
   let labelsets_excluded_from_filters = $derived(
     componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
   );
+  let initial_filters = $derived(componentProps.initial_filters || config.initial_filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let csspath = $derived(componentProps.csspath || config.csspath);
@@ -189,6 +194,7 @@
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let routing = $derived(componentProps.routing || config.routing);
   let darkMode = $derived(mode === 'dark');
+  let cache = $derived(componentProps.cache || config.cache);
 
   $effect(() => {
     let [initialPlaceholder, discussionPlaceholder] = chat_placeholder.split('|');
@@ -210,9 +216,11 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let _initial_filters: string[] | undefined;
   let _filter_expression: FilterExpression | undefined;
   let _reasoning: ReasoningParam | undefined;
   let _routing: Routing | undefined;
+  let _cache: number | string | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -252,6 +260,7 @@
       system_prompt,
       rephrase_prompt,
       generativemodel,
+      _initial_filters,
       preselected_filters,
       _filter_expression,
       mode,
@@ -275,6 +284,7 @@
       search_config_id,
       _reasoning,
       _routing,
+      _cache,
     });
   }
 
@@ -315,7 +325,7 @@
     }
     if (_features.filter) {
       if (_filters.labels || _filters.labelFamilies) {
-        initLabelStore(labelsets_excluded_from_filters);
+        initLabelStore(labelsets_excluded_from_filters, _filter_expression);
       }
       if (_filters.entities) {
         initEntitiesStore();
@@ -325,6 +335,9 @@
       }
       if (_filters.path) {
         initPathsStore();
+      }
+      if (_initial_filters) {
+        addInitialLabelFilters(_initial_filters);
       }
     }
     if (_features.debug) {
@@ -347,6 +360,9 @@
       account,
       accountId: account,
     };
+    _cache = (typeof cache === 'string' ? parseInt(cache, 10) : cache) as number | undefined;
+    widgetCache.set(_cache); // Set cache before making any call
+
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
       config = { ...config, ...loadedProperties };
 
@@ -378,6 +394,7 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      _initial_filters = initial_filters?.split(',').filter((filter: string) => !!filter);
       try {
         _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {

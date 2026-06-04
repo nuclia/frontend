@@ -17,6 +17,7 @@ export const widgetFeedback = writableSubject<Widget.WidgetFeedback>('answer');
 export const widgetViewerEnabled = writableSubject<boolean>(true);
 export const widgetBlocked = writableSubject<boolean>(false);
 export const widgetBlockedMessage = writableSubject<string>('');
+export const widgetCache = writableSubject<number | undefined>(undefined);
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
@@ -65,7 +66,7 @@ export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
 export const preferMarkdown: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.preferMarkdown));
 export const jsonSchemaEnabled: Observable<boolean> = widgetJsonSchema.pipe(map((schema) => !!schema));
 export const disableAnswers = () => {
-  widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
+  widgetFeatures.set({ ...widgetFeatures.value, answers: false });
 };
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));
@@ -74,7 +75,15 @@ export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !
 export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === 'answerAndResults'));
 
 export const expandedCitations: Observable<boolean | undefined> = widgetFeatures.pipe(
-  map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
+  map((features) => {
+    if (features?.expandCitations) {
+      return true;
+    } else if (features?.collapseCitations) {
+      return false;
+    } else {
+      return undefined;
+    }
+  }),
 );
 export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));
 export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));
@@ -84,3 +93,4 @@ export const disableRAG: Observable<boolean> = widgetFeatures.pipe(map((features
 export const hasContextImages = widgetFeatures.pipe(map((features) => !!features?.contextImages));
 export const hasQueryImage = widgetFeatures.pipe(map((features) => !!features?.queryImage));
 export const hasSortButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.sortResults));
+export const hideReset: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideReset));

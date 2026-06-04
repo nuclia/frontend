@@ -40,7 +40,7 @@
       <app-csv-select
         [buttonKind]="qna.length === 0 ? 'primary' : 'secondary'"
         [fields]="2"
-      (select)="displayCsv($event)"></app-csv-select>
+      (csvSelect)="displayCsv($event)"></app-csv-select>
 
       @if (qna.length > 0) {
         <pa-table

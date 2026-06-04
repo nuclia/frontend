@@ -35,6 +35,7 @@ import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
+import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
 import { BillingComponent } from './billing/billing.component';
 import { BillingModule } from './billing/billing.module';
 import { CheckoutComponent } from './billing/checkout/checkout.component';
@@ -45,7 +46,7 @@ import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.co
 import { UsageTableComponent } from './billing/usage/usage-table.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
 import { AccountModelsComponent } from './account-models/account-models.component';
-import { accountOwnerGuard, agentFeatureEnabledGuard } from '../guards';
+import { accountOwnerGuard, agentFeatureEnabledGuard, canMatchSimpleMode } from '../guards';
 import { KbCreationComponent } from '../kb-creation';
 import { PipesModule } from '../pipes';
 import { TokenDialogModule } from '../token-dialog';
@@ -64,6 +65,12 @@ const routes: Routes = [
   {
     path: 'settings',
     component: AccountManageComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'home',
+    canMatch: [canMatchSimpleMode],
+    component: SimpleAccountHomeComponent,
     canActivate: [accountOwnerGuard],
   },
   {
@@ -195,7 +202,8 @@ const routes: Routes = [
     ClientDialogComponent,
     AccountUsersComponent,
     NuaActivityComponent,
+    SimpleAccountHomeComponent,
   ],
-  exports: [AccountHomeComponent, AccountManageComponent],
+  exports: [AccountHomeComponent, AccountManageComponent, SimpleAccountHomeComponent],
 })
 export class AccountModule {}

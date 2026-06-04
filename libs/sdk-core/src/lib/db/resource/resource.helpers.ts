@@ -22,8 +22,7 @@ export const setLabels: (
   const paragraphs = deDuplicateList(
     allEntries
       .filter((entry) => hasLabelsForField(entry, fieldId, fieldType))
-      .map((entry) => entry.paragraphs as ParagraphClassification[])
-      .reduce((acc, val) => acc.concat(val), []),
+    .flatMap((entry) => entry.paragraphs as ParagraphClassification[]),
   );
   const valuesForOtherParagraphs = paragraphs.filter((p) => p.key !== paragraphId);
   // remove all existing entries for the field

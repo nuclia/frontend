@@ -6,7 +6,7 @@
   footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
   [validFormInside]="questionAnswerForm.valid"
   (save)="onSave($event)"
-  (cancel)="backToTaskList()">
+  (taskCancel)="backToTaskList()">
   <div>
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.question-answer.prompts.title"

@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [PaButtonModule, TranslateModule],
 })
 export class SitemapSelectComponent {
-  @Output() select = new EventEmitter<string[]>();
+  @Output() sitemapSelect = new EventEmitter<string[]>();
 
   constructor(private toaster: SisToastService) {}
 
@@ -22,7 +22,7 @@ export class SitemapSelectComponent {
       reader.onload = () => {
         const links = this.parseSitemap(reader.result as string);
         if (links) {
-          this.select.emit(links);
+          this.sitemapSelect.emit(links);
         } else {
           (event.target as HTMLInputElement).value = '';
           this.toaster.error('upload.invalid-sitemap');

@@ -9,6 +9,7 @@
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
     hasChatEntries,
+    hideReset,
     isReasoning,
     isStreaming,
     resetChat,
@@ -134,7 +135,7 @@
             <Icon name="warning" />
             {$widgetBlockedMessage} 
           </div>
-        {:else if standaloneChat}
+        {:else if standaloneChat && !$hideReset}
           <div class="reset-button">
             <Button
               aspect="basic"

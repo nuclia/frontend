@@ -12,6 +12,7 @@
     parseRAGImageStrategies,
     parseRAGStrategies,
     Reranker,
+    type Ask,
     type FilterExpression,
     type KBStates,
     type Nuclia,
@@ -27,6 +28,8 @@
   import { Viewer } from '../../components';
   import Chat from '../../components/answer/Chat.svelte';
   import {
+    addInitialLabelFilters,
+    chat,
     chatInput,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
@@ -39,6 +42,7 @@
     searchConfigId,
     widgetBlocked,
     widgetBlockedMessage,
+    widgetCache,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -82,6 +86,7 @@
     generativemodel?: string;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     no_tracking = false;
@@ -107,6 +112,7 @@
     height?: string;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
   let { ...componentProps } = $props();
   let config = $state(new Props());
@@ -133,6 +139,7 @@
   let labelsets_excluded_from_filters = $derived(
     componentProps.labelsets_excluded_from_filters || config.labelsets_excluded_from_filters,
   );
+  let initial_filters = $derived(componentProps.initial_filters || config.initial_filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
   let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
@@ -158,6 +165,7 @@
   let height = $derived(componentProps.height || config.height);
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let routing = $derived(componentProps.routing || config.routing);
+  let cache = $derived(componentProps.cache || config.cache);
 
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
@@ -215,6 +223,10 @@
     widgetBlockedMessage.set('');
   }
 
+  export function setChat(entries: Ask.Entry[]) {
+    chat.set(entries);
+  }
+
   export const onError = getApiErrors();
 
   export const reset = () => resetNuclia();
@@ -227,7 +239,9 @@
   let _features: Widget.WidgetFeatures = {};
   let _securityGroups: string[] | undefined;
   let _filters: WidgetFilters = {};
+  let _initial_filters: string[] | undefined;
   let _filter_expression: FilterExpression | undefined;
+  let _cache: number | string | undefined;
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -242,7 +256,7 @@
     // any feature that calls the Nuclia API immediately at init time must be done here
     if (_features.filter) {
       if (_filters.labels || _filters.labelFamilies) {
-        initLabelStore(labelsets_excluded_from_filters);
+        initLabelStore(labelsets_excluded_from_filters, _filter_expression);
       }
       if (_filters.entities) {
         initEntitiesStore();
@@ -273,6 +287,9 @@
       account,
       accountId: account,
     };
+    _cache = (typeof cache === 'string' ? parseInt(cache, 10) : cache) as number | undefined;
+    widgetCache.set(_cache); // Set cache before making any call
+
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
       config = { ...config, ...loadedProperties };
 
@@ -299,6 +316,7 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      _initial_filters = initial_filters?.split(',').filter((filter: string) => !!filter);
       try {
         _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
       } catch (e) {
@@ -353,6 +371,9 @@
       } else if (_filter_expression) {
         filterExpression.set(_filter_expression);
       }
+      if (_features.filter && _initial_filters) {
+        addInitialLabelFilters(_initial_filters);
+      }
       if (_reasoning) {
         reasoningParam.set(_reasoning);
       }
@@ -360,7 +381,7 @@
         routingParam.set(_routing);
       }
 
-      initAnswer();
+      initAnswer(dispatchCustomEvent);
       initViewer();
       initUsageTracking(no_tracking);
       if (_features.persistChatHistory) {

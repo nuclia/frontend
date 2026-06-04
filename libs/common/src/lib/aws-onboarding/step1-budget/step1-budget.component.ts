@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';

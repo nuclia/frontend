@@ -9,8 +9,7 @@ export type ProviderType =
   | 'sql'
   | 'mcpsse'
   | 'mcpstdio'
-  | 'mcphttp'
-  | 'sync';
+  | 'mcphttp';
 
 export type AragModule =
   | 'historical'

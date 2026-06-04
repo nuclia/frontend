@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
+import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -65,14 +65,23 @@ export class TopbarComponent {
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
   isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
   );
-  hasSimpleUI = this.features.unstable.simpleUI;
+  logoPath = this.isCowork.pipe(
+    map((isCowork) => {
+      if (isCowork) {
+        return 'assets/logos/logo-context-box.svg';
+      } else if (this.standalone) {
+        return 'assets/logos/nucliadb.svg';
+      } else {
+        return this.backendConfig.getLogoPath();
+      }
+    }),
+  );
 
   constructor(
     private router: Router,
@@ -87,20 +96,17 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
-    combineLatest([
-      this.isCowork.pipe(take(1)),
-      this.navigationService.kbUrl.pipe(take(1)),
-      this.navigationService.homeUrl.pipe(take(1)),
-    ]).subscribe(([isCowork, kbUrl, homeUrl]) => {
-      if (this.inDashboard && !isCowork) {
-        // The logo should always take dashboard users back to the default (simple) home UI.
-        this.navigationService.setSimpleMode(true);
-        this.router.navigateByUrl(`${kbUrl}/simple`);
-        return;
-      }
+    const simpleHomeUrl$ = this.sdk.isKbLoaded
+      ? this.navigationService.kbUrl
+      : of(this.navigationService.getAccountSelectUrl());
 
-      this.router.navigate([isCowork ? kbUrl : homeUrl]);
-    });
+    this.simpleMode
+      .pipe(
+        take(1),
+        switchMap((simpleMode) => (simpleMode ? simpleHomeUrl$ : this.navigationService.homeUrl)),
+        take(1),
+      )
+      .subscribe((url) => this.router.navigate([url]));
   }
 
   bookDemo() {
@@ -115,10 +121,16 @@ export class TopbarComponent {
     );
   }
 
-  switchMode(value: boolean) {
-    this.navigationService.simpleMode.next(!value);
-    this.navigationService.homeUrl.pipe(take(1)).subscribe((homeUrl) => {
-      this.router.navigateByUrl(homeUrl);
-    });
+  goToSubscriptions() {
+    combineLatest([this.simpleMode.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(
+      ([isSimple, account]) => {
+        if (isSimple) {
+          const homeUrl = this.navigationService.getAccountManageUrl(account.slug) + '/home';
+          this.router.navigate([homeUrl], { queryParams: { tab: 'subscriptions' } });
+        } else {
+          this.router.navigate([this.navigationService.getAccountManageUrl(account.slug) + '/billing']);
+        }
+      },
+    );
   }
 }

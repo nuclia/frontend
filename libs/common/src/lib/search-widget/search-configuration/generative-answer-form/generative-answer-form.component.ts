@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { filter, takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -76,7 +76,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       updateOn: 'blur',
     }),
     showReasoning: new FormControl<boolean>(false, { nonNullable: true }),
-    reasoningEffort: new FormControl<'low' | 'medium' | 'high'>('medium', {
+    reasoningEffort: new FormControl<'none' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh'>('medium', {
       nonNullable: true,
       updateOn: 'blur',
     }),

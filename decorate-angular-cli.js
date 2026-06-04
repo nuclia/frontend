@@ -21,16 +21,16 @@
  * - Delete and reinstall your node_modules
  */
 
-const fs = require('fs');
-const os = require('os');
-const cp = require('child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const cp = require('node:child_process');
 const isWindows = os.platform() === 'win32';
 let output;
 try {
   output = require('@nx/workspace').output;
 } catch (e) {
   console.warn(
-    'Angular CLI could not be decorated to enable computation caching. Please ensure @nx/workspace is installed.',
+    'Angular CLI could not be decorated to enable computation caching. Please ensure @nx/workspace is installed. Error: ' + e.message,
   );
   process.exit(0);
 }
@@ -66,5 +66,5 @@ try {
   require('@nrwl/cli/lib/decorate-cli').decorateCli();
   output.log({ title: 'Angular CLI has been decorated to enable computation caching.' });
 } catch (e) {
-  output.error({ title: 'Decoration of the Angular CLI did not complete successfully' });
+  output.error({ title: 'Decoration of the Angular CLI did not complete successfully: ' + e.message });
 }

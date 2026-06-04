@@ -3,11 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
+import { filter, forkJoin, map, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
+import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -21,6 +22,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   canFullyEditAccount = this.store.canFullyEditAccount;
   canEdit = this.store.canEdit;
+  readonly zoneVisibilityOptions = ZONE_VISIBILITY_OPTIONS;
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -51,6 +53,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     trialExpirationDate: new FormControl<string>(''),
     workflow: new FormControl<WorkflowType>('classic'),
     allowAccessNonEnterpriseModels: new FormControl<boolean>(false, { nonNullable: true }),
+    zoneVisibility: new FormControl<ZoneVisibility>('DEFAULT', { nonNullable: true }),
     labels: new FormGroup({
       progress_account: new FormControl<boolean>(false, { nonNullable: true }),
     }),
@@ -128,8 +131,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
                   trialExpirationDate,
                   type: rawValue.type,
                   workflow: rawValue.workflow,
+                  zoneVisibility: rawValue.zoneVisibility,
                 };
-            payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
+            payload.trialExpirationDate = trialExpirationDate ?? null;
             return this.accountService.updateAccount(accountBackup.id, payload);
           }),
         )

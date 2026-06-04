@@ -29,13 +29,13 @@ export class MissingLabelsDialogComponent {
     switchMap((kb) =>
       kb.catalog('', { faceted: [`/${LABEL_FILTER_PREFIX}`] }).pipe(
         switchMap((results) => {
-          if (results.type === 'error') throw 'Error';
+          if (results.type === 'error') throw new Error('Error');
           const facets = Object.keys(results.fulltext?.facets?.[`/${LABEL_FILTER_PREFIX}`] || {});
           return facets.length === 0
             ? of({})
             : kb.catalog('', { faceted: facets }).pipe(
                 map((results) => {
-                  if (results.type === 'error') throw 'Error';
+                  if (results.type === 'error') throw new Error('Error');
                   return Object.entries(results.fulltext?.facets || {}).reduce(
                     (acc, [labelSet, labels]) => {
                       acc[getLabelSetFromFilter(labelSet)] = Object.keys(labels).map(

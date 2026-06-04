@@ -166,7 +166,7 @@ export class SDKService {
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
     const currentAccount = this._account.value;
-    if (currentAccount && currentAccount.slug === accountSlug) {
+    if (currentAccount?.slug === accountSlug) {
       return of(currentAccount);
     } else {
       const getAccount = this.config.staticConf.standalone
@@ -184,11 +184,15 @@ export class SDKService {
   ): Observable<RetrievalAgent> {
     // returns the current arag and set it if not set
     const currentRa = this._arag.value;
-    if (!force && currentRa && currentRa.id === aragId) {
+    if (!force && currentRa?.id === aragId) {
       return of(currentRa as RetrievalAgent);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getRetrievalAgent(accountId, aragId, zone).pipe(
+      // Ensure zoneOrigins is populated before the agent is used, so regionalBackend resolves
+      // the correct origin URL for private zones on direct navigation.
+      return this.nuclia.rest.getZones().pipe(
+        take(1),
+        switchMap(() => this.nuclia.db.getRetrievalAgent(accountId, aragId, zone)),
         map((arag) => {
           this.arag = arag;
           return arag;
@@ -205,11 +209,15 @@ export class SDKService {
   ): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
     const currentKb = this._kb.value;
-    if (!force && currentKb && currentKb.id === kbId) {
+    if (!force && currentKb?.id === kbId) {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getKnowledgeBox(accountId, kbId, zone).pipe(
+      // Ensure zoneOrigins is populated before the KB is used, so regionalBackend resolves
+      // the correct origin URL for private zones on direct navigation (bookmark / page refresh).
+      return this.nuclia.rest.getZones().pipe(
+        take(1),
+        switchMap(() => this.nuclia.db.getKnowledgeBox(accountId, kbId, zone)),
         map((kb) => {
           this.kb = kb;
           return kb;
@@ -222,13 +230,13 @@ export class SDKService {
     const currentKb = this._kb.value;
     const currentAccount = this._account.value;
     this.nuclia.options.zone = zone;
-    if (currentKb && currentKb.slug === kbSlug) {
+    if (currentKb?.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else if (zone) {
       return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
         switchMap((account) => {
           this.nuclia.options.accountId = account.id;
-          return this.nuclia.db.getKnowledgeBoxesForZone(account.id, zone).pipe(
+          return this.nuclia.db.getKnowledgeBoxesForZone(account.id, zone, false).pipe(
             switchMap((kbs) => {
               const kb = kbs.find((item) => item.slug === kbSlug);
               if (!kb) {
@@ -255,13 +263,13 @@ export class SDKService {
     const currentRa = this._arag.value;
     const currentAccount = this._account.value;
     this.nuclia.options.zone = zone;
-    if (currentRa && currentRa.slug === agentSlug) {
+    if (currentRa?.slug === agentSlug) {
       return of(currentRa as RetrievalAgent);
     } else if (zone) {
       return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
         switchMap((account) => {
           this.nuclia.options.accountId = account.id;
-          return this.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
+          return this.nuclia.db.getRetrievalAgentsForZone(account.id, zone, 'agents', false).pipe(
             switchMap((arags) => {
               const arag = arags.find((item) => item.slug === agentSlug);
               if (!arag) {
@@ -315,7 +323,7 @@ export class SDKService {
         )
       : this.currentAccount.pipe(
           take(1),
-          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
         );
 
     kbList.subscribe({
@@ -338,8 +346,8 @@ export class SDKService {
         take(1),
         switchMap((account) =>
           forkJoin([
-            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent'),
-            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent_no_memory'),
+            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent', false),
+            this.nuclia.db.getRetrievalAgents(account.slug, account.id, 'agent_no_memory', false),
           ]),
         ),
       )

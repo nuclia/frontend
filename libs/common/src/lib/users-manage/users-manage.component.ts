@@ -90,29 +90,27 @@ export class UsersManageComponent {
           const user = accountUsers.find((user) => user.email === data.email);
           if (user) {
             return this.users.addUser(user.id, data.role);
-          } else {
-            if (account.can_manage_account) {
-              return this.users.inviteUser(data).pipe(
-                tap(() =>
-                  this.toaster.success(
-                    this.translate.instant('stash.invited_user', { user: this.addForm.value.email }),
-                  ),
+          } else if (account.can_manage_account) {
+            return this.users.inviteUser(data).pipe(
+              tap(() =>
+                this.toaster.success(
+                  this.translate.instant('stash.invited_user', { user: this.addForm.value.email }),
                 ),
-                catchError((error) => {
-                  if (error?.status === 409) {
-                    this.toaster.error(
-                      this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }),
-                    );
-                  }
-                  throw error;
-                }),
-              );
-            } else {
-              this.toaster.error(
-                this.translate.instant('kb.users.insufficient-permissions', { email: this.addForm.value.email }),
-              );
-              return of(undefined);
-            }
+              ),
+              catchError((error) => {
+                if (error?.status === 409) {
+                  this.toaster.error(
+                    this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }),
+                  );
+                }
+                throw error;
+              }),
+            );
+          } else {
+            this.toaster.error(
+              this.translate.instant('kb.users.insufficient-permissions', { email: this.addForm.value.email }),
+            );
+            return of(undefined);
           }
         }),
       )

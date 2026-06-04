@@ -101,9 +101,7 @@ export class AddSyncPageComponent implements OnInit {
   }
 
   cancel() {
-    if (!this.syncId) {
-      this.router.navigate([this.backPath], { relativeTo: this.currentRoute });
-    } else {
+    if (this.syncId) {
       this.modalService
         .openConfirm({
           title: 'sync.confirm.cancel-oauth.title',
@@ -119,6 +117,8 @@ export class AddSyncPageComponent implements OnInit {
         .subscribe({
           next: () => this.router.navigate([this.backPath], { relativeTo: this.currentRoute }),
         });
+    } else {
+      this.router.navigate([this.backPath], { relativeTo: this.currentRoute });
     }
   }
 
@@ -140,7 +140,7 @@ export class AddSyncPageComponent implements OnInit {
                 );
                 // it will redirect to an oauth url, so the rest of the observable pipe will never happen
                 this.performOAuth(authorize_url);
-                throw 'Will redirect to oauth now.';
+                throw new Error('Will redirect to oauth now.');
               }),
             );
           }
@@ -210,10 +210,10 @@ export class AddSyncPageComponent implements OnInit {
         const isCloud = connector.cloud;
         if (isCloud) {
           if (!this.externalConnection) {
-            throw 'No external connection';
+            throw new Error('No external connection');
           }
           if (!this.selectedFolder) {
-            throw 'No folder selected';
+            throw new Error('No folder selected');
           }
           return this.syncService
             .addCloudSync({

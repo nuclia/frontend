@@ -297,7 +297,7 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
 
   // Check if all required fields are populated (even with default values)
   areAllRequiredFieldsPopulated(): boolean {
-    if (!this.schema || !this.schema.properties || !this.configForm) {
+    if (!this.schema?.properties || !this.configForm) {
       return true; // No requirements to check
     }
 

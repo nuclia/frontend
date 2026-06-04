@@ -4,7 +4,7 @@
     (click)="goToHome()">
     <img
       class="topbar-logo-expanded"
-      [src]="!standalone ? logoPath : 'assets/logos/nucliadb.svg'"
+      [src]="logoPath | async"
       [alt]="!standalone ? brandName : 'NucliaDB'" />
     @if (isStageOrDev) {
       <img
@@ -55,20 +55,12 @@
         kind="primary"
         aspect="basic"
         size="small"
-        [routerLink]="billingUrl | async">
+        (click)="goToSubscriptions()">
         {{ 'account.type.' + (accountType | async) | translate }}
         @if (showTrial | async) {
           ({{ 'account.type.trial-mode' | translate }})
         }
       </pa-button>
-    }
-
-    @if ((hasSimpleUI | async) && inDashboard && !(inArag | async)) {
-      <pa-toggle
-        [value]="!(simpleMode | async)"
-        (valueChange)="switchMode($event)">
-        {{ 'kb.advanced-mode' | translate }}
-      </pa-toggle>
     }
 
     @if (((userInfo | async)?.accounts?.length || 0) > 1) {

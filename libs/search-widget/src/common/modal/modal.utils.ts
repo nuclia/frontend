@@ -22,7 +22,7 @@ export function unblockBackground(fullscreenModal = false) {
 }
 
 function scrollBackTo(scrollY: string) {
-  window.scrollTo(0, parseInt(scrollY || '0') * -1);
+  window.scrollTo(0, Number.parseInt(scrollY || '0') * -1);
 }
 
 function getFixedRootParent(element: any): HTMLElement | undefined {
@@ -49,7 +49,7 @@ function getFixedRootParent(element: any): HTMLElement | undefined {
       return getFixedRootParent(parent);
     } else {
       const parentNode = element.parentNode;
-      if (parentNode && parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+      if (parentNode?.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
         return getFixedRootParent((parentNode as ShadowRoot).host as HTMLElement);
       } else {
         return element;

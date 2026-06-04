@@ -5,13 +5,13 @@
     noTopBorder>
     <div class="settings-container">
       <div class="setting">
-        <label>{{ 'tasks-automation.form.task-name.input-label' | translate }}</label>
+        <span>{{ 'tasks-automation.form.task-name.input-label' | translate }}</span>
         <div>{{ task.parameters.name }}</div>
       </div>
       @if (task.parameters.llm.model; as model) {
         <div class="separator-line"></div>
         <div class="setting">
-          <label>LLM</label>
+          <span>LLM</span>
           @if ((modelsInfo | async)?.[model]; as modelInfo) {
             <div>{{ modelInfo.name }}</div>
             @if (task.parameters.llm.keys?.[modelInfo.userKey]) {
@@ -35,7 +35,7 @@
         @if (hasFilters && !task.parameters.filter_expression_json) {
           @if (task.parameters.filter; as filter) {
             <div class="setting">
-              <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
+              <span>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</span>
               <div>{{ filter.contains?.join(', ') || '-' }}</div>
               @if (filter.contains_operator === 1) {
                 <div>
@@ -46,7 +46,7 @@
             @if (fieldTypes.length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
-                <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
+                <span>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</span>
                 <div class="filters">
                   @for (type of fieldTypes; track type) {
                     <nsi-badge>{{ type }}</nsi-badge>
@@ -57,7 +57,7 @@
             @if (notFieldTypes.length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
-                <label>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</label>
+                <span>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</span>
                 <div class="filters">
                   @for (type of notFieldTypes; track type) {
                     <nsi-badge>{{ type }}</nsi-badge>
@@ -68,7 +68,7 @@
             @if (labels.length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
-                <label>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</label>
+                <span>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</span>
                 <div class="filters">
                   @for (label of labels; track label) {
                     <div>{{ label }}</div>
@@ -84,13 +84,13 @@
             @if (apply_to_agent_generated_fields) {
               <div class="separator-line"></div>
               <div class="setting">
-                <label>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</label>
+                <span>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</span>
               </div>
             }
           }
         } @else {
           <div class="setting">
-            <label>{{ 'tasks-automation.form.filter.filter-expression.title' | translate }}</label>
+            <span>{{ 'tasks-automation.form.filter.filter-expression.title' | translate }}</span>
             @if (task.parameters.filter_expression_json) {
               <pa-textarea
                 rows="4"
@@ -112,18 +112,18 @@
       <div class="settings-container">
         <div class="setting">
           @if (askOperation.json) {
-            <label>{{ 'tasks-automation.generator.your-question.json-schema' | translate }}</label>
+            <span>{{ 'tasks-automation.generator.your-question.json-schema' | translate }}</span>
             <nsi-info-card>
               <code class="body-s">{{ askOperation.question }}</code>
             </nsi-info-card>
           } @else {
-            <label>{{ 'tasks-automation.generator.your-question.question-label' | translate }}</label>
+            <span>{{ 'tasks-automation.generator.your-question.question-label' | translate }}</span>
             <div>{{ askOperation.user_prompt || askOperation.question }}</div>
           }
         </div>
         <div class="separator-line"></div>
         <div class="setting">
-          <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
+          <span>{{ 'tasks-automation.form.field-name.label' | translate }}</span>
           <div>{{ askOperation.destination }}</div>
         </div>
       </div>
@@ -142,25 +142,25 @@
         ">
         <div class="settings-container">
           <div class="setting">
-            <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
+            <span>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</span>
             <div>{{ labelOperation?.ident }}</div>
           </div>
           @if (labelOperation?.multiple) {
             <div class="separator-line"></div>
             <div class="setting">
-              <label>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</label>
+              <span>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</span>
             </div>
           }
           @if (labelOperation?.description) {
             <div class="separator-line"></div>
             <div class="setting">
-              <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
+              <span>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</span>
               <div>{{ labelOperation.description }}</div>
             </div>
           }
           <div class="separator-line"></div>
           <div class="setting">
-            <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
+            <span>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</span>
             <pa-table
               border
               columns="1fr 2fr">
@@ -196,7 +196,7 @@
       description="tasks-automation.graph-extraction.ner-types.description">
       <div class="settings-container">
         <div class="setting">
-          <label>{{ 'tasks-automation.graph-extraction.ner-types.title' | translate }}</label>
+          <span>{{ 'tasks-automation.graph-extraction.ner-types.title' | translate }}</span>
           <pa-table
             border
             columns="1fr 2fr">
@@ -223,7 +223,7 @@
         @if ((graphOperation.examples || []).length > 0) {
           <div class="separator-line"></div>
           <div class="setting">
-            <label>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</label>
+            <span>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</span>
             <pa-table
               border
               columns="1fr 1fr">
@@ -269,17 +269,17 @@
     <nsi-two-columns-configuration-item itemTitle="tasks-automation.question-answer.prompts.title">
       <div class="settings-container">
         <div class="setting">
-          <label>{{ 'tasks-automation.form.prompts.question-prompt' | translate }}</label>
+          <span>{{ 'tasks-automation.form.prompts.question-prompt' | translate }}</span>
           <div>{{ qaOperation.question_generator_prompt || '-' }}</div>
         </div>
         <div class="separator-line"></div>
         <div class="setting">
-          <label>{{ 'tasks-automation.form.prompts.answer-prompt' | translate }}</label>
+          <span>{{ 'tasks-automation.form.prompts.answer-prompt' | translate }}</span>
           <div>{{ qaOperation.generate_answers_prompt || '-' }}</div>
         </div>
         <div class="separator-line"></div>
         <div class="setting">
-          <label>{{ 'tasks-automation.question-answer.max-questions.label' | translate }}</label>
+          <span>{{ 'tasks-automation.question-answer.max-questions.label' | translate }}</span>
           <div>{{ qaOperation.max_questions ?? 20 }}</div>
         </div>
       </div>
@@ -304,13 +304,13 @@
       description="tasks-automation.form.webhook.description">
       <div class="settings-container">
         <div class="setting">
-          <label>URL</label>
+          <span>URL</span>
           <div>{{ trigger.url }}</div>
         </div>
         @if (trigger.headers.length > 0) {
           <div class="separator-line"></div>
           <div class="setting">
-            <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+            <span>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</span>
             <app-parameters-table
               readonly
               secretDisabled
@@ -320,7 +320,7 @@
         @if (trigger.params.length > 0) {
           <div class="separator-line"></div>
           <div class="setting">
-            <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+            <span>{{ 'tasks-automation.form.webhook.params.label' | translate }}</span>
             <app-parameters-table
               readonly
               secretDisabled

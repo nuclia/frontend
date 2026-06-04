@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (userLocale && userLocale !== '') {
       this.ngxTranslate.use(userLocale);
-    } else if (browserLang && STFUtils.supportedLanguages().indexOf(browserLang) > -1) {
+    } else if (browserLang && STFUtils.supportedLanguages().includes(browserLang)) {
       this.ngxTranslate.use(browserLang);
     } else {
       this.ngxTranslate.use('en');

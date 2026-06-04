@@ -1,0 +1,27 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'simple.trial.equator.modal.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <p class="body-text">
+      {{ 'simple.trial.equator.modal.description' | translate: { days: modal.config.data?.['daysLeft'] } }}
+    </p>
+    <p class="body-text body-text--bold">
+      {{ 'simple.trial.equator.modal.description-bold' | translate: { days: modal.config.data?.['daysLeft'] } }}
+    </p>
+    <p
+      class="body-text body-text--dimmed"
+      [innerHTML]="'simple.trial.equator.modal.upgrade-info' | translate"></p>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      (click)="upgradeNow()">
+      {{ 'simple.trial.equator.modal.upgrade' | translate }}
+    </pa-button>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="maybeLater()">
+      {{ 'simple.trial.equator.modal.maybe-later' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

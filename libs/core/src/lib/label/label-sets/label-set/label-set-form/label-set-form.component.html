@@ -16,10 +16,10 @@
           </pa-input>
 
           @if (addNew && !kind) {
-            <div>
-              <label class="title-xxs">
+            <div role="group" aria-labelledby="kind-group-label">
+              <span id="kind-group-label" class="title-xxs">
                 {{ 'label-set.form.kind' | translate }}
-              </label>
+              </span>
               <pa-radio-group formControlName="kind">
                 @for (kind of kinds; track kind.id) {
                   <pa-radio
@@ -38,10 +38,10 @@
             </div>
           }
 
-          <div>
-            <label class="title-xxs">
+          <div role="group" aria-labelledby="exclusive-group-label">
+            <span id="exclusive-group-label" class="title-xxs">
               {{ 'label-set.form.exclusive.label' | translate }}
-            </label>
+            </span>
             <pa-checkbox
               formControlName="exclusive"
               help="label-set.form.exclusive.description">
@@ -124,7 +124,7 @@
         </pa-button>
         <pa-button
           aspect="basic"
-          (click)="cancel.emit()">
+          (click)="formCancel.emit()">
           {{ 'generic.cancel' | translate }}
         </pa-button>
       </div>

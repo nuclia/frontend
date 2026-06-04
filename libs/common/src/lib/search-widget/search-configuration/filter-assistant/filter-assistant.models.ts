@@ -60,8 +60,8 @@ export function mapToSimpleFilter(value: string): SimpleFilter | undefined {
   if (!value.startsWith('/')) {
     return undefined;
   }
-  const found = value.match(simpleFilterRegex);
-  if (found && found[1] && found[2]) {
+  const found = simpleFilterRegex.exec(value);
+  if (found?.[1] && found?.[2]) {
     const type = found[1];
     const value = found[2];
     return { type, value };

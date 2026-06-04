@@ -2,12 +2,14 @@
 <form
   [formGroup]="kbForm"
   (ngSubmit)="save()">
-  <label class="title-s">Enable on Knowledge Boxes:</label>
+  <fieldset>
+    <legend class="title-s">Enable on Knowledge Boxes:</legend>
   @for (kb of kbForm.controls | keyvalue; track kb.key) {
     <pa-checkbox [formControlName]="kb.key">
       {{ ((modelNames | async) || {})[kb.key] }}
     </pa-checkbox>
   }
+  </fieldset>
   <footer>
     <pa-button
       kind="primary"

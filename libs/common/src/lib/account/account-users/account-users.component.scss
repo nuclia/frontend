@@ -1,11 +1,8 @@
 @use 'apps/dashboard/src/variables' as *;
 
 .account-users {
-  h2 {
-    font-size: 1.125rem;
-    line-height: 1.5;
-    margin-bottom: rhythm(4);
-  }
+  padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
+    var(--app-layout-padding-left);
 
   .page-description {
     color: $color-neutral-regular;
@@ -36,18 +33,5 @@
 
   .pending-icon {
     color: $color-neutral-regular;
-  }
-
-  &.embedded {
-    margin: 0;
-    padding: 0;
-
-    h2 {
-      margin-bottom: rhythm(1);
-    }
-
-    .add-user {
-      margin: rhythm(3) 0 rhythm(4);
-    }
   }
 }

@@ -37,12 +37,11 @@ export class BedrockService {
       .pipe(
         map(() => ({ status: 'active' }) as BedrockStatus),
         catchError((error) => {
-          const status =
-            error?.body?.detail === 'Assume role process not started for this account'
-              ? 'none'
-              : error?.body?.detail === 'Assume role configuration is incomplete for this account'
-                ? 'incomplete'
-                : 'error';
+    const status = (() => {
+      if (error?.body?.detail === 'Assume role process not started for this account') return 'none';
+      if (error?.body?.detail === 'Assume role configuration is incomplete for this account') return 'incomplete';
+      return 'error';
+    })();
           return of({
             status,
             errorMessage:

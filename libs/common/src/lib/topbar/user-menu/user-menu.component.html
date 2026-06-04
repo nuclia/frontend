@@ -27,7 +27,7 @@
         {{ 'generic.switch_account' | translate }}
       </pa-option>
     }
-    @if ((isKbAdmin | async)) {
+    @if (isKbAdmin | async) {
       <pa-option
         data-cy="go-to-manage-users"
         icon="users"
@@ -70,7 +70,7 @@
     (click)="goToSupport()">
     {{ 'generic.report_bug' | translate }}
   </pa-option>
-  @if ((simpleMode | async) && (isCowork | async) && (isAccountManager | async)) {
+  @if ((simpleMode | async) && (isAccountManager | async)) {
     <pa-option
       data-cy="delete-account"
       destructive

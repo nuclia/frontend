@@ -25,8 +25,7 @@ export class DashboardLayoutComponent {
     map(([showLimit, showProgress]) => showLimit || showProgress),
   );
   collapsedNav = this.layoutService.collapsedNav;
-  noNavBar = combineLatest([
-    this.navigationService.simpleMode,
-    this.navigationService.inArag(),
-  ]).pipe(map(([simple, inArag]) => simple && !inArag));
+  noNavBar = combineLatest([this.navigationService.simpleMode, this.navigationService.inArag()]).pipe(
+    map(([simple, inArag]) => simple && !inArag),
+  );
 }

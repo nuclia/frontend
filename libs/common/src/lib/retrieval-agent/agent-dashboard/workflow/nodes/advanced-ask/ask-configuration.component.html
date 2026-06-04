@@ -493,7 +493,6 @@
                   (valueChange)="updateHeight()">
                   <span class="toggle-label">
                     {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-label' | translate }}
-                    <nsi-badge kind="tertiary">BETA</nsi-badge>
                   </span>
                 </pa-toggle>
                 <div class="config-form-help">
@@ -723,7 +722,7 @@
 
   <pa-accordion-item
     #resultDisplay
-    id="generative-answer"
+    id="result-display"
     [itemTitle]="'retrieval-agents.workflow.node-types.advanced_ask.form.citations-and-json' | translate"
     (expandedChange)="updateHeight()">
     <pa-accordion-item-body>

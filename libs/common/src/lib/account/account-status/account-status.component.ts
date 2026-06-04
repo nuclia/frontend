@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
@@ -20,7 +20,6 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountStatusComponent {
-  @Input({ transform: booleanAttribute }) scrollToSubscriptions = false;
   @Output() upgradeClick = new EventEmitter<void>();
 
   isTrial = this.features.isTrial;
@@ -63,7 +62,7 @@ export class AccountStatusComponent {
   }
 
   onUpgrade() {
-    if (this.scrollToSubscriptions) {
+    if (this.upgradeClick.observed) {
       this.upgradeClick.emit();
       return;
     }
@@ -84,7 +83,7 @@ export class AccountStatusComponent {
         const ids = localStorage.getItem(TRIAL_ALERT) || '';
         if (!ids.split(',').includes(account.id)) {
           this.showEndOfTrialAlert();
-          localStorage.setItem(TRIAL_ALERT, !ids ? account.id : `${ids},${account.id}`);
+          localStorage.setItem(TRIAL_ALERT, ids ? `${ids},${account.id}` : account.id);
         }
       });
   }

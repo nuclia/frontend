@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -49,6 +49,7 @@ import {
   SelectFirstFieldDirective,
 } from './';
 import { RelationsComponent } from './annotation/relations/relations.component';
+import { KeyValueFieldComponent } from './preview/key-value-field';
 import { PreviewTableComponent } from './preview/preview-table.component';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 
@@ -111,6 +112,8 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     ResourceTextComponent,
     SelectFirstFieldDirective,
     ThumbnailComponent,
+    KeyValueFieldComponent,
   ],
+  providers: [DatePipe],
 })
 export class EditResourceModule {}

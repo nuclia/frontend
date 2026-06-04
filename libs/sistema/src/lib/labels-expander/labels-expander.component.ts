@@ -52,10 +52,10 @@ export class LabelsExpanderComponent {
         const newSelection: { [id: string]: boolean } = Object.entries(this.currentSelection).reduce(
           (selection, [labelId, selected]) => {
             const label = getLabelFromSelectionKey(labelId);
-            if (label.labelset !== data.labelset) {
-              selection[labelId] = selected;
-            } else {
+            if (label.labelset === data.labelset) {
               selection[labelId] = label.label === data.label;
+            } else {
+              selection[labelId] = selected;
             }
             return selection;
           },

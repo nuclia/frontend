@@ -8,7 +8,7 @@
     <app-configuration-form
       [form]="form"
       [submitDisabled]="isSubmitDisabled()"
-      (cancel)="cancel.emit()"
+      (formCancel)="formCancel.emit()"
       (triggerSubmit)="submit()">
       @if (configForm) {
         <ng-container *ngTemplateOutlet="formContent"></ng-container>

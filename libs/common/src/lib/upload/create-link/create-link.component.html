@@ -136,7 +136,7 @@
             <app-csv-select
               [help]="['upload.csv_links_description', 'upload.csv_labels', 'upload.csv_css_selector']"
               [fields]="3"
-              (select)="checkCsv($event)"></app-csv-select>
+              (csvSelect)="checkCsv($event)"></app-csv-select>
             @if (csv.length > 0) {
               <nsi-info-card>
                 {{ 'modal.create_link.upload-summary' | translate: { count: csv.length } }}

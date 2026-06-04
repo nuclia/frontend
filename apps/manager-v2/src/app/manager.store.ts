@@ -60,7 +60,7 @@ export class ManagerStore {
   }
   setAccountUsers(users: AccountUser[]) {
     this._accountUsers.next(
-      users.sort((a, b) => {
+      users.toSorted((a, b) => {
         if (a.isManager && !b.isManager) {
           return -1;
         } else if (!a.isManager && b.isManager) {

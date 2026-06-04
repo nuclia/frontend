@@ -3,7 +3,15 @@ import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
-import type { Ask, CatalogOptions, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
+import type {
+  Ask,
+  CatalogOptions,
+  ChatOptions,
+  PredictAnswerOptions,
+  Search,
+  SearchOptions,
+  SuggestOptions,
+} from '../search';
 import { Agentic } from '../search/agentic';
 import { TaskManager } from '../task';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
@@ -95,8 +103,6 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
-  getSynonyms(): Observable<Synonyms>;
-
   getFacets(facets: string[]): Observable<Search.FacetsResult>;
 
   getLabels(): Observable<LabelSets>;
@@ -157,7 +163,12 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse>;
 
-  suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
+  suggest(
+    query: string,
+    inTitleOnly?: boolean,
+    features?: Search.SuggestionFeatures[],
+    options?: SuggestOptions,
+  ): Observable<Search.Suggestions | IErrorResponse>;
 
   feedback(answerId: string, good: boolean, feedback?: string, text_block_id?: string): Observable<void>;
 
@@ -209,17 +220,6 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   setLabelSet(setId: string, labelSet: LabelSet): Observable<void>;
 
   deleteLabelSet(setId: string): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * @param synonyms
-   */
-  setSynonyms(synonyms: Synonyms): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   */
-  deleteAllSynonyms(): Observable<void>;
 
   createResource(resource: IResource, synchronous: boolean): Observable<{ uuid: string }>;
 
@@ -466,20 +466,6 @@ export interface ServiceAccountCreation {
   role: KBRoles;
 }
 
-/**
- * @deprecated
- */
-export interface SynonymsPayload {
-  synonyms: Synonyms;
-}
-
-/**
- * @deprecated
- */
-export interface Synonyms {
-  [main: string]: string[];
-}
-
 export interface SentenceToken {
   text: string;
   ner: string;
@@ -643,6 +629,8 @@ export enum ReasoningEffort {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
+  NONE = 'none',
+  XHIGH = 'xhigh',
 }
 
 export enum NumericReasoningEffort {
@@ -650,6 +638,8 @@ export enum NumericReasoningEffort {
   LOW = 1,
   MEDIUM = 2,
   HIGH = 3,
+  NONE = 4,
+  XHIGH = 5,
 }
 
 export interface ReasoningConfig {

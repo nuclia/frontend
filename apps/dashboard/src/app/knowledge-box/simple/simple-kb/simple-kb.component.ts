@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, computed, Component, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
-import { take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap } from 'rxjs';
-import { DroppedFile, SDKService, SizePipe } from '@flaps/core';
+import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
+import { map, take, of, delay, Subject, filter, distinctUntilChanged, switchMap, tap, combineLatest } from 'rxjs';
+import { DroppedFile, FeaturesService, SDKService, SizePipe } from '@flaps/core';
 import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { SimpleKBService } from './simple-kb.service';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
+import { getCoworkTrialState } from '../simple.utils';
 
 @Component({
   standalone: false,
@@ -17,7 +18,7 @@ import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.co
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SizePipe],
 })
-export class SimpleKBComponent {
+export class SimpleKBComponent implements OnDestroy {
   private simpleKBService = inject(SimpleKBService);
   private searchWidgetService = inject(SearchWidgetService);
   private modalService = inject(SisModalService);
@@ -25,6 +26,7 @@ export class SimpleKBComponent {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
   private sizePipe = inject(SizePipe);
+  private features = inject(FeaturesService);
 
   widgetPreview = this.searchWidgetService.widgetPreview;
   maxFiles = this.simpleKBService.maxFiles;
@@ -38,7 +40,14 @@ export class SimpleKBComponent {
   maxMediaFileSize = -1;
 
   view = signal<'resources' | 'history' | 'search'>('resources');
-  prevQuestionId?: string;
+  currentConversation?: string;
+
+  private trialState = toSignal(this.sdk.currentAccount.pipe(map(getCoworkTrialState)), {
+    initialValue: { isCoworkTrial: false, isTrialExpired: false, isAtEquator: false, daysLeft: 0 },
+  });
+
+  isCoworkTrial = computed(() => this.trialState().isCoworkTrial);
+  isAtEquator = computed(() => this.trialState().isAtEquator);
 
   constructor() {
     this.simpleKBService.resources.pipe(take(1)).subscribe((resources) => {
@@ -61,11 +70,11 @@ export class SimpleKBComponent {
 
     // Make sure that enforce_security is enabled.
     // It's required to prevent external agents using the MCP endpoint from retrieving conversation resources.
-    this.sdk.currentKb
+    combineLatest([this.sdk.currentKb, this.features.isKbAdmin])
       .pipe(
         take(1),
-        filter((kb) => kb.enforce_security === false),
-        switchMap((kb) => kb.modify({ enforce_security: true })),
+        filter(([kb, isAdmin]) => kb.enforce_security === false && isAdmin),
+        switchMap(([kb]) => kb.modify({ enforce_security: true })),
       )
       .subscribe(() => {
         this.sdk.refreshKbList(true);
@@ -85,17 +94,19 @@ export class SimpleKBComponent {
         switchMap((event) =>
           (event['lastQuery']?.params?.context || []).length > 0
             ? this.simpleKBService.appendQuestion(
-                this.prevQuestionId || '',
+                this.currentConversation || '',
                 event['lastQuery'].params.query,
                 event['lastResults']?.text || '',
+                event['lastResults']?.text ? event['lastResults'] : undefined,
               )
             : this.simpleKBService
                 .createQuestion(
                   'Question ' + Date.now(),
                   event['lastQuery'].params.query,
                   event['lastResults']?.text || '',
+                  event['lastResults']?.text ? event['lastResults'] : undefined,
                 )
-                .pipe(tap(({ uuid }) => (this.prevQuestionId = uuid))),
+                .pipe(tap(({ uuid }) => (this.currentConversation = uuid))),
         ),
         takeUntilDestroyed(),
       )
@@ -157,15 +168,21 @@ export class SimpleKBComponent {
   }
 
   initWidget() {
-    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG);
+    this.searchWidgetService.generateWidgetSnippet(NUCLIA_STANDARD_SEARCH_CONFIG, {
+      ...DEFAULT_WIDGET_CONFIG,
+      displaySearchButton: true,
+      widgetMode: 'chat',
+      hideReset: true,
+      customizeChatPlaceholder: true,
+      chatPlaceholder: this.translate.instant('simple.search-placeholder'),
+    });
     of(true)
       .pipe(
         delay(1000), // Wait for the widget to be rendered
       )
       .subscribe(() => {
-        const element = document.querySelector('nuclia-search-bar');
-        element?.addEventListener('search', () => this.view.set('search'));
-        element?.addEventListener('resetQuery', () => this.view.set('resources'));
+        const element = document.querySelector('nuclia-chat');
+        element?.addEventListener('chat', () => this.view.set('search'));
         element?.addEventListener('logs', (event: any) => this.logs.next(event.detail));
       });
   }
@@ -184,5 +201,14 @@ export class SimpleKBComponent {
 
   showMcpEndpoint() {
     this.modalService.openModal(McpEndpointModalComponent);
+  }
+
+  openConversation(resourceId: string) {
+    this.simpleKBService.getChatEntries(resourceId).subscribe((entries) => {
+      const element = document.querySelector('nuclia-chat');
+      (element as any)?.setChat(entries);
+      this.currentConversation = resourceId;
+      this.view.set('search');
+    });
   }
 }

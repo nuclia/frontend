@@ -141,7 +141,6 @@ export interface SearchOptions extends BaseSearchOptions {
   page_size?: number;
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
-  with_synonyms?: boolean;
   rephrase_prompt?: string;
   features?: Search.Features[];
 }
@@ -159,6 +158,12 @@ export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'>
   filter_expression?: {
     resource: ResourceFilterExpression;
   };
+}
+
+export interface SuggestOptions {
+  highlight?: boolean;
+  show_hidden?: boolean;
+  security?: { groups: string[] };
 }
 
 export interface And<T> {
@@ -311,6 +316,7 @@ export enum SHORT_FIELD_TYPE {
   link = 'u',
   generic = 'a',
   conversation = 'c',
+  key_value = 'kv',
 }
 
 export enum Reranker {
@@ -336,7 +342,6 @@ export namespace Search {
   export enum SuggestionFeatures {
     PARAGRAPH = 'paragraph',
     ENTITIES = 'entities',
-    INTENT = 'intent',
   }
 
   export interface FindResults {

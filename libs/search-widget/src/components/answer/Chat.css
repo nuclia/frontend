@@ -33,6 +33,9 @@
     --padding-top-input-container: var(--chat-padding);
     --padding-bottom-input-container: var(--chat-padding);
     --padding-side-input-container: var(--chat-padding);
+    --padding-side-entries-container: var(--custom-padding-side-entries-container, 0);
+    --margin-side-input-container: var(--custom-margin-side-input-container, 0);
+    --width-input-container: var(--custom-width-input-container, auto);
 
     &.fullscreen {
       --height-container: 100%;
@@ -53,6 +56,7 @@
       max-height: var(--max-height-entries);
       overflow: auto;
       flex: 1 0 0;
+      padding: 0 var(--padding-side-entries-container);
 
       &.hidden {
         display: none;
@@ -98,6 +102,8 @@
       flex: 0 0 auto;
       padding: var(--padding-top-input-container) var(--padding-side-input-container)
         var(--padding-bottom-input-container);
+      margin: 0 var(--margin-side-input-container);
+      width: var(--width-input-container);
     }
   }
 }

@@ -217,7 +217,9 @@ export class UploadService {
         }
         const labelSets: { [id: string]: LabelSet } = {};
         missingLabels.forEach((missingLabel) => {
-          if (!labelSets[missingLabel.labelset]) {
+          if (labelSets[missingLabel.labelset]) {
+            labelSets[missingLabel.labelset].labels.push({ title: missingLabel.label });
+          } else {
             labelSets[missingLabel.labelset] = existingLabels[missingLabel.labelset]
               ? {
                   ...existingLabels[missingLabel.labelset],
@@ -230,8 +232,6 @@ export class UploadService {
                   kind: [LabelSetKind.RESOURCES],
                   labels: [{ title: missingLabel.label }],
                 };
-          } else {
-            labelSets[missingLabel.labelset].labels.push({ title: missingLabel.label });
           }
         });
         return combineLatest(
@@ -297,7 +297,7 @@ export class UploadService {
             )?.[0];
             return fieldId
               ? resource.setField(FIELD_TYPE.link, fieldId, { uri, ...linkField })
-              : throwError(() => new Error());
+              : throwError(() => new Error('Upload failed'));
           }),
         ),
       ),
@@ -326,7 +326,7 @@ export class UploadService {
                   split_strategy,
                   language,
                 })
-              : throwError(() => new Error());
+              : throwError(() => new Error('Upload failed'));
           }),
         ),
       ),

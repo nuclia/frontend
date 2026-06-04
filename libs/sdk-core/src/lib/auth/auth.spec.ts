@@ -19,7 +19,7 @@ describe('Authentication', () => {
     const rest = {
       get: jest.fn(() => of({})),
       delete: jest.fn(() => of(void 0)),
-      ...(overrides?.rest || {}),
+      ...overrides?.rest,
     };
 
     return {

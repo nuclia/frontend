@@ -40,6 +40,7 @@
     proxy?: boolean;
     filters?: string;
     labelsets_excluded_from_filters?: string;
+    initial_filters?: string;
     preselected_filters?: string;
     filter_expression?: string;
     csspath?: string;
@@ -70,6 +71,7 @@
     security_groups?: string | undefined;
     reasoning?: string;
     routing?: string;
+    cache?: number | string | undefined;
   }
 
   let {
@@ -88,6 +90,7 @@
     proxy = false,
     filters = '',
     labelsets_excluded_from_filters = '',
+    initial_filters = '',
     preselected_filters = '',
     filter_expression = '',
     csspath = '',
@@ -118,6 +121,7 @@
     security_groups = undefined,
     reasoning = undefined,
     routing = undefined,
+    cache = undefined,
   }: Props = $props();
 
   let searchBar: any = $state();
@@ -229,6 +233,7 @@
           {proxy}
           {filters}
           {labelsets_excluded_from_filters}
+          {initial_filters}
           {preselected_filters}
           {filter_expression}
           {csspath}
@@ -258,7 +263,8 @@
           {search_config_id}
           {security_groups}
           {reasoning}
-          {routing} />
+          {routing}
+          {cache} />
       </div>
       <div class="search-results-container">
         <SearchResults scrollableContainerSelector=".nuclia-widget .search-container" />

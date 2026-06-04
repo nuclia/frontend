@@ -81,7 +81,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @returns Paginated sessions list
    */
   listSessions(page?: number, size?: number): Observable<SessionList> {
-    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter(Boolean).join('&');
     return this.nuclia.rest
       .get<{
         resources: ISession[];
@@ -110,12 +110,13 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     workflowId = 'default',
     method: 'POST' | 'WS' = 'WS',
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     switch (method) {
       case 'POST':
-        return this._interactThroughPost(sessionId, question, workflowId, headers);
+        return this._interactThroughPost(sessionId, question, workflowId, headers, streaming);
       case 'WS':
-        return this._interactThroughWs(sessionId, question, workflowId, headers);
+        return this._interactThroughWs(sessionId, question, workflowId, headers, streaming);
     }
   }
 
@@ -127,16 +128,28 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     }
   }
 
+  sendMessage(sessionId: string, requestId: string, message: any) {
+    if (this.wsConnections[sessionId]) {
+      this.wsConnections[sessionId].send(
+        JSON.stringify({
+          request_id: requestId,
+          response: JSON.stringify(message),
+        }),
+      );
+    }
+  }
+
   wsOpeningCount = 0;
   private _interactThroughWs(
     sessionId: string,
     question: string,
     workflowId: string,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     const answerSubject = new Subject<AragResponse | IErrorResponse>();
     this.wsOpeningCount = 0;
-    this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
+    this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers, streaming);
 
     return answerSubject.asObservable();
   }
@@ -148,6 +161,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     answerSubject: Subject<AragResponse | IErrorResponse>,
     fromCursor?: number,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ) {
     let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, workflowId, fromCursor).subscribe({
@@ -155,7 +169,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         const ws = new WebSocket(wsUrl);
         this.wsConnections[sessionId] = ws;
         ws.onopen = () => {
-          const message = { question, operation: InteractionOperation.question, headers };
+          const message = { question, operation: InteractionOperation.question, headers, streaming };
           // and send the question
           ws.send(JSON.stringify(message));
         };
@@ -176,20 +190,10 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
                 const existingCredentials = Object.fromEntries(
                   Object.entries(this.oauthCredentials || {}).filter(([key]) => syncConfigIds.includes(key)),
                 );
-                ws.send(
-                  JSON.stringify({
-                    request_id: feedback.request_id,
-                    response: JSON.stringify({ existing_credentials: existingCredentials }),
-                  }),
-                );
+                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: existingCredentials });
               } else if (feedback.question === 'Send credentials') {
                 this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
-                ws.send(
-                  JSON.stringify({
-                    request_id: feedback.request_id,
-                    response: JSON.stringify({ existing_credentials: feedback.credentials }),
-                  }),
-                );
+                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: feedback.credentials });
               }
             } else if (lastMessage.oauth) {
               window.open(lastMessage.oauth.oauth_url, 'blank', 'noreferrer');
@@ -247,6 +251,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     question: string,
     workflowId: string,
     headers?: { [key: string]: string },
+    streaming?: boolean,
   ): Observable<AragResponse | IErrorResponse> {
     let fullPath = this.getInteractionPath(sessionId);
     fullPath += fullPath.includes('?') ? '&' : '?' + `workflow_id=${workflowId}`;
@@ -256,13 +261,11 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         question,
         operation: InteractionOperation.question,
         headers,
+        streaming,
       })
       .pipe(
         switchMap(({ data }) => {
-          const rows = new TextDecoder()
-            .decode(data.buffer)
-            .split('\n')
-            .filter((d) => d);
+          const rows = new TextDecoder().decode(data.buffer).split('\n').filter(Boolean);
           let previous = '';
           const items: AragAnswer[] = rows.slice(nextIndex).reduce((list, row) => {
             previous += row;
@@ -272,6 +275,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
               previous = '';
             } catch (e) {
               // block is not complete yet
+              console.warn(e);
             }
             return list;
           }, [] as AragAnswer[]);

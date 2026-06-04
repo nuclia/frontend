@@ -1,4 +1,6 @@
 .sw-arag-answer {
+  --reasoning-margin: calc(var(--rhythm-4) + var(--rhythm-0_5));
+
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -50,12 +52,20 @@
     width: 100%;
     &.with-rank {
       width: calc(100% - var(--rhythm-3) - var(--rhythm-1));
-    }    
+    }
   }
 
   .reasoning-text {
     font-size: 75%;
-    margin-left: calc(var(--rhythm-4) + var(--rhythm-0_5));
+    margin-left: var(--reasoning-margin);
+  }
+
+  .details {
+    padding-top: var(--rhythm-0_25);
+  }
+
+  .feedback {
+    margin: var(--rhythm-2) 0 var(--rhythm-2) var(--reasoning-margin);
   }
 
   .error {

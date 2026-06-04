@@ -95,7 +95,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   isBillingEnabled = this.features.unstable.billing;
   noStripe = this.backendConfig.noStripe();
-  isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
@@ -191,7 +190,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private isOnMetricsPage(path: string): boolean {
-    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|detailed)/.test(
+    return /\/metrics\/(remi-analytics|usage-analytics|tokens-and-time-usage|resource-activity|search-activity|user-feedback|detailed)/.test(
       path,
     );
   }

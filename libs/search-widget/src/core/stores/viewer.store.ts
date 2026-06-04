@@ -82,7 +82,7 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
       : null,
     selectedParagraphIndex: data.selectedParagraphIndex,
     fieldFullId:
-      data.result && data.result.field
+      data.result?.field
         ? {
             field_id: data.result.field.field_id,
             field_type: data.result.field.field_type,
@@ -157,7 +157,7 @@ export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>
     if (state.searchInFieldResults) {
       return state.searchInFieldResults[state.selectedParagraphIndex];
     }
-    if (state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== -1) {
+    if (state.currentResult?.paragraphs && state.selectedParagraphIndex !== -1) {
       return state.currentResult.paragraphs[state.selectedParagraphIndex];
     }
   }

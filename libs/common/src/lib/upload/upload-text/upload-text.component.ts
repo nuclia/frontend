@@ -9,7 +9,7 @@ import { StandaloneService } from '../../services';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 import { SDKService } from '@flaps/core';
 
-const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST'];
+const FORMATS: Set<TextFormat> = new Set(['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST']);
 
 interface Row {
   title: string;
@@ -53,7 +53,7 @@ export class UploadTextComponent {
       format: row[2] as TextFormat,
       labels: parseCsvLabels(row[3]),
     }));
-    if (csv.every((row) => FORMATS.includes(row.format) && !!row.labels)) {
+    if (csv.every((row) => FORMATS.has(row.format) && !!row.labels)) {
       this.csv = csv as Row[];
       markForCheck(this.cdr);
     } else {

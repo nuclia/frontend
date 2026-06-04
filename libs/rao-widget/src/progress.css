@@ -184,6 +184,14 @@
     --citation-number-background-color: #303136;
     --citation-number-background-hover-color: #1f2023;
   }
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--container-background-color, var(--color-light-stronger));
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 .progress-widget__error {
@@ -195,17 +203,6 @@
   color: #991b1b;
   font-size: 0.9rem;
   font-weight: 500;
-}
-
-.progress-widget {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  background: var(--container-background-color, var(--color-light-stronger));
-  border-radius: var(--border-radius);
-  overflow: hidden;
 }
 
 .progress-widget__react-host {

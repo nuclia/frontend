@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 
 import { RouterModule } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { Account, WritableKnowledgeBox } from '@nuclia/core';
+import { WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { MockProvider } from 'ng-mocks';
 import { KnowledgeBoxComponent } from './knowledge-box.component';

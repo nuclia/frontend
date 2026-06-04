@@ -17,7 +17,8 @@
 
     <!-- STF Splash Screen CSS -->
     <link rel="stylesheet" href="assets/splash-screen.css" />
-    <!-- Google Tag Manager --> <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start' : new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j. src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','STF_DOCKER_CONFIG_GOOGLE_ANALYTICS');</script> <!-- End Google Tag Manager -->
+    <meta name="gtm-id" content="STF_DOCKER_CONFIG_GOOGLE_ANALYTICS" />
+    <!-- Google Tag Manager --> <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start' : new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j. src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer',document.querySelector('meta[name="gtm-id"]').content);</script> <!-- End Google Tag Manager -->
 
   </head>
   <body class="body-s">
@@ -25,7 +26,7 @@
     <stf-splash-screen id="stf-splash-screen">
       <div class="center">
         <div class="logo">
-          <img width="128" src="assets/logos/logo.svg"/>
+          <img width="128" src="assets/logos/logo.svg" alt=""/>
         </div>
         <div id="stf-splash-screen-text" class="splash-text">
           Be patient my friend &#128513
@@ -55,7 +56,7 @@
 <!-- OptanonConsentNoticeStart -->
 <script type="text/javascript">
   // the actual loading happens in Sign Up page only
-  function OptanonWrapper() { }
+  function OptanonWrapper() { /* noop: actual loading happens in Sign Up page only */ }
 </script>
 <!-- OptanonConsentNoticeEnd -->
 </body>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
-import { EventList, NUAClient, ResourceProperties } from '@nuclia/core';
+import { EventList, NUAClient } from '@nuclia/core';
 
 export interface Activity {
   resourceId: Observable<string>;

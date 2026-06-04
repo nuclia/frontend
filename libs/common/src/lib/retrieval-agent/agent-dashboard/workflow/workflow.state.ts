@@ -10,7 +10,6 @@ import {
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import {
   AragAnswerUi,
-  AskAgentUI,
   isCategory,
   NodeCategory,
   NodeConfig,
@@ -22,7 +21,6 @@ import {
   SmartAgentUI,
   TEMP_CHILD_ID,
 } from './workflow.models';
-import { JSONSchema4 } from 'json-schema';
 
 /**
  * Global state
@@ -180,7 +178,7 @@ export const testAgentAnswersByCategory = computed(() => {
     let previousAnswer: AragAnswerUi | undefined;
     sortedAnswers[category].forEach((answer) => {
       const currentAnswer = aragAnswerToUi(answer);
-      if (previousAnswer && currentAnswer.agentId === previousAnswer.agentId) {
+      if (currentAnswer.agentId === previousAnswer?.agentId) {
         // grouping steps of a same module together
         if (answer.step) {
           previousAnswer.steps.push(answer.step);
@@ -492,16 +490,60 @@ export function getAllNodes(includeChildren = false): ParentNode[] {
  * @param agentId Optional agent identifier corresponding to the node
  * @param childIndex Index of the child in parent’s then/else list (optional)
  */
+function _linkNodeToParent(
+  nodeId: string,
+  nodeCategory: NodeCategory,
+  parentId: string,
+  property: string,
+  nodeType: NodeType,
+  node: ParentNode,
+  opts: { isSaved: boolean; childIndex?: number },
+) {
+  const { isSaved, childIndex } = opts;
+  const parent = getNode(parentId, nodeCategory);
+  if (!parent) {
+    throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
+  }
+  if (property === 'registered_agents') {
+    registeredAgentParams.set({ description: '', functions: [], nodeType });
+  }
+  if (property === 'then' || property === 'else_' || property === 'agents') {
+    const existing = (parent as any)?.[property];
+    const childIds = Array.isArray(existing) ? [...existing] : [];
+    const currentIndex = childIds.indexOf(nodeId);
+    if (currentIndex !== -1) {
+      childIds.splice(currentIndex, 1);
+    }
+    const insertionIndex =
+      typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
+        ? childIndex
+        : childIds.length;
+    childIds.splice(insertionIndex, 0, nodeId);
+    node.childIndex = insertionIndex;
+  }
+  childNodes.update((children) => ({ ...children, [nodeId]: node }));
+  if (property === 'registered_agents' || property === 'agents' || property === 'then' || property === 'else_') {
+    updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
+  } else {
+    updateNode(parentId, nodeCategory, { [property]: nodeId, isSaved });
+  }
+}
+
+export interface AddNodeOptions {
+  nodeConfig?: NodeConfig;
+  agentId?: string;
+  isSaved?: boolean;
+  childIndex?: number;
+}
+
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
   nodeType: NodeType,
   nodeCategory: NodeCategory,
   origin: ConnectableEntryComponent,
-  nodeConfig?: NodeConfig,
-  agentId?: string,
-  isSaved = false,
-  childIndex?: number,
+  opts: AddNodeOptions = {},
 ) {
+  const { nodeConfig, agentId, isSaved = false, childIndex } = opts;
   const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved, childIndex };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
@@ -509,44 +551,14 @@ export function addNode(
   if (nodeConfig) {
     node.nodeRef.setInput('config', nodeConfig);
   }
-  if (!parentId) {
-    _addNode(nodeId, nodeCategory, node);
-  } else {
+  if (parentId) {
     const property = origin.id();
-
     node.parentId = parentId;
     node.parentLinkType = property;
     node.parentLinkConfigProperty = property;
-    const parent = getNode(parentId, nodeCategory);
-    if (!parent) {
-      throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
-    }
-    if (property === 'registered_agents') {
-      registeredAgentParams.set({ description: '', functions: [], nodeType });
-    }
-    if (property === 'then' || property === 'else_' || property === 'agents') {
-      const existing = (parent as any)?.[property];
-      const childIds = Array.isArray(existing) ? [...existing] : [];
-      const currentIndex = childIds.indexOf(nodeId);
-      if (currentIndex !== -1) {
-        childIds.splice(currentIndex, 1);
-      }
-      const insertionIndex =
-        typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
-          ? childIndex
-          : childIds.length;
-      childIds.splice(insertionIndex, 0, nodeId);
-      node.childIndex = insertionIndex;
-    }
-    childNodes.update((children) => ({ ...children, [nodeId]: node }));
-    if (property === 'registered_agents' || property === 'agents' || property === 'then' || property === 'else_') {
-      updateNode(parentId, nodeCategory, { isSaved }, { property, nodeId });
-    } else {
-      updateNode(parentId, nodeCategory, {
-        [property]: nodeId,
-        isSaved,
-      });
-    }
+    _linkNodeToParent(nodeId, nodeCategory, parentId, property, nodeType, node, { isSaved, childIndex });
+  } else {
+    _addNode(nodeId, nodeCategory, node);
   }
 }
 
@@ -668,6 +680,74 @@ export function resetNodes() {
   childNodes.set({});
 }
 
+function _syncRegisteredAgentOnSelf(node: ParentNode, partialNode: Partial<ParentNode>): void {
+  if (node.parentLinkType !== 'registered_agents' || !node.parentId) return;
+  if (!node.agentId) {
+    node.agentId = (partialNode.nodeConfig as any).id;
+  }
+  const agentId = node.agentId;
+  if (!agentId) throw new Error('No id');
+  const parent = getNode(node.parentId, 'context');
+  if (parent?.nodeType === 'smart' && parent?.nodeConfig) {
+    _writeRegisteredAgentMeta(parent.nodeConfig as SmartAgentUI, agentId);
+  }
+}
+
+function _writeRegisteredAgentMeta(config: SmartAgentUI, agentId: string): void {
+  config.registered_agents_descriptions = {
+    ...config.registered_agents_descriptions,
+    [agentId]: registeredAgentParams().description,
+  };
+  config.registered_agents_exposed_functions = {
+    ...config.registered_agents_exposed_functions,
+    [agentId]: registeredAgentParams().functions,
+  };
+}
+
+function _updateParentNodeConfig(node: ParentNode, nodeCategory: NodeCategory): void {
+  if (!node.parentId || !node.parentLinkType) return;
+  const parent = getNode(node.parentId, nodeCategory);
+  if (!parent?.nodeConfig || !node.nodeConfig) return;
+
+  const childKeys = ['fallback', 'next_agent'];
+  const childrenKeys = ['then', 'else_', 'agents', 'registered_agents'];
+
+  if (childKeys.includes(node.parentLinkType)) {
+    (parent.nodeConfig as any)[node.parentLinkType] = node.nodeConfig;
+  }
+  if (childrenKeys.includes(node.parentLinkType)) {
+    const existings: NodeConfigWithId[] = (parent.nodeConfig as any)[node.parentLinkType] || [];
+    const nodeId = (node.nodeConfig as NodeConfigWithId).id;
+    if (existings.some((a) => a.id === nodeId)) {
+      (parent.nodeConfig as any)[node.parentLinkType] = existings.map((a) =>
+        a.id === nodeId ? node.nodeConfig : { ...a },
+      );
+    } else {
+      (parent.nodeConfig as any)[node.parentLinkType] = [...existings, node.nodeConfig];
+    }
+    if (node.parentLinkType === 'registered_agents') {
+      _writeRegisteredAgentMeta(parent.nodeConfig as SmartAgentUI, nodeId);
+    }
+  }
+}
+
+function _markChildLinksAsUnsaved(updatedNode: ParentNode): void {
+  const childIdsToMark = [updatedNode.fallback, updatedNode.next_agent].filter(
+    (childId): childId is string => typeof childId === 'string' && childId.length > 0,
+  );
+  if (childIdsToMark.length === 0) return;
+
+  childNodes.update((_nodes) => {
+    let workingNodes = _nodes;
+    childIdsToMark.forEach((childId) => {
+      const childNode = workingNodes[childId];
+      if (!childNode || childNode.isSaved === false) return;
+      workingNodes = { ...workingNodes, [childId]: { ...childNode, isSaved: false } };
+    });
+    return workingNodes;
+  });
+}
+
 /**
  * Update node
  * @param id Node identifier
@@ -689,84 +769,13 @@ export function updateNode(
     partialNode[appendChild.property] = [...existingChildren, appendChild.nodeId];
   }
 
-  // if the node is a registered agent, update registered_agents_descriptions and registered_agents_exposed_functions in the parent node
-  if (node.parentLinkType === 'registered_agents' && node.parentId) {
-    if (!node.agentId) {
-      node.agentId = (partialNode.nodeConfig as any).id;
-    }
-    const id = node.agentId;
-    if (!id) {
-      throw new Error('No id');
-    }
-    const parent = getNode(node.parentId, 'context');
-    if (parent && parent.nodeType === 'smart' && parent.nodeConfig) {
-      (parent.nodeConfig as SmartAgentUI).registered_agents_descriptions = {
-        ...(parent.nodeConfig as SmartAgentUI).registered_agents_descriptions,
-        [id]: registeredAgentParams().description,
-      };
-      (parent.nodeConfig as SmartAgentUI).registered_agents_exposed_functions = {
-        ...(parent.nodeConfig as SmartAgentUI).registered_agents_exposed_functions,
-        [id]: registeredAgentParams().functions,
-      };
-    }
-  }
-
-  // update parent configs
-  const childKeys = ['fallback', 'next_agent'];
-  const childrenKeys = ['then', 'else_', 'agents', 'registered_agents'];
-  if (node.parentId && node.parentLinkType) {
-    const parent = getNode(node.parentId, nodeCategory);
-    if (parent && parent.nodeConfig && node.nodeConfig) {
-      if (childKeys.includes(node.parentLinkType)) {
-        (parent.nodeConfig as any)[node.parentLinkType] = node.nodeConfig;
-      }
-      if (childrenKeys.includes(node.parentLinkType)) {
-        const existings: NodeConfigWithId[] = (parent.nodeConfig as any)[node.parentLinkType] || [];
-        const nodeId = (node.nodeConfig as NodeConfigWithId).id;
-        if (existings.find((a) => a.id === nodeId)) {
-          (parent.nodeConfig as any)[node.parentLinkType] = existings.map((a) =>
-            a.id === nodeId ? node.nodeConfig : { ...a },
-          );
-        } else {
-          (parent.nodeConfig as any)[node.parentLinkType] = [...existings, node.nodeConfig];
-        }
-        // if the node is a registered agent, update registered_agents_descriptions and registered_agents_exposed_functions in the parent node
-        if (node.parentLinkType === 'registered_agents') {
-          (parent.nodeConfig as SmartAgentUI).registered_agents_descriptions = {
-            ...(parent.nodeConfig as SmartAgentUI).registered_agents_descriptions,
-            [nodeId]: registeredAgentParams().description,
-          };
-          (parent.nodeConfig as SmartAgentUI).registered_agents_exposed_functions = {
-            ...(parent.nodeConfig as SmartAgentUI).registered_agents_exposed_functions,
-            [nodeId]: registeredAgentParams().functions,
-          };
-        }
-      }
-    }
-  }
+  _syncRegisteredAgentOnSelf(node, partialNode);
+  _updateParentNodeConfig(node, nodeCategory);
 
   const updatedNode = { ...node, ...partialNode, isSaved: partialNode.isSaved || false };
 
   if (partialNode.nodeConfig) {
-    const childIdsToMark = [updatedNode.fallback, updatedNode.next_agent].filter(
-      (childId): childId is string => typeof childId === 'string' && childId.length > 0,
-    );
-
-    if (childIdsToMark.length > 0) {
-      childNodes.update((_nodes) => {
-        let workingNodes = _nodes;
-
-        childIdsToMark.forEach((childId) => {
-          const childNode = workingNodes[childId];
-          if (!childNode || childNode.isSaved === false) {
-            return;
-          }
-          workingNodes = { ...workingNodes, [childId]: { ...childNode, isSaved: false } };
-        });
-
-        return workingNodes;
-      });
-    }
+    _markChildLinksAsUnsaved(updatedNode);
   }
 
   const isChild = _isChildNode(id);

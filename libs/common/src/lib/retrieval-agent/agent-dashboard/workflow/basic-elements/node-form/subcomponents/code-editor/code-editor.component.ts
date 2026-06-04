@@ -155,7 +155,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
   private handlePythonEnter(textarea: HTMLTextAreaElement, start: number, value: string) {
     const lineStart = value.lastIndexOf('\n', start - 1) + 1;
     const currentLine = value.substring(lineStart, start);
-    const indent = currentLine.match(/^[ ]*/)?.[0] || '';
+    const indent = /^ */.exec(currentLine)?.[0] || '';
 
     // Check if current line ends with colon (function, class, if, etc.)
     const shouldIncreaseIndent = currentLine.trim().endsWith(':');
@@ -302,9 +302,6 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     const lines = code.split('\n');
-    const indentStack: number[] = [0];
-    const inString = false;
-    const stringChar = '';
 
     lines.forEach((line, index) => {
       const lineNumber = index + 1;
@@ -316,10 +313,10 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       }
 
       // Basic indentation check
-      const leadingSpaces = line.match(/^(\s*)/)?.[1]?.length || 0;
+      const leadingSpaces = /^(\s*)/.exec(line)?.[1].length || 0;
 
       // Check for mixed tabs and spaces
-      if (line.match(/^\s*\t/) && line.match(/^\s* /)) {
+      if (/^\s*\t/.test(line) && /^\s* /.test(line)) {
         errors.push(`Line ${lineNumber}: Mixed tabs and spaces for indentation`);
       }
 
@@ -329,7 +326,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         const nextLineIndex = lines.findIndex((l, i) => i > index && l.trim());
         if (nextLineIndex !== -1) {
           const nextLine = lines[nextLineIndex];
-          const nextIndent = nextLine.match(/^(\s*)/)?.[1]?.length || 0;
+          const nextIndent = /^(\s*)/.exec(nextLine)?.[1].length || 0;
           if (nextIndent <= leadingSpaces) {
             errors.push(`Line ${lineNumber}: Expected indented block after ':' `);
           }
@@ -337,8 +334,8 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       }
 
       // Check for unmatched parentheses, brackets, braces
-      const openChars = (line.match(/[([{]/g) || []).length;
-      const closeChars = (line.match(/[)\]}]/g) || []).length;
+      const openChars = [...line.matchAll(/[([{]/g)].length;
+      const closeChars = [...line.matchAll(/[)\]}]/g)].length;
 
       // Basic check for obvious mismatches on single line
       if (trimmedLine.includes('(') && !trimmedLine.includes(')') && openChars > closeChars) {
@@ -346,7 +343,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
       }
 
       // Check for invalid characters in Python identifiers
-      const invalidIdentifier = trimmedLine.match(/^\s*[0-9]+[a-zA-Z]/);
+      const invalidIdentifier = /^\s*\d+[a-zA-Z]/.exec(trimmedLine);
       if (invalidIdentifier) {
         errors.push(`Line ${lineNumber}: Invalid identifier starting with number`);
       }

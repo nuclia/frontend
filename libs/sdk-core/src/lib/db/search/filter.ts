@@ -47,14 +47,14 @@ export function getEntityFromFilter(filter: string): { family: string; entity: s
   return { family: items[2], entity: items[3] };
 }
 export function getDateFromFilter(dateFilter: string) {
-  return dateFilter.split('/').slice(-1)[0];
+  return dateFilter.split('/').at(-1)!;
 }
 export function getFilterFromDate(date: string, type: 'start' | 'end') {
   return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
 }
 
 export function getVisibilityFromFilter(filter: string) {
-  return filter.split('/').slice(-1)[0] === 'true';
+  return filter.split('/').at(-1) === 'true';
 }
 
 export function getFilterFromVisibility(hidden: boolean) {

@@ -58,7 +58,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
     }
   }
 
-  @Output() close = new EventEmitter<void>();
+  @Output() menuClose = new EventEmitter<void>();
 
   avatar: AvatarModel = {};
   accounts: string[] = [];
@@ -109,23 +109,23 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   }
 
   goProfile() {
-    this.close.emit();
+    this.menuClose.emit();
     this.router.navigate(['/user/profile']);
   }
 
   goToBilling() {
-    this.close.emit();
+    this.menuClose.emit();
     this.router.navigate([`${this.navigation.getAccountManageUrl(this.account?.slug || '')}/billing`]);
   }
 
   switchAccount() {
-    this.close.emit();
+    this.menuClose.emit();
     this.sdk.cleanAccount();
     this.router.navigate([this.navigation.getAccountSelectUrl()]);
   }
 
   logout() {
-    this.close.emit();
+    this.menuClose.emit();
     this.sdk.nuclia.auth.logout();
   }
 
@@ -134,19 +134,19 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   }
 
   goToManageAccount() {
-    this.close.emit();
+    this.menuClose.emit();
     if (this.account) {
       this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home']);
     }
   }
 
   goToManageUsers() {
-    this.close.emit();
+    this.menuClose.emit();
     this.router.navigate([this.kbUrl + '/users']);
   }
 
   openDeleteAccount() {
-    this.close.emit();
+    this.menuClose.emit();
     this.modalService.openModal(AccountDeleteComponent);
   }
 }

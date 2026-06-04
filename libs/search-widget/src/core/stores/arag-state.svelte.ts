@@ -6,6 +6,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
   type AragAnswer,
+  type Feedback,
   type IErrorResponse,
 } from '@nuclia/core';
 import { addLLMCitationReferences } from './answers.store';
@@ -33,6 +34,7 @@ export interface AragChatEntry {
   question: string;
   answers: AragAnswer[];
   error?: IErrorResponse;
+  streamingAnswer?: string;
 }
 
 interface AragAnswerState {
@@ -46,10 +48,10 @@ export const aragAnswerState = $state<AragAnswerState>({
 });
 
 export function getCurrentEntry(): AragChatEntry | undefined {
-  return aragAnswerState.entries.slice(-1)[0];
+  return aragAnswerState.entries.at(-1);
 }
 export function getEntryAnswer(entry: AragChatEntry) {
-  return entry.answers.filter((a) => !!a.answer).slice(-1)[0];
+  return entry.answers.findLast((a) => !!a.answer);
 }
 export function getEntryVisualizations(entry: AragChatEntry) {
   return entry.answers.filter((a) => !!a.data_visualizations).slice(-1)[0];
@@ -77,6 +79,9 @@ export function getEntryDetails(entry: AragChatEntry) {
 }
 export function getEntryAnswerText(entry: AragChatEntry) {
   return addLLMCitationReferences(getEntryAnswer(entry)?.answer || '', true);
+}
+export function getEntryFeedback(entry: AragChatEntry) {
+  return entry.answers.at(-1)?.feedback;
 }
 
 export function getEntrySources(entry: AragChatEntry): AragSource[] {
@@ -126,6 +131,12 @@ export function addAragAnswer(answer: AragAnswer) {
     if (answer.operation === AnswerOperation.error) {
       stopAgent();
     }
+  }
+}
+export function addAnswerChunk(answer: AragAnswer) {
+  const current = aragAnswerState.entries.at(-1);
+  if (current) {
+    current.streamingAnswer = (current.streamingAnswer || '') + (answer.streaming_response_chunk?.text || '');
   }
 }
 export function setAragError(error: IErrorResponse) {
@@ -189,13 +200,36 @@ export function convertChunkToParagraph(chunk: RankedChunk): RankedParagraph {
     labels: [],
     position: {
       index: 0,
-      start: position?.[0] ? parseInt(position?.[0]) : 0,
-      end: position?.[1] ? parseInt(position?.[1]) : 0,
+      start: position?.[0] ? Number.parseInt(position?.[0]) : 0,
+      end: position?.[1] ? Number.parseInt(position?.[1]) : 0,
     },
     fuzzy_result: false,
     page_with_visual: false,
     is_a_table: false,
     reference: '',
     rank: chunk.rank,
+  };
+}
+
+export function getFeedbackFields(feedback: Feedback) {
+  const schema = feedback.response_schema;
+  const supportedTypes = ['string'];
+  const required = Array.isArray(schema?.required) ? schema.required : [];
+
+  // Return undefined if schema is not supported
+  if (schema?.type !== 'object' || !schema?.properties) {
+    return undefined;
+  }
+  // Only support simple fields, no nested objects or arrays
+  const fields = Object.entries(schema.properties).filter(
+    ([, property]) => typeof property.type === 'string' && supportedTypes.includes(property.type),
+  );
+
+  if (fields.length === 0) {
+    return undefined;
+  }
+  return {
+    fields: Object.fromEntries(fields),
+    required,
   };
 }

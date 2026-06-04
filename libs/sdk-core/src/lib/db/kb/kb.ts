@@ -22,6 +22,8 @@ import {
   ExtractedDataTypes,
   ICreateResource,
   IResource,
+  KBKVSchemas,
+  KVSchema,
   LinkField,
   Origin,
   Resource,
@@ -41,6 +43,7 @@ import {
   Search,
   SearchOptions,
   suggest,
+  SuggestOptions,
 } from '../search';
 import { Agentic } from '../search/agentic';
 import { Ask, PredictAnswerOptions } from '../search/ask.models';
@@ -78,8 +81,6 @@ import {
   ServiceAccountCreation,
   SplitStrategies,
   SplitStrategy,
-  Synonyms,
-  SynonymsPayload,
 } from './kb.models';
 import { SyncManager } from '../sync/sync';
 import { ISyncManager } from '../sync/sync.models';
@@ -172,16 +173,22 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<EntitiesGroup>(`${this.path}/entitiesgroup/${groupId}`);
   }
 
-  getSynonyms(): Observable<Synonyms> {
-    return this.nuclia.rest.get<SynonymsPayload>(`${this.path}/custom-synonyms`).pipe(map((result) => result.synonyms));
-  }
-
   /** Returns all the labels defined in the Knowledge Box. */
   getLabels(): Observable<LabelSets> {
     return this.nuclia.rest.get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`).pipe(
       map((res) => res?.labelsets || {}),
       catchError(() => of({})),
     );
+  }
+
+  /** Returns all the KV schemas defined in the Knowledge Box. */
+  getKVSchemas(): Observable<KBKVSchemas> {
+    return this.nuclia.rest.get<KBKVSchemas>(`${this.path}/kv-schemas`);
+  }
+
+  /** Returns the KV schema with the given name. */
+  getKVSchema(name: string): Observable<KVSchema> {
+    return this.nuclia.rest.get<KVSchema>(`${this.path}/kv-schemas/${name}`);
   }
 
   /**
@@ -193,7 +200,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     // catalog endpoint has a limit on the number of facets that can be retrieved per request
     const facetChunks = facets.reduce(
       (chunks, curr) => {
-        const lastChunk = chunks[chunks.length - 1];
+        const lastChunk = chunks.at(-1)!;
         if (lastChunk.length < MAX_FACETS_PER_REQUEST) {
           lastChunk.push(curr);
         } else {
@@ -214,7 +221,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       map((results) =>
         results
           .filter((result) => result.type !== 'error')
-          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
+          .reduce((acc, curr) => ({ ...acc, ...curr.fulltext?.facets }), {}),
       ),
     );
   }
@@ -329,7 +336,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   private _getPath(uuid?: string, slug?: string): string {
-    return !uuid ? `${this.path}/slug/${slug}` : `${this.path}/resource/${uuid}`;
+    return uuid ? `${this.path}/resource/${uuid}` : `${this.path}/slug/${slug}`;
   }
 
   getResourceFromData(data: IResource): Resource {
@@ -626,13 +633,13 @@ export class KnowledgeBox implements IKnowledgeBox {
           ) || []
         ).length > 0,
     );
-    if (!firstFieldWithEntitiesRelations) {
-      return of('');
-    } else {
+    if (firstFieldWithEntitiesRelations) {
       const relation = firstFieldWithEntitiesRelations.extracted?.metadata?.metadata.relations?.find(
         (rel) => rel.from?.type === 'entity' && rel.to.type === 'entity',
       );
       return this.rephrase(`${relation?.from?.value} ${relation?.label} ${relation?.to.value}`);
+    } else {
+      return of('');
     }
   }
 
@@ -645,8 +652,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     query: string,
     inTitleOnly = false,
     features: Search.SuggestionFeatures[] = [],
+    options?: SuggestOptions,
   ): Observable<Search.Suggestions | IErrorResponse> {
-    return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
+    return suggest(this.nuclia, this.path, query, inTitleOnly, features, options);
   }
 
   feedback(answerId: string, good: boolean, feedback = '', text_block_id?: string): Observable<void> {
@@ -666,7 +674,7 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /** Lists all the resources stored in the Knowledge Box. */
   listResources(page?: number, size?: number): Observable<ResourceList> {
-    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter(Boolean).join('&');
     return this.nuclia.rest
       .get<{
         resources: IResource[];
@@ -708,7 +716,9 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _getTempToken(payload?: any): Observable<{ token: string }> {
-    if (!this.nuclia.options.standalone) {
+    if (this.nuclia.options.standalone) {
+      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
+    } else {
       const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
       if (!accountId || !zone) {
@@ -722,8 +732,6 @@ export class KnowledgeBox implements IKnowledgeBox {
         undefined,
         zone,
       );
-    } else {
-      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -935,16 +943,12 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    * Entry point to task manager
    */
   get taskManager(): TaskManager {
-    if (!this._taskManager) {
-      this._taskManager = new TaskManager(this, this.nuclia);
-    }
+    this._taskManager ??= new TaskManager(this, this.nuclia);
     return this._taskManager;
   }
 
   get syncManager(): ISyncManager {
-    if (!this._syncManager) {
-      this._syncManager = new SyncManager(this, this.nuclia);
-    }
+    this._syncManager ??= new SyncManager(this, this.nuclia);
     return this._syncManager;
   }
 
@@ -952,15 +956,11 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    * @deprecated
    */
   get training(): Training {
-    if (!this._training) {
-      this._training = new Training(this, this.nuclia);
-    }
+    this._training ??= new Training(this, this.nuclia);
     return this._training;
   }
   get activityMonitor(): ActivityMonitor {
-    if (!this._activityMonitor) {
-      this._activityMonitor = new ActivityMonitor(this, this.nuclia);
-    }
+    this._activityMonitor ??= new ActivityMonitor(this, this.nuclia);
     return this._activityMonitor;
   }
 
@@ -1034,21 +1034,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** Deletes a label set. */
   deleteLabelSet(setId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
-  }
-
-  /**
-   * @deprecated
-   * @param synonyms
-   */
-  setSynonyms(synonyms: Synonyms): Observable<void> {
-    return this.nuclia.rest.put<void>(`${this.path}/custom-synonyms`, { synonyms });
-  }
-
-  /**
-   * @deprecated
-   */
-  deleteAllSynonyms(): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/custom-synonyms`);
   }
 
   /** Creates and indexes a new resource in the Knowledge Box. */

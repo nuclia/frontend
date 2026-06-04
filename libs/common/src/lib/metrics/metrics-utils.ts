@@ -1,5 +1,6 @@
 import { UsagePoint } from '@nuclia/core';
-import { DateCondition, NumericCondition } from './metrics-filters';
+import { BooleanCondition, DateCondition, NumericCondition } from './metrics-filters';
+import { differenceInCalendarMonths } from 'date-fns';
 
 /**
  * Converts a YYYY-MM string into a date range spanning that full month.
@@ -8,7 +9,7 @@ import { DateCondition, NumericCondition } from './metrics-filters';
  */
 export function getMonthRange(yearMonth: string): { from: string; to: string } {
   const [year, month] = yearMonth.split('-');
-  const lastDay = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+  const lastDay = new Date(Number.parseInt(year, 10), Number.parseInt(month, 10), 0).getDate();
   return {
     from: `${yearMonth}-01`,
     to: `${yearMonth}-${String(lastDay).padStart(2, '0')}`,
@@ -41,7 +42,7 @@ export function applyTextSearchFilter(
 ): void {
   if (!search?.term) return;
   if (search.column === 'id') {
-    const parsed = parseInt(search.term, 10);
+    const parsed = Number.parseInt(search.term, 10);
     if (!isNaN(parsed)) {
       filters['id'] = { eq: parsed };
     }
@@ -57,10 +58,7 @@ export function applyTextSearchFilter(
  * Each condition maps to { date: { ge?: string, le?: string } }.
  * Multiple conditions on the same column are merged.
  */
-export function applyDateConditions(
-  conditions: DateCondition[],
-  filters: Record<string, unknown>,
-): void {
+export function applyDateConditions(conditions: DateCondition[], filters: Record<string, unknown>): void {
   for (const c of conditions) {
     if (!c.from && !c.to) continue;
     const existing = (filters[c.column] as Record<string, unknown>) ?? {};
@@ -90,6 +88,16 @@ export function applyNumericConditions(
 }
 
 /**
+ * Applies an array of boolean filter conditions to the filters object.
+ * Each condition maps to { eq: boolean }.
+ */
+export function applyBooleanConditions(conditions: BooleanCondition[], filters: Record<string, unknown>): void {
+  for (const c of conditions) {
+    filters[c.column] = { eq: c.value };
+  }
+}
+
+/**
  * Maps a numeric REMi score (0–5 scale) to a colour tier.
  * low  → ≤2   (red)
  * mid  → 2–4  (amber)
@@ -101,4 +109,25 @@ export function getRemiColorClass(val: number | null | undefined): 'low' | 'mid'
   if (val <= 2) return 'low';
   if (val >= 4) return 'high';
   return 'mid';
+}
+
+/**
+ * Converts a Date object into a YYYY-MM string.
+ */
+export function formatDateToYearMonth(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/**
+ * Returns an array of YYYY-MM strings representing each month from the given date to the current month.
+ */
+export function getMonthsSinceDate(date: Date): string[] {
+  const diff = differenceInCalendarMonths(new Date(), date) + 1;
+  const months = [];
+  for (let i = 0; i < diff; i++) {
+    const prevMonth = new Date();
+    prevMonth.setUTCMonth(prevMonth.getUTCMonth() - i);
+    months.push(prevMonth);
+  }
+  return months.map((month) => formatDateToYearMonth(month));
 }

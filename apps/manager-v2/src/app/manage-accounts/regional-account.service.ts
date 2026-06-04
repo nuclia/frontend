@@ -223,6 +223,7 @@ export class RegionalAccountService {
       created: account.created,
       workflow: account.workflow,
       allowAccessNonEnterpriseModels: account.allow_access_non_enterprise_models,
+      zoneVisibility: account.zone_visibility ?? 'DEFAULT',
       labels: account.labels,
     };
   }

@@ -49,9 +49,7 @@ export class SubscriptionsComponent implements OnDestroy {
   workflow = this.sdk.currentAccount.pipe(map((account) => account.workflow));
   tiers: Observable<AccountTypes[]> = combineLatest([this.workflow, this.accountType]).pipe(
     map(([workflow, type]) =>
-      workflow === 'cowork' || type === 'cowork'
-        ? ['cowork', 'v3starter', 'v3pro', 'v3enterprise']
-        : ['v3starter', 'v3pro', 'v3enterprise'],
+      workflow === 'cowork' || type === 'cowork' ? ['cowork'] : ['v3starter', 'v3pro', 'v3enterprise'],
     ),
   );
   showCowork = this.tiers.pipe(map((tiers) => tiers.includes('cowork')));

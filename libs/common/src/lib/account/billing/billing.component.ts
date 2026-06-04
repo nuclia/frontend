@@ -27,7 +27,7 @@ export class BillingComponent implements OnInit, OnDestroy {
   );
   showBackToHome = combineLatest([this.isCowork, this.currentUrl]).pipe(
     map(([isCowork, url]) => isCowork && !url.includes('/billing/checkout')),
-    shareReplay(1),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   constructor(

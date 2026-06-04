@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SisToastService } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { combineLatest, filter, forkJoin, map, shareReplay, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -17,7 +17,7 @@ import { convertEnumProperties, UserKeysComponent, UserKeysForm } from '@flaps/c
   templateUrl: './add-model.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddModelComponent implements OnDestroy {
+export class AddModelComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   modelForm = new FormGroup({

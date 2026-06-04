@@ -84,7 +84,7 @@ export class ClientDialogComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    forkJoin([this.zoneService.getZones(), this.account.pipe(take(1))])
+    forkJoin([this.zoneService.getZones().pipe(take(1)), this.account.pipe(take(1))])
       .pipe(
         tap(([zones]) => {
           this.zones = zones;
@@ -103,11 +103,11 @@ export class ClientDialogComponent implements OnInit {
 
   save() {
     if (this.clientForm.invalid) return;
-    if (!this.editMode) {
-      this.create();
-    } else {
+    if (this.editMode) {
       // TODO: edit
       this.modal.close(true);
+    } else {
+      this.create();
     }
   }
 

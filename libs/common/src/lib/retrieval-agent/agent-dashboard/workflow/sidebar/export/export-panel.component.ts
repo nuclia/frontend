@@ -33,7 +33,7 @@ export class ExportPanelComponent {
     }),
   });
 
-  cancel = output();
+  panelCancel = output();
 
   submit() {
     const options = this.form.getRawValue();
@@ -52,7 +52,7 @@ export class ExportPanelComponent {
         next: (email) => {
           const message = this.translate.instant('retrieval-agents.workflow.sidebar.export.email-sent', { email });
           this.toaster.success(message);
-          this.cancel.emit();
+          this.panelCancel.emit();
         },
         error: () => {
           this.toaster.error('retrieval-agents.workflow.sidebar.export.export-error');

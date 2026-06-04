@@ -1,3 +1,4 @@
+import { JSONSchema4 } from 'json-schema';
 import { IErrorResponse } from '../../models';
 import { Memory } from './memory.models';
 
@@ -13,6 +14,8 @@ export enum AnswerOperation {
   done = 3,
   error = 4,
   agent_request = 5,
+  answer_chunk = 6,
+  reasoning = 7,
 }
 
 export interface InteractionRequest {
@@ -42,9 +45,14 @@ export interface Feedback {
   agent_id: string;
   data: any;
   timeout_ms: number;
-  response_schema: any;
+  response_schema?: JSONSchema4;
   get_credentials?: { [key: string]: string };
   credentials?: OAuthCredentials;
+}
+
+export interface StreamingChunk {
+  text: string;
+  last: boolean;
 }
 
 export interface OAuthRedirection {
@@ -76,6 +84,8 @@ export interface AragAnswer {
   feedback: Feedback | null;
   oauth: OAuthRedirection | null;
   data_visualizations: Memory.DataVisualization[] | null;
+  streaming_response_chunk: StreamingChunk | null;
+  reasoning: StreamingChunk | null;
 }
 
 export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {

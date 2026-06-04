@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService, BillingService, FeaturesService, Prices, SDKService } from '@flaps/core';
+import { AccountService, BillingService, FeaturesService, SDKService } from '@flaps/core';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { format, getDaysInMonth, isFuture, subDays, subMonths } from 'date-fns';
-import { AccountTypes, UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
+import { UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
 
 export type ChartData = {
   data: [string, number][];
@@ -36,7 +36,7 @@ export class MetricsService {
         // If start date is in the future, that means the trial has been extended (maybe a lot like we do for Nuclia’s accounts),
         // so better to return undefined, so we use currentMonth as chart period
         const start = subDays(expiration, defaults['stash-trial'].max_trial_days);
-        return !isFuture(start) ? { start, end: expiration } : undefined;
+        return isFuture(start) ? undefined : { start, end: expiration };
       } else {
         return undefined;
       }

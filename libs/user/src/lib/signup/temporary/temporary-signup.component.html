@@ -1,0 +1,61 @@
+<nus-user-container>
+  <div class="main-container with-gap">
+    <div class="form-header">
+      <h1>Get Started for Free</h1>
+    </div>
+    <form
+      data-cy="signup-form"
+      class="signup-form"
+      method="POST"
+      [action]="postUrl">
+      <pa-input
+        type="email"
+        name="email"
+        stfLowerCaseInput>
+        Email
+      </pa-input>
+      <pa-input name="fullname">Fullname</pa-input>
+      <input
+        name="company"
+        type="hidden"
+        value="contextbox" />
+      <input
+        name="workflow"
+        type="hidden"
+        value="cowork" />
+      <input
+        name="app"
+        type="hidden"
+        [value]="appUrl" />
+
+      <div>
+        <pa-checkbox [(value)]="agree">
+          I agree to the terms of the
+          <a
+            href="https://www.progress.com/legal/license-agreements/agentic-rag-license-agreement"
+            target="_blank">
+            User License Agreement
+          </a>
+        </pa-checkbox>
+      </div>
+
+      <pa-button
+        class="full-width"
+        type="submit"
+        [disabled]="!agree"
+        kind="primary">
+        Sign up
+      </pa-button>
+    </form>
+
+    <p class="centered">
+      Already have an account?
+      <a
+        href="#"
+        (click)="login()"
+        class="accent-link">
+        Login
+      </a>
+    </p>
+  </div>
+</nus-user-container>

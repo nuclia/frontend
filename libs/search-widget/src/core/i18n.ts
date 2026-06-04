@@ -18,7 +18,7 @@ const locales = new BehaviorSubject<Translations>({});
 
 const addTranslations = (lang: string, entries: TranslationEntries) => {
   const current = locales.getValue();
-  locales.next({ ...current, [lang]: { ...(current[lang] || {}), ...entries } });
+  locales.next({ ...current, [lang]: { ...current[lang], ...entries } });
 };
 
 const loadTranslations = (lang: string) => {
@@ -52,9 +52,9 @@ const translate = (
     Object.keys(args).forEach((param) => {
       let paramValue = args[param];
       if (typeof paramValue === 'string') {
-        paramValue = paramValue.replace(HTML_TAG_DELIMITERS, (c) => '&#' + c.charCodeAt(0) + ';');
+        paramValue = paramValue.replaceAll(HTML_TAG_DELIMITERS, (c) => '&#' + c.codePointAt(0) + ';');
       }
-      value = value.replace(new RegExp(`{{${param}}}`, 'g'), paramValue as string);
+      value = value.replaceAll(`{{${param}}}`, paramValue as string);
     });
   }
   return value || key;

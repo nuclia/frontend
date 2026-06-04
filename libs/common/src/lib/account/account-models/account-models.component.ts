@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   BedrockService,
   BedrockStatus,
@@ -59,7 +59,7 @@ interface BedrockIntegration extends BedrockStatus {
   styleUrl: './account-models.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountModelsComponent {
+export class AccountModelsComponent implements OnInit {
   private sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
   private modalService = inject(SisModalService);
@@ -116,7 +116,7 @@ export class AccountModelsComponent {
 
   displayConfig(config: ModelConfigurationWithZone) {
     return forkJoin([
-      this.zones,
+      this.zones.pipe(take(1)),
       this.bedrockZones.pipe(take(1)),
       this.sdk.currentAccount.pipe(
         take(1),
@@ -165,7 +165,7 @@ export class AccountModelsComponent {
   }
 
   updateModelConfigs() {
-    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones]).pipe(
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.zones.pipe(take(1))]).pipe(
       switchMap(([account, zones]) =>
         forkJoin(
           zones.map((zone) =>
@@ -269,7 +269,7 @@ export class AccountModelsComponent {
   updateBedrockIntegrations() {
     this.loadingBedrock = true;
     this.cdr.markForCheck();
-    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.awsZones]).pipe(
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.awsZones.pipe(take(1))]).pipe(
       switchMap(([account, zones]) =>
         zones.length === 0
           ? of([])

@@ -22,14 +22,13 @@ env:
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
   PROMO_PRODUCTION: false
 
-permissions:
-  id-token: write
-  contents: write
-  actions: read
-
 jobs:
   build:
     runs-on: nuclia-base
+    permissions:
+      id-token: write    # required by google-github-actions/auth (OIDC)
+      contents: write    # required by pkgdeps/git-tag-action and JamesIves/github-pages-deploy-action
+      actions: read      # required by nrwl/nx-set-shas to query previous workflow runs
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
@@ -44,44 +43,45 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
+        uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db' # v3.0.1
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         if: github.ref == 'refs/heads/main'
         with:
           role-to-assume: '${{ env.S3_CDN_STORAGE_IAM_ROLE_ARN }}'
           aws-region: eu-central-1
 
       - name: Configure AWS client
-        uses: unfor19/install-aws-cli-action@v1
+        uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
         if: github.ref == 'refs/heads/main'
         with:
           arch: amd64
 
-      - uses: nrwl/nx-set-shas@v5
+      - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5.0.1
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
@@ -114,7 +114,7 @@ jobs:
         run: |-
           npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget,platform
 
-          # Check if there's any app that should be built because of chart changes and mark it to be built. 
+          # Check if there's any app that should be built because of chart or nginx changes and mark it to be built. 
           # Unless it's already build by "npx nx affected" command
           APPS_TO_BUILD=""
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/app/' && ! test -d dist/apps/dashboard && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
@@ -122,6 +122,12 @@ jobs:
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/platform/' && ! test -d dist/apps/platform && APPS_TO_BUILD="$APPS_TO_BUILD platform"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/auth/' && ! test -d dist/apps/auth && APPS_TO_BUILD="$APPS_TO_BUILD auth"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/manager/' && ! test -d dist/apps/manager-v2 && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
+          # nginx conf changes require Docker rebuild — always rebuild the affected app (nginx is not tracked by nx affected)
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/app.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/rao.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD rao"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/platform.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD platform"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/auth.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD auth"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/manager.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
 
           if [ -n "$APPS_TO_BUILD" ]; then
             echo "Building apps with chart changes:$APPS_TO_BUILD"
@@ -134,7 +140,7 @@ jobs:
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
 
       - name: Tag if new version
-        uses: pkgdeps/git-tag-action@v3.0.1
+        uses: pkgdeps/git-tag-action@a5a161774bace8b4e1969dd850c67a7421f1b710 # v3.0.1
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -224,19 +230,22 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Push dashboard image to registries
         uses: ./tooling/.github/actions/build-img-regcache
@@ -344,12 +353,12 @@ jobs:
 
       - name: Deploy sistema-demo to GH pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4.8.0
         with:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
-        uses: getsentry/action-release@v3.6.0
+        uses: getsentry/action-release@ff07929a6537bac57790c3451cf4d364aca38528 # v3.7.0
         if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -361,6 +370,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-app == 'yes'
+    permissions:
+      id-token: write  # required by google-github-actions/auth (OIDC)
+      contents: read   # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -375,18 +387,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -397,25 +411,28 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-app
         run: |
           VERSION=`cat apps/dashboard/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -435,6 +452,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-manager == 'yes'
+    permissions:
+      id-token: write  # required by google-github-actions/auth (OIDC)
+      contents: read   # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -449,18 +469,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -471,25 +493,28 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-manager
         run: |
           VERSION=`cat apps/manager-v2/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -509,6 +534,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-rao == 'yes'
+    permissions:
+      id-token: write  # required by google-github-actions/auth (OIDC)
+      contents: read   # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -523,18 +551,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -545,25 +575,28 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-rao
         run: |
           VERSION=`cat apps/rao/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -583,6 +616,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-platform == 'yes'
+    permissions:
+      id-token: write  # required by google-github-actions/auth (OIDC)
+      contents: read   # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -597,18 +633,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -619,25 +657,28 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-platform
         run: |
           VERSION=`cat apps/platform/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -657,6 +698,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-auth == 'yes'
+    permissions:
+      id-token: write  # required by google-github-actions/auth (OIDC)
+      contents: read   # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -671,18 +715,20 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -693,25 +739,28 @@ jobs:
 
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: tooling
+          permission-contents: read
 
       - name: Checkout tooling repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: nuclia/tooling
           ref: main
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Get chart version
         id: chart-version-auth
         run: |
           VERSION=`cat apps/auth/VERSION`
-          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
       - name: Build and push helm chart
         uses: ./tooling/.github/actions/build-helm-chart
@@ -729,6 +778,7 @@ jobs:
   send-to-promotion:
     runs-on: ubuntu-latest
     needs: [deploy-manager, deploy-app, deploy-rao, deploy-platform, deploy-auth]
+    permissions: {}    # no GITHUB_TOKEN scopes needed; dispatch uses a scoped GitHub App token
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
@@ -739,11 +789,14 @@ jobs:
     steps:
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
+          repositories: core-apps
+          # POST /repos/{owner}/{repo}/dispatches requires contents: write
+          permission-contents: write
 
       - name: Create components promotion summary. Trigger1
         env:
@@ -753,6 +806,11 @@ jobs:
           PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
           TEAM: ${{ secrets.TEAM_NAME }}
           SLACK_TEAM: ${{ secrets.SLACK_TEAM }}
+          NEEDS_DEPLOY_RAO_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-rao.outputs.json-summary }}
+          NEEDS_DEPLOY_PLATFORM_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-platform.outputs.json-summary }}
+          NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-manager.outputs.json-summary }}
+          NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-app.outputs.json-summary }}
+          NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-auth.outputs.json-summary }}
         run: |
           MERGED_JSON=$(jq -cs \
             --arg environment "$ENVIRONMENT" \
@@ -784,18 +842,18 @@ jobs:
             } + {
               "commit-sha": $commit_sha
             }' \
-            <(echo '${{ needs.deploy-rao.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-platform.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-app.outputs.json-summary }}') \
-            <(echo '${{ needs.deploy-auth.outputs.json-summary }}')
+            <(echo "${NEEDS_DEPLOY_RAO_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_PLATFORM_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY}")
           )
 
           echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV
 
       - name: Send to promotion queue
         id: send-to-promo
-        uses: peter-evans/repository-dispatch@v4
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/core-apps

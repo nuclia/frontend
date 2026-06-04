@@ -17,7 +17,7 @@ export const setAccountGuard = (route: ActivatedRouteSnapshot) => {
     switchMap((account) => {
       sdk.nuclia.options.accountId = account.id;
       navigation.setSimpleMode(account.workflow === 'cowork');
-      return navigation.getAccountUrl(accountSlug);
+      return of(true);
     }),
   );
 };

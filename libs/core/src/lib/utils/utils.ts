@@ -52,10 +52,10 @@ export function getSemanticModels(
   semanticModelNames.forEach((name) => {
     const semanticModel = learningConfiguration['semantic_model'].options?.find((model) => model.name === name);
 
-    if (!semanticModel) {
-      console.warn(`Semantic model ${name} not found.`);
-    } else {
+    if (semanticModel) {
       semanticModels.push(semanticModel.value);
+    } else {
+      console.warn(`Semantic model ${name} not found.`);
     }
   });
 
@@ -78,11 +78,11 @@ export class STFUtils {
     let slug = latinize(text);
 
     // Strip non allowed characters
-    slug = slug.replace(/[^\w\s-_]+/g, '');
+    slug = slug.replaceAll(/[^\w\s-]+/g, '');
 
     // Replace white spaces
     slug = slug.trim();
-    slug = slug.replace(/[\s]+/g, '-');
+    slug = slug.replaceAll(/\s+/g, '-');
 
     if (!slug) {
       slug = crypto.randomUUID();
@@ -117,7 +117,7 @@ export class STFUtils {
   public static get REGEX() {
     return {
       email:
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[(\d{1,3}\.){3}\d{1,3}\])|(([a-zA-Z\-\d]+\.)+[a-zA-Z]{2,}))$/,
     };
   }
 

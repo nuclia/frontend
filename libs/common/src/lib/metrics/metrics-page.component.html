@@ -143,14 +143,24 @@
                       }
                     </div>
                   } @else {
-                    <span
-                      class="body-s cell-value"
-                      [class.remi-score-low]="isRemiScoreLow(item, col)"
-                      [class.remi-score-mid]="isRemiScoreMid(item, col)"
-                      [class.remi-score-high]="isRemiScoreHigh(item, col)"
-                      [paTooltip]="getCellValue(item, col.key)">
-                      {{ getCellValue(item, col.key) }}
-                    </span>
+                    @if (col.iconFn) {
+                      @if (col.iconFn(item); as iconName) {
+                        <pa-icon
+                          [name]="iconName"
+                          [class]="col.iconColorClass?.(item) ?? ''"></pa-icon>
+                      } @else {
+                        <span class="body-s cell-value">—</span>
+                      }
+                    } @else {
+                      <span
+                        class="body-s cell-value"
+                        [class.remi-score-low]="isRemiScoreLow(item, col)"
+                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
+                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
+                        [paTooltip]="getCellValue(item, col.key)">
+                        {{ getCellValue(item, col.key) }}
+                      </span>
+                    }
                   }
                 </pa-table-cell>
               }
@@ -218,13 +228,23 @@
                   } @else {
                     <div class="detail-row">
                       <span class="detail-label body-s">{{ field.label | translate }}</span>
-                      <span
-                        class="detail-value body-s"
-                        [class.remi-score-low]="field.colorFn?.(item) === 'low'"
-                        [class.remi-score-mid]="field.colorFn?.(item) === 'mid'"
-                        [class.remi-score-high]="field.colorFn?.(item) === 'high'">
-                        {{ getFieldValue(selectedItem()!, field) }}
-                      </span>
+                      @if (field.iconFn) {
+                        @if (field.iconFn(item); as iconName) {
+                          <pa-icon
+                            [name]="iconName"
+                            [class]="field.iconColorClass?.(item) ?? ''"></pa-icon>
+                        } @else {
+                          <span class="detail-value body-s">—</span>
+                        }
+                      } @else {
+                        <span
+                          class="detail-value body-s"
+                          [class.remi-score-low]="field.colorFn?.(item) === 'low'"
+                          [class.remi-score-mid]="field.colorFn?.(item) === 'mid'"
+                          [class.remi-score-high]="field.colorFn?.(item) === 'high'">
+                          {{ getFieldValue(selectedItem()!, field) }}
+                        </span>
+                      }
                     </div>
                   }
                 }

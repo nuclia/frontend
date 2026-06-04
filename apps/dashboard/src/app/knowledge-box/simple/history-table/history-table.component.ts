@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { BehaviorSubject, filter, map, Observable, switchMap } from 'rxjs';
 import { ConversationsPage, SimpleKBService } from '../simple-kb/simple-kb.service';
 import { SDKService } from '@flaps/core';
@@ -28,6 +28,8 @@ export class HistoryTableComponent {
   simpleKBService = inject(SimpleKBService);
   sdk = inject(SDKService);
   modalService = inject(SisModalService);
+
+  openConversation = output<string>();
 
   columns = ['question', 'answer', 'status', 'date', 'delete'];
   page = signal(0);
@@ -60,9 +62,9 @@ export class HistoryTableComponent {
     ),
     map((rows) =>
       rows.sort((a, b) =>
-        a.created !== b.created
-          ? new Date(b.created).getTime() - new Date(a.created).getTime()
-          : b.questionIndex - a.questionIndex,
+        a.created === b.created
+          ? b.questionIndex - a.questionIndex
+          : new Date(b.created).getTime() - new Date(a.created).getTime(),
       ),
     ),
   );
@@ -83,7 +85,8 @@ export class HistoryTableComponent {
     });
   }
 
-  deleteQuestion(row: TableRow) {
+  deleteQuestion(row: TableRow, event: MouseEvent) {
+    event.stopPropagation();
     this.modalService
       .openConfirm({
         title: 'simple.delete-question',
@@ -107,7 +110,8 @@ export class HistoryTableComponent {
     return undefined;
   }
 
-  toggleExpanded(id: string) {
+  toggleExpanded(id: string, event: MouseEvent) {
+    event.stopPropagation();
     this.expanded.update((expanded) => ({ ...expanded, [id]: !expanded[id] }));
   }
 }

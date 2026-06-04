@@ -35,8 +35,7 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { COUNTRIES } from '@nuclia/sistema';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { COUNTRIES, SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';
 import { SubscriptionService } from '../subscription.service';
@@ -97,8 +96,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(1),
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
-  backToSettingsLink = this.sdk.currentAccount.pipe(
-    map((account) => `${this.navigation.getAccountManageUrl(account.slug)}/home`),
+  simpleMode = this.navigation.simpleMode;
+  backToSettingsLink = combineLatest([this.navigation.simpleMode, this.sdk.currentAccount]).pipe(
+    map(([isSimple, account]) => this.navigation.getAccountManageUrl(account.slug) + (isSimple ? '/home' : '/billing')),
   );
 
   updateCurrency = new Subject<string>();
@@ -366,7 +366,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
                   this.editCustomer = true;
                   throw new Error('billing.invalid_address');
                 }
-                throw new Error();
+                throw new Error('billing.unknown_error');
               }),
             ),
         ),

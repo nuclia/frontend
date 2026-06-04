@@ -1,8 +1,10 @@
 <div
   class="subform-field"
+  role="group"
+  aria-labelledby="subform-label"
   [formGroup]="form">
   <div class="subform-header">
-    <label class="subform-label">
+    <span id="subform-label" class="subform-label">
       {{ label }}
       @if (required) {
         <span
@@ -10,7 +12,7 @@
           *
         </span>
       }
-    </label>
+    </span>
     @if (property.description) {
       <small
         class="subform-description">
@@ -117,7 +119,7 @@
               <!-- Custom placeholder for TODO fields -->
               @case ('custom-placeholder') {
                 <div>
-                  <label>
+                  <span>
                     <i>[Custom]</i>
                     {{ field.label }}
                     @if (field.required) {
@@ -126,7 +128,7 @@
                         *
                       </span>
                     }
-                  </label>
+                  </span>
                 </div>
               }
               <!-- Text input and fallback -->

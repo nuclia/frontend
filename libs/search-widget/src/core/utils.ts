@@ -21,9 +21,10 @@ import {
 } from '@nuclia/core';
 import { from, map, Observable, of } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { getFileUrls } from './api';
 import type { DisplayableMetadata, ResultMetadata, ResultMetadataItem, TypedResult } from './models';
+import { widgetCache } from './stores';
 
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -109,10 +110,9 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
 };
 
 export function getUrlParams(): URLSearchParams {
-  const params =
-    window.location.hash && window.location.hash.includes('?')
-      ? window.location.hash.slice(window.location.hash.indexOf('?'))
-      : window.location.search;
+  const params = window.location.hash?.includes('?')
+    ? window.location.hash.slice(window.location.hash.indexOf('?'))
+    : window.location.search;
   return new URLSearchParams(params);
 }
 
@@ -138,8 +138,8 @@ export const coerceBooleanProperty = (value: any): boolean => {
 export const getYoutubeId = (url: string) => {
   // From https://stackoverflow.com/a/9102270
   const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  if (match && match[2].length === 11) {
+  const match = regExp.exec(url);
+  if (match?.[2].length === 11) {
     return match[2];
   } else {
     return '';
@@ -151,9 +151,8 @@ export const isYoutubeUrl = (url: string) => {
 };
 
 export const formatTitle = (title?: string): string => {
-  title = title || '–';
   try {
-    return decodeURIComponent(title);
+    return decodeURIComponent(title || '–');
   } catch (e) {
     return title;
   }
@@ -201,16 +200,16 @@ function hexToRGB(hex: string): { r: number; g: number; b: number } | undefined 
   // 3 digits
   if (hex.length === 4) {
     return {
-      r: parseInt(hex[1] + hex[1], 16),
-      g: parseInt(hex[2] + hex[2], 16),
-      b: parseInt(hex[3] + hex[3], 16),
+      r: Number.parseInt(hex[1] + hex[1], 16),
+      g: Number.parseInt(hex[2] + hex[2], 16),
+      b: Number.parseInt(hex[3] + hex[3], 16),
     };
     // 6 digits
   } else {
     return {
-      r: parseInt(hex[1] + hex[2], 16),
-      g: parseInt(hex[3] + hex[4], 16),
-      b: parseInt(hex[5] + hex[6], 16),
+      r: Number.parseInt(hex[1] + hex[2], 16),
+      g: Number.parseInt(hex[3] + hex[4], 16),
+      b: Number.parseInt(hex[5] + hex[6], 16),
     };
   }
 }
@@ -220,10 +219,10 @@ export function slugify(text: string): string {
     text
       .toLowerCase()
       // Strip non allowed characters
-      .replace(/[^\w\s-_]+/gi, '')
+      .replaceAll(/[^\w\s-]+/gi, '')
       // Replace white spaces
       .trim()
-      .replace(/\s+/gi, '-')
+      .replaceAll(/\s+/gi, '-')
   );
 }
 
@@ -267,7 +266,7 @@ function getTextFragment(paragraphText: string) {
 }
 
 export function getFieldType(fieldType: string): FIELD_TYPE {
-  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
+  return (fieldType.endsWith('s') ? fieldType.slice(0, -1) : fieldType) as FIELD_TYPE;
 }
 
 export function getExtractedTexts(data: IFieldData | null): { shortId: string; text: string }[] {
@@ -330,19 +329,16 @@ export const getNavigationUrl = (
 export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field?: ResourceField) => {
   if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
+  } else if (field?.field_type === FIELD_TYPE.link) {
+    return (field.value as LinkField)?.uri;
+  } else if (field?.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
+    return (field.value as FileField)?.file?.uri;
+  } else if (resource.origin?.url) {
+    return resource.origin.url;
   } else {
-    if (field && field.field_type === FIELD_TYPE.link) {
-      return (field.value as LinkField)?.uri;
-    } else if (field && field.field_type === FIELD_TYPE.file && (field?.value as FileField)?.external) {
-      return (field.value as FileField)?.file?.uri;
-    } else if (resource.origin?.url) {
-      return resource.origin.url;
-    } else {
-      return undefined;
-    }
+    return undefined;
   }
 };
-
 export const getPreviewUrl = (
   resourceId: string,
   field: FieldId,
@@ -483,7 +479,7 @@ const TxtRenderer = {
   table: (data: { header: { text: string }[]; rows: { text: string }[][] }) =>
     data.header
       .map((header) => header)
-      .concat(data.rows.reduce((acc, row) => acc.concat(row), []))
+      .concat(data.rows.flat())
       .map(inline)
       .join('\n'),
   tablerow: line,
@@ -513,9 +509,9 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
     console.error('Account id, Knowledge Box id and zone must be provided to load the widget configuration');
     return of({});
   }
-  return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
-    map((kb) => {
-      const widget = (kb.search_configs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
+  return getSearchConfigs(options).pipe(
+    map((searchConfigs) => {
+      const widget = (searchConfigs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
       if (!widget) {
         console.error(`Widget not found: "${id}"`);
         return of({});
@@ -524,7 +520,7 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
       if (widget.searchConfigId === NUCLIA_STANDARD_SEARCH_CONFIG_ID) {
         searchConfig = NUCLIA_STANDARD_SEARCH_CONFIG;
       } else {
-        searchConfig = (kb.search_configs?.['searchConfigurations'] || []).find(
+        searchConfig = (searchConfigs?.['searchConfigurations'] || []).find(
           (config: Widget.SearchConfiguration) => config.id === widget.searchConfigId,
         );
       }
@@ -538,8 +534,28 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
   );
 }
 
+function getSearchConfigs(options: NucliaOptions) {
+  if (!options.account || !options.knowledgeBox || !options.zone) {
+    throw new Error('Account id, Knowledge Box id and zone must be provided');
+  }
+  const useCache = !!widgetCache.getValue();
+  const cache = getCachedRequest(options.knowledgeBox, 'searchConfigs');
+  if (cache && useCache) {
+    return of(cache);
+  } else {
+    return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
+      map((kb) => kb.search_configs),
+      tap((searchConfigs) => {
+        if (useCache) {
+          storeCachedRequest(options.knowledgeBox || '', 'searchConfigs', searchConfigs);
+        }
+      }),
+    );
+  }
+}
+
 function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
 
 function getMetadata(metadata: ResultMetadataItem[], obj: any): DisplayableMetadata[] {
@@ -583,8 +599,35 @@ function supportsCSSNesting() {
   `;
   document.head.appendChild(style);
   const isSupported = style.sheet && style.sheet.cssRules.length > 0;
-  document.head.removeChild(style);
+  style.remove();
   return !!isSupported;
 }
 
 export const isBrowserUnsupported = !supportsCSSNesting();
+
+const REQUESTS_CACHE_KEY = 'agentic-rag-widget-cache';
+
+export function getCachedRequest(kbId: string, type: 'labels' | 'searchConfigs') {
+  try {
+    const cache = JSON.parse(window.localStorage.getItem(REQUESTS_CACHE_KEY) || '{}');
+    const entry = cache[`${kbId}-${type}`];
+    if (typeof entry?.expires === 'number' && entry.expires > Date.now()) {
+      return entry.value;
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function storeCachedRequest(kbId: string, type: 'labels' | 'searchConfigs', response: any) {
+  const ttl = (widgetCache.getValue() || 0) * 1000;
+  let current;
+  try {
+    current = JSON.parse(window.localStorage.getItem(REQUESTS_CACHE_KEY) || '{}');
+  } catch (e) {
+    current = {};
+  }
+  current[`${kbId}-${type}`] = { value: response, expires: Date.now() + ttl };
+  window.localStorage.setItem(REQUESTS_CACHE_KEY, JSON.stringify(current));
+}

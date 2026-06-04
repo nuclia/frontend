@@ -114,14 +114,14 @@ export class BillingService {
       ),
       map((data) => {
         let subscription: AccountSubscription;
-        if (!Object.prototype.hasOwnProperty.call(data, 'provider')) {
+        if (Object.hasOwn(data, 'provider')) {
+          subscription = data as AccountSubscription;
+        } else {
           // Backward compatibility: when there is no provider, it's an old STRIPE subscription
           subscription = {
             provider: 'STRIPE',
             subscription: data,
           } as AccountSubscription;
-        } else {
-          subscription = data as AccountSubscription;
         }
 
         this._accountSubscriptionInit = true;
@@ -142,10 +142,10 @@ export class BillingService {
   getStripeSubscription(): Observable<StripeAccountSubscription | null> {
     return this.getSubscription().pipe(
       map((data) => {
-        if (!data || data.provider !== 'STRIPE') {
-          return null;
-        } else {
+        if (data?.provider === 'STRIPE') {
           return data.subscription as StripeAccountSubscription;
+        } else {
+          return null;
         }
       }),
       catchError(() => of(null)),
@@ -155,10 +155,10 @@ export class BillingService {
   getAwsSubscription(): Observable<AwsAccountSubscription | null> {
     return this.getSubscription().pipe(
       map((data) => {
-        if (!data || data.provider !== 'AWS_MARKETPLACE') {
-          return null;
-        } else {
+        if (data?.provider === 'AWS_MARKETPLACE') {
           return data.subscription as AwsAccountSubscription;
+        } else {
+          return null;
         }
       }),
     );
@@ -242,6 +242,7 @@ export class BillingService {
             {} as { [key in AccountTypes]: Prices },
           );
         }),
+        catchError(() => of({} as { [key in AccountTypes]: Prices })),
       );
   }
 

@@ -50,8 +50,7 @@ const getSpeechRecognitionCtor = (): SpeechRecognitionConstructor | null => {
 const getTranscriptFromResults = (results: SpeechRecognitionResultList) => {
   const transcript: string[] = [];
 
-  for (let index = 0; index < results.length; index += 1) {
-    const result = results[index];
+  for (const result of results) {
     if (!result) {
       continue;
     }

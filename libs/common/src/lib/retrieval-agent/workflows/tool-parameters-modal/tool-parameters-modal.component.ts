@@ -61,7 +61,7 @@ export class ToolParametersModalComponent {
       const required = values.required
         .split('\n')
         .map((item) => item.trim())
-        .filter((item) => item);
+        .filter(Boolean);
       const parameters = JSON.parse(values.parameters || '{}');
       const workflow: Workflow = { ...this.workflow, required, parameters };
       this.modal.close(workflow);

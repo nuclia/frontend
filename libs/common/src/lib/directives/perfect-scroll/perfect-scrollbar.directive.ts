@@ -12,7 +12,7 @@ import PerfectScrollbar from 'perfect-scrollbar';
 export class STFPerfectScrollbarDirective implements AfterViewInit, OnDestroy {
   isInitialized: boolean;
   isMobile: boolean;
-  ps: PerfectScrollbar | any;
+  ps: any;
 
   // Private
   private _enabled: boolean | '';
@@ -37,7 +37,7 @@ export class STFPerfectScrollbarDirective implements AfterViewInit, OnDestroy {
   // @ Accessors
   // -----------------------------------------------------------------------------------------------------
 
-  @Input('stfPerfectScrollbarOptions')
+  @Input()
   set stfPerfectScrollbarOptions(value) {
     // Merge the options
     this._options = { ...this._options, value };

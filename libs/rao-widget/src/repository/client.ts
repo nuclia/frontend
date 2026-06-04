@@ -101,7 +101,7 @@ export const createNucliaFetcher = (config: NucliaFetchConfig): NucliaFetcher =>
     const response = await fetch(url, {
       method,
       headers: finalHeaders,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     });
 

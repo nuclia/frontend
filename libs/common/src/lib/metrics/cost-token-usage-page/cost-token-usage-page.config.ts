@@ -95,7 +95,7 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   {
     key: 'feedback_good',
     label: 'activity.column.feedback-good',
-    value: (item: ActivityLogItem) => (item.feedback_good != null ? String(item.feedback_good) : null),
+    value: (item: ActivityLogItem) => (item.feedback_good == null ? null : String(item.feedback_good)),
     width: '100px',
     defaultHidden: true,
     group: 'feedback',
@@ -103,7 +103,7 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   {
     key: 'feedback_good_all',
     label: 'activity.column.feedback-good-all',
-    value: (item: ActivityLogItem) => (item.feedback_good_all != null ? String(item.feedback_good_all) : null),
+    value: (item: ActivityLogItem) => (item.feedback_good_all == null ? null : String(item.feedback_good_all)),
     width: '120px',
     defaultHidden: true,
     group: 'feedback',
@@ -111,7 +111,7 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   {
     key: 'feedback_good_any',
     label: 'activity.column.feedback-good-any',
-    value: (item: ActivityLogItem) => (item.feedback_good_any != null ? String(item.feedback_good_any) : null),
+    value: (item: ActivityLogItem) => (item.feedback_good_any == null ? null : String(item.feedback_good_any)),
     width: '120px',
     defaultHidden: true,
     group: 'feedback',
@@ -160,7 +160,7 @@ export const COST_TOKEN_COLUMNS: MetricsColumnDef[] = [
   },
 ];
 
-const EXCLUDED_COST_TOKEN_FIELDS: readonly string[] = [
+const EXCLUDED_COST_TOKEN_FIELDS: ReadonlySet<string> = new Set([
   'id',
   'user_id',
   'user_type',
@@ -181,9 +181,9 @@ const EXCLUDED_COST_TOKEN_FIELDS: readonly string[] = [
   'retrieval_rephrased_question',
   'security',
   'result_per_page',
-];
+]);
 export const COST_TOKEN_SHOW_FIELDS = ACTIVITY_LOG_ASK_SHOW_FIELDS.filter(
-  (f) => !EXCLUDED_COST_TOKEN_FIELDS.includes(f),
+  (f) => !EXCLUDED_COST_TOKEN_FIELDS.has(f),
 );
 
 export const COST_TOKEN_SIDEBAR_FIELDS: MetricsSidebarField[] = [];

@@ -60,7 +60,7 @@ export class AppInitService {
             Sentry.init({
               dsn: config.backend.sentry_url,
               integrations: [browserTracingIntegration()],
-              tracesSampleRate: 5.0,
+              tracesSampleRate: 5,
             });
             Sentry.withScope((scope) => {
               scope.addEventProcessor((event) => {

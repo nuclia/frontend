@@ -1,6 +1,6 @@
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import type { CatalogOptions, CatalogQuery, SearchOptions } from './search.models';
+import type { CatalogOptions, CatalogQuery, SearchOptions, SuggestOptions } from './search.models';
 import { Search } from './search.models';
 
 export const find = (
@@ -13,15 +13,6 @@ export const find = (
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {
   options = options || {};
-  if (
-    options?.with_synonyms &&
-    (features.includes(Search.Features.SEMANTIC) || features.includes(Search.Features.RELATIONS))
-  ) {
-    console.warn(`with_synonyms option cannot work with SEMANTIC and RELATIONS features`);
-    features = features.filter(
-      (feature) => feature !== Search.Features.SEMANTIC && feature !== Search.Features.RELATIONS,
-    );
-  }
   const params: { [key: string]: string | string[] } = {
     query: query || '',
     features,
@@ -48,10 +39,10 @@ export const find = (
         return from(
           res.json().then(
             (body) => {
-              throw { status: res.status, body };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status, body });
             },
             () => {
-              throw { status: res.status };
+              throw Object.assign(new Error(`Search error ${res.status}`), { status: res.status });
             },
           ),
         );
@@ -115,21 +106,20 @@ export const catalog = (
     throw new Error('Advanced catahog query is not supported with GET');
   }
   const path = `/kb/${kbid}`;
+  const catalogPath = options ? serialize({ query: (query as string) || '' }, options) : '';
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(
-        `${path}/catalog?${options ? serialize({ query: (query as string) || '' }, options) : ''}`,
-      )
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...{ query: query || '' }, ...options });
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${catalogPath}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { query: query || '', ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 
 export const suggest = (
   nuclia: INuclia,
-  kbid: string,
   path: string,
   query: string,
   inTitleOnly: boolean,
   features: Search.SuggestionFeatures[],
+  options?: SuggestOptions,
 ) => {
   const params: { [key: string]: string | string[] } = {
     query: query || '',
@@ -138,10 +128,12 @@ export const suggest = (
   if (inTitleOnly) {
     params['fields'] = ['a/title'];
   }
-  return nuclia.rest.get<Search.Suggestions | IErrorResponse>(`${path}/suggest?${serialize(params, {})}`).pipe(
-    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
-    map((res) => (res.type === 'error' ? res : ({ ...res, type: 'suggestions' } as Search.Suggestions))),
-  );
+  return nuclia.rest
+    .get<Search.Suggestions | IErrorResponse>(`${path}/suggest?${serialize(params, options || {})}`)
+    .pipe(
+      catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+      map((res) => (res.type === 'error' ? res : ({ ...res, type: 'suggestions' } as Search.Suggestions))),
+    );
 };
 
 function manageSearchRequest(
@@ -155,13 +147,18 @@ function manageSearchRequest(
   );
 }
 
-const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions | CatalogOptions): string => {
+const serialize = (
+  params: { [key: string]: string | string[] },
+  others: SearchOptions | CatalogOptions | SuggestOptions,
+): string => {
   Object.entries(others || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {
         params[key] = value.map((el) => `${el}`);
       } else if (typeof value === 'object') {
-        Object.entries(value).forEach(([k, v]) => (params[`${key}_${k}`] = `${v}`));
+        Object.entries(value).forEach(([k, v]) => {
+          params[`${key}_${k}`] = Array.isArray(v) ? v.map((el) => `${el}`) : `${v}`;
+        });
       } else {
         params[key] = `${value}`;
       }

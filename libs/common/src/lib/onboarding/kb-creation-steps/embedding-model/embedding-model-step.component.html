@@ -1,8 +1,20 @@
-<div class="onboarding-form">
-  <nus-embeddings-model-form
-    [learningSchema]="schema"
-    (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>
-</div>
+@if (cowork) {
+  <div class="onboarding-form">
+    <pa-radio-group [formControl]="coworkModelControl">
+      @for (option of coworkOptions; track option.name) {
+        <pa-radio [value]="option.value">
+          {{ 'user.kb.creation-form.models.options.' + option.name | translate }}
+        </pa-radio>
+      }
+    </pa-radio-group>
+  </div>
+} @else {
+  <div class="onboarding-form">
+    <nus-embeddings-model-form
+      [learningSchema]="schema"
+      (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>
+  </div>
+}
 
 <nsi-sticky-footer>
   <pa-button

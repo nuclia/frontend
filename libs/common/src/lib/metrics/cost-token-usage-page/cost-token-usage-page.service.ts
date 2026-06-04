@@ -19,6 +19,7 @@ import {
   applyDateConditions,
   applyTextSearchFilter,
   getMonthRange,
+  getMonthsSinceDate,
 } from '../metrics-utils';
 import { COST_TOKEN_SHOW_FIELDS } from './cost-token-usage-page.config';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
@@ -71,17 +72,10 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   }
 
   protected loadAvailableMonths(): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(EventType.ASK)),
-      )
-      .subscribe({
-        next: (res) => this._availableMonths.set([...res.downloads].sort((a, b) => b.localeCompare(a))),
-        error: () => {
-          /* empty */
-        },
-      });
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      this._availableMonths.set(getMonthsSinceDate(creationDate));
+    });
   }
 
   protected override _resetPaginationState(): void {
@@ -129,7 +123,7 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   }
 
   protected _applyPage(newItems: ActivityLogItem[], isAppend: boolean): void {
-    const lastId = newItems.length > 0 ? newItems[newItems.length - 1].id : undefined;
+    const lastId = newItems.length > 0 ? newItems.at(-1)!.id : undefined;
     this._hasMore.set(newItems.length >= this.PAGE_SIZE);
     if (lastId !== undefined) this._lastId.set(lastId);
     const combined = isAppend ? [...this._items(), ...newItems] : newItems;

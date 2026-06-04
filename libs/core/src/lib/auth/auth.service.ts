@@ -40,7 +40,7 @@ export class AuthService {
     return localStorage.getItem(NEXT_URL_PARAMS_KEY);
   }
 
-  setNextParams(data: any | null) {
+  setNextParams(data: any) {
     if (data) {
       localStorage.setItem(NEXT_URL_PARAMS_KEY, JSON.stringify(data));
     } else {

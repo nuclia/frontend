@@ -98,10 +98,10 @@ export class AgentActivityComponent implements OnDestroy {
                 take(1),
                 concatMap(() => {
                   const url = this.downloads[month].url;
-                  if (!url) {
-                    return of(null);
-                  } else {
+                  if (url) {
                     return this.fetchRows(this.downloads[month]);
+                  } else {
+                    return of(null);
                   }
                 }),
               ),
@@ -163,7 +163,7 @@ export class AgentActivityComponent implements OnDestroy {
 
   parseDate(value: string) {
     const [year, month] = value.split('-');
-    return new Date(parseInt(year), parseInt(month) - 1, 2);
+    return new Date(Number.parseInt(year), Number.parseInt(month) - 1, 2);
   }
 
   parseNdjson(ndjson: string) {

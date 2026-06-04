@@ -194,7 +194,7 @@
           [expanded]="false"
           [contentLoaded]="headers">
           <pa-expander-header>
-            <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+            <span>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</span>
           </pa-expander-header>
           <pa-expander-body>
             <div>
@@ -208,7 +208,7 @@
           [expanded]="false"
           [contentLoaded]="parameters">
           <pa-expander-header>
-            <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+            <span>{{ 'tasks-automation.form.webhook.params.label' | translate }}</span>
           </pa-expander-header>
           <pa-expander-body>
             <div>
@@ -222,18 +222,10 @@
     </nsi-two-columns-configuration-item>
 
     <nsi-sticky-footer>
-      <!--
-      <span footerNote>
-        @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
-          {{ footerNoteAutomation | translate }}
-        } @else if (resourceCount !== undefined) {
-          {{ footerNoteOneTime | translate: { count: resourceCount } }}
-        }
-      </span>
-      -->
+
       <pa-button
         aspect="basic"
-        (click)="cancel.emit()">
+        (click)="taskCancel.emit()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
       <pa-button

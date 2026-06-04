@@ -11,7 +11,7 @@ import { NodeConfig } from '../../../../workflow.models';
   standalone: true,
   imports: [PaButtonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
 })
-export class ArrayStringFieldComponent {
+export class ArrayStringFieldComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() arrayName!: string;
   @Input() config?: NodeConfig | undefined;

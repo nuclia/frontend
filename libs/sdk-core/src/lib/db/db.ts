@@ -169,6 +169,7 @@ export class Db implements IDb {
     accountSlug?: string,
     accountId?: string,
     mode: KnowledgeBoxMode = 'kb',
+    includeSearchConfigs = true,
   ): Observable<IKnowledgeBoxItem[]> {
     const slug = accountSlug || this.nuclia.options.account;
     const id = accountId || this.nuclia.options.accountId;
@@ -192,7 +193,7 @@ export class Db implements IDb {
         return zones.length > 0
           ? forkJoin(
               zones.map((zone) =>
-                this._getKnowledgeBoxesForZone(id, zone, mode).pipe(
+                this._getKnowledgeBoxesForZone(id, zone, mode, includeSearchConfigs).pipe(
                   timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
                   catchError(() => {
                     console.error(
@@ -217,10 +218,17 @@ export class Db implements IDb {
     accountId: string,
     zone: string,
     mode: KnowledgeBoxMode = 'kb',
+    includeSearchConfigs = true,
   ): Observable<IKnowledgeBoxItem[]> {
-    const modeParam = mode !== 'kb' ? `?mode=${mode}` : '';
+    const params = [];
+    if (mode !== 'kb') {
+      params.push(`mode=${mode}`);
+    }
+    if (includeSearchConfigs === false) {
+      params.push(`include_search_configs=${includeSearchConfigs}`);
+    }
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
-      `/account/${accountId}/kbs${modeParam}`,
+      `/account/${accountId}/kbs${params.length > 0 ? `?${params.join('&')}` : ''}`,
       undefined,
       undefined,
       zone,
@@ -231,9 +239,17 @@ export class Db implements IDb {
    * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
    */
   getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
-    return this._getKnowledgeBoxes(accountSlug, accountId);
+  getKnowledgeBoxes(
+    accountSlug: string,
+    accountId: string,
+    includeSearchConfigs?: boolean,
+  ): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(
+    accountSlug?: string,
+    accountId?: string,
+    includeSearchConfigs = true,
+  ): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId, 'kb', includeSearchConfigs);
   }
 
   /**
@@ -241,21 +257,31 @@ export class Db implements IDb {
    * @param accountId
    * @param zone
    */
-  getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]> {
-    return this._getKnowledgeBoxesForZone(accountId, zone);
+  getKnowledgeBoxesForZone(
+    accountId: string,
+    zone: string,
+    includeSearchConfigs = true,
+  ): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxesForZone(accountId, zone, 'kb', includeSearchConfigs);
   }
 
   /**
    * Returns a list of all the Retrieval Agents for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
    */
   getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
-  getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(
+    accountSlug: string,
+    accountId: string,
+    mode?: KnowledgeBoxMode,
+    includeSearchConfigs?: boolean,
+  ): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgents(
     accountSlug?: string,
     accountId?: string,
     mode?: KnowledgeBoxMode,
-  ): Observable<IKnowledgeBoxItem[]> {
-    return this._getKnowledgeBoxes(accountSlug, accountId, mode || 'agents');
+    includeSearchConfigs = true,
+  ): Observable<IRetrievalAgentItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId, mode || 'agents', includeSearchConfigs);
   }
 
   /**
@@ -267,8 +293,9 @@ export class Db implements IDb {
     accountId: string,
     zone: string,
     mode?: KnowledgeBoxMode,
+    includeSearchConfigs = true,
   ): Observable<IRetrievalAgentItem[]> {
-    return this._getKnowledgeBoxesForZone(accountId, zone, mode || 'agents');
+    return this._getKnowledgeBoxesForZone(accountId, zone, mode || 'agents', includeSearchConfigs);
   }
 
   /**
@@ -288,13 +315,14 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
+      const zoneSlugArg = this.nuclia.options.proxy ? undefined : zoneSlug;
       const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
         ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
         : this.nuclia.rest.get<IKnowledgeBoxBase>(
             `/account/${accountID}/kb/${kbId}`,
             undefined,
             undefined,
-            this.nuclia.options.proxy ? undefined : zoneSlug,
+            zoneSlugArg,
           );
 
       return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
@@ -377,7 +405,7 @@ export class Db implements IDb {
     return creation.pipe(
       switchMap((id) => {
         if (!id) {
-          throw 'Knowledge Box creation failed';
+          throw new Error('Knowledge Box creation failed');
         }
         return this.getKnowledgeBox(accountId, id, zone);
       }),
@@ -407,7 +435,7 @@ export class Db implements IDb {
         map((res) => res.id),
         switchMap((id) => {
           if (!id) {
-            throw 'Retrieval Agent creation failed';
+            throw new Error('Retrieval Agent creation failed');
           }
           return this.getRetrievalAgent(accountId, id, zone);
         }),
@@ -576,14 +604,10 @@ export class Db implements IDb {
     }
 
     return this.nuclia.rest
-      .post<{ client_id: string; token: string }>(
-        `/account/${accountId}/nua_clients`,
-        payload,
-        undefined,
-        undefined,
-        undefined,
-        zone,
-      )
+      .post<{
+        client_id: string;
+        token: string;
+      }>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
       .pipe(
         catchError((err) => {
           if (err.status === 409 && data.client_id) {

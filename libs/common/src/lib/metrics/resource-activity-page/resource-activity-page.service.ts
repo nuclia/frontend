@@ -168,7 +168,7 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     const newLastIds: Record<string, number | undefined> = { ...this._lastIds() };
     groups.forEach(({ eventType, items }) => {
       if (items.length > 0) {
-        newLastIds[eventType] = items[items.length - 1].id;
+        newLastIds[eventType] = items.at(-1)!.id;
       }
     });
     this._lastIds.set(newLastIds);

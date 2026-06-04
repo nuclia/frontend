@@ -1,8 +1,17 @@
-<div class="simple-kb">
-  <div class="display-m">
+<div
+  class="simple-kb"
+  [class.search-view]="view() === 'search'"
+  [class.with-banner]="isCoworkTrial() && isAtEquator()">
+  @if (isCoworkTrial()) {
+    <app-trial-equator-banner></app-trial-equator-banner>
+  }
+  <div
+    class="title display-m"
+    [class.hidden]="view() === 'search'">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
+      <nsi-spinner size="small"></nsi-spinner>
       {{ 'simple.title.uploading' | translate }}
     } @else if (step() === 3) {
       {{ 'simple.title.testing' | translate }}
@@ -67,7 +76,25 @@
       </div>
     }
   </div>
-
+  @if (step() === 3) {
+    @if (widgetPreview | async; as widgetPreview) {
+      @if (view() === 'search') {
+        <div class="close-widget">
+          <pa-button
+            aspect="basic"
+            icon="cross"
+            (click)="changeView('resources')">
+            {{ 'generic.close' | translate }}
+          </pa-button>
+        </div>
+      }
+      <div
+        #preview
+        [class.open]="view() === 'search'"
+        class="preview"
+        [innerHtml]="widgetPreview.preview"></div>
+    }
+  }
   <div>
     @if (step() === 1) {
       <div
@@ -88,19 +115,11 @@
         <div class="body-m">{{ 'simple.max-files' | translate: { num: maxFiles } }}</div>
       </div>
     } @else if (step() > 1) {
-      @if (step() === 3) {
-        @if (widgetPreview | async; as widgetPreview) {
-          <div
-            #preview
-            class="preview"
-            [innerHtml]="widgetPreview.preview"></div>
-        }
-      }
       @if (view() === 'resources') {
         <app-resource-table></app-resource-table>
       }
       @if (view() === 'history') {
-        <app-history-table></app-history-table>
+        <app-history-table (openConversation)="openConversation($event)"></app-history-table>
       }
     }
   </div>
@@ -129,6 +148,7 @@
         aspect="basic"
         icon="info"
         iconAndText
+        [disabled]="isAtEquator()"
         (click)="showMcpEndpoint()">
         {{ 'simple.get-mcp-url' | translate }}
       </pa-button>

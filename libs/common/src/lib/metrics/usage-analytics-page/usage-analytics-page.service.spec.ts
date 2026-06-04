@@ -15,15 +15,17 @@ describe('UsageAnalyticsPageService', () => {
     const mockKb = {
       activityMonitor: {
         queryRemiScores,
-        getMonthsWithActivity: jest.fn().mockReturnValue(of({ downloads: [] })),
         getRemiScores: jest.fn().mockReturnValue(of([])),
       },
+    };
+    const mockAccount = {
+      creation_date: '2026-02-20T09:00:00.000000',
     };
 
     TestBed.configureTestingModule({
       providers: [
         UsageAnalyticsPageService,
-        MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(SDKService, { currentKb: of(mockKb as any), currentAccount: of(mockAccount as any) }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(UserService, { userPrefs: of({ email: 'test@example.com' }) }),
         MockProvider(SisToastService),

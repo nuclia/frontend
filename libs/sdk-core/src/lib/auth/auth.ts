@@ -45,13 +45,15 @@ export class Authentication implements IAuthentication {
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
   getAuthHeaders(method?: string, path?: string): { [key: string]: string } {
-    return this.nuclia.options.standalone
-      ? { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) }
-      : this.nuclia.options.apiKey
-        ? { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` }
-        : this.getToken()
-          ? { Authorization: `Bearer ${this.getToken()}` }
-          : {};
+    if (this.nuclia.options.standalone) {
+      return { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) };
+    } else if (this.nuclia.options.apiKey) {
+      return { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` };
+    } else if (this.getToken()) {
+      return { Authorization: `Bearer ${this.getToken()}` };
+    } else {
+      return {};
+    }
   }
 
   private getNucliaDbRole(method?: string, path?: string): NucliaDBRole {
@@ -128,9 +130,7 @@ export class Authentication implements IAuthentication {
   }
 
   redirectToOAuth(queryParams?: { [key: string]: string | boolean }, oauthUrlParams?: { [key: string]: string }) {
-    if (!queryParams) {
-      queryParams = {};
-    }
+    queryParams ??= {};
     const oauthParams = this.nuclia.options.oauth;
     if (!oauthParams) {
       throw new Error('OAuth parameters are missing.');
@@ -239,7 +239,7 @@ export class Authentication implements IAuthentication {
   }
 
   private base64URLEncode(buffer: Uint8Array<ArrayBuffer>) {
-    return btoa(String.fromCharCode(...buffer))
+    return btoa(String.fromCodePoint(...buffer))
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=/g, '');
@@ -262,13 +262,13 @@ export class Authentication implements IAuthentication {
       ```
    */
   authenticate(tokens: AuthTokens): boolean {
-    if (!tokens.access_token) {
-      this._isAuthenticated.next(false);
-      return false;
-    } else {
+    if (tokens.access_token) {
       this.storeTokens(tokens);
       this._isAuthenticated.next(true);
       return true;
+    } else {
+      this._isAuthenticated.next(false);
+      return false;
     }
   }
 
@@ -325,6 +325,7 @@ export class Authentication implements IAuthentication {
       token = this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
     } catch (e) {
       // Local storage is disabled
+      console.error(e);
     }
     return token;
   }
@@ -426,7 +427,7 @@ export class Authentication implements IAuthentication {
     if (token) {
       const helper = new JwtHelper(token);
       const expiration = helper.getTokenExpirationDate()?.getTime();
-      const now = new Date().getTime();
+      const now = Date.now();
       if (expiration && expiration < now) {
         this.logout();
       } else {
@@ -454,7 +455,7 @@ export class Authentication implements IAuthentication {
   ): Observable<T> {
     const headers: { [key: string]: string } = {
       'content-type': formUrlencoded ? 'application/x-www-form-urlencoded' : 'application/json',
-      ...(extraHeaders || {}),
+      ...extraHeaders,
     };
     return fromFetch(url, {
       method: 'POST',

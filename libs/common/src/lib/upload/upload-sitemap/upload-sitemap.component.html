@@ -13,7 +13,7 @@
           {{ 'upload.slow-upload' | translate: { limit: pendingResourcesLimit | number } }}
         </nsi-info-card>
       }
-      <app-sitemap-select (select)="setSitemapLinks($event)"></app-sitemap-select>
+      <app-sitemap-select (sitemapSelect)="setSitemapLinks($event)"></app-sitemap-select>
 
       <pa-input
         formControlName="sitemapFilter"

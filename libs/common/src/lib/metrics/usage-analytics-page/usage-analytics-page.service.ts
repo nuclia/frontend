@@ -16,7 +16,7 @@ import {
 import { UserService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsItem } from '../metrics-column.model';
-import { getMonthRange } from '../metrics-utils';
+import { getMonthRange, getMonthsSinceDate } from '../metrics-utils';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 import { DateCondition } from '../metrics-filters';
 
@@ -38,6 +38,8 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
   ]),
 ) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
+type ScoreFilter = { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' };
+
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
   private user = inject(UserService);
@@ -56,9 +58,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   // Filter state
   private _activeStatuses = signal<Set<RemiAnswerStatus>>(new Set(STATUSES));
   private _feedbackGoodFilter = signal<boolean | undefined>(undefined);
-  private _contentRelevanceFilter = signal<
-    { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined
-  >(undefined);
+  private _contentRelevanceFilter = signal<ScoreFilter | undefined>(undefined);
   private _dateConditions = signal<DateCondition[]>([]);
 
   readonly remiScoreAverages = this._remiScoreAverages.asReadonly();
@@ -95,18 +95,10 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   }
 
   protected loadAvailableMonths(): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(EventType.ASK)),
-        map((res) => [...res.downloads].sort((a, b) => b.localeCompare(a))),
-      )
-      .subscribe({
-        next: (months) => this._availableMonths.set(months),
-        error: () => {
-          /* empty */
-        },
-      });
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      this._availableMonths.set(getMonthsSinceDate(creationDate));
+    });
   }
 
   protected override _resetPaginationState(): void {
@@ -134,9 +126,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     this._applyFilters();
   }
 
-  updateContentRelevanceFilter(
-    filter: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' } | undefined,
-  ): void {
+  updateContentRelevanceFilter(filter: ScoreFilter | undefined): void {
     this._contentRelevanceFilter.set(filter);
     this._applyFilters();
   }
@@ -144,9 +134,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   applyAllFilters(
     statuses: RemiAnswerStatus[],
     feedbackGood: boolean | undefined,
-    contentRelevance:
-      | { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' }
-      | undefined,
+    contentRelevance: ScoreFilter | undefined,
     dateConditions: DateCondition[] = [],
   ): void {
     // If contentRelevance is set, we cannot filter by status (API constraint)
@@ -249,7 +237,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     yearMonth: string,
     isAppend: boolean,
     feedbackGood: boolean | undefined,
-    contextRelevance: { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' },
+    contextRelevance: ScoreFilter,
     dateConditions: DateCondition[] = [],
   ) {
     // Use 'SUCCESS' page state as shared pagination tracker

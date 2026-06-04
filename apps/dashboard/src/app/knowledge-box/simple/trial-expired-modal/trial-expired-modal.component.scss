@@ -1,0 +1,26 @@
+@use 'apps/dashboard/src/variables' as *;
+
+pa-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  p {
+    margin: 0;
+  }
+}
+
+.modal-title {
+  font-size: $font-size-title-m;
+  font-weight: $font-weight-semi-bold;
+  color: $color-dark-stronger;
+  margin: rhythm(2) 0 0;
+}
+
+.body-text-bold {
+  color: $color-dark-stronger;
+}
+
+.body-text-dimmed {
+  color: $color-neutral-regular;
+}

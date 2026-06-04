@@ -9,7 +9,7 @@ import {
   ZoneService,
 } from '@flaps/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { BlockedFeature, Counters, setZoneInRegionalUrl, UsageType } from '@nuclia/core';
+import { BlockedFeature, Counters, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
@@ -57,7 +57,11 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
   uid = this.currentKb.pipe(map((kb) => kb.id));
   mcp = this.currentKb.pipe(
-    map((kb) => setZoneInRegionalUrl(this.sdk.nuclia.options.backend, kb.zone, 'dp') + `/v1${kb.path}/mcp`),
+    switchMap((kb) =>
+      this.zoneService
+        .buildZoneUrl(kb.zone, this.sdk.nuclia.options.backend, 'dp')
+        .pipe(map((baseUrl) => `${baseUrl}/v1${kb.path}/mcp`)),
+    ),
   );
   zone = combineLatest([this.currentKb, this.zoneService.getZones()]).pipe(
     map(([kb, zones]) => {
@@ -138,7 +142,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     ),
   );
 
-  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+  clipboardSupported = !!navigator.clipboard?.writeText;
   developerExpanded = false;
   copyIcon = {
     endpoint: 'copy',
@@ -198,7 +202,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
             take(1),
             switchMap((kb) => kb.processingStatus()),
             repeat({ delay: () => timer(POLLING_DELAY) }),
-            takeUntil(this.onboardingState$.pipe(filter((state) => !state || state.currentStep !== 'processing-data'))),
+            takeUntil(this.onboardingState$.pipe(filter((state) => state?.currentStep !== 'processing-data'))),
           ),
         ),
         takeUntil(this.unsubscribeAll),

@@ -53,24 +53,21 @@ export class JwtHelper {
       throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
     }
 
-    for (
-      // initialize result and counters
-      let bc = 0, bs: any, buffer: any, idx = 0;
-      // get next character
-      (buffer = str.charAt(idx++));
-      // character found in table? initialize bit storage and add its ascii value;
-      // tslint:disable-next-line:no-bitwise
-      ~buffer &&
-      ((bs = bc % 4 ? bs * 64 + buffer : buffer),
-      // and if not first of each 4 characters,
-      // convert the first 8 bits to one ascii character
-      bc++ % 4)
-        ? // tslint:disable-next-line:no-bitwise
-          (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
-        : 0
-    ) {
+    let bc = 0, bs: any, buffer: any;
+    let idx = 0;
+    while ((buffer = str.charAt(idx++))) { // NOSONAR
       // try to find character in table (0-63, not found => -1)
       buffer = chars.indexOf(buffer);
+      // tslint:disable-next-line:no-bitwise
+      if (~buffer) {
+        // tslint:disable-next-line:no-bitwise
+        bs = bc % 4 ? bs * 64 + buffer : buffer;
+        // tslint:disable-next-line:no-bitwise
+        if (bc++ % 4) { // NOSONAR
+          // tslint:disable-next-line:no-bitwise
+          output += String.fromCodePoint(255 & (bs >> ((-2 * bc) & 6)));
+        }
+      }
     }
     return output;
   }
@@ -79,7 +76,7 @@ export class JwtHelper {
     return decodeURIComponent(
       Array.prototype.map
         .call(this.b64decode(str), (c: string) => {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          return '%' + ('00' + c.codePointAt(0)!.toString(16)).slice(-2);
         })
         .join(''),
     );
@@ -119,7 +116,7 @@ export class JwtHelper {
 
   public getTokenExpirationDate(token: string = this.token): Date | null {
     const user = this.getJWTUser(token);
-    if (!user || !user.exp) {
+    if (!user?.exp) {
       return null;
     }
     const date = new Date(0);
@@ -139,6 +136,6 @@ export class JwtHelper {
       return true;
     }
 
-    return date.valueOf() <= new Date().valueOf() + offsetSeconds * 1000;
+    return date.valueOf() <= Date.now() + offsetSeconds * 1000;
   }
 }

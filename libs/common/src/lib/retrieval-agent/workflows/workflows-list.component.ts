@@ -8,13 +8,13 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { setZoneInRegionalUrl, Workflow } from '@nuclia/core';
+import { Workflow } from '@nuclia/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, map, switchMap, take } from 'rxjs';
 import { WorkflowModalComponent } from './workflow-modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkflowsService } from './workflows.service';
-import { SDKService } from '@flaps/core';
+import { SDKService, ZoneService } from '@flaps/core';
 import { ToolParametersModalComponent } from './tool-parameters-modal';
 
 @Component({
@@ -39,16 +39,17 @@ export class WorkflowsListComponent {
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
+  private zoneService = inject(ZoneService);
 
   workflows = this.workflowsService.workflows.pipe(
     map((workflows) => [...workflows].sort((a, b) => a.name.localeCompare(b.name))),
   );
 
   endpoint = this.sdk.currentArag.pipe(
-    map(
-      (arag) =>
-        setZoneInRegionalUrl(this.sdk.nuclia.options.backend, arag.zone, 'dp') +
-        `/v1${arag.path}/session/ephemeral/mcp`,
+    switchMap((arag) =>
+      this.zoneService
+        .buildZoneUrl(arag.zone, this.sdk.nuclia.options.backend, 'dp')
+        .pipe(map((baseUrl) => `${baseUrl}/v1${arag.path}/session/ephemeral/mcp`)),
     ),
   );
 

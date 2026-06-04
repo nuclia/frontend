@@ -17,12 +17,16 @@ on:
 jobs:
   blackduck-sca-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     concurrency:
       group: bd-sca-scan-${{ github.ref_name }}
       cancel-in-progress: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
 
       - name: Calculate detect-args for BD SCA Scan
         id: calculate-detect-args
@@ -35,7 +39,7 @@ jobs:
 
       - name: Run Black Duck SCA PR Scan
         id: blackduck-pr-scan
-        uses: blackduck-inc/black-duck-security-scan@v2
+        uses: blackduck-inc/black-duck-security-scan@659a0742e793a093377fab3117b0d90f23b04bfa # v2.9.0
         env:
           DETECT_PROJECT_NAME: nuclia-frontend
           DETECT_PROJECT_GROUP_NAME: Nuclia
