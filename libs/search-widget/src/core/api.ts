@@ -43,14 +43,7 @@ import {
 import { suggestionError } from './stores/suggestions.store';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { initTracking, logEvent } from './tracking';
-import {
-  downloadAsJSON,
-  entitiesDefaultColor,
-  generatedEntitiesColor,
-  getCachedRequest,
-  storeCachedRequest,
-} from './utils';
-import { widgetCache } from './stores';
+import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, withCache } from './utils';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -497,25 +490,17 @@ export const getLabelSets = (): Observable<LabelSets> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  const useCache = !!widgetCache.getValue();
-  const cache = getCachedRequest(nucliaApi.knowledgeBox.id, 'labels');
-  if (cache && useCache) {
-    return of(cache);
-  } else {
-    return nucliaApi.knowledgeBox.getLabels().pipe(
-      tap((res) => {
-        if (useCache) {
-          storeCachedRequest(nucliaApi!.knowledgeBox.id, 'labels', res);
-        }
-      }),
-    );
-  }
+  return withCache<LabelSets>(() => nucliaApi!.knowledgeBox.getLabels(), nucliaApi.knowledgeBox.id, 'labels');
 };
 export const getLabelFacets = (labelSet: string): Observable<Search.FacetsResult> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getFacets([getFilterFromLabelSet(labelSet)]);
+  return withCache<Search.FacetsResult>(
+    () => nucliaApi!.knowledgeBox.getFacets([getFilterFromLabelSet(labelSet)]),
+    nucliaApi.knowledgeBox.id,
+    `label_facets_${labelSet}`,
+  );
 };
 export const getMimeFacets = (): Observable<Search.FacetsResult> => {
   if (!nucliaApi) {
