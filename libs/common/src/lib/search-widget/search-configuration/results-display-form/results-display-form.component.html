@@ -189,7 +189,7 @@
       <nsi-info-card type="warning">
         {{
           'search.configuration.result-display.json-schema.unsupported-model-warning'
-            | translate: { model: modelNames[generativeModel()] }
+            | translate: { model: modelNames[generativeModel() || ''] }
         }}
       </nsi-info-card>
     }
