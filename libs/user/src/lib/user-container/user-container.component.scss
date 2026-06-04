@@ -52,3 +52,29 @@
     padding-top: rhythm(8);
   }
 }
+
+@media (max-height: $height-viewport-small-max) {
+  .container .user-container {
+    padding-top: rhythm(3);
+
+    .logo {
+      padding-bottom: 0;
+    }
+  }
+
+  ::ng-deep .main-container {
+    header,
+    .login_separator {
+      display: none !important;
+    }
+
+    .login_social,
+    .login_recover {
+      margin-top: rhythm(2) !important;
+    }
+
+    .login_signup {
+      margin-top: rhythm(2);
+    }
+  }
+}
