@@ -38,6 +38,7 @@
   "login.recover": "Recuperar contrasenya",
   "login.recover_help": "Problemes amb la paraula de pas?",
   "consent.scope.mcp.read": "Accedir a les vostres dades a través dels serveis MCP",
+  "consent.scope.agents.read": "Interactuar amb els vostres agents",
   "consent.scope.offline_access": "Mantenir l'accés quan no esteu utilitzant activament l'aplicació",
   "consent.scope.openid": "Confirmar la vostra identitat",
   "login.subtitle": "Oferint les respostes adequades a partir de les vostres dades internes.",
