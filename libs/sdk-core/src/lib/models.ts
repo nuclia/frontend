@@ -117,6 +117,8 @@ export interface IRest {
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
   getZoneSlug(zoneId: string): Observable<string>;
+  getZoneOrigin(slug: string): string | null | undefined;
+  setZoneOrigins(origins: { [slug: string]: string | null }): void;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
   getStreamedResponse(

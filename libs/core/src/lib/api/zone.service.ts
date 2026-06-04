@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Zone } from '../models';
-import { catchError, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
 import { BillingService } from './billing.service';
@@ -24,6 +24,14 @@ export class ZoneService {
   // can actually use. Re-fetches automatically when the active account changes.
   private readonly rawZones$: Observable<Zone[]> = this.sdk.currentAccount.pipe(
     switchMap((account) => this.sdk.nuclia.rest.get<Zone[]>(`/account/${account.slug}/${ZONES}`)),
+    tap((zones) => {
+      // Seed the SDK origin cache so regionalBackend resolves correctly for private zones.
+      const origins: { [slug: string]: string | null } = {};
+      for (const zone of zones) {
+        origins[zone.slug] = zone.origin ?? null;
+      }
+      this.sdk.nuclia.rest.setZoneOrigins(origins);
+    }),
     shareReplay(1),
   );
 

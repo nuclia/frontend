@@ -25,7 +25,10 @@ export class Nuclia implements INuclia {
 
   /** The Nuclia regional backend URL. */
   get regionalBackend(): string {
-    return setZoneInRegionalUrl(this.options.backend, this.options.zone, this.options.regionalPrefix);
+    const origin = this.options.zone ? this.rest.getZoneOrigin(this.options.zone) : undefined;
+    return origin
+      ? `${origin}/api`
+      : setZoneInRegionalUrl(this.options.backend, this.options.zone, this.options.regionalPrefix);
   }
 
   /**

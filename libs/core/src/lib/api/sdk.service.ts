@@ -188,7 +188,11 @@ export class SDKService {
       return of(currentRa as RetrievalAgent);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getRetrievalAgent(accountId, aragId, zone).pipe(
+      // Ensure zoneOrigins is populated before the agent is used, so regionalBackend resolves
+      // the correct origin URL for private zones on direct navigation.
+      return this.nuclia.rest.getZones().pipe(
+        take(1),
+        switchMap(() => this.nuclia.db.getRetrievalAgent(accountId, aragId, zone)),
         map((arag) => {
           this.arag = arag;
           return arag;
@@ -209,7 +213,11 @@ export class SDKService {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getKnowledgeBox(accountId, kbId, zone).pipe(
+      // Ensure zoneOrigins is populated before the KB is used, so regionalBackend resolves
+      // the correct origin URL for private zones on direct navigation (bookmark / page refresh).
+      return this.nuclia.rest.getZones().pipe(
+        take(1),
+        switchMap(() => this.nuclia.db.getKnowledgeBox(accountId, kbId, zone)),
         map((kb) => {
           this.kb = kb;
           return kb;
