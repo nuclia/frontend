@@ -38,6 +38,7 @@
   "login.recover": "Recover password",
   "login.recover_help": "Problems logging in?",
   "consent.scope.mcp.read": "Access your data through MCP services",
+  "consent.scope.agents.read": "Interact with your agent workflows",
   "consent.scope.offline_access": "Maintain access when you're not actively using the application",
   "consent.scope.openid": "Confirm your identity",
   "login.subtitle": "Delivering the right answers from your internal data.",
