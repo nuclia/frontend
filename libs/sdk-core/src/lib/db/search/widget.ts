@@ -30,6 +30,7 @@ export namespace Widget {
     filters: FilterSelectionType;
     labelSetsExcludedFromFilters: string;
     initialFilters: string | undefined;
+    labelFilterCounts: boolean;
     rephraseQuery: boolean;
     useRephrasePrompt: boolean;
     rephrasePrompt: string;
@@ -235,6 +236,7 @@ export namespace Widget {
     preferMarkdown?: boolean;
     openNewTab?: boolean;
     orFilterLogic?: boolean;
+    labelFilterCounts?: boolean;
     noChatHistory?: boolean;
     showHidden?: boolean;
     showAttachedImages?: boolean;
@@ -277,6 +279,7 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   preselectedFilters: '',
   preselectedFilterExpression: '',
   initialFilters: undefined,
+  labelFilterCounts: false,
   suggestions: false,
   suggestResults: false,
   autocompleteFromNERs: false,
@@ -587,6 +590,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
+    labelFilterCounts: config.searchBox.labelFilterCounts,
     highlight: config.searchBox.highlight,
     suggestions: config.searchBox.suggestions,
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,

@@ -2133,6 +2133,8 @@
 	"search.configuration.search-box.filters.toggle-label": "Mostra el botó per filtrar",
 	"search.configuration.search-box.highlight.toggle-description": "Ressaltar les paraules clau trobades.",
 	"search.configuration.search-box.highlight.toggle-label": "Ressaltar",
+	"search.configuration.search-box.label-filter-counts.toggle-description": "Mostra el nombre de recursos al costat de cada filtre d'etiqueta",
+	"search.configuration.search-box.label-filter-counts.toggle-label": "Mostra els recomptes als filtres d'etiquetes",
 	"search.configuration.search-box.limit-paragraphs.toggle-description": "Controlar quants dels paràgrafs més rellevants es passen al LLM per generar la resposta. Per defecte: 20.",
 	"search.configuration.search-box.limit-paragraphs.toggle-label": "Millors resultats (top_k)",
 	"search.configuration.search-box.preselected-filters.assistant.add-expression-button": "Afegeix expressió",

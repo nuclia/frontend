@@ -2133,6 +2133,8 @@
 	"search.configuration.search-box.filters.toggle-label": "Show button to filter",
 	"search.configuration.search-box.highlight.toggle-description": "Highlight matched keywords.",
 	"search.configuration.search-box.highlight.toggle-label": "Highlight",
+	"search.configuration.search-box.label-filter-counts.toggle-description": "Show the number of resources next to each label filter",
+	"search.configuration.search-box.label-filter-counts.toggle-label": "Show counts on label filters",
 	"search.configuration.search-box.limit-paragraphs.toggle-description": "To control how many of the most relevant paragraphs are passed to the LLM to generate the answer. Default: 20.",
 	"search.configuration.search-box.limit-paragraphs.toggle-label": "Best results amount (top_k)",
 	"search.configuration.search-box.preselected-filters.assistant.add-expression-button": "Add expression",
