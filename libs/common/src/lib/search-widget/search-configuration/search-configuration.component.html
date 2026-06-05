@@ -164,9 +164,10 @@
             <stf-results-display-form
               [config]="savedConfig?.resultDisplay"
               [modelNames]="generativeModelNames"
-              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
+              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel || generativeModelFromSettings"
               [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
               [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              [generativeProviders]="generativeProviders"
               (configChanged)="updateResultDisplayConfig($event)"
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>

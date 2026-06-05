@@ -2,38 +2,26 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   EventEmitter,
   inject,
+  input,
   Input,
   OnDestroy,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
 import { OptionModel, PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { INITIAL_CITATION_THRESHOLD, Widget } from '@nuclia/core';
+import { GenerativeProviders, INITIAL_CITATION_THRESHOLD, Widget } from '@nuclia/core';
 import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { JsonValidator } from '../../../validators';
-
-// TODO remove when all LLMs support JSON output
-const LLM_WITH_JSON_OUTPUT_SUPPORT: Set<string> = new Set([
-  'chatgpt-azure',
-  'chatgpt-azure-4-turbo',
-  'chatgpt-azure-4o',
-  'claude-3',
-  'claude-3-fast',
-  'claude-3-5-fast',
-  'chatgpt-vision',
-  'chatgpt4',
-  'chatgpt4o',
-  'chatgpt4o-mini',
-  'gemini-1-5-pro',
-  'azure-mistral',
-]);
 
 @Component({
   selector: 'stf-results-display-form',
@@ -63,25 +51,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       this.form.patchValue({ ...rest, metadatas: formattedMetadata });
     }
   }
-  // TODO remove when all LLMs support JSON output
   @Input() modelNames: { [key: string]: string } = {};
-  @Input() set generativeModel(model: string | undefined) {
-    if (model) {
-      this._generativeModel = model;
-      if (LLM_WITH_JSON_OUTPUT_SUPPORT.has(model)) {
-        this.jsonOutputControl.enable();
-        this.isJsonOutputDisabled = false;
-      } else {
-        this.jsonOutputControl.patchValue(false);
-        this.jsonOutputControl.disable();
-        this.isJsonOutputDisabled = true;
-      }
-    }
-  }
-  get generativeModel() {
-    return this._generativeModel;
-  }
-  private _generativeModel = '';
   @Input() set generateAnswer(value: boolean) {
     this._generateAnswer = value;
     this.disableCitations(this.jsonOutputEnabled, value);
@@ -91,6 +61,22 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   }
   private _generateAnswer = true;
   @Input() useSearchResults = true;
+
+  generativeModel = input<string | undefined>(undefined);
+  generativeProviders = input<GenerativeProviders>({});
+
+  isJsonOutputDisabled = signal(false);
+  modelsWithJSONOutput = computed(() =>
+    Object.values(this.generativeProviders()).reduce(
+      (acc, provider) =>
+        acc.concat(
+          Object.entries(provider.models)
+            .filter(([, model]) => !!model.features.structured_output)
+            .map(([key]) => key),
+        ),
+      [] as string[],
+    ),
+  );
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<Widget.ResultDisplayConfig>();
@@ -149,7 +135,6 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
-  isJsonOutputDisabled = false;
 
   get displayResultsEnabled() {
     return this.form.controls.displayResults.value;
@@ -174,6 +159,22 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   }
   get customizeThresholdEnabled() {
     return this.form.controls.customizeThreshold.value;
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.generativeModel()) {
+        const structredOutput = this.modelsWithJSONOutput().includes(this.generativeModel() || '');
+        if (structredOutput) {
+          this.jsonOutputControl.enable();
+          this.isJsonOutputDisabled.set(false);
+        } else {
+          this.jsonOutputControl.patchValue(false);
+          this.jsonOutputControl.disable();
+          this.isJsonOutputDisabled.set(true);
+        }
+      }
+    });
   }
 
   ngOnInit() {
