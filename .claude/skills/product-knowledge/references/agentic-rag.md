@@ -55,6 +55,7 @@ Preprocess → Retrieval context → Generation → Postprocess
 - **SQL** _(beta)_: Natural-language queries over a relational database (via SQL driver). Configurable: conversion model, dynamic table selection, `include_tables`/`ignore_tables`, sample rows, index info, retry count.
 - **Snowflake** _(beta)_: Natural-language queries over Snowflake (via Snowflake driver). Works like SQL agent with Snowflake-specific dialect guidance; supports `max_result_rows`, schema override, dynamic table selection.
 - **Pandas** _(beta)_: Queries over a `.csv` dataframe. Configurable: conversion model, sample rows, retry count.
+- **Smart Agent**: Orchestrates multiple agents dynamically. Selects and invokes functions exposed by registered agents based on capabilities and task requirements. Configurable: mode (planning vs reactive), models for planning/execution phases, registered agents list, extra rules. Supports feedback mode for iterative refinement with the user.
 
 #### 3. Generation
 

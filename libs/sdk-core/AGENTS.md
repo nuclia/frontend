@@ -154,7 +154,29 @@ Standard events emitted: `api-error`, `partial`, `lastQuery`, `lastResults`.
 
 `ActivityMonitor.queryActivityLogs(eventType, query)` is the SDK-level pagination API for the metrics pages. The endpoint returns NDJSON — `rest.post(..., doNotParse=true)` receives the raw `Response`, then text body is split by newlines and JSON-parsed. **Do not** use the download-based methods for UI display — they produce CSV/NDJSON files for download, not structured data.
 
-`EventType` values: `NEW`, `MODIFIED`, `PROCESSED`, `CHAT`, `ASK`, `SEARCH`, `SUGGEST`, `INDEXED`, `RETRIEVE`, `AUGMENT`.---
+`EventType` values: `NEW`, `MODIFIED`, `PROCESSED`, `CHAT`, `ASK`, `SEARCH`, `SUGGEST`, `INDEXED`, `RETRIEVE`, `AUGMENT`.
+
+---
+
+### KV Schemas (`WritableKnowledgeBox`)
+
+KV (key-value) schemas define structured field types for resource key-value fields. Key constraints:
+
+- Up to **20 schemas per KB**; up to **50 fields per schema**
+- `KVSchema.id` is **immutable** once created — only `description` and `fields` can be updated
+- `KVSchemaField.range` (boolean) — valid only for `integer`, `float`, `date` types; value is then a `KVRange { lower, upper }`
+- `KVSchemaField.repeated` (boolean) — valid only for `text` type; value is then `string[]`
+
+```ts
+// Read (KnowledgeBox)
+kb.getKVSchemas(): Observable<KBKVSchemas>       // { schemas: { [id]: KVSchema } }
+kb.getKVSchema(id: string): Observable<KVSchema>
+
+// Write (WritableKnowledgeBox only)
+kb.createKVSchema(schema: KVSchema): Observable<void>
+kb.updateKVSchema(id: string, update: UpdateKVSchema): Observable<void>  // id is immutable
+kb.deleteKVSchema(id: string): Observable<void>
+```
 
 ## How Workspace Apps Use This Library
 

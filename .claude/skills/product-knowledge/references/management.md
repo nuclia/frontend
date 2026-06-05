@@ -136,3 +136,14 @@ Two regions available (chosen at KB creation, cannot change):
 - **USA**
 
 Data residency is locked to the chosen region.
+
+---
+
+## Outbound IP Addresses
+
+If your firewall blocks inbound traffic, allowlist these IPs — they are the source addresses Agentic RAG uses for outbound connections (webhooks, sync agents, integrations):
+
+| Region       | IP addresses                                                                    |
+| ------------ | ------------------------------------------------------------------------------- |
+| Europe (AWS) | `63.179.23.139/32`, `3.78.13.149/32`, `3.66.123.24/32`                          |
+| Europe (GCP) | `35.204.65.155/32`, `34.91.38.151/32`, `35.204.139.129/32`, `35.204.108.221/32` |
