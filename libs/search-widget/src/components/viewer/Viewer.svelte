@@ -231,7 +231,7 @@
 
   function findInField(event) {
     if (event.key === 'Enter') {
-      const query = searchInFieldQuery.getValue();
+      const query = searchInFieldQuery.getValue()?.trim();
       sidePanelSectionOpen = 'search';
       if (query && result && result.field) {
         isSearchingInResource.next(true);
