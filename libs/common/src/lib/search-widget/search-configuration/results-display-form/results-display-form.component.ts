@@ -11,6 +11,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FeaturesService } from '@flaps/core';
@@ -63,6 +64,8 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
 
   generativeModel = input<string | undefined>(undefined);
   generativeProviders = input<GenerativeProviders>({});
+
+  isJsonOutputDisabled = signal(false);
   modelsWithJSONOutput = computed(() =>
     Object.values(this.generativeProviders()).reduce(
       (acc, provider) =>
@@ -132,7 +135,6 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
-  isJsonOutputDisabled = false;
 
   get displayResultsEnabled() {
     return this.form.controls.displayResults.value;
@@ -165,11 +167,11 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
         const structredOutput = this.modelsWithJSONOutput().includes(this.generativeModel() || '');
         if (structredOutput) {
           this.jsonOutputControl.enable();
-          this.isJsonOutputDisabled = false;
+          this.isJsonOutputDisabled.set(false);
         } else {
           this.jsonOutputControl.patchValue(false);
           this.jsonOutputControl.disable();
-          this.isJsonOutputDisabled = true;
+          this.isJsonOutputDisabled.set(true);
         }
       }
     });
