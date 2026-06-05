@@ -1,0 +1,10 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>{{ 'kb.kv-schemas.modal.edit-title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <app-schema-form
+      [schema]="schema"
+      mode="modal"
+      (saved)="close()"
+      (cancelled)="close()"></app-schema-form>
+  </pa-modal-content>
+</pa-modal-advanced>

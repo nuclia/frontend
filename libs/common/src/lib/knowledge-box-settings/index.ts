@@ -1,2 +1,2 @@
 export * from './knowledge-box-settings.component';
-export * from './knowledge-box-settings.module';
+export * from './kv-schemas/kb-settings.module';

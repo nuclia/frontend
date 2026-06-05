@@ -1,0 +1,83 @@
+<div class="page-spacing">
+  <div class="kv-schemas-header">
+    <h1 class="page-title">{{ 'kb.kv-schemas.title' | translate }}</h1>
+    <p class="body-m page-description">{{ 'kb.kv-schemas.description' | translate }}</p>
+    <pa-button
+      aspect="solid"
+      kind="primary"
+      icon="circle-plus"
+      iconAndText
+      [disabled]="((schemas$ | async)?.length ?? 0) >= config.maxSchemas"
+      (click)="showCreate()">
+      {{ 'kb.kv-schemas.add-schema' | translate }}
+    </pa-button>
+  </div>
+
+  @if (showCreateForm()) {
+    <div class="create-form-wrapper">
+      <app-schema-form
+        (saved)="hideCreate()"
+        (cancelled)="hideCreate()"></app-schema-form>
+    </div>
+  }
+
+  @if (schemas$ | async; as schemas) {
+    @if (schemas.length === 0 && !showCreateForm) {
+      <p class="body-m empty-state">{{ 'kb.kv-schemas.empty' | translate }}</p>
+    } @else if (schemas.length > 0) {
+      <pa-table
+        border
+        [columns]="config.tableColumns">
+        <pa-table-header>
+          @for (col of config.columns; track col) {
+            <pa-table-cell header>{{ 'kb.kv-schemas.table.' + col | translate }}</pa-table-cell>
+          }
+        </pa-table-header>
+        @for (schema of schemas; track schema.id) {
+          <pa-table-row>
+            <pa-table-cell>{{ schema.id }}</pa-table-cell>
+            <pa-table-cell>{{ schema.description }}</pa-table-cell>
+            <pa-table-cell>
+              <div class="field-badges">
+                @for (field of schema.fields; track field.key) {
+                  <div class="field-badge">
+                    <nsi-badge>{{ field.key }}</nsi-badge>
+                    @if (field.required) {
+                      <span class="required-marker">*</span>
+                    }
+                  </div>
+                }
+              </div>
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <pa-button
+                aspect="basic"
+                icon="edit"
+                (click)="editSchema(schema)"></pa-button>
+              <pa-button
+                aspect="basic"
+                icon="trash"
+                (click)="deleteSchema(schema)"></pa-button>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    }
+  } @else {
+    <pa-table [columns]="config.tableColumns">
+      <pa-table-header>
+        @for (col of config.columns; track col) {
+          <pa-table-cell header>{{ 'kb.kv-schemas.table.' + col | translate }}</pa-table-cell>
+        }
+      </pa-table-header>
+      @for (i of config.skeletonRows; track i) {
+        <pa-table-row>
+          <pa-table-cell><span class="skeleton-text"></span></pa-table-cell>
+          <pa-table-cell><span class="skeleton-text"></span></pa-table-cell>
+          <pa-table-cell><span class="skeleton-text"></span></pa-table-cell>
+          <pa-table-cell></pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+  }
+</div>
