@@ -344,7 +344,8 @@ export class STFUtils {
 }
 
 export function renderMarkdown(text: string): Observable<string> {
-  return injectScript('//cdn.rag.progress.cloud/vendors/marked.min.js').pipe(
+  const domain = location.host.endsWith('stashify.cloud') ? 'cdn.stashify.cloud' : 'cdn.rag.progress.cloud';
+  return injectScript(`//${domain}/vendors/marked.min.js`).pipe(
     take(1),
     map(() => DOMPurify.sanitize((window as any)['marked'].parse(text, { mangle: false, headerIds: false }))),
   );
