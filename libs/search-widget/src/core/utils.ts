@@ -29,15 +29,15 @@ import { widgetCache } from './stores';
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
-// the vendor CDN does not need to be customized
-export const getVendorsCDN = () => 'https://cdn.rag.progress.cloud/vendors';
+const domain = location.host.endsWith('stashify.cloud') ? 'cdn.stashify.cloud' : 'cdn.rag.progress.cloud';
+export const getVendorsCDN = () => `https://${domain}/vendors`;
 
 export const loadFonts = () => {
   const fontLinkId = 'nuclia-fonts-link';
   if (!document.getElementById(fontLinkId)) {
     const font = document.createElement('link');
     font.id = fontLinkId;
-    font.href = 'https://cdn.rag.progress.cloud/fonts/inter.css';
+    font.href = `https://${domain}/fonts/inter.css`;
     font.rel = 'stylesheet';
 
     const head = document.head || document.getElementsByTagName('head')[0];
