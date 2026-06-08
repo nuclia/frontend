@@ -52,7 +52,9 @@ apps/dashboard/src/app/
     /synonyms              → SynonymsModule (lazy)
     /ai-models             [knowledgeBoxOwnerGuard] → AiModelsComponent
     /widgets               [knowledgeBoxOwnerGuard] → WIDGETS_ROUTES (lazy)
-    /manage                [knowledgeBoxOwnerGuard] → KnowledgeBoxSettingsComponent
+    /manage                [knowledgeBoxOwnerGuard] → KbSettingsModule (lazy)
+                             ├─ general             → KnowledgeBoxSettingsComponent
+                             └─ kv-schemas          → KvSchemasComponent
     /users                 [knowledgeBoxOwnerGuard] → KnowledgeBoxUsersComponent
     /keys                  [knowledgeBoxOwnerGuard] → KnowledgeBoxKeysComponent
     /rag-lab               → RagLabPageComponent
@@ -172,7 +174,7 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
 4. **Module-based** — app uses NgModules; imported lib components may be standalone.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
-6. **Lazy modules** — `AccountModule`, `UploadModule`, `ResourcesModule`, `MetricsModule` (+ `ActivityModule` inside it), `WIDGETS_ROUTES`, `TASK_AUTOMATION_ROUTES`, `LazyUserModule` are all lazy-loaded.
+6. **Lazy modules** — `AccountModule`, `UploadModule`, `ResourcesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `WIDGETS_ROUTES`, `TASK_AUTOMATION_ROUTES`, `LazyUserModule` are all lazy-loaded.
 7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
 8. **Activity logs moved to `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no longer a standalone `/activity` route on the KB.
 9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.

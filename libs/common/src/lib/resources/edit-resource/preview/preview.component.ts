@@ -11,7 +11,9 @@ import {
   FileField,
   FileFieldData,
   IError,
+  KVRange,
   KVSchemaField,
+  KVValue,
   LinkFieldData,
   MessageAttachment,
   Resource,
@@ -124,7 +126,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       const schemaFetches = Object.keys(kvFields).map((fieldId) =>
         kb.getKVSchema(fieldId).pipe(
           catchError(() => of(null)),
-          map((schema) => ({ fieldId, data: kvFields[fieldId]?.value, schemaFields: schema?.fields ?? [] })),
+          map((schema) => ({ fieldId, data: kvFields[fieldId]?.value?.data, schemaFields: schema?.fields ?? [] })),
         ),
       );
       return forkJoin(schemaFetches).pipe(
@@ -134,10 +136,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
               acc[entry.fieldId] = { data: entry.data, schemaFields: entry.schemaFields };
               return acc;
             },
-            {} as Record<
-              string,
-              { data: Record<string, string | number | boolean> | undefined; schemaFields: KVSchemaField[] }
-            >,
+            {} as Record<string, { data: Record<string, KVValue> | undefined; schemaFields: KVSchemaField[] }>,
           ),
         ),
       );

@@ -1,0 +1,115 @@
+<div
+  [class.form-card]="mode() === 'inline'"
+  [class.modal-content]="mode() === 'modal'">
+  @if (!isEditMode()) {
+    <div class="form-title-section">
+      <h2 class="form-title title-l">{{ 'kb.kv-schemas.form.title' | translate }}</h2>
+      <p class="body-m">{{ 'kb.kv-schemas.form.subtitle' | translate }}</p>
+    </div>
+  }
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()">
+    <div class="schema-fields-section">
+      <pa-input
+        formControlName="id"
+        [readonly]="isEditMode()">
+        {{ 'kb.kv-schemas.form.schema-name' | translate }}
+      </pa-input>
+
+      <pa-input formControlName="description">
+        {{ 'kb.kv-schemas.form.schema-description' | translate }}
+      </pa-input>
+    </div>
+
+    <div class="fields-section">
+      <div class="fields-title-section">
+        <h2 class="title-l form-title">{{ 'kb.kv-schemas.form.fields' | translate }}</h2>
+        <p class="body-m">{{ 'kb.kv-schemas.form.fields-subtitle' | translate }}</p>
+      </div>
+
+      @if (fieldsArray.length > 0) {
+        <div class="fields-table">
+          <div class="fields-header-row">
+            @for (col of config.columns; track col) {
+              <span
+                class="col-label"
+                [class.text-center]="isCenteredColumn(col)">
+                {{ 'kb.kv-schemas.form.col.' + col | translate }}
+              </span>
+            }
+          </div>
+
+          <div formArrayName="fields">
+            @for (fieldGroup of fieldsArray.controls; track $index) {
+              <div
+                [formGroupName]="$index"
+                class="field-row">
+                <pa-input formControlName="key"></pa-input>
+                <pa-checkbox
+                  class="self-center"
+                  formControlName="required"></pa-checkbox>
+                <pa-select
+                  formControlName="type"
+                  [label]="'kb.kv-schemas.form.field-type' | translate">
+                  @for (type of config.fieldTypeOptions; track type) {
+                    <pa-option [value]="type">{{ type }}</pa-option>
+                  }
+                </pa-select>
+                <div class="col-conditional self-center">
+                  @if (isRangeEnabled(getFieldType($index))) {
+                    <pa-checkbox formControlName="range"></pa-checkbox>
+                  } @else {
+                    —
+                  }
+                </div>
+                <div class="col-conditional self-center">
+                  @if (isRepeatedEnabled(getFieldType($index))) {
+                    <pa-checkbox formControlName="repeated"></pa-checkbox>
+                  } @else {
+                    —
+                  }
+                </div>
+                <pa-input formControlName="description"></pa-input>
+                <pa-button
+                  aspect="basic"
+                  icon="trash"
+                  type="button"
+                  (click)="removeField($index)"></pa-button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="add-field-row">
+        <nsi-button-mini
+          icon="circle-plus"
+          [disabled]="fieldsArray.length >= config.maxFields"
+          (click)="addField()">
+          {{ 'kb.kv-schemas.form.add-field' | translate }}
+        </nsi-button-mini>
+      </div>
+
+      @if (fieldsArray.hasError('uniqueKeys')) {
+        <p class="error-text">{{ 'kb.kv-schemas.validation.unique-keys' | translate }}</p>
+      }
+    </div>
+
+    <div class="form-actions">
+      <pa-button
+        aspect="basic"
+        type="button"
+        (click)="cancelled.emit()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="solid"
+        type="submit"
+        [disabled]="form.invalid || fieldsArray.length === 0">
+        {{ (isEditMode() ? 'generic.save' : 'generic.create') | translate }}
+      </pa-button>
+    </div>
+  </form>
+</div>

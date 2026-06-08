@@ -166,6 +166,8 @@ paths:
   /api/manage/@user/{user_id}/@reset: {}
   /api/manage/@users: {}
   /api/manage/@zone/{zone_id}: {}
+  /api/manage/@zone/{zone_id}/accounts: {}
+  /api/manage/@zone/{zone_id}/accounts/{account_id}: {}
   /api/manage/@zone/{zone_id}/key: {}
   /api/manage/@zones: {}
   /api/marketplace/aws/callback: {}
@@ -279,7 +281,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-05-04T16:24:23.082739'
+          default: '2026-06-02T10:57:28.257427'
           title: To
       responses:
         '200':
@@ -317,6 +319,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/account/{account_slug_or_id}/zones:
+    get:
+      tags:
+      - Zones
+      summary: List Account Zones
+      description: List zones visible to a specific account. Accepts either the account
+        slug or UUID.
+      operationId: list_account_zones_api_v1_account__account_slug_or_id__zones_get
+      parameters:
+      - name: account_slug_or_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Account Slug Or Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Zone'
+                title: Response List Account Zones Api V1 Account  Account Slug Or
+                  Id  Zones Get
         '422':
           description: Validation Error
           content:
@@ -789,7 +823,7 @@ paths:
       tags:
       - Zones
       summary: List Zones
-      description: List available zones
+      description: List available zones across all user accounts (union)
       operationId: list_zones_api_v1_zones_get
       responses:
         '200':
@@ -859,17 +893,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  accounting:
-    commit: d0001ff3da06bccef3a650f4eb4911f5bccece7d
-    last_updated: '2026-05-04T16:24:23.650978'
   zone_hub:
-    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
-    last_updated: '2026-05-04T14:48:12.375783'
+    commit: 02eb5d19900f78c32f7975f6bf7917ff9bb58c5b
+    last_updated: '2026-05-29T07:54:03.400697'
+  accounting:
+    commit: b7b6cb2bc9b6ae56552788d4679af6f78f6242fd
+    last_updated: '2026-06-02T10:57:28.847625'
   idp:
-    commit: c41e42808eb9872d0ec1e20351cd9b2d1ce4ef42
-    last_updated: '2026-05-04T14:53:32.801512'
+    commit: 54029253acd51e62c0d2134628868c87e1d3dff8
+    last_updated: '2026-06-02T15:29:43.532094'
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AWSMarketplaceCustomerData:
       properties:
         first_name:
@@ -1968,15 +2032,6 @@ components:
       - service
       - version
       title: FlatIdentifier
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     IntervalType:
       type: string
       enum:
@@ -3042,27 +3097,6 @@ components:
       required:
       - account_type
       title: UpgradeStripeSubscription
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     nuclia_accounting__api__models__InvoiceItem:
       properties:
         id:
@@ -3137,6 +3171,8 @@ components:
           title: Title
         type:
           $ref: '#/components/schemas/AccountType'
+        zone_visibility:
+          $ref: '#/components/schemas/ZoneVisibility'
         description:
           anyOf:
           - type: string
@@ -3241,6 +3277,7 @@ components:
       - slug
       - title
       - type
+      - zone_visibility
       - can_manage_account
       - current_users
       - current_kbs
@@ -3261,12 +3298,11 @@ components:
     AccountCreation:
       properties:
         slug:
-          type: string
-          pattern: ^[a-z0-9_-]+$
-          title: Account slug
-          description: Identifier to use as the account identifier in all account
-            resources and subresources. This is a mutable field, unique, but independent
-            of the account id
+          anyOf:
+          - type: string
+            pattern: ^[a-z0-9_-]+$
+          - type: 'null'
+          title: Slug
         title:
           type: string
           minLength: 1
@@ -3292,7 +3328,6 @@ components:
           default: classic
       type: object
       required:
-      - slug
       - title
       title: AccountCreation
     AccountId:
@@ -3350,12 +3385,15 @@ components:
           title: Title
         type:
           $ref: '#/components/schemas/AccountType'
+        zone_visibility:
+          $ref: '#/components/schemas/ZoneVisibility'
       type: object
       required:
       - id
       - slug
       - title
       - type
+      - zone_visibility
       title: AccountListItem
     AccountManager:
       properties:
@@ -3400,6 +3438,8 @@ components:
           anyOf:
           - $ref: '#/components/schemas/AccountLabels'
           - type: 'null'
+        zone_visibility:
+          $ref: '#/components/schemas/ZoneVisibility'
         blocked_features:
           items:
             $ref: '#/components/schemas/BlockedFeature'
@@ -3458,9 +3498,8 @@ components:
           - $ref: '#/components/schemas/SAMLConfig'
           - type: 'null'
         workflow:
-          anyOf:
-          - $ref: '#/components/schemas/WorkflowMode'
-          - type: 'null'
+          $ref: '#/components/schemas/WorkflowMode'
+          default: classic
       type: object
       required:
       - id
@@ -3469,6 +3508,7 @@ components:
       - creator
       - email
       - created
+      - zone_visibility
       - blocked_features
       - blocking_state
       - users
@@ -3568,6 +3608,10 @@ components:
           anyOf:
           - $ref: '#/components/schemas/AccountLabels'
           - type: 'null'
+        zone_visibility:
+          anyOf:
+          - $ref: '#/components/schemas/ZoneVisibility'
+          - type: 'null'
       type: object
       title: AccountManagerPatch
     AccountManagerSetBlocking:
@@ -3643,6 +3687,8 @@ components:
           anyOf:
           - $ref: '#/components/schemas/AccountLabels'
           - type: 'null'
+        zone_visibility:
+          $ref: '#/components/schemas/ZoneVisibility'
       type: object
       required:
       - id
@@ -3651,6 +3697,7 @@ components:
       - creator
       - email
       - created
+      - zone_visibility
       title: AccountManagerSummary
     AccountManagerUploadLimits:
       properties:
@@ -3975,6 +4022,30 @@ components:
       required:
       - type
       title: AccountUserPatch
+    AccountZoneEntry:
+      properties:
+        account_id:
+          type: string
+          format: uuid
+          title: Account Id
+        zone_id:
+          type: string
+          format: uuid
+          title: Zone Id
+      type: object
+      required:
+      - account_id
+      - zone_id
+      title: AccountZoneEntry
+    AccountZoneGrant:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+      type: object
+      required:
+      - account_id
+      title: AccountZoneGrant
     AccountZoneInfo:
       properties:
         account_type:
@@ -4161,6 +4232,7 @@ components:
       enum:
       - AWS
       - GCP
+      - ON_PREMISES
       title: CloudProvider
     CreateTokenRequest:
       properties:
@@ -4382,6 +4454,10 @@ components:
           default: classic
         type:
           $ref: '#/components/schemas/AccountType'
+        zone_visibility:
+          anyOf:
+          - $ref: '#/components/schemas/ZoneVisibility'
+          - type: 'null'
       type: object
       required:
       - slug
@@ -4492,15 +4568,20 @@ components:
           title: Modified
         cloud_provider:
           $ref: '#/components/schemas/CloudProvider'
-        subdomain:
-          type: string
-          title: Subdomain
+        private:
+          type: boolean
+          title: Private
+        origin:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Origin
       type: object
       required:
       - id
       - slug
       - cloud_provider
-      - subdomain
+      - private
       title: ManageZone
     ManageZoneAdd:
       properties:
@@ -4517,16 +4598,21 @@ components:
           title: Creator
         cloud_provider:
           $ref: '#/components/schemas/CloudProvider'
-        subdomain:
-          type: string
-          title: Subdomain
+        private:
+          type: boolean
+          title: Private
+          default: false
+        origin:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Origin
       type: object
       required:
       - slug
       - title
       - creator
       - cloud_provider
-      - subdomain
       title: ManageZoneAdd
     ManageZoneCreated:
       properties:
@@ -4567,9 +4653,14 @@ components:
           title: Modified
         cloud_provider:
           $ref: '#/components/schemas/CloudProvider'
-        subdomain:
-          type: string
-          title: Subdomain
+        private:
+          type: boolean
+          title: Private
+        origin:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Origin
         token:
           type: string
           title: Token
@@ -4578,7 +4669,7 @@ components:
       - id
       - slug
       - cloud_provider
-      - subdomain
+      - private
       - token
       title: ManageZoneCreated
     ManageZonePatch:
@@ -4595,20 +4686,20 @@ components:
             minLength: 1
           - type: 'null'
           title: Title
-        url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Url
         cloud_provider:
           anyOf:
           - $ref: '#/components/schemas/CloudProvider'
           - type: 'null'
-        subdomain:
+        private:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Private
+        origin:
           anyOf:
           - type: string
           - type: 'null'
-          title: Subdomain
+          title: Origin
       type: object
       title: ManageZonePatch
     ManageZoneSessionToken:
@@ -4816,28 +4907,16 @@ components:
       title: SignupAction
     SignupRequest:
       properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        email:
-          anyOf:
-          - type: string
-            format: email
-          - type: 'null'
-          title: Email
         password:
           type: string
           title: Password
         login_challenge:
-          anyOf:
-          - type: string
-          - type: 'null'
+          type: string
           title: Login Challenge
       type: object
       required:
       - password
+      - login_challenge
       title: SignupRequest
     SignupResponse:
       properties:
@@ -5159,16 +5238,27 @@ components:
           title: Title
         cloud_provider:
           $ref: '#/components/schemas/CloudProvider'
-        subdomain:
-          type: string
-          title: Subdomain
+        private:
+          type: boolean
+          title: Private
+        origin:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Origin
       type: object
       required:
       - id
       - slug
       - cloud_provider
-      - subdomain
+      - private
       title: Zone
+    ZoneVisibility:
+      type: string
+      enum:
+      - DEFAULT
+      - RESTRICTED
+      title: ZoneVisibility
     stashify_idp__api__auth__providers__microsoft__SocialLoginAuthorizationRequest:
       properties:
         code:

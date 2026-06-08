@@ -1,6 +1,7 @@
 export {
   AccountModule,
   EntitiesModule,
+  KbSettingsModule,
   MetricsModule,
   ResourcesModule,
   TASK_AUTOMATION_ROUTES,

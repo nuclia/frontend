@@ -504,7 +504,13 @@ export interface GenericFieldData extends IFieldDataBase {
   value?: string;
 }
 
-export type AnyFieldData = FileFieldData | TextFieldData | LinkFieldData | ConversationFieldData | GenericFieldData;
+export type AnyFieldData =
+  | FileFieldData
+  | TextFieldData
+  | LinkFieldData
+  | ConversationFieldData
+  | GenericFieldData
+  | KeyValueFieldData;
 
 export interface ConversationField {
   messages: Message[];
@@ -581,7 +587,13 @@ export interface AppliedDataAugmentation {
 
 // --- key_value field type ---
 
-export type KVValue = string | number | boolean;
+/** A closed-bound range value for `range: true` fields (integer, float, or date). */
+export interface KVRange {
+  lower: number | string;
+  upper: number | string;
+}
+
+export type KVValue = string | string[] | number | boolean | KVRange;
 
 export type KVFieldType = 'text' | 'integer' | 'float' | 'boolean' | 'date';
 
@@ -589,19 +601,34 @@ export interface KVSchemaField {
   key: string;
   type: KVFieldType;
   description?: string;
-  required?: boolean;
+  required: boolean;
+  // Only meaningful for `integer`, `float`, and `date` field types.
+  range: boolean;
+  // Only meaningful for the `text` field type.
+  repeated: boolean;
 }
 
 export interface KVSchema {
-  name: string;
+  id: string;
   description?: string;
-  fields: KVSchemaField[];
+  fields: KVSchemaField[]; // up to 50 fields per schema
 }
 
 export interface KBKVSchemas {
-  schemas: { [name: string]: KVSchema };
+  // up to 20 schemas per KB
+  schemas: { [id: string]: KVSchema };
+}
+
+export interface UpdateKVSchema {
+  // id is immutable and thus not included here
+  description?: string;
+  fields?: KVSchemaField[];
+}
+
+export interface KeyValueField {
+  data: Record<string, KVValue>;
 }
 
 export interface KeyValueFieldData extends IFieldDataBase {
-  value?: { [key: string]: KVValue };
+  value?: KeyValueField;
 }

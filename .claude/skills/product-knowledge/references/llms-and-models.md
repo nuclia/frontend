@@ -9,29 +9,33 @@ _Source: `../docs/docs/rag/llms.md`, `rag/advanced/models.md`, `develop/openai_c
 ### OpenAI
 
 - GPT-4, GPT-4o, GPT-4o Mini, o1, o3, o3 Mini, o4 Mini
-- GPT-4.1, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat
+- GPT-4.1, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat, GPT-5.5
 - OpenAI API Compatible Model (BYOM)
 
 ### OpenAI via Azure
 
-- GPT-4o, GPT-4o Mini, o1, o3, o3 Mini, o4 Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat
+- GPT-4o, GPT-4o Mini, o1, o3, o3 Mini, o4 Mini, GPT-5, GPT-5 Mini, GPT-5 Nano, GPT-5 Chat, GPT-5.5
 - Azure GPT OSS 120B
 
 ### Anthropic (direct)
 
-- Claude 4 Sonnet, Claude 4 Opus, Claude 4.5 Sonnet, Claude 4.5 Haiku, Claude 4.6 Sonnet, Claude 4.6 Opus
+- Claude 4 Sonnet, Claude 4 Opus, Claude 4.5 Sonnet, Claude 4.5 Haiku, Claude 4.6 Sonnet, Claude 4.6 Opus, Claude 4.7 Opus
 
 ### Anthropic via GCP (Vertex AI)
 
-- Claude 3.5 Sonnet v2, Claude 3.7 Sonnet, Claude 4.5 Sonnet
+- Claude 3.5 Sonnet v2, Claude 3.7 Sonnet, Claude 4.5 Sonnet, Claude 4.6 Opus, Claude 4.7 Opus
 
 ### Anthropic via AWS Bedrock
 
-- Claude 3.7 Sonnet, Claude 4 Sonnet, Claude 4.5 Sonnet, Claude 4 Opus, Claude 4.1 Opus
+- Claude 3.7 Sonnet, Claude 4 Sonnet, Claude 4.5 Sonnet, Claude 4.5 Haiku, Claude 4.6 Sonnet, Claude 4 Opus, Claude 4.1 Opus, Claude 4.6 Opus
 
 ### Gemini via GCP
 
-- Gemini Flash 2.0 Lite, Flash 2.0, Flash 2.5 Lite, Flash 2.5, Pro 2.5
+- Gemini Flash 2.0 Lite, Flash 2.0, Flash 2.5 Lite, Flash 2.5, Pro 2.5, Gemini 3.1 Flash Lite
+
+### GLM via GCP
+
+- GLM-5 (Global)
 
 ### Hugging Face
 

@@ -35,17 +35,19 @@ many features; this covers only what the team has adopted. When in doubt, match 
 
 Every non-trivial page or feature component **must** be split into three files:
 
-| File                        | Responsibility                                                 | Class/export type                                                                                                   |
-| --------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `feature-name.component.ts` | Template wiring, host element, signals bound to service state  | `@Component` class — no business logic, no HTTP calls, no inline data                                               |
-| `feature-name.service.ts`   | All business logic, API calls, derived state                   | `@Injectable()` class — scoped to the component via `providers: [FeatureNameService]` in the `@Component` decorator |
-| `feature-name.config.ts`    | Static configuration: column defs, dropdown options, constants | Exported `const` values and types — no class, no DI                                                                 |
+| File                        | Responsibility                                                               | Class/export type                                                                                                   |
+| --------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `feature-name.component.ts` | Template wiring, host element, signals bound to service state                | `@Component` class — no business logic, no HTTP calls, no inline data                                               |
+| `feature-name.service.ts`   | All business logic, API calls, derived state                                 | `@Injectable()` class — scoped to the component via `providers: [FeatureNameService]` in the `@Component` decorator |
+| `feature-name.config.ts`    | Static configuration: column defs, options, limits, layout values, constants | Exported `const` values and types — no class, no DI                                                                 |
 
 ### Rules
 
 - **Component file** may only: inject the local service, bind signals to the template, handle user events by delegating to the service.
 - **Service file** owns state as `signal()` / `computed()`. If state feeds from an observable, use the Tier 2 pattern (tap into signal, expose `asReadonly()`).
 - **Config file** is pure TypeScript — no imports from Angular, no `@Injectable`. Import it in both the component and the service if needed.
+- **Prefer grouped config objects for related UI constants.** When a feature has several static UI values that belong together (columns, sidebar fields, limits, options, layout values), export one or a small number of feature-local config objects such as `config`, `listConfig`, or `formConfig` instead of many loose constants.
+- **Why:** grouped config objects keep locality high, remove repetitive alias lines from the component class, and give templates a single access point like `config.columns` or `formConfig.maxFields`.
 
 ### Example
 
@@ -53,21 +55,26 @@ Every non-trivial page or feature component **must** be split into three files:
 // my-page.config.ts  — pure constants, no Angular imports
 import { MyColumnDef } from './my-page.models';
 
-export const MY_PAGE_COLUMNS: MyColumnDef[] = [
-  { key: 'date', label: 'activity.column.date', width: '120px' },
-  { key: 'name', label: 'activity.column.name', width: '1fr' },
-];
+export const MY_PAGE_CONFIG = {
+  columns: [
+    { key: 'date', label: 'activity.column.date', width: '120px' },
+    { key: 'name', label: 'activity.column.name', width: '1fr' },
+  ] satisfies MyColumnDef[],
+  pageSizeOptions: [10, 25, 50],
+  sidebarWidth: '320px',
+} as const;
 ```
 
 ```ts
 // my-page.service.ts  — logic + state, local scope
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { MY_PAGE_COLUMNS } from './my-page.config';
+import { MY_PAGE_CONFIG } from './my-page.config';
 
 @Injectable()
 export class MyPageService {
   private sdk = inject(SDKService);
+  protected config = MY_PAGE_CONFIG;
 
   // ── State (signals) ───────────────────────────────────────────────
   private _items = signal<MyItem[]>([]);
@@ -106,7 +113,7 @@ export class MyPageService {
 })
 export class MyPageComponent {
   protected service = inject(MyPageService);
-  readonly columns = MY_PAGE_COLUMNS; // ← from config, not computed here
+  readonly config = MY_PAGE_CONFIG; // ← one template entrypoint, not many aliased constants
 }
 ```
 

@@ -133,7 +133,7 @@ const routes: Routes = [
               },
               {
                 path: 'manage',
-                component: KnowledgeBoxSettingsComponent,
+                loadChildren: () => import('./app-routing.lazy').then((m) => m.KbSettingsModule),
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {
