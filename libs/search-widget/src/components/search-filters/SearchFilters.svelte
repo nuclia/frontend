@@ -23,9 +23,11 @@
     filterByMime,
     filterByPath,
     hasRangeCreation,
+    labelFacets,
     labelFilters,
     labelSetFilters,
     type LabelSetWithId,
+    loadLabelFacets,
     type MimeFacet,
     mimeTypesfilters,
     orderedLabelSetList,
@@ -38,6 +40,7 @@
     removeLabelSetFilter,
     removeMimeFilter,
     searchFilters,
+    displayLabelFilterCounts,
   } from '../../core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
@@ -101,8 +104,19 @@
 
   function onClickLabelExpander(id: string, event: Event) {
     if ((event?.target as HTMLElement).tagName === 'DIV') {
-      toggleExpander(id);
+      toggleLabelSet(id);
     }
+  }
+
+  function toggleLabelSet(labelSetId: string) {
+    toggleExpander(labelSetId);
+    combineLatest([labelFacets, displayLabelFilterCounts])
+      .pipe(take(1))
+      .subscribe(([facets, showCounts]) => {
+        if (showCounts && !facets[labelSetId]) {
+          loadLabelFacets(labelSetId);
+        }
+      });
   }
 
   onMount(() => {
@@ -261,7 +275,7 @@
       {#if $filterByLabels}
         <span class="header-button">
           <IconButton
-            on:click={() => toggleExpander(labelSet.id)}
+            on:click={() => toggleLabelSet(labelSet.id)}
             icon="chevron-down"
             size="small"
             aspect="basic" />
@@ -281,6 +295,9 @@
                 $preselection.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title }))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
+              {#if $displayLabelFilterCounts && $labelFacets[labelSet.id]?.[label.title]}
+                ({$labelFacets[labelSet.id]?.[label.title]})
+              {/if}
             </Checkbox>
           </div>
         {/each}

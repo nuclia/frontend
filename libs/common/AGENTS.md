@@ -38,6 +38,12 @@ upload/            ← Multi-channel upload (file, link, CSV, sitemap, text, Q&A
 
 Other small areas: `aws-onboarding/`, `directives/`, `features/`, `hint/`, `kb-creation/`, `knowledge-box-keys/`, `knowledge-box-settings/`, `knowledge-box-users/`, `navbar/`, `page-not-found/`, `pagination/`, `pipes/`, `select-account-kb/`, `token-dialog/`, `topbar/`, `users-manage/`, `validators/`.
 
+**`knowledge-box-settings/` sub-structure:**
+
+- `KnowledgeBoxSettingsComponent` (standalone) — KB general settings (name, description, slug)
+- `kv-schemas/kb-settings.module.ts` — `KbSettingsModule` (the lazy-loaded module): declares `KbSettingsLayoutComponent` (tab shell with router-outlet), `KvSchemasComponent` (CRUD list), `SchemaFormComponent`, `SchemaEditModalComponent`; routes `general → KnowledgeBoxSettingsComponent`, `kv-schemas → KvSchemasComponent`
+- Barrel exports `KnowledgeBoxSettingsComponent` + `KbSettingsModule` (old `KnowledgeBoxSettingsModule` is deleted)
+
 ---
 
 ## Guards

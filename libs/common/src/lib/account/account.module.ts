@@ -53,7 +53,6 @@ import { TokenDialogModule } from '../token-dialog';
 import { ChartsModule } from '../charts';
 import { NavbarModule } from '../navbar';
 import { HintModule } from '../hint';
-import { KnowledgeBoxSettingsModule } from '../knowledge-box-settings';
 import { ProfileComponent } from '../profile/profile.component';
 
 const routes: Routes = [
@@ -182,7 +181,6 @@ const routes: Routes = [
     BillingModule,
     AccountStatusComponent,
     PaDateTimeModule,
-    KnowledgeBoxSettingsModule,
     PaTooltipModule,
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,

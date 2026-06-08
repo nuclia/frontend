@@ -1,0 +1,99 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-card {
+  border: 1px solid var(--color-neutral-light);
+  border-radius: $border-radius-card;
+  padding: rhythm(4);
+}
+
+.modal-content {
+  padding-top: rhythm(1);
+  padding-bottom: rhythm(3);
+}
+
+.form-title-section,
+.fields-title-section {
+  margin-bottom: rhythm(3);
+
+  .form-title {
+    margin-bottom: rhythm(1);
+  }
+}
+
+.schema-fields-section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-bottom: rhythm(6);
+}
+
+.fields-table {
+  width: 100%;
+  margin-bottom: rhythm(1.5);
+}
+
+.fields-header-row,
+.field-row {
+  display: grid;
+  // col widths: key | required | type | range | repeated | description | delete
+  grid-template-columns: 1fr 60px 150px 60px 60px 1fr 40px;
+  align-items: center;
+  gap: rhythm(2);
+}
+
+.fields-header-row {
+  padding: 0 0 rhythm(1);
+  margin-bottom: rhythm(0.5);
+
+  .text-center {
+    text-align: center;
+  }
+}
+
+.col-label {
+  font-size: font-size(s);
+  color: var(--color-neutral-regular);
+  font-weight: $font-weight-semi-bold;
+}
+
+.col-conditional {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: rhythm(5);
+}
+
+.field-row {
+  padding: rhythm(1) 0;
+
+  .self-center {
+    justify-self: center;
+  }
+
+  ::ng-deep pa-checkbox {
+    label:empty {
+      display: none;
+    }
+    .pa-toggle {
+      align-items: center;
+    }
+  }
+}
+
+.add-field-row {
+  margin-top: rhythm(1.5);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: rhythm(1);
+  margin-top: rhythm(4);
+  padding-top: rhythm(3);
+}
+
+.error-text {
+  color: var(--color-danger-regular);
+  font-size: font-size(s);
+  margin-top: rhythm(0.5);
+}

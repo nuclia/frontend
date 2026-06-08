@@ -1,0 +1,14 @@
+<pa-tabs>
+  <pa-tab
+    [active]="!isKvSchemasActive()"
+    (click)="navigateTo('general')">
+    {{ 'kb.kv-schemas.tab-general' | translate }}
+  </pa-tab>
+  <pa-tab
+    [active]="isKvSchemasActive()"
+    (click)="navigateTo('kv-schemas')">
+    {{ 'kb.kv-schemas.tab' | translate }}
+  </pa-tab>
+</pa-tabs>
+
+<router-outlet></router-outlet>

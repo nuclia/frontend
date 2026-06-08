@@ -319,31 +319,32 @@ For file-type icons, use the `mimeIcon` pipe: `{{ mimeType | mimeIcon }}` or `St
 
 ---
 
-## Typography Tokens (CSS custom properties)
+## Typography Tokens
 
-```css
---font-family-sans-serif   /* Poppins / Roboto (white-labeled via --custom-font-family) */
---font-family-monospace    /* Source Code Pro */
+### In Angular app component SCSS (dashboard, rao, manager-v2, nucliadb-admin)
 
---font-size-xxs   /* 10px (0.625rem) */
---font-size-xs    /* 12px (0.75rem) */
---font-size-s     /* 14px (0.875rem) */   ← body default
---font-size-m     /* 16px (1rem) */
---font-size-l     /* 18px (1.125rem) */
---font-size-xl    /* 20px (1.25rem) */
---font-size-xxl   /* 24px (1.5rem) */
+After `@use 'apps/dashboard/src/variables' as *;`, use **SCSS functions/variables** — NOT CSS custom properties.
+`_cssvariables.scss` (which declares `--font-size-*` CSS vars) is loaded only by `standalone-css.scss` for the search-widget, **not** by `_core.scss` used by Angular apps.
 
---font-weight-thin         /* 300 */
---font-weight-regular      /* 400 */
---font-weight-semi-bold    /* 500–600 (varies by context) */
---font-weight-bold         /* 700 */
+```scss
+// Font sizes — SCSS function (reads from $font-size map)
+font-size: font-size(xxs); // 10px
+font-size: font-size(xs); // 12px
+font-size: font-size(s); // 14px  ← body default
+font-size: font-size(m); // 16px
+font-size: font-size(l); // 18px
+font-size: font-size(xl); // 20px
+font-size: font-size(xxl); // 24px
 
---line-height-s   /* 16px */   --line-height-m   /* 20px */
---line-height-l   /* 24px */   --line-height-xl  /* 28px */
---line-height-xxl /* 32px */
+// Font weights — SCSS variables
+font-weight: $font-weight-semi-bold; // 600
+// Note: $font-weight-thin (300), $font-weight-regular (400), $font-weight-bold (700)
+// come from pastanaga-angular and are also available after the @use.
+
+// Font families — SCSS variables
+font-family: $font-family-monospace; // Source Code Pro
+font-family: $font-family-sans-serif; // Roboto / var(--custom-font-family)
 ```
-
----
 
 ## Colour Palette (CSS custom properties)
 

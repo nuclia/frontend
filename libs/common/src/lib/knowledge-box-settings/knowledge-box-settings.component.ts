@@ -1,9 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SDKService, STFUtils } from '@flaps/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  IErrorMessages,
+  PaButtonModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, merge, Observable, of, Subject } from 'rxjs';
@@ -15,7 +24,18 @@ import { Sluggable } from '../validators';
   templateUrl: './knowledge-box-settings.component.html',
   styleUrls: ['./knowledge-box-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    PaButtonModule,
+    PaIconModule,
+    PaPopupModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    PaExpanderModule,
+  ],
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

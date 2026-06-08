@@ -97,17 +97,11 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
 
 export const searchInFieldQuery = viewerState.writer<string | null, string>(
   (state) => state.query,
-  (state, query) => {
-    const trimmedQuery = query.trim();
-    if (trimmedQuery !== state.query) {
-      return {
-        ...state,
-        query: trimmedQuery,
-        hasError: false,
-      };
-    }
-    return state;
-  },
+  (state, query) => ({
+    ...state,
+    query,
+    hasError: false,
+  }),
 );
 
 export const searchInFieldResults = viewerState.writer<Search.FindParagraph[] | null>(
