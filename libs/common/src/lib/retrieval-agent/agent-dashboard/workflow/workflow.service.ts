@@ -987,7 +987,9 @@ export class WorkflowService {
     if (!(config as any).id) {
       (config as any).id = crypto.randomUUID();
     }
-    updateNode(nodeId, nodeCategory, { nodeConfig: config });
+    const existingNodeConfig = getNode(nodeId, nodeCategory)?.nodeConfig;
+    const mergedConfig: NodeConfig = existingNodeConfig ? { ...existingNodeConfig, ...config } : config;
+    updateNode(nodeId, nodeCategory, { nodeConfig: mergedConfig });
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
     let childCreated = false;
     if (isCondionalNode(nodeType) && !hasChildInThen(nodeId, nodeCategory)) {
