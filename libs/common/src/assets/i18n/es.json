@@ -2133,6 +2133,8 @@
 	"search.configuration.search-box.filters.toggle-label": "Mostrar botón para filtrar",
 	"search.configuration.search-box.highlight.toggle-description": "Resaltar las palabras clave encontradas.",
 	"search.configuration.search-box.highlight.toggle-label": "Destacar",
+	"search.configuration.search-box.label-filter-counts.toggle-description": "Mostrar el número de recursos junto a cada filtro de etiqueta",
+	"search.configuration.search-box.label-filter-counts.toggle-label": "Mostrar recuentos en los filtros de etiquetas",
 	"search.configuration.search-box.limit-paragraphs.toggle-description": "Para controlar cuántos de los párrafos más relevantes se pasan al LLM para generar la respuesta. Valor predeterminado: 20.",
 	"search.configuration.search-box.limit-paragraphs.toggle-label": "Mejores resultados (top_k)",
 	"search.configuration.search-box.preselected-filters.assistant.add-expression-button": "Añadir expresión",

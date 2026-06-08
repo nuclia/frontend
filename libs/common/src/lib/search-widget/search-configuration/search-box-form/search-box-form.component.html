@@ -96,6 +96,19 @@
             {{ 'search.configuration.search-box.filters.initial-filters.textarea-label' | translate }}
           </nsi-expandable-textarea>
         </div>
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="labelFilterCounts"
+            withBackground
+            spaceBetweenLabelAndToggle>
+            <span class="toggle-label">
+              {{ 'search.configuration.search-box.label-filter-counts.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{ 'search.configuration.search-box.label-filter-counts.toggle-description' | translate }}
+          </div>
+        </div>        
       }
 
       <div class="config-form-field">
