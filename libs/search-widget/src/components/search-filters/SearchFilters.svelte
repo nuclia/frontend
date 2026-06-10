@@ -295,8 +295,8 @@
                 $preselection.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title }))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
-              {#if $displayLabelFilterCounts && $labelFacets[labelSet.id]?.[label.title]}
-                ({$labelFacets[labelSet.id]?.[label.title]})
+              {#if $displayLabelFilterCounts}
+                ({$labelFacets[labelSet.id]?.[label.title] || 0})
               {/if}
             </Checkbox>
           </div>
