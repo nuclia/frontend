@@ -21,6 +21,7 @@ import {
   AvatarModel,
   PaAvatarModule,
   PaDropdownModule,
+  PaFocusableModule,
   PaIconModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
@@ -38,6 +39,7 @@ import { AccountDeleteComponent } from '../../account/account-manage/account-del
     PaIconModule,
     PaAvatarModule,
     PaDropdownModule,
+    PaFocusableModule,
     PaPopupModule,
     AccountDeleteComponent,
   ],

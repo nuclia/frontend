@@ -2,3 +2,32 @@
   height: 100%;
   padding-top: var(--app-topbar-height);
 }
+
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: -1;
+
+  &:focus {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 8px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    z-index: 9999;
+    padding: 8px 16px;
+    background: #ffffff;
+    border: 2px solid var(--color-primary-regular, #2a6bbf);
+    border-radius: 4px;
+    color: var(--color-primary-regular, #2a6bbf);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}

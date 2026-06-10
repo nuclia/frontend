@@ -1,5 +1,10 @@
+@if (type === 'warning') {
+  <span class="sr-only">Warning:</span>
+}
 @if (icon) {
-  <pa-icon [name]="icon"></pa-icon>
+  <pa-icon
+    [name]="icon"
+    aria-hidden="true"></pa-icon>
 }
 <div class="body-m">
   <ng-content></ng-content>

@@ -2,12 +2,16 @@
   class="simple-kb"
   [class.search-view]="view() === 'search'"
   [class.with-banner]="isCoworkTrial() && isAtEquator()">
-  @if (isCoworkTrial()) {
-    <app-trial-equator-banner></app-trial-equator-banner>
-  }
-  <div
+  <div aria-live="polite">
+    @if (isCoworkTrial()) {
+      <app-trial-equator-banner></app-trial-equator-banner>
+    }
+  </div>
+  <h1
     class="title display-m"
-    [class.hidden]="view() === 'search'">
+    [class.hidden]="view() === 'search'"
+    aria-live="polite"
+    aria-atomic="true">
     @if (step() === 1) {
       {{ 'simple.title.first-files' | translate }}
     } @else if (step() === 2) {
@@ -16,9 +20,12 @@
     } @else if (step() === 3) {
       {{ 'simple.title.testing' | translate }}
     }
-  </div>
+  </h1>
 
-  <div class="counters">
+  <div
+    class="counters"
+    aria-live="polite"
+    aria-atomic="false">
     @if (step() === 2) {
       <div>
         <strong>{{ 'simple.ready' | translate }}</strong>
@@ -33,47 +40,33 @@
         <span>: {{ counter()?.error || 0 }}</span>
       </div>
     } @else if (step() === 3) {
-      <div
+      <button
         class="nav"
         [class.active]="view() === 'resources'"
+        [attr.aria-pressed]="view() === 'resources'"
         (click)="view() !== 'resources' ? changeView('resources') : null">
-        @if (view() === 'resources') {
-          <pa-icon
-            name="folder"
-            color="white"></pa-icon>
-        } @else {
-          <pa-button
-            kind="secondary"
-            aspect="basic"
-            icon="folder">
-            {{ 'simple.your-resources' | translate }}
-          </pa-button>
-        }
+        <pa-icon
+          [class.active]="view() === 'resources'"
+          name="folder"
+          aria-hidden="true"></pa-icon>
         <div>
           <strong>{{ 'simple.your-resources' | translate }}</strong>
           <span>: {{ counter()?.processed || 0 }}</span>
         </div>
-      </div>
-      <div
+      </button>
+      <button
         class="nav"
         [class.active]="view() === 'history'"
+        [attr.aria-pressed]="view() === 'history'"
         (click)="view() !== 'history' ? changeView('history') : null">
-        @if (view() === 'history') {
-          <pa-icon
-            name="clock-dash"
-            color="white"></pa-icon>
-        } @else {
-          <pa-button
-            kind="secondary"
-            aspect="basic"
-            icon="clock-dash">
-            {{ 'simple.history' | translate }}
-          </pa-button>
-        }
+        <pa-icon
+          [class.active]="view() === 'history'"
+          name="clock-dash"
+          aria-hidden="true"></pa-icon>
         <div>
           <strong>{{ 'simple.history' | translate }}</strong>
         </div>
-      </div>
+      </button>
     }
   </div>
   @if (step() === 3) {
