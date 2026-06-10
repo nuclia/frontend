@@ -57,7 +57,10 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: Widget.SearchBoxConfig | undefined) {
     if (value) {
-      this.form.patchValue(value);
+      this.form.patchValue({
+        ...value,
+        initialFilters: value.initialFilters ?? '',
+      });
     }
   }
   @Input({ required: true }) semanticModels: OptionModel[] = [];
