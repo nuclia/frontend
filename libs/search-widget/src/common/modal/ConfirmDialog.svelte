@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import Button from '../button/Button.svelte';
+  import { createFocusTrap } from '../focusTrap';
   import { freezeBackground, unblockBackground } from './modal.utils';
 
   interface Props {
@@ -20,9 +21,13 @@
     children,
   }: Props = $props();
 
+  let dialogEl: HTMLDialogElement = $state();
+  const { trapFocus, restoreFocus } = createFocusTrap(() => dialogEl);
+
   $effect(() => {
     if (show) {
       freezeBackground();
+      trapFocus();
     }
   });
 
@@ -30,6 +35,7 @@
   const close = (action) => {
     show = false;
     unblockBackground();
+    restoreFocus();
     dispatch(action);
   };
   const outsideClick = () => {
@@ -43,7 +49,10 @@
   <div
     class="sw-modal-backdrop fade"
     onclick={outsideClick}>
-    <dialog class="modal">
+    <dialog
+      class="modal"
+      bind:this={dialogEl}
+      aria-modal="true">
       <div class="modal-content">
         {@render children?.()}
         <footer class="confirm-footer">

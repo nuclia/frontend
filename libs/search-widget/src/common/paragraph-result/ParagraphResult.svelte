@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
   import type { RankedParagraph, ResultType } from '../../core';
+  import { _ } from '../../core/i18n';
   import IconButton from '../button/IconButton.svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
@@ -52,7 +53,7 @@
   }
 </script>
 
-<li class="sw-paragraph-result">
+<div class="sw-paragraph-result">
   {#if !stack}
     <div
       class="expander-button-container"
@@ -62,6 +63,7 @@
           icon="chevron-right"
           aspect="basic"
           size="xsmall"
+          ariaLabel={$_('paragraph.expand')}
           on:click={toggleExpand} />
       {/if}
     </div>
@@ -99,12 +101,13 @@
     <div
       class="paragraph-text"
       class:ellipsis={hasEllipsis && !expanded}
+      inert={hasEllipsis && !expanded ? true : undefined}
       bind:this={paragraphElement}>
       <MarkdownRendering
         text={paragraph.text}
         on:setElement={checkHeight} />
     </div>
   </div>
-</li>
+</div>
 
 <style src="./ParagraphResult.css"></style>

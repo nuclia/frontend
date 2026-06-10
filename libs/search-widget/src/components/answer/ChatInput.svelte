@@ -141,12 +141,14 @@
             icon="microphone"
             active={$isSpeechStarted}
             aspect="basic"
+            ariaLabel={$_('input.microphone')}
             on:click={toggleSpeech} />
         {/if}
         {#if $hasSearchButton}
           <IconButton
             icon="search"
             aspect="basic"
+            ariaLabel={$_('input.search')}
             on:click={askQuestion} />
         {/if}
         {#if $hasFilterButton}
@@ -156,6 +158,7 @@
               aspect="basic"
               size="medium"
               active={showFilterDropdowns}
+              ariaLabel={$_('input.filters')}
               on:click={toggleFilter} />
           </div>
         {/if}

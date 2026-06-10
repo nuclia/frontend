@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import { createFocusTrap } from '../focusTrap';
   import { freezeBackground, getFixedRootParentIfAny, iOSDevice, unblockBackground } from './modal.utils';
 
   interface Props {
@@ -24,15 +25,18 @@
   let top: number | undefined = $state(undefined);
   let left: number | undefined = $state(undefined);
   let fixedRootParentChecked = false;
+  let dialogEl: HTMLDialogElement = $state();
+  const { trapFocus, restoreFocus } = createFocusTrap(() => dialogEl);
 
   const isIOS = iOSDevice();
-
   $effect(() => {
     if (!popup) {
       if (show) {
         freezeBackground();
+        trapFocus();
       } else {
         unblockBackground();
+        restoreFocus();
       }
     }
 
@@ -112,6 +116,8 @@
     onclick={outsideClick}>
     <dialog
       class="modal"
+      bind:this={dialogEl}
+      aria-modal="true"
       onclick={insideClick}
       style:--popup-top="{top || 0}px"
       style:--popup-left="{left || 0}px"

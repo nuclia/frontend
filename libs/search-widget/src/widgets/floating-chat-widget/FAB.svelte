@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { scale } from 'svelte/transition';
   import { Icon } from '../../common';
+  import { _ } from '../../core/i18n';
 
   interface Props {
     position?: 'bottom-right' | 'bottom-left';
@@ -34,7 +35,7 @@
   class="fab {size}"
   style="{positionStyle}"
   onclick={handleClick}
-  aria-label="Open chat"
+  aria-label={$_('widget.open-chat')}
   type="button"
   transition:scale={{ duration: 200 }}>
   <Icon name="chat" />

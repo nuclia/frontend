@@ -17,7 +17,7 @@
   --color-primary-lighter: var(--custom-color-primary-lighter, hsl(252, 100%, 90%));
   --color-primary-lightest: var(--custom-color-primary-lightest, hsl(252, 100%, 96%));
 
-  --color-secondary-stronger: hsl(49, 100%, 30%);
+  --color-secondary-stronger: hsl(49, 100%, 25%);
   --color-secondary-strong: hsl(49, 100%, 40%);
   --color-secondary-regular: hsl(49, 100%, 60%);
   --color-secondary-light: hsl(49, 100%, 80%);
@@ -120,7 +120,7 @@
   --color-scrollbar-track: var(--color-light-stronger);
   --color-scrollbar-thumb: var(--color-dark-stronger);
 
-  --focus-shadow: inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter);
+  --focus-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--color-primary-regular);
 
   /* Search bar */
   --search-bar-border-color: var(--border-color);

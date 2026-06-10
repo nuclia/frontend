@@ -25,6 +25,12 @@
     }
   }
 
+  .timeline:focus-visible,
+  .volume:focus-visible {
+    box-shadow: var(--focus-shadow);
+    outline: 0;
+  }
+
   .volume-container {
     --volume-thickness: var(--rhythm-0_5);
 

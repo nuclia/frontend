@@ -3,6 +3,7 @@
   import IconButton from '../../../../common/button/IconButton.svelte';
   import { sendFeedback } from '../../../../core/api';
   import { chat } from '../../../../core/stores/answers.store';
+  import { _ } from '../../../../core/i18n';
 
   interface Props {
     rank?: number;
@@ -32,6 +33,7 @@
     active={isGood}
     size="small"
     kind={isGood ? 'primary' : 'secondary'}
+    ariaLabel={$_('answer.feedback.good')}
     on:click={() => send(true)} />
 
   <IconButton
@@ -40,5 +42,6 @@
     active={isBad}
     size="small"
     kind={isBad ? 'primary' : 'secondary'}
+    ariaLabel={$_('answer.feedback.bad')}
     on:click={() => send(false)} />
 {/if}

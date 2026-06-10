@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { _ } from '../../core/i18n';
   import Icon from '../icons/Icon.svelte';
   import Spinner from '../spinner/Spinner.svelte';
   import Thumbnail from './Thumbnail.svelte';
@@ -43,21 +44,22 @@
       on:loaded={onLoad} />
 
     {#if loaded}
-      <div
-        class="action-container"
-        class:play-icon={!spinner}
-        tabindex="0"
-        onkeyup={(e) => {
-          if (e.key === 'Enter') play();
-        }}>
-        {#if !spinner}
+      {#if !spinner}
+        <button
+          class="action-container play-icon"
+          type="button"
+          aria-label={$_('player.play')}
+          onclick={play}
+          >
           <Icon
             name="play"
             size="large" />
-        {:else}
+        </button>
+      {:else}
+        <div class="action-container">
           <Spinner />
-        {/if}
-      </div>
+        </div>
+      {/if}
     {/if}
   </div>
 {/if}
