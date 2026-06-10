@@ -5,6 +5,8 @@ import {
   applyNumericConditions,
   formatDateToYearMonth,
   getMonthsSinceDate,
+  getRemiScoreDisplay,
+  getRemiColorClass,
 } from './metrics-utils';
 import { UsagePoint } from '@nuclia/core';
 import { NumericCondition } from './metrics-filters';
@@ -154,6 +156,75 @@ describe('metrics-utils', () => {
 
     it('returns months from now back to the given month', () => {
       expect(getMonthsSinceDate(new Date('2025-12-01T00:00:00.000Z'))).toEqual(['2026-02', '2026-01', '2025-12']);
+    });
+  });
+
+  describe('getRemiScoreDisplay()', () => {
+    it('normalizes 0-1 values to 0-100 and marks poor', () => {
+      expect(getRemiScoreDisplay(0.2)).toEqual({
+        normalizedScore: 20,
+        displayValue: '20/100',
+        label: 'Poor',
+        status: 'poor',
+        cssClass: 'remi-low',
+      });
+    });
+
+    it('normalizes 0-1 values to needs review', () => {
+      expect(getRemiScoreDisplay(0.6)).toEqual({
+        normalizedScore: 60,
+        displayValue: '60/100',
+        label: 'Needs review',
+        status: 'needs-review',
+        cssClass: 'remi-mid',
+      });
+    });
+
+    it('normalizes 0-5 scores to 0-100', () => {
+      expect(getRemiScoreDisplay(4)).toEqual({
+        normalizedScore: 80,
+        displayValue: '80/100',
+        label: 'Good',
+        status: 'good',
+        cssClass: 'remi-high',
+      });
+    });
+
+    it('passes through 0-100 percentages', () => {
+      expect(getRemiScoreDisplay(84)).toEqual({
+        normalizedScore: 84,
+        displayValue: '84/100',
+        label: 'Good',
+        status: 'good',
+        cssClass: 'remi-high',
+      });
+    });
+
+    it('returns no-data for null/undefined', () => {
+      expect(getRemiScoreDisplay(null)).toEqual({
+        normalizedScore: null,
+        displayValue: '—',
+        label: 'No data',
+        status: 'no-data',
+        cssClass: 'remi-no-data',
+      });
+
+      expect(getRemiScoreDisplay(undefined)).toEqual({
+        normalizedScore: null,
+        displayValue: '—',
+        label: 'No data',
+        status: 'no-data',
+        cssClass: 'remi-no-data',
+      });
+    });
+  });
+
+  describe('getRemiColorClass()', () => {
+    it('maps normalized statuses to low/mid/high tiers', () => {
+      expect(getRemiColorClass(0.2)).toBe('low');
+      expect(getRemiColorClass(0.6)).toBe('mid');
+      expect(getRemiColorClass(4)).toBe('high');
+      expect(getRemiColorClass(null)).toBeNull();
     });
   });
 });

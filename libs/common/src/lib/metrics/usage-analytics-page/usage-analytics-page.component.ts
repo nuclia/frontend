@@ -16,11 +16,10 @@ import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-a
 import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { SisModalService } from '@nuclia/sistema';
-import { getRemiColorClass } from '../metrics-utils';
 import { FeaturesService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MetricsPageComponent } from '../metrics-page.component';
+import { MetricsPageComponent, RemiDiagnosis } from '../metrics-page.component';
 
 @Component({
   selector: 'app-usage-analytics-page',
@@ -60,6 +59,60 @@ export class UsageAnalyticsPageComponent {
     return col;
   });
   readonly sidebarFields = USAGE_ANALYSIS_SIDEBAR_FIELDS;
+
+  readonly resolveRemiDiagnosis = (item: ActivityLogItem): RemiDiagnosis | null => {
+    const usageItem = item as UsageAnalyticsItem;
+    const issueLabel = usageItem._issueLabel ?? 'No data';
+
+    const map: Record<string, Omit<RemiDiagnosis, 'score'>> = {
+      'Context weak': {
+        severity: usageItem._issueSeverity ?? 'needs-review',
+        mainIssue: 'Context relevance is low.',
+        why: 'The answer may look acceptable, but REMi expected stronger retrieved content to support it.',
+        recommendedAction: 'Review retrieved sources or add missing content to the Knowledge Box.',
+      },
+      'Answer weak': {
+        severity: usageItem._issueSeverity ?? 'needs-review',
+        mainIssue: 'Answer relevance is low.',
+        why: 'REMi found that the answer does not directly address the user question.',
+        recommendedAction: 'Review the expected answer, prompt behavior, or model response.',
+      },
+      'Grounding weak': {
+        severity: usageItem._issueSeverity ?? 'needs-review',
+        mainIssue: 'Groundedness is low.',
+        why: 'REMi found claims in the answer that are not strongly supported by the retrieved content.',
+        recommendedAction: 'Check whether the answer is supported by citations or retrieved context.',
+      },
+      'No answer': {
+        severity: 'poor',
+        mainIssue: 'No answer was generated.',
+        why: 'The query did not return enough usable context to generate an answer.',
+        recommendedAction: 'Add missing knowledge to the Knowledge Box or review ingestion and retrieval settings.',
+      },
+      'No major issue': {
+        severity: 'good',
+        mainIssue: 'No major issue detected.',
+        why: 'REMi found the answer, context, and grounding to be acceptable.',
+        recommendedAction: 'No action needed.',
+      },
+      'No data': {
+        severity: 'no-data',
+        mainIssue: 'REMi data is unavailable.',
+        why: 'This query does not have enough REMi evaluation data.',
+        recommendedAction: 'Try another date range or check that REMi evaluation is enabled.',
+      },
+    };
+
+    const diagnosis = map[issueLabel] ?? map['No data'];
+    return {
+      score: usageItem._remiScore,
+      severity: diagnosis.severity,
+      issueLabel,
+      mainIssue: diagnosis.mainIssue,
+      why: diagnosis.why,
+      recommendedAction: diagnosis.recommendedAction,
+    };
+  };
 
   // ── Filter configs ──────────────────────────────────────────────────────────
 
@@ -102,6 +155,34 @@ export class UsageAnalyticsPageComponent {
     return this.service.contentRelevanceFilter() !== undefined;
   });
 
+  protected hasManualFilters = computed(() => {
+    const statusCount = this.service.activeStatuses().size;
+    const hasStatusFilter = statusCount > 0 && statusCount < this.syntheticStatuses.length;
+
+    return (
+      hasStatusFilter ||
+      this.activeBooleanConditions().length > 0 ||
+      this.activeNumericConditions().length > 0 ||
+      this.activeDateConditions().length > 0
+    );
+  });
+
+  protected emptyStateTitleKey = computed(() =>
+    this.hasManualFilters() ? 'activity.usage-analysis.empty.no-matching.title' : 'activity.usage-analysis.empty.no-queries.title',
+  );
+
+  protected emptyStateDescriptionKey = computed(() =>
+    this.hasManualFilters()
+      ? 'activity.usage-analysis.empty.no-matching.description'
+      : 'activity.usage-analysis.empty.no-queries.description',
+  );
+
+  protected emptyStateActionLabelKey = computed(() =>
+    this.hasManualFilters() ? 'activity.usage-analysis.empty.reset-filters' : '',
+  );
+
+  protected showEmptyStateAction = computed(() => this.hasManualFilters());
+
   protected selectedMonth = signal<string>(this._currentMonth());
   protected activeDateConditions = computed<DateCondition[]>(() => this.service.dateConditions());
 
@@ -132,11 +213,6 @@ export class UsageAnalyticsPageComponent {
     this.service.loadNextPage();
   }
 
-  remiColor(val: number | null): string {
-    const cls = getRemiColorClass(val);
-    return cls ? `remi-${cls}` : '';
-  }
-
   // ── Filter handlers ───────────────────────────────────────────────────────
 
   onFiltersApplied(event: FilterApplyEvent): void {
@@ -151,6 +227,10 @@ export class UsageAnalyticsPageComponent {
         }
       : undefined;
     this.service.applyAllFilters(statuses, feedbackCondition?.value, contentRelevance, event.dateConditions ?? []);
+  }
+
+  resetFiltersFromEmptyState(): void {
+    this.service.applyAllFilters(this.syntheticStatuses as RemiAnswerStatus[], undefined, undefined, []);
   }
 
   // ── Download ──────────────────────────────────────────────────────────────

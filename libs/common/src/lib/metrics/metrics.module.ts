@@ -30,6 +30,7 @@ import { UserFeedbackPageComponent } from './user-feedback-page/user-feedback-pa
 import { CostTokenUsagePageComponent } from './cost-token-usage-page/cost-token-usage-page.component';
 import { UsageAnalyticsPageComponent } from './usage-analytics-page/usage-analytics-page.component';
 import { RemiAnalyticsPageComponent } from './remi-analytics-page';
+import { RemiScoreDisplayComponent } from './remi-score-display';
 
 const ROUTES = [
   { path: 'usage-analytics', component: UsageAnalyticsPageComponent },
@@ -63,6 +64,7 @@ const ROUTES = [
     RemiAnalyticsPageComponent,
     MetricsFiltersComponent,
     CompactNumberPipe,
+    RemiScoreDisplayComponent,
   ],
   declarations: [
     MetricsPageComponent,

@@ -164,8 +164,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: rhythm(20);
-  color: $color-neutral-light;
+  min-height: rhythm(16);
+  padding: rhythm(2);
+
+  nsi-info-card {
+    width: min(100%, rhythm(60));
+  }
+
+  .empty-state-title,
+  .empty-state-description {
+    margin: 0;
+  }
+
+  .empty-state-description {
+    margin-top: rhythm(0.5);
+    color: $color-neutral-regular;
+  }
+
+  pa-button {
+    margin-top: rhythm(1.5);
+  }
 }
 
 .clickable-row {
@@ -197,19 +215,107 @@ pa-table {
   white-space: nowrap;
 }
 
+.remi-metric-display {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
 .remi-score-low {
   color: var(--color-danger-regular) !important;
   font-weight: 600;
 }
 
 .remi-score-mid {
-  color: var(--color-secondary-regular) !important;
+  color: $color-secondary-strong !important;
   font-weight: 600;
 }
 
 .remi-score-high {
   color: var(--color-success-regular) !important;
   font-weight: 600;
+}
+
+.issue-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: rhythm(2);
+  padding: 2px 8px;
+  font-size: font-size(xs);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.issue-good {
+  color: var(--color-success-strong);
+  background: var(--color-success-lightest);
+}
+
+.issue-needs-review {
+  color: $color-secondary-strong;
+  background: var(--color-secondary-lightest);
+}
+
+.issue-poor {
+  color: var(--color-danger-strong);
+  background: var(--color-danger-lightest);
+}
+
+.issue-no-data {
+  color: var(--color-neutral-regular);
+  background: var(--color-neutral-lightest);
+}
+
+.remi-diagnosis-card {
+  .diagnosis-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: rhythm(0.5);
+    padding: rhythm(1) 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba($color-neutral-lighter, 0.5);
+    }
+
+    .detail-label {
+      color: $color-neutral-regular;
+    }
+  }
+
+  .diagnosis-text {
+    margin: 0;
+    text-align: left;
+    color: var(--color-neutral-dark);
+  }
+}
+
+.remi-expected-card {
+  .expected-metric {
+    padding: rhythm(0.75) 0;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba($color-neutral-lighter, 0.35);
+    }
+  }
+
+  .expected-metric-label {
+    margin: 0 0 rhythm(0.25);
+    color: var(--color-neutral-dark);
+    font-weight: 600;
+  }
+
+  .expected-metric-copy {
+    margin: 0;
+    color: $color-neutral-regular;
+  }
+
+  .expected-scale-note {
+    margin: rhythm(1.25) 0 0;
+    color: $color-neutral-regular;
+    font-style: italic;
+  }
 }
 
 .feedback-positive {
@@ -384,4 +490,8 @@ pa-table {
   justify-content: space-between;
   width: 100%;
   gap: 4px;
+
+  .remi-metric-display {
+    flex-shrink: 0;
+  }
 }

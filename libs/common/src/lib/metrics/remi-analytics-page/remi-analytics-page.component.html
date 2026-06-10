@@ -21,6 +21,100 @@
     </pa-select>
   </section>
 
+  <section class="metric-card overall-health-card">
+    <div class="metric-card-header">
+      <div class="title-l">{{ 'kb.metrics.overall-health.title' | translate }}</div>
+    </div>
+    @if (overallHealthSummary | async; as summary) {
+      <div class="overall-health-content">
+        <div class="overall-health-info">
+          <div class="overall-health-score">
+            <span class="detail-label body-s">{{ 'kb.metrics.overall-health.overall-score' | translate }}</span>
+            <div class="display-s remi-summary">
+              <app-remi-score-display
+                class="remi-summary-score"
+                [value]="summary.overallScore"
+                [ariaLabel]="getOverallScoreAriaLabel(summary.overallScore)"
+                displayMode="compact"></app-remi-score-display>
+              <app-remi-score-display
+                class="remi-summary-badge"
+                [value]="summary.overallScore"
+                displayMode="badge"
+                aria-hidden="true"></app-remi-score-display>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label body-s">{{ 'kb.metrics.overall-health.main-issue.label' | translate }}</span>
+            <span class="body-m">{{ summary.mainIssueKey | translate }}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label body-s">{{ 'kb.metrics.overall-health.recommended-action.label' | translate }}</span>
+            <span class="body-m">{{ summary.recommendedActionKey | translate }}</span>
+          </div>
+        </div>
+
+        @if (summary.hasAffectedQueries) {
+          <div class="overall-health-cta">
+            <pa-button
+              kind="primary"
+              (click)="scrollToIssues()">
+              {{ 'kb.metrics.overall-health.review-issues' | translate }}
+            </pa-button>
+            <pa-button
+              aspect="basic"
+              (click)="openAffectedQueries(summary)">
+              {{ 'kb.metrics.overall-health.view-all-queries' | translate }}
+            </pa-button>
+          </div>
+        }
+      </div>
+
+      <div
+        class="score-guide-row"
+        aria-label="Score guide: Good 80-100 · Needs review 50-79 · Poor 0-49">
+        <span class="score-guide-label body-s">Score guide:</span>
+
+        <span class="score-guide-item">
+          <app-remi-score-display
+            [value]="90"
+            displayMode="badge"
+            aria-hidden="true"></app-remi-score-display>
+          <span class="score-guide-range body-s">80-100</span>
+        </span>
+
+        <span
+          class="score-guide-separator body-s"
+          aria-hidden="true">
+          ·
+        </span>
+
+        <span class="score-guide-item">
+          <app-remi-score-display
+            [value]="65"
+            displayMode="badge"
+            aria-hidden="true"></app-remi-score-display>
+          <span class="score-guide-range body-s">50-79</span>
+        </span>
+
+        <span
+          class="score-guide-separator body-s"
+          aria-hidden="true">
+          ·
+        </span>
+
+        <span class="score-guide-item">
+          <app-remi-score-display
+            [value]="30"
+            displayMode="badge"
+            aria-hidden="true"></app-remi-score-display>
+          <span class="score-guide-range body-s">0-49</span>
+        </span>
+      </div>
+    }
+  </section>
+
   <!-- Health Status card -->
   <section class="metric-card">
     <div class="metric-card-header">
@@ -38,6 +132,7 @@
         @if (healthCheckData | async; as healthStatus) {
           @if (healthStatus.length > 0) {
             <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
+            <p class="body-s chart-helper-text">{{ 'kb.metrics.health-status.helper' | translate }}</p>
           } @else {
             <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
           }
@@ -95,6 +190,7 @@
           <stf-multi-series-evolution-chart
             [series]="(evolutionSeries | async) || []"
             [height]="400"></stf-multi-series-evolution-chart>
+          <p class="body-s chart-helper-text">{{ 'kb.metrics.performance-evolution.helper' | translate }}</p>
         </div>
       }
     </div>
@@ -109,27 +205,28 @@
     </a>
   </div>
 
-  <!-- Missing Knowledge section -->
   <section
-    class="missing-knowledge"
-    [style]="missingKnowledgeHeaderHeight">
-    <div
-      class="sticky-section"
-      #missingKnowledgeHeader>
-      <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
-      <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
-    </div>
+    id="issues-to-review"
+    class="issues-review-heading">
+    <div class="title-l">{{ 'kb.metrics.issues-to-review.title' | translate }}</div>
+    <div class="page-description">{{ 'kb.metrics.issues-to-review.description' | translate }}</div>
+  </section>
 
+  <section class="issues-review-list">
     <!-- No Answer sub-section -->
-    <div class="metric-card missing-knowledge-card">
-      <div class="sticky-section sub-section">
+    <div class="metric-card issue-category-card">
+      <div class="sub-section-copy">
+        <div class="title-s">{{ 'kb.metrics.missing-knowledge.no-answer-and-missing.title' | translate }}</div>
+        <div class="body-s">{{ 'kb.metrics.missing-knowledge.no-answer-and-missing.description' | translate }}</div>
+      </div>
+      <div class="sticky-section">
         <pa-expander
           [expanded]="false"
           [contentLoaded]="noAnswerMonthControl.errors?.['dateBefore']">
           <pa-expander-header>
             <div class="criteria-header">
               <span class="title-xxs">
-                {{ 'kb.metrics.missing-knowledge.status.summary' | translate: { month: noAnswerMonthValue } }}
+                {{ 'kb.metrics.missing-knowledge.no-answer.title' | translate }}
               </span>
               <div class="pagination">
                 <pa-button
@@ -189,7 +286,10 @@
       } @else if (!noAnswerMonthControl.errors) {
         @if (noAnswerData | async; as noAnswers) {
           @if (noAnswers.data.length === 0) {
-            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+            <nsi-info-card>
+              <div class="title-xxs">{{ 'kb.metrics.empty.no-answer.title' | translate }}</div>
+              <div class="body-s">{{ 'kb.metrics.empty.no-answer.description' | translate }}</div>
+            </nsi-info-card>
           } @else {
             <pa-accordion>
               @for (item of noAnswers.data; track item.id) {
@@ -225,16 +325,17 @@
     </div>
 
     <!-- Low Context sub-section -->
-    <div class="metric-card missing-knowledge-card">
-      <div class="sticky-section sub-section">
+    <div class="metric-card issue-category-card">
+      <div class="sub-section-copy">
+        <div class="title-s">{{ 'kb.metrics.missing-knowledge.low-context.title' | translate }}</div>
+        <div class="body-s">{{ 'kb.metrics.missing-knowledge.low-context.description' | translate }}</div>
+      </div>
+      <div class="sticky-section">
         <pa-expander [expanded]="false">
           <pa-expander-header>
             <div class="criteria-header">
               <span class="title-xxs">
-                {{
-                  'kb.metrics.missing-knowledge.criteria.summary'
-                    | translate: { value: criteriaPercentValue, month: lowControlMonthValue }
-                }}
+                {{ 'kb.metrics.missing-knowledge.low-context.summary' | translate: { value: criteriaPercentValue } }}
               </span>
               <div class="pagination">
                 <pa-button
@@ -308,7 +409,10 @@
       } @else if (!lowContextMonthControl.errors) {
         @if (lowContextData | async; as missingKnowledge) {
           @if (missingKnowledge.data.length === 0) {
-            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+            <nsi-info-card>
+              <div class="title-xxs">{{ 'kb.metrics.empty.low-context.title' | translate }}</div>
+              <div class="body-s">{{ 'kb.metrics.empty.low-context.description' | translate }}</div>
+            </nsi-info-card>
           } @else {
             <pa-accordion>
               @for (item of missingKnowledge.data; track item.id) {
@@ -371,15 +475,19 @@
     </div>
 
     <!-- Bad Feedback sub-section -->
-    <div class="metric-card missing-knowledge-card">
-      <div class="sticky-section sub-section">
+    <div class="metric-card issue-category-card">
+      <div class="sub-section-copy">
+        <div class="title-s">{{ 'kb.metrics.missing-knowledge.bad-feedback.section-title' | translate }}</div>
+        <div class="body-s">{{ 'kb.metrics.missing-knowledge.bad-feedback.description' | translate }}</div>
+      </div>
+      <div class="sticky-section">
         <pa-expander
           [expanded]="false"
           [contentLoaded]="badFeedbackMonthControl.errors?.['dateBefore']">
           <pa-expander-header>
             <div class="criteria-header">
               <span class="title-xxs">
-                {{ 'kb.metrics.missing-knowledge.bad-feedback.title' | translate: { month: badFeedbackMonthValue } }}
+                {{ 'kb.metrics.missing-knowledge.bad-feedback.section-title' | translate }}
               </span>
               <div class="pagination">
                 <pa-button
@@ -443,7 +551,10 @@
       } @else if (!badFeedbackMonthControl.errors) {
         @if (badFeedbackData | async; as badFeedback) {
           @if (badFeedback.data.length === 0) {
-            <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+            <nsi-info-card>
+              <div class="title-xxs">{{ 'kb.metrics.empty.bad-feedback.title' | translate }}</div>
+              <div class="body-s">{{ 'kb.metrics.empty.bad-feedback.description' | translate }}</div>
+            </nsi-info-card>
           } @else {
             <pa-accordion>
               @for (item of badFeedback.data; track item.id) {

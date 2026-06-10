@@ -1,6 +1,6 @@
 import { ActivityLogItem } from '@nuclia/core';
 import { MetricsColumnDef, MetricsSidebarField, UsageAnalyticsItem } from '../metrics-column.model';
-import { getRemiColorClass } from '../metrics-utils';
+import { getRemiColorClass, getRemiScoreDisplay } from '../metrics-utils';
 
 export const USAGE_ANALYSIS_COLUMNS: MetricsColumnDef[] = [
   {
@@ -34,8 +34,8 @@ export const USAGE_ANALYSIS_COLUMNS: MetricsColumnDef[] = [
   {
     key: 'remiScore',
     label: 'activity.column.remi-score',
-    value: (item: ActivityLogItem) => (item as UsageAnalyticsItem)._remiScore ?? null,
-    width: '100px',
+    value: (item: ActivityLogItem) => getRemiScoreDisplay((item as UsageAnalyticsItem)._remiScore).displayValue,
+    width: '150px',
     group: 'remi',
     colorFn: (item: ActivityLogItem) => getRemiColorClass((item as UsageAnalyticsItem)._remiScore),
     inlineAction: {
@@ -52,26 +52,35 @@ export const USAGE_ANALYSIS_COLUMNS: MetricsColumnDef[] = [
     },
   },
   {
+    key: 'issue',
+    label: 'Issue',
+    value: (item: ActivityLogItem) => (item as UsageAnalyticsItem)._issueLabel ?? 'No data',
+    width: '150px',
+    group: 'remi',
+  },
+  {
     key: 'answerRelevance',
     label: 'activity.column.answer-relevance',
-    value: (item: ActivityLogItem) => (item as UsageAnalyticsItem)._remiAnswerRelevance ?? null,
-    width: '100px',
+    value: (item: ActivityLogItem) =>
+      getRemiScoreDisplay((item as UsageAnalyticsItem)._remiAnswerRelevance).displayValue,
+    width: '120px',
     group: 'remi',
     colorFn: (item: ActivityLogItem) => getRemiColorClass((item as UsageAnalyticsItem)._remiAnswerRelevance),
   },
   {
     key: 'contentRelevance',
     label: 'activity.column.content-relevance',
-    value: (item: ActivityLogItem) => (item as UsageAnalyticsItem)._remiContextRelevance ?? null,
-    width: '100px',
+    value: (item: ActivityLogItem) =>
+      getRemiScoreDisplay((item as UsageAnalyticsItem)._remiContextRelevance).displayValue,
+    width: '120px',
     group: 'remi',
     colorFn: (item: ActivityLogItem) => getRemiColorClass((item as UsageAnalyticsItem)._remiContextRelevance),
   },
   {
     key: 'groundedness',
     label: 'activity.column.groundedness',
-    value: (item: ActivityLogItem) => (item as UsageAnalyticsItem)._remiGroundedness ?? null,
-    width: '100px',
+    value: (item: ActivityLogItem) => getRemiScoreDisplay((item as UsageAnalyticsItem)._remiGroundedness).displayValue,
+    width: '120px',
     group: 'remi',
     colorFn: (item: ActivityLogItem) => getRemiColorClass((item as UsageAnalyticsItem)._remiGroundedness),
   },

@@ -16,7 +16,7 @@ import {
 import { UserService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsItem } from '../metrics-column.model';
-import { getMonthRange, getMonthsSinceDate } from '../metrics-utils';
+import { getMonthRange, getMonthsSinceDate, getRemiScoreDisplay } from '../metrics-utils';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 import { DateCondition } from '../metrics-filters';
 
@@ -39,6 +39,7 @@ const NULL_ACTIVITY_FIELDS = Object.fromEntries(
 ) as Omit<ActivityLogItem, (typeof REMI_PROVIDED_FIELDS)[number]>;
 
 type ScoreFilter = { value: number; operation: 'gt' | 'lt' | 'eq'; aggregation: 'average' | 'min' | 'max' };
+type IssueSeverity = 'good' | 'needs-review' | 'poor' | 'no-data';
 
 @Injectable()
 export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageAnalyticsItem> {
@@ -305,6 +306,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
 
     const remiScores = [answerRelevance, contentRelevance, groundedness].filter((v): v is number => v !== null);
     const remiScore = remiScores.length > 0 ? Math.min(...remiScores) : null;
+    const issue = this._deriveIssue(remiItem.answer, status, answerRelevance, contentRelevance, groundedness);
 
     return {
       ...NULL_ACTIVITY_FIELDS,
@@ -320,6 +322,64 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       _remiAnswerRelevance: answerRelevance,
       _remiContextRelevance: contentRelevance,
       _remiGroundedness: groundedness,
+      _issueLabel: issue.label,
+      _issueSeverity: issue.severity,
+    };
+  }
+
+  private _deriveIssue(
+    answer: string | null | undefined,
+    status: RemiAnswerStatus | null,
+    answerRelevance: number | null,
+    contextRelevance: number | null,
+    groundedness: number | null,
+  ): { label: string; severity: IssueSeverity } {
+    const hasNoAnswer = status === 'NO_CONTEXT' || !answer?.trim();
+    if (hasNoAnswer) {
+      return { label: 'No answer', severity: 'poor' };
+    }
+
+    if (answerRelevance === null || contextRelevance === null || groundedness === null) {
+      return { label: 'No data', severity: 'no-data' };
+    }
+
+    const metrics = [
+      {
+        key: 'context' as const,
+        label: 'Context weak',
+        priority: 1,
+        display: getRemiScoreDisplay(contextRelevance),
+      },
+      {
+        key: 'grounding' as const,
+        label: 'Grounding weak',
+        priority: 2,
+        display: getRemiScoreDisplay(groundedness),
+      },
+      {
+        key: 'answer' as const,
+        label: 'Answer weak',
+        priority: 3,
+        display: getRemiScoreDisplay(answerRelevance),
+      },
+    ];
+
+    if (metrics.every((metric) => metric.display.status === 'good')) {
+      return { label: 'No major issue', severity: 'good' };
+    }
+
+    const weakest = metrics
+      .slice()
+      .sort((left, right) => {
+        if (left.display.normalizedScore !== right.display.normalizedScore) {
+          return (left.display.normalizedScore ?? 0) - (right.display.normalizedScore ?? 0);
+        }
+        return left.priority - right.priority;
+      })[0];
+
+    return {
+      label: weakest.label,
+      severity: weakest.display.status === 'poor' ? 'poor' : 'needs-review',
     };
   }
 

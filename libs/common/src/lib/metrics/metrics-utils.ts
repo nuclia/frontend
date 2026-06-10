@@ -97,18 +97,82 @@ export function applyBooleanConditions(conditions: BooleanCondition[], filters: 
   }
 }
 
+export type RemiScoreStatus = 'good' | 'needs-review' | 'poor' | 'no-data';
+export type RemiScoreLabel = 'Good' | 'Needs review' | 'Poor' | 'No data';
+export type RemiScoreClass = 'remi-high' | 'remi-mid' | 'remi-low' | 'remi-no-data';
+
+export interface RemiScoreDisplay {
+  normalizedScore: number | null;
+  displayValue: string;
+  label: RemiScoreLabel;
+  status: RemiScoreStatus;
+  cssClass: RemiScoreClass;
+}
+
 /**
- * Maps a numeric REMi score (0–5 scale) to a colour tier.
- * low  → ≤2   (red)
- * mid  → 2–4  (amber)
- * high → ≥4   (green)
+ * Normalizes REMi values coming from mixed scales into a 0-100 display scale.
+ * Supported inputs:
+ *  - 0..1   (fractional)
+ *  - 0..5   (score)
+ *  - 0..100 (percentage)
+ *  - null/undefined (no data)
+ */
+export function getRemiScoreDisplay(rawValue: number | null | undefined): RemiScoreDisplay {
+  if (rawValue === null || rawValue === undefined) {
+    return {
+      normalizedScore: null,
+      displayValue: '—',
+      label: 'No data',
+      status: 'no-data',
+      cssClass: 'remi-no-data',
+    };
+  }
+
+  const as100Scale = rawValue <= 1 ? rawValue * 100 : rawValue <= 5 ? (rawValue / 5) * 100 : rawValue;
+  const normalizedScore = Math.round(Math.max(0, Math.min(100, as100Scale)));
+
+  if (normalizedScore >= 80) {
+    return {
+      normalizedScore,
+      displayValue: `${normalizedScore}/100`,
+      label: 'Good',
+      status: 'good',
+      cssClass: 'remi-high',
+    };
+  }
+
+  if (normalizedScore >= 50) {
+    return {
+      normalizedScore,
+      displayValue: `${normalizedScore}/100`,
+      label: 'Needs review',
+      status: 'needs-review',
+      cssClass: 'remi-mid',
+    };
+  }
+
+  return {
+    normalizedScore,
+    displayValue: `${normalizedScore}/100`,
+    label: 'Poor',
+    status: 'poor',
+    cssClass: 'remi-low',
+  };
+}
+
+/**
+ * Maps a numeric REMi score to a colour tier using normalized 0-100 thresholds.
+ * low  → 0-49
+ * mid  → 50-79
+ * high → 80-100
  * Returns null when the value is absent so callers can skip styling entirely.
  */
 export function getRemiColorClass(val: number | null | undefined): 'low' | 'mid' | 'high' | null {
-  if (val === null || val === undefined) return null;
-  if (val <= 2) return 'low';
-  if (val >= 4) return 'high';
-  return 'mid';
+  const display = getRemiScoreDisplay(val);
+  if (display.status === 'no-data') return null;
+  if (display.status === 'good') return 'high';
+  if (display.status === 'needs-review') return 'mid';
+  return 'low';
 }
 
 /**

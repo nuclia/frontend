@@ -4,5 +4,6 @@ export * from './metrics-column.model';
 export * from './metrics-filters';
 export * from './metrics-utils';
 export * from './remi-score-badge';
+export * from './remi-score-display';
 export * from './remi-analytics-page';
 export * from './remi-metrics.service';

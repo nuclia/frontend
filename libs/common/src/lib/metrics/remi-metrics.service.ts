@@ -26,6 +26,15 @@ interface RawEvolutionResults {
   parameters: RangeParameters;
 }
 
+type RemiScoreMetric = RemiScoresResponseItem['metrics'][number];
+
+export interface RemiHealthAggregate {
+  answerRelevance: number | null;
+  contextRelevance: number | null;
+  groundedness: number | null;
+  overall: number | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RemiMetricsService {
   private translate = inject(TranslateService);
@@ -158,7 +167,7 @@ export class RemiMetricsService {
     });
   }
 
-  healthCheckData: Observable<RangeChartData[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
+  private healthMetricsRaw: Observable<RemiScoreMetric[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
     switchMap(([kb, parameters]) =>
       kb.activityMonitor.getRemiScores(parameters.from).pipe(
         catchError((err) => {
@@ -175,13 +184,44 @@ export class RemiMetricsService {
         return [];
       }
       this._healthStatusOnError.next(false);
-      return data[0].metrics.map((item) => ({
+      return data[0].metrics;
+    }),
+    shareReplay(1),
+  );
+
+  healthAggregate: Observable<RemiHealthAggregate> = this.healthMetricsRaw.pipe(
+    map((metrics) => {
+      const metricMap = new Map(metrics.map((metric) => [metric.name, metric] as const));
+      const toHundredScale = (value: number | undefined): number | null => (value === undefined ? null : (value * 100) / 5);
+
+      const answerRelevance = toHundredScale(metricMap.get('answer_relevance')?.average);
+      const contextRelevance = toHundredScale(metricMap.get('context_relevance')?.average);
+      const groundedness = toHundredScale(metricMap.get('groundedness')?.average);
+      const overall = toHundredScale(metricMap.get('overall')?.average);
+
+      const computedOverall =
+        answerRelevance !== null && contextRelevance !== null && groundedness !== null
+          ? (answerRelevance + contextRelevance + groundedness) / 3
+          : null;
+
+      return {
+        answerRelevance,
+        contextRelevance,
+        groundedness,
+        overall: overall ?? computedOverall,
+      };
+    }),
+  );
+
+  healthCheckData: Observable<RangeChartData[]> = this.healthMetricsRaw.pipe(
+    map((metrics) =>
+      metrics.map((item) => ({
         category: this.translate.instant(`metrics.remi.category-short.${item.name}`),
         average: (item.average * 100) / 5,
         min: (item.min * 100) / 5,
         max: (item.max * 100) / 5,
-      }));
-    }),
+      })),
+    ),
   );
 
   private rawEvolutionData: Observable<RawEvolutionResults> = combineLatest([

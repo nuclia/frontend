@@ -66,7 +66,8 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('class', 'x-axis')
       .call(d3.axisBottom(x).tickSize(4))
       .selectAll('text')
-      .style('text-anchor', 'end');
+      .style('text-anchor', 'end')
+      .style('font-weight', (d: unknown) => (d === 50 || d === 80) ? '600' : null);
 
     // Add X axis unit
     svg
@@ -76,7 +77,7 @@ export class RangeChartComponent extends BaseChartDirective implements AfterView
       .attr('x', 0)
       .attr('class', 'unit')
       .style('text-anchor', 'middle')
-      .text(this.translate.instant('metrics.units.percent'));
+      .text(this.translate.instant('metrics.units.score'));
 
     // Add Y axis
     const y = d3

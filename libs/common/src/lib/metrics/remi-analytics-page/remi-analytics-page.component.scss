@@ -35,10 +35,137 @@
     margin-bottom: rhythm(2);
   }
 
+  .overall-health-content {
+    display: flex;
+    gap: rhythm(3);
+    align-items: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .overall-health-info {
+    display: flex;
+    gap: rhythm(3);
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .overall-health-score {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.75);
+    flex: 0 1 auto;
+    min-width: fit-content;
+
+    .remi-summary {
+      display: inline-flex;
+      align-items: center;
+      gap: rhythm(1);
+    }
+
+    .remi-summary-badge ::ng-deep .remi-score-display.mode-badge {
+      white-space: nowrap;
+    }
+
+    .remi-summary-score {
+      @include font-size(xl);
+      @include line-height(xl);
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  .detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.75);
+    flex: 0 1 auto;
+    min-width: rhythm(18);
+
+    .body-m {
+      overflow-wrap: break-word;
+    }
+  }
+
+  .overall-health-cta {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    align-items: center;
+    flex: 0 0 auto;
+    margin-left: rhythm(1);
+    align-self: flex-start;
+  }
+
+  .score-guide-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: rhythm(0.5);
+    row-gap: rhythm(0.5);
+    margin-top: rhythm(1.5);
+    padding-top: rhythm(1.5);
+    border-top: 1px solid $color-neutral-lightest;
+    color: $color-neutral-regular;
+  }
+
+  .score-guide-label {
+    font-weight: $font-weight-semi-bold;
+    color: $color-dark-stronger;
+  }
+
+  .score-guide-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: rhythm(0.5);
+  }
+
+  .score-guide-range {
+    color: $color-neutral-regular;
+  }
+
+  .score-guide-separator {
+    color: $color-neutral-regular;
+    line-height: 1;
+  }
+
+  @media (max-width: 90rem) {
+    .overall-health-content {
+      flex-wrap: wrap;
+    }
+
+    .overall-health-info {
+      flex-basis: 100%;
+    }
+
+    .overall-health-cta {
+      flex-basis: auto;
+      margin-left: 0;
+      display: flex;
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .overall-health-info {
+      flex-wrap: wrap;
+      row-gap: rhythm(1.5);
+    }
+  }
+
+  .detail-label {
+    color: $color-neutral-regular;
+  }
+
   .metric-card-body {
     display: flex;
     flex-direction: column;
     gap: rhythm(2);
+  }
+
+  .chart-helper-text {
+    margin: 0;
+    color: $color-neutral-regular;
   }
 
   // ── Health Status definitions row ──────────────────────────────────
@@ -138,17 +265,33 @@
     }
   }
 
-  // ── Missing Knowledge section ──────────────────────────────────────
-  .missing-knowledge {
+  .issues-review-heading {
     display: flex;
     flex-direction: column;
-    gap: rhythm(3);
+    gap: rhythm(0.5);
   }
 
-  .missing-knowledge-card {
+  // ── Issues to review section ───────────────────────────────────────
+  .issues-review-list {
     display: flex;
     flex-direction: column;
-    gap: rhythm(2);
+    gap: rhythm(2.5);
+  }
+
+  .issue-category-card {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+
+    .sub-section-copy {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(0.5);
+
+      .body-s {
+        color: $color-neutral-regular;
+      }
+    }
 
     // ── Fix #5: Accordion items — borders, gap, expanded bg ────────
     pa-accordion {
@@ -293,10 +436,6 @@
       background: $color-neutral-lighter;
     }
 
-    &.sub-section {
-      padding-top: rhythm(2);
-      margin-bottom: rhythm(0);
-      top: var(--header-height);
-    }
+    margin-bottom: rhythm(0);
   }
 }

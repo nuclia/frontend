@@ -81,7 +81,19 @@
       <nsi-spinner></nsi-spinner>
     } @else if (items().length === 0) {
       <div class="empty-state">
-        <p class="body-m">{{ 'generic.empty' | translate }}</p>
+        <nsi-info-card>
+          <p class="title-xxs empty-state-title">{{ emptyStateTitleKey() | translate }}</p>
+          @if (emptyStateDescriptionKey()) {
+            <p class="body-s empty-state-description">{{ emptyStateDescriptionKey() | translate }}</p>
+          }
+          @if (showEmptyStateAction() && emptyStateActionLabelKey()) {
+            <pa-button
+              aspect="basic"
+              (click)="onEmptyStateAction()">
+              {{ emptyStateActionLabelKey() | translate }}
+            </pa-button>
+          }
+        </nsi-info-card>
       </div>
     } @else {
       <cdk-virtual-scroll-viewport
@@ -124,14 +136,23 @@
                 <pa-table-cell>
                   @if (col.inlineAction) {
                     <div class="cell-inline-action-wrapper">
-                      <span
-                        class="body-s cell-value"
-                        [class.remi-score-low]="isRemiScoreLow(item, col)"
-                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
-                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
-                        [paTooltip]="getCellValue(item, col.key)">
-                        {{ getCellValue(item, col.key) }}
-                      </span>
+                      @if (isRemiMetricColumn(col.key)) {
+                        <app-remi-score-display
+                          class="body-s remi-metric-display"
+                          [value]="getRemiMetricRawValue(item, col.key)"
+                          displayMode="compact"
+                          [ariaLabel]="getCellAriaLabel(item, col.key)"></app-remi-score-display>
+                      } @else {
+                        <span
+                          class="body-s cell-value"
+                          [class.remi-score-low]="isRemiScoreLow(item, col)"
+                          [class.remi-score-mid]="isRemiScoreMid(item, col)"
+                          [class.remi-score-high]="isRemiScoreHigh(item, col)"
+                          [paTooltip]="getCellTooltip(item, col.key)"
+                          [attr.aria-label]="getCellAriaLabel(item, col.key)">
+                          {{ getCellValue(item, col.key) }}
+                        </span>
+                      }
                       @if (col.inlineAction.visible(item)) {
                         <pa-button
                           class="inline-action-btn"
@@ -152,14 +173,34 @@
                         <span class="body-s cell-value">—</span>
                       }
                     } @else {
-                      <span
-                        class="body-s cell-value"
-                        [class.remi-score-low]="isRemiScoreLow(item, col)"
-                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
-                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
-                        [paTooltip]="getCellValue(item, col.key)">
-                        {{ getCellValue(item, col.key) }}
-                      </span>
+                      @if (isRemiMetricColumn(col.key)) {
+                        <app-remi-score-display
+                          class="body-s remi-metric-display"
+                          [value]="getRemiMetricRawValue(item, col.key)"
+                          displayMode="compact"
+                          [ariaLabel]="getCellAriaLabel(item, col.key)"></app-remi-score-display>
+                      } @else if (isIssueColumn(col.key)) {
+                        <span
+                          class="issue-chip"
+                          [class.issue-good]="getIssueSeverity(item) === 'good'"
+                          [class.issue-needs-review]="getIssueSeverity(item) === 'needs-review'"
+                          [class.issue-poor]="getIssueSeverity(item) === 'poor'"
+                          [class.issue-no-data]="getIssueSeverity(item) === 'no-data'"
+                          [attr.title]="'Issue: ' + getIssueLabel(item)"
+                          [attr.aria-label]="'Issue: ' + getIssueLabel(item)">
+                          {{ getIssueLabel(item) }}
+                        </span>
+                      } @else {
+                        <span
+                          class="body-s cell-value"
+                          [class.remi-score-low]="isRemiScoreLow(item, col)"
+                          [class.remi-score-mid]="isRemiScoreMid(item, col)"
+                          [class.remi-score-high]="isRemiScoreHigh(item, col)"
+                          [paTooltip]="getCellTooltip(item, col.key)"
+                          [attr.aria-label]="getCellAriaLabel(item, col.key)">
+                          {{ getCellValue(item, col.key) }}
+                        </span>
+                      }
                     }
                   }
                 </pa-table-cell>
@@ -251,6 +292,79 @@
               }
             </div>
           </section>
+
+          @if (section.group === 'query' && hasRemiDiagnosis(item)) {
+            @if (getRemiDiagnosis(item); as diagnosis) {
+              <section class="detail-section">
+                <h3 class="title-s section-title">REMi Diagnosis</h3>
+                <div class="detail-card remi-diagnosis-card">
+                  <div class="diagnosis-item">
+                    <span class="detail-label body-s">Overall score</span>
+                    <app-remi-score-display
+                      class="body-s"
+                      [value]="diagnosis.score"
+                      displayMode="full"></app-remi-score-display>
+                  </div>
+
+                  <div class="diagnosis-item">
+                    <span class="detail-label body-s">Main issue</span>
+                    <span
+                      class="issue-chip"
+                      [class.issue-good]="diagnosis.severity === 'good'"
+                      [class.issue-needs-review]="diagnosis.severity === 'needs-review'"
+                      [class.issue-poor]="diagnosis.severity === 'poor'"
+                      [class.issue-no-data]="diagnosis.severity === 'no-data'"
+                      [attr.title]="'Main issue: ' + diagnosis.mainIssue"
+                      [attr.aria-label]="'Main issue: ' + diagnosis.mainIssue">
+                      {{ diagnosis.mainIssue }}
+                    </span>
+                  </div>
+
+                  <div class="diagnosis-item">
+                    <span class="detail-label body-s">Why this score?</span>
+                    <p class="body-s diagnosis-text">{{ diagnosis.why }}</p>
+                  </div>
+
+                  <div class="diagnosis-item">
+                    <span class="detail-label body-s">Recommended action</span>
+                    <p class="body-s diagnosis-text">{{ diagnosis.recommendedAction }}</p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="detail-section">
+                <div class="detail-card remi-expected-card">
+                  <pa-expander [expanded]="shouldExpandRemiExpected(item)">
+                    <pa-expander-header>
+                      {{ 'What REMi expected' }}
+                    </pa-expander-header>
+                    <pa-expander-body>
+                      <div class="expected-metric">
+                        <p class="expected-metric-label body-s">Answer relevance</p>
+                        <p class="expected-metric-copy body-s">Expected: The answer directly addresses the user’s question.</p>
+                      </div>
+
+                      <div class="expected-metric">
+                        <p class="expected-metric-label body-s">Context relevance</p>
+                        <p class="expected-metric-copy body-s">
+                          Expected: Retrieved content contains the information needed to answer the question.
+                        </p>
+                      </div>
+
+                      <div class="expected-metric">
+                        <p class="expected-metric-label body-s">Groundedness</p>
+                        <p class="expected-metric-copy body-s">
+                          Expected: Claims in the answer are supported by the retrieved content.
+                        </p>
+                      </div>
+
+                      <p class="expected-scale-note body-s">REMi scores are shown from 0/100 to 100/100.</p>
+                    </pa-expander-body>
+                  </pa-expander>
+                </div>
+              </section>
+            }
+          }
         }
       }
     </div>

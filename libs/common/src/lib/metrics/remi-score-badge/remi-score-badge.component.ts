@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { getRemiColorClass } from '../metrics-utils';
+import { getRemiScoreDisplay } from '../metrics-utils';
 
 /**
  * Displays a single REMi score as a coloured pill badge.
@@ -8,23 +7,20 @@ import { getRemiColorClass } from '../metrics-utils';
  * Usage:
  *   <app-remi-score-badge [value]="3.2" [label]="'metrics.remi.answer' | translate" />
  *
- * Renders nothing when value is null.
- * Colour tiers: low ≤2 (red), mid 2–4 (amber), high ≥4 (green).
+ * Always normalizes visible values to a 0-100 scale.
  */
 @Component({
   selector: 'app-remi-score-badge',
   standalone: true,
-  imports: [DecimalPipe],
   template: `
-    @if (value() !== null) {
-      <span
-        class="remi-badge"
-        [class.low]="colorClass() === 'low'"
-        [class.mid]="colorClass() === 'mid'"
-        [class.high]="colorClass() === 'high'">
-        {{ label() }}: {{ value() | number: '1.1-1' }}
-      </span>
-    }
+    <span
+      class="remi-badge"
+      [class.low]="display().status === 'poor'"
+      [class.mid]="display().status === 'needs-review'"
+      [class.high]="display().status === 'good'"
+      [class.no-data]="display().status === 'no-data'">
+      {{ label() }}: {{ display().displayValue }} · {{ display().label }}
+    </span>
   `,
   styles: [
     `
@@ -53,6 +49,12 @@ import { getRemiColorClass } from '../metrics-utils';
           color: var(--color-success-strong);
           font-weight: 600;
         }
+
+        &.no-data {
+          background: var(--color-neutral-lightest, #f5f5f5);
+          color: var(--color-neutral-regular, #737373);
+          font-weight: 600;
+        }
       }
     `,
   ],
@@ -62,5 +64,5 @@ export class RemiScoreBadgeComponent {
   readonly value = input<number | null>(null);
   readonly label = input('');
 
-  readonly colorClass = computed(() => getRemiColorClass(this.value()));
+  readonly display = computed(() => getRemiScoreDisplay(this.value()));
 }

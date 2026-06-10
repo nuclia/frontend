@@ -3,19 +3,10 @@
   gap: 16px;
 }
 
-.remi-low {
-  color: var(--color-danger-regular);
-  font-weight: 600;
-}
-
-.remi-mid {
-  color: var(--color-secondary-regular);
-  font-weight: 600;
-}
-
-.remi-high {
-  color: var(--color-success-regular);
-  font-weight: 600;
+.remi-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .download-button {

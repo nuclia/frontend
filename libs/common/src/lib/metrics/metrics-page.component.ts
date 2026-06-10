@@ -16,6 +16,16 @@ import { Subject, debounceTime } from 'rxjs';
 import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
 import { MetricsColumnDef, MetricsMonthRange, MetricsSidebarField } from './metrics-column.model';
 import { MetricsPageService } from './metrics-page.service';
+import { getRemiScoreDisplay } from './metrics-utils';
+
+export interface RemiDiagnosis {
+  score: number | null | undefined;
+  severity: 'good' | 'needs-review' | 'poor' | 'no-data';
+  issueLabel?: string;
+  mainIssue: string;
+  why: string;
+  recommendedAction: string;
+}
 
 @Component({
   standalone: false,
@@ -42,6 +52,11 @@ export class MetricsPageComponent {
   availableMonths = input<string[]>([]);
   showDownload = input(true);
   showSearch = input(true);
+  emptyStateTitleKey = input('generic.empty');
+  emptyStateDescriptionKey = input('');
+  emptyStateActionLabelKey = input('');
+  showEmptyStateAction = input(false);
+  remiDiagnosisResolver = input<((item: ActivityLogItem) => RemiDiagnosis | null) | null>(null);
   readonly rowAction = input<{
     icon: string;
     tooltip: string;
@@ -56,11 +71,13 @@ export class MetricsPageComponent {
   loadNextPage = output<void>();
   downloadRequested = output<{ format: DownloadFormat }>();
   rowActionTriggered = output<ActivityLogItem>();
+  emptyStateActionTriggered = output<void>();
 
   // ── Internal state ────────────────────────────────────────────────────────
 
   readonly rowHeight = 56;
   viewportOffset = 0;
+  private readonly remiMetricKeys = new Set(['remiScore', 'answerRelevance', 'contentRelevance', 'groundedness']);
 
   readonly selectedMonth = signal<string>(MetricsPageComponent.currentYearMonth());
   readonly selectedItem = signal<ActivityLogItem | null>(null);
@@ -143,6 +160,10 @@ export class MetricsPageComponent {
     }
   }
 
+  onEmptyStateAction(): void {
+    this.emptyStateActionTriggered.emit();
+  }
+
   toggleColumn(key: string): void {
     this.service.toggleColumn(key);
   }
@@ -203,8 +224,9 @@ export class MetricsPageComponent {
 
     return Array.from(groupMap.entries()).map(([group, fields]) => ({
       group,
-      labelKey: `activity.detail.group.${group}`,
-      fields,
+      labelKey: group === 'remi' ? 'Metric Breakdown' : `activity.detail.group.${group}`,
+      fields:
+        group === 'remi' ? fields.filter((field) => !['status', 'remiScore', 'issue'].includes(field.key)) : fields,
     }));
   });
 
@@ -243,6 +265,80 @@ export class MetricsPageComponent {
 
   getCellValue(item: ActivityLogItem, key: string): string {
     return this.service.getCellValue(item, key);
+  }
+
+  isRemiMetricColumn(key: string): boolean {
+    return this.remiMetricKeys.has(key);
+  }
+
+  isIssueColumn(key: string): boolean {
+    return key === 'issue';
+  }
+
+  getIssueLabel(item: ActivityLogItem): string {
+    return ((item as ActivityLogItem & { _issueLabel?: string })._issueLabel ?? 'No data').trim();
+  }
+
+  getIssueSeverity(item: ActivityLogItem): 'good' | 'needs-review' | 'poor' | 'no-data' {
+    return (item as ActivityLogItem & { _issueSeverity?: 'good' | 'needs-review' | 'poor' | 'no-data' })._issueSeverity ??
+      'no-data';
+  }
+
+  getCellTooltip(item: ActivityLogItem, key: string): string {
+    const remiTooltip = this.getRemiMetricTooltip(item, key);
+    if (remiTooltip !== null) return remiTooltip;
+    return this.getCellValue(item, key);
+  }
+
+  getCellAriaLabel(item: ActivityLogItem, key: string): string {
+    const remiTooltip = this.getRemiMetricTooltip(item, key);
+    if (remiTooltip !== null) return remiTooltip;
+    return this.getCellValue(item, key);
+  }
+
+  getRemiMetricRawValue(item: ActivityLogItem, key: string): number | null | undefined {
+    return this.getRawRemiMetricValue(item, key);
+  }
+
+  getRemiDiagnosis(item: ActivityLogItem): RemiDiagnosis | null {
+    const resolver = this.remiDiagnosisResolver();
+    return resolver ? resolver(item) : null;
+  }
+
+  hasRemiDiagnosis(item: ActivityLogItem): boolean {
+    return this.getRemiDiagnosis(item) !== null;
+  }
+
+  shouldExpandRemiExpected(item: ActivityLogItem): boolean {
+    const diagnosis = this.getRemiDiagnosis(item);
+    if (!diagnosis) return false;
+    if (diagnosis.issueLabel) {
+      return diagnosis.issueLabel !== 'No major issue';
+    }
+    return diagnosis.severity !== 'good';
+  }
+
+  private getRemiMetricTooltip(item: ActivityLogItem, key: string): string | null {
+    const remiRawValue = this.getRawRemiMetricValue(item, key);
+    if (remiRawValue === undefined) return null;
+
+    const display = getRemiScoreDisplay(remiRawValue);
+    return display.normalizedScore === null ? display.label : `${display.displayValue} · ${display.label}`;
+  }
+
+  private getRawRemiMetricValue(item: ActivityLogItem, key: string): number | null | undefined {
+    const usageItem = item as ActivityLogItem & {
+      _remiScore?: number | null;
+      _remiAnswerRelevance?: number | null;
+      _remiContextRelevance?: number | null;
+      _remiGroundedness?: number | null;
+    };
+
+    if (key === 'remiScore') return usageItem._remiScore;
+    if (key === 'answerRelevance') return usageItem._remiAnswerRelevance;
+    if (key === 'contentRelevance') return usageItem._remiContextRelevance;
+    if (key === 'groundedness') return usageItem._remiGroundedness;
+    return undefined;
   }
 
   isRemiScoreLow(item: ActivityLogItem, col: MetricsColumnDef): boolean {
