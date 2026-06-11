@@ -10,6 +10,19 @@ export interface FocusTrapOptions {
 }
 
 /**
+ * Returns the deepest focused element, traversing nested shadow roots.
+ * Necessary because document.activeElement returns the shadow host when
+ * focus is inside a shadow DOM, not the actual focused element within it.
+ */
+function getDeepActiveElement(): Element | null {
+  let el: Element | null = document.activeElement;
+  while (el?.shadowRoot?.activeElement) {
+    el = el.shadowRoot.activeElement;
+  }
+  return el;
+}
+
+/**
  * Creates a keyboard focus trap for accessible overlay components.
  *
  * - `trapFocus()` — captures the currently focused element, installs a Tab-key
@@ -40,16 +53,17 @@ export function createFocusTrap(getContainer: () => HTMLElement | undefined, opt
 
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
+    const active = getDeepActiveElement();
 
     if (event.shiftKey) {
       // Shift+Tab: if focus is on (or before) the first element, wrap to last
-      if (document.activeElement === first || !container.contains(document.activeElement)) {
+      if (active === first || !container.contains(active)) {
         event.preventDefault();
         last.focus();
       }
     } else {
       // Tab: if focus is on (or after) the last element, wrap to first
-      if (document.activeElement === last || !container.contains(document.activeElement)) {
+      if (active === last || !container.contains(active)) {
         event.preventDefault();
         first.focus();
       }
