@@ -21,7 +21,6 @@
     type = 'button',
     children,
   }: Props = $props();
-  let label: HTMLSpanElement = $state();
 </script>
 
 <button
@@ -29,14 +28,12 @@
   class:small={size === 'small'}
   class:active
   {type}
-  aria-label={label ? label.textContent : ''}
   tabindex="0"
   {disabled}
   onclick={bubble('click')}>
   <span
     tabindex="-1"
-    class="button-label"
-    bind:this={label}>
+    class="button-label">
     {@render children?.()}
   </span>
 </button>

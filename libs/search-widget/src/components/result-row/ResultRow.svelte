@@ -239,7 +239,7 @@
       {expanded}
       duration={0}>
       <div tabindex="-1">
-        <ul
+        <div
           class="sw-paragraphs-container"
           class:expanded={showAllResults}
           class:can-expand={paragraphs.length > NUM_PARAGRAPHS}
@@ -285,7 +285,7 @@
               {/if}
             </div>
           {/each}
-        </ul>
+        </div>
 
         {#if enableAllResultsToggle}
           <AllResultsToggle

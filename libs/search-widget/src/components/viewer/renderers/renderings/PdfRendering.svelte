@@ -5,6 +5,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
   import { getVendorsCDN, getPdfSrc } from '../../../../core';
+  import { _ } from '../../../../core/i18n';
   import { getUnMarked } from '../../utils';
 
   interface Props {
@@ -224,11 +225,13 @@
       <div class="pdf-navigator">
         <IconButton
           icon="circle-chevron-left"
+          ariaLabel={$_('pdf.previous-page')}
           aspect="basic"
           size="small"
           on:click={previousPage} />
         <IconButton
           icon="circle-chevron-right"
+          ariaLabel={$_('pdf.next-page')}
           aspect="basic"
           size="small"
           on:click={nextPage} />
@@ -239,11 +242,13 @@
       <div class="pdf-zoom-container">
         <IconButton
           icon="circle-minus"
+          ariaLabel={$_('pdf.zoom-out')}
           aspect="basic"
           size="small"
           on:click={zoomOut} />
         <IconButton
           icon="circle-plus"
+          ariaLabel={$_('pdf.zoom-in')}
           aspect="basic"
           size="small"
           on:click={zoomIn} />
@@ -253,6 +258,7 @@
       <div class="pdf-drag">
         <IconButton
           icon="fullscreen"
+          ariaLabel={$_('pdf.drag-mode')}
           aspect="basic"
           size="small"
           active={dragMode}

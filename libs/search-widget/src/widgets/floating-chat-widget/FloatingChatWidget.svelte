@@ -465,10 +465,9 @@
     {:else}
       <div
         class="floating-chat-backdrop"
+        aria-hidden="true"
         onclick={handleBackdropClick}
-        onkeyup={onBackdropKeyup}
-        role="button"
-        tabindex="0">
+        onkeyup={onBackdropKeyup}>
         <div
           class="floating-chat-panel"
           class:bottom-right={fab_position === 'bottom-right'}

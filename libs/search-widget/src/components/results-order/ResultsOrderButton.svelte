@@ -32,7 +32,7 @@
     <Dropdown
       {position}
       on:close={() => (showDropdown = false)}>
-      <div>
+      <div role="menu">
         <Option
           selected={$resultsOrder === 'relevance'}
           on:select={() => select('relevance')}>

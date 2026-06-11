@@ -15,8 +15,9 @@
   };
 </script>
 
-<div
+<button
   class="all-result-toggle"
+  type="button"
   class:expanded={showAllResults}
   onclick={toggle}>
   Display {showAllResults ? 'less' : 'all'} results
@@ -26,6 +27,6 @@
       name="chevron-right"
       size="small" />
   </div>
-</div>
+</button>
 
 <style src="./AllResultsToggle.css"></style>
