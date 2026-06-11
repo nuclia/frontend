@@ -10,6 +10,7 @@ import {
   retry,
   RetryConfig,
   switchMap,
+  take,
   throwError,
   timeout,
   timer,
@@ -227,11 +228,11 @@ export class Db implements IDb {
     if (includeSearchConfigs === false) {
       params.push(`include_search_configs=${includeSearchConfigs}`);
     }
-    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
-      `/account/${accountId}/kbs${params.length > 0 ? `?${params.join('&')}` : ''}`,
-      undefined,
-      undefined,
-      zone,
+    const path = `/account/${accountId}/kbs${params.length > 0 ? `?${params.join('&')}` : ''}`;
+    // Ensure zoneOrigins is populated before building the URL so that private zones with a custom origin resolve correctly
+    return this.nuclia.rest.getZones().pipe(
+      take(1),
+      switchMap(() => this.nuclia.rest.get<IKnowledgeBoxItem[]>(path, undefined, undefined, zone)),
     );
   }
 
