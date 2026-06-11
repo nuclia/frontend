@@ -46,7 +46,7 @@ export class RegionalAccountService {
                       kbMode: index.kb_mode,
                       activity: {
                         redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
-                        grafana: `http://platform.grafana.nuclia.com/d/${
+                        grafana: `https://grafana.gcp-internal-1.nuclia.cloud/d/${
                           index.account_id
                         }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
                           zone.slug === 'europe-1' ? 'flaps' : zone.slug
