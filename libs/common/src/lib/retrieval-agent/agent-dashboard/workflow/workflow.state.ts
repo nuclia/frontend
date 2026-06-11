@@ -515,9 +515,7 @@ function _linkNodeToParent(
       childIds.splice(currentIndex, 1);
     }
     const insertionIndex =
-      typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length
-        ? childIndex
-        : childIds.length;
+      typeof childIndex === 'number' && childIndex >= 0 && childIndex <= childIds.length ? childIndex : childIds.length;
     childIds.splice(insertionIndex, 0, nodeId);
     node.childIndex = insertionIndex;
   }
@@ -694,6 +692,7 @@ function _syncRegisteredAgentOnSelf(node: ParentNode, partialNode: Partial<Paren
 }
 
 function _writeRegisteredAgentMeta(config: SmartAgentUI, agentId: string): void {
+  if (!registeredAgentParams().modified) return;
   config.registered_agents_descriptions = {
     ...config.registered_agents_descriptions,
     [agentId]: registeredAgentParams().description,

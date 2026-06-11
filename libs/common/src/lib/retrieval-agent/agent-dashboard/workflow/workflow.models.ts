@@ -511,10 +511,11 @@ export function getAgentFromConfig(
   config: any,
   id?: string,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
-  if (id && !config.id) {
-    config.id = id;
+  const configCopy = structuredClone(config ?? {});
+  if (id && !configCopy.id) {
+    configCopy.id = id;
   }
-  const cleanConfig = cleanupConfig(config);
+  const cleanConfig = cleanupConfig(configCopy);
   switch (nodeType) {
     case 'rephrase':
       return rephraseUiToCreation(cleanConfig);
