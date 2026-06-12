@@ -59,7 +59,7 @@ export class MetricsPageComponent {
 
   // ── Internal state ────────────────────────────────────────────────────────
 
-  readonly rowHeight = 56;
+  readonly rowHeight = 72;
   viewportOffset = 0;
 
   readonly selectedMonth = signal<string>(MetricsPageComponent.currentYearMonth());
