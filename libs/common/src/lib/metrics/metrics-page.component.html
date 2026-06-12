@@ -216,7 +216,7 @@
                 @if (isFieldVisible(item, field)) {
                   @if (field.expandable) {
                     <div class="detail-inner-card">
-                      <pa-expander [expanded]="false">
+                      <pa-expander [expanded]="true">
                         <pa-expander-header>
                           <span class="detail-inner-label overline">{{ field.label | translate }}</span>
                         </pa-expander-header>
