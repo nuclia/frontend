@@ -41,6 +41,7 @@ export interface MagicAction {
   zone?: string;
   consent_url?: string;
   came_from?: string;
+  needs_initial_setpassword?: boolean;
 }
 
 export type MagicActionError = 'local_user_already_exists' | 'user_registered_as_external_user';
