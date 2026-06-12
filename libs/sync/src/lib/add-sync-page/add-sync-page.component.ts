@@ -54,7 +54,7 @@ export class AddSyncPageComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
   private uploadEventService = inject(UploadEventService);
-  selectedFolder?: { sync_root_path: string; drive_id: string };
+  selectedFolder?: { sync_root_path?: string; folder_id?: string; drive_id: string };
 
   connectorId = this.currentRoute.params.pipe(
     filter((params) => params['connector']),
@@ -292,7 +292,7 @@ export class AddSyncPageComponent implements OnInit {
     this.toaster.error('sync.add-page.toast.generic-error');
   }
 
-  selectFolder(folder: { sync_root_path: string; drive_id: string }) {
+  selectFolder(folder: { sync_root_path?: string; folder_id?: string; drive_id: string }) {
     this.selectedFolder = folder;
     this.cdr.markForCheck();
   }
