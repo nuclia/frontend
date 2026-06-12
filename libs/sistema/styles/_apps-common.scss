@@ -252,3 +252,14 @@ pa-dropdown.info-dropdown .pa-option-content {
   overflow: visible !important;
   text-overflow: unset !important;
 }
+
+*:focus-visible {
+  outline: variables.$color-shadow-focus auto 1px;
+  outline-offset: variables.rhythm(0.25);
+}
+
+button.pa-keyboard-focus {
+  box-shadow:
+    0 0 0 variables.rhythm(0.25) variables.$color-light-stronger,
+    0 0 0 variables.rhythm(0.5) variables.$color-shadow-focus;
+}

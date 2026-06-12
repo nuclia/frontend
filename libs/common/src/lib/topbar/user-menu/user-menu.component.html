@@ -1,7 +1,14 @@
-<pa-avatar
-  size="small"
-  [avatar]="avatar"
-  [paPopup]="userMenu"></pa-avatar>
+<button
+  type="button"
+  class="user-menu-trigger"
+  paFocusable
+  openOnFocus
+  [attr.aria-label]="'generic.user_menu' | translate"
+  [paPopup]="userMenu">
+  <pa-avatar
+    size="small"
+    [avatar]="avatar"></pa-avatar>
+</button>
 
 <pa-dropdown #userMenu>
   @if (!(simpleMode | async)) {

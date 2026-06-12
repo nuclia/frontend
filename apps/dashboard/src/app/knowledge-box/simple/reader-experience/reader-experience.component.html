@@ -1,18 +1,21 @@
 <div class="reader-layout">
   <div class="reader-header">
     <div class="reader-title-block">
-      <div class="title-with-actions display-m">
+      <h1 class="title-with-actions display-m">
         {{ 'search.title' | translate }}
         @if (view() === 'search') {
           <pa-button
             icon="info"
             aspect="basic"
             size="small"
-            [paPopup]="readerInfoDropdown"></pa-button>
+            [paPopup]="readerInfoDropdown">
+            {{ 'simple.reader.info.label' | translate }}
+          </pa-button>
           <pa-dropdown
             #readerInfoDropdown
-            class="info-dropdown">
-            <pa-option [readonly]="true">{{ 'simple.reader.info' | translate }}</pa-option>
+            class="info-dropdown"
+            [ariaLabel]="'simple.reader.info.label' | translate">
+            <pa-option [readonly]="true">{{ 'simple.reader.info.text' | translate }}</pa-option>
           </pa-dropdown>
         }
         @if (configOptions().length > 1) {
@@ -25,7 +28,7 @@
             </pa-select>
           </div>
         }
-      </div>
+      </h1>
       <div class="body-m reader-subtitle">{{ 'simple.reader.description' | translate }}</div>
     </div>
   </div>
@@ -40,8 +43,9 @@
     <div class="reader-info-block">
       <pa-icon
         name="info"
-        size="medium"></pa-icon>
-      <p>{{ 'simple.reader.info' | translate }}</p>
+        size="medium"
+        aria-hidden="true"></pa-icon>
+      <p>{{ 'simple.reader.info.text' | translate }}</p>
     </div>
   }
 </div>

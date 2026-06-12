@@ -1,7 +1,7 @@
 <pa-table
   border
   columns="2fr 140px 1.5fr 140px 70px">
-  <pa-table-header>
+  <pa-table-header role="presentation">
     @for (column of columns; track column) {
       <pa-table-cell header>
         <span class="title-s">{{ 'simple.column.' + column | translate }}</span>
@@ -16,7 +16,9 @@
       <pa-table-cell>
         <span class="body-s">
           @if (row.icon | mimeIcon; as icon) {
-            <pa-icon [name]="icon"></pa-icon>
+            <pa-icon
+              [name]="icon"
+              aria-hidden="true"></pa-icon>
           }
           @if (row.extension) {
             <span class="extension">.{{ row.extension.toLowerCase() }}</span>
@@ -29,7 +31,8 @@
             {{ 'simple.ready' | translate }}
             <pa-icon
               name="check"
-              size="small"></pa-icon>
+              size="small"
+              aria-hidden="true"></pa-icon>
           </span>
         } @else if (row.status === RESOURCE_STATUS.PENDING) {
           <span class="body-s">
