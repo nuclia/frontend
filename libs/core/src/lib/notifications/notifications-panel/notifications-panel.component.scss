@@ -71,6 +71,10 @@ $notification-panel-width: rhythm(56);
         li {
           box-shadow: $box-shadow-border-bottom;
         }
+        li.no-notifications {
+          box-shadow: none;
+          border-top: none;
+        }
       }
       .no-notifications {
         align-items: center;

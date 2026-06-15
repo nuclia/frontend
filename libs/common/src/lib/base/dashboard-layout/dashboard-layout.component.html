@@ -22,7 +22,10 @@
         }
       </div>
     }
-    <main [class.with-status-bar]="showStatusBar | async">
+    <main
+      id="dashboard-main"
+      tabindex="-1"
+      [class.with-status-bar]="showStatusBar | async">
       <router-outlet></router-outlet>
     </main>
   </div>

@@ -3,6 +3,16 @@
 :host {
   display: block;
 
+  .user-menu-trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50%;
+  }
+
   pa-avatar ::ng-deep .pa-avatar {
     cursor: pointer;
     height: rhythm(5);

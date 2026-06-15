@@ -43,7 +43,7 @@
       @let kbCount = (kbList || []).length;
       @let aragList = arags | async;
       @let aragCount = (aragList || []).length;
-      @let showList = isAragEnabled ? (kbCount > 0 || aragCount > 0) : kbCount > 0;
+      @let showList = isAragEnabled ? kbCount > 0 || aragCount > 0 : kbCount > 0;
 
       @if (showList) {
         <div class="select-kb-list">
@@ -53,8 +53,12 @@
                 <a
                   class="kb"
                   data-cy="arag-list-item"
+                  role="link"
+                  tabindex="0"
                   [class.disabled]="!arag.role_on_kb"
-                  (click)="goToArag(arag)">
+                  (click)="goToArag(arag)"
+                  (keydown.enter)="goToArag(arag)"
+                  (keydown.space)="goToArag(arag); $event.preventDefault()">
                   <pa-icon
                     size="small"
                     name="workflows"></pa-icon>
@@ -78,8 +82,12 @@
                 <a
                   class="kb"
                   data-cy="kb-list-item"
+                  role="link"
+                  tabindex="0"
                   [class.disabled]="!kb.role_on_kb"
-                  (click)="goToKb(kb)">
+                  (click)="goToKb(kb)"
+                  (keydown.enter)="goToKb(kb)"
+                  (keydown.space)="goToKb(kb); $event.preventDefault()">
                   @if (standalone) {
                     <pa-button
                       class="delete-btn"

@@ -55,20 +55,32 @@ $counters-height: rhythm(6);
 .nav {
   align-items: center;
   display: flex;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
   gap: rhythm(1.5);
 
   &:not(.active) {
     cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   pa-icon {
-    background-color: tokens.$success-color;
-    border-radius: 100%;
-    padding: rhythm(1);
-  }
-  pa-button {
     border: 1px solid $color-neutral-light;
     border-radius: 100%;
+    padding: rhythm(1);
+
+    &.active {
+      background-color: tokens.$success-color;
+      border-color: tokens.$success-color;
+      color: white;
+    }
   }
 }
 
@@ -118,7 +130,7 @@ $counters-height: rhythm(6);
 .dropzone {
   align-items: center;
   background-color: $color-light-stronger;
-  border: 2px dashed $color-neutral-light;
+  border: 2px dashed $color-neutral-regular;
   color: $color-neutral-regular;
   font-size: font-size(xl);
   display: flex;
