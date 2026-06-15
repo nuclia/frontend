@@ -1,0 +1,11 @@
+@use 'apps/manager-v2/src/variables' as *;
+
+.manual-subscription {
+  margin-top: rhythm(6);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+}
