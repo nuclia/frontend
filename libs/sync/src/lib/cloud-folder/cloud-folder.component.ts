@@ -42,17 +42,18 @@ export class CloudFolderComponent implements OnInit {
   private toaster = inject(SisToastService);
 
   @Input() externalConnection?: ExternalConnection;
-  @Output() selection = new EventEmitter<{ sync_root_path: string; drive_id: string }>();
+  @Output() selection = new EventEmitter<{ sync_root_path?: string; folder_id?: string; drive_id: string }>();
   currentSite = signal<StorageSite | undefined>(undefined);
   currentDrive = signal<StorageDrive | undefined>(undefined);
-  currentPath = signal<string>('');
+  currentFolder = signal<StorageFolder[]>([]);
   selectedDrive = signal<string | undefined>(undefined);
-  selectedPath = signal<string | undefined>(undefined);
+  selectedFolder = signal<StorageFolder | undefined>(undefined);
   isCurrentSelected = computed(
     () =>
-      this.selectedPath() === this.currentPath() ||
-      (!this.currentPath() && this.selectedDrive() && this.currentDrive()?.id === this.selectedDrive()),
+      (this.selectedFolder() && this.selectedFolder()?.path === this.currentFolder().at(-1)?.path) ||
+      (this.currentFolder().length === 0 && this.selectedDrive() && this.currentDrive()?.id === this.selectedDrive()),
   );
+  hasCurrentFolder = computed(() => this.currentFolder().length > 0);
   sites: StorageSite[] | undefined = undefined;
   drives: StorageDrive[] = [];
   folders: StorageFolder[] = [];
@@ -63,6 +64,7 @@ export class CloudFolderComponent implements OnInit {
   siteUrlControl = new FormControl('');
   requiresBucketSearch = false;
   bucketName = '';
+  usePath = false;
   private cdr = inject(ChangeDetectorRef);
   private syncService = inject(SyncService);
   private translate = inject(TranslateService);
@@ -74,18 +76,24 @@ export class CloudFolderComponent implements OnInit {
     this.requiresSearch = !!capabilities?.requires_site_search;
     this.requiresSiteUrlResolution = !!capabilities?.requires_site_url_resolution;
     this.requiresBucketSearch = this.externalConnection?.provider === 'aws_s3_assume_role';
+    this.usePath = this.externalConnection?.provider === 'aws_s3_assume_role';
     if (!this.requiresSearch && !this.requiresSiteUrlResolution && !this.requiresBucketSearch) {
       this.loadFolders();
     }
   }
 
-  loadFolders(site?: string, drive?: string, path?: string) {
+  loadFolders(site?: string, drive?: string, folder?: StorageFolder) {
     if (!this.externalConnection) {
       return;
     }
     this.loading = true;
     this.cdr.markForCheck();
-    const query = { site_id: site, drive_id: drive, path };
+    const query = {
+      site_id: site,
+      drive_id: drive,
+      path: this.usePath ? folder?.path : undefined,
+      folder_id: !this.usePath ? folder?.id : undefined,
+    };
     this.syncService.getCloudFolders(this.externalConnection.id, query).subscribe((res) => {
       if (res.sites) {
         this.sites = res.sites;
@@ -109,26 +117,24 @@ export class CloudFolderComponent implements OnInit {
     this.loadFolders(undefined, drive.id);
   }
 
-  browseFolder(path: string) {
-    // Normalize the path as some connectors (e.g. AWS S3) do not include the initial slash
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    this.currentPath.set(normalizedPath);
-    this.loadFolders(undefined, this.currentDrive()?.id, normalizedPath);
+  browseFolder(folder: StorageFolder) {
+    this.currentFolder.update((current) => [...current, folder]);
+    this.loadFolders(undefined, this.currentDrive()?.id, folder);
   }
 
   back() {
-    if (this.currentPath()) {
-      const chunks = this.currentPath().split('/');
-      if (chunks.length === 2 && this.currentDrive()) {
-        this.currentPath.set('');
+    if (this.currentFolder().length > 0) {
+      if (this.currentFolder().length === 1 && this.currentDrive()) {
+        this.currentFolder.set([]);
         this.browseDrive(this.currentDrive() as StorageDrive);
-      } else if (chunks.length === 2 && !this.currentDrive()) {
+      } else if (this.currentFolder().length === 1 && !this.currentDrive()) {
         // Drive-less providers (e.g. Dropbox): back to root
-        this.currentPath.set('');
+        this.currentFolder.set([]);
         this.loadFolders();
-      } else if (chunks.length > 2) {
-        const path = chunks.slice(0, -1).join('/');
-        this.browseFolder(path);
+      } else if (this.currentFolder().length > 1) {
+        const prevFolder = this.currentFolder().at(-2);
+        this.currentFolder.update((current) => current.slice(0, -1));
+        this.loadFolders(undefined, this.currentDrive()?.id, prevFolder!);
       }
     } else if (this.currentDrive()) {
       this.currentDrive.set(undefined);
@@ -145,15 +151,20 @@ export class CloudFolderComponent implements OnInit {
   }
 
   selectDrive() {
-    this.selectedPath.set(undefined);
+    this.selectedFolder.set(undefined);
     this.selectedDrive.set(this.currentDrive()?.id);
-    this.selection.emit({ drive_id: this.currentDrive()?.id || '', sync_root_path: '' });
+    this.selection.emit({ drive_id: this.currentDrive()?.id || '', folder_id: '', sync_root_path: '' });
   }
 
   selectFolder() {
     this.selectedDrive.set(undefined);
-    this.selection.emit({ drive_id: this.currentDrive()?.id || '', sync_root_path: this.currentPath() });
-    this.selectedPath.set(this.currentPath());
+    const folder = this.currentFolder().at(-1);
+    this.selection.emit({
+      drive_id: this.currentDrive()?.id || '',
+      sync_root_path: this.usePath ? folder?.path || '' : undefined,
+      folder_id: !this.usePath ? folder?.id || '' : undefined,
+    });
+    this.selectedFolder.set(folder);
     this.cdr.markForCheck();
   }
 

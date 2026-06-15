@@ -16,7 +16,9 @@
             (keyup.enter)="resolveAndBrowseSite()">
             {{ 'sync.cloud-folder.enter-site-url' | translate }}
           </pa-input>
-          <nsi-button-mini (click)="resolveAndBrowseSite()">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+          <nsi-button-mini (click)="resolveAndBrowseSite()">
+            {{ 'sync.cloud-folder.browse' | translate }}
+          </nsi-button-mini>
         </div>
       </nsi-two-columns-configuration-item>
     } @else {
@@ -45,7 +47,7 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
-  @if (currentSite() || (currentDrive() && !requiresBucketSearch) || currentPath()) {
+  @if (currentSite() || (currentDrive() && !requiresBucketSearch) || hasCurrentFolder()) {
     <div>
       <nsi-button-mini
         icon="undo"
@@ -64,15 +66,17 @@
         @if (currentDrive()) {
           {{ currentDrive()?.name }}
         }
-        @if (this.currentPath()) {
-          {{ this.currentPath() }}
+        @if (hasCurrentFolder()) {
+          {{ currentFolder().at(-1)?.path }}
         }
         @if (isCurrentSelected()) {
-          <pa-icon name="check"></pa-icon>
+          <pa-icon
+            name="check"
+            class="selected"></pa-icon>
         }
       </h3>
-      @if (currentDrive() || currentPath()) {
-        <nsi-button-mini (click)="this.currentPath() ? selectFolder() : selectDrive()">
+      @if (currentDrive() || hasCurrentFolder()) {
+        <nsi-button-mini (click)="hasCurrentFolder() ? selectFolder() : selectDrive()">
           {{ 'sync.cloud-folder.select' | translate }}
         </nsi-button-mini>
       }
@@ -106,7 +110,7 @@
         <li>
           <pa-icon name="folder"></pa-icon>
           {{ folder.name }}
-          <nsi-button-mini (click)="browseFolder(folder.path)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
+          <nsi-button-mini (click)="browseFolder(folder)">{{ 'sync.cloud-folder.browse' | translate }}</nsi-button-mini>
         </li>
       }
     </ul>
@@ -117,7 +121,7 @@
           <pa-icon name="folder"></pa-icon>
           {{ folder.name }}
           <nsi-button-mini
-            (click)="browseFolder(folder.path)"
+            (click)="browseFolder(folder)"
             icon="chevron-down"></nsi-button-mini>
         </li>
       }
