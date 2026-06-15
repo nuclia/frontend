@@ -1,88 +1,199 @@
 # GitHub Copilot Instructions
 
-This is a Nuclia frontend Nx monorepo. See `README.md` for general project setup.
+Nuclia frontend Nx monorepo. See `AGENTS.md` for workspace structure and `README.md` for project setup.
+
+---
+
+## Core Workflow Rules
+
+### 1. Validate Before Executing
+
+**Do not start implementing until the task is clear.** Before writing any code:
+
+1. **Restate the task** in one sentence to confirm understanding.
+2. **Identify ambiguities** — which project? which component? what's the expected behaviour?
+3. **Ask open questions** if anything is unclear. Prefer open-ended questions over yes/no when you need context. A 50-token question is always cheaper than a 5000-token wrong implementation.
+4. **State your plan** briefly before starting (2-3 bullet points, not a wall of text).
+
+When to ask vs. when to infer:
+
+- **Ask** when: the target project is ambiguous, the scope could change which files are touched, or a wrong assumption would require significant rework.
+- **Infer** when: the project can be determined from file paths or previous messages, the task is purely additive, or the user has already answered a similar question in this session.
+
+### 2. Anti-Cycling Protocol
+
+Token waste from spinning is the biggest efficiency killer. Follow these rules strictly:
+
+- **3-attempt maximum.** If the same approach fails 3 times (build error, test failure, lint error), STOP. Explain what you tried, what failed, and ask the user for guidance.
+- **Pivot after 2.** If 2 attempts at the same approach fail, try a fundamentally different approach on the 3rd attempt — don't iterate on a broken idea.
+- **No speculative exploration.** Don't read 20 files "just in case." Read the files you need, act, verify. If you need more context, read more files — but always with a specific question in mind.
+- **Detect your own loops.** If you notice you're doing the same grep/read/edit cycle without making progress, stop and tell the user what's blocking you.
+- **Scope-check long tasks.** If a task is taking more than ~10 tool calls without visible progress, pause and reassess: is the approach wrong? Is the task bigger than expected? Tell the user.
+
+### 3. Task Sizing
+
+Before diving in, mentally classify the task:
+
+| Size   | Description                                         | Approach                                      |
+| ------ | --------------------------------------------------- | --------------------------------------------- |
+| **XS** | Typo fix, rename, single-line change                | Do it directly, no skill loading needed       |
+| **S**  | Modify one component/service, add a translation key | Load relevant skill if pattern is non-obvious |
+| **M**  | New component, new service, new route               | Load skill + read project AGENTS.md           |
+| **L**  | Multi-file feature, cross-project change            | Consider using sub-agents via orchestrator    |
+| **XL** | New library, major refactor, multi-domain feature   | Use orchestrator with full agent delegation   |
+
+**Don't bring a cannon to a knife fight.** An XS task should not trigger skill loading, agent delegation, or orchestrator coordination.
+
+---
+
+## Session Knowledge Protocol
+
+Long sessions produce valuable knowledge. Capture it so future sessions don't start cold.
+
+### What to capture
+
+- **Non-obvious constraints:** "Component X breaks if you remove NgModule Y because of Z"
+- **Workarounds:** "Use `setTimeout` wrapper for signal X due to Angular change detection timing"
+- **Hidden dependencies:** "Service A must be initialized before Service B — no error, just silent failure"
+- **Architecture decisions:** "Team chose approach X over Y because of Z"
+- **DO NOT capture:** standard patterns (already in skills), obvious things, session-specific temporary state
+
+### Where to write it
+
+| Knowledge type                      | Write to                 | Section              |
+| ----------------------------------- | ------------------------ | -------------------- |
+| Project-specific gotcha (1-2 lines) | Project's `AGENTS.md`    | `## Gotchas` section |
+| Deeper explanation (>3 lines)       | Project's `KNOWLEDGE.md` | Relevant heading     |
+| Cross-project pattern               | Root `AGENTS.md`         | `## Key Conventions` |
+
+### When to write it
+
+- **At natural breakpoints** in long sessions (feature completed, bug fixed, refactor done)
+- **When explicitly asked** ("save what you learned", "update knowledge")
+- **When you discover a gotcha** that would have saved time if you'd known it earlier
+- **End of long sessions** — offer to update AGENTS.md with any discoveries
+
+### KNOWLEDGE.md format
+
+Each project may have a `KNOWLEDGE.md` alongside its `AGENTS.md`. Link it from AGENTS.md:
+
+```markdown
+## Deep Knowledge
+
+For non-obvious patterns, workarounds, and architectural decisions, see [KNOWLEDGE.md](./KNOWLEDGE.md).
+```
+
+KNOWLEDGE.md entries should be:
+
+- **Dated** (month/year is fine)
+- **Titled** with the problem or topic
+- **Actionable** — what to do or avoid, not just "here's what happened"
+
+---
+
+## Cross-Session Memory
+
+A session store records every session's files, tools, and conversations. **Use it to avoid re-discovering what was already learned.**
+
+Before starting work on a component or feature area, check if prior sessions touched the same files:
+
+```
+session_store_sql: SELECT sf.file_path, s.summary FROM session_files sf JOIN sessions s ON sf.session_id = s.id WHERE sf.file_path LIKE '%<component-or-feature-path>%' ORDER BY sf.first_seen_at DESC LIMIT 5
+```
+
+This is especially valuable for:
+
+- Resuming work from a previous session ("I was working on X yesterday")
+- Understanding why something was changed ("who modified this file recently?")
+- Avoiding repeating failed approaches ("has this been tried before?")
+
+Don't query the session store for every task — only when context from prior work would save time.
+
+---
 
 ## Skills
 
-When the following tasks come up, load and follow the corresponding skill file before acting:
+### Critical Rules (always apply — no skill loading needed)
 
-### agents-review
-**When to use:** Any time the user asks to review, improve, refactor, or create an AGENTS.md file — or when you notice a project in `apps/` or `libs/` is missing an AGENTS.md.
-**How to activate:** Read `.claude/skills/agents-review/SKILL.md` with `read_file` and follow its instructions exactly.
+These are the most commonly violated patterns. Apply them on every Angular task without loading any skill file:
 
-### skill-creator
-**When to use:** Any time the user asks to create a new skill, improve an existing skill, run evals on a skill, or optimize a skill's description.
-**How to activate:** Read `.claude/skills/skill-creator/SKILL.md` with `read_file` and follow its instructions exactly.
+- **`ChangeDetectionStrategy.OnPush`** on every component — no exceptions.
+- **`inject()`** instead of constructor injection — all new code.
+- **`input()` / `output()`** signal APIs for new components — `@Input`/`@Output` decorators are legacy.
+- **`styleUrl` (singular)**, not `styleUrls` (array) — since Angular 17.
+- **Never hardcode English strings** — use the `translate` pipe or `TranslateService`.
+- **Every SDK call needs an error path** — never ship a happy path without `catchError`.
+- **`shareReplay(1)`** at the end of service pipelines, **after** `catchError`.
+- **`takeUntilDestroyed()`** for subscription cleanup in components/directives.
 
-### design-system
-**When to use:** Any time a task involves Angular UI in this monorepo — creating or modifying components in dashboard, rao, manager-v2, or nucliadb-admin; using `nsi-*` or `pa-*` components; styling with SCSS tokens; implementing modals, toasts, tables, forms, tabs, cards, icons, settings pages, or any other UI pattern. Also use when asked about design tokens, colour palette, typography, spacing, or component APIs.
-**How to activate:** Read `.claude/skills/design-system/SKILL.md` with `read_file` and follow its instructions exactly.
+### Full Skill Files
 
-### angular-patterns
-**When to use:** Any Angular task in this monorepo — creating or modifying components, writing services, managing state, adding routes or guards, refactoring legacy code to modern Angular 21 style, debugging change detection issues, or deciding which state management tier to use. Also use when migrating from `@Input`/`@Output` decorators, constructor injection, or NgModules to the modern signal-based style.
-**How to activate:** Read `.claude/skills/angular-patterns/SKILL.md` with `read_file` and follow its instructions exactly.
+Load the full skill file **only when the task needs deep reference** — creating a new component from scratch, debugging a non-obvious issue, or when the critical rules above aren't enough.
 
-### rxjs-patterns
-**When to use:** Any task that writes or modifies a `.pipe()`, creates a Subject, adds a subscription in a service or component, uses `catchError`/`switchMap`/`forkJoin`/`combineLatest`, or requires choosing between RxJS operators. Also use when debugging streams that never emit, emit multiple times unexpectedly, or cause memory leaks. Applies to Angular apps and libs (not search-widget or rao-widget).
-**How to activate:** Read `.claude/skills/rxjs-patterns/SKILL.md` with `read_file` and follow its instructions exactly.
+| Skill                 | Trigger                                                                | File                                        |
+| --------------------- | ---------------------------------------------------------------------- | ------------------------------------------- |
+| **angular-patterns**  | Angular components, services, state, routes, guards, signals, inject() | `.github/skills/angular-patterns/SKILL.md`  |
+| **rxjs-patterns**     | `.pipe()`, Subject, switchMap, combineLatest, stream debugging         | `.github/skills/rxjs-patterns/SKILL.md`     |
+| **design-system**     | `nsi-*`/`pa-*` components, SCSS tokens, modals, toasts, tables, forms  | `.github/skills/design-system/SKILL.md`     |
+| **api-sdk**           | Nuclia API, SDK, KnowledgeBox, RetrievalAgent, SDKService              | `.github/skills/api-sdk/SKILL.md`           |
+| **error-handling**    | catchError, IErrorResponse, SisToastService, retry logic               | `.github/skills/error-handling/SKILL.md`    |
+| **testing-patterns**  | `*.spec.ts`, TestBed, ng-mocks, Vitest, fixture.detectChanges()        | `.github/skills/testing-patterns/SKILL.md`  |
+| **i18n-patterns**     | Translation keys, translate pipe, BabelEdit, locale files              | `.github/skills/i18n-patterns/SKILL.md`     |
+| **nx-monorepo**       | nx commands, project.json, generators, module boundaries, tags         | `.github/skills/nx-monorepo/SKILL.md`       |
+| **performance**       | @for loops, signal vs computed, lazy routes, shareReplay, debounce     | `.github/skills/performance/SKILL.md`       |
+| **code-review**       | "review", "code review", "review this PR/diff/file"                    | `.github/skills/code-review/SKILL.md`       |
+| **bug-finder**        | "find bugs", "check for bugs", "is this correct?"                      | `.github/skills/bug-finder/SKILL.md`        |
+| **knowledge-sync**    | "sync knowledge", "update AGENTS.md", stale docs after commit/PR       | `.github/skills/knowledge-sync/SKILL.md`    |
+| **agents-review**     | Review, create, or improve an AGENTS.md file                           | `.github/skills/agents-review/SKILL.md`     |
+| **skill-creator**     | Create, improve, or evaluate a skill                                   | `.github/skills/skill-creator/SKILL.md`     |
+| **product-knowledge** | Platform capabilities, API behaviour, feature feasibility              | `.github/skills/product-knowledge/SKILL.md` |
+| **slack-bolt-py**     | Slack bot, Bolt for Python, slack-bolt                                 | `.github/skills/slack-bolt-py/SKILL.md`     |
+| **teams-py-sdk**      | Teams bot, teams.py, microsoft-teams-apps                              | `.github/skills/teams-py-sdk/SKILL.md`      |
 
-### nx-monorepo
-**When to use:** Any Nx workspace task — running or debugging builds/tests/serve, adding a new library or app, editing `project.json` targets or executors, understanding the project graph or module boundary violations, using `nx affected` commands, fixing cache issues, or using generators (`nx g`). Also use when the user asks which project name to pass to an `nx` command, or needs to know current tags and boundary constraints.
-**How to activate:** Read `.claude/skills/nx-monorepo/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### testing-patterns
-**When to use:** Any task that writes or modifies a `*.spec.ts` file, sets up a TestBed configuration, mocks Angular services, works with OnPush components in tests, debugs failing tests, or writes Vitest tests for `search-widget` (Svelte 5) or `rao-widget` (React 19). Also use when the user asks about `ng-mocks`, `fixture.detectChanges()`, signal inputs in tests, `fakeAsync`/`tick`, `MockProvider`, `MockModule`, or Vitest `mount`/`unmount`.
-**How to activate:** Read `.claude/skills/testing-patterns/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### api-sdk
-**When to use:** Any task that involves calling the Nuclia API, adding a new endpoint, extending `KnowledgeBox` or `RetrievalAgent`, creating or modifying an Angular service that fetches data, working with `SDKService`, handling HTTP errors from the SDK, or understanding the `@nuclia/core` SDK structure. Also use when the user asks how to add a new API call, wrap an SDK method in Angular, or handle `IErrorResponse` from search/ask.
-**How to activate:** Read `.claude/skills/api-sdk/SKILL.md` with `read_file` and follow its instructions exactly.
-
-
-### code-review
-**When to use:** Any time the user says "review", "code review", "review this PR", "review this diff", "review these changes", or "review this file". Reviews changed files or a diff against all monorepo standards: Angular 21 patterns, RxJS best practices, design system usage, SDK patterns, Nx module boundaries, test coverage, and TypeScript hygiene.
-**How to activate:** Read `.claude/skills/code-review/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### bug-finder
-**When to use:** Any time the user asks to "find bugs", "check for bugs", "what could go wrong", "is this correct?", or when auditing code specifically for runtime defects. Also invoke automatically from within code-review or any automated agent that needs a focused bug scan. Covers memory leaks, race conditions, null dereference, change detection bugs, signal misuse, form bugs, router bugs, and silent error swallowing — but never style or architecture issues.
-**How to activate:** Read `.claude/skills/bug-finder/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### error-handling
-**When to use:** Any task that involves handling SDK responses from `search()`, `ask()`, `find()`, or `catalog()`, writing `catchError` callbacks, showing error toasts via `SisToastService`, handling `IErrorResponse`, adding retry logic, or surfacing errors in the UI. Also use when a toast receives a raw string instead of an i18n key, when 401/400 is being handled in a component instead of delegating to `AuthInterceptor`, or when `shareReplay` appears before `catchError` in a pipeline.
-**How to activate:** Read `.claude/skills/error-handling/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### performance
-**When to use:** Any task that involves adding or reviewing `@for` loops, choosing between `signal()` and `computed()`, setting up lazy-loaded routes, writing service-level streams with `shareReplay`, handling resize or input debouncing, rendering long lists, or reviewing a component for change detection issues. Also use when `markForCheck()`, `shareReplay()` without a buffer argument, `$index` in `track` expressions, or eager route loading is found during code review.
-**How to activate:** Read `.claude/skills/performance/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### i18n-patterns
-**When to use:** Any task that involves adding, renaming, or deleting a translation key, using the `translate` pipe in a template, calling `TranslateService`, wiring up i18n in a new component or library, or working with translation files. Also use when a user mentions BabelEdit, when a string is hardcoded in English in a template that should be translatable, or when working with translations in the `search-widget` (Svelte 5) — which uses a different i18n system than Angular.
-**How to activate:** Read `.claude/skills/i18n-patterns/SKILL.md` with `read_file` and follow its instructions exactly.
-
-### knowledge-sync
-**When to use:** Any time a large commit or PR lands and documentation might be stale — user says "there was a big update", "sync knowledge", "update AGENTS.md after this commit", "keep knowledge up-to-date", or provides a commit hash asking what needs updating. Also use when the staleness check script reports stale files, when a new `apps/` or `libs/` project was created without an AGENTS.md, or when a skill references a renamed/deleted class. Proactively suggest running the staleness check after any merge that touches 10+ files.
-**How to activate:** Read `.claude/skills/knowledge-sync/SKILL.md` with `read_file` and follow its instructions exactly.
+---
 
 ## Agents
 
-For non-trivial multi-step tasks, delegate to the agent system via the orchestrator.
+Sub-agents run in **separate context windows** — use them for genuinely complex tasks, not for simple work that you can do directly in 2-5 tool calls.
+
+### Model routing
+
+Use the right model for each sub-agent to balance cost and quality:
+
+| Role                                                                                         | Model  | Rationale                                  |
+| -------------------------------------------------------------------------------------------- | ------ | ------------------------------------------ |
+| **Info gathering** (explore, product-owner, knowledge-keeper)                                | Haiku  | Just reading files and docs — fast, cheap  |
+| **Code generation** (ui-builder, test-writer, api-integrator, reactive-expert, infra-expert) | Sonnet | Needs code quality, but not deep reasoning |
+| **Code review** (quality-inspector)                                                          | Sonnet | Pattern recognition and judgment           |
+| **Coordination** (orchestrator)                                                              | Sonnet | Classification and routing                 |
+
+Never use Opus for sub-agents — if a task needs Opus-level reasoning, the user will run it in the main conversation.
 
 ### When to use the orchestrator
-Load `.claude/agents/orchestrator.md` when the task:
+
+Load `.github/agents/orchestrator.md` when the task:
+
 - Touches more than one domain (UI + API, component + tests, etc.)
 - Is described as "build a feature", "add end-to-end", or "create a tested component"
 - Requires coordinating output from multiple specialists
+- Is sized **L or XL** in the task sizing table
 
 ### Direct agent invocation (single-domain tasks)
-When the task is clearly single-domain, load the specialist directly:
 
-| Task type | Load agent |
-|-----------|------------|
-| Build / modify Angular UI, templates, SCSS, i18n | `.claude/agents/ui-builder.md` |
-| Write or fix `*.spec.ts` files | `.claude/agents/test-writer.md` |
-| Add API calls, SDK endpoints, Angular services | `.claude/agents/api-integrator.md` |
-| RxJS pipelines, signals, performance | `.claude/agents/reactive-expert.md` |
-| Code review, find bugs | `.claude/agents/quality-inspector.md` |
-| Nx build/test/serve, project.json, generators | `.claude/agents/infra-expert.md` |
-| Sync AGENTS.md and skill docs after a commit/PR | `.claude/agents/knowledge-keeper.md` |
+For tasks sized **M** that are clearly single-domain, invoke the specialist directly:
 
+| Task type                                      | Agent                                 |
+| ---------------------------------------------- | ------------------------------------- |
+| Angular UI, templates, SCSS, i18n              | `.github/agents/ui-builder.md`        |
+| `*.spec.ts` files                              | `.github/agents/test-writer.md`       |
+| API calls, SDK endpoints, Angular services     | `.github/agents/api-integrator.md`    |
+| RxJS pipelines, signals, performance           | `.github/agents/reactive-expert.md`   |
+| Code review, find bugs                         | `.github/agents/quality-inspector.md` |
+| Nx build/test/serve, project.json, generators  | `.github/agents/infra-expert.md`      |
+| Sync AGENTS.md and skill docs after commit/PR  | `.github/agents/knowledge-keeper.md`  |
+| Platform domain questions, feature feasibility | `.github/agents/product-owner.md`     |
+
+### When NOT to use agents
+
+- **XS/S tasks:** Do the work directly. A rename, a one-line fix, or a simple translation key doesn't need agent delegation.
+- **Tasks you can do in ≤5 tool calls:** Just do it yourself.

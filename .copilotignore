@@ -1,0 +1,37 @@
+# Copilot Ignore — reduce noise in AI search/indexing
+
+# Build outputs
+dist/
+tmp/
+out-tsc/
+.angular/cache/
+.nx/cache/
+.nx/workspace-data/
+
+# Dependencies
+node_modules/
+
+# Coverage & logs
+coverage/
+npm-debug.log
+yarn-error.log
+testem.log
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+
+# Vendored / generated
+libs/chrome-ext/src/lib/vendor/
+libs/sdk-core/protobuf/build/
+
+# Large binary / spec files (API specs are read on-demand via product-knowledge skill)
+.github/skills/product-knowledge/references/api-specs/*.yaml
+
+# Yarn internals
+.yarn/
+.pnp.*
+
+# Lock file (huge, never useful for AI)
+yarn.lock
