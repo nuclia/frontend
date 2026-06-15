@@ -1,0 +1,164 @@
+<ng-template
+  #formFields
+  let-form="form"
+  let-isCloudZero="isCloudZero"
+  let-showAction="showAction">
+  <ng-container [formGroup]="form">
+    <pa-input
+      formControlName="nuclia_tokens_price"
+      type="number">
+      Nuclia tokens price *
+    </pa-input>
+    @if (isCloudZero) {
+      <pa-input formControlName="product">Product *</pa-input>
+      <pa-input formControlName="product_line">Product line *</pa-input>
+      <pa-input formControlName="business_unit">Business unit *</pa-input>
+    }
+    <pa-select
+      label="Billing formula"
+      formControlName="billing_formula_id"
+      [options]="service.formulasOptions | async"></pa-select>
+    <pa-input
+      formControlName="free_tokens_per_billing_cycle"
+      type="number">
+      Free tokens per billing cycle
+    </pa-input>
+    <pa-input
+      formControlName="free_storage_nuclia_tokens"
+      type="number">
+      Free storage (Nuclia tokens)
+    </pa-input>
+    <pa-input
+      formControlName="on_demand_budget"
+      type="number">
+      On-demand budget
+    </pa-input>
+    @if (showAction) {
+      <pa-select
+        label="Action on budget exhausted"
+        formControlName="action_on_budget_exhausted">
+        @for (opt of service.actionOnBudgetOptions; track opt.value) {
+          <pa-option [value]="opt.value">{{ opt.label }}</pa-option>
+        }
+      </pa-select>
+    }
+  </ng-container>
+</ng-template>
+
+@switch (service.subscriptionState()) {
+  @case ('loading') {
+    <p>Loading subscription...</p>
+  }
+  @case ('other') {
+    <nsi-info-card>
+      This account already has a subscription managed by another provider ({{ service.existingProvider() }}).
+    </nsi-info-card>
+  }
+  @case ('none') {
+    <h3>Cloud Zero Subscription</h3>
+    <form
+      [formGroup]="service.cloudZeroForm"
+      (ngSubmit)="service.createCloudZeroSubscription()">
+      <ng-container
+        *ngTemplateOutlet="
+          formFields;
+          context: { form: service.cloudZeroForm, isCloudZero: true, showAction: service.cloudZeroShowAction() }
+        "></ng-container>
+      <div>
+        <pa-button
+          type="submit"
+          [disabled]="service.cloudZeroForm.invalid || service.isSavingCloudZero()">
+          Create Cloud Zero Subscription
+        </pa-button>
+      </div>
+    </form>
+
+    <h3 class="manual-subscription">Manual Subscription</h3>
+    <form
+      [formGroup]="service.manualForm"
+      (ngSubmit)="service.createManualSubscription()">
+      <ng-container
+        *ngTemplateOutlet="
+          formFields;
+          context: { form: service.manualForm, isCloudZero: false, showAction: service.manualShowAction() }
+        "></ng-container>
+      <div>
+        <pa-button
+          type="submit"
+          [disabled]="service.manualForm.invalid || service.isSavingManual()">
+          Create Manual Subscription
+        </pa-button>
+      </div>
+    </form>
+  }
+  @case ('cloud_zero') {
+    <h3>Cloud Zero Subscription</h3>
+    <form
+      [formGroup]="service.cloudZeroForm"
+      (ngSubmit)="service.updateCloudZeroSubscription()">
+      <ng-container
+        *ngTemplateOutlet="
+          formFields;
+          context: { form: service.cloudZeroForm, isCloudZero: true, showAction: service.cloudZeroShowAction() }
+        "></ng-container>
+      <div class="form-actions">
+        <pa-button
+          type="submit"
+          [disabled]="service.cloudZeroForm.pristine || service.cloudZeroForm.invalid || service.isSavingCloudZero()">
+          Update
+        </pa-button>
+        @if (!showCloudZeroDeleteConfirm()) {
+          <pa-button
+            kind="destructive"
+            (click)="showCloudZeroDeleteConfirm.set(true)">
+            Delete
+          </pa-button>
+        } @else {
+          <span>Are you sure? This action cannot be undone.</span>
+          <pa-button
+            kind="destructive"
+            [disabled]="service.isDeletingCloudZero()"
+            (click)="service.confirmDelete('cloud_zero'); showCloudZeroDeleteConfirm.set(false)">
+            Confirm delete
+          </pa-button>
+          <pa-button (click)="showCloudZeroDeleteConfirm.set(false)">Cancel</pa-button>
+        }
+      </div>
+    </form>
+  }
+  @case ('manual') {
+    <h3>Manual Subscription</h3>
+    <form
+      [formGroup]="service.manualForm"
+      (ngSubmit)="service.updateManualSubscription()">
+      <ng-container
+        *ngTemplateOutlet="
+          formFields;
+          context: { form: service.manualForm, isCloudZero: false, showAction: service.manualShowAction() }
+        "></ng-container>
+      <div class="form-actions">
+        <pa-button
+          type="submit"
+          [disabled]="service.manualForm.pristine || service.manualForm.invalid || service.isSavingManual()">
+          Update
+        </pa-button>
+        @if (!showManualDeleteConfirm()) {
+          <pa-button
+            kind="destructive"
+            (click)="showManualDeleteConfirm.set(true)">
+            Delete
+          </pa-button>
+        } @else {
+          <span>Are you sure? This action cannot be undone.</span>
+          <pa-button
+            kind="destructive"
+            [disabled]="service.isDeletingManual()"
+            (click)="service.confirmDelete('manual'); showManualDeleteConfirm.set(false)">
+            Confirm delete
+          </pa-button>
+          <pa-button (click)="showManualDeleteConfirm.set(false)">Cancel</pa-button>
+        }
+      </div>
+    </form>
+  }
+}

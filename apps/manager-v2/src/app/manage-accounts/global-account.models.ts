@@ -142,6 +142,51 @@ export interface BillingFormula {
   formula: string[];
 }
 
+export type ActionOnBudgetExhausted = 'WARN_ACCOUNT_OWNER' | 'BLOCK_ACCOUNT';
+
+export interface BaseSubscriptionPayload {
+  nuclia_tokens_price: number;
+  billing_formula_id?: string;
+  free_tokens_per_billing_cycle?: number;
+  free_storage_nuclia_tokens?: number | null;
+  on_demand_budget?: number | null;
+  action_on_budget_exhausted?: ActionOnBudgetExhausted | null;
+}
+
+export interface CloudZeroSubscriptionPayload extends BaseSubscriptionPayload {
+  product: string;
+  product_line: string;
+  business_unit: string;
+}
+
+export type ManualSubscriptionPayload = BaseSubscriptionPayload;
+
+export type ManagerSubscriptionProvider =
+  | 'MANUAL'
+  | 'CLOUD_ZERO'
+  | 'STRIPE'
+  | 'AWS_MARKETPLACE'
+  | 'NO_SUBSCRIPTION'
+  | string;
+
+export interface ManagerSubscriptionDetails {
+  status?: string;
+  on_demand_budget?: number | null;
+  action_on_budget_exhausted?: ActionOnBudgetExhausted | null;
+  free_tokens_per_billing_cycle?: number;
+  nuclia_tokens_price?: number;
+  billing_formula_id?: string;
+  free_storage_nuclia_tokens?: number | null;
+  product?: string;
+  product_line?: string;
+  business_unit?: string;
+}
+
+export interface ManagerAccountSubscription {
+  provider: ManagerSubscriptionProvider;
+  subscription: ManagerSubscriptionDetails;
+}
+
 export type PaymentCurrency = 'usd' | 'eur';
 
 export interface PaymentLinkPayload {
