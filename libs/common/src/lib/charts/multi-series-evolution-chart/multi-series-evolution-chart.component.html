@@ -22,7 +22,7 @@
         @for (item of tooltipSeries; track item.label) {
           <li>
             <span class="tooltip-color" [style.background]="item.color"></span>
-            {{ item.label }}: {{ item.average }}/100 · {{ item.status }}
+            {{ item.label }}: {{ item.average }}% · {{ item.status }}
             @if (item.hasRange) {
               <span class="tooltip-range">(min-max {{ item.min }}–{{ item.max }})</span>
             }

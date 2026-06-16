@@ -134,7 +134,7 @@ export function getRemiScoreDisplay(rawValue: number | null | undefined): RemiSc
   if (normalizedScore >= 80) {
     return {
       normalizedScore,
-      displayValue: `${normalizedScore}/100`,
+      displayValue: `${normalizedScore}%`,
       label: 'Good',
       status: 'good',
       cssClass: 'remi-high',
@@ -144,7 +144,7 @@ export function getRemiScoreDisplay(rawValue: number | null | undefined): RemiSc
   if (normalizedScore >= 50) {
     return {
       normalizedScore,
-      displayValue: `${normalizedScore}/100`,
+      displayValue: `${normalizedScore}%`,
       label: 'Needs review',
       status: 'needs-review',
       cssClass: 'remi-mid',
@@ -153,7 +153,7 @@ export function getRemiScoreDisplay(rawValue: number | null | undefined): RemiSc
 
   return {
     normalizedScore,
-    displayValue: `${normalizedScore}/100`,
+    displayValue: `${normalizedScore}%`,
     label: 'Poor',
     status: 'poor',
     cssClass: 'remi-low',

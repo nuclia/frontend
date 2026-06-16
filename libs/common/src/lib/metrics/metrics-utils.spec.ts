@@ -163,7 +163,7 @@ describe('metrics-utils', () => {
     it('normalizes 0-1 values to 0-100 and marks poor', () => {
       expect(getRemiScoreDisplay(0.2)).toEqual({
         normalizedScore: 20,
-        displayValue: '20/100',
+        displayValue: '20%',
         label: 'Poor',
         status: 'poor',
         cssClass: 'remi-low',
@@ -173,7 +173,7 @@ describe('metrics-utils', () => {
     it('normalizes 0-1 values to needs review', () => {
       expect(getRemiScoreDisplay(0.6)).toEqual({
         normalizedScore: 60,
-        displayValue: '60/100',
+        displayValue: '60%',
         label: 'Needs review',
         status: 'needs-review',
         cssClass: 'remi-mid',
@@ -183,7 +183,7 @@ describe('metrics-utils', () => {
     it('normalizes 0-5 scores to 0-100', () => {
       expect(getRemiScoreDisplay(4)).toEqual({
         normalizedScore: 80,
-        displayValue: '80/100',
+        displayValue: '80%',
         label: 'Good',
         status: 'good',
         cssClass: 'remi-high',
@@ -193,7 +193,7 @@ describe('metrics-utils', () => {
     it('passes through 0-100 percentages', () => {
       expect(getRemiScoreDisplay(84)).toEqual({
         normalizedScore: 84,
-        displayValue: '84/100',
+        displayValue: '84%',
         label: 'Good',
         status: 'good',
         cssClass: 'remi-high',
