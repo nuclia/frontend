@@ -6,6 +6,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
   type AragAnswer,
+  type HistoryEntry,
   type Feedback,
   type IErrorResponse,
 } from '@nuclia/core';
@@ -82,6 +83,12 @@ export function getEntryAnswerText(entry: AragChatEntry) {
 }
 export function getEntryFeedback(entry: AragChatEntry) {
   return entry.answers.at(-1)?.feedback;
+}
+export function getHistoryEntries(): HistoryEntry[] {
+  return aragAnswerState.entries.map((entry) => ({
+    question: entry.question,
+    answer: getEntryAnswer(entry)?.answer || '',
+  }));
 }
 
 export function getEntrySources(entry: AragChatEntry): AragSource[] {

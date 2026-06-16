@@ -24,6 +24,16 @@ export interface InteractionRequest {
   operation: InteractionOperation;
 }
 
+export interface InteractionOptions {
+  chat_history?: HistoryEntry[];
+  streaming?: boolean;
+}
+
+export type HistoryEntry = {
+  question: string;
+  answer: string;
+};
+
 export interface ARAGException {
   detail: string;
 }

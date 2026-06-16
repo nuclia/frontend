@@ -29,6 +29,7 @@
     widgetFeatures,
     widgetViewerEnabled,
     addAnswerChunk,
+    getHistoryEntries,
   } from '../../core';
   import AragAnswer from '../../components/arag-answer/AragAnswer.svelte';
 
@@ -101,7 +102,12 @@
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((question) => setAragQuestion(question)),
-            switchMap((question) => nucliaAPI.arag.interact(session, question, workflow, 'WS', undefined, true)),
+            switchMap((question) =>
+              nucliaAPI.arag.interact(session, question, workflow, 'WS', undefined, {
+                streaming: true,
+                chat_history: session === 'ephemeral' ? getHistoryEntries().slice(0, -1) : undefined,
+              }),
+            ),
           ),
         ),
       )
