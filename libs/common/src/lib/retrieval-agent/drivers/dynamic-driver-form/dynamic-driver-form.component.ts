@@ -188,6 +188,9 @@ export class DynamicDriverFormComponent implements OnInit {
       // Object with additionalProperties should be a FormGroup for key-value pairs
       return new FormGroup({});
     } else if (type === 'array' || property.items) {
+      if (defaultValue && Array.isArray(defaultValue)) {
+        return new FormArray(defaultValue.map((item: any) => new FormControl(item)));
+      }
       return new FormArray([]);
     } else if (type === 'boolean') {
       return new FormControl(defaultValue ?? false);
