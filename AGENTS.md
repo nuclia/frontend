@@ -15,17 +15,17 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 
 ### Apps
 
-| Project              | Stack           | Purpose                                                        |
-| -------------------- | --------------- | -------------------------------------------------------------- |
-| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth     |
-| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                  |
-| `platform`           | Angular 21      | Progress Cloud branded platform (account mgmt, `platform` UX)  |
-| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)                |
-| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                  |
-| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                       |
-| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                     |
-| `rao-demo`           | React 19 + Vite | Local dev sandbox for `libs/rao-widget`                        |
-| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                        |
+| Project              | Stack           | Purpose                                                       |
+| -------------------- | --------------- | ------------------------------------------------------------- |
+| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth    |
+| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                 |
+| `platform`           | Angular 21      | Progress Cloud branded platform (account mgmt, `platform` UX) |
+| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)               |
+| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                 |
+| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                      |
+| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                    |
+| `rao-demo`           | React 19 + Vite | Local dev sandbox for `libs/rao-widget`                       |
+| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                       |
 
 ### Libraries
 
@@ -116,17 +116,15 @@ Test files are co-located alongside source as `*.spec.ts`.
 
 ---
 
-## Project-Level AGENTS.md Files
+## Project-Level Documentation
 
 Every app and lib has its own `AGENTS.md` with project-specific routing, components, services, and gotchas. Read the relevant file before working in any sub-project. This root file documents only what is shared across the entire workspace.
 
----
+Projects may also have a `KNOWLEDGE.md` for deeper write-ups of non-obvious patterns, workarounds, and architectural decisions discovered during development sessions. If it exists, it will be linked from the project's `AGENTS.md`.
 
-## Communication Rules
+### AI workflow configuration
 
-- **NEVER ask questions as plain text.** Always use the `ask_user` tool with choices when clarification is needed.
-- **Prefer multiple-choice over freeform.** Provide a `choices` array whenever possible — faster UX and lower quota usage.
-- **Batch information, not questions.** If you need multiple pieces of info, gather them via tool calls or codebase exploration first; only ask the user when truly blocked.
+See `.github/copilot-instructions.md` for the full AI workflow: communication rules, anti-cycling protocol, task sizing, session knowledge capture, skill routing, and agent delegation.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

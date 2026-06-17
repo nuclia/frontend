@@ -1,5 +1,5 @@
 /.yarn/releases/** binary
 /.yarn/plugins/** binary
 # API spec snapshots — large generated files, suppress line diffs
-.claude/skills/product-knowledge/references/api-specs/*.yaml binary
+.github/skills/product-knowledge/references/api-specs/*.yaml binary
 
