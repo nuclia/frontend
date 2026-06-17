@@ -26,9 +26,9 @@ jobs:
   build:
     runs-on: nuclia-base
     permissions:
-      id-token: write    # required by google-github-actions/auth (OIDC)
-      contents: write    # required by pkgdeps/git-tag-action and JamesIves/github-pages-deploy-action
-      actions: read      # required by nrwl/nx-set-shas to query previous workflow runs
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: write # required by pkgdeps/git-tag-action and JamesIves/github-pages-deploy-action
+      actions: read # required by nrwl/nx-set-shas to query previous workflow runs
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
@@ -104,7 +104,7 @@ jobs:
 
       - name: Install project dependencies
         run: |-
-          yarn
+          yarn install --immutable
           yarn missdev
 
       - name: Unit tests
@@ -373,8 +373,8 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-app == 'yes'
     permissions:
-      id-token: write  # required by google-github-actions/auth (OIDC)
-      contents: read   # required by actions/checkout
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -455,8 +455,8 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-manager == 'yes'
     permissions:
-      id-token: write  # required by google-github-actions/auth (OIDC)
-      contents: read   # required by actions/checkout
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -537,8 +537,8 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-rao == 'yes'
     permissions:
-      id-token: write  # required by google-github-actions/auth (OIDC)
-      contents: read   # required by actions/checkout
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -619,8 +619,8 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-platform == 'yes'
     permissions:
-      id-token: write  # required by google-github-actions/auth (OIDC)
-      contents: read   # required by actions/checkout
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -701,8 +701,8 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-auth == 'yes'
     permissions:
-      id-token: write  # required by google-github-actions/auth (OIDC)
-      contents: read   # required by actions/checkout
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
     outputs:
       json-summary: |
         {
@@ -780,7 +780,7 @@ jobs:
   send-to-promotion:
     runs-on: ubuntu-latest
     needs: [deploy-manager, deploy-app, deploy-rao, deploy-platform, deploy-auth]
-    permissions: {}    # no GITHUB_TOKEN scopes needed; dispatch uses a scoped GitHub App token
+    permissions: {} # no GITHUB_TOKEN scopes needed; dispatch uses a scoped GitHub App token
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
