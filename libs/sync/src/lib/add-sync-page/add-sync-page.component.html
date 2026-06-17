@@ -69,7 +69,7 @@
         } @else {
           <pa-button
             kind="primary"
-            [disabled]="!validForm || (connector.allowToSelectFolders && !selectedFolder) || saving"
+            [disabled]="!validForm || (connector.allowToSelectFolders && !isFolderSelectionValid()) || saving"
             (click)="save()">
             {{ 'sync.add-page.footer.save-button' | translate }}
           </pa-button>
