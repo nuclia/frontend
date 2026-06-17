@@ -2,7 +2,7 @@
   "pastanaga-angular": {
     "url": "git@github.com:ykulynych/pastanaga-angular.git",
     "https": "https://github.com/ykulynych/pastanaga-angular.git",
-    "branch": "accesibility-improvements",
+    "branch": "fix-multilevel-dropdowns",
     "path": "/projects/pastanaga-angular/src",
     "package": "@guillotinaweb/pastanaga-angular"
   }

@@ -314,7 +314,7 @@ const routes: Routes = [
   },
   { path: 'user/callback', component: CallbackComponent },
   // TEMPORARY: expose saml callback for IDP-initiated SAML clients whose RelayState points here.
-  // Remove once those clients are updated to use the auth app's URL.
+  // Remove once those clients are updated to use the auth app's URL
   { path: 'user/callbacks/saml', component: CallbackComponent, data: { saml: true } },
   { path: 'user/login-redirect', component: AppLoginComponent },
   { path: 'user/signup', component: PageNotFoundComponent, canActivate: [redirectToSignUp] },
