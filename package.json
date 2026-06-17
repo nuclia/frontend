@@ -203,5 +203,5 @@
   "overrides": {
     "stylus": "0.59.0"
   },
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@4.17.0"
 }
