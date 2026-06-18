@@ -7,6 +7,7 @@ export interface KbConnection {
   type: KbConnectionType;
   label: string;
   description: string;
+  preselectedFilterExpression?: string;
   // MCP-specific fields
   url?: string;
   key?: string;

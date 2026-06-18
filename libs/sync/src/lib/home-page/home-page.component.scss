@@ -73,6 +73,39 @@
     pa-textarea {
       display: block;
     }
+
+    .config-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1);
+
+      .config-form-help {
+        @include body-m();
+        color: $color-neutral-regular;
+      }
+
+      .extra-fields {
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(2);
+        margin-top: rhythm(1);
+
+        &.visible {
+          height: auto;
+          opacity: 1;
+        }
+      }
+
+      .align-on-right {
+        align-self: flex-end;
+      }
+    }
+
+    .preselected-filters-field {
+      border-top: 1px solid $color-neutral-lighter;
+      margin-top: rhythm(1);
+      padding-top: rhythm(2);
+    }
   }
 }
 

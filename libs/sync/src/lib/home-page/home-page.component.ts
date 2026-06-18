@@ -20,7 +20,9 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BadgeComponent,
+  ButtonMiniComponent,
   DropdownButtonComponent,
+  ExpandableTextareaComponent,
   InfoCardComponent,
   SisModalService,
   SisStatusComponent,
@@ -30,17 +32,16 @@ import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, t
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
 import {
-  EditSourceModalData,
-  EditSourceModalResult,
+  FilterExpressionModalComponent,
   KbConnection,
   KbConnectionsService,
-  RaoEditSourceModalComponent,
 } from '@flaps/common';
 
 @Component({
   imports: [
     CommonModule,
     BadgeComponent,
+    ButtonMiniComponent,
     ConnectorComponent,
     DropdownButtonComponent,
     PaButtonModule,
@@ -55,9 +56,9 @@ import {
     RouterLink,
     PaIconModule,
     PaDateTimeModule,
+    ExpandableTextareaComponent,
     InfoCardComponent,
     PaPopupModule,
-    RaoEditSourceModalComponent,
     SisStatusComponent,
   ],
   templateUrl: './home-page.component.html',
@@ -83,6 +84,7 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
   connectSourceControl = new FormControl<string>('kb', { nonNullable: true });
   kbNameControl = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
   kbDescriptionControl = new FormControl<string>('', { nonNullable: true });
+  kbPreselectedFilterExpressionControl = new FormControl<string>('', { nonNullable: true, updateOn: 'blur' });
   currentKb = this.sdk.currentKb;
 
   connections = this.connectionsService.connections;
@@ -282,9 +284,26 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'kb',
       label: this.kbNameControl.value,
       description: this.kbDescriptionControl.value,
+      preselectedFilterExpression: this.kbPreselectedFilterExpressionControl.value,
     });
     this.kbNameControl.reset('');
     this.kbDescriptionControl.reset('');
+    this.kbPreselectedFilterExpressionControl.reset('');
+  }
+
+  openKbPreselectedFilterAssistant() {
+    this.modalService
+      .openModal(
+        FilterExpressionModalComponent,
+        new ModalConfig({
+          data: {
+            filterExpression: this.kbPreselectedFilterExpressionControl.value,
+            help: 'search.configuration.search-box.preselected-filters.info-box',
+          },
+        }),
+      )
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => this.kbPreselectedFilterExpressionControl.patchValue(filters));
   }
 
   connectMcp() {
@@ -302,20 +321,6 @@ export class HomePageComponent implements OnInit, AfterViewInit, OnDestroy {
       timeout: timeout ?? undefined,
     });
     this.mcpForm.reset();
-  }
-
-  editConnection(source: KbConnection) {
-    this.modalService
-      .openModal(
-        RaoEditSourceModalComponent,
-        new ModalConfig<EditSourceModalData>({
-          data: { sourceLabel: source.label, description: source.description },
-        }),
-      )
-      .onClose.pipe(filter((result): result is EditSourceModalResult => !!result && typeof result === 'object'))
-      .subscribe(({ label, description }) => {
-        this.connectionsService.update(source.id, { label, description });
-      });
   }
 
   selectThirdParty(app: string) {

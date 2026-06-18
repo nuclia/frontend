@@ -57,6 +57,12 @@
     gap: rhythm(1);
   }
 
+  .search-mode-label {
+    align-items: center;
+    display: inline-flex;
+    gap: rhythm(0.5);
+  }
+
   .rao-config-flow {
     display: flex;
     flex-direction: column;

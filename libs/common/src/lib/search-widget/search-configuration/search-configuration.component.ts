@@ -55,7 +55,6 @@ import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
 import { RoutingFormComponent } from './routing-form/routing-form.component';
-import { RaoEditSourceModalComponent, EditSourceModalData, EditSourceModalResult } from './rao-edit-source-modal/rao-edit-source-modal.component';
 import { KbConnectionsService } from '../connections.service';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
@@ -375,38 +374,6 @@ export class SearchConfigurationComponent {
     this.selectedSourceIds.update((ids) =>
       ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id],
     );
-  }
-
-  editKbSource(event: Event) {
-    event.stopPropagation();
-    const kb = this.currentKbSource();
-    if (!kb) return;
-    this.modalService
-      .openModal(
-        RaoEditSourceModalComponent,
-        new ModalConfig<EditSourceModalData>({
-          data: { sourceLabel: kb.label, description: '' },
-        }),
-      )
-      .onClose.pipe(filter((result): result is EditSourceModalResult => !!result && typeof result === 'object'))
-      .subscribe(({ label }) => {
-        this.currentKbSource.set({ ...kb, label });
-      });
-  }
-
-  editRaoSource(event: Event, source: { id: string; label: string; description: string }) {
-    event.stopPropagation();
-    this.modalService
-      .openModal(
-        RaoEditSourceModalComponent,
-        new ModalConfig<EditSourceModalData>({
-          data: { sourceLabel: source.label, description: source.description },
-        }),
-      )
-      .onClose.pipe(filter((result): result is EditSourceModalResult => !!result && typeof result === 'object'))
-      .subscribe(({ label, description }) => {
-        this.connectionsService.update(source.id, { label, description });
-      });
   }
 
   navigateToSync() {

@@ -121,23 +121,64 @@
         (valueChange)="updateJsonConfig($event)"></nsi-expandable-textarea>
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
       <div class="search-mode-container">
-        <pa-radio-group noBackground [value]="searchMode()" (valueChange)="searchMode.set($event)">
-          <pa-radio
-            value="agentic"
-            [help]="'search.configuration.search-mode.agentic-description' | translate">
-            <span class="title-m">{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+        <pa-radio-group
+          noBackground
+          [value]="searchMode()"
+          (valueChange)="searchMode.set($event)">
+          <pa-radio value="agentic">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="agenticModeInfoDropdown"></pa-button>
+            </span>
           </pa-radio>
-          <pa-radio
-            value="simple-rag"
-            [help]="'search.configuration.search-mode.simple-rag-description' | translate">
-            <span class="title-m">{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
+
+          <pa-radio value="simple-rag">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="simpleRagModeInfoDropdown"></pa-button>
+            </span>
           </pa-radio>
-          <pa-radio
-            value="search"
-            [help]="'search.configuration.search-mode.search-description' | translate">
-            <span class="title-m">{{ 'search.configuration.search-mode.search' | translate }}</span>
+
+          <pa-radio value="search">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.search' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="searchModeInfoDropdown"></pa-button>
+            </span>
           </pa-radio>
         </pa-radio-group>
+
+        <pa-dropdown
+          #agenticModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">{{ 'search.configuration.search-mode.agentic-description' | translate }}</pa-option>
+        </pa-dropdown>
+
+        <pa-dropdown
+          #simpleRagModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">{{ 'search.configuration.search-mode.simple-rag-description' | translate }}</pa-option>
+        </pa-dropdown>
+
+        <pa-dropdown
+          #searchModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">{{ 'search.configuration.search-mode.search-description' | translate }}</pa-option>
+        </pa-dropdown>
       </div>
       <pa-accordion (toggleAccordion)="scrollOnTop()">
         @if (searchMode() === 'agentic') {
@@ -155,11 +196,6 @@
                       {{ currentKbSource()!.label }}
                     </pa-checkbox>
                     <nsi-badge kind="neutral">{{ connectionTypeLabels['kb'] }}</nsi-badge>
-                    <pa-button
-                      aspect="basic"
-                      size="small"
-                      icon="edit"
-                      (click)="editKbSource($event)"></pa-button>
                   </div>
                 }
                 @for (source of connections(); track source.id) {
@@ -170,11 +206,6 @@
                       {{ source.label }}
                     </pa-checkbox>
                     <nsi-badge kind="neutral">{{ connectionTypeLabels[source.type] }}</nsi-badge>
-                    <pa-button
-                      aspect="basic"
-                      size="small"
-                      icon="edit"
-                      (click)="editRaoSource($event, source)"></pa-button>
                   </div>
                 }
                 @if (connections().length === 0) {
@@ -194,7 +225,7 @@
             </pa-accordion-item-body>
           </pa-accordion-item>
         }
-        @if (searchMode() === 'search') {
+        @if (searchMode() === 'search' || searchMode() === 'simple-rag') {
           <pa-accordion-item
             #searchBox
             id="search-box"
@@ -250,7 +281,7 @@
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>
         </pa-accordion-item>
-        @if ((isRoutingEnabled | async) && searchMode() === 'search') {
+        @if ((isRoutingEnabled | async) && (searchMode() === 'search' || searchMode() === 'simple-rag')) {
           <pa-accordion-item
             #routing
             id="routing"

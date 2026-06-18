@@ -286,6 +286,30 @@
               [placeholder]="'sync.home-page.connect.kb.description-placeholder' | translate">
               {{ 'sync.home-page.connect.kb.description-label' | translate }}<span class="required-asterisk"> *</span>
             </pa-textarea>
+
+            <div class="config-form-field preselected-filters-field">
+              <div class="config-form-help">
+                {{ 'sync.home-page.connect.kb.preselected-filters.description' | translate }}
+              </div>
+
+              <div class="extra-fields visible">
+                <nsi-info-card>
+                  <span [innerHTML]="'sync.home-page.connect.kb.preselected-filters.info-box' | translate"></span>
+                </nsi-info-card>
+
+                <nsi-expandable-textarea
+                  [formControl]="kbPreselectedFilterExpressionControl"
+                  resizable
+                  rows="4"
+                  modalTitle="search.configuration.search-box.preselected-filters.filter-expression.textarea-label">
+                  {{ 'search.configuration.search-box.preselected-filters.filter-expression.textarea-label' | translate }}
+                </nsi-expandable-textarea>
+
+                <nsi-button-mini icon="circle-plus" (click)="openKbPreselectedFilterAssistant()">
+                  {{ 'search.configuration.search-box.preselected-filters.assistant-button-label' | translate }}
+                </nsi-button-mini>
+              </div>
+            </div>
           </div>
 
           <div>
@@ -432,9 +456,6 @@
                   Menu
                 </pa-button>
                 <pa-dropdown #connectionMenu>
-                  <pa-option (selectOption)="editConnection(connection)">
-                    {{ 'sync.home-page.connections.menu.edit' | translate }}
-                  </pa-option>
                   <pa-option
                     destructive
                     (selectOption)="deleteConnection(connection)">
