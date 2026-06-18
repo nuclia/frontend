@@ -616,9 +616,13 @@ export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
 }
 
-export function getRouting(question: string, routing: Routing): Observable<{ config: string; answer?: string }> {
-  const configs = routing.rules.map((rule) => rule.search_config);
-  const rules = routing.rules
+export function getRouting(question: string, routing: Routing): Observable<string> {
+  const rules = routing.direct_answer
+    ? [...routing.rules, { search_config: 'DIRECT_ANSWER', prompt: routing.direct_answer }]
+    : routing.rules;
+
+  const configs = rules.map((rule) => rule.search_config);
+  const rulesPrompt = rules
     .map(
       (rule) => `- Category name: ${rule.search_config}
   Description: ${rule.prompt}
@@ -629,7 +633,7 @@ export function getRouting(question: string, routing: Routing): Observable<{ con
 
 **CATEGORIES**:
 
-${rules}
+${rulesPrompt}
 
 - Category name: FALLBACK
   Description: If none of the previous descriptions correspond to the question, return "FALLBACK".
@@ -648,12 +652,6 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
           type: 'string',
           description: fullPrompt,
         },
-        direct_answer: routing.direct_answer
-          ? {
-              type: 'string',
-              description: routing.direct_answer,
-            }
-          : undefined,
       },
       required: ['category'],
     },
@@ -671,15 +669,13 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
   ).pipe(
     map((res) => {
       if (res.type === 'error') {
-        return { config: 'FALLBACK' };
-      } else if (res.jsonAnswer?.category === 'FALLBACK' && res.jsonAnswer?.direct_answer) {
-        return { config: 'FALLBACK', answer: res.jsonAnswer.direct_answer as string };
+        return 'FALLBACK';
       } else {
         return res.jsonAnswer?.category && configs.includes(res.jsonAnswer?.category)
-          ? { config: (res.jsonAnswer?.category as string) || '' }
-          : { config: 'FALLBACK' };
+          ? res.jsonAnswer.category
+          : 'FALLBACK';
       }
     }),
-    tap((config) => routedConfig.set(config.config)),
+    tap((config) => routedConfig.set(config)),
   );
 }

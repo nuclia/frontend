@@ -610,16 +610,10 @@ export function askQuestion(
         _isDebug,
       ]) => {
         isDebugMode = _isDebug;
-        if (routedConfig?.config && routedConfig.config !== 'FALLBACK') {
-          return getAnswer(question, entries, {}, routedConfig.config);
-        } else if (routedConfig?.config === 'FALLBACK' && routedConfig?.answer) {
-          return of({
-            type: 'answer',
-            id: '',
-            text: routedConfig.answer,
-            incomplete: false,
-            inError: false,
-          } as Ask.Answer);
+        if (routedConfig && !['FALLBACK', 'DIRECT_ANSWER'].includes(routedConfig)) {
+          return getAnswer(question, entries, {}, routedConfig);
+        } else if (routedConfig === 'DIRECT_ANSWER') {
+          return getAnswerWithoutRAG(question, entries, options);
         } else {
           return buildRagAnswerObservable(question, entries, options, {
             reasoning,
@@ -677,17 +671,14 @@ export function getSearchResults(
     take(1),
     switchMap((routing) => {
       if (loadMore) {
-        return routedConfig.pipe(
-          take(1),
-          map((conf) => ({ config: conf, answer: '' })),
-        );
+        return routedConfig.pipe(take(1));
       } else {
-        return routing ? getRouting(query, routing).pipe(take(1)) : of({ config: 'FALLBACK', answer: '' });
+        return routing ? getRouting(query, routing).pipe(take(1)) : of('FALLBACK');
       }
     }),
     switchMap((config) =>
-      config.config && config.config !== 'FALLBACK'
-        ? find(query, { search_configuration: config.config })
+      config && !['FALLBACK', 'DIRECT_ANSWER'].includes(config)
+        ? find(query, { search_configuration: config })
         : find(query, options),
     ),
   );
