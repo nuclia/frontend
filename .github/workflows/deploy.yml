@@ -128,6 +128,8 @@ jobs:
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/platform.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD platform"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/auth.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD auth"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/manager.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
+          # mrs.developer.json changes affect dashboard dependencies — rebuild dashboard if not already built
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^mrs\.developer\.json' && ! test -d dist/apps/dashboard && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
 
           if [ -n "$APPS_TO_BUILD" ]; then
             echo "Building apps with chart changes:$APPS_TO_BUILD"
