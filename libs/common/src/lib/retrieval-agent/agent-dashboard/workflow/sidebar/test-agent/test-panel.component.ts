@@ -16,6 +16,7 @@ import { Session } from '@nuclia/core';
 import { ProgressBarComponent } from '@nuclia/sistema';
 import {
   resetTestAgent,
+  testAgentAnswers,
   testAgentAnswersByCategory,
   testAgentQuestion,
   testAgentRunning,
@@ -25,6 +26,7 @@ import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
 import { ParametersTableComponent, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';
+import { getFormattedCost } from '../../../../arag.utils';
 
 @Component({
   selector: 'app-test-panel',
@@ -83,6 +85,20 @@ export class TestPanelComponent implements OnInit, OnDestroy {
   rawAnswers = testAgentAnswersByCategory;
 
   stopDisabled = computed(() => this.runningTest() === false || !this.useWs);
+
+  totalCost = computed(() => {
+    const cost = (testAgentAnswers() || [])
+      .filter((answer) => !!answer.step)
+      .map((answer) => answer.step)
+      .reduce(
+        (cost, step) => ({
+          input: cost.input + (step?.input_nuclia_tokens ?? 0),
+          output: cost.output + (step?.output_nuclia_tokens ?? 0),
+        }),
+        { input: 0, output: 0 },
+      );
+    return getFormattedCost(undefined, cost.input, cost.output, true);
+  });
 
   constructor() {
     effect(() => {
