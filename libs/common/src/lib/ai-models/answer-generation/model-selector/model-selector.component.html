@@ -69,7 +69,9 @@
         {{ 'kb.ai-models.model-selector.search' | translate }}
       }
     </pa-input>
-    <pa-dropdown #dropdown>
+    <pa-dropdown
+      #dropdown
+      role="listbox">
       @if (filteredByTerm().length > 1) {
         <div class="filters">
           @for (provider of filteredByTerm(); track provider.key) {
@@ -99,7 +101,8 @@
             (selectOption)="selectOption(provider.key === 'default' ? model.value.name : model.key)">
             <div class="option-name">
               <div>{{ model.value.title }}</div>
-              @let guaranteedDataResidency = model.value.metadata.data_residency_status === DataResidencyStatus.GUARANTEED;
+              @let guaranteedDataResidency =
+                model.value.metadata.data_residency_status === DataResidencyStatus.GUARANTEED;
               @let enterpriseReady = provider.value.enterprise_readiness;
               @if (enterpriseReady || guaranteedDataResidency) {
                 <div>
