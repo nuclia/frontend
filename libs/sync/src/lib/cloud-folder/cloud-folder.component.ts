@@ -46,12 +46,9 @@ export class CloudFolderComponent implements OnInit {
   currentSite = signal<StorageSite | undefined>(undefined);
   currentDrive = signal<StorageDrive | undefined>(undefined);
   currentFolder = signal<StorageFolder[]>([]);
-  selectedDrive = signal<string | undefined>(undefined);
   selectedFolder = signal<StorageFolder | undefined>(undefined);
   isCurrentSelected = computed(
-    () =>
-      (this.selectedFolder() && this.selectedFolder()?.path === this.currentFolder().at(-1)?.path) ||
-      (this.currentFolder().length === 0 && this.selectedDrive() && this.currentDrive()?.id === this.selectedDrive()),
+    () => this.selectedFolder() && this.selectedFolder()?.path === this.currentFolder().at(-1)?.path,
   );
   hasCurrentFolder = computed(() => this.currentFolder().length > 0);
   sites: StorageSite[] | undefined = undefined;
@@ -150,14 +147,7 @@ export class CloudFolderComponent implements OnInit {
     }
   }
 
-  selectDrive() {
-    this.selectedFolder.set(undefined);
-    this.selectedDrive.set(this.currentDrive()?.id);
-    this.selection.emit({ drive_id: this.currentDrive()?.id || '', folder_id: '', sync_root_path: '' });
-  }
-
   selectFolder() {
-    this.selectedDrive.set(undefined);
     const folder = this.currentFolder().at(-1);
     this.selection.emit({
       drive_id: this.currentDrive()?.id || '',

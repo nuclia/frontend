@@ -75,8 +75,8 @@
             class="selected"></pa-icon>
         }
       </h3>
-      @if (currentDrive() || hasCurrentFolder()) {
-        <nsi-button-mini (click)="hasCurrentFolder() ? selectFolder() : selectDrive()">
+      @if (hasCurrentFolder()) {
+        <nsi-button-mini (click)="selectFolder()">
           {{ 'sync.cloud-folder.select' | translate }}
         </nsi-button-mini>
       }
