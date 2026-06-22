@@ -182,6 +182,7 @@ export class RemiMetricsService {
         max: (item.max * 100) / 5,
       }));
     }),
+    shareReplay(1),
   );
 
   private rawEvolutionData: Observable<RawEvolutionResults> = combineLatest([
