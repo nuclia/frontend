@@ -13,7 +13,15 @@ import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
-import { AccountModule, BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
+import {
+  AccountModule,
+  BaseModule,
+  ChatAdviceBubbleComponent,
+  EntitiesModule,
+  SelectAccountKbModule,
+  TopbarModule,
+  UploadModule,
+} from '@flaps/common';
 import { AppComponent } from './app.component';
 
 // Load locales
@@ -67,6 +75,7 @@ const appModules = [
     OverlayModule,
     STFPipesModule,
     TopbarModule,
+    ChatAdviceBubbleComponent,
     ...appModules,
     TranslateModule.forRoot({
       loader: {

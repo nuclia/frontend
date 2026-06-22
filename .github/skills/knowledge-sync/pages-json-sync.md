@@ -1,11 +1,11 @@
-# Chat Advice — pages.yaml Build & Sync Guide
+# Chat Advice — pages.json Build & Sync Guide
 
-This document describes how to build and maintain the `pages.yaml` navigation document used
+This document describes how to build and maintain the `pages.json` navigation document used
 by the chat advice widget. The file lives at:
 
-- `apps/dashboard/src/assets/chat/pages.yaml`
+- `apps/dashboard/src/assets/chat/pages.json`
 
-**Do not write pages.yaml entries from memory or routing tables alone.**  
+**Do not write pages.json entries from memory or routing tables alone.**  
 The capabilities and summaries must be derived from the actual component code.
 Every entry that is written without reading the component will be wrong.
 
@@ -14,9 +14,9 @@ Every entry that is written without reading the component will be wrong.
 ## When to run this
 
 - When a new route is added to `apps/dashboard`
-- When the staleness check reports routing files newer than `pages.yaml`:
+- When the staleness check reports routing files newer than `pages.json`:
   ```bash
-  find apps/dashboard/src/app -name "*routing*" -newer apps/dashboard/src/assets/chat/pages.yaml
+  find apps/dashboard/src/app -name "*routing*" -newer apps/dashboard/src/assets/chat/pages.json
   ```
 - When `knowledge-sync` detects changes in route-related files
 
@@ -110,17 +110,18 @@ Key patterns to extract from templates:
 
 ---
 
-### Step 4 — Write the YAML entry
+### Step 4 — Write the JSON entry
 
-```yaml
-- id: <kebab-case-stable-identifier>
-  route: '/at/:account/...' # full route template, params as :placeholders
-  title: '<resolved English page title>'
-  summary: '<1–2 sentence description of what this page shows, in user language>'
-  capabilities:
-    - '<concrete thing user can do or see — start with a verb>'
-    - '<another capability>'
-    # aim for 3–6 capabilities; prefer concrete over vague
+Add an entry to the `pages` array in `apps/dashboard/src/assets/chat/pages.json`:
+
+```json
+{
+  "id": "<kebab-case-stable-identifier>",
+  "route": "/at/:account/...",
+  "title": "<resolved English page title>",
+  "summary": "<1–2 sentence description of what this page shows, in user language>",
+  "capabilities": ["<concrete thing user can do or see — start with a verb>", "<another capability>"]
+}
 ```
 
 **Rules for good entries:**
@@ -149,26 +150,30 @@ Key patterns to extract from templates:
 
 **Correct entry:**
 
-```yaml
-- id: account-home
-  route: '/at/:account/manage/home'
-  title: 'Consumption'
-  summary: "Overview of your account's consumption: token usage and total query counts across all Knowledge Boxes."
-  capabilities:
-    - 'View token consumption based on activity, with period selector'
-    - 'See the list of Knowledge Boxes and navigate directly to one'
-    - 'View total query counts for the last 30 days, 12 months, and since account creation'
+```json
+{
+  "id": "account-home",
+  "route": "/at/:account/manage/home",
+  "title": "Consumption",
+  "summary": "Overview of your account's consumption: token usage and total query counts across all Knowledge Boxes.",
+  "capabilities": [
+    "View token consumption based on activity, with period selector",
+    "See the list of Knowledge Boxes and navigate directly to one",
+    "View total query counts for the last 30 days, 12 months, and since account creation"
+  ]
+}
 ```
 
 **What was wrong in the manually written version:**
 
-```yaml
-# BAD — guessed from routing context, not component code:
-title: 'Account Home' # wrong: real title is "Consumption"
-summary: 'Overview of your account...' # vague and incorrect
-capabilities:
-  - 'Create a new Knowledge Box' # WRONG: this page has no create action
-  - 'Switch between KBs and Agents' # WRONG: this is not on this page
+```json
+{
+  "id": "account-home",
+  "route": "/at/:account/manage/home",
+  "title": "Account Home",
+  "summary": "Overview of your account...",
+  "capabilities": ["Create a new Knowledge Box", "Switch between KBs and Agents"]
+}
 ```
 
 ---
@@ -202,8 +207,8 @@ grep -oh "'[a-z._-]*' | translate" libs/common/src/lib/<feature>/*.html \
 
 | Changed path                                        | Documentation to update                                                                | Priority |
 | --------------------------------------------------- | -------------------------------------------------------------------------------------- | -------- |
-| `apps/dashboard/src/app/*routing*`                  | `apps/dashboard/src/assets/chat/pages.yaml`                                            | HIGH     |
-| `libs/common/src/lib/<feature>/**/*.component.html` | Check if feature maps to a pages.yaml entry; update `summary` and `capabilities` if so | MEDIUM   |
+| `apps/dashboard/src/app/*routing*`                  | `apps/dashboard/src/assets/chat/pages.json`                                            | HIGH     |
+| `libs/common/src/lib/<feature>/**/*.component.html` | Check if feature maps to a pages.json entry; update `summary` and `capabilities` if so | MEDIUM   |
 | `libs/common/src/lib/<feature>/**/*.component.ts`   | Same as above — check for new public actions                                           | LOW      |
 
 ---

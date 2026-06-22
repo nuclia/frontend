@@ -1,0 +1,75 @@
+@if (isOpen()) {
+  <section class="chat-panel">
+    <header class="chat-panel-header">
+      <span>{{ 'chat-advice.title' | translate }}</span>
+      <pa-button
+        icon="circle-cross"
+        kind="primary"
+        [attr.aria-label]="'chat-advice.close' | translate"
+        (click)="closePanel()" />
+    </header>
+
+    <div class="messages-list">
+      @for (message of messages(); track $index) {
+        <div
+          class="message"
+          [class.user]="message.role === 'user'"
+          [class.assistant]="message.role === 'assistant'">
+          @if (message.role === 'assistant' && message.segments?.length) {
+            @for (segment of message.segments; track $index) {
+              @if (segment.type === 'text') {
+                <span>{{ segment.content }}</span>
+              } @else {
+                <a
+                  [routerLink]="segment.route"
+                  (click)="closePanel()">
+                  {{ segment.content }}
+                </a>
+              }
+            }
+          } @else {
+            <span>{{ message.content }}</span>
+          }
+        </div>
+      }
+
+      @if (state() === 'thinking') {
+        <div class="thinking-state">
+          <span>{{ 'chat-advice.thinking' | translate }}</span>
+          <span
+            class="thinking-dots"
+            aria-hidden="true"></span>
+        </div>
+      }
+    </div>
+
+    @if (state() === 'error' && errorMessage()) {
+      <div class="chat-error">{{ errorMessage() }}</div>
+    }
+
+    <form
+      class="chat-input-row"
+      (submit)="$event.preventDefault(); sendMessage()">
+      <input
+        class="chat-input"
+        [value]="inputValue()"
+        [placeholder]="'chat-advice.input-placeholder' | translate"
+        (input)="updateInput($event)" />
+
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="state() === 'thinking' || !inputValue().trim()">
+        {{ 'chat-advice.send' | translate }}
+      </pa-button>
+    </form>
+  </section>
+} @else {
+  <pa-button
+    class="chat-bubble-button"
+    kind="primary"
+    [attr.aria-label]="'chat-advice.title' | translate"
+    (click)="openPanel()">
+    <pa-icon name="chat"></pa-icon>
+  </pa-button>
+}

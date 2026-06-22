@@ -1,0 +1,134 @@
+@use 'variables' as *;
+
+:host {
+  position: fixed;
+  right: rhythm(3);
+  bottom: rhythm(3);
+  z-index: $z-index-alert;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-bubble-button {
+  display: block;
+}
+
+.chat-panel {
+  width: min(calc(100vw - #{rhythm(6)}), rhythm(48));
+  max-height: min(65vh, calc(#{rhythm(48)} + #{rhythm(16)} + #{rhythm(1)}));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(1.5);
+  background: $color-light-stronger;
+  box-shadow: var(--shadow-large);
+  overflow: hidden;
+}
+
+.chat-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: rhythm(2);
+  padding: rhythm(1.5) rhythm(2);
+  background: $color-primary-regular;
+  color: $color-light-stronger;
+  font-size: font-size(s);
+  font-weight: $font-weight-semi-bold;
+}
+
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  padding: rhythm(2);
+  background: $color-light-stronger;
+
+  &:empty {
+    padding: 0;
+  }
+}
+
+.message {
+  max-width: 85%;
+  padding: rhythm(1) rhythm(1.5);
+  border-radius: rhythm(1);
+  font-size: font-size(s);
+  line-height: 1.5;
+  white-space: pre-wrap;
+
+  &.user {
+    align-self: flex-end;
+    background: $color-primary-regular;
+    color: $color-light-stronger;
+  }
+
+  &.assistant {
+    align-self: flex-start;
+    background: $color-neutral-lightest;
+    color: $color-dark-stronger;
+
+    a {
+      color: $color-primary-regular;
+      font-weight: $font-weight-semi-bold;
+      text-decoration: underline;
+    }
+  }
+}
+
+.thinking-state {
+  align-self: flex-start;
+  color: $color-neutral-regular;
+  font-size: font-size(s);
+  font-style: italic;
+}
+
+@keyframes thinking-dots {
+  0%,
+  100% {
+    content: ' .';
+  }
+  33% {
+    content: ' ..';
+  }
+  66% {
+    content: ' ...';
+  }
+}
+
+.thinking-dots::after {
+  content: '.';
+  animation: thinking-dots 1.2s steps(1) infinite;
+}
+
+.chat-error {
+  padding: 0 rhythm(2) rhythm(1.5);
+  color: $color-secondary-strong;
+  font-size: font-size(xs);
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  padding: rhythm(1.5) rhythm(2);
+  border-top: 1px solid $color-neutral-light;
+  background: $color-light-stronger;
+}
+
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  padding: rhythm(1) rhythm(1.5);
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.75);
+  font-size: font-size(s);
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary-regular;
+  }
+}
