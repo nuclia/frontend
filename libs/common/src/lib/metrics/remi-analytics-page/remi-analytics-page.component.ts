@@ -38,7 +38,7 @@ import {
   MultiSeriesEvolutionChartComponent,
 } from '../../charts';
 import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
-import { InfoCardComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FeaturesService, NavigationService } from '@flaps/core';
 import { format } from 'date-fns';
@@ -83,6 +83,7 @@ const METRIC_COLOR_LIST = [
     SisProgressModule,
     ReactiveFormsModule,
     InfoCardComponent,
+    NsiSkeletonComponent,
     PaIconModule,
     PaTableModule,
     GroupedBarChartComponent,
@@ -244,6 +245,11 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
   }
 
   ngOnInit() {
+    // Eager subscriptions keep the missing-knowledge pipelines alive for loader
+    this.noAnswerData.pipe(takeUntil(this.unsubscribeAll)).subscribe();
+    this.lowContextData.pipe(takeUntil(this.unsubscribeAll)).subscribe();
+    this.badFeedbackData.pipe(takeUntil(this.unsubscribeAll)).subscribe();
+
     this.loadNoAnswers();
     this.loadLowContext();
     this.loadBadFeedback();

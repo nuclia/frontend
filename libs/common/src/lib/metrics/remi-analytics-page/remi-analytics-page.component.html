@@ -28,20 +28,20 @@
       <div class="page-description">{{ 'kb.metrics.health-status.description' | translate }}</div>
     </div>
     <div class="metric-card-body">
-      @if (healthStatusOnError | async) {
-        <nsi-info-card
-          type="warning"
-          icon="warning">
-          {{ 'kb.metrics.error.health-status-not-loaded' | translate }}
-        </nsi-info-card>
-      } @else {
-        @if (healthCheckData | async; as healthStatus) {
-          @if (healthStatus.length > 0) {
-            <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
-          } @else {
-            <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
-          }
+      @if (healthCheckData | async; as healthStatus) {
+        @if (healthStatusOnError | async) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'kb.metrics.error.health-status-not-loaded' | translate }}
+          </nsi-info-card>
+        } @else if (healthStatus.length > 0) {
+          <stf-range-chart [data]="healthStatus"></stf-range-chart>
+        } @else {
+          <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
         }
+      } @else {
+        <nsi-skeleton height="10rem"></nsi-skeleton>
       }
     </div>
     <div class="definitions-row">
@@ -82,20 +82,24 @@
       <div class="page-description">{{ 'kb.metrics.performance-evolution.description' | translate }}</div>
     </div>
     <div class="metric-card-body">
-      @if (evolutionDataOnError | async) {
-        <nsi-info-card
-          type="warning"
-          icon="warning">
-          {{ 'kb.metrics.error.evolution-not-loaded' | translate }}
-        </nsi-info-card>
-      } @else if (noEvolutionData | async) {
-        <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+      @if (evolutionSeries | async; as series) {
+        @if (evolutionDataOnError | async) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'kb.metrics.error.evolution-not-loaded' | translate }}
+          </nsi-info-card>
+        } @else if (noEvolutionData | async) {
+          <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+        } @else {
+          <div class="chart-container unified-chart">
+            <stf-multi-series-evolution-chart
+              [series]="series"
+              [height]="400"></stf-multi-series-evolution-chart>
+          </div>
+        }
       } @else {
-        <div class="chart-container unified-chart">
-          <stf-multi-series-evolution-chart
-            [series]="(evolutionSeries | async) || []"
-            [height]="400"></stf-multi-series-evolution-chart>
-        </div>
+        <nsi-skeleton height="400px"></nsi-skeleton>
       }
     </div>
   </section>
@@ -186,6 +190,8 @@
           icon="warning">
           {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
         </nsi-info-card>
+      } @else if (noAnswerLoading | async) {
+        <nsi-skeleton height="8rem"></nsi-skeleton>
       } @else if (!noAnswerMonthControl.errors) {
         @if (noAnswerData | async; as noAnswers) {
           @if (noAnswers.data.length === 0) {
@@ -305,6 +311,8 @@
           icon="warning">
           {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
         </nsi-info-card>
+      } @else if (lowContextLoading | async) {
+        <nsi-skeleton height="8rem"></nsi-skeleton>
       } @else if (!lowContextMonthControl.errors) {
         @if (lowContextData | async; as missingKnowledge) {
           @if (missingKnowledge.data.length === 0) {
@@ -440,6 +448,8 @@
           icon="warning">
           {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
         </nsi-info-card>
+      } @else if (badFeedbackLoading | async) {
+        <nsi-skeleton height="8rem"></nsi-skeleton>
       } @else if (!badFeedbackMonthControl.errors) {
         @if (badFeedbackData | async; as badFeedback) {
           @if (badFeedback.data.length === 0) {
