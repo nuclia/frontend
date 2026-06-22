@@ -119,20 +119,35 @@ Add an entry to the `pages` array in `apps/dashboard/src/assets/chat/pages.json`
   "id": "<kebab-case-stable-identifier>",
   "route": "/at/:account/...",
   "title": "<resolved English page title>",
-  "summary": "<1–2 sentence description of what this page shows, in user language>",
-  "capabilities": ["<concrete thing user can do or see — start with a verb>", "<another capability>"]
+  "summary": "<1–3 sentences: PURPOSE first, then what user sees/achieves. Include user-facing terminology.>",
+  "capabilities": ["<user task or goal — start with a verb, use natural language>", "<another capability>"]
 }
 ```
 
 **Rules for good entries:**
 
-| Field          | Rule                                                                                               |
-| -------------- | -------------------------------------------------------------------------------------------------- |
-| `id`           | Stable kebab-case. Prefix with context: `account-`, `kb-`, `agent-`. Never change after first use. |
-| `route`        | Full path from root. Keep params as `:placeholders`.                                               |
-| `title`        | Exactly the resolved English string shown as the page heading.                                     |
-| `summary`      | What the user _sees_ on this page, not what the page _is_ technically. 1–2 sentences.              |
-| `capabilities` | Derived from actual template — buttons, actions, data displayed. Not guessed.                      |
+| Field          | Rule                                                                                                                                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`           | Stable kebab-case. Prefix with context: `account-`, `kb-`, `agent-`. Never change after first use.                                                                                                                 |
+| `route`        | Full path from root. Keep params as `:placeholders`.                                                                                                                                                               |
+| `title`        | Exactly the resolved English string shown as the page heading.                                                                                                                                                     |
+| `summary`      | **Purpose-first**: start with what the user _achieves_ here, not what UI elements exist. Include synonyms and user-facing terminology (e.g. "answer history", "invite team members", "cloud sync"). 1–3 sentences. |
+| `capabilities` | User tasks and goals derived from the template — what the user _does_, not what button labels say.                                                                                                                 |
+
+**Summary quality checklist — before writing:**
+
+1. Does it say what the user _achieves_ (not just what's rendered)?
+2. Does it include terminology a user might use when asking a question? (e.g. "answer history", "billing", "embed widget", "change language")
+3. Would an AI reading only this entry understand when to recommend this page?
+4. Is it free of purely technical descriptions ("this page lists X with Y controls")?
+
+**Bad vs good summary examples:**
+
+| ❌ Bad (UI mechanics)                                                                                      | ✅ Good (purpose + user terminology)                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "This page lists search activity logs with totals, column controls, filters, exports, and row drill-down." | "View the history of search queries and AI-generated answers for a Knowledge Box. Useful for auditing past interactions and reviewing specific answers." |
+| "This page lists saved agent sessions with search, date filters, pagination, and delete actions."          | "Browse past conversation sessions with a Retrieval Agent. Each session contains the full history of questions and AI-generated answers."                |
+| "This page manages the external sources available to the current retrieval agent."                         | "Manage the knowledge sources (data connections) that the agent uses when answering questions."                                                          |
 
 ---
 

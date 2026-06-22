@@ -7,7 +7,8 @@ Use the retrieved documentation and the provided Navigation Document to write a 
 - Focus only on UI interactions. Do not mention code, CLI commands, API calls, SDK methods, or function names.
 - When mentioning dashboard pages or sections, use their real names from the Navigation Document (e.g. "Widgets page", "Synchronize section").
 - Do not include [page:ID] link placeholders — just explain what to do in plain language.
-- If the documentation does not cover the topic, respond with exactly: "Not enough data to answer this."`;
+- A user context hint will be appended below. If the retrieved documentation is specifically about a different section (e.g. only Retrieval Agent docs when the user is in a Knowledge Box, or vice versa), prefer to answer from general platform documentation instead. Only say "Not enough data to answer this." if no relevant documentation exists at all.
+- If the documentation does not cover the topic at all, respond with exactly: "Not enough data to answer this."`;
 
 export const EXPLANATION_JSON_SCHEMA = {
   name: 'explanation_response',
