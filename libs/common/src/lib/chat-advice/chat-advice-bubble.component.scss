@@ -10,8 +10,39 @@
   align-items: flex-end;
 }
 
+:host(.minimized) {
+  right: 0;
+}
+
 .chat-bubble-button {
   display: block;
+}
+
+.chat-minimized-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: rhythm(5);
+  width: rhythm(5);
+  padding: rhythm(1);
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(1) 0 0 rhythm(1);
+  background: $color-light-stronger;
+  color: $color-dark-stronger;
+  cursor: pointer;
+
+  pa-icon {
+    color: $color-dark-stronger;
+  }
+
+  &:hover {
+    background: $color-neutral-lightest;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-shadow-focus;
+    outline-offset: 2px;
+  }
 }
 
 .chat-panel {
@@ -36,6 +67,12 @@
   color: $color-light-stronger;
   font-size: font-size(s);
   font-weight: $font-weight-semi-bold;
+}
+
+.chat-panel-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: rhythm(0.5);
 }
 
 .messages-list {

@@ -2,14 +2,25 @@
   <section class="chat-panel">
     <header class="chat-panel-header">
       <span>{{ 'chat-advice.title' | translate }}</span>
-      <pa-button
-        icon="circle-cross"
-        kind="primary"
-        [attr.aria-label]="'chat-advice.close' | translate"
-        (click)="closePanel()" />
+      <div class="chat-panel-header-actions">
+        <pa-button
+          icon="eye-closed"
+          kind="primary"
+          [paTooltip]="'chat-advice.minimize' | translate"
+          [attr.aria-label]="'chat-advice.minimize' | translate"
+          (click)="minimizePanel()" />
+        <pa-button
+          icon="circle-cross"
+          kind="primary"
+          [paTooltip]="'chat-advice.close' | translate"
+          [attr.aria-label]="'chat-advice.close' | translate"
+          (click)="closePanel()" />
+      </div>
     </header>
 
-    <div class="messages-list">
+    <div
+      #messagesList
+      class="messages-list">
       @for (message of messages(); track $index) {
         <div
           class="message"
@@ -64,12 +75,24 @@
       </pa-button>
     </form>
   </section>
+} @else if (isMinimized()) {
+  <button
+    class="chat-minimized-custom"
+    type="button"
+    [paTooltip]="'chat-advice.title' | translate"
+    [paTooltipOffset]="-90"
+    [attr.aria-label]="'chat-advice.title' | translate"
+    (click)="openFromMinimized()">
+    <pa-icon name="chat" />
+  </button>
 } @else {
   <pa-button
     class="chat-bubble-button"
     kind="primary"
+    size="large"
+    icon="chat"
+    [paTooltip]="'chat-advice.title' | translate"
+    [paTooltipOffset]="-90"
     [attr.aria-label]="'chat-advice.title' | translate"
-    (click)="openPanel()">
-    <pa-icon name="chat"></pa-icon>
-  </pa-button>
+    (click)="openPanel()"></pa-button>
 }

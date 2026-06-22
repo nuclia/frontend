@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Account, Ask, RetrievalAgent, WritableKnowledgeBox } from '@nuclia/core';
+import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, map, Observable, shareReplay, startWith, switchMap, take, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import {
@@ -17,12 +18,14 @@ import {
   EXPLANATION_JSON_SCHEMA,
   EXPLANATION_SYSTEM_PROMPT,
   LINK_INJECTION_PROMPT_PREFIX,
+  NO_DATA_SENTINEL,
 } from './chat-advice.config';
 
 @Injectable({ providedIn: 'root' })
 export class ChatAdviceService {
   private http = inject(HttpClient);
   private sdk = inject(SDKService);
+  private translate = inject(TranslateService);
 
   private readonly advisorKbAskUrl =
     'https://europe-1.rag.progress.cloud/api/v1/kb/df8b4c24-2807-4888-ad6c-ae97357a638b/ask';
@@ -51,7 +54,7 @@ export class ChatAdviceService {
         const routeMap = this.buildRouteMap(pages, routeContext);
         const contextualPagesJson = JSON.stringify(pages.filter(pageFilter));
         const allPagesJson = JSON.stringify(pages);
-        const chatHistory = previousMessages.map((message) => ({
+        const chatHistory = previousMessages.slice(-6).map((message) => ({
           author: message.role === 'user' ? Ask.Author.USER : Ask.Author.NUCLIA,
           text: message.content,
         }));
@@ -85,11 +88,17 @@ export class ChatAdviceService {
                 )
                 .pipe(
                   map((rawText) => this.extractPredictResponse(rawText)),
-                  map((response) => ({
-                    role: 'assistant' as const,
-                    content: response.answer,
-                    segments: this.parseSegments(response.answer, response.pages, routeMap),
-                  })),
+                  map((response) => {
+                    const answer =
+                      response.answer.trim() === NO_DATA_SENTINEL
+                        ? this.translate.instant('chat-advice.no-data')
+                        : response.answer;
+                    return {
+                      role: 'assistant' as const,
+                      content: answer,
+                      segments: this.parseSegments(answer, response.pages, routeMap),
+                    };
+                  }),
                 ),
             ),
             catchError((error) => throwError(() => this.normalizeError(error))),
@@ -195,8 +204,9 @@ export class ChatAdviceService {
       this.parseNdjson(rawText, (p) => {
         if (p?.item?.type !== 'answer_json') return null;
         const explanation = (p.item.object as { explanation?: string })?.explanation?.trim();
-        return explanation || null;
-      }) ?? 'Not enough data to answer this.'
+        if (!explanation || explanation === NO_DATA_SENTINEL) return null;
+        return explanation;
+      }) ?? this.translate.instant('chat-advice.no-data')
     );
   }
 
