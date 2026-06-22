@@ -63,7 +63,7 @@ The Nuclia API has two base URLs:
 
 | Scope        | Base URL                                                           | When to use                           |
 | ------------ | ------------------------------------------------------------------ | ------------------------------------- |
-| **Global**   | `nuclia.backend` → `https://rag.progress.cloud/api`                | Account CRUD, zones list, NUA clients |
+| **Global**   | `nuclia.backend` → `https://accounts.progress.cloud/api`                | Account CRUD, zones list, NUA clients |
 | **Regional** | `nuclia.regionalBackend` → `https://<zone>.rag.progress.cloud/api` | KB-level & ARAG operations            |
 
 `nuclia.rest.get(path)` targets the **global** backend by default.

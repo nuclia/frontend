@@ -33,34 +33,6 @@ const createSessionSlug = (): string => {
   return `session-${timestamp}-${randomPart}`;
 };
 
-const injectZoneIntoBackend = (backend: string, zone?: string): string => {
-  if (!zone || !backend) {
-    return backend;
-  }
-
-  try {
-    const url = new URL(backend);
-    const hostname = url.hostname;
-    if (
-      hostname.startsWith(`${zone}.`) ||
-      hostname === 'localhost' ||
-      hostname.includes(':') ||
-      /^\d+(?:\.\d+){3}$/.test(hostname)
-    ) {
-      return backend;
-    }
-
-    url.hostname = `${zone}.${hostname}`;
-    const result = url.toString();
-    if (!backend.endsWith('/') && result.endsWith('/')) {
-      return result.slice(0, -1);
-    }
-    return result;
-  } catch (error) {
-    return backend;
-  }
-};
-
 const normalizeText = (value: unknown): string | null => {
   if (typeof value !== 'string') {
     return null;
@@ -122,11 +94,14 @@ export const RaoProvider: FC<PropsWithChildren<IRaoProvider>> = ({
   );
 
   const regionalBackend = useMemo(() => {
+    if (nuclia?.regionalBackend) {
+      return nuclia.regionalBackend;
+    }
     if (!backend) {
       return null;
     }
-    return injectZoneIntoBackend(backend, zone);
-  }, [backend, zone]);
+    return backend;
+  }, [backend, nuclia]);
 
   const fetcher: NucliaFetcher | undefined = useMemo(() => {
     if (!regionalBackend) {

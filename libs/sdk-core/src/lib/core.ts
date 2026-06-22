@@ -4,7 +4,7 @@ import { Db, KnowledgeBox, RetrievalAgent } from './db';
 import { Events } from './events';
 import type { IAuthentication, IDb, INuclia, IRest, NucliaOptions, PromiseMapper } from './models';
 import { Rest } from './rest';
-import { setZoneInRegionalUrl } from './rest/utils';
+import { normalizeGlobalBackendUrl, setZoneInRegionalUrl } from './rest/utils';
 
 export class Nuclia implements INuclia {
   options: NucliaOptions;
@@ -89,14 +89,17 @@ export class Nuclia implements INuclia {
 
     ```ts
     const nuclia = new Nuclia({
-      backend: 'https://rag.progress.cloud/api',
+      backend: 'https://accounts.progress.cloud/api',
       knowledgeBox: '17815eb2-06a5-40ee-a5aa-b2f9dbc5da70',
       zone: 'europe-1',
     });
     ```
    */
   constructor(options: NucliaOptions) {
-    this.options = options;
+    this.options = {
+      ...options,
+      backend: normalizeGlobalBackendUrl(options.backend),
+    };
     this.auth = new Authentication(this);
     this.rest = new Rest(this);
     this.db = new Db(this);
