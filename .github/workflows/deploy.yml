@@ -195,6 +195,7 @@ jobs:
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         env:
           NPM_CONFIG_PROVENANCE: false
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
         run: |-
           cd ./dist/sdk-core
           npm publish || true
