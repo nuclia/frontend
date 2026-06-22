@@ -24870,9 +24870,9 @@ __metadata:
   linkType: hard
 
 "shell-quote@npm:^1.8.1, shell-quote@npm:^1.8.3":
-  version: 1.8.3
-  resolution: "shell-quote@npm:1.8.3"
-  checksum: 10/5473e354637c2bd698911224129c9a8961697486cff1fb221f234d71c153fc377674029b0223d1d3c953a68d451d79366abfe53d1a0b46ee1f28eb9ade928f4c
+  version: 1.8.4
+  resolution: "shell-quote@npm:1.8.4::__archiveUrl=https%3A%2F%2Fpkg.harness.io%2Fpkg%2Fct8onj8YTdaXtKaFsYCRLg%2Forg-nuclia-npm%2Fnpm%2Fshell-quote%2F-%2F1.8.4%2Fshell-quote-1.8.4.tgz"
+  checksum: 10/a3e3796385f2cd5cf0b78207a4439f0c7395c0833fc75b2473084b5d298c109c5c0fa687fcd1c04e4b4484866e5bb8eaae7efae443b80fff71ea7e29baf11f0c
   languageName: node
   linkType: hard
 
