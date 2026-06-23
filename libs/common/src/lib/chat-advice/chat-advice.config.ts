@@ -10,6 +10,7 @@ Use the retrieved documentation and the provided Navigation Document to write a 
 - When mentioning dashboard pages or sections, use their real names from the Navigation Document (e.g. "Widgets page", "Synchronize section").
 - Do not include [page:ID] link placeholders — just explain what to do in plain language.
 - A user context hint will be appended below. If the retrieved documentation is specifically about a different section (e.g. only Retrieval Agent docs when the user is in a Knowledge Box, or vice versa), prefer to answer from general platform documentation instead.
+- IMPORTANT: Only describe features and pages that exist in the provided Navigation Document. If the documentation mentions a feature that has no matching entry in the Navigation Document (e.g. a Knowledge Box feature when the user is in Agent context), do not mention it — describe an equivalent page from the Navigation Document instead, or respond with "${NO_DATA_SENTINEL}" if none exists.
 - If the documentation does not cover the topic, respond with exactly: "${NO_DATA_SENTINEL}"`;
 
 export const EXPLANATION_JSON_SCHEMA = {
@@ -24,9 +25,8 @@ export const EXPLANATION_JSON_SCHEMA = {
   required: ['explanation'],
 };
 
-// Step 2: pure LLM call — inject [page:ID] links into the explanation.
-// No retrieval: the model only sees the navigation document + the step 1 explanation.
-// The full pages.yaml is appended to this prefix at request time.
+// Step 2: RAG-enabled call for page link injection — inject [page:ID] links into the explanation.
+// Call directly navigate-pages resource with multiple fields (field = page), filter only ones that needed.
 export const LINK_INJECTION_PROMPT_PREFIX = `You receive a user question and a plain-text explanation about the Nuclia Agentic RAG Dashboard.
 Your job: return the explanation as a concise 1–3 sentence answer, with [page:PAGE_ID] placeholders inserted inline for every page or section mentioned.
 

@@ -748,31 +748,32 @@ is suppressed with `eslint-disable`. Do not "fix" it by changing to path aliases
 
 ## Common Mistakes to Avoid
 
-| Mistake                                                          | Correct approach                                                        |
+| `*ngIf="cond"` / `*ngFor="let x of list"` | `@if (cond) { ... }` / `@for (x of list; track x.id) { ... }` |
+| Mistake | Correct approach |
 | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Nested ternary (`a ? b : c ? d : e`)                             | Use `if / else if` blocks — flat branching is always clearer            |
-| `if (cond) { doX(); } else { doY(); }` when one branch returns   | Use guard-clause / early-return: `if (!cond) { doY(); return; } doX();` |
-| `constructor(private svc: Service)`                              | `private svc = inject(Service)`                                         |
-| `@Input() value: string`                                         | `value = input.required<string>()`                                      |
-| `@Output() changed = new EventEmitter<string>()`                 | `changed = output<string>()`                                            |
-| `standalone: true` explicitly written                            | Omit it — defaults to `true` in Angular 19+                             |
-| `styleUrls: ['./foo.component.scss']` (array)                    | `styleUrl: './foo.component.scss'` (singular string)                    |
-| Empty `.scss` file committed for a component                     | Omit `styleUrl` entirely when no styles are needed                      |
-| Page component files at the module root                          | Put each page component in a named subfolder (`feature-name/`)          |
-| Missing `changeDetection: ChangeDetectionStrategy.OnPush`        | Always include it                                                       |
-| `effect()` to derive values                                      | Use `computed()` for derived state                                      |
-| `this.signal.set(x)` inside `computed()`                         | Never write inside computed                                             |
-| `inject()` inside `ngOnInit`                                     | Move to property initializer or constructor                             |
-| Plain property read in template (`isLoading = false`)            | `isLoading = signal(false)` — OnPush won't re-render otherwise          |
-| `this.cdr.markForCheck()` after every mutation                   | Convert state to `signal()` and remove `ChangeDetectorRef`              |
-| `[(value)]="name"` with nsi-/pa- components                      | `[value]="name()" (valueChange)="name.set($event)"`                     |
-| `arr[i] = val` on a signal array                                 | `const copy = [...arr()]; copy[i] = val; arr.set(copy)`                 |
-| `new Subject<void>()` as Tier 2 refresh trigger                  | `new BehaviorSubject<void>(undefined)`                                  |
-| `toSignal(obs$)` inside a Tier 2 service                         | Use `tap((v) => this._sig.set(v))` in the pipeline                      |
-| Omit `shareReplay(1)` on service pipelines                       | Always include — prevents duplicate HTTP requests                       |
-| Omit `catchError` on service pipelines                           | Always include — otherwise errors permanently kill the stream           |
-| Adding NgRx `signalStore`                                        | Not used in this codebase — use one of the 3 tiers                      |
-| Forgetting `takeUntilDestroyed()` on subscriptions in components | Always unsubscribe                                                      |
+| Nested ternary (`a ? b : c ? d : e`) | Use `if / else if` blocks — flat branching is always clearer |
+| `if (cond) { doX(); } else { doY(); }` when one branch returns | Use guard-clause / early-return: `if (!cond) { doY(); return; } doX();` |
+| `constructor(private svc: Service)` | `private svc = inject(Service)` |
+| `@Input() value: string` | `value = input.required<string>()` |
+| `@Output() changed = new EventEmitter<string>()` | `changed = output<string>()` |
+| `standalone: true` explicitly written | Omit it — defaults to `true` in Angular 19+ |
+| `styleUrls: ['./foo.component.scss']` (array) | `styleUrl: './foo.component.scss'` (singular string) |
+| Empty `.scss` file committed for a component | Omit `styleUrl` entirely when no styles are needed |
+| Page component files at the module root | Put each page component in a named subfolder (`feature-name/`) |
+| Missing `changeDetection: ChangeDetectionStrategy.OnPush` | Always include it |
+| `effect()` to derive values | Use `computed()` for derived state |
+| `this.signal.set(x)` inside `computed()` | Never write inside computed |
+| `inject()` inside `ngOnInit` | Move to property initializer or constructor |
+| Plain property read in template (`isLoading = false`) | `isLoading = signal(false)` — OnPush won't re-render otherwise |
+| `this.cdr.markForCheck()` after every mutation | Convert state to `signal()` and remove `ChangeDetectorRef` |
+| `[(value)]="name"` with nsi-/pa- components | `[value]="name()" (valueChange)="name.set($event)"` |
+| `arr[i] = val` on a signal array | `const copy = [...arr()]; copy[i] = val; arr.set(copy)` |
+| `new Subject<void>()` as Tier 2 refresh trigger | `new BehaviorSubject<void>(undefined)` |
+| `toSignal(obs$)` inside a Tier 2 service | Use `tap((v) => this._sig.set(v))` in the pipeline |
+| Omit `shareReplay(1)` on service pipelines | Always include — prevents duplicate HTTP requests |
+| Omit `catchError` on service pipelines | Always include — otherwise errors permanently kill the stream |
+| Adding NgRx `signalStore` | Not used in this codebase — use one of the 3 tiers |
+| Forgetting `takeUntilDestroyed()` on subscriptions in components | Always unsubscribe |
 
 ---
 

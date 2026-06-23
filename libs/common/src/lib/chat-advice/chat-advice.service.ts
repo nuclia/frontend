@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import pagesData from './pages.json';
 import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { SDKService } from '@flaps/core';
 import { Account, Ask, RetrievalAgent, WritableKnowledgeBox } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -29,13 +30,8 @@ export class ChatAdviceService {
 
   private readonly advisorKbAskUrl =
     'https://europe-1.rag.progress.cloud/api/v1/kb/df8b4c24-2807-4888-ad6c-ae97357a638b/ask';
-  private readonly advisorKbPredictUrl =
-    'https://europe-1.rag.progress.cloud/api/v1/kb/df8b4c24-2807-4888-ad6c-ae97357a638b/predict/chat';
-
-  private readonly pages$ = this.http.get<PageEntry[]>('assets/chat/pages.json').pipe(
-    catchError(() => throwError(() => new Error('chat-advice.error'))),
-    shareReplay(1),
-  );
+  private readonly navigationPagesResourceId = 'a572ce0c7eb949e4a17babae21a03a4a';
+  private readonly pages: PageEntry[] = pagesData as PageEntry[];
 
   private readonly routeContext$ = combineLatest([
     this.sdk.currentAccount.pipe(startWith(null as Account | null)),
@@ -47,13 +43,14 @@ export class ChatAdviceService {
   );
 
   ask(userMessage: string, previousMessages: ChatMessage[]): Observable<ChatMessage> {
-    return combineLatest([this.pages$, this.routeContext$]).pipe(
+    return this.routeContext$.pipe(
       take(1),
-      switchMap(([pages, routeContext]) => {
+      switchMap((routeContext) => {
         const { prefix, hint, pageFilter } = this.getContext(routeContext);
-        const routeMap = this.buildRouteMap(pages, routeContext);
-        const contextualPagesJson = JSON.stringify(pages.filter(pageFilter));
-        const allPagesJson = JSON.stringify(pages);
+        const routeMap = this.buildRouteMap(this.pages, routeContext);
+        const contextualPages = this.pages.filter(pageFilter);
+        const contextualPagesJson = JSON.stringify(contextualPages);
+        const navFields = contextualPages.map((p) => `t/${p.id}`);
         const chatHistory = previousMessages.slice(-6).map((message) => ({
           author: message.role === 'user' ? Ask.Author.USER : Ask.Author.NUCLIA,
           text: message.content,
@@ -77,17 +74,20 @@ export class ChatAdviceService {
             switchMap((explanation) =>
               this.http
                 .post(
-                  this.advisorKbPredictUrl,
+                  this.advisorKbAskUrl,
                   {
-                    question: `User context: ${hint}\n\nUser question: "${userMessage}"\n\nExplanation to enrich with links:\n${explanation}`,
-                    user_id: Ask.Author.USER,
-                    system: LINK_INJECTION_PROMPT_PREFIX + allPagesJson,
-                    json_schema: ANSWER_JSON_SCHEMA,
+                    query: `User context: ${hint}\n\nUser question: "${userMessage}"\n\nExplanation to enrich with links:\n${explanation}`,
+                    resource_filters: [this.navigationPagesResourceId],
+                    fields: navFields,
+                    rag_strategies: [{ name: 'field_extension', fields: navFields }],
+                    prompt: { system: LINK_INJECTION_PROMPT_PREFIX },
+                    answer_json_schema: ANSWER_JSON_SCHEMA,
+                    synchronous: true,
                   },
                   { responseType: 'text' },
                 )
                 .pipe(
-                  map((rawText) => this.extractPredictResponse(rawText)),
+                  map((rawText) => this.extractAskResponse(rawText)),
                   map((response) => {
                     const answer =
                       response.answer.trim() === NO_DATA_SENTINEL
@@ -210,10 +210,12 @@ export class ChatAdviceService {
     );
   }
 
-  private extractPredictResponse(rawText: string): ChatAdviceResponse {
-    const result = this.parseNdjson(rawText, (p) =>
-      p?.chunk?.type === 'object' && this.isChatAdviceResponse(p.chunk.object) ? p.chunk.object : null,
-    );
+  private extractAskResponse(rawText: string): ChatAdviceResponse {
+    const result = this.parseNdjson(rawText, (p) => {
+      if (p?.item?.type !== 'answer_json') return null;
+      const obj = p.item.object;
+      return this.isChatAdviceResponse(obj) ? obj : null;
+    });
     if (!result) throw new Error('chat-advice.error');
     return result;
   }

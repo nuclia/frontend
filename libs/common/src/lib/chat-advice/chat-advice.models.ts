@@ -27,12 +27,6 @@ export interface NdJsonItem {
     text?: string;
     object?: unknown;
   };
-  // predict/chat format
-  chunk?: {
-    type: string;
-    object?: unknown;
-    code?: string;
-  };
 }
 
 export interface RouteContext {

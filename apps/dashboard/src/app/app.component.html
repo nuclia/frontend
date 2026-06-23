@@ -5,4 +5,6 @@
     <div #toastsContainer></div>
   </div>
 </aside>
-<stf-chat-advice-bubble></stf-chat-advice-bubble>
+@if (isChatAdviceEnabled | async) {
+  <stf-chat-advice-bubble></stf-chat-advice-bubble>
+}
