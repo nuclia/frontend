@@ -31,9 +31,7 @@
               @if (segment.type === 'text') {
                 <span>{{ segment.content }}</span>
               } @else {
-                <a
-                  [routerLink]="segment.route"
-                  (click)="closePanel()">
+                <a [routerLink]="segment.route">
                   {{ segment.content }}
                 </a>
               }
