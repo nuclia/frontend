@@ -927,6 +927,7 @@
 	"kb.ai-models.extraction.llm-configuration.rules.define-rules": "Definir regles",
 	"kb.ai-models.extraction.llm-configuration.rules.disabled": "{{model}} no permet regles",
 	"kb.ai-models.extraction.llm-configuration.rules.rule": "Regla",
+	"kb.ai-models.extraction.max-parallel-llm-calls": "Número màxim de crides simultànies a LLM",
 	"kb.ai-models.extraction.name": "Nom de la configuració",
 	"kb.ai-models.extraction.split.default.label": "Per defecte",
 	"kb.ai-models.extraction.split.description": "Defineix com es dividiran les teves dades en paràgrafs.",
