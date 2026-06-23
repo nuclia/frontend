@@ -30,7 +30,8 @@ export interface NdJsonItem {
 }
 
 export interface RouteContext {
-  account?: string;
+  accountSlug?: string;
+  accountId?: string;
   zone?: string;
   kb?: string;
   agent?: string;

@@ -56,6 +56,8 @@ export class ChatAdviceService {
           text: message.content,
         }));
 
+        const auditMetadata = { origin: 'ai-assistant', account: routeContext.accountId };
+
         return this.http
           .post(
             this.advisorKbAskUrl,
@@ -65,6 +67,7 @@ export class ChatAdviceService {
               extra_context: [contextualPagesJson],
               prompt: { system: EXPLANATION_SYSTEM_PROMPT + '\n\n' + hint },
               answer_json_schema: EXPLANATION_JSON_SCHEMA,
+              audit_metadata: auditMetadata,
               synchronous: true,
             },
             { responseType: 'text' },
@@ -82,6 +85,7 @@ export class ChatAdviceService {
                     rag_strategies: [{ name: 'field_extension', fields: navFields }],
                     prompt: { system: LINK_INJECTION_PROMPT_PREFIX },
                     answer_json_schema: ANSWER_JSON_SCHEMA,
+                    audit_metadata: auditMetadata,
                     synchronous: true,
                   },
                   { responseType: 'text' },
@@ -117,7 +121,8 @@ export class ChatAdviceService {
       !!currentKb && !!currentArag && (currentKb.id === currentArag.id || currentKb.slug === currentArag.slug);
 
     return {
-      account: account?.slug,
+      accountSlug: account?.slug,
+      accountId: account?.id,
       zone: isKbActuallyArag ? currentArag?.zone : currentKb?.zone || currentArag?.zone,
       kb: isKbActuallyArag ? undefined : currentKb?.slug,
       agent: currentArag?.slug,
@@ -171,7 +176,7 @@ export class ChatAdviceService {
 
   private resolveRoute(route: string, routeContext: RouteContext): string | undefined {
     const replacements: Record<string, string | undefined> = {
-      ':account': routeContext.account,
+      ':account': routeContext.accountSlug,
       ':zone': routeContext.zone,
       ':kb': routeContext.kb,
       ':agent': routeContext.agent,
