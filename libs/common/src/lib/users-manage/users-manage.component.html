@@ -1,32 +1,138 @@
 @if (canAddUsers | async) {
-  <h3>{{ 'stash.users.new_user' | translate }}</h3>
-  <form
-    class="add-user"
-    (ngSubmit)="addUser()"
-    [formGroup]="addForm">
-    <pa-input
-      type="email"
-      formControlName="email"
-      stfLowerCaseInput>
-      {{ 'accounts.add_user_input' | translate }}
-    </pa-input>
-    <pa-select
-      formControlName="role"
-      label="{{ 'generic.role' | translate }}"
-      dim>
-      @for (role of roles; track role) {
-        <pa-option [value]="role">
-          {{ roleTitles[role] | translate }}
-        </pa-option>
+  <div class="users-invite-form">
+    <h3>{{ 'stash.users.invite_users' | translate }}</h3>
+    <p class="invite-description">{{ 'stash.users.invite_users_description' | translate }}</p>
+    <form
+      class="invite-form"
+      (ngSubmit)="addUser()"
+      [formGroup]="addForm">
+    <div class="email-row">
+      <pa-input
+        #emailInputRef
+        type="email"
+        formControlName="emailInput"
+        [placeholder]="'stash.users.email_input_placeholder' | translate"
+        stfLowerCaseInput
+        (paste)="handleInputPaste($event)"
+        (keydown)="handleEmailInputKeydown($event)">
+        {{ 'stash.users.email_input_label' | translate }}
+      </pa-input>
+      <pa-select
+        formControlName="role"
+        label="{{ 'generic.role' | translate }}"
+        dim>
+        @for (role of roles; track role) {
+          <pa-option [value]="role">
+            {{ roleTitles[role] | translate }}
+          </pa-option>
+        }
+      </pa-select>
+      <pa-button
+        type="button"
+        [disabled]="!canAddTypedEmail || inviteInProgress"
+        (click)="addCurrentEmail()">
+        {{ 'stash.users.add_email' | translate }}
+      </pa-button>
+    </div>
+
+    @if (hasInviteEntries) {
+      <div
+        class="chips-list"
+        role="list">
+        @for (entry of inviteEntries; track entry.email + '-' + $index) {
+          <div
+            class="chip-item"
+            role="listitem">
+            <pa-chip [ngClass]="inviteEntryStatusClass(entry.status)">
+              <span class="chip-email">{{ entry.email }}</span>
+              @if (entry.status !== 'valid') {
+                <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
+              }
+            </pa-chip>
+            <pa-button
+              type="button"
+              icon="cross"
+              size="small"
+              kind="secondary"
+              aspect="basic"
+              [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
+              (click)="removeInviteByIndex($index)">
+              {{ 'stash.users.remove' | translate }}
+            </pa-button>
+          </div>
+        }
+      </div>
+
+      <div class="invite-summary-row">
+        <div
+          class="invite-summary"
+          aria-live="polite">
+          {{ 'stash.users.validation_summary' | translate: summaryMessageParams }}
+        </div>
+        <pa-button
+          type="button"
+          kind="secondary"
+          aspect="basic"
+          (click)="clearAllInviteEntries()">
+          {{ 'generic.clear_all' | translate }}
+        </pa-button>
+      </div>
+      @if (invalidCount > 0 || duplicateCount > 0) {
+        <div class="invite-hint invite-hint-error">{{ 'stash.users.fix_invalid_hint' | translate }}</div>
       }
-    </pa-select>
-    <pa-button
-      type="submit"
-      kind="primary"
-      [disabled]="addForm.invalid">
-      {{ 'generic.add' | translate }}
-    </pa-button>
-  </form>
+      @if (failedCount > 0) {
+        <div class="invite-hint">{{ 'stash.users.retry_failed_hint' | translate: { count: failedCount } }}</div>
+      }
+      @if (inviteErrorMessageKey) {
+        <div class="invite-hint invite-hint-error">{{ inviteErrorMessageKey | translate: inviteErrorMessageParams }}</div>
+      }
+    }
+
+      <div class="paste-accordion">
+        <pa-accordion
+          small
+          noBorders>
+          <pa-accordion-item
+            id="paste-multiple-emails"
+            [itemTitle]="'stash.users.paste_multiple' | translate"
+            [expanded]="pasteModeOpen"
+            (expandedChange)="onPasteToggle($event)">
+            <pa-accordion-item-body>
+              <div class="bulk-paste-row">
+                <nsi-expandable-textarea
+                  #bulkInputRef
+                  formControlName="bulkInput"
+                  [rows]="2"
+                  [placeholder]="'stash.users.bulk_input_placeholder' | translate"
+                  [modalTitle]="'stash.users.bulk_input_label' | translate"
+                  resizable>
+                  {{ 'stash.users.bulk_input_label' | translate }}
+                </nsi-expandable-textarea>
+                <div class="bulk-paste-actions">
+                  <pa-button
+                    type="button"
+                    [disabled]="!bulkInputValue.trim() || inviteInProgress"
+                    (click)="addBulkEmails()">
+                    {{ 'stash.users.add_pasted_emails' | translate }}
+                  </pa-button>
+                </div>
+              </div>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
+      </div>
+
+      <div class="invite-actions-row">
+        <pa-button
+          type="submit"
+          kind="primary"
+          [active]="inviteInProgress"
+          [disabled]="sendInvitesDisabled">
+          {{ sendInvitesLabelKey | translate: sendInvitesLabelParams }}
+        </pa-button>
+      </div>
+    </form>
+  </div>
 }
 
 <div class="users-list-header">

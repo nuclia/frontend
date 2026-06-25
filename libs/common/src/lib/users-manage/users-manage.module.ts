@@ -4,14 +4,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
   PaButtonModule,
+  PaChipsModule,
   PaDropdownModule,
   PaIconModule,
   PaTableModule,
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
 import { LowerCaseInputDirective } from '@flaps/core';
 import { UsersManageComponent } from './users-manage.component';
 
@@ -22,7 +26,11 @@ import { UsersManageComponent } from './users-manage.component';
     TranslateModule.forChild(),
     ReactiveFormsModule,
     FormsModule,
+    AccordionBodyDirective,
+    AccordionComponent,
+    AccordionItemComponent,
     PaButtonModule,
+    PaChipsModule,
     PaDropdownModule,
     PaIconModule,
     DropdownButtonComponent,
@@ -30,6 +38,7 @@ import { UsersManageComponent } from './users-manage.component';
     PaTextFieldModule,
     PaTooltipModule,
     LowerCaseInputDirective,
+    ExpandableTextareaComponent,
   ],
   declarations: [UsersManageComponent],
   exports: [UsersManageComponent],
