@@ -95,7 +95,7 @@ Loaded by both `background.js` (via `importScripts`) and `options.html` (via `<s
 
 | Symbol | Signature | Description |
 |---|---|---|
-| `API_URL` | `const string` | Base API URL: `https://rag.progress.cloud/api` |
+| `API_URL` | `const string` | Base API URL: `https://accounts.progress.cloud/api` |
 | `DASHBOARD_URL` | `const string` | Dashboard URL: `https://rag.progress.cloud` |
 | `SETTINGS` | `const object` | Default settings shape: `{ NUCLIA_ACCOUNT, NUCLIA_KB, NUCLIA_TOKEN, ZONE }` (all empty strings) |
 | `localStorage` | polyfill | Overrides the global `localStorage` with an in-memory object because service workers do not support the real one |

@@ -36,7 +36,7 @@ Provides domain knowledge about the Nuclia / Progress Agentic RAG platform so th
 5. **Build agents** (Retrieval Agents) that orchestrate multi-source retrieval with workflows and drivers.
 
 **Platform URL:** `https://rag.progress.cloud`  
-**API base URL:** `https://[zone-id].rag.progress.cloud/api/v1/`  
+**API base URL:** `https://[zone-id].dp.progress.cloud/api/v1/`
 **CDN / widgets:** `https://cdn.rag.progress.cloud/`
 
 ---

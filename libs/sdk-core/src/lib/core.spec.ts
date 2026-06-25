@@ -18,4 +18,16 @@ describe('Nuclia', () => {
     expect(nuclia.rest).toBeTruthy();
     expect(nuclia.db).toBeTruthy();
   });
+
+  it('should normalize legacy rag backend to accounts backend', () => {
+    const nuclia = new Nuclia({
+      backend: 'http://rag.here',
+      zone: 'europe-1',
+      account: 'dc',
+      knowledgeBox: 'gotham',
+    });
+
+    expect(nuclia.backend).toEqual('http://accounts.here');
+    expect(nuclia.regionalBackend).toEqual('http://europe-1.dp.here');
+  });
 });

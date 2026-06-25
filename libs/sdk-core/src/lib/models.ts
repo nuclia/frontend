@@ -259,7 +259,7 @@ export interface NucliaOptions {
   /**
    * The Nuclia backend to use.
    *
-   * Example: `https://rag.progress.cloud/api` */
+   * Example: `https://accounts.progress.cloud/api` */
   backend: string;
   /**
    * The geographical zone for the regional API calls.

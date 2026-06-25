@@ -16,6 +16,7 @@ export interface INuclia {
     knowledgeBox: string;
     zone: string;
   };
+  regionalBackend?: string;
   rest?: unknown;
   db?: unknown;
   events?: unknown;
