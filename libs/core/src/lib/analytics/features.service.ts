@@ -70,6 +70,7 @@ export class FeaturesService {
     progressComSignup: this.featureFlag.isFeatureEnabled('progress-com-signup'),
     coworkAccount: this.featureFlag.isFeatureEnabled('cowork-account'),
     automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
+    chatAdvice: this.featureFlag.isFeatureEnabled('chat-advice'),
   };
 
   /**
