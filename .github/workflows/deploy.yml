@@ -787,7 +787,7 @@ jobs:
       ( needs.deploy-manager.result != 'skipped' ||
         needs.deploy-app.result != 'skipped' ||
         needs.deploy-auth.result != 'skipped' ||
-        needs.deploy-auth.result != 'rao' ||
+        needs.deploy-rao.result != 'skipped' ||
         needs.deploy-platform.result != 'skipped' )
     steps:
       - name: Generate a token
