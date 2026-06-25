@@ -111,6 +111,12 @@
           }
         </section>
       }
+      @if (runningTest() === false && totalCost()) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.total' | translate }}</stf-chip>
+          <blockquote class="total">{{ totalCost() }}</blockquote>
+        </section>
+      }
     </div>
 
     <footer>

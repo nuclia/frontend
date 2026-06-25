@@ -6,8 +6,10 @@ export function getListFromTextarea(value: string): string[] {
     .filter((item) => !!item);
 }
 
-export function getFormattedCost(timing: number, input = 0, output = 0): string {
-  return `${timing.toFixed(2)}s | ${(input || 0).toFixed(3)} input tokens | ${(output || 0).toFixed(3)} output tokens`;
+export function getFormattedCost(timing?: number, input = 0, output = 0, showTotal = false): string {
+  const time = typeof timing === 'number' ? `${timing.toFixed(2)}s | ` : '';
+  const total = showTotal ? ` | ${(input + output).toFixed(3)} total tokens` : '';
+  return `${time}${(input || 0).toFixed(3)} input tokens | ${(output || 0).toFixed(3)} output tokens${total}`;
 }
 
 export function getKeyValueInputType(property: any): string {

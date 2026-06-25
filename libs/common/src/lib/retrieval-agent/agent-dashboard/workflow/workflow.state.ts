@@ -135,6 +135,7 @@ const categories: ('preprocess' | 'context' | 'generation' | 'postprocess')[] = 
 ];
 export const testAgentRunning = computed(() => testAgent().running);
 export const testAgentQuestion = computed(() => testAgent().question);
+export const testAgentAnswers = computed(() => testAgent().answers);
 export const testAgentLastAnswer = computed(() => testAgent().answers.slice(-1)[0]);
 export const testAgentHasAllAnswers = computed(() => testAgentLastAnswer().operation === AnswerOperation.done);
 export const testAgentAnswersByCategory = computed(() => {
