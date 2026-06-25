@@ -35,3 +35,12 @@ h4 {
   padding: rhythm(2) 0 0 rhythm(3);
   margin-top: rhythm(2);
 }
+
+.input-with-info {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+  pa-input {
+    width: 100%;
+  }
+}
