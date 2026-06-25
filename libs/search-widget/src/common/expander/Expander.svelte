@@ -5,11 +5,12 @@
   interface Props {
     expanded?: boolean;
     duration?: number;
+    ariaLabel?: string;
     header?: import('svelte').Snippet;
     children?: import('svelte').Snippet;
   }
 
-  let { expanded = $bindable(false), duration = 300, header, children }: Props = $props();
+  let { expanded = $bindable(false), duration = 300, ariaLabel = '', header, children }: Props = $props();
 
   const dispatch = createEventDispatcher();
   let content: HTMLElement = $state();
@@ -63,24 +64,33 @@
   {#if header}
     <div
       onclick={() => (expanded = !expanded)}
-      onkeypress={(e) => {
-        if (e.key === 'Enter') {
+      onkeydown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           expanded = !expanded;
         }
       }}
+      role="button"
+      tabindex="0"
+      aria-expanded={expanded}
+      aria-label={ariaLabel}
       class="header"
       class:expanded>
       <span class="expander-icon">
         <IconButton
           icon="chevron-right"
           size="small"
-          aspect="basic" />
+          aspect="basic"
+          ariaLabel=""
+          tabIndex={-1}
+          ariaHidden={true} />
       </span>
       {@render header?.()}
     </div>
   {/if}
   <div
     class="expander-content"
+    inert={!showContent ? true : undefined}
     style:height="{contentHeight}px"
     style:visibility={showContent ? 'visible' : 'hidden'}
     style:transition={`height ${duration}ms`}>

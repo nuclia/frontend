@@ -2,7 +2,7 @@
   import Self from './PathFilters.svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
-  import { loadPaths, pathFilter, type PathTree } from '../../core';
+  import { _, loadPaths, pathFilter, type PathTree } from '../../core';
 
   interface Props {
     paths: PathTree;
@@ -31,6 +31,7 @@
           aspect="basic"
           icon="chevron-down"
           size="xsmall"
+          ariaLabel={$_('filter.load-paths')}
           on:click={() => loadPaths(node.childrenPaths).subscribe()}></IconButton>
       {/if}
     </div>

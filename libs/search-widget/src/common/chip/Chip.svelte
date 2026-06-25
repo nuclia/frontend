@@ -38,6 +38,7 @@
   class="sw-chip"
   class:closeable={removable}
   class:clickable
+  role={clickable ? 'button' : undefined}
   style:background-color={color}
   style:color={fontColor}
   tabindex={clickable ? 0 : -1}

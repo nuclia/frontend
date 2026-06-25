@@ -124,10 +124,16 @@
           align-items: center;
           background-color: var(--color-dark-stronger);
           color: var(--color-light-stronger);
+          cursor: pointer;
           display: flex;
           height: var(--side-panel-button-size);
           justify-content: center;
           width: var(--side-panel-button-size);
+
+          &:focus-visible {
+            outline: 2px solid var(--color-primary-regular);
+            outline-offset: 2px;
+          }
         }
 
         .side-panel-content {

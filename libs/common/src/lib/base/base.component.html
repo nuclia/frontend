@@ -1,8 +1,18 @@
+<a
+  href="#dashboard-main"
+  class="skip-to-main"
+  (click)="skipToMain($event)">
+  {{ 'nav.skip_to_main' | translate }}
+</a>
+
 <app-topbar
   [isNotificationPanelOpen]="isNotificationPanelOpen"
   (toggleNotificationPanel)="isNotificationPanelOpen = !isNotificationPanelOpen"></app-topbar>
 
-<div class="base-container">
+<div
+  class="base-container"
+  id="dashboard-main"
+  tabindex="-1">
   <router-outlet></router-outlet>
 </div>
 

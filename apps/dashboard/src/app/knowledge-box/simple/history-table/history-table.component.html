@@ -1,7 +1,7 @@
 <pa-table
   border
   columns="1fr 1fr 140px 140px 70px">
-  <pa-table-header>
+  <pa-table-header role="presentation">
     @for (column of columns; track column) {
       <pa-table-cell header>
         <span class="title-s">{{ 'simple.column.' + column | translate }}</span>
@@ -12,8 +12,12 @@
     @let rowId = row.resourceId + row.questionIdent;
     <pa-table-row
       clickable
+      hoverable
       (click)="openConversation.emit(row.resourceId)">
-      <pa-table-cell>
+      <pa-table-cell
+        clickable
+        [ariaLabel]="'simple.open-conversation' | translate: { question: row.questionShort || row.question }"
+        (keyup.enter)="openConversation.emit(row.resourceId)">
         @if (expanded()['question-' + rowId]) {
           <span class="body-m">{{ row.question }}</span>
         } @else {
@@ -25,7 +29,9 @@
             size="small"
             [icon]="expanded()['question-' + rowId] ? 'chevron-up' : 'chevron-down'"
             (click)="toggleExpanded('question-' + rowId, $event)"
-            aspect="basic"></pa-button>
+            aspect="basic">
+            {{ (expanded()['question-' + rowId] ? 'simple.collapse-question' : 'simple.expand-question') | translate }}
+          </pa-button>
         }
       </pa-table-cell>
       <pa-table-cell>
@@ -40,7 +46,9 @@
             aspect="basic"
             size="small"
             [icon]="expanded()['answer-' + rowId] ? 'chevron-up' : 'chevron-down'"
-            (click)="toggleExpanded('answer-' + rowId, $event)"></pa-button>
+            (click)="toggleExpanded('answer-' + rowId, $event)">
+            {{ (expanded()['answer-' + rowId] ? 'simple.collapse-answer' : 'simple.expand-answer') | translate }}
+          </pa-button>
         }
       </pa-table-cell>
       <pa-table-cell>
@@ -53,7 +61,8 @@
             {{ 'simple.successful' | translate }}
             <pa-icon
               name="check"
-              size="small"></pa-icon>
+              size="small"
+              aria-hidden="true"></pa-icon>
           </span>
         }
       </pa-table-cell>

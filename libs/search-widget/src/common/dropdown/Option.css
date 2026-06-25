@@ -8,6 +8,11 @@
   }
 }
 
+.sw-option:focus-visible {
+  box-shadow: var(--focus-shadow);
+  outline: 0;
+}
+
 @media (hover: hover) {
   .sw-option:not(.selected) {
     background: var(--color-light-stronger);

@@ -161,11 +161,12 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
+              role="button"
+              tabindex="0"
               onclick={preventDefault(() => goToResource(paragraph))}
               onkeyup={(e) => {
-                if (e.key === 'Enter') goToResource(paragraph);
-              }}
-              tabindex="0">
+                if (e.key === 'Enter' || e.key === ' ') goToResource(paragraph);
+              }}>
               {paragraph.text}
             </div>
           {/each}

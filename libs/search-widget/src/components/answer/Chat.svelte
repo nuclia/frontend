@@ -1,7 +1,7 @@
 <script lang="ts">
   import { delay, distinctUntilChanged, filter } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
+  import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground, createFocusTrap } from '../../common';
   import Button from '../../common/button/Button.svelte';
   import {
     _,
@@ -41,6 +41,9 @@
 
   const dispatch = createEventDispatcher();
   let entriesContainerElement: HTMLDivElement | undefined = $state();
+  let chatContainerEl: HTMLElement | undefined = $state();
+  let isMounted = false;
+  const { trapFocus, releaseTrap } = createFocusTrap(() => chatContainerEl, { selector: 'textarea, input, button:not([disabled])' });
 
   let isScrolling = $state(false);
 
@@ -48,7 +51,15 @@
     ask.next({ question, reset: false });
   }
 
+  $effect(() => {
+    if (show && isMounted && chatContainerEl) {
+      trapFocus();
+      return () => releaseTrap();
+    }
+  });
+
   onMount(() => {
+    isMounted = true;
     const sub = chat
       .pipe(
         delay(200),
@@ -79,12 +90,14 @@
 {#if show}
   <div
     class="sw-chat"
-    class:fullscreen>
+    class:fullscreen
+    bind:this={chatContainerEl}>
     {#if fullscreen}
       <header>
         <IconButton
           icon="cross"
           aspect="basic"
+          ariaLabel={$_('generic.close')}
           on:click={() => dispatch('close')} />
       </header>
     {/if}

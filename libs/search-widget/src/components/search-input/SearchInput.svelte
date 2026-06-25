@@ -172,7 +172,7 @@
       </div>
       <Textarea
         name="nuclia-search-field"
-        ariaLabel="Search input"
+        ariaLabel={$_('input.search')}
         placeholder={$_($widgetPlaceholder)}
         disabled={$isStreaming || $widgetBlocked}
         bind:this={searchInputElement}
@@ -184,6 +184,8 @@
         <input
           type="file"
           accept="image/*"
+          aria-hidden="true"
+          tabindex="-1"
           onchange={onFileSelected}
           bind:this={fileInputElement} />
         <IconButton
@@ -198,6 +200,7 @@
         <IconButton
           icon="search"
           aspect="basic"
+          ariaLabel={$_('input.search')}
           on:click={search} />
       {/if}
       {#if $hasFilterButton}
@@ -207,6 +210,7 @@
             aspect="basic"
             size="medium"
             active={showFilterDropdowns}
+            ariaLabel={$_('input.filters')}
             on:click={toggleFilter} />
         </div>
       {/if}

@@ -1,6 +1,6 @@
 @use 'apps/dashboard/src/variables' as *;
 
 $footer-height: rhythm(16);
-$success-color: #03a76c;
-$error-color: #f4364c;
+$success-color: #007952; // 4.54:1 on white — passes WCAG AA
+$error-color: #c1121f; // 5.10:1 on white — passes WCAG AA
 $content-width: rhythm(90) + rhythm(32);

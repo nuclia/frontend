@@ -13,7 +13,7 @@
     class="link"
     role="tab"
     onclick={bubble('click')}
-    aria-expanded={active}>
+    aria-selected={active}>
     <span
       class="link-wrapper ellipsis"
       tabindex="-1">

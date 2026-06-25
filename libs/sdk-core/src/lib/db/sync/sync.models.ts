@@ -82,7 +82,8 @@ export interface SyncConfiguration extends SyncConfigurationOptions {
 
 export interface SyncConfigurationCreate extends SyncConfigurationOptions {
   name: string;
-  sync_root_path: string;
+  folder_id?: string;
+  sync_root_path?: string;
   drive_id?: string;
   external_connection_id: string;
 }
@@ -152,6 +153,7 @@ export interface LogFilters {
 
 export interface BrowseOptions {
   drive_id?: string;
+  folder_id?: string;
   path?: string;
   page_token?: string;
   site_id?: string;

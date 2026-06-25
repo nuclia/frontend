@@ -15,4 +15,11 @@ export class BaseComponent implements OnInit {
   ngOnInit() {
     this.notificationService.startListening();
   }
+
+  skipToMain(event: Event) {
+    event.preventDefault();
+    const main = document.getElementById('dashboard-main');
+    main?.scrollIntoView({ behavior: 'smooth' });
+    main?.focus();
+  }
 }

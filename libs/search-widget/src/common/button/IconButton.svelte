@@ -12,6 +12,8 @@
     size?: string; // medium | small | xsmall
     disabled?: boolean;
     active?: boolean;
+    tabIndex?: number;
+    ariaHidden?: boolean;
   }
 
   let {
@@ -22,6 +24,8 @@
     size = 'medium',
     disabled = false,
     active = false,
+    tabIndex = undefined,
+    ariaHidden = undefined,
   }: Props = $props();
 
   let iconSize = $derived(size === 'xsmall' ? 'small' : 'medium');
@@ -39,8 +43,9 @@
   class="sw-button icon {aspect} {kind} {size}"
   class:active
   type="button"
-  aria-label={ariaLabel}
-  tabindex="0"
+  aria-label={ariaLabel || undefined}
+  aria-hidden={ariaHidden || undefined}
+  tabindex={tabIndex ?? undefined}
   {disabled}
   onclick={bubble('click')}
   onkeyup={onKeyup}>

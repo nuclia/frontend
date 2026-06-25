@@ -6,14 +6,18 @@
   import Chat from './Chat.svelte';
 
   let showChat = $state(false);
+  let previouslyFocused: Element | null = null;
 
   function openChat() {
+    previouslyFocused = document.activeElement;
     showChat = true;
     trackingEngagement.set({ type: 'CHAT' });
   }
   function onClose() {
     showChat = false;
     reinitChat.set();
+    (previouslyFocused as HTMLElement)?.focus();
+    previouslyFocused = null;
   }
 </script>
 

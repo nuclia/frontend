@@ -94,3 +94,6 @@ export const hasContextImages = widgetFeatures.pipe(map((features) => !!features
 export const hasQueryImage = widgetFeatures.pipe(map((features) => !!features?.queryImage));
 export const hasSortButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.sortResults));
 export const hideReset: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideReset));
+export const displayLabelFilterCounts: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.labelFilterCounts),
+);

@@ -29,15 +29,15 @@ import { widgetCache } from './stores';
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.rag.progress.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
-// the vendor CDN does not need to be customized
-export const getVendorsCDN = () => 'https://cdn.rag.progress.cloud/vendors';
+const domain = location.host.endsWith('stashify.cloud') ? 'cdn.stashify.cloud' : 'cdn.rag.progress.cloud';
+export const getVendorsCDN = () => `https://${domain}/vendors`;
 
 export const loadFonts = () => {
   const fontLinkId = 'nuclia-fonts-link';
   if (!document.getElementById(fontLinkId)) {
     const font = document.createElement('link');
     font.id = fontLinkId;
-    font.href = 'https://cdn.rag.progress.cloud/fonts/inter.css';
+    font.href = `https://${domain}/fonts/inter.css`;
     font.rel = 'stylesheet';
 
     const head = document.head || document.getElementsByTagName('head')[0];
@@ -538,20 +538,14 @@ function getSearchConfigs(options: NucliaOptions) {
   if (!options.account || !options.knowledgeBox || !options.zone) {
     throw new Error('Account id, Knowledge Box id and zone must be provided');
   }
-  const useCache = !!widgetCache.getValue();
-  const cache = getCachedRequest(options.knowledgeBox, 'searchConfigs');
-  if (cache && useCache) {
-    return of(cache);
-  } else {
-    return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
-      map((kb) => kb.search_configs),
-      tap((searchConfigs) => {
-        if (useCache) {
-          storeCachedRequest(options.knowledgeBox || '', 'searchConfigs', searchConfigs);
-        }
-      }),
-    );
-  }
+  return withCache(
+    () =>
+      new Nuclia(options).db
+        .getKnowledgeBox(options.account || '', options.knowledgeBox || '', options.zone)
+        .pipe(map((kb) => kb.search_configs)),
+    options.knowledgeBox,
+    'searchConfigs',
+  );
 }
 
 function getNestedValue(obj: any, path: string): any {
@@ -607,7 +601,23 @@ export const isBrowserUnsupported = !supportsCSSNesting();
 
 const REQUESTS_CACHE_KEY = 'agentic-rag-widget-cache';
 
-export function getCachedRequest(kbId: string, type: 'labels' | 'searchConfigs') {
+export const withCache = <T>(request: () => Observable<T>, kbId: string, type: string): Observable<T> => {
+  const useCache = !!widgetCache.getValue();
+  const cache = getCachedRequest(kbId, type);
+  if (cache && useCache) {
+    return of(cache);
+  } else {
+    return request().pipe(
+      tap((res) => {
+        if (useCache) {
+          storeCachedRequest(kbId, type, res);
+        }
+      }),
+    );
+  }
+};
+
+function getCachedRequest(kbId: string, type: string) {
   try {
     const cache = JSON.parse(window.localStorage.getItem(REQUESTS_CACHE_KEY) || '{}');
     const entry = cache[`${kbId}-${type}`];
@@ -620,7 +630,7 @@ export function getCachedRequest(kbId: string, type: 'labels' | 'searchConfigs')
   }
 }
 
-export function storeCachedRequest(kbId: string, type: 'labels' | 'searchConfigs', response: any) {
+function storeCachedRequest(kbId: string, type: string, response: any) {
   const ttl = (widgetCache.getValue() || 0) * 1000;
   let current;
   try {

@@ -28,6 +28,7 @@ import { FormFooterComponent } from './form-footer/form-footer.component';
 import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
 import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
 import { PaymentLinksComponent } from './account-details/payment-links/payment-links.component';
+import { SubscriptionsComponent } from './account-details/subscriptions/subscriptions.component';
 import { STFPipesModule } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
@@ -87,6 +88,10 @@ const ROUTES: Routes = [
             component: PaymentLinksComponent,
           },
           {
+            path: 'subscriptions',
+            component: SubscriptionsComponent,
+          },
+          {
             path: 'models',
             component: ModelsComponent,
           },
@@ -101,7 +106,7 @@ const ROUTES: Routes = [
           {
             path: 'models/:zoneSlug/model/:modelId/kbs',
             component: ModelDetailsComponent,
-          }
+          },
         ],
       },
     ],
@@ -144,6 +149,7 @@ const ROUTES: Routes = [
     FormFooterComponent,
     FeatureNamePipe,
     PaymentLinksComponent,
+    SubscriptionsComponent,
   ],
 })
 export class ManageAccountsModule {}

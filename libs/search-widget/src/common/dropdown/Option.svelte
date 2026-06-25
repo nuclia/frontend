@@ -8,7 +8,7 @@
   };
 </script>
 
-<li
+<div
   class="sw-option"
   role="menuitem"
   class:selected
@@ -18,6 +18,6 @@
     if (e.key === 'Enter') select();
   }}>
   <slot />
-</li>
+</div>
 
 <style src="./Option.css"></style>

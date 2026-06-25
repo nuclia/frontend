@@ -48,4 +48,8 @@
     -ms-transform: translateX(18px);
     transform: translateX(18px);
   }
+
+  input:focus-visible + .slider {
+    box-shadow: var(--focus-shadow);
+  }
 }

@@ -29,7 +29,8 @@ export namespace Widget {
     preselectedFilterExpression: string;
     filters: FilterSelectionType;
     labelSetsExcludedFromFilters: string;
-    initialFilters: string;
+    initialFilters: string | undefined;
+    labelFilterCounts: boolean;
     rephraseQuery: boolean;
     useRephrasePrompt: boolean;
     rephrasePrompt: string;
@@ -235,6 +236,7 @@ export namespace Widget {
     preferMarkdown?: boolean;
     openNewTab?: boolean;
     orFilterLogic?: boolean;
+    labelFilterCounts?: boolean;
     noChatHistory?: boolean;
     showHidden?: boolean;
     showAttachedImages?: boolean;
@@ -276,7 +278,8 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   setPreselectedFilters: false,
   preselectedFilters: '',
   preselectedFilterExpression: '',
-  initialFilters: '',
+  initialFilters: undefined,
+  labelFilterCounts: false,
   suggestions: false,
   suggestResults: false,
   autocompleteFromNERs: false,
@@ -587,6 +590,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
+    labelFilterCounts: config.searchBox.labelFilterCounts,
     highlight: config.searchBox.highlight,
     suggestions: config.searchBox.suggestions,
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
@@ -684,7 +688,7 @@ function getLabelSetsExcludedFromFilters(config: Widget.SearchBoxConfig): string
   return config.labelSetsExcludedFromFilters;
 }
 function getInitialFilters(config: Widget.SearchBoxConfig): string {
-  if (!config.filter || !config.filters.labels || !config.initialFilters.trim()) {
+  if (!config.filter || !config.filters.labels || !config.initialFilters?.trim()) {
     return '';
   }
   return config.initialFilters

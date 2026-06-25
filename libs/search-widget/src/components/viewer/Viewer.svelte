@@ -7,6 +7,7 @@
     DocTypeIndicator,
     Dropdown,
     Duration,
+    createFocusTrap,
     freezeBackground,
     Icon,
     IconButton,
@@ -89,6 +90,14 @@
   // Load data from the state
   let _state: ViewerState = $state();
   let result: TypedResult | null = $state();
+  let viewerEl: HTMLElement | undefined = $state();
+  const { trapFocus, restoreFocus } = createFocusTrap(() => viewerEl, { restoreDelay: 300 });
+
+  $effect(() => {
+    if ($isPreviewing) {
+      trapFocus();
+    }
+  });
   const stateSubscription = viewerData.pipe(filter((data) => data.isPreviewing)).subscribe((value) => {
     freezeBackground(true);
     _state = value;
@@ -135,6 +144,7 @@
     showKnowledgeGraph = false;
     transcriptsInitialized = false;
     sidePanelSectionOpen = 'search';
+    restoreFocus();
   }
 
   function setHeaderActionWidth() {
@@ -231,7 +241,7 @@
 
   function findInField(event) {
     if (event.key === 'Enter') {
-      const query = searchInFieldQuery.getValue();
+      const query = searchInFieldQuery.getValue()?.trim();
       sidePanelSectionOpen = 'search';
       if (query && result && result.field) {
         isSearchingInResource.next(true);
@@ -295,6 +305,10 @@
     viewerData.set({ result, selectedParagraphIndex: -1 });
   }
 
+  function onSpaceEnter(event: KeyboardEvent, callback: () => void) {
+     if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); callback(); }
+  }
+
   function onEscape(event: KeyboardEvent) {
     if ($isPreviewing && event.key === 'Escape') {
       close();
@@ -310,6 +324,7 @@
 {#if $isPreviewing}
   <div
     class="sw-viewer"
+    bind:this={viewerEl}
     style:--search-section-count={sidePanelSectionOpen === 'search' ? 1 : 0}
     style:--metadata-block-count={$metadataBlockCount}>
     <header style:--header-actions-width={`${actionsWidth}px`}>
@@ -324,13 +339,15 @@
               icon={_state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
               ariaLabel={$_('resource.source')}
               aspect="basic"
-              on:click={openOrigin} />
+              on:click={openOrigin}
+              on:keyup={e => onSpaceEnter(e, openOrigin)} />
           {:else if _state.fieldFullId?.field_type === FIELD_TYPE.text}
             <IconButton
               icon="download"
               ariaLabel={$_('resource.source')}
               aspect="basic"
-              on:click={downloadTextField} />
+              on:click={downloadTextField}
+              on:keyup={e => onSpaceEnter(e, downloadTextField)} />
           {/if}
         {/if}
       </div>
@@ -353,18 +370,19 @@
             <IconButton
               icon="more-vertical"
               aspect="basic"
-              on:click={openMenu} />
+              on:click={openMenu}
+              on:keyup={e => onSpaceEnter(e, openMenu)} />
           </div>
 
           {#if displayMenu}
             <Dropdown
               position={menuPosition}
               on:close={() => (displayMenu = false)}>
-              <ul>
+              <div role="menu">
                 {#each $widgetActions as item}
                   <Option on:select={() => clickOnMenu(item)}>{item.label}</Option>
                 {/each}
-              </ul>
+              </div>
             </Dropdown>
           {/if}
         {/if}
@@ -372,7 +390,8 @@
           icon="cross"
           ariaLabel={$_('generic.close')}
           aspect="basic"
-          on:click={close} />
+          on:click={close}
+          on:keyup={e => onSpaceEnter(e, close)} />
       </div>
     </header>
 
@@ -404,13 +423,23 @@
             {#if !showKnowledgeGraph}
               <div
                 class="side-panel-button"
-                onclick={toggleSidePanel}>
+                role="button"
+                tabindex="0"
+                aria-label={sidePanelExpanded ? $_('viewer.collapse-panel') : $_('viewer.expand-panel')}
+                aria-expanded={sidePanelExpanded}
+                onclick={toggleSidePanel}
+                onkeyup={e => onSpaceEnter(e, toggleSidePanel)}>
                 <Icon name={sidePanelExpanded ? 'chevrons-right' : 'chevrons-left'} />
               </div>
             {:else}
               <div
                 class="side-panel-button"
-                onclick={toggleSidePanel}>
+                role="button"
+                tabindex="0"
+                aria-label={sidePanelExpanded ? $_('viewer.collapse-panel') : $_('viewer.expand-panel')}
+                aria-expanded={sidePanelExpanded}
+                onclick={toggleSidePanel}
+                onkeyup={e => onSpaceEnter(e, toggleSidePanel)}>
                 <Icon name={sidePanelExpanded ? 'chevrons-right' : 'info'} />
               </div>
             {/if}
@@ -418,7 +447,11 @@
             {#if $isKnowledgeGraphEnabled}
               <div
                 class="side-panel-button"
-                onclick={toggleKnowledgeGraph}>
+                role="button"
+                tabindex="0"
+                aria-label={showKnowledgeGraph ? $_('viewer.hide-graph') : $_('viewer.show-graph')}
+                onclick={toggleKnowledgeGraph}
+                onkeyup={e => onSpaceEnter(e, toggleKnowledgeGraph)}>
                 <Icon name={showKnowledgeGraph ? 'cross' : 'submenu'} />
               </div>
             {/if}
@@ -465,7 +498,8 @@
                     icon="cross"
                     aspect="basic"
                     size="small"
-                    on:click={resetInternalSearch} />
+                    on:click={resetInternalSearch}
+                    on:keyup={e => onSpaceEnter(e, resetInternalSearch)} />
                 {/if}
               </div>
 
@@ -485,7 +519,7 @@
                     </span>
                   {/snippet}
                   {#snippet sectionContent()}
-                    <ul class="sw-paragraphs-container">
+                    <div class="sw-paragraphs-container">
                       {#if _state.searchInFieldResults !== null}
                         {#each _state.searchInFieldResults as paragraph, index}
                           <ParagraphResult
@@ -509,7 +543,7 @@
                             on:open={() => selectParagraph(index)} />
                         {/each}
                       {/if}
-                    </ul>
+                    </div>
                   {/snippet}
                 </MetadataContainer>
               {/if}
@@ -524,7 +558,7 @@
                   <span>{$_('viewer.full-transcripts')}</span>
                 {/snippet}
                 {#snippet sectionContent()}
-                  <ul class="sw-paragraphs-container">
+                  <div class="sw-paragraphs-container">
                     {#each $transcripts as paragraph, index}
                       <ParagraphResult
                         {paragraph}
@@ -533,7 +567,7 @@
                         stack
                         on:open={() => selectTranscript(paragraph, index)} />
                     {/each}
-                  </ul>
+                  </div>
                 {/snippet}
               </MetadataContainer>
             {/if}

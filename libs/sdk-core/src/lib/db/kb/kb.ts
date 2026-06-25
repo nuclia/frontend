@@ -28,6 +28,7 @@ import {
   Origin,
   Resource,
   retry429Config,
+  UpdateKVSchema,
   UserMetadata,
 } from '../resource';
 import {
@@ -186,9 +187,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<KBKVSchemas>(`${this.path}/kv-schemas`);
   }
 
-  /** Returns the KV schema with the given name. */
-  getKVSchema(name: string): Observable<KVSchema> {
-    return this.nuclia.rest.get<KVSchema>(`${this.path}/kv-schemas/${name}`);
+  /** Returns the KV schema with the given id. */
+  getKVSchema(id: string): Observable<KVSchema> {
+    return this.nuclia.rest.get<KVSchema>(`${this.path}/kv-schemas/${id}`);
   }
 
   /**
@@ -1262,5 +1263,20 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteSearchConfig(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/search_configurations/${id}`);
+  }
+
+  /** Creates a new KV schema in the Knowledge Box. */
+  createKVSchema(schema: KVSchema): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/kv-schemas`, schema);
+  }
+
+  /** Updates an existing KV schema. Only description and fields can be changed; id is immutable. */
+  updateKVSchema(id: string, update: UpdateKVSchema): Observable<void> {
+    return this.nuclia.rest.put(`${this.path}/kv-schemas/${id}`, update);
+  }
+
+  /** Deletes a KV schema from the Knowledge Box. */
+  deleteKVSchema(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/kv-schemas/${id}`);
   }
 }

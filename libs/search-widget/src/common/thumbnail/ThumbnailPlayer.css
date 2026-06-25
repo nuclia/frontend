@@ -33,6 +33,11 @@
     outline: 0;
   }
 
+  .play-icon:focus-visible {
+    box-shadow: var(--focus-shadow);
+    outline: 0;
+  }
+
   &:active .play-icon {
     background: var(--color-light-stronger);
   }

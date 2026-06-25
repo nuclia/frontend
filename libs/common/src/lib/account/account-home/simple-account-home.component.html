@@ -20,28 +20,34 @@
     <pa-tabs class="settings-tabs">
       <pa-tab
         [active]="selectedTab === 'consumption'"
+        ariaControls="settings-section-panel"
         (click)="goToSection('consumption')">
         {{ 'account.consumption' | translate }}
       </pa-tab>
       <pa-tab
         [active]="selectedTab === 'subscriptions'"
+        ariaControls="settings-section-panel"
         (click)="goToSection('subscriptions')">
         {{ 'account.subscriptions' | translate }}
       </pa-tab>
       <pa-tab
         [active]="selectedTab === 'users'"
+        ariaControls="settings-section-panel"
         (click)="goToSection('users')">
         {{ 'account.manage_users' | translate }}
       </pa-tab>
       <pa-tab
         [active]="selectedTab === 'preferences'"
+        ariaControls="settings-section-panel"
         (click)="goToSection('preferences')">
         {{ 'account.preferences' | translate }}
       </pa-tab>
     </pa-tabs>
   </div>
 
-  <div class="settings-section">
+  <div
+    class="settings-section"
+    id="settings-section-panel">
     @switch (selectedTab) {
       @case ('consumption') {
         <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>

@@ -12,7 +12,9 @@
 {#if name}
   <svg
     class="sw-svg-icon {size}"
-    tabindex="-1">
+    tabindex="-1"
+    aria-hidden="true"
+    focusable="false">
     <use href="#{name}" />
   </svg>
 {/if}

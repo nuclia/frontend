@@ -3,7 +3,7 @@ import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widge
 import { SDKService } from '@flaps/core';
 import { forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { distinctUntilKeyChanged, map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
 import { SearchConfig, SearchConfigs, Widget } from '@nuclia/core';
@@ -80,20 +80,19 @@ export class SearchWidgetStorageService {
   constructor() {
     this.sdk.currentKb
       .pipe(
-        take(1),
-        switchMap((kb) => kb.getSearchConfigs()),
+        distinctUntilKeyChanged('id'),
+        tap(() => this._searchConfigs.next({})),
+        switchMap(() => this.refreshSearchConfigs()),
       )
-      .subscribe((configs) => {
-        this._searchConfigs.next(configs);
+      .subscribe(() => {
+        this.storageUpdated.next();
       });
   }
 
   storeRagLabQuestions(updatedQuestions: string[]) {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) =>
-        kb.modify({ search_configs: { ...kb.search_configs, ragLabQuestions: updatedQuestions } }),
-      ),
+      switchMap((kb) => kb.modify({ search_configs: { ...kb.search_configs, ragLabQuestions: updatedQuestions } })),
       switchMap(() => this.sdk.refreshCurrentKb()),
       tap(() => this.storageUpdated.next()),
     );
@@ -196,8 +195,7 @@ export class SearchWidgetStorageService {
             switchMap((configs) =>
               configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
             ),
-            switchMap(() => kb.getSearchConfigs()),
-            tap((configs) => this._searchConfigs.next(configs)),
+            switchMap(() => this.refreshSearchConfigs()),
           ),
         ),
       );
@@ -214,12 +212,19 @@ export class SearchWidgetStorageService {
           this.searchAPIConfigs.pipe(
             take(1),
             switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined))),
-            switchMap(() => kb.getSearchConfigs()),
-            tap((configs) => this._searchConfigs.next(configs)),
+            switchMap(() => this.refreshSearchConfigs()),
           ),
         ),
       );
     }
+  }
+
+  private refreshSearchConfigs() {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.getSearchConfigs()),
+      tap((configs) => this._searchConfigs.next(configs)),
+    );
   }
 
   storeWidgets(updatedWidgets: Widget.Widget[]) {

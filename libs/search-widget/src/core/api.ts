@@ -19,6 +19,7 @@ import type {
 import {
   Ask,
   ExtractedDataTypes,
+  getFilterFromLabelSet,
   MIME_FACETS,
   Nuclia,
   ResourceFieldProperties,
@@ -42,14 +43,7 @@ import {
 import { suggestionError } from './stores/suggestions.store';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { initTracking, logEvent } from './tracking';
-import {
-  downloadAsJSON,
-  entitiesDefaultColor,
-  generatedEntitiesColor,
-  getCachedRequest,
-  storeCachedRequest,
-} from './utils';
-import { widgetCache } from './stores';
+import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, withCache } from './utils';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -496,19 +490,17 @@ export const getLabelSets = (): Observable<LabelSets> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  const useCache = !!widgetCache.getValue();
-  const cache = getCachedRequest(nucliaApi.knowledgeBox.id, 'labels');
-  if (cache && useCache) {
-    return of(cache);
-  } else {
-    return nucliaApi.knowledgeBox.getLabels().pipe(
-      tap((res) => {
-        if (useCache) {
-          storeCachedRequest(nucliaApi!.knowledgeBox.id, 'labels', res);
-        }
-      }),
-    );
+  return withCache<LabelSets>(() => nucliaApi!.knowledgeBox.getLabels(), nucliaApi.knowledgeBox.id, 'labels');
+};
+export const getLabelFacets = (labelSet: string): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
   }
+  return withCache<Search.FacetsResult>(
+    () => nucliaApi!.knowledgeBox.getFacets([getFilterFromLabelSet(labelSet)]),
+    nucliaApi.knowledgeBox.id,
+    `label_facets_${labelSet}`,
+  );
 };
 export const getMimeFacets = (): Observable<Search.FacetsResult> => {
   if (!nucliaApi) {
@@ -624,9 +616,13 @@ export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
 }
 
-export function getRouting(question: string, routing: Routing): Observable<{ config: string; answer?: string }> {
-  const configs = routing.rules.map((rule) => rule.search_config);
-  const rules = routing.rules
+export function getRouting(question: string, routing: Routing): Observable<string> {
+  const rules = routing.direct_answer
+    ? [...routing.rules, { search_config: 'DIRECT_ANSWER', prompt: routing.direct_answer }]
+    : routing.rules;
+
+  const configs = rules.map((rule) => rule.search_config);
+  const rulesPrompt = rules
     .map(
       (rule) => `- Category name: ${rule.search_config}
   Description: ${rule.prompt}
@@ -637,7 +633,7 @@ export function getRouting(question: string, routing: Routing): Observable<{ con
 
 **CATEGORIES**:
 
-${rules}
+${rulesPrompt}
 
 - Category name: FALLBACK
   Description: If none of the previous descriptions correspond to the question, return "FALLBACK".
@@ -656,12 +652,6 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
           type: 'string',
           description: fullPrompt,
         },
-        direct_answer: routing.direct_answer
-          ? {
-              type: 'string',
-              description: routing.direct_answer,
-            }
-          : undefined,
       },
       required: ['category'],
     },
@@ -679,15 +669,13 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
   ).pipe(
     map((res) => {
       if (res.type === 'error') {
-        return { config: 'FALLBACK' };
-      } else if (res.jsonAnswer?.category === 'FALLBACK' && res.jsonAnswer?.direct_answer) {
-        return { config: 'FALLBACK', answer: res.jsonAnswer.direct_answer as string };
+        return 'FALLBACK';
       } else {
         return res.jsonAnswer?.category && configs.includes(res.jsonAnswer?.category)
-          ? { config: (res.jsonAnswer?.category as string) || '' }
-          : { config: 'FALLBACK' };
+          ? res.jsonAnswer.category
+          : 'FALLBACK';
       }
     }),
-    tap((config) => routedConfig.set(config.config)),
+    tap((config) => routedConfig.set(config)),
   );
 }

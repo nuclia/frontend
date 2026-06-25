@@ -10,7 +10,10 @@ import {
   BillingFormula,
   BlockedFeature,
   BlockedFeaturesPayload,
+  CloudZeroSubscriptionPayload,
   ExtendedAccount,
+  ManagerAccountSubscription,
+  ManualSubscriptionPayload,
   PaymentLinkPayload,
   SearchPrice,
 } from './global-account.models';
@@ -92,5 +95,33 @@ export class GlobalAccountService {
   }
   createPaymentLink(data: PaymentLinkPayload) {
     return this.sdk.nuclia.rest.post<{ id: string; url: string }>(`/billing/stripe/payment_links`, data);
+  }
+
+  createCloudZeroSubscription(accountId: string, payload: CloudZeroSubscriptionPayload): Observable<void> {
+    return this.sdk.nuclia.rest.put(`/billing/account/${accountId}/cloud_zero/subscription`, payload);
+  }
+
+  createManualSubscription(accountId: string, payload: ManualSubscriptionPayload): Observable<void> {
+    return this.sdk.nuclia.rest.put(`/billing/account/${accountId}/manual/subscription`, payload);
+  }
+
+  getAccountSubscription(accountId: string): Observable<ManagerAccountSubscription> {
+    return this.sdk.nuclia.rest.get<ManagerAccountSubscription>(`/billing/account/${accountId}/subscription`);
+  }
+
+  patchCloudZeroSubscription(accountId: string, payload: Partial<CloudZeroSubscriptionPayload>): Observable<void> {
+    return this.sdk.nuclia.rest.patch<void>(`/billing/account/${accountId}/cloud_zero/subscription`, payload);
+  }
+
+  patchManualSubscription(accountId: string, payload: Partial<ManualSubscriptionPayload>): Observable<void> {
+    return this.sdk.nuclia.rest.patch<void>(`/billing/account/${accountId}/manual/subscription`, payload);
+  }
+
+  deleteCloudZeroSubscription(accountId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/cloud_zero/subscription`);
+  }
+
+  deleteManualSubscription(accountId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/manual/subscription`);
   }
 }

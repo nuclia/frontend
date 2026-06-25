@@ -1,4 +1,5 @@
 export * from './actions/actions';
+export * from './focusTrap';
 export * from './button';
 export { default as Checkbox } from './checkbox/Checkbox.svelte';
 export { default as Dropdown } from './dropdown/Dropdown.svelte';

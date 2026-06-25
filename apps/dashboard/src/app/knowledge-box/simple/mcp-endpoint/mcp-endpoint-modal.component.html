@@ -7,7 +7,10 @@
   </pa-modal-description>
 
   <pa-modal-content>
-    <div class="endpoint">
+    <div
+      class="endpoint"
+      role="region"
+      [attr.aria-label]="'simple.mcp.endpoint.label' | translate">
       <pre><code>{{ endpoint | async }}</code></pre>
       <pa-button
         aspect="basic"
@@ -20,8 +23,10 @@
     <div class="how-to">
       <a
         href="https://medium.com/nuclia/connecting-your-contentbox-5045f56f7ade"
-        target="_blank">
+        target="_blank"
+        rel="noopener noreferrer">
         {{ 'simple.mcp.how-to' | translate }}
+        <span class="sr-only">({{ 'generic.opens-in-new-tab' | translate }})</span>
       </a>
     </div>
   </pa-modal-content>

@@ -145,6 +145,7 @@ ${paragraphs.join('\n<hr>\n')}`;
         icon="info"
         size="small"
         kind="secondary"
+        ariaLabel={$_('answer.debug.title')}
         on:click={() => (showMetadata = true)} />
       <DebugInfo
         {answer}
@@ -182,7 +183,7 @@ ${paragraphs.join('\n<hr>\n')}`;
       </div>
     {/if}
     {#if reasoning}
-      <Expander expanded={true}>
+      <Expander expanded={true} ariaLabel={$_('answer.reasoning')}>
         {#snippet header()}
           <div class="title-xxs">
             {$_('answer.reasoning')}
@@ -204,6 +205,7 @@ ${paragraphs.join('\n<hr>\n')}`;
               icon={copied ? 'check' : 'copy'}
               size="small"
               kind="secondary"
+              ariaLabel={$_('answer.copy')}
               on:click={() => copyAnswer()} />
             <Tooltip
               visible={copied}
@@ -238,7 +240,7 @@ ${paragraphs.join('\n<hr>\n')}`;
                 selected={selectedCitation} />
             </div>
           {:else}
-            <Expander bind:expanded={expandedSources}>
+            <Expander bind:expanded={expandedSources} ariaLabel={$_('answer.sources')}>
               {#snippet header()}
                 <div class="title-s">
                   {$_('answer.sources')}

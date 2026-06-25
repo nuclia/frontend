@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UploadEventService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -54,7 +54,11 @@ export class AddSyncPageComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
   private uploadEventService = inject(UploadEventService);
-  selectedFolder?: { sync_root_path: string; drive_id: string };
+  selectedFolder = signal<{ sync_root_path?: string; folder_id?: string; drive_id: string } | undefined>(undefined);
+  isFolderSelectionValid = computed(() => {
+    const folder = this.selectedFolder();
+    return !!(folder?.folder_id || folder?.sync_root_path);
+  });
 
   connectorId = this.currentRoute.params.pipe(
     filter((params) => params['connector']),
@@ -212,14 +216,14 @@ export class AddSyncPageComponent implements OnInit {
           if (!this.externalConnection) {
             throw new Error('No external connection');
           }
-          if (!this.selectedFolder) {
+          if (!this.selectedFolder()) {
             throw new Error('No folder selected');
           }
           return this.syncService
             .addCloudSync({
               name: syncEntity.title,
               external_connection_id: this.externalConnection.id,
-              ...this.selectedFolder,
+              ...this.selectedFolder(),
               ...this.cloudSyncOptions,
             })
             .pipe(
@@ -292,8 +296,7 @@ export class AddSyncPageComponent implements OnInit {
     this.toaster.error('sync.add-page.toast.generic-error');
   }
 
-  selectFolder(folder: { sync_root_path: string; drive_id: string }) {
-    this.selectedFolder = folder;
-    this.cdr.markForCheck();
+  selectFolder(folder: { sync_root_path?: string; folder_id?: string; drive_id: string }) {
+    this.selectedFolder.set(folder);
   }
 }

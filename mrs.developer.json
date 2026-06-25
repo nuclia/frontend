@@ -1,9 +1,9 @@
 {
   "pastanaga-angular": {
-    "url": "git@github.com:plone/pastanaga-angular.git",
-    "https": "https://github.com/plone/pastanaga-angular.git",
+    "url": "git@github.com:ykulynych/pastanaga-angular.git",
+    "https": "https://github.com/ykulynych/pastanaga-angular.git",
+    "branch": "fix-multilevel-dropdowns",
     "path": "/projects/pastanaga-angular/src",
-    "package": "@guillotinaweb/pastanaga-angular",
-    "tag": "2.71.0"
+    "package": "@guillotinaweb/pastanaga-angular"
   }
 }
