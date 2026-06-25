@@ -937,6 +937,7 @@
 	"kb.ai-models.extraction.llm-configuration.rules.define-rules": "Define rules",
 	"kb.ai-models.extraction.llm-configuration.rules.disabled": "{{model}} does not support rules",
 	"kb.ai-models.extraction.llm-configuration.rules.rule": "Rule",
+	"kb.ai-models.extraction.max-parallel-llm-calls": "Max parallel LLM calls",
 	"kb.ai-models.extraction.name": "Configuration name",
 	"kb.ai-models.extraction.split.default.label": "Default",
 	"kb.ai-models.extraction.split.description": "Define how your data will be divided into paragraphs.",
