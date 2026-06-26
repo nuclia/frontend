@@ -19,7 +19,7 @@ describe('Rest', () => {
     mockFetch({ id: 'abc', title: 'Gödel, Escher, Bach: an Eternal Golden Braid' });
     rest.get<{ id: string; title: string }>('/somepath').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.rag.here/v1/somepath',
+        'http://europe-1.dp.here/v1/somepath',
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'GET',
@@ -39,7 +39,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.rag.here/v1/somepath',
+          'http://europe-1.dp.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -59,7 +59,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.rag.here/v1/somepath',
+          'http://europe-1.dp.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -79,7 +79,7 @@ describe('Rest', () => {
       })
       .subscribe(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          'http://europe-1.rag.here/v1/somepath',
+          'http://europe-1.dp.here/v1/somepath',
           expect.objectContaining({
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
@@ -94,7 +94,7 @@ describe('Rest', () => {
     mockFetch('');
     rest.delete<{ id: string; title: string }>('/somepath').subscribe(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://europe-1.rag.here/v1/somepath',
+        'http://europe-1.dp.here/v1/somepath',
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'DELETE',
@@ -108,6 +108,38 @@ describe('Rest', () => {
     mockFetch({});
     rest.get('/account').subscribe(() => {
       expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
+      done();
+    });
+  });
+
+  it('should normalize rag backend to accounts for global endpoints', (done) => {
+    const nuclia = new Nuclia({
+      backend: 'http://rag.here',
+      zone: 'europe-1',
+      account: 'dc',
+      knowledgeBox: 'gotham',
+    });
+    nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
+    const ragRest = nuclia.rest as Rest;
+    mockFetch({});
+    ragRest.get('/account').subscribe(() => {
+      expect(global.fetch).toHaveBeenCalledWith('http://accounts.here/v1/account', expect.anything());
+      done();
+    });
+  });
+
+  it('should normalize rag backend to region.dp for regional endpoints', (done) => {
+    const nuclia = new Nuclia({
+      backend: 'http://rag.here',
+      zone: 'europe-1',
+      account: 'dc',
+      knowledgeBox: 'gotham',
+    });
+    nuclia.auth.getAuthHeaders = () => ({ Authorization: 'Bearer 12345' });
+    const ragRest = nuclia.rest as Rest;
+    mockFetch({});
+    ragRest.get('/somepath').subscribe(() => {
+      expect(global.fetch).toHaveBeenCalledWith('http://europe-1.dp.here/v1/somepath', expect.anything());
       done();
     });
   });

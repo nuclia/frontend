@@ -6,6 +6,7 @@ h3 {
 
 .invite-description {
   color: $color-neutral-regular;
+  font-size: $font-size-body-m;
   margin: 0 0 rhythm(2.5);
 }
 
@@ -17,14 +18,152 @@ h3 {
   margin-bottom: rhythm(6);
 }
 
-.email-row {
-  align-items: flex-end;
+.paste-emails-row {
+  align-items: flex-start;
   display: grid;
   gap: rhythm(1.5);
-  grid-template-columns: minmax(rhythm(45), rhythm(60)) rhythm(20) auto;
+  grid-template-columns: 1fr auto;
+  margin-bottom: rhythm(3);
+}
 
-  pa-input {
-    min-width: 0;
+.chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1);
+  margin-top: rhythm(2);
+}
+
+.chip-item {
+  align-items: center;
+  display: inline-flex;
+
+  .chip-email {
+    max-width: rhythm(28);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chip-status {
+    font-weight: $font-weight-semi-bold;
+    font-size: 11px;
+    margin-left: rhythm(0.5);
+    text-transform: uppercase;
+  }
+
+  ::ng-deep pa-chip.chip-error {
+    .pa-chip {
+      background: $color-secondary-lightest;
+      border: 2px solid $color-secondary-strong;
+    }
+
+    .chip-status {
+      color: $color-secondary-strong;
+    }
+  }
+
+  ::ng-deep pa-chip.chip-warning {
+    .pa-chip {
+      background: $color-neutral-lighter;
+      border-color: $color-neutral-regular;
+    }
+
+    .chip-status {
+      color: $color-neutral-regular;
+    }
+  }
+}
+
+.invite-progress {
+  margin-top: rhythm(1.5);
+  color: $color-neutral-regular;
+}
+
+@keyframes thinking-dots {
+  0%,
+  100% {
+    content: '';
+  }
+  33% {
+    content: '.';
+  }
+  66% {
+    content: '..';
+  }
+  99% {
+    content: '...';
+  }
+}
+
+.thinking-dots::after {
+  content: '';
+  animation: thinking-dots 1.2s steps(1) infinite;
+}
+
+.invite-summary-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  margin-top: rhythm(2);
+  height: rhythm(5);
+
+  .clear-button {
+    color: $color-neutral-regular;
+  }
+}
+
+.invite-summary {
+  color: $color-neutral-regular;
+}
+
+.invite-hint {
+  color: $color-neutral-regular;
+  height: rhythm(5);
+
+  .clear-button {
+    color: $color-secondary-strong;
+  }
+}
+
+.invite-summary-row,
+.invite-hint {
+  .clear-button {
+    border: none;
+    background: none;
+    font-weight: $font-weight-semi-bold;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.hint-with-action {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1);
+}
+
+.show-hide-chips {
+  margin-top: rhythm(1);
+}
+
+.invite-hint-error {
+  color: $color-secondary-strong;
+}
+
+.invite-actions-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(1.5);
+  margin-top: rhythm(2);
+
+  pa-select {
+    min-width: rhythm(18);
+    width: rhythm(20);
   }
 
   pa-select {
@@ -157,22 +296,8 @@ h3 {
 }
 
 @media (max-width: $size-viewport-medium-max) {
-  .email-row {
+  .paste-emails-row {
     grid-template-columns: 1fr;
-
-    pa-select {
-      width: 100%;
-    }
-  }
-
-  .bulk-paste-row {
-    grid-template-columns: 1fr;
-  }
-
-  .bulk-paste-actions {
-    align-items: stretch;
-    display: flex;
-    flex-wrap: wrap;
   }
 
   .invite-summary-row {
@@ -183,5 +308,9 @@ h3 {
   .invite-actions-row {
     align-items: stretch;
     flex-direction: column;
+
+    pa-select {
+      width: 100%;
+    }
   }
 }

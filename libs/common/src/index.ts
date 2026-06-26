@@ -7,6 +7,7 @@ export * from './lib/ai-models';
 export * from './lib/aws-onboarding';
 export * from './lib/base';
 export * from './lib/charts';
+export * from './lib/chat-advice';
 export * from './lib/directives';
 export * from './lib/entities';
 export * from './lib/features';

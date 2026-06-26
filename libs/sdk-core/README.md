@@ -18,7 +18,7 @@ The full documentation is available at [https://docs.nuclia.dev/docs/develop/js-
 import { Nuclia } from '@nuclia/core';
 
 const nuclia = new Nuclia({
-  backend: 'https://rag.progress.cloud/api',
+  backend: 'https://accounts.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
@@ -26,6 +26,27 @@ nuclia.knowledgeBox.search('where does the Little Prince live', [Search.Features
   console.log('search result', searchResult);
 });
 ```
+
+### Backend URL Compatibility
+
+- Preferred global backend: `https://accounts.<domain>/api`
+- Preferred regional backend shape (derived by SDK): `https://<zone>.dp.<domain>/api`
+
+For backward compatibility, the SDK also accepts legacy global backends like
+`https://rag.<domain>/api` 
+
+and normalizes them internally to
+
+`https://accounts.<domain>/api` before building regional URLs.
+
+This means both of these inputs are supported and produce the same final routing:
+
+```ts
+new Nuclia({ backend: 'https://accounts.progress.cloud/api', zone: 'europe-1', knowledgeBox: '<KB-ID>' });
+new Nuclia({ backend: 'https://rag.progress.cloud/api', zone: 'europe-1', knowledgeBox: '<KB-ID>' });
+```
+
+In both cases, global requests use `accounts.<domain>` and regional requests use `<zone>.dp.<domain>`.
 
 ## Usage with NodeJS
 
@@ -37,7 +58,7 @@ require('localstorage-polyfill');
 require('isomorphic-unfetch');
 
 const nuclia = new Nuclia({
-  backend: 'https://rag.progress.cloud/api',
+  backend: 'https://accounts.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
@@ -55,7 +76,7 @@ It will expose a global variable `NucliaSDK` containing the `Nuclia` class:
 
 ```js
 const nuclia = new NucliaSDK.Nuclia({
-  backend: 'https://rag.progress.cloud/api',
+  backend: 'https://accounts.progress.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });

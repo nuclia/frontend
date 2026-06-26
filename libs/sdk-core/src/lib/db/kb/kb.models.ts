@@ -509,6 +509,7 @@ export interface ExtractConfig {
   vllm_config?: ExtractVLLMConfig;
   ai_tables?: ExtractVLLMConfig;
   split?: { max_paragraph?: number };
+  max_parallel_llm_calls?: number;
 }
 
 export interface ExtractLLMConfig {

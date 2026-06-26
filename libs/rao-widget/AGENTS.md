@@ -58,7 +58,7 @@ Attribute names are kebab-case; normalized to camelCase before passing to React.
 
 | Attribute         | Default                          | Description                                                                |
 | ----------------- | -------------------------------- | -------------------------------------------------------------------------- |
-| `backend`         | `https://rag.progress.cloud/api` | Base HTTP endpoint; zone prefix auto-injected                              |
+| `backend`         | `https://accounts.progress.cloud/api` | Base HTTP endpoint; zone prefix auto-injected                              |
 | `apikey`          | —                                | Bearer key; falls back to `localStorage.getItem('JWT_KEY')`                |
 | `viewtype`        | `"conversation"`                 | `"conversation"` = inline Standard view; `"floating"` = launcher + overlay |
 | `promptconfig`    | —                                | JSON: `{"prompts":["…"],"usefallbackprompts":false,"visibleprompts":4}`    |

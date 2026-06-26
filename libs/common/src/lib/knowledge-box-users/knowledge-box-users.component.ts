@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NavigationService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { BackButtonComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
-import { UsersManageModule } from '../users-manage';
+import { UsersManageModule, UsersManageService } from '../users-manage';
 
 @Component({
   selector: 'app-knowledge-box-users',
@@ -26,9 +26,12 @@ import { UsersManageModule } from '../users-manage';
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
+  providers: [UsersManageService],
   imports: [CommonModule, TranslateModule, UsersManageModule, BackButtonComponent],
 })
 export class KnowledgeBoxUsersComponent {
+  readonly users = inject(UsersManageService);
+
   kb = this.sdk.currentKb;
   arag = this.sdk.currentArag;
   simpleMode = this.navigation.simpleMode;

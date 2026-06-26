@@ -140,7 +140,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   /**
    * The Knowledge Box fullpath on the regional API.
    *
-   * Example: `https://europe-1.rag.progress.cloud/api/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
+   * Example: `https://europe-1.dp.progress.cloud/api/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
    */
   get fullpath(): string {
     return `${this.nuclia.regionalBackend}/v1/kb/${this.id}`;

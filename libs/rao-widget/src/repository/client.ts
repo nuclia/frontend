@@ -1,7 +1,7 @@
 import type { INucliaApiError } from '../interfaces';
 
 export interface NucliaFetchConfig {
-  /** Base HTTP(s) endpoint, e.g. https://rag.progress.cloud/api */
+  /** Base HTTP(s) endpoint, e.g. https://accounts.progress.cloud/api */
   baseUrl: string;
   /** Optional API key used for authenticated calls. */
   apiKey?: string;

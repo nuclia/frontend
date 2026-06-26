@@ -17,6 +17,7 @@ import {
   STFSplashScreenService,
   STFUtils,
   UserService,
+  FeaturesService,
 } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
@@ -40,6 +41,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private unsubscribeAll: Subject<void>;
 
   version: string | undefined;
+  isChatAdviceEnabled = this.features.unstable.chatAdvice;
 
   constructor(
     private user: UserService,
@@ -50,6 +52,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private labelService: LabelsService,
     private paTranslate: PaTranslateService,
     private modalService: SisModalService,
+    private features: FeaturesService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();

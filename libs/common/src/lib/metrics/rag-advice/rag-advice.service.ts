@@ -143,7 +143,7 @@ export class RagAdviceService {
   private http = inject(HttpClient);
 
   private readonly PUBLIC_KB_URL =
-    'https://europe-1.rag.progress.cloud/api/v1/kb/df8b4c24-2807-4888-ad6c-ae97357a638b/ask';
+    'https://europe-1.dp.progress.cloud/api/v1/kb/df8b4c24-2807-4888-ad6c-ae97357a638b/ask';
 
   generateAdvice(input: AdviceInput): Observable<AdviceResult> {
     const query = this.buildQuery(input);

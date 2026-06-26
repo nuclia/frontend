@@ -60,8 +60,8 @@ export class NucliaDriverModalComponent {
     filter_expression: new FormControl<string>('', { nonNullable: true }),
     keepExistingKey: new FormControl<boolean>(false, { nonNullable: true }),
     custom: new FormControl<boolean>(false, { nonNullable: true }),
-    url: new FormControl<string>('https://europe-1.rag.progress.cloud/api', { nonNullable: true }),
-    manager: new FormControl<string>('https://europe-1.rag.progress.cloud/api', { nonNullable: true }),
+    url: new FormControl<string>('https://europe-1.dp.progress.cloud/api', { nonNullable: true }),
+    manager: new FormControl<string>('https://europe-1.dp.progress.cloud/api', { nonNullable: true }),
     connection_ids: new FormArray<FormControl<string>>([]),
   });
 

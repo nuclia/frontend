@@ -15,6 +15,13 @@
         [errorMessages]="validationMessages.name">
         {{ 'kb.ai-models.extraction.name' | translate }}
       </pa-input>
+      @if (showMaxParallelCalls | async) {
+        <pa-input
+          formControlName="max_parallel_llm_calls"
+          type="number">
+          {{ 'kb.ai-models.extraction.max-parallel-llm-calls' | translate }}
+        </pa-input>
+      }
       <div>
         <h4>{{ 'kb.ai-models.extraction.extract.processing.title' | translate }}</h4>
         <div class="processings">
@@ -35,8 +42,8 @@
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [vllmOnly]="true"
                     [config]="config?.vllm_config"
-                    (valueChange)="vllmConfig = $event"
-                    (statusChange)="vllmConfigStatus = $event"></stf-llm-configuration>
+                    (valueChange)="vllmConfig.next($event)"
+                    (statusChange)="vllmConfigStatus.next($event)"></stf-llm-configuration>
                 </div>
               }
             </div>
@@ -58,8 +65,8 @@
                     rulesPlaceholder="kb.ai-models.extraction.extract.rules-placeholder"
                     [config]="config?.ai_tables"
                     [isAiTable]="true"
-                    (valueChange)="aiTables = $event"
-                    (statusChange)="aiTablesStatus = $event"></stf-llm-configuration>
+                    (valueChange)="aiTables.next($event)"
+                    (statusChange)="aiTablesStatus.next($event)"></stf-llm-configuration>
                 </div>
               }
             </div>
