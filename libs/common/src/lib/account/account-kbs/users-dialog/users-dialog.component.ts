@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { UsersManageService } from '../../../users-manage';
 
 @Component({
   templateUrl: './users-dialog.component.html',
   styleUrls: ['./users-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
+  providers: [UsersManageService],
 })
 export class UsersDialogComponent {
   kb = this.modal.config.data?.['kb'];

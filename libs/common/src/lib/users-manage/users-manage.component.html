@@ -1,32 +1,142 @@
-@if (canAddUsers | async) {
-  <h3>{{ 'stash.users.new_user' | translate }}</h3>
-  <form
-    class="add-user"
-    (ngSubmit)="addUser()"
-    [formGroup]="addForm">
-    <pa-input
-      type="email"
-      formControlName="email"
-      stfLowerCaseInput>
-      {{ 'accounts.add_user_input' | translate }}
-    </pa-input>
-    <pa-select
-      formControlName="role"
-      label="{{ 'generic.role' | translate }}"
-      dim>
-      @for (role of roles; track role) {
-        <pa-option [value]="role">
-          {{ roleTitles[role] | translate }}
-        </pa-option>
+@if (users.canAddUsers | async) {
+  <div class="users-invite-form">
+    <h3>{{ 'stash.users.invite_users' | translate }}</h3>
+    <p class="invite-description">{{ 'stash.users.invite_users_description' | translate }}</p>
+    <form
+      class="invite-form"
+      (ngSubmit)="users.sendInvites(addForm.value.role)"
+      [formGroup]="addForm">
+      <div class="paste-emails-row">
+        <nsi-expandable-textarea
+          #bulkInputRef
+          formControlName="bulkInput"
+          [rows]="2"
+          [placeholder]="'stash.users.bulk_input_placeholder' | translate"
+          [modalTitle]="'stash.users.bulk_input_label' | translate"
+          [help]="'stash.users.bulk_input_hint' | translate"
+          resizable
+          (keydown)="handleTextareaKeydown($event)">
+          {{ 'stash.users.bulk_input_label' | translate }}
+        </nsi-expandable-textarea>
+        <pa-button
+          type="button"
+          [disabled]="!bulkInputValue.trim() || users.inviteInProgress()"
+          (click)="addBulkEmails()">
+          {{ 'stash.users.add_emails' | translate }}
+        </pa-button>
+      </div>
+
+      @if (users.hasInviteEntries()) {
+        <div
+          class="chips-list"
+          role="list">
+          @for (entry of users.visibleChips(); track entry.id) {
+            <div
+              class="chip-item"
+              role="listitem">
+              <pa-chip [ngClass]="inviteEntryStatusClass(entry.status)">
+                <span class="chip-email">{{ entry.email }}</span>
+                @if (entry.status !== 'valid') {
+                  <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
+                }
+              </pa-chip>
+              <pa-button
+                type="button"
+                icon="cross"
+                size="small"
+                kind="secondary"
+                aspect="basic"
+                [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
+                [disabled]="users.inviteInProgress()"
+                (click)="users.removeEntryByIndex($index)">
+                {{ 'stash.users.remove' | translate }}
+              </pa-button>
+            </div>
+          }
+        </div>
+
+        @if (users.hiddenChipsCount() > 0 || users.showAllChips()) {
+          <pa-button
+            class="show-hide-chips"
+            type="button"
+            kind="secondary"
+            aspect="basic"
+            size="small"
+            (click)="users.toggleShowAllChips()">
+            {{
+              (users.showAllChips() ? 'stash.users.show_less_emails' : 'stash.users.show_more_emails')
+                | translate: { count: users.hiddenChipsCount() }
+            }}
+          </pa-button>
+        }
+
+        @if (users.inviteInProgress()) {
+          <div
+            class="invite-progress"
+            aria-live="polite">
+            <span class="thinking-dots">
+              {{ 'stash.users.inviting_progress' | translate: users.inviteProgress() }}
+            </span>
+          </div>
+        } @else {
+          <div class="invite-summary-row">
+            <div
+              class="invite-summary"
+              aria-live="polite">
+              {{ 'stash.users.validation_summary' | translate: users.counts() }}
+            </div>
+            <button
+              type="button"
+              class="clear-button"
+              (click)="users.clearAllEntries()">
+              {{ 'generic.clear_all' | translate }}
+            </button>
+          </div>
+          @if (users.counts().invalid > 0 || users.counts().duplicate > 0) {
+            <div class="invite-hint invite-hint-error hint-with-action">
+              {{ 'stash.users.fix_invalid_hint' | translate }}
+              <button
+                type="button"
+                class="clear-button"
+                (click)="users.clearBlockingEntries()">
+                {{ 'stash.users.clear_invalid' | translate }}
+              </button>
+            </div>
+          }
+          @if (users.counts().failed > 0) {
+            <div class="invite-hint">
+              {{ 'stash.users.retry_failed_hint' | translate: { count: users.counts().failed } }}
+            </div>
+          }
+          @if (users.inviteError(); as err) {
+            <div class="invite-hint invite-hint-error">
+              {{ err.key | translate: err.params }}
+            </div>
+          }
+        }
       }
-    </pa-select>
-    <pa-button
-      type="submit"
-      kind="primary"
-      [disabled]="addForm.invalid">
-      {{ 'generic.add' | translate }}
-    </pa-button>
-  </form>
+
+      <div class="invite-actions-row">
+        <pa-select
+          formControlName="role"
+          label="{{ 'generic.role' | translate }}">
+          @for (role of roles; track role) {
+            <pa-option [value]="role">
+              {{ roleTitles[role] | translate }}
+            </pa-option>
+          }
+        </pa-select>
+        <pa-button
+          type="submit"
+          kind="primary"
+          iconAndText
+          [icon]="users.inviteInProgress() ? 'spinner' : ''"
+          [disabled]="users.sendInvitesDisabled()">
+          {{ 'stash.users.send_invites' | translate: { count: users.counts().ready } }}
+        </pa-button>
+      </div>
+    </form>
+  </div>
 }
 
 <div class="users-list-header">
@@ -36,7 +146,7 @@
       aspect="basic"
       [popupRef]="orderUsers"
       [open]="orderOpen">
-      {{ 'stash.users.sort_by_' + (order | async) | translate }}
+      {{ 'stash.users.sort_by_' + (users.order | async) | translate }}
     </nsi-dropdown-button>
     <pa-dropdown
       #orderUsers
@@ -44,12 +154,12 @@
       (onOpen)="orderOpen = true">
       <pa-option
         value="role"
-        (selectOption)="changeOrder('role')">
+        (selectOption)="users.changeOrder('role')">
         {{ 'stash.users.sort_by_role' | translate }}
       </pa-option>
       <pa-option
         value="name"
-        (selectOption)="changeOrder('name')">
+        (selectOption)="users.changeOrder('name')">
         {{ 'stash.users.sort_by_name' | translate }}
       </pa-option>
     </pa-dropdown>
@@ -72,7 +182,7 @@
     <pa-table-cell-menu header></pa-table-cell-menu>
   </pa-table-header>
 
-  @for (user of userRows | async; track user.id) {
+  @for (user of users.userRows | async; track user.id) {
     <pa-table-row>
       <pa-table-cell>
         <span class="title-s">{{ user.name }}</span>
@@ -92,14 +202,14 @@
           size="small"
           aspect="basic"
           [popupRef]="roleDropdown"
-          [disabled]="(user.role === 'SOWNER' && (hasSeveralOwners | async) === false) || !!user.expires">
+          [disabled]="(user.role === 'SOWNER' && (users.hasSeveralOwners | async) === false) || !!user.expires">
           {{ roleTitles[user.role] | translate }}
         </nsi-dropdown-button>
         <pa-dropdown #roleDropdown>
           @for (role of roles; track role) {
             <pa-option
               [value]="role"
-              (selectOption)="changeRole(user.id, role)">
+              (selectOption)="users.changeRole(user.id, role)">
               {{ roleTitles[role] | translate }}
             </pa-option>
           }
@@ -113,9 +223,10 @@
             size="small"
             [disabled]="
               !user.expires &&
-              (((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false))
+              (((users.userCount | async) || 0) < 2 ||
+                (user.role === 'SOWNER' && (users.hasSeveralOwners | async) === false))
             "
-            (click)="deleteUser(user)">
+            (click)="users.confirmDeleteUser(user)">
             {{ 'generic.delete' | translate }}
           </pa-button>
         </div>
