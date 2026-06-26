@@ -33,44 +33,39 @@ h3 {
   margin-top: rhythm(2);
 }
 
-.chip-item {
-  align-items: center;
-  display: inline-flex;
+.chip-email {
+  max-width: rhythm(28);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .chip-email {
-    max-width: rhythm(28);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.chip-status {
+  font-weight: $font-weight-semi-bold;
+  font-size: 11px;
+  margin-left: rhythm(0.5);
+  text-transform: uppercase;
+}
+
+::ng-deep pa-chip-closeable.chip-error {
+  .pa-chip {
+    background: $color-secondary-lightest;
+    border: 2px solid $color-secondary-strong;
   }
 
   .chip-status {
-    font-weight: $font-weight-semi-bold;
-    font-size: 11px;
-    margin-left: rhythm(0.5);
-    text-transform: uppercase;
+    color: $color-secondary-strong;
+  }
+}
+
+::ng-deep pa-chip-closeable.chip-warning {
+  .pa-chip {
+    background: $color-neutral-lighter;
+    border-color: $color-neutral-regular;
   }
 
-  ::ng-deep pa-chip.chip-error {
-    .pa-chip {
-      background: $color-secondary-lightest;
-      border: 2px solid $color-secondary-strong;
-    }
-
-    .chip-status {
-      color: $color-secondary-strong;
-    }
-  }
-
-  ::ng-deep pa-chip.chip-warning {
-    .pa-chip {
-      background: $color-neutral-lighter;
-      border-color: $color-neutral-regular;
-    }
-
-    .chip-status {
-      color: $color-neutral-regular;
-    }
+  .chip-status {
+    color: $color-neutral-regular;
   }
 }
 
