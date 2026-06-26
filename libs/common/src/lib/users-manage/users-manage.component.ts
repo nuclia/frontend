@@ -7,13 +7,6 @@ import { INVITE_REMOVE_ARIA_I18N_KEY, INVITE_STATUS_CLASS, INVITE_STATUS_I18N_KE
 import { InviteEntry, InviteEntryStatus } from './users-manage.model';
 import { UsersManageService } from './users-manage.service';
 
-type InviteEntryStatus = 'valid' | 'invalid' | 'duplicate' | 'existing' | 'failed';
-
-interface InviteEntry {
-  email: string;
-  status: InviteEntryStatus;
-}
-
 @Component({
   selector: 'app-users-manage',
   templateUrl: './users-manage.component.html',
@@ -22,9 +15,6 @@ interface InviteEntry {
   standalone: false,
 })
 export class UsersManageComponent {
-  @ViewChild('emailInputRef', { read: ElementRef }) emailInputRef?: ElementRef<HTMLElement>;
-  @ViewChild('bulkInputRef', { read: ElementRef }) bulkInputRef?: ElementRef<HTMLElement>;
-
   @Input() set kb(value: WritableKnowledgeBox | undefined) {
     if (value) {
       this.users.setKb(value);
