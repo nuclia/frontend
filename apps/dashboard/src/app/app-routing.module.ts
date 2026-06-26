@@ -11,6 +11,7 @@ import {
   DriversPageComponent,
   EditResourceComponent,
   EmptyComponent,
+  inviteInProgressGuard,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
@@ -145,6 +146,7 @@ const routes: Routes = [
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
                 canActivate: [knowledgeBoxOwnerGuard],
+                canDeactivate: [inviteInProgressGuard],
               },
               {
                 path: 'keys',
@@ -258,6 +260,7 @@ const routes: Routes = [
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
                 canActivate: [aragOwnerGuard],
+                canDeactivate: [inviteInProgressGuard],
               },
               {
                 path: 'keys',
