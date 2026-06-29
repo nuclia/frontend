@@ -85,7 +85,7 @@
     "@angular/cli": "21.1.1",
     "@angular/compiler-cli": "21.2.15",
     "@angular/language-service": "21.2.15",
-    "@babel/core": "^7.14.5",
+    "@babel/core": "^7.29.6",
     "@babel/preset-react": "^7.14.5",
     "@biesbjerg/ngx-translate-extract": "7.0.4",
     "@eslint/js": "^9.35.0",
