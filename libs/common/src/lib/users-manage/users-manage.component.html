@@ -31,27 +31,17 @@
           class="chips-list"
           role="list">
           @for (entry of users.visibleChips(); track entry.id) {
-            <div
-              class="chip-item"
-              role="listitem">
-              <pa-chip [ngClass]="inviteEntryStatusClass(entry.status)">
-                <span class="chip-email">{{ entry.email }}</span>
-                @if (entry.status !== 'valid') {
-                  <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
-                }
-              </pa-chip>
-              <pa-button
-                type="button"
-                icon="cross"
-                size="small"
-                kind="secondary"
-                aspect="basic"
-                [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
-                [disabled]="users.inviteInProgress()"
-                (click)="users.removeEntryByIndex($index)">
-                {{ 'stash.users.remove' | translate }}
-              </pa-button>
-            </div>
+            <pa-chip-closeable
+              role="listitem"
+              [ngClass]="inviteEntryStatusClass(entry.status)"
+              [disabled]="users.inviteInProgress()"
+              [attr.aria-label]="removeInviteEntryAriaLabel(entry)"
+              (closed)="users.removeEntryByIndex($index)">
+              <span class="chip-email">{{ entry.email }}</span>
+              @if (entry.status !== 'valid') {
+                <span class="chip-status">{{ inviteEntryStatusLabel(entry.status) }}</span>
+              }
+            </pa-chip-closeable>
           }
         </div>
 
