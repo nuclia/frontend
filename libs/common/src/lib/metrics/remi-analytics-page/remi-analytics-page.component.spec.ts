@@ -3,6 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { SDKService, NavigationService, FeaturesService } from '@flaps/core';
 import { PreviewService } from '../../resources';
@@ -23,11 +24,16 @@ describe('RemiAnalyticsPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RemiAnalyticsPageComponent],
       providers: [
-        MockProvider(SDKService, { currentKb: of(mockKb as any) }),
+        MockProvider(SDKService, {
+          currentKb: of(mockKb as any),
+          currentAccount: of({ creation_date: '2025-01-01' } as any),
+        }),
         MockProvider(FeaturesService, { unstable: { automaticAdvice: of(false) } }),
         MockProvider(TranslateService, { instant: (key: string) => key }),
         MockProvider(PreviewService, { viewerWidget: of('') }),
         MockProvider(NavigationService, { kbUrl: '' }),
+        MockProvider(Router, { navigate: jest.fn() }),
+        MockProvider(ActivatedRoute, {}),
       ],
     })
       .overrideComponent(RemiAnalyticsPageComponent, {

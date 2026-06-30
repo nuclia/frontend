@@ -3,15 +3,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   inject,
   OnDestroy,
   OnInit,
-  ViewChild,
+  signal,
   ViewChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -25,8 +24,8 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { combineLatest, EMPTY, fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, catchError, map, take, takeUntil } from 'rxjs/operators';
+import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
+import { catchError, map, take, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -37,11 +36,11 @@ import {
   EvolutionSeriesData,
   MultiSeriesEvolutionChartComponent,
 } from '../../charts';
-import { RemiMetricsService, RemiPeriods } from '../remi-metrics.service';
+import { RemiMetricsService } from '../remi-metrics.service';
+import { REMI_SCORE_GUIDE, getRemiScoreDisplay } from '../remi-metrics.config';
 import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, NavigationService } from '@flaps/core';
-import { format } from 'date-fns';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   RemiQueryCriteria,
   RemiQueryResponse,
@@ -56,6 +55,9 @@ import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { PreviewService } from '../../resources';
 import { SafeHtml } from '@angular/platform-browser';
+import { RemiScoreDisplayComponent } from '../remi-score-display';
+import { formatMonth, formatDateToYearMonth, getMonthsSinceDate } from '../metrics-utils';
+import { RemiPeriods, RemiScoreStatus } from '../remi-metrics.model';
 
 /** Shared color palette for the 3 REMI metrics — keep in sync with the evolution chart. */
 const METRIC_COLORS: Record<string, string> = {
@@ -68,6 +70,16 @@ const METRIC_COLOR_LIST = [
   METRIC_COLORS['context_relevance'],
   METRIC_COLORS['groundedness'],
 ];
+
+type SummaryMetric = 'answer' | 'context' | 'groundedness';
+
+interface RemiHealthSummary {
+  overallScore: number | null;
+  mainIssueKey: string;
+  recommendedActionKey: string;
+  weakestMetric: SummaryMetric | null;
+  hasAffectedQueries: boolean;
+}
 
 @Component({
   imports: [
@@ -93,30 +105,37 @@ const METRIC_COLOR_LIST = [
     PaButtonModule,
     RouterModule,
     PaTooltipModule,
+    RemiScoreDisplayComponent,
   ],
   templateUrl: './remi-analytics-page.component.html',
   styleUrl: './remi-analytics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [RemiMetricsService],
 })
-export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDestroy {
+export class RemiAnalyticsPageComponent implements OnInit, OnDestroy {
   private remiMetrics = inject(RemiMetricsService);
+  private sdk = inject(SDKService);
   private translate = inject(TranslateService);
   private previewService = inject(PreviewService);
   private navigationService = inject(NavigationService);
   private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
   private features = inject(FeaturesService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   automaticAdvice$ = this.features.unstable.automaticAdvice;
 
   private unsubscribeAll: Subject<void> = new Subject();
 
-  @ViewChild('missingKnowledgeHeader', { read: ElementRef }) missingKnowledgeHeader?: ElementRef;
   @ViewChildren(AccordionItemComponent) accordionItems?: AccordionItemComponent[];
 
   period: Observable<RemiPeriods> = this.remiMetrics.period;
   metricColors = METRIC_COLORS;
+
+  overallHealthSummary: Observable<RemiHealthSummary> = this.remiMetrics.healthAggregate.pipe(
+    map((aggregate) => this.buildOverallHealthSummary(aggregate)),
+  );
 
   healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData.pipe(
     map((data) =>
@@ -171,19 +190,19 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
 
   lowContextCriteria = new FormGroup({
     value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
+    month: new FormControl<string>(formatDateToYearMonth(new Date()), {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
   noAnswerCriteria = new FormGroup({
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
+    month: new FormControl<string>(formatDateToYearMonth(new Date()), {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
   badFeedbackCriteria = new FormGroup({
-    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
+    month: new FormControl<string>(formatDateToYearMonth(new Date()), {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
@@ -228,23 +247,43 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
     return this.badFeedbackMonthControl.value;
   }
 
-  missingKnowledgeHeaderHeight = '';
+  /** The first month REMi data is available (after the DateAfter('2024-08') limit). */
+  private static readonly REMI_START_DATE = new Date(2024, 8, 1); // September 2024
 
-  ngAfterViewInit() {
-    if (this.missingKnowledgeHeader) {
-      this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
-      fromEvent(window, 'resize')
-        .pipe(auditTime(200), takeUntil(this.unsubscribeAll))
-        .subscribe(() => {
-          if (this.missingKnowledgeHeader) {
-            this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
-            this.cdr.detectChanges();
-          }
-        });
-    }
+  /** Months from the later of account creation or REMI_START_DATE up to the current month, descending. */
+  readonly availableMonths = signal<string[]>(getMonthsSinceDate(RemiAnalyticsPageComponent.REMI_START_DATE));
+
+  /** Formats a YYYY-MM string as "June 2026". */
+  readonly formatMonth = formatMonth;
+
+  /** Tiers rendered in the score guide legend. */
+  readonly scoreGuide = REMI_SCORE_GUIDE;
+
+  onNoAnswerMonthChange(value: string): void {
+    this.noAnswerCriteria.patchValue({ month: value });
+  }
+
+  onLowContextMonthChange(value: string): void {
+    this.lowContextCriteria.patchValue({ month: value });
+  }
+
+  onLowContextValueChange(value: string): void {
+    this.lowContextCriteria.patchValue({ value: value as '1' | '2' | '3' | '4' | '5' });
+  }
+
+  onBadFeedbackMonthChange(value: string): void {
+    this.badFeedbackCriteria.patchValue({ month: value });
   }
 
   ngOnInit() {
+    this.sdk.currentAccount.pipe(take(1), takeUntil(this.unsubscribeAll)).subscribe((account) => {
+      const creationDate = new Date(account.creation_date + 'Z');
+      const effectiveStart =
+        creationDate > RemiAnalyticsPageComponent.REMI_START_DATE
+          ? creationDate
+          : RemiAnalyticsPageComponent.REMI_START_DATE;
+      this.availableMonths.set(getMonthsSinceDate(effectiveStart));
+    });
     // Eager subscriptions keep the missing-knowledge pipelines alive for loader
     this.noAnswerData.pipe(takeUntil(this.unsubscribeAll)).subscribe();
     this.lowContextData.pipe(takeUntil(this.unsubscribeAll)).subscribe();
@@ -315,6 +354,80 @@ export class RemiAnalyticsPageComponent implements AfterViewInit, OnInit, OnDest
         catchError(() => EMPTY),
       )
       .subscribe();
+  }
+
+  private buildOverallHealthSummary(aggregate: {
+    answerRelevance: number | null;
+    contextRelevance: number | null;
+    groundedness: number | null;
+    overall: number | null;
+  }): RemiHealthSummary {
+    const { answerRelevance, contextRelevance, groundedness, overall } = aggregate;
+    const hasAllMetrics = answerRelevance !== null && contextRelevance !== null && groundedness !== null;
+
+    if (!hasAllMetrics) {
+      return {
+        overallScore: overall,
+        mainIssueKey: 'kb.metrics.overall-health.main-issue.unavailable',
+        recommendedActionKey: 'kb.metrics.overall-health.recommended-action.unavailable',
+        weakestMetric: null,
+        hasAffectedQueries: true,
+      };
+    }
+
+    const metrics: Array<{ key: SummaryMetric; value: number; status: RemiScoreStatus }> = [
+      {
+        key: 'answer',
+        value: answerRelevance,
+        status: getRemiScoreDisplay(answerRelevance).status,
+      },
+      {
+        key: 'context',
+        value: contextRelevance,
+        status: getRemiScoreDisplay(contextRelevance).status,
+      },
+      {
+        key: 'groundedness',
+        value: groundedness,
+        status: getRemiScoreDisplay(groundedness).status,
+      },
+    ];
+
+    if (metrics.every((metric) => metric.status === 'good')) {
+      return {
+        overallScore: overall,
+        mainIssueKey: 'kb.metrics.overall-health.main-issue.no-major-issue',
+        recommendedActionKey: 'kb.metrics.overall-health.recommended-action.no-action-needed',
+        weakestMetric: null,
+        hasAffectedQueries: false,
+      };
+    }
+
+    const weakestMetric = metrics.slice().sort((left, right) => left.value - right.value)[0].key;
+
+    return {
+      overallScore: overall,
+      mainIssueKey: `kb.metrics.overall-health.main-issue.${weakestMetric}`,
+      recommendedActionKey: `kb.metrics.overall-health.recommended-action.${weakestMetric}`,
+      weakestMetric,
+      hasAffectedQueries: true,
+    };
+  }
+
+  protected getOverallScoreAriaLabel(score: number | null): string {
+    const display = getRemiScoreDisplay(score);
+    const label = this.translate.instant(display.labelKey);
+    return display.status === 'no-data' ? label : `${display.displayValue} · ${label}`;
+  }
+
+  protected scrollToIssues(): void {
+    document.getElementById('issues-to-review')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  protected openAffectedQueries(_summary: RemiHealthSummary): void {
+    this.router.navigate(['../usage-analytics'], {
+      relativeTo: this.route,
+    });
   }
 
   private loadLowContext() {

@@ -47,15 +47,18 @@
             record.remiGroundedness !== null
           ) {
             <div class="remi-scores iteration-remi">
-              <app-remi-score-badge
+              <app-remi-score-display
+                displayMode="badge"
                 [value]="record.remiAnswerRelevance"
-                [label]="'metrics.remi.answer' | translate" />
-              <app-remi-score-badge
+                [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
+              <app-remi-score-display
+                displayMode="badge"
                 [value]="record.remiContentRelevance"
-                [label]="'metrics.remi.context' | translate" />
-              <app-remi-score-badge
+                [label]="'metrics.remi.context' | translate"></app-remi-score-display>
+              <app-remi-score-display
+                displayMode="badge"
                 [value]="record.remiGroundedness"
-                [label]="'metrics.remi.groundedness' | translate" />
+                [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
             </div>
           }
           <p class="body-m iteration-answer">{{ record.answer }}</p>
@@ -78,15 +81,18 @@
         }
         @if (input?.remiScores) {
           <div class="remi-scores">
-            <app-remi-score-badge
+            <app-remi-score-display
+              displayMode="badge"
               [value]="input?.remiScores?.answerRelevance ?? null"
-              [label]="'metrics.remi.answer' | translate" />
-            <app-remi-score-badge
+              [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
+            <app-remi-score-display
+              displayMode="badge"
               [value]="input?.remiScores?.contextRelevance ?? null"
-              [label]="'metrics.remi.context' | translate" />
-            <app-remi-score-badge
+              [label]="'metrics.remi.context' | translate"></app-remi-score-display>
+            <app-remi-score-display
+              displayMode="badge"
               [value]="input?.remiScores?.groundedness ?? null"
-              [label]="'metrics.remi.groundedness' | translate" />
+              [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
           </div>
         }
       </div>
@@ -111,15 +117,18 @@
           latestIteration()!.remiGroundedness !== null
         ) {
           <div class="remi-scores">
-            <app-remi-score-badge
+            <app-remi-score-display
+              displayMode="badge"
               [value]="latestIteration()!.remiAnswerRelevance"
-              [label]="'metrics.remi.answer' | translate" />
-            <app-remi-score-badge
+              [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
+            <app-remi-score-display
+              displayMode="badge"
               [value]="latestIteration()!.remiContentRelevance"
-              [label]="'metrics.remi.context' | translate" />
-            <app-remi-score-badge
+              [label]="'metrics.remi.context' | translate"></app-remi-score-display>
+            <app-remi-score-display
+              displayMode="badge"
               [value]="latestIteration()!.remiGroundedness"
-              [label]="'metrics.remi.groundedness' | translate" />
+              [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
           </div>
         }
       </div>
@@ -143,15 +152,18 @@
             }
             @if (input?.remiScores) {
               <div class="remi-scores">
-                <app-remi-score-badge
+                <app-remi-score-display
+                  displayMode="badge"
                   [value]="input?.remiScores?.answerRelevance ?? null"
-                  [label]="'metrics.remi.answer' | translate" />
-                <app-remi-score-badge
+                  [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
+                <app-remi-score-display
+                  displayMode="badge"
                   [value]="input?.remiScores?.contextRelevance ?? null"
-                  [label]="'metrics.remi.context' | translate" />
-                <app-remi-score-badge
+                  [label]="'metrics.remi.context' | translate"></app-remi-score-display>
+                <app-remi-score-display
+                  displayMode="badge"
                   [value]="input?.remiScores?.groundedness ?? null"
-                  [label]="'metrics.remi.groundedness' | translate" />
+                  [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
               </div>
             }
           </div>
@@ -443,15 +455,18 @@
           latestIteration()!.remiGroundedness !== null)
       ) {
         <div class="remi-scores iteration-remi">
-          <app-remi-score-badge
+          <app-remi-score-display
+            displayMode="badge"
             [value]="latestIteration()!.remiAnswerRelevance"
-            [label]="'metrics.remi.answer' | translate" />
-          <app-remi-score-badge
+            [label]="'metrics.remi.answer' | translate"></app-remi-score-display>
+          <app-remi-score-display
+            displayMode="badge"
             [value]="latestIteration()!.remiContentRelevance"
-            [label]="'metrics.remi.context' | translate" />
-          <app-remi-score-badge
+            [label]="'metrics.remi.context' | translate"></app-remi-score-display>
+          <app-remi-score-display
+            displayMode="badge"
             [value]="latestIteration()!.remiGroundedness"
-            [label]="'metrics.remi.groundedness' | translate" />
+            [label]="'metrics.remi.groundedness' | translate"></app-remi-score-display>
         </div>
       }
     }

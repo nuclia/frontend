@@ -3,28 +3,16 @@ import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareRepla
 import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
-import {
-  RemiQueryCriteria,
-  RemiQueryResponse,
-  RemiQueryResponseContextDetails,
-  RemiScoresResponseItem,
-  UsageAggregation,
-} from '@nuclia/core';
+import { RemiQueryCriteria, RemiQueryResponse, RemiQueryResponseContextDetails, UsageAggregation } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { catchError } from 'rxjs/operators';
-
-export type RemiPeriods = '24h' | '7d' | '14d' | '30d';
-
-interface RangeParameters {
-  aggregation: UsageAggregation;
-  from: string;
-  to?: string;
-}
-
-interface RawEvolutionResults {
-  results: RemiScoresResponseItem[];
-  parameters: RangeParameters;
-}
+import {
+  RemiHealthAggregate,
+  RemiPeriods,
+  RangeParameters,
+  RawEvolutionResults,
+  RemiScoreMetric,
+} from './remi-metrics.model';
 
 @Injectable({ providedIn: 'root' })
 export class RemiMetricsService {
@@ -158,7 +146,10 @@ export class RemiMetricsService {
     });
   }
 
-  healthCheckData: Observable<RangeChartData[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
+  private healthMetricsRaw: Observable<RemiScoreMetric[]> = combineLatest([
+    this.sdk.currentKb,
+    this.scoreParameters,
+  ]).pipe(
     switchMap(([kb, parameters]) =>
       kb.activityMonitor.getRemiScores(parameters.from).pipe(
         catchError((err) => {
@@ -175,13 +166,46 @@ export class RemiMetricsService {
         return [];
       }
       this._healthStatusOnError.next(false);
-      return data[0].metrics.map((item) => ({
+      return data[0].metrics;
+    }),
+    shareReplay(1),
+  );
+
+  healthAggregate: Observable<RemiHealthAggregate> = this.healthMetricsRaw.pipe(
+    map((metrics) => {
+      const metricMap = new Map(metrics.map((metric) => [metric.name, metric] as const));
+      const toHundredScale = (value: number | undefined): number | null =>
+        value === undefined ? null : (value * 100) / 5;
+
+      const answerRelevance = toHundredScale(metricMap.get('answer_relevance')?.average);
+      const contextRelevance = toHundredScale(metricMap.get('context_relevance')?.average);
+      const groundedness = toHundredScale(metricMap.get('groundedness')?.average);
+      const overall = toHundredScale(metricMap.get('overall')?.average);
+
+      const computedOverall =
+        answerRelevance !== null && contextRelevance !== null && groundedness !== null
+          ? (answerRelevance + contextRelevance + groundedness) / 3
+          : null;
+
+      return {
+        answerRelevance,
+        contextRelevance,
+        groundedness,
+        overall: overall ?? computedOverall,
+      };
+    }),
+    shareReplay(1),
+  );
+
+  healthCheckData: Observable<RangeChartData[]> = this.healthMetricsRaw.pipe(
+    map((metrics) =>
+      metrics.map((item) => ({
         category: this.translate.instant(`metrics.remi.category-short.${item.name}`),
         average: (item.average * 100) / 5,
         min: (item.min * 100) / 5,
         max: (item.max * 100) / 5,
-      }));
-    }),
+      })),
+    ),
     shareReplay(1),
   );
 

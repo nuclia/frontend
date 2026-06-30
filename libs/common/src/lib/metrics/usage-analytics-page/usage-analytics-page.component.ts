@@ -16,11 +16,11 @@ import { USAGE_ANALYSIS_COLUMNS, USAGE_ANALYSIS_SIDEBAR_FIELDS } from './usage-a
 import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
 import { SisModalService } from '@nuclia/sistema';
-import { getRemiColorClass } from '../metrics-utils';
 import { FeaturesService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MetricsPageComponent } from '../metrics-page.component';
+import { RemiCellPlugin, RemiSidebarPlugin } from '../remi-cell-plugin';
 
 @Component({
   selector: 'app-usage-analytics-page',
@@ -40,6 +40,11 @@ export class UsageAnalyticsPageComponent {
   @ViewChild(MetricsPageComponent) private metricsPage!: MetricsPageComponent;
 
   private readonly automaticAdvice = toSignal(this.features.unstable.automaticAdvice, { initialValue: false });
+
+  /** REMi cell plugin — handles score-display and chip columns, tooltips, colour classes. */
+  readonly remiCellPlugin = new RemiCellPlugin(this.translate);
+  /** REMi sidebar plugin — injects diagnosis card after the 'query' group. */
+  readonly remiSidebarPlugin = new RemiSidebarPlugin();
 
   /**
    * Columns with the inline advice action gated behind the automatic-advice feature flag.
@@ -130,11 +135,6 @@ export class UsageAnalyticsPageComponent {
 
   onLoadNextPage(): void {
     this.service.loadNextPage();
-  }
-
-  remiColor(val: number | null): string {
-    const cls = getRemiColorClass(val);
-    return cls ? `remi-${cls}` : '';
   }
 
   // ── Filter handlers ───────────────────────────────────────────────────────

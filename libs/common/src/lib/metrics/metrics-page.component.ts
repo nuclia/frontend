@@ -9,6 +9,8 @@ import {
   input,
   output,
   signal,
+  TemplateRef,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
@@ -16,6 +18,8 @@ import { Subject, debounceTime } from 'rxjs';
 import { ActivityLogItem, DownloadFormat } from '@nuclia/core';
 import { MetricsColumnDef, MetricsMonthRange, MetricsSidebarField } from './metrics-column.model';
 import { MetricsPageService } from './metrics-page.service';
+import { MetricsCellPlugin, MetricsSidebarPlugin } from './metrics-cell-plugin';
+import { METRICS_EMPTY_STATE, METRICS_PAGE_SIZES } from './metrics.config';
 
 @Component({
   standalone: false,
@@ -36,12 +40,30 @@ export class MetricsPageComponent {
   pageSubtitle = input('');
   loading = input(false);
   loadingMore = input(false);
+  hasMore = input(false);
+  resetPagination = input(0);
   columns = input<MetricsColumnDef[]>([]);
   sidebarFields = input<MetricsSidebarField[]>([]);
   items = input<ActivityLogItem[]>([]);
   availableMonths = input<string[]>([]);
   showDownload = input(true);
   showSearch = input(true);
+  hasActiveFilters = input(false);
+  /** Plugin that handles domain-specific cell rendering (score displays, chips, colour classes). */
+  cellPlugin = input<MetricsCellPlugin | null>(null);
+  /** Plugin that decides whether/what to inject after a sidebar group. */
+  sidebarPlugin = input<MetricsSidebarPlugin | null>(null);
+  /**
+   * Template rendered for custom columns (when `cellPlugin.isCustomColumn()` returns true).
+   * Context: `{ $implicit: item: ActivityLogItem, col: MetricsColumnDef }`.
+   * Mirrors the `afterGroupTemplate` pattern for sidebar extras.
+   */
+  customCellTemplate = input<TemplateRef<{ $implicit: ActivityLogItem; col: MetricsColumnDef }> | null>(null);
+  /**
+   * Optional template rendered after a sidebar group when sidebarPlugin returns true.
+   * Context: `{ $implicit: pluginData, item: ActivityLogItem }`.
+   */
+  afterGroupTemplate = input<TemplateRef<{ $implicit: unknown; item: ActivityLogItem }> | null>(null);
   readonly rowAction = input<{
     icon: string;
     tooltip: string;
@@ -56,15 +78,28 @@ export class MetricsPageComponent {
   loadNextPage = output<void>();
   downloadRequested = output<{ format: DownloadFormat }>();
   rowActionTriggered = output<ActivityLogItem>();
+  resetFilters = output<void>();
 
   // ── Internal state ────────────────────────────────────────────────────────
-
-  readonly rowHeight = 72;
-  viewportOffset = 0;
 
   readonly selectedMonth = signal<string>(MetricsPageComponent.currentYearMonth());
   readonly selectedItem = signal<ActivityLogItem | null>(null);
   readonly sidePanelExpanded = signal(false);
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+
+  readonly currentPage = signal(0);
+  readonly currentPageSize = signal<number>(METRICS_PAGE_SIZES[1]); // default 50
+
+  readonly emptyState = computed(() =>
+    this.hasActiveFilters() ? METRICS_EMPTY_STATE.filtered : METRICS_EMPTY_STATE.noData,
+  );
+
+  readonly paginatedItems = computed(() => {
+    const page = this.currentPage();
+    const size = this.currentPageSize();
+    return this.items().slice(page * size, (page + 1) * size);
+  });
 
   /** Always includes the current month at the top so the user can see it even with no data. */
   readonly monthOptions = computed(() => {
@@ -86,11 +121,27 @@ export class MetricsPageComponent {
     effect(() => {
       this.service.setItems(this.items());
     });
+    // Reset to first page only on full data reloads (month/filter change), not on append
+    effect(() => {
+      this.resetPagination();
+      this.currentPage.set(0);
+    });
 
     effect(() => {
       const months = this.availableMonths();
       if (months.length > 0 && !months.includes(this.selectedMonth())) {
         this._selectMonth(months[0]);
+      }
+    });
+
+    // Trigger API fetch when the current page needs items beyond what's loaded.
+    // items() is read via untracked to avoid re-triggering on every append —
+    // only page/pageSize changes should drive this effect.
+    effect(() => {
+      const needed = (this.currentPage() + 1) * this.currentPageSize();
+      const loaded = untracked(() => this.items().length);
+      if (needed > loaded && this.hasMore() && !this.loadingMore()) {
+        this.loadNextPage.emit();
       }
     });
 
@@ -143,6 +194,10 @@ export class MetricsPageComponent {
     }
   }
 
+  onEmptyStateAction(): void {
+    this.resetFilters.emit();
+  }
+
   toggleColumn(key: string): void {
     this.service.toggleColumn(key);
   }
@@ -166,7 +221,7 @@ export class MetricsPageComponent {
     return key === 'question' || key === 'answer' || key === 'reasoning' || key === 'retrieval_rephrased_question';
   }
 
-  /** Groups all columns + sidebar fields by their group property for sidebar rendering */
+  /** Groups all columns + sidebar fields by their group property for sidebar rendering. */
   readonly sidebarGroups = computed(() => {
     const colFields = this.service.columnDefs().map((col) => ({
       key: col.key,
@@ -193,6 +248,7 @@ export class MetricsPageComponent {
     }));
 
     const allFields = [...colFields, ...extraFields];
+    const plugin = this.cellPlugin();
 
     const groupMap = allFields.reduce((map, field) => {
       const group = field.group;
@@ -203,8 +259,8 @@ export class MetricsPageComponent {
 
     return Array.from(groupMap.entries()).map(([group, fields]) => ({
       group,
-      labelKey: `activity.detail.group.${group}`,
-      fields,
+      labelKey: plugin?.getGroupLabelKey(group) ?? `activity.detail.group.${group}`,
+      fields: plugin?.filterGroupFields(group, fields) ?? fields,
     }));
   });
 
@@ -212,6 +268,19 @@ export class MetricsPageComponent {
     const base = this.service.gridColumns();
     return this.rowAction() ? `${base} 48px` : base;
   });
+
+  // ── Cell helpers ──────────────────────────────────────────────────────────
+
+  /** True when the column needs custom rendering via `customCellTemplate`. */
+  isCustomColumn(key: string): boolean {
+    return this.cellPlugin()?.isCustomColumn(key) ?? false;
+  }
+
+  getCellValue(item: ActivityLogItem, key: string): string {
+    return this.service.getCellValue(item, key);
+  }
+
+  // ── Field / sidebar helpers ───────────────────────────────────────────────
 
   getFieldValue(
     item: ActivityLogItem,
@@ -241,40 +310,21 @@ export class MetricsPageComponent {
     return this.service.isColumnVisible(key);
   }
 
-  getCellValue(item: ActivityLogItem, key: string): string {
-    return this.service.getCellValue(item, key);
+  // ── Pagination ────────────────────────────────────────────────────────────
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
   }
 
-  isRemiScoreLow(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    if (!col.colorFn) return false;
-    return col.colorFn(item) === 'low';
-  }
-
-  isRemiScoreMid(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    if (!col.colorFn) return false;
-    return col.colorFn(item) === 'mid';
-  }
-
-  isRemiScoreHigh(item: ActivityLogItem, col: MetricsColumnDef): boolean {
-    if (!col.colorFn) return false;
-    return col.colorFn(item) === 'high';
+  onPageSizeChange(size: number): void {
+    this.currentPageSize.set(size);
+    this.currentPage.set(0);
   }
 
   // ── Download ──────────────────────────────────────────────────────────────
 
   onDownload(format: DownloadFormat): void {
     this.downloadRequested.emit({ format });
-  }
-
-  // ── Scroll ────────────────────────────────────────────────────────────────
-
-  private readonly SCROLL_NEAR_END_THRESHOLD = 30;
-
-  onScrolledIndexChange(firstVisible: number): void {
-    const total = this.items().length;
-    if (total > 0 && firstVisible + this.SCROLL_NEAR_END_THRESHOLD >= total) {
-      this.loadNextPage.emit();
-    }
   }
 
   private static currentYearMonth(): string {

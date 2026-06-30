@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, catchError, map, switchMap, take } from 'rxjs';
 import { UserService } from '@flaps/core';
@@ -33,6 +33,7 @@ export class UserFeedbackPageService extends AbstractMetricsPageService<Activity
 
   readonly booleanConditions = this._booleanConditions.asReadonly();
   readonly dateConditions = this._dateConditions.asReadonly();
+  readonly hasActiveFilters = computed(() => this._booleanConditions().length > 0 || this._dateConditions().length > 0);
 
   constructor() {
     super();
@@ -109,6 +110,10 @@ export class UserFeedbackPageService extends AbstractMetricsPageService<Activity
     this._items.set([]);
     this._loading.set(true);
     this._reset$.next();
+  }
+
+  resetFilters(): void {
+    this.applyAllFilters([], []);
   }
 
   applyAllFilters(booleanConditions: BooleanCondition[], dateConditions: DateCondition[] = []): void {
