@@ -7,8 +7,19 @@
     font-size: font-size(s);
   }
 
+  pa-table ::ng-deep .pa-table-grid--cell {
+    min-width: 0;
+  }
+
   pa-table a {
     color: $color-dark-stronger;
+  }
+
+  .title-with-icon {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+    min-width: 0;
   }
 
   .title-with-actions {
