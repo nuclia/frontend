@@ -111,6 +111,8 @@ export interface AskOperation extends BaseOperation {
   destination?: string;
   json?: boolean;
   user_prompt?: string;
+  store_as_key_value?: boolean;
+  kv_schema_id?: string;
 }
 
 export interface GuardOperation extends BaseOperation {

@@ -1,0 +1,11 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-container {
+  gap: rhythm(2);
+}
+
+.field-type {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
