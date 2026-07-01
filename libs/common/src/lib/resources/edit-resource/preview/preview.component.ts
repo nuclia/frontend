@@ -11,8 +11,7 @@ import {
   FileField,
   FileFieldData,
   IError,
-  KVRange,
-  KVSchemaField,
+  KVSchema,
   KVValue,
   LinkFieldData,
   MessageAttachment,
@@ -36,7 +35,7 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { shareReplay, takeUntil } from 'rxjs/operators';
 import {
   DATA_AUGMENTATION_ERROR,
   getErrors,
@@ -122,25 +121,40 @@ export class PreviewComponent implements OnInit, OnDestroy {
     switchMap(([resource, kb]) => {
       const kvFields = resource?.data?.key_values;
       if (!kvFields || Object.keys(kvFields).length === 0) return of(null);
-
-      const schemaFetches = Object.keys(kvFields).map((fieldId) =>
-        kb.getKVSchema(fieldId).pipe(
-          catchError(() => of(null)),
-          map((schema) => ({ fieldId, data: kvFields[fieldId]?.value?.data, schemaFields: schema?.fields ?? [] })),
-        ),
-      );
+      const schemaFetches = Object.keys(kvFields).map((fieldId) => {
+        const schema = fieldId.startsWith('da-') ? of(null) : kb.getKVSchema(fieldId).pipe(catchError(() => of(null)));
+        return schema.pipe(
+          map((schema) => ({
+            fieldId,
+            data: kvFields[fieldId]?.value?.data,
+            schema: schema || undefined,
+          })),
+        );
+      });
       return forkJoin(schemaFetches).pipe(
         map((entries) =>
           entries.reduce(
             (acc, entry) => {
-              acc[entry.fieldId] = { data: entry.data, schemaFields: entry.schemaFields };
+              acc[entry.fieldId] = { data: entry.data, schema: entry.schema };
               return acc;
             },
-            {} as Record<string, { data: Record<string, KVValue> | undefined; schemaFields: KVSchemaField[] }>,
+            {} as Record<string, { data: Record<string, KVValue> | undefined; schema: KVSchema | undefined }>,
           ),
         ),
       );
     }),
+    shareReplay(1),
+  );
+  keyValueField = this.editResourceService.currentField.pipe(
+    filter((field) => field !== 'resource'),
+    switchMap((field) =>
+      field.field_type === FIELD_TYPE.key_value
+        ? this.keyValues.pipe(
+            take(1),
+            map((keyValues) => keyValues?.[field.field_id]),
+          )
+        : of(undefined),
+    ),
   );
 
   private _noField = new ReplaySubject<boolean>(1);

@@ -1,5 +1,7 @@
 <div class="key-value-field">
-  <div class="title-s">{{ fieldId() }}</div>
+  @if (title()) {
+    <div class="title-s">{{ title() }}</div>
+  }
   @if (data() && (data() | keyvalue)?.length) {
     <pa-table columns="50% 50%">
       @for (item of data() | keyvalue; track item.key) {

@@ -55,6 +55,8 @@ export class EditResourceComponent implements OnInit, OnDestroy {
             icon = 'file';
           } else if (field.field_type === FIELD_TYPE.conversation) {
             icon = 'chat';
+          } else if (field.field_type === FIELD_TYPE.key_value) {
+            icon = 'database';
           } else {
             icon = field.field_type;
           }

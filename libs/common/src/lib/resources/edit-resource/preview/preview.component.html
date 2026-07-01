@@ -203,7 +203,7 @@
           </div>
         }
 
-        @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
+        @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async) && !(keyValueField | async)) {
           <div class="paragraph-container">
             <p>{{ 'resource.field-no-paragraph' | translate }}</p>
           </div>
@@ -215,13 +215,10 @@
           </div>
         }
 
-        @if (keyValues | async; as kvFields) {
-          @for (entry of kvFields | keyvalue; track entry.key) {
-            <stf-key-value-field
-              [fieldId]="entry.key"
-              [data]="entry.value.data"
-              [schemaFields]="entry.value.schemaFields"></stf-key-value-field>
-          }
+        @if (keyValueField | async; as kvField) {
+          <stf-key-value-field
+            [data]="kvField.data"
+            [schema]="kvField.schema"></stf-key-value-field>
         }
       } @else {
         @if (questionsAnswers | async; as questionsAnswers) {
