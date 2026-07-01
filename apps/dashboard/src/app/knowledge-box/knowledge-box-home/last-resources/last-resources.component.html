@@ -62,7 +62,9 @@
                   @if (resource.icon | mimeIcon; as icon) {
                     <pa-icon [name]="icon"></pa-icon>
                   }
-                  <a [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                  <a
+                    paEllipsisTooltip
+                    [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
                     {{ resource.title }}
                   </a>
                 </span>
@@ -109,13 +111,13 @@
           @for (resource of data.processingQueue; track resource.id) {
             <pa-table-row>
               <pa-table-cell>
-                <span
-                  class="title-with-icon title-xxs"
-                  paEllipsisTooltip>
+                <span class="title-with-icon title-xxs">
                   @if (resource.icon | mimeIcon; as icon) {
                     <pa-icon [name]="icon"></pa-icon>
                   }
-                  <a [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                  <a
+                    paEllipsisTooltip
+                    [routerLink]="data.kbUrl + '/resources/' + resource.id + '/edit/preview'">
                     {{ resource.title }}
                   </a>
                 </span>

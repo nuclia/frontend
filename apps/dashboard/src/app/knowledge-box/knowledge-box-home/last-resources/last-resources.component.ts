@@ -11,6 +11,7 @@ import {
   PaPopupModule,
   PaTableModule,
   PaTabsModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IResource, Resource, RESOURCE_STATUS, SortField } from '@nuclia/core';
@@ -34,6 +35,7 @@ import { combineLatest, filter, map, Observable, startWith, switchMap, take } fr
     RouterModule,
     PaDateTimeModule,
     SisIconsModule,
+    PaTooltipModule,
   ],
 })
 export class LastResourcesComponent implements OnInit {
