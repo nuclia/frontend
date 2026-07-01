@@ -139,6 +139,7 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
     this._items.set([]);
     this._loading.set(true);
     this._searchTotals.set({ totalSearch: null, totalChat: null });
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadTotals$.next(yearMonth);
   }

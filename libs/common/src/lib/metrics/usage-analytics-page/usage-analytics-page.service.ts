@@ -125,6 +125,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     this._items.set([]);
     this._loading.set(true);
     this._remiScoreAverages.set({ answerRelevance: null, contextRelevance: null, groundedness: null });
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadScores$.next(yearMonth);
   }
@@ -322,7 +323,6 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
 
     const remiScores = [answerRelevance, contentRelevance, groundedness].filter((v): v is number => v !== null);
     const remiScore = remiScores.length > 0 ? Math.min(...remiScores) : null;
-    const issue = this._deriveIssue(remiItem.answer, status, answerRelevance, contentRelevance, groundedness);
     return {
       ...NULL_ACTIVITY_FIELDS,
       id: remiItem.id,

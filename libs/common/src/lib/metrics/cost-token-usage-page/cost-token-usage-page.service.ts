@@ -149,6 +149,7 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     this._items.set([]);
     this._usageStats.set({ aiTokensUsed: null, nucliaTokens: null, nucliaTokensBilled: null });
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadUsage$.next(yearMonth);
   }

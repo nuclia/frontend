@@ -100,6 +100,7 @@ export class UserFeedbackPageService extends AbstractMetricsPageService<Activity
     this._hasMore.set(false);
     this._items.set([]);
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
   }
 

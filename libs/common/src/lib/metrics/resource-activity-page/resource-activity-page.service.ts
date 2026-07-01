@@ -199,6 +199,7 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._items.set([]);
     this._usageStats.set({ resourcesProcessed: null, paragraphsProcessed: null });
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadUsage$.next(yearMonth);
   }
