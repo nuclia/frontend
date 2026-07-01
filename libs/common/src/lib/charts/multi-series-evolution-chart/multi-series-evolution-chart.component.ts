@@ -14,7 +14,7 @@ import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { BaseChartDirective } from '../base-chart.directive';
 import { DatedRangeChartData } from '../range-chart/range.models';
 import * as d3 from 'd3';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface EvolutionSeriesData {
   /** Machine key — maps to a metric like 'answer_relevance' */
@@ -33,7 +33,7 @@ let nextUniqueId = 0;
 
 @Component({
   selector: 'stf-multi-series-evolution-chart',
-  imports: [CommonModule, PaTogglesModule],
+  imports: [CommonModule, PaTogglesModule, TranslateModule],
   templateUrl: './multi-series-evolution-chart.component.html',
   styleUrl: './multi-series-evolution-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +48,15 @@ export class MultiSeriesEvolutionChartComponent extends BaseChartDirective imple
   tooltipLeft = 0;
   tooltipBottom = 0;
   tooltipTimestamp = '';
-  tooltipSeries: { label: string; color: string; average: number; min: number; max: number }[] = [];
+  tooltipSeries: {
+    label: string;
+    color: string;
+    average: number;
+    min: number;
+    max: number;
+    hasRange: boolean;
+    status: string;
+  }[] = [];
 
   _series: EvolutionSeriesData[] = [];
 
@@ -98,13 +106,24 @@ export class MultiSeriesEvolutionChartComponent extends BaseChartDirective imple
         this.tooltipLeft = left - 4;
         this.tooltipBottom = this.container!.nativeElement.clientHeight - margin.top - top + 8;
         this.tooltipTimestamp = timestamps[index];
-        this.tooltipSeries = visibleSeries.map((s) => ({
-          label: s.label,
-          color: s.color,
-          average: s.data[index]?.average ?? 0,
-          min: s.data[index]?.min ?? 0,
-          max: s.data[index]?.max ?? 0,
-        }));
+        this.tooltipSeries = visibleSeries.map((s) => {
+          const averageRaw = s.data[index]?.average ?? 0;
+          const minRaw = s.data[index]?.min ?? 0;
+          const maxRaw = s.data[index]?.max ?? 0;
+          const average = Math.round(averageRaw);
+          const min = Math.round(minRaw);
+          const max = Math.round(maxRaw);
+
+          return {
+            label: s.label,
+            color: s.color,
+            average,
+            min,
+            max,
+            hasRange: min !== max,
+            status: this.getScoreStatusLabel(average),
+          };
+        });
         this.showTooltip = true;
         this.cdr.markForCheck();
       }
@@ -143,7 +162,12 @@ export class MultiSeriesEvolutionChartComponent extends BaseChartDirective imple
       .style('text-anchor', 'end');
 
     // Y axis
-    svg.append('g').attr('class', 'y-axis').call(d3.axisLeft(y).tickSize(4));
+    svg
+      .append('g')
+      .attr('class', 'y-axis')
+      .call(d3.axisLeft(y).tickSize(4))
+      .selectAll('.tick text')
+      .style('font-weight', (d: unknown) => (d === 50 || d === 80 ? '600' : null));
 
     // Y axis label
     svg
@@ -153,7 +177,7 @@ export class MultiSeriesEvolutionChartComponent extends BaseChartDirective imple
       .attr('x', 0)
       .attr('class', 'unit')
       .style('text-anchor', 'middle')
-      .text(this.translate.instant('metrics.units.percent'));
+      .text(this.translate.instant('metrics.units.score'));
 
     // Grid lines
     svg
@@ -201,5 +225,11 @@ export class MultiSeriesEvolutionChartComponent extends BaseChartDirective imple
             .y((d) => y(d.average)),
         );
     }
+  }
+
+  private getScoreStatusLabel(score: number): string {
+    if (score >= 80) return this.translate.instant('metrics.remi.status.good');
+    if (score >= 50) return this.translate.instant('metrics.remi.status.needs-review');
+    return this.translate.instant('metrics.remi.status.poor');
   }
 }

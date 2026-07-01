@@ -1,12 +1,15 @@
 @use 'apps/dashboard/src/variables' as *;
 
-// ── Page layout override ──────────────────────────────────────────────────
+// ── Page layout ───────────────────────────────────────────────────────────
 //
-// Strategy: let <main> (the app scroll container) scroll naturally through the
-// page header → toolbar → stat cards.  Once the table reaches the top of <main>
-// it becomes sticky there, and the CDK virtual-scroll viewport handles row
-// scrolling internally.  This avoids a locked viewport while still giving the
-// table the full remaining height once it is pinned.
+// Strategy: <main> scrolls naturally through the page header → toolbar →
+// stat cards → table rows.  The toolbar sticks at the top; the table column
+// headers stick just below the toolbar.  The pagination footer sticks at
+// the bottom.  No inner scroll container — single scrollbar.
+
+// Toolbar height used to offset the sticky table header so it sits
+// below the sticky toolbar rather than behind it.
+$toolbar-height: rhythm(8); // 56px — matches pa-select row (46px) + toolbar padding
 
 .page-spacing {
   height: auto;
@@ -14,7 +17,7 @@
   overflow: visible;
   display: flex;
   flex-direction: column;
-  padding-bottom: rhythm(2);
+  padding-bottom: 0;
 }
 
 // ── Page header ───────────────────────────────────────────────────────────
@@ -30,7 +33,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: rhythm(2);
-  margin-bottom: rhythm(4);
+  // Stick below the app topbar; cover the table header as it scrolls up
+  background-color: $color-light-stronger;
+  padding: rhythm(1.5) 0;
+  position: sticky;
+  top: 0;
+  z-index: $z-index-default + 1;
+  margin-bottom: rhythm(2);
 
   .month-picker {
     width: rhythm(18);
@@ -132,19 +141,8 @@
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────
-
 .table-container {
-  // Stick at the top of the <main> scroll container once the above-table
-  // content has scrolled out of view.
-  position: sticky;
-  top: 0;
-  height: calc(100vh - var(--app-topbar-height) - rhythm(4));
-  flex: none;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  margin-top: rhythm(1);
+  min-height: rhythm(24);
 
   nsi-spinner {
     display: block;
@@ -152,26 +150,37 @@
   }
 }
 
-.table-viewport {
-  flex: 1;
-  height: 100%;
-  min-height: 200px;
-  width: 100%;
-  overflow: auto;
-}
-
 .empty-state {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: rhythm(20);
-  color: $color-neutral-light;
+  min-height: rhythm(16);
+  padding: rhythm(2);
+
+  nsi-info-card {
+    width: min(100%, rhythm(60));
+  }
+
+  .empty-state-title,
+  .empty-state-description {
+    margin: 0;
+  }
+
+  .empty-state-description {
+    margin-top: rhythm(0.5);
+    color: $color-neutral-regular;
+  }
+
+  pa-button {
+    margin-top: rhythm(1.5);
+  }
 }
 
 .clickable-row {
   cursor: pointer;
 
   &:hover ::ng-deep .pa-table-grid--cell {
+    cursor: pointer;
     background-color: var(--color-neutral-lightest);
   }
 }
@@ -180,13 +189,16 @@ pa-table {
   display: block;
   width: 100%;
 
-  // Keep sticky headers in correct position with virtual scroll
-  ::ng-deep .pa-table-grid--header {
-    top: var(--table-header-top);
-  }
+  ::ng-deep .pa-table-grid {
+    overflow-x: auto;
 
-  ::ng-deep .pa-table-grid--cell {
-    height: var(--table-row-height);
+    &-cell {
+      height: var(--table-row-height);
+    }
+
+    &.with-border {
+      border-bottom: none;
+    }
   }
 }
 
@@ -198,17 +210,17 @@ pa-table {
   white-space: normal;
 }
 
-.remi-score-low {
+.score-low {
   color: var(--color-danger-regular) !important;
   font-weight: 600;
 }
 
-.remi-score-mid {
-  color: var(--color-secondary-regular) !important;
+.score-mid {
+  color: $color-secondary-strong !important;
   font-weight: 600;
 }
 
-.remi-score-high {
+.score-high {
   color: var(--color-success-regular) !important;
   font-weight: 600;
 }
@@ -377,7 +389,7 @@ pa-table {
   opacity: 1;
 }
 
-// ── Inline action (rendered inside a cell, e.g. remiScore column) ─────────
+// ── Inline action (rendered inside a cell) ───────────────────────────────
 
 .cell-inline-action-wrapper {
   display: flex;

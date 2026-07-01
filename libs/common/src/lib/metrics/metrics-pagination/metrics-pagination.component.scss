@@ -1,0 +1,42 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: block;
+  position: sticky;
+  bottom: 0;
+  z-index: $z-index-default;
+}
+
+.metrics-pagination {
+  align-items: center;
+  background-color: $color-light-stronger;
+  box-shadow: $box-shadow-border-top;
+  display: flex;
+  gap: rhythm(3);
+  padding: rhythm(2) rhythm(4);
+
+  .counter {
+    flex: 1 1 auto;
+    color: $color-neutral-regular;
+  }
+
+  .page-size {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+    color: $color-neutral-regular;
+    white-space: nowrap;
+  }
+
+  .pages {
+    display: flex;
+    align-items: center;
+    gap: rhythm(0.5);
+
+    .page-label {
+      min-width: rhythm(8);
+      text-align: center;
+      color: $color-neutral-regular;
+    }
+  }
+}

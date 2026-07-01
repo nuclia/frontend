@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import {
@@ -17,6 +17,8 @@ import { UserService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { UsageAnalyticsItem } from '../metrics-column.model';
 import { getMonthRange, getMonthsSinceDate } from '../metrics-utils';
+import { getRemiScoreDisplay } from '../remi-metrics.config';
+import { RemiIssueKey } from '../remi-metrics.model';
 import { AbstractMetricsPageService } from '../abstract-metrics-page.service';
 import { DateCondition } from '../metrics-filters';
 
@@ -67,6 +69,17 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   readonly contentRelevanceFilter = this._contentRelevanceFilter.asReadonly();
   readonly dateConditions = this._dateConditions.asReadonly();
 
+  readonly hasActiveFilters = computed(() => {
+    const statusCount = this._activeStatuses().size;
+    const hasStatusFilter = statusCount > 0 && statusCount < STATUSES.length;
+    return (
+      hasStatusFilter ||
+      this._feedbackGoodFilter() !== undefined ||
+      this._contentRelevanceFilter() !== undefined ||
+      this._dateConditions().length > 0
+    );
+  });
+
   private readonly _loadScores$ = new Subject<string>();
 
   constructor() {
@@ -112,6 +125,7 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
     this._items.set([]);
     this._loading.set(true);
     this._remiScoreAverages.set({ answerRelevance: null, contextRelevance: null, groundedness: null });
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadScores$.next(yearMonth);
   }
@@ -129,6 +143,10 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
   updateContentRelevanceFilter(filter: ScoreFilter | undefined): void {
     this._contentRelevanceFilter.set(filter);
     this._applyFilters();
+  }
+
+  resetFilters(): void {
+    this.applyAllFilters([...STATUSES], undefined, undefined, []);
   }
 
   applyAllFilters(
@@ -305,7 +323,6 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
 
     const remiScores = [answerRelevance, contentRelevance, groundedness].filter((v): v is number => v !== null);
     const remiScore = remiScores.length > 0 ? Math.min(...remiScores) : null;
-
     return {
       ...NULL_ACTIVITY_FIELDS,
       id: remiItem.id,
@@ -320,7 +337,44 @@ export class UsageAnalyticsPageService extends AbstractMetricsPageService<UsageA
       _remiAnswerRelevance: answerRelevance,
       _remiContextRelevance: contentRelevance,
       _remiGroundedness: groundedness,
+      _issueKey: this._deriveIssue(remiItem.answer, status, answerRelevance, contentRelevance, groundedness),
     };
+  }
+
+  private _deriveIssue(
+    answer: string | null | undefined,
+    status: RemiAnswerStatus | null,
+    answerRelevance: number | null,
+    contextRelevance: number | null,
+    groundedness: number | null,
+  ): RemiIssueKey {
+    if (status === 'NO_CONTEXT' || !answer?.trim()) {
+      return 'no-answer';
+    }
+
+    if (answerRelevance === null || contextRelevance === null || groundedness === null) {
+      return 'no-data';
+    }
+
+    const candidates: Array<{ key: RemiIssueKey; value: number; priority: number }> = [
+      { key: 'context-weak', value: contextRelevance, priority: 1 },
+      { key: 'grounding-weak', value: groundedness, priority: 2 },
+      { key: 'answer-weak', value: answerRelevance, priority: 3 },
+    ];
+
+    if (candidates.every((c) => getRemiScoreDisplay(c.value).status === 'good')) {
+      return 'no-major-issue';
+    }
+
+    const weakest = candidates
+      .filter((c) => getRemiScoreDisplay(c.value).status !== 'good')
+      .sort((a, b) => {
+        const diff =
+          (getRemiScoreDisplay(a.value).normalizedScore ?? 0) - (getRemiScoreDisplay(b.value).normalizedScore ?? 0);
+        return diff !== 0 ? diff : a.priority - b.priority;
+      })[0];
+
+    return weakest.key;
   }
 
   private _translateStatus(status: RemiAnswerStatus): string {

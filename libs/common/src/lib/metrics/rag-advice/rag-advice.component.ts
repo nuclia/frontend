@@ -31,7 +31,7 @@ import {
   RemiQueryResponseItem,
 } from '@nuclia/core';
 import { SearchWidgetService } from '../../search-widget';
-import { RemiScoreBadgeComponent } from '../remi-score-badge';
+import { RemiScoreDisplayComponent } from '../remi-score-display';
 import { catchError, last, Observable, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
@@ -75,7 +75,7 @@ type NumericInputOrUndefined = string | number | null | undefined;
     InfoCardComponent,
     NsiSkeletonComponent,
     SisProgressModule,
-    RemiScoreBadgeComponent,
+    RemiScoreDisplayComponent,
   ],
   templateUrl: './rag-advice.component.html',
   styleUrl: './rag-advice.component.scss',

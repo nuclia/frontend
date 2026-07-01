@@ -1,6 +1,6 @@
 import { UsagePoint } from '@nuclia/core';
 import { BooleanCondition, DateCondition, NumericCondition } from './metrics-filters';
-import { differenceInCalendarMonths } from 'date-fns';
+import { differenceInCalendarMonths, format } from 'date-fns';
 
 /**
  * Converts a YYYY-MM string into a date range spanning that full month.
@@ -98,20 +98,6 @@ export function applyBooleanConditions(conditions: BooleanCondition[], filters: 
 }
 
 /**
- * Maps a numeric REMi score (0–5 scale) to a colour tier.
- * low  → ≤2   (red)
- * mid  → 2–4  (amber)
- * high → ≥4   (green)
- * Returns null when the value is absent so callers can skip styling entirely.
- */
-export function getRemiColorClass(val: number | null | undefined): 'low' | 'mid' | 'high' | null {
-  if (val === null || val === undefined) return null;
-  if (val <= 2) return 'low';
-  if (val >= 4) return 'high';
-  return 'mid';
-}
-
-/**
  * Converts a Date object into a YYYY-MM string.
  */
 export function formatDateToYearMonth(date: Date): string {
@@ -130,4 +116,10 @@ export function getMonthsSinceDate(date: Date): string[] {
     months.push(prevMonth);
   }
   return months.map((month) => formatDateToYearMonth(month));
+}
+
+/** Formats a YYYY-MM string as a human-readable month label (e.g. "June 2026"). */
+export function formatMonth(yyyyMM: string): string {
+  const [year, month] = yyyyMM.split('-');
+  return format(new Date(Number(year), Number(month) - 1, 1), 'MMMM yyyy');
 }

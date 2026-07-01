@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-missing-knowledge-details',
   imports: [PaTableModule, InfoCardComponent, SisProgressModule, TranslateModule, PaButtonModule],
   templateUrl: './missing-knowledge-details.component.html',
+  styleUrls: ['./missing-knowledge-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MissingKnowledgeDetailsComponent {

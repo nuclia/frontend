@@ -1,0 +1,22 @@
+<span
+  [attr.title]="displayMode() === 'compact' ? fullAccessibleText() : null"
+  [attr.aria-label]="resolvedAriaLabel()">
+  @if (label()) {
+    <span class="score-label">{{ label() }}:&nbsp;</span>
+  }
+  @switch (displayMode()) {
+    @case ('compact') {
+      {{ compactVisibleText() }}
+    }
+    @case ('badge') {
+      @if (label()) {
+        {{ compactVisibleText() }} · {{ display().labelKey | translate }}
+      } @else {
+        {{ display().labelKey | translate }}
+      }
+    }
+    @default {
+      {{ fullAccessibleText() }}
+    }
+  }
+</span>

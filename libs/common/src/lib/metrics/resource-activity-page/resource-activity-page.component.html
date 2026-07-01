@@ -6,13 +6,17 @@
   [items]="service.items()"
   [loading]="service.loading()"
   [loadingMore]="service.loadingMore()"
+  [hasMore]="service.hasMore()"
+  [resetPagination]="service.resetPagination()"
+  [hasActiveFilters]="service.hasActiveFilters()"
   [availableMonths]="service.availableMonths()"
   (monthRangeChange)="onMonthRangeChange($event)"
   (searchChange)="onSearchChange($event)"
   (loadNextPage)="onLoadNextPage()"
+  (resetFilters)="service.resetFilters()"
   (downloadRequested)="onDownloadRequested($event)">
-
-  <app-metrics-filters toolbar-extra
+  <app-metrics-filters
+    toolbar-extra
     [showSyntheticStatus]="true"
     [syntheticStatuses]="syntheticStatuses"
     [activeSyntheticStatuses]="activeSyntheticStatuses()"
@@ -22,11 +26,12 @@
     [activeNumericConditions]="service.numericConditions()"
     [selectedMonth]="selectedMonth()"
     [activeDateConditions]="activeDateConditions()"
-    (filtersApplied)="onFiltersApplied($event)">
-  </app-metrics-filters>
+    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
 
   <!-- Stat cards -->
-  <div stat-cards class="stat-cards">
+  <div
+    stat-cards
+    class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.processing.resources-processed' | translate }}</div>
       <div class="display-s">{{ service.usageStats().resourcesProcessed | compactNumber }}</div>
@@ -36,5 +41,4 @@
       <div class="display-s">{{ service.usageStats().paragraphsProcessed | compactNumber }}</div>
     </div>
   </div>
-
 </app-metrics-page>

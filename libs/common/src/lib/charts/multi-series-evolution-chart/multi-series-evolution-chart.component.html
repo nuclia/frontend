@@ -1,8 +1,14 @@
 <div class="chart-legend">
   @for (s of _series; track s.key) {
-    <div class="legend-item" [class.dimmed]="!s.visible">
-      <pa-checkbox [value]="s.visible" (valueChange)="onToggleSeries(s.key)"></pa-checkbox>
-      <span class="legend-color" [style.background]="s.color"></span>
+    <div
+      class="legend-item"
+      [class.dimmed]="!s.visible">
+      <pa-checkbox
+        [value]="s.visible"
+        (valueChange)="onToggleSeries(s.key)"></pa-checkbox>
+      <span
+        class="legend-color"
+        [style.background]="s.color"></span>
       <span class="legend-label body-s">{{ s.label }}</span>
     </div>
   }
@@ -21,9 +27,15 @@
       <ul>
         @for (item of tooltipSeries; track item.label) {
           <li>
-            <span class="tooltip-color" [style.background]="item.color"></span>
-            {{ item.label }}: {{ item.average | number: '1.0-0' }}%
-            <span class="tooltip-range">({{ item.min | number: '1.0-0' }}–{{ item.max | number: '1.0-0' }})</span>
+            <span
+              class="tooltip-color"
+              [style.background]="item.color"></span>
+            {{ item.label }}: {{ item.average }}% · {{ item.status }}
+            @if (item.hasRange) {
+              <span class="tooltip-range">
+                {{ 'metrics.chart.min-max' | translate: { min: item.min, max: item.max } }}
+              </span>
+            }
           </li>
         }
       </ul>

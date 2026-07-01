@@ -6,10 +6,14 @@
   [items]="service.items()"
   [loading]="service.loading()"
   [loadingMore]="service.loadingMore()"
+  [hasMore]="service.hasMore()"
+  [resetPagination]="service.resetPagination()"
+  [hasActiveFilters]="service.hasActiveFilters()"
   [availableMonths]="service.availableMonths()"
   (monthRangeChange)="onMonthRangeChange($event)"
   (searchChange)="onSearchChange($event)"
   (loadNextPage)="onLoadNextPage()"
+  (resetFilters)="service.resetFilters()"
   (downloadRequested)="onDownloadRequested($event)">
   <app-metrics-filters
     toolbar-extra

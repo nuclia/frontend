@@ -13,7 +13,6 @@
     padding: rhythm(1.5) rhythm(3);
     background: $color-neutral-lightest;
     border-bottom: 1px solid $color-neutral-lighter;
-    border-radius: rhythm(1);
     box-shadow: var(--shadow-small);
   }
 
@@ -35,10 +34,137 @@
     margin-bottom: rhythm(2);
   }
 
+  .overall-health-content {
+    display: flex;
+    gap: rhythm(3);
+    align-items: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .overall-health-info {
+    display: flex;
+    gap: rhythm(3);
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .overall-health-score {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.75);
+    flex: 0 1 auto;
+    min-width: fit-content;
+
+    .remi-summary {
+      display: inline-flex;
+      align-items: center;
+      gap: rhythm(1);
+    }
+
+    .remi-summary-badge ::ng-deep app-remi-score-display.badge {
+      white-space: nowrap;
+    }
+
+    .remi-summary-score {
+      @include font-size(xl);
+      @include line-height(xl);
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  .detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.75);
+    flex: 0 1 auto;
+    min-width: rhythm(18);
+
+    .body-m {
+      overflow-wrap: break-word;
+    }
+  }
+
+  .overall-health-cta {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    align-items: center;
+    flex: 0 0 auto;
+    margin-left: rhythm(1);
+    align-self: flex-start;
+  }
+
+  .score-guide-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: rhythm(0.5);
+    row-gap: rhythm(0.5);
+    margin-top: rhythm(1.5);
+    padding-top: rhythm(1.5);
+    border-top: 1px solid $color-neutral-lightest;
+    color: $color-neutral-regular;
+  }
+
+  .score-guide-label {
+    font-weight: $font-weight-semi-bold;
+    color: $color-dark-stronger;
+  }
+
+  .score-guide-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: rhythm(0.5);
+  }
+
+  .score-guide-range {
+    color: $color-neutral-regular;
+  }
+
+  .score-guide-separator {
+    color: $color-neutral-regular;
+    line-height: 1;
+  }
+
+  @media (max-width: 90rem) {
+    .overall-health-content {
+      flex-wrap: wrap;
+    }
+
+    .overall-health-info {
+      flex-basis: 100%;
+    }
+
+    .overall-health-cta {
+      flex-basis: auto;
+      margin-left: 0;
+      display: flex;
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .overall-health-info {
+      flex-wrap: wrap;
+      row-gap: rhythm(1.5);
+    }
+  }
+
+  .detail-label {
+    color: $color-neutral-regular;
+  }
+
   .metric-card-body {
     display: flex;
     flex-direction: column;
     gap: rhythm(2);
+  }
+
+  .chart-helper-text {
+    margin: 0;
+    color: $color-neutral-regular;
   }
 
   // ── Health Status definitions row ──────────────────────────────────
@@ -138,17 +264,39 @@
     }
   }
 
-  // ── Missing Knowledge section ──────────────────────────────────────
-  .missing-knowledge {
+  .issues-review-heading {
     display: flex;
     flex-direction: column;
-    gap: rhythm(3);
+    gap: rhythm(0.5);
   }
 
-  .missing-knowledge-card {
+  // ── Issues to review section ───────────────────────────────────────
+  // position + z-index creates a stacking context above the sticky period-bar
+  // (z-index: 1) so the section background fills the gaps between cards,
+  // preventing the period-bar from showing through during scroll transitions.
+  .issues-review-list {
     display: flex;
     flex-direction: column;
-    gap: rhythm(2);
+    gap: rhythm(2.5);
+    position: relative;
+    z-index: 2;
+    background: $color-light-stronger;
+  }
+
+  .issue-category-card {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+
+    .sub-section-copy {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(0.5);
+
+      .body-s {
+        color: $color-neutral-regular;
+      }
+    }
 
     // ── Fix #5: Accordion items — borders, gap, expanded bg ────────
     pa-accordion {
@@ -167,7 +315,7 @@
         position: absolute;
         top: rhythm(1);
         right: rhythm(2);
-        z-index: $z-index-default + 1;
+        z-index: $z-index-default;
       }
     }
 
@@ -258,6 +406,53 @@
     }
   }
 
+  // ── Issue section expander body ────────────────────────────────────
+  .issue-body-content {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+    padding-top: rhythm(1.5);
+  }
+
+  // ── Threshold filter row (low-context) ─────────────────────────────
+  .criteria-threshold-row {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+    padding-bottom: rhythm(1.5);
+    border-bottom: 1px solid $color-neutral-lighter;
+    color: $color-neutral-regular;
+  }
+
+  // ── Criteria-header right group (pagination + month picker) ────────
+  .criteria-header-right {
+    display: flex;
+    align-items: center;
+    gap: rhythm(2);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  // ── Fix: expander body height for async content ────────────────────
+  // pa-expander measures --contentHeight once on init; async data loading
+  // causes overflow. Override to auto so the card grows with its content.
+  .issue-category-card pa-expander ::ng-deep .pa-expander:not(.pa-collapsed) .pa-expander-body {
+    height: auto;
+    overflow: visible;
+  }
+
+  // ── Sticky expander header for issue cards ─────────────────────────
+  // Only the header sticks (not the whole card) so the large body scrolls freely.
+  // top: 0 means the header replaces the period-bar as you scroll into a section.
+  .issue-category-card pa-expander ::ng-deep .pa-expander-header {
+    position: sticky;
+    top: 0;
+    z-index: $z-index-default + 1;
+    background: $color-neutral-lightest;
+    border: 1px solid color-mix(in srgb, $color-neutral-lightest 30%, $color-neutral-lighter 70%);
+    padding-left: rhythm(1);
+  }
+
   pa-expander ::ng-deep .pa-expander:not(.pa-expander-card).pa-collapsed .pa-expander-header {
     box-shadow: none;
   }
@@ -293,10 +488,10 @@
       background: $color-neutral-lighter;
     }
 
-    &.sub-section {
-      padding-top: rhythm(2);
-      margin-bottom: rhythm(0);
-      top: var(--header-height);
+    margin-bottom: rhythm(0);
+
+    pa-expander {
+      margin-top: rhythm(1);
     }
   }
 }
