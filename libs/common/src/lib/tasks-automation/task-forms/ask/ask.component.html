@@ -59,7 +59,7 @@
             formControlName="question"
             modalTitle="tasks-automation.generator.your-question.json-schema"
             [errorMessages]="errorMessages"
-            [hidden]="(noKvSchemas | async) && storeAsKeyValue">
+            [hidden]="storeAsKeyValue && !kvSchemaId">
             {{ 'tasks-automation.generator.your-question.json-schema' | translate }}
           </nsi-expandable-textarea>
         } @else {
