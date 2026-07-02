@@ -204,8 +204,9 @@ export class AskComponent extends TaskRouteDirective {
     if (field.range) {
       return { type: 'array', items: { type: 'string' }, description: field.description || '' };
     }
+    // For now, repeated fields are converted to string arrays because number and boolean arrays are not supported.
     if (field.repeated) {
-      return { type: 'array', items: { type }, description: field.description || '' };
+      return { type: 'array', items: { type: 'string' }, description: field.description || '' };
     }
     return { type, description: field.description || '' };
   }
