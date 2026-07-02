@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { combineLatest, filter, fromEvent, map, shareReplay, startWith, Subject, takeUntil } from 'rxjs';
 
-type AdministrationTab = 'knowledge-boxes' | 'users';
+type AdministrationTab = 'knowledge-boxes' | 'users' | 'retrieval-agents';
 
 @Component({
   selector: 'app-account-administration',
@@ -18,6 +18,7 @@ export class AccountAdministrationComponent implements OnInit, AfterViewInit, On
   unsubscribeAll = new Subject<void>();
 
   isAccountManager = this.features.isAccountManager;
+  isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
 
   backLink = combineLatest([
     this.sdk.currentAccount,
@@ -42,10 +43,15 @@ export class AccountAdministrationComponent implements OnInit, AfterViewInit, On
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.pipe(takeUntil(this.unsubscribeAll)).subscribe((params) => {
+    combineLatest([this.route.queryParams, this.isRetrievalAgentsEnabled])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([params, retrievalAgentsEnabled]) => {
       const tab = params['tab'] as AdministrationTab;
       const action = params['action'] as string | undefined;
       const validTabs: AdministrationTab[] = ['knowledge-boxes', 'users'];
+      if (retrievalAgentsEnabled) {
+        validTabs.push('retrieval-agents');
+      }
       if (tab && validTabs.includes(tab)) {
         this.selectedTab = tab;
       } else {
@@ -53,7 +59,7 @@ export class AccountAdministrationComponent implements OnInit, AfterViewInit, On
       }
       this.knowledgeBoxesAction = this.selectedTab === 'knowledge-boxes' && action === 'create' ? 'create' : null;
       this.cdr.markForCheck();
-    });
+      });
   }
 
   ngAfterViewInit(): void {

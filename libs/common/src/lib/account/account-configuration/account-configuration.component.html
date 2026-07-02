@@ -18,14 +18,6 @@
         (click)="goToSection('nua')">
         {{ 'navbar.nua-keys' | translate }}
       </pa-tab>
-      @if (isRetrievalAgentsEnabled | async) {
-        <pa-tab
-          [active]="selectedTab === 'retrieval-agents'"
-          ariaControls="configuration-section-panel"
-          (click)="goToSection('retrieval-agents')">
-          {{ 'navbar.account-retrieval-agents' | translate }}
-        </pa-tab>
-      }
       @if (isModelManagementEnabled | async) {
         <pa-tab
           [active]="selectedTab === 'models'"
@@ -41,11 +33,6 @@
     @switch (selectedTab) {
       @case ('nua') {
         <app-account-nua></app-account-nua>
-      }
-      @case ('retrieval-agents') {
-        @if (isRetrievalAgentsEnabled | async) {
-          <app-arag-list [isEmbedded]="true"></app-arag-list>
-        }
       }
       @case ('models') {
         @if (isModelManagementEnabled | async) {

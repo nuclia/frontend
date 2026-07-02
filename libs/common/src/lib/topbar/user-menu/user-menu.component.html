@@ -44,7 +44,7 @@
       }
     }
 
-    <!-- Configuration section — NUA keys, Retrieval agents, Models (account-level developer tools) -->
+    <!-- Administration + Configuration sections (account-level tools) -->
     @if (showAccountGroup | async) {
       <pa-separator></pa-separator>
       <pa-option-header>{{ 'user-menu.section.administration' | translate }}</pa-option-header>
@@ -53,6 +53,13 @@
         (click)="goToKnowledgeBoxes()">
         {{ 'account.related_kbs' | translate }}
       </pa-option>
+      @if (isRetrievalAgentsEnabled | async) {
+        <pa-option
+          icon="workflows"
+          (click)="goToRetrievalAgents()">
+          {{ 'navbar.account-retrieval-agents' | translate }}
+        </pa-option>
+      }
       @if (isAccountManager | async) {
         <pa-option
           data-cy="go-to-manage-users"
@@ -69,13 +76,6 @@
         (click)="goToNuaKeys()">
         {{ 'navbar.nua-keys' | translate }}
       </pa-option>
-      @if (isRetrievalAgentsEnabled | async) {
-        <pa-option
-          icon="workflows"
-          (click)="goToRetrievalAgents()">
-          {{ 'navbar.account-retrieval-agents' | translate }}
-        </pa-option>
-      }
       @if (isModelManagementEnabled | async) {
         <pa-option
           icon="settings"

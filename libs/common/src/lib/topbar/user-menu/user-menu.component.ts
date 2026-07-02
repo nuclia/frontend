@@ -208,7 +208,7 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   goToRetrievalAgents() {
     this.menuClose.emit();
     if (this.account) {
-      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/configuration'], {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/administration'], {
         queryParams: { tab: 'retrieval-agents' },
       });
     }

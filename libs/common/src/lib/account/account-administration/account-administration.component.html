@@ -18,6 +18,14 @@
         (click)="goToSection('knowledge-boxes')">
         {{ 'account.related_kbs' | translate }}
       </pa-tab>
+      @if (isRetrievalAgentsEnabled | async) {
+        <pa-tab
+          [active]="selectedTab === 'retrieval-agents'"
+          ariaControls="administration-section-panel"
+          (click)="goToSection('retrieval-agents')">
+          {{ 'navbar.account-retrieval-agents' | translate }}
+        </pa-tab>
+      }
       @if (isAccountManager | async) {
         <pa-tab
           [active]="selectedTab === 'users'"
@@ -44,6 +52,11 @@
       }
       @case ('users') {
         <app-account-users></app-account-users>
+      }
+      @case ('retrieval-agents') {
+        @if (isRetrievalAgentsEnabled | async) {
+          <app-arag-list [isEmbedded]="true"></app-arag-list>
+        }
       }
     }
   </div>

@@ -1,9 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { combineLatest, filter, fromEvent, map, shareReplay, startWith, Subject, takeUntil } from 'rxjs';
+import { combineLatest, filter, fromEvent, map, shareReplay, startWith, Subject, take, takeUntil } from 'rxjs';
 
-type ConfigurationTab = 'nua' | 'retrieval-agents' | 'models';
+type ConfigurationTab = 'nua' | 'models';
 
 @Component({
   selector: 'app-account-configuration',
@@ -17,7 +17,6 @@ export class AccountConfigurationComponent implements OnInit, AfterViewInit, OnD
   unsubscribeAll = new Subject<void>();
 
   isAccountManager = this.features.isAccountManager;
-  isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
 
   // Compute the back-link target from the active KB. When no KB is in context
@@ -50,10 +49,19 @@ export class AccountConfigurationComponent implements OnInit, AfterViewInit, OnD
     // re-navigating to a different tab from the dropdown (while already on the
     // shell) correctly updates the selected tab.
     this.route.queryParams.pipe(takeUntil(this.unsubscribeAll)).subscribe((params) => {
-      const tab = params['tab'] as ConfigurationTab;
-      const validTabs: ConfigurationTab[] = ['nua', 'retrieval-agents', 'models'];
-      if (tab && validTabs.includes(tab)) {
-        this.selectedTab = tab;
+      const tab = params['tab'] as string | undefined;
+      if (tab === 'retrieval-agents') {
+        this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll), take(1)).subscribe((account) => {
+          this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/administration`], {
+            queryParams: { tab: 'retrieval-agents' },
+            replaceUrl: true,
+          });
+        });
+        return;
+      }
+      const validTabs: ConfigurationTab[] = ['nua', 'models'];
+      if (tab && validTabs.includes(tab as ConfigurationTab)) {
+        this.selectedTab = tab as ConfigurationTab;
         this.cdr.markForCheck();
       } else if (!tab) {
         // No tab param — default to nua.
