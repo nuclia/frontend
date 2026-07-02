@@ -72,10 +72,18 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   );
   isKbAdmin = this.features.isKbAdmin;
   isBillingEnabled = this.features.unstable.billing;
+  isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
+  isModelManagementEnabled = this.features.unstable.modelManagement;
   noStripe = this.backendConfig.noStripe();
   standalone = this.sdk.nuclia.options.standalone;
   simpleMode = this.navigation.simpleMode;
   kbUrl = '';
+
+  /** True when the Account group section has at least one visible item. */
+  showAccountGroup = this.features.isAccountManager.pipe(
+    map((isAccountManager) => !this.standalone && !!isAccountManager),
+    shareReplay(1),
+  );
 
   private unsubscribeAll = new Subject<void>();
 
@@ -112,12 +120,33 @@ export class UserMenuComponent implements OnInit, OnDestroy {
 
   goProfile() {
     this.menuClose.emit();
-    this.router.navigate(['/user/profile']);
+    // Account managers land in the shell; other users go to the standalone profile page
+    // which does not require account-management access.
+    if (this.account?.can_manage_account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home'], {
+        queryParams: { tab: 'preferences' },
+      });
+    } else {
+      this.router.navigate(['/user/profile']);
+    }
+  }
+
+  goToKnowledgeBoxes() {
+    this.menuClose.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/administration'], {
+        queryParams: { tab: 'knowledge-boxes' },
+      });
+    }
   }
 
   goToBilling() {
     this.menuClose.emit();
-    this.router.navigate([`${this.navigation.getAccountManageUrl(this.account?.slug || '')}/billing`]);
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home'], {
+        queryParams: { tab: 'subscriptions' },
+      });
+    }
   }
 
   switchAccount() {
@@ -138,17 +167,59 @@ export class UserMenuComponent implements OnInit, OnDestroy {
   goToManageAccount() {
     this.menuClose.emit();
     if (this.account) {
-      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home']);
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home'], {
+        queryParams: { tab: 'consumption' },
+      });
+    }
+  }
+
+  goToAccountSettings() {
+    this.menuClose.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home'], {
+        queryParams: { tab: 'account-settings' },
+      });
     }
   }
 
   goToManageUsers() {
     this.menuClose.emit();
-    this.router.navigate([this.kbUrl + '/users']);
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/administration'], {
+        queryParams: { tab: 'users' },
+      });
+    }
   }
 
   openDeleteAccount() {
     this.menuClose.emit();
     this.modalService.openModal(AccountDeleteComponent);
+  }
+
+  goToNuaKeys() {
+    this.menuClose.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/configuration'], {
+        queryParams: { tab: 'nua' },
+      });
+    }
+  }
+
+  goToRetrievalAgents() {
+    this.menuClose.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/configuration'], {
+        queryParams: { tab: 'retrieval-agents' },
+      });
+    }
+  }
+
+  goToModels() {
+    this.menuClose.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/configuration'], {
+        queryParams: { tab: 'models' },
+      });
+    }
   }
 }

@@ -23,7 +23,11 @@ import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from 
 import { UsersManageModule } from '../users-manage';
 import { AccountAragComponent } from './account-arag/account-arag.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
+import { AccountAdministrationComponent } from './account-administration/account-administration.component';
+import { AccountAdministrationRedirectComponent } from './account-administration/account-administration-redirect.component';
+import { AccountConfigurationComponent } from './account-configuration/account-configuration.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
+import { AccountSettingsComponent } from './account-home/account-settings.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
 import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
@@ -74,7 +78,12 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: AccountHomeComponent,
+    component: AccountSettingsComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'configuration',
+    component: AccountConfigurationComponent,
     canActivate: [accountOwnerGuard],
   },
   {
@@ -88,19 +97,21 @@ const routes: Routes = [
     canActivate: [accountOwnerGuard],
   },
   {
-    path: 'kbs',
-    component: AccountKbsComponent,
+    path: 'administration',
+    component: AccountAdministrationComponent,
     canActivate: [accountOwnerGuard],
-    children: [
-      {
-        path: '',
-        component: KbListComponent,
-      },
-      {
-        path: 'create',
-        component: KbCreationComponent,
-      },
-    ],
+  },
+  {
+    path: 'kbs/create',
+    component: AccountAdministrationRedirectComponent,
+    canActivate: [accountOwnerGuard],
+    data: { tab: 'knowledge-boxes', action: 'create' },
+  },
+  {
+    path: 'kbs',
+    component: AccountAdministrationRedirectComponent,
+    canActivate: [accountOwnerGuard],
+    data: { tab: 'knowledge-boxes' },
   },
   {
     path: 'arag',
@@ -115,8 +126,9 @@ const routes: Routes = [
   },
   {
     path: 'users',
-    component: AccountUsersComponent,
+    component: AccountAdministrationRedirectComponent,
     canActivate: [accountOwnerGuard],
+    data: { tab: 'users' },
   },
   {
     path: 'billing',
@@ -189,19 +201,27 @@ const routes: Routes = [
     OtpInputComponent,
     AccountDeleteComponent,
     ProfileComponent,
+    AragListComponent,
+    AccountModelsComponent,
+    KbListComponent,
+    KbCreationComponent,
   ],
   declarations: [
+    AccountAdministrationComponent,
+    AccountAdministrationRedirectComponent,
     AccountHomeComponent,
+    AccountSettingsComponent,
     AccountManageComponent,
     AccountKbsComponent,
     AccountAragComponent,
     UsersDialogComponent,
     AccountNUAComponent,
+    AccountConfigurationComponent,
     ClientDialogComponent,
     AccountUsersComponent,
     NuaActivityComponent,
     SimpleAccountHomeComponent,
   ],
-  exports: [AccountHomeComponent, AccountManageComponent, SimpleAccountHomeComponent],
+  exports: [AccountHomeComponent, AccountSettingsComponent, AccountManageComponent, SimpleAccountHomeComponent],
 })
 export class AccountModule {}

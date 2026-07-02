@@ -3,7 +3,7 @@
     class="section"
     id="account">
     <div class="section-container">
-      <h1>{{ 'account.manage' | translate }}</h1>
+      <h2 class="page-title">{{ 'account.manage' | translate }}</h2>
       <form
         [formGroup]="accountForm"
         (ngSubmit)="saveAccount()">
@@ -54,7 +54,7 @@
 
   <div class="section">
     <div class="section-container">
-      <h3 class="title-m">{{ 'account.saml.title' | translate }}</h3>
+      <h3 class="page-title">{{ 'account.saml.title' | translate }}</h3>
       <form
         [formGroup]="samlForm"
         (ngSubmit)="saveSaml()">
@@ -110,10 +110,10 @@
   <div class="section">
     <div class="section-container">
       <div class="dangerous-zone">
-        <h3>{{ 'account.delete_account' | translate }}</h3>
+        <h3 class="page-title">{{ 'account.delete_account' | translate }}</h3>
         @if ((cannotDeleteAccount | async) === false) {
           <div>
-            <p>{{ 'account.delete_account_warning_1' | translate }}</p>
+            <p class="page-description">{{ 'account.delete_account_warning_1' | translate }}</p>
             <ul>
               <li>{{ 'account.delete_account_warning_2' | translate }}</li>
               <li>{{ 'account.delete_account_warning_3' | translate }}</li>
@@ -127,7 +127,7 @@
           </div>
         } @else if ((cannotDeleteAccount | async) === true) {
           <div>
-            <p>{{ 'account.delete.active-subscription' | translate }}</p>
+            <p class="page-description">{{ 'account.delete.active-subscription' | translate }}</p>
             @if (isSubscribedToStripe | async) {
               <p>
                 {{ 'account.delete.subscription-details' | translate }}

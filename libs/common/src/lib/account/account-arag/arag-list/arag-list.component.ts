@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import {
@@ -53,6 +53,9 @@ export class AragListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
+  // When embedded in the Configuration shell, do not clear query params on init
+  isEmbedded = input(false);
+
   unsubscribeAll = new Subject<void>();
   isLoading = false;
   account?: Account;
@@ -67,7 +70,11 @@ export class AragListComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(([params, account]) => {
           creation = params['create'] === 'true';
-          this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
+          // Only clear query params when not embedded in the Configuration shell.
+          // When embedded, preserve query params so the parent component controls tab selection.
+          if (!this.isEmbedded()) {
+            this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
+          }
           this.account = account;
           this.maxRetrievalAgents = account.max_agents;
           return this.sdk.aragList;

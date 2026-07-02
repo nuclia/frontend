@@ -17,7 +17,7 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, map, Observable, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -96,6 +96,27 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
+    // When in account management use the same logic as the "Back to homepage"
+    // button in AccountSettingsComponent: resolve from currentKb (startWith null
+    // so we always get one emission even if no KB is in context).
+    if (this.navigationService.inAccountManagement(location.pathname)) {
+      combineLatest([
+        this.sdk.currentAccount,
+        this.sdk.currentKb.pipe(startWith(null)),
+      ])
+        .pipe(
+          take(1),
+          map(([account, kb]) => {
+            const kbSlug = kb && (this.sdk.nuclia.options.standalone ? kb.id : kb.slug);
+            return kbSlug
+              ? this.navigationService.getKbUrl(account.slug, kbSlug as string)
+              : this.navigationService.getKbSelectUrl(account.slug);
+          }),
+        )
+        .subscribe((url) => this.router.navigate([url]));
+      return;
+    }
+
     const simpleHomeUrl$ = this.sdk.isKbLoaded
       ? this.navigationService.kbUrl
       : of(this.navigationService.getAccountSelectUrl());

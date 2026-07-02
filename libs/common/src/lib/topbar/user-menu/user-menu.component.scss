@@ -25,4 +25,23 @@
       font-weight: $font-weight-thin;
     }
   }
+
+  // Light-theme override for the user-menu popup: replaces the global dark
+  // popover palette with a white background and dark text to match the
+  // ContextBox/SimpleUI design language.
+  ::ng-deep pa-dropdown .pa-popup.pa-popover .pa-popup-wrapper {
+    background: $color-light-stronger;
+    color: $color-dark-stronger;
+    border: 1px solid $color-neutral-lighter;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  // Override Pastanaga's 5.5-option max-height constraint (264px) for this account menu.
+  // The menu now includes CONFIGURATION section items and spans multiple grouped sections,
+  // requiring more vertical space. On desktop viewports, display fully without internal scroll.
+  // On small viewports, calc(100vh - 120px) ensures the dropdown scrolls safely rather than
+  // extending off-screen, preserving the visual affordance while remaining usable.
+  ::ng-deep pa-dropdown .pa-popup-wrapper {
+    max-height: calc(100vh - 120px);
+  }
 }

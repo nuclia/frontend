@@ -3,6 +3,22 @@
     <h1 class="page-title">{{ 'account.manage_users' | translate }}</h1>
     <p class="page-description">{{ 'account.manage_users-description' | translate }}</p>
 
+    @if (showKbUsersCta | async) {
+      <div class="kb-users-callout">
+        <div class="kb-users-callout-text">
+          <div class="title-xxs">{{ 'account.manage_users-kb-cta.prompt' | translate }}</div>
+        </div>
+        <pa-button
+          kind="secondary"
+          aspect="basic"
+          iconAndText
+          icon="users"
+          (click)="goToCurrentKbUsers()">
+          {{ 'account.manage_users-kb-cta.action' | translate }}
+        </pa-button>
+      </div>
+    }
+
     <div>
       <div class="users-amount">
         {{ 'account.users_amount' | translate }}
@@ -35,6 +51,7 @@
           }
         </pa-select>
         <pa-button
+          kind="primary"
           [disabled]="form.invalid"
           (click)="addUser()">
           {{ 'account.add_user' | translate }}

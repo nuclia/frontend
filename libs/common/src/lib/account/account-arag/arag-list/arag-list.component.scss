@@ -3,9 +3,19 @@
 .account-arag {
   .account-arag-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     gap: rhythm(4);
     margin-bottom: rhythm(4);
+  }
+
+  .account-arag-counter {
+    font-weight: var(--stf-font-weight-semibold);
+    margin-top: rhythm(4);
+    margin-bottom: rhythm(2);
+  }
+
+  .create-arag-button {
+    margin-top: rhythm(3);
   }
 
   .go-to-arag {

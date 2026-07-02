@@ -1,0 +1,83 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.account-configuration-page {
+  margin: 0 auto;
+  max-width: calc(#{rhythm(90)} * 2);
+  width: 100%;
+
+  .settings-header {
+    margin-bottom: rhythm(3);
+
+    .page-title {
+      margin-bottom: rhythm(1);
+    }
+
+    .page-description {
+      color: $color-neutral-regular;
+      margin-bottom: 0;
+    }
+  }
+
+  .settings-navigation {
+    background: $color-light-stronger;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+    margin-bottom: rhythm(2);
+    padding-top: rhythm(2);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .back-home-button {
+    display: block;
+  }
+
+  .settings-tabs {
+    background: $color-light-stronger;
+  }
+
+  // Style for section headings inside embedded tab content
+  #configuration-section-panel {
+    padding-top: rhythm(3);
+
+    // Strip page-spacing padding from all embedded components
+    ::ng-deep .page-spacing {
+      min-height: auto;
+      padding: 0;
+    }
+
+    // Section headings inside embedded components use .page-title on h2
+    ::ng-deep .page-title {
+      font-size: 1.125rem;
+      line-height: 1.5;
+      margin-bottom: rhythm(1);
+    }
+
+    // When Models component is embedded, its internal tabs should have clear visual separation
+    ::ng-deep app-account-models {
+      // Remove extra top margin/padding from model sections
+      .models-section {
+        &:first-of-type {
+          margin-top: 0;
+        }
+      }
+      
+      pa-tabs[data-embedded='true'] {
+        border-top: 1px solid $color-neutral-lighter;
+        padding-top: rhythm(2);
+      }
+    }
+
+    // NUA component embedded
+    ::ng-deep app-account-nua {
+      padding: 0;
+    }
+
+    // Retrieval Agents (ARAG) component embedded
+    ::ng-deep app-account-arag {
+      padding: 0;
+    }
+  }
+}

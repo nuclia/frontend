@@ -1,0 +1,57 @@
+<div class="account-configuration-page page-spacing">
+  <div class="settings-header">
+    <h1 class="page-title">{{ 'generic.configuration' | translate }}</h1>
+    <p class="page-description">{{ 'account.configuration-description' | translate }}</p>
+  </div>
+
+  <div class="settings-navigation">
+    <nsi-back-button
+      class="back-home-button"
+      [link]="backLink | async">
+      {{ 'generic.back_to_home' | translate }}
+    </nsi-back-button>
+
+    <pa-tabs class="settings-tabs">
+      <pa-tab
+        [active]="selectedTab === 'nua'"
+        ariaControls="configuration-section-panel"
+        (click)="goToSection('nua')">
+        {{ 'navbar.nua-keys' | translate }}
+      </pa-tab>
+      @if (isRetrievalAgentsEnabled | async) {
+        <pa-tab
+          [active]="selectedTab === 'retrieval-agents'"
+          ariaControls="configuration-section-panel"
+          (click)="goToSection('retrieval-agents')">
+          {{ 'navbar.account-retrieval-agents' | translate }}
+        </pa-tab>
+      }
+      @if (isModelManagementEnabled | async) {
+        <pa-tab
+          [active]="selectedTab === 'models'"
+          ariaControls="configuration-section-panel"
+          (click)="goToSection('models')">
+          {{ 'navbar.models' | translate }}
+        </pa-tab>
+      }
+    </pa-tabs>
+  </div>
+
+  <div id="configuration-section-panel" role="tabpanel">
+    @switch (selectedTab) {
+      @case ('nua') {
+        <app-account-nua></app-account-nua>
+      }
+      @case ('retrieval-agents') {
+        @if (isRetrievalAgentsEnabled | async) {
+          <app-arag-list [isEmbedded]="true"></app-arag-list>
+        }
+      }
+      @case ('models') {
+        @if (isModelManagementEnabled | async) {
+          <app-account-models [isEmbedded]="true"></app-account-models>
+        }
+      }
+    }
+  </div>
+</div>

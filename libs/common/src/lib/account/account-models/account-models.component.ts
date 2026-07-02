@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, OnInit } from '@angular/core';
 import {
   BedrockService,
   BedrockStatus,
@@ -67,6 +67,9 @@ export class AccountModelsComponent implements OnInit {
   private features = inject(FeaturesService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
+
+  // When embedded in the Configuration shell, hide the standalone page header
+  isEmbedded = input(false);
 
   modelConfigs = new ReplaySubject<ModelConfigurationWithZone[]>(1);
   selectedTab: 'settings' | 'restrictions' = 'settings';

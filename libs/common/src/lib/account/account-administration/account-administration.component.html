@@ -1,0 +1,50 @@
+<div class="account-administration-page page-spacing">
+  <div class="settings-header">
+    <h1 class="page-title">{{ 'account.administration' | translate }}</h1>
+    <p class="page-description">{{ 'account.administration-description' | translate }}</p>
+  </div>
+
+  <div class="settings-navigation">
+    <nsi-back-button
+      class="back-home-button"
+      [link]="backLink | async">
+      {{ 'generic.back_to_home' | translate }}
+    </nsi-back-button>
+
+    <pa-tabs class="settings-tabs">
+      <pa-tab
+        [active]="selectedTab === 'knowledge-boxes'"
+        ariaControls="administration-section-panel"
+        (click)="goToSection('knowledge-boxes')">
+        {{ 'account.related_kbs' | translate }}
+      </pa-tab>
+      @if (isAccountManager | async) {
+        <pa-tab
+          [active]="selectedTab === 'users'"
+          ariaControls="administration-section-panel"
+          (click)="goToSection('users')">
+          {{ 'account.manage_users' | translate }}
+        </pa-tab>
+      }
+    </pa-tabs>
+  </div>
+
+  <div
+    class="settings-section"
+    id="administration-section-panel">
+    @switch (selectedTab) {
+      @case ('knowledge-boxes') {
+        @if (knowledgeBoxesAction === 'create') {
+          <app-kb-creation
+            [embedded]="true"
+            [embeddedParent]="'administration'"></app-kb-creation>
+        } @else {
+          <app-kb-list></app-kb-list>
+        }
+      }
+      @case ('users') {
+        <app-account-users></app-account-users>
+      }
+    }
+  </div>
+</div>

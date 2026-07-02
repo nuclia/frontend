@@ -1,68 +1,68 @@
 <div class="page-spacing">
-  <h1>{{ 'account.nua_keys' | translate }}</h1>
-  <div class="warning">
-    <pa-icon name="warning"></pa-icon>
-    {{ 'api-key-management.description' | translate }}
-  </div>
-
-  <pa-button
-    class="create-nua-button"
-    data-cy="open-create-nua-key-dialog"
-    (click)="openDialog()">
-    {{ 'account.create_nua_key' | translate }}
-  </pa-button>
+  <h2 class="page-title">{{ 'account.nua_keys' | translate }}</h2>
+  <p class="page-description">{{ 'api-key-management.description' | translate }}</p>
 
   @if (clients$ | async; as clients) {
-    <div class="container">
-      <h4>{{ 'account.existing_keys' | translate }}</h4>
-      @for (client of clients; track client.client_id) {
-        <div class="client-row">
-          <div
-            class="title"
-            paEllipsisTooltip>
-            {{ client.title }}
-          </div>
-          <div class="date">
-            <pa-datetime [datetime]="client.created"></pa-datetime>
-          </div>
-          <div
-            class="email"
-            paEllipsisTooltip>
-            {{ client.contact }}
-          </div>
-          <div class="zone">{{ client.zone }}</div>
-          <div class="buttons">
-            @if (isNuaActivityEnabled | async) {
+    @if (clients.length > 0) {
+      <div class="container">
+        <h2 class="page-title">{{ 'account.existing_keys' | translate }}</h2>
+        @for (client of clients; track client.client_id) {
+          <div class="client-row">
+            <div
+              class="title"
+              paEllipsisTooltip>
+              {{ client.title }}
+            </div>
+            <div class="date">
+              <pa-datetime [datetime]="client.created"></pa-datetime>
+            </div>
+            <div
+              class="email"
+              paEllipsisTooltip>
+              {{ client.contact }}
+            </div>
+            <div class="zone">{{ client.zone }}</div>
+            <div class="buttons">
+              @if (isNuaActivityEnabled | async) {
+                <pa-button
+                  (click)="goToActivity(client)"
+                  aspect="basic"
+                  icon="activity-log"
+                  size="small"
+                  paTooltip="account.nua_key_activity">
+                  {{ 'account.nua_key_activity' | translate }}
+                </pa-button>
+              }
               <pa-button
-                (click)="goToActivity(client)"
+                (click)="askConfirmation(client)"
                 aspect="basic"
-                icon="activity-log"
+                icon="refresh"
                 size="small"
-                paTooltip="account.nua_key_activity">
-                {{ 'account.nua_key_activity' | translate }}
+                paTooltip="account.generate_key">
+                {{ 'account.generate_key' | translate }}
               </pa-button>
-            }
-            <pa-button
-              (click)="askConfirmation(client)"
-              aspect="basic"
-              icon="refresh"
-              size="small"
-              paTooltip="account.generate_key">
-              {{ 'account.generate_key' | translate }}
-            </pa-button>
-            <pa-button
-              (click)="deleteClient(client)"
-              [attr.data-cy]="client.title + '-delete'"
-              aspect="basic"
-              icon="trash"
-              size="small"
-              kind="destructive"
-              paTooltip="generic.delete">
-              {{ 'account.delete' | translate }}
-            </pa-button>
+              <pa-button
+                (click)="deleteClient(client)"
+                [attr.data-cy]="client.title + '-delete'"
+                aspect="basic"
+                icon="trash"
+                size="small"
+                kind="destructive"
+                paTooltip="generic.delete">
+                {{ 'account.delete' | translate }}
+              </pa-button>
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    }
+
+    <pa-button
+      kind="primary"
+      class="create-nua-button"
+      data-cy="open-create-nua-key-dialog"
+      (click)="openDialog()">
+      {{ 'account.create_nua_key' | translate }}
+    </pa-button>
   }
 </div>

@@ -7,6 +7,19 @@ header {
   margin-bottom: rhythm(4);
 }
 
+.embedded-back-link {
+  align-items: center;
+  color: $color-dark-stronger;
+  display: flex;
+  gap: rhythm(1);
+  padding-right: rhythm(1);
+  width: fit-content;
+
+  pa-icon {
+    display: flex;
+  }
+}
+
 .toggle-container {
   background-color: $color-neutral-lightest;
   border-radius: rhythm(1);

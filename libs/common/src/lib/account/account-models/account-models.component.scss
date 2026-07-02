@@ -8,6 +8,64 @@
   pa-tabs {
     display: block;
     margin-bottom: rhythm(4);
+
+    // When embedded in the Configuration shell, style as secondary tabs
+    &[data-embedded='true'] {
+      margin-bottom: rhythm(3);
+      margin-top: rhythm(2);
+      opacity: 0.95;
+
+      // Reduce visual weight of secondary tabs
+      ::ng-deep {
+        pa-tab {
+          font-size: 0.95rem;
+        }
+      }
+    }
+  }
+
+  // Embedded mode: simple stacked section layout
+  .models-section {
+    margin-bottom: rhythm(3);
+    
+    // First section gets less top margin to reduce gap below tabs
+    &:first-of-type {
+      margin-top: rhythm(1);
+      margin-bottom: rhythm(3);
+    }
+  }
+
+  // Header row: heading/description on left, button on right
+  .models-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: rhythm(2);
+    margin-bottom: rhythm(2);
+
+    pa-button {
+      flex-shrink: 0;
+      margin-top: 0; // Align button with text baseline of heading
+    }
+  }
+
+  .configs {
+    .create-model-button {
+      display: block;
+      margin-top: rhythm(3);
+    }
+  }
+
+  .models-section-title {
+    flex: 1;
+
+    // h2.page-title is styled at the Configuration/Shell component level
+    // Don't override the margin-bottom from the shell styling
+    
+    p {
+      margin: 0;
+      opacity: 0.75;
+    }
   }
 
   .configs {
@@ -21,6 +79,15 @@
     display: flex;
     gap: rhythm(1);
     justify-content: flex-end;
+  }
+
+  // When rendered inside the Configuration shell as a section, button should be left-aligned
+  .create-model-config {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    justify-content: flex-start;
+    margin-top: rhythm(1);
   }
 
   .status {

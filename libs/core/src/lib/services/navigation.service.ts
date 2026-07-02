@@ -19,6 +19,7 @@ import {
 const IN_ARAG = /at\/[^/]+\/[^/]+\/arag/;
 const IN_ACCOUNT_MANAGEMENT = /\/at\/[^/]+\/manage/;
 const IN_ACCOUNT_BILLING = /\/at\/[^/]+\/manage\/billing/;
+const IN_ACCOUNT_SETTINGS_HOME = /\/at\/[^/]+\/manage\/(home|configuration|administration)/;
 
 @Injectable({
   providedIn: 'root',
@@ -74,8 +75,20 @@ export class NavigationService {
     ),
   ).pipe(distinctUntilChanged());
 
+  inAccountSettingsHome: Observable<boolean> = merge(
+    defer(() => of(this.inAccountManagementHome(location.pathname))),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.inAccountManagementHome((event as NavigationEnd).url)),
+    ),
+  ).pipe(distinctUntilChanged());
+
   inAccountManagement(path: string): boolean {
     return IN_ACCOUNT_MANAGEMENT.test(path);
+  }
+
+  inAccountManagementHome(path: string): boolean {
+    return IN_ACCOUNT_SETTINGS_HOME.test(path);
   }
   inAragSpace(path: string): boolean {
     return IN_ARAG.test(path);

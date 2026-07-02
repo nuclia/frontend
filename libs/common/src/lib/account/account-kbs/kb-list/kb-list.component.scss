@@ -7,7 +7,7 @@
 
   .account-kbs-list {
     margin-top: rhythm(5);
-    max-width: $width-large-screen;
+    max-width: 640px;
   }
 
   .account-kb {
@@ -37,17 +37,16 @@
 
   &-counter {
     font-weight: var(--stf-font-weight-semibold);
+    margin-top: rhythm(4);
+    margin-bottom: rhythm(2);
+  }
+
+  .add-kb-button {
+    margin-top: rhythm(3);
   }
 
   &-empty {
     font-style: italic;
-  }
-
-  .add-kb-container {
-    align-items: center;
-    display: flex;
-    gap: rhythm(3);
-    margin-top: rhythm(3);
   }
 }
 

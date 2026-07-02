@@ -8,22 +8,13 @@
   <div class="account-arag page-spacing">
     <div class="account-arag-header">
       <div>
-        <h1 class="page-title">
+        <h2 class="page-title">
           {{ 'account.retrieval-agents.title' | translate }}
           <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
-        </h1>
+        </h2>
 
         <p class="page-description">{{ 'account.retrieval-agents.description' | translate }}</p>
       </div>
-
-      @if (canAddArag | async) {
-        <pa-button
-          data-cy="add-arag"
-          [disabled]="retrievalAgents.length >= maxRetrievalAgents && maxRetrievalAgents !== -1"
-          (click)="createArag()">
-          {{ 'account.retrieval-agents.create' | translate }}
-        </pa-button>
-      }
     </div>
 
     <div class="account-arag-content">
@@ -81,16 +72,23 @@
             </pa-table-row>
           }
         </pa-table>
+      }
 
-        <nsi-sticky-footer>
-          @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
-            <div
-              footerNote
-              class="account-kbs-counter">
-              {{ 'account.kb.count' | translate: { count: retrievalAgents.length, max: maxRetrievalAgents } }}
-            </div>
-          }
-        </nsi-sticky-footer>
+      @if (canAddArag | async) {
+        @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
+          <div class="account-arag-counter">
+            {{ 'account.kb.count' | translate: { count: retrievalAgents.length, max: maxRetrievalAgents } }}
+          </div>
+        }
+
+        <pa-button
+          kind="primary"
+          class="create-arag-button"
+          data-cy="add-arag"
+          [disabled]="retrievalAgents.length >= maxRetrievalAgents && maxRetrievalAgents !== -1"
+          (click)="createArag()">
+          {{ 'account.retrieval-agents.create' | translate }}
+        </pa-button>
       }
     </div>
   </div>

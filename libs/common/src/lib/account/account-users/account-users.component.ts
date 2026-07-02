@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of, Subject, take } from 'rxjs';
+import { forkJoin, combineLatest, Observable, of, Subject, take } from 'rxjs';
 import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
+import { Router } from '@angular/router';
 import {
   Account,
   AccountRoles,
@@ -37,8 +38,12 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   };
 
   account$ = this.sdk.currentAccount;
+  currentKb = this.sdk.currentKb;
   canAddUsers = this.account$.pipe(
     map((account) => account!.max_users == null || (account!.current_users || 0) < account!.max_users),
+  );
+  showKbUsersCta = combineLatest([this.account$, this.currentKb]).pipe(
+    map(([, kb]) => !!kb?.slug && !!(kb.admin || kb.contrib)),
   );
 
   unsubscribeAll = new Subject<void>();
@@ -50,6 +55,8 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   constructor(
     private translate: TranslateService,
     private sdk: SDKService,
+    private navigation: NavigationService,
+    private router: Router,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
@@ -92,6 +99,16 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
       this.form.markAsPristine();
       this.cdr.markForCheck();
     });
+  }
+
+  goToCurrentKbUsers(): void {
+    combineLatest([this.account$.pipe(take(1)), this.currentKb.pipe(take(1))])
+      .pipe(filter(([, kb]) => !!kb?.slug && !!(kb.admin || kb.contrib)))
+      .subscribe(([account, kb]) => {
+        this.sdk.nuclia.options.zone = kb.zone;
+        this.sdk.nuclia.options.knowledgeBox = kb.id;
+        this.router.navigate([this.navigation.getKbUsersUrl(account.slug, kb.slug!)]);
+      });
   }
 
   changeRole(user: FullAccountUser, role: string): void {

@@ -1,0 +1,122 @@
+<div class="account-settings-page page-spacing">
+  @if (isTrial | async) {
+    <div class="trial-status-top">
+      <app-account-status (upgradeClick)="goToSection('subscriptions')"></app-account-status>
+    </div>
+  }
+
+  <div class="settings-header">
+    <h1 class="page-title">{{ 'account.account' | translate }}</h1>
+    <p class="page-description">{{ 'account.settings-description' | translate }}</p>
+  </div>
+
+  <div class="settings-navigation">
+    <nsi-back-button
+      class="back-home-button"
+      [link]="backLink | async">
+      {{ 'generic.back_to_home' | translate }}
+    </nsi-back-button>
+
+    <pa-tabs class="settings-tabs">
+      <pa-tab
+        [active]="selectedTab === 'consumption'"
+        ariaControls="settings-section-panel"
+        (click)="goToSection('consumption')">
+        {{ 'account.consumption' | translate }}
+      </pa-tab>
+      @if (showSubscriptionsTab | async) {
+        <pa-tab
+          [active]="selectedTab === 'subscriptions'"
+          ariaControls="settings-section-panel"
+          (click)="goToSection('subscriptions')">
+          {{ 'account.billing' | translate }}
+        </pa-tab>
+      }
+      <pa-tab
+        [active]="selectedTab === 'preferences'"
+        ariaControls="settings-section-panel"
+        (click)="goToSection('preferences')">
+        {{ 'generic.user_preferences' | translate }}
+      </pa-tab>
+      @if (showAccountSettingsTab | async) {
+        <pa-tab
+          [active]="selectedTab === 'account-settings'"
+          ariaControls="settings-section-panel"
+          (click)="goToSection('account-settings')">
+          {{ 'account.manage' | translate }}
+        </pa-tab>
+      }
+    </pa-tabs>
+  </div>
+
+  <div
+    class="settings-section"
+    id="settings-section-panel">
+    @switch (selectedTab) {
+      @case ('consumption') {
+        <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
+        <p class="page-description">{{ 'account.consumption-description' | translate }}</p>
+        <app-nuclia-tokens
+          [usage]="usage"
+          [selectedPeriod]="selectedPeriod | async"
+          (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
+
+        <div class="consumption-summary">
+          <div class="summary-section">
+            <h3 class="title-m">{{ 'account.knowledgeboxes' | translate }}</h3>
+            @if (kbs | async; as kbList) {
+              @if (kbList.length > 0) {
+                <ul class="kb-summary-list">
+                  @for (kb of kbList; track kb.id) {
+                    <li class="kb-summary-item" [class.disabled]="!kb.role_on_kb">
+                      <div class="kb-info">
+                        <span class="kb-title">{{ kb.title }}</span>
+                        @if (kb.state === 'PRIVATE') {
+                          <pa-icon size="small" name="lock" class="lock-icon"></pa-icon>
+                        }
+                      </div>
+                      @if (tokensCount?.[kb.id]; as tokens) {
+                        @if (tokens > 0) {
+                          <span class="kb-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                        }
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            }
+          </div>
+
+          <div class="summary-section">
+            @if (totalQueries | async; as count) {
+              <h3 class="title-m">{{ 'account.total_queries' | translate }}</h3>
+              <div class="queries-grid">
+                <div class="query-stat">
+                  <div class="title-xxs">{{ 'metrics.period.last-30-days' | translate }}</div>
+                  <div class="display-s">{{ count.month | number }}</div>
+                </div>
+                <div class="query-stat">
+                  <div class="title-xxs">{{ 'metrics.period.last-12-months' | translate }}</div>
+                  <div class="display-s">{{ count.year | number }}</div>
+                </div>
+                <div class="query-stat">
+                  <div class="title-xxs">{{ 'metrics.period.since-creation' | translate }}</div>
+                  <div class="display-s">{{ count.sinceCreation | number }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      @case ('subscriptions') {
+        <app-subscriptions></app-subscriptions>
+      }
+      @case ('preferences') {
+        <nus-profile></nus-profile>
+      }
+      @case ('account-settings') {
+        <app-account-manage></app-account-manage>
+      }
+    }
+  </div>
+</div>
