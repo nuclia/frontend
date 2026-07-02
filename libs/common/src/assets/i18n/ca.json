@@ -2726,6 +2726,7 @@
 	"tasks-automation.testing.description": "Seleccioneu un o diversos recursos per executar una prova de l'agent.",
 	"tasks-automation.testing.error": "S'ha produït un error en provar l'agent.",
 	"tasks-automation.testing.execute-test": "Executar la prova",
+	"tasks-automation.testing.not-supported": "Les proves no estan disponibles per a agents que generen camps de valor-clau.",
 	"tasks-automation.testing.results.clear": "Esborra tots els resultats de la prova",
 	"tasks-automation.testing.results.description": "Aquest contingut generat només serveix com a prova i no es guarda en els recursos.",
 	"tasks-automation.testing.results.empty": "Els resultats de la prova apareixeran aquí.",

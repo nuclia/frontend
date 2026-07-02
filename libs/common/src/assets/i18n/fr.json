@@ -2726,6 +2726,7 @@
 	"tasks-automation.testing.description": "Sélectionnez une ou plusieurs ressources pour exécuter un test de l'agent.",
 	"tasks-automation.testing.error": "Une erreur s'est produite lors du test de l'agent.",
 	"tasks-automation.testing.execute-test": "Exécuter le test",
+	"tasks-automation.testing.not-supported": "Les tests ne sont pas disponibles pour les agents qui génèrent des champs clé-valeur.",
 	"tasks-automation.testing.results.clear": "Effacer tous les résultats des tests",
 	"tasks-automation.testing.results.description": "Ce contenu généré sert uniquement de test et n'est pas enregistré sur les ressources.",
 	"tasks-automation.testing.results.empty": "Vos résultats de test apparaîtront ici.",

@@ -2726,6 +2726,7 @@
 	"tasks-automation.testing.description": "Select one or multiple resources to run a test of the agent.",
 	"tasks-automation.testing.error": "An error occurred when testing the agent.",
 	"tasks-automation.testing.execute-test": "Execute test run",
+	"tasks-automation.testing.not-supported": "Testing is not available for agents that generate key-value fields.",
 	"tasks-automation.testing.results.clear": "Clear all test results",
 	"tasks-automation.testing.results.description": "This generated content only serves as a test and is not saved on the resources.",
 	"tasks-automation.testing.results.empty": "Your test results will appear here.",

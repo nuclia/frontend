@@ -2726,6 +2726,7 @@
 	"tasks-automation.testing.description": "Seleccione uno o varios recursos para ejecutar una prueba del agente.",
 	"tasks-automation.testing.error": "Se produjo un error al probar el agente.",
 	"tasks-automation.testing.execute-test": "Ejecutar la prueba",
+	"tasks-automation.testing.not-supported": "Las pruebas no están disponibles para los agentes que generan campos de clave-valor.",
 	"tasks-automation.testing.results.clear": "Borrar todos los resultados de la prueba",
 	"tasks-automation.testing.results.description": "Este contenido generado solo sirve como prueba y no se guarda en los recursos.",
 	"tasks-automation.testing.results.empty": "Los resultados de la prueba aparecerán aquí.",
