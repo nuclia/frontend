@@ -1,4 +1,5 @@
 import { ActivityLogItem } from '@nuclia/core';
+import { RemiIssueKey } from './remi-metrics.model';
 
 /**
  * Defines a single column in the metrics table.
@@ -101,6 +102,7 @@ export type UsageAnalyticsItem = ActivityLogItem & {
   _remiContextRelevance?: number | null;
   _remiGroundedness?: number | null;
   _rawStatus?: string | null;
+  _issueKey?: RemiIssueKey;
 };
 
 /** Aggregated cost/token usage stats for the selected month. */

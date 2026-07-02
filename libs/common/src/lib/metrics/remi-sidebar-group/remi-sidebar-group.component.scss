@@ -1,0 +1,52 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.remi-diagnosis-card {
+  .diagnosis-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: rhythm(0.5);
+    padding: rhythm(1) 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba($color-neutral-lighter, 0.5);
+    }
+
+    .detail-label {
+      color: $color-neutral-regular;
+    }
+  }
+
+  .diagnosis-text {
+    margin: 0;
+    text-align: left;
+    color: var(--color-neutral-dark);
+  }
+}
+
+.remi-expected-card {
+  .expected-metric {
+    padding: rhythm(0.75) 0;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba($color-neutral-lighter, 0.35);
+    }
+  }
+
+  .expected-metric-label {
+    margin: 0 0 rhythm(0.25);
+    color: var(--color-neutral-dark);
+    font-weight: 600;
+  }
+
+  .expected-metric-copy {
+    margin: 0;
+    color: $color-neutral-regular;
+  }
+
+  .expected-scale-note {
+    margin: rhythm(1.25) 0 0;
+    color: $color-neutral-regular;
+    font-style: italic;
+  }
+}

@@ -1,0 +1,58 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+
+  // ── Mode ──────────────────────────────────────────────────────────────────
+  &.full,
+  &.compact {
+    font-weight: 600;
+  }
+
+  &.badge {
+    border-radius: 999px;
+    padding: rhythm(0.25) rhythm(1);
+    font-size: font-size(xs);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  // ── Status colours (text) ─────────────────────────────────────────────────
+  &.good {
+    color: var(--color-success-regular);
+  }
+
+  &.needs-review {
+    color: var(--color-secondary-strong);
+  }
+
+  &.poor {
+    color: var(--color-danger-regular);
+  }
+
+  &.no-data {
+    color: var(--color-neutral-regular);
+  }
+
+  // ── Badge background overrides ────────────────────────────────────────────
+  &.badge {
+    &.good {
+      color: var(--color-success-strong);
+      background: var(--color-success-lightest);
+    }
+
+    &.needs-review {
+      background: var(--color-secondary-lightest);
+    }
+
+    &.poor {
+      color: var(--color-danger-strong);
+      background: var(--color-danger-lightest);
+    }
+
+    &.no-data {
+      background: var(--color-neutral-lightest);
+    }
+  }
+}

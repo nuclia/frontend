@@ -1,23 +1,56 @@
+@use 'apps/dashboard/src/variables' as *;
+
 .stat-cards {
   display: flex;
-  gap: 16px;
+  gap: rhythm(2);
 }
 
-.remi-low {
-  color: var(--color-danger-regular);
-  font-weight: 600;
-}
-
-.remi-mid {
-  color: var(--color-secondary-regular);
-  font-weight: 600;
-}
-
-.remi-high {
-  color: var(--color-success-regular);
-  font-weight: 600;
+.remi-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .download-button {
   order: 4;
+}
+
+// ── REMi cell styles ─────────────────────────────────────────────────────
+
+.score-display-cell {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+  font-size: $font-size-body-m;
+}
+
+.cell-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: rhythm(2);
+  padding: rhythm(0.25) rhythm(1);
+  font-size: font-size(xs);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  &.good {
+    color: var(--color-success-strong);
+    background: var(--color-success-lightest);
+  }
+
+  &.needs-review {
+    color: $color-secondary-strong;
+    background: var(--color-secondary-lightest);
+  }
+
+  &.poor {
+    color: var(--color-danger-strong);
+    background: var(--color-danger-lightest);
+  }
+
+  &.no-data {
+    color: var(--color-neutral-regular);
+    background: var(--color-neutral-lightest);
+  }
 }

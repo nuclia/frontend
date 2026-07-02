@@ -1,0 +1,41 @@
+<footer class="metrics-pagination">
+  <span class="body-m counter">
+    {{ 'metrics.pagination.counter' | translate: { from: from(), to: to() } }}
+  </span>
+
+  <div class="page-size">
+    <span class="body-m">{{ 'metrics.pagination.rows-per-page' | translate }}</span>
+    <nsi-dropdown-button
+      aspect="basic"
+      [popupRef]="sizeDropdown">
+      {{ pageSize() }}
+    </nsi-dropdown-button>
+    <pa-dropdown #sizeDropdown>
+      @for (size of pageSizes; track size) {
+        <pa-option (selectOption)="pageSizeChange.emit(size)">{{ size }}</pa-option>
+      }
+    </pa-dropdown>
+  </div>
+
+  <div class="pages">
+    <pa-button
+      aspect="basic"
+      [disabled]="page() === 0"
+      (click)="goTo(page() - 1)">
+      <pa-icon
+        name="arrow-left"
+        size="small"></pa-icon>
+    </pa-button>
+    <span class="body-m page-label">
+      {{ 'metrics.pagination.page' | translate: { page: page() + 1 } }}
+    </span>
+    <pa-button
+      aspect="basic"
+      [disabled]="isLastPage()"
+      (click)="goTo(page() + 1)">
+      <pa-icon
+        name="arrow-right"
+        size="small"></pa-icon>
+    </pa-button>
+  </div>
+</footer>

@@ -81,42 +81,43 @@
       <nsi-spinner></nsi-spinner>
     } @else if (items().length === 0) {
       <div class="empty-state">
-        <p class="body-m">{{ 'generic.empty' | translate }}</p>
+        <nsi-info-card>
+          <p class="title-xxs empty-state-title">{{ emptyState().titleKey | translate }}</p>
+          @if (emptyState().descriptionKey) {
+            <p class="body-s empty-state-description">{{ emptyState().descriptionKey | translate }}</p>
+          }
+          @if (emptyState().actionKey) {
+            <pa-button
+              aspect="basic"
+              (click)="onEmptyStateAction()">
+              {{ emptyState().actionKey | translate }}
+            </pa-button>
+          }
+        </nsi-info-card>
       </div>
     } @else {
-      <cdk-virtual-scroll-viewport
-        tableVirtualScroll
-        class="table-viewport"
-        [itemSize]="rowHeight"
-        (offsetChange)="viewportOffset = $event"
-        (scrolledIndexChange)="onScrolledIndexChange($event)">
-        @if (loadingMore()) {
-          <div class="loading-more-row"><nsi-spinner class="loading-more-spinner"></nsi-spinner></div>
-        }
-        <pa-table
-          border
-          [style.--table-row-height]="rowHeight + 'px'"
-          [style.--table-header-top]="-1 * viewportOffset + 'px'"
-          [columns]="computedGridColumns()">
-          <pa-table-header>
-            <pa-table-row>
-              @for (col of service.columnDefs(); track col.key) {
-                @if (isColumnVisible(col.key)) {
-                  <pa-table-cell header>
-                    {{ col.label | translate }}
-                  </pa-table-cell>
-                }
+      <pa-table
+        border
+        [columns]="computedGridColumns()">
+        <pa-table-header>
+          <pa-table-row>
+            @for (col of service.columnDefs(); track col.key) {
+              @if (isColumnVisible(col.key)) {
+                <pa-table-cell header>
+                  {{ col.label | translate }}
+                </pa-table-cell>
               }
-              @if (rowAction()) {
-                <pa-table-cell
-                  header
-                  class="action-col-header"></pa-table-cell>
-              }
-            </pa-table-row>
-          </pa-table-header>
+            }
+            @if (rowAction()) {
+              <pa-table-cell
+                header
+                class="action-col-header"></pa-table-cell>
+            }
+          </pa-table-row>
+        </pa-table-header>
 
+        @for (item of paginatedItems(); track item.id) {
           <pa-table-row
-            *cdkVirtualFor="let item of items()"
             (click)="onRowClick(item)"
             class="clickable-row">
             @for (col of service.columnDefs(); track col.key) {
@@ -124,14 +125,12 @@
                 <pa-table-cell>
                   @if (col.inlineAction) {
                     <div class="cell-inline-action-wrapper">
-                      <span
-                        class="body-s cell-value"
-                        [class.remi-score-low]="isRemiScoreLow(item, col)"
-                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
-                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
-                        [paTooltip]="getCellValue(item, col.key)">
-                        {{ getCellValue(item, col.key) }}
-                      </span>
+                      <!-- Custom cell rendering delegated to caller via plugin + template -->
+                      @if (isCustomColumn(col.key) && customCellTemplate(); as tpl) {
+                        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item, col: col }"></ng-container>
+                      } @else {
+                        <span class="body-s cell-value">{{ getCellValue(item, col.key) }}</span>
+                      }
                       @if (col.inlineAction.visible(item)) {
                         <pa-button
                           class="inline-action-btn"
@@ -151,15 +150,11 @@
                       } @else {
                         <span class="body-s cell-value">—</span>
                       }
+                    } @else if (isCustomColumn(col.key) && customCellTemplate(); as tpl) {
+                      <!-- Custom cell rendering delegated to caller via plugin + template -->
+                      <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item, col: col }"></ng-container>
                     } @else {
-                      <span
-                        class="body-s cell-value"
-                        [class.remi-score-low]="isRemiScoreLow(item, col)"
-                        [class.remi-score-mid]="isRemiScoreMid(item, col)"
-                        [class.remi-score-high]="isRemiScoreHigh(item, col)"
-                        [paTooltip]="getCellValue(item, col.key)">
-                        {{ getCellValue(item, col.key) }}
-                      </span>
+                      <span class="body-s cell-value">{{ getCellValue(item, col.key) }}</span>
                     }
                   }
                 </pa-table-cell>
@@ -178,8 +173,16 @@
               </pa-table-cell>
             }
           </pa-table-row>
-        </pa-table>
-      </cdk-virtual-scroll-viewport>
+        }
+      </pa-table>
+
+      <app-metrics-pagination
+        [page]="currentPage()"
+        [pageSize]="currentPageSize()"
+        [totalItems]="items().length"
+        [hasMore]="hasMore() || loadingMore()"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"></app-metrics-pagination>
     }
   </div>
 </div>
@@ -237,11 +240,7 @@
                           <span class="detail-value body-s">—</span>
                         }
                       } @else {
-                        <span
-                          class="detail-value body-s"
-                          [class.remi-score-low]="field.colorFn?.(item) === 'low'"
-                          [class.remi-score-mid]="field.colorFn?.(item) === 'mid'"
-                          [class.remi-score-high]="field.colorFn?.(item) === 'high'">
+                        <span class="detail-value body-s score-{{ field.colorFn?.(item) }}">
                           {{ getFieldValue(selectedItem()!, field) }}
                         </span>
                       }
@@ -251,6 +250,18 @@
               }
             </div>
           </section>
+
+          <!-- Plugin-provided extra content after this group (e.g. REMi diagnosis card) -->
+          @if (sidebarPlugin()?.shouldShowAfterGroup(section.group, item) && afterGroupTemplate()) {
+            <ng-container
+              *ngTemplateOutlet="
+                afterGroupTemplate()!;
+                context: {
+                  $implicit: sidebarPlugin()!.getAfterGroupData(section.group, item),
+                  item: item,
+                }
+              "></ng-container>
+          }
         }
       }
     </div>

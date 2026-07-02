@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { UserService } from '@flaps/core';
@@ -44,6 +44,11 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   readonly booleanFilters = this._booleanFilters.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
   readonly dateConditions = this._dateConditions.asReadonly();
+  readonly hasActiveFilters = computed(() => {
+    const booleans = this._booleanFilters();
+    const hasBooleans = Object.values(booleans).some((v) => v !== undefined);
+    return hasBooleans || this._numericConditions().length > 0 || this._dateConditions().length > 0;
+  });
 
   private readonly _loadUsage$ = new Subject<string>();
 
@@ -144,6 +149,7 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
     this._items.set([]);
     this._usageStats.set({ aiTokensUsed: null, nucliaTokens: null, nucliaTokensBilled: null });
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadUsage$.next(yearMonth);
   }
@@ -170,6 +176,10 @@ export class CostTokenUsagePageService extends AbstractMetricsPageService<Activi
   updateDateFilter(conditions: DateCondition[]): void {
     this._dateConditions.set(conditions);
     this._applyFilters();
+  }
+
+  resetFilters(): void {
+    this.applyAllFilters({}, [], []);
   }
 
   applyAllFilters(

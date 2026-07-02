@@ -1,0 +1,76 @@
+<section class="detail-section">
+  <h3 class="title-s section-title">{{ 'metrics.remi.diagnosis.title' | translate }}</h3>
+  <div class="detail-card remi-diagnosis-card">
+    <div class="diagnosis-item">
+      <span class="detail-label body-s">{{ 'metrics.remi.diagnosis.overall-score' | translate }}</span>
+      <app-remi-score-display
+        class="body-s"
+        [value]="diagnosis().score"
+        displayMode="full"></app-remi-score-display>
+    </div>
+
+    <div class="diagnosis-item">
+      <span class="detail-label body-s">{{ 'metrics.remi.diagnosis.main-issue' | translate }}</span>
+      <span
+        class="issue-chip {{ diagnosis().severity }}"
+        [attr.title]="'metrics.remi.issue.chip-label' | translate: { label: diagnosis().mainIssueKey | translate }"
+        [attr.aria-label]="
+          'metrics.remi.issue.chip-label' | translate: { label: diagnosis().mainIssueKey | translate }
+        ">
+        {{ diagnosis().mainIssueKey | translate }}
+      </span>
+    </div>
+
+    <div class="diagnosis-item">
+      <span class="detail-label body-s">{{ 'metrics.remi.diagnosis.why' | translate }}</span>
+      <p class="body-s diagnosis-text">{{ diagnosis().whyKey | translate }}</p>
+    </div>
+
+    <div class="diagnosis-item">
+      <span class="detail-label body-s">{{ 'metrics.remi.diagnosis.recommended-action' | translate }}</span>
+      <p class="body-s diagnosis-text">{{ diagnosis().recommendedActionKey | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="detail-section">
+  <div class="detail-card remi-expected-card">
+    <pa-expander [expanded]="expandExpected()">
+      <pa-expander-header>
+        {{ 'metrics.remi.diagnosis.what-expected.title' | translate }}
+      </pa-expander-header>
+      <pa-expander-body>
+        <div class="expected-metric">
+          <p class="expected-metric-label body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.answer-relevance.title' | translate }}
+          </p>
+          <p class="expected-metric-copy body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.answer-relevance.description' | translate }}
+          </p>
+        </div>
+
+        <div class="expected-metric">
+          <p class="expected-metric-label body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.context-relevance.title' | translate }}
+          </p>
+          <p class="expected-metric-copy body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.context-relevance.description' | translate }}
+          </p>
+        </div>
+
+        <div class="expected-metric">
+          <p class="expected-metric-label body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.groundedness.title' | translate }}
+          </p>
+          <p class="expected-metric-copy body-s">
+            {{ 'metrics.remi.diagnosis.what-expected.groundedness.description' | translate }}
+          </p>
+        </div>
+
+        <p class="expected-scale-note body-s">
+          {{ 'metrics.remi.diagnosis.what-expected.scale-note' | translate }}
+        </p>
+      </pa-expander-body>
+    </pa-expander>
+  </div>
+</section>

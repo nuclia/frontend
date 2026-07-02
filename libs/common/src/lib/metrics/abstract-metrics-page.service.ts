@@ -1,4 +1,4 @@
-import { DestroyRef, inject, signal } from '@angular/core';
+import { DestroyRef, Signal, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, exhaustMap, switchMap } from 'rxjs';
 import { SDKService } from '@flaps/core';
@@ -32,6 +32,8 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
   protected _availableMonths = signal<string[]>([]);
   protected _yearMonth = signal('');
   protected _hasMore = signal(false);
+  /** Increments on every full data reload (month change, filter change). Never changes on append. */
+  protected _resetPagination = signal(0);
 
   // ── Public readonly projections ───────────────────────────────────────
   readonly items = this._items.asReadonly();
@@ -39,6 +41,7 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
   readonly loadingMore = this._loadingMore.asReadonly();
   readonly availableMonths = this._availableMonths.asReadonly();
   readonly hasMore = this._hasMore.asReadonly();
+  readonly resetPagination = this._resetPagination.asReadonly();
 
   // ── Shared subjects ───────────────────────────────────────────────────
   protected readonly _reset$ = new Subject<void>();
@@ -49,6 +52,10 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
   protected abstract _queryPage(isAppend: boolean): Observable<R>;
   protected abstract _applyPage(rawResult: R, isAppend: boolean): void;
   protected abstract loadAvailableMonths(): void;
+  /** True when the user has applied any filters (status, numeric, date, boolean). */
+  abstract readonly hasActiveFilters: Signal<boolean>;
+  /** Clears all active filters and reloads data. */
+  abstract resetFilters(): void;
 
   // ── Concrete shared methods ───────────────────────────────────────────
 
@@ -63,6 +70,7 @@ export abstract class AbstractMetricsPageService<T, R = T[]> {
     this._resetPaginationState();
     this._items.set([]);
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
   }
 

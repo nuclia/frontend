@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
 import { UserService } from '@flaps/core';
@@ -44,6 +44,12 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
   readonly activeSources = this._activeSources.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
   readonly dateConditions = this._dateConditions.asReadonly();
+  readonly hasActiveFilters = computed(
+    () =>
+      this._activeSources().size < ALL_SOURCES.length ||
+      this._numericConditions().length > 0 ||
+      this._dateConditions().length > 0,
+  );
 
   private readonly _sources: Array<[EventType, string]> = [
     [EventType.NEW, 'Ingested'],
@@ -193,6 +199,7 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
     this._items.set([]);
     this._usageStats.set({ resourcesProcessed: null, paragraphsProcessed: null });
     this._loading.set(true);
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadUsage$.next(yearMonth);
   }
@@ -220,6 +227,10 @@ export class ResourceActivityPageService extends AbstractMetricsPageService<Proc
   updateDateFilter(conditions: DateCondition[]): void {
     this._dateConditions.set(conditions);
     this._applyFilters();
+  }
+
+  resetFilters(): void {
+    this.applyAllFilters([...ALL_SOURCES], [], []);
   }
 
   applyAllFilters(

@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, catchError, map, of, switchMap, take } from 'rxjs';
 import { UserService } from '@flaps/core';
@@ -41,6 +41,7 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
   readonly searchTotals = this._searchTotals.asReadonly();
   readonly numericConditions = this._numericConditions.asReadonly();
   readonly dateConditions = this._dateConditions.asReadonly();
+  readonly hasActiveFilters = computed(() => this._numericConditions().length > 0 || this._dateConditions().length > 0);
 
   private readonly _loadTotals$ = new Subject<string>();
 
@@ -138,6 +139,7 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
     this._items.set([]);
     this._loading.set(true);
     this._searchTotals.set({ totalSearch: null, totalChat: null });
+    this._resetPagination.update((v) => v + 1);
     this._reset$.next();
     this._loadTotals$.next(yearMonth);
   }
@@ -159,6 +161,10 @@ export class SearchActivityPageService extends AbstractMetricsPageService<Activi
   updateDateFilter(conditions: DateCondition[]): void {
     this._dateConditions.set(conditions);
     this._applyFilters();
+  }
+
+  resetFilters(): void {
+    this.applyAllFilters([], []);
   }
 
   applyAllFilters(numericConditions: NumericCondition[], dateConditions: DateCondition[] = []): void {

@@ -6,11 +6,19 @@
   [items]="service.items()"
   [loading]="service.loading()"
   [loadingMore]="service.loadingMore()"
+  [hasMore]="service.hasMore()"
+  [resetPagination]="service.resetPagination()"
+  [hasActiveFilters]="service.hasActiveFilters()"
   [availableMonths]="service.availableMonths()"
+  [cellPlugin]="remiCellPlugin"
+  [sidebarPlugin]="remiSidebarPlugin"
+  [customCellTemplate]="remiCellTpl"
+  [afterGroupTemplate]="remiDiagnosisTpl"
   [showDownload]="false"
   [showSearch]="false"
   (monthRangeChange)="onMonthRangeChange($event)"
   (loadNextPage)="onLoadNextPage()"
+  (resetFilters)="service.resetFilters()"
   (rowActionTriggered)="openAdvice($event)">
   <!-- Filter button + download button in toolbar (projected into toolbar-extra slot) -->
   <ng-container toolbar-extra>
@@ -44,27 +52,78 @@
     class="stat-cards">
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-answer-relevance' | translate }}</div>
-      <div
-        class="display-s"
-        [class]="remiColor(service.remiScoreAverages().answerRelevance)">
-        {{ service.remiScoreAverages().answerRelevance | compactNumber }}
+      <div class="display-s remi-summary">
+        <app-remi-score-display
+          class="remi-summary-score"
+          [value]="service.remiScoreAverages().answerRelevance"
+          displayMode="compact"></app-remi-score-display>
+        <app-remi-score-display
+          class="remi-summary-badge"
+          [value]="service.remiScoreAverages().answerRelevance"
+          displayMode="badge"></app-remi-score-display>
       </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-context-relevance' | translate }}</div>
-      <div
-        class="display-s"
-        [class]="remiColor(service.remiScoreAverages().contextRelevance)">
-        {{ service.remiScoreAverages().contextRelevance | compactNumber }}
+      <div class="display-s remi-summary">
+        <app-remi-score-display
+          class="remi-summary-score"
+          [value]="service.remiScoreAverages().contextRelevance"
+          displayMode="compact"></app-remi-score-display>
+        <app-remi-score-display
+          class="remi-summary-badge"
+          [value]="service.remiScoreAverages().contextRelevance"
+          displayMode="badge"></app-remi-score-display>
       </div>
     </div>
     <div class="stat-card">
       <div class="title-xxs">{{ 'activity.usage-analysis.avg-groundedness' | translate }}</div>
-      <div
-        class="display-s"
-        [class]="remiColor(service.remiScoreAverages().groundedness)">
-        {{ service.remiScoreAverages().groundedness | compactNumber }}
+      <div class="display-s remi-summary">
+        <app-remi-score-display
+          class="remi-summary-score"
+          [value]="service.remiScoreAverages().groundedness"
+          displayMode="compact"></app-remi-score-display>
+        <app-remi-score-display
+          class="remi-summary-badge"
+          [value]="service.remiScoreAverages().groundedness"
+          displayMode="badge"></app-remi-score-display>
       </div>
     </div>
   </div>
 </app-metrics-page>
+
+<!-- REMi diagnosis sidebar template — rendered after the 'query' group by remiSidebarPlugin -->
+<ng-template
+  #remiDiagnosisTpl
+  let-data
+  let-item="item">
+  @if (data) {
+    <app-remi-sidebar-group
+      [diagnosis]="data.diagnosis"
+      [expandExpected]="data.expandExpected"></app-remi-sidebar-group>
+  }
+</ng-template>
+
+<!-- REMi custom cell template — rendered by metrics-page for REMi-specific columns -->
+<ng-template
+  #remiCellTpl
+  let-item
+  let-col="col">
+  @switch (remiCellPlugin.getCellType(col.key)) {
+    @case ('score-display') {
+      <div class="score-display-cell">
+        <app-remi-score-display
+          [value]="remiCellPlugin.getScoreValue(item, col.key)"
+          displayMode="compact"></app-remi-score-display>
+      </div>
+    }
+    @case ('chip') {
+      <span
+        class="cell-chip {{ remiCellPlugin.getChipCssClass(item, col.key) }}"
+        [title]="remiCellPlugin.getChipTitle(item, col.key)"
+        [attr.aria-label]="remiCellPlugin.getChipTitle(item, col.key)">
+        {{ remiCellPlugin.getChipLabelKey(item, col.key) | translate }}
+      </span>
+    }
+  }
+</ng-template>

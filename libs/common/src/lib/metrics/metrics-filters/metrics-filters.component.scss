@@ -78,8 +78,9 @@
 }
 
 .section-title {
-  margin-bottom: v.rhythm(1.5);
   color: var(--color-neutral-dark);
+  margin-bottom: 0;
+  padding: v.rhythm(1) 0;
 }
 
 .filter-checkboxes,
