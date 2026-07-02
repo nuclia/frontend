@@ -161,6 +161,21 @@ export class ResourceListComponent implements OnDestroy {
     this.resourceListService.search();
   }
 
+  refreshResources() {
+    this.resourceListService
+      .loadResources(true, true)
+      .pipe(
+        switchMap(() => {
+          if (this.isMainView || this.isProcessedView) {
+            return this.loadFilters();
+          }
+          return of(null);
+        }),
+        take(1),
+      )
+      .subscribe();
+  }
+
   onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
     if ((event.target as HTMLElement).tagName === 'LI') {
       option.selected = !option.selected;

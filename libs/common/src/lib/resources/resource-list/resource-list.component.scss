@@ -21,11 +21,23 @@
     gap: rhythm(2);
     justify-content: space-between;
     margin-bottom: rhythm(2);
+
+    .header-actions {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
   }
 
   .filters {
     display: flex;
     gap: rhythm(1.5);
+
+    .search-actions {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
   }
 
   .active-filters {

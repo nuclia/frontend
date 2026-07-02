@@ -198,21 +198,36 @@
           }
 
           @if (isMainView || isProcessedView) {
-            <nsi-search-input
-              icon="search"
-              [modes]="searchModes"
-              [value]="query | async"
-              (modeSelected)="onModeChange($event)"
-              (valueChange)="onQueryChange($event)"
-              (keyup.enter)="search()">
-              {{ 'stash.search' | translate }}
-            </nsi-search-input>
+            <div class="search-actions">
+              <nsi-search-input
+                icon="search"
+                [modes]="searchModes"
+                [value]="query | async"
+                (modeSelected)="onModeChange($event)"
+                (valueChange)="onQueryChange($event)"
+                (keyup.enter)="search()">
+                {{ 'stash.search' | translate }}
+              </nsi-search-input>
+            </div>
           }
         </div>
 
-        @if (isAdminOrContrib | async) {
-          <stf-upload-button></stf-upload-button>
-        }
+        <div class="header-actions">
+          @if (isMainView || isProcessedView) {
+            <pa-button
+              kind="secondary"
+              aspect="basic"
+              icon="refresh"
+              iconAndText
+              (click)="refreshResources()">
+              {{ 'generic.refresh' | translate }}
+            </pa-button>
+          }
+
+          @if (isAdminOrContrib | async) {
+            <stf-upload-button></stf-upload-button>
+          }
+        </div>
       </div>
 
       <div class="active-filters">
