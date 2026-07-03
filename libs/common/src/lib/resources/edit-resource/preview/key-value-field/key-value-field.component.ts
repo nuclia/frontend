@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { KVRange, KVSchemaField, KVValue } from '@nuclia/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { KVRange, KVSchema, KVSchemaField, KVValue } from '@nuclia/core';
 
 @Component({
   selector: 'stf-key-value-field',
@@ -10,9 +10,11 @@ import { KVRange, KVSchemaField, KVValue } from '@nuclia/core';
   standalone: false,
 })
 export class KeyValueFieldComponent {
-  fieldId = input.required<string>();
+  fieldId = input<string>();
   data = input<Record<string, KVValue> | undefined>();
-  schemaFields = input<KVSchemaField[]>();
+  schema = input<KVSchema>();
+  schemaFields = computed(() => this.schema()?.fields || [] );
+  title = computed(() => this.schema()?.id || '' );
 
   private datePipe = inject(DatePipe);
 

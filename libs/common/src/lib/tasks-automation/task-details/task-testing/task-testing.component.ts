@@ -54,8 +54,17 @@ export class TaskTestingComponent {
   loading = false;
   results?: TestResults[];
   tokens?: { input: number; output: number };
+  notSupported = false;
 
-  @Input() task: DataAugmentationTaskOnGoing | undefined;
+  @Input()
+  set task(value: DataAugmentationTaskOnGoing | undefined) {
+    this._task = value;
+    this.notSupported = !!value?.parameters.operations?.[0]?.ask?.store_as_key_value;
+  }
+  get task() {
+    return this._task;
+  }
+  private _task: DataAugmentationTaskOnGoing | undefined;
 
   suggestions = this.updateSuggestions.pipe(
     debounceTime(300),

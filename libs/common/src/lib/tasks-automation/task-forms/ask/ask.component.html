@@ -15,31 +15,59 @@
         <pa-toggle
           formControlName="json"
           labelOnRight
-          (valueChange)="updateForm()">
+          (click)="onJSONChange()">
           {{ 'tasks-automation.generator.your-question.use-json' | translate }}
         </pa-toggle>
-        <pa-toggle
-          formControlName="customPrompt"
-          labelOnRight>
-          {{ 'tasks-automation.generator.your-question.advanced-prompt' | translate }}
-        </pa-toggle>
         @if (isJSON) {
-          <nsi-info-card>
-            {{ 'tasks-automation.generator.your-question.info-json' | translate }}
-            <blockquote>
-              <code>
-                {{ jsonExample | json }}
-              </code>
-            </blockquote>
-          </nsi-info-card>
+          <div class="field-type">
+            <div class="title-s">{{ 'tasks-automation.generator.your-question.field-type' | translate }}</div>
+            <pa-radio-group formControlName="fieldType">
+              <pa-radio value="json">{{ 'tasks-automation.generator.your-question.json-field' | translate }}</pa-radio>
+              <pa-radio value="keyValue">{{ 'resource.field-key_value' | translate }}</pa-radio>
+            </pa-radio-group>
+          </div>
+          @if (storeAsKeyValue) {
+            @if (noKvSchemas | async) {
+              <nsi-info-card>
+                {{ 'tasks-automation.generator.your-question.no-schemas' | translate }}
+                <a [routerLink]="schemasUrl | async">{{ 'navbar.settings' | translate }}</a>
+              </nsi-info-card>
+            } @else {
+              <pa-select
+                formControlName="kv_schema_id"
+                [label]="'tasks-automation.generator.your-question.structured-schema' | translate"
+                (valueChange)="selectSchema($event)"
+                [options]="kvSchemasOptions | async"></pa-select>
+              @if (kvSchemaId && reviewDescriptions()) {
+                <nsi-info-card>
+                  {{ 'tasks-automation.generator.your-question.review-descriptions' | translate }}
+                </nsi-info-card>
+              }
+            }
+          } @else {
+            <nsi-info-card>
+              {{ 'tasks-automation.generator.your-question.info-json' | translate }}
+              <blockquote>
+                <code>
+                  {{ jsonExample | json }}
+                </code>
+              </blockquote>
+            </nsi-info-card>
+          }
           <nsi-expandable-textarea
-            rows="4"
+            rows="6"
             formControlName="question"
             modalTitle="tasks-automation.generator.your-question.json-schema"
-            [errorMessages]="errorMessages">
+            [errorMessages]="errorMessages"
+            [hidden]="storeAsKeyValue && !kvSchemaId">
             {{ 'tasks-automation.generator.your-question.json-schema' | translate }}
           </nsi-expandable-textarea>
         } @else {
+          <pa-toggle
+            formControlName="customPrompt"
+            labelOnRight>
+            {{ 'tasks-automation.generator.your-question.advanced-prompt' | translate }}
+          </pa-toggle>
           @if (customPrompt) {
             <nsi-info-card>
               <span [innerHTML]="'tasks-automation.generator.your-question.info-prompt' | translate"></span>

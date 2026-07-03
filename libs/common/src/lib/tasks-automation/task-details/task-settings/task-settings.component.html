@@ -110,6 +110,13 @@
       itemTitle="tasks-automation.generator.your-question.title"
       description="tasks-automation.generator.your-question.description">
       <div class="settings-container">
+        @if (askOperation.store_as_key_value) {
+          <div class="setting">
+            <span>{{ 'tasks-automation.generator.your-question.structured-schema' | translate }}</span>
+            <div>{{ askOperation.kv_schema_id }}</div>
+          </div>
+          <div class="separator-line"></div>
+        }
         <div class="setting">
           @if (askOperation.json) {
             <span>{{ 'tasks-automation.generator.your-question.json-schema' | translate }}</span>

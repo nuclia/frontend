@@ -5,37 +5,45 @@
     badge="generic.badge.optional"
     noTopBorder>
     <div class="container">
-      <div>
-        <pa-input
-          icon="search"
-          [paPopup]="dropdown"
-          #popup="paPopupRef"
-          popupDisabled
-          [sameWidth]="true"
-          (keyUp)="!dropdown.isDisplayed && popup.toggle()"
-          (focusing)="!dropdown.isDisplayed && popup.toggle()"
-          (valueChange)="updateSuggestions.next($event)">
-          {{ 'tasks-automation.testing.search' | translate }}
-        </pa-input>
-        <pa-dropdown #dropdown>
-          @for (resource of suggestions | async; track resource.id) {
-            <pa-option (selectOption)="addResource(resource)">{{ resource.title }}</pa-option>
-          }
-        </pa-dropdown>
-      </div>
-      @if (resources.length > 0) {
-        <div class="resources">
-          @for (resource of resources; track resource.id) {
-            <pa-checkbox [(value)]="selected[resource.id]">{{ resource.title }}</pa-checkbox>
-          }
+      @if (notSupported) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'tasks-automation.testing.not-supported' | translate }}
+        </nsi-info-card>
+      } @else {
+        <div>
+          <pa-input
+            icon="search"
+            [paPopup]="dropdown"
+            #popup="paPopupRef"
+            popupDisabled
+            [sameWidth]="true"
+            (keyUp)="!dropdown.isDisplayed && popup.toggle()"
+            (focusing)="!dropdown.isDisplayed && popup.toggle()"
+            (valueChange)="updateSuggestions.next($event)">
+            {{ 'tasks-automation.testing.search' | translate }}
+          </pa-input>
+          <pa-dropdown #dropdown>
+            @for (resource of suggestions | async; track resource.id) {
+              <pa-option (selectOption)="addResource(resource)">{{ resource.title }}</pa-option>
+            }
+          </pa-dropdown>
         </div>
+        @if (resources.length > 0) {
+          <div class="resources">
+            @for (resource of resources; track resource.id) {
+              <pa-checkbox [(value)]="selected[resource.id]">{{ resource.title }}</pa-checkbox>
+            }
+          </div>
+        }
+        <pa-button
+          class="run"
+          [disabled]="selectedIds.length === 0 || loading"
+          (click)="run()">
+          {{ 'tasks-automation.testing.execute-test' | translate }}
+        </pa-button>
       }
-      <pa-button
-        class="run"
-        [disabled]="selectedIds.length === 0 || loading"
-        (click)="run()">
-        {{ 'tasks-automation.testing.execute-test' | translate }}
-      </pa-button>
     </div>
   </nsi-two-columns-configuration-item>
   <nsi-two-columns-configuration-item
