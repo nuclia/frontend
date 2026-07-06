@@ -303,9 +303,9 @@ export class ResourceListComponent implements OnDestroy {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     // some old labelsets might be lowercase while the actual ones on resources are not
     // this fix make them visible
-    const nonFacetedLabels = Object.values(labelSets).reduce((all, labelSet) => {
+    const nonFacetedLabels = Object.entries(labelSets).reduce((all, [labelSetKey, labelSet]) => {
       labelSet.labels.forEach((label) => {
-        const filter = getFilterFromLabel({ labelset: labelSet.title, label: label.title });
+        const filter = getFilterFromLabel({ labelset: labelSetKey, label: label.title });
         if (!filters.classification.some((v) => v.id === filter)) {
           // we cannot give the counting because the value differs by its case
           all.push(new OptionModel({ id: filter, label: `${labelSet.title}/${label.title} (?)`, value: filter }));
