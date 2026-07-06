@@ -306,7 +306,6 @@ export const getAnswerWithoutRAG = (
   question: string,
   chat?: Ask.Entry[],
   options?: ChatOptions,
-  forcePrompt?: string,
 ): Observable<Ask.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -322,10 +321,9 @@ export const getAnswerWithoutRAG = (
         return acc;
       }, [] as Ask.ContextEntry[]);
 
-  const defaultPrompt = '{question}';
   const predictOptions: PredictAnswerOptions = {
     generative_model: options?.generative_model || generative_model || undefined,
-    user_prompt: { prompt: forcePrompt || prompt || defaultPrompt },
+    user_prompt: { prompt: '{question}' },
     system: systemPrompt || undefined,
     retrieval: false,
     chat_history: context && context.length > 0 ? context : undefined,
@@ -657,16 +655,11 @@ Only return the category name. The value must be ${configs.map((c) => `"${c}"`).
     },
   };
 
-  return getAnswerWithoutRAG(
-    question,
-    undefined,
-    {
-      answer_json_schema,
-      generative_model: routing.generative_model,
-      synchronous: true,
-    },
-    '{question}',
-  ).pipe(
+  return getAnswerWithoutRAG(question, undefined, {
+    answer_json_schema,
+    generative_model: routing.generative_model,
+    synchronous: true,
+  }).pipe(
     map((res) => {
       if (res.type === 'error') {
         return 'FALLBACK';

@@ -28,41 +28,43 @@
       </div>
     </div>
 
-    <div class="config-form-field">
-      <pa-toggle
-        formControlName="usePrompt"
-        withBackground
-        spaceBetweenLabelAndToggle
-        (valueChange)="heightChanged.emit()">
-        <span class="toggle-label">
-          {{ 'search.configuration.generative-answer.prompt.toggle-label' | translate }}
-        </span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.generative-answer.prompt.toggle-description' | translate }}
-      </div>
-      @if (!!defaultPrompt) {
-        <blockquote [class.overridden]="userPromptOverridden">
-          {{ defaultPrompt }}
-        </blockquote>
-      }
-      <div
-        class="extra-fields"
-        [class.visible]="usePromptEnabled">
-        @if (userPromptInfo) {
-          <nsi-info-card>{{ userPromptInfo }}</nsi-info-card>
+    @if (useSearchResults) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="usePrompt"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.prompt.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.prompt.toggle-description' | translate }}
+        </div>
+        @if (!!defaultPrompt) {
+          <blockquote [class.overridden]="userPromptOverridden">
+            {{ defaultPrompt }}
+          </blockquote>
         }
-        <nsi-expandable-textarea
-          formControlName="prompt"
-          resizable
-          rows="4"
-          help="search.configuration.generative-answer.prompt.textarea-help"
-          modalTitle="search.configuration.generative-answer.prompt.textarea-label"
-          (resizing)="heightChanged.emit()">
-          {{ 'search.configuration.generative-answer.prompt.textarea-label' | translate }}
-        </nsi-expandable-textarea>
+        <div
+          class="extra-fields"
+          [class.visible]="usePromptEnabled">
+          @if (userPromptInfo) {
+            <nsi-info-card>{{ userPromptInfo }}</nsi-info-card>
+          }
+          <nsi-expandable-textarea
+            formControlName="prompt"
+            resizable
+            rows="4"
+            help="search.configuration.generative-answer.prompt.textarea-help"
+            modalTitle="search.configuration.generative-answer.prompt.textarea-label"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.generative-answer.prompt.textarea-label' | translate }}
+          </nsi-expandable-textarea>
+        </div>
       </div>
-    </div>
+    }
     <div class="config-form-field">
       <pa-toggle
         formControlName="useSystemPrompt"
