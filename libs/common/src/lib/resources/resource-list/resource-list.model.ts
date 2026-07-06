@@ -19,6 +19,7 @@ import {
 } from '@nuclia/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ResourceKeyValueField } from './resource-key-values.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -27,6 +28,7 @@ export interface ColoredLabel extends Classification {
 export interface ResourceWithLabels {
   resource: Resource;
   labels: ColoredLabel[];
+  keyValueFields: ResourceKeyValueField[];
   description?: string;
   status?: string;
   rank?: number;

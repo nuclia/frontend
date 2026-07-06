@@ -7,6 +7,7 @@ import {
   LabelSets,
   ProcessingStatus,
   Resource,
+  ResourceProperties,
   RESOURCE_STATUS,
   SortOption,
 } from '@nuclia/core';
@@ -50,6 +51,7 @@ import {
   searchResources,
 } from './resource-list.model';
 import { getResourceErrors } from '../edit-resource';
+import { extractResourceKeyValueFields } from './resource-key-values.utils';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -122,6 +124,7 @@ export class ResourceListService {
 
   private _sort: SortOption = DEFAULT_SORTING;
   private _cursor?: string;
+  private _keyValueDetailRequestId = 0;
   private formatETA: FormatETAPipe = new FormatETAPipe();
 
   constructor() {
@@ -297,6 +300,7 @@ export class ResourceListService {
       this.sdk.currentKb.pipe(
         take(1),
         switchMap((kb) =>
+          // TODO: request/include key_values in the Resources list response when the API supports it.
           searchResources(
             kb,
             resourceListParams,
@@ -327,8 +331,63 @@ export class ResourceListService {
           resourceIdList: newData.map((data) => data.resource.id),
           hasMore,
         };
+
+        this.loadKeyValueDetailsForVisibleResources(newData, kbId);
       }),
     );
+  }
+
+  private loadKeyValueDetailsForVisibleResources(rows: ResourceWithLabels[], kbId: string): void {
+    if (this.status === RESOURCE_STATUS.PENDING) {
+      return;
+    }
+
+    const resourceIds = rows
+      .filter((row) => row.resource.kb === kbId && row.keyValueFields.length === 0)
+      .map((row) => row.resource.id);
+    if (resourceIds.length === 0) {
+      return;
+    }
+
+    const requestId = ++this._keyValueDetailRequestId;
+
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          forkJoin(
+            resourceIds.map((resourceId) =>
+              kb.getResource(resourceId, [ResourceProperties.VALUES]).pipe(
+                map((resourceData) => ({
+                  resourceId,
+                  keyValueFields: extractResourceKeyValueFields(resourceData),
+                })),
+                catchError(() =>
+                  of({
+                    resourceId,
+                    keyValueFields: [],
+                  }),
+                ),
+              ),
+            ),
+          ),
+        ),
+      )
+      .subscribe((enrichedRows) => {
+        if (requestId !== this._keyValueDetailRequestId) {
+          return;
+        }
+
+        const keyValueFieldsByResourceId = new Map(
+          enrichedRows.map((row) => [row.resourceId, row.keyValueFields] as const),
+        );
+        const updatedRows = this._data.value.map((row) => ({
+          ...row,
+          keyValueFields: keyValueFieldsByResourceId.get(row.resource.id) || row.keyValueFields,
+        }));
+
+        this._data.next(updatedRows);
+      });
   }
 
   private getResourceWithLabelsAndErrors(
@@ -340,6 +399,7 @@ export class ResourceListService {
     const resourceWithLabels: ResourceWithLabels = {
       resource,
       labels: [],
+      keyValueFields: extractResourceKeyValueFields(resourceData),
     };
     const labels = resource.getClassifications();
     if (labels.length > 0) {
@@ -374,6 +434,7 @@ export class ResourceListService {
       return {
         resource,
         labels: [],
+        keyValueFields: [],
         status:
           data.schedule_order === -1
             ? this.translate.instant('resource.status.processing')

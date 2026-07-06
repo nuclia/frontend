@@ -69,6 +69,20 @@ table {
   overflow-x: auto;
 }
 
+.key-value-fields {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.key-value-fields-expanded {
+    overflow: visible;
+    text-overflow: initial;
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
 .loading-shade {
   position: fixed;
   top: 0;

@@ -93,6 +93,19 @@
               {{ (fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
             </pa-button>
           }
+          @if (visibleColumns.includes('key-value-fields')) {
+            <pa-button
+              size="small"
+              aspect="basic"
+              iconAndText
+              [icon]="fullKeyValueFields ? 'collapse' : 'expand'"
+              (click)="fullKeyValueFields = !fullKeyValueFields">
+              {{
+                (fullKeyValueFields ? 'resource.collapse-key-value-fields' : 'resource.expand-key-value-fields')
+                  | translate
+              }}
+            </pa-button>
+          }
         }
         <nsi-dropdown-button
           size="small"
@@ -285,6 +298,46 @@
               @if (visibleColumns.includes('language')) {
                 <pa-table-cell center>
                   <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
+                </pa-table-cell>
+              }
+              @if (visibleColumns.includes('key-value-fields')) {
+                <pa-table-cell>
+                  <span
+                    class="body-s key-value-fields"
+                    [class.key-value-fields-expanded]="fullKeyValueFields"
+                    [paTooltip]="getKeyValueFieldsDisplay(row)">
+                    @if (row.keyValueFields.length === 0) {
+                      —
+                    } @else {
+                      @if (getGroupedKeyValueFields(row); as groupedKeyValueFields) {
+                        @if (groupedKeyValueFields.length <= 1) {
+                          @for (field of row.keyValueFields; track field.id) {
+                            <strong>{{ field.label }}:</strong>
+                            {{ formatKeyValueValue(field.value) }}
+                            @if (!$last) {
+                              <span> · </span>
+                            }
+                          }
+                        } @else {
+                          @for (groupEntry of groupedKeyValueFields; track groupEntry.group) {
+                            <span>{{ groupEntry.group }}:</span>
+                            <span>
+                              @for (field of groupEntry.fields; track field.id) {
+                                <strong>{{ field.label }}:</strong>
+                                {{ formatKeyValueValue(field.value) }}
+                                @if (!$last) {
+                                  <span> · </span>
+                                }
+                              }
+                            </span>
+                            @if (!$last) {
+                              <span> · </span>
+                            }
+                          }
+                        }
+                      }
+                    }
+                  </span>
                 </pa-table-cell>
               }
               @if (visibleColumns.includes('visibility')) {

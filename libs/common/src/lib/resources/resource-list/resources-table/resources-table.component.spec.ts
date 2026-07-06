@@ -19,10 +19,19 @@ import { UploadService } from '../../../upload';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 import { ResourceListService } from './../resource-list.service';
 import { ResourcesTableComponent } from './resources-table.component';
+import { ResourceWithLabels } from '../resource-list.model';
 
 describe('ResourceTableComponent', () => {
   let component: ResourcesTableComponent;
   let fixture: ComponentFixture<ResourcesTableComponent>;
+
+  function getRow(keyValueFields: ResourceWithLabels['keyValueFields']): ResourceWithLabels {
+    return {
+      resource: { id: 'resource-1' } as any,
+      labels: [],
+      keyValueFields,
+    };
+  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -76,5 +85,109 @@ describe('ResourceTableComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('shows key-value fields in a compact string', () => {
+    const value = component.getKeyValueFieldsDisplay(
+      getRow([
+        {
+          id: 'generic_schema_1.available',
+          group: 'generic_schema_1',
+          key: 'available',
+          label: 'available',
+          value: true,
+        },
+        {
+          id: 'generic_schema_1.expires_at',
+          group: 'generic_schema_1',
+          key: 'expires_at',
+          label: 'expires_at',
+          value: 'Jul 03, 2026',
+        },
+      ]),
+    );
+
+    expect(value).toBe('available: true · expires_at: Jul 03, 2026');
+  });
+
+  it('formats key-value values without raw JSON', () => {
+    const value = component.getKeyValueFieldsDisplay(
+      getRow([
+        {
+          id: 'generic_schema_1.quantity',
+          group: 'generic_schema_1',
+          key: 'quantity',
+          label: 'quantity',
+          value: { lower: 1, upper: 5 },
+        },
+        {
+          id: 'generic_schema_1.label_repeated',
+          group: 'generic_schema_1',
+          key: 'label_repeated',
+          label: 'label_repeated',
+          value: ['label_1', 'label_2'],
+        },
+        {
+          id: 'generic_schema_1.available',
+          group: 'generic_schema_1',
+          key: 'available',
+          label: 'available',
+          value: true,
+        },
+        {
+          id: 'generic_schema_1.price',
+          group: 'generic_schema_1',
+          key: 'price',
+          label: 'price',
+          value: 1.15,
+        },
+      ]),
+    );
+
+    expect(value).toContain('quantity: 1 – 5');
+    expect(value).toContain('label_repeated: label_1, label_2');
+    expect(value).toContain('available: true');
+    expect(value).toContain('price: 1.15');
+    expect(value).not.toContain('{"lower":1,"upper":5}');
+    expect(value).not.toContain('["label_1","label_2"]');
+  });
+
+  it('never renders field status as key-value content', () => {
+    const value = component.getKeyValueFieldsDisplay(
+      getRow([
+        {
+          id: 'generic_schema_1.available',
+          group: 'generic_schema_1',
+          key: 'available',
+          label: 'available',
+          value: true,
+        },
+      ]),
+    );
+
+    expect(value).not.toContain('status: PROCESSED');
+    expect(value).toContain('available: true');
+  });
+
+  it('shows an em dash when key-value data is missing', () => {
+    expect(component.getKeyValueFieldsDisplay(getRow([]))).toBe('—');
+  });
+
+  it('starts with collapsed key-value field display', () => {
+    expect(component.fullKeyValueFields).toBe(false);
+  });
+
+  it('can toggle key-value field expansion state', () => {
+    component.fullKeyValueFields = true;
+
+    expect(component.fullKeyValueFields).toBe(true);
+  });
+
+  it('keeps existing columns and adds optional key-value fields column', () => {
+    const columns = component.initialColumns.map((column) => column.id);
+
+    expect(columns).toContain('title');
+    expect(columns).toContain('language');
+    expect(columns).toContain('key-value-fields');
   });
 });

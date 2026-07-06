@@ -1,5 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
+import {
+  ColoredLabel,
+  ColumnHeader,
+  DEFAULT_PREFERENCES,
+  RESOURCE_LIST_PREFERENCES,
+  ResourceWithLabels,
+} from '../resource-list.model';
 import { delay, filter, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, catchError, combineLatest, defer, from, Observable, of, skip, take, toArray } from 'rxjs';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
@@ -9,6 +15,8 @@ import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import { UploadService } from '../../../upload/upload.service';
 import { mergeExistingAndNewLabels, removeLabels } from '../../edit-resource';
+import { formatResourceKeyValueValue } from '../resource-key-values.utils';
+import { ResourceKeyValueField } from '../resource-key-values.utils';
 
 @Component({
   selector: 'stf-resources-table',
@@ -67,6 +75,13 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
         optional: true,
         visible: this.userPreferences.columns.includes('language'),
       },
+      {
+        id: 'key-value-fields',
+        label: 'resource.field-key_value',
+        size: 'minmax(256px, 1.5fr)',
+        optional: true,
+        visible: this.userPreferences.columns.includes('key-value-fields'),
+      },
     ];
   }
   userPreferences: typeof DEFAULT_PREFERENCES;
@@ -81,7 +96,9 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   currentRemoveLabelList: Classification[] = [];
   deletingLabel = false;
   fullLabels = false;
+  fullKeyValueFields = false;
   skeletonRows = new Array(20);
+  protected formatKeyValueValue = formatResourceKeyValueValue;
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,
@@ -282,5 +299,45 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
       column.visible = !column.visible;
       this.columnVisibilityUpdate.next(!column.visible);
     }
+  }
+
+  getKeyValueFieldsDisplay(row: ResourceWithLabels): string {
+    if (!row.keyValueFields.length) {
+      return '—';
+    }
+
+    const groups = row.keyValueFields.reduce(
+      (grouped, field) => {
+        grouped[field.group] = grouped[field.group] || [];
+        grouped[field.group].push(field);
+        return grouped;
+      },
+      {} as Record<string, ResourceWithLabels['keyValueFields']>,
+    );
+
+    const groupEntries = Object.entries(groups);
+    if (groupEntries.length <= 1) {
+      return row.keyValueFields.map((field) => `${field.label}: ${formatResourceKeyValueValue(field.value)}`).join(' · ');
+    }
+
+    return groupEntries
+      .map(([group, fields]) => {
+        const values = fields.map((field) => `${field.label}: ${formatResourceKeyValueValue(field.value)}`).join(' · ');
+        return `${group}: ${values}`;
+      })
+      .join(' · ');
+  }
+
+  getGroupedKeyValueFields(row: ResourceWithLabels): Array<{ group: string; fields: ResourceKeyValueField[] }> {
+    const grouped = row.keyValueFields.reduce(
+      (groups, field) => {
+        groups[field.group] = groups[field.group] || [];
+        groups[field.group].push(field);
+        return groups;
+      },
+      {} as Record<string, ResourceKeyValueField[]>,
+    );
+
+    return Object.entries(grouped).map(([group, fields]) => ({ group, fields }));
   }
 }
