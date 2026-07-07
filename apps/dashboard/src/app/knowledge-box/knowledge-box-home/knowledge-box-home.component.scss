@@ -23,6 +23,12 @@
       max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
       min-width: var(--width-small-column);
     }
+
+    @media (min-width: $size-viewport-wide-min) {
+      &.wide-column {
+        max-width: unset;
+      }
+    }
   }
   .row-container {
     display: flex;
