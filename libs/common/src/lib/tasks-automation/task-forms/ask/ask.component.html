@@ -23,7 +23,12 @@
             <div class="title-s">{{ 'tasks-automation.generator.your-question.field-type' | translate }}</div>
             <pa-radio-group formControlName="fieldType">
               <pa-radio value="json">{{ 'tasks-automation.generator.your-question.json-field' | translate }}</pa-radio>
-              <pa-radio value="keyValue">{{ 'resource.field-key_value' | translate }}</pa-radio>
+              <pa-radio
+                class="beta-option"
+                value="keyValue">
+                {{ 'resource.field-key_value' | translate }}
+                <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+              </pa-radio>
             </pa-radio-group>
           </div>
           @if (storeAsKeyValue) {

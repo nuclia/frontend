@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExpandableTextareaComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import {
+  ExpandableTextareaComponent,
+  InfoCardComponent,
+  TwoColumnsConfigurationItemComponent,
+  BadgeComponent,
+} from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -25,6 +30,7 @@ import { RouterModule } from '@angular/router';
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaTogglesModule,
+    BadgeComponent,
   ],
   templateUrl: './ask.component.html',
   styleUrls: ['../../_task.common.scss', './ask.component.scss'],
