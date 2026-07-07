@@ -210,9 +210,22 @@
           }
         </div>
 
-        @if (isAdminOrContrib | async) {
-          <stf-upload-button></stf-upload-button>
-        }
+        <div class="header-actions">
+          @if (isMainView || isProcessedView) {
+            <pa-button
+              kind="secondary"
+              aspect="basic"
+              icon="refresh"
+              iconAndText
+              (click)="refresh()">
+              {{ 'generic.refresh' | translate }}
+            </pa-button>
+          }
+
+          @if (isAdminOrContrib | async) {
+            <stf-upload-button></stf-upload-button>
+          }
+        </div>
       </div>
 
       <div class="active-filters">

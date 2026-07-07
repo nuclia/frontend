@@ -4,6 +4,10 @@
 pa-table {
   display: block;
   width: tokens.$content-width;
+
+  ::ng-deep .pa-table-grid--cell {
+    min-width: 0;
+  }
 }
 
 .extension {

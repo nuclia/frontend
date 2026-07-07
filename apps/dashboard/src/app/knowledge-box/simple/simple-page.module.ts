@@ -13,6 +13,7 @@ import {
   PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 
 import { SimplePageComponent } from './simple-page.component';
@@ -54,6 +55,7 @@ import { SimplePageRoutingModule } from './simple-page-routing.module';
     PaPopupModule,
     PaTableModule,
     PaTextFieldModule,
+    PaTooltipModule,
     SisProgressModule,
   ],
 })
