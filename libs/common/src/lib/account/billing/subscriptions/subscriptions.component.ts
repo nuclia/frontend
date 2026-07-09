@@ -88,7 +88,7 @@ export class SubscriptionsComponent implements OnDestroy {
 
   goToPaymentDetails(type: AccountTypes) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/billing/checkout`], {
+      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/home/subscriptions/checkout`], {
         queryParams: { type },
       });
     });

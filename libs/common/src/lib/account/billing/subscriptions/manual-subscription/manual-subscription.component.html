@@ -2,7 +2,7 @@
   <div class="usage">
     <header>
       <div>
-        <h2>{{ 'billing.usage.title' | translate }}</h2>
+        <h2 class="page-subtitle">{{ 'billing.usage.title' | translate }}</h2>
         <div>
           {{ 'billing.usage.interval' | translate: { to: (usage | async)?.end_billing_date | date: 'YYYY-MM-dd' } }}
         </div>

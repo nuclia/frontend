@@ -1,0 +1,54 @@
+<app-account-page-layout
+  [title]="'account.account-title' | translate"
+  [description]="'account.settings-description' | translate"
+  [backLink]="backLink | async"
+  panelId="settings-section-panel">
+  @if (isTrial | async) {
+    <div
+      top
+      class="trial-status-top">
+      <app-account-status (upgradeClick)="navigateTo('subscriptions')"></app-account-status>
+    </div>
+  }
+
+  <pa-tabs
+    tabs
+    class="settings-tabs">
+    <pa-tab
+      routerLink="consumption"
+      routerLinkActive
+      #rla0="routerLinkActive"
+      [active]="rla0.isActive"
+      ariaControls="settings-section-panel">
+      {{ 'account.consumption' | translate }}
+    </pa-tab>
+    @if (showSubscriptionsTab | async) {
+      <pa-tab
+        routerLink="subscriptions"
+        routerLinkActive
+        #rla1="routerLinkActive"
+        [active]="rla1.isActive"
+        ariaControls="settings-section-panel">
+        {{ 'account.billing' | translate }}
+      </pa-tab>
+    }
+    <pa-tab
+      routerLink="preferences"
+      routerLinkActive
+      #rla2="routerLinkActive"
+      [active]="rla2.isActive"
+      ariaControls="settings-section-panel">
+      {{ 'generic.user_preferences' | translate }}
+    </pa-tab>
+    @if (showAccountSettingsTab | async) {
+      <pa-tab
+        routerLink="account-settings"
+        routerLinkActive
+        #rla3="routerLinkActive"
+        [active]="rla3.isActive"
+        ariaControls="settings-section-panel">
+        {{ 'account.manage' | translate }}
+      </pa-tab>
+    }
+  </pa-tabs>
+</app-account-page-layout>

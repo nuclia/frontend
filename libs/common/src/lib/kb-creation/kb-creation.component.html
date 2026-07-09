@@ -1,4 +1,6 @@
-<div class="page-spacing">
+<div
+  class="page-spacing"
+  [class.embedded]="embedded">
   @if (saving) {
     <div class="loader-backdrop">
       <div class="spinner-container">
@@ -8,10 +10,25 @@
   }
 
   <header>
-    <nsi-back-button [link]="backPath">{{ 'account.kb.creation-form.back-button' | translate }}</nsi-back-button>
+    @if (embedded) {
+      <a
+        class="embedded-back-link title-xs"
+        [routerLink]="embeddedBackCommands">
+        <pa-icon
+          name="chevron-left"
+          size="small"></pa-icon>
+        {{ 'account.kb.creation-form.back-button' | translate }}
+      </a>
+    } @else {
+      <nsi-back-button [link]="backPath">{{ 'account.kb.creation-form.back-button' | translate }}</nsi-back-button>
+    }
 
     <div>
-      <h1 class="page-title">{{ 'account.kb.creation-form.title' | translate }}</h1>
+      @if (embedded) {
+        <h2 class="page-subtitle">{{ 'account.kb.creation-form.title' | translate }}</h2>
+      } @else {
+        <h1 class="page-title">{{ 'account.kb.creation-form.title' | translate }}</h1>
+      }
       <div class="page-description">{{ 'account.kb.creation-form.description' | translate }}</div>
     </div>
   </header>

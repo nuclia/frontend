@@ -46,9 +46,6 @@ export class TopbarComponent {
         !!accountType && accountType !== 'v3enterprise' && !isTypeEnforced && isAccountManager,
     ),
   );
-  billingUrl = this.sdk.currentAccount.pipe(
-    map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
-  );
   isTrial = this.features.isTrial;
   inPlatformApp = this.navigationService.inPlatformApp;
   inDashboard = this.navigationService.inDashboard;
@@ -96,6 +93,35 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
+    // When in account management use the same logic as the "Back to homepage"
+    // button in AccountSettingsComponent: resolve from currentKb (startWith null
+    // so we always get one emission even if no KB is in context).
+    if (this.navigationService.inAccountManagement(location.pathname)) {
+      this.sdk.currentAccount
+        .pipe(
+          take(1),
+          switchMap((account) => {
+            if (!this.sdk.isKbLoaded) {
+              return of(this.navigationService.getKbSelectUrl(account.slug));
+            }
+            // currentKb and aragList are both in ReplaySubjects already — isArag emits synchronously
+            return combineLatest([this.sdk.currentKb, this.sdk.isArag]).pipe(
+              take(1),
+              map(([kb, isArag]) =>
+                isArag
+                  ? this.navigationService.getRetrievalAgentUrl(account.slug, kb.slug as string)
+                  : this.navigationService.getKbUrl(
+                      account.slug,
+                      (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string,
+                    ),
+              ),
+            );
+          }),
+        )
+        .subscribe((url) => this.router.navigate([url]));
+      return;
+    }
+
     const simpleHomeUrl$ = this.sdk.isKbLoaded
       ? this.navigationService.kbUrl
       : of(this.navigationService.getAccountSelectUrl());
@@ -122,15 +148,8 @@ export class TopbarComponent {
   }
 
   goToSubscriptions() {
-    combineLatest([this.simpleMode.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(
-      ([isSimple, account]) => {
-        if (isSimple) {
-          const homeUrl = this.navigationService.getAccountManageUrl(account.slug) + '/home';
-          this.router.navigate([homeUrl], { queryParams: { tab: 'subscriptions' } });
-        } else {
-          this.router.navigate([this.navigationService.getAccountManageUrl(account.slug) + '/billing']);
-        }
-      },
-    );
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.router.navigate([`${this.navigationService.getAccountManageUrl(account.slug)}/home/subscriptions`]);
+    });
   }
 }

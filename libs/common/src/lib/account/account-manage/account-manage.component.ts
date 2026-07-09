@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { catchError, concatMap, map, shareReplay, takeUntil, tap } from 'rxjs/operators';
-import { AccountVerificationService, BillingService, NavigationService, SDKService, STFUtils, SubscriptionStatus } from '@flaps/core';
+import {
+  AccountVerificationService,
+  BillingService,
+  NavigationService,
+  SDKService,
+  STFUtils,
+  SubscriptionStatus,
+} from '@flaps/core';
 import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';

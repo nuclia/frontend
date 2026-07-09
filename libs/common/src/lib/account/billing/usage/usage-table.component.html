@@ -2,7 +2,7 @@
   @if (usageData | async; as usage) {
     <header>
       <div>
-        <h2>{{ 'billing.usage.title' | translate }}</h2>
+        <h2 class="page-subtitle">{{ 'billing.usage.title' | translate }}</h2>
         <div>
           <div>{{ 'billing.usage.description' | translate }}</div>
           <em>{{ 'billing.usage.interval' | translate: { to: usage.end_billing_date | date: 'yyyy-MM-dd' } }}</em>

@@ -1,10 +1,31 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../account/account';
+
+.page-spacing {
+  &.embedded {
+    min-height: auto;
+    padding: 0;
+  }
+}
 
 header {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
   margin-bottom: rhythm(4);
+}
+
+.embedded-back-link {
+  align-items: center;
+  color: $color-dark-stronger;
+  display: flex;
+  gap: rhythm(1);
+  padding-right: rhythm(1);
+  width: fit-content;
+
+  pa-icon {
+    display: flex;
+  }
 }
 
 .toggle-container {

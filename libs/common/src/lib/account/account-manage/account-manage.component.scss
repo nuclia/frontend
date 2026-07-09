@@ -1,7 +1,8 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../account';
 
-h1 {
-  margin-bottom: rhythm(4);
+.page-subtitle {
+  margin-bottom: rhythm(2);
 }
 .section {
   border-bottom: 1px solid $color-neutral-light;

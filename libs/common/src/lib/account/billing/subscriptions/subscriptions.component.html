@@ -3,7 +3,7 @@
 } @else if ((isManuallySubscribed | async) === true) {
   <app-manual-subscription></app-manual-subscription>
 } @else {
-  <h1 class="page-title">{{ 'billing.subscription.title' | translate }}</h1>
+  <h2 class="page-subtitle">{{ 'billing.subscription.title' | translate }}</h2>
   <p class="page-description">{{ 'billing.subscription.help' | translate }}</p>
   <div class="header">
     @if (canSelectCurrency) {
@@ -49,7 +49,11 @@
               } @else if ((accountType | async) === 'cowork') {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
               }
             </th>
           } @else {
@@ -70,7 +74,11 @@
               } @else if ((accountType | async) === 'v3starter') {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
               }
             </th>
             <th class="plan">
@@ -90,7 +98,11 @@
               } @else if ((accountType | async) === 'v3pro') {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
               }
             </th>
             <th class="plan">
@@ -101,7 +113,11 @@
               @if ((accountType | async) === 'v3enterprise') {
                 <ng-container *ngTemplateOutlet="subscribed"></ng-container>
               } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+                <pa-button
+                  kind="primary"
+                  (click)="contact()">
+                  {{ 'billing.contact' | translate }}
+                </pa-button>
               }
             </th>
           }

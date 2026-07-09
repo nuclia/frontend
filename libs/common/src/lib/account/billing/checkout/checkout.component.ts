@@ -97,8 +97,8 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
   simpleMode = this.navigation.simpleMode;
-  backToSettingsLink = combineLatest([this.navigation.simpleMode, this.sdk.currentAccount]).pipe(
-    map(([isSimple, account]) => this.navigation.getAccountManageUrl(account.slug) + (isSimple ? '/home' : '/billing')),
+  backToSettingsLink = this.sdk.currentAccount.pipe(
+    map((account) => `${this.navigation.getAccountManageUrl(account.slug)}/home/subscriptions`),
   );
 
   updateCurrency = new Subject<string>();
@@ -412,7 +412,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
                   return of(`${this.navigation.getKbSelectUrl(newAccount.slug)}`);
                 }
               } else {
-                return of(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
+                return of(`${this.navigation.getAccountManageUrl(newAccount.slug)}/home/subscriptions`);
               }
             }),
           );

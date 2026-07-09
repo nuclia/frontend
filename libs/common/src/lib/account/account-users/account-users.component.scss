@@ -1,13 +1,42 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../account';
 
 .account-users {
-  padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
-    var(--app-layout-padding-left);
-
+  padding: 0;
   .page-description {
     color: $color-neutral-regular;
     margin-bottom: rhythm(3);
   }
+
+  .kb-users-callout {
+    align-items: center;
+    background: $color-light-stronger;
+    border: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(1);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: rhythm(2);
+    justify-content: space-between;
+    margin-bottom: rhythm(3);
+    max-width: 100%;
+    min-width: 640px;
+    width: 640px;
+    padding: rhythm(2);
+    align-self: flex-start;
+  }
+
+  .kb-users-callout-text {
+    color: $color-neutral-regular;
+    display: block;
+    flex: 1 1 auto;
+    white-space: nowrap;
+    min-width: 0;
+
+    .title-xxs {
+      margin: 0;
+    }
+  }
+
   .users-left,
   .users-amount {
     strong {

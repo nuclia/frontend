@@ -18,7 +18,6 @@ import {
 
 const IN_ARAG = /at\/[^/]+\/[^/]+\/arag/;
 const IN_ACCOUNT_MANAGEMENT = /\/at\/[^/]+\/manage/;
-const IN_ACCOUNT_BILLING = /\/at\/[^/]+\/manage\/billing/;
 
 @Injectable({
   providedIn: 'root',
@@ -110,9 +109,6 @@ export class NavigationService {
   inKbUpload(path: string, kbUrl: string): boolean {
     const pattern = `${kbUrl}/upload`;
     return new RegExp(pattern).test(path);
-  }
-  inAccountBilling(path: string): boolean {
-    return IN_ACCOUNT_BILLING.test(path);
   }
 
   getAccountUrl(accountSlug: string): string {

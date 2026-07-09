@@ -1,0 +1,28 @@
+<app-account-page-layout
+  [title]="'generic.configuration' | translate"
+  [description]="'account.configuration-description' | translate"
+  [backLink]="backLink | async"
+  panelId="configuration-section-panel">
+  <pa-tabs
+    tabs
+    class="settings-tabs">
+    <pa-tab
+      routerLink="nua"
+      routerLinkActive
+      #rla0="routerLinkActive"
+      [active]="rla0.isActive"
+      ariaControls="configuration-section-panel">
+      {{ 'navbar.nua-keys' | translate }}
+    </pa-tab>
+    @if (isModelManagementEnabled | async) {
+      <pa-tab
+        routerLink="models"
+        routerLinkActive
+        #rla1="routerLinkActive"
+        [active]="rla1.isActive"
+        ariaControls="configuration-section-panel">
+        {{ 'navbar.models' | translate }}
+      </pa-tab>
+    }
+  </pa-tabs>
+</app-account-page-layout>

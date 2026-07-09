@@ -1,0 +1,87 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../account';
+
+.consumption-summary {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  margin-top: rhythm(4);
+}
+
+.summary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  h3 {
+    margin: 0;
+  }
+
+  .title-s {
+    margin: 0;
+  }
+}
+
+.kb-summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  max-width: 300px;
+}
+
+.kb-summary-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: rhythm(1.5) 0;
+  background: $color-light-stronger;
+  border-radius: rhythm(0.5);
+  color: inherit;
+  cursor: pointer;
+  gap: rhythm(1.5);
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .kb-info {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+
+    .kb-title {
+      word-break: break-word;
+    }
+
+    .lock-icon {
+      flex-shrink: 0;
+    }
+  }
+
+  .kb-tokens {
+    color: $color-neutral-regular;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+  }
+}
+
+.queries-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: rhythm(2);
+  margin-top: rhythm(1);
+  max-width: 500px;
+}
+
+.query-stat {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+  padding: rhythm(2) 0;
+  background: $color-light-stronger;
+  border-radius: rhythm(0.5);
+}

@@ -13,6 +13,20 @@
     border-radius: 50%;
   }
 
+  .avatar-wrapper {
+    position: relative;
+    display: inline-flex;
+
+    nsi-badge {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      cursor: pointer;
+      gap: 0;
+      text-transform: unset;
+    }
+  }
+
   pa-avatar ::ng-deep .pa-avatar {
     cursor: pointer;
     height: rhythm(5);
@@ -24,5 +38,9 @@
       font-size: font-size(m);
       font-weight: $font-weight-thin;
     }
+  }
+
+  ::ng-deep pa-dropdown .pa-popup-wrapper {
+    max-height: calc(100vh - 120px);
   }
 }

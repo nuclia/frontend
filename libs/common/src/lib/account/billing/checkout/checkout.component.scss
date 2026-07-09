@@ -1,17 +1,12 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../account';
 
 .checkout {
   display: flex;
   flex-direction: column;
-  gap: rhythm(6);
-  margin: 0 auto;
+  gap: rhythm(4);
   max-width: calc(rhythm(90) + rhythm(32));
   width: 100%;
-}
-
-h1,
-h2 {
-  margin: 0;
 }
 
 .page-description {

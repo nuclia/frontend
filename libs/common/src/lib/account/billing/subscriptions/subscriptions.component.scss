@@ -1,4 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../account';
 
 .header {
   margin-bottom: rhythm(5);

@@ -1,19 +1,41 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../account';
 
 .account-models {
-  .account-models-header {
-    margin-bottom: rhythm(4);
+  .models-section {
+    margin-bottom: rhythm(3);
+
+    &:first-of-type {
+      margin-top: rhythm(1);
+    }
   }
 
-  pa-tabs {
-    display: block;
-    margin-bottom: rhythm(4);
+  .models-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: rhythm(2);
+    margin-bottom: rhythm(2);
+
+    pa-button {
+      flex-shrink: 0;
+    }
   }
 
   .configs {
     display: flex;
     flex-direction: column;
     gap: rhythm(2);
+
+    .create-model-button {
+      display: block;
+      margin-top: rhythm(3);
+    }
+  }
+
+  .models-section-title p {
+    margin: 0;
+    opacity: 0.75;
   }
 
   .create {

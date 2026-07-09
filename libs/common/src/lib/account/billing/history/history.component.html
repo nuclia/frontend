@@ -1,5 +1,5 @@
 <div class="history">
-  <h2>{{ 'billing.history.title' | translate }}</h2>
+  <h2 class="page-subtitle">{{ 'billing.history.title' | translate }}</h2>
 
   <pa-table
     border
@@ -28,15 +28,13 @@
             icon="download"
             aspect="basic"
             size="small"
-          (click)="openPdf(invoice.pdf)"></pa-button>
+            (click)="openPdf(invoice.pdf)"></pa-button>
         </pa-table-cell>
       </pa-table-row>
     }
   </pa-table>
   @if (invoices.items.length > 0 && invoices.pagination.has_more) {
-    <div
-      class="load-more"
-      >
+    <div class="load-more">
       <pa-button
         size="small"
         [disabled]="loading"

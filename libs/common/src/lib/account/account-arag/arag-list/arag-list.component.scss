@@ -1,11 +1,30 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../account';
 
 .account-arag {
+  min-height: auto;
+  padding: 0;
+
+  .page-subtitle {
+    display: flex;
+    align-items: center;
+    gap: rhythm(1);
+  }
+
   .account-arag-header {
     display: flex;
-    justify-content: space-between;
-    gap: rhythm(4);
+    flex-direction: column;
     margin-bottom: rhythm(4);
+  }
+
+  .account-arag-counter {
+    font-weight: var(--stf-font-weight-semibold);
+    margin-top: rhythm(4);
+    margin-bottom: rhythm(2);
+  }
+
+  .create-arag-button {
+    margin-top: rhythm(3);
   }
 
   .go-to-arag {

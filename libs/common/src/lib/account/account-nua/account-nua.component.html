@@ -1,20 +1,10 @@
-<div class="page-spacing">
-  <h1>{{ 'account.nua_keys' | translate }}</h1>
-  <div class="warning">
-    <pa-icon name="warning"></pa-icon>
-    {{ 'api-key-management.description' | translate }}
-  </div>
+<h2 class="page-subtitle">{{ 'account.nua_keys' | translate }}</h2>
+<p class="page-description">{{ 'api-key-management.description' | translate }}</p>
 
-  <pa-button
-    class="create-nua-button"
-    data-cy="open-create-nua-key-dialog"
-    (click)="openDialog()">
-    {{ 'account.create_nua_key' | translate }}
-  </pa-button>
-
-  @if (clients$ | async; as clients) {
+@if (clients$ | async; as clients) {
+  @if (clients.length > 0) {
     <div class="container">
-      <h4>{{ 'account.existing_keys' | translate }}</h4>
+      <h3 class="title-s">{{ 'account.existing_keys' | translate }}</h3>
       @for (client of clients; track client.client_id) {
         <div class="client-row">
           <div
@@ -65,4 +55,12 @@
       }
     </div>
   }
-</div>
+
+  <pa-button
+    kind="primary"
+    class="create-nua-button"
+    data-cy="open-create-nua-key-dialog"
+    (click)="openDialog()">
+    {{ 'account.create_nua_key' | translate }}
+  </pa-button>
+}
