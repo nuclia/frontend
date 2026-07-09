@@ -16,24 +16,46 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { And, FieldFilterExpression, FilterExpression, Not, Or, ParagraphFilterExpression } from '@nuclia/core';
+import {
+  And,
+  FieldFilterExpression,
+  FilterExpression,
+  KeyValueContainsFilter,
+  KeyValueEqualFilter,
+  KeyValueFilterExpression,
+  KeyValueRangeFilter,
+  Not,
+  Or,
+  ParagraphFilterExpression,
+} from '@nuclia/core';
 import { AddFilterModalComponent } from './add-filter-modal/add-filter-modal.component';
 import { filter } from 'rxjs';
 import { FilterValueComponent } from './filter-value/filter-value.component';
+import { KvSchemasService } from '../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 
 export type AnyFilterExpression =
   | And<AnyFilterExpression>
   | Or<AnyFilterExpression>
   | Not<AnyFilterExpression | undefined>
   | FieldFilterExpression
-  | ParagraphFilterExpression;
+  | ParagraphFilterExpression
+  | KeyValueFilterExpressionWithProps;
 
 export type NonOperatorFilterExpression = Exclude<
   AnyFilterExpression,
   And<AnyFilterExpression> | Or<AnyFilterExpression> | Not<AnyFilterExpression | undefined>
 >;
 
-export type FilterTarget = 'field' | 'paragraph';
+export type FilterTarget = 'field' | 'paragraph' | 'key-value';
+
+// Key-value filters do not have the prop property. We add fake props for consistency.
+export type KeyValueFilterExpressionWithProps =
+  | And<KeyValueFilterExpressionWithProps>
+  | Or<KeyValueFilterExpressionWithProps>
+  | Not<KeyValueFilterExpressionWithProps>
+  | (KeyValueEqualFilter & { prop: 'key_value_eq' })
+  | (KeyValueRangeFilter & { prop: 'key_value_gte_lte' })
+  | (KeyValueContainsFilter & { prop: 'key_value_contains' });
 
 @Component({
   imports: [
@@ -61,6 +83,7 @@ export class FilterExpressionModalComponent {
   dataAugmentation = false;
   useKbData = true;
   help?: string;
+  hasKvSchemas = this.kvSchemasService.schemas$.pipe(filter((schemas) => schemas.length > 0));
 
   @ViewChildren(AccordionItemComponent) accordionItems: AccordionItemComponent[] = [];
 
@@ -70,10 +93,14 @@ export class FilterExpressionModalComponent {
       string
     >,
     private modalService: SisModalService,
+    private kvSchemasService: KvSchemasService,
     private cdr: ChangeDetectorRef,
   ) {
     try {
       this.filterExpression = JSON.parse(this.modal.config.data?.filterExpression || '{}');
+      if (this.filterExpression.key_value) {
+        this.filterExpression.key_value = this.addFakeProps(this.filterExpression.key_value);
+      }
     } catch {
       // Invalid filter expression
     }
@@ -83,12 +110,14 @@ export class FilterExpressionModalComponent {
   }
 
   get invalidExpession() {
-    return (
-      (!this.filterExpression.field && !this.filterExpression.paragraph) ||
-      (this.filterExpression.field && this.hasEmptyExpressions([this.filterExpression.field as AnyFilterExpression])) ||
-      (this.filterExpression.paragraph &&
-        this.hasEmptyExpressions([this.filterExpression.paragraph as AnyFilterExpression]))
-    );
+    const fieldExpression = this.filterExpression.field;
+    const paragraphExpression = this.filterExpression.paragraph;
+    const keyValueExpression = this.filterExpression.key_value;
+    const hasEmptyExpressions =
+      (fieldExpression && this.hasEmptyExpressions([fieldExpression as AnyFilterExpression])) ||
+      (paragraphExpression && this.hasEmptyExpressions([paragraphExpression as AnyFilterExpression])) ||
+      (keyValueExpression && this.hasEmptyExpressions([keyValueExpression as AnyFilterExpression]));
+    return (!fieldExpression && !paragraphExpression && !keyValueExpression) || hasEmptyExpressions;
   }
 
   add(target: FilterTarget, parent?: AnyFilterExpression) {
@@ -109,8 +138,10 @@ export class FilterExpressionModalComponent {
           }
         } else if (target === 'field') {
           this.filterExpression.field = result;
-        } else {
+        } else if (target === 'paragraph') {
           this.filterExpression.paragraph = result;
+        } else {
+          this.filterExpression.key_value = result;
         }
         this.updateMainOperator();
         this.cdr.markForCheck();
@@ -158,8 +189,10 @@ export class FilterExpressionModalComponent {
       }
     } else if (target === 'field') {
       this.filterExpression.field = undefined;
-    } else {
+    } else if (target === 'paragraph') {
       this.filterExpression.paragraph = undefined;
+    } else {
+      this.filterExpression.key_value = undefined;
     }
     this.updateMainOperator();
     this.cdr.markForCheck();
@@ -167,6 +200,11 @@ export class FilterExpressionModalComponent {
   }
 
   submit() {
+    if (this.filterExpression.key_value) {
+      this.filterExpression.key_value = this.removeFakeProps(
+        this.filterExpression.key_value as KeyValueFilterExpressionWithProps,
+      );
+    }
     this.modal.close(JSON.stringify(this.filterExpression, undefined, 2));
   }
 
@@ -185,8 +223,10 @@ export class FilterExpressionModalComponent {
       }
     } else if (target === 'field') {
       this.filterExpression.field = expression as FieldFilterExpression;
-    } else {
+    } else if (target === 'paragraph') {
       this.filterExpression.paragraph = expression as ParagraphFilterExpression;
+    } else {
+      this.filterExpression.key_value = expression as KeyValueFilterExpressionWithProps;
     }
   }
 
@@ -223,5 +263,31 @@ export class FilterExpressionModalComponent {
         return false;
       }
     });
+  }
+
+  private addFakeProps(expression: KeyValueFilterExpression): KeyValueFilterExpressionWithProps {
+    if ('and' in expression) {
+      return { and: expression.and.map((item) => this.addFakeProps(item)) };
+    } else if ('or' in expression) {
+      return { or: expression.or.map((item) => this.addFakeProps(item)) };
+    } else if ('not' in expression) {
+      return { not: this.addFakeProps(expression.not) };
+    }
+    return {
+      ...expression,
+      prop: 'eq' in expression ? 'key_value_eq' : 'contains' in expression ? 'key_value_contains' : 'key_value_gte_lte',
+    };
+  }
+
+  private removeFakeProps(expression: KeyValueFilterExpressionWithProps): KeyValueFilterExpression {
+    if ('and' in expression) {
+      return { and: expression.and.map((item) => this.removeFakeProps(item)) };
+    } else if ('or' in expression) {
+      return { or: expression.or.map((item) => this.removeFakeProps(item)) };
+    } else if ('not' in expression) {
+      return { not: this.removeFakeProps(expression.not) };
+    }
+    const { prop, ...rest } = expression;
+    return rest;
   }
 }

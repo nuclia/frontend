@@ -32,14 +32,21 @@
           <pa-option-header>
             {{ 'search.configuration.filter-expression-modal.filters' | translate }}
           </pa-option-header>
-          @if ((target | async) === 'field') {
+          @let targetValue = target | async;
+          @if (targetValue === 'field') {
             @for (filter of fieldFilters; track filter) {
               <pa-option [value]="filter">
                 {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
               </pa-option>
             }
-          } @else {
+          } @else if (targetValue === 'paragraph') {
             @for (filter of paragraphFilters; track filter) {
+              <pa-option [value]="filter">
+                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+              </pa-option>
+            }
+          } @else {
+            @for (filter of keyValueFilters; track filter) {
               <pa-option [value]="filter">
                 {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
               </pa-option>
@@ -234,7 +241,71 @@
                 {{ 'search.configuration.filter-expression-modal.origin-filter.value' | translate }}
               </pa-input>
             }
+            @case ('key_value_eq') {
+              <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
+              @if (selectedSchemaKey) {
+                @let type = (schemaField | async)?.type;
+                @if (type === 'text' || type === 'date') {
+                  <pa-input formControlName="eq">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.equal' | translate }}
+                  </pa-input>
+                } @else if (type === 'boolean') {
+                  <pa-select
+                    formControlName="eq"
+                    [label]="'search.configuration.filter-expression-modal.key-value-filter.equal' | translate">
+                    <pa-option value="true">True</pa-option>
+                    <pa-option value="false">False</pa-option>
+                  </pa-select>
+                } @else if (type === 'float' || type === 'integer') {
+                  <pa-input
+                    type="number"
+                    formControlName="eq">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.equal' | translate }}
+                  </pa-input>
+                }
+              }
+            }
+            @case ('key_value_gte_lte') {
+              <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
+              @if (selectedSchemaKey) {
+                <pa-input
+                  type="number"
+                  formControlName="gte">
+                  {{ 'search.configuration.filter-expression-modal.key-value-filter.gte' | translate }}
+                </pa-input>
+                <pa-input
+                  type="number"
+                  formControlName="lte">
+                  {{ 'search.configuration.filter-expression-modal.key-value-filter.lte' | translate }}
+                </pa-input>
+              }
+            }
+            @case ('key_value_contains') {
+              <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
+              @if (selectedSchemaKey) {
+                <pa-input formControlName="contains">
+                  {{ 'search.configuration.filter-expression-modal.key-value-filter.contains' | translate }}
+                </pa-input>
+              }
+            }
           }
+          <ng-template #schemaForm>
+            <pa-select
+              formControlName="schema_id"
+              [label]="'search.configuration.filter-expression-modal.key-value-filter.schema_id' | translate"
+              (valueChange)="resetKey()">
+              @for (schema of kvSchemas | async; track schema.id) {
+                <pa-option [value]="schema.id">{{ schema.id }}</pa-option>
+              }
+            </pa-select>
+            @if (selectedSchema) {
+              <pa-select
+                formControlName="key"
+                [label]="'search.configuration.filter-expression-modal.key-value-filter.field' | translate"
+                [options]="schemaKeyOptions | async"
+                (valueChange)="resetValue($event)"></pa-select>
+            }
+          </ng-template>
         </ng-container>
       }
     </div>

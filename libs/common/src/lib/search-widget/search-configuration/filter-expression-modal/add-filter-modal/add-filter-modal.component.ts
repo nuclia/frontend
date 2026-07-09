@@ -12,11 +12,12 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { LabelsService } from '@flaps/core';
-import { FIELD_TYPE, TypeParagraph } from '@nuclia/core';
+import { FIELD_TYPE, KVFieldType, TypeParagraph } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NerService } from '../../../../entities';
-import { BehaviorSubject, defer, filter, map, merge, of, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, defer, filter, map, merge, of, switchMap, take, tap } from 'rxjs';
 import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.component';
+import { KvSchemasService } from '../../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 
 @Component({
   imports: [
@@ -71,6 +72,13 @@ export class AddFilterModalComponent {
   fieldFilters = this.dataAugmentation ? this.dataAugmentationFieldFilters : this.allFieldFilters;
 
   paragraphFilters = ['label', 'kind'];
+
+  keyValueFilters = ['key_value_eq', 'key_value_gte_lte', 'key_value_contains'];
+
+  allowedFieldTypes: { [key: string]: string[] } = {
+    key_value_eq: ['text', 'boolean', 'integer', 'float', 'date'],
+    key_value_gte_lte: ['integer', 'float'],
+  };
 
   prop = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
   forms: { [key: string]: FormGroup } = {
@@ -136,6 +144,22 @@ export class AddFilterModalComponent {
       field: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       value: new FormControl<string>('', { nonNullable: true }),
     }),
+    key_value_eq: new FormGroup({
+      schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      eq: new FormControl<string | number>('', { validators: [Validators.required] }),
+    }),
+    key_value_gte_lte: new FormGroup({
+      schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      gte: new FormControl<string | number>('', { nonNullable: true }),
+      lte: new FormControl<string | number>('', { nonNullable: true }),
+    }),
+    key_value_contains: new FormGroup({
+      schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      contains: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    }),
   };
 
   familyOptions = this.nerService.entities.pipe(
@@ -157,12 +181,68 @@ export class AddFilterModalComponent {
     ),
   );
 
+  kvSchemas = this.kvSchemaService.schemas$;
+  selectedProp$ = merge(
+    defer(() => of(this.prop.value)),
+    this.prop.valueChanges,
+  );
+  selectedSchema$ = this.selectedProp$.pipe(
+    switchMap((prop) =>
+      merge(
+        defer(() => of(this.selectedSchema)),
+        this.forms[prop].controls['schema_id'].valueChanges,
+      ),
+    ),
+  );
+  selectedSchemaKey$ = this.selectedProp$.pipe(
+    switchMap((prop) =>
+      merge(
+        defer(() => of(this.selectedSchemaKey)),
+        this.forms[prop].controls['key'].valueChanges,
+      ),
+    ),
+  );
+  schemaKeyOptions = this.selectedSchema$.pipe(
+    filter((schema) => schema),
+    switchMap((schema) =>
+      this.kvSchemas.pipe(
+        take(1),
+        map((schemas) =>
+          (schemas.find((s) => s.id === schema)?.fields || [])
+            .filter((field) => {
+              if (this.prop.value === 'key_value_contains') {
+                return field.range || field.repeated;
+              }
+              return this.allowedFieldTypes[this.prop.value]?.includes(field.type) && !field.range && !field.repeated;
+            })
+            .map(
+              (field) => new OptionModel({ id: field.key, value: field.key, label: `${field.key} (${field.type})` }),
+            ),
+        ),
+      ),
+    ),
+  );
+  schemaField = combineLatest([this.selectedSchemaKey$, this.kvSchemas]).pipe(
+    map(([key, schemas]) =>
+      (schemas.find((s) => s.id === this.selectedSchema)?.fields || []).find((field) => field.key === key),
+    ),
+    tap((field) => (this.schemaFieldType = field?.type)),
+  );
+  schemaFieldType?: KVFieldType;
+
   get selectedLabelset() {
     return this.forms['label'].controls['labelset'].value;
   }
 
   get selectedNerFamily() {
     return this.forms['entity'].controls['subtype'].value;
+  }
+
+  get selectedSchema() {
+    return this.forms[this.prop.value].controls['schema_id'].value;
+  }
+  get selectedSchemaKey() {
+    return this.forms[this.prop.value].controls['key'].value;
   }
 
   get invalid() {
@@ -176,6 +256,7 @@ export class AddFilterModalComponent {
     >,
     private labelsService: LabelsService,
     private nerService: NerService,
+    private kvSchemaService: KvSchemasService,
   ) {
     this.target.next(this.modal.config.data?.target || 'field');
     const expression = this.modal.config.data?.expression;
@@ -187,6 +268,11 @@ export class AddFilterModalComponent {
         this.resourceSelection = expression.prop === 'resource' && !!expression.slug ? 'slug' : 'id';
         this.prop.patchValue(expression.prop);
         this.forms[expression.prop].patchValue(expression);
+
+        // Edge case: pastanaga inputs do not support boolean values
+        if ('eq' in expression && typeof expression.eq === 'boolean') {
+          this.forms['key_value_eq'].controls['eq'].patchValue(expression.eq ? 'true' : 'false');
+        }
       }
     }
   }
@@ -197,6 +283,14 @@ export class AddFilterModalComponent {
 
   resetNer() {
     this.forms['entity'].controls['value'].reset();
+  }
+
+  resetKey() {
+    this.forms[this.prop.value].controls['key'].reset();
+  }
+
+  resetValue(key: string) {
+    this.forms[this.prop.value].reset({ schema_id: this.selectedSchema, key });
   }
 
   submit() {
@@ -213,7 +307,12 @@ export class AddFilterModalComponent {
         break;
       default: {
         const filterParams = Object.fromEntries(
-          Object.entries(this.forms[this.prop.value].value).filter(([, value]) => !!value),
+          Object.entries(this.forms[this.prop.value].value)
+            .filter(([, value]) => value !== '')
+            .map(([key, value]) =>
+              // Edge case: boolean values should be converted to real booleans
+              key === 'eq' && this.schemaFieldType === 'boolean' ? [key, value === 'true'] : [key, value],
+            ),
         ) as any;
         expression = {
           prop: this.prop.value,

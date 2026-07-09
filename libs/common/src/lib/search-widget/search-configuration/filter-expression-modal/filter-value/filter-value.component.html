@@ -86,7 +86,9 @@
       @case ('origin_path') {
         @if (filter.prefix) {
           <pa-chip [backgroundColor]="chipColor">
-            {{ ('search.configuration.filter-expression-modal.origin-filter.prefix' | translate) + ': ' + filter.prefix }}
+            {{
+              ('search.configuration.filter-expression-modal.origin-filter.prefix' | translate) + ': ' + filter.prefix
+            }}
           </pa-chip>
         }
       }
@@ -104,6 +106,37 @@
           @if (filter.value) {
             <span>: {{ filter.value }}</span>
           }
+        </pa-chip>
+      }
+      @case ('key_value_eq') {
+        <pa-chip [backgroundColor]="chipColor">
+          <span>{{ filter.key }}</span>
+          <span>&#32;= {{ filter.eq }}</span>
+        </pa-chip>
+      }
+      @case ('key_value_gte_lte') {
+        @let hasGte = filter.gte !== undefined;
+        @if (hasGte) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ filter.key }}</span>
+            <span>&#32;≥ {{ filter.gte }}</span>
+          </pa-chip>
+        }
+        @let hasLte = filter.lte !== undefined;
+        @if (hasLte) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ filter.key }}</span>
+            <span>&#32;≤ {{ filter.lte }}</span>
+          </pa-chip>
+        }
+      }
+      @case ('key_value_contains') {
+        <pa-chip [backgroundColor]="chipColor">
+          <strong>{{ filter.key }}</strong>
+          <span>
+            {{ ('search.configuration.filter-expression-modal.key-value-filter.contains' | translate).toLowerCase() }}
+          </span>
+          <span>{{ filter.contains }}</span>
         </pa-chip>
       }
       @default {

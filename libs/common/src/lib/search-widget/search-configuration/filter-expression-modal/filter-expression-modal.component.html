@@ -78,6 +78,33 @@
           </pa-accordion-item>
         </pa-accordion>
       }
+      @if ((hasKvSchemas | async) || filterExpression.key_value) {
+        <pa-accordion>
+          <pa-accordion-item
+            id="keyValue"
+            [itemTitle]="'search.configuration.filter-expression-modal.key-value-filters' | translate"
+            [expanded]="filterExpression.key_value">
+            <pa-accordion-item-body>
+              @if (filterExpression.key_value) {
+                <ng-container
+                  [ngTemplateOutlet]="filterItem"
+                  [ngTemplateOutletContext]="{ filter: filterExpression.key_value, target: 'keyValue' }" />
+              }
+              @if (!filterExpression.key_value) {
+                <div>
+                  <pa-button
+                    aspect="basic"
+                    icon="circle-plus"
+                    iconAndText
+                    (click)="add('key-value')">
+                    {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                  </pa-button>
+                </div>
+              }
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
+      }
     </div>
   </pa-modal-content>
   <pa-modal-footer>

@@ -259,10 +259,32 @@ export interface KindFilter {
   kind: TypeParagraph;
 }
 
+interface KeyValueFilter {
+  schema_id: string;
+  key: string;
+}
+
+export interface KeyValueEqualFilter extends KeyValueFilter {
+  eq?: boolean | number | string;
+}
+
+export interface KeyValueRangeFilter extends KeyValueFilter {
+  gte?: number | string;
+  lte?: number | string;
+}
+
+export interface KeyValueContainsFilter extends KeyValueFilter {
+  eq?: boolean | number | string;
+  contains?: number | string;
+}
+
+export interface KeyValueEqualFilter {}
+
 export interface FilterExpression {
   field?: FieldFilterExpression;
   paragraph?: ParagraphFilterExpression;
   operator?: 'and' | 'or';
+  key_value?: KeyValueFilterExpression;
 }
 
 export type FieldFilterExpression =
@@ -309,6 +331,14 @@ export type ResourceFilterExpression =
   | OriginSourceFilter
   | OriginCollaboratorFilter
   | StatusFilter;
+
+export type KeyValueFilterExpression =
+  | And<KeyValueFilterExpression>
+  | Or<KeyValueFilterExpression>
+  | Not<KeyValueFilterExpression>
+  | KeyValueEqualFilter
+  | KeyValueRangeFilter
+  | KeyValueContainsFilter;
 
 export enum SHORT_FIELD_TYPE {
   text = 't',
