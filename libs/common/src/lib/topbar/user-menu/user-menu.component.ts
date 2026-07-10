@@ -146,6 +146,16 @@ export class UserMenuComponent implements OnInit {
         },
       ],
     },
+    // ── User preferences — visible for all users in all modes ─────────────
+    {
+      items: [
+        {
+          label: 'generic.user_preferences',
+          icon: 'user',
+          action: () => this.navigateToProfile(),
+        },
+      ],
+    },
     // ── Administration ─────────────────────────────────────────────────────
     {
       header: 'user-menu.section.administration',
@@ -188,18 +198,6 @@ export class UserMenuComponent implements OnInit {
           icon: 'settings',
           action: () => this.go('configuration/models'),
           visible$: this.isModelManagementEnabled,
-        },
-      ],
-    },
-    // ── User preferences — visible for all users in all modes ─────────────
-    {
-      prependSeparator: true,
-      appendSeparator: true,
-      items: [
-        {
-          label: 'generic.user_preferences',
-          icon: 'user',
-          action: () => this.navigateToProfile(),
         },
       ],
     },
