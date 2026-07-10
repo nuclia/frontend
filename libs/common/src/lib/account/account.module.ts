@@ -21,8 +21,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../users-manage';
-import { AccountAragComponent } from './account-arag/account-arag.component';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
+import { AccountBillingComponent } from './account-billing/account-billing.component';
 import { AccountAdministrationComponent } from './account-administration/account-administration.component';
 import { AccountConfigurationComponent } from './account-configuration/account-configuration.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
@@ -40,7 +40,6 @@ import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.co
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { SimpleAccountHomeComponent } from './account-home/simple-account-home.component';
-import { BillingComponent } from './billing/billing.component';
 import { BillingModule } from './billing/billing.module';
 import { CheckoutComponent } from './billing/checkout/checkout.component';
 import { HistoryComponent } from './billing/history/history.component';
@@ -86,18 +85,6 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'consumption', pathMatch: 'full' },
       { path: 'consumption', component: AccountConsumptionComponent },
-      {
-        path: 'subscriptions',
-        component: BillingComponent,
-        children: [
-          { path: '', pathMatch: 'full', component: RedirectComponent },
-          { path: 'plans', component: SubscriptionsComponent },
-          { path: 'checkout', component: CheckoutComponent },
-          { path: 'my-subscription', component: MySubscriptionComponent },
-          { path: 'usage', component: UsageTableComponent },
-          { path: 'history', component: HistoryComponent },
-        ],
-      },
       { path: 'preferences', component: ProfileComponent, data: { embedded: true } },
       { path: 'account-settings', component: AccountManageComponent, data: { embedded: true } },
     ],
@@ -131,6 +118,20 @@ const routes: Routes = [
       { path: 'models', component: AccountModelsComponent },
     ],
   },
+  // Billing page — tab shell with child routes
+  {
+    path: 'billing',
+    component: AccountBillingComponent,
+    canActivate: [accountOwnerGuard],
+    children: [
+      { path: '', pathMatch: 'full', component: RedirectComponent },
+      { path: 'subscriptions', component: SubscriptionsComponent },
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'my-subscription', component: MySubscriptionComponent },
+      { path: 'usage', component: UsageTableComponent },
+      { path: 'history', component: HistoryComponent },
+    ],
+  },
   // Legacy redirect routes (backward compatibility for bookmarked URLs)
   { path: 'nua', redirectTo: 'configuration/nua' },
   { path: 'nua/:id/activity', redirectTo: ({ params }) => `configuration/nua/${params['id']}/activity` },
@@ -139,13 +140,6 @@ const routes: Routes = [
   { path: 'arag', redirectTo: 'administration/retrieval-agents' },
   { path: 'models', redirectTo: 'configuration/models' },
   { path: 'users', redirectTo: 'administration/users' },
-  // Legacy billing redirects — all billing content lives under /home/subscriptions now
-  { path: 'billing', pathMatch: 'full', redirectTo: 'home/subscriptions' },
-  { path: 'billing/subscriptions', redirectTo: 'home/subscriptions/plans' },
-  { path: 'billing/checkout', redirectTo: 'home/subscriptions/checkout' },
-  { path: 'billing/my-subscription', redirectTo: 'home/subscriptions/my-subscription' },
-  { path: 'billing/usage', redirectTo: 'home/subscriptions/usage' },
-  { path: 'billing/history', redirectTo: 'home/subscriptions/history' },
 ];
 
 @NgModule({
@@ -193,6 +187,7 @@ const routes: Routes = [
   ],
   declarations: [
     AccountAdministrationComponent,
+    AccountBillingComponent,
     AccountHomeComponent,
     AccountPageLayoutComponent,
     AccountConsumptionComponent,

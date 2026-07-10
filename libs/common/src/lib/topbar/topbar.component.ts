@@ -149,7 +149,7 @@ export class TopbarComponent {
 
   goToSubscriptions() {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([`${this.navigationService.getAccountManageUrl(account.slug)}/home/subscriptions`]);
+      this.router.navigate([`${this.navigationService.getAccountManageUrl(account.slug)}/billing`]);
     });
   }
 }

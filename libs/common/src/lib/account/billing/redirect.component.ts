@@ -14,7 +14,7 @@ export class RedirectComponent {
     private route: ActivatedRoute,
   ) {
     this.billingService.isSubscribedToStripe.pipe(take(1)).subscribe((isSubscribed) => {
-      this.router.navigate([isSubscribed ? './usage' : './plans'], {
+      this.router.navigate([isSubscribed ? './usage' : './subscriptions'], {
         replaceUrl: true,
         relativeTo: this.route,
       });

@@ -1,11 +1,14 @@
 <div class="checkout">
-  <nsi-back-button [link]="backToSettingsLink | async">
-    {{ ((simpleMode | async) ? 'generic.back_to_settings' : 'generic.back') | translate }}
-  </nsi-back-button>
   <div>
     <h2 class="page-subtitle">{{ 'billing.payment_details' | translate }}</h2>
     <p class="page-description">{{ 'billing.payment_details-description' | translate }}</p>
   </div>
+
+  @if (!(isSubscribedToStripe | async)) {
+    <nsi-back-button [link]="backToSettingsLink | async">
+      {{ ((simpleMode | async) ? 'generic.back_to_subscription' : 'generic.back') | translate }}
+    </nsi-back-button>
+  }
 
   @if (subscribeMode | async) {
     <div>

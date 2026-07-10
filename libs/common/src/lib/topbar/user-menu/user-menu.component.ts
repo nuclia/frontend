@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {
   AccountVerificationService,
   BackendConfigurationService,
+  BillingService,
   FeaturesService,
   NavigationService,
   SDKService,
@@ -65,6 +66,7 @@ export class UserMenuComponent implements OnInit {
   private readonly backendConfig = inject(BackendConfigurationService);
   private readonly accountVerification = inject(AccountVerificationService);
   private readonly modalService = inject(SisModalService);
+  private readonly billing = inject(BillingService);
 
   @Input() set userInfo(userInfo: Welcome | undefined | null) {
     if (userInfo) {
@@ -115,6 +117,18 @@ export class UserMenuComponent implements OnInit {
 
   private readonly showSwitchAccount$ = new BehaviorSubject<boolean>(!!this.standalone);
 
+  private readonly showBillingGroup = combineLatest([this.isAccountManager, this.billing.isSubscribedToStripe]).pipe(
+    map(([manager, subscribed]) => !this.standalone && !!manager && (subscribed || !this.noStripe)),
+    shareReplay(1),
+  );
+
+  private readonly showBillingPlansItem = this.isBillingEnabled.pipe(
+    map((billing) => !!billing && !this.noStripe),
+    shareReplay(1),
+  );
+
+  private readonly isSubscribedToStripe = this.billing.isSubscribedToStripe;
+
   readonly sections: MenuSection[] = [
     // ── Account ────────────────────────────────────────────────────────────
     {
@@ -126,14 +140,6 @@ export class UserMenuComponent implements OnInit {
           icon: 'chart',
           action: () => this.go('home/consumption'),
           visible$: this.isAccountManager.pipe(map((m) => !this.standalone && !!m)),
-        },
-        {
-          label: 'account.billing',
-          icon: 'payment',
-          action: () => this.go('home/subscriptions'),
-          visible$: combineLatest([this.isBillingEnabled, this.isAccountManager]).pipe(
-            map(([billing, manager]) => !!billing && !!manager && !this.noStripe),
-          ),
         },
         {
           label: 'account.manage',
@@ -153,6 +159,49 @@ export class UserMenuComponent implements OnInit {
           label: 'generic.user_preferences',
           icon: 'user',
           action: () => this.navigateToProfile(),
+        },
+      ],
+    },
+    // ── Billing ────────────────────────────────────────────────────────────
+    {
+      header: 'user-menu.section.billing',
+      visible$: this.showBillingGroup,
+      items: [
+        {
+          // Always shown when billing is enabled + Stripe available
+          label: 'billing.plan-subscription',
+          icon: 'payment',
+          dataCy: 'go-to-billing',
+          action: () => this.go('billing'),
+          visible$: this.showBillingPlansItem,
+        },
+        {
+          label: 'billing.usage.label',
+          icon: 'activity-log',
+          dataCy: 'go-to-usage',
+          action: () => this.go('billing/usage'),
+          visible$: this.isSubscribedToStripe,
+        },
+        {
+          label: 'billing.payment_details',
+          icon: 'payment-details',
+          dataCy: 'go-to-checkout',
+          action: () => this.go('billing/checkout'),
+          visible$: this.isSubscribedToStripe,
+        },
+        {
+          label: 'billing.my-subscription',
+          icon: 'info',
+          dataCy: 'go-to-my-subscription',
+          action: () => this.go('billing/my-subscription'),
+          visible$: this.isSubscribedToStripe,
+        },
+        {
+          label: 'billing.history.link',
+          icon: 'history',
+          dataCy: 'go-to-history',
+          action: () => this.go('billing/history'),
+          visible$: this.isSubscribedToStripe,
         },
       ],
     },

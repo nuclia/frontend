@@ -3,14 +3,6 @@
   [description]="'account.settings-description' | translate"
   [backLink]="backLink | async"
   panelId="settings-section-panel">
-  @if (isTrial | async) {
-    <div
-      top
-      class="trial-status-top">
-      <app-account-status (upgradeClick)="navigateTo('subscriptions')"></app-account-status>
-    </div>
-  }
-
   <pa-tabs
     tabs
     class="settings-tabs">
@@ -22,16 +14,6 @@
       ariaControls="settings-section-panel">
       {{ 'account.consumption' | translate }}
     </pa-tab>
-    @if (showSubscriptionsTab | async) {
-      <pa-tab
-        routerLink="subscriptions"
-        routerLinkActive
-        #rla1="routerLinkActive"
-        [active]="rla1.isActive"
-        ariaControls="settings-section-panel">
-        {{ 'account.billing' | translate }}
-      </pa-tab>
-    }
     @if (showAccountSettingsTab | async) {
       <pa-tab
         routerLink="account-settings"

@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.trial-status-top {
+  background: $color-light-stronger;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(1);
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: rhythm(4);
+  padding: rhythm(2) rhythm(2.5) rhythm(1.5);
+  width: fit-content;
+}
