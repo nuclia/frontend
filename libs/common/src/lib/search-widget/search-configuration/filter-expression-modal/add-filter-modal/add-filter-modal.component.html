@@ -245,7 +245,7 @@
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
                 @let type = (schemaField | async)?.type;
-                @if (type === 'text' || type === 'date') {
+                @if (type === 'text') {
                   <pa-input formControlName="eq">
                     {{ 'search.configuration.filter-expression-modal.key-value-filter.equal' | translate }}
                   </pa-input>
@@ -262,22 +262,39 @@
                     formControlName="eq">
                     {{ 'search.configuration.filter-expression-modal.key-value-filter.equal' | translate }}
                   </pa-input>
+                } @else if (type === 'date') {
+                  <pa-date-picker
+                    formControlName="eq"
+                    [label]="'search.configuration.filter-expression-modal.key-value-filter.equal' | translate"
+                    isInPopup></pa-date-picker>
                 }
               }
             }
             @case ('key_value_gte_lte') {
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
-                <pa-input
-                  type="number"
-                  formControlName="gte">
-                  {{ 'search.configuration.filter-expression-modal.key-value-filter.gte' | translate }}
-                </pa-input>
-                <pa-input
-                  type="number"
-                  formControlName="lte">
-                  {{ 'search.configuration.filter-expression-modal.key-value-filter.lte' | translate }}
-                </pa-input>
+                @let type = (schemaField | async)?.type;
+                @if (type === 'float' || type === 'integer') {
+                  <pa-input
+                    type="number"
+                    formControlName="gte">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.gte' | translate }}
+                  </pa-input>
+                  <pa-input
+                    type="number"
+                    formControlName="lte">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.lte' | translate }}
+                  </pa-input>
+                } @else if (type === 'date') {
+                  <pa-date-picker
+                    formControlName="gte"
+                    [label]="'search.configuration.filter-expression-modal.key-value-filter.gte' | translate"
+                    isInPopup></pa-date-picker>
+                  <pa-date-picker
+                    formControlName="lte"
+                    [label]="'search.configuration.filter-expression-modal.key-value-filter.lte' | translate"
+                    isInPopup></pa-date-picker>
+                }
               }
             }
             @case ('key_value_contains') {

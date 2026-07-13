@@ -77,7 +77,7 @@ export class AddFilterModalComponent {
 
   allowedFieldTypes: { [key: string]: string[] } = {
     key_value_eq: ['text', 'boolean', 'integer', 'float', 'date'],
-    key_value_gte_lte: ['integer', 'float'],
+    key_value_gte_lte: ['integer', 'float', 'date'],
   };
 
   prop = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });

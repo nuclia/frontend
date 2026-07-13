@@ -115,18 +115,30 @@
         </pa-chip>
       }
       @case ('key_value_gte_lte') {
-        @let hasGte = filter.gte !== undefined;
-        @if (hasGte) {
+        @if (filter.gte !== undefined) {
           <pa-chip [backgroundColor]="chipColor">
-            <span>{{ filter.key }}</span>
-            <span>&#32;≥ {{ filter.gte }}</span>
+            <span>{{ filter.key }} ≥&#32;</span>
+            @if (typeof filter.gte === 'string') {
+              <pa-datetime
+                [datetime]="filter.gte"
+                format="numerical"
+                dateOnly></pa-datetime>
+            } @else {
+              <span>{{ filter.gte }}</span>
+            }
           </pa-chip>
         }
-        @let hasLte = filter.lte !== undefined;
-        @if (hasLte) {
+        @if (filter.lte !== undefined) {
           <pa-chip [backgroundColor]="chipColor">
-            <span>{{ filter.key }}</span>
-            <span>&#32;≤ {{ filter.lte }}</span>
+            <span>{{ filter.key }} ≤&#32;</span>
+            @if (typeof filter.lte === 'string') {
+              <pa-datetime
+                [datetime]="filter.lte"
+                format="numerical"
+                dateOnly></pa-datetime>
+            } @else {
+              <span>{{ filter.lte }}</span>
+            }
           </pa-chip>
         }
       }

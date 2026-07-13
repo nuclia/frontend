@@ -35,22 +35,8 @@
         </pa-accordion-item>
       </pa-accordion>
       @if (!dataAugmentation) {
-        @if (filterExpression.field && filterExpression.paragraph) {
-          <div class="filter-logic">
-            <pa-select [(value)]="filterExpression.operator">
-              <pa-option value="and">AND</pa-option>
-              <pa-option value="or">OR</pa-option>
-            </pa-select>
-            <span>
-              <pa-icon
-                name="info"
-                size="small"
-                [paPopover]="labelsLogic"></pa-icon>
-              <pa-popover #labelsLogic>
-                {{ 'search.configuration.filter-expression-modal.operator' | translate }}
-              </pa-popover>
-            </span>
-          </div>
+        @if (showFilterLogic) {
+          <ng-container *ngTemplateOutlet="filterLogic"></ng-container>
         }
         <pa-accordion>
           <pa-accordion-item
@@ -78,7 +64,10 @@
           </pa-accordion-item>
         </pa-accordion>
       }
-      @if ((hasKvSchemas | async) || filterExpression.key_value) {
+      @if (((hasKvSchemas | async) || filterExpression.key_value) && !dataAugmentation) {
+        @if (showFilterLogic) {
+          <ng-container *ngTemplateOutlet="filterLogic"></ng-container>
+        }
         <pa-accordion>
           <pa-accordion-item
             id="keyValue"
@@ -121,6 +110,24 @@
     </pa-button>
   </pa-modal-footer>
 </pa-modal-advanced>
+
+<ng-template #filterLogic>
+  <div class="filter-logic">
+    <pa-select [(value)]="filterExpression.operator">
+      <pa-option value="and">AND</pa-option>
+      <pa-option value="or">OR</pa-option>
+    </pa-select>
+    <span>
+      <pa-icon
+        name="info"
+        size="small"
+        [paPopover]="filterLogicInfo"></pa-icon>
+      <pa-popover #filterLogicInfo>
+        {{ 'search.configuration.filter-expression-modal.operator' | translate }}
+      </pa-popover>
+    </span>
+  </div>
+</ng-template>
 
 <ng-template
   #filterItem

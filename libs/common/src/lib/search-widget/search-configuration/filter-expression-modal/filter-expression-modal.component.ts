@@ -109,6 +109,14 @@ export class FilterExpressionModalComponent {
     this.help = this.modal.config.data?.help;
   }
 
+  get showFilterLogic() {
+    return (
+      (this.filterExpression.field && this.filterExpression.paragraph) ||
+      (this.filterExpression.field && this.filterExpression.key_value) ||
+      (this.filterExpression.paragraph && this.filterExpression.key_value)
+    );
+  }
+
   get invalidExpession() {
     const fieldExpression = this.filterExpression.field;
     const paragraphExpression = this.filterExpression.paragraph;
@@ -231,10 +239,7 @@ export class FilterExpressionModalComponent {
   }
 
   private updateMainOperator() {
-    this.filterExpression.operator =
-      this.filterExpression.field && this.filterExpression.paragraph
-        ? this.filterExpression.operator || 'and'
-        : undefined;
+    this.filterExpression.operator = this.showFilterLogic ? this.filterExpression.operator || 'and' : undefined;
   }
 
   private updateHeight() {
