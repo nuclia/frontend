@@ -25,7 +25,12 @@ export class DashboardLayoutComponent {
     map(([showLimit, showProgress]) => showLimit || showProgress),
   );
   collapsedNav = this.layoutService.collapsedNav;
-  noNavBar = combineLatest([this.navigationService.simpleMode, this.navigationService.inArag()]).pipe(
-    map(([simple, inArag]) => simple && !inArag),
-  );
+  // The sidebar is hidden when in simple mode (ContextBox/cowork) outside an ARAG space,
+  // OR when anywhere under /manage (all account-management routes are full-width).
+  // IN_ACCOUNT_MANAGEMENT regex matches ALL /manage/* paths, so no manage route has a sidebar.
+  noNavBar = combineLatest([
+    this.navigationService.simpleMode,
+    this.navigationService.inArag(),
+    this.navigationService.inAccount,
+  ]).pipe(map(([simple, inArag, inHome]) => (simple && !inArag) || inHome));
 }

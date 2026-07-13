@@ -5,8 +5,8 @@
 }
 
 @if (account && knowledgeBoxes) {
-  <div class="account-kbs page-spacing">
-    <h1 class="page-title">{{ 'account.related_kbs' | translate }}</h1>
+  <div class="account-kbs">
+    <h2 class="page-subtitle">{{ 'account.related_kbs' | translate }}</h2>
 
     <p class="page-description">{{ 'account.kb-description' | translate }}</p>
 
@@ -67,24 +67,21 @@
     }
 
     @if (canAddKb | async) {
-      <nsi-sticky-footer>
-        @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
-          <div
-            footerNote
-            class="account-kbs-counter">
-            {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length, max: maxKnowledgeBoxes } }}
-          </div>
-        }
+      @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
+        <div class="account-kbs-counter">
+          {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length, max: maxKnowledgeBoxes } }}
+        </div>
+      }
 
-        <pa-button
-          aspect="basic"
-          size="small"
-          data-cy="add-kb"
-          [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
-          routerLink="./create">
-          {{ 'account.kb.create' | translate }}
-        </pa-button>
-      </nsi-sticky-footer>
+      <pa-button
+        kind="primary"
+        aspect="solid"
+        data-cy="add-kb"
+        [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
+        [routerLink]="['/at', account.slug, 'manage', 'administration', 'knowledge-boxes', 'create']"
+        class="add-kb-button">
+        {{ 'account.kb.create' | translate }}
+      </pa-button>
     }
   </div>
 }

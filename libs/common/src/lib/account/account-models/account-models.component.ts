@@ -15,7 +15,6 @@ import {
   PaIconModule,
   PaPopupModule,
   PaTableModule,
-  PaTabsModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -49,7 +48,6 @@ interface BedrockIntegration extends BedrockStatus {
     PaIconModule,
     PaPopupModule,
     PaTableModule,
-    PaTabsModule,
     PaTooltipModule,
     SisProgressModule,
     TranslateModule,
@@ -68,8 +66,8 @@ export class AccountModelsComponent implements OnInit {
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
 
+  // Always rendered as a tab inside AccountConfigurationComponent
   modelConfigs = new ReplaySubject<ModelConfigurationWithZone[]>(1);
-  selectedTab: 'settings' | 'restrictions' = 'settings';
   zones = this.zoneService.getZones().pipe(shareReplay(1));
 
   awsZones = this.zones.pipe(

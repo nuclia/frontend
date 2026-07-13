@@ -1,0 +1,59 @@
+<h2 class="page-subtitle">{{ 'account.consumption' | translate }}</h2>
+<p class="page-description">{{ 'account.consumption-description' | translate }}</p>
+
+<app-nuclia-tokens
+  [usage]="usage"
+  [selectedPeriod]="selectedPeriod | async"
+  (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
+
+<div class="consumption-summary">
+  <div class="summary-section">
+    <h3 class="title-m">{{ 'account.knowledgeboxes' | translate }}</h3>
+    @if (kbs | async; as kbList) {
+      @if (kbList.length > 0) {
+        <ul class="kb-summary-list">
+          @for (kb of kbList; track kb.id) {
+            <li
+              class="kb-summary-item"
+              [class.disabled]="!kb.role_on_kb">
+              <div class="kb-info">
+                <span class="kb-title">{{ kb.title }}</span>
+                @if (kb.state === 'PRIVATE') {
+                  <pa-icon
+                    size="small"
+                    name="lock"
+                    class="lock-icon"></pa-icon>
+                }
+              </div>
+              @if (tokensCount?.[kb.id]; as tokens) {
+                @if (tokens > 0) {
+                  <span class="kb-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                }
+              }
+            </li>
+          }
+        </ul>
+      }
+    }
+  </div>
+
+  <div class="summary-section">
+    @if (totalQueries | async; as count) {
+      <h3 class="title-m">{{ 'account.total_queries' | translate }}</h3>
+      <div class="queries-grid">
+        <div class="query-stat">
+          <div class="title-xxs">{{ 'metrics.period.last-30-days' | translate }}</div>
+          <div class="display-s">{{ count.month | number }}</div>
+        </div>
+        <div class="query-stat">
+          <div class="title-xxs">{{ 'metrics.period.last-12-months' | translate }}</div>
+          <div class="display-s">{{ count.year | number }}</div>
+        </div>
+        <div class="query-stat">
+          <div class="title-xxs">{{ 'metrics.period.since-creation' | translate }}</div>
+          <div class="display-s">{{ count.sinceCreation | number }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

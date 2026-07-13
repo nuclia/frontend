@@ -1,11 +1,9 @@
 <div class="my-subscription">
-  <h2>{{ 'billing.my-subscription' | translate }}</h2>
+  <h2 class="page-subtitle">{{ 'billing.my-subscription' | translate }}</h2>
 
   @if (!(cancelScheduled | async)) {
     @if (prices$ | async; as prices) {
-      <div
-        class="subscription-info"
-        >
+      <div class="subscription-info">
         <div class="subscription-tier">
           <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
           @if (!doNotShowPrice.includes((type | async) || '')) {
@@ -23,9 +21,7 @@
         </div>
         @if (isDeprecatedAccount | async) {
           @if (currency$ | async; as currency) {
-            <pa-table
-              columns="auto auto auto"
-              >
+            <pa-table columns="auto auto auto">
               <pa-table-header>
                 <pa-table-cell header>{{ 'billing.quotas_label' | translate }}</pa-table-cell>
                 <pa-table-cell header></pa-table-cell>
@@ -37,9 +33,7 @@
                 </pa-table-cell>
                 <pa-table-cell>
                   @if ((defaults | async)?.max_kbs; as maxKbs) {
-                    <span
-                      class="body-m"
-                      >
+                    <span class="body-m">
                       {{ maxKbs === -1 ? ('billing.unlimited' | translate) : maxKbs }}
                     </span>
                   }
@@ -59,7 +53,9 @@
                   </pa-table-cell>
                   <pa-table-cell>
                     <span>
-                      <span class="body-m">{{ prices.usage[param]?.price | currency: currency : 'symbol' : '1.2-6' }}</span>
+                      <span class="body-m">
+                        {{ prices.usage[param]?.price | currency: currency : 'symbol' : '1.2-6' }}
+                      </span>
                       <span class="unit">
                         /{{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
                       </span>
@@ -71,22 +67,18 @@
           }
         }
         @if (activeSubscription | async) {
-          <div
-            class="title-s"
-            >
+          <div class="title-s">
             {{ 'billing.next-payment' | translate }}:
             <pa-datetime
               [datetime]="(subscription | async)?.end_billing_period || ''"
               format="human"
-            dateOnly></pa-datetime>
+              dateOnly></pa-datetime>
           </div>
         }
       </div>
     }
     @if (activeSubscription | async) {
-      <div
-        class="cancel-subscription"
-        >
+      <div class="cancel-subscription">
         <div>
           <h3 class="title-s">{{ 'billing.end-service' | translate }}</h3>
           <div>{{ 'billing.cancel-renewal' | translate }}</div>
@@ -106,7 +98,7 @@
       <pa-datetime
         [datetime]="(subscription | async)?.end_billing_period || ''"
         format="human"
-      dateOnly></pa-datetime>
+        dateOnly></pa-datetime>
     </div>
     <div class="renewal">
       <h3 class="title-s">{{ 'billing.renew-subscription' | translate }}</h3>

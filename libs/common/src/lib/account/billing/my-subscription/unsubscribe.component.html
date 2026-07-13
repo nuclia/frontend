@@ -1,6 +1,6 @@
 <pa-modal-dialog>
   <pa-modal-title>
-    <h2>{{ 'billing.unsubscribe-title' | translate }}</h2>
+    <h2 class="page-subtitle">{{ 'billing.unsubscribe-title' | translate }}</h2>
   </pa-modal-title>
   <pa-modal-content>
     <div>{{ 'billing.unsubscribe-help' | translate }}</div>
@@ -10,7 +10,7 @@
         <pa-datetime
           [datetime]="data?.endBillingPeriod || ''"
           format="human"
-        dateOnly></pa-datetime>
+          dateOnly></pa-datetime>
       </div>
     </div>
     @if (!!data && data.overCost > 0) {

@@ -1,7 +1,12 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../../account';
 
 .history {
   max-width: calc(rhythm(90) + rhythm(24));
+}
+
+.page-subtitle {
+  margin-bottom: rhythm(3);
 }
 
 // pa-table hacks

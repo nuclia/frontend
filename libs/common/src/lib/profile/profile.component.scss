@@ -1,4 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
+@use '../account/account';
 
 .profile {
   position: relative;
@@ -14,10 +15,6 @@
   form {
     display: flex;
     flex-direction: column;
-  }
-
-  .page-title {
-    margin-bottom: rhythm(1);
   }
 
   .page-description {
@@ -49,5 +46,28 @@
   .close-button {
     top: rhythm(3);
     right: rhythm(3);
+  }
+
+  &.embedded {
+    padding: 0;
+
+    .profile-container {
+      background-color: transparent;
+      border-radius: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    form {
+      min-height: auto;
+      padding: 0;
+    }
+
+    .actions {
+      margin-top: rhythm(2);
+      padding-top: rhythm(2);
+      text-align: left;
+    }
   }
 }

@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, Subject, switchMap, takeUntil } from 'rxjs';
@@ -18,11 +19,13 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 @Component({
   selector: 'nus-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, PaTextFieldModule, FormsModule, ReactiveFormsModule, PaTogglesModule, PaButtonModule],
 })
 export class ProfileComponent implements OnInit {
+  embedded = !!inject(ActivatedRoute).snapshot.data['embedded'];
+
   @Output() saved = new EventEmitter<void>();
 
   private location = inject(Location);

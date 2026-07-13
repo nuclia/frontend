@@ -15,7 +15,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent, CountrySelectComponent, SisProgressModule } from '@nuclia/sistema';
 import { STFPipesModule } from '@flaps/core';
-import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { ReviewComponent } from './review/review.component';
@@ -50,7 +49,6 @@ import { BudgetComponent } from './usage/budget.component';
     BudgetComponent,
   ],
   declarations: [
-    BillingComponent,
     SubscriptionsComponent,
     CheckoutComponent,
     ReviewComponent,
