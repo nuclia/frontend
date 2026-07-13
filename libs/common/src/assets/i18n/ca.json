@@ -44,6 +44,7 @@
 	"account.delete.reauth_explanation": "Per la teva seguretat, has de tornar a iniciar la sessió abans d'eliminar el teu compte.",
 	"account.delete.subscription-details": "Pots consultar els detalls de la subscripció a ",
 	"account.delete.success": "El compte s'ha eliminat correctament.",
+	"account.delete.user_sole_owner_error": "No es pot suprimir el vostre perfil perquè sou l'únic propietari d'un o més comptes. Transferiu la propietat o suprimiu aquests comptes primer.",
 	"account.delete.verify_identity_title": "Verifica la teva identitat",
 	"account.delete_account": "Eliminar compte",
 	"account.delete_account_confirm": "Vull suprimir aquest compte juntament amb totes les Knowledge Boxes existents i les seves dades",
