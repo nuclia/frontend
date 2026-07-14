@@ -138,6 +138,7 @@ export class UserMenuComponent implements OnInit {
         {
           label: 'account.consumption',
           icon: 'chart',
+          dataCy: 'go-to-consumption',
           action: () => this.go('home/consumption'),
           visible$: this.isAccountManager.pipe(map((m) => !this.standalone && !!m)),
         },
@@ -158,6 +159,7 @@ export class UserMenuComponent implements OnInit {
         {
           label: 'generic.user_preferences',
           icon: 'user',
+          dataCy: 'go-to-user-preferences',
           action: () => this.navigateToProfile(),
         },
       ],
@@ -214,11 +216,13 @@ export class UserMenuComponent implements OnInit {
         {
           label: 'account.related_kbs',
           icon: 'knowledge-box',
+          dataCy: 'go-to-account-kbs',
           action: () => this.go('administration/knowledge-boxes'),
         },
         {
           label: 'navbar.account-retrieval-agents',
           icon: 'workflows',
+          dataCy: 'go-to-retrieval-agents',
           action: () => this.go('administration/retrieval-agents'),
           visible$: this.isRetrievalAgentsEnabled,
         },
@@ -240,11 +244,13 @@ export class UserMenuComponent implements OnInit {
         {
           label: 'navbar.nua-keys',
           icon: 'key',
+          dataCy: 'go-to-nua-keys',
           action: () => this.go('configuration/nua'),
         },
         {
           label: 'navbar.models',
           icon: 'settings',
+          dataCy: 'go-to-models',
           action: () => this.go('configuration/models'),
           visible$: this.isModelManagementEnabled,
         },
