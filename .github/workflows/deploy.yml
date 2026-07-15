@@ -60,7 +60,7 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db' # v3.0.1
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -403,7 +403,7 @@ jobs:
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -485,7 +485,7 @@ jobs:
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -567,7 +567,7 @@ jobs:
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -649,7 +649,7 @@ jobs:
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
@@ -731,7 +731,7 @@ jobs:
           token_format: access_token
 
       - name: Login to Google Artifact Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
         with:
           registry: europe-west4-docker.pkg.dev
           username: oauth2accesstoken
