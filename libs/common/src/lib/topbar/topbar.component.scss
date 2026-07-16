@@ -41,6 +41,17 @@
     align-items: center;
     display: flex;
     gap: rhythm(2);
+
+    a.accent-link {
+      color: var(--color-primary-regular);
+      cursor: pointer;
+      font-size: 0.875rem;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-primary-strong);
+      }
+    }
   }
 
   .topbar-separator {
