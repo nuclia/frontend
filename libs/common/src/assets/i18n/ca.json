@@ -626,6 +626,7 @@
 	"chat-advice.input-placeholder": "Escriu una pregunta...",
 	"chat-advice.minimize": "Minimitzar l'assistent",
 	"chat-advice.no-data": "No he trobat prou informació rellevant per respondre això amb confiança.\n\nIntenta reformular la pregunta o donar més context.",
+	"chat-advice.pill-book-demo": "Reservar una demo",
 	"chat-advice.send": "Pregunta",
 	"chat-advice.thinking": "Pensant",
 	"chat-advice.title": "Pregunta a la IA",

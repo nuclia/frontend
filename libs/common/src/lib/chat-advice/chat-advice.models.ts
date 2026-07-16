@@ -36,3 +36,8 @@ export interface RouteContext {
   kb?: string;
   agent?: string;
 }
+
+export interface PredefinedPill {
+  labelKey: string;
+  url: string;
+}

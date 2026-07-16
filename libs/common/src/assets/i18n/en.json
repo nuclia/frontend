@@ -626,6 +626,7 @@
 	"chat-advice.input-placeholder": "Type a question ...",
 	"chat-advice.minimize": "Minimize assistant",
 	"chat-advice.no-data": "I couldn't find enough relevant information to answer this confidently.\n\nTry rephrasing the question or giving some more context.",
+	"chat-advice.pill-book-demo": "Book a demo",
 	"chat-advice.send": "Ask",
 	"chat-advice.thinking": "Thinking",
 	"chat-advice.title": "Help Assistant",

@@ -626,6 +626,7 @@
 	"chat-advice.input-placeholder": "Escribe una pregunta...",
 	"chat-advice.minimize": "Minimizar asistente",
 	"chat-advice.no-data": "No encontré suficiente información relevante para responder con seguridad.\n\nIntenta reformular la pregunta o proporcionar más contexto.",
+	"chat-advice.pill-book-demo": "Reservar una demo",
 	"chat-advice.send": "Preguntar",
 	"chat-advice.thinking": "Pensamiento",
 	"chat-advice.title": "Pregunta a la IA",

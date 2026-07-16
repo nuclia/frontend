@@ -5,15 +5,18 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  computed,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FeaturesService } from '@flaps/core';
+import { map } from 'rxjs';
 import { ChatAdviceService } from './chat-advice.service';
-import { ChatMessage, ChatState } from './chat-advice.models';
+import { ChatMessage, ChatState, PredefinedPill } from './chat-advice.models';
 
 @Component({
   selector: 'stf-chat-advice-bubble',
@@ -29,6 +32,7 @@ export class ChatAdviceBubbleComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private chatAdviceService = inject(ChatAdviceService);
   private translate = inject(TranslateService);
+  private features = inject(FeaturesService);
 
   private readonly MINIMIZED_KEY = 'HELP_ASSISTANT_MINIMIZED';
 
@@ -40,6 +44,24 @@ export class ChatAdviceBubbleComponent implements OnInit {
   messages = signal<ChatMessage[]>([]);
   inputValue = signal('');
   errorMessage = signal<string | null>(null);
+
+  hasUserMessages = computed(() => this.messages().some((m) => m.role === 'user'));
+
+  predefinedPills = toSignal(
+    this.features.authorized.showDemoButton.pipe(
+      map((showDemo): PredefinedPill[] =>
+        showDemo
+          ? [
+              {
+                labelKey: 'chat-advice.pill-book-demo',
+                url: 'https://www.progress.com/agentic-rag/book-a-demo',
+              },
+            ]
+          : [],
+      ),
+    ),
+    { initialValue: [] as PredefinedPill[] },
+  );
 
   ngOnInit(): void {
     this.translate
@@ -106,6 +128,10 @@ export class ChatAdviceBubbleComponent implements OnInit {
           );
         },
       });
+  }
+
+  openPill(url: string): void {
+    window.open(url, '_blank', 'noreferrer');
   }
 
   private scrollToLatestResponse(): void {
