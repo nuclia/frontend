@@ -148,7 +148,7 @@ export class FilterExpressionModalComponent {
           this.filterExpression.field = result;
         } else if (target === 'paragraph') {
           this.filterExpression.paragraph = result;
-        } else {
+        } else if (target === 'key-value') {
           this.filterExpression.key_value = result;
         }
         this.updateMainOperator();
@@ -199,7 +199,7 @@ export class FilterExpressionModalComponent {
       this.filterExpression.field = undefined;
     } else if (target === 'paragraph') {
       this.filterExpression.paragraph = undefined;
-    } else {
+    } else if (target === 'key-value') {
       this.filterExpression.key_value = undefined;
     }
     this.updateMainOperator();
@@ -233,7 +233,7 @@ export class FilterExpressionModalComponent {
       this.filterExpression.field = expression as FieldFilterExpression;
     } else if (target === 'paragraph') {
       this.filterExpression.paragraph = expression as ParagraphFilterExpression;
-    } else {
+    } else if (target === 'key-value') {
       this.filterExpression.key_value = expression as KeyValueFilterExpressionWithProps;
     }
   }
@@ -278,10 +278,15 @@ export class FilterExpressionModalComponent {
     } else if ('not' in expression) {
       return { not: this.addFakeProps(expression.not) };
     }
-    return {
-      ...expression,
-      prop: 'eq' in expression ? 'key_value_eq' : 'contains' in expression ? 'key_value_contains' : 'key_value_gte_lte',
-    };
+    let prop;
+    if ('eq' in expression) {
+      prop = 'key_value_eq';
+    } else if ('contains' in expression) {
+      prop = 'key_value_contains';
+    } else if ('gte' in expression || 'lte' in expression) {
+      prop = 'key_value_gte_lte';
+    }
+    return { ...expression, prop } as KeyValueFilterExpressionWithProps;
   }
 
   private removeFakeProps(expression: KeyValueFilterExpressionWithProps): KeyValueFilterExpression {

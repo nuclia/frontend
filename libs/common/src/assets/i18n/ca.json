@@ -2053,6 +2053,7 @@
 	"search.configuration.filter-expression-modal.key-value-filter.equal": "Igual a",
 	"search.configuration.filter-expression-modal.key-value-filter.field": "Camp",
 	"search.configuration.filter-expression-modal.key-value-filter.gte": "Més gran o igual a",
+	"search.configuration.filter-expression-modal.key-value-filter.invalid-range": "L'interval no és vàlid",
 	"search.configuration.filter-expression-modal.key-value-filter.lte": "Més petit o igual a",
 	"search.configuration.filter-expression-modal.key-value-filter.schema_id": "Esquema estructurat",
 	"search.configuration.filter-expression-modal.key-value-filters": "Filtres clau-valor",

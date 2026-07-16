@@ -2053,6 +2053,7 @@
 	"search.configuration.filter-expression-modal.key-value-filter.equal": "Égal à",
 	"search.configuration.filter-expression-modal.key-value-filter.field": "Champ",
 	"search.configuration.filter-expression-modal.key-value-filter.gte": "Supérieur ou égal à",
+	"search.configuration.filter-expression-modal.key-value-filter.invalid-range": "La plage est invalide",
 	"search.configuration.filter-expression-modal.key-value-filter.lte": "Inférieur ou égal à",
 	"search.configuration.filter-expression-modal.key-value-filter.schema_id": "Schéma structuré",
 	"search.configuration.filter-expression-modal.key-value-filters": "Filtres clé-valeur",

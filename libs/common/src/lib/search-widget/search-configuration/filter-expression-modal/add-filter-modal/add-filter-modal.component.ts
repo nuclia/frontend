@@ -13,15 +13,17 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { LabelsService } from '@flaps/core';
 import { FIELD_TYPE, KVFieldType, TypeParagraph } from '@nuclia/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NerService } from '../../../../entities';
 import { BehaviorSubject, combineLatest, defer, filter, map, merge, of, switchMap, take, tap } from 'rxjs';
 import { AnyFilterExpression, FilterTarget } from '../filter-expression-modal.component';
 import { KvSchemasService } from '../../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
+import { InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   imports: [
     CommonModule,
+    InfoCardComponent,
     PaButtonModule,
     PaDatePickerModule,
     PaExpanderModule,
@@ -78,6 +80,18 @@ export class AddFilterModalComponent {
   allowedFieldTypes: { [key: string]: string[] } = {
     key_value_eq: ['text', 'boolean', 'integer', 'float', 'date'],
     key_value_gte_lte: ['integer', 'float', 'date'],
+  };
+
+  validRange = (group: AbstractControl) => {
+    const gte = group.get('gte')?.value;
+    const lte = group.get('lte')?.value;
+    const gteEmpty = typeof gte !== 'number' && !gte;
+    const lteEmpty = typeof lte !== 'number' && !lte;
+    if (gteEmpty || lteEmpty) {
+      return null;
+    } else {
+      return lte < gte ? { invalidRange: true } : null;
+    }
   };
 
   prop = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
@@ -149,16 +163,19 @@ export class AddFilterModalComponent {
       key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       eq: new FormControl<string | number>('', { validators: [Validators.required] }),
     }),
-    key_value_gte_lte: new FormGroup({
-      schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      gte: new FormControl<string | number>('', { nonNullable: true }),
-      lte: new FormControl<string | number>('', { nonNullable: true }),
-    }),
+    key_value_gte_lte: new FormGroup(
+      {
+        schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        gte: new FormControl<string | number>('', { nonNullable: true }),
+        lte: new FormControl<string | number>('', { nonNullable: true }),
+      },
+      { validators: [this.validRange] },
+    ),
     key_value_contains: new FormGroup({
       schema_id: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      contains: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      contains: new FormControl<string | number>('', { nonNullable: true, validators: [Validators.required] }),
     }),
   };
 

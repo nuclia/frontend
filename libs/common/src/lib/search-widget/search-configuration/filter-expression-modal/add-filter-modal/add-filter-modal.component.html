@@ -33,23 +33,27 @@
             {{ 'search.configuration.filter-expression-modal.filters' | translate }}
           </pa-option-header>
           @let targetValue = target | async;
-          @if (targetValue === 'field') {
-            @for (filter of fieldFilters; track filter) {
-              <pa-option [value]="filter">
-                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
-              </pa-option>
+          @switch (targetValue) {
+            @case ('field') {
+              @for (filter of fieldFilters; track filter) {
+                <pa-option [value]="filter">
+                  {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+                </pa-option>
+              }
             }
-          } @else if (targetValue === 'paragraph') {
-            @for (filter of paragraphFilters; track filter) {
-              <pa-option [value]="filter">
-                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
-              </pa-option>
+            @case ('paragraph') {
+              @for (filter of paragraphFilters; track filter) {
+                <pa-option [value]="filter">
+                  {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+                </pa-option>
+              }
             }
-          } @else {
-            @for (filter of keyValueFilters; track filter) {
-              <pa-option [value]="filter">
-                {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
-              </pa-option>
+            @case ('key-value') {
+              @for (filter of keyValueFilters; track filter) {
+                <pa-option [value]="filter">
+                  {{ 'search.configuration.filter-expression-modal.filter-type.' + filter | translate }}
+                </pa-option>
+              }
             }
           }
         </pa-select>
@@ -295,14 +299,35 @@
                     [label]="'search.configuration.filter-expression-modal.key-value-filter.lte' | translate"
                     isInPopup></pa-date-picker>
                 }
+                @if (forms['key_value_gte_lte'].errors?.['invalidRange']) {
+                  <nsi-info-card
+                    type="warning"
+                    icon="warning">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.invalid-range' | translate }}
+                  </nsi-info-card>
+                }
               }
             }
             @case ('key_value_contains') {
               <ng-container *ngTemplateOutlet="schemaForm"></ng-container>
               @if (selectedSchemaKey) {
-                <pa-input formControlName="contains">
-                  {{ 'search.configuration.filter-expression-modal.key-value-filter.contains' | translate }}
-                </pa-input>
+                @let type = (schemaField | async)?.type;
+                @if (type === 'text') {
+                  <pa-input formControlName="contains">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.contains' | translate }}
+                  </pa-input>
+                } @else if (type === 'float' || type === 'integer') {
+                  <pa-input
+                    formControlName="contains"
+                    type="number">
+                    {{ 'search.configuration.filter-expression-modal.key-value-filter.contains' | translate }}
+                  </pa-input>
+                } @else if (type === 'date') {
+                  <pa-date-picker
+                    formControlName="contains"
+                    [label]="'search.configuration.filter-expression-modal.key-value-filter.contains' | translate"
+                    isInPopup></pa-date-picker>
+                }
               }
             }
           }

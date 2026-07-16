@@ -278,8 +278,6 @@ export interface KeyValueContainsFilter extends KeyValueFilter {
   contains?: number | string;
 }
 
-export interface KeyValueEqualFilter {}
-
 export interface FilterExpression {
   field?: FieldFilterExpression;
   paragraph?: ParagraphFilterExpression;

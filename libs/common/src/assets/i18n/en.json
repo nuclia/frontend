@@ -2053,6 +2053,7 @@
 	"search.configuration.filter-expression-modal.key-value-filter.equal": "Equal to",
 	"search.configuration.filter-expression-modal.key-value-filter.field": "Field",
 	"search.configuration.filter-expression-modal.key-value-filter.gte": "Greater than or equal to",
+	"search.configuration.filter-expression-modal.key-value-filter.invalid-range": "The range is invalid",
 	"search.configuration.filter-expression-modal.key-value-filter.lte": "Less than or equal to",
 	"search.configuration.filter-expression-modal.key-value-filter.schema_id": "Structured schema",
 	"search.configuration.filter-expression-modal.key-value-filters": "Key-value filters",

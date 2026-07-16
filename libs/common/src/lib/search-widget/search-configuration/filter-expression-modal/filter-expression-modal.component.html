@@ -70,14 +70,14 @@
         }
         <pa-accordion>
           <pa-accordion-item
-            id="keyValue"
+            id="key-value"
             [itemTitle]="'search.configuration.filter-expression-modal.key-value-filters' | translate"
             [expanded]="filterExpression.key_value">
             <pa-accordion-item-body>
               @if (filterExpression.key_value) {
                 <ng-container
                   [ngTemplateOutlet]="filterItem"
-                  [ngTemplateOutletContext]="{ filter: filterExpression.key_value, target: 'keyValue' }" />
+                  [ngTemplateOutletContext]="{ filter: filterExpression.key_value, target: 'key-value' }" />
               }
               @if (!filterExpression.key_value) {
                 <div>
