@@ -1,6 +1,7 @@
 import { from, map, Observable, Subject, switchMap } from 'rxjs';
 import { IErrorResponse } from '../../models';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
+import { setupAgenticWSHandlers } from './agentic-websocket';
 import { Driver, DriverCreation } from './driver.models';
 import {
   AnswerOperation,
@@ -164,72 +165,53 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     headers?: { [key: string]: string },
     options?: InteractionOptions,
   ) {
-    let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, workflowId, fromCursor).subscribe({
       next: (wsUrl) => {
         const ws = new WebSocket(wsUrl);
         this.wsConnections[sessionId] = ws;
-        ws.onopen = () => {
-          const message = { question, operation: InteractionOperation.question, headers, ...options };
-          // and send the question
-          ws.send(JSON.stringify(message));
-        };
-        ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          if (data) {
-            lastMessage = data as AragAnswer;
-            if (lastMessage.operation === AnswerOperation.done) {
-              ws.close(1000);
-              answerSubject.next({ type: 'answer', answer: lastMessage });
-            } else if (lastMessage.operation === AnswerOperation.error) {
-              ws.close(1000);
-              answerSubject.next(mapErrorResponseFromAnswer(lastMessage));
-            } else if (lastMessage.feedback?.module === 'oauth') {
-              const feedback = lastMessage.feedback;
-              if (feedback.question === 'Get credentials') {
-                const syncConfigIds = Object.keys(feedback.get_credentials || {});
-                const existingCredentials = Object.fromEntries(
-                  Object.entries(this.oauthCredentials || {}).filter(([key]) => syncConfigIds.includes(key)),
-                );
-                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: existingCredentials });
-              } else if (feedback.question === 'Send credentials') {
-                this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
-                this.sendMessage(sessionId, feedback.request_id, { existing_credentials: feedback.credentials });
-              }
-            } else if (lastMessage.oauth) {
-              window.open(lastMessage.oauth.oauth_url, 'blank', 'noreferrer');
-            } else {
-              answerSubject.next({ type: 'answer', answer: lastMessage });
-            }
-          }
-        };
-        ws.onerror = (error) => {
-          answerSubject.next({ type: 'error', status: -1, detail: 'WebSocket error', body: error });
-          answerSubject.complete();
-        };
+        const message = { question, operation: InteractionOperation.question, headers: headers ?? {}, ...options };
 
-        ws.onclose = (event) => {
-          // When close status is not a normal one, we check we got all the answers
-          if (event.code === 1000 || lastMessage?.operation === AnswerOperation.done) {
-            answerSubject.complete();
+        setupAgenticWSHandlers(ws, message, answerSubject, (event, lastMessage) => {
+          // OAuth feedback messages are intercepted before they reach the subject
+          // (handled in onmessage override below), so here we only deal with reconnect.
+          const lastSeqId = lastMessage?.seqid ?? null;
+          if (lastSeqId !== null) {
+            this.openWebSocket(sessionId, question, workflowId, answerSubject, lastSeqId + 1, headers);
+          } else if (this.wsOpeningCount < 2) {
+            // if we got no message, we retry only 3 times
+            this.wsOpeningCount++;
+            this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
           } else {
-            // If not we reopen a connection from the last seqId
-            const lastSeqId = lastMessage?.seqid || null;
-            if (lastSeqId !== null) {
-              this.openWebSocket(sessionId, question, workflowId, answerSubject, lastSeqId + 1, headers);
-            } else if (this.wsOpeningCount < 2) {
-              // if we got no message, we retry only 3 times
-              this.wsOpeningCount++;
-              this.openWebSocket(sessionId, question, workflowId, answerSubject, undefined, headers);
-            } else {
-              answerSubject.next({
-                type: 'error',
-                status: -1,
-                detail: 'WebSocket was closed without returning any answer.',
-                body: event,
-              });
-              answerSubject.complete();
+            answerSubject.next({
+              type: 'error',
+              status: -1,
+              detail: 'WebSocket was closed without returning any answer.',
+              body: event,
+            });
+            answerSubject.complete();
+          }
+        });
+
+        // Override onmessage to handle OAuth feedback before it reaches the subject.
+        const baseOnMessage = ws.onmessage;
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data) as AragAnswer;
+          if (data?.feedback?.module === 'oauth') {
+            const feedback = data.feedback;
+            if (feedback.question === 'Get credentials') {
+              const syncConfigIds = Object.keys(feedback.get_credentials || {});
+              const existingCredentials = Object.fromEntries(
+                Object.entries(this.oauthCredentials || {}).filter(([key]) => syncConfigIds.includes(key)),
+              );
+              this.sendMessage(sessionId, feedback.request_id, { existing_credentials: existingCredentials });
+            } else if (feedback.question === 'Send credentials') {
+              this.oauthCredentials = { ...this.oauthCredentials, ...(feedback.credentials || {}) };
+              this.sendMessage(sessionId, feedback.request_id, { existing_credentials: feedback.credentials });
             }
+          } else if (data?.oauth) {
+            window.open(data.oauth.oauth_url, 'blank', 'noreferrer');
+          } else {
+            baseOnMessage?.call(ws, event);
           }
         };
       },

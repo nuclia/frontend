@@ -125,6 +125,7 @@ export interface ChatOptions extends BaseSearchOptions {
   };
   reasoning?: ReasoningParam;
   show_consumption?: boolean;
+  agentic_config_id?: string;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

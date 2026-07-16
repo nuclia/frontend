@@ -18,6 +18,10 @@ export const widgetViewerEnabled = writableSubject<boolean>(true);
 export const widgetBlocked = writableSubject<boolean>(false);
 export const widgetBlockedMessage = writableSubject<string>('');
 export const widgetCache = writableSubject<number | undefined>(undefined);
+export const agenticConfigId = writableSubject<string | undefined>(undefined);
+// Note: 'websocket' requires account id and zone to be configured (for ephemeral token auth).
+export const agenticTransport = writableSubject<'http' | 'websocket'>('http');
+export const agenticStep = writableSubject<{ title: string; value?: string | null } | null>(null);
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));

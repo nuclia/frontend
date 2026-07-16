@@ -57,6 +57,8 @@
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import {
+    agenticConfigId,
+    agenticTransport,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
     DEFAULT_CHAT_PLACEHOLDER,
@@ -135,6 +137,8 @@
     metadata?: string | undefined;
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
+    agentic_config_id?: string;
+    agentic_transport?: 'http' | 'websocket';
     security_groups?: string | undefined;
     reasoning?: string;
     routing?: string;
@@ -190,6 +194,8 @@
   let metadata = $derived(componentProps.metadata || config.metadata);
   let widget_id = $derived(componentProps.widget_id || config.widget_id);
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let agentic_config_id = $derived(componentProps.agentic_config_id || config.agentic_config_id);
+  let agentic_transport = $derived(componentProps.agentic_transport || config.agentic_transport);
   let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let reasoning = $derived(componentProps.reasoning || config.reasoning);
   let routing = $derived(componentProps.routing || config.routing);
@@ -480,6 +486,12 @@
 
       if (search_config_id) {
         searchConfigId.set(search_config_id);
+      }
+      if (agentic_config_id) {
+        agenticConfigId.set(agentic_config_id);
+        agenticTransport.set(agentic_transport === 'websocket' ? 'websocket' : 'post');
+      } else {
+        agenticConfigId.set(undefined);
       }
       _initialized.next(true);
     });
