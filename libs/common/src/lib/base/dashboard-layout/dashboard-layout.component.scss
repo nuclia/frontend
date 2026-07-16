@@ -12,6 +12,7 @@ $height-status-bar: rhythm(9);
     flex: 0 0 auto;
     width: $width-sidenav;
     transition: width $transition-slide;
+    border-right: 1px solid $color-neutral-lighter;
 
     &.collapsed {
       width: 0;
