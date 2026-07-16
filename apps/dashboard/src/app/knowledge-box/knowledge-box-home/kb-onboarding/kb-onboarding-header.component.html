@@ -144,18 +144,104 @@
   } @else {
     <!-- KB Ready / done state -->
     <div class="onboarding-content onboarding-content--done">
-      <div class="onboarding-title-row">
-        <h2 class="onboarding-title">{{ 'onboarding.header.done.title' | translate }}</h2>
-        <div class="align-center-2">
+      <div class="onboarding-title-row onboarding-title-row--done">
+        <div class="done-title-block">
+          <h2 class="onboarding-title">{{ kbName() }}</h2>
+          @if (storageSummary(); as storage) {
+            <pa-button
+              class="storage-summary-button"
+              icon="info"
+              aspect="basic"
+              size="small"
+              [paTooltip]="'dashboard-home.kb-storage.title' | translate"
+              [paPopup]="storageSummaryDropdown"></pa-button>
+            <pa-dropdown #storageSummaryDropdown>
+              @if (storage.resources === 0) {
+                <pa-option [readonly]="true">{{ 'home.empty.storage' | translate }}</pa-option>
+              } @else {
+                <pa-option [readonly]="true">
+                  <div class="storage-summary-row">
+                    <span class="storage-summary-label">
+                      {{ 'dashboard-home.kb-storage.total.index-size' | translate }}
+                    </span>
+                    <span class="storage-summary-value">{{ storage.index_size | size }}</span>
+                  </div>
+                </pa-option>
+                <pa-option [readonly]="true">
+                  <div class="storage-summary-row">
+                    <span class="storage-summary-label">
+                      {{ 'dashboard-home.kb-storage.total.resources' | translate }}
+                    </span>
+                    <span class="storage-summary-value">{{ storage.resources | number: '1.0-0' : locale() }}</span>
+                  </div>
+                </pa-option>
+                <pa-option [readonly]="true">
+                  <div class="storage-summary-row">
+                    <span class="storage-summary-label">
+                      {{ 'dashboard-home.kb-storage.total.text-blocks' | translate }}
+                    </span>
+                    <span class="storage-summary-value">{{ storage.paragraphs | number: '1.0-0' : locale() }}</span>
+                  </div>
+                </pa-option>
+                <pa-option [readonly]="true">
+                  <div class="storage-summary-row">
+                    <span class="storage-summary-label">
+                      {{ 'dashboard-home.kb-storage.total.fields' | translate }}
+                    </span>
+                    <span class="storage-summary-value">{{ storage.fields | number: '1.0-0' : locale() }}</span>
+                  </div>
+                </pa-option>
+                <pa-option [readonly]="true">
+                  <div class="storage-summary-row">
+                    <span class="storage-summary-label">
+                      {{ 'dashboard-home.kb-storage.total.vectors' | translate }}
+                    </span>
+                    <span class="storage-summary-value">{{ storage.sentences | number: '1.0-0' : locale() }}</span>
+                  </div>
+                </pa-option>
+                @if (externalIndexProvider()) {
+                  <pa-option [readonly]="true">
+                    <div class="storage-summary-row">
+                      <span class="storage-summary-label">
+                        {{ 'dashboard-home.kb-storage.external-db.title' | translate }}
+                      </span>
+                      <span class="storage-summary-value">
+                        {{ 'dashboard-home.kb-storage.external-db.' + externalIndexProvider() | translate }}
+                      </span>
+                    </div>
+                  </pa-option>
+                }
+              }
+            </pa-dropdown>
+          }
+        </div>
+        <div class="done-actions">
           <pa-button
             kind="primary"
             icon="search"
-            [routerLink]="kbUrl() + '/search'"></pa-button>
+            iconAndText
+            [routerLink]="kbUrl() + '/search'">
+            {{ 'generic.search' | translate }}
+          </pa-button>
           <pa-button
-            class="icon-bordered"
             aspect="basic"
-            icon="plus"
-            [routerLink]="kbUrl() + '/upload'"></pa-button>
+            icon="upload"
+            iconAndText
+            [routerLink]="kbUrl() + '/upload'">
+            {{ 'navbar.upload-data' | translate }}
+          </pa-button>
+          <pa-button
+            class="more-actions-button"
+            aspect="basic"
+            icon="more-vertical"
+            [paPopup]="onboardingDoneActionsDropdown"></pa-button>
+          <pa-dropdown #onboardingDoneActionsDropdown>
+            <pa-option [routerLink]="kbUrl() + '/manage'">{{ 'dashboard-home.go-to.kb-settings' | translate }}</pa-option>
+            <pa-option (selectOption)="openDeveloperIntegrations()">
+              {{ 'home.developer-integrate.title' | translate }}
+            </pa-option>
+            <pa-option (selectOption)="openTestPage()">{{ 'dashboard-home.kb-details.test-page' | translate }}</pa-option>
+          </pa-dropdown>
         </div>
       </div>
     </div>

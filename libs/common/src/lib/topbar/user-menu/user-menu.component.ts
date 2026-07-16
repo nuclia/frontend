@@ -16,11 +16,10 @@ import {
   PaFocusableModule,
   PaIconModule,
   PaPopupModule,
-  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Welcome } from '@nuclia/core';
-import { SisModalService, BadgeComponent } from '@nuclia/sistema';
+import { SisModalService } from '@nuclia/sistema';
 import { BehaviorSubject, combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { AccountDeleteComponent } from '../../account/account-manage/account-delete/account-delete.component';
 
@@ -51,8 +50,6 @@ interface MenuSection {
     PaDropdownModule,
     PaFocusableModule,
     PaPopupModule,
-    PaTooltipModule,
-    BadgeComponent,
   ],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],

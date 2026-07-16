@@ -5,8 +5,10 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
+  PaDropdownModule,
   PaIconModule,
   PaModalModule,
+  PaPopupModule,
   PaTogglesModule,
   PaTooltipModule,
   ModalConfig,
@@ -53,8 +55,10 @@ describe('KbOnboardingHeaderComponent', () => {
           defaultLanguage: 'en',
         }),
         MockModule(PaButtonModule),
+        MockModule(PaDropdownModule),
         MockModule(PaIconModule),
         MockModule(PaModalModule),
+        MockModule(PaPopupModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
         MockModule(RouterModule),
@@ -74,6 +78,16 @@ describe('KbOnboardingHeaderComponent', () => {
     component = fixture.componentInstance;
     // Required signal input must be set before first detectChanges()
     fixture.componentRef.setInput('kbUrl', '/kb/test');
+    fixture.componentRef.setInput('kbName', 'Test KB');
+    fixture.componentRef.setInput('storageSummary', {
+      resources: 1,
+      index_size: 1024,
+      paragraphs: 2,
+      fields: 3,
+      sentences: 4,
+    });
+    fixture.componentRef.setInput('locale', 'en');
+    fixture.componentRef.setInput('externalIndexProvider', 'pinecone');
     fixture.detectChanges();
   }
 
@@ -188,12 +202,17 @@ describe('KbOnboardingHeaderComponent', () => {
     it('should render the done title', () => {
       const h2 = fixture.nativeElement.querySelector('h2');
       expect(h2).toBeTruthy();
-      expect(h2.textContent.trim()).toContain('Your Knowledge Box is Ready');
+      expect(h2.textContent.trim()).toContain('Test KB');
     });
 
     it('should show the done state', () => {
       const done = fixture.nativeElement.querySelector('.onboarding-content--done');
       expect(done).toBeTruthy();
+    });
+
+    it('should render the storage summary trigger beside the KB name', () => {
+      const trigger = fixture.nativeElement.querySelector('.done-title-block .storage-summary-button');
+      expect(trigger).toBeTruthy();
     });
   });
 

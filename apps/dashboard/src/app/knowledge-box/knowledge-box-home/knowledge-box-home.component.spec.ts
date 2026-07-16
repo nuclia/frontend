@@ -9,6 +9,7 @@ import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import {
   AccountStatusComponent,
   AppService,
+  GenerativeModelPipe,
   MetricsService,
   RemiMetricsService,
   UploadModule,
@@ -28,14 +29,18 @@ import {
   PaButtonModule,
   PaDropdownModule,
   PaIconModule,
+  PaPopupModule,
   PaTableModule,
   PaTabsModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { RouterModule } from '@angular/router';
 import { KbOnboardingHeaderComponent } from './kb-onboarding/kb-onboarding-header.component';
 import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
 import { ContentPlaceholderComponent } from './content-placeholder/content-placeholder.component';
+import { DeveloperIntegrationsModalComponent } from './developer-integrations-modal/developer-integrations-modal.component';
+import { LastResourcesComponent } from './last-resources/last-resources.component';
 
 function createTranslateLoader() {
   return {
@@ -63,17 +68,21 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockModule(PaButtonModule),
           MockModule(PaDropdownModule),
           MockModule(PaIconModule),
+          MockModule(PaPopupModule),
           MockModule(PaTableModule),
           MockModule(PaTabsModule),
+          MockModule(PaTooltipModule),
           MockModule(RouterModule),
           MockModule(UploadModule),
           STFPipesModule,
+          GenerativeModelPipe,
           MockComponent(DropdownButtonComponent),
           MockComponent(AccountStatusComponent),
           MockComponent(HomeContainerComponent),
           MockComponent(UsageChartsComponent),
           MockComponent(KbOnboardingHeaderComponent),
           MockComponent(ContentPlaceholderComponent),
+          MockComponent(LastResourcesComponent),
         ],
         providers: [
           MockProvider(AppService, {
@@ -106,7 +115,7 @@ describe('KnowledgeBoxHomeComponent', () => {
               max_users: 100,
               creation_date: '2023-01-01',
             } as Account),
-            counters: of({}),
+            counters: of({ resources: 1, index_size: 1024, paragraphs: 2, fields: 3, sentences: 4 }),
             refreshCounter: jest.fn(),
             nuclia: {
               options: { standalone: false, backend: 'https://nuclia.cloud' },
@@ -140,7 +149,9 @@ describe('KnowledgeBoxHomeComponent', () => {
               getLastStripePeriods: () => [{ start: new Date(), end: new Date() }],
             },
           },
-          MockProvider(SisModalService),
+          MockProvider(SisModalService, {
+            openModal: jest.fn(),
+          }),
           {
             provide: ZoneService,
             useValue: {
@@ -190,17 +201,43 @@ describe('KnowledgeBoxHomeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should translate properly', () => {
-    component.developerExpanded = true;
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('[data-cy="nucliadb-endpoint"]').textContent).toContain('NucliaDB API endpoint');
-  });
-
   it('should render onboarding header', () => {
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('app-kb-onboarding-header')).toBeTruthy();
+  });
+
+  it('should render the KB summary cards on the top row', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    const summaryCards = compiled.querySelectorAll('.kb-summary-card');
+
+    expect(summaryCards).toHaveLength(4);
+    expect(summaryCards[0].textContent).toContain('Region');
+    expect(summaryCards[1].textContent).toContain('Generative model');
+    expect(summaryCards[2].textContent).toContain('Knowledge Box status');
+    expect(summaryCards[3].textContent).toContain('Default embeddings model');
+  });
+
+  it('should not render the standalone storage card anymore', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.kb-storage')).toBeFalsy();
+  });
+
+  it('should not render the old KB details card anymore', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('.kb-details')).toBeFalsy();
+  });
+
+  it('should open the developer integrations modal', () => {
+    fixture.detectChanges();
+    const modalService = TestBed.inject(SisModalService);
+
+    component.openDeveloperIntegrations();
+
+    expect(modalService.openModal).toHaveBeenCalledWith(DeveloperIntegrationsModalComponent);
   });
 
   it('should not render onboarding header for non-admin users', () => {
