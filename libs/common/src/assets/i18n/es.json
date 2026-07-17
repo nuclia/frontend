@@ -2053,7 +2053,7 @@
 	"search.configuration.filter-expression-modal.key-value-filter.equal": "Igual a",
 	"search.configuration.filter-expression-modal.key-value-filter.field": "Campo",
 	"search.configuration.filter-expression-modal.key-value-filter.gte": "Mayor o igual a",
-	"search.configuration.filter-expression-modal.key-value-filter.invalid-range": "El rango no es válido",
+	"search.configuration.filter-expression-modal.key-value-filter.invalid-range": "El rango seleccionado no es válido",
 	"search.configuration.filter-expression-modal.key-value-filter.lte": "Menor o igual a",
 	"search.configuration.filter-expression-modal.key-value-filter.schema_id": "Esquema estructurado",
 	"search.configuration.filter-expression-modal.key-value-filters": "Filtros clave-valor",
