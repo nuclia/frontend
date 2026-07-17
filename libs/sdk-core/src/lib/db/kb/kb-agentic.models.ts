@@ -4,8 +4,11 @@ import type { FilterExpression } from '../search';
 // Agentic config models
 // Source: nucliadb_agentic_api/src/nucliadb_agentic_api/models.py
 // ---------------------------------------------------------------------------
+interface HistoryConfig {
+  history?: boolean;
+}
 
-export interface AgenticRephraseConfig {
+export interface AgenticRephraseConfig extends HistoryConfig {
   ask_to?: string;
   prompt?: string;
   model?: string;
@@ -19,7 +22,7 @@ export interface AgenticSmartAgentModels {
   executor?: string;
 }
 
-export interface AgenticSmartAgentConfig {
+export interface AgenticSmartAgentConfig extends HistoryConfig {
   mode?: AgenticSmartAgentMode;
   extra_prompt?: string;
   models?: AgenticSmartAgentModels;
@@ -27,7 +30,7 @@ export interface AgenticSmartAgentConfig {
   sources?: string[];
 }
 
-export interface AgenticSummarizeConfig {
+export interface AgenticSummarizeConfig extends HistoryConfig {
   user_prompt?: string;
   system_prompt?: string;
   conversational?: boolean;
