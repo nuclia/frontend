@@ -141,7 +141,11 @@
               <pa-icon
                 [name]="field.icon"
                 size="small"></pa-icon>
-              {{ 'resource.field-' + field.field_type | translate }}
+              @if (field.field_type === 'key_value') {
+                {{ field.field_id }}
+              } @else {
+                {{ 'resource.field-' + field.field_type | translate }}
+              }
 
               @if (field.hasError) {
                 <span class="error-marker">

@@ -86,7 +86,9 @@
       @case ('origin_path') {
         @if (filter.prefix) {
           <pa-chip [backgroundColor]="chipColor">
-            {{ ('search.configuration.filter-expression-modal.origin-filter.prefix' | translate) + ': ' + filter.prefix }}
+            {{
+              ('search.configuration.filter-expression-modal.origin-filter.prefix' | translate) + ': ' + filter.prefix
+            }}
           </pa-chip>
         }
       }
@@ -104,6 +106,49 @@
           @if (filter.value) {
             <span>: {{ filter.value }}</span>
           }
+        </pa-chip>
+      }
+      @case ('key_value_eq') {
+        <pa-chip [backgroundColor]="chipColor">
+          <span>{{ filter.key }}</span>
+          <span>&#32;= {{ filter.eq }}</span>
+        </pa-chip>
+      }
+      @case ('key_value_gte_lte') {
+        @if (filter.gte !== undefined) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ filter.key }} ≥&#32;</span>
+            @if (typeof filter.gte === 'string') {
+              <pa-datetime
+                [datetime]="filter.gte"
+                format="numerical"
+                dateOnly></pa-datetime>
+            } @else {
+              <span>{{ filter.gte }}</span>
+            }
+          </pa-chip>
+        }
+        @if (filter.lte !== undefined) {
+          <pa-chip [backgroundColor]="chipColor">
+            <span>{{ filter.key }} ≤&#32;</span>
+            @if (typeof filter.lte === 'string') {
+              <pa-datetime
+                [datetime]="filter.lte"
+                format="numerical"
+                dateOnly></pa-datetime>
+            } @else {
+              <span>{{ filter.lte }}</span>
+            }
+          </pa-chip>
+        }
+      }
+      @case ('key_value_contains') {
+        <pa-chip [backgroundColor]="chipColor">
+          <strong>{{ filter.key }}</strong>
+          <span>
+            {{ ('search.configuration.filter-expression-modal.key-value-filter.contains' | translate).toLowerCase() }}
+          </span>
+          <span>{{ filter.contains }}</span>
         </pa-chip>
       }
       @default {
