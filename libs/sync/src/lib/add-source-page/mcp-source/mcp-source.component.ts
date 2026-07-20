@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import {
-  FormArray,
   FormControl,
   FormGroup,
   NG_VALIDATORS,
@@ -12,10 +11,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { SourceFormDirective } from '../source-form.directive';
+import { ParametersTableComponent } from '@flaps/core';
 
 @Component({
   selector: 'nsy-mcp-source',
-  imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ParametersTableComponent, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
   styleUrl: './../_common-source.scss',
   templateUrl: './mcp-source.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,17 +25,25 @@ import { SourceFormDirective } from '../source-form.directive';
   ],
 })
 export class McpSourceComponent extends SourceFormDirective {
-  override form: FormGroup<any> = new FormGroup({
+  override form = new FormGroup({
     uri: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    timeout: new FormControl<number>(300, { nonNullable: true }),
-    sse_read_timeout: new FormControl<number>(300, { nonNullable: true }),
-    response_types: new FormArray<FormControl<string>>([new FormControl('code', { nonNullable: true })]),
-    server_url: new FormControl<string>('', { nonNullable: true }),
-    scope: new FormControl<string>('user', { nonNullable: true }),
+    headers: new FormControl<{ [key: string]: string }>({}),
   });
+
+  headers: { key: string; value: string }[] = [];
 
   constructor() {
     super();
     this.initForm();
+  }
+
+  override mapValueToForm(value: { [key: string]: any; headers?: { [key: string]: string } }) {
+    this.headers = value.headers ? Object.entries(value.headers).map(([key, value]) => ({ key, value })) : [];
+    return value;
+  }
+
+  updateHeaders(value: { key: string; value: string }[]) {
+    this.headers = value;
+    this.form.controls['headers'].patchValue(value.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {}));
   }
 }

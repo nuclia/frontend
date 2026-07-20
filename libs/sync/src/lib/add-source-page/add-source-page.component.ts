@@ -10,12 +10,14 @@ import { filter, of, switchMap, take, tap } from 'rxjs';
 import { sourceDefinitions, SourcesService } from '../logic/sources.service';
 import { NucliadbSourceComponent } from './nucliadb-source/nucliadb-source.component';
 import { SyncSourceComponent } from './sync-source/sync-source.component';
+import { McpSourceComponent } from './mcp-source/mcp-source.component';
 
 @Component({
   imports: [
     CommonModule,
     BackButtonComponent,
     NucliadbSourceComponent,
+    McpSourceComponent,
     PaButtonModule,
     PaIconModule,
     PaTextFieldModule,

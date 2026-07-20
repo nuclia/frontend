@@ -1,12 +1,17 @@
-
-<div class="separator"></div>
-<div class="extra-form">
-  <pa-input formControlName="uri">URI</pa-input>
-
-  <pa-input formControlName="timeout" type="number">{{ 'Timeout' }}</pa-input>
-  <pa-input formControlName="sse_read_timeout" type="number">{{ 'SSE read timeout in seconds' }}</pa-input>
-
-  <pa-input formControlName="server_url">OAuth authorization server URL</pa-input>
-  <pa-input formControlName="scope">OAuth Scopes</pa-input>
-  <pa-input formControlName="response_types">OAuth response yypes</pa-input>
+<div
+  class="extra-form"
+  [formGroup]="form">
+  <div class="separator"></div>
+  <pa-input
+    formControlName="uri"
+    help="generic.required-field">
+    {{ 'sync.add-source-page.mcp.uri' | translate }}
+  </pa-input>
+  <div>
+    <label class="title-s">{{ 'sync.add-source-page.mcp.headers' | translate }}</label>
+    <app-parameters-table
+      secretDisabled
+      [values]="headers"
+      (valuesChange)="updateHeaders($event)"></app-parameters-table>
+  </div>
 </div>

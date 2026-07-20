@@ -48,6 +48,8 @@
 	"sync.add-source-page.help.mcp": "Se connecter à un serveur Model Context Protocol via HTTP.",
 	"sync.add-source-page.help.perplexity": "Utilisez Perplexity comme source de questions-réponses basée sur l'IA.",
 	"sync.add-source-page.invalid-name": "Seuls les caractères alphabétiques, les chiffres, les tirets et les traits de soulignement sont autorisés",
+	"sync.add-source-page.mcp.headers": "En-têtes",
+	"sync.add-source-page.mcp.uri": "URI du serveur MCP",
 	"sync.add-source-page.name": "Nom",
 	"sync.add-source-page.nucliadb.filter-expression": "Expression de filtre",
 	"sync.add-source-page.nucliadb.filter-expression-format": "Le format des filtres est <a href=\"https://docs.rag.progress.cloud/docs/rag/advanced/search-filters\" target=\"_blank\" rel=\"noopener noreferrer\">documenté ici</a>.",
