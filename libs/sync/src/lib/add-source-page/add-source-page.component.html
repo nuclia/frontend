@@ -1,0 +1,62 @@
+<div class="page-spacing">
+  <nsi-back-button
+    [link]="'../..'"
+    [queryParams]="{ tab: 'connect' }">
+    {{ 'sync.add-source-page.back-button' | translate }}
+  </nsi-back-button>
+  @if (sourceDefinition(); as definition) {
+    <div>
+      <h1 class="page-title">
+        <pa-icon
+          [path]="definition.logo || ''"
+          [name]="definition.icon || ''"
+          size="large"></pa-icon>
+        {{ 'sync.add-source-page.title' | translate: { source: definition.title } }}
+      </h1>
+      @if (definition.help) {
+        <p class="page-description">{{ definition.help || '' | translate }}</p>
+      }
+    </div>
+  }
+  <div
+    class="source-form"
+    [formGroup]="form">
+    <pa-input
+      formControlName="name"
+      [readonly]="editMode()"
+      [errorMessages]="errorMessages">
+      {{ 'sync.add-source-page.name' | translate }}
+    </pa-input>
+    <pa-textarea
+      formControlName="description"
+      rows="4"
+      help="sync.add-source-page.description-help">
+      {{ 'sync.add-source-page.description' | translate }}
+    </pa-textarea>
+    @switch (sourceType()) {
+      @case ('nucliadb') {
+        <nsy-nucliadb-source [formControl]="extraFields"></nsy-nucliadb-source>
+      }
+      @case ('sync') {
+        <nsy-sync-source [formControl]="extraFields"></nsy-sync-source>
+      }
+      @case ('mcp') {
+        <nsy-mcp-source [formControl]="extraFields"></nsy-mcp-source>
+      }
+    }
+  </div>
+
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || extraFields.invalid"
+      (click)="save()">
+      {{ 'sync.home-page.connect.title' | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
+</div>

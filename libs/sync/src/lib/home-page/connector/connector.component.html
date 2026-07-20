@@ -3,7 +3,8 @@
   (cardClick)="selectConnector.emit($event)">
   <div class="connector">
     <pa-icon
-      [path]="logo"
+      [path]="logo || ''"
+      [name]="icon || ''"
       size="large" />
     <div>{{ title }}</div>
   </div>

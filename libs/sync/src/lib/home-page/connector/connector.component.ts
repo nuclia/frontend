@@ -11,7 +11,8 @@ import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 })
 export class ConnectorComponent {
   @Input({ required: true }) title = '';
-  @Input({ required: true }) logo = '';
+  @Input() logo: string | undefined;
+  @Input() icon: string | undefined;
   @Input({ transform: booleanAttribute }) disabled = false;
 
   @Output() selectConnector: EventEmitter<MouseEvent | KeyboardEvent> = new EventEmitter<MouseEvent | KeyboardEvent>();

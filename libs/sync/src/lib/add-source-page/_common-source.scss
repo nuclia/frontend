@@ -1,0 +1,20 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../common-sync';
+
+.source-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(90);
+}
+
+.extra-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.separator {
+  height: 1px;
+  background-color: $color-neutral-lighter;
+}

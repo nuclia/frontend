@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 import { PaButtonModule, PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
-import { RouterModule } from '@angular/router';
+import { Params, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'nsi-back-button',
@@ -12,4 +12,5 @@ import { RouterModule } from '@angular/router';
 })
 export class BackButtonComponent {
   @Input() link?: string | null;
+  @Input() queryParams?: Params;
 }
