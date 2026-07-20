@@ -10,6 +10,17 @@
   }
 }
 
+.sublabel {
+  font-size: 0.75em;
+  color: var(--color-neutral-regular, currentColor);
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
 .loading-dots {
   align-content: center;
   display: flex;

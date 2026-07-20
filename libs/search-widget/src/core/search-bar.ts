@@ -3,6 +3,8 @@ import { getAnswer } from './api';
 import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
+  agenticConfigId,
+  agenticTransport,
   askQuestion,
   combinedFilterExpression,
   combinedFilters,
@@ -96,6 +98,8 @@ export const setupTriggerSearch = (
                 preferMarkdown.pipe(take(1)),
                 widgetJsonSchema.pipe(take(1)),
                 searchConfigId.pipe(take(1)),
+                agenticConfigId.pipe(take(1)),
+                agenticTransport.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -116,8 +120,21 @@ export const setupTriggerSearch = (
                     preferMarkdown,
                     jsonSchema,
                     searchConfigId,
+                    agenticConfigId,
+                    transport,
                   ]) => {
                     dispatch('search', { query, filters });
+                    if (agenticConfigId && !trigger?.more) {
+                      return askQuestion(query, true, {}, agenticConfigId, transport).pipe(
+                        filter((res) => res.type !== 'error'),
+                        map((res) => ({
+                          results: (res as Ask.Answer).sources,
+                          append: false,
+                          hideResults,
+                          loadingMore: false,
+                        })),
+                      );
+                    }
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
@@ -127,7 +144,13 @@ export const setupTriggerSearch = (
                       range_creation_end: filterExpression ? undefined : rangeCreation?.end,
                     };
                     if (isAnswerEnabled && !trigger?.more) {
-                      const chatOptions = buildAskChatOptions(currentOptions, ragStrategies, ragImageStrategies, preferMarkdown, jsonSchema);
+                      const chatOptions = buildAskChatOptions(
+                        currentOptions,
+                        ragStrategies,
+                        ragImageStrategies,
+                        preferMarkdown,
+                        jsonSchema,
+                      );
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
                           if (res.type === 'error' && res.status === 402 && !hideResults) {

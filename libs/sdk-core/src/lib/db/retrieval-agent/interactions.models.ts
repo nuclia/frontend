@@ -22,6 +22,8 @@ export interface InteractionRequest {
   question: string;
   headers: Record<string, string>;
   operation: InteractionOperation;
+  chat_history?: HistoryEntry[];
+  streaming?: boolean;
 }
 
 export interface InteractionOptions {

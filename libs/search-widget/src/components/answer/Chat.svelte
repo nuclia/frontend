@@ -5,6 +5,7 @@
   import Button from '../../common/button/Button.svelte';
   import {
     _,
+    agenticStep,
     chat,
     chatPlaceholderDiscussion,
     chatPlaceholderInitial,
@@ -133,7 +134,9 @@
         {/each}
       </div>
       {#if $isStreaming}
-        <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
+        <LoadingDots
+          label={$isReasoning ? $_('answer.reasoning') + '…' : $agenticStep ? $agenticStep.title + '…' : ''}
+          sublabel={$agenticStep?.value ?? ''} />
       {/if}
       <div
         class="input-container"
