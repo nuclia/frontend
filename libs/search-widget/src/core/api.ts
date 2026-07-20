@@ -404,6 +404,37 @@ export const getAgenticAnswer = (
   );
 };
 
+export const getAgenticAnswerHttp = (
+  question: string,
+  configId: string,
+  chatHistory?: HistoryEntry[],
+): Observable<Ask.Answer | IErrorResponse> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  return searchConfigId.pipe(
+    take(1),
+    switchMap((searchConfig) => {
+      const context: Ask.ContextEntry[] | undefined =
+        chatHistory && chatHistory.length > 0
+          ? chatHistory.flatMap((entry) => [
+              { author: Ask.Author.USER, text: entry.question },
+              { author: Ask.Author.NUCLIA, text: entry.answer },
+            ])
+          : undefined;
+
+      const options: ChatOptions = {
+        agentic_config_id: configId,
+        security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
+        ...(searchConfig ? { search_configuration: searchConfig } : {}),
+      };
+
+      return nucliaApi!.knowledgeBox.ask(question, context, CHAT_MODE, options);
+    }),
+  );
+};
+
 export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');

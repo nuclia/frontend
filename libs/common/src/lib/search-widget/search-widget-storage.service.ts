@@ -105,6 +105,13 @@ export class SearchWidgetStorageService {
           this.storageUpdated.next();
         }),
       );
+    } else if (config.searchMode === 'agentic') {
+      // Agentic configs don't map to NucliaDB search configurations — clean up any stale one and only store the widget config.
+      return forkJoin([this._storeSearchConfig(name, config), this._deleteSearchOptions(name)]).pipe(
+        map(() => {
+          this.storageUpdated.next();
+        }),
+      );
     } else {
       let searchOptions: SearchConfig;
       if (config.generativeAnswer.generateAnswer) {

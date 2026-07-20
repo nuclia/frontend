@@ -57,6 +57,37 @@
     gap: rhythm(1);
   }
 
+  .search-mode-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-mode-label {
+    align-items: center;
+    display: inline-flex;
+    gap: rhythm(0.5);
+  }
+
+  .agentic-config-flow,
+  .rao-config-flow {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+  }
+
+  .rao-no-source {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+  }
+
+  .agentic-config-flow .config-form-help,
+  .rao-config-flow .config-form-help {
+    @include body-m();
+    color: $color-neutral-regular;
+  }
+
   @container (max-width: 400px) {
     .current-config-title {
       align-items: flex-start;

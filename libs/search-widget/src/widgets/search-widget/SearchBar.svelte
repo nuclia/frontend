@@ -489,7 +489,7 @@
       }
       if (agentic_config_id) {
         agenticConfigId.set(agentic_config_id);
-        agenticTransport.set(agentic_transport === 'websocket' ? 'websocket' : 'post');
+        agenticTransport.set(agentic_transport === 'websocket' ? 'websocket' : 'http');
       } else {
         agenticConfigId.set(undefined);
       }

@@ -143,6 +143,10 @@ export namespace Widget {
 
   export interface SearchConfiguration {
     id: string;
+    searchMode?: 'agentic' | 'simple-rag' | 'search';
+    agenticConfigId?: string;
+    agenticTransport?: 'http' | 'websocket';
+    agenticSearchConfiguration?: string;
     searchBox: SearchBoxConfig;
     generativeAnswer: GenerativeAnswerConfig;
     resultDisplay: ResultDisplayConfig;
@@ -371,6 +375,7 @@ const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
 export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
   type: 'config',
   id: NUCLIA_STANDARD_SEARCH_CONFIG_ID,
+  searchMode: 'simple-rag',
   searchBox: {
     ...DEFAULT_SEARCH_BOX_CONFIG,
     suggestions: true,
@@ -516,6 +521,19 @@ export function parsePreselectedFilters(preselectedFilters: string): string[] | 
     : preselectedFilters.split(',');
 }
 
+function getAgenticOptions(searchConfig: Widget.SearchConfiguration): {
+  agentic_config_id?: string;
+  agentic_transport?: 'http' | 'websocket';
+  search_config_id?: string;
+} {
+  if (searchConfig.searchMode !== 'agentic') return {};
+  return {
+    agentic_config_id: searchConfig.agenticConfigId || undefined,
+    agentic_transport: searchConfig.agenticTransport ?? 'http',
+    search_config_id: searchConfig.agenticSearchConfiguration || undefined,
+  };
+}
+
 export function getWidgetParameters(
   searchConfig: Widget.SearchConfiguration,
   widgetOptions: Widget.WidgetConfiguration,
@@ -569,50 +587,14 @@ export function getWidgetParameters(
     mode: getWidgetTheme(widgetOptions),
     feedback: widgetOptions.feedback,
     security_groups: getSecurityGroups(searchConfig.searchBox),
+    ...getAgenticOptions(searchConfig),
     ...floatingWidgetOptions,
   };
 }
 
 export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: Widget.WidgetConfiguration): string {
-  const widgetFeatures = {
-    // Search configuration
-    answers: config.generativeAnswer.generateAnswer,
-    preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
-    contextImages:
-      config.generativeAnswer.generateAnswer &&
-      config.generativeAnswer.useImages &&
-      config.generativeAnswer.imageUsage === 'context',
-    queryImage:
-      config.generativeAnswer.generateAnswer &&
-      config.generativeAnswer.useImages &&
-      config.generativeAnswer.imageUsage === 'query',
-    semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
-    rephrase: config.searchBox.rephraseQuery,
-    filter: config.searchBox.filter,
-    orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
-    labelFilterCounts: config.searchBox.labelFilterCounts,
-    highlight: config.searchBox.highlight,
-    suggestions: config.searchBox.suggestions,
-    autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
-    showHidden: config.searchBox.showHiddenResources,
-    citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
-    llmCitations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'llmCitations',
-    hideResults:
-      !config.resultDisplay.displayResults ||
-      config.resultDisplay.showResultType === 'citations' ||
-      config.resultDisplay.showResultType === 'llmCitations',
-    displayMetadata: config.resultDisplay.displayMetadata,
-    hideAnswer: config.resultDisplay.hideAnswer,
-    hideThumbnails: !config.resultDisplay.displayThumbnails,
-    showAttachedImages: config.resultDisplay.showAttachedImages,
-    relations: config.resultDisplay.relations,
-    knowledgeGraph: config.resultDisplay.relationGraph,
-    displayFieldList: config.resultDisplay.displayFieldList,
-    disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
-    sortResults: config.resultDisplay.sortResults,
-    noScroll: config.resultDisplay.noScroll,
-
-    // Widget options
+  // Widget-level options apply regardless of search mode
+  const sharedFeatures = {
     hideLogo: widgetOptions.hideLogo,
     permalink: widgetOptions.permalink,
     displaySearchButton: widgetOptions.displaySearchButton,
@@ -637,7 +619,53 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
     hideReset: widgetOptions.hideReset,
   };
-  return Object.entries(widgetFeatures)
+
+  const agenticFeatures =
+    config.searchMode === 'agentic'
+      ? {
+          answers: true,
+          preferMarkdown: false,
+          hideResults: true,
+        }
+      : {
+          answers: config.generativeAnswer.generateAnswer,
+          preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
+          contextImages:
+            config.generativeAnswer.generateAnswer &&
+            config.generativeAnswer.useImages &&
+            config.generativeAnswer.imageUsage === 'context',
+          queryImage:
+            config.generativeAnswer.generateAnswer &&
+            config.generativeAnswer.useImages &&
+            config.generativeAnswer.imageUsage === 'query',
+          semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
+          rephrase: config.searchBox.rephraseQuery,
+          filter: config.searchBox.filter,
+          orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
+          labelFilterCounts: config.searchBox.labelFilterCounts,
+          highlight: config.searchBox.highlight,
+          suggestions: config.searchBox.suggestions,
+          autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
+          showHidden: config.searchBox.showHiddenResources,
+          citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
+          llmCitations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'llmCitations',
+          hideResults:
+            !config.resultDisplay.displayResults ||
+            config.resultDisplay.showResultType === 'citations' ||
+            config.resultDisplay.showResultType === 'llmCitations',
+          displayMetadata: config.resultDisplay.displayMetadata,
+          hideAnswer: config.resultDisplay.hideAnswer,
+          hideThumbnails: !config.resultDisplay.displayThumbnails,
+          showAttachedImages: config.resultDisplay.showAttachedImages,
+          relations: config.resultDisplay.relations,
+          knowledgeGraph: config.resultDisplay.relationGraph,
+          displayFieldList: config.resultDisplay.displayFieldList,
+          disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
+          sortResults: config.resultDisplay.sortResults,
+          noScroll: config.resultDisplay.noScroll,
+        };
+
+  return Object.entries({ ...agenticFeatures, ...sharedFeatures })
     .filter(([, enabled]) => enabled)
     .map(([feature]) => feature)
     .join(',');
