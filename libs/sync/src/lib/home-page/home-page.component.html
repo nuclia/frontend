@@ -1,26 +1,20 @@
-<div
-  class="page-spacing"
-  #topAnchor>
-  <pa-tabs>
-    <pa-tab
-      (click)="selectTab('synchronize')"
-      [active]="selectedTab() === 'synchronize'"
-      ariaControls="home-page-panel">
-      {{ 'sync.home-page.synchronize.title' | translate }}
-    </pa-tab>
-    <pa-tab
-      (click)="selectTab('connect')"
-      [active]="selectedTab() === 'connect'"
-      ariaControls="home-page-panel">
-      {{ 'sync.home-page.connect.title' | translate }}
-    </pa-tab>
-  </pa-tabs>
+<pa-tabs>
+  <pa-tab
+    (click)="navigateTo('synchronize')"
+    [active]="!isConnectActive()"
+    ariaControls="home-page-panel">
+    {{ 'sync.home-page.synchronize.title' | translate }}
+  </pa-tab>
+  <pa-tab
+    (click)="navigateTo('connect')"
+    [active]="isConnectActive()"
+    ariaControls="home-page-panel">
+    {{ 'sync.home-page.connect.title' | translate }}
+  </pa-tab>
+</pa-tabs>
 
-  <div id="home-page-panel">
-    @if (selectedTab() === 'synchronize') {
-      <nsy-synchronize></nsy-synchronize>
-    } @else if (selectedTab() === 'connect') {
-      <nsy-connect></nsy-connect>
-    }
-  </div>
+<div
+  id="home-page-panel"
+  class="page-spacing">
+  <router-outlet></router-outlet>
 </div>

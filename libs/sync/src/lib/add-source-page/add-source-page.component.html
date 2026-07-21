@@ -1,7 +1,5 @@
 <div class="page-spacing">
-  <nsi-back-button
-    [link]="'../..'"
-    [queryParams]="{ tab: 'connect' }">
+  <nsi-back-button [link]="'../../connect'">
     {{ 'sync.add-source-page.back-button' | translate }}
   </nsi-back-button>
   @if (sourceDefinition(); as definition) {

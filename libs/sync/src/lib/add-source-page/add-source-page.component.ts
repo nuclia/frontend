@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -31,6 +31,7 @@ import { McpSourceComponent } from './mcp-source/mcp-source.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddSourcePageComponent implements OnInit {
+  private elementRef = inject(ElementRef<HTMLElement>);
   private router = inject(Router);
   private currentRoute = inject(ActivatedRoute);
   private toaster = inject(SisToastService);
@@ -57,6 +58,7 @@ export class AddSourcePageComponent implements OnInit {
   extraFields: FormControl<any> = new FormControl({});
 
   ngOnInit() {
+    this.elementRef.nativeElement.scrollIntoView();
     this.currentRoute.params
       .pipe(
         filter((params) => params['sourceId'] || params['type']),
@@ -83,9 +85,8 @@ export class AddSourcePageComponent implements OnInit {
       )
       .subscribe();
   }
-
   goBack() {
-    this.router.navigate(['../..'], { relativeTo: this.currentRoute, queryParams: { tab: 'connect' } });
+    this.router.navigate(['../../connect'], { relativeTo: this.currentRoute });
   }
 
   cancel() {

@@ -1,35 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
-import { SynchronizeComponent } from './synchronize';
-import { ConnectComponent } from './connect';
-import { ActivatedRoute } from '@angular/router';
-import { take } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  imports: [CommonModule, ConnectComponent, SynchronizeComponent, PaTabsModule, TranslateModule],
+  imports: [CommonModule, PaTabsModule, RouterModule, TranslateModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent {
+  private elementRef = inject(ElementRef<HTMLElement>);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  @ViewChild('topAnchor') topAnchor?: ElementRef<HTMLElement>;
+  private currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+  );
 
-  selectedTab = signal<'synchronize' | 'connect'>('synchronize');
+  isConnectActive = computed(() => (this.currentUrl() ?? '').includes('/connect'));
 
-  selectTab(tab: 'synchronize' | 'connect') {
-    this.selectedTab.set(tab);
-    this.topAnchor?.nativeElement.scrollIntoView();
-  }
-
-  ngOnInit() {
-    this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      if (params['tab'] === 'connect') {
-        this.selectedTab.set('connect');
-      }
-    });
+  navigateTo(tab: 'synchronize' | 'connect') {
+    this.router.navigate([tab === 'connect' ? tab : './'], { relativeTo: this.route });
+    this.elementRef.nativeElement.scrollIntoView();
   }
 }

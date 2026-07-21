@@ -76,7 +76,7 @@ export class ConnectComponent {
   ];
 
   onSelectConnector(type: string) {
-    this.router.navigate(['./add-source', type], { relativeTo: this.currentRoute });
+    this.router.navigate(['../add-source', type], { relativeTo: this.currentRoute });
   }
 
   deleteSource(id: string) {
