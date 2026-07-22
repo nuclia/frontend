@@ -2346,7 +2346,7 @@
 	"search.configuration.search-box.use-search-results.toggle-description": "Si cette option est désactivée, les résultats de la recherche ne seront pas utilisés pour générer la réponse. Le LLM générera des réponses basées uniquement sur sa propre base de connaissances.",
 	"search.configuration.search-box.use-search-results.toggle-label": "Utiliser les résultats de la recherche",
 	"search.configuration.search-mode.agentic": "Récupération active",
-	"search.configuration.search-mode.agentic-description": "Utilisez une recherche autonome en plusieurs étapes à travers des sources connectées telles que Knowledge Box, MCP et les connecteurs web. L'agent peut choisir les sources à consulter, puis synthétiser des réponses étayées par des citations. Idéal pour les questions complexes nécessitant planification, comparaison ou raisonnement inter-sources.",
+	"search.configuration.search-mode.agentic-description": "Utilisez une recherche autonome en plusieurs étapes à travers des sources connectées telles que Knowledge Box, MCP et les connecteurs Web. Idéale pour les questions complexes nécessitant planification, comparaison ou raisonnement inter-sources.",
 	"search.configuration.search-mode.search": "Recherche",
 	"search.configuration.search-mode.search-description": "Affichez directement les résultats de recherche sans gestion des réponses. Ajustez le comportement de récupération grâce au filtrage, au classement et au routage basé sur l'intention de l'utilisateur pour optimiser la précision et le rappel. Idéal lorsque les utilisateurs consultent les résultats correspondants ou lorsque la génération des réponses intervient ultérieurement.",
 	"search.configuration.search-mode.simple-rag": "Chiffon simple",

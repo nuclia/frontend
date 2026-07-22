@@ -28,11 +28,13 @@ import {
   OptionModel,
   OptionSeparator,
   OptionType,
+  PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
+  PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AgenticConfig, LearningConfigurations, GenerativeProviders, SearchConfig, Widget } from '@nuclia/core';
@@ -75,6 +77,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     AccordionItemComponent,
     ButtonMiniComponent,
     InfoCardComponent,
+    PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
     PaTextFieldModule,
@@ -88,6 +91,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     TranslateModule,
     PaTooltipModule,
     PaTogglesModule,
+    PaIconModule,
     IsTypedConfigPipe,
     ExpandableTextareaComponent,
   ],

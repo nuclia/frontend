@@ -2346,7 +2346,7 @@
 	"search.configuration.search-box.use-search-results.toggle-description": "If disabled, the search results will not be used to generate the answer. The LLM will generate responses based solely on its own knowledge base.",
 	"search.configuration.search-box.use-search-results.toggle-label": "Use search results",
 	"search.configuration.search-mode.agentic": "Agentic Retrieval",
-	"search.configuration.search-mode.agentic-description": "Use autonomous, multi-step retrieval across connected sources such as Knowledge Box, MCP, and web connectors. The agent can decide which sources to call, then synthesize grounded answers with citations. Best for complex questions that require planning, comparison, or cross-source reasoning.",
+	"search.configuration.search-mode.agentic-description": "Use autonomous, multi-step retrieval across connected sources such as Knowledge Box, MCP, and web connectors. Best for complex questions that require planning, comparison, or cross-source reasoning.",
 	"search.configuration.search-mode.search": "Search",
 	"search.configuration.search-mode.search-description": "Expose direct search results without answer orchestration. Tune retrieval behavior with filtering, ranking, and user-intent routing to optimize precision and recall. Best when users should browse matching results or when answer generation happens downstream.",
 	"search.configuration.search-mode.simple-rag": "Simple RAG",

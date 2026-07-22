@@ -12,13 +12,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SDKService } from '@flaps/core';
-import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-import { BadgeComponent } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, InfoCardComponent, BadgeComponent } from '@nuclia/sistema';
 import { AgenticConfig, AgenticSources, SearchConfigs, Widget } from '@nuclia/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaDropdownModule, PaTextFieldModule, PaTogglesModule, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { catchError, forkJoin, of, switchMap, take } from 'rxjs';
-import { KbConnectionType } from '../../connections.service';
 
 @Component({
   selector: 'stf-agentic-configuration',

@@ -2346,7 +2346,7 @@
 	"search.configuration.search-box.use-search-results.toggle-description": "Si està desactivat, els resultats de la cerca no s'utilitzaran per generar la resposta. El LLM generarà respostes basades únicament en la seva pròpia base de coneixement.",
 	"search.configuration.search-box.use-search-results.toggle-label": "Utilitzar els resultats de la cerca",
 	"search.configuration.search-mode.agentic": "Recuperació agentiva",
-	"search.configuration.search-mode.agentic-description": "Utilitzeu la recuperació autònoma i multipas entre fonts connectades com ara Knowledge Box, MCP i connectors web. L'agent pot decidir quines fonts trucar i, a continuació, sintetitzar respostes fonamentades amb cites. Ideal per a preguntes complexes que requereixen planificació, comparació o raonament entre fonts.",
+	"search.configuration.search-mode.agentic-description": "Utilitzeu la recuperació autònoma i multipas entre fonts connectades com ara Knowledge Box, MCP i connectors web. Ideal per a preguntes complexes que requereixen planificació, comparació o raonament entre fonts.",
 	"search.configuration.search-mode.search": "Cerca",
 	"search.configuration.search-mode.search-description": "Exposar resultats de cerca directes sense orquestració de respostes. Ajustar el comportament de recuperació amb filtratge, classificació i encaminament per intenció de l'usuari per optimitzar la precisió i la recuperació. Ideal quan els usuaris han de navegar pels resultats coincidents o quan la generació de respostes es produeix més endavant.",
 	"search.configuration.search-mode.simple-rag": "RAG simple",

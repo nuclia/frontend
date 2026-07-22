@@ -68,22 +68,13 @@
     gap: rhythm(0.5);
   }
 
-  .agentic-config-flow,
-  .rao-config-flow {
+  .agentic-config-flow {
     display: flex;
     flex-direction: column;
     gap: rhythm(1.5);
   }
 
-  .rao-no-source {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(1.5);
-  }
-
-  .agentic-config-flow .config-form-help,
-  .rao-config-flow .config-form-help {
+  .agentic-config-flow .config-form-help {
     @include body-m();
     color: $color-neutral-regular;
   }
