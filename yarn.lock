@@ -10278,8 +10278,8 @@ __metadata:
   linkType: hard
 
 "@xhmikosr/decompress@npm:^10.2.0":
-  version: 10.2.0
-  resolution: "@xhmikosr/decompress@npm:10.2.0"
+  version: 10.2.1
+  resolution: "@xhmikosr/decompress@npm:10.2.1"
   dependencies:
     "@xhmikosr/decompress-tar": "npm:^8.1.0"
     "@xhmikosr/decompress-tarbz2": "npm:^8.1.0"
@@ -10287,7 +10287,7 @@ __metadata:
     "@xhmikosr/decompress-unzip": "npm:^7.1.0"
     graceful-fs: "npm:^4.2.11"
     strip-dirs: "npm:^3.0.0"
-  checksum: 10/083f59bda6440b698322802e61c2b68e47d9a7f3c90d432d91a260b1630bda3c19088fb0cc8a42c67754a9de86e546f68c8d314408ff72180f0bba2b6ef65f81
+  checksum: 10/b2d3f2a9b06669628aa60e9d215d2f2730ff5370cb7e54b07b08ea0a355941a0c0eec6c25f856499d21ad14f2976309c811bb41a365d6adf64efcff206a7d7f5
   languageName: node
   linkType: hard
 
