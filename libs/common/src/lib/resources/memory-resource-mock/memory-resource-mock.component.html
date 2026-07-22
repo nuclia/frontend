@@ -181,9 +181,6 @@
               </pa-expander-header>
               <pa-expander-body>
                 <div class="entry-section">
-                  @if (fact.reasoning) {
-                    <p class="body-xs fact-reasoning">{{ fact.reasoning }}</p>
-                  }
                   @if ((relatedEntries(fact) || []).length > 0) {
                     <div class="title-xxs">{{ 'resource.memory-mock.facts.related' | translate }}</div>
                     <ul class="related-list">

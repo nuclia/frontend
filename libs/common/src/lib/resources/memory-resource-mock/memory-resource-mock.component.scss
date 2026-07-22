@@ -3,7 +3,7 @@
 .memory-mock {
   display: flex;
   flex-direction: column;
-  gap: rhythm(1);
+  gap: rhythm(2);
 }
 
 .memory-header {
@@ -47,6 +47,7 @@
 .memory-filters {
   overflow-x: auto;
   overflow-y: hidden;
+  padding-bottom: rhythm(1);
 }
 
 .memory-controls-row {
@@ -85,7 +86,7 @@
 .session-entries {
   display: flex;
   flex-direction: column;
-  gap: rhythm(1.5);
+  gap: rhythm(2);
   max-width: rhythm(120);
   padding: 0 rhythm(1) 0 rhythm(1);
   width: 100%;
@@ -96,7 +97,7 @@
 .graph-list {
   display: flex;
   flex-direction: column;
-  gap: rhythm(1.5);
+  gap: rhythm(2);
   max-width: rhythm(120);
   padding: 0 rhythm(1) 0 rhythm(1);
   width: 100%;
@@ -124,13 +125,28 @@
   }
 }
 
+.facts-list,
+.reference-list {
+  .body-s {
+    font-size: font-size(xs);
+    line-height: rhythm(2);
+  }
+}
+
+.graph-list {
+  .body-s {
+    font-size: font-size(xs);
+    line-height: rhythm(2);
+  }
+}
+
 .entry,
 .fact-item,
 .reference-item,
 .graph-item {
   display: flex;
   flex-direction: column;
-  gap: rhythm(0.75);
+  gap: rhythm(1);
 }
 
 .entry-text {
@@ -166,6 +182,11 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
+
+  .title-xxs {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-regular;
+  }
 }
 
 .entry-metadata {
@@ -179,6 +200,11 @@
   grid-template-columns: max-content max-content;
   justify-content: start;
   gap: rhythm(1);
+
+  span:first-child {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-regular;
+  }
 }
 
 .related-list {
@@ -189,22 +215,34 @@
   gap: rhythm(0.5);
 }
 
-.fact-reasoning {
-  margin: 0;
-  color: $color-neutral-regular;
-}
-
 .details-expander {
   background: $color-light-stronger;
   border: 1px solid $color-neutral-light;
   border-radius: rhythm(0.5);
   overflow: hidden;
+
+  ::ng-deep .pa-expander-header {
+    font-size: font-size(xs);
+    font-weight: $font-weight-semi-bold;
+    line-height: rhythm(2);
+  }
 }
 
 .reference-item,
 .graph-item {
   border: 1px solid $color-neutral-light;
   border-radius: rhythm(0.5);
+}
+
+.reference-item {
+  padding: rhythm(1);
+
+  .body-s {
+    margin: 0;
+  }
+}
+
+.graph-item {
   padding: rhythm(1.5);
 }
 

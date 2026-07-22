@@ -161,7 +161,7 @@ export class MemoryResourceMockService {
   }
 
   shouldCollapseFact(fact: MemoryMockFact) {
-    return fact.text.length > 140 || fact.related_entry_ids.length > 0 || !!fact.reasoning;
+    return fact.text.length > 140 || fact.related_entry_ids.length > 0;
   }
 
   getRelatedEntries(fact: MemoryMockFact): MemoryMockEntry[] {
