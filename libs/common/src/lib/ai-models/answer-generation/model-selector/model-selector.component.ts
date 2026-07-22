@@ -23,6 +23,7 @@ import {
   DataResidencyStatus,
   LearningConfigurations,
 } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import { map, shareReplay } from 'rxjs';
 
 @Component({
@@ -54,6 +55,7 @@ import { map, shareReplay } from 'rxjs';
 export class ModelSelectorComponent implements ControlValueAccessor {
   zoneService = inject(ZoneService);
   sdk = inject(SDKService);
+  toaster = inject(SisToastService);
 
   onChange: any;
   onTouched: any;
@@ -181,6 +183,9 @@ export class ModelSelectorComponent implements ControlValueAccessor {
     this.term.set('');
     if (value) {
       this.showDisclaimer.set(true);
+    }
+    if (value.includes('fable')) {
+      this.toaster.warning('kb.ai-models.model-selector.fable-warning');
     }
     this.updateControl();
     this.modelSelected.emit(value);
