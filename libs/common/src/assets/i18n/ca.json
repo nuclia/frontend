@@ -1589,6 +1589,7 @@
 	"resource.memory-mock.facts.title": "Punts clau per recordar",
 	"resource.memory-mock.facts.where-from": "Mostra detalls d'origen",
 	"resource.memory-mock.filters.person": "Persona",
+	"resource.memory-mock.filters.session": "Sessió",
 	"resource.memory-mock.filters.topic": "Tema",
 	"resource.memory-mock.graph.empty": "Encara no hi ha relacions disponibles per a aquesta selecció.",
 	"resource.memory-mock.graph.help": "Mostra relacions clau extretes de converses i documents de suport.",

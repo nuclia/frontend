@@ -36,12 +36,16 @@ export class MemoryResourceMockComponent implements OnInit {
     this.service.setUser(userId);
   }
 
-  protected toggleEntry(entryId: string) {
-    this.service.toggleEntry(entryId);
+  protected setSession(sessionId: string) {
+    this.service.selectSession(sessionId);
   }
 
-  protected toggleFact(factId: string) {
-    this.service.toggleFact(factId);
+  protected setEntryExpanded(entryId: string, expanded: boolean) {
+    this.service.setEntryExpanded(entryId, expanded);
+  }
+
+  protected setFactExpanded(factId: string, expanded: boolean) {
+    this.service.setFactExpanded(factId, expanded);
   }
 
   protected relatedEntries(fact: MemoryMockFact): MemoryMockEntry[] {

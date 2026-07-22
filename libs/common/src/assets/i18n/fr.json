@@ -1589,6 +1589,7 @@
 	"resource.memory-mock.facts.title": "Points clés à retenir",
 	"resource.memory-mock.facts.where-from": "Voir les détails de source",
 	"resource.memory-mock.filters.person": "Personne",
+	"resource.memory-mock.filters.session": "Session",
 	"resource.memory-mock.filters.topic": "Sujet",
 	"resource.memory-mock.graph.empty": "Aucune relation disponible pour cette sélection pour le moment.",
 	"resource.memory-mock.graph.help": "Affiche les relations clés extraites des conversations et des documents de support.",

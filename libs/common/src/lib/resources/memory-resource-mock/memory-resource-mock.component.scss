@@ -45,11 +45,8 @@
 }
 
 .memory-filters {
-  border: 1px solid $color-neutral-light;
-  border-radius: rhythm(0.5);
   overflow-x: auto;
   overflow-y: hidden;
-  padding: rhythm(2);
 }
 
 .memory-controls-row {
@@ -75,7 +72,6 @@
 
 .tab-bar {
   align-items: center;
-  align-items: center;
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
@@ -85,67 +81,33 @@
   visibility: hidden;
 }
 
-.sessions-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: rhythm(2);
-}
-
-.session-list,
-.session-entries,
-.facts-list,
-.reference-list {
-  border: 1px solid $color-neutral-light;
-  border-radius: rhythm(0.5);
-  padding: rhythm(2);
-}
-
-.session-list {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1);
-}
-
-.session-item {
-  background: $color-neutral-lighter;
-  border: 1px solid transparent;
-  border-radius: rhythm(0.5);
-  cursor: pointer;
-  padding: rhythm(1.5);
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(0.5);
-
-  &.active {
-    border-color: $color-primary-regular;
-    background: $color-primary-lightest;
-  }
-}
-
 .session-entries {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
+  max-width: rhythm(120);
+  padding: 0 rhythm(1);
+  width: 100%;
+}
+
+.facts-list,
+.reference-list,
+.graph-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  max-width: rhythm(120);
+  padding: 0 rhythm(1);
+  width: 100%;
 }
 
 .entry,
 .fact-item,
 .reference-item,
 .graph-item {
-  border-bottom: 1px solid $color-neutral-light;
-  padding-bottom: rhythm(1.5);
   display: flex;
   flex-direction: column;
   gap: rhythm(0.75);
-}
-
-.entry:last-child,
-.fact-item:last-child,
-.reference-item:last-child,
-.graph-item:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
 }
 
 .entry-text {
@@ -161,10 +123,7 @@
 }
 
 .entry-section {
-  background: $color-neutral-lightest;
-  border: 1px solid $color-neutral-light;
-  border-radius: rhythm(0.5);
-  padding: rhythm(1.5);
+  padding: rhythm(1.5) rhythm(1) rhythm(1.5) rhythm(2);
   display: flex;
   flex-direction: column;
   gap: rhythm(1);
@@ -193,8 +152,9 @@
 }
 
 .metadata-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  justify-content: start;
   gap: rhythm(1);
 }
 
@@ -211,10 +171,18 @@
   color: $color-neutral-regular;
 }
 
-.graph-list {
+.details-expander {
+  background: $color-light-stronger;
   border: 1px solid $color-neutral-light;
   border-radius: rhythm(0.5);
-  padding: rhythm(2);
+  overflow: hidden;
+}
+
+.reference-item,
+.graph-item {
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  padding: rhythm(1.5);
 }
 
 .relation-chip {

@@ -1585,6 +1585,7 @@
 	"resource.memory-mock.facts.title": "Key things to remember",
 	"resource.memory-mock.facts.where-from": "Show source details",
 	"resource.memory-mock.filters.person": "Person",
+	"resource.memory-mock.filters.session": "Session",
 	"resource.memory-mock.filters.topic": "Topic",
 	"resource.memory-mock.graph.empty": "No relationships available yet for this selection.",
 	"resource.memory-mock.graph.help": "This shows key relationships extracted from conversations and supporting documents.",

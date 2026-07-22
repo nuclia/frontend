@@ -117,8 +117,17 @@ export class MemoryResourceMockService {
     this._activeSessionId.set(sessionId);
   }
 
-  toggleEntry(entryId: string) {
-    this._expandedEntryIds.update((ids) => (ids.includes(entryId) ? ids.filter((id) => id !== entryId) : ids.concat(entryId)));
+  setEntryExpanded(entryId: string, expanded: boolean) {
+    this._expandedEntryIds.update((ids) => {
+      const isExpanded = ids.includes(entryId);
+      if (expanded && !isExpanded) {
+        return ids.concat(entryId);
+      }
+      if (!expanded && isExpanded) {
+        return ids.filter((id) => id !== entryId);
+      }
+      return ids;
+    });
   }
 
   isEntryExpanded(entryId: string) {
@@ -134,8 +143,17 @@ export class MemoryResourceMockService {
     );
   }
 
-  toggleFact(factId: string) {
-    this._expandedFactIds.update((ids) => (ids.includes(factId) ? ids.filter((id) => id !== factId) : ids.concat(factId)));
+  setFactExpanded(factId: string, expanded: boolean) {
+    this._expandedFactIds.update((ids) => {
+      const isExpanded = ids.includes(factId);
+      if (expanded && !isExpanded) {
+        return ids.concat(factId);
+      }
+      if (!expanded && isExpanded) {
+        return ids.filter((id) => id !== factId);
+      }
+      return ids;
+    });
   }
 
   isFactExpanded(factId: string) {
