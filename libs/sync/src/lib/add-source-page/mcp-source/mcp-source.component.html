@@ -1,0 +1,17 @@
+<div
+  class="extra-form"
+  [formGroup]="form">
+  <div class="separator"></div>
+  <pa-input
+    formControlName="uri"
+    help="generic.required-field">
+    {{ 'sync.add-source-page.mcp.uri' | translate }}
+  </pa-input>
+  <div>
+    <label class="title-s">{{ 'sync.add-source-page.mcp.headers' | translate }}</label>
+    <app-parameters-table
+      secretDisabled
+      [values]="headers"
+      (valuesChange)="updateHeaders($event)"></app-parameters-table>
+  </div>
+</div>

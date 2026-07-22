@@ -15,7 +15,7 @@ import { KVSchema, KVSchemaField, TaskApplyTo, TaskName } from '@nuclia/core';
 import { filter, map, take } from 'rxjs';
 import { KvSchemasService } from '../../../knowledge-box-settings/kv-schemas/kv-schemas.service';
 import { JSONSchema4, JSONSchema4TypeName } from 'json-schema';
-import { NavigationService } from '@flaps/core';
+import { NavigationService, STFUtils } from '@flaps/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -110,6 +110,12 @@ export class AskComponent extends TaskRouteDirective {
     this.askForm.controls.fieldType.valueChanges.subscribe((fieldType) => {
       this.askForm.controls.kv_schema_id.setValidators(fieldType === 'keyValue' ? Validators.required : []);
       this.askForm.controls.kv_schema_id.updateValueAndValidity();
+
+      // When generating key-value fields, the backend ignores the destination field, but a value must still be provided
+      // therefore, we hide the destination from the user and generate a random value
+      if (fieldType === 'keyValue' && !this.askForm.controls.destination.value) {
+        this.askForm.controls.destination.patchValue(`field_${STFUtils.generateRandomSlugSuffix()}`);
+      }
     });
 
     this.askOperation

@@ -1,0 +1,116 @@
+<div class="connect">
+  <div>
+    <h1 class="page-title">{{ 'sync.home-page.connect.title' | translate }}</h1>
+    <p class="page-description">{{ 'sync.home-page.connect.description' | translate }}</p>
+  </div>
+
+  <section>
+    <form class="source-groups">
+      <pa-radio-group [(value)]="selectedGroup">
+        <div>
+          <pa-radio
+            [help]="'sync.home-page.connect.local.radio-help' | translate"
+            value="local">
+            <span class="title-m">{{ 'sync.home-page.connect.local.radio-label' | translate }}</span>
+          </pa-radio>
+        </div>
+        <div class="separator-line"></div>
+        <div>
+          <pa-radio
+            [help]="'sync.home-page.connect.mcp.radio-help' | translate"
+            value="mcp">
+            <span class="title-m">{{ 'sync.home-page.connect.mcp.radio-label' | translate }}</span>
+          </pa-radio>
+        </div>
+        <div class="separator-line"></div>
+        <div>
+          <pa-radio
+            [help]="'sync.home-page.connect.external.radio-help' | translate"
+            value="external">
+            <span class="title-m">{{ 'sync.home-page.connect.external.radio-label' | translate }}</span>
+          </pa-radio>
+        </div>
+      </pa-radio-group>
+    </form>
+  </section>
+
+  <div class="separator-line"></div>
+
+  <section>
+    <div class="section-description">
+      <div class="title-l">{{ 'sync.home-page.connect.' + selectedGroup + '.radio-label' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.connect.' + selectedGroup + '.radio-help' | translate }}</div>
+    </div>
+    <div class="connector-list">
+      @for (connector of sourceDefinitions[selectedGroup]; track connector.type) {
+        <nsy-connector
+          [title]="connector.title"
+          [logo]="connector.logo"
+          [icon]="connector.icon"
+          (selectConnector)="onSelectConnector(connector.type)"></nsy-connector>
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="section-description">
+      <div class="title-l">{{ 'sync.home-page.connect.source-list.title' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.connect.source-list.description' | translate }}</div>
+    </div>
+
+    @if (sources | async; as sources) {
+      @if (sources.length === 0) {
+        <nsi-info-card icon="info">{{ 'sync.home-page.connect.source-list.empty-info' | translate }}</nsi-info-card>
+      } @else {
+        <pa-table
+          border
+          columns="1fr 1fr 2fr 96px">
+          <pa-table-sortable-header [cells]="tableHeader"></pa-table-sortable-header>
+
+          @for (source of sources; track source.id) {
+            <pa-table-row>
+              <pa-table-cell>
+                <div class="logo-title">
+                  <pa-icon
+                    size="small"
+                    [path]="source.logo || ''"
+                    [name]="source.icon || ''"></pa-icon>
+                  {{ source.id }}
+                </div>
+              </pa-table-cell>
+              <pa-table-cell>
+                <div class="body-s">
+                  {{ source.title }}
+                </div>
+              </pa-table-cell>
+              <pa-table-cell>
+                <div class="body-s">
+                  {{ source.description }}
+                </div>
+              </pa-table-cell>
+              <pa-table-cell-menu>
+                <pa-button
+                  icon="more-vertical"
+                  aspect="basic"
+                  size="small"
+                  [paPopup]="actionsMenu">
+                  Menu
+                </pa-button>
+                <pa-dropdown #actionsMenu>
+                  <pa-option [routerLink]="'../source/' + source.id">
+                    {{ 'generic.edit' | translate }}
+                  </pa-option>
+                  <pa-option
+                    destructive
+                    (selectOption)="deleteSource(source.id)">
+                    {{ 'generic.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              </pa-table-cell-menu>
+            </pa-table-row>
+          }
+        </pa-table>
+      }
+    }
+  </section>
+</div>
