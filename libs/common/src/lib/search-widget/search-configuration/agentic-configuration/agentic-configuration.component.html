@@ -1,0 +1,85 @@
+<div class="agentic-config-flow">
+  @if (configOptions().length > 0) {
+    <pa-select
+      [label]="'search.configuration.agentic.config-label' | translate"
+      [value]="agenticConfigId()"
+      [options]="configOptions()"
+      (valueChange)="updateConfigId($event)"></pa-select>
+  } @else {
+    <span class="config-form-help">
+      {{ 'search.configuration.agentic.no-configs' | translate }}
+    </span>
+  }
+
+  @if (sources().length > 0) {
+    <div class="config-form-field agentic-sources-field">
+      <span class="extra-label">{{ 'search.configuration.agentic.sources-label' | translate }}</span>
+      <div class="agentic-sources-list">
+        @for (source of sources(); track source.id) {
+          <div class="agentic-source-row">
+            <span class="body-m">{{ source.id }}</span>
+            <nsi-badge kind="neutral">{{ connectionTypeLabels[source.type] ?? source.type }}</nsi-badge>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="config-form-field">
+    <pa-toggle
+      [value]="agenticTransport() === 'websocket'"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="updateTransport($event ? 'websocket' : 'http')">
+      <span class="toggle-label">
+        {{ 'search.configuration.agentic.transport.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.agentic.transport.toggle-description' | translate }}
+    </div>
+  </div>
+
+  @if (askSearchConfigOptions().length > 1) {
+    <div class="config-form-field">
+      <pa-select
+        [label]="'search.configuration.agentic.search-config.label' | translate"
+        [value]="agenticSearchConfiguration()"
+        [options]="askSearchConfigOptions()"
+        (valueChange)="updateSearchConfiguration($event)"></pa-select>
+      <div class="config-form-help">{{ 'search.configuration.agentic.search-config.description' | translate }}</div>
+    </div>
+  }
+
+  <div class="config-form-field">
+    <pa-toggle
+      [value]="useSecurityGroups()"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="updateUseSecurityGroups($event)">
+      <span class="toggle-label">
+        {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.search-box.security-groups.toggle-description' | translate }}
+    </div>
+    <div
+      class="extra-fields"
+      [class.visible]="useSecurityGroups()">
+      <nsi-info-card type="warning">
+        {{ 'search.configuration.search-box.security-groups.info-box' | translate }}
+      </nsi-info-card>
+      <nsi-expandable-textarea
+        [value]="securityGroupsText()"
+        resizable
+        rows="4"
+        help="search.configuration.search-box.security-groups.textarea-help"
+        modalTitle="search.configuration.search-box.security-groups.toggle-label"
+        (valueChange)="updateSecurityGroupsText($event)"
+        (resizing)="heightChanged.emit()">
+        {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+      </nsi-expandable-textarea>
+    </div>
+  </div>
+</div>

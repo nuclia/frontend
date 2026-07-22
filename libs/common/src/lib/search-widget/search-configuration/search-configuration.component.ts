@@ -14,6 +14,7 @@ import {
   Output,
   Pipe,
   PipeTransform,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -27,14 +28,16 @@ import {
   OptionModel,
   OptionSeparator,
   OptionType,
+  PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
+  PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurations, GenerativeProviders, SearchConfig, Widget } from '@nuclia/core';
+import { AgenticConfig, LearningConfigurations, GenerativeProviders, SearchConfig, Widget } from '@nuclia/core';
 import {
   ButtonMiniComponent,
   ExpandableTextareaComponent,
@@ -42,11 +45,12 @@ import {
   SisModalService,
   SisToastService,
 } from '@nuclia/sistema';
-import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
+import { catchError, filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { getChatOptions, getFindOptions, isSameConfigurations } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
+import { AgenticConfigurationComponent } from './agentic-configuration';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
@@ -66,12 +70,14 @@ export class IsTypedConfigPipe implements PipeTransform {
 @Component({
   selector: 'stf-search-configuration',
   imports: [
+    AgenticConfigurationComponent,
     CommonModule,
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
     ButtonMiniComponent,
     InfoCardComponent,
+    PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
     PaTextFieldModule,
@@ -85,6 +91,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     TranslateModule,
     PaTooltipModule,
     PaTogglesModule,
+    PaIconModule,
     IsTypedConfigPipe,
     ExpandableTextareaComponent,
   ],
@@ -112,6 +119,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
 
+  @ViewChild('agenticConfig', { read: AccordionItemComponent }) agenticConfigItem?: AccordionItemComponent;
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
   @ViewChild('generativeAnswer', { read: AccordionItemComponent }) generativeAnswerItem?: AccordionItemComponent;
   @ViewChild('results', { read: AccordionItemComponent }) resultsItem?: AccordionItemComponent;
@@ -152,6 +160,11 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   ignoreChanges = false;
   ignoreNextRoutingRefresh = false;
 
+  searchMode = signal<'agentic' | 'simple-rag' | 'search'>('simple-rag');
+  currentKbSource = signal<{ id: string; label: string } | null>(null);
+  agenticConfigs = signal<Array<{ id: string } & AgenticConfig>>([]);
+  agenticWidgetConfigNames = signal<string[]>([]);
+
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
   }
@@ -160,19 +173,31 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         take(1),
+        tap((kb) => this.currentKbSource.set({ id: kb.id, label: kb.title })),
         switchMap((kb) => {
-          return forkJoin([kb.getLearningSchema(), kb.getConfiguration(), kb.getGenerativeProviders()]).pipe(
+          return forkJoin([
+            kb.getLearningSchema(),
+            kb.getConfiguration(),
+            kb.getGenerativeProviders(),
+            kb.listAgenticConfigs().pipe(catchError(() => of({}))),
+          ]).pipe(
             map(
-              ([schema, config, providers]) =>
-                ({ schema: removeDeprecatedModels(schema), config, providers }) as {
+              ([schema, config, providers, agenticConfigs]) =>
+                ({
+                  schema: removeDeprecatedModels(schema),
+                  config,
+                  providers,
+                  agenticConfigs,
+                }) as {
                   config: { [id: string]: any };
                   schema: LearningConfigurations;
                   providers: GenerativeProviders;
+                  agenticConfigs: Record<string, AgenticConfig>;
                 },
             ),
           );
         }),
-        tap(({ schema, config, providers }) => {
+        tap(({ schema, config, providers, agenticConfigs }) => {
           this.generativeModelFromSettings = config['generative_model'] || '';
           this.semanticModelFromSettings = config['default_semantic_model'] || '';
           this.generativeProviders = providers;
@@ -186,6 +211,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
               {} as { [key: string]: string },
             ) || {};
           this.setModelsAndPrompt(schema, config);
+          this.agenticConfigs.set(Object.entries(agenticConfigs).map(([id, cfg]) => ({ id, ...cfg })));
           this.initialised = true;
           this.cdr.detectChanges();
         }),
@@ -248,6 +274,12 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
         const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, savedConfigs);
         this.savedConfig = savedConfig;
+        this._syncModeSignals(savedConfig);
+        this.agenticWidgetConfigNames.set(
+          savedConfigs
+            .filter((c) => c.type === 'config' && (c as Widget.TypedSearchConfiguration).searchMode === 'agentic')
+            .map((c) => c.id),
+        );
         // config selection must be done in next check detection cycle for selection options to be there
         setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
       }),
@@ -310,6 +342,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
+        this._syncModeSignals(this.savedConfig);
         if (this.savedConfig.type === 'api') {
           this.isConfigUnsupported = true;
           this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);
@@ -332,6 +365,33 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     );
   }
 
+  private _syncModeSignals(config: Widget.AnySearchConfiguration) {
+    if (config.type === 'config') {
+      this.searchMode.set(config.searchMode || 'simple-rag');
+    }
+  }
+
+  updateSearchMode(mode: 'agentic' | 'simple-rag' | 'search') {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') return;
+    this.searchMode.set(mode);
+    const currentConfig = this.currentConfig;
+    this.currentConfig = { ...currentConfig, searchMode: mode };
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.updateWidget();
+  }
+
+  updateAgenticConfig(partial: Partial<Widget.TypedSearchConfiguration>) {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') return;
+    const originalSearchBox = this.currentConfig.searchBox;
+    this.currentConfig = {
+      ...this.currentConfig,
+      ...partial,
+      ...(partial.searchBox ? { searchBox: { ...originalSearchBox, ...partial.searchBox } } : {}),
+    };
+    this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
+    this.updateWidget();
+  }
+
   triggerCreateWidget() {
     if (this.isConfigModified) {
       this.modalService.openConfirm({
@@ -351,11 +411,16 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
         this.savedConfig = {
           type: 'config',
           id: this.savedConfig.id,
+          searchMode: this.savedConfig.searchMode,
+          agenticConfigId: this.savedConfig.agenticConfigId,
+          agenticTransport: this.savedConfig.agenticTransport,
+          agenticSearchConfiguration: this.savedConfig.agenticSearchConfiguration,
           searchBox: { ...this.savedConfig.searchBox },
           generativeAnswer: { ...this.savedConfig.generativeAnswer },
           resultDisplay: { ...this.savedConfig.resultDisplay },
           routing: { ...this.savedConfig.routing },
         };
+        this._syncModeSignals(this.savedConfig);
       } else {
         this.currentJsonConfig = this.originalJsonConfig;
         this.useGenerativeAnswer = this.savedConfig.value.kind === 'ask';
@@ -480,6 +545,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     this.updateWidget();
   }
 
+  updateAgenticConfigHeight() {
+    this.agenticConfigItem?.updateContentHeight();
+  }
   updateSearchBoxHeight() {
     this.searchBoxItem?.updateContentHeight();
   }
@@ -494,6 +562,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
   }
 
   updateHeight() {
+    this.updateAgenticConfigHeight();
     this.updateSearchBoxHeight();
     this.updateGenerativeAnswerHeight();
     this.updateResultsHeight();
@@ -534,7 +603,8 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
       .onClose.pipe(filter((confirm) => !!confirm))
       .subscribe(() => {
         if (this.currentConfig?.type === 'config') {
-          const isAsk = !!this.currentConfig.generativeAnswer.generateAnswer;
+          const isAsk =
+            this.currentConfig.searchMode === 'agentic' || !!this.currentConfig.generativeAnswer.generateAnswer;
           try {
             const config: SearchConfig = isAsk
               ? {

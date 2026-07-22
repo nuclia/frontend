@@ -120,59 +120,149 @@
         [value]="currentJsonConfig"
         (valueChange)="updateJsonConfig($event)"></nsi-expandable-textarea>
     } @else if ((savedConfig | isTypedConfig) && (currentConfig | isTypedConfig)) {
+      <div class="search-mode-container">
+        <pa-radio-group
+          noBackground
+          [value]="searchMode()"
+          (valueChange)="updateSearchMode($event)">
+          <pa-radio value="agentic">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.agentic' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="agenticModeInfoDropdown"></pa-button>
+            </span>
+          </pa-radio>
+
+          <pa-radio value="simple-rag">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.simple-rag' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="simpleRagModeInfoDropdown"></pa-button>
+            </span>
+          </pa-radio>
+
+          <pa-radio value="search">
+            <span class="search-mode-label">
+              <span class="title-m">{{ 'search.configuration.search-mode.search' | translate }}</span>
+              <pa-button
+                icon="info"
+                aspect="basic"
+                size="small"
+                (click)="$event.stopPropagation()"
+                [paPopup]="searchModeInfoDropdown"></pa-button>
+            </span>
+          </pa-radio>
+        </pa-radio-group>
+
+        <pa-dropdown
+          #agenticModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">
+            {{ 'search.configuration.search-mode.agentic-description' | translate }}
+          </pa-option>
+        </pa-dropdown>
+
+        <pa-dropdown
+          #simpleRagModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">
+            {{ 'search.configuration.search-mode.simple-rag-description' | translate }}
+          </pa-option>
+        </pa-dropdown>
+
+        <pa-dropdown
+          #searchModeInfoDropdown
+          class="info-dropdown">
+          <pa-option [readonly]="true">
+            {{ 'search.configuration.search-mode.search-description' | translate }}
+          </pa-option>
+        </pa-dropdown>
+      </div>
+
       <pa-accordion (toggleAccordion)="scrollOnTop()">
-        <pa-accordion-item
-          #searchBox
-          id="search-box"
-          [itemTitle]="'search.configuration.search-box.section-title' | translate"
-          [description]="'search.configuration.search-box.section-description' | translate"
-          (expandedChange)="updateSearchBoxHeight()">
-          <pa-accordion-item-body>
-            <stf-search-box-form
-              [config]="savedConfig?.searchBox"
-              [semanticModels]="semanticModels"
-              (configChanged)="updateSearchBoxConfig($event)"
-              (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-        <pa-accordion-item
-          #generativeAnswer
-          id="generative-answer"
-          [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
-          [description]="'search.configuration.generative-answer.section-description' | translate"
-          (expandedChange)="updateGenerativeAnswerHeight()">
-          <pa-accordion-item-body>
-            <stf-generative-answer-form
-              [config]="savedConfig?.generativeAnswer"
-              [defaultPrompt]="defaultPromptFromSettings"
-              [defaultSystemPrompt]="defaultSystemPromptFromSettings"
-              [promptInfos]="promptInfos"
-              [generativeProviders]="generativeProviders"
-              [learningConfigurations]="learningConfigurations"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
-              (configChanged)="updateGenerativeAnswerConfig($event)"
-              (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-        <pa-accordion-item
-          #results
-          id="results"
-          [itemTitle]="'search.configuration.result-display.section-title' | translate"
-          [description]="'search.configuration.result-display.section-description' | translate"
-          (expandedChange)="updateResultsHeight()">
-          <pa-accordion-item-body>
-            <stf-results-display-form
-              [config]="savedConfig?.resultDisplay"
-              [modelNames]="generativeModelNames"
-              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel || generativeModelFromSettings"
-              [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
-              [generativeProviders]="generativeProviders"
-              (configChanged)="updateResultDisplayConfig($event)"
-              (heightChanged)="updateResultsHeight()"></stf-results-display-form>
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-        @if (isRoutingEnabled | async) {
+        @if (searchMode() === 'agentic') {
+          <pa-accordion-item
+            #agenticConfig
+            id="agentic-config"
+            [itemTitle]="'search.configuration.agentic.section-title' | translate"
+            [description]="'search.configuration.agentic.section-description' | translate"
+            (expandedChange)="updateAgenticConfigHeight()">
+            <pa-accordion-item-body>
+              <stf-agentic-configuration
+                [agenticConfigs]="agenticConfigs()"
+                [config]="savedConfig?.type === 'config' ? savedConfig : undefined"
+                [excludeSearchConfigNames]="agenticWidgetConfigNames()"
+                (configChanged)="updateAgenticConfig($event)"
+                (heightChanged)="updateAgenticConfigHeight()"></stf-agentic-configuration>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (searchMode() === 'search' || searchMode() === 'simple-rag') {
+          <pa-accordion-item
+            #searchBox
+            id="search-box"
+            [itemTitle]="'search.configuration.search-box.section-title' | translate"
+            [description]="'search.configuration.search-box.section-description' | translate"
+            (expandedChange)="updateSearchBoxHeight()">
+            <pa-accordion-item-body>
+              <stf-search-box-form
+                [config]="savedConfig?.searchBox"
+                [semanticModels]="semanticModels"
+                (configChanged)="updateSearchBoxConfig($event)"
+                (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (searchMode() === 'simple-rag') {
+          <pa-accordion-item
+            #generativeAnswer
+            id="generative-answer"
+            [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
+            [description]="'search.configuration.generative-answer.section-description' | translate"
+            (expandedChange)="updateGenerativeAnswerHeight()">
+            <pa-accordion-item-body>
+              <stf-generative-answer-form
+                [config]="savedConfig?.generativeAnswer"
+                [defaultPrompt]="defaultPromptFromSettings"
+                [defaultSystemPrompt]="defaultSystemPromptFromSettings"
+                [promptInfos]="promptInfos"
+                [generativeProviders]="generativeProviders"
+                [learningConfigurations]="learningConfigurations"
+                [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+                (configChanged)="updateGenerativeAnswerConfig($event)"
+                (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if (searchMode() !== 'agentic') {
+          <pa-accordion-item
+            #results
+            id="results"
+            [itemTitle]="'search.configuration.result-display.section-title' | translate"
+            [description]="'search.configuration.result-display.section-description' | translate"
+            (expandedChange)="updateResultsHeight()">
+            <pa-accordion-item-body>
+              <stf-results-display-form
+                [config]="savedConfig?.resultDisplay"
+                [modelNames]="generativeModelNames"
+                [generativeModel]="currentConfig?.generativeAnswer?.generativeModel || generativeModelFromSettings"
+                [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
+                [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+                [generativeProviders]="generativeProviders"
+                (configChanged)="updateResultDisplayConfig($event)"
+                (heightChanged)="updateResultsHeight()"></stf-results-display-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+        @if ((isRoutingEnabled | async) && (searchMode() === 'search' || searchMode() === 'simple-rag')) {
           <pa-accordion-item
             #routing
             id="routing"

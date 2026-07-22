@@ -33,6 +33,7 @@ import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import {
   find,
   getAgenticAnswer,
+  getAgenticAnswerHttp,
   getAnswer,
   getAnswerWithoutRAG,
   getEntities,
@@ -585,13 +586,13 @@ export function askQuestion(
   question: string,
   reset: boolean,
   options: BaseSearchOptions = {},
-  agenticConfigId?: string,
+  configId?: string,
   transport: 'http' | 'websocket' = 'http',
 ): Observable<Ask.Answer | IErrorResponse> {
   let hasError = false;
   let isDebugMode = false;
 
-  if (agenticConfigId && transport === 'websocket') {
+  if (configId && transport === 'websocket') {
     return of({ question, reset }).pipe(
       tap((data) => {
         currentQuestion.set(data);
@@ -605,7 +606,7 @@ export function askQuestion(
               .filter((e) => !e.answer.incomplete && !e.answer.inError)
               .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
           ),
-          switchMap((chatHistory) => getAgenticAnswer(question, agenticConfigId, false, chatHistory)),
+          switchMap((chatHistory) => getAgenticAnswer(question, configId, false, chatHistory)),
         ),
       ),
       tap((result) => {
@@ -630,10 +631,43 @@ export function askQuestion(
     );
   }
 
-  // POST transport (default) — fall through to the standard ask flow,
-  // injecting agentic_config_id into options when present.
-  if (agenticConfigId) {
-    (options as ChatOptions).agentic_config_id = agenticConfigId;
+  if (configId && transport !== 'websocket') {
+    return of({ question, reset }).pipe(
+      tap((data) => {
+        currentQuestion.set(data);
+        pendingResults.set(true);
+      }),
+      switchMap(() =>
+        chat.pipe(
+          take(1),
+          map((entries) =>
+            entries
+              .filter((e) => !e.answer.incomplete && !e.answer.inError)
+              .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
+          ),
+          switchMap((chatHistory) => getAgenticAnswerHttp(question, configId, chatHistory)),
+        ),
+      ),
+      tap((result) => {
+        if (result.type === 'error') {
+          if (!hasError) {
+            hasError = true;
+            const answer = currentAnswer.getValue();
+            appendChatEntry.set({
+              question,
+              answer: { ...answer, text: answer.text, incomplete: false, inError: true, error: result.detail },
+            });
+            chatError.set(result);
+            pendingResults.set(false);
+          }
+        } else if ((result as Ask.Answer).incomplete) {
+          currentAnswer.set(result as Ask.Answer);
+        } else {
+          appendChatEntry.set({ question, answer: result as Ask.Answer });
+          pendingResults.set(false);
+        }
+      }),
+    );
   }
 
   return of({ question, reset }).pipe(

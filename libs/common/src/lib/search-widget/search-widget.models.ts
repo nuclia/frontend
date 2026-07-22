@@ -171,6 +171,12 @@ export function getChatOptions(searchConfig: Widget.SearchConfiguration, default
       groups: searchConfig.searchBox.securityGroups.split('\n').map((group) => group.trim()),
     };
   }
+  if (searchConfig.searchMode === 'agentic' && searchConfig.agenticConfigId) {
+    requestOptions.agentic_config_id = searchConfig.agenticConfigId;
+  }
+  if (searchConfig.searchMode === 'agentic' && searchConfig.agenticSearchConfiguration) {
+    requestOptions.search_configuration = searchConfig.agenticSearchConfiguration;
+  }
   return requestOptions;
 }
 

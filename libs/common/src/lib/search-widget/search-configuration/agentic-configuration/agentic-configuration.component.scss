@@ -1,0 +1,17 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.agentic-sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.agentic-source-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  span {
+    flex: 1;
+  }
+}
