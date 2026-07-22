@@ -71,10 +71,6 @@ const ROUTES: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'memory-mock',
-        component: MemoryResourceMockComponent,
-      },
-      {
         path: ':status',
         component: ResourceListComponent,
       },
@@ -134,6 +130,10 @@ const ROUTES: Routes = [
           {
             path: 'preview/:fieldType/:fieldId',
             component: PreviewComponent,
+          },
+          {
+            path: 'memory',
+            component: MemoryResourceMockComponent,
           },
         ],
       },

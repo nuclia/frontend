@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
-import { MemoryMockTab } from './memory-resource-mock.config';
+import { EditResourceService } from '../edit-resource';
+import { MemoryMockEntry, MemoryMockFact, MemoryMockTab } from './memory-resource-mock.config';
 import { MemoryResourceMockService } from './memory-resource-mock.service';
 
 @Component({
@@ -12,14 +13,39 @@ import { MemoryResourceMockService } from './memory-resource-mock.service';
   standalone: false,
   providers: [MemoryResourceMockService],
 })
-export class MemoryResourceMockComponent {
+export class MemoryResourceMockComponent implements OnInit {
   private modal = inject(SisModalService);
   private toaster = inject(SisToastService);
+  private editResource = inject(EditResourceService);
 
   protected service = inject(MemoryResourceMockService);
 
+  ngOnInit() {
+    this.editResource.setCurrentView('memory');
+  }
+
   protected setTab(tab: MemoryMockTab) {
     this.service.setTab(tab);
+  }
+
+  protected setTopic(topicId: string) {
+    this.service.setTopic(topicId);
+  }
+
+  protected setUser(userId: string) {
+    this.service.setUser(userId);
+  }
+
+  protected toggleEntry(entryId: string) {
+    this.service.toggleEntry(entryId);
+  }
+
+  protected toggleFact(factId: string) {
+    this.service.toggleFact(factId);
+  }
+
+  protected relatedEntries(fact: MemoryMockFact): MemoryMockEntry[] {
+    return this.service.getRelatedEntries(fact);
   }
 
   protected deleteMemoryResource() {

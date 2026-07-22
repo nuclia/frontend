@@ -39,7 +39,16 @@ export interface ColumnHeader extends IHeaderCell {
   visible?: boolean;
 }
 
-export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize' | 'hide' | 'unhide';
+export type MenuAction =
+  | 'edit'
+  | 'annotate'
+  | 'classify'
+  | 'memory'
+  | 'delete'
+  | 'reprocess'
+  | 'summarize'
+  | 'hide'
+  | 'unhide';
 
 export type SearchModes = 'title' | 'startswith' | 'uid' | 'slug';
 

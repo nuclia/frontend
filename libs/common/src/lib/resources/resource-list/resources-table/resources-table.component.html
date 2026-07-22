@@ -318,6 +318,9 @@
                   <pa-option (selectOption)="triggerAction(row.resource, 'classify')">
                     {{ 'resource.menu.classify' | translate }}
                   </pa-option>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'memory')">
+                    {{ 'resource.menu.memory' | translate }}
+                  </pa-option>
                   <pa-option
                     [disabled]="(isSummarizationAuthorized | async) === false"
                     [icon]="(isSummarizationAuthorized | async) === false ? unauthorizedIcon : null"

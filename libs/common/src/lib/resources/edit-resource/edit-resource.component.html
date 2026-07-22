@@ -81,6 +81,15 @@
           (click)="onViewChange()">
           {{ 'resource.tooltip.annotation' | translate }}
         </pa-button>
+        <pa-button
+          icon="book"
+          routerLink="memory"
+          [active]="currentView === 'memory'"
+          paTooltip="resource.tooltip.memory"
+          aspect="basic"
+          (click)="onViewChange()">
+          {{ 'resource.tooltip.memory' | translate }}
+        </pa-button>
       }
 
       <pa-button
@@ -122,13 +131,24 @@
         @if (currentView !== 'add-field') {
           <li
             class="nav-item"
-            [class.active]="(currentField | async) === 'resource'"
+            [class.active]="(currentField | async) === 'resource' && currentView !== 'memory'"
             (click)="navigateToField('resource')">
             <pa-icon
               name="file"
               size="small"></pa-icon>
             {{ (aragMode ? 'retrieval-agents.sessions.preview.session-info' : 'resource.profile') | translate }}
           </li>
+          @if (!aragMode) {
+            <li
+              class="nav-item"
+              [class.active]="currentView === 'memory'"
+              (click)="navigateToMemory()">
+              <pa-icon
+                name="book"
+                size="small"></pa-icon>
+              {{ 'resource.menu.memory' | translate }}
+            </li>
+          }
           @for (field of originalFields | async; track field.field_id) {
             <li
               class="nav-item"

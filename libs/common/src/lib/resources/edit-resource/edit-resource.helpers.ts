@@ -26,7 +26,7 @@ import {
 import { SafeUrl } from '@angular/platform-browser';
 
 export type Thumbnail = { uri: string; blob: SafeUrl };
-export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'add-field';
+export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'memory' | 'add-field';
 
 export interface ParagraphWithText extends Paragraph {
   paragraphId: string;

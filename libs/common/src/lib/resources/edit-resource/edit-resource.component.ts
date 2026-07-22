@@ -139,6 +139,8 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         field === 'resource'
           ? `./${this.currentView}/${field}`
           : `./${this.currentView}/${field.field_type}/${field.field_id}`;
+    } else if (this.currentView === 'memory') {
+      path = field === 'resource' ? './resource' : `./resource/${field.field_type}/${field.field_id}`;
     } else {
       path =
         field === 'resource' ? `./${this.currentView}` : `./${this.currentView}/${field.field_type}/${field.field_id}`;
@@ -150,6 +152,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   onViewChange() {
     this.editResource.setCurrentField('resource');
+  }
+
+  navigateToMemory() {
+    this.editResource.setCurrentField('resource');
+    this.router.navigate(['./memory'], { relativeTo: this.route });
   }
 
   reprocessResource() {

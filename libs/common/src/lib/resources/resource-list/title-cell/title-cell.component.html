@@ -4,14 +4,17 @@
       <pa-icon [name]="icon"></pa-icon>
     }
     <div class="title-and-description">
-      <div
-        class="body-s"
-        data-cy="resource-title">
-        <a
-          [routerLink]="'../' + row.resource.id + '/edit/preview'"
-          (click)="onClickLink($event)">
-          {{ row.resource.title }}
-        </a>
+      <div class="title-row">
+        <div
+          class="body-s"
+          data-cy="resource-title">
+          <a
+            [routerLink]="'../' + row.resource.id + '/edit/preview'"
+            (click)="onClickLink($event)">
+            {{ row.resource.title }}
+          </a>
+        </div>
+        <nsi-badge kind="neutral">{{ 'resource.tag.memory' | translate }}</nsi-badge>
       </div>
       @if (row.description) {
         <small

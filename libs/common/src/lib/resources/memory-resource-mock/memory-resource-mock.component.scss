@@ -3,18 +3,29 @@
 .memory-mock {
   display: flex;
   flex-direction: column;
-  gap: rhythm(3);
+  gap: rhythm(1);
 }
 
 .memory-header {
   align-items: flex-start;
+  background: transparent;
+  border: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: rhythm(2);
+  padding: 0;
+  position: static;
+  z-index: auto;
+}
+
+.memory-title {
+  flex: 1 1 auto;
+  text-align: left;
 }
 
 .header-actions {
   display: flex;
+  margin-left: auto;
   gap: rhythm(1);
 }
 
@@ -25,6 +36,53 @@
 
 .managed-note {
   color: $color-neutral-regular;
+}
+
+.section-helper {
+  color: $color-neutral-regular;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.memory-filters {
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: rhythm(2);
+}
+
+.memory-controls-row {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: rhythm(2);
+  min-width: max-content;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  flex: 0 0 auto;
+}
+
+.filter-control {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+}
+
+.tab-bar {
+  align-items: center;
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.filter-label-spacer {
+  visibility: hidden;
 }
 
 .sessions-layout {
@@ -55,9 +113,13 @@
   cursor: pointer;
   padding: rhythm(1.5);
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
 
   &.active {
     border-color: $color-primary-regular;
+    background: $color-primary-lightest;
   }
 }
 
@@ -69,20 +131,100 @@
 
 .entry,
 .fact-item,
-.reference-item {
+.reference-item,
+.graph-item {
   border-bottom: 1px solid $color-neutral-light;
-  padding-bottom: rhythm(1);
+  padding-bottom: rhythm(1.5);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.75);
 }
 
 .entry:last-child,
 .fact-item:last-child,
-.reference-item:last-child {
+.reference-item:last-child,
+.graph-item:last-child {
   border-bottom: 0;
   padding-bottom: 0;
+}
+
+.entry-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.collapsed {
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.entry-section {
+  background: $color-neutral-lightest;
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  padding: rhythm(1.5);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+
+  p {
+    margin: 0;
+  }
+}
+
+.entry-context {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.context-item {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+.entry-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+.metadata-row {
+  display: flex;
+  justify-content: space-between;
+  gap: rhythm(1);
+}
+
+.related-list {
+  margin: 0;
+  padding-left: rhythm(2);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+.fact-reasoning {
+  margin: 0;
+  color: $color-neutral-regular;
+}
+
+.graph-list {
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  padding: rhythm(2);
+}
+
+.relation-chip {
+  background: $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  padding: rhythm(0.25) rhythm(0.75);
+  margin: 0 rhythm(0.5);
 }
 
 .entry-meta {
   display: flex;
   justify-content: space-between;
-  margin-bottom: rhythm(0.5);
 }
