@@ -10,8 +10,10 @@ import {
   getDateFromFilter,
   getVisibilityFromFilter,
   HIDDEN_PREFIX,
+  KeyValueFieldData,
   Resource,
   RESOURCE_STATUS,
+  ResourceProperties,
   Search,
   SortField,
   SortOption,
@@ -31,12 +33,12 @@ export interface ResourceWithLabels {
   status?: string;
   rank?: number;
   errors?: string;
+  keyValue?: { [key: string]: KeyValueFieldData };
 }
 
 export interface ColumnHeader extends IHeaderCell {
   size: string;
   optional?: boolean;
-  visible?: boolean;
 }
 
 export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize' | 'hide' | 'unhide';
@@ -71,6 +73,7 @@ export interface ResourceListParams {
   query: string | CatalogQuery;
   filters: string[];
   labelsLogic?: LabelsLogic;
+  includeKeyValue?: boolean;
 }
 export function getSearchOptions(params: ResourceListParams, uid?: string, slug?: string): CatalogOptions {
   if (uid) {
@@ -110,6 +113,11 @@ export function getSearchOptions(params: ResourceListParams, uid?: string, slug?
       range_creation_end: end ? getDateFromFilter(end) : undefined,
       hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
       filters,
+      show: [
+        ResourceProperties.BASIC,
+        ResourceProperties.ERRORS,
+        ...(params.includeKeyValue ? [ResourceProperties.VALUES] : []),
+      ],
     };
   }
 }

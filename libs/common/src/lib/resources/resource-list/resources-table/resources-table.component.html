@@ -93,6 +93,16 @@
               {{ (fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
             </pa-button>
           }
+          @if (visibleColumns.includes('key-value-fields')) {
+            <pa-button
+              size="small"
+              aspect="basic"
+              iconAndText
+              [icon]="fullKeyValue ? 'collapse' : 'expand'"
+              (click)="fullKeyValue = !fullKeyValue">
+              {{ (fullKeyValue ? 'resource.collapse-key-value' : 'resource.expand-key-value') | translate }}
+            </pa-button>
+          }
         }
         <nsi-dropdown-button
           size="small"
@@ -105,11 +115,11 @@
           @for (column of optionalColumns; track column.id) {
             <pa-option
               [value]="column.id"
-              (selectOption)="selectColumn(column, $event)"
+              (selectOption)="toggleColumn(column, $event)"
               dontCloseOnSelect>
               <pa-checkbox
-                [(value)]="column.visible"
-                (valueChange)="this.columnVisibilityUpdate.next($event)">
+                [value]="(selectedColumns | async)?.includes(column.id)"
+                (valueChange)="toggleColumn(column)">
                 {{ column.label | translate }}
               </pa-checkbox>
             </pa-option>
@@ -295,6 +305,40 @@
                       name="eye-closed"
                       size="small"
                       paTooltip="resource.hidden"></pa-icon>
+                  }
+                </pa-table-cell>
+              }
+              @if (visibleColumns.includes('key-value-fields')) {
+                <pa-table-cell>
+                  @let fields = row.keyValue || {} | keyvalue;
+                  @if (fields.length > 0) {
+                    <div [class.ellipsis]="!fullKeyValue">
+                      @for (field of fields; track field.key) {
+                        <div
+                          class="body-s"
+                          [class.ellipsis]="!fullKeyValue">
+                          @if (fields.length > 1) {
+                            <span class="field-key">{{ field.key }}:</span>
+                          }
+                          @for (pair of field.value.value?.data || {} | keyvalue; track pair.key; let last = $last) {
+                            @let value = formatKeyValue(pair.value);
+                            <span>
+                              <strong>{{ pair.key }}</strong>
+                              @if (!fullKeyValue && value.length > 12) {
+                                <span>: {{ value | slice: 0 : 12 }}…</span>
+                              } @else {
+                                <span>: {{ value }}</span>
+                              }
+                            </span>
+                            @if (!last) {
+                              <span>&nbsp;·&nbsp;</span>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    -
                   }
                 </pa-table-cell>
               }

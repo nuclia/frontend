@@ -107,3 +107,14 @@ stf-table-pagination {
     height: 3rem;
   }
 }
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field-key {
+  margin-right: rhythm(0.5);
+  text-decoration: underline;
+}
