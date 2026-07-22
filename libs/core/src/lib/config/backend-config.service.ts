@@ -73,7 +73,7 @@ export class BackendConfigurationService {
   }
 
   getLogoPath(): string {
-    return `${this.getAssetsPath()}/logos/logo.svg?version=${this.getVersion()}`;
+    return `${this.getAssetsPath()}/logos/logo-horizontal.svg?version=${this.getVersion()}`;
   }
 
   getBrandName(): string {

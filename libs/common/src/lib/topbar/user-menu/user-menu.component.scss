@@ -16,10 +16,15 @@
   .avatar-wrapper {
     position: relative;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-primary-lightest;
+    border-radius: 50%;
+    padding: rhythm(0.5);
 
     nsi-badge {
       position: absolute;
-      bottom: -4px;
+      bottom: -2px;
       right: -4px;
       cursor: pointer;
       gap: 0;
@@ -31,10 +36,11 @@
     cursor: pointer;
     height: rhythm(5);
     width: rhythm(5);
+    background-color: $color-primary-lightest;
 
     .pa-avatar-initials {
-      background-color: $color-dark-stronger;
-      color: $color-light-stronger;
+      background-color: $color-primary-lightest;
+      color: $color-primary-regular;
       font-size: font-size(m);
       font-weight: $font-weight-thin;
     }

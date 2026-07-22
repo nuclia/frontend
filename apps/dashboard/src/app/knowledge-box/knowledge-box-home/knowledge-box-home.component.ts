@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AppService, ChartData, MetricsService, RangeChartData, RemiMetricsService } from '@flaps/common';
 import {
   FeaturesService,
@@ -30,7 +30,6 @@ import {
 import { takeUntil } from 'rxjs/operators';
 import { KbOnboardingStateService } from './kb-onboarding/kb-onboarding-state.service';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
-import { TestPageModalComponent } from './test-page-modal/test-page-modal.component';
 
 const POLLING_DELAY = 30000; // 30 seconds
 
@@ -54,15 +53,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
-  endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
-  uid = this.currentKb.pipe(map((kb) => kb.id));
-  mcp = this.currentKb.pipe(
-    switchMap((kb) =>
-      this.zoneService
-        .buildZoneUrl(kb.zone, this.sdk.nuclia.options.backend, 'dp')
-        .pipe(map((baseUrl) => `${baseUrl}/v1${kb.path}/mcp`)),
-    ),
-  );
   zone = combineLatest([this.currentKb, this.zoneService.getZones()]).pipe(
     map(([kb, zones]) => {
       const zone = zones.find((zone) => zone.slug === kb.zone);
@@ -122,7 +112,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   );
   isChartDropdownOpen = false;
 
-  readonly chartHeight = 232;
+  readonly chartHeight = 201;
   readonly defaultChartOption = new OptionModel({
     id: 'ask',
     label: 'metrics.ask.title',
@@ -142,14 +132,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     ),
   );
 
-  clipboardSupported = !!navigator.clipboard?.writeText;
-  developerExpanded = false;
-  copyIcon = {
-    endpoint: 'copy',
-    uid: 'copy',
-    mcp: 'copy',
-  };
-
   healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
 
   uploadBlocked = this.account.pipe(
@@ -164,7 +146,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   constructor(
     private app: AppService,
     private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
     private features: FeaturesService,
     private navigationService: NavigationService,
     private metrics: MetricsService,
@@ -302,34 +283,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  copyEndpoint() {
-    this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
-  }
-
-  copyUid() {
-    this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
-  }
-
-  copyMcp() {
-    this.mcp.pipe(take(1)).subscribe((mcp) => this.copyToClipboard('mcp', mcp));
-  }
-
-  private copyToClipboard(type: 'endpoint' | 'uid' | 'mcp', text: string) {
-    navigator.clipboard.writeText(text);
-    this.copyIcon = {
-      ...this.copyIcon,
-      [type]: 'check',
-    };
-    this.cdr.markForCheck();
-    setTimeout(() => {
-      this.copyIcon = {
-        ...this.copyIcon,
-        [type]: 'copy',
-      };
-      this.cdr.markForCheck();
-    }, 1000);
-  }
-
   selectChart(option: OptionModel) {
     this.currentChart = option;
     // when selecting another chart, first the chart is removed from the DOM causing the page height to be reduced
@@ -363,9 +316,5 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         },
       }),
     );
-  }
-
-  openTestPageModal() {
-    this.modal.openModal(TestPageModalComponent);
   }
 }

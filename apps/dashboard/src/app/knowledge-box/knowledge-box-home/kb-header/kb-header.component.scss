@@ -1,0 +1,78 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.kb-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: rhythm(5);
+  width: 100%;
+}
+
+.kb-header-title {
+  margin: 0;
+  font-size: font-size(xxl);
+  font-weight: $font-weight-semi-bold;
+  line-height: line-height(xxl);
+  color: var(--color-dark-stronger);
+  white-space: nowrap;
+}
+
+.kb-header-title-block {
+  align-items: baseline;
+  display: flex;
+  gap: rhythm(0.5);
+  min-width: 0;
+}
+
+.storage-summary-button {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.storage-summary-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  justify-content: space-between;
+  min-width: rhythm(24);
+}
+
+.storage-summary-label {
+  color: $color-neutral-regular;
+}
+
+.storage-summary-value {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-semi-bold;
+  text-align: right;
+}
+
+.kb-header-actions {
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
+
+  pa-button.more-actions-button {
+    ::ng-deep .pa-button {
+      border-radius: $border-radius-default;
+      height: rhythm(5);
+      width: rhythm(5);
+      min-width: rhythm(5);
+      padding: 0;
+    }
+
+    ::ng-deep .pa-button,
+    ::ng-deep .pa-button:hover,
+    ::ng-deep .pa-button:focus-visible,
+    ::ng-deep .pa-button:active,
+    ::ng-deep .pa-button::before,
+    ::ng-deep .pa-button::after {
+      border-radius: $border-radius-default;
+    }
+  }
+}

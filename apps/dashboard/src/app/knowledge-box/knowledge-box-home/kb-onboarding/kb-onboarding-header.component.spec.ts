@@ -7,7 +7,6 @@ import {
   PaButtonModule,
   PaIconModule,
   PaModalModule,
-  PaTogglesModule,
   PaTooltipModule,
   ModalConfig,
 } from '@guillotinaweb/pastanaga-angular';
@@ -15,7 +14,7 @@ import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
-// pa-checkbox uses ResizeObserver via paEllipsisTooltip
+// nsi-badge uses ResizeObserver via paEllipsisTooltip
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).ResizeObserver = class {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -31,6 +30,7 @@ import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { KbOnboardingEntry } from './kb-onboarding-state.model';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
+import { KbHeaderComponent } from '../kb-header/kb-header.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -55,10 +55,10 @@ describe('KbOnboardingHeaderComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
         MockModule(PaModalModule),
-        MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
         MockModule(RouterModule),
         MockComponent(InfoCardComponent),
+        MockComponent(KbHeaderComponent),
       ],
       providers: [
         MockProvider(KbOnboardingStateService, {
@@ -102,7 +102,7 @@ describe('KbOnboardingHeaderComponent', () => {
     });
 
     it('should show the skip button', () => {
-      const skipBtn = fixture.nativeElement.querySelector('pa-button[icon="cross"]');
+      const skipBtn = fixture.nativeElement.querySelector('pa-button[aspect="basic"]');
       expect(skipBtn).toBeTruthy();
     });
   });
@@ -185,15 +185,9 @@ describe('KbOnboardingHeaderComponent', () => {
       await createComponent(null);
     });
 
-    it('should render the done title', () => {
-      const h2 = fixture.nativeElement.querySelector('h2');
-      expect(h2).toBeTruthy();
-      expect(h2.textContent.trim()).toContain('Your Knowledge Box is Ready');
-    });
-
-    it('should show the done state', () => {
-      const done = fixture.nativeElement.querySelector('.onboarding-content--done');
-      expect(done).toBeTruthy();
+    it('should delegate to app-kb-header', () => {
+      const kbHeader = fixture.nativeElement.querySelector('app-kb-header');
+      expect(kbHeader).toBeTruthy();
     });
   });
 
@@ -205,7 +199,7 @@ describe('KbOnboardingHeaderComponent', () => {
     });
 
     it('should call SisModalService.openModal with SkipOnboardingModalComponent', () => {
-      const skipBtn = fixture.nativeElement.querySelector('pa-button[icon="cross"]');
+      const skipBtn = fixture.nativeElement.querySelector('pa-button[aspect="basic"]');
       expect(skipBtn).toBeTruthy();
 
       skipBtn.click();

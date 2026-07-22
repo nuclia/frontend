@@ -1,0 +1,70 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>{{ 'home.developer-integrate.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <div class="container">
+      <div>
+        <div
+          data-cy="nucliadb-endpoint"
+          class="title-xs">
+          {{ 'dashboard-home.kb-details.endpoint' | translate }}
+        </div>
+        <div class="integration-value">
+          <pa-textarea
+            rows="3"
+            readonly
+            [value]="endpoint()"></pa-textarea>
+          <pa-button
+            [icon]="copiedField() === 'endpoint' ? 'check' : 'copy'"
+            aspect="basic"
+            size="small"
+            (click)="copy('endpoint', endpoint())">
+            {{ 'generic.copy' | translate }}
+          </pa-button>
+        </div>
+      </div>
+
+      <div>
+        <div class="title-xs">{{ 'dashboard-home.kb-details.mcp-server' | translate }}</div>
+        <div class="integration-value">
+          <pa-textarea
+            rows="3"
+            readonly
+            [value]="mcp()"></pa-textarea>
+          <pa-button
+            [icon]="copiedField() === 'mcp' ? 'check' : 'copy'"
+            aspect="basic"
+            size="small"
+            (click)="copy('mcp', mcp())">
+            {{ 'generic.copy' | translate }}
+          </pa-button>
+        </div>
+      </div>
+
+      <div>
+        <div class="title-xs">{{ 'dashboard-home.kb-details.uid' | translate }}</div>
+        <div class="integration-value">
+          <pa-textarea
+            rows="2"
+            readonly
+            [value]="uid()"></pa-textarea>
+          <pa-button
+            [icon]="copiedField() === 'uid' ? 'check' : 'copy'"
+            aspect="basic"
+            size="small"
+            (click)="copy('uid', uid())">
+            {{ 'generic.copy' | translate }}
+          </pa-button>
+        </div>
+      </div>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
