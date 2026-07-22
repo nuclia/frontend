@@ -52,6 +52,17 @@ export class MemoryResourceMockComponent implements OnInit {
     return this.service.getRelatedEntries(fact);
   }
 
+  protected referenceIcon(type: string): string {
+    switch (type.trim().toLowerCase()) {
+      case 'pdf':
+        return 'file-pdf';
+      case 'docx':
+        return 'file-empty';
+      default:
+        return 'file';
+    }
+  }
+
   protected deleteMemoryResource() {
     this.modal
       .openConfirm({

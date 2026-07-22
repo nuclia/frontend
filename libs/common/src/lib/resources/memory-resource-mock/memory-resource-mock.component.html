@@ -210,8 +210,14 @@
     <section class="reference-list">
       @for (item of service.referenceContent(); track item.id) {
         <article class="reference-item">
-          <div class="title-xxs">{{ item.title }}</div>
-          <div class="body-xs">{{ item.type }}</div>
+          <div class="reference-header">
+            <pa-icon
+              class="reference-icon"
+              [name]="referenceIcon(item.type)"></pa-icon>
+            <div class="reference-meta">
+              <div class="title-xxs">{{ item.title }}</div>
+            </div>
+          </div>
           <p class="body-s">{{ item.summary }}</p>
         </article>
       }

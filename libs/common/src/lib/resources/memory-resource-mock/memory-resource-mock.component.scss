@@ -55,6 +55,7 @@
   flex-wrap: nowrap;
   gap: rhythm(2);
   min-width: max-content;
+  padding-left: rhythm(1);
 }
 
 .filter-group {
@@ -86,7 +87,7 @@
   flex-direction: column;
   gap: rhythm(1.5);
   max-width: rhythm(120);
-  padding: 0 rhythm(1);
+  padding: 0 rhythm(1) 0 rhythm(1);
   width: 100%;
 }
 
@@ -97,8 +98,30 @@
   flex-direction: column;
   gap: rhythm(1.5);
   max-width: rhythm(120);
-  padding: 0 rhythm(1);
+  padding: 0 rhythm(1) 0 rhythm(1);
   width: 100%;
+}
+
+.session-entries,
+.facts-list,
+.reference-list,
+.graph-list {
+  .title-xxs {
+    font-size: font-size(xs);
+    font-weight: $font-weight-semi-bold;
+    line-height: rhythm(2);
+  }
+
+  .body-xs {
+    font-size: font-size(xs);
+    line-height: rhythm(2);
+  }
+
+  .body-s {
+    font-size: font-size(s);
+    font-weight: $font-weight-regular;
+    line-height: rhythm(2.5);
+  }
 }
 
 .entry,
@@ -183,6 +206,22 @@
   border: 1px solid $color-neutral-light;
   border-radius: rhythm(0.5);
   padding: rhythm(1.5);
+}
+
+.reference-header {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
+.reference-icon {
+  color: $color-neutral-regular;
+}
+
+.reference-meta {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.25);
 }
 
 .relation-chip {
