@@ -5,13 +5,15 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  computed,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FeaturesService } from '@flaps/core';
 import { ChatAdviceService } from './chat-advice.service';
 import { ChatMessage, ChatState } from './chat-advice.models';
 
@@ -29,8 +31,10 @@ export class ChatAdviceBubbleComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private chatAdviceService = inject(ChatAdviceService);
   private translate = inject(TranslateService);
+  private features = inject(FeaturesService);
 
   private readonly MINIMIZED_KEY = 'HELP_ASSISTANT_MINIMIZED';
+  private readonly bookDemoUrl = 'https://www.progress.com/agentic-rag/book-a-demo';
 
   @ViewChild('messagesList') private messagesList?: ElementRef<HTMLDivElement>;
 
@@ -40,6 +44,10 @@ export class ChatAdviceBubbleComponent implements OnInit {
   messages = signal<ChatMessage[]>([]);
   inputValue = signal('');
   errorMessage = signal<string | null>(null);
+
+  hasUserMessages = computed(() => this.messages().some((m) => m.role === 'user'));
+
+  showBookDemoPill = toSignal(this.features.authorized.showDemoButton, { initialValue: false });
 
   ngOnInit(): void {
     this.translate
@@ -106,6 +114,10 @@ export class ChatAdviceBubbleComponent implements OnInit {
           );
         },
       });
+  }
+
+  openBookDemoPill(): void {
+    window.open(this.bookDemoUrl, '_blank', 'noreferrer');
   }
 
   private scrollToLatestResponse(): void {

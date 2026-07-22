@@ -14,21 +14,18 @@
   width: 100%;
   z-index: var(--app-zindex-topbar);
 
-  .is-stage {
-    position: absolute;
-    height: rhythm(4);
-    width: rhythm(4);
-    left: calc(rhythm(16) + rhythm(2));
-    top: rhythm(1.5);
-  }
   .topbar-logo {
     @include reset-button();
+    align-items: center;
     cursor: pointer;
+    display: flex;
+    gap: rhythm(1);
 
     .topbar-logo-expanded {
       display: block;
-      width: var(--app-topbar-logo-width);
       height: auto;
+      // Logo source asset is 522x310px; preserve its native aspect ratio when scaling by width.
+      width: calc(var(--app-topbar-logo-width) * (522 / 310));
       // this was based on Material. TODO: review breakpoints using pastanaga-angular variables
       @media screen and (max-width: 959px) {
         display: none;
@@ -45,6 +42,17 @@
     align-items: center;
     display: flex;
     gap: rhythm(2);
+
+    a.upgrade-link {
+      color: var(--color-primary-regular);
+      cursor: pointer;
+      font-size: font-size(s);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-primary-strong);
+      }
+    }
   }
 
   .topbar-separator {

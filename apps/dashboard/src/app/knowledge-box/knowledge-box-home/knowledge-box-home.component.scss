@@ -30,14 +30,64 @@
       }
     }
   }
-  .row-container {
-    display: flex;
-    gap: var(--gap-size);
-    flex: 1 0 auto;
 
-    .growing-container {
-      flex: 1 1 auto;
-      width: calc(100% / 2);
+  .kb-summary-grid {
+    display: grid;
+    gap: var(--gap-size);
+    grid-template-columns: repeat(auto-fit, minmax(rhythm(24), 1fr));
+    margin-bottom: rhythm(2);
+  }
+
+  nsi-home-container {
+    box-shadow: var(--shadow-default);
+  }
+
+  .kb-summary-card {
+    background-color: $color-light-stronger;
+    gap: calc(#{rhythm(2)} * 0.7);
+    height: 100%;
+
+    .kb-summary-card__header {
+      align-items: center;
+      color: $color-dark-stronger;
+      display: flex;
+      gap: rhythm(1);
+      font-weight: $font-weight-semi-bold;
+      margin-bottom: 0;
+
+      pa-icon {
+        color: $color-neutral-regular;
+      }
+
+      .kb-summary-card__globe-icon {
+        color: $color-primary-regular;
+      }
+
+      .kb-summary-card__model-icon {
+        color: $color-primary-regular;
+      }
+
+      .kb-summary-card__generative-icon {
+        color: $color-primary-regular;
+
+        ::ng-deep svg [stroke='black'] {
+          stroke: currentColor;
+        }
+
+        ::ng-deep svg [fill='black'] {
+          fill: currentColor;
+        }
+      }
+
+      .kb-summary-card__status-icon {
+        color: $color-primary-regular;
+      }
+    }
+
+    .kb-summary-card__value {
+      color: $color-dark-stronger;
+      font-weight: $font-weight-regular;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -46,8 +96,14 @@
     display: flex;
     gap: rhythm(1);
     overflow-wrap: break-word;
+
     pa-icon {
       display: flex;
+    }
+
+    .title-tooltip-button {
+      display: flex;
+      flex: 0 0 auto;
     }
   }
 
@@ -65,6 +121,25 @@
         margin-right: calc(-1 * #{rhythm(1)});
       }
     }
+  }
+
+  .health-status-header {
+    padding-right: 0;
+  }
+
+  .health-status-title {
+    flex-wrap: nowrap;
+    min-width: 0;
+    white-space: nowrap;
+
+    .period {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+  }
+
+  .health-status-actions {
+    padding-right: 0;
   }
 
   .select-container {
@@ -101,42 +176,6 @@
     }
   }
 
-  .kb-details,
-  .kb-storage {
-    div.title-xxs {
-      color: $color-neutral-regular;
-    }
-  }
-
-  .kb-details {
-    .details-block {
-      align-items: center;
-      background-color: $color-neutral-lightest;
-      border: 1px solid $color-neutral-light;
-      border-radius: rhythm(0.5);
-      display: flex;
-      gap: rhythm(0.5);
-      margin-top: calc(-1 * #{rhythm(0.25)});
-
-      pre {
-        margin-bottom: 0;
-        white-space: normal;
-      }
-    }
-  }
-
-  .kb-storage {
-    .index-size-container {
-      align-items: center;
-      background-color: $color-neutral-lightest;
-      border: 1px solid $color-neutral-lighter;
-      border-radius: rhythm(0.5);
-      display: flex;
-      justify-content: space-between;
-      padding: rhythm(0.5) rhythm(1);
-    }
-  }
-
   // .resources-container {
   //   pa-tab ::ng-deep .pa-tabs-link {
   //     font-size: font-size(s);
@@ -149,15 +188,59 @@
 
   .usage-charts {
     .title-xxs.header {
-      color: $color-neutral-regular;
+      color: $color-dark-stronger;
     }
+  }
+
+  .usage-chart-card {
     .usage-charts-header {
       align-items: center;
       display: flex;
+      gap: rhythm(2);
+      justify-content: space-between;
+      margin-bottom: rhythm(2);
+    }
+
+    .usage-charts-filters {
+      display: flex;
+      flex: 1 1 auto;
       gap: rhythm(1);
+
       > div {
         width: 50%;
       }
+    }
+  }
+
+  .alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-size);
+  }
+
+  .insights-grid {
+    display: grid;
+    gap: var(--gap-size);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    > nsi-home-container {
+      height: 100%;
+    }
+  }
+
+  .health-status-card {
+    display: flex;
+    flex-direction: column;
+
+    .title-with-actions {
+      margin-bottom: rhythm(2);
+    }
+
+    .health-status-content {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      justify-content: flex-end;
     }
   }
 

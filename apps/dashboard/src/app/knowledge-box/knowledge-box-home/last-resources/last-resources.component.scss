@@ -20,6 +20,11 @@
     align-items: center;
     gap: rhythm(1);
     min-width: 0;
+
+    .title-tooltip-button {
+      display: flex;
+      flex: 0 0 auto;
+    }
   }
 
   .title-with-actions {
@@ -32,7 +37,10 @@
       gap: rhythm(1);
       align-items: center;
       white-space: nowrap;
-      margin-right: calc(-1 * #{rhythm(1)});
+
+      &:has(pa-button) {
+        margin-right: calc(-1 * #{rhythm(1)});
+      }
     }
   }
 }

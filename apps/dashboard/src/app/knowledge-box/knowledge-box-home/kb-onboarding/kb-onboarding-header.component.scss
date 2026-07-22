@@ -16,9 +16,8 @@
 .onboarding-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: rhythm(2.5);
-  max-width: calc(rhythm(80) + rhythm(16));
   width: 100%;
 
   nsi-info-card {
@@ -30,63 +29,66 @@
       max-width: 100%;
     }
   }
-
-  &--done {
-    gap: rhythm(3);
-  }
 }
 
 .onboarding-title-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: rhythm(5);
+  width: 100%;
 }
 
 .onboarding-title {
   margin: 0;
-  font-size: var(--font-size-xxxl);
-  font-weight: var(--font-weight-semi-bold);
-  line-height: var(--line-height-xxl);
+  font-size: font-size(xxl);
+  font-weight: $font-weight-semi-bold;
+  line-height: line-height(xxl);
   color: var(--color-dark-stronger);
   white-space: nowrap;
 }
 
-.onboarding-actions {
+.onboarding-header-actions {
   display: flex;
-  gap: rhythm(2);
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  gap: rhythm(1);
+  flex: 0 0 auto;
+}
+
+.onboarding-actions {
+  width: 100%;
 }
 
 .onboarding-steps {
   display: flex;
-  flex-direction: column;
-  gap: rhythm(1.5);
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: rhythm(3);
   padding: 0;
   margin: 0;
   list-style: none;
 
   li {
-    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: rhythm(0.75);
   }
 
-  pa-checkbox {
-    ::ng-deep .pa-toggle-label {
-      font-size: var(--font-size-l);
-      font-weight: var(--font-weight-semi-bold);
-      line-height: var(--line-height-l);
-      color: var(--color-dark-stronger);
-      white-space: normal;
-    }
+  nsi-badge ::ng-deep {
+    font-size: font-size(l);
+    font-weight: $font-weight-semi-bold;
+    line-height: line-height(l);
+    height: unset;
   }
+}
 
-  &__item--done pa-checkbox {
-    ::ng-deep .pa-toggle-control:checked {
-      border-color: var(--color-success-regular) !important;
-      background-color: var(--color-success-regular) !important;
-    }
-  }
+.onboarding-step-label {
+  font-size: font-size(l);
+  font-weight: $font-weight-regular;
+  line-height: line-height(l);
+  color: var(--color-dark-stronger);
+  white-space: nowrap;
 }
 
 .align-center-2 {

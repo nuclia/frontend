@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import {
@@ -6,23 +6,27 @@ import {
   PaButtonModule,
   PaIconModule,
   PaModalModule,
-  PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { KbHeaderComponent } from '../kb-header/kb-header.component';
 import { KbOnboardingStateService } from './kb-onboarding-state.service';
+import { OnboardingStep } from './kb-onboarding-state.model';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
+
+const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'searching-data'];
 
 @Component({
   selector: 'app-kb-onboarding-header',
   imports: [
+    BadgeComponent,
     InfoCardComponent,
+    KbHeaderComponent,
     PaButtonModule,
     PaIconModule,
     PaModalModule,
-    PaTogglesModule,
     PaTooltipModule,
     RouterModule,
     TranslateModule,
@@ -46,4 +50,16 @@ export class KbOnboardingHeaderComponent {
   openRestartModal(): void {
     this.modalService.openModal(RestartOnboardingModalComponent, new ModalConfig({ dismissable: true }));
   }
+
+  /** Badge colour for each onboarding step, relative to the current step. Memoized per `state()` change. */
+  stepBadgeKinds = computed(() => {
+    const currentIndex = STEP_ORDER.indexOf(this.state()?.currentStep ?? 'uploading-data');
+    return STEP_ORDER.reduce(
+      (kinds, step, index) => {
+        kinds[step] = index === currentIndex ? 'success' : index < currentIndex ? 'tertiary' : 'neutral';
+        return kinds;
+      },
+      {} as Record<OnboardingStep, 'success' | 'tertiary' | 'neutral'>,
+    );
+  });
 }

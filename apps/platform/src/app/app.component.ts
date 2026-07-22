@@ -17,8 +17,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<void>;
 
-  version: string | undefined;
-
   constructor(
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
@@ -44,9 +42,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
-    }
     this.preventDragAndDropOnWindow();
   }
 

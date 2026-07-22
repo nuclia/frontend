@@ -426,5 +426,21 @@
         </div>
       }
     }
+
+    @if (showFooter) {
+      <footer class="navbar-footer">
+        <div class="footer-items">
+          @if (version) {
+            <span class="version-label">Version: {{ version }}</span>
+          }
+          @if (isStageOrDev) {
+            <img
+              src="assets/logos/stage-icon.svg"
+              class="stage-icon"
+              alt="Stage environment" />
+          }
+        </div>
+      </footer>
+    }
   </div>
 </div>
