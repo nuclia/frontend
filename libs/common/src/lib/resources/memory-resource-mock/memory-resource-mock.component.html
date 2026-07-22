@@ -1,0 +1,109 @@
+<div class="memory-mock page-spacing">
+  <header class="memory-header">
+    <div>
+      <div class="title-l">{{ service.resource().title }}</div>
+      <div class="body-m">{{ service.resource().description }}</div>
+    </div>
+
+    <div class="header-actions">
+      <pa-button
+        aspect="basic"
+        icon="chevrons-left"
+        routerLink="../all">
+        {{ 'resource.memory-mock.back' | translate }}
+      </pa-button>
+      <pa-button
+        icon="trash"
+        kind="destructive"
+        aspect="basic"
+        (click)="deleteMemoryResource()">
+        {{ 'resource.memory-mock.delete.resource' | translate }}
+      </pa-button>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <pa-button
+      [active]="service.activeTab() === 'sessions'"
+      aspect="basic"
+      (click)="setTab('sessions')">
+      {{ 'resource.memory-mock.tabs.sessions' | translate }}
+    </pa-button>
+    <pa-button
+      [active]="service.activeTab() === 'facts'"
+      aspect="basic"
+      (click)="setTab('facts')">
+      {{ 'resource.memory-mock.tabs.facts' | translate }}
+    </pa-button>
+    <pa-button
+      [active]="service.activeTab() === 'reference'"
+      aspect="basic"
+      (click)="setTab('reference')">
+      {{ 'resource.memory-mock.tabs.reference' | translate }}
+    </pa-button>
+  </div>
+
+  <p class="body-s managed-note">
+    {{ 'resource.memory-mock.system-managed' | translate }}
+  </p>
+
+  @if (service.activeTab() === 'sessions') {
+    <div class="sessions-layout">
+      <aside class="session-list">
+        <div class="title-s">{{ 'resource.memory-mock.sessions.title' | translate }}</div>
+        @for (session of service.sessions(); track session.id) {
+          <button
+            type="button"
+            class="session-item"
+            [class.active]="service.activeSessionId() === session.id"
+            (click)="service.selectSession(session.id)">
+            <div class="title-xxs">{{ session.owner }}</div>
+            <div class="body-xs">{{ session.last_activity | date: 'medium' }}</div>
+          </button>
+        }
+      </aside>
+
+      <section class="session-entries">
+        <div class="title-s">{{ 'resource.memory-mock.sessions.entries' | translate }}</div>
+        @if (service.activeSession(); as selectedSession) {
+          @for (entry of selectedSession.entries; track entry.at + entry.author) {
+            <article class="entry">
+              <div class="entry-meta">
+                <span class="title-xxs">{{ entry.author }}</span>
+                <span class="body-xs">{{ entry.at | date: 'short' }}</span>
+              </div>
+              <p class="body-s">{{ entry.text }}</p>
+            </article>
+          }
+        }
+      </section>
+    </div>
+  }
+
+  @if (service.activeTab() === 'facts') {
+    <section class="facts-list">
+      <div class="title-s">{{ 'resource.memory-mock.facts.title' | translate }}</div>
+      @for (fact of service.facts(); track fact.id) {
+        <article class="fact-item">
+          <p class="body-s">{{ fact.text }}</p>
+          <small class="body-xs">
+            {{ 'resource.memory-mock.facts.source' | translate: { source: fact.source_session } }}
+          </small>
+        </article>
+      }
+    </section>
+  }
+
+  @if (service.activeTab() === 'reference') {
+    <section class="reference-list">
+      <div class="title-s">{{ 'resource.memory-mock.reference.title' | translate }}</div>
+      @for (item of service.referenceContent(); track item.id) {
+        <article class="reference-item">
+          <div class="title-xxs">{{ item.title }}</div>
+          <div class="body-xs">{{ item.type }}</div>
+          <p class="body-s">{{ item.summary }}</p>
+        </article>
+      }
+    </section>
+  }
+</div>

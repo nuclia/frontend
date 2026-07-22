@@ -211,6 +211,14 @@
         </div>
 
         <div class="header-actions">
+          <pa-button
+            kind="secondary"
+            aspect="basic"
+            iconAndText
+            icon="layout"
+            routerLink="../memory-mock">
+            {{ 'resource.memory-mock.open' | translate }}
+          </pa-button>
           @if (isMainView || isProcessedView) {
             <pa-button
               kind="secondary"

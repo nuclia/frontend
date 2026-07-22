@@ -27,6 +27,7 @@ import {
   ResourceTextComponent,
 } from './edit-resource';
 import { ResourcesComponent } from './resources.component';
+import { MemoryResourceMockComponent } from './memory-resource-mock/memory-resource-mock.component';
 import {
   BackButtonComponent,
   DropdownButtonComponent,
@@ -68,6 +69,10 @@ const ROUTES: Routes = [
         path: '',
         redirectTo: 'all',
         pathMatch: 'full',
+      },
+      {
+        path: 'memory-mock',
+        component: MemoryResourceMockComponent,
       },
       {
         path: ':status',
@@ -192,6 +197,7 @@ const ROUTES: Routes = [
     PendingResourcesTableComponent,
     ResourcesTableDirective,
     ErrorResourcesTableComponent,
+    MemoryResourceMockComponent,
   ],
   exports: [],
 })
