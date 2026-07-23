@@ -95,6 +95,7 @@ export class OnboardingService {
                   slug: accountSlug,
                   title: data.company,
                   workflow: data.workflow,
+                  eula_accepted: true,
                 })
                 .pipe(
                   catchError((error) => {

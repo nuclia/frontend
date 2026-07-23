@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { combineLatest, map, startWith } from 'rxjs';
+import { combineLatest, map, startWith, take } from 'rxjs';
 import { PENDING_RESOURCES_LIMIT, UploadService } from '../../upload';
 import { DashboardLayoutService } from './dashboard-layout.service';
-import { NavigationService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
+import { EulaModalComponent } from '../../onboarding/eula-modal/eula-modal.component';
 
 @Component({
   selector: 'stf-dashboard-layout',
@@ -15,6 +17,8 @@ export class DashboardLayoutComponent {
   private uploadService = inject(UploadService);
   private navigationService = inject(NavigationService);
   private layoutService = inject(DashboardLayoutService);
+  private modalService = inject(SisModalService);
+  private sdk = inject(SDKService);
 
   showProgress = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
@@ -33,4 +37,12 @@ export class DashboardLayoutComponent {
     this.navigationService.inArag(),
     this.navigationService.inAccount,
   ]).pipe(map(([simple, inArag, inHome]) => (simple && !inArag) || inHome));
+
+  constructor() {
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      if (account.can_manage_account && !account.eula_accepted) {
+        this.modalService.openModal(EulaModalComponent, { dismissable: false });
+      }
+    });
+  }
 }
