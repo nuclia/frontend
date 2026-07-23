@@ -976,6 +976,7 @@
 	"kb.ai-models.model-selector.disclaimer.description": "Le {{model}} peut engendrer des risques commerciaux ou de conformité. Veuillez le lire attentivement et l'accepter avant de l'enregistrer.",
 	"kb.ai-models.model-selector.disclaimer.label": "J'ai pris connaissance des risques liés à l'utilisation de {{model}} et je les comprends. J'accepte la responsabilité de vérifier les résultats avant utilisation",
 	"kb.ai-models.model-selector.disclaimer.title": "Avertissement relatif aux risques liés aux modèles d'IA",
+	"kb.ai-models.model-selector.fable-warning": "Veuillez noter que le modèle Fable d'Anthropic exige une période de conservation des données obligatoire de 30 jours,<br> et que les données peuvent être examinées par des tiers à des fins de sécurité.",
 	"kb.ai-models.model-selector.features.data-residency": "Résidence des données garantie dans {{zone}}",
 	"kb.ai-models.model-selector.features.enterprise-ready": "Prêt pour l'entreprise",
 	"kb.ai-models.model-selector.search": "Rechercher pour sélectionner les modèles",

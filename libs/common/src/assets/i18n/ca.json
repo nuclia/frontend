@@ -976,6 +976,7 @@
 	"kb.ai-models.model-selector.disclaimer.description": "El {{model}} pot introduir riscos empresarials o de compliment normatiu. Si us plau, reviseu-lo i accepteu-lo abans de desar.",
 	"kb.ai-models.model-selector.disclaimer.label": "He revisat i entenc els riscos associats amb l'ús de {{model}}. Accepto la responsabilitat de verificar els resultats abans de l'ús",
 	"kb.ai-models.model-selector.disclaimer.title": "Avís de risc del model d'IA",
+	"kb.ai-models.model-selector.fable-warning": "Tingueu en compte que el model Fable d'Anthropic requereix un període obligatori de retenció de dades de 30 dies<br> i que les dades poden ser revisades per tercers per motius de seguretat.",
 	"kb.ai-models.model-selector.features.data-residency": "Residència de dades garantida a {{zone}}",
 	"kb.ai-models.model-selector.features.enterprise-ready": "Preparat per a les empreses",
 	"kb.ai-models.model-selector.search": "Cerca per seleccionar models",
