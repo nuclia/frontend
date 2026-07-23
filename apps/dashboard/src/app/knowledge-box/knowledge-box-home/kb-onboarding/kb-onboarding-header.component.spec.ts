@@ -31,6 +31,7 @@ import { KbOnboardingEntry } from './kb-onboarding-state.model';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
 import { RestartOnboardingModalComponent } from './restart-onboarding-modal.component';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
+import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -59,6 +60,7 @@ describe('KbOnboardingHeaderComponent', () => {
         MockModule(RouterModule),
         MockComponent(InfoCardComponent),
         MockComponent(KbHeaderComponent),
+        MockComponent(KbMoreActionsComponent),
       ],
       providers: [
         MockProvider(KbOnboardingStateService, {
@@ -104,6 +106,11 @@ describe('KbOnboardingHeaderComponent', () => {
     it('should show the skip button', () => {
       const skipBtn = fixture.nativeElement.querySelector('pa-button[aspect="basic"]');
       expect(skipBtn).toBeTruthy();
+    });
+
+    it('should show the more actions menu', () => {
+      const moreBtn = fixture.nativeElement.querySelector('app-kb-more-actions');
+      expect(moreBtn).toBeTruthy();
     });
   });
 
@@ -160,6 +167,11 @@ describe('KbOnboardingHeaderComponent', () => {
     it('should show the restart button', () => {
       const restartBtn = fixture.nativeElement.querySelector('pa-button[icon="help"]');
       expect(restartBtn).toBeTruthy();
+    });
+
+    it('should show the more actions menu', () => {
+      const moreBtn = fixture.nativeElement.querySelector('app-kb-more-actions');
+      expect(moreBtn).toBeTruthy();
     });
   });
 

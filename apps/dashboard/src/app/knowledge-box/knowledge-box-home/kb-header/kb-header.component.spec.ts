@@ -1,19 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { NavigationService, SDKService } from '@flaps/core';
 import { AppService } from '@flaps/common';
-import { SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import * as EN from '../../../../../../../libs/common/src/assets/i18n/en.json';
 
 import { KbHeaderComponent } from './kb-header.component';
-import { DeveloperIntegrationsModalComponent } from '../developer-integrations-modal/developer-integrations-modal.component';
-import { TestPageModalComponent } from '../test-page-modal/test-page-modal.component';
+import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
 function createTranslateLoader() {
   return { getTranslation: () => of(EN) };
@@ -22,7 +20,6 @@ function createTranslateLoader() {
 describe('KbHeaderComponent', () => {
   let component: KbHeaderComponent;
   let fixture: ComponentFixture<KbHeaderComponent>;
-  let modalService: SisModalService;
 
   const kb = {
     id: 'kb-id',
@@ -46,6 +43,7 @@ describe('KbHeaderComponent', () => {
         MockModule(PaPopupModule),
         MockModule(PaTooltipModule),
         MockModule(RouterModule),
+        MockComponent(KbMoreActionsComponent),
       ],
       providers: [
         MockProvider(SDKService, {
@@ -60,17 +58,12 @@ describe('KbHeaderComponent', () => {
         MockProvider(NavigationService, {
           getKbUrl: (accountSlug: string, kbSlug: string) => `/at/${accountSlug}/${kbSlug}`,
         }),
-        MockProvider(SisModalService, {
-          openModal: jest.fn(),
-        }),
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(KbHeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    modalService = TestBed.inject(SisModalService);
   });
 
   it('should create', () => {
@@ -99,15 +92,8 @@ describe('KbHeaderComponent', () => {
     expect(component.kbUrl()).toBe('/at/account-slug/kb-slug');
   });
 
-  describe('developer integrations / test page', () => {
-    it('should open the developer integrations modal', () => {
-      component.openDeveloperIntegrations();
-      expect(modalService.openModal).toHaveBeenCalledWith(DeveloperIntegrationsModalComponent);
-    });
-
-    it('should open the test page modal', () => {
-      component.openTestPage();
-      expect(modalService.openModal).toHaveBeenCalledWith(TestPageModalComponent);
-    });
+  it('should render the shared more actions menu', () => {
+    const moreActions = fixture.nativeElement.querySelector('app-kb-more-actions');
+    expect(moreActions).toBeTruthy();
   });
 });

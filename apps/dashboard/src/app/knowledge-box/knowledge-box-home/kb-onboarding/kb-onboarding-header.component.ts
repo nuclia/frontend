@@ -11,6 +11,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { KbHeaderComponent } from '../kb-header/kb-header.component';
+import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 import { KbOnboardingStateService } from './kb-onboarding-state.service';
 import { OnboardingStep } from './kb-onboarding-state.model';
 import { SkipOnboardingModalComponent } from './skip-onboarding-modal.component';
@@ -24,6 +25,7 @@ const STEP_ORDER: OnboardingStep[] = ['uploading-data', 'processing-data', 'sear
     BadgeComponent,
     InfoCardComponent,
     KbHeaderComponent,
+    KbMoreActionsComponent,
     PaButtonModule,
     PaIconModule,
     PaModalModule,

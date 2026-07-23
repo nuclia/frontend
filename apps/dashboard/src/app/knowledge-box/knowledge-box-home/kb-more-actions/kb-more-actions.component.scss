@@ -1,0 +1,15 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  display: contents;
+}
+
+.more-actions-button {
+  ::ng-deep .pa-button {
+    border-radius: $border-radius-default;
+    height: rhythm(5);
+    width: rhythm(5);
+    min-width: rhythm(5);
+    padding: 0;
+  }
+}
