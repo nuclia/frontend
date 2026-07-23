@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
 import { EditResourceService } from '../edit-resource';
-import { MemoryMockEntry, MemoryMockFact, MemoryMockTab } from './memory-resource-mock.config';
+import { MemoryMockEntry, MemoryMockFact } from './memory-resource-mock.config';
 import { MemoryResourceMockService } from './memory-resource-mock.service';
 
 @Component({
@@ -24,24 +24,12 @@ export class MemoryResourceMockComponent implements OnInit {
     this.editResource.setCurrentView('memory');
   }
 
-  protected setTab(tab: MemoryMockTab) {
-    this.service.setTab(tab);
-  }
-
   protected setTopic(topicId: string) {
     this.service.setTopic(topicId);
   }
 
   protected setUser(userId: string) {
     this.service.setUser(userId);
-  }
-
-  protected setSession(sessionId: string) {
-    this.service.selectSession(sessionId);
-  }
-
-  protected setEntryExpanded(entryId: string, expanded: boolean) {
-    this.service.setEntryExpanded(entryId, expanded);
   }
 
   protected setFactExpanded(factId: string, expanded: boolean) {
@@ -52,15 +40,23 @@ export class MemoryResourceMockComponent implements OnInit {
     return this.service.getRelatedEntries(fact);
   }
 
-  protected referenceIcon(type: string): string {
-    switch (type.trim().toLowerCase()) {
-      case 'pdf':
-        return 'file-pdf';
-      case 'docx':
-        return 'file-empty';
-      default:
-        return 'file';
-    }
+  protected factSummary(fact: MemoryMockFact): string {
+    return this.conciseSummary(fact.text);
+  }
+
+  private conciseSummary(text: string): string {
+    return (
+      text
+        .split('.')[0]
+        ?.replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s+completion\s+before\b.*$/i, '')
+        .replace(/\s+with\b.*$/i, '')
+        .replace(/\s+(during|because|since|when|while|under|after)\b.*$/i, '')
+        .replace(/,\s.*$/, '')
+        .replace(/\s+([’'])/g, '$1')
+        .replace(/\s{2,}/g, ' ')
+        .trim() || text.trim()
+    );
   }
 
   protected deleteMemoryResource() {

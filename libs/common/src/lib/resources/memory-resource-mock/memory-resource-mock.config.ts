@@ -98,17 +98,17 @@ export const MEMORY_MOCK_RESOURCE = {
           author: 'Alice (HR)',
           at: '2026-07-21T14:41:00Z',
           text:
-            'Approved carry-over exception for Maria (EMP-1042). She was unable to take her 8 remaining days due to the Q4 product launch.',
+            'Approved carry-over exception for Maria Gonzalez (EMP-1042). She was unable to take her 8 remaining days due to the Q4 product launch.',
           reasoning:
             'Business-critical launch period limited vacation scheduling. Decision balanced policy consistency with operational reality.',
           context: [
             {
-              author: 'Maria (employee)',
+              author: 'Maria Gonzalez (employee)',
               text: 'Can I carry over 8 days from the Q4 launch period?',
             },
             {
-              author: "Maria's manager",
-              text: "Confirmed — Maria's presence was essential during the launch period.",
+              author: "Maria Gonzalez's manager",
+              text: "Confirmed — Maria Gonzalez's presence was essential during the launch period.",
             },
           ],
           metadata: {
@@ -126,12 +126,23 @@ export const MEMORY_MOCK_RESOURCE = {
           at: '2026-07-21T15:05:00Z',
           text:
             'Clarified that half-day PTO requests are valid when manager approval is in place and team coverage is confirmed.',
+          reasoning: 'Aligned response with policy text and clarified the operational approval conditions.',
           context: [
             {
               author: 'HR knowledge base',
               text: 'Half-day requests are valid under standard approval policy.',
             },
+            {
+              author: 'Ops manager',
+              text: 'Team coverage is available for planned half-day absences when approved in advance.',
+            },
           ],
+          metadata: {
+            policy_section: 'PTO-2.3',
+            decision: 'clarified',
+            manager_approval_required: true,
+            team_coverage_required: true,
+          },
         },
       ],
     },
@@ -149,11 +160,11 @@ export const MEMORY_MOCK_RESOURCE = {
           author: 'Bob (HR)',
           at: '2026-07-20T17:03:00Z',
           text:
-            'Denied carry-over exception for Leo (EMP-5512). He had adequate opportunity to schedule vacation and 6 days were forfeited under standard policy.',
+            'Denied carry-over exception for Leo Turner (EMP-5512). He had adequate opportunity to schedule vacation and 6 days were forfeited under standard policy.',
           reasoning: 'No documented business-critical blocker. Standard policy applied.',
           context: [
             {
-              author: 'Leo (employee)',
+              author: 'Leo Turner (employee)',
               text: 'I forgot to use 6 days. Can I carry them over this year?',
             },
           ],
@@ -180,9 +191,24 @@ export const MEMORY_MOCK_RESOURCE = {
           at: '2026-07-18T09:40:00Z',
           text:
             'Shared onboarding checklist update: new hires now complete security training before access provisioning.',
+          reasoning:
+            'Reducing early access risk by ensuring baseline security knowledge is completed before account creation.',
+          context: [
+            {
+              author: 'IT security lead',
+              text: 'Security onboarding must be completed before granting system credentials.',
+            },
+            {
+              author: 'HR operations',
+              text: 'Checklist updated and distributed to all onboarding managers.',
+            },
+          ],
           metadata: {
             process: 'onboarding',
             step: 'security-training-first',
+            policy_section: 'HB-4.2',
+            rollout_scope: 'all-new-hires',
+            effective_date: '2026-07-18',
           },
         },
       ],
@@ -193,7 +219,7 @@ export const MEMORY_MOCK_RESOURCE = {
       id: 'fact-alice-1',
       topic_id: 'vacation-policy',
       user_id: 'alice-hr',
-      text: 'Alice approved an 8-day carry-over exception for Maria (EMP-1042) during a Q4 launch period.',
+      text: 'Approved an 8-day carry-over exception for Maria Gonzalez (EMP-1042) during a Q4 launch period.',
       source_session: 'Alice (HR)',
       related_entry_ids: ['alice-entry-001'],
       reasoning: 'Documented business-critical constraint.',
@@ -210,7 +236,7 @@ export const MEMORY_MOCK_RESOURCE = {
       id: 'fact-bob-1',
       topic_id: 'vacation-policy',
       user_id: 'bob-hr',
-      text: 'Bob denied Leo’s carry-over request because policy conditions for exception were not met.',
+      text: 'Denied Leo Turner (EMP-5512)’s carry-over request because policy conditions for exception were not met.',
       source_session: 'Bob (HR)',
       related_entry_ids: ['bob-entry-001'],
     },
@@ -218,7 +244,8 @@ export const MEMORY_MOCK_RESOURCE = {
       id: 'fact-alice-3',
       topic_id: 'handbook',
       user_id: 'alice-hr',
-      text: 'Onboarding now requires security training before system access is granted.',
+      text:
+        'Onboarding policy now requires security training completion before credentials and system access are provisioned for new hires.',
       source_session: 'Alice (HR)',
       related_entry_ids: ['alice-entry-010'],
     },

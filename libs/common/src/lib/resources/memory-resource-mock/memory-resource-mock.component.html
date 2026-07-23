@@ -52,192 +52,45 @@
           }
         </pa-dropdown>
       </div>
-
-      <div class="filter-group">
-        <div class="title-xxs">{{ 'resource.memory-mock.filters.session' | translate }}</div>
-        <nsi-dropdown-button
-          freeWidth
-          aspect="basic"
-          [popupRef]="sessionFilters">
-          {{
-            (service.activeSession()?.last_activity | date: 'short') || ('resource.memory-mock.filters.session' | translate)
-          }}
-        </nsi-dropdown-button>
-        <pa-dropdown #sessionFilters>
-          @for (session of service.sessions(); track session.id) {
-            <pa-option (selectOption)="setSession(session.id)">
-              {{ session.last_activity | date: 'short' }}
-            </pa-option>
-          }
-        </pa-dropdown>
-      </div>
-
-      <div class="filter-group tabs-group">
-        <div
-          class="title-xxs filter-label-spacer"
-          aria-hidden="true">
-          &nbsp;
-        </div>
-        <div class="tab-bar">
-          <pa-button
-            [active]="service.activeTab() === 'sessions'"
-            aspect="basic"
-            (click)="setTab('sessions')">
-            {{ 'resource.memory-mock.tabs.sessions' | translate }}
-          </pa-button>
-          <pa-button
-            [active]="service.activeTab() === 'facts'"
-            aspect="basic"
-            (click)="setTab('facts')">
-            {{ 'resource.memory-mock.tabs.facts' | translate }}
-          </pa-button>
-          <pa-button
-            [active]="service.activeTab() === 'reference'"
-            aspect="basic"
-            (click)="setTab('reference')">
-            {{ 'resource.memory-mock.tabs.reference' | translate }}
-          </pa-button>
-          <pa-button
-            [active]="service.activeTab() === 'graph'"
-            aspect="basic"
-            (click)="setTab('graph')">
-            {{ 'resource.memory-mock.tabs.graph' | translate }}
-          </pa-button>
-        </div>
-      </div>
     </div>
   </section>
 
-  @if (service.activeTab() === 'sessions') {
-    <section class="session-entries">
-      @if (service.activeSession(); as selectedSession) {
-        @for (entry of selectedSession.entries; track entry.at + entry.author) {
-          <article class="entry">
-            @if (service.shouldCollapseEntry(entry)) {
-              <pa-expander
-                class="details-expander"
-                [expanded]="service.isEntryExpanded(entry.id)"
-                (expandedChange)="setEntryExpanded(entry.id, $event)">
-                <pa-expander-header>
-                  {{ entry.text }}
-                </pa-expander-header>
-                <pa-expander-body>
-                  @if (entry.reasoning) {
-                    <div class="entry-section">
-                      <div class="title-xxs">{{ 'resource.memory-mock.entry.reasoning' | translate }}</div>
-                      <p class="body-xs">{{ entry.reasoning }}</p>
-                    </div>
-                  }
-                  @if ((entry.context || []).length > 0) {
-                    <div class="entry-section">
-                      <div class="title-xxs">{{ 'resource.memory-mock.entry.context' | translate }}</div>
-                      <div class="entry-context">
-                        @for (message of entry.context || []; track message.author + message.text) {
-                          <div class="context-item">
-                            <span class="title-xxs">{{ message.author }}</span>
-                            <span class="body-xs">{{ message.text }}</span>
-                          </div>
-                        }
+  <section class="facts-list">
+    @for (fact of service.facts(); track fact.id) {
+      <article class="fact-item">
+        <pa-expander
+          class="details-expander"
+          [expanded]="service.isFactExpanded(fact.id)"
+          (expandedChange)="setFactExpanded(fact.id, $event)">
+          <pa-expander-header>
+            {{ factSummary(fact) }}
+          </pa-expander-header>
+          <pa-expander-body>
+            <div class="entry-section">
+              <nsi-badge class="primary-pill">{{ 'resource.memory-mock.facts.label' | translate }}</nsi-badge>
+              <p class="body-xs">{{ fact.text }}</p>
+            </div>
+            <div class="entry-section related-section">
+              @if ((relatedEntries(fact) || []).length > 0) {
+                <nsi-badge class="primary-pill">{{ 'resource.memory-mock.facts.related' | translate }}</nsi-badge>
+                <div class="related-list">
+                  @for (entry of relatedEntries(fact); track entry.id) {
+                    <div class="source-entry body-xs">
+                      <div class="source-meta title-xxs">
+                        {{ 'resource.memory-mock.filters.session' | translate }} · {{ entry.at | date: 'short' }}
                       </div>
+                      <div>{{ entry.text }}</div>
                     </div>
-                  }
-                  @if (entry.metadata) {
-                    <div class="entry-section">
-                      <div class="title-xxs">{{ 'resource.memory-mock.entry.metadata' | translate }}</div>
-                      <div class="entry-metadata">
-                        @for (item of entry.metadata | keyvalue; track item.key) {
-                          <div class="metadata-row body-xs">
-                            <span>{{ item.key }}</span>
-                            <span>{{ item.value }}</span>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </pa-expander-body>
-              </pa-expander>
-            } @else {
-              <p class="body-s entry-text">{{ entry.text }}</p>
-            }
-          </article>
-        }
-      } @else {
-        <div class="body-s">{{ 'resource.memory-mock.sessions.empty' | translate }}</div>
-      }
-    </section>
-  }
-
-  @if (service.activeTab() === 'facts') {
-    <section class="facts-list">
-      @for (fact of service.facts(); track fact.id) {
-        <article class="fact-item">
-          @if (service.shouldCollapseFact(fact)) {
-            <pa-expander
-              class="details-expander"
-              [expanded]="service.isFactExpanded(fact.id)"
-              (expandedChange)="setFactExpanded(fact.id, $event)">
-              <pa-expander-header>
-                {{ fact.text }}
-              </pa-expander-header>
-              <pa-expander-body>
-                <div class="entry-section">
-                  @if ((relatedEntries(fact) || []).length > 0) {
-                    <div class="title-xxs">{{ 'resource.memory-mock.facts.related' | translate }}</div>
-                    <ul class="related-list">
-                      @for (entry of relatedEntries(fact); track entry.id) {
-                        <li class="body-xs">{{ entry.text }}</li>
-                      }
-                    </ul>
                   }
                 </div>
-              </pa-expander-body>
-            </pa-expander>
-          } @else {
-            <p class="body-s entry-text">{{ fact.text }}</p>
-          }
-        </article>
-      }
-      @if (service.facts().length === 0) {
-        <div class="body-s">{{ 'resource.memory-mock.facts.empty' | translate }}</div>
-      }
-    </section>
-  }
-
-  @if (service.activeTab() === 'reference') {
-    <section class="reference-list">
-      @for (item of service.referenceContent(); track item.id) {
-        <article class="reference-item">
-          <div class="reference-header">
-            <pa-icon
-              class="reference-icon"
-              [name]="referenceIcon(item.type)"></pa-icon>
-            <div class="reference-meta">
-              <div class="title-xxs">{{ item.title }}</div>
+              }
             </div>
-          </div>
-          <p class="body-s">{{ item.summary }}</p>
-        </article>
-      }
-      @if (service.referenceContent().length === 0) {
-        <div class="body-s">{{ 'resource.memory-mock.reference.empty' | translate }}</div>
-      }
-    </section>
-  }
-
-  @if (service.activeTab() === 'graph') {
-    <section class="graph-list">
-      @for (edge of service.graph(); track edge.id) {
-        <article class="graph-item">
-          <div class="body-s">
-            <strong>{{ edge.source }}</strong>
-            <span class="body-xs relation-chip">{{ edge.relation }}</span>
-            <strong>{{ edge.destination }}</strong>
-          </div>
-        </article>
-      }
-      @if (service.graph().length === 0) {
-        <div class="body-s">{{ 'resource.memory-mock.graph.empty' | translate }}</div>
-      }
-    </section>
-  }
+          </pa-expander-body>
+        </pa-expander>
+      </article>
+    }
+    @if (service.facts().length === 0) {
+      <div class="body-s">{{ 'resource.memory-mock.facts.empty' | translate }}</div>
+    }
+  </section>
 </div>

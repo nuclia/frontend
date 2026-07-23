@@ -30,6 +30,7 @@ import { ResourcesComponent } from './resources.component';
 import { MemoryResourceMockComponent } from './memory-resource-mock/memory-resource-mock.component';
 import {
   BackButtonComponent,
+  BadgeComponent,
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisIconsModule,
@@ -175,6 +176,7 @@ const ROUTES: Routes = [
     SisProgressModule,
     SisStatusComponent,
     BackButtonComponent,
+    BadgeComponent,
     DropdownButtonComponent,
     SisSearchInputComponent,
     NsiSkeletonComponent,

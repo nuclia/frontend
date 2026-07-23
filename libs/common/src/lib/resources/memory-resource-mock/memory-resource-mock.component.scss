@@ -3,7 +3,7 @@
 .memory-mock {
   display: flex;
   flex-direction: column;
-  gap: rhythm(2);
+  gap: rhythm(1);
 }
 
 .memory-header {
@@ -172,6 +172,10 @@
   }
 }
 
+.related-section {
+  padding-top: 0;
+}
+
 .entry-context {
   display: flex;
   flex-direction: column;
@@ -208,23 +212,69 @@
 }
 
 .related-list {
-  margin: 0;
-  padding-left: rhythm(2);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+.entry-section nsi-badge {
+  align-self: flex-start;
+}
+
+.entry-section nsi-badge.primary-pill {
+  background-color: $color-primary-lightest;
+  color: $color-primary-strong;
+}
+
+
+
+.source-entry {
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
+  text-align: left;
+}
+
+.source-meta {
+  color: $color-neutral-regular;
+  font-weight: $font-weight-semi-bold;
 }
 
 .details-expander {
   background: $color-light-stronger;
-  border: 1px solid $color-neutral-light;
+  border: 1px solid $color-neutral-lighter;
   border-radius: rhythm(0.5);
   overflow: hidden;
 
+  ::ng-deep .pa-expander-title {
+    color: $color-dark-stronger;
+  }
+
+  ::ng-deep .pa-expander-title:hover {
+    color: $color-dark-stronger;
+  }
+
   ::ng-deep .pa-expander-header {
+    background: $color-light-stronger;
     font-size: font-size(xs);
     font-weight: $font-weight-semi-bold;
     line-height: rhythm(2);
+  }
+
+  ::ng-deep .pa-expander-header:hover {
+    background: $color-neutral-lightest;
+  }
+
+  ::ng-deep .pa-expander-button .pa-button {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  ::ng-deep .pa-expander-button .pa-button:hover,
+  ::ng-deep .pa-expander-button .pa-button:active,
+  ::ng-deep .pa-expander-button .pa-button.pa-active {
+    background: transparent;
+    box-shadow: none;
   }
 }
 
