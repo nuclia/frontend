@@ -81,15 +81,6 @@
           (click)="onViewChange()">
           {{ 'resource.tooltip.annotation' | translate }}
         </pa-button>
-        <pa-button
-          icon="book"
-          routerLink="memory"
-          [active]="currentView === 'memory'"
-          paTooltip="resource.tooltip.memory"
-          aspect="basic"
-          (click)="onViewChange()">
-          {{ 'resource.tooltip.memory' | translate }}
-        </pa-button>
       }
 
       <pa-button
