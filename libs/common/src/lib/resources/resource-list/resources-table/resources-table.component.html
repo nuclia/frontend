@@ -322,7 +322,7 @@
                           }
                           @for (pair of field.value.value?.data || {} | keyvalue; track pair.key; let last = $last) {
                             @let value = formatKeyValue(pair.value);
-                            <span>
+                            <span [class.own-line]="fullKeyValue">
                               <strong>{{ pair.key }}</strong>
                               @if (!fullKeyValue && value.length > 12) {
                                 <span>: {{ value | slice: 0 : 12 }}…</span>
@@ -330,7 +330,7 @@
                                 <span>: {{ value }}</span>
                               }
                             </span>
-                            @if (!last) {
+                            @if (!last && !fullKeyValue) {
                               <span>&nbsp;·&nbsp;</span>
                             }
                           }
