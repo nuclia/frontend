@@ -56,23 +56,4 @@
   display: flex;
   align-items: center;
   gap: rhythm(1);
-
-  pa-button.more-actions-button {
-    ::ng-deep .pa-button {
-      border-radius: $border-radius-default;
-      height: rhythm(5);
-      width: rhythm(5);
-      min-width: rhythm(5);
-      padding: 0;
-    }
-
-    ::ng-deep .pa-button,
-    ::ng-deep .pa-button:hover,
-    ::ng-deep .pa-button:focus-visible,
-    ::ng-deep .pa-button:active,
-    ::ng-deep .pa-button::before,
-    ::ng-deep .pa-button::after {
-      border-radius: $border-radius-default;
-    }
-  }
 }

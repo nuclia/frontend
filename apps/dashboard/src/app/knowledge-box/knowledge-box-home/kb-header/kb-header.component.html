@@ -84,21 +84,7 @@
       [routerLink]="kbUrl() + '/upload'">
       {{ 'navbar.upload-data' | translate }}
     </pa-button>
-    <pa-button
-      class="more-actions-button"
-      aspect="basic"
-      icon="more-vertical"
-      [paPopup]="kbHeaderActionsDropdown"></pa-button>
-    <pa-dropdown #kbHeaderActionsDropdown>
-      <pa-option [routerLink]="kbUrl() + '/manage'">
-        {{ 'dashboard-home.go-to.kb-settings' | translate }}
-      </pa-option>
-      <pa-option (selectOption)="openDeveloperIntegrations()">
-        {{ 'home.developer-integrate.title' | translate }}
-      </pa-option>
-      <pa-option (selectOption)="openTestPage()">
-        {{ 'dashboard-home.kb-details.test-page' | translate }}
-      </pa-option>
-    </pa-dropdown>
+    <!-- Shared with the onboarding header states so it's defined in one place. -->
+    <app-kb-more-actions></app-kb-more-actions>
   </div>
 </div>
