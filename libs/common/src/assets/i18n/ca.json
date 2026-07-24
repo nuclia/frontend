@@ -143,7 +143,7 @@
 	"account.new_token": "Nova clau de l’API",
 	"account.nua.set-tokens-limit": "Establir límit de tokens",
 	"account.nua.tokens-limit": "Límit de tokens",
-	"account.nua.tokens-limit-help": "La clau es desactivarà un cop s'assoleixi el límit de tokens.",
+	"account.nua.tokens-limit-help": "Un cop s'assoleixi el límit de tokens, la clau quedarà desactivada fins al següent període de facturació.",
 	"account.nua_client": "Nom del client",
 	"account.nua_key_activity": "Registre d’activitat de la clau Agentic RAG Understanding API",
 	"account.nua_key_activity_subtitle": "Activitat de la Knowledge Box dels últims 30 dies",

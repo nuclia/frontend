@@ -34,17 +34,17 @@ export class AccountNUAService {
     );
   }
 
-  renewClient(id: string, zone: string) {
+  renewClient(internalId: string, zone: string) {
     return this.account.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.db.renewNUAClient(account.id, id, zone)),
+      switchMap((account) => this.sdk.nuclia.db.renewNUAClient(account.id, internalId, zone)),
     );
   }
 
-  deleteClient(id: string, zone: string) {
+  deleteClient(internalId: string, zone: string) {
     return this.account.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.db.deleteNUAClient(account.id, id, zone)),
+      switchMap((account) => this.sdk.nuclia.db.deleteNUAClient(account.id, internalId, zone)),
     );
   }
 }

@@ -43,7 +43,9 @@ export class ClientDialogComponent implements OnInit {
     allow_kb_management: new FormControl<boolean>(false, { nonNullable: true }),
     has_limit: new FormControl<boolean>(false, { nonNullable: true }),
     tokens_limit: new FormControl<number | null>(null, { nonNullable: true, validators: [Validators.min(0)] }),
-    webhook: new FormControl<string>('', { nonNullable: true }),
+    processing_webhook: new FormGroup({
+      uri: new FormControl<string>('', { nonNullable: true }),
+    }),
     zone: new FormControl<string>('', {
       validators: [Validators.required],
       nonNullable: true,

@@ -41,7 +41,7 @@ export class AccountNUAComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.nua.renewClient(client.client_id, client.zone)),
+        switchMap(() => this.nua.renewClient(client.internal_id, client.zone)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ token }) => {
@@ -110,7 +110,7 @@ export class AccountNUAComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.nua.deleteClient(client.client_id, client.zone)),
+        switchMap(() => this.nua.deleteClient(client.internal_id, client.zone)),
       )
       .subscribe(() => {
         this.nua.updateClients();

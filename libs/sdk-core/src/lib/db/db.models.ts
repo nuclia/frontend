@@ -260,6 +260,12 @@ export interface NUAClient extends NUAClientPayload {
   zone: string;
 }
 
+export interface NUAClientResponse {
+  client_id: string;
+  internal_id: string;
+  token: string;
+}
+
 export interface ProcessingPushResponse {
   seqid: number;
   account_seq: number;

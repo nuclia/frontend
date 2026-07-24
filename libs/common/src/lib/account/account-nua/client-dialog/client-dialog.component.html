@@ -47,12 +47,14 @@
         }
       }
 
-      <pa-input
-        formControlName="webhook"
-        help="account.nua_webhook_help"
-        [readonly]="editMode">
-        {{ 'account.nua_webhook' | translate }}
-      </pa-input>
+      <ng-container formGroupName="processing_webhook">
+        <pa-input
+          formControlName="uri"
+          help="account.nua_webhook_help"
+          [readonly]="editMode">
+          {{ 'account.nua_webhook' | translate }}
+        </pa-input>
+      </ng-container>
 
       <div class="webhook-hint">
         <ncom-hint
