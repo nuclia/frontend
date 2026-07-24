@@ -40,16 +40,19 @@ import { ResourceNavigationService } from '../edit-resource/resource-navigation.
 import {
   DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
+  DEFAULT_PREFERENCES,
   DEFAULT_SORTING,
   formatQuery,
   getSearchOptions,
   LabelsLogic,
+  RESOURCE_LIST_PREFERENCES,
   ResourceListParams,
   ResourceWithLabels,
   SearchModes,
   searchResources,
 } from './resource-list.model';
 import { getResourceErrors } from '../edit-resource';
+import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -59,6 +62,7 @@ export class ResourceListService {
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
+  private localStorage = inject(LOCAL_STORAGE);
 
   private _status?: RESOURCE_STATUS;
   get status() {
@@ -98,6 +102,8 @@ export class ResourceListService {
   totalPages = combineLatest([this._totalItems, this.pageSize]).pipe(
     map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
   );
+  private _selectedColumns = new BehaviorSubject<string[]>(this.getInitialColumns());
+  selectedColumns = this._selectedColumns.asObservable();
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
@@ -190,6 +196,14 @@ export class ResourceListService {
     this._page.next(0);
     this._pageSize.next(pageSize);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+  }
+
+  setSelectedColumns(columns: string[]) {
+    this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify({ columns }));
+    this._selectedColumns.next(columns);
+    if (columns.includes('key-value-fields')) {
+      this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+    }
   }
 
   setQuery(query: string) {
@@ -287,6 +301,7 @@ export class ResourceListService {
       query,
       filters: this._filters.value,
       labelsLogic: this._labelsLogic.value,
+      includeKeyValue: this._selectedColumns.value.includes('key-value-fields'),
     };
     const searchMode = this._searchMode.value;
     if (searchMode === 'startswith') {
@@ -351,6 +366,9 @@ export class ResourceListService {
     const errors = getResourceErrors(resource);
     if (errors.length > 0) {
       resourceWithLabels.errors = errors;
+    }
+    if (resource.data.key_values) {
+      resourceWithLabels.keyValue = resource.data.key_values;
     }
 
     return resourceWithLabels;
@@ -456,5 +474,19 @@ export class ResourceListService {
 
   private formatCellValue(value: string) {
     return value.replace(/"/g, '""');
+  }
+
+  private getInitialColumns(): string[] {
+    const pref = this.localStorage.getItem(RESOURCE_LIST_PREFERENCES);
+    if (pref) {
+      try {
+        return JSON.parse(pref)?.columns || DEFAULT_PREFERENCES.columns;
+      } catch (e) {
+        this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(DEFAULT_PREFERENCES));
+        return DEFAULT_PREFERENCES.columns;
+      }
+    } else {
+      return DEFAULT_PREFERENCES.columns;
+    }
   }
 }
