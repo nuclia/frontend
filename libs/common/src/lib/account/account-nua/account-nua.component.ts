@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { filter, map, switchMap, take } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { TokenDialogComponent } from '../../token-dialog';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-account-nua',
@@ -16,9 +17,9 @@ import { TokenDialogComponent } from '../../token-dialog';
   standalone: false,
 })
 export class AccountNUAComponent {
-  clients$ = this.nua.clients;
-  unsubscribeAll = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
 
+  clients$ = this.nua.clients;
   isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
 
   constructor(
@@ -41,7 +42,7 @@ export class AccountNUAComponent {
       .onClose.pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.nua.renewClient(client.client_id, client.zone)),
-        takeUntil(this.unsubscribeAll),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ token }) => {
         this.showToken(token);
@@ -70,7 +71,20 @@ export class AccountNUAComponent {
     });
   }
 
-  openDialog(client?: NUAClient) {
+  createClient() {
+    this.modalService
+      .openModal(ClientDialogComponent)
+      .onClose.pipe(
+        takeUntilDestroyed(this.destroyRef),
+        filter((result) => typeof result === 'string'),
+      )
+      .subscribe((token) => {
+        this.showToken(token);
+        this.nua.updateClients();
+      });
+  }
+
+  editClient(client?: NUAClient) {
     const data: ClientDialogData = { client };
     this.modalService
       .openModal(ClientDialogComponent, {
@@ -78,11 +92,10 @@ export class AccountNUAComponent {
         data,
       })
       .onClose.pipe(
-        takeUntil(this.unsubscribeAll),
-        filter((result) => typeof result === 'string'),
+        takeUntilDestroyed(this.destroyRef),
+        filter((result) => !!result),
       )
-      .subscribe((token) => {
-        this.showToken(token);
+      .subscribe(() => {
         this.nua.updateClients();
       });
   }

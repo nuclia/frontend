@@ -39,6 +39,7 @@ import {
   ModelConfigurationItem,
   normalizeSchemaProperty,
   NUAClient,
+  NUAClientEditPayload,
   NUAClientPayload,
   PredictedToken,
   ProcessingPullResponse,
@@ -598,7 +599,7 @@ export class Db implements IDb {
       return throwError(() => error);
     }
 
-    const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
+    const payload: NUAClientPayload = { ...data };
     if (payload.webhook) {
       payload.processing_webhook = { uri: payload.webhook };
       delete payload.webhook;
@@ -607,6 +608,7 @@ export class Db implements IDb {
     return this.nuclia.rest
       .post<{
         client_id: string;
+        internal_id: string;
         token: string;
       }>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
       .pipe(
@@ -618,6 +620,28 @@ export class Db implements IDb {
           }
         }),
       );
+  }
+
+  /**
+   * Edit a NUA key
+   * @param accountId Account identifier
+   * @param internalId NUA client internal identifier
+   * @param data
+   */
+  editNUAClient(
+    accountId: string,
+    internalId: string,
+    data: NUAClientEditPayload,
+    zone: string,
+  ): Observable<NUAClient> {
+    return this.nuclia.rest.patch<NUAClient>(
+      `/account/${accountId}/nua_client/${internalId}`,
+      data,
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
   }
 
   /**

@@ -22,6 +22,7 @@ import {
   ModelConfigurationCreation,
   ModelConfigurationItem,
   NUAClient,
+  NUAClientEditPayload,
   NUAClientPayload,
   PredictedToken,
   ProcessingPullResponse,
@@ -212,6 +213,7 @@ export interface IDb {
     data: NUAClientPayload,
     zone: string,
   ): Observable<{ client_id: string; token: string }>;
+  editNUAClient(accountId: string, internalId: string, data: NUAClientEditPayload, zone: string): Observable<NUAClient>;
   renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
   renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(accountId: string, client_id: string): Observable<void>;

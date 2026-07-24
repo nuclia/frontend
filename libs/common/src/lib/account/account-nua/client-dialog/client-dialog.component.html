@@ -20,16 +20,37 @@
         {{ 'generic.email' | translate }}*
       </pa-input>
 
-      <pa-checkbox
-        formControlName="allow_kb_management"
-        [stfUnauthorizedFeature]="(allowKbManagementAuthorized | async) === false"
-        fullProBadge>
-        {{ 'account.allow_kb_management' | translate }}
-      </pa-checkbox>
+      @if (!editMode) {
+        <pa-toggle
+          formControlName="allow_kb_management"
+          labelOnRight
+          [stfUnauthorizedFeature]="(allowKbManagementAuthorized | async) === false"
+          fullProBadge>
+          {{ 'account.allow_kb_management' | translate }}
+        </pa-toggle>
+      }
+
+      @if (hasSubscription | async) {
+        <pa-toggle
+          formControlName="has_limit"
+          labelOnRight>
+          {{ 'account.nua.set-tokens-limit' | translate }}
+        </pa-toggle>
+
+        @if (hasLimit) {
+          <pa-input
+            formControlName="tokens_limit"
+            type="number"
+            help="account.nua.tokens-limit-help">
+            {{ 'account.nua.tokens-limit' | translate }}
+          </pa-input>
+        }
+      }
 
       <pa-input
         formControlName="webhook"
-        help="account.nua_webhook_help">
+        help="account.nua_webhook_help"
+        [readonly]="editMode">
         {{ 'account.nua_webhook' | translate }}
       </pa-input>
 
@@ -44,16 +65,12 @@
       <div class="zone">
         <h4>{{ 'generic.processing-zone' | translate }}</h4>
         <p>{{ 'account.nua_key_zone' | translate }}</p>
+        @let zoneOptions = (zones | async) || [];
         <pa-select
           formControlName="zone"
-          [readonly]="(zones || []).length <= 1"
-          [label]="'generic.processing-zone' | translate">
-          @for (zone of zones; track zone.slug) {
-            <pa-option [value]="zone.id">
-              {{ zone.title }}
-            </pa-option>
-          }
-        </pa-select>
+          [options]="zoneOptions"
+          [readonly]="zoneOptions.length <= 1 || editMode"
+          [label]="'generic.processing-zone' | translate"></pa-select>
       </div>
     </form>
   </pa-modal-content>
