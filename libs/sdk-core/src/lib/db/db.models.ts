@@ -41,7 +41,6 @@ export interface Account {
   creation_date: string;
   type: AccountTypes;
   workflow?: WorkflowType;
-  zone: string;
 }
 
 export interface AccountConfig {
@@ -240,15 +239,31 @@ export interface NUAClientPayload {
   client_id?: string;
   contact: string;
   description?: string;
+  processing_webhook?: { uri: string; headers?: { [key: string]: string } };
   title: string;
+  tokens_limit?: number | null;
+  /** @deprecated */
   webhook?: string;
+}
+
+export interface NUAClientEditPayload {
+  title?: string;
+  contact?: string;
+  tokens_limit?: number | null;
 }
 
 export interface NUAClient extends NUAClientPayload {
   client_id: string;
   created: string;
+  internal_id: string;
   partitions: 0;
   zone: string;
+}
+
+export interface NUAClientResponse {
+  client_id: string;
+  internal_id: string;
+  token: string;
 }
 
 export interface ProcessingPushResponse {

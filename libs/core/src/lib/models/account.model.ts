@@ -4,7 +4,6 @@ export const standaloneSimpleAccount: Account = {
   id: 'local',
   slug: 'local',
   title: 'NucliaDB local',
-  zone: 'local',
   type: 'stash-basic',
   can_manage_account: false,
   blocked_features: [] as BlockedFeature[],
