@@ -44,6 +44,21 @@ export class MemoryResourceMockComponent implements OnInit {
     return this.conciseSummary(fact.text);
   }
 
+  protected sourceSessionLabel(fact: MemoryMockFact): string {
+    const rawLabel = fact.source_session.replace(/\bsession\b/gi, '').trim();
+    const selectedUserLabel = this.service.selectedUser()?.label?.trim() || '';
+    if (!selectedUserLabel) {
+      return rawLabel;
+    }
+    const normalizedSelectedUser = selectedUserLabel.toLowerCase();
+    const normalizedRawLabel = rawLabel.toLowerCase();
+    return normalizedRawLabel === normalizedSelectedUser ? '' : rawLabel;
+  }
+
+  protected sourceSessionDate(fact: MemoryMockFact): string | undefined {
+    return this.relatedEntries(fact)[0]?.at;
+  }
+
   private conciseSummary(text: string): string {
     return (
       text

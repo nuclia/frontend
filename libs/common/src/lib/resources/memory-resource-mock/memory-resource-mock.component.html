@@ -67,18 +67,17 @@
           </pa-expander-header>
           <pa-expander-body>
             <div class="entry-section">
-              <nsi-badge class="primary-pill">{{ 'resource.memory-mock.facts.label' | translate }}</nsi-badge>
-              <p class="body-xs">{{ fact.text }}</p>
+              <div class="title-xxs section-title">{{ 'resource.memory-mock.facts.label' | translate }}</div>
+              <p class="body-s">{{ fact.text }}</p>
             </div>
             <div class="entry-section related-section">
               @if ((relatedEntries(fact) || []).length > 0) {
-                <nsi-badge class="primary-pill">{{ 'resource.memory-mock.facts.related' | translate }}</nsi-badge>
+                <div class="title-xxs section-title">
+                  {{ sourceSessionLabel(fact) || (sourceSessionDate(fact) | date: 'short') }}
+                </div>
                 <div class="related-list">
                   @for (entry of relatedEntries(fact); track entry.id) {
-                    <div class="source-entry body-xs">
-                      <div class="source-meta title-xxs">
-                        {{ 'resource.memory-mock.filters.session' | translate }} · {{ entry.at | date: 'short' }}
-                      </div>
+                    <div class="source-entry body-s">
                       <div>{{ entry.text }}</div>
                     </div>
                   }

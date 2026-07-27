@@ -114,43 +114,6 @@
   width: 100%;
 }
 
-.session-entries,
-.facts-list,
-.reference-list,
-.graph-list {
-  .title-xxs {
-    font-size: font-size(xs);
-    font-weight: $font-weight-semi-bold;
-    line-height: rhythm(2);
-  }
-
-  .body-xs {
-    font-size: font-size(xs);
-    line-height: rhythm(2);
-  }
-
-  .body-s {
-    font-size: font-size(s);
-    font-weight: $font-weight-regular;
-    line-height: rhythm(2.5);
-  }
-}
-
-.facts-list,
-.reference-list {
-  .body-s {
-    font-size: font-size(xs);
-    line-height: rhythm(2);
-  }
-}
-
-.graph-list {
-  .body-s {
-    font-size: font-size(xs);
-    line-height: rhythm(2);
-  }
-}
-
 .entry,
 .fact-item,
 .reference-item,
@@ -181,6 +144,10 @@
   p {
     margin: 0;
   }
+}
+
+.section-title {
+  color: $color-neutral-regular;
 }
 
 .related-section {
@@ -228,27 +195,11 @@
   gap: rhythm(1);
 }
 
-.entry-section nsi-badge {
-  align-self: flex-start;
-}
-
-.entry-section nsi-badge.primary-pill {
-  background-color: $color-primary-lightest;
-  color: $color-primary-strong;
-}
-
-
-
 .source-entry {
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
   text-align: left;
-}
-
-.source-meta {
-  color: $color-neutral-regular;
-  font-weight: $font-weight-semi-bold;
 }
 
 .details-expander {
@@ -267,9 +218,6 @@
 
   ::ng-deep .pa-expander-header {
     background: $color-light-stronger;
-    font-size: font-size(xs);
-    font-weight: $font-weight-semi-bold;
-    line-height: rhythm(2);
   }
 
   ::ng-deep .pa-expander-header:hover {
