@@ -70,7 +70,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     filter: new FormControl<boolean>(false, { nonNullable: true }),
-    filterLogic: new FormControl<'and' | 'or'>('and', { nonNullable: true }),
+    filterLogic: new FormControl<'and' | 'or' | 'and-or'>('and', { nonNullable: true }),
     labelSetsExcludedFromFilters: new FormControl<string>('', { nonNullable: true }),
     initialFilters: new FormControl<string>('', { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
@@ -108,6 +108,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   });
 
   autocompleteFromNerEnabled = this.featuresService.authorized.suggestEntities;
+  andOrLogicAvailable = this.featuresService.unstable.andOrFilterLogic;
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
   labelExample = this.labelsService.labelSets.pipe(
     map((labelSets) => {

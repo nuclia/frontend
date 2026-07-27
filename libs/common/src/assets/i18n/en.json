@@ -2255,6 +2255,7 @@
 	"search.configuration.save-error": "An error occurred while saving the search configurations",
 	"search.configuration.saved-config-title": "Saved configuration",
 	"search.configuration.search-box.filter-logic.and-logic": "Return results that match all of the selected filters",
+	"search.configuration.search-box.filter-logic.and-or-logic": "Filters in the same category are combined with OR, while filters from different categories are combined with AND.",
 	"search.configuration.search-box.filter-logic.or-logic": "Return results that match at least one of the selected filters",
 	"search.configuration.search-box.filter-logic.title": "Type of filter logic",
 	"search.configuration.search-box.filter-logic.warning": "Note that OR logic is not applied to creation date filter",

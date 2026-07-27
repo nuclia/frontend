@@ -19,7 +19,7 @@ export namespace Widget {
 
   export interface SearchBoxConfig {
     filter: boolean;
-    filterLogic: 'and' | 'or';
+    filterLogic: 'and' | 'or' | 'and-or';
     setPreselectedFilters: boolean;
     suggestions: boolean;
     highlight: boolean;
@@ -236,6 +236,7 @@ export namespace Widget {
     preferMarkdown?: boolean;
     openNewTab?: boolean;
     orFilterLogic?: boolean;
+    andOrFilterLogic?: boolean;
     labelFilterCounts?: boolean;
     noChatHistory?: boolean;
     showHidden?: boolean;
@@ -590,6 +591,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
+    andOrFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'and-or',
     labelFilterCounts: config.searchBox.labelFilterCounts,
     highlight: config.searchBox.highlight,
     suggestions: config.searchBox.suggestions,
