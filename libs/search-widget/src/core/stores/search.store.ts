@@ -482,7 +482,7 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
     if (
       filterExpression &&
-      cannotCombineFilters(hasFieldFilters, hasParagraphFilters, orFilterLogic, filterExpression)
+      cannotCombineFilters(hasFieldFilters, hasParagraphFilters, orFilterLogic || andOrFilterLogic, filterExpression)
     ) {
       return filterExpression;
     }
