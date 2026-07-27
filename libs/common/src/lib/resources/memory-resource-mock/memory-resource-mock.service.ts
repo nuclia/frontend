@@ -8,6 +8,7 @@ import {
   MemoryMockReferenceContent,
   MemoryMockSession,
   MemoryMockTab,
+  MemoryMockTranscriptTurn,
   MemoryMockTopic,
   MemoryMockUser,
 } from './memory-resource-mock.config';
@@ -167,5 +168,59 @@ export class MemoryResourceMockService {
   getRelatedEntries(fact: MemoryMockFact): MemoryMockEntry[] {
     const related = new Set(fact.related_entry_ids.map((id) => `${this._resourceId()}-${id}`));
     return this.allEntries().filter((entry) => related.has(entry.id));
+  }
+
+  getDummyTranscript(entry: MemoryMockEntry): MemoryMockTranscriptTurn[] {
+    const contextTurns =
+      entry.context?.map((message, index) => ({
+        id: `${entry.id}-context-${index}`,
+        speaker: message.author,
+        message: message.text,
+      })) || [];
+    const timeline: MemoryMockTranscriptTurn[] = [
+      ...contextTurns,
+      {
+        id: `${entry.id}-analysis`,
+        speaker: entry.author,
+        message: entry.text,
+      },
+    ];
+
+    if (entry.reasoning) {
+      timeline.push({
+        id: `${entry.id}-reasoning`,
+        speaker: entry.author,
+        message: entry.reasoning,
+      });
+    }
+
+    if (timeline.length === 0) {
+      timeline.push({
+        id: `${entry.id}-fallback`,
+        speaker: entry.author,
+        message: entry.text,
+      });
+    }
+
+    return timeline.concat(this._buildDummyLongTranscript(entry));
+  }
+
+  private _buildDummyLongTranscript(entry: MemoryMockEntry): MemoryMockTranscriptTurn[] {
+    const turns: MemoryMockTranscriptTurn[] = [];
+    for (let i = 1; i <= 10; i += 1) {
+      turns.push(
+        {
+          id: `${entry.id}-dummy-user-${i}`,
+          speaker: 'User',
+          message: `Dummy follow-up question ${i}: can you clarify this policy with more detail and an example scenario?`,
+        },
+        {
+          id: `${entry.id}-dummy-agent-${i}`,
+          speaker: entry.author,
+          message: `Dummy transcript response ${i}: this is expanded mock transcript content to validate long-scroll behavior in the overlay, including multi-line details and additional context.`,
+        },
+      );
+    }
+    return turns;
   }
 }

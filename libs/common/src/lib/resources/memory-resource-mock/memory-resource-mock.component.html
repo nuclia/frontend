@@ -2,6 +2,7 @@
   <header class="memory-header">
     <div class="memory-title">
       <div class="title-l">{{ service.resource().description }}</div>
+      <div class="body-xs mock-indicator">{{ 'resource.memory-mock.mock-indicator' | translate }}</div>
     </div>
 
     <div class="header-actions">
@@ -72,12 +73,22 @@
             </div>
             <div class="entry-section related-section">
               @if ((relatedEntries(fact) || []).length > 0) {
-                <div class="title-xxs section-title">
-                  {{ sourceSessionLabel(fact) || (sourceSessionDate(fact) | date: 'short') }}
-                </div>
+                @if (sourceSessionLabel(fact); as sessionLabel) {
+                  <div class="title-xxs section-title">{{ sessionLabel }}</div>
+                }
                 <div class="related-list">
                   @for (entry of relatedEntries(fact); track entry.id) {
                     <div class="source-entry body-s">
+                      <button
+                        type="button"
+                        class="source-link title-xxs"
+                        (click)="openTranscript(fact, entry)">
+                        {{ entry.at | date: 'short' }}
+                        <pa-icon
+                          class="source-link-icon"
+                          name="fullscreen"
+                          size="small"></pa-icon>
+                      </button>
                       <div>{{ entry.text }}</div>
                     </div>
                   }

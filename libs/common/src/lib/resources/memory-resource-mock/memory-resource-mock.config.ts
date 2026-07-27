@@ -11,6 +11,12 @@ export interface MemoryMockContextMessage {
   text: string;
 }
 
+export interface MemoryMockTranscriptTurn {
+  id: string;
+  speaker: string;
+  message: string;
+}
+
 export interface MemoryMockEntry {
   id: string;
   topic_id: string;
