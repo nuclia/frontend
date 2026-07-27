@@ -22,6 +22,8 @@ import {
   NestedPosition,
   ResourceField,
   ReadableResource,
+  KVValue,
+  KVRange,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 
@@ -526,4 +528,15 @@ export function getResourceErrors(resource: Resource): string {
     .map((error) => error?.body || '')
     .filter((error) => !!error)
     .join('. ');
+}
+
+export function formatKeyValue(value: KVValue): string {
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+  if (value !== null && typeof value === 'object') {
+    const range = value as KVRange;
+    return `${range.lower} – ${range.upper}`;
+  }
+  return String(value);
 }

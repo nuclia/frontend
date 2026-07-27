@@ -22,6 +22,7 @@ export interface Account {
   current_users?: number;
   domain?: string;
   description?: string;
+  eula_accepted?: boolean;
   id: string;
   limits?: AccountLimits;
   max_agents: number;
@@ -101,6 +102,7 @@ export interface AccountCreation {
   title: string;
   description?: string;
   email?: string;
+  eula_accepted?: boolean;
   zone?: string;
   workflow?: WorkflowType;
 }
@@ -116,6 +118,7 @@ export interface SamlConfig {
 export interface AccountModification {
   title?: string;
   description?: string;
+  eula_accepted?: boolean;
   saml_config?: SamlConfig | null;
   slug?: string;
   workflow?: WorkflowType;

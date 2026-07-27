@@ -189,6 +189,6 @@ export const menu: IDemoMenuSection[] = [
   standalone: false,
 })
 export class AppComponent {
-  logo = './assets/logos/logo.svg';
+  logo = './assets/logos/logo-horizontal.svg';
   menu: IDemoMenuSection[] = menu;
 }

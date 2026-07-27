@@ -13,11 +13,18 @@ export class KvSchemasService {
   private _currentKb = this.sdk.currentKb;
   private _initialData = this._currentKb.pipe(
     switchMap((kb) =>
-      kb.getKVSchemas().pipe(
-        catchError(() => {
-          this.toaster.error('kb.kv-schemas.error.load');
-          return of({ schemas: {} });
-        }),
+      this.sdk.isArag.pipe(
+        take(1),
+        switchMap((isArag) =>
+          isArag
+            ? of({ schemas: {} })
+            : kb.getKVSchemas().pipe(
+                catchError(() => {
+                  this.toaster.error('kb.kv-schemas.error.load');
+                  return of({ schemas: {} });
+                }),
+              ),
+        ),
       ),
     ),
   );

@@ -16,3 +16,8 @@
     width: 50%;
   }
 }
+
+// To correctly display date pickers, the modal content should be above the modal header.
+::ng-deep .pa-modal-advanced .pa-modal-content {
+  z-index: 4;
+}

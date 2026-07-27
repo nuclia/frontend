@@ -128,11 +128,13 @@
             <div>{{ askOperation.user_prompt || askOperation.question }}</div>
           }
         </div>
-        <div class="separator-line"></div>
-        <div class="setting">
-          <span>{{ 'tasks-automation.form.field-name.label' | translate }}</span>
-          <div>{{ askOperation.destination }}</div>
-        </div>
+        @if (!askOperation.store_as_key_value) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <span>{{ 'tasks-automation.form.field-name.label' | translate }}</span>
+            <div>{{ askOperation.destination }}</div>
+          </div>
+        }
       </div>
     </nsi-two-columns-configuration-item>
   }

@@ -48,6 +48,10 @@ export class SchemaFormComponent {
 
   isEditMode = computed(() => !!this.schema());
 
+  errorMessages = {
+    pattern: 'kb.kv-schemas.form.invalid-id',
+  };
+
   constructor() {
     effect(() => {
       const s = this.schema();
@@ -79,7 +83,10 @@ export class SchemaFormComponent {
 
   buildFieldGroup(field?: KVSchemaField): FormGroup {
     return new FormGroup({
-      key: new FormControl(field?.key ?? '', [Validators.required, Validators.pattern(this.config.identifierPattern)]),
+      key: new FormControl(field?.key ?? '', [
+        Validators.required,
+        Validators.pattern(this.config.fieldIdentifierPattern),
+      ]),
       type: new FormControl<KVFieldType>(field?.type ?? this.config.defaultFieldType, Validators.required),
       description: new FormControl(field?.description ?? ''),
       required: new FormControl(field?.required ?? true),

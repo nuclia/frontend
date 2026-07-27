@@ -17,7 +17,8 @@ export const KV_SCHEMA_FORM_CONFIG = {
   rangeEnabledTypes: ['integer', 'float', 'date'] as const satisfies readonly KVFieldType[],
   repeatedEnabledTypes: ['text'] as const satisfies readonly KVFieldType[],
   defaultFieldType: 'text' as const satisfies KVFieldType,
-  identifierPattern: /^[^/.]{1,64}$/,
+  identifierPattern: /^[0-9a-zA-Z_]{1,64}$/,
+  fieldIdentifierPattern: /^[^/.]{1,64}$/,
 } as const;
 
 export type KvSchemaFormColumn = (typeof KV_SCHEMA_FORM_CONFIG.columns)[number];

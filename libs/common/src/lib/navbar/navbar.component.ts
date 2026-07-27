@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BackendConfigurationService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  FeatureFlagService,
+  FeaturesService,
+  NavigationService,
+  SDKService,
+} from '@flaps/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 
@@ -72,6 +78,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAragAdmin = this.features.isAragAdmin;
   isAccountManager = this.features.isAccountManager;
   noStripe = this.backendConfig.noStripe();
+  version = this.backendConfig.getVersion();
+  isStageOrDev = this.featureFlagService.isStageOrDev;
+  showFooter = this.isStageOrDev || !!this.version;
   isRemiMetricsEnabled = this.features.authorized.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
   isModelManagementEnabled = this.features.unstable.modelManagement;
@@ -91,6 +100,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private backendConfig: BackendConfigurationService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   ngOnInit(): void {
