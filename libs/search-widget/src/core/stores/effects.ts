@@ -124,6 +124,7 @@ import {
   isSpeechSynthesisEnabled,
   widgetImageRagStrategies,
   widgetRagStrategies,
+  andOrFilterLogic,
 } from './widget.store';
 import { loadPaths } from './paths.store';
 
@@ -517,6 +518,7 @@ interface RagAnswerOpts {
   filterExpression: boolean;
   filters: ChatOptions['filters'];
   combinedFilterExpr: ChatOptions['filter_expression'];
+  andOrFilterLogic: boolean;
   rangeCreation: { start?: string; end?: string } | undefined;
   _images: string[];
   _hasQueryImage: boolean;
@@ -535,6 +537,7 @@ function buildRagAnswerObservable(
     filterExpression,
     filters,
     combinedFilterExpr,
+    andOrFilterLogic,
     rangeCreation,
     _images,
     _hasQueryImage,
@@ -544,13 +547,14 @@ function buildRagAnswerObservable(
   if (disableRAG) {
     return getAnswerWithoutRAG(question, entries, chatOptions);
   }
+  const useFilterExpression = filterExpression || andOrFilterLogic;
   return getAnswer(question, entries, {
     ...chatOptions,
     search_configuration,
-    filters: filterExpression ? undefined : filters,
-    filter_expression: filterExpression ? combinedFilterExpr : undefined,
-    range_creation_start: filterExpression ? undefined : rangeCreation?.start,
-    range_creation_end: filterExpression ? undefined : rangeCreation?.end,
+    filters: useFilterExpression ? undefined : filters,
+    filter_expression: useFilterExpression ? combinedFilterExpr : undefined,
+    range_creation_start: useFilterExpression ? undefined : rangeCreation?.start,
+    range_creation_end: useFilterExpression ? undefined : rangeCreation?.end,
     extra_context_images: !_hasQueryImage && _images.length > 0 ? _images : undefined,
     query_image: _hasQueryImage && _images.length > 0 ? _images[0] : undefined,
     reasoning: reasoning as ChatOptions['reasoning'],
@@ -581,6 +585,7 @@ export function askQuestion(
         combinedFilters.pipe(take(1)),
         combinedFilterExpression.pipe(take(1)),
         filterExpression.pipe(take(1)),
+        andOrFilterLogic.pipe(take(1)),
         reasoningParam.pipe(take(1)),
         rangeCreationISO.pipe(take(1)),
         disableRAG.pipe(take(1)),
@@ -600,6 +605,7 @@ export function askQuestion(
         filters,
         combinedFilterExpression,
         filterExpression,
+        andOrFilterLogic,
         reasoning,
         rangeCreation,
         disableRAG,
@@ -621,6 +627,7 @@ export function askQuestion(
             filterExpression,
             filters,
             combinedFilterExpr: combinedFilterExpression,
+            andOrFilterLogic,
             rangeCreation,
             _images,
             _hasQueryImage,

@@ -2255,6 +2255,7 @@
 	"search.configuration.save-error": "Une erreur s'est produite lors de l'enregistrement des configurations de recherche",
 	"search.configuration.saved-config-title": "Configuration enregistrée",
 	"search.configuration.search-box.filter-logic.and-logic": "Renvoie les résultats correspondant à tous les filtres sélectionnés",
+	"search.configuration.search-box.filter-logic.and-or-logic": "Les filtres appartenant à la même catégorie sont combinés par l'opérateur OR, tandis que les filtres de catégories différentes sont combinés par l'opérateur AND.",
 	"search.configuration.search-box.filter-logic.or-logic": "Renvoyer les résultats qui correspondent à au moins un des filtres sélectionnés",
 	"search.configuration.search-box.filter-logic.title": "Type de logique de filtrage",
 	"search.configuration.search-box.filter-logic.warning": "Notez que la logique OR n’est pas appliquée au filtre de date de création",
