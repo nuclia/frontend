@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   HeaderCell,
@@ -17,7 +18,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { Subject, filter, map, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { ConnectorComponent } from '../connector';
-import { sourceDefinitions, SourcesService } from '../../logic/sources.service';
+import { SourcesService } from '../../logic/sources.service';
 
 @Component({
   selector: 'nsy-connect',
@@ -50,16 +51,23 @@ export class ConnectComponent {
   private sourcesService = inject(SourcesService);
 
   private refreshSources = new Subject<void>();
-  
-  sourceDefinitions = sourceDefinitions;
-  selectedGroup: 'local' | 'mcp' | 'external' = 'local';
+
+  selectedGroup = signal<'local' | 'mcp' | 'external'>('local');
+
+  availableSources = toSignal(this.sourcesService.availableSources, { initialValue: undefined });
+
+  availableGroups = computed(() =>
+    Object.entries(this.availableSources() || {})
+      .filter(([, sources]) => sources.length > 0)
+      .map(([group]) => group),
+  );
 
   sources = this.refreshSources.pipe(
     startWith(true),
     switchMap(() => this.sourcesService.getSources()),
     map((sources) =>
       Object.entries(sources).map(([id, source]) => {
-        const def = Object.values(this.sourceDefinitions)
+        const def = Object.values(this.sourcesService.sourceDefinitions)
           .flat()
           .find((def) => def.type === source.type);
         return { id, logo: def?.logo, icon: def?.icon, title: def?.title, ...source };
