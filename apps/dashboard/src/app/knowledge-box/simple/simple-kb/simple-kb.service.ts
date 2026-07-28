@@ -105,6 +105,7 @@ export class SimpleKBService {
   }
 
   uploadFiles(files: File[]) {
+    this.cleanUploads();
     const uploadIndex = ++this.uploadIndex;
     this.resources.pipe(take(1)).subscribe((resources) => {
       if (resources.length + files.length > this.maxFiles) {
@@ -120,6 +121,15 @@ export class SimpleKBService {
           this.uploadStatus.next({ ...this.uploadStatus.getValue(), [uploadIndex]: status });
         });
     });
+  }
+
+  cleanUploads() {
+    // Avoid the accumulation of upload errors. We only want to show the most recent ones.
+    const current = this.uploadStatus.getValue();
+    const newStatus = Object.fromEntries(Object.entries(current).filter(([, status]) => !status.completed));
+    if (Object.keys(newStatus).length !== Object.keys(current).length) {
+      this.uploadStatus.next(newStatus);
+    }
   }
 
   isUploadFailed(upload: FileUploadStatus): boolean {
