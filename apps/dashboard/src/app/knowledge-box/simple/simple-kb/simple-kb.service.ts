@@ -113,19 +113,13 @@ export class SimpleKBService {
       }
       this.uploadService
         .uploadFiles(files, (status) => {
-          this.updateStatus(uploadIndex, status);
+          this.uploadStatus.next({ ...this.uploadStatus.getValue(), [uploadIndex]: status });
           this._forceRefresh.next();
         })
         .subscribe((status) => {
-          this.updateStatus(uploadIndex, status);
+          this.uploadStatus.next({ ...this.uploadStatus.getValue(), [uploadIndex]: status });
         });
     });
-  }
-
-  updateStatus(index: number, status: UploadStatus) {
-    const newStatus = this.uploadStatus.getValue();
-    newStatus[index] = status;
-    this.uploadStatus.next(newStatus);
   }
 
   isUploadFailed(upload: FileUploadStatus): boolean {
