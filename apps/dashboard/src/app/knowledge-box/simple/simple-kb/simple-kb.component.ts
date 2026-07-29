@@ -31,7 +31,6 @@ export class SimpleKBComponent implements OnDestroy {
   maxFiles = this.simpleKBService.maxFiles;
   logs = new Subject<any>();
 
-  uploadInProgress = toSignal(this.simpleKBService.uploadInProgress, { initialValue: false });
   counter = toSignal(this.simpleKBService.resourceCounter);
   step = signal<number>(-1);
   fileOver = signal(false);

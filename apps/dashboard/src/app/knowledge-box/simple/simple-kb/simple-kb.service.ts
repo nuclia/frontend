@@ -59,18 +59,18 @@ export class SimpleKBService {
 
   maxFiles = 250;
 
-  uploadStatus = new BehaviorSubject<UploadStatus>({
-    files: [],
-    progress: 0,
-    completed: false,
-    uploaded: 0,
-    failed: 0,
-  });
+  uploadIndex = 0;
+  uploadStatus = new BehaviorSubject<{ [index: number]: UploadStatus }>({});
 
   userId = this.sdk.nuclia.auth.getJWTUser()?.sub || '';
 
-  visibleUploads = this.uploadStatus.pipe(map((uploads) => uploads.files.filter((upload) => !upload.uploaded)));
-  uploadInProgress = this.visibleUploads.pipe(map((uploads) => uploads.some((upload) => !this.isUploadFailed(upload))));
+  visibleUploads = this.uploadStatus.pipe(
+    map((uploads) =>
+      Object.values(uploads)
+        .reduce((acc, status) => acc.concat(status.files), [] as FileUploadStatus[])
+        .filter((upload) => !upload.uploaded),
+    ),
+  );
 
   private _forceRefresh = new Subject<void>();
   refreshResources = merge(
@@ -105,6 +105,8 @@ export class SimpleKBService {
   }
 
   uploadFiles(files: File[]) {
+    this.cleanUploads();
+    const uploadIndex = ++this.uploadIndex;
     this.resources.pipe(take(1)).subscribe((resources) => {
       if (resources.length + files.length > this.maxFiles) {
         this.toaster.error(this.translate.instant('simple.file-limit', { num: this.maxFiles }));
@@ -112,13 +114,22 @@ export class SimpleKBService {
       }
       this.uploadService
         .uploadFiles(files, (status) => {
-          this.uploadStatus.next(status);
+          this.uploadStatus.next({ ...this.uploadStatus.getValue(), [uploadIndex]: status });
           this._forceRefresh.next();
         })
         .subscribe((status) => {
-          this.uploadStatus.next(status);
+          this.uploadStatus.next({ ...this.uploadStatus.getValue(), [uploadIndex]: status });
         });
     });
+  }
+
+  cleanUploads() {
+    // Avoid the accumulation of upload errors. We only want to show the most recent ones.
+    const current = this.uploadStatus.getValue();
+    const newStatus = Object.fromEntries(Object.entries(current).filter(([, status]) => !status.completed));
+    if (Object.keys(newStatus).length !== Object.keys(current).length) {
+      this.uploadStatus.next(newStatus);
+    }
   }
 
   isUploadFailed(upload: FileUploadStatus): boolean {

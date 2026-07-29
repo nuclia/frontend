@@ -118,7 +118,6 @@
         aspect="basic"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'simple.add-more' | translate }}
       </pa-button>
@@ -127,7 +126,6 @@
         kind="primary"
         icon="upload"
         iconAndText
-        [disabled]="uploadInProgress()"
         (click)="fileInput.click()">
         {{ 'upload.files' | translate }}
       </pa-button>
