@@ -3,12 +3,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, map, Subject, switchMap, tap } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
 import { ZONE_VISIBILITY_OPTIONS, ZoneVisibility } from '../../../manage-zones/zone.models';
+import { GlobalAccountService } from '../../global-account.service';
+import { AccountBudget, ActionOnBudgetExhausted } from '../../global-account.models';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -65,9 +67,17 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   defaultLimits?: AccountTypeDefaults;
   isTrial = false;
 
+  private budgetBackup?: AccountBudget | null;
+  budgetForm = new FormGroup({
+    custom_budget: new FormControl<'default' | 'unlimited' | 'limit'>('default', { nonNullable: true }),
+    budget_value: new FormControl<number | null>(null, { nonNullable: false, validators: [Validators.min(1)] }),
+    action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: false }),
+  });
+
   constructor(
     private store: ManagerStore,
     private accountService: AccountService,
+    private globalAccountService: GlobalAccountService,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -92,9 +102,21 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               take(1),
             ),
             this.accountService.getSubscription(accountDetails.id).pipe(
+              catchError(() => of(null)),
               tap((sub) => {
-                this.provider = sub.provider;
-                this.free_tokens_per_billing_cycle = sub.subscription.free_tokens_per_billing_cycle || 0;
+                if (sub) {
+                  this.provider = sub.provider;
+                  this.free_tokens_per_billing_cycle = sub.subscription.free_tokens_per_billing_cycle || 0;
+                  this.cdr.markForCheck();
+                }
+              }),
+              take(1),
+            ),
+            this.globalAccountService.getBudget(accountDetails.id).pipe(
+              catchError(() => of(null)),
+              tap((budget) => {
+                this.budgetBackup = budget;
+                this.patchBudget(budget);
                 this.cdr.markForCheck();
               }),
               take(1),
@@ -113,7 +135,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   save() {
     const accountBackup = this.accountBackup;
-    if (this.configForm.valid && accountBackup) {
+    if (this.configForm.valid && this.budgetForm.valid && accountBackup) {
       this.isSaving = true;
       const { trialExpirationDate, kbs, agents, memories, ...rawValue } = this.configForm.getRawValue();
       this.canFullyEditAccount
@@ -134,14 +156,17 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
                   zoneVisibility: rawValue.zoneVisibility,
                 };
             payload.trialExpirationDate = trialExpirationDate ?? null;
-            return this.accountService.updateAccount(accountBackup.id, payload);
+            const saveBudgetRequest = canFullyEditAccount ? this.saveBudget() : of(null);
+            return forkJoin([this.accountService.updateAccount(accountBackup.id, payload), saveBudgetRequest]);
           }),
         )
         .subscribe({
-          next: (updatedAccount) => {
+          next: ([updatedAccount, budget]) => {
             this.isSaving = false;
             this.accountBackup = { ...updatedAccount };
+            this.budgetBackup = budget;
             this.configForm.markAsPristine();
+            this.budgetForm.markAsPristine();
             this.cdr.markForCheck();
           },
           error: () => {
@@ -153,12 +178,38 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
+  saveBudget() {
+    const { custom_budget, ...budget } = this.budgetForm.getRawValue();
+    let budgetPayload: AccountBudget | null;
+    if (custom_budget === 'limit') {
+      budgetPayload = budget;
+    } else if (custom_budget === 'unlimited') {
+      budgetPayload = { budget_value: null, action_on_budget_exhausted: null };
+    } else {
+      budgetPayload = null;
+    }
+    if (budgetPayload && this.accountBackup) {
+      if (this.budgetBackup) {
+        return this.globalAccountService.patchBudget(this.accountBackup.id, budgetPayload);
+      } else {
+        return this.globalAccountService.addBudget(this.accountBackup.id, budgetPayload);
+      }
+    } else {
+      return of(null);
+    }
+  }
+
   reset() {
     if (this.accountBackup) {
       this.patchConfigForm(this.accountBackup);
       this.configForm.markAsPristine();
       this.cdr.markForCheck();
     }
+    this.resetBudget();
+  }
+
+  resetBudget() {
+    this.patchBudget(this.budgetBackup || null);
   }
 
   resetMaxKbsToDefault() {
@@ -202,6 +253,16 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     if (labels !== null) {
       this.configForm.controls.labels.patchValue(labels);
     }
+    this.cdr.markForCheck();
+  }
+
+  private patchBudget(budget: AccountBudget | null) {
+    if (budget) {
+      this.budgetForm.patchValue({ ...budget, custom_budget: budget.budget_value === null ? 'unlimited' : 'limit' });
+    } else {
+      this.budgetForm.patchValue({ budget_value: null, custom_budget: 'default' });
+    }
+    this.budgetForm.markAsPristine();
     this.cdr.markForCheck();
   }
 

@@ -33,7 +33,7 @@ export class AccountService {
   private regionalService = inject(RegionalAccountService);
   private store = inject(ManagerStore);
 
-  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay());
+  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay(1));
 
   getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
     return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
