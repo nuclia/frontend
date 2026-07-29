@@ -126,17 +126,15 @@ export class SimpleKBComponent implements OnDestroy {
 
   onFilesSelected(files: File[] | FileList | DroppedFile[]) {
     const fileTypes = getFilesGroupedByType(files);
-    const allowedMediaFiles = fileTypes.mediaFiles.filter((file) => {
-      const type = file.type?.split('/')[0];
-      return type !== 'audio' && type !== 'video';
-    });
-    if (allowedMediaFiles.length < fileTypes.mediaFiles.length) {
-      this.toaster.warning(this.translate.instant('simple.no-video-audio'));
+    const mediaFilesNotSupported = this.maxMediaFileSize === 1;
+    if (mediaFilesNotSupported) {
+      fileTypes.mediaFiles = [];
+      this.toaster.warning(this.translate.instant('simple.no-media-files'));
     }
     const filesWithinLimits = fileTypes.nonMediaFiles.filter(
       (file) => this.maxFileSize === -1 || file.size <= this.maxFileSize,
     );
-    const mediaFilesWithinLimits = allowedMediaFiles.filter(
+    const mediaFilesWithinLimits = fileTypes.mediaFiles.filter(
       (file) => this.maxMediaFileSize === -1 || file.size <= this.maxMediaFileSize,
     );
     if (filesWithinLimits.length < fileTypes.nonMediaFiles.length) {
@@ -144,7 +142,7 @@ export class SimpleKBComponent implements OnDestroy {
         this.translate.instant('simple.file-size-limit', { size: this.sizePipe.transform(this.maxFileSize) }),
       );
     }
-    if (mediaFilesWithinLimits.length < allowedMediaFiles.length) {
+    if (mediaFilesWithinLimits.length < fileTypes.mediaFiles.length) {
       this.toaster.warning(
         this.translate.instant('simple.media-file-size-limit', {
           size: this.sizePipe.transform(this.maxMediaFileSize),
