@@ -305,15 +305,12 @@
           @if (subscribeMode | async) {
             @if (currency$ | async; as currency) {
               <app-budget
-                [currency]="currency"
                 [showActions]="false"
                 [defaultBudget]="true"
                 (budgetChange)="budget = $event"></app-budget>
             }
           } @else {
-            <app-budget
-              [currency]="(usage | async)?.currency"
-              (budgetChange)="budget = $event"></app-budget>
+            <app-budget (budgetChange)="budget = $event"></app-budget>
             <div class="submit">
               <pa-button
                 kind="primary"

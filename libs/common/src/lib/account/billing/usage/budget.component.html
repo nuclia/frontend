@@ -3,9 +3,7 @@
     <pa-input
       type="number"
       formControlName="budget">
-      @if (currency) {
-        {{ currency === 'USD' ? '$' : '€' }}
-      }
+      Tokens
     </pa-input>
     <span>/ {{ 'billing.month' | translate }}</span>
   </div>

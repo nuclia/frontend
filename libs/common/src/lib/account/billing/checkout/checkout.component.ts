@@ -95,7 +95,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     map(([currentIsCowork, nextIsCowork]) => currentIsCowork || nextIsCowork),
     shareReplay(1),
   );
-  usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
   simpleMode = this.navigation.simpleMode;
   backToSettingsLink = this.sdk.currentAccount.pipe(
     map((account) => `${this.navigation.getAccountManageUrl(account.slug)}/billing`),

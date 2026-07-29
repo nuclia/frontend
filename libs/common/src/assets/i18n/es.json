@@ -578,7 +578,7 @@
 	"billing.reactivate": "Reactivar",
 	"billing.renew-subscription": "Renovar la suscripción",
 	"billing.review.confirm_subscription": "Confirma tu suscripción",
-	"billing.review.cost": "Suscripción de {{cost}}  + costes de los consumos con un límite mensual de {{budget}}",
+	"billing.review.cost": "Suscripción de {{cost}}  + costes de los consumos con un límite mensual de {{budget}} tokens",
 	"billing.review.cost-without-limit": "Suscripción de {{cost}} + costos de consumo (sin límite de presupuesto mensual)",
 	"billing.review.subscribe_to": "Te estás suscribiendo a {{account}}",
 	"billing.review.title": "Revisa tu suscripción",

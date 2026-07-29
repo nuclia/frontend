@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { AccountBudget, BillingService, Currency } from '@flaps/core';
+import { AccountBudget, BillingService } from '@flaps/core';
 import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
-const DEFAULT_BUDGET = 500;
+const DEFAULT_BUDGET = 60000; // Arround $480
 
 @Component({
   selector: 'app-budget',
@@ -24,7 +24,6 @@ export class BudgetComponent implements OnDestroy, OnInit {
   });
   unsubscribeAll = new Subject<void>();
 
-  @Input() currency: Currency | undefined;
   @Input() showActions = true;
   @Input() defaultBudget = false;
   @Output() budgetChange = new EventEmitter<Partial<AccountBudget> | undefined>();
