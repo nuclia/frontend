@@ -578,7 +578,7 @@
 	"billing.reactivate": "Réactiver",
 	"billing.renew-subscription": "Renouveler l’abonnement",
 	"billing.review.confirm_subscription": "Confirmez votre abonnement",
-	"billing.review.cost": "Abonnement {{cost}} + frais de consommation avec une restriction budgétaire mensuelle de {{budget}}",
+	"billing.review.cost": "Abonnement {{cost}} + frais de consommation avec une restriction budgétaire mensuelle de {{budget}} tokens",
 	"billing.review.cost-without-limit": "Abonnement {{cost}} + frais de consommation (sans limite de budget mensuel)",
 	"billing.review.subscribe_to": "S’abonner à {{account}}",
 	"billing.review.title": "Vérifiez votre abonnement",
