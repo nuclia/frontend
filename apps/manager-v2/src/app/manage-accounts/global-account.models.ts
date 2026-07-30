@@ -197,3 +197,8 @@ export interface PaymentLinkPayload {
   allow_promotion_codes?: boolean;
   currency: PaymentCurrency;
 }
+
+export interface AccountBudget {
+  budget_value: number | null;
+  action_on_budget_exhausted: ActionOnBudgetExhausted | null;
+}

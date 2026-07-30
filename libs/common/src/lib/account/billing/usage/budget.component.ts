@@ -6,7 +6,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 
-const DEFAULT_BUDGET = 60000; // Arround $480
+const DEFAULT_BUDGET = 60000; // Around $480
 
 @Component({
   selector: 'app-budget',

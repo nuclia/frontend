@@ -17,6 +17,7 @@ import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ManagerStore } from '../../../manager.store';
 import { BlockedFeaturesComponent } from '../blocked-features/blocked-features.component';
 import { ACCOUNT_DETAILS } from '../../test-utils';
+import { GlobalAccountService } from '../../global-account.service';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -47,6 +48,7 @@ describe('ConfigurationComponent', () => {
         }),
         MockProvider(AccountService),
         MockProvider(SisToastService),
+        MockProvider(GlobalAccountService),
       ],
     }).compileComponents();
 
