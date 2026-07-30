@@ -67,11 +67,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   defaultLimits?: AccountTypeDefaults;
   isTrial = false;
 
-  private budgetBackup?: AccountBudget | null;
+  private budgetBackup: AccountBudget | null = null;
   budgetForm = new FormGroup({
     custom_budget: new FormControl<'default' | 'unlimited' | 'limit'>('default', { nonNullable: true }),
-    budget_value: new FormControl<number | null>(null, { nonNullable: false, validators: [Validators.min(1)] }),
-    action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: false }),
+    budget_value: new FormControl<number | null>(null, { validators: [Validators.min(1)] }),
+    action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: true }),
   });
 
   constructor(
@@ -179,6 +179,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   saveBudget() {
+    if (!this.accountBackup) {
+      return of(null);
+    }
     const { custom_budget, ...budget } = this.budgetForm.getRawValue();
     let budgetPayload: AccountBudget | null;
     if (custom_budget === 'limit') {
@@ -188,14 +191,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     } else {
       budgetPayload = null;
     }
-    if (budgetPayload && this.accountBackup) {
-      if (this.budgetBackup) {
-        return this.globalAccountService.patchBudget(this.accountBackup.id, budgetPayload);
-      } else {
-        return this.globalAccountService.addBudget(this.accountBackup.id, budgetPayload);
-      }
+    if (budgetPayload) {
+      return this.budgetBackup
+        ? this.globalAccountService.patchBudget(this.accountBackup.id, budgetPayload)
+        : this.globalAccountService.addBudget(this.accountBackup.id, budgetPayload);
     } else {
-      return of(null);
+      return this.budgetBackup !== null
+        ? this.globalAccountService.deleteBudget(this.accountBackup.id).pipe(map(() => null))
+        : of(null);
     }
   }
 
@@ -258,12 +261,19 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   private patchBudget(budget: AccountBudget | null) {
     if (budget) {
-      this.budgetForm.patchValue({ ...budget, custom_budget: budget.budget_value === null ? 'unlimited' : 'limit' });
+      this.budgetForm.patchValue({
+        budget_value: budget.budget_value,
+        action_on_budget_exhausted: budget.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+        custom_budget: budget.budget_value === null ? 'unlimited' : 'limit',
+      });
     } else {
-      this.budgetForm.patchValue({ budget_value: null, custom_budget: 'default' });
+      this.budgetForm.reset();
     }
-    this.budgetForm.markAsPristine();
-    this.cdr.markForCheck();
+    // A timeout is needed to correctly set pastanaga radios as pristine
+    setTimeout(() => {
+      this.budgetForm.markAsPristine();
+      this.cdr.markForCheck();
+    });
   }
 
   updateFreeTokens() {

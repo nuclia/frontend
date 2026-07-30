@@ -126,15 +126,19 @@ export class GlobalAccountService {
     return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/manual/subscription`);
   }
 
-  getBudget(accountId: string): Observable<AccountBudget | null> {
+  getBudget(accountId: string): Observable<AccountBudget> {
     return this.sdk.nuclia.rest.get<AccountBudget>(`/billing/account/${accountId}/budget`);
   }
 
-  addBudget(accountId: string, budget: AccountBudget | null): Observable<AccountBudget | null> {
+  addBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
     return this.sdk.nuclia.rest.post(`/billing/account/${accountId}/budget`, budget);
   }
 
-  patchBudget(accountId: string, budget: AccountBudget | null): Observable<AccountBudget | null> {
+  patchBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
     return this.sdk.nuclia.rest.patch(`/billing/account/${accountId}/budget`, budget);
+  }
+
+  deleteBudget(accountId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/budget`);
   }
 }
