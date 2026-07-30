@@ -143,7 +143,7 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
   }
 
   updateConfig(config: any) {
-    const searchConfig: Widget.SearchConfiguration = {
+    const searchConfig: Widget.StandardSearchConfiguration = {
       id: '',
       routing: {
         useRouting: false,

@@ -1,5 +1,15 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.sources-label {
+  margin-top: rhythm(2);
+}
+
+.agentic-sources-field {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
 .agentic-sources-list {
   display: flex;
   flex-direction: column;
@@ -11,7 +21,36 @@
   display: flex;
   gap: rhythm(1);
 
-  span {
+  pa-select {
     flex: 1;
+    min-width: 0;
+  }
+}
+
+.agentic-sources-buttons {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  pa-button {
+    flex: 1;
+
+    ::ng-deep button {
+      width: 100%;
+    }
+  }
+
+  .connect-sources ::ng-deep button {
+    border: none;
+  }
+}
+
+.connect-sources-link {
+  align-self: flex-start;
+  color: $color-text-link-accent;
+  font-size: font-size(small);
+
+  &:hover {
+    color: $color-text-link-accent-hover;
   }
 }

@@ -77,7 +77,7 @@
           <div>
             <nsi-button-mini
               icon="download"
-              [disabled]="!isConfigModified"
+              [disabled]="!isConfigModified || (searchMode() === 'agentic' && !agenticSourcesValid())"
               [paPopup]="isNucliaConfig ? null : saveMenu"
               (click)="isNucliaConfig ? saveConfig() : null">
               {{ 'search.configuration.action.save' | translate }}
@@ -192,16 +192,33 @@
           <pa-accordion-item
             #agenticConfig
             id="agentic-config"
+            [expanded]="true"
             [itemTitle]="'search.configuration.agentic.section-title' | translate"
             [description]="'search.configuration.agentic.section-description' | translate"
             (expandedChange)="updateAgenticConfigHeight()">
             <pa-accordion-item-body>
+              @if (agenticSourcesRequiredWarning()) {
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  {{ 'search.configuration.agentic.sources-required' | translate }}
+                </nsi-info-card>
+              } @else if (isConfigModified) {
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  {{ 'search.configuration.unsupported-warning' | translate }}
+                </nsi-info-card>
+              }
               <stf-agentic-configuration
-                [agenticConfigs]="agenticConfigs()"
                 [config]="savedConfig?.type === 'config' ? savedConfig : undefined"
                 [excludeSearchConfigNames]="agenticWidgetConfigNames()"
+                [learningConfigurations]="learningConfigurations"
                 (configChanged)="updateAgenticConfig($event)"
-                (heightChanged)="updateAgenticConfigHeight()"></stf-agentic-configuration>
+                (heightChanged)="updateAgenticConfigHeight()"
+                (sourcesValidChanged)="agenticSourcesValid.set($event)"
+                (sourcesRequiredWarningChanged)="agenticSourcesRequiredWarning.set($event)"
+                (pendingSourceChanged)="pendingAgenticSource.set($event)"></stf-agentic-configuration>
             </pa-accordion-item-body>
           </pa-accordion-item>
         }

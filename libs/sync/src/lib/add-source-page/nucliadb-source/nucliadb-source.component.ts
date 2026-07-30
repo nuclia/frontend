@@ -4,7 +4,7 @@ import { ButtonMiniComponent, ExpandableTextareaComponent, InfoCardComponent, Si
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalConfig, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { FilterExpressionModalComponent } from 'libs/common/src/lib/search-widget/search-configuration/filter-expression-modal';
+import { FilterExpressionModalComponent } from '@flaps/common';
 import { filter, map, take } from 'rxjs';
 import { SourceFormDirective } from '../source-form.directive';
 import { SDKService } from '@flaps/core';
