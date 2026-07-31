@@ -214,6 +214,7 @@
                 [config]="savedConfig?.type === 'config' ? savedConfig : undefined"
                 [excludeSearchConfigNames]="agenticWidgetConfigNames()"
                 [learningConfigurations]="learningConfigurations"
+                [generativeProviders]="generativeProviders"
                 (configChanged)="updateAgenticConfig($event)"
                 (heightChanged)="updateAgenticConfigHeight()"
                 (sourcesValidChanged)="agenticSourcesValid.set($event)"

@@ -36,13 +36,13 @@ export const sourceDefinitions: { [key: string]: SourceDefinition[] } = {
   external: [
     {
       type: 'perplexity',
-      title: 'Perplexity',
+      title: 'Perplexity Search',
       help: 'sync.add-source-page.help.perplexity',
       logo: `${baseLogoPath}/perplexity.svg`,
     },
     {
       type: 'google',
-      title: 'Google Gemini',
+      title: 'Gemini Google Search',
       help: 'sync.add-source-page.help.google',
       logo: `${baseLogoPath}/gemini.svg`,
     },

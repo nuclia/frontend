@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
@@ -17,6 +18,7 @@ import {
   AgenticConfig,
   AgenticSmartAgentMode,
   AgenticSources,
+  GenerativeProviders,
   LearningConfigurations,
   SearchConfigs,
   Widget,
@@ -30,11 +32,14 @@ import {
   OptionModel,
 } from '@guillotinaweb/pastanaga-angular';
 import { catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { ModelSelectorComponent } from '../../../ai-models';
 
 @Component({
   selector: 'stf-agentic-configuration',
   imports: [
     ExpandableTextareaComponent,
+    FormsModule,
+    ModelSelectorComponent,
     PaButtonModule,
     PaDropdownModule,
     PaTextFieldModule,
@@ -55,6 +60,7 @@ export class AgenticConfigurationComponent {
   readonly config = input<Widget.TypedSearchConfiguration | undefined>(undefined);
   readonly excludeSearchConfigNames = input<string[]>([]);
   readonly learningConfigurations = input<LearningConfigurations>({});
+  readonly generativeProviders = input<GenerativeProviders>({});
 
   readonly configChanged = output<Partial<Widget.TypedSearchConfiguration>>();
   readonly heightChanged = output<void>();
@@ -65,8 +71,8 @@ export class AgenticConfigurationComponent {
   readonly connectionTypeLabels: Record<string, string> = {
     nucliadb: 'Knowledge Box',
     mcp: 'MCP',
-    perplexity: 'Perplexity',
-    google: 'Google Gemini',
+    perplexity: 'Perplexity Search',
+    google: 'Gemini Google Search',
     sync: 'Synchronization',
     unknown: 'Unknown',
   };
@@ -105,12 +111,6 @@ export class AgenticConfigurationComponent {
       .filter((name) => !this.excludeSearchConfigNames().includes(name))
       .map((name) => new OptionModel({ id: name, value: name, label: name })),
   ]);
-
-  readonly modelOptions = computed(() =>
-    (this.learningConfigurations()['generative_model']?.options || []).map(
-      (option) => new OptionModel({ id: option.value, value: option.value, label: option.name }),
-    ),
-  );
 
   /** KB's default generative model, used to preselect model dropdowns when no explicit choice was made. */
   readonly defaultGenerativeModel = computed(() => this.learningConfigurations()['generative_model']?.default || '');

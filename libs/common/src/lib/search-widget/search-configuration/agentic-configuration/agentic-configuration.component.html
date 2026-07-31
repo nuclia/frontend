@@ -153,28 +153,36 @@
     <div
       class="extra-fields"
       [class.visible]="useSpecificModels()">
-      <pa-select
-        [label]="'search.configuration.agentic.models.executor-label' | translate"
-        [value]="displayedExecutorModel()"
-        [options]="modelOptions()"
-        (valueChange)="updateExecutorModel($event)"></pa-select>
+      <div class="title-xs">{{ 'search.configuration.agentic.models.executor-label' | translate }}</div>
+      <stf-model-selector
+        [ngModel]="displayedExecutorModel()"
+        (ngModelChange)="updateExecutorModel($event)"
+        [providers]="generativeProviders()"
+        [learningConfigurations]="learningConfigurations()"
+        (heightChanged)="heightChanged.emit()"></stf-model-selector>
       @if (mode() === 'plan_execute') {
-        <pa-select
-          [label]="'search.configuration.agentic.models.planner-label' | translate"
-          [value]="displayedPlannerModel()"
-          [options]="modelOptions()"
-          (valueChange)="updatePlannerModel($event)"></pa-select>
+        <div class="title-xs">{{ 'search.configuration.agentic.models.planner-label' | translate }}</div>
+        <stf-model-selector
+          [ngModel]="displayedPlannerModel()"
+          (ngModelChange)="updatePlannerModel($event)"
+          [providers]="generativeProviders()"
+          [learningConfigurations]="learningConfigurations()"
+          (heightChanged)="heightChanged.emit()"></stf-model-selector>
       }
-      <pa-select
-        [label]="'search.configuration.agentic.models.rephrase-label' | translate"
-        [value]="displayedRephraseModel()"
-        [options]="modelOptions()"
-        (valueChange)="updateRephraseModel($event)"></pa-select>
-      <pa-select
-        [label]="'search.configuration.agentic.models.summarize-label' | translate"
-        [value]="displayedSummarizeModel()"
-        [options]="modelOptions()"
-        (valueChange)="updateSummarizeModel($event)"></pa-select>
+      <div class="title-xs">{{ 'search.configuration.agentic.models.rephrase-label' | translate }}</div>
+      <stf-model-selector
+        [ngModel]="displayedRephraseModel()"
+        (ngModelChange)="updateRephraseModel($event)"
+        [providers]="generativeProviders()"
+        [learningConfigurations]="learningConfigurations()"
+        (heightChanged)="heightChanged.emit()"></stf-model-selector>
+      <div class="title-xs">{{ 'search.configuration.agentic.models.summarize-label' | translate }}</div>
+      <stf-model-selector
+        [ngModel]="displayedSummarizeModel()"
+        (ngModelChange)="updateSummarizeModel($event)"
+        [providers]="generativeProviders()"
+        [learningConfigurations]="learningConfigurations()"
+        (heightChanged)="heightChanged.emit()"></stf-model-selector>
     </div>
   </div>
 

@@ -1,4 +1,5 @@
 <pa-card
+  class="card"
   [disabled]="disabled"
   (cardClick)="selectConnector.emit($event)">
   <div class="connector">
@@ -6,6 +7,6 @@
       [path]="logo || ''"
       [name]="icon || ''"
       size="large" />
-    <div>{{ title }}</div>
+    <div class="title">{{ title }}</div>
   </div>
 </pa-card>
