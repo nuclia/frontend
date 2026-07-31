@@ -130,12 +130,14 @@ export class AgenticConfigurationComponent {
 
   readonly canAddSource = computed(() => this.selectedSourceIds().length < this.availableSources().length);
 
+  readonly hasAvailableSources = computed(() => this.availableSources().length > 0);
+
   readonly hasNucliaDbSource = computed(() => {
+    if (!this.hasAvailableSources()) return true; // in this case we create a nucliadb source for user from title&description fields
     const sources = this.availableSources();
     return this.selectedSourceIds().some((id) => sources.find((source) => source.id === id)?.type === 'nucliadb');
   });
 
-  readonly hasAvailableSources = computed(() => this.availableSources().length > 0);
   readonly hasSelectedSource = computed(() => this.selectedSourceIds().some((id) => !!id));
   readonly isNewSourceValid = computed(() => !!this.newSourceTitle().trim());
   /** Save is only meaningful once the agent has at least one source: an existing one selected, or a new KB source ready to be created. */
@@ -189,6 +191,7 @@ export class AgenticConfigurationComponent {
         );
         this.newSourceTitle.set(kb.title || '');
         this.newSourceDescription.set(kb.description || '');
+        this.heightChanged.emit();
       });
   }
 

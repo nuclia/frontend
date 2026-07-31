@@ -414,20 +414,31 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
     if (!this.savedConfig || this.currentConfig?.type !== 'config') return;
     this.searchMode.set(mode);
     const currentConfig = this.currentConfig;
+    // Request kind is purely a function of mode: 'search' is always 'find', 'simple-rag' always 'ask'
+    const generativeAnswer = {
+      ...(currentConfig.generativeAnswer ?? DEFAULT_GENERATIVE_ANSWER_CONFIG),
+      generateAnswer: mode === 'simple-rag',
+    };
     this.currentConfig = {
       ...currentConfig,
       searchMode: mode,
+      // Clear the stale agentic config when leaving agentic mode, otherwise it lingers in the saved config.
+      agentic:
+        mode === 'agentic'
+          ? { ...currentConfig.agentic, configId: currentConfig.agentic?.configId || currentConfig.id }
+          : undefined,
       ...(mode !== 'agentic'
         ? {
             searchBox: currentConfig.searchBox ?? { ...DEFAULT_SEARCH_BOX_CONFIG },
-            generativeAnswer: currentConfig.generativeAnswer ?? { ...DEFAULT_GENERATIVE_ANSWER_CONFIG },
+            generativeAnswer,
             resultDisplay: currentConfig.resultDisplay ?? { ...DEFAULT_RESULT_DISPLAY_CONFIG },
             routing: currentConfig.routing ?? { ...DEFAULT_ROUTING_CONFIG },
           }
-        : {
-            agentic: { ...currentConfig.agentic, configId: currentConfig.agentic?.configId || currentConfig.id },
-          }),
+        : {}),
     };
+    if (mode !== 'agentic') {
+      this.useGenerativeAnswer = generativeAnswer.generateAnswer;
+    }
     this.isConfigModified = !this.ignoreChanges && !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
