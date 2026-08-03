@@ -1,7 +1,39 @@
-<h2 class="page-subtitle">{{ 'account.consumption' | translate }}</h2>
-<p class="page-description">{{ 'account.consumption-description' | translate }}</p>
+<div class="top-summary-cards">
+  <div class="summary-card query-card">
+    <div class="card-title title-m">{{ 'account.nuclia-tokens.tokens-consumed' | translate }}</div>
+    <div class="card-value">
+      <span class="display-s">{{ accountTokens | number: '1.0-0' }}</span>
+      <span class="card-unit body-m">{{ 'metrics.units.tokens' | translate }}</span>
+    </div>
+  </div>
+
+  @if (totalQueries | async; as count) {
+    <div class="summary-card query-card">
+      <div class="card-title title-m">{{ 'metrics.period.last-30-days' | translate }}</div>
+      <div class="card-value">
+        <span class="display-s">{{ count.month | number }}</span>
+        <span class="card-unit body-m">{{ 'metrics.units.queries' | translate }}</span>
+      </div>
+    </div>
+    <div class="summary-card query-card">
+      <div class="card-title title-m">{{ 'metrics.period.last-12-months' | translate }}</div>
+      <div class="card-value">
+        <span class="display-s">{{ count.year | number }}</span>
+        <span class="card-unit body-m">{{ 'metrics.units.queries' | translate }}</span>
+      </div>
+    </div>
+    <div class="summary-card query-card">
+      <div class="card-title title-m">{{ 'metrics.period.since-creation' | translate }}</div>
+      <div class="card-value">
+        <span class="display-s">{{ count.sinceCreation | number }}</span>
+        <span class="card-unit body-m">{{ 'metrics.units.queries' | translate }}</span>
+      </div>
+    </div>
+  }
+</div>
 
 <app-nuclia-tokens
+  [showTotal]="false"
   [usage]="usage"
   [selectedPeriod]="selectedPeriod | async"
   (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
@@ -15,45 +47,36 @@
           @for (kb of kbList; track kb.id) {
             <li
               class="kb-summary-item"
-              [class.disabled]="!kb.role_on_kb">
+              [class.disabled]="!isNavigableKb(kb)"
+              (click)="isNavigableKb(kb) ? goToKb(kb) : null">
               <div class="kb-info">
-                <span class="kb-title">{{ kb.title }}</span>
-                @if (kb.state === 'PRIVATE') {
-                  <pa-icon
-                    size="small"
-                    name="lock"
-                    class="lock-icon"></pa-icon>
+                <div class="kb-main">
+                  @if (kb.state === 'PRIVATE') {
+                    <pa-icon
+                      size="small"
+                      name="lock"
+                      class="lock-icon"></pa-icon>
+                  }
+                  <span
+                    #kbTitleRef
+                    class="kb-title"
+                    [paPopover]="isTitleTruncated(kbTitleRef) ? kbNamePopover : undefined">
+                    {{ kb.title }}
+                  </span>
+                  <pa-popover #kbNamePopover>
+                    <span class="body-s">{{ kb.title }}</span>
+                  </pa-popover>
+                </div>
+                @if (tokensCount?.[kb.id]; as tokens) {
+                  @if (tokens > 0) {
+                    <span class="kb-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                  }
                 }
               </div>
-              @if (tokensCount?.[kb.id]; as tokens) {
-                @if (tokens > 0) {
-                  <span class="kb-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
-                }
-              }
             </li>
           }
         </ul>
       }
-    }
-  </div>
-
-  <div class="summary-section">
-    @if (totalQueries | async; as count) {
-      <h3 class="title-m">{{ 'account.total_queries' | translate }}</h3>
-      <div class="queries-grid">
-        <div class="query-stat">
-          <div class="title-xxs">{{ 'metrics.period.last-30-days' | translate }}</div>
-          <div class="display-s">{{ count.month | number }}</div>
-        </div>
-        <div class="query-stat">
-          <div class="title-xxs">{{ 'metrics.period.last-12-months' | translate }}</div>
-          <div class="display-s">{{ count.year | number }}</div>
-        </div>
-        <div class="query-stat">
-          <div class="title-xxs">{{ 'metrics.period.since-creation' | translate }}</div>
-          <div class="display-s">{{ count.sinceCreation | number }}</div>
-        </div>
-      </div>
     }
   </div>
 </div>
