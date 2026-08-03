@@ -50,7 +50,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
         value.ragStrategies.graph.exclude_processor_relations =
           value.ragStrategies.graph.exclude_processor_relations || !!value.ragStrategies.graph.agentic_graph_only;
       }
-      this.form.patchValue(value);
+      this.form.patchValue({ ...value, generateAnswer: true });
     }
   }
   @Input({ required: true }) generativeProviders: GenerativeProviders = {};
@@ -209,7 +209,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       const currentSystemPrompt = this.form.controls.systemPrompt.value.trim();
       this.systemPromptOverridden =
         !!currentSystemPrompt && currentSystemPrompt !== this.defaultSystemPrompt && !!value.useSystemPrompt;
-      this.configChanged.emit({ ...this.form.getRawValue() });
+      this.configChanged.emit({ ...this.form.getRawValue(), generateAnswer: true });
     });
   }
 

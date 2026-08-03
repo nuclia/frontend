@@ -6,65 +6,104 @@ import {
   effect,
   inject,
   input,
-  OnInit,
   output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SDKService } from '@flaps/core';
-import { ExpandableTextareaComponent, InfoCardComponent, BadgeComponent } from '@nuclia/sistema';
-import { AgenticConfig, AgenticSources, SearchConfigs, Widget } from '@nuclia/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { PaDropdownModule, PaTextFieldModule, PaTogglesModule, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { catchError, forkJoin, of, switchMap, take } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import {
+  AgenticConfig,
+  AgenticSmartAgentMode,
+  AgenticSources,
+  GenerativeProviders,
+  LearningConfigurations,
+  SearchConfigs,
+  Widget,
+} from '@nuclia/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  OptionModel,
+} from '@guillotinaweb/pastanaga-angular';
+import { catchError, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { ModelSelectorComponent } from '../../../ai-models';
 
 @Component({
   selector: 'stf-agentic-configuration',
   imports: [
-    BadgeComponent,
     ExpandableTextareaComponent,
-    InfoCardComponent,
+    FormsModule,
+    ModelSelectorComponent,
+    PaButtonModule,
     PaDropdownModule,
     PaTextFieldModule,
     PaTogglesModule,
+    RouterLink,
     TranslateModule,
   ],
   templateUrl: './agentic-configuration.component.html',
   styleUrl: './agentic-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgenticConfigurationComponent implements OnInit {
+export class AgenticConfigurationComponent {
   private sdk = inject(SDKService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
+  private navigationService = inject(NavigationService);
 
-  readonly agenticConfigs = input<Array<{ id: string } & AgenticConfig>>([]);
   readonly config = input<Widget.TypedSearchConfiguration | undefined>(undefined);
   readonly excludeSearchConfigNames = input<string[]>([]);
+  readonly learningConfigurations = input<LearningConfigurations>({});
+  readonly generativeProviders = input<GenerativeProviders>({});
 
   readonly configChanged = output<Partial<Widget.TypedSearchConfiguration>>();
   readonly heightChanged = output<void>();
+  readonly sourcesValidChanged = output<boolean>();
+  readonly sourcesRequiredWarningChanged = output<boolean>();
+  readonly pendingSourceChanged = output<{ title: string; description: string } | undefined>();
 
   readonly connectionTypeLabels: Record<string, string> = {
-    kb: 'Knowledge Box',
+    nucliadb: 'Knowledge Box',
     mcp: 'MCP',
-    perplexity: 'Perplexity',
-    'perplexity-search': 'Perplexity Search',
-    'perplexity-answer': 'Perplexity Answer',
-    gemini: 'Google Gemini',
+    perplexity: 'Perplexity Search',
+    google: 'Gemini Google Search',
+    sync: 'Synchronization',
     unknown: 'Unknown',
   };
 
-  agenticConfigId = signal<string>('');
-  agenticTransport = signal<'http' | 'websocket'>('http');
+  // Ask-level parameters (sent alongside the agentic_config_id on ask requests)
   agenticSearchConfiguration = signal<string>('');
-  useSecurityGroups = signal<boolean>(false);
-  securityGroupsText = signal<string>('');
-  sources = signal<Array<{ id: string; type: string; description?: string }>>([]);
   private _allAskSearchConfigs = signal<string[]>([]);
 
-  readonly configOptions = computed(() =>
-    this.agenticConfigs().map(({ id, title }) => new OptionModel({ id, value: id, label: title || id })),
-  );
+  // Agentic pipeline config draft (smart_agent + rephrase + summarize)
+  availableSources = signal<Array<{ id: string; type: string; description?: string }>>([]);
+  selectedSourceIds = signal<string[]>([]);
+  mode = signal<AgenticSmartAgentMode>('reactive');
+  extraPrompt = signal<string>('');
+  useRephrasePrompt = signal<boolean>(false);
+  rephrasePrompt = signal<string>('');
+  rephraseModel = signal<string>('');
+  useSummarizePrompt = signal<boolean>(false);
+  summarizeSystemPrompt = signal<string>('');
+  summarizeModel = signal<string>('');
+  useSpecificModels = signal<boolean>(false);
+  executorModel = signal<string>('');
+  plannerModel = signal<string>('');
+
+  // Draft for the KB source created on save when the KB has no agentic sources yet (see `hasAvailableSources`).
+  newSourceTitle = signal<string>('');
+  newSourceDescription = signal<string>('');
+
+  readonly displayedExecutorModel = computed(() => this.executorModel() || this.defaultGenerativeModel());
+  readonly displayedPlannerModel = computed(() => this.plannerModel() || this.defaultGenerativeModel());
+  readonly displayedRephraseModel = computed(() => this.rephraseModel() || this.defaultGenerativeModel());
+  readonly displayedSummarizeModel = computed(() => this.summarizeModel() || this.defaultGenerativeModel());
 
   readonly askSearchConfigOptions = computed(() => [
     new OptionModel({ id: '', value: '', label: '–' }),
@@ -73,102 +112,260 @@ export class AgenticConfigurationComponent implements OnInit {
       .map((name) => new OptionModel({ id: name, value: name, label: name })),
   ]);
 
+  readonly sourceOptionsByRow = computed(() => {
+    const selected = this.selectedSourceIds();
+    const sources = this.availableSources();
+    return selected.map((currentId) =>
+      sources
+        .filter((source) => source.id === currentId || !selected.includes(source.id))
+        .map(
+          (source) =>
+            new OptionModel({
+              id: source.id,
+              value: source.id,
+              label: source.id,
+              help: this.connectionTypeLabels[source.type] ?? source.type,
+            }),
+        ),
+    );
+  });
+
+  /** KB's default generative model, used to preselect model dropdowns when no explicit choice was made. */
+  readonly defaultGenerativeModel = computed(() => this.learningConfigurations()['generative_model']?.default || '');
+
+  readonly modeOptions = [
+    new OptionModel({
+      id: 'reactive',
+      value: 'reactive',
+      label: this.translate.instant('search.configuration.agentic.mode.reactive'),
+    }),
+    new OptionModel({
+      id: 'plan_execute',
+      value: 'plan_execute',
+      label: this.translate.instant('search.configuration.agentic.mode.plan-execute'),
+    }),
+  ];
+
+  readonly canAddSource = computed(() => this.selectedSourceIds().length < this.availableSources().length);
+
+  readonly hasAvailableSources = computed(() => this.availableSources().length > 0);
+
+  readonly hasNucliaDbSource = computed(() => {
+    if (!this.hasAvailableSources()) return true; // in this case we create a nucliadb source for user from title&description fields
+    const sources = this.availableSources();
+    return this.selectedSourceIds().some((id) => sources.find((source) => source.id === id)?.type === 'nucliadb');
+  });
+
+  readonly hasSelectedSource = computed(() => this.selectedSourceIds().some((id) => !!id));
+  readonly isNewSourceValid = computed(() => !!this.newSourceTitle().trim());
+  /** Save is only meaningful once the agent has at least one source: an existing one selected, or a new KB source ready to be created. */
+  readonly sourcesValid = computed(() =>
+    this.hasAvailableSources() ? this.hasSelectedSource() : this.isNewSourceValid(),
+  );
+  /** Only relevant when the KB already has sources to pick from: nudges the user to select at least one. */
+  readonly showSourcesRequiredWarning = computed(() => this.hasAvailableSources() && !this.hasSelectedSource());
+
+  readonly connectSourcesUrl = toSignal(this.navigationService.kbUrl.pipe(map((kbUrl) => `${kbUrl}/sync/connect`)), {
+    initialValue: '',
+  });
+
   constructor() {
     effect(() => {
       const cfg = this.config();
-      if (cfg) {
-        this.agenticConfigId.set(cfg.agenticConfigId || '');
-        this.agenticTransport.set(cfg.agenticTransport ?? 'http');
-        this.agenticSearchConfiguration.set(cfg.agenticSearchConfiguration || '');
-        this.useSecurityGroups.set(cfg.searchBox?.useSecurityGroups ?? false);
-        this.securityGroupsText.set(cfg.searchBox?.securityGroups ?? '');
-        this._loadSources(cfg.agenticConfigId || '');
-      }
+      this.agenticSearchConfiguration.set(cfg?.agentic?.searchConfigId || '');
+      this._loadAgenticConfigDraft(cfg?.agentic?.config);
     });
-  }
 
-  ngOnInit() {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.getSearchConfigs().pipe(catchError(() => of({} as SearchConfigs)))),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((configs) => {
-        this._allAskSearchConfigs.set(
-          Object.entries(configs)
-            .filter(([, cfg]) => cfg.kind === 'ask' && !cfg.config.agentic_config_id)
-            .map(([name]) => name),
-        );
-      });
-  }
+    effect(() => this.sourcesValidChanged.emit(this.sourcesValid()));
+    effect(() => this.sourcesRequiredWarningChanged.emit(this.showSourcesRequiredWarning()));
 
-  updateConfigId(id: string) {
-    this.agenticConfigId.set(id);
-    this.configChanged.emit({ agenticConfigId: id });
-    this._loadSources(id);
-  }
-
-  updateTransport(transport: 'http' | 'websocket') {
-    this.agenticTransport.set(transport);
-    this.configChanged.emit({ agenticTransport: transport });
-  }
-
-  updateSearchConfiguration(name: string) {
-    this.agenticSearchConfiguration.set(name);
-    this.configChanged.emit({ agenticSearchConfiguration: name || undefined });
-  }
-
-  updateUseSecurityGroups(val: boolean) {
-    this.useSecurityGroups.set(val);
-    this.configChanged.emit({
-      searchBox: {
-        ...(this.config()?.searchBox ?? {}),
-        useSecurityGroups: val,
-        securityGroups: this.securityGroupsText(),
-      } as Widget.SearchBoxConfig,
+    effect(() => {
+      this.pendingSourceChanged.emit(
+        this.hasAvailableSources()
+          ? undefined
+          : { title: this.newSourceTitle(), description: this.newSourceDescription() },
+      );
     });
-    this.heightChanged.emit();
-  }
 
-  updateSecurityGroupsText(val: string) {
-    this.securityGroupsText.set(val);
-    this.configChanged.emit({
-      searchBox: {
-        ...(this.config()?.searchBox ?? {}),
-        useSecurityGroups: this.useSecurityGroups(),
-        securityGroups: val,
-      } as Widget.SearchBoxConfig,
-    });
-  }
-
-  private _loadSources(configId: string) {
-    if (!configId) {
-      this.sources.set([]);
-      this.heightChanged.emit();
-      return;
-    }
     this.sdk.currentKb
       .pipe(
         take(1),
         switchMap((kb) =>
           forkJoin([
-            kb.getAgenticConfig(configId).pipe(catchError(() => of(null))),
+            kb.getSearchConfigs().pipe(catchError(() => of({} as SearchConfigs))),
             kb.listAgenticSources().pipe(catchError(() => of({} as AgenticSources))),
-          ]),
+          ]).pipe(map(([configs, sources]) => ({ kb, configs, sources }))),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([agenticConfig, agenticSources]) => {
-        const sourceIds: string[] = agenticConfig?.smart_agent?.sources ?? [];
-        this.sources.set(
-          sourceIds.map((id) => ({
-            id,
-            type: agenticSources[id]?.type ?? 'unknown',
-            description: agenticSources[id]?.description,
-          })),
+      .subscribe(({ kb, configs, sources }) => {
+        this._allAskSearchConfigs.set(
+          Object.entries(configs)
+            .filter(([, cfg]) => cfg.kind === 'ask' && !cfg.config.agentic_config_id)
+            .map(([name]) => name),
         );
+        this.availableSources.set(
+          Object.entries(sources).map(([id, source]) => ({ id, type: source.type, description: source.description })),
+        );
+        this.newSourceTitle.set(kb.title || '');
+        this.newSourceDescription.set(kb.description || '');
         this.heightChanged.emit();
       });
+  }
+
+  private _loadAgenticConfigDraft(draft: AgenticConfig | undefined) {
+    this.selectedSourceIds.set(draft?.smart_agent?.sources ?? []);
+    this.mode.set(draft?.smart_agent?.mode ?? 'reactive');
+    this.extraPrompt.set(draft?.smart_agent?.extra_prompt ?? '');
+    this.executorModel.set(draft?.smart_agent?.models?.executor ?? '');
+    this.plannerModel.set(draft?.smart_agent?.models?.planner ?? '');
+
+    this.useRephrasePrompt.set(!!draft?.rephrase?.prompt);
+    this.rephrasePrompt.set(draft?.rephrase?.prompt ?? '');
+    this.rephraseModel.set(draft?.rephrase?.model ?? '');
+
+    this.useSummarizePrompt.set(!!draft?.summarize?.system_prompt);
+    this.summarizeSystemPrompt.set(draft?.summarize?.system_prompt ?? '');
+    this.summarizeModel.set(draft?.summarize?.model ?? '');
+
+    this.useSpecificModels.set(
+      !!draft?.smart_agent?.models?.executor ||
+        !!draft?.smart_agent?.models?.planner ||
+        !!draft?.rephrase?.model ||
+        !!draft?.summarize?.model,
+    );
+  }
+
+  private _emitAgenticConfig() {
+    const useModels = this.useSpecificModels();
+    const mode = this.mode();
+    const agenticConfig: AgenticConfig = {
+      smart_agent: {
+        mode,
+        extra_prompt: this.extraPrompt() || undefined,
+        sources: this.selectedSourceIds().filter((id) => !!id),
+        history: true,
+        ...(useModels
+          ? {
+              models: {
+                executor: this.displayedExecutorModel() || undefined,
+                planner: mode === 'plan_execute' ? this.displayedPlannerModel() || undefined : undefined,
+              },
+            }
+          : {}),
+      },
+      rephrase: {
+        prompt: this.useRephrasePrompt() ? this.rephrasePrompt() || undefined : undefined,
+        history: true,
+        ...(useModels && this.displayedRephraseModel() ? { model: this.displayedRephraseModel() } : {}),
+      },
+      summarize: {
+        system_prompt: this.useSummarizePrompt() ? this.summarizeSystemPrompt() || undefined : undefined,
+        conversational: true,
+        history: true,
+        ...(useModels && this.displayedSummarizeModel() ? { model: this.displayedSummarizeModel() } : {}),
+      },
+    };
+    this.configChanged.emit({ agentic: { config: agenticConfig } });
+  }
+
+  updateSearchConfiguration(name: string) {
+    this.agenticSearchConfiguration.set(name);
+    this.configChanged.emit({ agentic: { searchConfigId: name || undefined } });
+  }
+
+  updateNewSourceTitle(val: string) {
+    this.newSourceTitle.set(val);
+  }
+
+  updateNewSourceDescription(val: string) {
+    this.newSourceDescription.set(val);
+  }
+
+  /** Called by the parent once it has actually created the pending KB source on save, so this draft doesn't get recreated on the next save. */
+  applyCreatedSource(id: string, description: string) {
+    this.availableSources.update((list) => [...list, { id, type: 'nucliadb', description }]);
+    this.selectedSourceIds.set([id]);
+    this.newSourceTitle.set('');
+    this.newSourceDescription.set('');
+    this._emitAgenticConfig();
+  }
+
+  addSourceRow() {
+    if (!this.canAddSource()) return;
+    this.selectedSourceIds.update((ids) => [...ids, '']);
+    this.heightChanged.emit();
+  }
+
+  removeSourceRow(index: number) {
+    this.selectedSourceIds.update((ids) => ids.filter((_, i) => i !== index));
+    this._emitAgenticConfig();
+    this.heightChanged.emit();
+  }
+
+  updateSourceAt(index: number, id: string) {
+    this.selectedSourceIds.update((ids) => ids.map((value, i) => (i === index ? id : value)));
+    this._emitAgenticConfig();
+  }
+
+  updateMode(mode: AgenticSmartAgentMode) {
+    this.mode.set(mode);
+    if (mode !== 'plan_execute') {
+      this.plannerModel.set('');
+    }
+    this._emitAgenticConfig();
+  }
+
+  updateExtraPrompt(val: string) {
+    this.extraPrompt.set(val);
+    this._emitAgenticConfig();
+  }
+
+  toggleUseRephrasePrompt(val: boolean) {
+    this.useRephrasePrompt.set(val);
+    this._emitAgenticConfig();
+    this.heightChanged.emit();
+  }
+
+  updateRephrasePrompt(val: string) {
+    this.rephrasePrompt.set(val);
+    this._emitAgenticConfig();
+  }
+
+  toggleUseSummarizePrompt(val: boolean) {
+    this.useSummarizePrompt.set(val);
+    this._emitAgenticConfig();
+    this.heightChanged.emit();
+  }
+
+  updateSummarizeSystemPrompt(val: string) {
+    this.summarizeSystemPrompt.set(val);
+    this._emitAgenticConfig();
+  }
+
+  toggleUseSpecificModels(val: boolean) {
+    this.useSpecificModels.set(val);
+    this._emitAgenticConfig();
+    this.heightChanged.emit();
+  }
+
+  updateExecutorModel(val: string) {
+    this.executorModel.set(val);
+    this._emitAgenticConfig();
+  }
+
+  updatePlannerModel(val: string) {
+    this.plannerModel.set(val);
+    this._emitAgenticConfig();
+  }
+
+  updateRephraseModel(val: string) {
+    this.rephraseModel.set(val);
+    this._emitAgenticConfig();
+  }
+
+  updateSummarizeModel(val: string) {
+    this.summarizeModel.set(val);
+    this._emitAgenticConfig();
   }
 }

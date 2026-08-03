@@ -7,7 +7,9 @@ import { filter } from 'rxjs';
 export class SourceFormDirective implements ControlValueAccessor, Validator {
   private destroyRef = inject(DestroyRef);
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onChange: (value: any) => void = () => {};
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private onTouched: () => void = () => {};
 
   form = new FormGroup<any>({});

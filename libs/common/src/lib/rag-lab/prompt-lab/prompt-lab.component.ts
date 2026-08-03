@@ -116,7 +116,7 @@ export class PromptLabComponent implements OnDestroy {
         switchMap((configs) => {
           const selectedConfig = configs.find(
             (config) => config.id === this.currentConfig,
-          ) as Widget.SearchConfiguration;
+          ) as Widget.StandardTypedSearchConfiguration;
           const requestOptions = getChatOptions(selectedConfig);
           const rephrasePrompt =
             typeof requestOptions?.prompt === 'string' ? undefined : requestOptions?.prompt?.rephrase;
