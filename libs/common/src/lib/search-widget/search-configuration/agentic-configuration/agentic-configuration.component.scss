@@ -54,3 +54,9 @@
     color: $color-text-link-accent-hover;
   }
 }
+
+.model-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}

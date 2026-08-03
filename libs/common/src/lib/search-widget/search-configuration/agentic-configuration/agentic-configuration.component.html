@@ -66,9 +66,7 @@
       [value]="mode()"
       [options]="modeOptions"
       (valueChange)="updateMode($any($event))"></pa-select>
-  </div>
 
-  <div class="config-form-field">
     <nsi-expandable-textarea
       [value]="extraPrompt()"
       resizable
@@ -153,36 +151,44 @@
     <div
       class="extra-fields"
       [class.visible]="useSpecificModels()">
-      <div class="title-xs">{{ 'search.configuration.agentic.models.executor-label' | translate }}</div>
-      <stf-model-selector
-        [ngModel]="displayedExecutorModel()"
-        (ngModelChange)="updateExecutorModel($event)"
-        [providers]="generativeProviders()"
-        [learningConfigurations]="learningConfigurations()"
-        (heightChanged)="heightChanged.emit()"></stf-model-selector>
-      @if (mode() === 'plan_execute') {
-        <div class="title-xs">{{ 'search.configuration.agentic.models.planner-label' | translate }}</div>
+      <div class="model-container">
+        <div class="title-xs">{{ 'search.configuration.agentic.models.executor-label' | translate }}</div>
         <stf-model-selector
-          [ngModel]="displayedPlannerModel()"
-          (ngModelChange)="updatePlannerModel($event)"
+          [ngModel]="displayedExecutorModel()"
+          (ngModelChange)="updateExecutorModel($event)"
           [providers]="generativeProviders()"
           [learningConfigurations]="learningConfigurations()"
           (heightChanged)="heightChanged.emit()"></stf-model-selector>
+      </div>
+      @if (mode() === 'plan_execute') {
+        <div class="model-container">
+          <div class="title-xs">{{ 'search.configuration.agentic.models.planner-label' | translate }}</div>
+          <stf-model-selector
+            [ngModel]="displayedPlannerModel()"
+            (ngModelChange)="updatePlannerModel($event)"
+            [providers]="generativeProviders()"
+            [learningConfigurations]="learningConfigurations()"
+            (heightChanged)="heightChanged.emit()"></stf-model-selector>
+        </div>
       }
-      <div class="title-xs">{{ 'search.configuration.agentic.models.rephrase-label' | translate }}</div>
-      <stf-model-selector
-        [ngModel]="displayedRephraseModel()"
-        (ngModelChange)="updateRephraseModel($event)"
-        [providers]="generativeProviders()"
-        [learningConfigurations]="learningConfigurations()"
-        (heightChanged)="heightChanged.emit()"></stf-model-selector>
-      <div class="title-xs">{{ 'search.configuration.agentic.models.summarize-label' | translate }}</div>
-      <stf-model-selector
-        [ngModel]="displayedSummarizeModel()"
-        (ngModelChange)="updateSummarizeModel($event)"
-        [providers]="generativeProviders()"
-        [learningConfigurations]="learningConfigurations()"
-        (heightChanged)="heightChanged.emit()"></stf-model-selector>
+      <div class="model-container">
+        <div class="title-xs">{{ 'search.configuration.agentic.models.rephrase-label' | translate }}</div>
+        <stf-model-selector
+          [ngModel]="displayedRephraseModel()"
+          (ngModelChange)="updateRephraseModel($event)"
+          [providers]="generativeProviders()"
+          [learningConfigurations]="learningConfigurations()"
+          (heightChanged)="heightChanged.emit()"></stf-model-selector>
+      </div>
+      <div class="model-container">
+        <div class="title-xs">{{ 'search.configuration.agentic.models.summarize-label' | translate }}</div>
+        <stf-model-selector
+          [ngModel]="displayedSummarizeModel()"
+          (ngModelChange)="updateSummarizeModel($event)"
+          [providers]="generativeProviders()"
+          [learningConfigurations]="learningConfigurations()"
+          (heightChanged)="heightChanged.emit()"></stf-model-selector>
+      </div>
     </div>
   </div>
 
