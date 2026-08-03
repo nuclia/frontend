@@ -4,7 +4,7 @@
 
 `libs/sdk-core` is the **Nuclia JavaScript/TypeScript SDK** — the single source of truth for all Nuclia backend communication.
 
-- **npm package:** `@nuclia/core` (v1.31.1, MIT)
+- **npm package:** `@nuclia/core` (v1.32.0, MIT)
 - **Internal alias:** `@nuclia/core → libs/sdk-core/src/index.ts` (no build step needed for workspace consumers)
 - **Framework-agnostic** — no Angular/React/DOM dependency; works in browser, Node.js (with polyfills), and as UMD bundle
 - **Observable-first** — every async operation returns `Observable<T>`. `asyncKnowledgeBox` proxy wraps them as Promises when needed.
@@ -30,7 +30,8 @@ libs/sdk-core/
         │   ├── auth.models.ts   # AuthTokens, NucliaDBRole, AuthInfo
         │   └── jwt-helpers.ts   # JwtHelper (base64 decode), JwtUser interface
         ├── rest/
-        │   └── rest.ts          # Rest class — thin HTTP layer (fetch + streaming)
+        │   ├── rest.ts          # Rest class — thin HTTP layer (fetch + streaming)
+        │   └── utils.ts         # replaceSubdomainInUrl, normalizeGlobalBackendUrl, setZoneInRegionalUrl
         └── db/
             ├── db.ts            # Db class — accounts, KBs, agents, NUA clients
             ├── db.models.ts     # Account, AccountTypes, LearningConfigurations…
@@ -46,7 +47,9 @@ libs/sdk-core/
             │   ├── search.ts        # find(), search(), catalog(), suggest()
             │   ├── search.models.ts # Search namespace, SearchOptions, filters
             │   ├── ask.ts           # ask() — SSE streaming → assembled Ask.Answer
-            │   └── ask.models.ts    # Ask namespace (Answer, Features, AskResponseItem)
+            │   ├── ask.models.ts    # Ask namespace (Answer, Features, AskResponseItem)
+            │   ├── agentic.ts       # Agentic RAG pipeline engine — backs createAgenticRAGPipeline()
+            │   └── filter.ts        # Filter prefix constants (LABEL_FILTER_PREFIX, NER_FILTER_PREFIX…)
             ├── resource/
             │   ├── resource.ts         # ReadableResource + Resource classes
             │   ├── resource.models.ts  # IResource, FIELD_TYPE, Relation…
@@ -57,13 +60,18 @@ libs/sdk-core/
             │   ├── retrieval-agent.types.ts  # AragModule, ProviderType, type guards
             │   ├── memory.models.ts          # Memory namespace — NucliaDBMemoryConfig, MemoryConfig, Rule, Rules…
             │   ├── interactions.models.ts    # InteractionOperation, AnswerOperation, AragAnswer, InteractionRequest
-            │   └── driver.models.ts          # IDriver, DriverCreation, and driver config types (BraveConfig, CypherConfig, NucliaDBConfig, McpSseConfig…)
+            │   ├── driver.models.ts          # IDriver, DriverCreation, and driver config types (BraveConfig, CypherConfig, NucliaDBConfig, McpSseConfig…)
+            │   ├── session.ts                # ReadableSession + Session classes (RetrievalAgent session storage)
+            │   └── session.models.ts         # ISession model
             ├── notifications/
-            │   └── notifications.ts  # getAllNotifications() — SSE stream
+            │   ├── notifications.ts       # getAllNotifications() — SSE stream
+            │   └── notification.models.ts # NotificationType, NotificationMessage…
             ├── sync/
             │   └── sync.ts           # SyncManager class
-            └── task/
-                └── task.ts           # TaskManager class
+            ├── task/
+            │   └── task.ts           # TaskManager class
+            └── training/
+                └── training.ts       # Training class — start()/stop()/getStatus() for KB training tasks
 ```
 
 ---
@@ -72,13 +80,13 @@ libs/sdk-core/
 
 ```
 Nuclia
- └── .db (Db)
-      └── getKnowledgeBox() → WritableKnowledgeBox
-           └── getRetrievalAgent() → RetrievalAgent
+ ├── .db (Db)
+ │    ├── getKnowledgeBox() → WritableKnowledgeBox
+ │    └── getRetrievalAgent() → RetrievalAgent   (sibling call, not chained off getKnowledgeBox())
  └── .knowledgeBox (read-only KnowledgeBox — no auth needed for public KBs)
 ```
 
-**Key distinction:** `nuclia.knowledgeBox` → read-only, public access. `db.getKnowledgeBox()` → writable, requires account auth.
+**Key distinction:** `nuclia.knowledgeBox` → read-only, public access. `db.getKnowledgeBox()` / `db.getRetrievalAgent()` → writable, requires account auth.
 `RetrievalAgent` inherits all `WritableKnowledgeBox` methods but routes to `/agent/{id}` endpoints.
 
 ---
@@ -129,7 +137,7 @@ kb.createResource(data, true).subscribe(() => console.log('fully created'));
 
 ### TUS uploads
 
-Files over 5 MB use TUS resumable upload protocol. Pass `TUS: true` to `upload()` / `batchUpload()`.
+`kb.upload(file, TUS?)` is opt-in: pass `TUS: true` to use the resumable [TUS](https://tus.io/) protocol, otherwise a plain PUT is used. `kb.batchUpload(files)` always uses TUS internally (no flag to disable it) and runs up to 6 uploads concurrently. TUS chunk size is 5 MB (S3's minimum multipart chunk size), unrelated to file size thresholds.
 
 ### Custom headers
 
@@ -154,7 +162,7 @@ Standard events emitted: `api-error`, `partial`, `lastQuery`, `lastResults`.
 
 `ActivityMonitor.queryActivityLogs(eventType, query)` is the SDK-level pagination API for the metrics pages. The endpoint returns NDJSON — `rest.post(..., doNotParse=true)` receives the raw `Response`, then text body is split by newlines and JSON-parsed. **Do not** use the download-based methods for UI display — they produce CSV/NDJSON files for download, not structured data.
 
-`EventType` values: `NEW`, `MODIFIED`, `PROCESSED`, `CHAT`, `ASK`, `SEARCH`, `SUGGEST`, `INDEXED`, `RETRIEVE`, `AUGMENT`.
+See the `EventType` enum in `activity.models.ts` for the full list of loggable event kinds.
 
 ---
 

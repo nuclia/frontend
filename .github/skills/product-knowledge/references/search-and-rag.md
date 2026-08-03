@@ -48,13 +48,7 @@ Combine: `features=semantic&features=keyword`
 }
 ```
 
-| Semantic Model              | Similarity fn | Default min score |
-| --------------------------- | ------------- | ----------------- |
-| `en-2024-04-24`             | Cosine        | 0.47              |
-| `multilingual-2023-08-16`   | Dot product   | 0.7               |
-| `multilingual-2024-05-06`   | Dot product   | 0.4               |
-| `Open AI small`             | Cosine        | 0.5               |
-| `Google multilingual Gecko` | Cosine        | 0.55              |
+Default min scores are per-model and kept in one place to avoid drift — see the full, up-to-date table in [`llms-and-models.md`](./llms-and-models.md#embedding--semantic-models) (covers `en-2024-04-24`, the `multilingual-*` variants including `multilingual-2024-10-07`, `Open AI 3 small/large`, `Google multilingual Gecko`, `Google Gemini 2`, and Hugging Face).
 
 ---
 
@@ -78,22 +72,31 @@ Applied to all search endpoints. POST body (not query param — POST recommended
 
 ### Field filters (`prop` values)
 
-| prop              | Description               | Example                                                        |
-| ----------------- | ------------------------- | -------------------------------------------------------------- |
-| `resource`        | By resource id or slug    | `{"prop":"resource","slug":"my-slug"}`                         |
-| `field`           | By field type/name        | `{"prop":"field","type":"text"}`                               |
-| `keyword`         | Contains word             | `{"prop":"keyword","word":"umbrella"}`                         |
-| `created`         | Creation date range       | `{"prop":"created","since":"2021-03-05T02:00:00"}`             |
-| `modified`        | Modification date range   | `{"prop":"modified","until":"2021-05-15T02:00:00"}`            |
-| `origin_tag`      | Origin tag                | `{"prop":"origin_tag","tag":"word"}`                           |
-| `origin_metadata` | Origin metadata key/value | `{"prop":"origin_metadata","field":"agent","value":"crawler"}` |
-| `origin_path`     | Path prefix match         | `{"prop":"origin_path","prefix":"Users/JohnDoe"}`              |
-| `origin_source`   | Origin source ID          | —                                                              |
-| `language`        | Primary language          | `{"prop":"language","language":"en"}`                          |
-| `label`           | Resource label            | `{"prop":"label","labelset":"severity","label":"high"}`        |
-| `entity`          | Named entity              | `{"prop":"entity","subtype":"CITY","value":"Paris"}`           |
-| `status`          | Processing status         | —                                                              |
-| `security`        | Access group              | —                                                              |
+| prop              | Description                 | Example                                                                        |
+| ----------------- | --------------------------- | ------------------------------------------------------------------------------ |
+| `resource`        | By resource id or slug      | `{"prop":"resource","slug":"my-slug"}`                                         |
+| `field`           | By field type/name          | `{"prop":"field","type":"text"}`                                               |
+| `keyword`         | Contains word               | `{"prop":"keyword","word":"umbrella"}`                                         |
+| `created`         | Creation date range         | `{"prop":"created","since":"2021-03-05T02:00:00"}`                             |
+| `modified`        | Modification date range     | `{"prop":"modified","until":"2021-05-15T02:00:00"}`                            |
+| `origin_tag`      | Origin tag                  | `{"prop":"origin_tag","tag":"word"}`                                           |
+| `origin_metadata` | Origin metadata key/value   | `{"prop":"origin_metadata","field":"agent","value":"crawler"}`                 |
+| `origin_path`     | Path prefix match           | `{"prop":"origin_path","prefix":"Users/JohnDoe"}`                              |
+| `origin_source`   | Origin source ID            | —                                                                              |
+| `language`        | Primary language            | `{"prop":"language","language":"en"}`                                          |
+| `label`           | Resource label              | `{"prop":"label","labelset":"severity","label":"high"}`                        |
+| `entity`          | Named entity                | `{"prop":"entity","subtype":"CITY","value":"Paris"}`                           |
+| `status`          | Processing status           | —                                                                              |
+| `security`        | Access group                | —                                                                              |
+| `key_value`       | Filter on a Key-Value field | `{"prop":"key_value","schema_id":"product","key":"category","eq":"furniture"}` |
+
+#### Key-Value filters
+
+Applies to resources with [Key-Value fields](./ingestion.md#key-value-fields) — structured data conforming to a schema. All variants require `schema_id` (the KV schema) and `key` (the field within it):
+
+- **`eq`** — exact match; applies to any field type: `{"key_value": {"schema_id": "product", "key": "category", "eq": "furniture"}}`
+- **`gte` / `lte`** — inequalities on numeric types; combinable in one filter: `{"key_value": {"schema_id": "product", "key": "price", "lte": 100.5, "gte": 23.12}}`
+- **`contains`** — matches repeated fields or range fields: `{"key_value": {"schema_id": "product", "key": "labels", "contains": "sofa"}}`
 
 ### Paragraph filters (`prop` values)
 

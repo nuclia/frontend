@@ -117,7 +117,7 @@ This is an Nx monorepo. Every AGENTS.md here should document only what is unique
 - **Path aliases**: `tsconfig.base.json` maps `@nuclia/*` and `@guillotinaweb/*`
 - **Design system**: `libs/sistema` (`@nuclia/sistema`) for current UI; `libs/pastanaga-angular` for legacy components
 - **Primary SDK**: `libs/sdk-core` → `@nuclia/core`
-- **Web components**: `libs/search-widget` (Svelte), `libs/rao-widget` (Angular wrapper)
+- **Web components**: `libs/search-widget` (Svelte 5), `libs/rao-widget` (React 19)
 - **State conventions**: `*.state.ts` = Angular signal store; older RxJS services still common
 - **i18n**: `@guillotinaweb/pastanaga-angular` translation bridge; `.po`/`.pot` files in `src/assets/i18n/`
 

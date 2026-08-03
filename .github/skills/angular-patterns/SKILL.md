@@ -270,21 +270,21 @@ vice-versa.
 
 ### Per-project prefix table (verified from `project.json` and actual source)
 
-| Project                                                       | Location | Prefix | Example selector           |
-| ------------------------------------------------------------- | -------- | ------ | -------------------------- |
-| `apps/dashboard`                                              | App      | `app-` | `'app-knowledge-box-home'` |
-| `apps/rao`                                                    | App      | `app-` | `'app-root'`               |
-| `apps/manager-v2`                                             | App      | `nma-` | `'nma-form-footer'`        |
-| `apps/nucliadb-admin`                                         | App      | `nad-` | `'nad-home-page'`          |
-| `libs/sistema` (`@nuclia/sistema`)                            | Lib      | `nsi-` | `'nsi-button'`             |
-| `libs/common` (`@flaps/common`)                               | Lib      | `stf-` | `'stf-my-feature'`         |
-| `libs/user` (`@nuclia/user`)                                  | Lib      | `nus-` | `'nus-sidebar'`            |
-| `libs/sync` (`@nuclia/sync`)                                  | Lib      | `nsy-` | `'nsy-icon'`               |
-| `libs/pastanaga-angular` (`@guillotinaweb/pastanaga-angular`) | Lib      | `pa-`  | `'pa-button'`              |
+| Project                                                       | Location | Prefix | Example selector                                                                                                                            |
+| ------------------------------------------------------------- | -------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/dashboard`                                              | App      | `app-` | `'app-knowledge-box-home'`                                                                                                                  |
+| `apps/rao`                                                    | App      | `app-` | `'app-root'`                                                                                                                                |
+| `apps/manager-v2`                                             | App      | `nma-` | `'nma-form-footer'`                                                                                                                         |
+| `apps/nucliadb-admin`                                         | App      | `nad-` | `'nad-home-page'`                                                                                                                           |
+| `libs/sistema` (`@nuclia/sistema`)                            | Lib      | `nsi-` | `'nsi-button'`                                                                                                                              |
+| `libs/common` (`@flaps/common`)                               | Lib      | `stf-` | `'stf-my-feature'`                                                                                                                          |
+| `libs/user` (`@nuclia/user`)                                  | Lib      | `nus-` | `'nus-login'` (note: many older components in this lib use legacy `stf-`/`nuclia-`/`app-` selectors instead — `nus-` is not universal here) |
+| `libs/sync` (`@nuclia/sync`)                                  | Lib      | `nsy-` | `'nsy-icon'`                                                                                                                                |
+| `libs/pastanaga-angular` (`@guillotinaweb/pastanaga-angular`) | Lib      | `pa-`  | `'pa-button'`                                                                                                                               |
 
 > **Note on `apps/dashboard`:** The `project.json` for dashboard has `"prefix": ""` (an empty
 > string, likely an oversight). Despite this, **all existing dashboard components use `app-`**
-> (e.g. `app-root`, `app-synonyms`, `app-knowledge-box-home`). New components in
+> (e.g. `app-root`, `app-knowledge-box-home`, `app-usage-modal`). New components in
 > `apps/dashboard` must follow the same `app-` convention.
 
 ```ts

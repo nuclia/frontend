@@ -38,8 +38,9 @@ libs/sync/src/lib/
         ├── folder.ts        # FolderConnector (local path)
         ├── sitemap.ts       # SitemapConnector (sitemap.xml crawl)
         ├── rss.ts           # RSSConnector (RSS feed crawl)
-        ├── s3.ts            # S3Impl + AWS Assume Role connector
-        └── sitefinity.ts    # SitefinityConnector (feature-flagged)
+        ├── s3.ts            # S3Impl (single class; "AWS S3 Assume Role" is the same connector, distinguished by apikey_provider)
+        ├── sitefinity.ts    # SitefinityConnector (feature-flagged)
+        └── confluence.ts    # ConfluenceConnector (deprecated: true — filtered from display, kept for existing syncs)
 ```
 
 ---
@@ -78,7 +79,7 @@ Apps use: `loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes
 | `_useCloudSync` | Whether to use cloud API vs desktop agent                                     |
 | `_syncCache`    | Client-side cache of fetched sync entities                                    |
 | `_cacheUpdated` | Bump signal — triggers re-fetch in subscribed components                      |
-| `connectors$`   | Observable list of available connectors (filters deprecated, feature-flagged) |
+| `connectorsObs` | Observable list of available connectors (filters deprecated, feature-flagged) |
 
 **localStorage keys** (non-obvious — must stay in sync across files):
 
@@ -88,12 +89,16 @@ Apps use: `loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes
 
 ## `IConnector` Interface (minimum impl)
 
-Each connector must implement:
+Each connector class in `logic/connectors/` implements:
 
-- `getParameters()` — returns `ConnectorParameters` for the config form
-- `handleOAuth(params)` → `Observable<void>` — handles OAuth redirect
-- `authenticate(params)` → `Observable<ExternalConnectionCredentials>` — returns credentials
-- `browse(options)` → `Observable<SearchResults>` — folder browser (cloud connectors)
+- `getParametersSections()` → `Observable<Section[]>` — form sections/fields for the config UI
+- `getParametersValues()` → `ConnectorParameters` — current parameter values (e.g. read from localStorage)
+- `getStaticFolders()` → `SyncItem[]` — static root folders, if any (most connectors return `[]`)
+- `handleParameters?(params)` — optional: persist parameters after form submit (e.g. store an OAuth/API token)
+- `getLink?(resource)` → `Observable<{ uri; extra_headers }>` — optional: resolve a direct link to a synced resource
+
+OAuth handling and cloud-folder browsing are **not** part of `IConnector` — they live on `SyncService`
+(`addExternalConnection()`, `getCloudFolders()`) and on `AddSyncPageComponent` / `CloudFolderComponent`.
 
 ---
 
@@ -126,10 +131,10 @@ nx lint sync
    combineLatest([this.syncService.cacheUpdated, ...])
      .pipe(switchMap(() => this.syncService.getSyncsForKB(...)))
    ```
-3. **Cloud vs desktop branching** — every service method checks `this._useCloudSync.getValue()`. When adding new operations, always handle both paths.
+3. **Cloud vs desktop branching** — most service methods check `this._useCloudSync.getValue()` and branch internally. **Exception:** `updateSync()` is desktop-only (HTTP patch to the sync-agent); cloud updates go through the separate `updateCloudSync(syncId, updates, originalSync)` method — callers (e.g. `sync-details-page`) must branch on `sync.isCloud` themselves to pick the right one. `updateCloudSync`'s private `buildCloudPatchPayload()` explicitly sends `null` for fields that were cleared (empty array/undefined) but had a value in `originalSync` — omitting a field is not the same as clearing it.
 4. **Deprecated connectors** — `connectorsObs` filters `deprecated: true` from display; existing syncs continue to work.
 5. **Feature-flagged connector** — `sitefinity` filtered unless `features.unstable.sitefinityConnector`.
-6. **S3 Assume Role connector** — `s3.ts` exports `S3Impl` plus a separate AWS Assume Role implementation. The assume-role variant uses an IAM policy modal (`assume-role-modal`) to guide users through the bucket policy setup. Both share the same connector ID pattern.
+6. **S3 Assume Role connector** — there is a single `S3Impl` class (`s3.ts`); the "assume role" variant is the same connector registered with `apikey_provider: 'aws_s3_assume_role'`, not a separate implementation. `configuration-form.component.ts` shows an IAM policy modal (`AssumeRoleModalComponent`, imported from `@flaps/common`) to guide users through the bucket policy setup when that provider is used.
 7. **`PENDING_NEW_CONNECTOR` localStorage key** — stays in sync with `apps/dashboard/app.component` to resume OAuth flows after redirect.
 8. **Server polling** — `SyncRootComponent` uses dual-rate timer: 5 s when server down, skips 12 ticks when up (effectively ~60 s). Logic resets `count` on each actual poll.
 9. **Standalone components only** — no NgModules in this library.

@@ -23,8 +23,8 @@ nx test platform         # Jest tests
 ```
 apps/platform/src/
 ├── environments/
-│   ├── environment.ts       # client: 'platform', social_login: true
-│   └── environment.prod.ts  # same values in prod
+│   ├── environment.ts       # client: 'platform', backend: { social_login: true, new_api: true }
+│   └── environment.prod.ts  # same values, production: true
 └── app/
     ├── app.module.ts            # Root NgModule — HTTP, i18n, toast, BaseModule
     ├── app-routing.module.ts    # Top-level routes (see Routing Tree)
@@ -100,9 +100,12 @@ apps/platform/src/
 - **`/user/signup` redirects to `progress.com`.** The `redirectToSignUp` guard sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. The component slot is `PageNotFoundComponent` and is never rendered.
 - **`/at/:account` redirects to `/manage`**, not to a KB dashboard. This app is account-scoped
   (no `/at/:account/:zone/:kb` pattern). All KB routes live in `apps/dashboard`.
-- **`PlatformComponent` is standalone** (`imports: [RouterOutlet]`) but used inside an NgModule
-  route. This is an intentional pattern — declare it in the module via `imports[]`, not
-  `declarations[]`.
+- **`PlatformComponent`, `HomeComponent`, and `RandomComponent` are standalone** (default in
+  Angular 21 — no `standalone: false`) and are referenced directly as `component:` in
+  `app-routing.module.ts`. They are **not** added to `AppModule`'s `declarations[]` or
+  `imports[]` — standalone components used as route targets don't need any NgModule
+  registration. Only `AppComponent` is NgModule-style (`standalone: false`, declared in
+  `AppModule`).
 - **No HTTP interceptors registered.** The `AuthInterceptor` (used by `dashboard`/`rao`) is
   absent. Auth headers are injected by the SDK directly.
 - **`client: 'platform'`** in `environment.ts` — `BackendConfigurationService` uses this to

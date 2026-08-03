@@ -28,7 +28,7 @@ nx test auth         # Jest tests
 ```
 apps/auth/src/
 ├── app/
-│   ├── app.module.ts            # Root NgModule — HTTP interceptors, translate, toast
+│   ├── app.module.ts            # Root NgModule — translate, toast, splash screen
 │   ├── app.component.ts         # Root component — minimal shell
 │   ├── app-routing.module.ts    # Root routes (see below)
 │   ├── app-title.strategy.ts    # Page title strategy
@@ -79,12 +79,12 @@ this app. Never add auth logic directly to `apps/auth/src` — it belongs in `li
 
 ## Guards
 
-| Guard                   | From                | What it enforces                                                                                                                                                                                                                          |
-| ----------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authGuard`             | `@flaps/core`       | User must be authenticated; redirects to `/user/login` if not                                                                                                                                                                             |
-| `rootGuard`             | `@flaps/common`     | Redirects authenticated users to their home dashboard                                                                                                                                                                                     |
-| `awsGuard`              | `@flaps/common`     | Only allows access during AWS Marketplace onboarding flow                                                                                                                                                                                 |
-| `fallbackRedirectGuard` | `apps/auth` (local) | Catches ALL unmatched routes (`**`). Validates `cameFrom` via `getSafeOrigin()` (must be https + same main domain as backend). If valid, redirects to rag app preserving path + query. If invalid, returns `true` and shows the 404 page. |
+| Guard                   | From                | What it enforces                                                                                                                                                                                                                                            |
+| ----------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`             | `@flaps/core`       | User must be authenticated; redirects to `/user/login-redirect` if not. That path isn't a route in this app (it only exists in dashboard/platform/rao/manager-v2), so it falls through to `**` and `fallbackRedirectGuard` bounces the user to the rag app. |
+| `rootGuard`             | `@flaps/common`     | Redirects authenticated users to their home dashboard                                                                                                                                                                                                       |
+| `awsGuard`              | `@flaps/common`     | Only allows access during AWS Marketplace onboarding flow                                                                                                                                                                                                   |
+| `fallbackRedirectGuard` | `apps/auth` (local) | Catches ALL unmatched routes (`**`). Validates `cameFrom` via `getSafeOrigin()` (must be https + same main domain as backend). If valid, redirects to rag app preserving path + query. If invalid, returns `true` and shows the 404 page.                   |
 
 ---
 
@@ -93,7 +93,7 @@ this app. Never add auth logic directly to `apps/auth/src` — it belongs in `li
 | Alias                              | Purpose in this app                                                         |
 | ---------------------------------- | --------------------------------------------------------------------------- |
 | `@nuclia/user`                     | Provides `AuthUserModule`, `authRoutes`, and all auth UI components         |
-| `@flaps/core`                      | Provides `authGuard`, `BackendConfigurationService`, HTTP interceptors      |
+| `@flaps/core`                      | Provides `authGuard`, `BackendConfigurationService`, `SDKService`           |
 | `@flaps/common`                    | Provides `BaseComponent`, `rootGuard`, `awsGuard`, `AwsOnboardingComponent` |
 | `@nuclia/sistema`                  | Design tokens, password input                                               |
 | `@guillotinaweb/pastanaga-angular` | Base UI: buttons, toast, icons, text fields                                 |
@@ -131,10 +131,11 @@ The `BackendConfigurationService` from `@flaps/core` reads this config.
 
 ## Testing
 
-Runner: Jest 30 (`jest-preset-angular`). Tests are in `libs/user` (not in `apps/auth`).
+Runner: Jest 30 (`jest-preset-angular`). There are currently **no spec files in `apps/auth/src`**;
+all auth flow tests live in `libs/user`.
 
 ```bash
-nx test auth        # app-level tests (minimal — just bootstrapping)
+nx test auth        # passes trivially (passWithNoTests) — no specs exist here yet
 nx test user        # all auth flow tests live here
 ```
 
