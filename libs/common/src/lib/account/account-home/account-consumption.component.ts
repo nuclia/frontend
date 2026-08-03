@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { SDKService } from '@flaps/core';
-import { UsagePoint, UsageType } from '@nuclia/core';
+import { Router } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
+import { IKnowledgeBoxItem, UsagePoint, UsageType } from '@nuclia/core';
 import { combineLatest, forkJoin, map, ReplaySubject, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { MetricsService } from '../metrics.service';
 
@@ -14,6 +15,8 @@ import { MetricsService } from '../metrics.service';
 export class AccountConsumptionComponent implements OnInit, OnDestroy {
   private metrics = inject(MetricsService);
   private sdk = inject(SDKService);
+  private navigation = inject(NavigationService);
+  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll = new Subject<void>();
@@ -22,19 +25,26 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
 
   usage?: { [key: string]: UsagePoint[] };
   tokensCount?: { [key: string]: number };
+  accountTokens = 0;
+  accountSlug = '';
 
   kbs = this.sdk.kbList;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
 
   ngOnInit() {
+    this.metrics.account$.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
+      this.accountSlug = account.slug;
+    });
+
     this.metrics.period.pipe(takeUntil(this.unsubscribeAll)).subscribe((period) => {
       this.selectedPeriod.next(period);
     });
 
-    this.getUsageMap()
+    combineLatest([this.getUsageMap(), this.kbs])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((usage) => {
+      .subscribe(([usage]) => {
         this.usage = usage;
+        this.accountTokens = usage['account']?.[0]?.metrics?.find((m) => m.name === 'nuclia_tokens_billed')?.value || 0;
         this.tokensCount = Object.entries(usage).reduce(
           (acc, [key, value]) => {
             if (key !== 'account') {
@@ -51,6 +61,20 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  isTitleTruncated(element: HTMLElement | null): boolean {
+    return !!element && element.scrollWidth > element.clientWidth;
+  }
+
+  isNavigableKb(kb: Pick<IKnowledgeBoxItem, 'role_on_kb'>): boolean {
+    return !!kb.role_on_kb;
+  }
+
+  goToKb(kb: Pick<IKnowledgeBoxItem, 'slug' | 'zone'>): void {
+    if (!kb.slug) return;
+    this.sdk.nuclia.options.zone = kb.zone;
+    this.router.navigate([this.navigation.getKbUrl(this.accountSlug, kb.slug)]);
   }
 
   private getUsageMap() {

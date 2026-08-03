@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -87,6 +88,7 @@ export class NucliaTokensComponent implements OnDestroy {
   }
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
+  @Input({ transform: booleanAttribute }) showTotal = true;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
