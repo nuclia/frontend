@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Counters } from '@nuclia/core';
 import { NavigationService, SDKService, STFPipesModule } from '@flaps/core';
-import { AppService } from '@flaps/common';
-import { UploadDialogService, UploadType } from '@flaps/common';
+import { AppService, UploadDialogService, UploadType } from '@flaps/common';
 import { combineLatest, map } from 'rxjs';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
@@ -25,6 +25,7 @@ import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.compo
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
+    RouterModule,
     STFPipesModule,
     TranslateModule,
   ],
