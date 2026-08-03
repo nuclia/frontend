@@ -71,20 +71,53 @@
   </div>
   <div class="kb-header-actions">
     <pa-button
-      kind="primary"
+      aspect="basic"
       icon="search"
       iconAndText
       [routerLink]="kbUrl() + '/search'">
       {{ 'generic.search' | translate }}
     </pa-button>
     <pa-button
-      aspect="basic"
+      kind="primary"
       icon="upload"
       iconAndText
-      [routerLink]="kbUrl() + '/upload'">
+      [paPopup]="uploadMenu"
+      alignPopupOnLeft>
       {{ 'navbar.upload-data' | translate }}
     </pa-button>
     <!-- Shared with the onboarding header states so it's defined in one place. -->
     <app-kb-more-actions></app-kb-more-actions>
+    <pa-dropdown #uploadMenu>
+      <pa-option
+        icon="file"
+        (selectOption)="upload('files')">
+        {{ 'upload.files' | translate }}
+      </pa-option>
+      <pa-option
+        icon="folder"
+        (selectOption)="upload('folder')">
+        {{ 'upload.folder' | translate }}
+      </pa-option>
+      <pa-option
+        icon="link"
+        (selectOption)="upload('link')">
+        {{ 'upload.link' | translate }}
+      </pa-option>
+      <pa-option
+        icon="file-empty"
+        (selectOption)="upload('csv')">
+        {{ 'upload.texts' | translate }}
+      </pa-option>
+      <pa-option
+        icon="connectors"
+        (selectOption)="upload('sitemap')">
+        {{ 'upload.sitemap.title' | translate }}
+      </pa-option>
+      <pa-option
+        icon="chat"
+        (selectOption)="upload('qna')">
+        {{ 'upload.q_and_a' | translate }}
+      </pa-option>
+    </pa-dropdown>
   </div>
 </div>
