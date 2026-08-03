@@ -7,7 +7,7 @@
           <div class="agentic-source-row">
             <pa-select
               [value]="sourceId"
-              [options]="sourceOptionsForRow(sourceId)"
+              [options]="sourceOptionsByRow()[rowIndex]"
               [placeholder]="'search.configuration.agentic.sources-placeholder' | translate"
               (valueChange)="updateSourceAt(rowIndex, $event)"></pa-select>
             <pa-button

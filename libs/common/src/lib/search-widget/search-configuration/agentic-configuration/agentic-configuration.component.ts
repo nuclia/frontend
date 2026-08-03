@@ -112,6 +112,24 @@ export class AgenticConfigurationComponent {
       .map((name) => new OptionModel({ id: name, value: name, label: name })),
   ]);
 
+  readonly sourceOptionsByRow = computed(() => {
+    const selected = this.selectedSourceIds();
+    const sources = this.availableSources();
+    return selected.map((currentId) =>
+      sources
+        .filter((source) => source.id === currentId || !selected.includes(source.id))
+        .map(
+          (source) =>
+            new OptionModel({
+              id: source.id,
+              value: source.id,
+              label: source.id,
+              help: this.connectionTypeLabels[source.type] ?? source.type,
+            }),
+        ),
+    );
+  });
+
   /** KB's default generative model, used to preselect model dropdowns when no explicit choice was made. */
   readonly defaultGenerativeModel = computed(() => this.learningConfigurations()['generative_model']?.default || '');
 
@@ -288,21 +306,6 @@ export class AgenticConfigurationComponent {
   updateSourceAt(index: number, id: string) {
     this.selectedSourceIds.update((ids) => ids.map((value, i) => (i === index ? id : value)));
     this._emitAgenticConfig();
-  }
-
-  sourceOptionsForRow(currentId: string) {
-    const selected = this.selectedSourceIds();
-    return this.availableSources()
-      .filter((source) => source.id === currentId || !selected.includes(source.id))
-      .map(
-        (source) =>
-          new OptionModel({
-            id: source.id,
-            value: source.id,
-            label: source.id,
-            help: this.connectionTypeLabels[source.type] ?? source.type,
-          }),
-      );
   }
 
   updateMode(mode: AgenticSmartAgentMode) {

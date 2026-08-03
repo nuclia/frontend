@@ -406,7 +406,9 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   private _syncModeSignals(config: Widget.AnySearchConfiguration) {
     if (config.type === 'config') {
-      this.searchMode.set(config.searchMode || 'simple-rag');
+      // backwards compatibility for older configs without searchMode
+      const inferredMode = config.generativeAnswer?.generateAnswer ? 'simple-rag' : 'search';
+      this.searchMode.set(config.searchMode || inferredMode);
     }
   }
 
