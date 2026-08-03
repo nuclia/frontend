@@ -6,7 +6,7 @@ import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTooltipModule } from
 import { TranslateModule } from '@ngx-translate/core';
 import { Counters } from '@nuclia/core';
 import { NavigationService, SDKService, STFPipesModule } from '@flaps/core';
-import { AppService } from '@flaps/common';
+import { AppService, UploadDialogService, UploadType } from '@flaps/common';
 import { combineLatest, map } from 'rxjs';
 import { KbMoreActionsComponent } from '../kb-more-actions/kb-more-actions.component';
 
@@ -37,6 +37,7 @@ export class KbHeaderComponent {
   private sdk = inject(SDKService);
   private appService = inject(AppService);
   private navigationService = inject(NavigationService);
+  private uploadService = inject(UploadDialogService);
 
   private currentKb = this.sdk.currentKb;
 
@@ -57,4 +58,8 @@ export class KbHeaderComponent {
     ),
     { initialValue: '' },
   );
+
+  upload(type: UploadType) {
+    this.uploadService.upload(type);
+  }
 }
