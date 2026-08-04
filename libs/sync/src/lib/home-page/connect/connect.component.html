@@ -7,29 +7,35 @@
   <section>
     <form class="source-groups">
       <pa-radio-group [(value)]="selectedGroup">
-        <div>
-          <pa-radio
-            [help]="'sync.home-page.connect.local.radio-help' | translate"
-            value="local">
-            <span class="title-m">{{ 'sync.home-page.connect.local.radio-label' | translate }}</span>
-          </pa-radio>
-        </div>
-        <div class="separator-line"></div>
-        <div>
-          <pa-radio
-            [help]="'sync.home-page.connect.mcp.radio-help' | translate"
-            value="mcp">
-            <span class="title-m">{{ 'sync.home-page.connect.mcp.radio-label' | translate }}</span>
-          </pa-radio>
-        </div>
-        <div class="separator-line"></div>
-        <div>
-          <pa-radio
-            [help]="'sync.home-page.connect.external.radio-help' | translate"
-            value="external">
-            <span class="title-m">{{ 'sync.home-page.connect.external.radio-label' | translate }}</span>
-          </pa-radio>
-        </div>
+        @if (availableGroups().includes('local')) {
+          <div>
+            <pa-radio
+              [help]="'sync.home-page.connect.local.radio-help' | translate"
+              value="local">
+              <span class="title-m">{{ 'sync.home-page.connect.local.radio-label' | translate }}</span>
+            </pa-radio>
+          </div>
+        }
+        @if (availableGroups().includes('mcp')) {
+          <div class="separator-line"></div>
+          <div>
+            <pa-radio
+              [help]="'sync.home-page.connect.mcp.radio-help' | translate"
+              value="mcp">
+              <span class="title-m">{{ 'sync.home-page.connect.mcp.radio-label' | translate }}</span>
+            </pa-radio>
+          </div>
+        }
+        @if (availableGroups().includes('external')) {
+          <div class="separator-line"></div>
+          <div>
+            <pa-radio
+              [help]="'sync.home-page.connect.external.radio-help' | translate"
+              value="external">
+              <span class="title-m">{{ 'sync.home-page.connect.external.radio-label' | translate }}</span>
+            </pa-radio>
+          </div>
+        }
       </pa-radio-group>
     </form>
   </section>
@@ -38,11 +44,11 @@
 
   <section>
     <div class="section-description">
-      <div class="title-l">{{ 'sync.home-page.connect.' + selectedGroup + '.radio-label' | translate }}</div>
-      <div class="page-description">{{ 'sync.home-page.connect.' + selectedGroup + '.radio-help' | translate }}</div>
+      <div class="title-l">{{ 'sync.home-page.connect.' + selectedGroup() + '.radio-label' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.connect.' + selectedGroup() + '.radio-help' | translate }}</div>
     </div>
     <div class="connector-list">
-      @for (connector of sourceDefinitions[selectedGroup]; track connector.type) {
+      @for (connector of availableSources()?.[selectedGroup()] || []; track connector.type) {
         <nsy-connector
           [title]="connector.title"
           [logo]="connector.logo"
