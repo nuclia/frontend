@@ -1,5 +1,6 @@
 import type { Observable } from 'rxjs';
 import type { IErrorResponse } from '../../models';
+import type { AgenticConfig, AgenticConfigs, AgenticSource, AgenticSources } from './kb-agentic.models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
@@ -13,6 +14,7 @@ import type {
   SuggestOptions,
 } from '../search';
 import { Agentic } from '../search/agentic';
+import type { AragResponse, HistoryEntry } from '../retrieval-agent/interactions.models';
 import { TaskManager } from '../task';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import { ActivityMonitor } from './activity';
@@ -131,6 +133,15 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse>;
 
+  asViaWS(
+    agenticConfigId: string,
+    question: string,
+    keepOpen?: boolean,
+    searchConfiguration?: string,
+    groups?: string[],
+    chatHistory?: HistoryEntry[],
+  ): Observable<AragResponse | IErrorResponse>;
+
   find(
     query: string,
     features?: Search.Features[],
@@ -202,6 +213,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
   getSplitStrategies(): Observable<SplitStrategies>;
 
   getSearchConfigs(): Observable<SearchConfigs>;
+  getAgenticConfig(id: string): Observable<AgenticConfig>;
+  listAgenticConfigs(): Observable<AgenticConfigs>;
+  getAgenticSource(id: string): Observable<AgenticSource>;
+  listAgenticSources(): Observable<AgenticSources>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -274,6 +289,18 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   updateSearchConfig(id: string, config: SearchConfig): Observable<void>;
 
   deleteSearchConfig(id: string): Observable<void>;
+
+  createAgenticConfig(id: string, config: AgenticConfig): Observable<void>;
+
+  updateAgenticConfig(id: string, config: AgenticConfig): Observable<void>;
+
+  deleteAgenticConfig(id: string): Observable<void>;
+
+  createAgenticSource(id: string, source: AgenticSource): Observable<void>;
+
+  updateAgenticSource(id: string, source: AgenticSource): Observable<void>;
+
+  deleteAgenticSource(id: string): Observable<void>;
 }
 
 export interface KnowledgeBoxCreation {

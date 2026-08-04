@@ -2,6 +2,7 @@ import type {
   ChatOptions,
   FieldFullId,
   FieldMetadata,
+  HistoryEntry,
   IErrorResponse,
   IEvents,
   IResource,
@@ -17,6 +18,7 @@ import type {
   SuggestOptions,
 } from '@nuclia/core';
 import {
+  AnswerOperation,
   Ask,
   ExtractedDataTypes,
   getFilterFromLabelSet,
@@ -31,6 +33,7 @@ import { _, translateInstant } from './i18n';
 import type { EntityGroup, WidgetOptions } from './models';
 import { reset } from './reset';
 import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
+import { agenticStep } from './stores/widget.store';
 import {
   displayedMetadata,
   searchConfigId,
@@ -333,6 +336,103 @@ export const getAnswerWithoutRAG = (
     reasoning: options?.reasoning,
   };
   return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions, false);
+};
+
+/**
+ * Ask a question via the WebSocket agentic pipeline.
+ * Maps `AragResponse` messages from the WS stream to the `Ask.Answer` shape so they
+ * can be consumed by the existing chat state without UI changes.
+ *
+ * Streaming chunks accumulate progressively; a final complete answer is emitted with
+ * `incomplete: false` when the pipeline finishes.
+ */
+export const getAgenticAnswer = (
+  question: string,
+  configId: string,
+  keepOpen = false,
+  chatHistory?: HistoryEntry[],
+): Observable<Ask.Answer | IErrorResponse> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  return searchConfigId.pipe(
+    take(1),
+    switchMap((searchConfig) => {
+      let accumulatedText = '';
+
+      return nucliaApi!.knowledgeBox
+        .asViaWS(configId, question, keepOpen, searchConfig || undefined, SECURITY_GROUPS, chatHistory)
+        .pipe(
+          map((response): Ask.Answer | IErrorResponse => {
+            if (response.type === 'error') {
+              return response;
+            }
+
+            const aragAnswer = response.answer;
+
+            if (aragAnswer.step?.title) {
+              agenticStep.set({ title: aragAnswer.step.title, value: aragAnswer.step.value });
+            }
+
+            if (aragAnswer.streaming_response_chunk) {
+              agenticStep.set(null);
+              accumulatedText += aragAnswer.streaming_response_chunk.text;
+              return {
+                type: 'answer',
+                text: accumulatedText,
+                incomplete: !aragAnswer.streaming_response_chunk.last,
+                id: '',
+              } as Ask.Answer;
+            }
+
+            if (aragAnswer.answer) {
+              accumulatedText = aragAnswer.answer;
+            }
+
+            const isDone = aragAnswer.operation === AnswerOperation.done;
+            if (isDone) agenticStep.set(null);
+            return {
+              type: 'answer',
+              text: accumulatedText,
+              incomplete: !isDone,
+              id: '',
+            } as Ask.Answer;
+          }),
+        );
+    }),
+  );
+};
+
+export const getAgenticAnswerHttp = (
+  question: string,
+  configId: string,
+  chatHistory?: HistoryEntry[],
+): Observable<Ask.Answer | IErrorResponse> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  return searchConfigId.pipe(
+    take(1),
+    switchMap((searchConfig) => {
+      const context: Ask.ContextEntry[] | undefined =
+        chatHistory && chatHistory.length > 0
+          ? chatHistory.flatMap((entry) => [
+              { author: Ask.Author.USER, text: entry.question },
+              { author: Ask.Author.NUCLIA, text: entry.answer },
+            ])
+          : undefined;
+
+      const options: ChatOptions = {
+        agentic_config_id: configId,
+        security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
+        ...(searchConfig ? { search_configuration: searchConfig } : {}),
+      };
+
+      return nucliaApi!.knowledgeBox.ask(question, context, CHAT_MODE, options);
+    }),
+  );
 };
 
 export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {

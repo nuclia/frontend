@@ -1,9 +1,19 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.card,
+.card ::ng-deep .pa-card-wrapper {
+  height: 100%;
+}
+
 .connector {
   align-items: center;
   display: flex;
   flex-direction: column;
   gap: rhythm(1);
   width: rhythm(12);
+  height: 100%;
+}
+
+.title {
+  text-align: center;
 }

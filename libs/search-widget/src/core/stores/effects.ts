@@ -4,6 +4,7 @@ import type {
   ChatOptions,
   FieldFullId,
   FilterExpression,
+  HistoryEntry,
   IErrorResponse,
   LabelSets,
   Search,
@@ -31,6 +32,8 @@ import {
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import {
   find,
+  getAgenticAnswer,
+  getAgenticAnswerHttp,
   getAnswer,
   getAnswerWithoutRAG,
   getEntities,
@@ -115,6 +118,8 @@ import {
   viewerState,
 } from './viewer.store';
 import {
+  agenticConfigId,
+  agenticTransport,
   disableRAG,
   debug,
   hasQueryImage,
@@ -247,21 +252,35 @@ export function initAnswer(dispatch?: (event: string, details: { query: string }
             widgetImageRagStrategies.pipe(take(1)),
             isDefaultCitationsEnabled.pipe(take(1)),
             isLLMCitationsEnabled.pipe(take(1)),
+            agenticConfigId.pipe(take(1)),
+            agenticTransport.pipe(take(1)),
           ]).pipe(
-            switchMap(([ragStrategies, ragImageStrategies, isDefaultCitationsEnabled, isLLMCitationsEnabled]) => {
-              const chatOptions: ChatOptions = {};
-              if (ragStrategies.length > 0) {
-                chatOptions.rag_strategies = ragStrategies;
-                chatOptions.rag_images_strategies = ragImageStrategies;
-              }
-              if (isLLMCitationsEnabled) {
-                chatOptions.citations = 'llm_footnotes';
-              } else if (isDefaultCitationsEnabled) {
-                chatOptions.citations = true;
-              }
-              dispatch?.('chat', { query: question });
-              return askQuestion(question, reset, chatOptions);
-            }),
+            switchMap(
+              ([
+                ragStrategies,
+                ragImageStrategies,
+                isDefaultCitationsEnabled,
+                isLLMCitationsEnabled,
+                configId,
+                transport,
+              ]) => {
+                dispatch?.('chat', { query: question });
+                if (configId) {
+                  return askQuestion(question, reset, {}, configId, transport);
+                }
+                const chatOptions: ChatOptions = {};
+                if (ragStrategies.length > 0) {
+                  chatOptions.rag_strategies = ragStrategies;
+                  chatOptions.rag_images_strategies = ragImageStrategies;
+                }
+                if (isLLMCitationsEnabled) {
+                  chatOptions.citations = 'llm_footnotes';
+                } else if (isDefaultCitationsEnabled) {
+                  chatOptions.citations = true;
+                }
+                return askQuestion(question, reset, chatOptions);
+              },
+            ),
           ),
         ),
       )
@@ -571,9 +590,90 @@ export function askQuestion(
   question: string,
   reset: boolean,
   options: BaseSearchOptions = {},
+  configId?: string,
+  transport: 'http' | 'websocket' = 'http',
 ): Observable<Ask.Answer | IErrorResponse> {
   let hasError = false;
   let isDebugMode = false;
+
+  if (configId && transport === 'websocket') {
+    return of({ question, reset }).pipe(
+      tap((data) => {
+        currentQuestion.set(data);
+        pendingResults.set(true);
+      }),
+      switchMap(() =>
+        chat.pipe(
+          take(1),
+          map((entries) =>
+            entries
+              .filter((e) => !e.answer.incomplete && !e.answer.inError)
+              .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
+          ),
+          switchMap((chatHistory) => getAgenticAnswer(question, configId, false, chatHistory)),
+        ),
+      ),
+      tap((result) => {
+        if (result.type === 'error') {
+          if (!hasError) {
+            hasError = true;
+            const answer = currentAnswer.getValue();
+            appendChatEntry.set({
+              question,
+              answer: { ...answer, text: answer.text, incomplete: false, inError: true, error: result.detail },
+            });
+            chatError.set(result);
+            pendingResults.set(false);
+          }
+        } else if (result.incomplete) {
+          currentAnswer.set(result);
+        } else {
+          appendChatEntry.set({ question, answer: result });
+          pendingResults.set(false);
+        }
+      }),
+    );
+  }
+
+  if (configId && transport !== 'websocket') {
+    return of({ question, reset }).pipe(
+      tap((data) => {
+        currentQuestion.set(data);
+        pendingResults.set(true);
+      }),
+      switchMap(() =>
+        chat.pipe(
+          take(1),
+          map((entries) =>
+            entries
+              .filter((e) => !e.answer.incomplete && !e.answer.inError)
+              .map((e): HistoryEntry => ({ question: e.question, answer: e.answer.text })),
+          ),
+          switchMap((chatHistory) => getAgenticAnswerHttp(question, configId, chatHistory)),
+        ),
+      ),
+      tap((result) => {
+        if (result.type === 'error') {
+          if (!hasError) {
+            hasError = true;
+            const answer = currentAnswer.getValue();
+            appendChatEntry.set({
+              question,
+              answer: { ...answer, text: answer.text, incomplete: false, inError: true, error: result.detail },
+            });
+            chatError.set(result);
+            pendingResults.set(false);
+          }
+        } else if ((result as Ask.Answer).incomplete) {
+          currentAnswer.set(result as Ask.Answer);
+        } else {
+          appendChatEntry.set({ question, answer: result as Ask.Answer });
+          pendingResults.set(false);
+        }
+      }),
+    );
+  }
+
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(() =>

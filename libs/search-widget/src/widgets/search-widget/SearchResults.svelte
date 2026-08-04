@@ -25,6 +25,7 @@
     isAnswerEnabled,
     isEmptySearchQuery,
     isReasoning,
+    agenticStep,
     jsonAnswer,
     jsonSchemaEnabled,
     loadFonts,
@@ -198,7 +199,9 @@
     </div>
     {#if $showLoading}
       <div class="loading">
-        <LoadingDots label={$isReasoning ? $_('answer.reasoning') + '…' : ''} />
+        <LoadingDots
+          label={$isReasoning ? $_('answer.reasoning') + '…' : $agenticStep ? $agenticStep.title + '…' : ''}
+          sublabel={$agenticStep?.value ?? ''} />
       </div>
     {/if}
   {/if}

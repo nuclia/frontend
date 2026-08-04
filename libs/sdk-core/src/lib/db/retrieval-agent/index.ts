@@ -1,3 +1,4 @@
+export * from './agentic-websocket';
 export * from './driver.models';
 export * from './interactions.models';
 export * from './memory.models';

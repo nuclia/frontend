@@ -9,6 +9,7 @@ import {
   retry,
   RetryConfig,
   shareReplay,
+  Subject,
   switchMap,
   tap,
   throwError,
@@ -48,11 +49,14 @@ import {
 } from '../search';
 import { Agentic } from '../search/agentic';
 import { Ask, PredictAnswerOptions } from '../search/ask.models';
+import { setupAgenticWSHandlers } from '../retrieval-agent/agentic-websocket';
+import { AragResponse, HistoryEntry, InteractionOperation } from '../retrieval-agent/interactions.models';
 import { TaskManager } from '../task';
 import { Training } from '../training';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { ActivityMonitor } from './activity';
+import { AgenticConfig, AgenticConfigs, AgenticSource, AgenticSources } from './kb-agentic.models';
 import {
   Counters,
   Entities,
@@ -927,6 +931,70 @@ export class KnowledgeBox implements IKnowledgeBox {
   getSearchConfigs(): Observable<SearchConfigs> {
     return this.nuclia.rest.get<SearchConfigs>(`${this.path}/search_configurations`);
   }
+
+  getAgenticConfig(id: string): Observable<AgenticConfig> {
+    return this.nuclia.rest.get<AgenticConfig>(`${this.path}/agentic_configs/${id}`);
+  }
+
+  listAgenticConfigs(): Observable<AgenticConfigs> {
+    return this.nuclia.rest.get<AgenticConfigs>(`${this.path}/agentic_configs`);
+  }
+
+  getAgenticSource(id: string): Observable<AgenticSource> {
+    return this.nuclia.rest.get<AgenticSource>(`${this.path}/sources/${id}`);
+  }
+
+  listAgenticSources(): Observable<AgenticSources> {
+    return this.nuclia.rest.get<AgenticSources>(`${this.path}/sources`);
+  }
+
+  /**
+   * Asks a question using an agentic pipeline (Rephrase → SmartAgent → Summarize) over WebSocket.
+   *
+   * Requires an `agentic_config_id` that has been created via `createAgenticConfig()`.
+   * Set `keepOpen: true` to keep the connection open for follow-up questions.
+   */
+  asViaWS(
+    agenticConfigId: string,
+    question: string,
+    keepOpen = false,
+    searchConfiguration?: string,
+    groups?: string[],
+    chatHistory?: HistoryEntry[],
+  ): Observable<AragResponse | IErrorResponse> {
+    const subject = new Subject<AragResponse | IErrorResponse>();
+
+    this.getTempToken(undefined, true).subscribe({
+      next: (token) => {
+        const basePath = `${this.path}/ask`;
+        const baseWsUrl = this.nuclia.rest.getWsUrl(basePath, token);
+        const queryParams = new URLSearchParams({ agentic_config_id: agenticConfigId });
+        if (keepOpen) {
+          queryParams.set('keep_open', 'true');
+        }
+        if (searchConfiguration) {
+          queryParams.set('search_configuration', searchConfiguration);
+        }
+        (groups || []).forEach((g) => queryParams.append('groups', g));
+        const wsUrl = `${baseWsUrl}&${queryParams.toString()}`;
+
+        const ws = new WebSocket(wsUrl);
+        setupAgenticWSHandlers(
+          ws,
+          { question, operation: InteractionOperation.question, headers: {}, chat_history: chatHistory },
+          subject,
+          undefined,
+          !keepOpen,
+        );
+      },
+      error: (error) => {
+        subject.next({ type: 'error', status: error.status, detail: error.detail, body: error.body });
+        subject.complete();
+      },
+    });
+
+    return subject.asObservable();
+  }
 }
 
 /** Extends `KnowledgeBox` with all the write operations. */
@@ -1263,6 +1331,30 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteSearchConfig(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/search_configurations/${id}`);
+  }
+
+  createAgenticConfig(id: string, config: AgenticConfig): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/agentic_configs/${id}`, config);
+  }
+
+  updateAgenticConfig(id: string, config: AgenticConfig): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/agentic_configs/${id}`, config);
+  }
+
+  deleteAgenticConfig(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/agentic_configs/${id}`);
+  }
+
+  createAgenticSource(id: string, source: AgenticSource): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/sources/${id}`, source);
+  }
+
+  updateAgenticSource(id: string, source: AgenticSource): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/sources/${id}`, source);
+  }
+
+  deleteAgenticSource(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/sources/${id}`);
   }
 
   /** Creates a new KV schema in the Knowledge Box. */

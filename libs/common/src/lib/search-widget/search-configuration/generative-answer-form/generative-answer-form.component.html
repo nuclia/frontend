@@ -1,18 +1,4 @@
 <form [formGroup]="form">
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="generateAnswer"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">
-        {{ 'search.configuration.generative-answer.generate-answer.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.generative-answer.generate-answer.toggle-description' | translate }}
-    </div>
-  </div>
   @if (generateAnswerEnabled) {
     <div class="config-form-field">
       <div class="title-xs">{{ 'search.configuration.generative-answer.generative-model.title' | translate }}</div>

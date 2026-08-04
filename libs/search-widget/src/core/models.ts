@@ -82,6 +82,8 @@ export interface WidgetOptions {
   not_enough_data_message?: string;
   metadata?: string;
   security_groups?: string[];
+  agentic_config_id?: string;
+  agentic_transport?: 'http' | 'websocket';
 }
 
 export interface WidgetAction {

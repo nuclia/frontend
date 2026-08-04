@@ -1,4 +1,5 @@
 import {
+  AgenticConfig,
   FullResourceStrategy,
   GraphStrategy,
   HierarchyStrategy,
@@ -141,13 +142,28 @@ export namespace Widget {
   export type TypedSearchConfiguration = SearchConfiguration & { type: 'config' };
   export type AnySearchConfiguration = TypedSearchConfiguration | SearchAPIConfig;
 
-  export interface SearchConfiguration {
-    id: string;
+  export interface AgenticSearchConfig {
+    configId?: string; // agentic_config_id
+    transport?: 'http' | 'websocket';
+    searchConfigId?: string;
+    config?: AgenticConfig;
+  }
+
+  export interface StandardSearchFields {
     searchBox: SearchBoxConfig;
     generativeAnswer: GenerativeAnswerConfig;
     resultDisplay: ResultDisplayConfig;
     routing: RoutingConfig;
   }
+
+  export interface SearchConfiguration extends Partial<StandardSearchFields> {
+    id: string;
+    searchMode?: 'agentic' | 'simple-rag' | 'search';
+    agentic?: AgenticSearchConfig;
+  }
+
+  export type StandardSearchConfiguration = SearchConfiguration & StandardSearchFields;
+  export type StandardTypedSearchConfiguration = StandardSearchConfiguration & { type: 'config' };
 
   export interface WidgetConfiguration {
     widgetMode: 'page' | 'popup' | 'chat' | 'floating-chat';
@@ -264,7 +280,7 @@ export namespace Widget {
 export const NUCLIA_STANDARD_SEARCH_CONFIG_ID = 'nuclia-standard';
 export const INITIAL_CITATION_THRESHOLD = 0.4;
 
-const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
+export const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   filter: false,
   filters: {
     labels: true,
@@ -350,7 +366,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
     includeParagraphImages: false,
   },
 };
-const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
+export const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   displayResults: false,
   showResultType: 'llmCitations',
   displayMetadata: false,
@@ -369,9 +385,14 @@ const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   sortResults: false,
 };
 
-export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
+export const DEFAULT_ROUTING_CONFIG: Widget.RoutingConfig = {
+  useRouting: false,
+};
+
+export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.StandardTypedSearchConfiguration = {
   type: 'config',
   id: NUCLIA_STANDARD_SEARCH_CONFIG_ID,
+  searchMode: 'simple-rag',
   searchBox: {
     ...DEFAULT_SEARCH_BOX_CONFIG,
     suggestions: true,
@@ -385,9 +406,7 @@ export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
     ...DEFAULT_RESULT_DISPLAY_CONFIG,
     displayResults: true,
   },
-  routing: {
-    useRouting: false,
-  },
+  routing: { ...DEFAULT_ROUTING_CONFIG },
 };
 
 export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
@@ -517,14 +536,59 @@ export function parsePreselectedFilters(preselectedFilters: string): string[] | 
     : preselectedFilters.split(',');
 }
 
+function getAgenticOptions(searchConfig: Widget.SearchConfiguration): {
+  agentic_config_id?: string;
+  agentic_transport?: 'http' | 'websocket';
+  search_config_id?: string;
+} {
+  if (searchConfig.searchMode !== 'agentic') return {};
+  return {
+    agentic_config_id: searchConfig.agentic?.configId || undefined,
+    agentic_transport: searchConfig.agentic?.transport ?? 'websocket',
+    search_config_id: searchConfig.agentic?.searchConfigId || undefined,
+  };
+}
+
+function getStandardWidgetParameters(
+  searchConfig: Widget.StandardSearchConfiguration,
+  widgetOptions: Widget.WidgetConfiguration,
+) {
+  const { searchBox, generativeAnswer, resultDisplay } = searchConfig;
+  const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(generativeAnswer.ragStrategies);
+
+  return {
+    features: getFeatures(searchConfig, widgetOptions),
+    prompt: getPrompt(generativeAnswer),
+    system_prompt: getSystemPrompt(generativeAnswer),
+    rephrase_prompt: getRephrasePrompt(searchBox),
+    filters: getFilters(searchBox),
+    labelsets_excluded_from_filters: getLabelSetsExcludedFromFilters(searchBox),
+    initial_filters: getInitialFilters(searchBox),
+    preselected_filters: getPreselectedFilters(searchBox),
+    filter_expression: getPreselectedFilterExpression(searchBox),
+    rag_strategies: ragProperties,
+    rag_images_strategies: ragImagesProperties,
+    ask_to_resource: getAskToResource(generativeAnswer),
+    reasoning: getReasoning(generativeAnswer),
+    routing: getRouting(searchConfig.routing),
+    max_tokens: getMaxTokens(generativeAnswer),
+    max_output_tokens: getMaxOutputTokens(generativeAnswer),
+    max_paragraphs: getMaxParagraphs(searchBox),
+    generativemodel: generativeAnswer.generativeModel ? generativeAnswer.generativeModel : '',
+    vectorset: searchBox.vectorset ? searchBox.vectorset : '',
+    json_schema: getJsonSchema(resultDisplay),
+    metadata: getMetadata(resultDisplay),
+    reranker: getReranker(searchBox),
+    rrf_boosting: getRrfBoosting(searchBox),
+    citation_threshold: getCitationThreshold(resultDisplay),
+    security_groups: getSecurityGroups(searchBox),
+  };
+}
+
 export function getWidgetParameters(
   searchConfig: Widget.SearchConfiguration,
   widgetOptions: Widget.WidgetConfiguration,
 ) {
-  const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(
-    searchConfig.generativeAnswer.ragStrategies,
-  );
-
   const floatingWidgetOptions =
     widgetOptions.widgetMode === 'floating-chat'
       ? {
@@ -537,31 +601,7 @@ export function getWidgetParameters(
         }
       : {};
 
-  return {
-    features: getFeatures(searchConfig, widgetOptions),
-    prompt: getPrompt(searchConfig.generativeAnswer),
-    system_prompt: getSystemPrompt(searchConfig.generativeAnswer),
-    rephrase_prompt: getRephrasePrompt(searchConfig.searchBox),
-    filters: getFilters(searchConfig.searchBox),
-    labelsets_excluded_from_filters: getLabelSetsExcludedFromFilters(searchConfig.searchBox),
-    initial_filters: getInitialFilters(searchConfig.searchBox),
-    preselected_filters: getPreselectedFilters(searchConfig.searchBox),
-    filter_expression: getPreselectedFilterExpression(searchConfig.searchBox),
-    rag_strategies: ragProperties,
-    rag_images_strategies: ragImagesProperties,
-    ask_to_resource: getAskToResource(searchConfig.generativeAnswer),
-    reasoning: getReasoning(searchConfig.generativeAnswer),
-    routing: getRouting(searchConfig.routing),
-    max_tokens: getMaxTokens(searchConfig.generativeAnswer),
-    max_output_tokens: getMaxOutputTokens(searchConfig.generativeAnswer),
-    max_paragraphs: getMaxParagraphs(searchConfig.searchBox),
-    generativemodel: searchConfig.generativeAnswer.generativeModel ? searchConfig.generativeAnswer.generativeModel : '',
-    vectorset: searchConfig.searchBox.vectorset ? searchConfig.searchBox.vectorset : '',
-    json_schema: getJsonSchema(searchConfig.resultDisplay),
-    metadata: getMetadata(searchConfig.resultDisplay),
-    reranker: getReranker(searchConfig.searchBox),
-    rrf_boosting: getRrfBoosting(searchConfig.searchBox),
-    citation_threshold: getCitationThreshold(searchConfig.resultDisplay),
+  const sharedWidgetOptions = {
     placeholder: getPlaceholder(widgetOptions),
     chat_placeholder: getChatPlaceholder(widgetOptions),
     copy_disclaimer: getCopyDisclaimer(widgetOptions),
@@ -569,52 +609,67 @@ export function getWidgetParameters(
     not_enough_data_message: getNotEnoughDataMessage(widgetOptions),
     mode: getWidgetTheme(widgetOptions),
     feedback: widgetOptions.feedback,
-    security_groups: getSecurityGroups(searchConfig.searchBox),
     ...floatingWidgetOptions,
+  };
+
+  if (searchConfig.searchMode === 'agentic') {
+    // Agentic configs don't use searchBox/generativeAnswer/resultDisplay/routing at all — everything relevant
+    // is carried by `getAgenticOptions` (agentic_config_id/transport/search_config_id).
+    return {
+      features: getFeatures(searchConfig, widgetOptions),
+      ...getAgenticOptions(searchConfig),
+      ...sharedWidgetOptions,
+    };
+  }
+
+  // Guaranteed non-agentic here (searchMode !== 'agentic'), so searchBox/etc. are populated.
+  return {
+    ...getStandardWidgetParameters(searchConfig as Widget.StandardSearchConfiguration, widgetOptions),
+    ...sharedWidgetOptions,
+  };
+}
+
+function getStandardFeatures(config: Widget.StandardSearchConfiguration) {
+  const { searchBox, generativeAnswer, resultDisplay } = config;
+  return {
+    answers: generativeAnswer.generateAnswer,
+    preferMarkdown: generativeAnswer.generateAnswer && generativeAnswer.preferMarkdown,
+    contextImages:
+      generativeAnswer.generateAnswer && generativeAnswer.useImages && generativeAnswer.imageUsage === 'context',
+    queryImage:
+      generativeAnswer.generateAnswer && generativeAnswer.useImages && generativeAnswer.imageUsage === 'query',
+    semanticOnly: searchBox.generateAnswerWith === 'only-semantic',
+    rephrase: searchBox.rephraseQuery,
+    filter: searchBox.filter,
+    orFilterLogic: searchBox.filter && searchBox.filterLogic === 'or',
+    andOrFilterLogic: searchBox.filter && searchBox.filterLogic === 'and-or',
+    labelFilterCounts: searchBox.labelFilterCounts,
+    highlight: searchBox.highlight,
+    suggestions: searchBox.suggestions,
+    autocompleteFromNERs: searchBox.suggestions && searchBox.autocompleteFromNERs,
+    showHidden: searchBox.showHiddenResources,
+    citations: resultDisplay.displayResults && resultDisplay.showResultType === 'citations',
+    llmCitations: resultDisplay.displayResults && resultDisplay.showResultType === 'llmCitations',
+    hideResults:
+      !resultDisplay.displayResults ||
+      resultDisplay.showResultType === 'citations' ||
+      resultDisplay.showResultType === 'llmCitations',
+    displayMetadata: resultDisplay.displayMetadata,
+    hideAnswer: resultDisplay.hideAnswer,
+    hideThumbnails: !resultDisplay.displayThumbnails,
+    showAttachedImages: resultDisplay.showAttachedImages,
+    relations: resultDisplay.relations,
+    knowledgeGraph: resultDisplay.relationGraph,
+    displayFieldList: resultDisplay.displayFieldList,
+    disableRAG: searchBox.useSearchResults === undefined ? false : !searchBox.useSearchResults,
+    sortResults: resultDisplay.sortResults,
+    noScroll: resultDisplay.noScroll,
   };
 }
 
 export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: Widget.WidgetConfiguration): string {
-  const widgetFeatures = {
-    // Search configuration
-    answers: config.generativeAnswer.generateAnswer,
-    preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
-    contextImages:
-      config.generativeAnswer.generateAnswer &&
-      config.generativeAnswer.useImages &&
-      config.generativeAnswer.imageUsage === 'context',
-    queryImage:
-      config.generativeAnswer.generateAnswer &&
-      config.generativeAnswer.useImages &&
-      config.generativeAnswer.imageUsage === 'query',
-    semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
-    rephrase: config.searchBox.rephraseQuery,
-    filter: config.searchBox.filter,
-    orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
-    andOrFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'and-or',
-    labelFilterCounts: config.searchBox.labelFilterCounts,
-    highlight: config.searchBox.highlight,
-    suggestions: config.searchBox.suggestions,
-    autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
-    showHidden: config.searchBox.showHiddenResources,
-    citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
-    llmCitations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'llmCitations',
-    hideResults:
-      !config.resultDisplay.displayResults ||
-      config.resultDisplay.showResultType === 'citations' ||
-      config.resultDisplay.showResultType === 'llmCitations',
-    displayMetadata: config.resultDisplay.displayMetadata,
-    hideAnswer: config.resultDisplay.hideAnswer,
-    hideThumbnails: !config.resultDisplay.displayThumbnails,
-    showAttachedImages: config.resultDisplay.showAttachedImages,
-    relations: config.resultDisplay.relations,
-    knowledgeGraph: config.resultDisplay.relationGraph,
-    displayFieldList: config.resultDisplay.displayFieldList,
-    disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
-    sortResults: config.resultDisplay.sortResults,
-    noScroll: config.resultDisplay.noScroll,
-
-    // Widget options
+  // Widget-level options apply regardless of search mode
+  const sharedFeatures = {
     hideLogo: widgetOptions.hideLogo,
     permalink: widgetOptions.permalink,
     displaySearchButton: widgetOptions.displaySearchButton,
@@ -639,7 +694,19 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
     hideReset: widgetOptions.hideReset,
   };
-  return Object.entries(widgetFeatures)
+
+  // Guaranteed non-agentic here when not 'agentic': searchBox/generativeAnswer/resultDisplay are only left
+  // undefined on agentic search configs, handled by the 'agentic' branch below.
+  const modeFeatures =
+    config.searchMode === 'agentic'
+      ? {
+          answers: true,
+          preferMarkdown: false,
+          hideResults: true,
+        }
+      : getStandardFeatures(config as Widget.StandardSearchConfiguration);
+
+  return Object.entries({ ...modeFeatures, ...sharedFeatures })
     .filter(([, enabled]) => enabled)
     .map(([feature]) => feature)
     .join(',');
@@ -704,11 +771,13 @@ export function getPreselectedFilterValue(config: Widget.SearchBoxConfig): strin
     .split('\n')
     .map((filter) => {
       let formattedFilter = filter.trim();
-      try {
-        formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
-      } catch (e) {
-        // do nothing more if the filter wasn't in JSON format
-        console.warn(e);
+      if (formattedFilter) {
+        try {
+          formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
+        } catch (e) {
+          // do nothing more if the filter wasn't in JSON format
+          console.warn(e);
+        }
       }
       return formattedFilter;
     })

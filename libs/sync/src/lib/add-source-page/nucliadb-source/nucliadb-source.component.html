@@ -1,0 +1,27 @@
+<div class="extra-form">
+  <pa-select
+    readonly
+    label="Knowledge Box"
+    [value]="'current'">
+    <pa-option value="current">{{ currentKb | async }}</pa-option>
+  </pa-select>
+  <div class="separator"></div>
+  <div class="body-m">
+    {{ 'sync.add-source-page.nucliadb.filter-expression-help' | translate }}
+  </div>
+  <nsi-info-card>
+    <span [innerHTML]="'sync.add-source-page.nucliadb.filter-expression-format' | translate"></span>
+  </nsi-info-card>
+  <nsi-expandable-textarea
+    [formControl]="form.controls.filter_expression"
+    resizable
+    rows="4"
+    modalTitle="sync.add-source-page.nucliadb.filter-expression">
+    {{ 'sync.add-source-page.nucliadb.filter-expression' | translate }}
+  </nsi-expandable-textarea>
+  <nsi-button-mini
+    icon="circle-plus"
+    (click)="openAssistant()">
+    {{ 'sync.add-source-page.nucliadb.use-assistant' | translate }}
+  </nsi-button-mini>
+</div>

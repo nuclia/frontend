@@ -80,7 +80,7 @@ export function isSameConfigurations(
   return deepEqual(configA, configB);
 }
 
-function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSearchOptions {
+function getBaseSearchOptions(searchConfig: { searchBox: Widget.SearchBoxConfig }): BaseSearchOptions {
   const options: BaseSearchOptions = {
     vectorset: searchConfig.searchBox.vectorset || undefined,
     highlight: searchConfig.searchBox.highlight,
@@ -111,7 +111,21 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
   return options;
 }
 
-export function getChatOptions(searchConfig: Widget.SearchConfiguration, defaultGenerativeModel?: string): ChatOptions {
+export function getAgenticChatOptions(searchConfig: Widget.SearchConfiguration): ChatOptions {
+  const requestOptions: ChatOptions = {};
+  if (searchConfig.agentic?.configId) {
+    requestOptions.agentic_config_id = searchConfig.agentic.configId;
+  }
+  if (searchConfig.agentic?.searchConfigId) {
+    requestOptions.search_configuration = searchConfig.agentic.searchConfigId;
+  }
+  return requestOptions;
+}
+
+export function getChatOptions(
+  searchConfig: Widget.StandardSearchConfiguration,
+  defaultGenerativeModel?: string,
+): ChatOptions {
   const citations = (() => {
     if (searchConfig.resultDisplay.showResultType === 'citations') return true;
     if (searchConfig.resultDisplay.showResultType === 'llmCitations') return 'llm_footnotes' as const;
@@ -174,7 +188,7 @@ export function getChatOptions(searchConfig: Widget.SearchConfiguration, default
   return requestOptions;
 }
 
-export function getFindOptions(searchConfig: Widget.SearchConfiguration): SearchOptions {
+export function getFindOptions(searchConfig: Widget.StandardSearchConfiguration): SearchOptions {
   const options: SearchOptions = {
     ...getBaseSearchOptions(searchConfig),
   };
@@ -191,8 +205,11 @@ export function getFindOptions(searchConfig: Widget.SearchConfiguration): Search
   return options;
 }
 
-export function getSearchConfigFromSearchOptions(id: string, searchOptions: SearchConfig): Widget.SearchConfiguration {
-  const config = cloneDeep(NUCLIA_STANDARD_SEARCH_CONFIG) as Widget.SearchConfiguration;
+export function getSearchConfigFromSearchOptions(
+  id: string,
+  searchOptions: SearchConfig,
+): Widget.StandardSearchConfiguration {
+  const config = cloneDeep(NUCLIA_STANDARD_SEARCH_CONFIG) as Widget.StandardSearchConfiguration;
   config.id = id;
   const options = searchOptions.config;
   config.searchBox = {

@@ -209,11 +209,7 @@ export interface IDb {
   getNUAClients(accountId: string): Observable<NUAClient[]>;
   getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient>;
   createNUAClient(accountId: string, data: NUAClientPayload): Observable<NUAClientResponse>;
-  createNUAClient(
-    accountId: string,
-    data: NUAClientPayload,
-    zone: string,
-  ): Observable<NUAClientResponse>;
+  createNUAClient(accountId: string, data: NUAClientPayload, zone: string): Observable<NUAClientResponse>;
   editNUAClient(accountId: string, internalId: string, data: NUAClientEditPayload, zone: string): Observable<NUAClient>;
   renewNUAClient(accountId: string, internalId: string): Observable<NUAClientResponse>;
   renewNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClientResponse>;

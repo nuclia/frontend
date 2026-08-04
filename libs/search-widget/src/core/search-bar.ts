@@ -3,6 +3,8 @@ import { getAnswer } from './api';
 import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
+  agenticConfigId,
+  agenticTransport,
   andOrFilterLogic,
   askQuestion,
   combinedFilterExpression,
@@ -98,6 +100,8 @@ export const setupTriggerSearch = (
                 preferMarkdown.pipe(take(1)),
                 widgetJsonSchema.pipe(take(1)),
                 searchConfigId.pipe(take(1)),
+                agenticConfigId.pipe(take(1)),
+                agenticTransport.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -119,8 +123,21 @@ export const setupTriggerSearch = (
                     preferMarkdown,
                     jsonSchema,
                     searchConfigId,
+                    agenticConfigId,
+                    transport,
                   ]) => {
                     dispatch('search', { query, filters });
+                    if (agenticConfigId && !trigger?.more) {
+                      return askQuestion(query, true, {}, agenticConfigId, transport).pipe(
+                        filter((res) => res.type !== 'error'),
+                        map((res) => ({
+                          results: (res as Ask.Answer).sources,
+                          append: false,
+                          hideResults,
+                          loadingMore: false,
+                        })),
+                      );
+                    }
                     const useFilterExpression = filterExpression || andOrFilterLogic;
                     const currentOptions: SearchOptions = {
                       ...options,

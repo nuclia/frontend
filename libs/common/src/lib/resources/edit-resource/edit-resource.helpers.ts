@@ -358,8 +358,8 @@ export function getParagraphsWithImages(
       ? fieldData.extracted?.file?.nested_list_position
       : getLinkFilesPositions(paragraphs, generatedFiles);
 
-  const imagePositions = Object.entries(nestedListPosition || {}).filter(
-    ([filename]) => generatedFiles?.[filename]?.content_type?.startsWith('image/'),
+  const imagePositions = Object.entries(nestedListPosition || {}).filter(([filename]) =>
+    generatedFiles?.[filename]?.content_type?.startsWith('image/'),
   );
   if (imagePositions.length === 0) {
     return paragraphs;

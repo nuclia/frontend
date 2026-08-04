@@ -97,10 +97,7 @@ export function ask(
           const searchId = headers.get('X-Nuclia-Trace-Id') || '';
           const id = headers.get('NUCLIA-LEARNING-ID') || '';
           let previous = '';
-          const rows = new TextDecoder()
-            .decode(data.buffer)
-            .split('\n')
-            .filter(Boolean);
+          const rows = new TextDecoder().decode(data.buffer).split('\n').filter(Boolean);
           const items: Ask.AskResponseItem[] = rows.reduce((acc, row) => {
             previous += row;
             try {
@@ -108,8 +105,9 @@ export function ask(
               acc.push(obj);
               previous = '';
             } catch (e) {
-              // block is not complete yet
-              console.warn(e);
+              if (!incomplete) {
+                console.warn(e);
+              }
             }
             return acc;
           }, [] as Ask.AskResponseItem[]);
@@ -243,7 +241,12 @@ export function predictAnswer(
                     { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
                   );
                 } else {
-                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: Number.parseInt(text.slice(-1)) };
+                  return {
+                    id,
+                    answer: text.slice(0, -1),
+                    jsonAnswer: undefined,
+                    status: Number.parseInt(text.slice(-1)),
+                  };
                 }
               }),
             );
@@ -266,10 +269,7 @@ export function predictAnswer(
           map(({ data, incomplete, headers }) => {
             const id = headers.get('nuclia-learning-id') || '';
             let previous = '';
-            const rows = new TextDecoder()
-              .decode(data.buffer)
-              .split('\n')
-              .filter(Boolean);
+            const rows = new TextDecoder().decode(data.buffer).split('\n').filter(Boolean);
             const items = rows.reduce((acc, row) => {
               previous += row;
               try {
@@ -277,8 +277,9 @@ export function predictAnswer(
                 acc.push(obj);
                 previous = '';
               } catch (e) {
-                // block is not complete yet
-                console.warn(e);
+                if (!incomplete) {
+                  console.warn(e);
+                }
               }
               return acc;
             }, [] as Ask.PredictAnswerResponseItem[]);
