@@ -6,31 +6,10 @@
       class="topbar-logo-expanded"
       [src]="logoPath | async"
       [alt]="!standalone ? brandName : 'NucliaDB'" />
-    @if (isStageOrDev) {
-      <img
-        src="assets/logos/stage-icon.svg"
-        class="is-stage"
-        alt="Stage" />
-    }
   </button>
 
   <div class="topbar-buttons">
     @if (!inPlatformApp && !(simpleMode | async)) {
-      @if (showDemo && (hasDemoButton | async)) {
-        <pa-button
-          kind="primary"
-          aspect="basic"
-          paFocusable
-          (click)="bookDemo()"
-          (keyup.enter)="bookDemo()">
-          <a
-            href="https://www.progress.com/agentic-rag/book-a-demo"
-            target="_blank"
-            rel="noopener noreferrer">
-            {{ 'need-help-book-demo' | translate }}
-          </a>
-        </pa-button>
-      }
       @if (isTrial | async) {
         <pa-button
           kind="primary"
@@ -50,19 +29,6 @@
   </div>
 
   <div class="topbar-actions">
-    @if (!inPlatformApp && !standalone && (shouldAccountTypeBeVisible | async)) {
-      <pa-button
-        kind="primary"
-        aspect="basic"
-        size="small"
-        (click)="goToSubscriptions()">
-        {{ 'account.type.' + (accountType | async) | translate }}
-        @if (showTrial | async) {
-          ({{ 'account.type.trial-mode' | translate }})
-        }
-      </pa-button>
-    }
-
     @if (((userInfo | async)?.accounts?.length || 0) > 1) {
       <div class="topbar-account">
         <strong>{{ (account | async)?.title }}</strong>
@@ -74,6 +40,13 @@
     }
 
     @if (!standalone) {
+      @if (!inPlatformApp && (shouldAccountTypeBeVisible | async)) {
+        <a
+          class="upgrade-link"
+          (click)="goToSubscriptions()">
+          {{ 'billing.upgrade' | translate }}
+        </a>
+      }
       @if (!(simpleMode | async)) {
         <stf-notification-button
           [count]="notificationsCount | async"

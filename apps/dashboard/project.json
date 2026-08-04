@@ -288,7 +288,7 @@
           "buildTarget": "dashboard:build:local-prod"
         }
       },
-      "defaultConfiguration": "local-dev",
+      "defaultConfiguration": "local-stage",
       "continuous": true
     },
     "extract-i18n": {

@@ -165,6 +165,42 @@
         }
       </div>
     </div>
+    <div [formGroup]="budgetForm">
+      <label class="title-xxs">Monthly budget</label>
+      <div class="radio-limit-container">
+        <pa-radio-group
+          formControlName="custom_budget"
+          noBackground>
+          <pa-radio value="default">Default budget</pa-radio>
+          <pa-radio value="unlimited">Unlimited</pa-radio>
+          <pa-radio value="limit">Limit</pa-radio>
+        </pa-radio-group>
+        @if (budgetForm.controls.custom_budget.value === 'limit') {
+          <div>
+            <div class="limit-container">
+              <pa-input
+                type="number"
+                formControlName="budget_value">
+                Tokens
+              </pa-input>
+              <pa-button
+                icon="reload"
+                paTooltip="Reset"
+                aspect="basic"
+                (click)="resetBudget()">
+                Reset
+              </pa-button>
+            </div>
+            <div class="limit-action">
+              <pa-radio-group formControlName="action_on_budget_exhausted">
+                <pa-radio value="BLOCK_ACCOUNT">Block the account</pa-radio>
+                <pa-radio value="WARN_ACCOUNT_OWNER">Send a warning email</pa-radio>
+              </pa-radio-group>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
     <pa-toggle
       labelOnRight
       formControlName="allowAccessNonEnterpriseModels">
@@ -179,7 +215,7 @@
     </ng-container>
   }
   <nma-form-footer
-    [disabled]="configForm.pristine || configForm.invalid || isSaving"
+    [disabled]="(configForm.pristine && budgetForm.pristine) || configForm.invalid || budgetForm.invalid || isSaving"
     (footerCancel)="reset()"></nma-form-footer>
 </form>
 

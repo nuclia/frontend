@@ -40,7 +40,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private unsubscribeAll: Subject<void>;
 
-  version: string | undefined;
   isChatAdviceEnabled = this.features.unstable.chatAdvice;
 
   constructor(
@@ -74,9 +73,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
-    }
     this.preventDragAndDropOnWindow();
     this.listenFeatureFlagCode();
   }

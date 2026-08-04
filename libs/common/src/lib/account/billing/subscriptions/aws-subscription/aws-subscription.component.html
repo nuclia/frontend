@@ -19,9 +19,7 @@
         class="body-m"
         [innerHTML]="'billing.budget_description' | translate"></div>
     </div>
-    <app-budget
-      currency="USD"
-      (budgetChange)="budget = $event"></app-budget>
+    <app-budget (budgetChange)="budget = $event"></app-budget>
     <pa-button
       kind="primary"
       [disabled]="!budget"

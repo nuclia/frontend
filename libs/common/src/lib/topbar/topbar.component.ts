@@ -10,7 +10,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BackendConfigurationService,
-  FeatureFlagService,
   FeaturesService,
   NavigationService,
   NotificationService,
@@ -33,7 +32,6 @@ export class TopbarComponent {
 
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
-  isStageOrDev = this.featureFlagService.isStageOrDev;
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));
   isAccountManager = this.features.isAccountManager;
@@ -57,8 +55,6 @@ export class TopbarComponent {
   standalone = this.standaloneService.standalone;
   errorMessage = this.standaloneService.errorMessage;
 
-  showDemo = !this.standalone;
-  hasDemoButton = this.features.authorized.showDemoButton;
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
@@ -89,7 +85,6 @@ export class TopbarComponent {
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
     private features: FeaturesService,
-    private featureFlagService: FeatureFlagService,
   ) {}
 
   goToHome(): void {
@@ -133,10 +128,6 @@ export class TopbarComponent {
         take(1),
       )
       .subscribe((url) => this.router.navigate([url]));
-  }
-
-  bookDemo() {
-    window.open('https://www.progress.com/agentic-rag/book-a-demo', 'blank', 'noreferrer');
   }
 
   goToTutorial() {

@@ -4,6 +4,7 @@ import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@
 import { Observable } from 'rxjs';
 import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 import {
+  AccountBudget,
   AccountPatchPayload,
   AccountSummary,
   AccountUserType,
@@ -123,5 +124,21 @@ export class GlobalAccountService {
 
   deleteManualSubscription(accountId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/manual/subscription`);
+  }
+
+  getBudget(accountId: string): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.get<AccountBudget>(`/billing/account/${accountId}/budget`);
+  }
+
+  addBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.post(`/billing/account/${accountId}/budget`, budget);
+  }
+
+  patchBudget(accountId: string, budget: AccountBudget): Observable<AccountBudget> {
+    return this.sdk.nuclia.rest.patch(`/billing/account/${accountId}/budget`, budget);
+  }
+
+  deleteBudget(accountId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`/billing/account/${accountId}/budget`);
   }
 }

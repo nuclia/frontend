@@ -71,6 +71,7 @@ export class FeaturesService {
     coworkAccount: this.featureFlag.isFeatureEnabled('cowork-account'),
     automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
     chatAdvice: this.featureFlag.isFeatureEnabled('chat-advice'),
+    andOrFilterLogic: this.featureFlag.isFeatureEnabled('and-or-filter-logic'),
   };
 
   /**

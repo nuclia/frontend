@@ -11,6 +11,7 @@
       <div class="title-with-icon">
         <pa-icon name="list"></pa-icon>
         {{ 'dashboard-home.resources.title' | translate }}
+        <ng-content></ng-content>
       </div>
 
       <div class="actions">
@@ -19,7 +20,6 @@
           [routerLink]="data.kbUrl + '/resources'">
           {{ 'dashboard-home.go-to.resource-list' | translate }}
         </a>
-        <ng-content></ng-content>
       </div>
     </div>
 

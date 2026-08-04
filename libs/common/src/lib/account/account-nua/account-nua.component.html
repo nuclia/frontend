@@ -33,6 +33,14 @@
               </pa-button>
             }
             <pa-button
+              (click)="editClient(client)"
+              aspect="basic"
+              icon="edit"
+              size="small"
+              paTooltip="generic.edit">
+              {{ 'generic.edit' | translate }}
+            </pa-button>
+            <pa-button
               (click)="askConfirmation(client)"
               aspect="basic"
               icon="refresh"
@@ -60,7 +68,7 @@
     kind="primary"
     class="create-nua-button"
     data-cy="open-create-nua-key-dialog"
-    (click)="openDialog()">
+    (click)="createClient()">
     {{ 'account.create_nua_key' | translate }}
   </pa-button>
 }

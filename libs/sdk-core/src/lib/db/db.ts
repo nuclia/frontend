@@ -39,7 +39,9 @@ import {
   ModelConfigurationItem,
   normalizeSchemaProperty,
   NUAClient,
+  NUAClientEditPayload,
   NUAClientPayload,
+  NUAClientResponse,
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
@@ -557,8 +559,13 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient> {
-    return this.nuclia.rest.get<NUAClient>(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
+  getNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClient> {
+    return this.nuclia.rest.get<NUAClient>(
+      `/account/${accountId}/nua_client/${internalId}`,
+      undefined,
+      undefined,
+      zone,
+    );
   }
 
   hasNUAClient(): boolean {
@@ -581,34 +588,23 @@ export class Db implements IDb {
    * @param accountId Account identifier
    * @param data NUA client data
    */
-  createNUAClient(accountId: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
-  createNUAClient(
-    accountId: string,
-    data: NUAClientPayload,
-    zone: string,
-  ): Observable<{ client_id: string; token: string }>;
-  createNUAClient(
-    accountId?: string,
-    data?: NUAClientPayload,
-    zone?: string,
-  ): Observable<{ client_id: string; token: string }> {
+  createNUAClient(accountId: string, data: NUAClientPayload): Observable<NUAClientResponse>;
+  createNUAClient(accountId: string, data: NUAClientPayload, zone: string): Observable<NUAClientResponse>;
+  createNUAClient(accountId?: string, data?: NUAClientPayload, zone?: string): Observable<NUAClientResponse> {
     if (!accountId || !data) {
       const error = 'Account and data are required to create a NUA client';
       console.error(error);
       return throwError(() => error);
     }
 
-    const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
+    const payload: NUAClientPayload = { ...data };
     if (payload.webhook) {
       payload.processing_webhook = { uri: payload.webhook };
       delete payload.webhook;
     }
 
     return this.nuclia.rest
-      .post<{
-        client_id: string;
-        token: string;
-      }>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
+      .post<NUAClientResponse>(`/account/${accountId}/nua_clients`, payload, undefined, undefined, undefined, zone)
       .pipe(
         catchError((err) => {
           if (err.status === 409 && data.client_id) {
@@ -621,18 +617,36 @@ export class Db implements IDb {
   }
 
   /**
+   * Edit a NUA key
+   * @param accountId Account identifier
+   * @param internalId NUA client internal identifier
+   * @param data
+   */
+  editNUAClient(
+    accountId: string,
+    internalId: string,
+    data: NUAClientEditPayload,
+    zone: string,
+  ): Observable<NUAClient> {
+    return this.nuclia.rest.patch<NUAClient>(
+      `/account/${accountId}/nua_client/${internalId}`,
+      data,
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
    *  Renews a NUA token.
    *  Zone parameter must be provided except when working with a local NucliaDB instance.
    */
-  renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(
-    accountId?: string,
-    client_id?: string,
-    zone?: string,
-  ): Observable<{ client_id: string; token: string }> {
-    return this.nuclia.rest.put<{ client_id: string; token: string }>(
-      `/account/${accountId}/nua_client/${client_id}/key`,
+  renewNUAClient(accountId: string, internalId: string): Observable<NUAClientResponse>;
+  renewNUAClient(accountId: string, internalId: string, zone: string): Observable<NUAClientResponse>;
+  renewNUAClient(accountId?: string, internalId?: string, zone?: string): Observable<NUAClientResponse> {
+    return this.nuclia.rest.put<NUAClientResponse>(
+      `/account/${accountId}/nua_client/${internalId}/key`,
       {},
       undefined,
       undefined,
@@ -645,10 +659,10 @@ export class Db implements IDb {
    * Deletes a NUA client.
    * Zone parameter must be provided except when working with a local NucliaDB instance.
    */
-  deleteNUAClient(accountId: string, client_id: string): Observable<void>;
-  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
-  deleteNUAClient(accountId?: string, client_id?: string, zone?: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
+  deleteNUAClient(accountId: string, internalId: string): Observable<void>;
+  deleteNUAClient(accountId: string, internalId: string, zone: string): Observable<void>;
+  deleteNUAClient(accountId?: string, internalId?: string, zone?: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${internalId}`, undefined, undefined, zone);
   }
 
   /**

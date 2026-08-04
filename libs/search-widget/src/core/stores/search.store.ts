@@ -2,6 +2,7 @@ import {
   Search,
   type Ask,
   type Classification,
+  type FieldFilterExpression,
   type FieldId,
   type Filter,
   type FilterExpression,
@@ -14,6 +15,12 @@ import {
   type ResourceField,
   type Routing,
   type SearchOptions,
+  type LabelFilter as LabelFilterExpression,
+  type EntityFilter as EntityFilterExpression,
+  type FieldMimetypeFilter,
+  type OriginPathFilter,
+  type DateCreatedFilter,
+  type ParagraphFilterExpression,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -53,7 +60,7 @@ import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
 import { labelSets } from './labels.store';
 import { getMimeFromFilter, type MimeFacet, type MimeFilter } from './mime.store';
-import { orFilterLogic } from './widget.store';
+import { andOrFilterLogic, orFilterLogic } from './widget.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -374,60 +381,108 @@ export const combinedFilters = combineLatest([searchFilters, preselectedFilters,
 export const combinedFilterExpression: Observable<FilterExpression> = combineLatest([
   searchState.reader<SearchFilters>((state) => state.filters),
   orFilterLogic,
+  andOrFilterLogic,
   filterExpression,
   labelSets,
   rangeCreationISO,
 ]).pipe(
-  map(([filters, orFilterLogic, filterExpression, labelSets, rangeCreation]) => {
-    const fieldFilters = {
-      [orFilterLogic ? 'or' : 'and']: [
-        ...(filters.entities || []).map((entity) => ({
-          prop: 'entity',
-          subtype: entity.family,
-          value: entity.entity,
-        })),
-        ...(filters.labels || [])
-          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
-          .map((label) => ({
-            prop: 'label',
-            labelset: label.classification.labelset,
-            label: label.classification.label,
+  map(([filters, orFilterLogic, andOrFilterLogic, filterExpression, labelSets, rangeCreation]) => {
+    const entityFilters = (filters.entities || []).map((entity) => ({
+      prop: 'entity',
+      subtype: entity.family,
+      value: entity.entity,
+    })) as EntityFilterExpression[];
+
+    const labelFilters = (filters.labels || [])
+      .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
+      .map((label) => ({
+        prop: 'label',
+        labelset: label.classification.labelset,
+        label: label.classification.label,
+      })) as LabelFilterExpression[];
+
+    const labelSetFilters = (filters.labelSets || [])
+      .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
+      .map((labelset) => ({ prop: 'label', labelset: labelset.id })) as LabelFilterExpression[];
+
+    const mimeTypeFilters = (filters.mimeTypes || []).map((mimeType) => ({
+      prop: 'field_mimetype',
+      type: mimeType.key.split('/').at(-2),
+      subtype: mimeType.key.split('/').at(-1),
+    })) as FieldMimetypeFilter[];
+
+    const pathFilters = (filters.path ? [filters.path] : []).map((path) => ({
+      prop: 'origin_path',
+      prefix: path.split(PATH_FILTER_PREFIX)[1],
+    })) as OriginPathFilter[];
+
+    const creationFilters = (
+      rangeCreation?.start || rangeCreation?.end
+        ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
+        : []
+    ) as DateCreatedFilter[];
+
+    let fieldFilters: FieldFilterExpression;
+    if (andOrFilterLogic) {
+      const labelFiltersByLabelset = groupFiltersByLabelset(labelFilters);
+      fieldFilters = {
+        and: [
+          ...Object.values(labelFiltersByLabelset).map((filters) => ({
+            or: filters,
           })),
-        ...(filters.labelSets || [])
-          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
-          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
-        ...(filters.mimeTypes || []).map((mimeType) => ({
-          prop: 'field_mimetype',
-          type: mimeType.key,
-        })),
-        ...(filters.path ? [filters.path] : []).map((path) => ({
-          prop: 'origin_path',
-          prefix: path.split(PATH_FILTER_PREFIX)[1],
-        })),
-        ...(rangeCreation?.start || rangeCreation?.end
-          ? [{ prop: 'created', since: rangeCreation?.start, until: rangeCreation?.end }]
-          : []),
-      ],
-    };
-    const paragraphFilters = {
-      [orFilterLogic ? 'or' : 'and']: [
-        ...(filters.labels || [])
-          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.PARAGRAPHS))
-          .map((label) => ({
-            prop: 'label',
-            labelset: label.classification.labelset,
-            label: label.classification.label,
+          ...labelSetFilters,
+          ...(entityFilters.length ? [{ or: [...entityFilters] }] : []),
+          ...(mimeTypeFilters.length ? [{ or: [...mimeTypeFilters] }] : []),
+          ...(pathFilters.length ? [{ or: [...pathFilters] }] : []),
+          ...(creationFilters.length ? [{ or: [...creationFilters] }] : []),
+        ],
+      };
+    } else {
+      const allFieldFilters = [
+        ...entityFilters,
+        ...labelFilters,
+        ...labelSetFilters,
+        ...mimeTypeFilters,
+        ...pathFilters,
+        ...creationFilters,
+      ];
+      fieldFilters = orFilterLogic ? { or: allFieldFilters } : { and: allFieldFilters };
+    }
+
+    const paragraphLabelFilters = (filters.labels || [])
+      .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.PARAGRAPHS))
+      .map((label) => ({
+        prop: 'label',
+        labelset: label.classification.labelset,
+        label: label.classification.label,
+      })) as LabelFilterExpression[];
+
+    const paragraphLabelSetFilters = (filters.labelSets || [])
+      .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.PARAGRAPHS))
+      .map((labelset) => ({ prop: 'label', labelset: labelset.id })) as LabelFilterExpression[];
+
+    let paragraphFilters: ParagraphFilterExpression;
+    if (andOrFilterLogic) {
+      const labelFiltersByLabelset = groupFiltersByLabelset(paragraphLabelFilters);
+      paragraphFilters = {
+        and: [
+          ...paragraphLabelSetFilters,
+          ...Object.values(labelFiltersByLabelset).map((filters) => ({
+            or: filters,
           })),
-        ...(filters.labelSets || [])
-          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.PARAGRAPHS))
-          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
-      ],
-    };
+        ],
+      };
+    } else {
+      paragraphFilters = orFilterLogic
+        ? { or: [...paragraphLabelFilters, ...paragraphLabelSetFilters] }
+        : { and: [...paragraphLabelFilters, ...paragraphLabelSetFilters] };
+    }
+
     const hasFieldFilters = Object.values(fieldFilters)[0].length > 0;
     const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
     if (
       filterExpression &&
-      cannotCombineFilters(hasFieldFilters, hasParagraphFilters, orFilterLogic, filterExpression)
+      cannotCombineFilters(hasFieldFilters, hasParagraphFilters, orFilterLogic || andOrFilterLogic, filterExpression)
     ) {
       return filterExpression;
     }
@@ -449,6 +504,22 @@ export const combinedFilterExpression: Observable<FilterExpression> = combineLat
     };
   }),
 );
+
+const groupFiltersByLabelset = (
+  labelFilters: LabelFilterExpression[],
+): { [labelset: string]: LabelFilterExpression[] } => {
+  return labelFilters.reduce(
+    (acc, curr) => {
+      if (acc[curr.labelset]) {
+        acc[curr.labelset].push(curr);
+      } else {
+        acc[curr.labelset] = [curr];
+      }
+      return acc;
+    },
+    {} as { [labelset: string]: LabelFilterExpression[] },
+  );
+};
 
 const cannotCombineFilters = (
   hasFieldFilters: boolean,

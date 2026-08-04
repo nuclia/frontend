@@ -60,6 +60,9 @@ export const filterByCreatedDate: Observable<boolean> = widgetFilters.pipe(map((
 export const filterByMime: Observable<boolean> = widgetFilters.pipe(map((filters) => !!filters.mime));
 export const filterByPath: Observable<boolean> = widgetFilters.pipe(map((filters) => !!filters.path));
 export const orFilterLogic: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.orFilterLogic));
+export const andOrFilterLogic: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.andOrFilterLogic),
+);
 export const hideResults: Observable<boolean> = combineLatest([
   isAnswerEnabled,
   widgetFeatures.pipe(map((features) => !!features?.hideResults)),

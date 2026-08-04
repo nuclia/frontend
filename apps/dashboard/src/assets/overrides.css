@@ -1,6 +1,71 @@
 /* @import url('https://cdn.rag.progress.cloud/fonts/inter.css'); */
 /* @import url('https://cdn.rag.progress.cloud/fonts/roboto.css'); */
 
+/* Enable with ?fontTest=progress-sans (and disable with ?fontTest=default) */
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('./fonts/progress-sans/ProgressSansText-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('./fonts/progress-sans/ProgressSansText-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('./fonts/progress-sans/ProgressSansText-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Text';
+  src: url('./fonts/progress-sans/ProgressSansText-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('./fonts/progress-sans/ProgressSansDisplay-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('./fonts/progress-sans/ProgressSansDisplay-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('./fonts/progress-sans/ProgressSansDisplay-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Progress Sans Display';
+  src: url('./fonts/progress-sans/ProgressSansDisplay-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
 :root {
   /* --custom-font-family: Inter;
   --custom-color-neutral-regular: #707070;
@@ -15,3 +80,10 @@
   --custom-color-primary-lightest: #eeebff; */
 }
 
+:root {
+  --custom-font-family: 'Progress Sans Text';
+}
+
+:root :is(h1, h2, h3, h4, .display-s, .display-s-mobile, .display-m, .display-m-mobile) {
+  font-family: 'Progress Sans Display', var(--custom-font-family, Roboto), sans-serif;
+}

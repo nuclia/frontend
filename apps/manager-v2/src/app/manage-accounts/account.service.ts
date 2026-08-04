@@ -33,7 +33,7 @@ export class AccountService {
   private regionalService = inject(RegionalAccountService);
   private store = inject(ManagerStore);
 
-  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay());
+  private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay(1));
 
   getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
     return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
@@ -124,7 +124,10 @@ export class AccountService {
   /**
    * Update KB slug and/or title and/or prewarm_enabled and update the store accordingly
    */
-  updateKb(kbSummary: KbSummary, data: { slug?: string; title?: string; prewarm_enabled?: boolean }): Observable<KbDetails> {
+  updateKb(
+    kbSummary: KbSummary,
+    data: { slug?: string; title?: string; prewarm_enabled?: boolean },
+  ): Observable<KbDetails> {
     return this.regionalService.updateKb(kbSummary, data).pipe(
       tap(() => console.log(`update kb done`)),
       switchMap(() =>

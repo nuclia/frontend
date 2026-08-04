@@ -5,7 +5,7 @@ import { SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { TrialExpiredModalComponent } from './trial-expired-modal/trial-expired-modal.component';
-import { getCoworkTrialState } from './simple.utils';
+import { isTrialExpired } from './simple.utils';
 
 @Component({
   selector: 'app-simple-page',
@@ -31,7 +31,7 @@ export class SimplePageComponent {
     this.sdk.currentAccount
       .pipe(
         take(1),
-        filter((account) => getCoworkTrialState(account).isTrialExpired),
+        filter((account) => isTrialExpired(account)),
         takeUntilDestroyed(),
       )
       .subscribe(() => {
