@@ -67,6 +67,7 @@
 	"account.free_trial": "Essai gratuit",
 	"account.free_trial_ended.description": "La période d’essai de 15 jours s’est écoulée et votre compte a été bloqué. Vous pouvez souscrire à l’un de nos plans ou nous contacter pour une prolongation de la période d’essai.",
 	"account.free_trial_ended.title": "Votre essai gratuit est terminé",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.generate_key": "Générer une nouvelle clé",
 	"account.invite-collaborators.add-users.add-owners": "Ajouter des administrateurs au compte",
 	"account.invite-collaborators.add-users.description": "L’ajout de propriétaires à votre compte leur donne l’autorisation de gérer le compte, de créer et de gérer des Knowledge Boxes, ainsi que d’inviter des collaborateurs dans chaque Knowledge Box.",

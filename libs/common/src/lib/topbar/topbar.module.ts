@@ -15,7 +15,7 @@ import {
   PaPopupModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent } from '@nuclia/sistema';
+import { BadgeComponent, DropdownButtonComponent } from '@nuclia/sistema';
 import { UserMenuComponent } from './user-menu';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
 import { NotificationButtonComponent } from '@flaps/core';
@@ -31,6 +31,7 @@ import { NotificationButtonComponent } from '@flaps/core';
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
+    BadgeComponent,
     DropdownButtonComponent,
     RouterModule,
     PaFocusableModule,

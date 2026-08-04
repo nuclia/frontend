@@ -26,6 +26,7 @@ export class BadgeComponent implements AfterViewInit {
 
   @Input() icon?: string;
   @Input({ transform: numberAttribute }) count?: number;
+  @Input() countLabel?: string;
   @Input({ transform: booleanAttribute }) clickable = false;
   @Input() kind: 'tertiary' | 'neutral' | 'success' = 'neutral';
 
@@ -35,7 +36,7 @@ export class BadgeComponent implements AfterViewInit {
     return true;
   }
   @HostBinding('class.with-count') get hasCount() {
-    return typeof this.count === 'number';
+    return !!this.countLabel || typeof this.count === 'number';
   }
   @HostBinding('class.with-icon') get hasIcon() {
     return !!this.icon;
@@ -51,6 +52,16 @@ export class BadgeComponent implements AfterViewInit {
   }
 
   hasContent = false;
+
+  get countText(): string {
+    if (this.countLabel) {
+      return this.countLabel;
+    }
+    if (typeof this.count !== 'number') {
+      return '';
+    }
+    return this.count > 999 ? '999+' : `${this.count}`;
+  }
 
   ngAfterViewInit() {
     this.hasContent = !!this.content && this.content.nativeElement.textContent.trim().length > 0;

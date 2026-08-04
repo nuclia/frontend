@@ -67,6 +67,7 @@
 	"account.free_trial": "Prueba gratis",
 	"account.free_trial_ended.description": "La prueba de 15 días ha finalizado y tu cuenta ha sido bloqueada. Puedes suscribirte a uno de nuestros planes o contactar con nosotros para ampliar el período de prueba.",
 	"account.free_trial_ended.title": "¡Oh! Tu prueba gratuita ha finalizado",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.generate_key": "Generar un nuevo código",
 	"account.invite-collaborators.add-users.add-owners": "Añadir administrador a la cuenta",
 	"account.invite-collaborators.add-users.description": "Agregar propietarios a su cuenta les otorga permiso para administrar la cuenta, crear y administrar Knowledge Boxes, así como invitar colaboradores a cada Knowledge Box.",

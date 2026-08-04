@@ -40,6 +40,29 @@
     }
 
     @if (!standalone) {
+      @if (!inPlatformApp && (trialHeaderInfo | async); as trialInfo) {
+        <div class="trial-summary">
+          <nsi-badge
+            [countLabel]="
+              trialInfo.daysLeft !== null
+                ? (trialInfo.daysLeft === 1
+                    ? ('account.day_left' | translate)
+                    : ('account.days_left' | translate: { days: trialInfo.daysLeft }))
+                : undefined
+            ">
+            {{ trialInfo.labelKey | translate }}
+          </nsi-badge>
+          @if (trialInfo.used !== null && trialInfo.limit !== null) {
+            <span class="trial-summary__tokens">
+              {{
+                'account.trial.token-usage-value'
+                  | translate
+                    : { used: (trialInfo.used | number: '1.0-0'), limit: (trialInfo.limit | number: '1.0-0') }
+              }}
+            </span>
+          }
+        </div>
+      }
       @if (!inPlatformApp && (shouldAccountTypeBeVisible | async)) {
         <a
           class="upgrade-link"

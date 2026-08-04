@@ -67,6 +67,7 @@
 	"account.free_trial": "Prova gratuïta",
 	"account.free_trial_ended.description": "La prova de 15 dies ha finalitzat i el teu compte ha quedat bloquejat. Pots subscriure’t a un dels nostres plans o contactar amb nosaltres per ampliar el període de prova.",
 	"account.free_trial_ended.title": "Oh! La teva prova gratuïta ha finalitzat",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.generate_key": "Generar un nou codi",
 	"account.invite-collaborators.add-users.add-owners": "Afegir administrador al compte",
 	"account.invite-collaborators.add-users.description": "Afegir propietaris al vostre compte els dóna permís per gestionar el compte, crear i gestionar Knowledge Boxes, així com convidar col·laboradors a cada Knowledge Box.",
