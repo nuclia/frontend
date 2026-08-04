@@ -15,6 +15,7 @@ import {
   Resource,
   ResourceData,
   ResourceField,
+  ResourceProperties,
   Session,
   TextField,
   UserClassification,
@@ -120,7 +121,28 @@ export class EditResourceService {
     this.isSession = false;
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.getFullResource(resourceId)),
+      switchMap((kb) =>
+        kb
+          .getResource(resourceId, [
+            ResourceProperties.BASIC,
+            ResourceProperties.ORIGIN,
+            ResourceProperties.EXTRA,
+            ResourceProperties.RELATIONS,
+            ResourceProperties.VALUES,
+            ResourceProperties.ERRORS,
+            ResourceProperties.SECURITY,
+          ])
+          .pipe(
+            switchMap((resource) => {
+              // If all fields are conversations, we don't need to retrieve extracted data.
+              // This is a temporary workaround to prevent memory resources from taking too long to load.
+              const onlyConversations = Object.keys(resource.data).every((fieldType) =>
+                ['conversations', 'generics'].includes(fieldType),
+              );
+              return onlyConversations ? of(resource) : kb.getFullResource(resourceId);
+            }),
+          ),
+      ),
       tap((resource) => this._resource.next(resource)),
     );
   }
