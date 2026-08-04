@@ -26,9 +26,9 @@
           </pa-select>
         </div>
       }
-      @let hasKbs = ((kbList | async) || []).length > 0;
-      @let hasNuaKeys = nuaKeys.length > 0;
-      @if (hasKbs || hasNuaKeys) {
+      @let kbCount = ((kbList | async) || []).length;
+      @let keyCount = nuaKeys.length;
+      @if (kbCount + keyCount > 1) {
         <div class="select">
           <pa-select
             [value]="selectedItem | async"
@@ -38,7 +38,7 @@
               icon="account">
               {{ 'account.nuclia-tokens.account' | translate }}
             </pa-option>
-            @if (hasKbs) {
+            @if (kbCount > 0) {
               <pa-separator></pa-separator>
               <pa-option-header>{{ 'account.knowledgeboxes' | translate }}</pa-option-header>
               @for (kb of kbList | async; track kb.id) {
@@ -49,7 +49,7 @@
                 </pa-option>
               }
             }
-            @if (hasNuaKeys) {
+            @if (keyCount > 0) {
               <pa-separator></pa-separator>
               <pa-option-header>{{ 'account.nuclia-tokens.nua-keys' | translate }}</pa-option-header>
               @for (key of nuaKeys; track key.internal_id) {
