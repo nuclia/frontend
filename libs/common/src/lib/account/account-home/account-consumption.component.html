@@ -3,6 +3,7 @@
 
 <app-nuclia-tokens
   [usage]="usage"
+  [nuaKeys]="(nuaKeys | async) || []"
   [selectedPeriod]="selectedPeriod | async"
   (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
 

@@ -203,6 +203,7 @@ export interface IDb {
     to?: string,
     knowledgeBox?: string,
     aggregation?: UsageAggregation,
+    nuaKeyId?: string,
   ): Observable<UsagePoint[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
   pull(): Observable<ProcessingPullResponse>;

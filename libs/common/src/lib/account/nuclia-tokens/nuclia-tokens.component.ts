@@ -25,7 +25,7 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { KnowledgeBox, LearningConfigurations, NucliaTokensDetails, UsagePoint } from '@nuclia/core';
+import { KnowledgeBox, LearningConfigurations, NUAClient, NucliaTokensDetails, UsagePoint } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -87,6 +87,7 @@ export class NucliaTokensComponent implements OnDestroy {
   }
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
+  @Input() nuaKeys: NUAClient[] = [];
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
@@ -94,7 +95,7 @@ export class NucliaTokensComponent implements OnDestroy {
   loading = true;
   digitsInfo = '1.0-0';
   kbList = this.sdk.kbList;
-  selectedKb = new BehaviorSubject<string>('account');
+  selectedItem = new BehaviorSubject<string>('account');
   usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
   isSubscribedToStripe = this.metrics.isSubscribedToStripe;
   periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
@@ -117,13 +118,13 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   details: Observable<NucliaTokensDetailsEnhanced[]> = combineLatest([
-    this.selectedKb,
+    this.selectedItem,
     this.usageSubject,
     this.schema,
   ]).pipe(
-    filter(([kb, usage]) => !!usage[kb]),
-    map(([kb, usage, schema]) => {
-      const details = (usage[kb][0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
+    filter(([item, usage]) => !!usage[item]),
+    map(([item, usage, schema]) => {
+      const details = (usage[item][0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
         []) as NucliaTokensDetails[];
       const models = schema['generative_model']?.options || [];
       return details

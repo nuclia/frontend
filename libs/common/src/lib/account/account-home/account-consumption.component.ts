@@ -24,6 +24,10 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   tokensCount?: { [key: string]: number };
 
   kbs = this.sdk.kbList;
+  nuaKeys = this.sdk.currentAccount.pipe(
+    switchMap((account) => this.sdk.nuclia.db.getNUAClients(account.id)),
+    shareReplay(1),
+  );
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
 
   ngOnInit() {
@@ -54,13 +58,27 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   }
 
   private getUsageMap() {
-    return combineLatest([this.metrics.account$, this.selectedPeriod, this.kbs]).pipe(
-      switchMap(([account, period, kbs]) => {
+    return combineLatest([this.metrics.account$, this.selectedPeriod, this.kbs, this.nuaKeys]).pipe(
+      switchMap(([account, period, kbs, nuaKeys]) => {
         const requests = kbs
           .map((kb) =>
             this.sdk.nuclia.db
               .getUsage(account.id, period.start.toISOString(), period.end.toISOString(), kb.id)
               .pipe(map((usage) => ({ key: kb.id, usage }))),
+          )
+          .concat(
+            nuaKeys.map((nuaKey) =>
+              this.sdk.nuclia.db
+                .getUsage(
+                  account.id,
+                  period.start.toISOString(),
+                  period.end.toISOString(),
+                  undefined,
+                  undefined,
+                  nuaKey.internal_id,
+                )
+                .pipe(map((usage) => ({ key: nuaKey.internal_id, usage }))),
+            ),
           )
           .concat([
             this.sdk.nuclia.db

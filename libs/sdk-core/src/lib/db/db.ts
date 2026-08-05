@@ -459,6 +459,7 @@ export class Db implements IDb {
    * - "quarter"
    * - "year"
    * - "millennium" (used by default)
+   * @param nuaKeyId NUA key identifier to get the metrics for a specific NUA key.
    */
   getUsage(
     accountId: string,
@@ -466,6 +467,7 @@ export class Db implements IDb {
     to?: string,
     knowledgeBoxId?: string,
     aggregation?: UsageAggregation,
+    nuaKeyId?: string,
   ): Observable<UsagePoint[]> {
     const params = [`from=${from}`];
     if (to) {
@@ -473,6 +475,8 @@ export class Db implements IDb {
     }
     if (knowledgeBoxId) {
       params.push(`knowledgebox=${knowledgeBoxId}`);
+    } else if (nuaKeyId) {
+      params.push(`nua_key_id=${nuaKeyId}`);
     }
     if (aggregation) {
       params.push(`aggregation=${aggregation}`);

@@ -170,6 +170,7 @@
 	"account.nuclia-tokens.help.summarize": "Resum activat per l’usuari d’un recurs",
 	"account.nuclia-tokens.help.token": "Extracció d’entitats de blocs de text",
 	"account.nuclia-tokens.no-consumption": "No hi ha dades de consum",
+	"account.nuclia-tokens.nua-keys": "Claus NUA",
 	"account.nuclia-tokens.operations": "Operacions",
 	"account.nuclia-tokens.service.answers": "Serveis de respostes generatives",
 	"account.nuclia-tokens.service.other": "Altres serveis",

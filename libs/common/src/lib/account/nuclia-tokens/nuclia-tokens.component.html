@@ -11,39 +11,59 @@
     <div class="selectors">
       @if (((periods | async) || []).length > 0 && selectedPeriod) {
         <div class="select">
-          <pa-select
-            [value]="selectedPeriod.start.toString()">
-            @for (period of ((periods | async) || []); track period.start.toString()) {
+          <pa-select [value]="selectedPeriod.start.toString()">
+            @for (period of (periods | async) || []; track period.start.toString()) {
               <pa-option
                 [value]="period.start.toString()"
-                (selectOption)="selectPeriod.emit(period); loading = true"
-                >
+                (selectOption)="selectPeriod.emit(period); loading = true">
                 @if (isSubscribedToStripe | async) {
-                  {{ period.start | date: 'MMM d, y': 'UTC' }} - {{ period.end | date: 'MMM d, y': 'UTC' }}
-                }
-                @else {
-                  {{ period.start | date: 'MMMM y': 'UTC' }} 
+                  {{ period.start | date: 'MMM d, y' : 'UTC' }} - {{ period.end | date: 'MMM d, y' : 'UTC' }}
+                } @else {
+                  {{ period.start | date: 'MMMM y' : 'UTC' }}
                 }
               </pa-option>
             }
           </pa-select>
         </div>
       }
-      @if (((kbList | async) || []).length > 1) {
+      @let kbCount = ((kbList | async) || []).length;
+      @let keyCount = nuaKeys.length;
+      @if (kbCount + keyCount > 1) {
         <div class="select">
           <pa-select
-            [value]="selectedKb | async"
-            (valueChange)="selectedKb.next($event)">
-            <pa-option value="account">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
-            <pa-separator></pa-separator>
-            @for (kb of kbList | async; track kb.id) {
-              <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
+            [value]="selectedItem | async"
+            (valueChange)="selectedItem.next($event)">
+            <pa-option
+              value="account"
+              icon="account">
+              {{ 'account.nuclia-tokens.account' | translate }}
+            </pa-option>
+            @if (kbCount > 0) {
+              <pa-separator></pa-separator>
+              <pa-option-header>{{ 'account.knowledgeboxes' | translate }}</pa-option-header>
+              @for (kb of kbList | async; track kb.id) {
+                <pa-option
+                  [value]="kb.id"
+                  icon="knowledge-box">
+                  {{ kb.title }}
+                </pa-option>
+              }
+            }
+            @if (keyCount > 0) {
+              <pa-separator></pa-separator>
+              <pa-option-header>{{ 'account.nuclia-tokens.nua-keys' | translate }}</pa-option-header>
+              @for (key of nuaKeys; track key.internal_id) {
+                <pa-option
+                  [value]="key.internal_id"
+                  icon="key">
+                  {{ key.title }}
+                </pa-option>
+              }
             }
           </pa-select>
         </div>
       }
     </div>
-
   </div>
   @if (!loading) {
     @let groups = visibleGroups | async;

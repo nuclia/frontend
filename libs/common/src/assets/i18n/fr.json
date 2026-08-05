@@ -170,6 +170,7 @@
 	"account.nuclia-tokens.help.summarize": "Résumé d’une ressource déclenché par l’utilisateur",
 	"account.nuclia-tokens.help.token": "Extraction d’entités à partir de blocs de texte",
 	"account.nuclia-tokens.no-consumption": "Il n'y a pas de données de consommation",
+	"account.nuclia-tokens.nua-keys": "Clés NUA",
 	"account.nuclia-tokens.operations": "Opérations",
 	"account.nuclia-tokens.service.answers": "Services de réponses génératives",
 	"account.nuclia-tokens.service.other": "Autres services",
