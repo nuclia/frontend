@@ -137,25 +137,48 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     const accountBackup = this.accountBackup;
     if (this.configForm.valid && this.budgetForm.valid && accountBackup) {
       this.isSaving = true;
-      const { trialExpirationDate, kbs, agents, memories, ...rawValue } = this.configForm.getRawValue();
+      const controls = this.configForm.controls;
+      const rawValue = this.configForm.getRawValue();
       this.canFullyEditAccount
         .pipe(
           take(1),
           switchMap((canFullyEditAccount) => {
-            const payload: Partial<AccountConfigurationPayload> = canFullyEditAccount
-              ? {
-                  ...rawValue,
-                  maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
-                  maxAgents: agents.agents_radio === 'limit' ? agents.maxAgents : -1,
-                  maxMemories: memories.memories_radio === 'limit' ? memories.maxMemories : -1,
-                }
-              : {
-                  trialExpirationDate,
-                  type: rawValue.type,
-                  workflow: rawValue.workflow,
-                  zoneVisibility: rawValue.zoneVisibility,
-                };
-            payload.trialExpirationDate = trialExpirationDate ?? null;
+            const payload: Partial<AccountConfigurationPayload> = {};
+            if (controls.email.dirty) {
+              payload.email = rawValue.email;
+            }
+            if (controls.slug.dirty) {
+              payload.slug = rawValue.slug;
+            }
+            if (controls.type.dirty) {
+              payload.type = rawValue.type;
+            }
+            if (controls.workflow.dirty) {
+              payload.workflow = rawValue.workflow;
+            }
+            if (controls.zoneVisibility.dirty) {
+              payload.zoneVisibility = rawValue.zoneVisibility;
+            }
+            if (controls.trialExpirationDate.dirty) {
+              payload.trialExpirationDate = rawValue.trialExpirationDate ?? null;
+            }
+            if (controls.allowAccessNonEnterpriseModels.dirty) {
+              payload.allowAccessNonEnterpriseModels = rawValue.allowAccessNonEnterpriseModels;
+            }
+            if (controls.labels.dirty) {
+              payload.labels = rawValue.labels;
+            }
+            if (canFullyEditAccount) {
+              if (controls.kbs.dirty) {
+                payload.maxKbs = rawValue.kbs.kbs_radio === 'limit' ? rawValue.kbs.maxKbs : -1;
+              }
+              if (controls.agents.dirty) {
+                payload.maxAgents = rawValue.agents.agents_radio === 'limit' ? rawValue.agents.maxAgents : -1;
+              }
+              if (controls.memories.dirty) {
+                payload.maxMemories = rawValue.memories.memories_radio === 'limit' ? rawValue.memories.maxMemories : -1;
+              }
+            }
             const saveBudgetRequest = canFullyEditAccount ? this.saveBudget() : of(null);
             return forkJoin([this.accountService.updateAccount(accountBackup.id, payload), saveBudgetRequest]);
           }),
