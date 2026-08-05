@@ -264,6 +264,17 @@
                   </a>
                   <a
                     [routerLink]="
+                      (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/chat-activity' : null
+                    "
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-chat-activity"
+                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                    <pa-icon name="chat"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics.chat-activity' | translate }}</span>
+                  </a>
+                  <a
+                    [routerLink]="
                       (isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics/detailed' : null
                     "
                     routerLinkActive="active"

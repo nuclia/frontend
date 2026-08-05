@@ -27,7 +27,8 @@ libs/core/src/lib/
 ├── api/
 │   ├── sdk.service.ts              # ★ SDKService — central SDK wrapper & reactive state hub
 │   ├── billing.service.ts          # Stripe/AWS/Manual billing API client
-│   ├── sso.service.ts              # SSO login URL builder (Google/GitHub/Microsoft); reauth URL
+│   ├── bedrock.service.ts          # AWS Bedrock assume-role auth flow (start/finish/delete)
+│   ├── sso.service.ts              # SSO login URL builder + code exchange (Google/GitHub/Microsoft)
 │   ├── user.service.ts             # Current user info
 │   └── zone.service.ts             # Available deployment zones
 ├── auth/
@@ -58,7 +59,10 @@ libs/core/src/lib/
 │   ├── unauthorized-feature.directive.ts  # [stfUnauthorizedFeature] standalone directive
 │   └── unauthorized-feature-modal.component.ts  # Standalone modal — shows tier-upgrade CTA with feature list + icons; navigates to billing
 └── utils/
-    └── utils.ts                    # STFUtils, injectScript(), deepEqual(), MD5, countries
+    ├── utils.ts                    # STFUtils (slugs, language lists), injectScript(), renderMarkdown()
+    ├── deep-equal.ts                # deepEqual() — deep object/array comparison
+    ├── md5.ts                       # md5() — hashes a File for upload dedup
+    └── clonedeep.ts                 # cloneDeep() — deep clone with circular-ref support
 ```
 
 ---
@@ -79,7 +83,7 @@ Central source of truth for the currently active account/KB/ARAG. Application-le
 | `aragList`         | `Observable<IRetrievalAgentItem[]>` | All ARAGs for current account                   |
 | `isAdminOrContrib` | `Observable<boolean>`               | True in standalone mode or admin/contrib role   |
 
-**Key methods:** `setCurrentAccount(slug)`, `setCurrentKb(accountId, kbId, zone?)`, `setCurrentRetrievalAgent(...)`, `refreshKbList()`, `refreshAragList()`, `cleanAccount()`
+**Key methods:** `setCurrentAccount(slug)`, `setCurrentKnowledgeBox(accountId, kbId, zone?, force?)`, `setCurrentRetrievalAgent(accountId, aragId, zone?, force?)`, `refreshKbList()`, `refreshAragList()`, `cleanAccount()`
 
 ---
 
@@ -90,7 +94,7 @@ Central source of truth for the currently active account/KB/ARAG. Application-le
 High-level service combining `FeatureFlagService` (CDN MD5 rollout) with account-type rules. Exposes named `Observable<boolean>` properties:
 
 - **Roles:** `isKbAdmin`, `isKBContrib`, `isAragAdmin`, `isAccountManager`, `isTrial`, `isEnterpriseOrPro`
-- **`unstable.*`** (hidden in prod, enabled per-account via MD5): `billing`, `retrievalAgents`, `modelManagement`, `routing`, `aragWithMemory`, `bedrockIntegration`, `cloudSyncService`, `raoWidget`, `progressComSignup`, `simpleUI`, `metrics`, and others
+- **`unstable.*`** (hidden in prod, enabled per-account via MD5): `billing`, `retrievalAgents`, `modelManagement`, `routing`, `aragWithMemory`, `bedrockIntegration`, `cloudSyncService`, `raoWidget`, `progressComSignup`, `andOrFilterLogic`, and others
 - **`authorized.*`** (visible but tier-gated): `promptLab`, `summarization`, `remiMetrics`, `ragImages`, `extractConfig`, `splitConfig`, and others
 
 ---
@@ -118,22 +122,22 @@ Reactive helpers: `homeUrl`, `kbUrl`, `inArag()`, `inKbSettings()`.
 
 ---
 
-## Guards (from `@flaps/common`)
+## Guards
 
-Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app routing:
+Most guards live in `libs/common/src/lib/guards/`; `authGuard` and `redirectToSignUp` are defined in this lib (`src/lib/auth/auth.guard.ts`). All are wired into app routing via `@flaps/core`:
 
-| Guard                      | Enforces                                                                                                                                                                                                        |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authGuard`                | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=`                                                                                                                       |
-| `setAccountGuard`          | Calls `SDKService.setCurrentAccount()` from route param                                                                                                                                                         |
-| `setKbGuard`               | Calls `SDKService.setCurrentKb()` from route params                                                                                                                                                             |
-| `setAgentGuard`            | Calls `SDKService.setCurrentRetrievalAgent()` from route params                                                                                                                                                 |
-| `accountOwnerGuard`        | Account-owner role required                                                                                                                                                                                     |
-| `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) required                                                                                                                                                                                      |
-| `aragOwnerGuard`           | ARAG owner required                                                                                                                                                                                             |
-| `selectAccountGuard`       | Redirects if account already selected                                                                                                                                                                           |
-| `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                               |
-| `redirectToSignUp`         | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in platform + rao after signup migrated away from the monorepo. |
+| Guard                          | Enforces                                                                                                                                                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard` (in `core`)        | Checks `localStorage['JWT_KEY']` or `?token=` query param; also captures `?signup_token=`                                                                                                                       |
+| `setAccountGuard`              | Calls `SDKService.setCurrentAccount()` from route param                                                                                                                                                         |
+| `setKbGuard`                   | Calls `SDKService.setCurrentKnowledgeBox()` from route params                                                                                                                                                   |
+| `setAgentGuard`                | Calls `SDKService.setCurrentRetrievalAgent()` from route params                                                                                                                                                 |
+| `accountOwnerGuard`            | Account-owner role required                                                                                                                                                                                     |
+| `knowledgeBoxOwnerGuard`       | KB owner (SOWNER) required                                                                                                                                                                                      |
+| `aragOwnerGuard`               | ARAG owner required                                                                                                                                                                                             |
+| `selectAccountGuard`           | Redirects if account already selected                                                                                                                                                                           |
+| `agentFeatureEnabledGuard`     | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                               |
+| `redirectToSignUp` (in `core`) | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in platform + rao after signup migrated away from the monorepo. |
 
 ---
 
@@ -154,8 +158,6 @@ Most guards live in `libs/common/src/lib/guards/`. Imported and wired in app rou
 
 6. **Testing stubs** — use `subscriptionFn` / `subscriptionPipeFn` from `@flaps/core` testing exports to mock observable-returning services without importing RxJS subjects directly.
 
-7. **`UserService.updateWelcome()` logs out on any error** — previously only 403/400 triggered logout; now any `/db/welcome` error does. If the current tokens are invalid, users are redirected to login immediately.
+7. **`UserService.updateWelcome()` only logs out on a 401** — other `/db/welcome` errors (e.g. network failures during OAuth redirects) are swallowed via `EMPTY` and do not affect the session, to avoid spurious logout loops (see #2728).
 
 8. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.
-
-9. **`authGuard` captures `signup_token`** — if `?signup_token=` is in the URL, it is stored via `AuthService.setSignUpToken()` before the guard allows navigation. This token is later read by `OnboardingService` to pre-fill sign-up data.

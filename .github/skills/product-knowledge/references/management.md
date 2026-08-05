@@ -139,11 +139,23 @@ Data residency is locked to the chosen region.
 
 ---
 
-## Outbound IP Addresses
+## Public IP Addresses
 
-If your firewall blocks inbound traffic, allowlist these IPs — they are the source addresses Agentic RAG uses for outbound connections (webhooks, sync agents, integrations):
+If your firewall restricts network traffic, allowlist these IPs. Grouped by region, split into two categories:
 
-| Region       | IP addresses                                                                    |
-| ------------ | ------------------------------------------------------------------------------- |
-| Europe (AWS) | `63.179.23.139/32`, `3.78.13.149/32`, `3.66.123.24/32`                          |
-| Europe (GCP) | `35.204.65.155/32`, `34.91.38.151/32`, `35.204.139.129/32`, `35.204.108.221/32` |
+- **Inbound** — addresses Agentic RAG receives requests on; allowlist if you restrict outbound traffic from your own infrastructure (e.g. calling the APIs).
+- **Outbound** — source addresses Agentic RAG uses when connecting to your systems (webhooks, sync agents, other integrations); allowlist if you restrict inbound traffic to your infrastructure.
+
+Machine-readable lists (may change over time — fetch periodically): [JSON](https://cdn.rag.progress.cloud/ip-addresses.json) | [YAML](https://cdn.rag.progress.cloud/ip-addresses.yaml).
+
+| Region              | Inbound                                                     | Outbound                                                                        |
+| ------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Europe (GCP)        | `34.111.1.187/32`, `136.68.112.29/32`                       | `35.204.65.155/32`, `34.91.38.151/32`, `35.204.139.129/32`, `35.204.108.221/32` |
+| Australia (AWS)     | `54.253.224.44/32`, `3.25.20.9/32`, `52.64.202.159/32`      | `15.135.151.213/32`, `3.24.144.83/32`, `3.24.81.206/32`                         |
+| Europe (AWS)        | `63.182.151.234/32`, `35.159.36.135/32`, `52.57.40.91/32`   | `63.179.23.139/32`, `3.78.13.149/32`, `3.66.123.24/32`                          |
+| Israel (AWS)        | `51.84.176.167/32`, `16.164.50.185/32`, `16.164.85.69/32`   | `51.17.150.97/32`, `51.84.112.203/32`, `51.17.212.226/32`                       |
+| United States (AWS) | `18.225.228.199/32`, `18.119.145.185/32`, `3.21.239.244/32` | `3.137.28.168/32`, `18.225.104.91/32`, `16.59.115.61/32`                        |
+
+**Private connectivity:** For AWS-hosted regions, private access via AWS PrivateLink (endpoint service) is available instead of over the public internet — not self-service, contact your account manager.
+
+Note: Australia/Israel/US-AWS here are infrastructure/processing zones for network egress purposes — distinct from the two **data-residency** regions (Europe / USA) a KB is created in (see Data Regions above).

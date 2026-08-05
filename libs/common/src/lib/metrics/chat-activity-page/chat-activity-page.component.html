@@ -1,0 +1,27 @@
+<app-metrics-page
+  pageTitle="activity.chat-activity.title"
+  pageSubtitle="activity.chat-activity.subtitle"
+  [columns]="columns"
+  [sidebarFields]="sidebarFields"
+  [items]="service.items()"
+  [loading]="service.loading()"
+  [loadingMore]="service.loadingMore()"
+  [hasMore]="service.hasMore()"
+  [resetPagination]="service.resetPagination()"
+  [hasActiveFilters]="service.hasActiveFilters()"
+  [availableMonths]="service.availableMonths()"
+  (monthRangeChange)="onMonthRangeChange($event)"
+  (searchChange)="onSearchChange($event)"
+  (loadNextPage)="onLoadNextPage()"
+  (resetFilters)="service.resetFilters()"
+  (downloadRequested)="onDownloadRequested($event)">
+  <app-metrics-filters
+    toolbar-extra
+    [showSyntheticStatus]="false"
+    [filterColumns]="filterColumns"
+    [activeBooleanConditions]="activeBooleanConditions()"
+    [activeNumericConditions]="service.numericConditions()"
+    [selectedMonth]="selectedMonth()"
+    [activeDateConditions]="activeDateConditions()"
+    (filtersApplied)="onFiltersApplied($event)"></app-metrics-filters>
+</app-metrics-page>

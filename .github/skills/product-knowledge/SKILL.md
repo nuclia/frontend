@@ -174,12 +174,12 @@ Every `/ask` and `/find` call is logged. `ActivityLogItem` field groups:
 
 Four OpenAPI specification scopes, stored in `references/api-specs/`. See `references/api-specs/README.md` for full details.
 
-| Scope        | File            | Base URL                    | Purpose                                              |
-| ------------ | --------------- | --------------------------- | ---------------------------------------------------- |
-| **global**   | `global.yaml`   | `api.rag.progress.cloud`    | Account management: users, invites, PATs, zones      |
-| **nua**      | `nua.yaml`      | `[zone].rag.progress.cloud` | ML/AI: search, predict, models, agents, processing   |
-| **nucliadb** | `nucliadb.yaml` | `[zone].rag.progress.cloud` | NucliaDB: resources, fields, search, strategies      |
-| **zone**     | `zone.yaml`     | `[zone].rag.progress.cloud` | Zone: KB settings, API keys, sync, backups, activity |
+| Scope        | File            | Base URL                   | Purpose                                              |
+| ------------ | --------------- | -------------------------- | ---------------------------------------------------- |
+| **global**   | `global.yaml`   | `accounts.progress.cloud`  | Account management: users, invites, PATs, zones      |
+| **nua**      | `nua.yaml`      | `[zone].dp.progress.cloud` | ML/AI: search, predict, models, agents, processing   |
+| **nucliadb** | `nucliadb.yaml` | `[zone].dp.progress.cloud` | NucliaDB: resources, fields, search, strategies      |
+| **zone**     | `zone.yaml`     | `[zone].dp.progress.cloud` | Zone: KB settings, API keys, sync, backups, activity |
 
 ---
 
@@ -192,7 +192,7 @@ Four OpenAPI specification scopes, stored in `references/api-specs/`. See `refer
 - `ActivityMonitor` (`kb.activityMonitor`): activity log queries
 - `RetrievalAgent`: agent configuration and invocation
 
-**OpenAI-Compatible API:** `https://[zone-id].rag.progress.cloud/api/v1/predict/compat`  
+**OpenAI-Compatible API:** `https://[zone-id].dp.progress.cloud/api/v1/predict/compat`  
 Auth: `Authorization: Bearer <NUA-KEY>`. Supports chat completions, models list, embeddings.
 
 ---
@@ -243,8 +243,8 @@ Auth: `Authorization: Bearer <NUA-KEY>`. Supports chat completions, models list,
 
 This skill was last updated from:
 
-- **Docs repo:** `../docs` at commit `922725ef1f896d24374b72ac49b0785a0822d833`
-- **API specs:** Downloaded `2026-03-26` — ETags and versions stored in `meta.json`
+- **Docs repo:** `../docs` at commit `1780e3973e56432b62614ad09eba8a16bc19428b`
+- **API specs:** Downloaded `2026-08-03` — ETags and versions stored in `meta.json`
 
 ### Detecting stale docs
 
@@ -252,7 +252,7 @@ The docs repo is expected at `../docs` (sibling directory). **If it does not exi
 
 ```bash
 if [ -d "../docs" ]; then
-  cd ../docs && git fetch && git log 922725ef..origin/main --oneline
+  cd ../docs && git fetch && git log 1780e397..origin/main --oneline
 else
   echo "docs repo not found at ../docs — skipping"
 fi

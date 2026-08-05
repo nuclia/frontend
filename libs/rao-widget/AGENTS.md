@@ -2,7 +2,7 @@
 
 ## Library Overview
 
-`rao-widget` is a self-contained **embeddable web component** (`<progress-rao-widget>`) built with React 18 + Web Components API. Provides an AI-powered conversational assistant (Agentic RAG) for embedding in external sites. Shadow DOM isolates styles. Communication: WebSocket (chat streaming) + HTTP (session management).
+`rao-widget` is a self-contained **embeddable web component** (`<progress-rao-widget>`) built with React 19 + Web Components API. Provides an AI-powered conversational assistant (Agentic RAG) for embedding in external sites. Shadow DOM isolates styles. Communication: WebSocket (chat streaming) + HTTP (session management).
 
 **Two build configs** (non-obvious — choosing wrong one breaks embed):
 | Config | Entry | Output | Use case |
@@ -21,22 +21,26 @@ libs/rao-widget/src/
 ├── index.ts              # Registers <progress-rao-widget> custom element
 ├── web-component.tsx     # HTMLElement subclass; reads attrs → mounts React into Shadow DOM
 ├── RaoWrapper.tsx        # Validates required attrs; builds Nuclia instance; loads SVG sprite
-├── RaoApp.tsx            # RaoProvider + RaoWidget composition (sessionId="ephemeral" always)
-├── interfaces/           # INuclia, IMessage, ISession, IResources (DEFAULT_RESOURCES), ICallState<T>
+├── RaoApp.tsx            # RaoProvider + RaoWidget composition (sessionId passed through as a prop)
+├── interfaces/           # INuclia, IMessage, ISession, ICallState<T>; DEFAULT_RESOURCES in const.ts (IResources type itself lives in components/RaoWidget/RaoWidget.interface.ts)
 ├── hooks/
 │   ├── RaoProvider.tsx   # Core state: auth (ephemeral JWT), WebSocket chat, conversation, sessions
 │   └── RaoContext.ts     # React context + useRaoContext hook
 ├── repository/
+│   ├── client.ts         # createNucliaFetcher() factory — shared HTTP client (headers, error normalization, bearer/ephemeral token); used to build the auth and sessions APIs
 │   ├── auth.ts           # createAuthApi() factory — ephemeral JWT token endpoint; supports service-account header override
 │   ├── chat.ts           # ChatRepository factory — WebSocket ARAG chat; ChatHandlers, ChatConnectOptions, ChatConnection interfaces
 │   └── sessions.ts       # Catalog API — list/get/create sessions
 └── components/
     ├── Icon/             # SVG sprite <use> icon (sm|md|lg)
     ├── Conversation/     # Message thread (markdown, sources, reasoning)
-    ├── SessionDrawer/    # Slide-out session history drawer
+    ├── SessionDrawer/    # Slide-out session history drawer (wraps SessionHistory list)
     └── RaoWidget/
-        ├── Standard/     # Full chat UI: prompt cards, input, voice, drawer trigger
-        └── Floating/     # Circular launcher button + dialog panel overlay
+        ├── RaoWidget.tsx           # Picks Standard vs Floating based on visibleViewType
+        ├── RaoWidget.interface.ts # IRaoWidget, IResources, EViewType
+        └── viewTypes/
+            ├── Standard/  # Full chat UI: prompt cards, text input, voice, drawer trigger
+            └── Floating/  # Circular launcher button + dialog panel overlay
 ```
 
 ---
@@ -56,21 +60,21 @@ Attribute names are kebab-case; normalized to camelCase before passing to React.
 
 ### Key optional attributes
 
-| Attribute         | Default                          | Description                                                                |
-| ----------------- | -------------------------------- | -------------------------------------------------------------------------- |
+| Attribute         | Default                               | Description                                                                |
+| ----------------- | ------------------------------------- | -------------------------------------------------------------------------- |
 | `backend`         | `https://accounts.progress.cloud/api` | Base HTTP endpoint; zone prefix auto-injected                              |
-| `apikey`          | —                                | Bearer key; falls back to `localStorage.getItem('JWT_KEY')`                |
-| `viewtype`        | `"conversation"`                 | `"conversation"` = inline Standard view; `"floating"` = launcher + overlay |
-| `promptconfig`    | —                                | JSON: `{"prompts":["…"],"usefallbackprompts":false,"visibleprompts":4}`    |
-| `recordingconfig` | —                                | JSON: `{"language":"en-US"}` — enables microphone button                   |
-| `resources`       | `DEFAULT_RESOURCES`              | JSON partial override of all UI text labels (see `IResources`)             |
+| `apikey`          | —                                     | Bearer key; falls back to `localStorage.getItem('JWT_KEY')`                |
+| `viewtype`        | `"conversation"`                      | `"conversation"` = inline Standard view; `"floating"` = launcher + overlay |
+| `promptconfig`    | —                                     | JSON: `{"prompts":["…"],"usefallbackprompts":false,"visibleprompts":4}`    |
+| `recordingconfig` | —                                     | JSON: `{"language":"en-US"}` — enables microphone button                   |
+| `resources`       | `DEFAULT_RESOURCES`                   | JSON partial override of all UI text labels (see `IResources`)             |
 
 ---
 
 ## Key Components
 
 - **`RaoProvider`** — central state machine: obtains ephemeral JWTs, manages WebSocket chat, parses `AragAnswer` streaming frames, accumulates `IMessage[]` conversation.
-- **`Standard`** — full chat UI with prompt cards (intro), textarea, voice recorder, session-history drawer.
+- **`Standard`** — full chat UI with prompt cards (intro), text input, voice recorder, session-history drawer.
 - **`Floating`** — circular launcher button; on click mounts `Standard` inside a `role="dialog"` panel. Escape key closes.
 
 ---
@@ -78,10 +82,11 @@ Attribute names are kebab-case; normalized to camelCase before passing to React.
 ## Run Commands
 
 ```bash
-nx build rao-widget   # UMD build → dist/rao-widget/rao-widget.umd.js
-nx test rao-widget    # Vitest
-nx lint rao-widget
+nx build rao-widget     # UMD build → dist/rao-widget/rao-widget.umd.js
+nx vite:test rao-widget # Vitest (the "test" target is an intentional nx:noop — do NOT use `nx test rao-widget`)
 ```
+
+Note: there is no `lint` target for this project (no ESLint config present) — don't run `nx lint rao-widget`.
 
 ---
 
@@ -89,10 +94,10 @@ nx lint rao-widget
 
 1. **No `attributeChangedCallback`** — attributes are read once on `connectedCallback`. To update props after mount, remove and re-insert the element.
 2. **Shadow DOM + inline CSS** — all CSS imported as `?inline` strings and injected via `<style>` tags in the Shadow DOM. No separate CSS output; no style leakage.
-3. **Ephemeral sessions always** — `sessionId="ephemeral"` is hardcoded in `RaoApp.tsx`. Persistent sessions exist in `SessionsApi` but are not yet wired to chat flow (guarded by `features.sessionHistory = false`).
+3. **Ephemeral sessions always** — `sessionId="ephemeral"` is hardcoded in `RaoWrapper.tsx` (passed down through `RaoApp.tsx`). Persistent sessions exist in `SessionsApi` but are not yet wired to chat flow (guarded by `features.sessionHistory = false`).
 4. **`@nuclia/core` aliasing** — `vite.config.lib.ts` aliases `@nuclia/core` → `libs/sdk-core/src/index.ts`. UMD bundle uses workspace SDK. Keep in sync with published package.
 5. **Two build configs** — `nx build rao-widget` runs UMD (`vite.config.lib.ts`). ESM build uses `vite.config.ts`. Don't confuse them.
 6. **`version` token** — wrapper div has `data-version="__NUCLIA_DEV_VERSION__"`. This placeholder is replaced at build/release time.
 7. **Kebab-case attrs, camelCase props** — `web-component.tsx` converts `api-key` → `apiKey` via regex. Always define React props camelCase, HTML attrs kebab-case.
 8. **i18n via `resources` attr** — all text sourced from `IResources` (default English in `src/interfaces/const.ts`). Pass partial JSON as `resources` attribute to override labels.
-9. **Repository factory pattern** — `auth.ts` exports `createAuthApi(fetcher, accountId, knowledgeBoxId, config?)` returning `{ createEphemeralToken }`. `chat.ts` exports `ChatRepository` interface with `connect(options)` and `buildSocketUrl(...)`. Both are factory functions, not classes — instantiate per-component in `RaoProvider`.
+9. **Repository factory pattern** — `client.ts` exports `createNucliaFetcher(config)` returning a shared `NucliaFetcher` (`request`/`get`/`post`, header injection, error normalization, `setBearerToken`/`setEphemeralToken`). `auth.ts` exports `createAuthApi(fetcher, accountId, knowledgeBoxId, config?)` returning `{ createEphemeralToken }`. `sessions.ts` exports `createSessionsApi(fetcher, knowledgeBoxId)`. `chat.ts` exports `ChatRepository` interface with `connect(options)` and `buildSocketUrl(...)`. All are factory functions, not classes — instantiated per-component in `RaoProvider` (the fetcher is built first, then passed into the auth and sessions APIs).

@@ -312,7 +312,7 @@ complete after the first emission — otherwise the outer subscription stays ope
 private features = inject(FeaturesService);
 
 // Stable flags
-isEnterprise = this.features.isEnterprise;         // Observable<boolean>
+isEnterprise = this.features.isEnterpriseOrPro;    // Observable<boolean>
 
 // Unstable flags (subject to change)
 hasSomeFeature = this.features.unstable.someFeature; // Observable<boolean>

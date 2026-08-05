@@ -20,6 +20,7 @@ All feature code lives under `libs/common/src/lib/`. Major areas:
 account/           ← Account management, billing, NUA clients, AI model config
 ai-models/         ← KB-level AI/LLM model configuration (extraction, generation, semantic, summarization)
 base/              ← Root shell: BaseComponent (auth + notification polling), DashboardLayoutComponent
+chat-advice/       ← AI chat assistant prototype (ChatAdviceService, ChatAdviceBubbleComponent)
 charts/            ← Reusable chart components (bar, line, range) using base-chart directive
 entities/          ← NER entity group management
 guards/            ← All route guards (functional, not class-based)
@@ -27,6 +28,8 @@ metrics/           ← Activity logs & REMI quality analytics (dashboard-only, 5
   activity/        ← "Detailed logs" — ActivityModule (lazy inside MetricsModule at /metrics/detailed)
   rag-advice/      ← AI-generated advice on how to improve RAG scores (RagAdviceService + RagAdviceComponent)
   remi-score-badge/← Coloured badge for REMI score display (RemiScoreBadgeComponent)
+onboarding/        ← Post-signup onboarding flow: account/KB creation steps, embeddings-model form, EULA modal
+profile/           ← User profile page (ProfileComponent) — name/language/password preferences
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
 resources/         ← Resource CRUD, editor, list with pending/processed/error tabs
 retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
@@ -64,7 +67,6 @@ All functional guards in `libs/common/src/lib/guards/`:
 | `knowledgeBoxOwnerGuard`   | KB owner (SOWNER) role required                                                                      |
 | `aragOwnerGuard`           | ARAG owner role required                                                                             |
 | `agentFeatureEnabledGuard` | Checks `FeaturesService.unstable.retrievalAgents`                                                    |
-| `AuthInterceptor`          | HTTP interceptor — injects `Authorization` header from JWT                                           |
 
 ---
 

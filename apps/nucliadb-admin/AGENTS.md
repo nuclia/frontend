@@ -5,7 +5,7 @@
 `nucliadb-admin` is an Angular 21 admin UI for **self-hosted NucliaDB** instances. Key characteristics:
 
 - Deployed at `/admin/` with **hash-based routing** (`useHash: true`).
-- OAuth post-redirect URL repair: `AppComponent` rewrites `/admin/admin/` → `/#/admin/`.
+- OAuth post-redirect URL repair: `AppComponent` rewrites `/admin/admin/` → `/admin/#/admin/`.
 - Always `environment.standalone = true` — no Nuclia cloud account needed.
 - App shell is intentionally thin — almost all features come from `libs/`.
 - i18n assembled from three bundles: `user`, `common`, `sync`.
@@ -26,7 +26,7 @@ apps/nucliadb-admin/src/
     ├── app.component.ts        # Root: i18n init, OAuth repair, toast block
     ├── app-title.strategy.ts   # "NucliaDB – <title>"
     └── home/
-        ├── home-page.component.ts  # Standalone: NUA key validity + version status
+        ├── home-page.component.ts  # Not standalone: NUA key validity + version status
         └── main-container/         # Standalone: thin router-outlet wrapper
 ```
 
@@ -73,7 +73,7 @@ All URLs are hash-prefixed: `http://localhost:4200/admin/#/at/local/my-kb-id/res
 
 | Component                | Selector             | Responsibility                                                                                                                          |
 | ------------------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppComponent`           | `nad-root`           | i18n init, drag-drop prevention, version string, OAuth URL repair                                                                       |
+| `AppComponent`           | `nad-root`           | i18n init, drag-drop prevention, OAuth URL repair                                                                                       |
 | `HomePageComponent`      | `nad-home-page`      | NUA API key validity status + NucliaDB/admin-assets version checks (`StandaloneService`). **Not standalone** — declared in `AppModule`. |
 | `MainContainerComponent` | `nad-main-container` | Thin `<router-outlet>` wrapper (**standalone**, OnPush)                                                                                 |
 
@@ -135,7 +135,7 @@ App runs at `http://localhost:4200/admin/` (hash routes: `http://localhost:4200/
 3. **Standalone mode** — `environment.standalone = true` always. Guards skip zone API; `StandaloneService` runs NUA key check.
 4. **Component prefix `nad`** — all app-level selectors start `nad-`.
 5. **Runtime config** — never hardcode backend URLs; access via `BackendConfigurationService` (reads `window.config` from `AppInitService`).
-6. **OAuth URL repair** — `AppComponent` constructor checks if `location.pathname` starts with `/admin/admin/` and rewrites to `/#/admin/`. This handles OAuth redirects that incorrectly double the base path.
+6. **OAuth URL repair** — `AppComponent` constructor checks if `location.href` includes `/admin/admin/` and rewrites it to `/admin/#/admin/`. This handles OAuth redirects that incorrectly double the base path.
 7. **Module boundary workarounds** — lazy routes reference lib internals directly (`import('../../../../libs/common/src/lib/...')`); suppress with `// eslint-disable-next-line @nx/enforce-module-boundaries`.
 8. **i18n** — three bundles merged: `assets/i18n/user/`, `assets/i18n/common/`, `assets/i18n/sync/`. `PaTranslateModule` must be imported in root module for Pastanaga locale-aware components.
 9. **Sentry** — production only; activated by `AppInitService` from `app-config.json` `sentry_url`. Never hardcoded.

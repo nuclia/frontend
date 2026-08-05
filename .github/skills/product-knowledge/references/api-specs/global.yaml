@@ -5,7 +5,7 @@ info:
   version: v1
 openapi: 3.1.0
 servers:
-- url: https://stashify.cloud/api/v1
+- url: https://accounts.stashify.cloud/api/v1
   description: Development server
 tags:
 - description: Operations for creating, reading, updating, and deleting accounts.
@@ -49,86 +49,12 @@ paths:
   /api/billing/account/{account_id}/aws/manual-agreement: {}
   /api/billing/account/{account_id}/aws/subscription: {}
   /api/billing/account/{account_id}/aws/subscription/sync: {}
+  /api/billing/account/{account_id}/budget: {}
+  /api/billing/account/{account_id}/cloud_zero/subscription: {}
   /api/billing/account/{account_id}/current_usage: {}
   /api/billing/account/{account_id}/customer: {}
   /api/billing/account/{account_id}/invoices: {}
-  /api/billing/account/{account_id}/manual/subscription:
-    put:
-      summary: Create Manual Subscription
-      operationId: create_manual_subscription_api_billing_account__account_id__manual_subscription_put
-      parameters:
-      - name: account_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Account Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ManualSubscriptionCreate'
-      responses:
-        '201':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    patch:
-      summary: Patch Manual Subscription
-      operationId: patch_manual_subscription_api_billing_account__account_id__manual_subscription_patch
-      parameters:
-      - name: account_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Account Id
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ManualSubscriptionUpdate'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NucliaCustomerData'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-    delete:
-      summary: Delete Manual Subscription
-      operationId: delete_manual_subscription_api_billing_account__account_id__manual_subscription_delete
-      parameters:
-      - name: account_id
-        in: path
-        required: true
-        schema:
-          type: string
-          title: Account Id
-      responses:
-        '204':
-          description: Successful Response
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
+  /api/billing/account/{account_id}/manual/subscription: {}
   /api/billing/account/{account_id}/nuclia/current_usage: {}
   /api/billing/account/{account_id}/payment_methods: {}
   /api/billing/account/{account_id}/stripe/current_usage: {}
@@ -146,6 +72,7 @@ paths:
   /api/billing/account/{account_id}/subscription/reactivate: {}
   /api/billing/account/{account_id}/subscription/reset: {}
   /api/billing/account/{account_id}/subscription/upgrade: {}
+  /api/billing/cloud_zero/product_catalog: {}
   /api/billing/currencies: {}
   /api/billing/formula: {}
   /api/billing/formula/{id}: {}
@@ -156,6 +83,7 @@ paths:
   /api/configuration/account_types: {}
   /api/hub/pull: {}
   /api/hub/push: {}
+  /api/internal/token-metadata: {}
   /api/manage/@account/{account_id_or_slug}: {}
   /api/manage/@account/{account_id_or_slug}/blocking_status: {}
   /api/manage/@account/{account_id_or_slug}/{user_id}: {}
@@ -266,6 +194,14 @@ paths:
             format: uuid
           - type: 'null'
           title: Knowledgebox
+      - name: nua_key_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nua Key Id
       - name: from
         in: query
         required: true
@@ -281,7 +217,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-06-02T10:57:28.257427'
+          default: '2026-07-29T21:50:23.441756'
           title: To
       responses:
         '200':
@@ -842,8 +778,9 @@ paths:
   /api/zone/billing/formula/{id}: {}
   /api/zone/index/kb/{kb_id}: {}
   /api/zone/index/kbs: {}
-  /api/zone/index/nua_client/{client_id}: {}
+  /api/zone/index/nua_client/{internal_id}: {}
   /api/zone/index/nua_clients: {}
+  /api/zone/token-metadata: {}
   /api/zone/user: {}
   /api/zone/user/token: {}
   /api/zone/users: {}
@@ -894,14 +831,14 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
   zone_hub:
-    commit: 02eb5d19900f78c32f7975f6bf7917ff9bb58c5b
-    last_updated: '2026-05-29T07:54:03.400697'
+    commit: 831c28f2018d7fe821afcd0545017976058ad086
+    last_updated: '2026-07-13T09:19:14.356586'
   accounting:
-    commit: b7b6cb2bc9b6ae56552788d4679af6f78f6242fd
-    last_updated: '2026-06-02T10:57:28.847625'
+    commit: e6801bf177da46421e987f1734f7cfcae6b65b93
+    last_updated: '2026-07-29T21:50:23.861152'
   idp:
-    commit: 54029253acd51e62c0d2134628868c87e1d3dff8
-    last_updated: '2026-06-02T15:29:43.532094'
+    commit: 12ae558311422f12bf032b4f966a953761a156bc
+    last_updated: '2026-07-24T07:58:29.925079'
 components:
   schemas:
     HTTPValidationError:
@@ -928,6 +865,11 @@ components:
         type:
           type: string
           title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
       - loc
@@ -1068,12 +1010,22 @@ components:
         free_tokens_per_billing_cycle:
           type: integer
           title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
       type: object
       required:
       - status
       - aws_product_code
       - aws_product_id
       - free_tokens_per_billing_cycle
+      - billing_formula_id
       title: AccountAWSMarketplaceSubscriptionInfo
     AccountBillingConfig:
       properties:
@@ -1142,10 +1094,24 @@ components:
         free_tokens_per_billing_cycle:
           type: integer
           title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
       type: object
       required:
       - status
       - free_tokens_per_billing_cycle
+      - billing_formula_id
+      - nuclia_tokens_price
       title: AccountNucliaCustomerTableSubscriptionInfo
     AccountStripeCustomer:
       properties:
@@ -1221,12 +1187,22 @@ components:
         free_tokens_per_billing_cycle:
           type: integer
           title: Free Tokens Per Billing Cycle
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
       type: object
       required:
       - status
       - start_billing_period
       - end_billing_period
       - free_tokens_per_billing_cycle
+      - billing_formula_id
       title: AccountStripeSubscriptionInfo
     AccountSubscription:
       properties:
@@ -1606,6 +1582,59 @@ components:
       required:
       - x-amzn-marketplace-token
       title: Body_aws_marketplace_fulfillment_callback_api_marketplace_aws_callback_post
+    BudgetCreate:
+      properties:
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+          description: Set to null for unlimited, or a positive number for the token
+            limit.
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      required:
+      - budget_value
+      title: BudgetCreate
+    BudgetPatch:
+      properties:
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+          description: Set to null for unlimited, or a positive number for the token
+            limit.
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      additionalProperties: false
+      type: object
+      title: BudgetPatch
+    BudgetResponse:
+      properties:
+        account_id:
+          type: string
+          title: Account Id
+        budget_value:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Budget Value
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      required:
+      - account_id
+      - budget_value
+      - action_on_budget_exhausted
+      title: BudgetResponse
     CalculatorConfig:
       properties:
         version:
@@ -1642,6 +1671,148 @@ components:
           title: Comment
       type: object
       title: CancelStripeSubscription
+    CloudZeroCustomerData:
+      properties:
+        account_id:
+          type: string
+          format: uuid4
+          title: Account Id
+        created:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Created
+        modified:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Modified
+        billing_formula_id:
+          type: string
+          format: uuid4
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000001
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        billing_history:
+          additionalProperties: true
+          type: object
+          title: Billing History
+        last_notifications:
+          $ref: '#/components/schemas/LastNotifications'
+        product:
+          type: string
+          title: Product
+        product_line:
+          type: string
+          title: Product Line
+        business_unit:
+          type: string
+          title: Business Unit
+      type: object
+      required:
+      - account_id
+      - nuclia_tokens_price
+      - product
+      - product_line
+      - business_unit
+      title: CloudZeroCustomerData
+    CloudZeroSubscriptionCreate:
+      properties:
+        nuclia_tokens_price:
+          type: number
+          title: Nuclia Tokens Price
+        billing_formula_id:
+          type: string
+          title: Billing Formula Id
+          default: 00000000-0000-4000-8000-000000000002
+        free_storage_nuclia_tokens:
+          type: integer
+          title: Free Storage Nuclia Tokens
+          default: 0
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+        product:
+          type: string
+          title: Product
+        product_line:
+          type: string
+          title: Product Line
+        business_unit:
+          type: string
+          title: Business Unit
+      type: object
+      required:
+      - nuclia_tokens_price
+      - product
+      - product_line
+      - business_unit
+      title: CloudZeroSubscriptionCreate
+    CloudZeroSubscriptionUpdate:
+      properties:
+        billing_formula_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Billing Formula Id
+        nuclia_tokens_price:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Nuclia Tokens Price
+        free_storage_nuclia_tokens:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Storage Nuclia Tokens
+        free_tokens_per_billing_cycle:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Free Tokens Per Billing Cycle
+        on_demand_budget:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: On Demand Budget
+        action_on_budget_exhausted:
+          anyOf:
+          - $ref: '#/components/schemas/ActionOnBudgetExhausted'
+          - type: 'null'
+      type: object
+      title: CloudZeroSubscriptionUpdate
     Country:
       type: string
       enum:
@@ -2184,15 +2355,20 @@ components:
         free_storage_nuclia_tokens:
           type: integer
           title: Free Storage Nuclia Tokens
+          default: 0
+        free_tokens_per_billing_cycle:
+          type: integer
+          title: Free Tokens Per Billing Cycle
+          default: 0
         on_demand_budget:
-          type: number
+          anyOf:
+          - type: number
+          - type: 'null'
           title: On Demand Budget
-          default: 500
         action_on_budget_exhausted:
           anyOf:
           - $ref: '#/components/schemas/ActionOnBudgetExhausted'
           - type: 'null'
-          default: WARN_ACCOUNT_OWNER
       type: object
       required:
       - nuclia_tokens_price
@@ -2317,7 +2493,6 @@ components:
       - media_seconds_processed
       - pages_processed
       - paragraphs_processed
-      - train_seconds
       - searches_performed
       - suggestions_performed
       - predictions_performed
@@ -2908,6 +3083,7 @@ components:
       - STRIPE
       - AWS_MARKETPLACE
       - MANUAL
+      - CLOUD_ZERO
       title: SubscriptionProvider
     SubscriptionStatus:
       type: string
@@ -3271,6 +3447,10 @@ components:
         workflow:
           $ref: '#/components/schemas/WorkflowMode'
           default: classic
+        eula_accepted:
+          type: boolean
+          title: Eula Accepted
+          default: false
       type: object
       required:
       - id
@@ -3326,6 +3506,10 @@ components:
         workflow:
           $ref: '#/components/schemas/WorkflowMode'
           default: classic
+        eula_accepted:
+          type: boolean
+          title: Eula Accepted
+          default: false
       type: object
       required:
       - title
@@ -3798,6 +3982,11 @@ components:
           anyOf:
           - $ref: '#/components/schemas/WorkflowMode'
           - type: 'null'
+        eula_accepted:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Eula Accepted
       type: object
       title: AccountModification
     AccountRole:
@@ -4221,7 +4410,7 @@ components:
       properties:
         file:
           type: string
-          format: binary
+          contentMediaType: application/octet-stream
           title: File
       type: object
       required:
@@ -4452,6 +4641,10 @@ components:
         workflow:
           $ref: '#/components/schemas/WorkflowMode'
           default: classic
+        eula_accepted:
+          type: boolean
+          title: Eula Accepted
+          default: false
         type:
           $ref: '#/components/schemas/AccountType'
         zone_visibility:
@@ -4719,11 +4912,44 @@ components:
         account_id:
           type: string
           title: Account Id
+        internal_id:
+          type: string
+          title: Internal Id
+        tokens_limit:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Tokens Limit
       type: object
       required:
       - client_id
       - account_id
+      - internal_id
       title: NuaKeyIndexCreationPayload
+    NuaKeyIndexUpdatePayload:
+      properties:
+        tokens_limit:
+          anyOf:
+          - type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Tokens Limit
+      type: object
+      title: NuaKeyIndexUpdatePayload
+    NuaKeyInfoResponse:
+      properties:
+        blocked:
+          type: integer
+          title: Blocked
+          default: 0
+        tokens_limit:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Tokens Limit
+      type: object
+      title: NuaKeyInfoResponse
     OAuthTokens:
       properties:
         access_token:
@@ -4759,6 +4985,25 @@ components:
       - entity_id
       - x509_cert
       title: OldSAMLConfig
+    PATTokenMetadataUpdate:
+      properties:
+        token_jti:
+          type: string
+          title: Token Jti
+        issuer:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Issuer
+        seen_at:
+          type: string
+          format: date-time
+          title: Seen At
+      type: object
+      required:
+      - token_jti
+      - seen_at
+      title: PATTokenMetadataUpdate
     RecoverPayload:
       properties:
         username:
@@ -4926,6 +5171,20 @@ components:
       required:
       - action
       title: SignupResponse
+    SocialLoginAuthorizationRequest:
+      properties:
+        code:
+          type: string
+          title: Code
+        login_challenge:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Login Challenge
+      type: object
+      required:
+      - code
+      title: SocialLoginAuthorizationRequest
     Stash:
       properties:
         id:
@@ -5039,6 +5298,16 @@ components:
       - description
       - expires
       title: TokenItem
+    TokenMetadataPayload:
+      properties:
+        pat_updates:
+          items:
+            $ref: '#/components/schemas/PATTokenMetadataUpdate'
+          type: array
+          title: Pat Updates
+          default: []
+      type: object
+      title: TokenMetadataPayload
     UserCreated:
       properties:
         id:
@@ -5259,20 +5528,6 @@ components:
       - DEFAULT
       - RESTRICTED
       title: ZoneVisibility
-    stashify_idp__api__auth__providers__microsoft__SocialLoginAuthorizationRequest:
-      properties:
-        code:
-          type: string
-          title: Code
-        login_challenge:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Login Challenge
-      type: object
-      required:
-      - code
-      title: SocialLoginAuthorizationRequest
     stashify_idp__api__manage__models__User:
       properties:
         id:

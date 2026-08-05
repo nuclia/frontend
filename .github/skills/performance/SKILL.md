@@ -167,7 +167,6 @@ shareReplay()               // ← use shareReplay(1)
 
 Known instances of `shareReplay()` without buffer in the codebase:
 
-- `apps/manager-v2/src/app/manage-accounts/account.service.ts`
 - `libs/common/src/lib/account/billing/history/history.component.ts`
 
 When touching these files, fix the anti-pattern.
