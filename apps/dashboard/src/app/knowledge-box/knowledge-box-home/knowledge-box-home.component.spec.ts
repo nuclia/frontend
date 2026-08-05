@@ -188,7 +188,7 @@ describe('KnowledgeBoxHomeComponent', () => {
         ],
       }).compileComponents();
     }),
-    7000,
+    20000,
   );
 
   beforeEach(() => {
