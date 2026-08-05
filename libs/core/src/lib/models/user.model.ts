@@ -143,6 +143,6 @@ export interface ResetResponse {
 }
 
 export interface SetupResponse {
-  login_challenge: string;
+  login_challenge?: string;
   user_hint: string;
 }
