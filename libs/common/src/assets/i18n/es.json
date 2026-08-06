@@ -1358,6 +1358,7 @@
 	"navbar.settings": "Preferencias",
 	"navbar.subscription": "Suscripción",
 	"navbar.sync": "Sincronizar y conectar",
+	"navbar.sync-only": "Sincronizar",
 	"navbar.trainings": "Entrenamientos",
 	"navbar.upload-data": "Subir datos",
 	"navbar.users": "Usuarios",

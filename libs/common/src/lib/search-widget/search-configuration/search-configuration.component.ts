@@ -143,6 +143,7 @@ export class SearchConfigurationComponent implements OnInit, OnDestroy {
 
   isRagLabAuthorized = this.features.authorized.promptLab;
   isRoutingEnabled = this.features.unstable.routing;
+  isAgenticSearchEnabled = this.features.unstable.agenticSearch;
   configurations: OptionType[] = [];
 
   selectedConfig = new FormControl<string>('');

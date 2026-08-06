@@ -1,17 +1,19 @@
-<pa-tabs>
-  <pa-tab
-    (click)="navigateTo('synchronize')"
-    [active]="!isConnectActive()"
-    ariaControls="home-page-panel">
-    {{ 'sync.home-page.synchronize.title' | translate }}
-  </pa-tab>
-  <pa-tab
-    (click)="navigateTo('connect')"
-    [active]="isConnectActive()"
-    ariaControls="home-page-panel">
-    {{ 'sync.home-page.connect.title' | translate }}
-  </pa-tab>
-</pa-tabs>
+@if (isAgenticSearchEnabled()) {
+  <pa-tabs>
+    <pa-tab
+      (click)="navigateTo('synchronize')"
+      [active]="!isConnectActive()"
+      ariaControls="home-page-panel">
+      {{ 'sync.home-page.synchronize.title' | translate }}
+    </pa-tab>
+    <pa-tab
+      (click)="navigateTo('connect')"
+      [active]="isConnectActive()"
+      ariaControls="home-page-panel">
+      {{ 'sync.home-page.connect.title' | translate }}
+    </pa-tab>
+  </pa-tabs>
+}
 
 <div
   id="home-page-panel"

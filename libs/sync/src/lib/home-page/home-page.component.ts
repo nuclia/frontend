@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   imports: [CommonModule, PaTabsModule, RouterModule, TranslateModule],
@@ -16,6 +17,7 @@ export class HomePageComponent {
   private elementRef = inject(ElementRef<HTMLElement>);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private features = inject(FeaturesService);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -25,6 +27,7 @@ export class HomePageComponent {
     ),
   );
 
+  isAgenticSearchEnabled = toSignal(this.features.unstable.agenticSearch, { initialValue: false });
   isConnectActive = computed(() => (this.currentUrl() ?? '').includes('/connect'));
 
   navigateTo(tab: 'synchronize' | 'connect') {
