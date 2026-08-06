@@ -15,7 +15,9 @@ export function unblockBackground(fullscreenModal = false) {
     const scrollY = body.style.top;
     body.style.position = '';
     body.style.top = '';
-    setTimeout(() => scrollBackTo(scrollY));
+    if (scrollY) {
+      setTimeout(() => scrollBackTo(scrollY));
+    }
   } else {
     document.body.style.overflow = 'inherit';
   }
