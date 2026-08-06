@@ -46,7 +46,9 @@
                 data-cy="go-to-sync"
                 [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                 <pa-icon name="connectors"></pa-icon>
-                <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
+                <span class="nav-link-title">
+                  {{ ((isAgenticSearchEnabled | async) ? 'navbar.sync' : 'navbar.sync-only') | translate }}
+                </span>
               </a>
               <a
                 class="nav-link"

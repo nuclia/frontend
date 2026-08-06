@@ -72,6 +72,7 @@ export class FeaturesService {
     automaticAdvice: this.featureFlag.isFeatureEnabled('automatic-advice'),
     chatAdvice: this.featureFlag.isFeatureEnabled('chat-advice'),
     andOrFilterLogic: this.featureFlag.isFeatureEnabled('and-or-filter-logic'),
+    agenticSearch: this.featureFlag.isFeatureEnabled('agentic-search'),
     syncSource: this.featureFlag.isFeatureEnabled('sync-source'),
     mcpSource: this.featureFlag.isFeatureEnabled('mcp-source'),
     perplexitySource: this.featureFlag.isFeatureEnabled('perplexity-source'),

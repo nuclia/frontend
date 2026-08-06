@@ -1358,6 +1358,7 @@
 	"navbar.settings": "Settings",
 	"navbar.subscription": "Subscription",
 	"navbar.sync": "Sync & Connect",
+	"navbar.sync-only": "Synchronize",
 	"navbar.trainings": "Trainings",
 	"navbar.upload-data": "Upload data",
 	"navbar.users": "Users",
