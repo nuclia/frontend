@@ -101,6 +101,8 @@ export class UserMenuComponent implements OnInit {
 
   private readonly simpleMode = this.navigation.simpleMode;
 
+  private readonly isKbAdmin = this.features.isKbAdmin;
+
   private readonly showAccountGroup = this.isAccountManager.pipe(
     map((isAccountManager) => !this.standalone && !!isAccountManager),
     shareReplay(1),
@@ -235,6 +237,20 @@ export class UserMenuComponent implements OnInit {
         },
       ],
     },
+    // ── Context box administration ─────────────────────────────────────────────────────
+    {
+      header: 'user-menu.section.administration',
+      visible$: combineLatest([this.isCowork, this.isKbAdmin]).pipe(map(([cowork, kbAdmin]) => !!cowork && !!kbAdmin)),
+      prependSeparator: true,
+      items: [
+        {
+          label: 'account.manage_users',
+          icon: 'users',
+          dataCy: 'go-to-manage-users',
+          action: () => this.navigateToKbUsers(),
+        },
+      ],
+    },
     // ── Configuration ──────────────────────────────────────────────────────
     {
       header: 'user-menu.section.configuration',
@@ -323,6 +339,13 @@ export class UserMenuComponent implements OnInit {
       } else {
         this.router.navigate(['/user/profile']);
       }
+    });
+  }
+
+  private navigateToKbUsers() {
+    this.menuClose.emit();
+    this.navigation.kbUrl.pipe(take(1)).subscribe((kbUrl) => {
+      this.router.navigate([kbUrl + '/users']);
     });
   }
 
