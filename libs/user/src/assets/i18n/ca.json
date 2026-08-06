@@ -46,7 +46,7 @@
 	"login.use-sso": "Utilitzeu l'inici de sessió únic",
 	"onboarding.account-workflow.classic": "Avançat",
 	"onboarding.account-workflow.classic-description": "Utilitzeu el conjunt complet de funcions d'Agentic RAG. Aquesta opció està pensada per a usuaris que volen un control precís de totes les capacitats disponibles.",
-	"onboarding.account-workflow.cowork": "Simplificat",
+	"onboarding.account-workflow.cowork": "Context Box",
 	"onboarding.account-workflow.cowork-description": "Una experiència més fàcil d'utilitzar. Trieu aquesta opció si només voleu utilitzar Agentic RAG per proporcionar context a altres agents a través de MCP.",
 	"onboarding.failed": "S'ha produït un error, poseu-vos en contacte amb el vostre administrador.",
 	"onboarding.final-button": "Valida",

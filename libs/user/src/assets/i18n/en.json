@@ -46,7 +46,7 @@
 	"login.use-sso": "Use Single Sign-On",
 	"onboarding.account-workflow.classic": "Advanced",
 	"onboarding.account-workflow.classic-description": "Use the full set of Agentic RAG features. This option is intended for users who want fine‑grained control to all available capabilities.",
-	"onboarding.account-workflow.cowork": "Simplified",
+	"onboarding.account-workflow.cowork": "Context Box",
 	"onboarding.account-workflow.cowork-description": "An easier‑to‑use experience. Choose this if you only intend to use Agentic RAG to supply context to other agents through MCP.",
 	"onboarding.failed": "Something went wrong, please contact your administrator.",
 	"onboarding.final-button": "Validate",

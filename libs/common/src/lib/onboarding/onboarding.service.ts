@@ -5,7 +5,14 @@ import { SDKService, STFUtils, UserService, NavigationService, AuthService, Feat
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
-import { Account, AccountModification, KnowledgeBoxCreation, RetrievalAgentCreation, WorkflowType } from '@nuclia/core';
+import {
+  Account,
+  AccountModification,
+  KnowledgeBoxCreation,
+  RetrievalAgentCreation,
+  SignUpInfo,
+  WorkflowType,
+} from '@nuclia/core';
 
 const STEPS = [1, 2, 3, 4, 5, 6];
 const CLASSIC_STEPS = [1, 3, 4, 5, 6];
@@ -74,66 +81,63 @@ export class OnboardingService {
       .subscribe();
   }
 
-  createAccount(): Observable<Account> {
+  getSignUpData(): Observable<SignUpInfo | null> {
+    const signupToken = this.authService.getSignUpToken();
+    if (signupToken) {
+      return this.sdk.nuclia.db.getSignupInfo(signupToken || '').pipe(
+        catchError((error) => {
+          return of(null);
+        }),
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  createAccount(data: SignUpInfo): Observable<Account> {
     this._onboardingState.next({
       creating: true,
       accountCreated: false,
       kbCreated: false,
       creationFailed: false,
     });
-    const signupToken = this.authService.getSignUpToken();
-    if (signupToken) {
-      return this.sdk.nuclia.db.getSignupInfo(signupToken).pipe(
-        switchMap((data) =>
-          this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
-            switchMap((accountSlug) => {
-              if (data.workflow) {
-                this.setSteps(data.workflow);
-              }
-              return this.sdk.nuclia.db
-                .createAccount({
-                  slug: accountSlug,
-                  title: data.company,
-                  workflow: data.workflow,
-                  eula_accepted: true,
-                })
-                .pipe(
-                  catchError((error) => {
-                    this._onboardingState.next({
-                      creating: false,
-                      accountCreated: false,
-                      kbCreated: false,
-                      creationFailed: true,
-                    });
-                    console.error(`Account creation failed`, error);
-                    this.toaster.error('Account creation failed');
-                    throw error;
-                  }),
-                );
+    return this.getAvailableAccountSlug(STFUtils.generateSlug(data.company)).pipe(
+      switchMap((accountSlug) => {
+        if (data.workflow) {
+          this.setSteps(data.workflow);
+        }
+        return this.sdk.nuclia.db
+          .createAccount({
+            slug: accountSlug,
+            title: data.company,
+            workflow: data.workflow,
+            eula_accepted: true,
+          })
+          .pipe(
+            catchError((error) => {
+              this._onboardingState.next({
+                creating: false,
+                accountCreated: false,
+                kbCreated: false,
+                creationFailed: true,
+              });
+              console.error(`Account creation failed`, error);
+              this.toaster.error('Account creation failed');
+              throw error;
             }),
-          ),
-        ),
-        switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
-        switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
-        tap(() => {
-          this._onboardingState.next({
-            creating: false,
-            accountCreated: true,
-            kbCreated: false,
-            creationFailed: false,
-          });
-        }),
-      );
-    } else {
-      this._onboardingState.next({
-        creating: false,
-        accountCreated: false,
-        kbCreated: false,
-        creationFailed: true,
-      });
-      console.error('No signup data');
-      return throwError(() => new Error('No signup data'));
-    }
+          );
+      }),
+      switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
+      switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
+      tap(() => {
+        this._onboardingState.next({
+          creating: false,
+          accountCreated: true,
+          kbCreated: false,
+          creationFailed: false,
+        });
+      }),
+    );
   }
 
   modifyAccount(accountSlug: string, data: AccountModification): Observable<void> {
