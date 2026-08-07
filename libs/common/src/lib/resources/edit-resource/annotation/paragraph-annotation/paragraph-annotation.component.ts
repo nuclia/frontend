@@ -42,10 +42,10 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       this.selectedTab = 'relations';
     });
 
-    combineLatest([this.fieldId, this.resource, this.entityFamilies])
+    combineLatest([this.fieldId, this.fieldData, this.entityFamilies])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource, families]) =>
-        this.annotationService.initParagraphsWithAnnotations(fieldId, resource, families),
+      .subscribe(([fieldId, fieldData, families]) =>
+        this.annotationService.initParagraphsWithAnnotations(fieldId, fieldData, families),
       );
   }
 
