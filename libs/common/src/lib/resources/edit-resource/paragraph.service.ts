@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, tap } from 'rxjs';
 import {
   getConversationParagraphs,
-  getParagraphs,
   getParagraphsWithClassifications,
   getTotalMessagePages,
   ParagraphWithText,
@@ -11,6 +10,7 @@ import {
   ConversationField,
   FIELD_TYPE,
   FieldId,
+  IFieldData,
   longToShortFieldType,
   Message,
   Resource,
@@ -64,7 +64,7 @@ export class ParagraphService {
     map(([current, total]) => total > current),
   );
 
-  initParagraphs(fieldId: FieldId, resource: Resource, page = 1) {
+  initParagraphs(fieldId: FieldId, resource: Resource, fieldData: IFieldData, page = 1) {
     if (fieldId.field_type === FIELD_TYPE.conversation) {
       return this.fetchConversationPage(fieldId, resource, page).pipe(
         tap((pararaphs) => {
@@ -72,9 +72,9 @@ export class ParagraphService {
         }),
       );
     } else {
-      return of(getParagraphs(fieldId, resource)).pipe(
+      return of(fieldData?.extracted?.metadata?.metadata?.paragraphs || []).pipe(
         tap((paragraphs) => {
-          const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, resource).filter(
+          const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, fieldData, resource).filter(
             (paragraph) => !(paragraph.kind === 'OCR' && !paragraph.text),
           );
           this.setupParagraphs(enhancedParagraphs);

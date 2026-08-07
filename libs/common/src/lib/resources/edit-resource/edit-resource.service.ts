@@ -6,15 +6,18 @@ import {
   AnyFieldData,
   Classification,
   CloudLink,
+  ExtractedDataTypes,
   FIELD_TYPE,
   FieldId,
   FileFieldData,
   getDataKeyFromFieldType,
+  IFieldData,
   LinkField,
   Paragraph,
   Resource,
   ResourceData,
   ResourceField,
+  ResourceFieldProperties,
   ResourceProperties,
   Session,
   TextField,
@@ -25,6 +28,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  distinctUntilChanged,
   filter,
   forkJoin,
   map,
@@ -43,6 +47,7 @@ import {
   EntityGroup,
   getClassificationsPayload,
   getCustomEntities,
+  getNamedEntities,
   getParagraphId,
   Thumbnail,
 } from './edit-resource.helpers';
@@ -54,20 +59,52 @@ export class EditResourceService {
   private _resource = new BehaviorSubject<Resource | null>(null);
   private _currentView = new BehaviorSubject<EditResourceView | null>(null);
   private _currentField = new BehaviorSubject<FieldId | 'resource'>('resource');
+  private _loadingField = new BehaviorSubject<boolean>(false);
 
   currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
   currentField: Observable<FieldId | 'resource'> = this._currentField.asObservable();
   resource: Observable<Resource | null> = this._resource.asObservable();
-  currentFieldData = this.resource.pipe(
-    switchMap((resource) =>
-      this.currentField.pipe(
-        map((field) =>
-          field === 'resource'
-            ? undefined
-            : resource?.getFieldData(`${field.field_type}s` as keyof ResourceData, field.field_id),
-        ),
+  loadingField: Observable<boolean> = this._loadingField.asObservable();
+
+  fieldExtractedData: Observable<IFieldData | null> = combineLatest([
+    this.resource.pipe(distinctUntilChanged((prev, curr) => prev === curr || prev?.id === curr?.id)),
+    this.currentField.pipe(
+      distinctUntilChanged(
+        (prev, curr) =>
+          prev === curr || (prev !== 'resource' && curr !== 'resource' && prev.field_id === curr.field_id),
       ),
     ),
+  ]).pipe(
+    switchMap(([resource, field]) => {
+      if (!resource || field === 'resource') {
+        this._loadingField.next(false);
+        return of(null);
+      }
+      this._loadingField.next(true);
+      return resource
+        .getField(
+          field.field_type,
+          field.field_id,
+          [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
+          [
+            ExtractedDataTypes.TEXT,
+            ExtractedDataTypes.METADATA,
+            ExtractedDataTypes.LINK,
+            ExtractedDataTypes.FILE,
+            ExtractedDataTypes.QUESTION_ANSWERS,
+          ],
+        )
+        .pipe(
+          catchError(() => {
+            this._loadingField.next(false);
+            return of(null);
+          }),
+          tap(() => {
+            this._loadingField.next(false);
+          }),
+        );
+    }),
+    shareReplay({ refCount: true, bufferSize: 1 }),
   );
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
@@ -122,8 +159,9 @@ export class EditResourceService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb
-          .getResource(resourceId, [
+        kb.getResource(
+          resourceId,
+          [
             ResourceProperties.BASIC,
             ResourceProperties.ORIGIN,
             ResourceProperties.EXTRA,
@@ -131,17 +169,12 @@ export class EditResourceService {
             ResourceProperties.VALUES,
             ResourceProperties.ERRORS,
             ResourceProperties.SECURITY,
-          ])
-          .pipe(
-            switchMap((resource) => {
-              // If all fields are conversations, we don't need to retrieve extracted data.
-              // This is a temporary workaround to prevent memory resources from taking too long to load.
-              const onlyConversations = Object.keys(resource.data).every((fieldType) =>
-                ['conversations', 'generics'].includes(fieldType),
-              );
-              return onlyConversations ? of(resource) : kb.getFullResource(resourceId);
-            }),
-          ),
+            ResourceProperties.EXTRACTED,
+          ],
+          // File extracted data is retrived to display all thumbnails.
+          // All other extracted data is lazy loaded in "fieldExtractedData" to improve performance
+          [ExtractedDataTypes.FILE],
+        ),
       ),
       tap((resource) => this._resource.next(resource)),
     );
@@ -149,13 +182,10 @@ export class EditResourceService {
 
   loadResourceEntities(): Observable<EntityGroup[]> {
     return combineLatest([
-      this.resource.pipe(
-        filter((resource) => !!resource),
-        map((resource) => resource as Resource),
-      ),
+      this.fieldExtractedData.pipe(filter((fieldData) => !!fieldData)),
       this.sdk.currentKb.pipe(switchMap((kb) => kb.getEntities())),
     ]).pipe(
-      map(([resource, allEntities]) => {
+      map(([fieldData, allEntities]) => {
         const allGroups: EntityGroup[] = Object.entries(allEntities)
           .map(([groupId, group]) => {
             const generatedColor = generatedEntitiesColor[groupId];
@@ -169,8 +199,8 @@ export class EditResourceService {
           })
           .sort((a, b) => a.title.localeCompare(b.title));
 
-        addEntitiesToGroups(allGroups, resource.getNamedEntities());
-        addEntitiesToGroups(allGroups, getCustomEntities(resource));
+        addEntitiesToGroups(allGroups, getNamedEntities(fieldData));
+        addEntitiesToGroups(allGroups, getCustomEntities(fieldData));
         allGroups.forEach((group) => {
           group.entities = group.entities.toSorted((a, b) => a.localeCompare(b));
         });
@@ -223,6 +253,7 @@ export class EditResourceService {
     this._resource.next(null);
     this._currentView.next(null);
     this._currentField.next('resource');
+    this._loadingField.next(false);
   }
 
   getClassificationsPayload(labels: Classification[]): UserClassification[] {
@@ -426,7 +457,10 @@ export class EditResourceService {
     return dataKey
       ? {
           ...currentData,
-          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce((acc, val) => reduceCallback(acc, val), {} as any),
+          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce(
+            (acc, val) => reduceCallback(acc, val),
+            {} as any,
+          ),
         }
       : currentData;
   }

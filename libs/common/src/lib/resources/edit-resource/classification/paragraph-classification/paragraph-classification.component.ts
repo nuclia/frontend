@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { FieldId, LabelSets, Resource, Search } from '@nuclia/core';
+import { FieldId, IFieldData, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { takeUntil } from 'rxjs/operators';
@@ -20,6 +20,10 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   private resource: Observable<Resource> = this.editResource.resource.pipe(
     filter((resource) => !!resource),
     map((resource) => resource as Resource),
+  );
+  private fieldData: Observable<IFieldData> = this.editResource.fieldExtractedData.pipe(
+    filter((field) => !!field),
+    map((field) => field as IFieldData),
   );
   private fieldId: Observable<FieldId> = this.route.params.pipe(
     filter((params) => !!params['fieldType'] && !!params['fieldId']),
@@ -53,9 +57,11 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editResource.setCurrentView('classification');
 
-    combineLatest([this.fieldId, this.resource])
+    combineLatest([this.fieldId, this.resource, this.fieldData])
       .pipe(
-        switchMap(([fieldId, resource]) => this.paragraphService.initParagraphs(fieldId, resource)),
+        switchMap(([fieldId, resource, fieldData]) =>
+          this.paragraphService.initParagraphs(fieldId, resource, fieldData),
+        ),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
@@ -111,9 +117,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   private _triggerSearch(query: string, extendedResults = false) {
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
-      switchMap(([field, resource]) =>
-        this.paragraphService.searchInField(query, resource, field, extendedResults),
-      ),
+      switchMap(([field, resource]) => this.paragraphService.searchInField(query, resource, field, extendedResults)),
     );
   }
 }

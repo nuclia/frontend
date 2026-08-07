@@ -24,6 +24,7 @@ import {
   ReadableResource,
   KVValue,
   KVRange,
+  IFieldData,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 
@@ -68,14 +69,6 @@ export interface EntityAnnotation extends TokenAnnotation {
 export const DATA_AUGMENTATION_ERROR = 'DATAAUGMENTATION';
 
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
-
-export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[] => {
-  const dataKey = getDataKeyFromFieldType(fieldId.field_type);
-  if (!dataKey || !resource.data[dataKey]) {
-    return [];
-  }
-  return resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata?.paragraphs || [];
-};
 
 export const getConversationParagraphs = (
   field: ResourceField,
@@ -167,44 +160,39 @@ export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [ke
 }
 
 export function getGeneratedFieldAnnotations(
-  resource: Resource,
-  fieldId: FieldId,
+  fieldData: IFieldData,
   families: EntityGroup[],
 ): EntityAnnotation[] {
-  const dataKey = getDataKeyFromFieldType(fieldId.field_type);
   const annotations: EntityAnnotation[] = [];
-  if (dataKey && resource.data[dataKey]) {
-    const positions: EntityPositions =
-      resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata.positions || {};
-    Object.entries(positions).forEach(([family, entityPosition]) => {
-      const familyId = family.split('/')[0];
-      const familyTitle = families.find((group) => group.id === familyId)?.title || '';
-      entityPosition.position.forEach((position) =>
-        annotations.push({
-          klass: familyId,
-          family: familyTitle,
-          token: entityPosition.entity,
-          start: position.start,
-          end: position.end,
-        }),
-      );
-    });
-    Object.entries(resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata.entities || {})
-      .filter(([key]) => key !== DEFAULT_NER_KEY)
-      .forEach(([, entities]) => {
-        entities.entities.forEach((entity) => {
-          entity.positions.forEach((position) => {
-            annotations.push({
-              klass: entity.label,
-              family: entity.label,
-              token: entity.text,
-              start: position.start,
-              end: position.end,
-            });
+  const positions: EntityPositions = fieldData.extracted?.metadata?.metadata.positions || {};
+  Object.entries(positions).forEach(([family, entityPosition]) => {
+    const familyId = family.split('/')[0];
+    const familyTitle = families.find((group) => group.id === familyId)?.title || '';
+    entityPosition.position.forEach((position) =>
+      annotations.push({
+        klass: familyId,
+        family: familyTitle,
+        token: entityPosition.entity,
+        start: position.start,
+        end: position.end,
+      }),
+    );
+  });
+  Object.entries(fieldData.extracted?.metadata?.metadata.entities || {})
+    .filter(([key]) => key !== DEFAULT_NER_KEY)
+    .forEach(([, entities]) => {
+      entities.entities.forEach((entity) => {
+        entity.positions.forEach((position) => {
+          annotations.push({
+            klass: entity.label,
+            family: entity.label,
+            token: entity.text,
+            start: position.start,
+            end: position.end,
           });
         });
       });
-  }
+    });
   return annotations;
 }
 
@@ -330,6 +318,10 @@ export const sliceUnicode = (str: string | string[] | undefined, start?: number,
   return str.slice(start, end).join('');
 };
 
+export const getParagraphText = (fieldText: string[], paragraph: Paragraph) => {
+  return sliceUnicode(fieldText, paragraph.start, paragraph.end);
+};
+
 export const getClassificationsPayload = (resource: Resource, labels: Classification[]): UserClassification[] => {
   const extracted = deDuplicateList(
     (resource.computedmetadata?.field_classifications || []).reduce((acc, field) => {
@@ -397,26 +389,23 @@ function getLinkFilesPositions(paragraphs: Paragraph[], files: { [id: string]: C
   );
 }
 
-export function getCustomEntities(resource: Resource): { [key: string]: string[] } {
-  return resource
-    .getFields()
-    .map((field) => {
-      return Object.entries(field.extracted?.metadata?.metadata?.entities || {})
-        .filter(([key]) => key !== DEFAULT_NER_KEY)
-        .reduce(
-          (acc, [, entities]) => {
-            entities.entities.forEach((entity) => {
-              acc[entity.label] = (acc[entity.label] || []).concat([entity.text]);
-            });
-            return acc;
-          },
-          {} as { [key: string]: string[] },
-        );
-    })
+export function getNamedEntities(fieldData: IFieldData): { [key: string]: string[] } {
+  return Object.entries(fieldData.extracted?.metadata?.metadata?.ner || {}).reduce(
+    (acc, [key, value]) => {
+      acc[value] = (acc[value] || []).concat([key]);
+      return acc;
+    },
+    {} as { [key: string]: string[] },
+  );
+}
+
+export function getCustomEntities(fieldData: IFieldData): { [key: string]: string[] } {
+  return Object.entries(fieldData.extracted?.metadata?.metadata?.entities || {})
+    .filter(([key]) => key !== DEFAULT_NER_KEY)
     .reduce(
-      (acc, val) => {
-        Object.entries(val).forEach(([key, value]) => {
-          acc[key] = (acc[key] || []).concat(value);
+      (acc, [, entities]) => {
+        entities.entities.forEach((entity) => {
+          acc[entity.label] = (acc[entity.label] || []).concat([entity.text]);
         });
         return acc;
       },
@@ -432,16 +421,18 @@ export function getParagraphId(resourceId: string, field: FieldId, paragraph: Pa
 export function getParagraphsWithClassifications(
   paragraphs: Paragraph[],
   fieldId: FieldId,
+  fieldData: IFieldData,
   resource: Resource,
 ): ParagraphWithTextAndClassifications[] {
   const paragraphClassificationMap = getParagraphClassificationMap(resource, fieldId);
+  const fieldText = Array.from(fieldData.extracted?.text?.text || '');
   return paragraphs.map((paragraph) => {
     const paragraphId = getParagraphId(resource.id, fieldId, paragraph);
     const userClassifications = paragraphClassificationMap[paragraphId] || [];
     const generatedClassifications = getGeneratedClassification(paragraph, userClassifications);
     const enhancedParagraph: ParagraphWithTextAndClassifications = {
       ...paragraph,
-      text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
+      text: getParagraphText(fieldText, paragraph),
       paragraphId,
       userClassifications,
       generatedClassifications,

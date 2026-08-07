@@ -24,213 +24,219 @@
       </div>
     }
 
-    @if (loaded) {
-      @if (((questionsAnswers | async) || []).length > 0) {
-        <pa-tabs notFullWidth>
-          <pa-tab
-            (click)="selectedTab = 'content'"
-            [active]="selectedTab === 'content'">
-            <span class="body-m">{{ 'resource.preview.content' | translate }}</span>
-          </pa-tab>
-          <pa-tab
-            (click)="selectedTab = 'questions-answers'"
-            [active]="selectedTab === 'questions-answers'">
-            <span class="body-m">{{ 'resource.preview.questions-answers' | translate }}</span>
-          </pa-tab>
-        </pa-tabs>
-      }
-
-      @if (selectedTab === 'content') {
-        @let extractId = extractConfigId | async;
-        @let extractName = (extractConfig | async)?.name;
-        @let splitId = splitConfigId | async;
-        @let splitName = (splitConfig | async)?.name;
-        @if (extractId || splitId) {
-          <nsi-info-card>
-            <div class="body-s">
-              @if (extractName || extractId) {
-                <div class="custom-processing">
-                  <strong>{{ 'resource.custom-processing.extract-strategy' | translate }}:</strong>
-                  <span>{{ extractName || extractId }}</span>
-                  @if (!extractName) {
-                    <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
-                  }
-                </div>
-              }
-              @if (splitName || splitId) {
-                <div class="custom-processing">
-                  <strong>{{ 'resource.custom-processing.split-strategy' | translate }}:</strong>
-                  <span>{{ splitName || splitId }}</span>
-                  @if (!splitName) {
-                    <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
-                  }
-                </div>
-              }
-              <a [routerLink]="aiModelsUrl | async">{{ 'resource.custom-processing.ai-models-link' | translate }}</a>
-            </div>
-          </nsi-info-card>
+    @if (fieldId | async) {
+      @if (loadingField | async) {
+        <nsi-skeleton
+          width="100%"
+          height="2rem"></nsi-skeleton>
+      } @else {
+        @if (((questionsAnswers | async) || []).length > 0) {
+          <pa-tabs notFullWidth>
+            <pa-tab
+              (click)="selectedTab = 'content'"
+              [active]="selectedTab === 'content'">
+              <span class="body-m">{{ 'resource.preview.content' | translate }}</span>
+            </pa-tab>
+            <pa-tab
+              (click)="selectedTab = 'questions-answers'"
+              [active]="selectedTab === 'questions-answers'">
+              <span class="body-m">{{ 'resource.preview.questions-answers' | translate }}</span>
+            </pa-tab>
+          </pa-tabs>
         }
-        @if (hasFilters | async) {
-          <div class="filters-container">
-            <div class="filters">
-              @if (((paragraphTypes | async) || []).length > 1) {
-                <div>
-                  <nsi-dropdown-button
-                    aspect="basic"
-                    freeWidth
-                    [popupRef]="paragraphTypeDropdown">
-                    {{ 'Paragraph type' | translate }}
-                  </nsi-dropdown-button>
-                  <pa-dropdown #paragraphTypeDropdown>
-                    @for (type of paragraphTypes | async; track type) {
-                      <pa-option
-                        [value]="type"
-                        (selectOption)="onClickOption(type, $event)"
-                        dontCloseOnSelect>
-                        <pa-checkbox
-                          [value]="((selectedTypes | async) || []).includes(type)"
-                          (change)="toggleType(type)">
-                          {{ type }}
-                        </pa-checkbox>
-                      </pa-option>
+
+        @if (selectedTab === 'content') {
+          @let extractId = extractConfigId | async;
+          @let extractName = (extractConfig | async)?.name;
+          @let splitId = splitConfigId | async;
+          @let splitName = (splitConfig | async)?.name;
+          @if (extractId || splitId) {
+            <nsi-info-card>
+              <div class="body-s">
+                @if (extractName || extractId) {
+                  <div class="custom-processing">
+                    <strong>{{ 'resource.custom-processing.extract-strategy' | translate }}:</strong>
+                    <span>{{ extractName || extractId }}</span>
+                    @if (!extractName) {
+                      <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
                     }
-                  </pa-dropdown>
-                </div>
-              }
-              @if (((labelSets | async | keyvalue) || []).length > 0) {
-                <div>
-                  <app-label-dropdown
-                    [labelSets]="labelSets | async"
-                    [selection]="(selectedLabels | async) || []"
-                    (selectionChange)="updateSelectedLabels($event)"
-                    [fullWidth]="true"
-                    [multiple]="true"
-                    aspect="basic">
-                    {{ 'resource.classification-column' | translate }}
-                  </app-label-dropdown>
-                </div>
-              }
-            </div>
-            @if (hasSelectedFilters | async) {
-              <div class="selected-filters">
-                <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
-                @for (type of selectedTypes | async; track type) {
-                  <pa-chip-closeable (closed)="toggleType(type)">
-                    {{ type }}
-                  </pa-chip-closeable>
+                  </div>
                 }
-                @for (label of selectedLabels | async; track label.labelset + label.label) {
-                  <pa-chip-closeable (closed)="removeLabel(label)">
-                    {{ label.labelset + '/' + label.label }}
-                  </pa-chip-closeable>
+                @if (splitName || splitId) {
+                  <div class="custom-processing">
+                    <strong>{{ 'resource.custom-processing.split-strategy' | translate }}:</strong>
+                    <span>{{ splitName || splitId }}</span>
+                    @if (!splitName) {
+                      <span>({{ 'resource.custom-processing.deleted' | translate }})</span>
+                    }
+                  </div>
                 }
+                <a [routerLink]="aiModelsUrl | async">{{ 'resource.custom-processing.ai-models-link' | translate }}</a>
               </div>
-            }
-          </div>
-        }
-
-        @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
-          <div class="paragraph-container">
-            @if (paragraph.url) {
-              <p>
-                <img
-                  class="image"
-                  alt=""
-                  [src]="paragraph.url | async" />
-              </p>
-            } @else if (paragraph.kind === 'TEXT') {
-              @if (((attachments | async) || {})[paragraph.key || '']; as attachments) {
-                <p class="with-attachments">
-                  <span>{{ paragraph.text }}</span>
-                  <span>
+            </nsi-info-card>
+          }
+          @if (hasFilters | async) {
+            <div class="filters-container">
+              <div class="filters">
+                @if (((paragraphTypes | async) || []).length > 1) {
+                  <div>
                     <nsi-dropdown-button
                       aspect="basic"
-                      size="small"
                       freeWidth
-                      [popupRef]="attachmentsDropdown">
-                      {{ 'resource.attachments' | translate }}
+                      [popupRef]="paragraphTypeDropdown">
+                      {{ 'Paragraph type' | translate }}
                     </nsi-dropdown-button>
-                    <pa-dropdown #attachmentsDropdown>
-                      @for (attachment of attachments; track attachment) {
+                    <pa-dropdown #paragraphTypeDropdown>
+                      @for (type of paragraphTypes | async; track type) {
                         <pa-option
-                          (selectOption)="navigateToField(attachment)"
-                          [description]="attachment.field_id">
-                          {{ 'resource.field-' + attachment.field_type | translate }}
+                          [value]="type"
+                          (selectOption)="onClickOption(type, $event)"
+                          dontCloseOnSelect>
+                          <pa-checkbox
+                            [value]="((selectedTypes | async) || []).includes(type)"
+                            (change)="toggleType(type)">
+                            {{ type }}
+                          </pa-checkbox>
                         </pa-option>
                       }
                     </pa-dropdown>
+                  </div>
+                }
+                @if (((labelSets | async | keyvalue) || []).length > 0) {
+                  <div>
+                    <app-label-dropdown
+                      [labelSets]="labelSets | async"
+                      [selection]="(selectedLabels | async) || []"
+                      (selectionChange)="updateSelectedLabels($event)"
+                      [fullWidth]="true"
+                      [multiple]="true"
+                      aspect="basic">
+                      {{ 'resource.classification-column' | translate }}
+                    </app-label-dropdown>
+                  </div>
+                }
+              </div>
+              @if (hasSelectedFilters | async) {
+                <div class="selected-filters">
+                  <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+                  @for (type of selectedTypes | async; track type) {
+                    <pa-chip-closeable (closed)="toggleType(type)">
+                      {{ type }}
+                    </pa-chip-closeable>
+                  }
+                  @for (label of selectedLabels | async; track label.labelset + label.label) {
+                    <pa-chip-closeable (closed)="removeLabel(label)">
+                      {{ label.labelset + '/' + label.label }}
+                    </pa-chip-closeable>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
+            <div class="paragraph-container">
+              @if (paragraph.url) {
+                <p>
+                  <img
+                    class="image"
+                    alt=""
+                    [src]="paragraph.url | async" />
+                </p>
+              } @else if (paragraph.kind === 'TEXT') {
+                @if (((attachments | async) || {})[paragraph.key || '']; as attachments) {
+                  <p class="with-attachments">
+                    <span>{{ paragraph.text }}</span>
+                    <span>
+                      <nsi-dropdown-button
+                        aspect="basic"
+                        size="small"
+                        freeWidth
+                        [popupRef]="attachmentsDropdown">
+                        {{ 'resource.attachments' | translate }}
+                      </nsi-dropdown-button>
+                      <pa-dropdown #attachmentsDropdown>
+                        @for (attachment of attachments; track attachment) {
+                          <pa-option
+                            (selectOption)="navigateToField(attachment)"
+                            [description]="attachment.field_id">
+                            {{ 'resource.field-' + attachment.field_type | translate }}
+                          </pa-option>
+                        }
+                      </pa-dropdown>
+                    </span>
+                  </p>
+                } @else {
+                  <p>{{ paragraph.text }}</p>
+                }
+              } @else {
+                <p class="with-type">
+                  @if (paragraph.kind === 'TABLE') {
+                    <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
+                  } @else {
+                    <span>{{ paragraph.text }}</span>
+                  }
+                  <span
+                    [paTooltip]="
+                      paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
+                        ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
+                        : undefined
+                    ">
+                    <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
                   </span>
                 </p>
-              } @else {
-                <p>{{ paragraph.text }}</p>
               }
-            } @else {
-              <p class="with-type">
-                @if (paragraph.kind === 'TABLE') {
-                  <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
-                } @else {
-                  <span>{{ paragraph.text }}</span>
-                }
-                <span
-                  [paTooltip]="
-                    paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
-                      ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
-                      : undefined
-                  ">
-                  <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
-                </span>
-              </p>
-            }
-            @if (paragraph.activeClassifications.length > 0) {
-              <div class="labels-container">
-                <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
-                @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
-                  <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
-                    {{ label.label }}
-                  </pa-chip>
+              @if (paragraph.activeClassifications.length > 0) {
+                <div class="labels-container">
+                  <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
+                  @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
+                    <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
+                      {{ label.label }}
+                    </pa-chip>
+                  }
+                </div>
+              }
+            </div>
+          }
+          @if (hasMorePages | async) {
+            <div>
+              <pa-button
+                aspect="basic"
+                (click)="loadMoreMessages()">
+                {{ 'generic.show_more' | translate }}
+              </pa-button>
+            </div>
+          }
+
+          @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async) && !(keyValueField | async)) {
+            <div class="paragraph-container">
+              <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+            </div>
+          }
+
+          @if (jsonTextField | async) {
+            <div class="paragraph-container">
+              <pre><code>{{ jsonTextField | async }}</code></pre>
+            </div>
+          }
+
+          @if (keyValueField | async; as kvField) {
+            <stf-key-value-field
+              [data]="kvField.data"
+              [schema]="kvField.schema"></stf-key-value-field>
+          }
+        } @else {
+          @if (questionsAnswers | async; as questionsAnswers) {
+            @for (item of questionsAnswers; track item.question.text) {
+              <div class="question-answer">
+                <div class="title-xxs">{{ 'resource.preview.question' | translate }}</div>
+                <p>{{ item.question.text }}</p>
+                <div class="title-xxs">{{ 'resource.preview.answers' | translate }}</div>
+                @for (answer of item.answers; track answer.text) {
+                  <p>{{ answer.text }}</p>
                 }
               </div>
             }
-          </div>
-        }
-        @if (hasMorePages | async) {
-          <div>
-            <pa-button
-              aspect="basic"
-              (click)="loadMoreMessages()">
-              {{ 'generic.show_more' | translate }}
-            </pa-button>
-          </div>
-        }
-
-        @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async) && !(keyValueField | async)) {
-          <div class="paragraph-container">
-            <p>{{ 'resource.field-no-paragraph' | translate }}</p>
-          </div>
-        }
-
-        @if (jsonTextField | async) {
-          <div class="paragraph-container">
-            <pre><code>{{ jsonTextField | async }}</code></pre>
-          </div>
-        }
-
-        @if (keyValueField | async; as kvField) {
-          <stf-key-value-field
-            [data]="kvField.data"
-            [schema]="kvField.schema"></stf-key-value-field>
-        }
-      } @else {
-        @if (questionsAnswers | async; as questionsAnswers) {
-          @for (item of questionsAnswers; track item.question.text) {
-            <div class="question-answer">
-              <div class="title-xxs">{{ 'resource.preview.question' | translate }}</div>
-              <p>{{ item.question.text }}</p>
-              <div class="title-xxs">{{ 'resource.preview.answers' | translate }}</div>
-              @for (answer of item.answers; track answer.text) {
-                <p>{{ answer.text }}</p>
-              }
-            </div>
           }
         }
       }

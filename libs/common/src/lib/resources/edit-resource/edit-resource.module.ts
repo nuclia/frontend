@@ -30,6 +30,7 @@ import {
   InfoCardComponent,
   JsonViewerComponent,
   LabelsExpanderComponent,
+  NsiSkeletonComponent,
   SisProgressModule,
 } from '@nuclia/sistema';
 import { HintModule } from '../../hint/hint.module';
@@ -96,6 +97,7 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     RelationsComponent,
     InfoCardComponent,
     ExpandableTextareaComponent,
+    NsiSkeletonComponent,
   ],
   declarations: [
     AddFieldComponent,
