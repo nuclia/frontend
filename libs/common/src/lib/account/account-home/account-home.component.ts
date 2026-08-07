@@ -67,13 +67,7 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((usage) => {
         this.usage = usage;
-        this.tokensCount = Object.entries(usage).reduce(
-          (acc, [key, value]) => {
-            acc[key] = value[0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0;
-            return acc;
-          },
-          {} as { [key: string]: number },
-        );
+        this.tokensCount = this.metrics.getTokensCountByKey(usage);
         this.cdr.markForCheck();
       });
 

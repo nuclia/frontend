@@ -1,8 +1,28 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { SDKService } from '@flaps/core';
-import { UsagePoint, UsageType } from '@nuclia/core';
-import { combineLatest, forkJoin, map, ReplaySubject, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
+import { Router } from '@angular/router';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { IKnowledgeBoxItem, NUAClient, UsagePoint, UsageType } from '@nuclia/core';
+import {
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  ReplaySubject,
+  shareReplay,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { MetricsService } from '../metrics.service';
+
+interface UsageListItem {
+  id: string;
+  title: string;
+  icon?: string;
+  enabled: boolean;
+  onClick: () => void;
+}
 
 @Component({
   selector: 'app-account-consumption',
@@ -14,6 +34,9 @@ import { MetricsService } from '../metrics.service';
 export class AccountConsumptionComponent implements OnInit, OnDestroy {
   private metrics = inject(MetricsService);
   private sdk = inject(SDKService);
+  private navigation = inject(NavigationService);
+  private router = inject(Router);
+  private features = inject(FeaturesService);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll = new Subject<void>();
@@ -22,13 +45,43 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
 
   usage?: { [key: string]: UsagePoint[] };
   tokensCount?: { [key: string]: number };
+  accountTokens = 0;
 
   kbs = this.sdk.kbList;
   nuaKeys = this.sdk.currentAccount.pipe(
     switchMap((account) => this.sdk.nuclia.db.getNUAClients(account.id)),
     shareReplay(1),
   );
+  isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
+
+  kbItems$ = this.kbs.pipe(
+    map((kbs) =>
+      kbs.map(
+        (kb): UsageListItem => ({
+          id: kb.id,
+          title: kb.title,
+          icon: kb.state === 'PRIVATE' ? 'lock' : undefined,
+          enabled: this.isNavigableKb(kb),
+          onClick: () => this.goToKb(kb),
+        }),
+      ),
+    ),
+  );
+
+  nuaKeyItems$ = combineLatest([this.nuaKeys, this.isNuaActivityEnabled]).pipe(
+    map(([nuaKeys, enabled]) =>
+      nuaKeys.map(
+        (nuaKey): UsageListItem => ({
+          id: nuaKey.internal_id,
+          title: nuaKey.title,
+          icon: 'key',
+          enabled,
+          onClick: () => this.goToNuaKey(nuaKey),
+        }),
+      ),
+    ),
+  );
 
   ngOnInit() {
     this.metrics.period.pipe(takeUntil(this.unsubscribeAll)).subscribe((period) => {
@@ -39,15 +92,9 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((usage) => {
         this.usage = usage;
-        this.tokensCount = Object.entries(usage).reduce(
-          (acc, [key, value]) => {
-            if (key !== 'account') {
-              acc[key] = value[0]?.metrics?.find((m) => m.name === 'nuclia_tokens_billed')?.value || 0;
-            }
-            return acc;
-          },
-          {} as { [key: string]: number },
-        );
+        const tokensCount = this.metrics.getTokensCountByKey(usage);
+        this.accountTokens = tokensCount['account'] || 0;
+        this.tokensCount = tokensCount;
         this.cdr.markForCheck();
       });
   }
@@ -55,6 +102,32 @@ export class AccountConsumptionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  isNavigableKb(kb: Pick<IKnowledgeBoxItem, 'role_on_kb'>): boolean {
+    return !!kb.role_on_kb;
+  }
+
+  goToKb(kb: Pick<IKnowledgeBoxItem, 'slug' | 'zone' | 'role_on_kb'>): void {
+    if (!this.isNavigableKb(kb) || !kb.slug) return;
+
+    this.metrics.account$.pipe(take(1)).subscribe((account) => {
+      this.sdk.nuclia.options.zone = kb.zone;
+      this.router.navigate([this.navigation.getKbUrl(account.slug, kb.slug as string)]);
+    });
+  }
+
+  goToNuaKey(key: Pick<NUAClient, 'client_id'>): void {
+    this.isNuaActivityEnabled
+      .pipe(
+        take(1),
+        filter((enabled) => enabled),
+        switchMap(() => this.metrics.account$),
+        take(1),
+      )
+      .subscribe((account) => {
+        this.router.navigateByUrl(`${this.navigation.getAccountManageUrl(account.slug)}/nua/${key.client_id}/activity`);
+      });
   }
 
   private getUsageMap() {

@@ -15,6 +15,9 @@ function defaultMapper(value: number) {
   return value;
 }
 
+/** Metric name used by the usage API to report Nuclia token consumption. */
+export const NUCLIA_TOKENS_BILLED_METRIC = 'nuclia_tokens_billed';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -98,6 +101,16 @@ export class MetricsService {
           sinceCreation: sinceCreationMetric.value,
         };
       }),
+    );
+  }
+
+  getTokensCountByKey(usage: { [key: string]: UsagePoint[] }): { [key: string]: number } {
+    return Object.entries(usage).reduce(
+      (acc, [key, points]) => {
+        acc[key] = points[0]?.metrics?.find((metric) => metric.name === NUCLIA_TOKENS_BILLED_METRIC)?.value || 0;
+        return acc;
+      },
+      {} as { [key: string]: number },
     );
   }
 
