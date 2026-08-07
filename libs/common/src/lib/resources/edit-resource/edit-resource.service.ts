@@ -104,7 +104,7 @@ export class EditResourceService {
           }),
         );
     }),
-    shareReplay({ refCount: true, bufferSize: 1 }),
+    shareReplay(1),
   );
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
@@ -128,8 +128,14 @@ export class EditResourceService {
   kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
-  extractStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getExtractStrategies().pipe(shareReplay(1))));
-  splitStrategies = this.sdk.currentKb.pipe(switchMap((kb) => kb.getSplitStrategies().pipe(shareReplay(1))));
+  extractStrategies = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getExtractStrategies()),
+    shareReplay(1),
+  );
+  splitStrategies = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getSplitStrategies()),
+    shareReplay(1),
+  );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isSession = false;
 
