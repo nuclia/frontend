@@ -1,8 +1,10 @@
 <div>
-  <div class="total title-m">
-    <span>{{ 'account.nuclia-tokens.tokens-consumed' | translate }}:&nbsp;</span>
-    <strong>{{ totalTokens | async | number: digitsInfo }}</strong>
-  </div>
+  @if (showTotal) {
+    <div class="total title-m">
+      <span>{{ 'account.nuclia-tokens.tokens-consumed' | translate }}:&nbsp;</span>
+      <strong>{{ totalTokens | async | number: digitsInfo }}</strong>
+    </div>
+  }
   <div class="header">
     <div class="title-m">
       <pa-icon name="chart"></pa-icon>

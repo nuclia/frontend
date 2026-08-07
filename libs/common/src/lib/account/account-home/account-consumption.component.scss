@@ -1,6 +1,52 @@
 @use 'apps/dashboard/src/variables' as *;
 @use '../account';
 
+.top-summary-cards {
+  display: grid;
+  gap: rhythm(2);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: rhythm(3) 0 rhythm(4);
+  width: 100%;
+}
+
+.summary-card {
+  background: $color-light-stronger;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.75);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  height: auto;
+  min-height: unset;
+  padding: rhythm(2);
+
+  .card-title {
+    font-weight: $font-weight-regular;
+    margin: 0;
+    order: 2;
+  }
+
+  .card-value {
+    color: $color-dark-stronger;
+    order: 1;
+  }
+}
+
+.query-card {
+  .card-value {
+    align-items: baseline;
+    display: flex;
+    gap: rhythm(0.75);
+  }
+
+  .card-unit {
+    color: $color-neutral-regular;
+  }
+}
+
 .consumption-summary {
   display: flex;
   flex-direction: column;
@@ -12,6 +58,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  width: 100%;
 
   h3 {
     margin: 0;
@@ -22,66 +69,104 @@
   }
 }
 
-.kb-summary-list {
+.usage-summary-list {
+  --kb-col-gap: #{rhythm(5)};
+  --kb-col-width: calc((100% - (var(--kb-col-gap) * 2)) / 3);
+  --kb-separator-offset: #{rhythm(1.5)};
+
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1.5);
-  max-width: 300px;
+  display: grid;
+  gap: rhythm(0.75);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--kb-col-gap);
+  max-width: 100%;
+  position: relative;
+  width: 100%;
+
+  &::before {
+    background: $color-neutral-lighter;
+    content: '';
+    left: calc(var(--kb-col-width) + var(--kb-separator-offset));
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  &::after {
+    background: $color-neutral-lighter;
+    content: '';
+    left: calc((var(--kb-col-width) * 2) + var(--kb-col-gap) + var(--kb-separator-offset));
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  // Only draw a divider between two columns when both are actually populated with an item,
+  // otherwise a stray line shows over empty space when there are fewer than 3 items.
+  &:not(.has-divider-1)::before,
+  &:not(.has-divider-2)::after {
+    content: none;
+  }
 }
 
-.kb-summary-item {
-  display: flex;
-  justify-content: flex-start;
+.usage-summary-item {
   align-items: center;
   padding: rhythm(1.5) 0;
   background: $color-light-stronger;
   border-radius: rhythm(0.5);
   color: inherit;
   cursor: pointer;
-  gap: rhythm(1.5);
+  display: flex;
+  min-width: 0;
+  width: 100%;
 
   &.disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .kb-info {
-    display: flex;
-    align-items: center;
-    gap: rhythm(1);
+  &:focus-visible {
+    outline: 2px solid $color-shadow-focus;
+    outline-offset: -2px;
+  }
 
-    .kb-title {
-      word-break: break-word;
+  .usage-info {
+    align-items: center;
+    column-gap: rhythm(2.5);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .usage-main {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+
+    .usage-title {
+      min-width: 0;
     }
 
-    .lock-icon {
+    .item-icon {
       flex-shrink: 0;
     }
   }
 
-  .kb-tokens {
+  .usage-tokens {
     color: $color-neutral-regular;
-    font-size: 0.875rem;
-    flex-shrink: 0;
+    font-size: inherit;
+    font-weight: $font-weight-regular;
+    justify-self: end;
+    white-space: nowrap;
   }
-}
-
-.queries-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: rhythm(2);
-  margin-top: rhythm(1);
-  max-width: 500px;
-}
-
-.query-stat {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(0.5);
-  padding: rhythm(2) 0;
-  background: $color-light-stronger;
-  border-radius: rhythm(0.5);
 }
