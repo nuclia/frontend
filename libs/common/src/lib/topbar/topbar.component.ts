@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  BillingService,
   BackendConfigurationService,
   FeaturesService,
   NavigationService,
@@ -16,7 +17,8 @@ import {
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { differenceInDays } from 'date-fns';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -50,6 +52,34 @@ export class TopbarComponent {
   inArag = this.navigationService.inArag();
   showTrial = combineLatest([this.isTrial, this.accountType]).pipe(
     map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
+  );
+  trialHeaderInfo = combineLatest([this.isTrial, this.account, this.shouldAccountTypeBeVisible]).pipe(
+    switchMap(([isTrial, account, canShowUpgrade]) => {
+      const isTrialAccount = isTrial || account.type === 'stash-trial';
+      if (!canShowUpgrade || !isTrialAccount) {
+        return of(null);
+      }
+      const daysLeft = account.trial_expiration_date
+        ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)
+        : null;
+      return this.billingService.getAccountUsage().pipe(
+        map((usage) => ({
+          labelKey: 'account.type.stash-trial',
+          daysLeft,
+          used: usage.consumption || 0,
+          limit: usage.invoice_items['nuclia-tokens']?.threshold || 0,
+        })),
+        catchError(() =>
+          of({
+            labelKey: 'account.type.stash-trial',
+            daysLeft,
+            used: null,
+            limit: null,
+          }),
+        ),
+      );
+    }),
+    shareReplay(1),
   );
 
   standalone = this.standaloneService.standalone;
@@ -85,6 +115,7 @@ export class TopbarComponent {
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
     private features: FeaturesService,
+    private billingService: BillingService,
   ) {}
 
   goToHome(): void {

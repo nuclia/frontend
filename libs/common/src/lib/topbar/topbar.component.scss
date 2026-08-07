@@ -43,6 +43,13 @@
     display: flex;
     gap: rhythm(2);
 
+    .trial-summary {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      white-space: nowrap;
+    }
+
     a.upgrade-link {
       color: var(--color-primary-regular);
       cursor: pointer;
