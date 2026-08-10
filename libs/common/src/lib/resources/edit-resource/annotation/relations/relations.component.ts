@@ -34,7 +34,7 @@ export class RelationsComponent {
 
   selectedFilters = new BehaviorSubject<string[]>([]);
   relations = forkJoin([
-    this.editResource.currentFieldData.pipe(
+    this.editResource.fieldExtractedData.pipe(
       map((field) => field?.extracted?.metadata?.metadata.relations || []),
       take(1),
     ),

@@ -11,6 +11,7 @@ import {
   FileField,
   FileFieldData,
   IError,
+  IFieldData,
   KVSchema,
   KVValue,
   LinkFieldData,
@@ -69,17 +70,17 @@ export class PreviewComponent implements OnInit, OnDestroy {
     takeUntil(this.unsubscribeAll),
   );
   paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
-  jsonTextField = this.editResourceService.currentFieldData.pipe(
+  jsonTextField = this.editResourceService.fieldExtractedData.pipe(
     map((field) =>
       !!field && !!field.value && (field.value as TextField).format === 'JSON'
         ? JSON.stringify(JSON.parse((field!.value as TextField).body), null, 2)
         : '',
     ),
   );
-  extractConfigId: Observable<string | undefined> = this.editResourceService.currentFieldData.pipe(
+  extractConfigId: Observable<string | undefined> = this.editResourceService.fieldExtractedData.pipe(
     map((field) => (field?.value as FileField)?.extract_strategy),
   );
-  splitConfigId: Observable<string | undefined> = this.editResourceService.currentFieldData.pipe(
+  splitConfigId: Observable<string | undefined> = this.editResourceService.fieldExtractedData.pipe(
     map((field) => (field?.value as FileField)?.split_strategy),
   );
   extractConfig: Observable<ExtractConfig | undefined> = this.extractConfigId.pipe(
@@ -94,7 +95,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
-  loaded = false;
   loadingPreview = false;
   errors: IError[] = [];
   dataAugmentationErrors: IError[] = [];
@@ -103,6 +103,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
     filter((resource) => !!resource),
     map((resource) => resource as Resource),
   );
+  fieldData: Observable<IFieldData> = this.editResource.fieldExtractedData.pipe(
+    filter((field) => !!field),
+    map((field) => field as IFieldData),
+  );
+  loadingField: Observable<boolean> = this.editResourceService.loadingField;
   isOnResourcePage: Observable<any> = this.route.params.pipe(
     map((params) => !params['fieldId'] && !params['fieldType']),
   );
@@ -196,11 +201,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
   renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
     this.paragraphs,
     this.fieldId,
-    this.editResourceService.currentFieldData,
+    this.editResourceService.fieldExtractedData,
   ]).pipe(
     map(([paragraphs, fieldType, fieldData]) => {
       paragraphs = paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
-      if ([FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
+      if (fieldData && [FIELD_TYPE.file, FIELD_TYPE.link].includes(fieldType.field_type)) {
         return getParagraphsWithImages(paragraphs, fieldData as FileFieldData | LinkFieldData);
       } else {
         return paragraphs;
@@ -232,7 +237,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     }),
   );
 
-  questionsAnswers = this.editResourceService.currentFieldData.pipe(
+  questionsAnswers = this.editResourceService.fieldExtractedData.pipe(
     map((field) => field?.extracted?.question_answers?.question_answers.question_answer),
   );
   selectedTab: 'content' | 'questions-answers' = 'content';
@@ -269,11 +274,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
-    combineLatest([this.fieldId, this.resource])
+    combineLatest([this.fieldId, this.resource, this.fieldData])
       .pipe(
-        switchMap(([fieldId, resource]) =>
+        switchMap(([fieldId, resource, fieldData]) =>
           this.paragraphService
-            .initParagraphs(fieldId, resource, fieldId.field_type === FIELD_TYPE.conversation ? 1 : undefined)
+            .initParagraphs(
+              fieldId,
+              resource,
+              fieldData,
+              fieldId.field_type === FIELD_TYPE.conversation ? 1 : undefined,
+            )
             .pipe(map(() => ({ fieldId, resource }))),
         ),
         takeUntil(this.unsubscribeAll),
@@ -285,7 +295,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
           (error) => error.code_str === DATA_AUGMENTATION_ERROR,
         );
         this.selectedTab = 'content';
-        this.loaded = true;
         this.cdr.markForCheck();
       });
 
@@ -371,7 +380,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .pipe(
         take(1),
         switchMap(([fieldId, resource, conversationPage]) =>
-          this.paragraphService.initParagraphs(fieldId, resource, conversationPage + 1),
+          this.paragraphService.initParagraphs(fieldId, resource, {}, conversationPage + 1),
         ),
       )
       .subscribe();

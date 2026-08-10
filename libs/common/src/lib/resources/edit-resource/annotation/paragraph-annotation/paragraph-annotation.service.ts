@@ -5,11 +5,11 @@ import {
   getGeneratedFieldAnnotations,
   getHighlightedAnnotations,
   getParagraphAnnotations,
-  getParagraphs,
+  getParagraphText,
   ParagraphWithTextAndAnnotations,
 } from '../../edit-resource.helpers';
 import { EditResourceService } from '../../edit-resource.service';
-import { FieldId, Paragraph, Resource } from '@nuclia/core';
+import { FieldId, IFieldData, Paragraph } from '@nuclia/core';
 import { ParagraphService } from '../../paragraph.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -32,8 +32,8 @@ export class ParagraphAnnotationService extends ParagraphService {
     super();
   }
 
-  initParagraphsWithAnnotations(fieldId: FieldId, resource: Resource, families: EntityGroup[]) {
-    const paragraphs: ParagraphWithTextAndAnnotations[] = this.getEnhancedParagraphs(fieldId, resource, families);
+  initParagraphsWithAnnotations(fieldId: FieldId, fieldData: IFieldData, families: EntityGroup[]) {
+    const paragraphs: ParagraphWithTextAndAnnotations[] = this.getEnhancedParagraphs(fieldId, fieldData, families);
     this.setupParagraphs(paragraphs);
   }
 
@@ -45,16 +45,17 @@ export class ParagraphAnnotationService extends ParagraphService {
 
   private getEnhancedParagraphs(
     fieldId: FieldId,
-    resource: Resource,
+    fieldData: IFieldData,
     families: EntityGroup[],
   ): ParagraphWithTextAndAnnotations[] {
-    const annotations = getGeneratedFieldAnnotations(resource, fieldId, families);
-    const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
+    const annotations = getGeneratedFieldAnnotations(fieldData, families);
+    const paragraphs: Paragraph[] = fieldData.extracted?.metadata?.metadata?.paragraphs || [];
+    const fieldText = Array.from(fieldData?.extracted?.text?.text || '');
     return paragraphs.map((paragraph) => {
       const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
       const allParagraphAnnotations = getParagraphAnnotations(annotations, paragraph, families);
       const highlightedAnnotation = getHighlightedAnnotations(allParagraphAnnotations);
-      const paragraphText = resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph);
+      const paragraphText = getParagraphText(fieldText, paragraph);
       const enhancedParagraph: ParagraphWithTextAndAnnotations = {
         ...paragraph,
         paragraphId,
