@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -38,7 +39,7 @@ import {
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { MetricsService } from '../metrics.service';
+import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '../metrics.service';
 
 const groups = {
   processing: ['sentence', 'extract_tables', 'vllm_extraction', 'token', 'relations'],
@@ -88,6 +89,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
   @Input() nuaKeys: NUAClient[] = [];
+  @Input({ transform: booleanAttribute }) showTotal = true;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
@@ -195,7 +197,9 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   totalTokens = this.usageSubject.pipe(
-    map((usage) => usage['account'][0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0),
+    map(
+      (usage) => usage['account'][0].metrics.find((metric) => metric.name === NUCLIA_TOKENS_BILLED_METRIC)?.value || 0,
+    ),
   );
 
   constructor(
