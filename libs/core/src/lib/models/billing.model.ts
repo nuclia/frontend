@@ -84,7 +84,7 @@ export enum CancellationFeedback {
 }
 
 // TODO: 'NO_SUBSCRIPTION' will be replaced by 'MANUAL'. The old value can be removed once it's removed from backend.
-export type SubscriptionProvider = 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION' | 'MANUAL';
+export type SubscriptionProvider = 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION' | 'MANUAL' | 'CLOUD_ZERO';
 
 export interface AccountSubscription {
   provider: SubscriptionProvider;
