@@ -1,5 +1,7 @@
 <div class="knowledge-box-keys page-spacing">
-  <h1>{{ 'api-key-management.title' | translate }}</h1>
+  @if (!embedded) {
+    <h1>{{ 'api-key-management.title' | translate }}</h1>
+  }
   <div class="warning">{{ 'api-key-management.description' | translate }}</div>
   <app-service-access></app-service-access>
 </div>

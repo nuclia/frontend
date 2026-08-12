@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { switchMap, take } from 'rxjs';
 
 @Component({
@@ -12,6 +13,8 @@ import { switchMap, take } from 'rxjs';
 export class McpEndpointModalComponent {
   sdk = inject(SDKService);
   private zoneService = inject(ZoneService);
+  private navigation = inject(NavigationService);
+  private router = inject(Router);
   modal = inject(ModalRef);
 
   endpoint = this.sdk.currentKb.pipe(
@@ -25,6 +28,13 @@ export class McpEndpointModalComponent {
         this.copied.set(true);
         setTimeout(() => this.copied.set(false), 2000);
       });
+    });
+  }
+
+  goToApiKeys() {
+    this.modal.close();
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/home/api-keys`]);
     });
   }
 }

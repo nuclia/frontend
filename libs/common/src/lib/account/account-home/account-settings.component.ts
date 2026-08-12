@@ -22,4 +22,9 @@ export class AccountSettingsComponent extends AccountPageBase {
     map(([isManager, isCowork]) => !!isManager && !isCowork),
     shareReplay(1),
   );
+
+  showApiKeysTab = combineLatest([this.features.isAccountManager, this.isCowork]).pipe(
+    map(([isManager, isCowork]) => !!isManager && isCowork),
+    shareReplay(1),
+  );
 }
