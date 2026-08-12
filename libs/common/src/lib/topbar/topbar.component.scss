@@ -33,21 +33,55 @@
     }
   }
 
-  .topbar-buttons {
-    display: flex;
-    gap: rhythm(2);
-  }
-
   .topbar-actions {
     align-items: center;
     display: flex;
     gap: rhythm(2);
 
     .trial-summary {
-      align-items: center;
-      display: flex;
-      gap: rhythm(1);
       white-space: nowrap;
+
+      ::ng-deep .pa-chip-content-wrapper {
+        align-items: center;
+        display: flex;
+        gap: rhythm(1);
+        max-width: none;
+        overflow: visible;
+        text-overflow: unset;
+        white-space: nowrap;
+      }
+
+      &__label {
+        align-items: center;
+        background-color: $color-neutral-lighter;
+        border-radius: rhythm(1.5);
+        display: inline-flex;
+        font-size: $font-size-body-s;
+        font-weight: $font-weight-body-s;
+        gap: rhythm(0.5);
+        height: rhythm(2.5);
+        line-height: rhythm(2.5);
+        padding: 0 rhythm(0.5) 0 rhythm(1);
+      }
+
+      &__days {
+        align-items: center;
+        background-color: $color-light-stronger;
+        border-radius: rhythm(5);
+        display: inline-flex;
+        font-size: $font-size-body-s;
+        font-weight: $font-weight-body-s;
+        height: rhythm(2);
+        justify-content: center;
+        line-height: 1;
+        min-width: rhythm(2);
+        padding: 0 rhythm(0.5);
+      }
+
+      &__tokens {
+        font-size: $font-size-body-s;
+        font-weight: $font-weight-body-s;
+      }
     }
 
     a.upgrade-link {

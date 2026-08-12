@@ -107,9 +107,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
-  showAccountStatus = combineLatest([this.features.isAccountManager, this.features.isTrial]).pipe(
-    map(([isManager, isTrial]) => isManager && isTrial),
-  );
+  // Trial/account status is now shown persistently in the topbar chip, so we no longer
+  // duplicate it here on the dashboard home page.
+  showAccountStatus = of(false);
   isChartDropdownOpen = false;
 
   readonly chartHeight = 201;

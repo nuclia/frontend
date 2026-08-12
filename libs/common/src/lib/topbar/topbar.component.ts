@@ -161,14 +161,6 @@ export class TopbarComponent {
       .subscribe((url) => this.router.navigate([url]));
   }
 
-  goToTutorial() {
-    window.open(
-      'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial',
-      'blank',
-      'noreferrer',
-    );
-  }
-
   goToSubscriptions() {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       this.router.navigate([`${this.navigationService.getAccountManageUrl(account.slug)}/billing`]);
