@@ -8,26 +8,6 @@
       [alt]="!standalone ? brandName : 'NucliaDB'" />
   </button>
 
-  <div class="topbar-buttons">
-    @if (!inPlatformApp && !(simpleMode | async)) {
-      @if (isTrial | async) {
-        <pa-button
-          kind="primary"
-          aspect="basic"
-          paFocusable
-          (click)="goToTutorial()"
-          (keyup.enter)="goToTutorial()">
-          <a
-            href="https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial"
-            target="_blank"
-            rel="noopener noreferrer">
-            {{ 'generic.trial-tutorial' | translate }}
-          </a>
-        </pa-button>
-      }
-    }
-  </div>
-
   <div class="topbar-actions">
     @if (((userInfo | async)?.accounts?.length || 0) > 1) {
       <div class="topbar-account">
@@ -40,6 +20,30 @@
     }
 
     @if (!standalone) {
+      @if (!inPlatformApp && (trialHeaderInfo | async); as trialInfo) {
+        <pa-chip class="trial-summary">
+          <span class="trial-summary__label">
+            {{ trialInfo.labelKey | translate }}
+            @if (trialInfo.daysLeft !== null) {
+              <span class="trial-summary__days">
+                {{
+                  trialInfo.daysLeft === 1
+                    ? ('account.day_left' | translate)
+                    : ('account.days_left' | translate: { days: trialInfo.daysLeft })
+                }}
+              </span>
+            }
+          </span>
+          @if (trialInfo.used !== null && trialInfo.limit !== null) {
+            <span class="trial-summary__tokens">
+              {{
+                'account.trial.token-usage-value'
+                  | translate: { used: (trialInfo.used | number: '1.0-0'), limit: (trialInfo.limit | number: '1.0-0') }
+              }}
+            </span>
+          }
+        </pa-chip>
+      }
       @if (!inPlatformApp && (shouldAccountTypeBeVisible | async)) {
         <a
           class="upgrade-link"

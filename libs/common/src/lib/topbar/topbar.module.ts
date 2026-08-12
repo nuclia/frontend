@@ -8,9 +8,8 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { TopbarComponent } from './topbar.component';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import {
-  PaButtonModule,
+  PaChipsModule,
   PaDropdownModule,
-  PaFocusableModule,
   PaIconModule,
   PaPopupModule,
   PaTooltipModule,
@@ -27,13 +26,12 @@ import { NotificationButtonComponent } from '@flaps/core';
     OverlayModule,
     TranslateModule,
     PaIconModule,
-    PaButtonModule,
+    PaChipsModule,
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
     DropdownButtonComponent,
     RouterModule,
-    PaFocusableModule,
     UserMenuComponent,
     StandaloneMenuComponent,
     NotificationButtonComponent,

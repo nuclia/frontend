@@ -35,6 +35,8 @@ export class ChatAdviceBubbleComponent implements OnInit {
 
   private readonly MINIMIZED_KEY = 'HELP_ASSISTANT_MINIMIZED';
   private readonly bookDemoUrl = 'https://www.progress.com/agentic-rag/book-a-demo';
+  private readonly trialTutorialUrl =
+    'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial';
 
   @ViewChild('messagesList') private messagesList?: ElementRef<HTMLDivElement>;
 
@@ -48,6 +50,7 @@ export class ChatAdviceBubbleComponent implements OnInit {
   hasUserMessages = computed(() => this.messages().some((m) => m.role === 'user'));
 
   showBookDemoPill = toSignal(this.features.authorized.showDemoButton, { initialValue: false });
+  showTrialTutorialPill = toSignal(this.features.isTrial, { initialValue: false });
 
   ngOnInit(): void {
     this.translate
@@ -118,6 +121,10 @@ export class ChatAdviceBubbleComponent implements OnInit {
 
   openBookDemoPill(): void {
     window.open(this.bookDemoUrl, '_blank', 'noreferrer');
+  }
+
+  openTrialTutorialPill(): void {
+    window.open(this.trialTutorialUrl, '_blank', 'noreferrer');
   }
 
   private scrollToLatestResponse(): void {
