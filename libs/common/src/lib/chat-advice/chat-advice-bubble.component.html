@@ -59,16 +59,28 @@
     <form
       class="chat-input-row"
       (submit)="$event.preventDefault(); sendMessage()">
-      @if (!hasUserMessages() && showBookDemoPill()) {
+      @if (!hasUserMessages() && (showBookDemoPill() || showTrialTutorialPill())) {
         <div class="predefined-pills">
-          <pa-button
-            class="pill"
-            kind="primary"
-            aspect="basic"
-            size="small"
-            (click)="openBookDemoPill()">
-            {{ 'chat-advice.pill-book-demo' | translate }}
-          </pa-button>
+          @if (showBookDemoPill()) {
+            <pa-button
+              class="pill"
+              kind="primary"
+              aspect="basic"
+              size="small"
+              (click)="openBookDemoPill()">
+              {{ 'chat-advice.pill-book-demo' | translate }}
+            </pa-button>
+          }
+          @if (showTrialTutorialPill()) {
+            <pa-button
+              class="pill"
+              kind="primary"
+              aspect="basic"
+              size="small"
+              (click)="openTrialTutorialPill()">
+              {{ 'generic.trial-tutorial' | translate }}
+            </pa-button>
+          }
         </div>
       }
       <div class="chat-input-actions">

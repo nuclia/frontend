@@ -4,10 +4,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   HostBinding,
   inject,
-  Input,
+  input,
   numberAttribute,
   ViewChild,
 } from '@angular/core';
@@ -24,30 +25,38 @@ import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular'
 export class BadgeComponent implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
 
-  @Input() icon?: string;
-  @Input({ transform: numberAttribute }) count?: number;
-  @Input({ transform: booleanAttribute }) clickable = false;
-  @Input() kind: 'tertiary' | 'neutral' | 'success' = 'neutral';
+  icon = input<string>();
+  count = input(undefined, { transform: numberAttribute });
+  label = input<string>();
+  clickable = input(false, { transform: booleanAttribute });
+  kind = input<'tertiary' | 'neutral' | 'success'>('neutral');
 
   @ViewChild('content', { read: ElementRef }) content?: ElementRef;
+
+  displayValue = computed(() => {
+    const label = this.label();
+    if (label) return label;
+    const count = this.count();
+    return typeof count === 'number' ? (count > 999 ? '999+' : `${count}`) : '';
+  });
 
   @HostBinding('class.overline') get overline() {
     return true;
   }
   @HostBinding('class.with-count') get hasCount() {
-    return typeof this.count === 'number';
+    return !!this.displayValue();
   }
   @HostBinding('class.with-icon') get hasIcon() {
-    return !!this.icon;
+    return !!this.icon();
   }
   @HostBinding('class.tertiary') get tertiary() {
-    return this.kind === 'tertiary';
+    return this.kind() === 'tertiary';
   }
   @HostBinding('class.success') get success() {
-    return this.kind === 'success';
+    return this.kind() === 'success';
   }
   @HostBinding('class.clickable') get isClickable() {
-    return this.clickable;
+    return this.clickable();
   }
 
   hasContent = false;

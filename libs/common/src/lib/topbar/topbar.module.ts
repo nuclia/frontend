@@ -7,18 +7,12 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 
 import { TopbarComponent } from './topbar.component';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
-import {
-  PaButtonModule,
-  PaDropdownModule,
-  PaFocusableModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTooltipModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { PaDropdownModule, PaIconModule, PaPopupModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UserMenuComponent } from './user-menu';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
 import { NotificationButtonComponent } from '@flaps/core';
+import { PlanStatusComponent } from './plan-status/plan-status.component';
 
 @NgModule({
   imports: [
@@ -27,16 +21,15 @@ import { NotificationButtonComponent } from '@flaps/core';
     OverlayModule,
     TranslateModule,
     PaIconModule,
-    PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
     DropdownButtonComponent,
     RouterModule,
-    PaFocusableModule,
     UserMenuComponent,
     StandaloneMenuComponent,
     NotificationButtonComponent,
+    PlanStatusComponent,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

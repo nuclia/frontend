@@ -13,9 +13,6 @@
         (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
     </div>
     <div class="right-column">
-      @if (isTrial | async) {
-        <app-account-status></app-account-status>
-      }
       @if (!inRaoApp) {
         <div>
           <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Inject, Output } from '@angular/core';
 import { combineLatest, filter, map, switchMap, take } from 'rxjs';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { CommonModule } from '@angular/common';

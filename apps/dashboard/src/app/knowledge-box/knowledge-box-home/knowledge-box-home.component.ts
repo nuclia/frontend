@@ -107,9 +107,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
-  showAccountStatus = combineLatest([this.features.isAccountManager, this.features.isTrial]).pipe(
-    map(([isManager, isTrial]) => isManager && isTrial),
-  );
+
   isChartDropdownOpen = false;
 
   readonly chartHeight = 201;

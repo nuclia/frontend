@@ -1,0 +1,39 @@
+@if (vm$ | async; as vm) {
+  @if (vm.isTrial) {
+    <pa-chip class="trial-summary">
+      <span class="trial-summary__label">
+        {{ vm.labelKey | translate }}
+        @if (vm.daysLeft !== null) {
+          <span class="trial-summary__days">
+            {{
+              vm.daysLeft === 1
+                ? ('account.day_left' | translate)
+                : ('account.days_left' | translate: { days: vm.daysLeft })
+            }}
+          </span>
+        }
+      </span>
+      @if (vm.used !== null) {
+        <span class="trial-summary__tokens">
+          @if (vm.limit !== null) {
+            {{
+              'account.trial.token-usage-value'
+                | translate: { used: (vm.used | number: '1.0-0'), limit: (vm.limit | number: '1.0-0') }
+            }}
+          } @else {
+            {{ 'account.trial.token-usage-unlimited' | translate: { used: (vm.used | number: '1.0-0') } }}
+          }
+        </span>
+      }
+    </pa-chip>
+  } @else {
+    <pa-chip class="plan-summary">{{ vm.labelKey | translate }}</pa-chip>
+  }
+  @if (showUpgrade$ | async) {
+    <a
+      class="upgrade-link"
+      (click)="goToSubscriptions()">
+      {{ 'billing.upgrade' | translate }}
+    </a>
+  }
+}

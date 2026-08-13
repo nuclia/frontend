@@ -35,6 +35,7 @@ describe('ChatAdviceBubbleComponent', () => {
         }),
         MockProvider(FeaturesService, {
           authorized: { showDemoButton: of(showDemoButton) } as unknown as FeaturesService['authorized'],
+          isTrial: of(false),
         }),
       ],
     }).compileComponents();

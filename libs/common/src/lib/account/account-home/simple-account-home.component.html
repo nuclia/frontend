@@ -1,10 +1,4 @@
 <div class="simple-account-home page-spacing">
-  @if (isTrial | async) {
-    <div class="trial-status-top">
-      <app-account-status (upgradeClick)="goToSection('subscriptions')"></app-account-status>
-    </div>
-  }
-
   <div class="settings-header">
     <h1 class="page-title">{{ 'account.account-title' | translate }}</h1>
     <p class="page-description">{{ 'account.settings-description' | translate }}</p>

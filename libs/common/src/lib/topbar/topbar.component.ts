@@ -7,10 +7,9 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   BackendConfigurationService,
-  FeaturesService,
   NavigationService,
   NotificationService,
   SDKService,
@@ -32,26 +31,9 @@ export class TopbarComponent {
 
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
-  private _account = this.sdk.currentAccount.pipe(shareReplay());
-  accountType = this._account.pipe(map((account) => account.type));
-  isAccountManager = this.features.isAccountManager;
-  isTypeEnforced = combineLatest([this.accountType, this.route.queryParams.pipe(map((params) => params['type']))]).pipe(
-    map(([currentType, nextType]) => nextType && currentType !== nextType),
-  );
-  shouldAccountTypeBeVisible = combineLatest([this.accountType, this.isTypeEnforced, this.isAccountManager]).pipe(
-    map(
-      ([accountType, isTypeEnforced, isAccountManager]) =>
-        !!accountType && accountType !== 'v3enterprise' && !isTypeEnforced && isAccountManager,
-    ),
-  );
-  isTrial = this.features.isTrial;
   inPlatformApp = this.navigationService.inPlatformApp;
   inDashboard = this.navigationService.inDashboard;
   inArag = this.navigationService.inArag();
-  showTrial = combineLatest([this.isTrial, this.accountType]).pipe(
-    map(([isTrial, accountType]) => isTrial && accountType !== 'stash-trial'),
-  );
-
   standalone = this.standaloneService.standalone;
   errorMessage = this.standaloneService.errorMessage;
 
@@ -81,10 +63,8 @@ export class TopbarComponent {
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private route: ActivatedRoute,
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
-    private features: FeaturesService,
   ) {}
 
   goToHome(): void {
@@ -128,19 +108,5 @@ export class TopbarComponent {
         take(1),
       )
       .subscribe((url) => this.router.navigate([url]));
-  }
-
-  goToTutorial() {
-    window.open(
-      'https://www.progress.com/agentic-rag/trial-guide?utm_medium=product&utm_source=trial-guide&utm_content=agentic-rag-trial',
-      'blank',
-      'noreferrer',
-    );
-  }
-
-  goToSubscriptions() {
-    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([`${this.navigationService.getAccountManageUrl(account.slug)}/billing`]);
-    });
   }
 }

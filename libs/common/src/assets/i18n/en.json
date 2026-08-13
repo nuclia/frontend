@@ -223,6 +223,8 @@
 	"account.token_description": "<strong>Important!</strong> Copy and save the API key. It will disappear once added.",
 	"account.token_generation_warning": "If you generate a new key, the current key will be disabled and any ongoing jobs will be lost",
 	"account.total_queries": "Total number of queries",
+	"account.trial.token-usage-unlimited": "{{used}} tokens (unlimited)",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.type.cowork": "Context Box account",
 	"account.type.label": "Tier",
 	"account.type.stash-trial": "Trial Account",

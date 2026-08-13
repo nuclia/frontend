@@ -223,6 +223,8 @@
 	"account.token_description": "<strong> Important !</strong> Copiez et enregistrez la clé API. Il disparaîtra une fois ajouté.",
 	"account.token_generation_warning": "Si vous générez une nouvelle clé, la clé actuelle sera désactivée et tous les travaux en cours seront perdus.",
 	"account.total_queries": "Nombre total de requêtes",
+	"account.trial.token-usage-unlimited": "{{used}} jetons (illimités)",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} jetons",
 	"account.type.cowork": "Compte Context Box",
 	"account.type.label": "Niveau",
 	"account.type.stash-trial": "Compte d’essai",
