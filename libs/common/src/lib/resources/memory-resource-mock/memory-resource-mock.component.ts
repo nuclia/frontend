@@ -1,8 +1,8 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
-import { DatePickerComponent, ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { ModalRef, PaDatePickerModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
+import { DatePickerComponent, ModalConfig, ModalRef, PaDatePickerModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
@@ -22,23 +22,21 @@ export class MemoryResourceMockComponent implements OnInit {
   private modal = inject(SisModalService);
   private toaster = inject(SisToastService);
   private editResource = inject(EditResourceService);
+  private destroyRef = inject(DestroyRef);
 
   protected service = inject(MemoryResourceMockService);
   protected factDateControl = new FormControl<string | null>(null);
 
+  // pa-date-picker manages its own display-only inputControl separately from the
+  // bound FormControl. Resetting inputControl directly is required to clear the
+  // visible text, since the component's internal valueChanges pipe filters out null.
   @ViewChild(DatePickerComponent) private datePicker?: DatePickerComponent;
 
   ngOnInit() {
     this.editResource.setCurrentView('memory');
-    this.factDateControl.valueChanges.subscribe((dateIso) => this.service.setDateFilter(dateIso || null));
-  }
-
-  protected setTopic(topicId: string) {
-    this.service.setTopic(topicId);
-  }
-
-  protected setUser() {
-    this.service.setUser();
+    this.factDateControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((dateIso) => this.service.setDateFilter(dateIso || null));
   }
 
   protected setFactExpanded(factId: string, expanded: boolean) {
@@ -49,19 +47,10 @@ export class MemoryResourceMockComponent implements OnInit {
     return this.service.getRelatedEntries(fact);
   }
 
-  protected factSummary(fact: MemoryMockFact): string {
-    return this.conciseSummary(fact.text);
-  }
-
-  protected sourceSessionLabel(fact: MemoryMockFact): string {
-    const rawLabel = fact.source_session.replace(/\bsession\b/gi, '').trim();
-    const selectedUserLabel = this.service.selectedUser()?.label?.trim() || '';
-    if (!selectedUserLabel) {
-      return rawLabel;
-    }
-    const normalizedSelectedUser = selectedUserLabel.toLowerCase();
-    const normalizedRawLabel = rawLabel.toLowerCase();
-    return normalizedRawLabel === normalizedSelectedUser ? '' : rawLabel;
+  // TODO: replace fact.source_session with a structured author field from the API.
+  // Currently source_session is a plain string label used as the HR person's display name.
+  protected factOwnerLabel(fact: MemoryMockFact): string {
+    return fact.source_session;
   }
 
   protected sourceSessionDate(fact: MemoryMockFact): string | undefined {
@@ -73,35 +62,17 @@ export class MemoryResourceMockComponent implements OnInit {
     this.datePicker?.inputControl.reset();
   }
 
-  protected factOwnerLabel(fact: MemoryMockFact): string {
-    return fact.source_session;
-  }
-
   protected openTranscript(fact: MemoryMockFact, entry: MemoryMockEntry) {
     this.modal.openModal(
       MemoryTranscriptModalComponent,
       new ModalConfig({
         data: {
-          sessionDetails: this.sourceSessionLabel(fact),
+          // TODO: replace getDummyTranscript with a real API call to fetch the
+          // full conversation transcript for this session entry.
           sourceTimestamp: entry.at,
           transcript: this.service.getDummyTranscript(entry),
         },
       }),
-    );
-  }
-
-  private conciseSummary(text: string): string {
-    return (
-      text
-        .split('.')[0]
-        ?.replace(/\s*\([^)]*\)/g, '')
-        .replace(/\s+completion\s+before\b.*$/i, '')
-        .replace(/\s+with\b.*$/i, '')
-        .replace(/\s+(during|because|since|when|while|under|after)\b.*$/i, '')
-        .replace(/,\s.*$/, '')
-        .replace(/\s+([’'])/g, '$1')
-        .replace(/\s{2,}/g, ' ')
-        .trim() || text.trim()
     );
   }
 
@@ -119,7 +90,6 @@ export class MemoryResourceMockComponent implements OnInit {
 }
 
 interface MemoryTranscriptModalData {
-  sessionDetails: string;
   sourceTimestamp: string;
   transcript: MemoryMockTranscriptTurn[];
 }
@@ -127,18 +97,14 @@ interface MemoryTranscriptModalData {
 @Component({
   selector: 'stf-memory-transcript-modal',
   standalone: true,
-  imports: [CommonModule, DatePipe, PaModalModule, PaDatePickerModule, TranslateModule],
+  imports: [CommonModule, DatePipe, PaModalModule, TranslateModule],
   template: `
     <pa-modal-advanced fitContentHeight class="memory-transcript-modal">
       <pa-modal-title>{{ 'resource.memory-mock.transcript.title' | translate }}</pa-modal-title>
-
       <pa-modal-content>
         <div class="transcript-content">
-          <div class="title-xxs">{{ 'resource.memory-mock.transcript.session' | translate }}</div>
-          <p class="body-s">{{ data?.sessionDetails || '—' }}</p>
           <div class="title-xxs">{{ 'resource.memory-mock.transcript.timestamp' | translate }}</div>
           <p class="body-s">{{ data?.sourceTimestamp | date: 'medium' }}</p>
-
           <div class="title-xxs">{{ 'resource.memory-mock.transcript.full' | translate }}</div>
           <div class="turns-list">
             @for (turn of data?.transcript || []; track turn.id) {
@@ -152,51 +118,28 @@ interface MemoryTranscriptModalData {
       </pa-modal-content>
     </pa-modal-advanced>
   `,
-  styles: [
-    `
-      :host ::ng-deep pa-modal-advanced.memory-transcript-modal .pa-modal.pa-modal-advanced {
-        @media (min-width: 900px) {
-          width: min(1100px, 95vw);
-        }
-      }
-
-      .transcript-content {
-        width: min(1000px, 90vw);
-        max-height: 78vh;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding: 12px 0 24px;
-        box-shadow: inset 0 8px 8px -8px rgba(17, 24, 39, 0.18);
-      }
-
-      .turns-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .turn {
-        border: 1px solid #e3e6eb;
-        border-radius: 4px;
-        padding: 8px;
-      }
-
-      .turn p {
-        margin: 4px 0 0;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-      }
-
-      .turn-speaker {
-        color: #6b7280;
-      }
-    `,
-  ],
+  styles: [`
+    :host ::ng-deep pa-modal-advanced.memory-transcript-modal .pa-modal.pa-modal-advanced {
+      @media (min-width: 900px) { width: min(1100px, 95vw); }
+    }
+    .transcript-content {
+      width: min(1000px, 90vw);
+      max-height: 78vh;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 0 24px;
+    }
+    .turns-list { display: flex; flex-direction: column; gap: 8px; }
+    .turn { border: 1px solid #e3e6eb; border-radius: 4px; padding: 8px; }
+    .turn p { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .turn-speaker { color: #6b7280; }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class MemoryTranscriptModalComponent {
   protected modal = inject(ModalRef<MemoryTranscriptModalData>);
   protected data = this.modal.config.data;
 }
+

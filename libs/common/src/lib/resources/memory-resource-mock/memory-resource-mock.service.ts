@@ -2,15 +2,10 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MEMORY_MOCK_RESOURCE,
-  MemoryMockFact,
-  MemoryMockGraphEdge,
   MemoryMockEntry,
-  MemoryMockReferenceContent,
+  MemoryMockFact,
   MemoryMockSession,
-  MemoryMockTab,
   MemoryMockTranscriptTurn,
-  MemoryMockTopic,
-  MemoryMockUser,
 } from './memory-resource-mock.config';
 import { EditResourceService } from '../edit-resource';
 
@@ -18,158 +13,80 @@ import { EditResourceService } from '../edit-resource';
 export class MemoryResourceMockService {
   private editResource = inject(EditResourceService);
   private currentResource = toSignal(this.editResource.resource, { initialValue: null });
-  private _activeTab = signal<MemoryMockTab>('sessions');
-  private _selectedTopicId = signal<string>(MEMORY_MOCK_RESOURCE.topics[0]?.id || '');
   private _selectedDateIso = signal<string | null>(null);
-  private _activeSessionId = signal<string>('');
-  private _expandedEntryIds = signal<string[]>([]);
   private _expandedFactIds = signal<string[]>([]);
   private _resourceId = computed(() => this.currentResource()?.id || 'resource');
 
+  // TODO: replace MEMORY_MOCK_RESOURCE with SDK API call when real data is available.
+  // The resource title and description map to the KB resource's title/summary fields.
   resource = computed(() => ({
     ...MEMORY_MOCK_RESOURCE,
     title: this.currentResource()?.title || MEMORY_MOCK_RESOURCE.title,
     description: this.currentResource()?.summary || MEMORY_MOCK_RESOURCE.description,
   }));
-  activeTab = this._activeTab.asReadonly();
-  selectedTopicId = this._selectedTopicId.asReadonly();
-  selectedDateIso = this._selectedDateIso.asReadonly();
-  activeSessionId = this._activeSessionId.asReadonly();
 
-  topics = computed<MemoryMockTopic[]>(() => this.resource().topics as MemoryMockTopic[]);
-  selectedTopic = computed<MemoryMockTopic | undefined>(() =>
-    this.topics().find((topic) => topic.id === this._selectedTopicId()),
-  );
-  users = computed<MemoryMockUser[]>(() => this.resource().users as MemoryMockUser[]);
-  usersForSelectedTopic = computed<MemoryMockUser[]>(() => {
-    const userIds = new Set(
-      this.resource()
-        .sessions.filter((session) => session.topic_id === this._selectedTopicId())
-        .map((session) => session.user_id),
-    );
-    return this.users().filter((user) => userIds.has(user.id));
-  });
-  selectedUser = computed<MemoryMockUser | undefined>(() => this.users()[0]);
+  selectedDateIso = this._selectedDateIso.asReadonly();
+
+  // TODO: replace with SDK call — sessions should be fetched from the memory API
+  // and entries are the individual conversation turns within each session.
   sessions = computed<MemoryMockSession[]>(() =>
-    this.resource()
-      .sessions.filter((session) => session.topic_id === this._selectedTopicId())
-      .map((session) => ({
-        ...session,
-        id: `${this._resourceId()}-${session.id}`,
-        entries: session.entries.map((entry) => ({ ...entry, id: `${this._resourceId()}-${entry.id}` })),
-      })),
+    this.resource().sessions.map((session) => ({
+      ...session,
+      id: `${this._resourceId()}-${session.id}`,
+      entries: session.entries.map((entry) => ({ ...entry, id: `${this._resourceId()}-${entry.id}` })),
+    })),
   );
-  facts = computed<MemoryMockFact[]>(() =>
-    this.resource()
-      .facts.filter((fact) => fact.topic_id === this._selectedTopicId())
-      .filter((fact) => {
-        const selectedDate = this._selectedDateIso();
-        if (!selectedDate) {
-          return true;
-        }
-        const factDate = this.getRelatedEntries(fact)[0]?.at;
-        return !!factDate && factDate.slice(0, 10) === selectedDate.slice(0, 10);
-      }),
-  );
-  referenceContent = computed<MemoryMockReferenceContent[]>(
-    () => this.resource().reference_content.filter((item) => item.topic_id === this._selectedTopicId()),
-  );
-  graph = computed<MemoryMockGraphEdge[]>(() => this.resource().graph.filter((edge) => edge.topic_id === this._selectedTopicId()));
-  activeSession = computed<MemoryMockSession | undefined>(() =>
-    this.sessions().find((session) => session.id === this._activeSessionId()),
-  );
+
   allEntries = computed<MemoryMockEntry[]>(() => this.sessions().flatMap((session) => session.entries));
 
-  constructor() {
-    effect(() => {
-      const firstSessionId = this.sessions()[0]?.id || '';
-      const hasActiveSession = this.sessions().some((session) => session.id === this._activeSessionId());
-      if (!hasActiveSession) {
-        this._activeSessionId.set(firstSessionId);
+  // TODO: replace with SDK call — facts should come from the memory facts API endpoint.
+  // Each fact has: id, text (the fact), source_session (author label), related_entry_ids (links to session entries).
+  // The date filter compares against the related entry's timestamp (entry.at ISO string).
+  facts = computed<MemoryMockFact[]>(() =>
+    this.resource().facts.filter((fact) => {
+      const selectedDate = this._selectedDateIso();
+      if (!selectedDate) {
+        return true;
       }
-    });
-    effect(() => {
-      const validEntryIds = new Set(this.allEntries().map((entry) => entry.id));
-      this._expandedEntryIds.update((ids) => ids.filter((id) => validEntryIds.has(id)));
-    });
+      const factDate = this.getRelatedEntries(fact)[0]?.at;
+      return !!factDate && factDate.slice(0, 10) === selectedDate.slice(0, 10);
+    }),
+  );
+
+  constructor() {
+    // Keep expanded state in sync when facts change (e.g. after date filter applied)
     effect(() => {
       const validFactIds = new Set(this.facts().map((fact) => fact.id));
       this._expandedFactIds.update((ids) => ids.filter((id) => validFactIds.has(id)));
     });
   }
 
-  setTab(tab: MemoryMockTab) {
-    this._activeTab.set(tab);
-  }
-
-  setTopic(topicId: string) {
-    this._selectedTopicId.set(topicId);
-  }
-
-  setUser() {
-    // user filter removed in v2 mock
-  }
-
   setDateFilter(dateIso: string | null) {
     this._selectedDateIso.set(dateIso);
-  }
-
-  selectSession(sessionId: string) {
-    this._activeSessionId.set(sessionId);
-  }
-
-  setEntryExpanded(entryId: string, expanded: boolean) {
-    this._expandedEntryIds.update((ids) => {
-      const isExpanded = ids.includes(entryId);
-      if (expanded && !isExpanded) {
-        return ids.concat(entryId);
-      }
-      if (!expanded && isExpanded) {
-        return ids.filter((id) => id !== entryId);
-      }
-      return ids;
-    });
-  }
-
-  isEntryExpanded(entryId: string) {
-    return this._expandedEntryIds().includes(entryId);
-  }
-
-  shouldCollapseEntry(entry: MemoryMockEntry) {
-    return (
-      entry.text.length > 180 ||
-      !!entry.reasoning ||
-      (entry.context || []).length > 0 ||
-      Object.keys(entry.metadata || {}).length > 0
-    );
   }
 
   setFactExpanded(factId: string, expanded: boolean) {
     this._expandedFactIds.update((ids) => {
       const isExpanded = ids.includes(factId);
-      if (expanded && !isExpanded) {
-        return ids.concat(factId);
-      }
-      if (!expanded && isExpanded) {
-        return ids.filter((id) => id !== factId);
-      }
+      if (expanded && !isExpanded) return ids.concat(factId);
+      if (!expanded && isExpanded) return ids.filter((id) => id !== factId);
       return ids;
     });
   }
 
-  isFactExpanded(factId: string) {
+  isFactExpanded(factId: string): boolean {
     return this._expandedFactIds().includes(factId);
   }
 
-  shouldCollapseFact(fact: MemoryMockFact) {
-    return fact.text.length > 140 || fact.related_entry_ids.length > 0;
-  }
-
+  // Returns session entries linked to a fact via related_entry_ids.
+  // TODO: when connecting to real API, related entries may be fetched separately per fact.
   getRelatedEntries(fact: MemoryMockFact): MemoryMockEntry[] {
     const related = new Set(fact.related_entry_ids.map((id) => `${this._resourceId()}-${id}`));
     return this.allEntries().filter((entry) => related.has(entry.id));
   }
 
+  // TODO: remove this method when real transcript data is available from the API.
+  // The transcript modal should fetch the actual conversation turns for a given session entry.
   getDummyTranscript(entry: MemoryMockEntry): MemoryMockTranscriptTurn[] {
     const contextTurns =
       entry.context?.map((message, index) => ({
@@ -177,29 +94,14 @@ export class MemoryResourceMockService {
         speaker: message.author,
         message: message.text,
       })) || [];
+
     const timeline: MemoryMockTranscriptTurn[] = [
       ...contextTurns,
-      {
-        id: `${entry.id}-analysis`,
-        speaker: entry.author,
-        message: entry.text,
-      },
+      { id: `${entry.id}-analysis`, speaker: entry.author, message: entry.text },
     ];
 
     if (entry.reasoning) {
-      timeline.push({
-        id: `${entry.id}-reasoning`,
-        speaker: entry.author,
-        message: entry.reasoning,
-      });
-    }
-
-    if (timeline.length === 0) {
-      timeline.push({
-        id: `${entry.id}-fallback`,
-        speaker: entry.author,
-        message: entry.text,
-      });
+      timeline.push({ id: `${entry.id}-reasoning`, speaker: entry.author, message: entry.reasoning });
     }
 
     return timeline.concat(this._buildDummyLongTranscript(entry));
@@ -224,3 +126,4 @@ export class MemoryResourceMockService {
     return turns;
   }
 }
+
