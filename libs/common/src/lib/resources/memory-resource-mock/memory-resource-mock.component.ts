@@ -1,7 +1,8 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { ModalRef, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { DatePickerComponent, ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { ModalRef, PaDatePickerModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter } from 'rxjs';
@@ -23,17 +24,21 @@ export class MemoryResourceMockComponent implements OnInit {
   private editResource = inject(EditResourceService);
 
   protected service = inject(MemoryResourceMockService);
+  protected factDateControl = new FormControl<string | null>(null);
+
+  @ViewChild(DatePickerComponent) private datePicker?: DatePickerComponent;
 
   ngOnInit() {
     this.editResource.setCurrentView('memory');
+    this.factDateControl.valueChanges.subscribe((dateIso) => this.service.setDateFilter(dateIso || null));
   }
 
   protected setTopic(topicId: string) {
     this.service.setTopic(topicId);
   }
 
-  protected setUser(userId: string) {
-    this.service.setUser(userId);
+  protected setUser() {
+    this.service.setUser();
   }
 
   protected setFactExpanded(factId: string, expanded: boolean) {
@@ -61,6 +66,15 @@ export class MemoryResourceMockComponent implements OnInit {
 
   protected sourceSessionDate(fact: MemoryMockFact): string | undefined {
     return this.relatedEntries(fact)[0]?.at;
+  }
+
+  protected clearDateFilter() {
+    this.factDateControl.reset();
+    this.datePicker?.inputControl.reset();
+  }
+
+  protected factOwnerLabel(fact: MemoryMockFact): string {
+    return fact.source_session;
   }
 
   protected openTranscript(fact: MemoryMockFact, entry: MemoryMockEntry) {
@@ -113,7 +127,7 @@ interface MemoryTranscriptModalData {
 @Component({
   selector: 'stf-memory-transcript-modal',
   standalone: true,
-  imports: [CommonModule, DatePipe, PaModalModule, TranslateModule],
+  imports: [CommonModule, DatePipe, PaModalModule, PaDatePickerModule, TranslateModule],
   template: `
     <pa-modal-advanced fitContentHeight class="memory-transcript-modal">
       <pa-modal-title>{{ 'resource.memory-mock.transcript.title' | translate }}</pa-modal-title>

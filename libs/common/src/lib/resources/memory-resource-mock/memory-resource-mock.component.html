@@ -1,5 +1,5 @@
 <div class="memory-mock">
-  <header class="memory-header">
+  <div class="memory-header">
     <div class="memory-title">
       <div class="title-l">{{ service.resource().description }}</div>
       <div class="body-xs mock-indicator">{{ 'resource.memory-mock.mock-indicator' | translate }}</div>
@@ -14,82 +14,61 @@
         {{ 'resource.memory-mock.delete.resource' | translate }}
       </pa-button>
     </div>
-  </header>
+  </div>
 
   <section class="memory-filters">
     <div class="memory-controls-row">
       <div class="filter-group">
-        <div class="title-xxs">{{ 'resource.memory-mock.filters.topic' | translate }}</div>
-        <div class="filter-control">
-          <nsi-dropdown-button
-            freeWidth
-            aspect="basic"
-            [popupRef]="topicFilters">
-            {{ service.selectedTopic()?.title || ('resource.memory-mock.filters.topic' | translate) }}
-          </nsi-dropdown-button>
+        <div class="title-xxs">{{ 'resource.filter.date-added' | translate }}</div>
+        <div class="date-filter-row">
+          <pa-date-picker
+            [label]="'resource.filter.date-added' | translate"
+            [externalLabel]="true"
+            [formControl]="factDateControl"></pa-date-picker>
+          @if (factDateControl.value) {
+            <pa-button
+              icon="cross"
+              aspect="basic"
+              size="small"
+              (click)="clearDateFilter()">
+              {{ 'generic.clear' | translate }}
+            </pa-button>
+          }
         </div>
-        <pa-dropdown #topicFilters>
-          @for (topic of service.topics(); track topic.id) {
-            <pa-option (selectOption)="setTopic(topic.id)">
-              {{ topic.title }}
-            </pa-option>
-          }
-        </pa-dropdown>
-      </div>
-
-      <div class="filter-group">
-        <div class="title-xxs">{{ 'resource.memory-mock.filters.person' | translate }}</div>
-        <nsi-dropdown-button
-          freeWidth
-          aspect="basic"
-          [popupRef]="personFilters">
-          {{ service.selectedUser()?.label || ('resource.memory-mock.filters.person' | translate) }}
-        </nsi-dropdown-button>
-        <pa-dropdown #personFilters>
-          @for (user of service.usersForSelectedTopic(); track user.id) {
-            <pa-option (selectOption)="setUser(user.id)">
-              {{ user.label }}
-            </pa-option>
-          }
-        </pa-dropdown>
       </div>
     </div>
   </section>
 
+  <div class="title-xxs facts-list-title">{{ 'resource.memory-mock.tabs.facts' | translate }}</div>
   <section class="facts-list">
     @for (fact of service.facts(); track fact.id) {
       <article class="fact-item">
         <pa-expander
           class="details-expander"
+          [class.expanded]="service.isFactExpanded(fact.id)"
           [expanded]="service.isFactExpanded(fact.id)"
           (expandedChange)="setFactExpanded(fact.id, $event)">
           <pa-expander-header>
-            {{ factSummary(fact) }}
+            <span class="fact-header-date title-xs">{{ sourceSessionDate(fact) | date: 'shortDate' }}</span>
+            <span class="fact-header-text title-xs">{{ fact.text }}</span>
           </pa-expander-header>
           <pa-expander-body>
-            <div class="entry-section">
-              <div class="title-xxs section-title">{{ 'resource.memory-mock.facts.label' | translate }}</div>
-              <p class="body-s">{{ fact.text }}</p>
-            </div>
-            <div class="entry-section related-section">
-              @if ((relatedEntries(fact) || []).length > 0) {
-                @if (sourceSessionLabel(fact); as sessionLabel) {
-                  <div class="title-xxs section-title">{{ sessionLabel }}</div>
-                }
+            <div class="fact-body">
+              @if (relatedEntries(fact).length > 0) {
                 <div class="related-list">
                   @for (entry of relatedEntries(fact); track entry.id) {
-                    <div class="source-entry body-s">
+                    <div class="source-entry">
                       <button
                         type="button"
-                        class="source-link title-xxs"
+                        class="source-link title-xs"
                         (click)="openTranscript(fact, entry)">
-                        {{ entry.at | date: 'short' }}
+                        <span class="source-meta">{{ entry.at | date: 'shortTime' }} · {{ factOwnerLabel(fact) }}</span>
                         <pa-icon
                           class="source-link-icon"
                           name="fullscreen"
                           size="small"></pa-icon>
                       </button>
-                      <div>{{ entry.text }}</div>
+                      <p class="title-xs source-text">{{ entry.text }}</p>
                     </div>
                   }
                 </div>

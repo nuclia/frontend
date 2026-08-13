@@ -20,7 +20,7 @@ export class MemoryResourceMockService {
   private currentResource = toSignal(this.editResource.resource, { initialValue: null });
   private _activeTab = signal<MemoryMockTab>('sessions');
   private _selectedTopicId = signal<string>(MEMORY_MOCK_RESOURCE.topics[0]?.id || '');
-  private _selectedUserId = signal<string>('');
+  private _selectedDateIso = signal<string | null>(null);
   private _activeSessionId = signal<string>('');
   private _expandedEntryIds = signal<string[]>([]);
   private _expandedFactIds = signal<string[]>([]);
@@ -33,7 +33,7 @@ export class MemoryResourceMockService {
   }));
   activeTab = this._activeTab.asReadonly();
   selectedTopicId = this._selectedTopicId.asReadonly();
-  selectedUserId = this._selectedUserId.asReadonly();
+  selectedDateIso = this._selectedDateIso.asReadonly();
   activeSessionId = this._activeSessionId.asReadonly();
 
   topics = computed<MemoryMockTopic[]>(() => this.resource().topics as MemoryMockTopic[]);
@@ -49,14 +49,10 @@ export class MemoryResourceMockService {
     );
     return this.users().filter((user) => userIds.has(user.id));
   });
-  selectedUser = computed<MemoryMockUser | undefined>(() =>
-    this.users().find((user) => user.id === this._selectedUserId()),
-  );
+  selectedUser = computed<MemoryMockUser | undefined>(() => this.users()[0]);
   sessions = computed<MemoryMockSession[]>(() =>
     this.resource()
-      .sessions.filter(
-        (session) => session.topic_id === this._selectedTopicId() && session.user_id === this._selectedUserId(),
-      )
+      .sessions.filter((session) => session.topic_id === this._selectedTopicId())
       .map((session) => ({
         ...session,
         id: `${this._resourceId()}-${session.id}`,
@@ -64,27 +60,27 @@ export class MemoryResourceMockService {
       })),
   );
   facts = computed<MemoryMockFact[]>(() =>
-    this.resource().facts.filter((fact) => fact.topic_id === this._selectedTopicId() && fact.user_id === this._selectedUserId()),
+    this.resource()
+      .facts.filter((fact) => fact.topic_id === this._selectedTopicId())
+      .filter((fact) => {
+        const selectedDate = this._selectedDateIso();
+        if (!selectedDate) {
+          return true;
+        }
+        const factDate = this.getRelatedEntries(fact)[0]?.at;
+        return !!factDate && factDate.slice(0, 10) === selectedDate.slice(0, 10);
+      }),
   );
   referenceContent = computed<MemoryMockReferenceContent[]>(
     () => this.resource().reference_content.filter((item) => item.topic_id === this._selectedTopicId()),
   );
-  graph = computed<MemoryMockGraphEdge[]>(() =>
-    this.resource().graph.filter((edge) => edge.topic_id === this._selectedTopicId() && edge.user_id === this._selectedUserId()),
-  );
+  graph = computed<MemoryMockGraphEdge[]>(() => this.resource().graph.filter((edge) => edge.topic_id === this._selectedTopicId()));
   activeSession = computed<MemoryMockSession | undefined>(() =>
     this.sessions().find((session) => session.id === this._activeSessionId()),
   );
   allEntries = computed<MemoryMockEntry[]>(() => this.sessions().flatMap((session) => session.entries));
 
   constructor() {
-    effect(() => {
-      const availableUsers = this.usersForSelectedTopic();
-      const selectedUserId = this._selectedUserId();
-      if (!selectedUserId || !availableUsers.some((user) => user.id === selectedUserId)) {
-        this._selectedUserId.set(availableUsers[0]?.id || '');
-      }
-    });
     effect(() => {
       const firstSessionId = this.sessions()[0]?.id || '';
       const hasActiveSession = this.sessions().some((session) => session.id === this._activeSessionId());
@@ -110,8 +106,12 @@ export class MemoryResourceMockService {
     this._selectedTopicId.set(topicId);
   }
 
-  setUser(userId: string) {
-    this._selectedUserId.set(userId);
+  setUser() {
+    // user filter removed in v2 mock
+  }
+
+  setDateFilter(dateIso: string | null) {
+    this._selectedDateIso.set(dateIso);
   }
 
   selectSession(sessionId: string) {

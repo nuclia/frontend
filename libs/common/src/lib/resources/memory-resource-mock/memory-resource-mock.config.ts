@@ -72,7 +72,7 @@ export interface MemoryMockUser {
 
 export const MEMORY_MOCK_RESOURCE = {
   title: 'HR — Paid Time Off',
-  description: 'Internal HR memory for PTO policy support',
+  description: 'Memory for PTO policy support',
   topics: [
     {
       id: 'vacation-policy',
