@@ -119,6 +119,7 @@ export interface IRest {
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
   getZoneSlug(zoneId: string): Observable<string>;
+  getAccountZones(accountIdOrSlug: string): Observable<{ [key: string]: string }>;
   getZoneOrigin(slug: string): string | null | undefined;
   setZoneOrigins(origins: { [slug: string]: string | null }): void;
   getFullUrl(path: string): string;
@@ -208,6 +209,7 @@ export interface IDb {
   upload(file: File): Observable<ProcessingPushResponse>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(accountId: string): Observable<NUAClient[]>;
+  getNUAClientsForZone(accountId: string, zoneSlug: string): Observable<NUAClient[]>;
   getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient>;
   createNUAClient(accountId: string, data: NUAClientPayload): Observable<NUAClientResponse>;
   createNUAClient(accountId: string, data: NUAClientPayload, zone: string): Observable<NUAClientResponse>;

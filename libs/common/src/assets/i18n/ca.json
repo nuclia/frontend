@@ -183,6 +183,7 @@
 	"account.nuclia-tokens.tokens-per-operation": "tokens/operació",
 	"account.nuclia-tokens.tokens-unit": "Fitxes",
 	"account.nuclia-tokens.total": "Total",
+	"account.nuclia-tokens.zone-tooltip": "Zona: {{zone}}",
 	"account.preferences": "Preferències",
 	"account.preferences-description": "Actualitza la informació del teu perfil i les teves preferències personals.",
 	"account.related_kbs": "Knowledge Boxes del compte",

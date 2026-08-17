@@ -17,7 +17,7 @@
             @for (period of (periods | async) || []; track period.start.toString()) {
               <pa-option
                 [value]="period.start.toString()"
-                (selectOption)="selectPeriod.emit(period); loading = true">
+                (selectOption)="selectPeriod.emit(period)">
                 @if (isSubscribedToStripe | async) {
                   {{ period.start | date: 'MMM d, y' : 'UTC' }} - {{ period.end | date: 'MMM d, y' : 'UTC' }}
                 } @else {
@@ -67,7 +67,9 @@
       }
     </div>
   </div>
-  @if (!loading) {
+  @if (loading$ | async) {
+    <nsi-skeleton height="200px"></nsi-skeleton>
+  } @else {
     @let groups = visibleGroups | async;
     @if ((groups || []).length > 0) {
       <pa-accordion [allowMultipleExpanded]="true">

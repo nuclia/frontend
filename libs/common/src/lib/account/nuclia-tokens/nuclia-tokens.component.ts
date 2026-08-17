@@ -26,7 +26,14 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { KnowledgeBox, LearningConfigurations, NUAClient, NucliaTokensDetails, UsagePoint } from '@nuclia/core';
+import {
+  IKnowledgeBoxItem,
+  KnowledgeBox,
+  LearningConfigurations,
+  NUAClient,
+  NucliaTokensDetails,
+  UsagePoint,
+} from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -38,7 +45,7 @@ import {
   PaTextFieldModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent, NsiSkeletonComponent } from '@nuclia/sistema';
 import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '../metrics.service';
 
 const groups = {
@@ -69,6 +76,7 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
     AccordionItemComponent,
     CommonModule,
     InfoCardComponent,
+    NsiSkeletonComponent,
     PaExpanderModule,
     PaIconModule,
     PaTableModule,
@@ -81,10 +89,8 @@ export class NucliaTokensComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   @Input() set usage(value: { [key: string]: UsagePoint[] } | undefined) {
-    if (value) {
-      this.usageSubject.next(value);
-      this.loading = false;
-    }
+    // Can be partial or undefined while loading; loading$ checks the selected item's key specifically.
+    this.usageSubject.next(value);
   }
 
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
@@ -94,11 +100,18 @@ export class NucliaTokensComponent implements OnDestroy {
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
-  loading = true;
   digitsInfo = '1.0-0';
-  kbList = this.sdk.kbList;
+  private kbsInput$ = new BehaviorSubject<IKnowledgeBoxItem[] | undefined>(undefined);
+  // Uses parent-supplied `kbs` if provided, else falls back to `sdk.kbList` for pages that don't pass it.
+  @Input() set kbs(value: IKnowledgeBoxItem[] | undefined) {
+    this.kbsInput$.next(value);
+  }
+  kbList: Observable<IKnowledgeBoxItem[]> = this.kbsInput$.pipe(
+    switchMap((inputKbs) => (inputKbs !== undefined ? of(inputKbs) : this.sdk.kbList)),
+  );
   selectedItem = new BehaviorSubject<string>('account');
-  usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
+  usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] } | undefined>(1);
+  loading$ = combineLatest([this.selectedItem, this.usageSubject]).pipe(map(([item, usage]) => !usage?.[item]));
   isSubscribedToStripe = this.metrics.isSubscribedToStripe;
   periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
     map(([isSubscribed, period]) =>
@@ -124,9 +137,9 @@ export class NucliaTokensComponent implements OnDestroy {
     this.usageSubject,
     this.schema,
   ]).pipe(
-    filter(([item, usage]) => !!usage[item]),
+    filter(([item, usage]) => !!usage?.[item]),
     map(([item, usage, schema]) => {
-      const details = (usage[item][0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
+      const details = (usage?.[item]?.[0]?.metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
         []) as NucliaTokensDetails[];
       const models = schema['generative_model']?.options || [];
       return details
@@ -198,7 +211,8 @@ export class NucliaTokensComponent implements OnDestroy {
 
   totalTokens = this.usageSubject.pipe(
     map(
-      (usage) => usage['account'][0].metrics.find((metric) => metric.name === NUCLIA_TOKENS_BILLED_METRIC)?.value || 0,
+      (usage) =>
+        usage?.['account']?.[0]?.metrics.find((metric) => metric.name === NUCLIA_TOKENS_BILLED_METRIC)?.value || 0,
     ),
   );
 

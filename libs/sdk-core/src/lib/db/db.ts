@@ -184,7 +184,7 @@ export class Db implements IDb {
           }. You can provide them as parameter or in Nuclia options.`,
       );
     }
-    return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(slug)]).pipe(
+    return forkJoin([this.nuclia.rest.getAccountZones(slug), this.getKbIndexes(slug)]).pipe(
       switchMap(([zoneMap, indexes]) => {
         const zones = indexes.reduce((zoneIds, index) => {
           const zoneSlug: string = zoneMap[index.zone_id];
@@ -217,6 +217,13 @@ export class Db implements IDb {
     );
   }
 
+  /** Skips the warm-up call if the origin is already known for this zone (e.g. seeded by getAccountZones). */
+  private ensureZoneOriginReady(accountId: string, zone: string): Observable<unknown> {
+    return this.nuclia.rest.getZoneOrigin(zone) !== undefined
+      ? of(undefined)
+      : this.nuclia.rest.getAccountZones(accountId);
+  }
+
   private _getKnowledgeBoxesForZone(
     accountId: string,
     zone: string,
@@ -231,8 +238,7 @@ export class Db implements IDb {
       params.push(`include_search_configs=${includeSearchConfigs}`);
     }
     const path = `/account/${accountId}/kbs${params.length > 0 ? `?${params.join('&')}` : ''}`;
-    // Ensure zoneOrigins is populated before building the URL so that private zones with a custom origin resolve correctly
-    return this.nuclia.rest.getZones().pipe(
+    return this.ensureZoneOriginReady(accountId, zone).pipe(
       take(1),
       switchMap(() => this.nuclia.rest.get<IKnowledgeBoxItem[]>(path, undefined, undefined, zone)),
     );
@@ -541,19 +547,28 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClients(accountId: string): Observable<NUAClient[]> {
-    return this.nuclia.rest.getZones().pipe(
-      switchMap((zones) =>
-        forkJoin(
-          Object.values(zones).map((zoneSlug) =>
-            this.nuclia.rest
-              .get<{ clients: NUAClient[] }>(`/account/${accountId}/nua_clients`, undefined, undefined, zoneSlug)
-              .pipe(
-                map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
-                catchError(() => of([] as NUAClient[])),
-              ),
-          ),
+  /** Returns the list of NUA clients for the given account and zone. */
+  getNUAClientsForZone(accountId: string, zoneSlug: string): Observable<NUAClient[]> {
+    return this.ensureZoneOriginReady(accountId, zoneSlug).pipe(
+      take(1),
+      switchMap(() =>
+        this.nuclia.rest.get<{ clients: NUAClient[] }>(
+          `/account/${accountId}/nua_clients`,
+          undefined,
+          undefined,
+          zoneSlug,
         ),
+      ),
+      timeout(10000), // When a request is too slow, we assume the zone may be down and skip it
+      map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
+      catchError(() => of([] as NUAClient[])),
+    );
+  }
+
+  getNUAClients(accountId: string): Observable<NUAClient[]> {
+    return this.nuclia.rest.getAccountZones(accountId).pipe(
+      switchMap((zones) =>
+        forkJoin(Object.values(zones).map((zoneSlug) => this.getNUAClientsForZone(accountId, zoneSlug))),
       ),
       map((response) =>
         response.reduce((allClients, clients) => {
