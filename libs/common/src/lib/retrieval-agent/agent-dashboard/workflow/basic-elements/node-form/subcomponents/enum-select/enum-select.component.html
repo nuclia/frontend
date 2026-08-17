@@ -13,12 +13,12 @@
         <div class="radio-item">
           <input
             type="radio"
-            [id]="controlName + '_' + option.id"
+            [id]="controlName + '_' + option.id + '_' + id"
             [formControlName]="controlName"
             [value]="option.value"
             class="radio-input" />
           <label
-            [for]="controlName + '_' + option.id"
+            [for]="controlName + '_' + option.id + '_' + id"
             class="radio-label">
             {{ option.label }}
           </label>
