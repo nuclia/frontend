@@ -32,5 +32,15 @@
       ariaControls="settings-section-panel">
       {{ 'generic.user_preferences' | translate }}
     </pa-tab>
+    @if (showApiKeysTab | async) {
+      <pa-tab
+        routerLink="api-keys"
+        routerLinkActive
+        #rla4="routerLinkActive"
+        [active]="rla4.isActive"
+        ariaControls="settings-section-panel">
+        {{ 'api-key-management.title' | translate }}
+      </pa-tab>
+    }
   </pa-tabs>
 </app-account-page-layout>

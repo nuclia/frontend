@@ -164,6 +164,15 @@ export class UserMenuComponent implements OnInit {
           dataCy: 'go-to-user-preferences',
           action: () => this.navigateToProfile(),
         },
+        {
+          label: 'api-key-management.title',
+          icon: 'key',
+          dataCy: 'go-to-api-keys',
+          action: () => this.go('home/api-keys'),
+          visible$: combineLatest([this.isAccountManager, this.isCowork]).pipe(
+            map(([manager, cowork]) => !!manager && !!cowork),
+          ),
+        },
       ],
     },
     // ── Billing ────────────────────────────────────────────────────────────

@@ -22,6 +22,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../users-manage';
+import { KnowledgeBoxKeysComponent } from '../knowledge-box-keys';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
 import { AccountBillingComponent } from './account-billing/account-billing.component';
 import { AccountAdministrationComponent } from './account-administration/account-administration.component';
@@ -88,6 +89,7 @@ const routes: Routes = [
       { path: 'consumption', component: AccountConsumptionComponent },
       { path: 'preferences', component: ProfileComponent, data: { embedded: true } },
       { path: 'account-settings', component: AccountManageComponent, data: { embedded: true } },
+      { path: 'api-keys', component: KnowledgeBoxKeysComponent, data: { embedded: true } },
     ],
   },
   // Administration page — tab shell with child routes

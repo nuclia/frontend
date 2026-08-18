@@ -28,4 +28,8 @@
 
 .how-to {
   margin-top: rhythm(1);
+
+  a:hover {
+    cursor: pointer;
+  }
 }
