@@ -12,10 +12,11 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { AccountTypes } from '@nuclia/core';
+import { AccountTypes, UsageType } from '@nuclia/core';
 import {
   AccountBudget,
   AccountSubscription,
+  AccountTokenBudget,
   AccountUsage,
   AwsAccountSubscription,
   BillingDetails,
@@ -30,6 +31,8 @@ import {
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
+
+export const DEFAULT_TRIAL_TOKEN_BUDGET = 20_000;
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
@@ -286,6 +289,44 @@ export class BillingService {
             : {}),
         },
       })),
+    );
+  }
+
+  private getAccountTokenBudgetOverride(): Observable<AccountTokenBudget | null> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.get<AccountTokenBudget>(`/billing/account/${account.id}/budget`)),
+      // no override (404) or unauthorized falls back to the default budget
+      catchError(() => of(null)),
+    );
+  }
+
+  getTrialTokenUsage(): Observable<{ used: number; limit: number | null } | null> {
+    return combineLatest([
+      this.sdk.currentAccount,
+      this.isSubscribedToStripe,
+      this.isSubscribedToAws,
+      this.isManuallySubscribed,
+    ]).pipe(
+      take(1),
+      switchMap(([account, stripe, aws, manual]) => {
+        if (!account.trial_expiration_date || stripe || aws || manual) {
+          return of(null);
+        }
+        return combineLatest([
+          this.sdk.nuclia.db.getUsage(account.id, account.creation_date),
+          this.getAccountTokenBudgetOverride(),
+        ]).pipe(
+          map(([usage, override]) => {
+            const used = usage
+              .flatMap((point) => point.metrics)
+              .filter((metric) => metric.name === UsageType.NUCLIA_TOKENS)
+              .reduce((total, metric) => total + metric.value, 0);
+            const limit = override ? override.budget_value : DEFAULT_TRIAL_TOKEN_BUDGET;
+            return { used, limit };
+          }),
+        );
+      }),
     );
   }
 

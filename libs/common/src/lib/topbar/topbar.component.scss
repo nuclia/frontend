@@ -33,26 +33,10 @@
     }
   }
 
-  .topbar-buttons {
-    display: flex;
-    gap: rhythm(2);
-  }
-
   .topbar-actions {
     align-items: center;
     display: flex;
     gap: rhythm(2);
-
-    a.upgrade-link {
-      color: var(--color-primary-regular);
-      cursor: pointer;
-      font-size: font-size(s);
-      text-decoration: none;
-
-      &:hover {
-        color: var(--color-primary-strong);
-      }
-    }
   }
 
   .topbar-separator {

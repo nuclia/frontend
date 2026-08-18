@@ -97,6 +97,14 @@ export interface AccountBudget {
   free_tokens_per_billing_cycle?: number;
 }
 
+// GET /billing/account/{account_id}/budget response
+export interface AccountTokenBudget {
+  account_id: string;
+  // null means unlimited
+  budget_value: number | null;
+  action_on_budget_exhausted: 'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER' | null;
+}
+
 export interface StripeAccountSubscription extends AccountBudget {
   status: SubscriptionStatus;
   billing_interval: RecurrentPriceInterval;

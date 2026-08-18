@@ -16,7 +16,6 @@ export class SimpleAccountHomeComponent implements OnInit, OnDestroy {
   selectedTab: 'consumption' | 'subscriptions' | 'users' | 'preferences' = 'consumption';
   unsubscribeAll = new Subject<void>();
   account$ = this.metrics.account$;
-  isTrial = this.features.isTrial;
   selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
   inRaoApp = this.navigation.inRaoApp;
   backLink = this.navigation.kbUrl.pipe(map((url) => `${url}/simple`));

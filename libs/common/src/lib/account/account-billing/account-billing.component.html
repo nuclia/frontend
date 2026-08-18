@@ -3,13 +3,6 @@
   [description]="((isSubscribed | async) ? 'billing.page-description' : 'billing.subscription.help') | translate"
   [backLink]="backLink | async"
   panelId="billing-section-panel">
-  @if (isTrial | async) {
-    <div
-      top
-      class="trial-status-top">
-      <app-account-status></app-account-status>
-    </div>
-  }
   @if (isSubscribed | async) {
     <pa-tabs
       tabs

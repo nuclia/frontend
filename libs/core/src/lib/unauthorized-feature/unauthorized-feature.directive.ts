@@ -54,9 +54,9 @@ export class UnauthorizedFeatureDirective {
   private addBadge() {
     setTimeout(() => {
       this._badge = this.viewContainerRef.createComponent(BadgeComponent);
-      this._badge.instance.icon = 'lock-filled';
-      this._badge.instance.kind = 'tertiary';
-      this._badge.instance.clickable = true;
+      this._badge.setInput('icon', 'lock-filled');
+      this._badge.setInput('kind', 'tertiary');
+      this._badge.setInput('clickable', true);
       if (this.fullProBadge) {
         this._badge.location.nativeElement.appendChild(document.createTextNode('pro'));
       }

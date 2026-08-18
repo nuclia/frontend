@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { BackendConfigurationService, BillingService, FeaturesService, injectScript } from '@flaps/core';
+import { BackendConfigurationService, BillingService, injectScript } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountPageBase } from '../account-page-base';
 
@@ -12,12 +12,10 @@ import { AccountPageBase } from '../account-page-base';
 })
 export class AccountBillingComponent extends AccountPageBase implements OnInit, OnDestroy {
   private readonly billing = inject(BillingService);
-  private readonly features = inject(FeaturesService);
   private readonly window = inject(WINDOW);
   private readonly backendConfig = inject(BackendConfigurationService);
 
   isSubscribed = this.billing.isSubscribedToStripe;
-  isTrial = this.features.isTrial;
   noStripe = this.backendConfig.noStripe();
 
   ngOnInit(): void {

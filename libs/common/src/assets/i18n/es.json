@@ -223,6 +223,8 @@
 	"account.token_description": "<strong>¡Importante!</strong> Copie y guarde la clave API. Desaparecerá una vez añadido.",
 	"account.token_generation_warning": "Si generas un nuevo código perderás el acceso con la clave actual y se perderán los procesos que se estén ejecutando en estos momentos.",
 	"account.total_queries": "Número total de búsquedas",
+	"account.trial.token-usage-unlimited": "{{used}} tokens (ilimitados)",
+	"account.trial.token-usage-value": "{{used}} / {{limit}} tokens",
 	"account.type.cowork": "Cuenta Context Box",
 	"account.type.label": "Nivel",
 	"account.type.stash-trial": "Cuenta de prueba",
