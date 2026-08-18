@@ -56,14 +56,6 @@ export class FieldConfigService {
       type: 'custom',
       additionalProps: { provider: 'nucliadb', multiselect: true },
     },
-    // Model selection fields
-    conversion_model: { component: 'model-select', type: 'custom' },
-    generative_model: { component: 'model-select', type: 'custom' },
-    model: { component: 'model-select', type: 'custom' },
-    rephrase_model: { component: 'model-select', type: 'custom' },
-    sampling_model: { component: 'model-select', type: 'custom' },
-    summarize_model: { component: 'model-select', type: 'custom' },
-    tool_choice_model: { component: 'model-select', type: 'custom' },
     // Basic fields
     code: {
       component: 'code-editor',

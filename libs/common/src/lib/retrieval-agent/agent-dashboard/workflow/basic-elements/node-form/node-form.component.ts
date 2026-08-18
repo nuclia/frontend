@@ -199,14 +199,26 @@ export class NodeFormComponent extends FormDirective implements OnInit, OnDestro
     }
     if (property.$ref) {
       // Merge the resolved schema with the original property to preserve other attributes like 'default'
-      return { ...this.resolveRef(property.$ref), ...property, $ref: undefined, type: 'subform' };
+      return {
+        ...this.resolveRef(property.$ref),
+        ...property,
+        $ref: undefined,
+        $defs: this.agentSchema?.['$defs'],
+        type: 'subform',
+      };
     }
     if (property.anyOf) {
       // Find the first non-null object reference
       const objRef = property.anyOf.find((t: any) => t.$ref);
       if (objRef) {
         // Merge resolved schema with original property
-        return { ...(objRef.$ref ? this.resolveRef(objRef.$ref) : {}), ...property, anyOf: undefined, type: 'subform' };
+        return {
+          ...(objRef.$ref ? this.resolveRef(objRef.$ref) : {}),
+          ...property,
+          anyOf: undefined,
+          $defs: this.agentSchema?.['$defs'],
+          type: 'subform',
+        };
       }
       // Or return the first non-null type
       const typeObj = property.anyOf.find((t: any) => t.type && t.type !== 'null');

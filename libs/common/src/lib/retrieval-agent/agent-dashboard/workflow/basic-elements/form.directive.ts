@@ -166,14 +166,24 @@ export abstract class FormDirective {
     // Create form controls for the resolved schema
     const nestedGroup: { [key: string]: any } = {};
     for (const [propKey, prop] of Object.entries(resolvedSchema.properties)) {
-      nestedGroup[propKey] = this.createNestedFormControl(propKey, prop as JSONSchema4, agentSchema);
+      nestedGroup[propKey] = this.createNestedFormControl(propKey, prop as JSONSchema4, property, agentSchema);
     }
     return new FormGroup(nestedGroup);
   }
 
-  private createNestedFormControl(propKey: string, nestedProperty: JSONSchema4, agentSchema: JSONSchema4): any {
+  private createNestedFormControl(
+    propKey: string,
+    nestedProperty: JSONSchema4,
+    parentProperty: JSONSchema4,
+    agentSchema: JSONSchema4,
+  ): any {
     let type = nestedProperty.type;
-    const defaultValue = nestedProperty.default ?? null;
+    let defaultValue = null;
+    if (nestedProperty.default) {
+      defaultValue = nestedProperty.default;
+    } else if (typeof parentProperty.default === 'object' && !Array.isArray(parentProperty.default)) {
+      defaultValue = parentProperty.default?.[propKey] ?? null;
+    }
 
     // Handle anyOf
     if (nestedProperty.anyOf) {

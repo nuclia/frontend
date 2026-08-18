@@ -11,6 +11,8 @@ interface OptionModel {
   value: string;
 }
 
+let nextId = 0;
+
 @Component({
   selector: 'app-enum-select',
   templateUrl: './enum-select.component.html',
@@ -30,6 +32,7 @@ export class EnumSelectComponent implements OnInit, OnDestroy {
 
   options = signal<OptionModel[] | null>(null);
   currentValue = signal<string | null>(null);
+  id = 0;
 
   // Computed signal to determine if children should be shown
   showChildren = computed(() => {
@@ -38,6 +41,7 @@ export class EnumSelectComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
+    this.id = ++nextId;
     this.initializeOptions();
     this.setupFormValueSubscription();
   }
