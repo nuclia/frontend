@@ -446,6 +446,13 @@ export function smartUiToCreation(config: SmartAgentUI): any {
   );
   functionsToDelete.forEach((k) => delete config.registered_agents_exposed_functions?.[k]);
 
+  // null values are not allowed in descriptions, we convert them to empty strings
+  Object.entries(config.registered_agents_descriptions || {}).forEach(([key, description]) => {
+    if (description === null) {
+      config.registered_agents_descriptions![key] = '';
+    }
+  });
+
   return {
     module: 'smart',
     ...config,
