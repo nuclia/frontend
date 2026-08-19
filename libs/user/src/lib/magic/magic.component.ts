@@ -71,10 +71,16 @@ export class MagicComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.sdk.nuclia.auth.redirectToOAuth({
-      message: 'login.account_ready_please_login',
-      ...(this.readyCameFrom ? { came_from: this.readyCameFrom } : {}),
-    });
+    // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
+    // the originating app (came_from), whose /user/login-redirect route holds the real client_id.
+    if (this.readyCameFrom) {
+      const url = new URL(`${this.readyCameFrom}/user/login-redirect`);
+      url.searchParams.set('message', 'login.account_ready_please_login');
+      url.searchParams.set('came_from', this.readyCameFrom);
+      location.href = url.toString();
+    } else {
+      this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.account_ready_please_login' });
+    }
   }
 
   ngOnDestroy() {
