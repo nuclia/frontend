@@ -20,6 +20,7 @@ describe('CallbackComponent', () => {
       auth: {
         authenticate: jest.Mock;
         processAuthorizationResponse: jest.Mock;
+        redirectToOAuth: jest.Mock;
       };
     };
   };
@@ -83,6 +84,7 @@ describe('CallbackComponent', () => {
         auth: {
           authenticate: jest.fn(),
           processAuthorizationResponse: jest.fn(() => of({ success: true, state: {} })),
+          redirectToOAuth: jest.fn(),
         },
       },
     };
@@ -155,8 +157,8 @@ describe('CallbackComponent', () => {
 
     component.ngOnInit();
 
-    expect(toaster.error).toHaveBeenCalledWith('login.error.oops');
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup']);
+    expect(toaster.error).toHaveBeenCalledWith('login.error.device_mismatch');
+    expect(sdk.nuclia.auth.redirectToOAuth).toHaveBeenCalledWith({ message: 'login.error.device_mismatch' });
   });
 
   it('should handle processAuthorizationResponse error', async () => {
@@ -166,8 +168,8 @@ describe('CallbackComponent', () => {
 
     component.ngOnInit();
 
-    expect(toaster.error).toHaveBeenCalledWith('login.error.oops');
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup']);
+    expect(toaster.error).toHaveBeenCalledWith('login.error.device_mismatch');
+    expect(sdk.nuclia.auth.redirectToOAuth).toHaveBeenCalledWith({ message: 'login.error.device_mismatch' });
   });
 
   it('should navigate to signup when callback params are unsupported', async () => {

@@ -70,13 +70,13 @@ export class CallbackComponent implements OnInit {
               this.router.navigate(['/']);
             }
           } else {
-            this.toaster.error('login.error.oops');
-            this.router.navigate(['/user/signup']);
+            this.toaster.error('login.error.device_mismatch');
+            this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
           }
         },
         error: () => {
-          this.toaster.error('login.error.oops');
-          this.router.navigate(['/user/signup']);
+          this.toaster.error('login.error.device_mismatch');
+          this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
         },
       });
     } else {

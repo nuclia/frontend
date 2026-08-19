@@ -26,7 +26,8 @@ export type MagicActionType =
   | 'gosetupaccount'
   | 'startonboarding'
   | 'join_regional_kb'
-  | 'redict_to_kb';
+  | 'redict_to_kb'
+  | 'account_ready_please_login';
 
 export interface MagicAction {
   action: MagicActionType;

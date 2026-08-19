@@ -14,6 +14,8 @@ export class MagicComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   error = '';
+  showLoginCta = false;
+  private readyCameFrom = '';
   constructor(
     private magicService: MagicService,
     private route: ActivatedRoute,
@@ -38,10 +40,24 @@ export class MagicComponent implements OnInit, OnDestroy {
         switchMap((action) => this.magicService.execute(action)),
       )
       .subscribe({
+        next: () => {
+          if (this.magicService.readyToLogin) {
+            this.readyCameFrom = this.magicService.cameFrom;
+            this.showLoginCta = true;
+            this.cdr.markForCheck();
+          }
+        },
         error: (error) => {
           if (error?.tokenError) {
+            const cause = error.tokenError.detail as MagicActionError | 'login_challenge_expired_or_invalid';
+            if (cause === 'login_challenge_expired_or_invalid') {
+              // Legacy fallback (pre account_ready_please_login backends): account/password are
+              // already set, only the OAuth dance timed out.
+              this.showLoginCta = true;
+              this.cdr.markForCheck();
+              return;
+            }
             let message = 'login.token_expired';
-            const cause = error.tokenError.detail as MagicActionError;
             if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
               message = `login.${cause}`;
             }
@@ -52,6 +68,13 @@ export class MagicComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+
+  login() {
+    this.sdk.nuclia.auth.redirectToOAuth({
+      message: 'login.account_ready_please_login',
+      ...(this.readyCameFrom ? { came_from: this.readyCameFrom } : {}),
+    });
   }
 
   ngOnDestroy() {
