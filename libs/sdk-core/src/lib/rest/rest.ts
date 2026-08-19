@@ -1,4 +1,4 @@
-import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, shareReplay, Subscriber, switchMap } from 'rxjs';
 import { NucliaDBRole } from '../auth/auth.models';
 import { KBRoles } from '../db/kb/kb.models';
 import type { INuclia, IRest } from '../models';
@@ -28,6 +28,8 @@ const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fet
 export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
+  /** Cached per account so concurrent per-zone callers of `getAccountZones()` share a single request. */
+  private accountZones = new Map<string, Observable<{ [key: string]: string }>>();
   private zoneOrigins?: { [slug: string]: string | null };
   private streamErrorAt?: number;
   private webSockets: { [path: string]: WebSocket } = {};
@@ -245,6 +247,18 @@ export class Rest implements IRest {
     );
   }
 
+  /** Builds the id-to-slug zone map from a zone list and seeds the origin cache as a side effect. */
+  private toZoneMap(zoneList: { id: string; slug: string; origin?: string | null }[]): { [key: string]: string } {
+    const origins: { [slug: string]: string | null } = {};
+    const zones = zoneList.reduce((all: { [key: string]: string }, zone) => {
+      all[zone.id] = zone.slug;
+      origins[zone.slug] = zone.origin ?? null;
+      return all;
+    }, {});
+    this.setZoneOrigins(origins);
+    return zones;
+  }
+
   /** Returns a dictionary giving the geographical zones available slugs by unique ids. */
   getZones(): Observable<{ [key: string]: string }> {
     if (this.zones) {
@@ -252,16 +266,8 @@ export class Rest implements IRest {
     }
     return this.get<{ id: string; slug: string; origin?: string | null }[]>('/zones').pipe(
       map((zoneList) => {
-        const zones = zoneList.reduce((all: { [key: string]: string }, zone) => {
-          all[zone.id] = zone.slug;
-          return all;
-        }, {});
+        const zones = this.toZoneMap(zoneList);
         this.zones = zones;
-        const zoneOrigins = zoneList.reduce((all: { [slug: string]: string | null }, zone) => {
-          all[zone.slug] = zone.origin ?? null;
-          return all;
-        }, {});
-        this.setZoneOrigins(zoneOrigins);
         return zones;
       }),
     );
@@ -269,6 +275,21 @@ export class Rest implements IRest {
 
   getZoneSlug(zoneId: string): Observable<string> {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
+  }
+
+  /** Zone id to slug map, scoped to the account's own zones (unlike `getZones()`, which is global). */
+  getAccountZones(accountIdOrSlug: string): Observable<{ [key: string]: string }> {
+    let zones$ = this.accountZones.get(accountIdOrSlug);
+    if (!zones$) {
+      zones$ = this.get<{ id: string; slug: string; origin?: string | null }[]>(
+        `/account/${accountIdOrSlug}/zones`,
+      ).pipe(
+        map((zoneList) => this.toZoneMap(zoneList)),
+        shareReplay(1),
+      );
+      this.accountZones.set(accountIdOrSlug, zones$);
+    }
+    return zones$;
   }
 
   /** Returns the custom origin URL for the given zone slug, or null/undefined if not set. */

@@ -183,6 +183,7 @@
 	"account.nuclia-tokens.tokens-per-operation": "tokens/operation",
 	"account.nuclia-tokens.tokens-unit": "Tokens",
 	"account.nuclia-tokens.total": "Total",
+	"account.nuclia-tokens.zone-tooltip": "Zone: {{zone}}",
 	"account.preferences": "Preferences",
 	"account.preferences-description": "Update your profile information and personal preferences.",
 	"account.related_kbs": "Knowledge Boxes",

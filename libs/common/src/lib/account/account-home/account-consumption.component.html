@@ -1,11 +1,20 @@
 <div class="top-summary-cards">
-  <div class="summary-card query-card">
-    <div class="card-title title-m">{{ 'account.nuclia-tokens.tokens-consumed' | translate }}</div>
-    <div class="card-value">
-      <span class="display-s">{{ accountTokens | number: '1.0-0' }}</span>
-      <span class="card-unit body-m">{{ 'metrics.units.tokens' | translate }}</span>
+  @if (usage?.['account']) {
+    <div class="summary-card query-card">
+      <div class="card-title title-m">{{ 'account.nuclia-tokens.tokens-consumed' | translate }}</div>
+      <div class="card-value">
+        <span class="display-s">{{ accountTokens | number: '1.0-0' }}</span>
+        <span class="card-unit body-m">{{ 'metrics.units.tokens' | translate }}</span>
+      </div>
     </div>
-  </div>
+  } @else {
+    <div class="summary-card query-card">
+      <div class="card-title title-m">{{ 'account.nuclia-tokens.tokens-consumed' | translate }}</div>
+      <nsi-skeleton
+        width="6rem"
+        height="1.5rem"></nsi-skeleton>
+    </div>
+  }
 
   @if (totalQueries | async; as count) {
     <div class="summary-card query-card">
@@ -29,12 +38,22 @@
         <span class="card-unit body-m">{{ 'metrics.units.queries' | translate }}</span>
       </div>
     </div>
+  } @else {
+    @for (i of [1, 2, 3]; track i) {
+      <div class="summary-card query-card">
+        <div class="card-title title-m">&nbsp;</div>
+        <nsi-skeleton
+          width="6rem"
+          height="1.5rem"></nsi-skeleton>
+      </div>
+    }
   }
 </div>
 
 <app-nuclia-tokens
   [showTotal]="false"
   [usage]="usage"
+  [kbs]="(kbs | async) || []"
   [nuaKeys]="(nuaKeys | async) || []"
   [selectedPeriod]="selectedPeriod | async"
   (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
@@ -54,6 +73,7 @@
           [class.disabled]="!item.enabled"
           [attr.tabindex]="item.enabled ? 0 : -1"
           [attr.aria-disabled]="!item.enabled"
+          [paTooltip]="'account.nuclia-tokens.zone-tooltip' | translate: { zone: item.zone }"
           (click)="item.onClick()"
           (keydown.enter)="item.onClick()">
           <div class="usage-info">
@@ -70,11 +90,31 @@
                 {{ item.title }}
               </span>
             </div>
-            @if (tokensCount?.[item.id]; as tokens) {
-              @if (tokens > 0) {
-                <span class="usage-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+            @if (usage?.[item.id]; as itemUsage) {
+              @if (tokensCount?.[item.id]; as tokens) {
+                @if (tokens > 0) {
+                  <span class="usage-tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
+                }
               }
+            } @else {
+              <nsi-skeleton
+                width="5rem"
+                height="1rem"></nsi-skeleton>
             }
+          </div>
+        </li>
+      }
+    </ul>
+  </ng-template>
+
+  <ng-template #usageListSkeleton>
+    <ul class="usage-summary-list">
+      @for (i of [1, 2, 3]; track i) {
+        <li class="usage-summary-item">
+          <div class="usage-info">
+            <nsi-skeleton
+              width="8rem"
+              height="1rem"></nsi-skeleton>
           </div>
         </li>
       }
@@ -87,6 +127,8 @@
       @if (kbItems.length > 0) {
         <ng-container *ngTemplateOutlet="usageList; context: { $implicit: kbItems }"></ng-container>
       }
+    } @else {
+      <ng-container *ngTemplateOutlet="usageListSkeleton"></ng-container>
     }
   </div>
 
@@ -97,5 +139,10 @@
         <ng-container *ngTemplateOutlet="usageList; context: { $implicit: nuaKeyItems }"></ng-container>
       </div>
     }
+  } @else {
+    <div class="summary-section">
+      <h3 class="title-m">{{ 'account.nuclia-tokens.nua-keys' | translate }}</h3>
+      <ng-container *ngTemplateOutlet="usageListSkeleton"></ng-container>
+    </div>
   }
 </div>

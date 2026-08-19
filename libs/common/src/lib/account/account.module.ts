@@ -20,7 +20,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, NsiSkeletonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../users-manage';
 import { KnowledgeBoxKeysComponent } from '../knowledge-box-keys';
 import { AragListComponent } from './account-arag/arag-list/arag-list.component';
@@ -180,6 +180,7 @@ const routes: Routes = [
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,
     NucliaTokensComponent,
+    NsiSkeletonComponent,
     LowerCaseInputDirective,
     OtpInputComponent,
     AccountDeleteComponent,
