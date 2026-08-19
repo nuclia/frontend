@@ -1,6 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { AnalyticsService, NavigationService, SDKService, STFUtils, UserService } from '@flaps/core';
+import {
+  AnalyticsService,
+  NavigationService,
+  SDKService,
+  SelectAccountKbService,
+  STFUtils,
+  UserService,
+} from '@flaps/core';
 import { catchError, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
 import { Account, KnowledgeBoxCreation, LearningConfigurations, SignUpInfo, WorkflowType } from '@nuclia/core';
@@ -60,6 +67,7 @@ export class OnboardingComponent {
     private analytics: AnalyticsService,
     private navigation: NavigationService,
     private userService: UserService,
+    private selectAccountKbService: SelectAccountKbService,
   ) {}
 
   goBack(): void {
@@ -73,17 +81,27 @@ export class OnboardingComponent {
       this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
     }
 
-    this.onboardingService
-      .getSignUpData()
+    this.selectAccountKbService
+      .loadAccounts()
       .pipe(
-        switchMap((data) => {
-          if (data) {
-            return this.createAccount(data);
-          } else {
-            this.enterCompanyName = true;
-            this.cdr.markForCheck();
+        switchMap((accounts) => {
+          if (accounts.length > 0) {
+            // Account already exists for this user (e.g. onboarding page reloaded after a successful
+            // creation) — don't attempt to create another one, just continue to the existing account.
+            this.navigation.goToLandingPage();
             return of(null);
           }
+          return this.onboardingService.getSignUpData().pipe(
+            switchMap((data) => {
+              if (data) {
+                return this.createAccount(data);
+              } else {
+                this.enterCompanyName = true;
+                this.cdr.markForCheck();
+                return of(null);
+              }
+            }),
+          );
         }),
       )
       .subscribe();
