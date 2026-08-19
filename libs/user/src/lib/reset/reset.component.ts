@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService, ResetResponse, SetupResponse } from '@flaps/core';
+import { LoginService, ResetResponse, SDKService, SetupResponse } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -52,6 +52,7 @@ export class ResetComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private sdk: SDKService,
   ) {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params['token'];
@@ -96,6 +97,14 @@ export class ResetComponent {
   }
 
   goLogin(data: ResetResponse | SetupResponse) {
+    const loginChallenge = (data as SetupResponse).login_challenge;
+    if (!loginChallenge) {
+      // The setup email was sent without a login_challenge (POST /auth/recover was called
+      // before an OAuth flow created one). The password has been set successfully, so
+      // start a fresh OAuth flow to authenticate the user normally.
+      this.sdk.nuclia.auth.redirectToOAuth();
+      return;
+    }
     this.router.navigate(['../login'], {
       relativeTo: this.route,
       queryParams: { ...data },

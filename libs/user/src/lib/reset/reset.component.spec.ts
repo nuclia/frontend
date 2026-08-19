@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoginService } from '@flaps/core';
+import { LoginService, SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, of, throwError } from 'rxjs';
@@ -19,6 +19,7 @@ describe('ResetComponent', () => {
   let router: { navigate: jest.Mock };
   let reCaptchaV3Service: { execute: jest.Mock };
   let toaster: { success: jest.Mock; error: jest.Mock };
+  let sdk: { nuclia: { auth: { redirectToOAuth: jest.Mock } } };
 
   let queryParams$: BehaviorSubject<Record<string, string | undefined>>;
   let url$: BehaviorSubject<{ path: string }[]>;
@@ -32,6 +33,7 @@ describe('ResetComponent', () => {
         { provide: ReCaptchaV3Service, useValue: reCaptchaV3Service },
         { provide: SisToastService, useValue: toaster },
         { provide: Router, useValue: router },
+        { provide: SDKService, useValue: sdk },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -58,6 +60,7 @@ describe('ResetComponent', () => {
       setup: jest.fn(() => of({ login_challenge: 'challenge-1' })),
     };
     router = { navigate: jest.fn() };
+    sdk = { nuclia: { auth: { redirectToOAuth: jest.fn() } } };
     reCaptchaV3Service = { execute: jest.fn(() => of('captcha-token')) };
     toaster = { success: jest.fn(), error: jest.fn() };
     queryParams$ = new BehaviorSubject<Record<string, string | undefined>>({ token: 'magic-token' });
@@ -212,11 +215,21 @@ describe('ResetComponent', () => {
   it('should navigate to login with challenge in goLogin', async () => {
     await buildComponent();
 
-    component.goLogin({ login_challenge: 'challenge-2' });
+    component.goLogin({ login_challenge: 'challenge-2', user_hint: 'user@example.com' });
 
     expect(router.navigate).toHaveBeenCalledWith(['../login'], {
       relativeTo: TestBed.inject(ActivatedRoute),
-      queryParams: { login_challenge: 'challenge-2' },
+      queryParams: { login_challenge: 'challenge-2', user_hint: 'user@example.com' },
     });
+    expect(sdk.nuclia.auth.redirectToOAuth).not.toHaveBeenCalled();
+  });
+
+  it('should redirect to OAuth when login_challenge is missing in goLogin', async () => {
+    await buildComponent();
+
+    component.goLogin({ user_hint: 'user@example.com' } as any);
+
+    expect(sdk.nuclia.auth.redirectToOAuth).toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });
