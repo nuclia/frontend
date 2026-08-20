@@ -15,7 +15,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { StickyFooterComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 
-const COWORK_ZONE_SLUGS = ['europe-1', 'aws-us-east-2-1'];
+const COWORK_ZONE_SLUGS = ['europe-1', 'aws-us-east-2-1', 'gcp-dev-1'];
 
 @Component({
   selector: 'nus-zone-step',
