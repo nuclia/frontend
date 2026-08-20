@@ -121,7 +121,7 @@ describe('LoginComponent', () => {
   it('should set message and loginChallenge from query params', async () => {
     await buildComponent();
 
-    expect(component.message).toBe('hello');
+    expect(component.message()).toBe('hello');
     expect(component.loginChallenge).toBe('challenge-1');
     expect(component.error).toBeNull();
   });
@@ -141,7 +141,7 @@ describe('LoginComponent', () => {
     });
     await buildComponent();
 
-    expect(component.message).toBe('denied by policy');
+    expect(component.message()).toBe('denied by policy');
   });
 
   it('should set fallback message when OAuth error description is missing', async () => {
@@ -151,7 +151,7 @@ describe('LoginComponent', () => {
     });
     await buildComponent();
 
-    expect(component.message).toBe('login.error.invalid_request');
+    expect(component.message()).toBe('login.error.invalid_request');
   });
 
   it('should trigger remoteLogin when remote login is enabled', async () => {
@@ -291,7 +291,7 @@ describe('LoginComponent', () => {
     await buildComponent();
 
     expect(component.emailControl.value).toBe('test@example.com');
-    expect(component.message).toBe('login.account_already_exists');
+    expect(component.message()).toBe('login.account_already_exists');
   });
 
   it('should not pre-fill email and not set account_already_exists message when needs_signup is true', async () => {
@@ -307,6 +307,6 @@ describe('LoginComponent', () => {
     await buildComponent();
 
     expect(component.emailControl.value).toBe('');
-    expect(component.message).not.toBe('login.account_already_exists');
+    expect(component.message()).not.toBe('login.account_already_exists');
   });
 });

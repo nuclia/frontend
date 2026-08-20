@@ -1,8 +1,3 @@
 <nus-user-container>
-  @if (showLoginCta) {
-    <p>{{ 'login.account_ready_please_login' | translate }}</p>
-    <pa-button (click)="login()">{{ 'login.login' | translate }}</pa-button>
-  } @else {
-    <p>{{ (error ? error : 'onboarding.loading') | translate }}</p>
-  }
+  <p>{{ (error ? error : 'onboarding.loading') | translate }}</p>
 </nus-user-container>

@@ -3,11 +3,12 @@
     <header>
       <p class="body-m">{{ 'login.subtitle' | translate }}</p>
     </header>
-    @if (message || error) {
+    @if (message() || error) {
       <div
         class="login_alert title-xxs"
+        [class.login_alert--positive]="isPositiveMessage()"
         data-cy="login-error">
-        {{ message || error || '' | translate }}
+        {{ message() || error || '' | translate }}
       </div>
     }
     <div class="login_form">

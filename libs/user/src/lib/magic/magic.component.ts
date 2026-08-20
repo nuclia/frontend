@@ -14,7 +14,6 @@ export class MagicComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   error = '';
-  showLoginCta = false;
   private readyCameFrom = '';
   constructor(
     private magicService: MagicService,
@@ -43,8 +42,9 @@ export class MagicComponent implements OnInit, OnDestroy {
         next: () => {
           if (this.magicService.readyToLogin) {
             this.readyCameFrom = this.magicService.cameFrom;
-            this.showLoginCta = true;
-            this.cdr.markForCheck();
+            // Account/password are already set, only the login_challenge is stale — no need to
+            // make the user click anything, just take them straight to a fresh login.
+            this.login();
           }
         },
         error: (error) => {
@@ -53,8 +53,7 @@ export class MagicComponent implements OnInit, OnDestroy {
             if (cause === 'login_challenge_expired_or_invalid') {
               // Legacy fallback (pre account_ready_please_login backends): account/password are
               // already set, only the OAuth dance timed out.
-              this.showLoginCta = true;
-              this.cdr.markForCheck();
+              this.login();
               return;
             }
             let message = 'login.token_expired';
@@ -70,7 +69,7 @@ export class MagicComponent implements OnInit, OnDestroy {
       });
   }
 
-  login() {
+  private login() {
     // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
     // the originating app (came_from), whose /user/login-redirect route holds the real client_id.
     if (this.readyCameFrom) {
