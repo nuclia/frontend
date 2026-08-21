@@ -1,4 +1,3 @@
-import { SDKService } from '@flaps/core';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
@@ -19,7 +18,6 @@ export class MagicComponent implements OnInit, OnDestroy {
     private magicService: MagicService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private sdk: SDKService,
   ) {}
 
   ngOnInit() {
@@ -42,25 +40,21 @@ export class MagicComponent implements OnInit, OnDestroy {
         next: () => {
           if (this.magicService.readyToLogin) {
             this.readyCameFrom = this.magicService.cameFrom;
-            // Account/password are already set, only the login_challenge is stale — no need to
-            // make the user click anything, just take them straight to a fresh login.
-            this.login();
+            // Account/password are already set, only the login_challenge is stale, we need user to login again;
+            this.login('login.account_ready_please_login');
           }
         },
         error: (error) => {
           if (error?.tokenError) {
             const cause = error.tokenError.detail as MagicActionError | 'login_challenge_expired_or_invalid';
-            if (cause === 'login_challenge_expired_or_invalid') {
-              // Legacy fallback (pre account_ready_please_login backends): account/password are
-              // already set, only the OAuth dance timed out.
-              this.login();
-              return;
-            }
             let message = 'login.token_expired';
+
+            if (cause === 'login_challenge_expired_or_invalid') message = 'login.account_ready_please_login';
             if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
               message = `login.${cause}`;
             }
-            this.sdk.nuclia.auth.redirectToOAuth({ message });
+
+            this.login(message);
           } else {
             this.error = 'onboarding.failed';
             this.cdr.markForCheck();
@@ -69,16 +63,16 @@ export class MagicComponent implements OnInit, OnDestroy {
       });
   }
 
-  private login() {
-    // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
-    // the originating app (came_from), whose /user/login-redirect route holds the real client_id.
+  private login(message: string) {
+    // The auth app has no real OAuth client_id of its own; the flow must be (re)started from the originating app (came_from)
     if (this.readyCameFrom) {
-      const url = new URL(`${this.readyCameFrom}/user/login-redirect`);
-      url.searchParams.set('message', 'login.account_ready_please_login');
-      url.searchParams.set('came_from', this.readyCameFrom);
+      // Strip down to the origin in case the backend ever sends came_from with a path/query.
+      const url = new URL(new URL(this.readyCameFrom).origin);
+      url.searchParams.set('message', message);
       location.href = url.toString();
     } else {
-      this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.account_ready_please_login' });
+      this.error = 'login.error.missing_came_from';
+      this.cdr.markForCheck();
     }
   }
 
