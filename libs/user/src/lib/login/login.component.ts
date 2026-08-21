@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
@@ -22,8 +22,10 @@ export class LoginComponent {
   loginChallenge: string | undefined;
   loginData: OAuthLoginData | undefined;
 
-  message: string | null = null;
+  message = signal<string | null>(null);
   error: string | null = null;
+
+  isPositiveMessage = computed(() => this.message() === 'login.account_ready_please_login');
 
   loginValidationMessages = {
     email: {
@@ -93,21 +95,22 @@ export class LoginComponent {
       }
     });
     this.route.queryParams.subscribe((params) => {
-      this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
 
       // Get data from resolver - resolver handles skip_login auto-submit before component loads
       this.loginData = this.route.snapshot.data['loginData'];
 
+      this.message.set(params['message'] || this.loginData?.message || null);
+
       if (!this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params['error']) {
-        this.message = params['error_description'] || 'login.error.' + params['error'];
+        this.message.set(params['error_description'] || 'login.error.' + params['error']);
       }
       if (this.loginData?.email && !this.loginData?.needs_signup) {
         this.emailControl.setValue(this.loginData.email);
-        this.message = 'login.account_already_exists';
+        this.message.set('login.account_already_exists');
       }
     });
   }

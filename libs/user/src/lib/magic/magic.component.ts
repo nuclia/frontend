@@ -1,4 +1,3 @@
-import { SDKService } from '@flaps/core';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
@@ -14,11 +13,11 @@ export class MagicComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   error = '';
+  private readyCameFrom = '';
   constructor(
     private magicService: MagicService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private sdk: SDKService,
   ) {}
 
   ngOnInit() {
@@ -38,20 +37,43 @@ export class MagicComponent implements OnInit, OnDestroy {
         switchMap((action) => this.magicService.execute(action)),
       )
       .subscribe({
+        next: () => {
+          if (this.magicService.readyToLogin) {
+            this.readyCameFrom = this.magicService.cameFrom;
+            // Account/password are already set, only the login_challenge is stale, we need user to login again;
+            this.login('login.account_ready_please_login');
+          }
+        },
         error: (error) => {
           if (error?.tokenError) {
+            const cause = error.tokenError.detail as MagicActionError | 'login_challenge_expired_or_invalid';
             let message = 'login.token_expired';
-            const cause = error.tokenError.detail as MagicActionError;
+
+            if (cause === 'login_challenge_expired_or_invalid') message = 'login.account_ready_please_login';
             if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
               message = `login.${cause}`;
             }
-            this.sdk.nuclia.auth.redirectToOAuth({ message });
+
+            this.login(message);
           } else {
             this.error = 'onboarding.failed';
             this.cdr.markForCheck();
           }
         },
       });
+  }
+
+  private login(message: string) {
+    // The auth app has no real OAuth client_id of its own; the flow must be (re)started from the originating app (came_from)
+    if (this.readyCameFrom) {
+      // Strip down to the origin in case the backend ever sends came_from with a path/query.
+      const url = new URL(new URL(this.readyCameFrom).origin);
+      url.searchParams.set('message', message);
+      location.href = url.toString();
+    } else {
+      this.error = 'login.error.missing_came_from';
+      this.cdr.markForCheck();
+    }
   }
 
   ngOnDestroy() {

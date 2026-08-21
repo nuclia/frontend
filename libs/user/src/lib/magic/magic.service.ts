@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, SDKService } from '@flaps/core';
 import { MagicAction } from '@nuclia/core';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, from, map, of, switchMap, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MagicService {
   cameFrom = '';
+  readyToLogin = false;
 
   constructor(
     private authService: AuthService,
@@ -77,6 +78,10 @@ export class MagicService {
           throw new Error('No consent_url');
         }
         break;
+      case 'account_ready_please_login':
+        // login_challenge expired after verification, but the account/password are already set.
+        this.readyToLogin = true;
+        break;
     }
   }
 
@@ -89,7 +94,12 @@ export class MagicService {
   validateToken(token: string, zone?: string) {
     return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
-        throw Object.assign(new Error('Token validation error'), { tokenError: error });
+        // error is the raw fetch Response; parse its JSON body so callers can read `.detail`.
+        return from(error instanceof Response ? error.json().catch(() => ({})) : Promise.resolve({})).pipe(
+          switchMap((body) => {
+            throw Object.assign(new Error('Token validation error'), { tokenError: body });
+          }),
+        );
       }),
     );
   }
