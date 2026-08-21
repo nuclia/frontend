@@ -112,7 +112,7 @@
               aspect="basic">
               {{ 'resource.classification-column' | translate }}
               {{
-                selectedClassifications.length
+                selectedClassifications.length || selectedLabelsets.length
                   ? '(' + (selectedClassifications.length + selectedLabelsets.length) + ')'
                   : ''
               }}

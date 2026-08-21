@@ -74,7 +74,7 @@ export class LabelDropdownComponent {
   checkboxSelection: string[] = [];
   filter = '';
   filteredLabels?: Classification[];
-  maxLabels = 4;
+  maxLabels = 100;
   radioValue = '';
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet, event: MouseEvent | KeyboardEvent) {
