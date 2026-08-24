@@ -5,3 +5,9 @@ pa-tabs {
   top: 0;
   z-index: 1;
 }
+
+.tab-with-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: rhythm(1);
+}

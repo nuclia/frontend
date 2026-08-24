@@ -50,6 +50,7 @@ import {
   DEFAULT_ROUTING_CONFIG,
 } from '@nuclia/core';
 import {
+  BadgeComponent,
   ButtonMiniComponent,
   ExpandableTextareaComponent,
   InfoCardComponent,
@@ -85,6 +86,7 @@ export class IsTypedConfigPipe implements PipeTransform {
     AccordionComponent,
     AccordionBodyDirective,
     AccordionItemComponent,
+    BadgeComponent,
     ButtonMiniComponent,
     InfoCardComponent,
     PaButtonModule,
