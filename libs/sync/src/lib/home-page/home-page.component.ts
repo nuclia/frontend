@@ -6,9 +6,10 @@ import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/ro
 import { filter, map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FeaturesService } from '@flaps/core';
+import { BadgeComponent } from '@nuclia/sistema';
 
 @Component({
-  imports: [CommonModule, PaTabsModule, RouterModule, TranslateModule],
+  imports: [CommonModule, BadgeComponent, PaTabsModule, RouterModule, TranslateModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

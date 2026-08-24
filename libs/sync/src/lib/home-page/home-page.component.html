@@ -10,7 +10,10 @@
       (click)="navigateTo('connect')"
       [active]="isConnectActive()"
       ariaControls="home-page-panel">
-      {{ 'sync.home-page.connect.title' | translate }}
+      <div class="tab-with-badge">
+        {{ 'sync.home-page.connect.title' | translate }}
+        <nsi-badge kind="tertiary">BETA</nsi-badge>
+      </div>
     </pa-tab>
   </pa-tabs>
 }
