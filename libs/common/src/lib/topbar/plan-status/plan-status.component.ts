@@ -65,11 +65,12 @@ export class PlanStatusComponent {
       const daysLeft = account.trial_expiration_date
         ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)
         : null;
+
       return this.billing.getTrialTokenUsage().pipe(
         map(
           (usage): PlanStatusVm => ({
             isTrial: true,
-            labelKey: 'account.type.stash-trial',
+            labelKey: `account.type.${account.type}_trial`,
             daysLeft,
             used: usage?.used ?? null,
             limit: usage?.limit ?? null,
