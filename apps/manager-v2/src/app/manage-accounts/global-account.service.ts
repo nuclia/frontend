@@ -16,6 +16,7 @@ import {
   ManagerAccountSubscription,
   ManualSubscriptionPayload,
   PaymentLinkPayload,
+  ProductCatalog,
   SearchPrice,
 } from './global-account.models';
 
@@ -112,6 +113,10 @@ export class GlobalAccountService {
 
   patchCloudZeroSubscription(accountId: string, payload: Partial<CloudZeroSubscriptionPayload>): Observable<void> {
     return this.sdk.nuclia.rest.patch<void>(`/billing/account/${accountId}/cloud_zero/subscription`, payload);
+  }
+
+  getProductCatalog(): Observable<ProductCatalog> {
+    return this.sdk.nuclia.rest.get<ProductCatalog>(`/billing/cloud_zero/product_catalog`);
   }
 
   patchManualSubscription(accountId: string, payload: Partial<ManualSubscriptionPayload>): Observable<void> {

@@ -1,5 +1,5 @@
-import { DestroyRef, inject, Injectable, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
@@ -13,6 +13,7 @@ import {
   ManagerAccountSubscription,
   ManagerSubscriptionDetails,
   ManualSubscriptionPayload,
+  ProductCatalog,
 } from '../../global-account.models';
 
 export type SubscriptionState = 'loading' | 'none' | 'cloud_zero' | 'manual' | 'other';
@@ -35,6 +36,7 @@ export class SubscriptionsService {
   private _isDeletingManual = signal(false);
   private _cloudZeroShowAction = signal(false);
   private _manualShowAction = signal(false);
+  private _productCatalog = signal<ProductCatalog>({});
 
   // ── Public readonly signals ──────────────────────────────────────────
   subscriptionState = this._subscriptionState.asReadonly();
@@ -85,10 +87,38 @@ export class SubscriptionsService {
     shareReplay(1),
   );
 
+  // - Product catalog options (signals) ─────────────────────────────────────────────
+  businessUnit = toSignal(this.cloudZeroForm.controls.business_unit.valueChanges, { initialValue: '' });
+  productLine = toSignal(this.cloudZeroForm.controls.product_line.valueChanges, { initialValue: '' });
+  businessUnitOptions = computed(() => {
+    return Object.entries(this._productCatalog()).map(
+      ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
+    );
+  });
+  productLineOptions = computed(() => {
+    if (!this.businessUnit()) {
+      return [];
+    } else {
+      return Object.entries(this._productCatalog()[this.businessUnit()]?.product_lines || {}).map(
+        ([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }),
+      );
+    }
+  });
+  productOptions = computed(() => {
+    if (!this.businessUnit() || !this.productLine()) {
+      return [];
+    } else {
+      return Object.entries(
+        this._productCatalog()[this.businessUnit()]?.product_lines[this.productLine()]?.products || {},
+      ).map(([key, value]) => new OptionModel({ id: key, value: key, label: value.name || key }));
+    }
+  });
+
   constructor() {
     this.setupBudgetCoupling(this.cloudZeroForm, true);
     this.setupBudgetCoupling(this.manualForm, false);
     this.loadSubscription();
+    this.loadProductCatalog();
   }
 
   // ── Private helpers ──────────────────────────────────────────────────
@@ -156,6 +186,21 @@ export class SubscriptionsService {
         },
         error: () => {
           this._subscriptionState.set('none');
+        },
+      });
+  }
+
+  private loadProductCatalog(): void {
+    this.globalService
+      .getProductCatalog()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this._productCatalog.set(data);
+        },
+        error: () => {
+          // On stage the endpoint is not available, it return error.
+          this._productCatalog.set({});
         },
       });
   }
@@ -291,5 +336,14 @@ export class SubscriptionsService {
         this.loadSubscription();
       },
     );
+  }
+
+  resetProduct() {
+    this.cloudZeroForm.controls.product.reset();
+  }
+
+  resetProductLine() {
+    this.cloudZeroForm.controls.product_line.reset();
+    this.cloudZeroForm.controls.product.reset();
   }
 }
