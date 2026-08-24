@@ -5,62 +5,69 @@
   @if (clients.length > 0) {
     <div class="container">
       <h3 class="title-s">{{ 'account.existing_keys' | translate }}</h3>
-      @for (client of clients; track client.client_id) {
-        <div class="client-row">
-          <div
-            class="title"
-            paEllipsisTooltip>
-            {{ client.title }}
-          </div>
-          <div class="date">
-            <pa-datetime [datetime]="client.created"></pa-datetime>
-          </div>
-          <div
-            class="email"
-            paEllipsisTooltip>
-            {{ client.contact }}
-          </div>
-          <div class="zone">{{ client.zone }}</div>
-          <div class="buttons">
-            @if (isNuaActivityEnabled | async) {
+      <pa-table
+        border
+        columns="1.5fr 160px 1fr 1fr 150px">
+        <pa-table-header>
+          <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'generic.date' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'generic.email' | translate }}</pa-table-cell>
+          <pa-table-cell header>{{ 'generic.zone' | translate }}</pa-table-cell>
+          <pa-table-cell-menu header>{{ 'generic.actions' | translate }}</pa-table-cell-menu>
+        </pa-table-header>
+        @for (client of clients; track client.client_id) {
+          <pa-table-row>
+            <pa-table-cell class="body-s">
+              <span paEllipsisTooltip>{{ client.title }}</span>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">
+              <pa-datetime [datetime]="client.created"></pa-datetime>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">
+              <span paEllipsisTooltip>{{ client.contact }}</span>
+            </pa-table-cell>
+            <pa-table-cell class="body-s">{{ client.zone }}</pa-table-cell>
+            <pa-table-cell-menu>
+              @if (isNuaActivityEnabled | async) {
+                <pa-button
+                  (click)="goToActivity(client)"
+                  aspect="basic"
+                  icon="activity-log"
+                  size="small"
+                  paTooltip="account.nua_key_activity">
+                  {{ 'account.nua_key_activity' | translate }}
+                </pa-button>
+              }
               <pa-button
-                (click)="goToActivity(client)"
+                (click)="editClient(client)"
                 aspect="basic"
-                icon="activity-log"
+                icon="edit"
                 size="small"
-                paTooltip="account.nua_key_activity">
-                {{ 'account.nua_key_activity' | translate }}
+                paTooltip="generic.edit">
+                {{ 'generic.edit' | translate }}
               </pa-button>
-            }
-            <pa-button
-              (click)="editClient(client)"
-              aspect="basic"
-              icon="edit"
-              size="small"
-              paTooltip="generic.edit">
-              {{ 'generic.edit' | translate }}
-            </pa-button>
-            <pa-button
-              (click)="askConfirmation(client)"
-              aspect="basic"
-              icon="refresh"
-              size="small"
-              paTooltip="account.generate_key">
-              {{ 'account.generate_key' | translate }}
-            </pa-button>
-            <pa-button
-              (click)="deleteClient(client)"
-              [attr.data-cy]="client.title + '-delete'"
-              aspect="basic"
-              icon="trash"
-              size="small"
-              kind="destructive"
-              paTooltip="generic.delete">
-              {{ 'account.delete' | translate }}
-            </pa-button>
-          </div>
-        </div>
-      }
+              <pa-button
+                (click)="askConfirmation(client)"
+                aspect="basic"
+                icon="refresh"
+                size="small"
+                paTooltip="account.generate_key">
+                {{ 'account.generate_key' | translate }}
+              </pa-button>
+              <pa-button
+                (click)="deleteClient(client)"
+                [attr.data-cy]="client.title + '-delete'"
+                aspect="basic"
+                icon="trash"
+                size="small"
+                kind="destructive"
+                paTooltip="generic.delete">
+                {{ 'account.delete' | translate }}
+              </pa-button>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
     </div>
   }
 
