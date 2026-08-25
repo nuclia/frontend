@@ -139,6 +139,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.workflowService.cleanWorkflow();
+    // Collapsing the nav is only actionable from within the canvas toolbar (no other
+    // page exposes a way to re-expand it), so restore it whenever the canvas is left,
+    // regardless of exit path (back button, browser back/forward, deep link, etc.).
+    this.layoutService.expandNav();
   }
 
   setRoot(root: WorkflowRoot) {
