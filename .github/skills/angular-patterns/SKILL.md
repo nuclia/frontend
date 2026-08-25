@@ -28,6 +28,26 @@ many features; this covers only what the team has adopted. When in doubt, match 
 5. **`@Input()`/`@Output()` decorators are legacy** — use `input()` / `output()` signal APIs for new components.
 6. **`styleUrl` (singular string), not `styleUrls` (array)** — since Angular 17 the shorthand `styleUrl: './foo.component.scss'` replaces `styleUrls: ['./foo.component.scss']`. Always use the singular form in new code.
 7. **No NgRx `signalStore`** — this codebase does not use `@ngrx/signals`. See state management section below.
+8. **Access modifiers on component class members:** Angular's template type-checker cannot access `private` members from the component's own template (compile error), so `protected`/`private` are chosen by usage, not by inheritance:
+   - **`protected`** — referenced in the template (`{{ foo }}`, `(click)="bar()"`, etc.). This is the default for template-bound properties/methods, even when the component has no subclasses — it just means "not part of this component's public API."
+   - **`private`** — used only internally in the class, never referenced in the template.
+   - **public (no modifier)** — only for members that must be accessed from outside the class itself (e.g. via `@ViewChild` from a parent, or genuine public API of a reusable component/service).
+9. **Early-return guard clauses go on one line, but only if the whole statement fits on one line** —
+   prefer `if (condition) return value;` over a 3-line braced block when it stays within the
+   120-char print width. Braces are still required as soon as the body needs more than the return
+   itself, or the line would wrap.
+
+   ```ts
+   // ✅ fits on one line
+   if (!columnKey) return null;
+   if (fb === null) return null;
+
+   // ✅ still needs braces — body has more than the bare return, or it would wrap past 120 chars
+   if (!resource) {
+     this.toaster.error('resource.memory.delete.error');
+     return;
+   }
+   ```
 
 ---
 
@@ -191,6 +211,25 @@ import { ActivityColumnModel } from '../activity-column.model';
 import { ActivityLogPageComponent } from '../activity-log-page.component';
 import { COST_TOKEN_COLUMNS } from './cost-token-page.config'; // sibling in same subfolder
 ```
+
+### Don't add a barrel `index.ts` to a feature folder by default
+
+Import directly from the specific file (`./memory.service`, `../edit-resource/edit-resource.service`)
+rather than creating an `index.ts` that re-exports everything in the folder. Only add one when there
+are **actual external consumers** that need a single stable entry point — check first with:
+
+```bash
+grep -rn "from '.*<folder-name>'" libs/ apps/ --include="*.ts" | grep -v "/<folder-name>/"
+```
+
+- **Justified example:** `resources/edit-resource/index.ts` — genuinely imported as a barrel from
+  `resources.module.ts`, `resource-list.service.ts`, and even `upload.service.ts` outside the
+  `resources` folder, and re-exported from the parent `resources/index.ts`.
+- **Unjustified example:** a new feature folder (e.g. `memory/index.ts`) where every real consumer
+  already imports the concrete file directly (`./memory.component`, `./memory.model`) — the barrel
+  has zero consumers and is dead weight. Delete it instead of creating it "just in case."
+- The library-root `src/index.ts` (the public API surface referenced by `tsconfig.base.json` path
+  aliases) is a different, always-required case — this rule is about **sub-folder** barrels only.
 
 ---
 

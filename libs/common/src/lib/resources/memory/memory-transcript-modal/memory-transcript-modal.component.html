@@ -1,0 +1,22 @@
+<pa-modal-advanced
+  fitContentHeight
+  class="memory-transcript-modal">
+  <pa-modal-title>
+    {{ 'resource.memory.transcript.title' | translate: { session: data?.['sessionLabel'] } }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div class="transcript-content">
+      @if ((data?.['entries'] || []).length === 0) {
+        <p class="body-s">{{ 'resource.memory.transcript.empty' | translate }}</p>
+      }
+      <div class="turns-list">
+        @for (entry of data?.['entries'] || []; track entry.id) {
+          <article class="turn">
+            <div class="title-xxs turn-meta">{{ entry.timestamp | date: 'medium' }}</div>
+            <p class="body-s">{{ entry.content.text }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>

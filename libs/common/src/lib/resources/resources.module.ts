@@ -27,8 +27,10 @@ import {
   ResourceTextComponent,
 } from './edit-resource';
 import { ResourcesComponent } from './resources.component';
+import { MemoryComponent } from './memory/memory.component';
 import {
   BackButtonComponent,
+  BadgeComponent,
   DropdownButtonComponent,
   NsiSkeletonComponent,
   SisIconsModule,
@@ -49,6 +51,7 @@ import {
   PaDatePickerModule,
   PaDateTimeModule,
   PaDropdownModule,
+  PaExpanderModule,
   PaIconModule,
   PaPopupModule,
   PaScrollModule,
@@ -130,6 +133,10 @@ const ROUTES: Routes = [
             path: 'preview/:fieldType/:fieldId',
             component: PreviewComponent,
           },
+          {
+            path: 'memory',
+            component: MemoryComponent,
+          },
         ],
       },
     ],
@@ -151,6 +158,7 @@ const ROUTES: Routes = [
     PaDatePickerModule,
     PaDateTimeModule,
     PaDropdownModule,
+    PaExpanderModule,
     PaIconModule,
     PaPopupModule,
     PaScrollModule,
@@ -168,6 +176,7 @@ const ROUTES: Routes = [
     SisProgressModule,
     SisStatusComponent,
     BackButtonComponent,
+    BadgeComponent,
     DropdownButtonComponent,
     SisSearchInputComponent,
     NsiSkeletonComponent,
@@ -192,6 +201,7 @@ const ROUTES: Routes = [
     PendingResourcesTableComponent,
     ResourcesTableDirective,
     ErrorResourcesTableComponent,
+    MemoryComponent,
   ],
   exports: [],
 })
