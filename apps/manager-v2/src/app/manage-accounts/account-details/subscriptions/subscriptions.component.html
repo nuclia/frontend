@@ -10,9 +10,22 @@
       Nuclia tokens price *
     </pa-input>
     @if (isCloudZero) {
-      <pa-input formControlName="product">Product *</pa-input>
-      <pa-input formControlName="product_line">Product line *</pa-input>
-      <pa-input formControlName="business_unit">Business unit *</pa-input>
+      <pa-select
+        formControlName="business_unit"
+        label="Business unit *"
+        [options]="service.businessUnitOptions()"
+        (valueChange)="service.resetProductLine()"></pa-select>
+      <pa-select
+        formControlName="product_line"
+        label="Product line *"
+        (valueChange)="service.resetProduct()"
+        [readonly]="!service.businessUnit()"
+        [options]="service.productLineOptions()"></pa-select>
+      <pa-select
+        formControlName="product"
+        label="Product *"
+        [readonly]="!service.productLine()"
+        [options]="service.productOptions()"></pa-select>
     }
     <pa-select
       label="Billing formula"

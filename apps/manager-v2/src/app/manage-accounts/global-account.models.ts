@@ -187,6 +187,20 @@ export interface ManagerAccountSubscription {
   subscription: ManagerSubscriptionDetails;
 }
 
+export type ProductCatalog = {
+  [key: string]: BusinessUnit;
+};
+
+export interface BusinessUnit {
+  name?: string;
+  product_lines: { [key: string]: ProductLine };
+}
+
+export interface ProductLine {
+  name?: string;
+  products: { [key: string]: { name?: string } };
+}
+
 export type PaymentCurrency = 'usd' | 'eur';
 
 export interface PaymentLinkPayload {
