@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AccountTypeDefaults, type SubscriptionProvider } from '@flaps/core';
 import { AccountTypes, WorkflowType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { filter, forkJoin, map, of, Subject, switchMap, tap } from 'rxjs';
+import { filter, forkJoin, map, Observable, of, Subject, switchMap, tap, throwError } from 'rxjs';
 import { catchError, take, takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
@@ -69,8 +69,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   private budgetBackup: AccountBudget | null = null;
   budgetForm = new FormGroup({
-    custom_budget: new FormControl<'default' | 'unlimited' | 'limit'>('default', { nonNullable: true }),
-    budget_value: new FormControl<number | null>(null, { validators: [Validators.min(1)] }),
+    custom_budget: new FormControl<'unlimited' | 'limit'>('limit', { nonNullable: true }),
+    budget_value: new FormControl<number | null>(0, { validators: [Validators.min(1)] }),
     action_on_budget_exhausted: new FormControl<ActionOnBudgetExhausted>('BLOCK_ACCOUNT', { nonNullable: true }),
   });
 
@@ -113,11 +113,16 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
               take(1),
             ),
             this.globalAccountService.getBudget(accountDetails.id).pipe(
-              catchError(() => of(null)),
+              catchError(() => {
+                this.toast.error('An error occurred when loading the budget');
+                return of(null);
+              }),
               tap((budget) => {
-                this.budgetBackup = budget;
-                this.patchBudget(budget);
-                this.cdr.markForCheck();
+                if (budget) {
+                  this.budgetBackup = budget;
+                  this.patchBudget(budget);
+                  this.cdr.markForCheck();
+                }
               }),
               take(1),
             ),
@@ -201,27 +206,33 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveBudget() {
+  saveBudget(): Observable<AccountBudget | null> {
     if (!this.accountBackup) {
       return of(null);
     }
+    const accountId = this.accountBackup.id;
     const { custom_budget, ...budget } = this.budgetForm.getRawValue();
-    let budgetPayload: AccountBudget | null;
+    let budgetPayload: AccountBudget;
     if (custom_budget === 'limit') {
       budgetPayload = budget;
-    } else if (custom_budget === 'unlimited') {
+    } else {
       budgetPayload = { budget_value: null, action_on_budget_exhausted: null };
-    } else {
-      budgetPayload = null;
     }
-    if (budgetPayload) {
-      return this.budgetBackup
-        ? this.globalAccountService.patchBudget(this.accountBackup.id, budgetPayload)
-        : this.globalAccountService.addBudget(this.accountBackup.id, budgetPayload);
+    const changed =
+      this.budgetBackup?.budget_value !== budgetPayload.budget_value ||
+      this.budgetBackup?.action_on_budget_exhausted !== budgetPayload.action_on_budget_exhausted;
+
+    if (changed) {
+      return this.globalAccountService.patchBudget(accountId, budgetPayload).pipe(
+        catchError((error) => {
+          // If the budget has not been set yet, POST endpoint must be used instead
+          return error?.status === 404
+            ? this.globalAccountService.addBudget(accountId, budgetPayload)
+            : throwError(() => error);
+        }),
+      );
     } else {
-      return this.budgetBackup !== null
-        ? this.globalAccountService.deleteBudget(this.accountBackup.id).pipe(map(() => null))
-        : of(null);
+      return of(null);
     }
   }
 
@@ -235,7 +246,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   resetBudget() {
-    this.patchBudget(this.budgetBackup || null);
+    if (this.budgetBackup) {
+      this.patchBudget(this.budgetBackup);
+    }
   }
 
   resetMaxKbsToDefault() {
@@ -282,16 +295,12 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private patchBudget(budget: AccountBudget | null) {
-    if (budget) {
-      this.budgetForm.patchValue({
-        budget_value: budget.budget_value,
-        action_on_budget_exhausted: budget.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
-        custom_budget: budget.budget_value === null ? 'unlimited' : 'limit',
-      });
-    } else {
-      this.budgetForm.reset();
-    }
+  private patchBudget(budget: AccountBudget) {
+    this.budgetForm.patchValue({
+      budget_value: budget.budget_value,
+      action_on_budget_exhausted: budget.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+      custom_budget: budget.budget_value === null ? 'unlimited' : 'limit',
+    });
     // A timeout is needed to correctly set pastanaga radios as pristine
     setTimeout(() => {
       this.budgetForm.markAsPristine();
