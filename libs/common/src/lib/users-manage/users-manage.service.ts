@@ -63,6 +63,7 @@ export class UsersManageService {
   readonly inviteInProgress = signal(false);
   readonly inviteProgress = signal<InviteProgress>({ invited: 0, failed: 0, pending: 0 });
   readonly inviteError = signal<{ key: string; params: Record<string, number> } | null>(null);
+  readonly showAccessWarning = signal(false);
 
   // --- Computed ---
   readonly hasInviteEntries = computed(() => this.inviteEntries().length > 0);
@@ -315,6 +316,7 @@ export class UsersManageService {
       this.toaster.success(
         this.translate.instant('stash.users.invites_sent', { count: this.inviteProgress().invited }),
       );
+      this.showAccessWarning.set(true);
     }
     if (this.inviteProgress().failed > 0) {
       const key = 'stash.users.invites_partial';

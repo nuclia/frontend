@@ -2701,6 +2701,7 @@
 	"stash.upload.sync.title": "Synchronization",
 	"stash.upload_data": "Upload data",
 	"stash.upload_to_search": "Upload data to start using the AI-search engine.",
+	"stash.users.access-warning": "Note that invited users can view all resources in the Knowledge Box, regardless of their permissions to access the original data.",
 	"stash.users.add_email": "Add email",
 	"stash.users.add_emails": "Add email(s)",
 	"stash.users.bulk_input_hint": "Separate multiple emails with commas, semicolons, or newlines",

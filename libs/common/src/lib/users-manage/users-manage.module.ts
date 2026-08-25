@@ -11,7 +11,7 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, ExpandableTextareaComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { UsersManageComponent } from './users-manage.component';
 
 @NgModule({
@@ -28,6 +28,7 @@ import { UsersManageComponent } from './users-manage.component';
     PaTextFieldModule,
     PaTooltipModule,
     ExpandableTextareaComponent,
+    InfoCardComponent,
   ],
   declarations: [UsersManageComponent],
   exports: [UsersManageComponent],

@@ -2701,6 +2701,7 @@
 	"stash.upload.sync.title": "Synchronisation",
 	"stash.upload_data": "Télécharger des données",
 	"stash.upload_to_search": "Téléchargez des données pour commencer à utiliser le moteur de recherche AI.",
+	"stash.users.access-warning": "Notez que les utilisateurs invités peuvent consulter toutes les ressources de la Boîte à connaissances, quelles que soient leurs autorisations d'accès aux données originales.",
 	"stash.users.add_email": "Ajouter un e-mail",
 	"stash.users.add_emails": "Ajouter un ou plusieurs e-mails",
 	"stash.users.bulk_input_hint": "Séparez les adresses électroniques multiples par des virgules, des points-virgules ou des sauts de ligne.",
