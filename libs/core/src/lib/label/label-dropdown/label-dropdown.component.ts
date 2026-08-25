@@ -23,10 +23,6 @@ export class LabelDropdownComponent {
   @Input({ required: true }) labelSets?: LabelSets | null;
   @Input({ transform: booleanAttribute }) disabled = false;
   /**
-   * when true, selection is done at label set level (useful on widget filters for example)
-   */
-  @Input({ transform: booleanAttribute }) labelSetSelection = false;
-  /**
    * when true, don't display checkboxes and close the dropdown when clicking on a label option.
    */
   @Input({ transform: booleanAttribute }) single = false;
@@ -53,10 +49,19 @@ export class LabelDropdownComponent {
     return this._selection;
   }
   private _selection: Classification[] = [];
-  @Input() selectedLabelSet?: string;
+
+  @Input({ transform: booleanAttribute }) selectLabelsets = false;
+  @Input()
+  set labelsetSelection(value: string[]) {
+    this._labelsetSelection = [...value];
+  }
+  get labelsetSelection() {
+    return this._labelsetSelection;
+  }
+  private _labelsetSelection: string[] = [];
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
-  @Output() labelSetSelected = new EventEmitter<{ id: string; labelSet: LabelSet }>();
+  @Output() labelsetSelectionChange = new EventEmitter<string[]>();
   @Output() dropdownClose = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
@@ -64,7 +69,6 @@ export class LabelDropdownComponent {
 
   labelSetExpandedId = '';
   labelSetExpanded?: LabelSet;
-  labelSetInSelection = false;
   labelValues: Classification[] = [];
   open = false;
   checkboxSelection: string[] = [];
@@ -73,19 +77,15 @@ export class LabelDropdownComponent {
   maxLabels = 100;
   radioValue = '';
 
-  onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
+  onLevel1Selection(labelSetType: string, labelSet: LabelSet, event: MouseEvent | KeyboardEvent) {
     if (!this.labelSets) {
       return;
     }
-    if (this.labelSetSelection && this.single) {
-      this.labelSetSelected.emit({ id: labelSetType, labelSet });
-    } else {
-      this.labelSetExpandedId = labelSetType;
-      this.labelSetExpanded = this.labelSets[labelSetType];
-      this.level2Popup?.close();
-      this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
-      this.setRadioModel(labelSetType);
-    }
+    this.labelSetExpandedId = labelSetType;
+    this.labelSetExpanded = this.labelSets[labelSetType];
+    this.level2Popup?.close();
+    this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
+    this.setRadioModel(labelSetType);
     this.filter = '';
     this.filteredLabels = undefined;
   }
@@ -95,7 +95,6 @@ export class LabelDropdownComponent {
     this.level2Popup?.close();
     this.labelSetExpandedId = '';
     this.labelSetExpanded = undefined;
-    this.labelSetInSelection = false;
     this.radioValue = '';
     this.dropdownClose.emit();
   }
@@ -103,9 +102,24 @@ export class LabelDropdownComponent {
   private setRadioModel(labelSetType: string) {
     if (!!this.labelSetExpanded && !this.labelSetExpanded.multiple) {
       const selectedLabel = this.selection.find((label) => label.labelset === labelSetType);
-      this.labelSetInSelection = !!selectedLabel;
       this.radioValue = selectedLabel ? `${selectedLabel.labelset}${selectedLabel.label}` : '';
     }
+  }
+
+  setLabelsetSelection(labelset: string, selected: boolean) {
+    this.labelsetSelection = selected
+      ? [...this.labelsetSelection, labelset]
+      : this.labelsetSelection.filter((item) => item !== labelset);
+
+    if (selected) {
+      const newSelectedLabels = this.selection.filter((label) => label.labelset !== labelset);
+      if (newSelectedLabels.length !== this.selection.length) {
+        this.selection = newSelectedLabels;
+        this.selectionChange.emit(newSelectedLabels);
+      }
+    }
+    this.labelsetSelectionChange.emit(this.labelsetSelection);
+    this.closeDropdowns();
   }
 
   toggleLabel(labelValue: Classification) {
@@ -129,22 +143,6 @@ export class LabelDropdownComponent {
     this.selection = newSelectedLabels;
     this.setRadioModel(labelValue.labelset);
     this.selectionChange.emit(newSelectedLabels);
-  }
-
-  toggleRadio(labelValue: Classification, $event: { value: string; checked: boolean }) {
-    if ($event.value === `${labelValue.labelset}${labelValue.label}`) {
-      this.toggleLabel(labelValue);
-    }
-  }
-
-  resetRadio(labelSet: string, event: MouseEvent | KeyboardEvent) {
-    this.selection = this.selection.filter((label) => label.labelset !== labelSet);
-    this.labelSetInSelection = false;
-    this.selectionChange.emit(this.selection);
-    if ((event.target as HTMLElement).tagName === 'LI') {
-      event.preventDefault();
-      event.stopPropagation();
-    }
   }
 
   onOptionSelection(labelValue: Classification, event: MouseEvent | KeyboardEvent) {

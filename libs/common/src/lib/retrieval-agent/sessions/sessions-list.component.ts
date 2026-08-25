@@ -107,7 +107,7 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
   pageSizes = PAGE_SIZES;
   tableTopPosition = signal('0px');
 
-  filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  filterOptions: Filters = { classification: [], labelsets: [], mainTypes: [], creation: {}, hidden: undefined };
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
     end: new FormControl<string>(''),

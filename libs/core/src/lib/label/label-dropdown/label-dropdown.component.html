@@ -22,15 +22,22 @@
           icon="chevron-right"
           iconOnRight
           popupOnRight
-          [dontCloseOnSelect]="!labelSetSelection"
+          dontCloseOnSelect
           [paPopup]="level2"
           [popupVerticalOffset]="-40"
-          [selected]="selectedLabelSet === labelSet.key || labelSetExpandedId === labelSet.key"
-          (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
-          <span
-            class="label-color"
-            [style.background-color]="labelSet.value.color"></span>
-          {{ labelSet.value.title }}
+          [selected]="labelSetExpandedId === labelSet.key"
+          (selectOption)="onLevel1Selection(labelSet.key, labelSet.value, $event)">
+          @if (selectLabelsets) {
+            <pa-checkbox
+              class="labelset-checkbox"
+              [value]="labelsetSelection.includes(labelSet.key)"
+              (valueChange)="setLabelsetSelection(labelSet.key, $event)"
+              (click)="$event.stopPropagation()">
+              {{ labelSet.value.title }}
+            </pa-checkbox>
+          } @else {
+            {{ labelSet.value.title }}
+          }
         </pa-option>
       }
     }
@@ -53,18 +60,20 @@
       </pa-option>
     }
 
+    @let labelsetSelected = labelsetSelection.includes(labelSetExpandedId);
     @if (single || labelSetExpanded?.multiple || !displayRadioForNonMultiple) {
       @for (labelValue of filteredLabels || labelValues | slice: 0 : maxLabels; track labelValue) {
         <pa-option
           class="level2-option"
-          [disabled]="labelSetSelection"
+          [disabled]="labelsetSelected"
           [dontCloseOnSelect]="!single"
           (selectOption)="onOptionSelection(labelValue, $event)">
           @if (single) {
             {{ labelValue.label }}
           } @else {
             <pa-checkbox
-              [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
+              [disabled]="labelsetSelected"
+              [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label) || labelsetSelected"
               (change)="toggleLabel(labelValue)">
               {{ labelValue.label }}
             </pa-checkbox>
@@ -74,14 +83,17 @@
     } @else if (displayRadioForNonMultiple) {
       <pa-radio-group
         name="label-group"
-        [(ngModel)]="radioValue">
+        [(ngModel)]="radioValue"
+        noBackground>
         @for (labelValue of filteredLabels || labelValues | slice: 0 : maxLabels; track labelValue) {
           <pa-option
             class="level2-option"
+            [disabled]="labelsetSelected"
             dontCloseOnSelect
-            [disabled]="labelSetSelection"
             (selectOption)="onOptionSelection(labelValue, $event)">
-            <pa-radio [value]="labelValue.labelset + labelValue.label">
+            <pa-radio
+              [value]="labelValue.labelset + labelValue.label"
+              [disabled]="labelsetSelected">
               {{ labelValue.label }}
             </pa-radio>
           </pa-option>

@@ -7,8 +7,10 @@ import {
   Classification,
   getFilterFromDate,
   getFilterFromLabel,
+  getFilterFromLabelSet,
   getFilterFromVisibility,
   getLabelFromFilter,
+  getLabelSetFromFilter,
   LabelSets,
   MIME_FACETS,
   RESOURCE_STATUS,
@@ -52,7 +54,7 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   status = this.route.params.pipe(map((params) => this.getStatusFromParam(params['status'] || '')));
-  filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  filterOptions: Filters = { classification: [], labelsets: [], mainTypes: [], creation: {}, hidden: undefined };
   andLogicForLabels = false;
   displayedLabelSets: LabelSets = {};
   searchModes = [
@@ -130,7 +132,7 @@ export class ResourceListComponent implements OnDestroy {
           if (this.isMainView || this.isProcessedView) {
             return this.loadFilters();
           } else {
-            this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+            this.filterOptions = { classification: [], labelsets: [], mainTypes: [], creation: {}, hidden: undefined };
             this.cdr.markForCheck();
             return of(null);
           }
@@ -185,6 +187,15 @@ export class ResourceListComponent implements OnDestroy {
   updateClassifications(selection: Classification[]) {
     const filters = new Set(selection.map((label) => getFilterFromLabel(label).toLocaleLowerCase()));
     this.filterOptions.classification.forEach((option) => {
+      option.selected = filters.has(option.id.toLocaleLowerCase());
+    });
+    this.cdr.markForCheck();
+    this.onToggleFilter();
+  }
+
+  updateLabelsets(selection: string[]) {
+    const filters = new Set(selection.map((label) => getFilterFromLabelSet(label).toLocaleLowerCase()));
+    this.filterOptions.labelsets.forEach((option) => {
       option.selected = filters.has(option.id.toLocaleLowerCase());
     });
     this.cdr.markForCheck();
@@ -246,6 +257,7 @@ export class ResourceListComponent implements OnDestroy {
     this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
+    this.filterOptions.labelsets.forEach((option) => (option.selected = false));
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
     this.filterOptions.hidden = undefined;
   }
@@ -262,6 +274,14 @@ export class ResourceListComponent implements OnDestroy {
     return this.selectedClassificationOptions.map((option) => getLabelFromFilter(option.id));
   }
 
+  get selectedLabelsetOptions() {
+    return this.filterOptions.labelsets.filter((option) => option.selected);
+  }
+
+  get selectedLabelsets() {
+    return this.selectedLabelsetOptions.map((option) => getLabelSetFromFilter(option.id));
+  }
+
   get selectedVisibility() {
     return this.filterOptions.hidden === undefined ? [] : getFilterFromVisibility(this.filterOptions.hidden);
   }
@@ -274,12 +294,13 @@ export class ResourceListComponent implements OnDestroy {
 
   get selectedFilters(): string[] {
     return this.getSelectionFor('classification')
+      .concat(this.getSelectionFor('labelsets'))
       .concat(this.getSelectionFor('mainTypes'))
       .concat(this.selectedDates)
       .concat(this.selectedVisibility);
   }
 
-  private getSelectionFor(type: 'classification' | 'mainTypes') {
+  private getSelectionFor(type: 'classification' | 'labelsets' | 'mainTypes') {
     return this.filterOptions[type].filter((option) => option.selected).map((option) => option.value);
   }
 
