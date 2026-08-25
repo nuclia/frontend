@@ -30,7 +30,7 @@
     .workflow-dropdown-menu .pa-popup {
       min-width: auto;
     }
-
+    
     // paPopup toggles the .pa-active class imperatively when its dropdown closes,
     // which clears the class Angular set from [active]. Its guard reads
     // ng-reflect-active, an attribute only emitted in dev builds, so in production
