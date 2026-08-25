@@ -1,5 +1,6 @@
 <div class="edit-resource">
   @let aragMode = isArag | async;
+  @let isMemoryResource = isMemoryResource$ | async;
 
   <header>
     <div class="header-left-block">
@@ -122,13 +123,24 @@
         @if (currentView !== 'add-field') {
           <li
             class="nav-item"
-            [class.active]="(currentField | async) === 'resource'"
+            [class.active]="(currentField | async) === 'resource' && currentView !== 'memory'"
             (click)="navigateToField('resource')">
             <pa-icon
               name="file"
               size="small"></pa-icon>
             {{ (aragMode ? 'retrieval-agents.sessions.preview.session-info' : 'resource.profile') | translate }}
           </li>
+          @if (!aragMode && isMemoryResource) {
+            <li
+              class="nav-item"
+              [class.active]="currentView === 'memory'"
+              (click)="navigateToMemory()">
+              <pa-icon
+                name="history"
+                size="small"></pa-icon>
+              {{ 'resource.menu.memory' | translate }}
+            </li>
+          }
           @for (field of originalFields | async; track field.field_id) {
             <li
               class="nav-item"

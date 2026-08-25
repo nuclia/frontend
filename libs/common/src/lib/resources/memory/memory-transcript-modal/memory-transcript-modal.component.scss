@@ -1,0 +1,32 @@
+:host ::ng-deep pa-modal-advanced.memory-transcript-modal .pa-modal.pa-modal-advanced {
+  @media (min-width: 900px) {
+    width: min(1100px, 95vw);
+  }
+}
+.transcript-content {
+  width: min(1000px, 90vw);
+  max-height: 78vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0 24px;
+}
+.turns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.turn {
+  border: 1px solid var(--color-neutral-light);
+  border-radius: 4px;
+  padding: 8px;
+}
+.turn p {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.turn-meta {
+  color: var(--color-neutral-regular);
+}

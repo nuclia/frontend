@@ -29,7 +29,7 @@ import {
 import { SafeUrl } from '@angular/platform-browser';
 
 export type Thumbnail = { uri: string; blob: SafeUrl };
-export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'add-field';
+export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'memory' | 'add-field';
 
 export interface ParagraphWithText extends Paragraph {
   paragraphId: string;
@@ -159,10 +159,7 @@ export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [ke
   });
 }
 
-export function getGeneratedFieldAnnotations(
-  fieldData: IFieldData,
-  families: EntityGroup[],
-): EntityAnnotation[] {
+export function getGeneratedFieldAnnotations(fieldData: IFieldData, families: EntityGroup[]): EntityAnnotation[] {
   const annotations: EntityAnnotation[] = [];
   const positions: EntityPositions = fieldData.extracted?.metadata?.metadata.positions || {};
   Object.entries(positions).forEach(([family, entityPosition]) => {

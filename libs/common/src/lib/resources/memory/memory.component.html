@@ -1,0 +1,114 @@
+<div class="memory">
+  <section class="memory-filters">
+    <div class="memory-controls-row">
+      <div class="filter-group search-group">
+        <nsi-search-input
+          icon="search"
+          [value]="searchControl.value"
+          (valueChange)="searchControl.setValue($event)">
+          {{ 'resource.memory.search-placeholder' | translate }}
+        </nsi-search-input>
+      </div>
+
+      <div class="filter-group">
+        <div class="date-filter-row">
+          <pa-date-picker
+            [label]="'resource.filter.date-added' | translate"
+            [formControl]="factDateControl"></pa-date-picker>
+          @if (factDateControl.value) {
+            <pa-button
+              icon="cross"
+              aspect="basic"
+              size="small"
+              (click)="clearDateFilter()">
+              {{ 'generic.clear' | translate }}
+            </pa-button>
+          }
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <pa-button
+          class="delete-action"
+          icon="trash"
+          aspect="basic"
+          [paTooltip]="'resource.memory.delete.tooltip' | translate"
+          (click)="deleteMemoryResource()">
+          {{ 'resource.memory.delete.resource' | translate }}
+        </pa-button>
+      </div>
+    </div>
+  </section>
+
+  <div class="title-xs facts-list-title">{{ 'resource.memory.tabs.facts' | translate }}</div>
+
+  @if (service.loading()) {
+    <section class="facts-list loading">
+      <div class="body-s loading-progress">
+        {{
+          'resource.memory.loading-progress'
+            | translate: { loaded: service.loadedSessionCount(), total: service.totalSessionCount() }
+        }}
+      </div>
+      @for (skeleton of [1, 2, 3, 4, 5]; track skeleton) {
+        <nsi-skeleton height="3rem"></nsi-skeleton>
+      }
+    </section>
+  } @else {
+    <section class="facts-list">
+      @for (fact of service.filteredFacts(); track fact.id) {
+        <article class="fact-item">
+          <pa-expander
+            class="details-expander"
+            emitOnly
+            [class.expanded]="isFactExpanded(fact.id)"
+            [expanded]="isFactExpanded(fact.id)"
+            [contentLoaded]="!service.isSessionEntriesLoading(fact.sessionFieldId)"
+            (toggleExpander)="toggleFact(fact)">
+            <pa-expander-header>
+              <span class="fact-header-date title-xs">{{ fact.timestamp | date: 'shortDate' }}</span>
+              <span class="fact-header-text title-xs">{{ fact.content.text }}</span>
+            </pa-expander-header>
+            <pa-expander-body>
+              <div class="fact-body">
+                @if (service.isSessionEntriesLoading(fact.sessionFieldId)) {
+                  <nsi-skeleton height="3rem"></nsi-skeleton>
+                } @else {
+                  <div class="related-list">
+                    @for (entry of relatedEntriesOf(fact); track entry.id) {
+                      <div class="source-entry">
+                        <button
+                          type="button"
+                          class="source-link title-xs"
+                          (click)="openTranscript(fact)">
+                          <span class="source-meta">
+                            {{ entry.timestamp | date: 'shortTime' }} · {{ sessionDisplayName(fact.sessionFieldId) }}
+                          </span>
+                          <pa-icon
+                            class="source-link-icon"
+                            name="fullscreen"
+                            size="small"></pa-icon>
+                        </button>
+                        <p class="title-xs source-text">{{ entry.content.text }}</p>
+                      </div>
+                    }
+                    @if (relatedEntriesOf(fact).length === 0) {
+                      <p class="body-s">{{ 'resource.memory.facts.no-related-entries' | translate }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </pa-expander-body>
+          </pa-expander>
+        </article>
+      }
+      @if (service.filteredFacts().length === 0) {
+        <div class="body-s">
+          {{
+            (service.hasAnyFacts() ? 'resource.memory.facts.empty-filtered' : 'resource.memory.facts.empty') | translate
+          }}
+        </div>
+      }
+    </section>
+  }
+</div>
