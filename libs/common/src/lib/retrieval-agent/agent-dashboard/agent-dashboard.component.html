@@ -50,7 +50,9 @@
         (click)="addNode()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.add-node' | translate }}
       </pa-button>
-      <div>
+      <div
+        class="toolbar-overflow-trigger"
+        [class.active]="overflowMenuActive()">
         <pa-button
           aspect="basic"
           size="small"
@@ -111,6 +113,7 @@
         }
         <pa-button
           aspect="basic"
+          size="small"
           icon="cross"
           (click)="closeSidebar()">
           {{ 'retrieval-agents.workflow.sidebar.close-button' | translate }}

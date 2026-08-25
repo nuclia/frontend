@@ -30,6 +30,15 @@
     .workflow-dropdown-menu .pa-popup {
       min-width: auto;
     }
+
+    // paPopup toggles the .pa-active class imperatively when its dropdown closes,
+    // which clears the class Angular set from [active]. Its guard reads
+    // ng-reflect-active, an attribute only emitted in dev builds, so in production
+    // the open sidebar state is lost from the trigger. Own the state here instead.
+    .toolbar-overflow-trigger.active .pa-button {
+      color: $color-text-button-secondary-basic-active;
+      background: $color-background-button-secondary-basic-active;
+    }
   }
 
   .workflow-dropdown-menu {
@@ -111,13 +120,22 @@
     }
 
     header {
+      // .sidebar zeroes its right padding so the scrollable content can run to the
+      // edge; the header is not scrollable, so it needs that padding back.
+      padding-right: dashboard.$padding-sidebar;
+
       .title-m {
         align-items: center;
         display: flex;
         gap: rhythm(1.5);
-        height: dashboard.$height-sidebar-header;
+        min-height: dashboard.$height-sidebar-header;
+
         pa-button {
+          flex: 0 0 auto;
           margin-left: auto;
+          // The small icon button is a 32px box around a 16px glyph, so pull it out
+          // by its own padding to optically align the cross with the padding edge.
+          margin-right: calc(#{rhythm(1)} * -1);
         }
       }
 
