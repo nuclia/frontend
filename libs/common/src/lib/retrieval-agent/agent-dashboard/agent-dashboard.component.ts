@@ -11,7 +11,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalConfig, PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { auditTime, combineLatest, filter, fromEvent, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { DashboardLayoutService } from '../../base';
@@ -53,6 +59,7 @@ const OVERFLOW_SIDEBARS: SidebarType[] = ['rules', 'import', 'export'];
     PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
+    PaTooltipModule,
     TranslateModule,
     WorkflowRootComponent,
   ],
@@ -176,6 +183,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   goToSessions() {
     this.router.navigate([`${this.aragUrl()}/sessions`]);
+  }
+
+  backToWorkflows() {
+    this.router.navigate([`${this.aragUrl()}/workflows`]);
   }
 
   addWorkflow() {
