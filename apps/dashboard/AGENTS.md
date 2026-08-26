@@ -117,7 +117,7 @@ apps/dashboard/src/app/
 
 ## Knowledge Box Home
 
-`KnowledgeBoxHomeComponent` composes several sub-components: `KbOnboardingHeaderComponent` (admin-only, wraps `KbHeaderComponent` once onboarding is done — KB name, storage summary popup, search/upload buttons, `KbMoreActionsComponent` "more actions" menu shared between both headers for KB settings / `DeveloperIntegrationsModalComponent` / test page), a KB summary grid (region, generative model, status, semantic model), account-manager-only usage charts + a usage summary table, a health-status card (REMI, shown when `isKBContrib` and `authorized.remiMetrics`), and `LastResourcesComponent` (recent resources preview). Trial/blocked-feature banners render via `app-account-status` when `isAccountManager && isTrial`.
+`KnowledgeBoxHomeComponent` composes several sub-components: `KbOnboardingHeaderComponent` (admin-only, wraps `KbHeaderComponent` once onboarding is done — KB name, storage summary popup, search/upload buttons, `KbMoreActionsComponent` "more actions" menu shared between both headers for KB settings / `DeveloperIntegrationsModalComponent` / test page), a KB summary grid (region, generative model, status, semantic model), account-manager-only usage charts + a usage summary table, a health-status card (REMI, shown when `isKBContrib` and `authorized.remiMetrics`, "more metrics" link goes to `/metrics/remi-analytics`), and `LastResourcesComponent` (recent resources preview). The `app-account-status` trial banner (`isAccountManager && isTrial`) was removed from this page.
 
 ---
 

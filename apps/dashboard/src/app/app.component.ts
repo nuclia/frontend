@@ -24,6 +24,7 @@ import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent } from '@flaps/common';
+import { PendoService } from './pendo.service';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency
@@ -52,6 +53,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private modalService: SisModalService,
     private features: FeaturesService,
+    private pendo: PendoService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
@@ -65,6 +67,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.sdk.cleanAccount();
     });
 
+    this.pendo.init();
     this.redirectToSyncCreation();
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();

@@ -57,6 +57,9 @@ function apply_path {
 
     echo "Configuring STF_DOCKER_CONFIG_GOOGLE_ANALYTICS vars"
     sed -i "s#STF_DOCKER_CONFIG_GOOGLE_ANALYTICS#${GOOGLE_ANALYTICS}#g" /dist/index.html
+
+    echo "Configuring STF_DOCKER_CONFIG_PENDO_KEY vars"
+    sed -i "s#STF_DOCKER_CONFIG_PENDO_KEY#${PENDO_KEY}#g" /dist/index.html
  
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"
