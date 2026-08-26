@@ -301,6 +301,23 @@ export class BillingService {
     );
   }
 
+  //Tokens consumed since the 1st of the current calendar month (00:00 UTC)
+  private getCurrentMonthTokenUsage(): Observable<number> {
+    const monthStart = new Date();
+    monthStart.setUTCDate(1);
+    monthStart.setUTCHours(0, 0, 0, 0);
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.db.getUsage(account.id, monthStart.toISOString())),
+      map((usage) =>
+        usage
+          .flatMap((point) => point.metrics)
+          .filter((metric) => metric.name === UsageType.NUCLIA_TOKENS)
+          .reduce((total, metric) => total + metric.value, 0),
+      ),
+    );
+  }
+
   getTrialTokenUsage(): Observable<{ used: number; limit: number | null } | null> {
     return combineLatest([
       this.sdk.currentAccount,
@@ -310,23 +327,40 @@ export class BillingService {
     ]).pipe(
       take(1),
       switchMap(([account, stripe, aws, manual]) => {
-        if (!account.trial_expiration_date || stripe || aws || manual) {
-          return of(null);
-        }
-        return combineLatest([
-          this.sdk.nuclia.db.getUsage(account.id, account.creation_date),
-          this.getAccountTokenBudgetOverride(),
-        ]).pipe(
-          map(([usage, override]) => {
-            const used = usage
-              .flatMap((point) => point.metrics)
-              .filter((metric) => metric.name === UsageType.NUCLIA_TOKENS)
-              .reduce((total, metric) => total + metric.value, 0);
+        if (!account.trial_expiration_date || stripe || aws || manual) return of(null);
+
+        return combineLatest([this.getCurrentMonthTokenUsage(), this.getAccountTokenBudgetOverride()]).pipe(
+          map(([used, override]) => {
             const limit = override ? override.budget_value : DEFAULT_TRIAL_TOKEN_BUDGET;
             return { used, limit };
           }),
         );
       }),
+    );
+  }
+
+  /** Token usage summary for non-trial accounts, shown next to the plan name in the topbar.
+   * Stripe accounts: usage + plan quota both come from `invoice_items` on the same response
+   * (matches the "Billable"/quota columns on the usage table).
+   * Others (AWS/manual): usage for the current calendar month + limit from the budget override
+   * endpoint (same one used for trial accounts); `null` limit means unlimited. */
+  getPlanTokenUsage(): Observable<{ used: number; limit: number | null } | null> {
+    return this.isSubscribedToStripe.pipe(
+      take(1),
+      switchMap((stripe) => {
+        if (stripe) {
+          return this.getAccountUsage().pipe(
+            map((usage) => {
+              const item = usage.invoice_items['nuclia-tokens'] ?? usage.invoice_items['ai-tokens-used'];
+              return { used: item?.current_usage ?? 0, limit: item?.threshold ?? null };
+            }),
+          );
+        }
+        return combineLatest([this.getCurrentMonthTokenUsage(), this.getAccountTokenBudgetOverride()]).pipe(
+          map(([used, override]) => ({ used, limit: override?.budget_value ?? null })),
+        );
+      }),
+      catchError(() => of(null)),
     );
   }
 
