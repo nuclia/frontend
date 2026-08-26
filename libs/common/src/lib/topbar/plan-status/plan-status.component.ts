@@ -48,29 +48,22 @@ export class PlanStatusComponent {
     ),
   );
 
-  vm$ = combineLatest([this.features.isTrial, this.sdk.currentAccount]).pipe(
-    switchMap(([isTrial, account]) => {
-      if (this.navigation.inPlatformApp) {
+  vm$ = combineLatest([this.features.isTrial, this.sdk.currentAccount, this.features.isAccountManager]).pipe(
+    switchMap(([isTrial, account, isAccountManager]) => {
+      if (this.navigation.inPlatformApp || !isAccountManager) {
         return of(null);
       }
-      if (!isTrial) {
-        return of({
-          isTrial: false,
-          labelKey: `account.type.${account.type}`,
-          daysLeft: null,
-          used: null,
-          limit: null,
-        });
-      }
-      const daysLeft = account.trial_expiration_date
-        ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)
-        : null;
+      const daysLeft =
+        isTrial && account.trial_expiration_date
+          ? Math.max(differenceInDays(new Date(`${account.trial_expiration_date}+00:00`), new Date()) + 1, 0)
+          : null;
+      const usage$ = isTrial ? this.billing.getTrialTokenUsage() : this.billing.getPlanTokenUsage();
 
-      return this.billing.getTrialTokenUsage().pipe(
+      return usage$.pipe(
         map(
           (usage): PlanStatusVm => ({
-            isTrial: true,
-            labelKey: `account.type.${account.type}_trial`,
+            isTrial,
+            labelKey: isTrial ? `account.type.${account.type}_trial` : `account.type.${account.type}`,
             daysLeft,
             used: usage?.used ?? null,
             limit: usage?.limit ?? null,
