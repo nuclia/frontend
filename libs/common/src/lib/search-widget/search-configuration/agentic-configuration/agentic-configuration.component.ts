@@ -100,11 +100,6 @@ export class AgenticConfigurationComponent {
   newSourceTitle = signal<string>('');
   newSourceDescription = signal<string>('');
 
-  readonly displayedExecutorModel = computed(() => this.executorModel() || this.defaultGenerativeModel());
-  readonly displayedPlannerModel = computed(() => this.plannerModel() || this.defaultGenerativeModel());
-  readonly displayedRephraseModel = computed(() => this.rephraseModel() || this.defaultGenerativeModel());
-  readonly displayedSummarizeModel = computed(() => this.summarizeModel() || this.defaultGenerativeModel());
-
   readonly askSearchConfigOptions = computed(() => [
     new OptionModel({ id: '', value: '', label: '–' }),
     ...this._allAskSearchConfigs()
@@ -217,16 +212,16 @@ export class AgenticConfigurationComponent {
     this.selectedSourceIds.set(draft?.smart_agent?.sources ?? []);
     this.mode.set(draft?.smart_agent?.mode ?? 'reactive');
     this.extraPrompt.set(draft?.smart_agent?.extra_prompt ?? '');
-    this.executorModel.set(draft?.smart_agent?.models?.executor ?? '');
-    this.plannerModel.set(draft?.smart_agent?.models?.planner ?? '');
+    this.executorModel.set(draft?.smart_agent?.models?.executor?.model_id ?? '');
+    this.plannerModel.set(draft?.smart_agent?.models?.planner?.model_id ?? '');
 
     this.useRephrasePrompt.set(!!draft?.rephrase?.prompt);
     this.rephrasePrompt.set(draft?.rephrase?.prompt ?? '');
-    this.rephraseModel.set(draft?.rephrase?.model ?? '');
+    this.rephraseModel.set(draft?.rephrase?.model?.model_id ?? '');
 
     this.useSummarizePrompt.set(!!draft?.summarize?.system_prompt);
     this.summarizeSystemPrompt.set(draft?.summarize?.system_prompt ?? '');
-    this.summarizeModel.set(draft?.summarize?.model ?? '');
+    this.summarizeModel.set(draft?.summarize?.model?.model_id ?? '');
 
     this.useSpecificModels.set(
       !!draft?.smart_agent?.models?.executor ||
@@ -248,8 +243,11 @@ export class AgenticConfigurationComponent {
         ...(useModels
           ? {
               models: {
-                executor: this.displayedExecutorModel() || undefined,
-                planner: mode === 'plan_execute' ? this.displayedPlannerModel() || undefined : undefined,
+                executor: { model_id: this.executorModel() || this.defaultGenerativeModel() },
+                planner:
+                  mode === 'plan_execute'
+                    ? { model_id: this.plannerModel() || this.defaultGenerativeModel() }
+                    : undefined,
               },
             }
           : {}),
@@ -257,13 +255,13 @@ export class AgenticConfigurationComponent {
       rephrase: {
         prompt: this.useRephrasePrompt() ? this.rephrasePrompt() || undefined : undefined,
         history: true,
-        ...(useModels && this.displayedRephraseModel() ? { model: this.displayedRephraseModel() } : {}),
+        ...(useModels ? { model: { model_id: this.rephraseModel() || this.defaultGenerativeModel() } } : {}),
       },
       summarize: {
         system_prompt: this.useSummarizePrompt() ? this.summarizeSystemPrompt() || undefined : undefined,
         conversational: true,
         history: true,
-        ...(useModels && this.displayedSummarizeModel() ? { model: this.displayedSummarizeModel() } : {}),
+        ...(useModels ? { model: { model_id: this.summarizeModel() || this.defaultGenerativeModel() } } : {}),
       },
     };
     this.configChanged.emit({ agentic: { config: agenticConfig } });
