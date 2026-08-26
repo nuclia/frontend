@@ -1775,6 +1775,7 @@
 	"retrieval-agents.workflow.common-forms.property.name": "Nom",
 	"retrieval-agents.workflow.common-forms.property.remove": "Supprimer la propriété",
 	"retrieval-agents.workflow.common-forms.property.value": "Valeur",
+	"retrieval-agents.workflow.common-forms.reasoning": "Raisonnement",
 	"retrieval-agents.workflow.common-forms.rules.add": "Ajouter une règle",
 	"retrieval-agents.workflow.common-forms.rules.label": "Règles",
 	"retrieval-agents.workflow.common-forms.rules.no-rules": "Aucune règle définie",

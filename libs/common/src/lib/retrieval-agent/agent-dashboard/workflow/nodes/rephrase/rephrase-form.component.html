@@ -61,10 +61,10 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.split-question.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.split-question.label' | translate }}
     </pa-toggle>
-    <app-model-select
+    <app-model-field
       [label]="'retrieval-agents.workflow.common-forms.model' | translate"
-      [form]="configForm"
-      controlName="model"></app-model-select>
+      [form]="configForm.controls.model"
+      [required]="true"></app-model-field>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>

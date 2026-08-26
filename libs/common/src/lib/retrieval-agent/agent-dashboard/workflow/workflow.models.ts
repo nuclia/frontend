@@ -20,7 +20,6 @@ import {
   GoogleAgent,
   GuardrailsProviderType,
   InternetProviderType,
-  McpAgentCreation,
   Memory,
   PerplexityAgent,
   PerplexityAgentCreation,
@@ -336,14 +335,13 @@ export function getNodeTypeFromAgent(
   return agent.module as NodeType;
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
-  const { userInfo, model, ...agentConfig } = config;
+  const { userInfo, ...agentConfig } = config;
   return {
     module: 'rephrase',
     ...agentConfig,
     session_info: userInfo,
     rids: [],
     labels: [],
-    model: model || undefined, // null is not allowed on model params
   };
 }
 export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
@@ -373,13 +371,10 @@ export function askAgentToUi(agent: AskAgent): AskAgentUI {
   };
 }
 export function basicAskUiToCreation(config: BasicAskAgentUI): BasicAskAgentCreation {
-  const { sources, generative_model, summarize_model, ...agentConfig } = config;
+  const { sources, ...agentConfig } = config;
   return {
     module: 'basic_ask',
     sources: Array.isArray(sources) ? sources : sources.split(','),
-    // null is not allowed on model params
-    generative_model: generative_model || undefined,
-    summarize_model: summarize_model || undefined,
     ...agentConfig,
   };
 }
@@ -389,16 +384,6 @@ export function basicAskAgentToUi(agent: BasicAskAgent): BasicAskAgentUI {
     ...rest,
     sources: sources.join(','),
     rules: rules || null,
-  };
-}
-export function mcpUiToCreation(config: McpAgentUI): McpAgentCreation {
-  const { summarize_model, tool_choice_model, ...agentConfig } = config;
-  return {
-    module: 'mcp',
-    // null is not allowed on model params
-    tool_choice_model: tool_choice_model || undefined,
-    summarize_model: summarize_model || undefined,
-    ...agentConfig,
   };
 }
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
@@ -532,8 +517,6 @@ export function getAgentFromConfig(
       return askUiToCreation(cleanConfig);
     case 'basic_ask':
       return basicAskUiToCreation(cleanConfig);
-    case 'mcp':
-      return mcpUiToCreation(cleanConfig);
     case 'external':
       return externalUiToCreation(cleanConfig);
     case 'smart':
