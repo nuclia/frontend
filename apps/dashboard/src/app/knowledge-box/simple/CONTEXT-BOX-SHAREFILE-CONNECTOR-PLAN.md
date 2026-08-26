@@ -40,26 +40,22 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
 
 ## Proposed UX flow
 
-1. **Entry point — two places, not one**
-   - **Empty state (step 1):** the primary "Upload files" button becomes a **split
-     button / dropdown** — default click action stays "Upload files"; the dropdown chevron
-     reveals **"Connect ShareFile"** as a secondary option. (Matches `PaDropdownModule`, already
-     used elsewhere in `apps/dashboard`/`libs/common` for this exact pattern — no new primitive
-     needed.) Keeps upload as the dominant, one-click action while making the connector
-     discoverable without adding a second competing full-size button.
-   - **Populated state (step 3, resources already exist):** the same "Connect ShareFile" action
-     must also be reachable from here — a first-time user may add a handful of files manually
-     before deciding to connect an external folder later. Today the step-3 footer only has
-     "Upload files" and "Get the MCP URL" (`simple-kb.component.html`); add "Connect ShareFile"
-     there too (as a footer action, or folded into the same split-button/dropdown pattern as
-     step 1 for consistency). Do not make it empty-state-only.
-   - Once a ShareFile folder is connected, this entry point is replaced by the connected-source
-     status chip described below (no point offering "Connect ShareFile" again while already
-     connected — see "Scope boundaries," single-folder-per-KB for v1).
+1. **Entry point — single button, always opens a source-choice dropdown**
+   - The button stays exactly as it is today, labeled **"Upload files"** — no split button, no
+     separate default action. Clicking it **always** opens a dropdown/menu
+     (`PaDropdownModule`, already used elsewhere in the app) with two choices:
+     - **"From your computer"** — triggers the existing file-picker/drop behavior
+       (`fileInput.click()` today).
+     - **"From ShareFile"** — kicks off the OAuth + folder-picker flow below.
+   - This applies everywhere the upload button exists today: the step-1 empty-state button and
+     the step-3 footer "Upload files" button (`simple-kb.component.html`) both become this same
+     dropdown — one consistent control, no new/second button anywhere.
+   - Once a ShareFile folder is connected, "From ShareFile" in the dropdown is disabled/hidden
+     (v1 is single-folder-per-KB — see "Scope boundaries").
 
 2. **OAuth**
-   - Clicking it kicks off `SyncService.getOAuthUrl('sharefile_oauth')`, same redirect pattern
-     as the full Sync feature, but the return path is the Context Box route
+   - Choosing "From ShareFile" kicks off `SyncService.getOAuthUrl('sharefile_oauth')`, same
+     redirect pattern as the full Sync feature, but the return path is the Context Box route
      (`/:zone/:kb/simple`), not `/:zone/:kb/sync/add/...`.
    - Needs a Context-Box-specific `PENDING_NEW_CONNECTOR`-style resume handler (or an extension
      of the existing one) so `app.component.ts` knows to redirect back into `/simple` instead of
@@ -77,19 +73,23 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
    - On folder confirm, call `SyncService.addCloudSync(...)` with sensible fixed defaults
      (no user-facing options form — no filters/labels/schedule UI, unlike the full Sync feature).
    - Immediately `triggerSync()` so ingestion starts right away.
-   - Close the modal; newly-synced files should surface through the *same* resource list /
-     counters (`resources`, `resourceCounter`) Context Box already renders — no separate
-     "synced files" table.
+   - Close the modal; newly-synced files, **plus the connected folder itself**, surface through
+     the *same* resource list (`resources`, `resourceCounter`) Context Box already renders — see
+     next item. No separate status chip, banner, or dedicated area anywhere in the UI.
 
-5. **Persistent status once connected**
-   - Show a small chip/indicator near the resource list header, e.g.
-     `Synced from ShareFile: /Marketing/Assets`, with:
-     - a manual "Sync now" action (maps to `SyncService.triggerSync()`),
-     - a "Change folder" action (re-opens the `CloudFolderComponent` modal),
-     - a **"Disconnect ShareFile"** action — see "Disconnect vs. delete" below for why this needs
-       its own explicit label rather than reusing the resource table's "Delete" button/icon.
-   - This makes the external dependency visible instead of files silently reappearing/updating
-     with no attribution.
+5. **Connected folder shown as a resource-table entry — no separate status area**
+   - Per explicit direction: do **not** add a standalone chip/banner/status area for "you're
+     connected to ShareFile." Instead, the connected folder itself appears as **one row in the
+     existing resource table** (`ResourceTableComponent`), styled/labeled like a resource (e.g.
+     File column shows the ShareFile folder path, Type column shows the ShareFile badge/icon
+     from item 6 below instead of a mime icon).
+   - That row's "Delete" action (same column/button every other row uses — no new button, no new
+     icon, no separate label) is how the user disconnects it. Clicking it opens the **same**
+     confirm modal pattern already used for per-resource deletion
+     (`SisModalService.openConfirm(...)`), but with copy specific to this row that explains nothing
+     is deleted, only disconnected — see item 7.
+   - No "Sync now" / "Change folder" actions in v1 — keeps this to exactly what was asked for:
+     the connection behaves like any other row in the table, with Confirm/Cancel on removal.
 
 6. **Source identifier in the resource table ("Type" column)**
    - `ResourceTableComponent` (`apps/dashboard/src/app/knowledge-box/simple/resource-table/`)
@@ -98,34 +98,34 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
      format*, not *where the file came from*.
    - Add a small ShareFile badge/icon next to the existing mime icon for any row whose resource
      originated from the ShareFile sync, so a user scanning the table can tell "this one came
-     from ShareFile" at a glance — the same way they can already tell "this one's a PDF."
+     from ShareFile" at a glance — the same way they can already tell "this one's a PDF." The
+     synthetic "connected folder" row from item 5 uses this same badge as its only Type icon
+     (no mime icon, since it isn't a file).
    - Technical hook: `Origin.source_id` (`libs/sdk-core/src/lib/db/resource/resource.models.ts`)
      is already set to the originating sync config id for resources created via a sync (used
      today for attribution in `libs/common/src/lib/resources/resource-list/resource-list.service.ts`
      and the metrics/activity pages). `TableRow` (`resource-table.component.ts`) would need a new
      `sourceConnector?: 'sharefile'` field derived by comparing `resource.origin?.source_id`
-     against the KB's connected ShareFile sync id (held in the new `SimpleKBService` connected-source
-     state from item 5 above). No backend change needed — this is purely a frontend
-     lookup/annotation using data that already exists on the resource.
+     against the KB's connected ShareFile sync id (held in `SimpleKBService`). No backend change
+     needed — this is purely a frontend lookup/annotation using data that already exists.
    - Manually-uploaded files and files from any other future connector simply don't get this
      badge, so it degrades gracefully if/when more connectors are added later.
 
-7. **Disconnect vs. delete — distinct language required**
-   - Concern raised: reusing the existing per-resource "Delete" button/icon
-     (`resource-table.component.html`, `deleteResource()`) for the "disconnect this ShareFile
-     folder" action would be misleading — a user could reasonably read "Delete" as "delete my
-     ShareFile account/files," not "stop syncing this folder into Context Box." These are
-     different actions with different blast radii (per-file removal vs. severing an external
-     connection) and must not share the same icon/label.
-   - Resolution: the disconnect action lives **only** on the connected-source status chip (item 5),
-     labeled explicitly **"Disconnect ShareFile"** (not "Delete," not a bare trash icon) and,
-     per the existing repo pattern (`SisModalService.openConfirm(...)`, see
-     `sync-details-page.component.ts` → `deleteSync()`), should confirm via a modal whose copy
-     makes the effect explicit, e.g.: *"This will stop syncing files from ShareFile. Files
-     already added to this Content Box will not be deleted."* — mirroring the "Open questions"
-     item below on whether previously-synced resources are removed (recommended: they are not).
-   - The per-resource row "Delete" action in the table is unaffected and continues to only
-     delete that individual resource, regardless of its source.
+7. **Disconnect vs. delete — same action, disambiguated by the confirm modal's copy only**
+   - Per explicit direction: **no separate label, icon, or UI area** for disconnecting — the
+     connected-folder row (item 5) uses the exact same "Delete" button every other resource row
+     uses. The distinction between "delete a file" and "disconnect ShareFile" is communicated
+     entirely through the **confirm modal text**, not through different buttons/UI.
+   - When the deleted row is the connected-folder row, the confirm modal
+     (`SisModalService.openConfirm(...)`, same pattern as `sync-details-page.component.ts` →
+     `deleteSync()`) shows Content-Box-specific copy instead of the generic per-file delete copy,
+     e.g.: *"Disconnect ShareFile? Nothing will be deleted — your files stay in this Content Box.
+     Only the connection to ShareFile is removed."* with **Confirm** / **Cancel** buttons.
+   - Confirm → calls the disconnect/delete-sync flow (removing the sync config; ingested
+     resources remain, per "Open questions" below) and removes that row from the table.
+     Cancel → closes the modal, no change.
+   - Regular per-file delete rows keep their existing generic confirm copy — only the
+     connected-folder row's modal instance needs the different copy.
 
 ---
 
@@ -145,18 +145,17 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
 ## Implementation sketch (files likely touched)
 
 - `apps/dashboard/src/app/knowledge-box/simple/simple-kb/simple-kb.component.ts/.html/.scss`
-  - Convert the step-1 "Upload files" button into a split button / `PaDropdownModule` menu
-    exposing "Connect ShareFile" as a secondary option.
-  - Add the same "Connect ShareFile" entry point to the step-3 footer (alongside "Upload files"
-    / "Get the MCP URL"), so it's reachable after resources already exist, not just empty state.
-  - Add the connected-folder status chip (sync now / change folder / disconnect) near the
-    resource list header once a ShareFile source is connected; hide both entry points while
-    connected (v1 is single-folder-per-KB).
+  - Keep "Upload files" as a single button in both step 1 and the step-3 footer; wrap it in a
+    `PaDropdownModule` menu that always opens on click, offering "From your computer" (existing
+    `fileInput.click()` behavior) and "From ShareFile" (new OAuth + folder-picker flow). No
+    second button, no split-button default-action pattern.
+  - Disable/hide "From ShareFile" in the dropdown once a folder is already connected (v1 is
+    single-folder-per-KB).
 - `apps/dashboard/src/app/knowledge-box/simple/simple-kb/simple-kb.service.ts`
   - New methods/state: `connectShareFile()`, `getConnectedSource()`, `disconnectSource()`,
-    wrapping the relevant `SyncService` calls; expose an observable for "is a source connected"
-    + "last sync status" for the status chip, plus the connected sync's id (needed by the
-    resource-table badge lookup below).
+    wrapping the relevant `SyncService` calls; expose the connected sync's id (needed by the
+    resource-table badge lookup below) and whether a source is currently connected (to
+    enable/disable "From ShareFile" in the dropdown).
 - New small component: `simple-kb/sharefile-folder-modal/` (or reuse `CloudFolderComponent`
   directly inside a `SisModalService.openModal()` call) — thin wrapper providing the
   `ExternalConnection` input and emitting the selected folder.
@@ -164,10 +163,15 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
   - Extend `TableRow` with a `sourceConnector?: 'sharefile'` field, computed by comparing each
     resource's `origin?.source_id` against the KB's connected ShareFile sync id
     (`SimpleKBService`).
-  - In the "Type" column template, render a small ShareFile badge/icon alongside the existing
-    `row.icon | mimeIcon` icon when `row.sourceConnector === 'sharefile'` — same visual pattern
-    as the file-type icon, just a second small icon/badge, not a replacement.
-  - No change to the existing per-row "Delete" button/behavior — it stays file-scoped only.
+  - Add the connected folder itself as a synthetic row (not a real `Resource`) merged into the
+    same `rows` observable that already combines `resources` + `visibleUploads` — same table,
+    same columns, no separate area.
+  - In the "Type" column template, render the ShareFile badge/icon: alongside the existing
+    `row.icon | mimeIcon` icon for real ShareFile-sourced files, or as the sole icon for the
+    synthetic connected-folder row (which has no mime type).
+  - `deleteResource()` (or a new shared handler covering both real resources and the synthetic
+    row) branches on row type only to pick the confirm-modal copy — everything else (button,
+    icon, column, position) is identical between a normal delete and a disconnect.
 - `apps/dashboard/src/app/app.component.ts`
   - Extend `redirectToSyncCreation()` (or add a parallel handler) to resume into `/simple`
     when the pending connector context indicates a Context Box origin, not a Sync-page origin.
@@ -175,23 +179,23 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
   (`SyncService`, `CloudFolderComponent`, connector definitions). If a Context-Box-specific
   entry point needs a narrower/simplified variant of `addCloudSync` defaults, prefer adding an
   optional parameter to existing service methods over forking logic.
-- i18n: new keys under the `simple.` namespace (e.g. `simple.connect-sharefile`,
-  `simple.sharefile.connected-folder`, `simple.sharefile.sync-now`,
-  `simple.sharefile.change-folder`, `simple.sharefile.disconnect-action`,
+- i18n: new keys under the `simple.` namespace (e.g. `simple.upload-from-computer`,
+  `simple.connect-sharefile`, `simple.sharefile.folder-row-label`,
   `simple.sharefile.disconnect-confirm-title`, `simple.sharefile.disconnect-confirm-description`,
   `simple.column.type.sharefile-badge-tooltip`) added to
-  `libs/common/src/assets/i18n/{en,es,fr,ca}.json`. Note the deliberate `disconnect-action`
-  naming (not reusing `simple.delete`) to keep the two actions visually and linguistically
-  distinct in the codebase as well as the UI — see "Disconnect vs. delete" above.
+  `libs/common/src/assets/i18n/{en,es,fr,ca}.json`. No separate "disconnect" action key is
+  needed for the button/icon itself (it reuses `simple.delete`) — only the confirm modal's
+  title/description differ when the row being removed is the connected-folder row.
 
 ---
 
 ## Open questions to resolve before implementation
 
 1. **Re-sync cost/cadence** — ShareFile always does a full folder re-scan (no incremental
-   delta support). Do we auto-trigger on a schedule, or manual-only ("Sync now" button)?
-   Recommend manual-only for v1 to avoid surprise reprocessing costs, revisit once usage data
-   exists.
+   delta support), and v1 has no manual "Sync now" control (per the "no extra area" direction
+   in item 5). Does re-sync happen on a fixed schedule, on next KB visit, or only when the user
+   disconnects/reconnects the folder? Needs a product decision before implementation — affects
+   both reprocessing cost and how "fresh" users should expect their ShareFile files to be.
 2. **Multi-folder / multi-source** — confirmed out of scope for v1, but confirm with product
    this is an acceptable long-term constraint or just a phased rollout decision.
 3. **Permissions model** — does every KB collaborator see/trigger the ShareFile sync, or only
