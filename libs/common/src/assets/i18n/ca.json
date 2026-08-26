@@ -1775,6 +1775,7 @@
 	"retrieval-agents.workflow.common-forms.property.name": "Nom",
 	"retrieval-agents.workflow.common-forms.property.remove": "Eliminar la propietat",
 	"retrieval-agents.workflow.common-forms.property.value": "Valor",
+	"retrieval-agents.workflow.common-forms.reasoning": "Raonament",
 	"retrieval-agents.workflow.common-forms.rules.add": "Afegir una regla",
 	"retrieval-agents.workflow.common-forms.rules.label": "Normes",
 	"retrieval-agents.workflow.common-forms.rules.no-rules": "No hi ha regles definides",

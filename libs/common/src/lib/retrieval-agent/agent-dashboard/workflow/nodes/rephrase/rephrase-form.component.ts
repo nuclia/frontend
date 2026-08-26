@@ -3,7 +3,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  forwardRef,
   inject,
   input,
   OnInit,
@@ -20,9 +19,10 @@ import { InfoCardComponent } from '@nuclia/sistema';
 import { map } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { SynonymsFieldComponent } from '../../basic-elements/node-form/subcomponents';
-import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select';
 import { aragUrl } from '../../workflow.state';
 import { DriversService } from '../../../../drivers/drivers.service';
+import { JSONSchema4Object } from 'json-schema';
+import { ModelFieldComponent } from '../../basic-elements/node-form/subcomponents/model-field/model-field.component';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -37,7 +37,7 @@ import { DriversService } from '../../../../drivers/drivers.service';
     InfoCardComponent,
     RouterLink,
     SynonymsFieldComponent,
-    forwardRef(() => ModelSelectComponent), // Avoid circular dependency
+    ModelFieldComponent,
   ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +57,15 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
       userInfo: new FormControl(false),
       split_question: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
-      model: new FormControl<string>('', { nonNullable: true }),
+      model: new FormGroup({
+        model_id: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+        reasoning: new FormControl<'enabled' | 'disabled' | null>(null),
+        advanced_reasoning: new FormGroup({
+          budget_tokens: new FormControl<number | null>(null),
+          reaseffortning: new FormControl<string | null>(null),
+        }),
+        _type: new FormControl<string>('llm_config', { nonNullable: true }),
+      }),
       // TODO manage rids and labels
     }),
   });
@@ -95,8 +103,8 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
     // Set default model
     const { schema } = this.buildFormFromSchema(this.schemas(), 'rephrase', 'preprocess');
-    const defaultModel = schema?.properties?.['model']?.default as string | undefined;
-    this.configForm.controls.model.patchValue(defaultModel || '');
+    const defaultModel = (schema?.properties?.['model']?.default || {}) as JSONSchema4Object;
+    this.configForm.controls.model.patchValue(defaultModel);
     this.formReady.emit(this.configForm);
 
     // Toggle validators for provided_synonyms based on synonyms switch

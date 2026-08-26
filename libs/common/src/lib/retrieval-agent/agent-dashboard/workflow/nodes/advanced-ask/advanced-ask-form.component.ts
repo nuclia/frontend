@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  forwardRef,
   inject,
   Input,
   OnInit,
@@ -17,12 +16,12 @@ import { ARAGSchemas, BaseContextAgent, ChatOptions, SearchOptions, Widget } fro
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { DriverSelectComponent } from '../../basic-elements/node-form/subcomponents/driver-select';
 import { JSONSchema4 } from 'json-schema';
-import { ModelSelectComponent } from '../../basic-elements/node-form/subcomponents/model-select/model-select.component';
 import { AskConfigurationComponent } from './ask-configuration.component';
 import { getChatOptions, getFindOptions, getSearchConfigFromSearchOptions } from '../../../../../search-widget';
 import { debounceTime, defer, map, of, shareReplay, startWith, switchMap, tap } from 'rxjs';
 import { WorkflowService } from '../../workflow.service';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { ModelFieldComponent } from '../../basic-elements/node-form/subcomponents/model-field/model-field.component';
 
 @Component({
   selector: 'app-advanced-ask-form',
@@ -32,7 +31,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
     ConfigurationFormComponent,
     DriverSelectComponent,
     InfoCardComponent,
-    forwardRef(() => ModelSelectComponent), // Avoid circular dependency
+    ModelFieldComponent,
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -61,9 +60,33 @@ export class AdvancedAskFormComponent extends FormDirective implements OnInit {
       id: new FormControl<string>('', { nonNullable: true }),
       sources: new FormArray<FormControl<string>>([], { validators: [Validators.required] }),
       fallback: new FormControl<BaseContextAgent | null>(null),
-      generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      rephrase_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-      context_validation_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      generative_model: new FormGroup({
+        model_id: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+        reasoning: new FormControl<'enabled' | 'disabled' | null>(null),
+        advanced_reasoning: new FormGroup({
+          budget_tokens: new FormControl<number | null>(null),
+          reaseffortning: new FormControl<string | null>(null),
+        }),
+        _type: new FormControl<string>('llm_config', { nonNullable: true }),
+      }),
+      rephrase_model: new FormGroup({
+        model_id: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+        reasoning: new FormControl<'enabled' | 'disabled' | null>(null),
+        advanced_reasoning: new FormGroup({
+          budget_tokens: new FormControl<number | null>(null),
+          reaseffortning: new FormControl<string | null>(null),
+        }),
+        _type: new FormControl<string>('llm_config', { nonNullable: true }),
+      }),
+      context_validation_model: new FormGroup({
+        model_id: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+        reasoning: new FormControl<'enabled' | 'disabled' | null>(null),
+        advanced_reasoning: new FormGroup({
+          budget_tokens: new FormControl<number | null>(null),
+          reaseffortning: new FormControl<string | null>(null),
+        }),
+        _type: new FormControl<string>('llm_config', { nonNullable: true }),
+      }),
       max_retries: new FormControl<number | null>(1),
       prune_context: new FormControl<boolean>(false, { nonNullable: true }),
       rules: new FormArray<FormControl<string>>([]),

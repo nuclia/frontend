@@ -12,23 +12,20 @@
       provider="nucliadb"
       [multiselect]="true"></app-driver-select>
 
-    <app-model-select
+    <app-model-field
       [label]="schema?.properties?.['generative_model']?.title || ''"
-      [form]="configForm"
-      [required]="true"
-      controlName="generative_model"></app-model-select>
+      [form]="configForm.controls.generative_model"
+      [required]="true"></app-model-field>
 
-    <app-model-select
+    <app-model-field
       [label]="schema?.properties?.['rephrase_model']?.title || ''"
-      [form]="configForm"
-      [required]="true"
-      controlName="rephrase_model"></app-model-select>
+      [form]="configForm.controls.rephrase_model"
+      [required]="true"></app-model-field>
 
-    <app-model-select
+    <app-model-field
       [label]="schema?.properties?.['context_validation_model']?.title || ''"
-      [form]="configForm"
-      [required]="true"
-      controlName="context_validation_model"></app-model-select>
+      [form]="configForm.controls.context_validation_model"
+      [required]="true"></app-model-field>
 
     <pa-toggle
       formControlName="prune_context"
