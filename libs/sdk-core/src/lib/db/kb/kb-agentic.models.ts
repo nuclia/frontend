@@ -1,4 +1,5 @@
 import type { FilterExpression } from '../search';
+import { ReasoningEffort } from './kb.models';
 
 // ---------------------------------------------------------------------------
 // Agentic config models
@@ -11,15 +12,15 @@ interface HistoryConfig {
 export interface AgenticRephraseConfig extends HistoryConfig {
   ask_to?: string;
   prompt?: string;
-  model?: string;
+  model?: AgenticModelConfig;
 }
 
 export type AgenticSmartAgentMode = 'reactive' | 'plan_execute';
 
 export interface AgenticSmartAgentModels {
-  context_validation?: string;
-  planner?: string;
-  executor?: string;
+  context_validation?: AgenticModelConfig;
+  planner?: AgenticModelConfig;
+  executor?: AgenticModelConfig;
 }
 
 export interface AgenticSmartAgentConfig extends HistoryConfig {
@@ -34,7 +35,7 @@ export interface AgenticSummarizeConfig extends HistoryConfig {
   user_prompt?: string;
   system_prompt?: string;
   conversational?: boolean;
-  model?: string;
+  model?: AgenticModelConfig;
 }
 
 export interface AgenticConfig {
@@ -42,6 +43,15 @@ export interface AgenticConfig {
   rephrase?: AgenticRephraseConfig;
   smart_agent?: AgenticSmartAgentConfig;
   summarize?: AgenticSummarizeConfig;
+}
+
+export interface AgenticModelConfig {
+  model_id: string;
+  reasoning?: 'enabled' | 'disabled';
+  advanced_reasoning?: {
+    effort?: ReasoningEffort;
+    budget_tokens?: number;
+  };
 }
 
 export type AgenticConfigs = { [id: string]: AgenticConfig };
