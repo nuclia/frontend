@@ -2701,6 +2701,7 @@
 	"stash.upload.sync.title": "Sincronització",
 	"stash.upload_data": "Pujar dades",
 	"stash.upload_to_search": "Puja dades per comença a utilitzar el motor de cerca.",
+	"stash.users.access-warning": "Tingueu en compte que els usuaris convidats poden veure tots els recursos del Knowledge Box, independentment dels seus permisos per accedir a les dades originals.",
 	"stash.users.add_email": "Afegeix un correu electrònic",
 	"stash.users.add_emails": "Afegeix correus electrònics",
 	"stash.users.bulk_input_hint": "Separeu diversos correus electrònics amb comes, punts i coma o salts de línia",

@@ -185,6 +185,10 @@ h3 {
   }
 }
 
+.warning {
+  margin-top: rhythm(2);
+}
+
 @media (max-width: $size-viewport-medium-max) {
   .paste-emails-row {
     grid-template-columns: 1fr;

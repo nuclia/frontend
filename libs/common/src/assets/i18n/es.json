@@ -2701,6 +2701,7 @@
 	"stash.upload.sync.title": "Sincronización",
 	"stash.upload_data": "Subir datos",
 	"stash.upload_to_search": "Sube datos para empezar a utilizar el motor de búsqueda.",
+	"stash.users.access-warning": "Tenga en cuenta que los usuarios invitados pueden ver todos los recursos en el Cuadro de Conocimiento, independientemente de sus permisos para acceder a los datos originales.",
 	"stash.users.add_email": "Agregar Correo Electrónico",
 	"stash.users.add_emails": "Agregar correo(s) electrónico(s)",
 	"stash.users.bulk_input_hint": "Separe los correos electrónicos con comas, puntos y comas o saltos de línea.",
