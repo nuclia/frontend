@@ -41,6 +41,7 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
+  redirectToWorkflowGuard,
   WorkflowsListComponent,
   WorkflowsComponent,
 } from '@flaps/common';
@@ -179,8 +180,9 @@ const routes: Routes = [
             children: [
               {
                 path: '',
-                redirectTo: 'workflows',
                 pathMatch: 'full',
+                component: EmptyComponent,
+                canActivate: [redirectToWorkflowGuard],
               },
               {
                 path: 'workflows',
