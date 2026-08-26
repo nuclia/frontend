@@ -15,7 +15,9 @@
           [popupRef]="workflowDropdown">
           {{ (currentWorkflow | async)?.name || '' }}
         </nsi-dropdown-button>
-        <pa-dropdown #workflowDropdown>
+        <pa-dropdown
+          #workflowDropdown
+          class="workflow-dropdown-menu">
           @for (workflow of workflows | async; track workflow) {
             <pa-option
               [value]="workflow.id"
@@ -23,66 +25,63 @@
               {{ workflow.name }}
             </pa-option>
           }
+          <pa-separator></pa-separator>
+          <pa-option
+            class="workflow-add-option"
+            (selectOption)="addWorkflow()">
+            {{ 'retrieval-agents.workflows-list.add' | translate }}
+          </pa-option>
         </pa-dropdown>
       </div>
-      <pa-button
-        aspect="basic"
-        size="small"
-        [active]="activeSideBar() === 'rules'"
-        (click)="openRules()">
-        {{ 'retrieval-agents.workflow.toolbar-buttons.rules' | translate }}
-      </pa-button>
-      <pa-button
-        aspect="basic"
-        size="small"
-        icon="circle-plus"
-        iconAndText=""
-        iconSize="medium"
-        [active]="activeSideBar() === 'add'"
-        (click)="addNode()">
-        {{ 'retrieval-agents.workflow.toolbar-buttons.add-node' | translate }}
-      </pa-button>
-      @if (isAragAdmin | async) {
-        <pa-button
-          aspect="basic"
-          size="small"
-          icon="download"
-          iconAndText=""
-          iconSize="medium"
-          [active]="activeSideBar() === 'import'"
-          (click)="import()">
-          {{ 'retrieval-agents.workflow.toolbar-buttons.import' | translate }}
-        </pa-button>
-        <pa-button
-          aspect="basic"
-          size="small"
-          icon="upload"
-          iconAndText=""
-          iconSize="medium"
-          [active]="activeSideBar() === 'export'"
-          (click)="export()">
-          {{ 'retrieval-agents.workflow.toolbar-buttons.export' | translate }}
-        </pa-button>
-      }
     </div>
     <div class="button-group">
       <pa-button
+        kind="primary"
+        aspect="basic"
         size="small"
-        icon="play"
-        iconSize="medium"
-        iconAndText=""
         [active]="activeSideBar() === 'test'"
         (click)="openTest()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.test-agent' | translate }}
       </pa-button>
-      @if (isAragWithMemory | async) {
+      <pa-button
+        kind="primary"
+        size="small"
+        [active]="activeSideBar() === 'add'"
+        (click)="addNode()">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.add-node' | translate }}
+      </pa-button>
+      <div
+        class="toolbar-overflow-trigger"
+        [class.active]="overflowMenuActive()">
         <pa-button
+          aspect="basic"
           size="small"
-          kind="primary"
-          [routerLink]="aragUrl() + '/sessions'">
-          {{ 'retrieval-agents.workflow.toolbar-buttons.manage-sessions' | translate }}
+          icon="more-vertical"
+          [active]="overflowMenuActive()"
+          [paPopup]="toolbarOverflowMenu">
+          {{ 'retrieval-agents.workflow.toolbar-buttons.more' | translate }}
         </pa-button>
-      }
+        <pa-dropdown
+          #toolbarOverflowMenu
+          class="toolbar-overflow-menu">
+          <pa-option (selectOption)="openRules()">
+            {{ 'retrieval-agents.workflow.toolbar-buttons.rules' | translate }}
+          </pa-option>
+          @if (isAragAdmin | async) {
+            <pa-option (selectOption)="import()">
+              {{ 'retrieval-agents.workflow.toolbar-buttons.import' | translate }}
+            </pa-option>
+            <pa-option (selectOption)="export()">
+              {{ 'retrieval-agents.workflow.toolbar-buttons.export' | translate }}
+            </pa-option>
+          }
+          @if (isAragWithMemory | async) {
+            <pa-option (selectOption)="goToSessions()">
+              {{ 'retrieval-agents.workflow.toolbar-buttons.manage-sessions' | translate }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
     </div>
   </div>
 
@@ -114,6 +113,7 @@
         }
         <pa-button
           aspect="basic"
+          size="small"
           icon="cross"
           (click)="closeSidebar()">
           {{ 'retrieval-agents.workflow.sidebar.close-button' | translate }}

@@ -4,8 +4,9 @@
 .agent-dashboard {
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
-    border-bottom: 1px solid $color-neutral-light;
-    border-left: 1px solid $color-neutral-light;
+    // The main nav already draws its own border-right, so a border-left here would
+    // stack a second line against it. Only the bottom edge is ours to draw.
+    border-bottom: 1px solid $color-neutral-lighter;
     display: flex;
     justify-content: space-between;
     height: dashboard.$height-toolbar;
@@ -16,10 +17,48 @@
       display: flex;
       gap: rhythm(1);
     }
+
+    // Align the workflow switcher outline with the layout's border weight, so the
+    // toolbar reads as one light rule rather than competing greys.
+    nsi-dropdown-button .pa-button {
+      border-color: $color-neutral-lighter;
+    }
+
+    // Both toolbar menus hold short labels, so the 192px popup floor leaves them
+    // visibly wider than their content. Release the floor to let them hug instead.
+    .toolbar-overflow-menu .pa-popup,
+    .workflow-dropdown-menu .pa-popup {
+      min-width: auto;
+    }
+
+    // paPopup toggles the .pa-active class imperatively when its dropdown closes,
+    // which clears the class Angular set from [active]. Its guard reads
+    // ng-reflect-active, an attribute only emitted in dev builds, so in production
+    // the open sidebar state is lost from the trigger. Own the state here instead.
+    .toolbar-overflow-trigger.active .pa-button {
+      color: $color-text-button-secondary-basic-active;
+      background: $color-background-button-secondary-basic-active;
+    }
+  }
+
+  .workflow-dropdown-menu {
+    // Mirrors the structure of the built-in destructive option, but in the primary
+    // hue: this is an action rather than a workflow to switch to.
+    .workflow-add-option .pa-option {
+      color: $color-primary-regular;
+      font-weight: $font-weight-semi-bold;
+
+      &:hover {
+        background-color: $color-primary-lightest;
+      }
+      &:active {
+        background-color: $color-primary-lighter;
+      }
+    }
   }
 
   .workflow-container {
-    background-color: hsl(336, 100%, 96%, 25%);
+    background-color: $color-light-stronger;
     background-size: rhythm(2.5) rhythm(2.5);
     background-image: radial-gradient(circle, $color-neutral-lighter rhythm(0.25), rgba(0, 0, 0, 0) rhythm(0.25));
     overflow: auto;
@@ -81,13 +120,22 @@
     }
 
     header {
+      // .sidebar zeroes its right padding so the scrollable content can run to the
+      // edge; the header is not scrollable, so it needs that padding back.
+      padding-right: dashboard.$padding-sidebar;
+
       .title-m {
         align-items: center;
         display: flex;
         gap: rhythm(1.5);
-        height: dashboard.$height-sidebar-header;
+        min-height: dashboard.$height-sidebar-header;
+
         pa-button {
+          flex: 0 0 auto;
           margin-left: auto;
+          // The small icon button is a 32px box around a 16px glyph, so pull it out
+          // by its own padding to optically align the cross with the padding edge.
+          margin-right: calc(#{rhythm(1)} * -1);
         }
       }
 

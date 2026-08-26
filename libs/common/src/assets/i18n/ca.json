@@ -2021,6 +2021,7 @@
 	"retrieval-agents.workflow.toolbar-buttons.export": "Exportar",
 	"retrieval-agents.workflow.toolbar-buttons.import": "Importar",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Gestionar sessions",
+	"retrieval-agents.workflow.toolbar-buttons.more": "Més",
 	"retrieval-agents.workflow.toolbar-buttons.rules": "Normes",
 	"retrieval-agents.workflow.toolbar-buttons.test-agent": "Provar l'agent",
 	"retrieval-agents.workflow.toolbar-buttons.toggle-navbar": "Obriu el tauler de navegació",

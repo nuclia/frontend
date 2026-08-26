@@ -2021,6 +2021,7 @@
 	"retrieval-agents.workflow.toolbar-buttons.export": "Exporter",
 	"retrieval-agents.workflow.toolbar-buttons.import": "Importer",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Gérer les sessions",
+	"retrieval-agents.workflow.toolbar-buttons.more": "Plus",
 	"retrieval-agents.workflow.toolbar-buttons.rules": "Règles",
 	"retrieval-agents.workflow.toolbar-buttons.test-agent": "Tester l'agent",
 	"retrieval-agents.workflow.toolbar-buttons.toggle-navbar": "Ouvrir le panneau de navigation",
