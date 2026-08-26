@@ -2,29 +2,27 @@
   <header>
     <div class="page-title">
       {{ 'retrieval-agents.workflows-list.title' | translate }}
-      <pa-button
-        icon="circle-plus"
-        iconAndText
-        (click)="add()">
-        {{ 'retrieval-agents.workflows-list.add' | translate }}
-      </pa-button>
+      <div class="page-title-actions">
+        <pa-button
+          kind="primary"
+          icon="circle-plus"
+          iconAndText
+          (click)="add()">
+          {{ 'retrieval-agents.workflows-list.add' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          icon="more-vertical"
+          [paPopup]="workflowsMoreActions"></pa-button>
+        <pa-dropdown #workflowsMoreActions>
+          <pa-option (selectOption)="openMcpEndpoint()">
+            {{ 'retrieval-agents.workflows-list.mcp-endpoint' | translate }}
+          </pa-option>
+        </pa-dropdown>
+      </div>
     </div>
     <div class="page-description">{{ 'retrieval-agents.workflows-list.description' | translate }}</div>
   </header>
-
-  <div class="section">
-    <div class="section-title title-s">{{ 'retrieval-agents.workflows-list.mcp-endpoint' | translate }}</div>
-    <div class="endpoint">
-      <pa-button
-        aspect="basic"
-        size="small"
-        [icon]="copied() ? 'check' : 'copy'"
-        (click)="copyEndpoint()">
-        {{ 'generic.copy' | translate }}
-      </pa-button>
-      <pre><code>{{ endpoint | async }}</code></pre>
-    </div>
-  </div>
 
   <div class="section">
     @if (((workflows | async) || []).length === 0) {
@@ -59,6 +57,9 @@
                   icon="more-vertical"
                   [paPopup]="menu"></pa-button>
                 <pa-dropdown #menu>
+                  <pa-option (selectOption)="goToWorkflow(workflow)">
+                    {{ 'retrieval-agents.workflows-list.open' | translate }}
+                  </pa-option>
                   <pa-option (selectOption)="edit(workflow, $event)">
                     {{ 'retrieval-agents.workflows-list.edit' | translate }}
                   </pa-option>

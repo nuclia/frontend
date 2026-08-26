@@ -2031,6 +2031,7 @@
 	"retrieval-agents.workflows-list.confirm-deletion.title": "Supprimer {{name}} ?",
 	"retrieval-agents.workflows-list.delete": "Supprimer le workflow",
 	"retrieval-agents.workflows-list.description": "Créer et gérer les workflows des agents",
+	"retrieval-agents.workflows-list.open": "Ouvrir le workflow",
 	"retrieval-agents.workflows-list.edit": "Modifier le workflow",
 	"retrieval-agents.workflows-list.empty": "Vous n'avez pas encore créé de workflow",
 	"retrieval-agents.workflows-list.errors.creation": "Une erreur s’est produite lors de la création du workflow, veuillez réessayer.",
