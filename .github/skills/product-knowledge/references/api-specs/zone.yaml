@@ -1204,7 +1204,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-07-22T09:20:33.489079'
+          default: '2026-08-17T10:16:55.592360'
           title: To
       responses:
         '200':
@@ -2316,7 +2316,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-07-22T09:20:33.495985'
+          default: '2026-08-17T10:16:55.598660'
           title: To
       responses:
         '200':
@@ -2393,17 +2393,847 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  idp_regional:
-    commit: e530eb09830e834fa863b8cebd1098ded777983e
-    last_updated: '2026-07-27T09:57:00.567276'
   cloud_storage_sync:
-    commit: 831c28f2018d7fe821afcd0545017976058ad086
-    last_updated: '2026-07-13T09:19:49.098529+00:00'
+    commit: ba1fdde791099614482d40f5eba1e8438ad116aa
+    last_updated: '2026-08-21T15:20:36.049961+00:00'
+  idp_regional:
+    commit: 8c4c24d8abd6c60d235b0b53254e8338540b9139
+    last_updated: '2026-08-18T09:31:16.286392'
   events:
-    commit: 5d41aae70e979a5b5444fa022b2f5e2d731348ef
-    last_updated: '2026-07-22T09:20:33.836730'
+    commit: c1766f329d3db0a87c06afa575f0dfcd66dfb12c
+    last_updated: '2026-08-17T10:16:55.908143'
 components:
   schemas:
+    AWSS3AssumeRoleCredentials:
+      properties:
+        role_arn:
+          type: string
+          title: Role Arn
+        external_id:
+          type: string
+          title: External Id
+      type: object
+      required:
+      - role_arn
+      - external_id
+      title: AWSS3AssumeRoleCredentials
+    AuthorizeUrlOutput:
+      properties:
+        authorize_url:
+          type: string
+          title: Authorize Url
+      type: object
+      required:
+      - authorize_url
+      title: AuthorizeUrlOutput
+    AzureCertificateCredentials:
+      properties:
+        tenant_id:
+          type: string
+          title: Tenant Id
+        client_id:
+          type: string
+          title: Client Id
+        pfx_base64:
+          type: string
+          title: Pfx Base64
+        pfx_password:
+          type: string
+          title: Pfx Password
+      type: object
+      required:
+      - tenant_id
+      - client_id
+      - pfx_base64
+      - pfx_password
+      title: AzureCertificateCredentials
+      description: 'Credentials for Azure/SharePoint certificate-based authentication.
+
+
+        This uses the client credentials flow with a certificate instead of a client
+        secret.
+
+        The certificate must be registered in the Azure App Registration.
+
+
+        Users provide a .pfx file (base64-encoded) and its password. The private key
+        and
+
+        certificate are extracted server-side and stored for authentication.'
+    BrowseCapabilities:
+      properties:
+        has_sites:
+          type: boolean
+          title: Has Sites
+          description: Whether the provider supports site browsing (SharePoint only).
+          default: false
+        requires_site_search:
+          type: boolean
+          title: Requires Site Search
+          description: Whether site_search is required (True) or can list all sites
+            (False). Only applicable for certificate auth connections.
+          default: false
+        requires_site_url_resolution:
+          type: boolean
+          title: Requires Site Url Resolution
+          description: Whether the client must use the /resolve_site endpoint to obtain
+            a site_id from a site URL before browsing drives. Applies to OAuth connections
+            using Sites.Selected permission.
+          default: false
+      type: object
+      title: BrowseCapabilities
+      description: Capabilities for browsing storage in this external connection.
+    BrowseStorageOutput:
+      properties:
+        sites:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageSiteOutput'
+            type: array
+          - type: 'null'
+          title: Sites
+        drives:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageDriveOutput'
+            type: array
+          - type: 'null'
+          title: Drives
+        folders:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StorageFolderOutput'
+            type: array
+          - type: 'null'
+          title: Folders
+        next_page_token:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Page Token
+      type: object
+      title: BrowseStorageOutput
+      description: Result of browsing storage, containing sites, drives or folders.
+    ExternalAuthorizationInput:
+      properties:
+        widget_redirect_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Widget Redirect Url
+        rao_redirect_url:
+          type: string
+          title: Rao Redirect Url
+      type: object
+      required:
+      - rao_redirect_url
+      title: ExternalAuthorizationInput
+      description: Input schema for external connection authorization with additional
+        parameters.
+    ExternalConnectionInput:
+      properties:
+        provider:
+          $ref: '#/components/schemas/Provider'
+        credentials:
+          anyOf:
+          - $ref: '#/components/schemas/AWSS3AssumeRoleCredentials'
+          - $ref: '#/components/schemas/AzureCertificateCredentials'
+          - type: 'null'
+          title: Credentials
+      type: object
+      required:
+      - provider
+      title: ExternalConnectionInput
+      description: 'Input schema for creating an external connection.
+
+
+        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth): only provider
+        is required.
+
+        The response will contain an authorize_url to complete the OAuth flow.
+
+
+        For providers aws_s3_assume_role, azure_certificate_credentials:
+
+        provider and credentials are required.
+
+        The response will contain the created ExternalConnection directly.'
+    ExternalConnectionOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        provider:
+          $ref: '#/components/schemas/Provider'
+        capabilities:
+          $ref: '#/components/schemas/BrowseCapabilities'
+      type: object
+      required:
+      - id
+      - kb_id
+      - created_by
+      - created_at
+      - updated_at
+      - provider
+      - capabilities
+      title: ExternalConnectionOutput
+      description: External connection output without sensitive credential data.
+    FileFilterInput:
+      properties:
+        mode:
+          type: string
+          enum:
+          - include
+          - exclude
+          title: Mode
+        extensions:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            uniqueItems: true
+          - type: 'null'
+          title: Extensions
+        glob_patterns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            uniqueItems: true
+          - type: 'null'
+          title: Glob Patterns
+      type: object
+      required:
+      - mode
+      title: FileFilterInput
+    FileFilterOutput:
+      properties:
+        mode:
+          type: string
+          enum:
+          - include
+          - exclude
+          title: Mode
+        extensions:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Extensions
+        glob_patterns:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Glob Patterns
+      type: object
+      required:
+      - mode
+      title: FileFilterOutput
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InvalidResource:
+      properties:
+        resource:
+          $ref: '#/components/schemas/ResourceIdentifier'
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - resource
+      - reason
+      title: InvalidResource
+      description: Details about a resource that failed validation.
+    LabelInput:
+      properties:
+        labelset:
+          type: string
+          title: Labelset
+        label:
+          type: string
+          title: Label
+      type: object
+      required:
+      - labelset
+      - label
+      title: LabelInput
+    LabelOutput:
+      properties:
+        labelset:
+          type: string
+          title: Labelset
+        label:
+          type: string
+          title: Label
+      type: object
+      required:
+      - labelset
+      - label
+      title: LabelOutput
+    LogEntryOutput:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique identifier for the log entry
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Timestamp of the log entry
+        level:
+          type: string
+          title: Level
+          description: Log level (INFO, WARNING, ERROR, etc.)
+        message:
+          type: string
+          title: Message
+          description: Log message
+        extra:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Extra
+          description: Additional context data for the log entry
+      type: object
+      required:
+      - id
+      - timestamp
+      - level
+      - message
+      title: LogEntryOutput
+      description: A single log entry from a sync job.
+    LogLevel:
+      type: string
+      enum:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+      - EXCEPTION
+      - CRITICAL
+      title: LogLevel
+      description: Log level for filtering sync job logs.
+    ModifiedTimeRangeInput:
+      properties:
+        from:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From
+        to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To
+      type: object
+      title: ModifiedTimeRangeInput
+    ModifiedTimeRangeOutput:
+      properties:
+        from:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From
+        to:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To
+      type: object
+      title: ModifiedTimeRangeOutput
+    PaginatedLogsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/LogEntryOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor (log ID) to fetch the next page of results. None if
+            no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedLogsOutput
+      description: Paginated list of log entries.
+    PaginatedSyncJobsOutput:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/SyncJobOutput'
+          type: array
+          title: Items
+        next_cursor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Cursor
+          description: Cursor to fetch the next page of results. None if no more results.
+      type: object
+      required:
+      - items
+      title: PaginatedSyncJobsOutput
+      description: Paginated list of sync jobs.
+    Provider:
+      type: string
+      enum:
+      - google_oauth
+      - azure_oauth
+      - azure_certificate_credentials
+      - aws_s3_assume_role
+      - sharefile_oauth
+      - dropbox_oauth
+      title: Provider
+    ResourceIdentifier:
+      properties:
+        file_id:
+          type: string
+          title: File Id
+      type: object
+      required:
+      - file_id
+      title: ResourceIdentifier
+      description: 'Identifier for an external resource.
+
+
+        The meaning of ``file_id`` depends on the provider (determined by the sync
+        config):
+
+        - Google Drive: the Drive file id
+
+        - SharePoint / OneDrive: the item id
+
+        - S3: the object key
+
+        - ShareFile: the item id
+
+        - Dropbox: the full file path including filename (e.g. ``/Documents/report.pdf``)'
+    ResourceValidationInput:
+      properties:
+        credentials:
+          type: string
+          title: Credentials
+        resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Resources
+      type: object
+      required:
+      - credentials
+      - resources
+      title: ResourceValidationInput
+      description: 'Input schema for validating multiple resources with existing external
+        connection.
+
+
+        Credentials should be a Fernet-encrypted string containing the JSON-serialized
+
+        credentials dict, encrypted with the same key used for external connections.'
+    ResourceValidationOutput:
+      properties:
+        valid_resources:
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+          type: array
+          title: Valid Resources
+        invalid_resources:
+          items:
+            $ref: '#/components/schemas/InvalidResource'
+          type: array
+          title: Invalid Resources
+      type: object
+      required:
+      - valid_resources
+      - invalid_resources
+      title: ResourceValidationOutput
+      description: Output schema for validated resources.
+    S3AssumeRoleInfoOutput:
+      properties:
+        external_id:
+          type: string
+          title: External Id
+          description: The external ID to use in the IAM role trust policy condition.
+        role_name:
+          type: string
+          title: Role Name
+          description: The role name that should be created in the client's AWS account.
+        aws_account_id:
+          type: string
+          title: Aws Account Id
+          description: Nuclia's AWS account ID that will assume the role.
+      type: object
+      required:
+      - external_id
+      - role_name
+      - aws_account_id
+      title: S3AssumeRoleInfoOutput
+      description: Information the client needs to configure an IAM role for Nuclia
+        S3 sync.
+    SortOrder:
+      type: string
+      enum:
+      - asc
+      - desc
+      title: SortOrder
+      description: Sort order for paginated queries.
+    StorageDriveOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        drive_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Type
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageDriveOutput
+      description: Represents a drive/storage location that can be selected for syncing.
+    StorageFolderOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        path:
+          type: string
+          title: Path
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      - path
+      title: StorageFolderOutput
+      description: Represents a folder that can be selected for syncing.
+    StorageSiteOutput:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        web_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Web Url
+      type: object
+      required:
+      - id
+      - name
+      title: StorageSiteOutput
+      description: Represents a SharePoint site that can be selected for browsing
+        drives.
+    SyncConfigInput:
+      properties:
+        name:
+          type: string
+          title: Name
+        sync_root_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sync Root Path
+        folder_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Folder Id
+        external_connection_id:
+          type: string
+          format: uuid
+          title: External Connection Id
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterInput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelInput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+      type: object
+      required:
+      - name
+      - external_connection_id
+      title: SyncConfigInput
+    SyncConfigOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        name:
+          type: string
+          title: Name
+        kb_id:
+          type: string
+          format: uuid
+          title: Kb Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        sync_root_path:
+          type: string
+          title: Sync Root Path
+        sync_interval_minutes:
+          type: integer
+          title: Sync Interval Minutes
+        created_by:
+          type: string
+          format: uuid
+          title: Created By
+        external_connection:
+          $ref: '#/components/schemas/ExternalConnectionOutput'
+        drive_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Drive Id
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterOutput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelOutput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeOutput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+        last_sync_run:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Sync Run
+      type: object
+      required:
+      - id
+      - name
+      - kb_id
+      - created_at
+      - updated_at
+      - sync_root_path
+      - sync_interval_minutes
+      - created_by
+      - external_connection
+      title: SyncConfigOutput
+    SyncConfigUpdateInput:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        file_filter:
+          anyOf:
+          - $ref: '#/components/schemas/FileFilterInput'
+          - type: 'null'
+        labels:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/LabelInput'
+            type: array
+          - type: 'null'
+          title: Labels
+        modified_time_range:
+          anyOf:
+          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
+          - type: 'null'
+        extract_strategy:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Extract Strategy
+      additionalProperties: false
+      type: object
+      title: SyncConfigUpdateInput
+      description: 'Partial update model for SyncConfig.
+
+
+        Omitted fields are left unchanged. Fields explicitly set to null
+
+        clear that entry from extra_configuration.'
+    SyncJobOptionsOutput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          default: false
+      type: object
+      title: SyncJobOptionsOutput
+      description: Options for a sync job.
+    SyncJobOutput:
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Finished At
+        config_id:
+          type: string
+          format: uuid
+          title: Config Id
+        status:
+          $ref: '#/components/schemas/SyncJobStatus'
+        options:
+          $ref: '#/components/schemas/SyncJobOptionsOutput'
+          default:
+            full_sync: false
+      type: object
+      required:
+      - id
+      - created_at
+      - finished_at
+      - config_id
+      - status
+      title: SyncJobOutput
+    SyncJobStatus:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - completed
+      - failed
+      title: SyncJobStatus
+    TriggerSyncInput:
+      properties:
+        full_sync:
+          type: boolean
+          title: Full Sync
+          description: 'If True, ignore incremental sync state and perform a full
+            sync. Note: S3 and ShareFile providers always perform full syncs as they
+            don''t support delta tracking.'
+          default: false
+      type: object
+      title: TriggerSyncInput
+      description: Input for triggering a sync job.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AccountType:
       type: string
       enum:
@@ -2585,15 +3415,6 @@ components:
       required:
       - token
       title: EphemeralTokenResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     InviteKnowledgeBoxPayload:
       properties:
         email:
@@ -3361,827 +4182,6 @@ components:
       - id
       - role
       title: UpdateKbUser
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    AWSS3AssumeRoleCredentials:
-      properties:
-        role_arn:
-          type: string
-          title: Role Arn
-        external_id:
-          type: string
-          title: External Id
-      type: object
-      required:
-      - role_arn
-      - external_id
-      title: AWSS3AssumeRoleCredentials
-    AuthorizeUrlOutput:
-      properties:
-        authorize_url:
-          type: string
-          title: Authorize Url
-      type: object
-      required:
-      - authorize_url
-      title: AuthorizeUrlOutput
-    AzureCertificateCredentials:
-      properties:
-        tenant_id:
-          type: string
-          title: Tenant Id
-        client_id:
-          type: string
-          title: Client Id
-        pfx_base64:
-          type: string
-          title: Pfx Base64
-        pfx_password:
-          type: string
-          title: Pfx Password
-      type: object
-      required:
-      - tenant_id
-      - client_id
-      - pfx_base64
-      - pfx_password
-      title: AzureCertificateCredentials
-      description: 'Credentials for Azure/SharePoint certificate-based authentication.
-
-
-        This uses the client credentials flow with a certificate instead of a client
-        secret.
-
-        The certificate must be registered in the Azure App Registration.
-
-
-        Users provide a .pfx file (base64-encoded) and its password. The private key
-        and
-
-        certificate are extracted server-side and stored for authentication.'
-    BrowseCapabilities:
-      properties:
-        has_sites:
-          type: boolean
-          title: Has Sites
-          description: Whether the provider supports site browsing (SharePoint only).
-          default: false
-        requires_site_search:
-          type: boolean
-          title: Requires Site Search
-          description: Whether site_search is required (True) or can list all sites
-            (False). Only applicable for certificate auth connections.
-          default: false
-        requires_site_url_resolution:
-          type: boolean
-          title: Requires Site Url Resolution
-          description: Whether the client must use the /resolve_site endpoint to obtain
-            a site_id from a site URL before browsing drives. Applies to OAuth connections
-            using Sites.Selected permission.
-          default: false
-      type: object
-      title: BrowseCapabilities
-      description: Capabilities for browsing storage in this external connection.
-    BrowseStorageOutput:
-      properties:
-        sites:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageSiteOutput'
-            type: array
-          - type: 'null'
-          title: Sites
-        drives:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageDriveOutput'
-            type: array
-          - type: 'null'
-          title: Drives
-        folders:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/StorageFolderOutput'
-            type: array
-          - type: 'null'
-          title: Folders
-        next_page_token:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next Page Token
-      type: object
-      title: BrowseStorageOutput
-      description: Result of browsing storage, containing sites, drives or folders.
-    ExternalAuthorizationInput:
-      properties:
-        widget_redirect_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Widget Redirect Url
-        rao_redirect_url:
-          type: string
-          title: Rao Redirect Url
-      type: object
-      required:
-      - rao_redirect_url
-      title: ExternalAuthorizationInput
-      description: Input schema for external connection authorization with additional
-        parameters.
-    ExternalConnectionInput:
-      properties:
-        provider:
-          $ref: '#/components/schemas/Provider'
-        credentials:
-          anyOf:
-          - $ref: '#/components/schemas/AWSS3AssumeRoleCredentials'
-          - $ref: '#/components/schemas/AzureCertificateCredentials'
-          - type: 'null'
-          title: Credentials
-      type: object
-      required:
-      - provider
-      title: ExternalConnectionInput
-      description: 'Input schema for creating an external connection.
-
-
-        For OAuth providers (google_oauth, azure_oauth, sharefile_oauth): only provider
-        is required.
-
-        The response will contain an authorize_url to complete the OAuth flow.
-
-
-        For providers aws_s3_assume_role, azure_certificate_credentials:
-
-        provider and credentials are required.
-
-        The response will contain the created ExternalConnection directly.'
-    ExternalConnectionOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        kb_id:
-          type: string
-          format: uuid
-          title: Kb Id
-        created_by:
-          type: string
-          format: uuid
-          title: Created By
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        provider:
-          $ref: '#/components/schemas/Provider'
-        capabilities:
-          $ref: '#/components/schemas/BrowseCapabilities'
-      type: object
-      required:
-      - id
-      - kb_id
-      - created_by
-      - created_at
-      - updated_at
-      - provider
-      - capabilities
-      title: ExternalConnectionOutput
-      description: External connection output without sensitive credential data.
-    FileFilterInput:
-      properties:
-        mode:
-          type: string
-          enum:
-          - include
-          - exclude
-          title: Mode
-        extensions:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            uniqueItems: true
-          - type: 'null'
-          title: Extensions
-        glob_patterns:
-          anyOf:
-          - items:
-              type: string
-            type: array
-            uniqueItems: true
-          - type: 'null'
-          title: Glob Patterns
-      type: object
-      required:
-      - mode
-      title: FileFilterInput
-    FileFilterOutput:
-      properties:
-        mode:
-          type: string
-          enum:
-          - include
-          - exclude
-          title: Mode
-        extensions:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Extensions
-        glob_patterns:
-          anyOf:
-          - items:
-              type: string
-            type: array
-          - type: 'null'
-          title: Glob Patterns
-      type: object
-      required:
-      - mode
-      title: FileFilterOutput
-    InvalidResource:
-      properties:
-        resource:
-          $ref: '#/components/schemas/ResourceIdentifier'
-        reason:
-          type: string
-          title: Reason
-      type: object
-      required:
-      - resource
-      - reason
-      title: InvalidResource
-      description: Details about a resource that failed validation.
-    LabelInput:
-      properties:
-        labelset:
-          type: string
-          title: Labelset
-        label:
-          type: string
-          title: Label
-      type: object
-      required:
-      - labelset
-      - label
-      title: LabelInput
-    LabelOutput:
-      properties:
-        labelset:
-          type: string
-          title: Labelset
-        label:
-          type: string
-          title: Label
-      type: object
-      required:
-      - labelset
-      - label
-      title: LabelOutput
-    LogEntryOutput:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique identifier for the log entry
-        timestamp:
-          type: string
-          format: date-time
-          title: Timestamp
-          description: Timestamp of the log entry
-        level:
-          type: string
-          title: Level
-          description: Log level (INFO, WARNING, ERROR, etc.)
-        message:
-          type: string
-          title: Message
-          description: Log message
-        extra:
-          anyOf:
-          - additionalProperties: true
-            type: object
-          - type: 'null'
-          title: Extra
-          description: Additional context data for the log entry
-      type: object
-      required:
-      - id
-      - timestamp
-      - level
-      - message
-      title: LogEntryOutput
-      description: A single log entry from a sync job.
-    LogLevel:
-      type: string
-      enum:
-      - DEBUG
-      - INFO
-      - WARNING
-      - ERROR
-      - EXCEPTION
-      - CRITICAL
-      title: LogLevel
-      description: Log level for filtering sync job logs.
-    ModifiedTimeRangeInput:
-      properties:
-        from:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: From
-        to:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: To
-      type: object
-      title: ModifiedTimeRangeInput
-    ModifiedTimeRangeOutput:
-      properties:
-        from:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: From
-        to:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: To
-      type: object
-      title: ModifiedTimeRangeOutput
-    PaginatedLogsOutput:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/LogEntryOutput'
-          type: array
-          title: Items
-        next_cursor:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Next Cursor
-          description: Cursor (log ID) to fetch the next page of results. None if
-            no more results.
-      type: object
-      required:
-      - items
-      title: PaginatedLogsOutput
-      description: Paginated list of log entries.
-    PaginatedSyncJobsOutput:
-      properties:
-        items:
-          items:
-            $ref: '#/components/schemas/SyncJobOutput'
-          type: array
-          title: Items
-        next_cursor:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Next Cursor
-          description: Cursor to fetch the next page of results. None if no more results.
-      type: object
-      required:
-      - items
-      title: PaginatedSyncJobsOutput
-      description: Paginated list of sync jobs.
-    Provider:
-      type: string
-      enum:
-      - google_oauth
-      - azure_oauth
-      - azure_certificate_credentials
-      - aws_s3_assume_role
-      - sharefile_oauth
-      - dropbox_oauth
-      title: Provider
-    ResourceIdentifier:
-      properties:
-        file_id:
-          type: string
-          title: File Id
-      type: object
-      required:
-      - file_id
-      title: ResourceIdentifier
-      description: 'Identifier for an external resource.
-
-
-        The meaning of ``file_id`` depends on the provider (determined by the sync
-        config):
-
-        - Google Drive: the Drive file id
-
-        - SharePoint / OneDrive: the item id
-
-        - S3: the object key
-
-        - ShareFile: the item id
-
-        - Dropbox: the full file path including filename (e.g. ``/Documents/report.pdf``)'
-    ResourceValidationInput:
-      properties:
-        credentials:
-          type: string
-          title: Credentials
-        resources:
-          items:
-            $ref: '#/components/schemas/ResourceIdentifier'
-          type: array
-          title: Resources
-      type: object
-      required:
-      - credentials
-      - resources
-      title: ResourceValidationInput
-      description: 'Input schema for validating multiple resources with existing external
-        connection.
-
-
-        Credentials should be a Fernet-encrypted string containing the JSON-serialized
-
-        credentials dict, encrypted with the same key used for external connections.'
-    ResourceValidationOutput:
-      properties:
-        valid_resources:
-          items:
-            $ref: '#/components/schemas/ResourceIdentifier'
-          type: array
-          title: Valid Resources
-        invalid_resources:
-          items:
-            $ref: '#/components/schemas/InvalidResource'
-          type: array
-          title: Invalid Resources
-      type: object
-      required:
-      - valid_resources
-      - invalid_resources
-      title: ResourceValidationOutput
-      description: Output schema for validated resources.
-    S3AssumeRoleInfoOutput:
-      properties:
-        external_id:
-          type: string
-          title: External Id
-          description: The external ID to use in the IAM role trust policy condition.
-        role_name:
-          type: string
-          title: Role Name
-          description: The role name that should be created in the client's AWS account.
-        aws_account_id:
-          type: string
-          title: Aws Account Id
-          description: Nuclia's AWS account ID that will assume the role.
-      type: object
-      required:
-      - external_id
-      - role_name
-      - aws_account_id
-      title: S3AssumeRoleInfoOutput
-      description: Information the client needs to configure an IAM role for Nuclia
-        S3 sync.
-    SortOrder:
-      type: string
-      enum:
-      - asc
-      - desc
-      title: SortOrder
-      description: Sort order for paginated queries.
-    StorageDriveOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        drive_type:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Type
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      title: StorageDriveOutput
-      description: Represents a drive/storage location that can be selected for syncing.
-    StorageFolderOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        path:
-          type: string
-          title: Path
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      - path
-      title: StorageFolderOutput
-      description: Represents a folder that can be selected for syncing.
-    StorageSiteOutput:
-      properties:
-        id:
-          type: string
-          title: Id
-        name:
-          type: string
-          title: Name
-        web_url:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Web Url
-      type: object
-      required:
-      - id
-      - name
-      title: StorageSiteOutput
-      description: Represents a SharePoint site that can be selected for browsing
-        drives.
-    SyncConfigInput:
-      properties:
-        name:
-          type: string
-          title: Name
-        sync_root_path:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Sync Root Path
-        folder_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Folder Id
-        external_connection_id:
-          type: string
-          format: uuid
-          title: External Connection Id
-        drive_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Id
-        file_filter:
-          anyOf:
-          - $ref: '#/components/schemas/FileFilterInput'
-          - type: 'null'
-        labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/LabelInput'
-            type: array
-          - type: 'null'
-          title: Labels
-        modified_time_range:
-          anyOf:
-          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
-          - type: 'null'
-        extract_strategy:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Extract Strategy
-      type: object
-      required:
-      - name
-      - external_connection_id
-      title: SyncConfigInput
-    SyncConfigOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        name:
-          type: string
-          title: Name
-        kb_id:
-          type: string
-          format: uuid
-          title: Kb Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        updated_at:
-          type: string
-          format: date-time
-          title: Updated At
-        sync_root_path:
-          type: string
-          title: Sync Root Path
-        sync_interval_minutes:
-          type: integer
-          title: Sync Interval Minutes
-        created_by:
-          type: string
-          format: uuid
-          title: Created By
-        external_connection:
-          $ref: '#/components/schemas/ExternalConnectionOutput'
-        drive_id:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Drive Id
-        file_filter:
-          anyOf:
-          - $ref: '#/components/schemas/FileFilterOutput'
-          - type: 'null'
-        labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/LabelOutput'
-            type: array
-          - type: 'null'
-          title: Labels
-        modified_time_range:
-          anyOf:
-          - $ref: '#/components/schemas/ModifiedTimeRangeOutput'
-          - type: 'null'
-        extract_strategy:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Extract Strategy
-        last_sync_run:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Last Sync Run
-      type: object
-      required:
-      - id
-      - name
-      - kb_id
-      - created_at
-      - updated_at
-      - sync_root_path
-      - sync_interval_minutes
-      - created_by
-      - external_connection
-      title: SyncConfigOutput
-    SyncConfigUpdateInput:
-      properties:
-        name:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Name
-        file_filter:
-          anyOf:
-          - $ref: '#/components/schemas/FileFilterInput'
-          - type: 'null'
-        labels:
-          anyOf:
-          - items:
-              $ref: '#/components/schemas/LabelInput'
-            type: array
-          - type: 'null'
-          title: Labels
-        modified_time_range:
-          anyOf:
-          - $ref: '#/components/schemas/ModifiedTimeRangeInput'
-          - type: 'null'
-        extract_strategy:
-          anyOf:
-          - type: string
-            format: uuid
-          - type: 'null'
-          title: Extract Strategy
-      additionalProperties: false
-      type: object
-      title: SyncConfigUpdateInput
-      description: 'Partial update model for SyncConfig.
-
-
-        Omitted fields are left unchanged. Fields explicitly set to null
-
-        clear that entry from extra_configuration.'
-    SyncJobOptionsOutput:
-      properties:
-        full_sync:
-          type: boolean
-          title: Full Sync
-          default: false
-      type: object
-      title: SyncJobOptionsOutput
-      description: Options for a sync job.
-    SyncJobOutput:
-      properties:
-        id:
-          type: string
-          format: uuid
-          title: Id
-        created_at:
-          type: string
-          format: date-time
-          title: Created At
-        finished_at:
-          anyOf:
-          - type: string
-            format: date-time
-          - type: 'null'
-          title: Finished At
-        config_id:
-          type: string
-          format: uuid
-          title: Config Id
-        status:
-          $ref: '#/components/schemas/SyncJobStatus'
-        options:
-          $ref: '#/components/schemas/SyncJobOptionsOutput'
-          default:
-            full_sync: false
-      type: object
-      required:
-      - id
-      - created_at
-      - finished_at
-      - config_id
-      - status
-      title: SyncJobOutput
-    SyncJobStatus:
-      type: string
-      enum:
-      - pending
-      - in_progress
-      - completed
-      - failed
-      title: SyncJobStatus
-    TriggerSyncInput:
-      properties:
-        full_sync:
-          type: boolean
-          title: Full Sync
-          description: 'If True, ignore incremental sync state and perform a full
-            sync. Note: S3 and ShareFile providers always perform full syncs as they
-            don''t support delta tracking.'
-          default: false
-      type: object
-      title: TriggerSyncInput
-      description: Input for triggering a sync job.
     ActivityLogsAskQuery:
       properties:
         pagination:
@@ -4242,13 +4242,13 @@ components:
             const: all
           title: Show
           default:
-          - resources_count
-          - id
-          - rephrased_question
           - answer
+          - rephrased_question
           - question
           - rag_strategies_names
           - date
+          - id
+          - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
       additionalProperties: false
@@ -4308,12 +4308,12 @@ components:
             const: all
           title: Show
           default:
-          - question
-          - rag_strategies_names
-          - id
           - date
-          - rephrased_question
           - answer
+          - rephrased_question
+          - question
+          - id
+          - rag_strategies_names
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
       additionalProperties: false
@@ -4403,8 +4403,8 @@ components:
           title: Show
           default:
           - date
-          - id
           - question
+          - id
           - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'
@@ -4645,13 +4645,13 @@ components:
             const: all
           title: Show
           default:
-          - resources_count
-          - id
-          - rephrased_question
           - answer
+          - rephrased_question
           - question
           - rag_strategies_names
           - date
+          - id
+          - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
         email_address:
@@ -4717,12 +4717,12 @@ components:
             const: all
           title: Show
           default:
-          - question
-          - rag_strategies_names
-          - id
           - date
-          - rephrased_question
           - answer
+          - rephrased_question
+          - question
+          - id
+          - rag_strategies_names
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
         email_address:
@@ -4824,8 +4824,8 @@ components:
           title: Show
           default:
           - date
-          - id
           - question
+          - id
           - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'

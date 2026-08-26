@@ -26,7 +26,7 @@ libs/core/src/lib/
 │   └── features.service.ts         # Permission/tier-aware feature flags (high-level)
 ├── api/
 │   ├── sdk.service.ts              # ★ SDKService — central SDK wrapper & reactive state hub
-│   ├── billing.service.ts          # Stripe/AWS/Manual billing API client
+│   ├── billing.service.ts          # Stripe/AWS/Manual/Cloud Zero billing API client — incl. `getTrialTokenUsage()`
 │   ├── bedrock.service.ts          # AWS Bedrock assume-role auth flow (start/finish/delete)
 │   ├── sso.service.ts              # SSO login URL builder + code exchange (Google/GitHub/Microsoft)
 │   ├── user.service.ts             # Current user info

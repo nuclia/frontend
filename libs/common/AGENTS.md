@@ -32,6 +32,9 @@ onboarding/        ← Post-signup onboarding flow: account/KB creation steps, e
 profile/           ← User profile page (ProfileComponent) — name/language/password preferences
 rag-lab/           ← RAG Lab: generative queries across model configs for comparison
 resources/         ← Resource CRUD, editor, list with pending/processed/error tabs
+  memory/          ← `MemoryComponent` (route `resource/:id/memory`) — reads the synthetic 'memory' field
+                      (FIELD_TYPE) to show conversation sessions/facts/entries; `MemoryService` is
+                      component-provided (not root) and batches session loads (`MEMORY_LOAD_CONCURRENCY = 6`)
 retrieval-agent/   ← ARAG: visual workflow canvas, workflows list, drivers, sessions, activity log
 search-widget/     ← Search widget builder & deployment config
 services/          ← AppService (locale), StandaloneService (NucliaDB standalone mode)

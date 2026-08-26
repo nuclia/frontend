@@ -217,7 +217,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-07-29T21:50:23.441756'
+          default: '2026-08-17T10:17:00.122208'
           title: To
       responses:
         '200':
@@ -830,52 +830,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
 x-metadata:
-  zone_hub:
-    commit: 831c28f2018d7fe821afcd0545017976058ad086
-    last_updated: '2026-07-13T09:19:14.356586'
   accounting:
-    commit: e6801bf177da46421e987f1734f7cfcae6b65b93
-    last_updated: '2026-07-29T21:50:23.861152'
+    commit: c1766f329d3db0a87c06afa575f0dfcd66dfb12c
+    last_updated: '2026-08-17T10:17:00.492561'
+  zone_hub:
+    commit: 5a623c5b5bb469d32cf54ffd360ba31bc36c3331
+    last_updated: '2026-08-17T10:02:26.108993'
   idp:
-    commit: 12ae558311422f12bf032b4f966a953761a156bc
-    last_updated: '2026-07-24T07:58:29.925079'
+    commit: 697dcadfa9996deb445959af8c4e54cd3683b467
+    last_updated: '2026-08-21T12:52:06.825675'
 components:
   schemas:
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
     AWSMarketplaceCustomerData:
       properties:
         first_name:
@@ -1706,6 +1671,10 @@ components:
         nuclia_tokens_price:
           type: number
           title: Nuclia Tokens Price
+        subscription_status:
+          anyOf:
+          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+          - type: 'null'
         action_on_budget_exhausted:
           anyOf:
           - $ref: '#/components/schemas/ActionOnBudgetExhausted'
@@ -2203,6 +2172,15 @@ components:
       - service
       - version
       title: FlatIdentifier
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     IntervalType:
       type: string
       enum:
@@ -2560,6 +2538,10 @@ components:
         nuclia_tokens_price:
           type: number
           title: Nuclia Tokens Price
+        subscription_status:
+          anyOf:
+          - $ref: '#/components/schemas/NucliaCustomerTableSubscriptionStatus'
+          - type: 'null'
         action_on_budget_exhausted:
           anyOf:
           - $ref: '#/components/schemas/ActionOnBudgetExhausted'
@@ -2584,6 +2566,8 @@ components:
       type: string
       enum:
       - active
+      - pending
+      - canceled
       title: NucliaCustomerTableSubscriptionStatus
     NucliaTokenDetails:
       properties:
@@ -3273,6 +3257,32 @@ components:
       required:
       - account_type
       title: UpgradeStripeSubscription
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     nuclia_accounting__api__models__InvoiceItem:
       properties:
         id:

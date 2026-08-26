@@ -140,3 +140,4 @@ nx lint sync
 9. **Standalone components only** — no NgModules in this library.
 10. **Translation key namespace** — all i18n keys prefixed `sync.` (e.g., `sync.add-page.title`).
 11. **Sync ID generation** — `{kbId}-{slugified-title}-{random5chars}`, finalised only when `addSync`/`addCloudSync` is called.
+12. **"Connect" tab gated by `agenticSearch`** — `HomePageComponent`'s `synchronize`/`connect` tab switcher only renders when `features.unstable.agenticSearch` is enabled (labeled "BETA"); when disabled, no tabs render at all (only the router-outlet content for whatever route is active).

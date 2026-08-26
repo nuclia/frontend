@@ -139,6 +139,10 @@ kb.createResource(data, true).subscribe(() => console.log('fully created'));
 
 `kb.upload(file, TUS?)` is opt-in: pass `TUS: true` to use the resumable [TUS](https://tus.io/) protocol, otherwise a plain PUT is used. `kb.batchUpload(files)` always uses TUS internally (no flag to disable it) and runs up to 6 uploads concurrently. TUS chunk size is 5 MB (S3's minimum multipart chunk size), unrelated to file size thresholds.
 
+### Zone resolution: global vs account-scoped
+
+`Rest.getZones()` fetches **all** zones platform-wide (`GET /zones`, cached in-instance). `Rest.getAccountZones(accountId)` fetches only the zones **that account uses** (`GET /account/:id/zones`, cached per-account-id in a `Map`, `shareReplay(1)`d so concurrent callers share one request). `Db` methods that list an account's KBs/agents/NUA clients (`getKnowledgeBoxIndex`, `_getKnowledgeBoxesForZone`, `getNUAClients`) use `getAccountZones()`, not `getZones()`, so private zones with a custom origin resolve correctly. Both populate the same `zoneOrigins` cache (via `Rest.toZoneMap()`) as a side effect.
+
 ### Custom headers
 
 ```ts
