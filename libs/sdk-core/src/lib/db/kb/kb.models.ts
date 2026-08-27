@@ -133,7 +133,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse>;
 
-  asViaWS(
+  askViaWS(
     agenticConfigId: string,
     question: string,
     keepOpen?: boolean,
