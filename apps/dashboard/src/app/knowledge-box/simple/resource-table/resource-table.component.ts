@@ -12,6 +12,7 @@ import { SimpleKBService } from '../simple-kb/simple-kb.service';
 
 interface TableRow {
   id?: string;
+  syncId?: string;
   title?: string;
   extension?: string;
   icon?: string;
@@ -19,6 +20,7 @@ interface TableRow {
   status?: RESOURCE_STATUS | 'uploading';
   rank?: number;
   errorMessage?: string;
+  sourceConnector?: 'sharefile';
 }
 
 @Component({
@@ -48,8 +50,20 @@ export class ResourceTableComponent {
   rows: Observable<TableRow[]> = combineLatest([
     this.simpleKBService.resources,
     this.simpleKBService.visibleUploads,
+    this.simpleKBService.connectedSource,
   ]).pipe(
-    map(([resources, uploads]) => [
+    map(([resources, uploads, connectedSource]) => [
+      ...(connectedSource
+        ? [
+            {
+              syncId: connectedSource.id,
+              title: connectedSource.title || 'ShareFile',
+              created: connectedSource.lastSyncGMT || new Date().toISOString(),
+              status: RESOURCE_STATUS.PROCESSED,
+              sourceConnector: 'sharefile' as const,
+            },
+          ]
+        : []),
       ...resources.map((resource) => ({
         id: resource.id,
         title: this.splitTitle(resource.title || '').name,
@@ -62,6 +76,9 @@ export class ResourceTableComponent {
           resource.metadata?.status === RESOURCE_STATUS.ERROR
             ? getResourceErrors(new Resource(this.sdk.nuclia, resource.id, resource))
             : '',
+        sourceConnector: (connectedSource && resource.origin?.source_id === connectedSource.id
+          ? 'sharefile'
+          : undefined) as TableRow['sourceConnector'],
       })),
       ...uploads.map((upload) => ({
         title: this.splitTitle(upload.file.name || '').name,
@@ -89,6 +106,28 @@ export class ResourceTableComponent {
         filter((result) => result),
         switchMap(() => this.sdk.currentKb.pipe(take(1))),
         switchMap((kb) => new Resource(this.sdk.nuclia, kb.id, { id }).delete()),
+      )
+      .subscribe(() => {
+        this.simpleKBService.forceRefresh();
+      });
+  }
+
+  /**
+   * Disconnecting the ShareFile source reuses the same "Delete" button/column as any other
+   * resource row — the only difference is this modal's copy, which makes clear that nothing
+   * is deleted, only the connection is removed (per explicit product direction).
+   */
+  disconnectShareFile(syncId: string) {
+    this.modalService
+      .openConfirm({
+        title: 'simple.sharefile.disconnect-confirm-title',
+        description: 'simple.sharefile.disconnect-confirm-description',
+        confirmLabel: 'simple.sharefile.disconnect-confirm-label',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((result) => result),
+        switchMap(() => this.simpleKBService.disconnectShareFile(syncId)),
       )
       .subscribe(() => {
         this.simpleKBService.forceRefresh();

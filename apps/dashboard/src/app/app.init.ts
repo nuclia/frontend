@@ -11,9 +11,15 @@ export function checkExternalConnection(): Promise<void> {
     return Promise.resolve();
   }
   try {
-    const redirect = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}')['redirect'];
+    const pending = JSON.parse(localStorage.getItem(PENDING_NEW_CONNECTOR_KEY) || '{}');
+    const redirect = pending['redirect'];
     if (typeof redirect === 'string') {
-      location.href = `${redirect}/${externalConnectionId}`;
+      // Context Box's ShareFile entry point resumes into its own route (`/simple`) with the
+      // connection id as a query param, instead of the Sync feature's `/add/:connector/:syncId`
+      // path-segment convention — see SimpleKBService.connectShareFile().
+      location.href = pending['contextBox']
+        ? `${redirect}${redirect.includes('?') ? '&' : '?'}external_connection_id=${externalConnectionId}`
+        : `${redirect}/${externalConnectionId}`;
       return new Promise<void>(() => undefined); // Stop AppComponent initialization
     } else {
       // DEV PURPOSE

@@ -96,7 +96,8 @@
           kind="primary"
           icon="upload"
           iconAndText
-          (click)="fileInput.click()">
+          [paPopup]="uploadMenu"
+          [disabled]="isShareFileConnected()">
           {{ 'upload.files' | translate }}
         </pa-button>
         <div class="body-m">{{ 'simple.max-files' | translate: { num: maxFiles } }}</div>
@@ -126,7 +127,8 @@
         kind="primary"
         icon="upload"
         iconAndText
-        (click)="fileInput.click()">
+        [paPopup]="uploadMenu"
+        [disabled]="isShareFileConnected()">
         {{ 'upload.files' | translate }}
       </pa-button>
       <pa-button
@@ -139,6 +141,14 @@
     }
   </div>
 }
+<pa-dropdown #uploadMenu>
+  <pa-option (selectOption)="fileInput.click()">
+    {{ 'simple.upload-from-computer' | translate }}
+  </pa-option>
+  <pa-option (selectOption)="connectShareFile()">
+    {{ 'simple.upload-from-sharefile' | translate }}
+  </pa-option>
+</pa-dropdown>
 <input
   #fileInput
   type="file"

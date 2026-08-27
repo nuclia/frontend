@@ -7,6 +7,7 @@ import {
   CatalogOptions,
   Classification,
   ConversationField,
+  ExternalConnection,
   FIELD_TYPE,
   FileUploadStatus,
   IErrorResponse,
@@ -17,11 +18,15 @@ import {
   ResourceProperties,
   Search,
   SortField,
+  SyncConfiguration,
   UploadStatus,
 } from '@nuclia/core';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ISyncEntity, SyncService } from '@nuclia/sync';
 import { SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
+  catchError,
   forkJoin,
   map,
   merge,
@@ -31,6 +36,7 @@ import {
   Subject,
   switchMap,
   take,
+  tap,
   throttleTime,
 } from 'rxjs';
 
@@ -39,6 +45,10 @@ const HISTORY_LABEL: Classification = {
   label: 'history',
 };
 const HISTORY_FIELD = 'history';
+const SHAREFILE_CONNECTOR_ID = 'sharefile';
+// Warning: this key name is also declared in apps/dashboard app.component and in @nuclia/sync
+// to avoid making a dependency
+const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
 
 export interface ConversationsPage {
   items: { messages: Message[]; resource: IResource }[];
@@ -56,6 +66,7 @@ export class SimpleKBService {
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
   private notificationService = inject(NotificationService);
+  private syncService = inject(SyncService);
 
   maxFiles = 250;
 
@@ -100,6 +111,29 @@ export class SimpleKBService {
     })),
   );
 
+  private _connectedSource = new BehaviorSubject<ISyncEntity | null | undefined>(undefined);
+  /**
+   * Currently connected external source (ShareFile) for this Content Box, if any.
+   * `undefined` while loading, `null` when there is none.
+   */
+  connectedSource = this._connectedSource.asObservable();
+
+  constructor() {
+    this.loadConnectedSource();
+  }
+
+  private loadConnectedSource() {
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) => this.syncService.getSyncsForKB(kb.id, true)),
+        map((syncs) => syncs.find((sync) => sync.connectorId === SHAREFILE_CONNECTOR_ID)),
+        switchMap((sync) => (sync ? this.syncService.getSync(sync.id) : of(undefined))),
+        catchError(() => of(undefined)),
+      )
+      .subscribe((sync) => this._connectedSource.next(sync || null));
+  }
+
   forceRefresh() {
     this._forceRefresh.next();
   }
@@ -134,6 +168,59 @@ export class SimpleKBService {
 
   isUploadFailed(upload: FileUploadStatus): boolean {
     return upload.failed || !!upload.blocked || !!upload.conflicts || !!upload.limitExceeded;
+  }
+
+  /**
+   * Kicks off the ShareFile OAuth flow, storing enough context in localStorage so
+   * `app.component.ts` can redirect back into this Content Box once the OAuth
+   * provider redirects back with an `external_connection_id`.
+   */
+  connectShareFile(): Observable<string> {
+    localStorage.setItem(
+      PENDING_NEW_CONNECTOR_KEY,
+      JSON.stringify({
+        redirect: location.href,
+        contextBox: true,
+      }),
+    );
+    return this.syncService.getOAuthUrl('sharefile_oauth');
+  }
+
+  getExternalConnection(externalConnectionId: string): Observable<ExternalConnection> {
+    return this.syncService.getExternalConnection(externalConnectionId);
+  }
+
+  /**
+   * Creates the ShareFile sync config for the selected folder and immediately triggers
+   * ingestion, using fixed sensible defaults (no filters/labels/schedule UI, unlike the
+   * full Sync feature).
+   */
+  createShareFileSync(
+    externalConnectionId: string,
+    folder: { folder_id?: string; sync_root_path?: string; drive_id: string },
+  ): Observable<SyncConfiguration> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        this.syncService.addCloudSync({
+          name: `ShareFile - ${kb.title || kb.id}`,
+          external_connection_id: externalConnectionId,
+          folder_id: folder.folder_id,
+          sync_root_path: folder.sync_root_path,
+          drive_id: folder.drive_id,
+        }),
+      ),
+      switchMap((sync) => this.syncService.triggerSync(sync.id).pipe(map(() => sync))),
+      tap(() => this.loadConnectedSource()),
+    );
+  }
+
+  /**
+   * Removes the ShareFile connection. Per product decision, this only removes the sync
+   * config — previously-ingested resources are left untouched in the Content Box.
+   */
+  disconnectShareFile(syncId: string): Observable<void> {
+    return this.syncService.deleteSync(syncId).pipe(tap(() => this._connectedSource.next(null)));
   }
 
   getResourcesWithRank(resources: IResource[]): Observable<rankedResource[]> {

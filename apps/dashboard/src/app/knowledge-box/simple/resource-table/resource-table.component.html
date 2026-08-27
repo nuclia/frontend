@@ -19,6 +19,12 @@
       </pa-table-cell>
       <pa-table-cell>
         <span class="body-s">
+          @if (row.sourceConnector === 'sharefile') {
+            <pa-icon
+              name="upload-cloud"
+              [attr.aria-label]="'simple.column.type.sharefile-badge-tooltip' | translate"
+              [paTooltip]="'simple.column.type.sharefile-badge-tooltip' | translate"></pa-icon>
+          }
           @if (row.icon | mimeIcon; as icon) {
             <pa-icon
               [name]="icon"
@@ -74,6 +80,14 @@
             aspect="basic"
             icon="trash"
             (click)="deleteResource(row.id)"
+            size="small">
+            {{ 'simple.delete' | translate }}
+          </pa-button>
+        } @else if (row.syncId) {
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            (click)="disconnectShareFile(row.syncId)"
             size="small">
             {{ 'simple.delete' | translate }}
           </pa-button>

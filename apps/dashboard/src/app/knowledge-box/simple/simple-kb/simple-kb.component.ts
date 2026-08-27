@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DEFAULT_WIDGET_CONFIG, getFilesGroupedByType, SearchWidgetService } from '@flaps/common';
 import {
@@ -10,14 +10,35 @@ import {
   SDKService,
   SizePipe,
 } from '@flaps/core';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
+import { ExternalConnection, NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { SisModalService, SisToastService, SpinnerComponent } from '@nuclia/sistema';
-import { combineLatest, delay, distinctUntilChanged, filter, of, Subject, switchMap, take, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  delay,
+  distinctUntilChanged,
+  filter,
+  of,
+  Subject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { HistoryTableComponent } from '../history-table/history-table.component';
 import { McpEndpointModalComponent } from '../mcp-endpoint/mcp-endpoint-modal.component';
 import { ResourceTableComponent } from '../resource-table/resource-table.component';
+import {
+  ShareFileFolderModalComponent,
+  ShareFileFolderSelection,
+} from './sharefile-folder-modal/sharefile-folder-modal.component';
 import { SimpleKBService } from './simple-kb.service';
 
 @Component({
@@ -30,6 +51,8 @@ import { SimpleKBService } from './simple-kb.service';
     SpinnerComponent,
     PaIconModule,
     PaButtonModule,
+    PaDropdownModule,
+    PaPopupModule,
     FileDropDirective,
     FileSelectDirective,
     ResourceTableComponent,
@@ -61,6 +84,9 @@ export class SimpleKBComponent implements OnDestroy {
   view = signal<'resources' | 'history' | 'search'>('resources');
   currentConversation?: string;
 
+  connectedSource = toSignal(this.simpleKBService.connectedSource);
+  isShareFileConnected = computed(() => !!this.connectedSource());
+
   constructor() {
     this.simpleKBService.resources.pipe(take(1)).subscribe((resources) => {
       if (resources.length === 0) {
@@ -69,6 +95,8 @@ export class SimpleKBComponent implements OnDestroy {
         this.goToStep3();
       }
     });
+
+    this.resumeShareFileOAuthIfNeeded();
 
     // Auto-advance from step 2 to step 3 once resources are confirmed processed.
     this.simpleKBService.resourceCounter
@@ -220,5 +248,60 @@ export class SimpleKBComponent implements OnDestroy {
       this.currentConversation = resourceId;
       this.view.set('search');
     });
+  }
+
+  /**
+   * Resumes the "From ShareFile" flow after the OAuth provider redirects back here with
+   * `?external_connection_id=...` (see app.component.ts `redirectToSyncCreation()` and
+   * `SimpleKBService.connectShareFile()`).
+   */
+  private resumeShareFileOAuthIfNeeded() {
+    const params = new URLSearchParams(location.search);
+    const externalConnectionId = params.get('external_connection_id');
+    if (!externalConnectionId) {
+      return;
+    }
+    // Clean the query param from the URL so a page refresh doesn't try to resume again.
+    history.replaceState(null, '', location.pathname);
+    this.simpleKBService
+      .getExternalConnection(externalConnectionId)
+      .pipe(
+        catchError(() => {
+          this.toaster.error(this.translate.instant('simple.sharefile.connect-error'));
+          return of(undefined);
+        }),
+      )
+      .subscribe((externalConnection) => {
+        if (externalConnection) {
+          this.openShareFileFolderPicker(externalConnection);
+        }
+      });
+  }
+
+  connectShareFile() {
+    this.simpleKBService.connectShareFile().subscribe((authorizeUrl) => {
+      window.location.href = authorizeUrl;
+    });
+  }
+
+  private openShareFileFolderPicker(externalConnection: ExternalConnection) {
+    this.modalService
+      .openModal(ShareFileFolderModalComponent, new ModalConfig({ data: { externalConnection } }))
+      .onClose.pipe(
+        filter((selection): selection is ShareFileFolderSelection => !!selection),
+        switchMap((selection) => this.simpleKBService.createShareFileSync(externalConnection.id, selection)),
+        catchError(() => {
+          this.toaster.error(this.translate.instant('simple.sharefile.connect-error'));
+          return of(undefined);
+        }),
+      )
+      .subscribe((sync) => {
+        if (sync) {
+          this.simpleKBService.forceRefresh();
+          if (this.step() === 1) {
+            this.step.set(2);
+          }
+        }
+      });
   }
 }
