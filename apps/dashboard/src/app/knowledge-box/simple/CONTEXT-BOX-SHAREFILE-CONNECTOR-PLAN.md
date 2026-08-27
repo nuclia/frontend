@@ -17,10 +17,15 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
     `allowToSelectFolders = true`, `canSyncLastChanges = false` (confirmed with product: this
     does **not** block re-syncing — ShareFile syncs do pick up folder changes, just always as a
     full re-scan rather than an incremental delta; see "Open questions" below for the cost angle).
-  - `CloudFolderComponent` (`libs/sync/src/lib/cloud-folder/`) — the folder browser modal/panel
-    used by every cloud connector (Drive, OneDrive, SharePoint, ShareFile) to pick a single
-    folder (`allowToSelectFolders` connectors only; no "sync whole account" mode exists anywhere
-    in the codebase today).
+  - `CloudFolderComponent` (`libs/sync/src/lib/cloud-folder/`) — the breadcrumb-style folder
+    browser panel used by every cloud connector (Drive, OneDrive, SharePoint, ShareFile) to pick
+    a single folder (`allowToSelectFolders` connectors only; no "sync whole account" mode exists
+    anywhere in the codebase today). This is the **tested, proven pattern Context Box will reuse
+    for v1** — see "Folder picker" below.
+  - `nsi-folder-tree` (`libs/sistema/src/lib/folder-tree/`) — design-system recursive,
+    checkbox-driven folder tree (expand/collapse nested folders in place, indeterminate parent
+    states). Considered as a richer alternative but **deferred past v1** — see "Future
+    enhancement" note under "Folder picker" below.
   - `SyncService.getOAuthUrl()`, `addExternalConnection()`, `getExternalConnection()`,
     `getCloudFolders()`, `addCloudSync()`, `triggerSync()` — all the service methods needed to
     drive auth + folder browse + sync creation.
@@ -63,11 +68,21 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
 
 3. **Folder picker (modal, not a full wizard page)**
    - On OAuth return, open a `SisModalService` modal wrapping `CloudFolderComponent` bound to the
-     new `ExternalConnection`.
+     new `ExternalConnection` — the same proven, lazy-loading, breadcrumb-navigation folder
+     browser every other cloud connector already uses. No new component logic required beyond a
+     thin modal wrapper (`ExternalConnection` in, selected folder out).
    - Single folder selection only (matches `allowToSelectFolders` behavior everywhere else in
      the app) — breadcrumb navigation, "Select this folder" confirm button.
    - Keep this a modal instead of the full multi-step `/sync/add` wizard — Context Box explicitly
      avoids exposing the general Sync feature's complexity (labels, filters, schedule, etc.).
+   - **Future enhancement (not v1):** swap in `nsi-folder-tree`
+     (`libs/sistema/src/lib/folder-tree/`) for a nicer in-place expand/collapse nested view once
+     there's a real need for it. That component doesn't support lazy per-level loading today
+     (needs the whole tree in memory) and is natively multi-select, so it would need (a) a
+     lazy-loading enhancement (`expandRequest` output + per-node loading state, reusing the
+     existing `getCloudFolders()` API) and (b) a single-select override in the host. Revisit if
+     ShareFile trees prove awkward to browse breadcrumb-style, or if multi-folder selection
+     becomes a real requirement.
 
 4. **Confirm / create sync**
    - On folder confirm, call `SyncService.addCloudSync(...)` with sensible fixed defaults
@@ -156,9 +171,9 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
     wrapping the relevant `SyncService` calls; expose the connected sync's id (needed by the
     resource-table badge lookup below) and whether a source is currently connected (to
     enable/disable "From ShareFile" in the dropdown).
-- New small component: `simple-kb/sharefile-folder-modal/` (or reuse `CloudFolderComponent`
-  directly inside a `SisModalService.openModal()` call) — thin wrapper providing the
-  `ExternalConnection` input and emitting the selected folder.
+- New small component: `simple-kb/sharefile-folder-modal/` wrapping `CloudFolderComponent`
+  inside a `SisModalService.openModal()` call — thin wrapper providing the `ExternalConnection`
+  input and emitting the selected folder. No changes needed to `CloudFolderComponent` itself.
 - `apps/dashboard/src/app/knowledge-box/simple/resource-table/resource-table.component.ts/.html`
   - Extend `TableRow` with a `sourceConnector?: 'sharefile'` field, computed by comparing each
     resource's `origin?.source_id` against the KB's connected ShareFile sync id
@@ -175,6 +190,10 @@ reusing the ShareFile connector and folder-browsing UI that already exist in `li
 - `apps/dashboard/src/app/app.component.ts`
   - Extend `redirectToSyncCreation()` (or add a parallel handler) to resume into `/simple`
     when the pending connector context indicates a Context Box origin, not a Sync-page origin.
+- `libs/sistema/src/lib/folder-tree/` — **no changes for v1.** `nsi-folder-tree` is not used in
+  v1 (see "Future enhancement" note under "Folder picker" above). If revisited later, it would
+  need a lazy-loading enhancement (expand-request event + per-node loading state) and a
+  single-select override, scoped as its own follow-up piece of work.
 - `libs/sync` — likely **no changes needed**; only consumed via its existing public API
   (`SyncService`, `CloudFolderComponent`, connector definitions). If a Context-Box-specific
   entry point needs a narrower/simplified variant of `addCloudSync` defaults, prefer adding an
