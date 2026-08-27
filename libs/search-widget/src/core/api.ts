@@ -362,7 +362,7 @@ export const getAgenticAnswer = (
       let accumulatedText = '';
 
       return nucliaApi!.knowledgeBox
-        .asViaWS(configId, question, keepOpen, searchConfig || undefined, SECURITY_GROUPS, chatHistory)
+        .askViaWS(configId, question, keepOpen, searchConfig || undefined, SECURITY_GROUPS, chatHistory)
         .pipe(
           map((response): Ask.Answer | IErrorResponse => {
             if (response.type === 'error') {

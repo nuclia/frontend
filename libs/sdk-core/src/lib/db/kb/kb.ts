@@ -958,7 +958,7 @@ export class KnowledgeBox implements IKnowledgeBox {
    * Requires an `agentic_config_id` that has been created via `createAgenticConfig()`.
    * Set `keepOpen: true` to keep the connection open for follow-up questions.
    */
-  asViaWS(
+  askViaWS(
     agenticConfigId: string,
     question: string,
     keepOpen = false,
@@ -968,7 +968,11 @@ export class KnowledgeBox implements IKnowledgeBox {
   ): Observable<AragResponse | IErrorResponse> {
     const subject = new Subject<AragResponse | IErrorResponse>();
 
-    this.getTempToken(undefined, true).subscribe({
+    // Public KBs have no accountId, so there's no way to get a temp token; the WS auth then relies on anonymous read access (same as HTTP calls).
+    const tempToken$ =
+      this.nuclia.options.standalone || this.nuclia.options.accountId ? this.getTempToken(undefined, true) : of('');
+
+    tempToken$.subscribe({
       next: (token) => {
         const basePath = `${this.path}/ask`;
         const baseWsUrl = this.nuclia.rest.getWsUrl(basePath, token);
@@ -980,7 +984,7 @@ export class KnowledgeBox implements IKnowledgeBox {
           queryParams.set('search_configuration', searchConfiguration);
         }
         (groups || []).forEach((g) => queryParams.append('groups', g));
-        const wsUrl = `${baseWsUrl}&${queryParams.toString()}`;
+        const wsUrl = `${baseWsUrl}${baseWsUrl.includes('?') ? '&' : '?'}${queryParams.toString()}`;
 
         const ws = new WebSocket(wsUrl);
         setupAgenticWSHandlers(

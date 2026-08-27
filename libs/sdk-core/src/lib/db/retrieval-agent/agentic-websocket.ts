@@ -11,7 +11,7 @@ import {
 /**
  * Sets up the onopen / onmessage / onerror / onclose handlers on an already-created WebSocket.
  *
- * Shared by `RetrievalAgent._interactThroughWs()` and `KnowledgeBox.asViaWS()`.
+ * Shared by `RetrievalAgent._interactThroughWs()` and `KnowledgeBox.askViaWS()`.
  * Both callers own the Subject and the WebSocket; this function only wires the handlers.
  *
  * @param ws         The WebSocket instance to attach handlers to.

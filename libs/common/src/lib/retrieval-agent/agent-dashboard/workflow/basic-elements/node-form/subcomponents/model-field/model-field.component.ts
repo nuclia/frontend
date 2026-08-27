@@ -17,9 +17,9 @@ let nextId = 0;
   imports: [CommonModule, ModelSelectorComponent, PaTogglesModule, ReactiveFormsModule, TranslateModule],
 })
 export class ModelFieldComponent {
-  @Input() label: string = '';
+  @Input() label = '';
   @Input() form!: FormGroup;
-  @Input() required: boolean = false;
+  @Input() required = false;
 
   private workflowService = inject(WorkflowService);
 

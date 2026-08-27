@@ -501,6 +501,7 @@ export class Rest implements IRest {
   }
 
   getWsUrl(path: string, ephemeralToken: string): string {
-    return `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
+    const base = this.getFullUrl(path).replace('https', 'wss');
+    return ephemeralToken ? `${base}?eph-token=${ephemeralToken}` : base;
   }
 }
