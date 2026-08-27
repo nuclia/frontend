@@ -60,23 +60,26 @@ export class CallbackComponent implements OnInit {
     ) {
       this.ssoLogin();
     } else if (queryParams['code'] && queryParams['state']) {
+      // The raw returned state is still decodable even when it fails the localStorage
+      // oauth_state check below (the mismatch is against what we expected, not the payload itself).
+      const came_from = this.decodeCameFrom(queryParams['state']);
       this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe({
         next: (res) => {
           if (res.success) {
-            const came_from = res.state.came_from;
-            if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
-              window.location.href = came_from;
+            const successCameFrom = res.state.came_from;
+            if (successCameFrom && successCameFrom !== window.location.origin && this.isCameFromLegit(successCameFrom)) {
+              window.location.href = successCameFrom;
             } else {
               this.router.navigate(['/']);
             }
           } else {
             this.toaster.error('login.error.device_mismatch');
-            this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
+            this.restartOAuthFromOriginatingApp('login.error.device_mismatch', came_from);
           }
         },
         error: () => {
           this.toaster.error('login.error.device_mismatch');
-          this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
+          this.restartOAuthFromOriginatingApp('login.error.device_mismatch', came_from);
         },
       });
     } else {
@@ -150,6 +153,11 @@ export class CallbackComponent implements OnInit {
         error: (error) => {
           if (error.status === 403 && error.body?.detail === 'user_not_registered') {
             this.message = this.translate.instant('login.error.user_not_registered', { provider: this.getProvider() });
+          } else if (error.body?.detail === 'login_challenge_expired_or_invalid') {
+            // The login_challenge outlived by the time spent on the provider's own login/MFA
+            // screens. Restart the OAuth flow with fresh state instead of dead-ending on signup.
+            this.toaster.error('login.error.session_expired');
+            this.restartOAuthFromOriginatingApp('login.error.session_expired', this.decodeCameFrom(state));
           } else {
             let errorCode = 'oops';
             if (error.status === 412) {
@@ -195,5 +203,26 @@ export class CallbackComponent implements OnInit {
     const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
     const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
     return urlMainDomain === backendMainDomain;
+  }
+
+  private decodeCameFrom(state: string): string | undefined {
+    try {
+      return this.ssoService.decodeState(state)['came_from'];
+    } catch {
+      return undefined;
+    }
+  }
+
+  // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
+  // the originating app (came_from), whose /user/login-redirect route holds the real client_id.
+  private restartOAuthFromOriginatingApp(message: string, came_from?: string): void {
+    if (came_from && this.isCameFromLegit(came_from)) {
+      const url = new URL(`${came_from}/user/login-redirect`);
+      url.searchParams.set('message', message);
+      url.searchParams.set('came_from', came_from);
+      this.document.location.href = url.toString();
+    } else {
+      this.sdk.nuclia.auth.redirectToOAuth({ message });
+    }
   }
 }

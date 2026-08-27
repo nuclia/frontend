@@ -24,6 +24,7 @@
 	"login.error.aws.invalid_customer_token": "Invalid customer_token",
 	"login.error.aws.missing_customer_token": "Missing customer_token",
 	"login.error.device_mismatch": "We couldn't finish signing you in on this device or browser — continuing below.",
+	"login.error.session_expired": "Your sign-in session expired before we could finish. Please try again below.",
 	"login.error.get_consent_error": "An error occurred while retrieving consent information",
 	"login.error.invalid_user_or_credentials": "Invalid user or credentials",
 	"login.error.missing_came_from": "Sorry, we couldn't log you in. Please return to your original app to start the process again.",

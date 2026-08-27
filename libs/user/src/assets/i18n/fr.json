@@ -24,6 +24,7 @@
 	"login.error.aws.invalid_customer_token": "Customer_token invalide",
 	"login.error.aws.missing_customer_token": "Customer_token manquant",
 	"login.error.device_mismatch": "Nous n'avons pas pu terminer votre connexion sur cet appareil ou ce navigateur. Poursuite ci-dessous.",
+	"login.error.session_expired": "Votre session de connexion a expiré avant de pouvoir se terminer. Veuillez réessayer ci-dessous.",
 	"login.error.get_consent_error": "Une erreur s'est produite lors de la récupération des informations relatives au consentement",
 	"login.error.invalid_user_or_credentials": "Identifiants ou nom d'utilisateur invalides",
 	"login.error.missing_came_from": "Désolé, nous n'avons pas pu vous connecter. Veuillez retourner dans votre application d'origine pour recommencer la procédure.",

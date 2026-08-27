@@ -24,6 +24,7 @@
 	"login.error.aws.invalid_customer_token": "Customer_token no vàlid",
 	"login.error.aws.missing_customer_token": "Falta customer_token",
 	"login.error.device_mismatch": "No hem pogut acabar d'iniciar la teva sessió en aquest dispositiu o navegador. Continuem a continuació.",
+	"login.error.session_expired": "La teva sessió d'inici de sessió ha caducat abans de poder completar-se. Torna-ho a provar a continuació.",
 	"login.error.get_consent_error": "S'ha produït un error a l'obtenir la informació de consentiment",
 	"login.error.invalid_user_or_credentials": "Usuari o credencials no vàlids",
 	"login.error.missing_came_from": "Ho sentim, no hem pogut iniciar la sessió. Torna a l'aplicació original per reiniciar el procés.",
