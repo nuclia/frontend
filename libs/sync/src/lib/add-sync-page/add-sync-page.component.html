@@ -29,6 +29,13 @@
       @if (loading) {
         <nsi-spinner></nsi-spinner>
       } @else {
+        @if (shareFileNotSupported | async) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'sync.add-page.sharefile-not-supported' | translate }}
+          </nsi-info-card>
+        }
         <nsy-configuration-form
           [useOAuth]="useOAuth"
           [enterCredentials]="!!(isCloud | async) && enterCredentials"
@@ -62,7 +69,7 @@
         @if (!!(isCloud | async) && enterCredentials) {
           <pa-button
             kind="primary"
-            [disabled]="!validForm || saving"
+            [disabled]="!validForm || saving || (shareFileNotSupported | async)"
             (click)="authenticate()">
             {{ 'sync.add-page.footer.auth-button' | translate }}
           </pa-button>
