@@ -56,7 +56,7 @@ import { Training } from '../training';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { ActivityMonitor } from './activity';
-import { AgenticConfig, AgenticConfigs, AgenticSource, AgenticSources } from './kb-agentic.models';
+import { AgenticConfig, AgenticConfigs, AgenticConfigSchema, AgenticSource, AgenticSources } from './kb-agentic.models';
 import {
   Counters,
   Entities,
@@ -938,6 +938,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   listAgenticConfigs(): Observable<AgenticConfigs> {
     return this.nuclia.rest.get<AgenticConfigs>(`${this.path}/agentic_configs`);
+  }
+
+  getAgenticConfigsSchema(): Observable<AgenticConfigSchema> {
+    return this.nuclia.rest.get<AgenticConfigSchema>(`${this.path}/agentic_configs/schema`);
   }
 
   getAgenticSource(id: string): Observable<AgenticSource> {

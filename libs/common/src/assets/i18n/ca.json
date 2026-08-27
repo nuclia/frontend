@@ -2068,7 +2068,7 @@
 	"search.configuration.agentic.models.planner-label": "Model de planificador",
 	"search.configuration.agentic.models.rephrase-label": "Reformular el model",
 	"search.configuration.agentic.models.summarize-label": "Resumeix el model",
-	"search.configuration.agentic.models.toggle-description": "Per defecte, el model generatiu del quadre de coneixement s'utilitza a cada pas. Activeu aquesta opció per triar un model diferent per pas.",
+	"search.configuration.agentic.models.toggle-description": "Per defecte, cada pas utilitza el model recomanat per l'API. Activeu aquesta opció per triar un model diferent per pas.",
 	"search.configuration.agentic.models.toggle-label": "Utilitzeu models específics",
 	"search.configuration.agentic.new-source.description-help": "Descriviu aquesta font per ajudar l'agent a entendre quan l'ha d'utilitzar.",
 	"search.configuration.agentic.new-source.description-label": "Descripció",

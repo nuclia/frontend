@@ -1,5 +1,36 @@
 import type { FilterExpression } from '../search';
 import { ReasoningEffort } from './kb.models';
+import { LearningConfigurationSchema } from '../db.models';
+
+// Same $defs-based JSON Schemashape as LearningConfigurationSchema
+export type AgenticConfigSchema = LearningConfigurationSchema;
+
+export interface AgenticConfigDefaults {
+  rephraseModel?: string;
+  summarizeModel?: string;
+  smartAgentExecutorModel?: string;
+  smartAgentPlannerModel?: string;
+  smartAgentContextValidationModel?: string;
+}
+
+interface LLMConfigDefault {
+  model_id: string;
+}
+
+function getDefaultModelId(schema: AgenticConfigSchema, defName: string, property: string): string | undefined {
+  const value = schema.$defs?.[defName]?.properties?.[property]?.default as LLMConfigDefault | null | undefined;
+  return value?.model_id;
+}
+
+export function getAgenticConfigDefaults(schema: AgenticConfigSchema): AgenticConfigDefaults {
+  return {
+    rephraseModel: getDefaultModelId(schema, 'AgenticRephraseConfiguration', 'model'),
+    summarizeModel: getDefaultModelId(schema, 'AgenticSummarizeConfiguration', 'model'),
+    smartAgentExecutorModel: getDefaultModelId(schema, 'AgenticSmartAgentModels', 'executor'),
+    smartAgentPlannerModel: getDefaultModelId(schema, 'AgenticSmartAgentModels', 'planner'),
+    smartAgentContextValidationModel: getDefaultModelId(schema, 'AgenticSmartAgentModels', 'context_validation'),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Agentic config models
