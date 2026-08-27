@@ -6,6 +6,7 @@ import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pa
 import { TranslateModule } from '@ngx-translate/core';
 import {
   BackButtonComponent,
+  InfoCardComponent,
   SisModalService,
   SisProgressModule,
   SisToastService,
@@ -31,6 +32,7 @@ const PENDING_NEW_CONNECTOR_KEY = 'PENDING_NEW_CONNECTOR';
   imports: [
     CommonModule,
     BackButtonComponent,
+    InfoCardComponent,
     PaButtonModule,
     PaIconModule,
     StickyFooterComponent,
@@ -84,6 +86,15 @@ export class AddSyncPageComponent implements OnInit {
   loading = false;
   saving = false;
   useOAuth = false;
+
+  shareFileNotSupported = this.connectorId.pipe(
+    map((connectorId) => {
+      const ua = navigator.userAgent;
+      const isSafari =
+        /safari/i.test(ua) && !/(chrome|chromium|android|crios|fxios|edg|opr|opera|samsungbrowser)/i.test(ua);
+      return connectorId === 'sharefile' && isSafari;
+    }),
+  );
 
   get backPath() {
     return this.syncId ? '../../..' : '../..';
