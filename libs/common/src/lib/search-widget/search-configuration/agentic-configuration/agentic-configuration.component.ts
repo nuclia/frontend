@@ -16,9 +16,11 @@ import { NavigationService, SDKService } from '@flaps/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import {
   AgenticConfig,
+  AgenticConfigDefaults,
   AgenticSmartAgentMode,
   AgenticSources,
   GenerativeProviders,
+  getAgenticConfigDefaults,
   LearningConfigurations,
   SearchConfigs,
   Widget,
@@ -95,10 +97,25 @@ export class AgenticConfigurationComponent {
   useSpecificModels = signal<boolean>(false);
   executorModel = signal<string>('');
   plannerModel = signal<string>('');
+  agenticConfigDefaults = signal<AgenticConfigDefaults>({});
 
   // Draft for the KB source created on save when the KB has no agentic sources yet (see `hasAvailableSources`).
   newSourceTitle = signal<string>('');
   newSourceDescription = signal<string>('');
+
+  // Preselect dropdowns with the API's per-field default (falling back to the KB's generative model) until the user picks explicitly.
+  readonly displayedExecutorModel = computed(
+    () => this.executorModel() || this.agenticConfigDefaults().smartAgentExecutorModel || this.defaultGenerativeModel(),
+  );
+  readonly displayedPlannerModel = computed(
+    () => this.plannerModel() || this.agenticConfigDefaults().smartAgentPlannerModel || this.defaultGenerativeModel(),
+  );
+  readonly displayedRephraseModel = computed(
+    () => this.rephraseModel() || this.agenticConfigDefaults().rephraseModel || this.defaultGenerativeModel(),
+  );
+  readonly displayedSummarizeModel = computed(
+    () => this.summarizeModel() || this.agenticConfigDefaults().summarizeModel || this.defaultGenerativeModel(),
+  );
 
   readonly askSearchConfigOptions = computed(() => [
     new OptionModel({ id: '', value: '', label: '–' }),
@@ -189,11 +206,17 @@ export class AgenticConfigurationComponent {
           forkJoin([
             kb.getSearchConfigs().pipe(catchError(() => of({} as SearchConfigs))),
             kb.listAgenticSources().pipe(catchError(() => of({} as AgenticSources))),
-          ]).pipe(map(([configs, sources]) => ({ kb, configs, sources }))),
+            kb.getAgenticConfigsSchema().pipe(
+              map((schema) => getAgenticConfigDefaults(schema)),
+              catchError(() => of({} as AgenticConfigDefaults)),
+            ),
+          ]).pipe(
+            map(([configs, sources, agenticConfigDefaults]) => ({ kb, configs, sources, agenticConfigDefaults })),
+          ),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ kb, configs, sources }) => {
+      .subscribe(({ kb, configs, sources, agenticConfigDefaults }) => {
         this._allAskSearchConfigs.set(
           Object.entries(configs)
             .filter(([, cfg]) => cfg.kind === 'ask' && !cfg.config.agentic_config_id)
@@ -202,6 +225,7 @@ export class AgenticConfigurationComponent {
         this.availableSources.set(
           Object.entries(sources).map(([id, source]) => ({ id, type: source.type, description: source.description })),
         );
+        this.agenticConfigDefaults.set(agenticConfigDefaults);
         this.newSourceTitle.set(kb.title || '');
         this.newSourceDescription.set(kb.description || '');
         this.heightChanged.emit();
@@ -243,11 +267,8 @@ export class AgenticConfigurationComponent {
         ...(useModels
           ? {
               models: {
-                executor: { model_id: this.executorModel() || this.defaultGenerativeModel() },
-                planner:
-                  mode === 'plan_execute'
-                    ? { model_id: this.plannerModel() || this.defaultGenerativeModel() }
-                    : undefined,
+                executor: { model_id: this.displayedExecutorModel() },
+                planner: mode === 'plan_execute' ? { model_id: this.displayedPlannerModel() } : undefined,
               },
             }
           : {}),
@@ -255,13 +276,13 @@ export class AgenticConfigurationComponent {
       rephrase: {
         prompt: this.useRephrasePrompt() ? this.rephrasePrompt() || undefined : undefined,
         history: true,
-        ...(useModels ? { model: { model_id: this.rephraseModel() || this.defaultGenerativeModel() } } : {}),
+        ...(useModels ? { model: { model_id: this.displayedRephraseModel() } } : {}),
       },
       summarize: {
         system_prompt: this.useSummarizePrompt() ? this.summarizeSystemPrompt() || undefined : undefined,
         conversational: true,
         history: true,
-        ...(useModels ? { model: { model_id: this.summarizeModel() || this.defaultGenerativeModel() } } : {}),
+        ...(useModels ? { model: { model_id: this.displayedSummarizeModel() } } : {}),
       },
     };
     this.configChanged.emit({ agentic: { config: agenticConfig } });

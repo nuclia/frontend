@@ -2068,7 +2068,7 @@
 	"search.configuration.agentic.models.planner-label": "Modèle de planificateur",
 	"search.configuration.agentic.models.rephrase-label": "Reformuler le modèle",
 	"search.configuration.agentic.models.summarize-label": "Résumer le modèle",
-	"search.configuration.agentic.models.toggle-description": "Par défaut, le modèle génératif de la boîte à connaissances est utilisé à chaque étape. Activez cette option pour choisir un modèle différent à chaque étape.",
+	"search.configuration.agentic.models.toggle-description": "Par défaut, chaque étape utilise le modèle recommandé par l'API. Activez cette option pour choisir un modèle différent à chaque étape.",
 	"search.configuration.agentic.models.toggle-label": "Utilisez des modèles spécifiques",
 	"search.configuration.agentic.new-source.description-help": "Décrivez cette source pour aider l'agent à comprendre quand l'utiliser.",
 	"search.configuration.agentic.new-source.description-label": "Description",

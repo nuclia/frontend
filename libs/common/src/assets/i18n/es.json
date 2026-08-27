@@ -2068,7 +2068,7 @@
 	"search.configuration.agentic.models.planner-label": "Modelo de planificador",
 	"search.configuration.agentic.models.rephrase-label": "Modelo de reformulación",
 	"search.configuration.agentic.models.summarize-label": "Resumir el modelo",
-	"search.configuration.agentic.models.toggle-description": "Por defecto, el modelo generativo del cuadro de conocimiento se utiliza en cada paso. Habilite esta opción para seleccionar un modelo diferente en cada paso.",
+	"search.configuration.agentic.models.toggle-description": "Por defecto, cada paso utiliza el modelo recomendado por la API. Habilite esta opción para seleccionar un modelo diferente en cada paso.",
 	"search.configuration.agentic.models.toggle-label": "Utilice modelos específicos",
 	"search.configuration.agentic.new-source.description-help": "Describe esta fuente para ayudar al agente a comprender cuándo debe usarla.",
 	"search.configuration.agentic.new-source.description-label": "Descripción",

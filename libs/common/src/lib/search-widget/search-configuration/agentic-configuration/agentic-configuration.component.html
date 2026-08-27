@@ -154,7 +154,7 @@
       <div class="model-container">
         <div class="title-xs">{{ 'search.configuration.agentic.models.executor-label' | translate }}</div>
         <stf-model-selector
-          [ngModel]="executorModel()"
+          [ngModel]="displayedExecutorModel()"
           (ngModelChange)="updateExecutorModel($event)"
           [providers]="generativeProviders()"
           [learningConfigurations]="learningConfigurations()"
@@ -164,7 +164,7 @@
         <div class="model-container">
           <div class="title-xs">{{ 'search.configuration.agentic.models.planner-label' | translate }}</div>
           <stf-model-selector
-            [ngModel]="plannerModel()"
+            [ngModel]="displayedPlannerModel()"
             (ngModelChange)="updatePlannerModel($event)"
             [providers]="generativeProviders()"
             [learningConfigurations]="learningConfigurations()"
@@ -174,7 +174,7 @@
       <div class="model-container">
         <div class="title-xs">{{ 'search.configuration.agentic.models.rephrase-label' | translate }}</div>
         <stf-model-selector
-          [ngModel]="rephraseModel()"
+          [ngModel]="displayedRephraseModel()"
           (ngModelChange)="updateRephraseModel($event)"
           [providers]="generativeProviders()"
           [learningConfigurations]="learningConfigurations()"
@@ -183,7 +183,7 @@
       <div class="model-container">
         <div class="title-xs">{{ 'search.configuration.agentic.models.summarize-label' | translate }}</div>
         <stf-model-selector
-          [ngModel]="summarizeModel()"
+          [ngModel]="displayedSummarizeModel()"
           (ngModelChange)="updateSummarizeModel($event)"
           [providers]="generativeProviders()"
           [learningConfigurations]="learningConfigurations()"
