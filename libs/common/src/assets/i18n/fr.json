@@ -150,6 +150,7 @@
 	"account.nua_key_activity_title": "{{key}} journal d’activité",
 	"account.nua_key_delete": "Supprimer la clé Agentic RAG Understanding API",
 	"account.nua_key_delete_warning": "La suppression de cette clé entraîne la perte de tous les travaux en cours.",
+	"account.nua_key_tokens_limit": "Limite de jetons",
 	"account.nua_key_zone": "Sélectionnez la zone et le fournisseur de traitement que vous souhaitez utiliser pour cette clé",
 	"account.nua_keys": "Clés Agentic RAG Understanding API",
 	"account.nua_webhook": "Webhook URL",
