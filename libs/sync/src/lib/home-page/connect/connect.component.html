@@ -6,7 +6,9 @@
 
   <section>
     <form class="source-groups">
-      <pa-radio-group [(value)]="selectedGroup">
+      <pa-radio-group
+        [(value)]="selectedGroup"
+        noBackground>
         @if (availableGroups().includes('local')) {
           <div>
             <pa-radio

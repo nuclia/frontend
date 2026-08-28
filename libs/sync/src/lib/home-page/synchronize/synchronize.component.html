@@ -14,7 +14,9 @@
       class="setup-sync-agent"
       [formGroup]="syncAgentForm"
       (ngSubmit)="saveSyncServer()">
-      <pa-radio-group formControlName="type">
+      <pa-radio-group
+        formControlName="type"
+        noBackground>
         @if (hasCloudSync | async) {
           <div class="radio-config-row">
             <pa-radio
