@@ -214,12 +214,12 @@ export class CallbackComponent implements OnInit {
   }
 
   // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
-  // the originating app (came_from), whose /user/login-redirect route holds the real client_id.
+  // the originating app (came_from) itself. Land on its root instead of a specific route
+  // (e.g. /user/login-redirect) so we don't assume a route convention product teams may not share.
   private restartOAuthFromOriginatingApp(message: string, came_from?: string): void {
     if (came_from && this.isCameFromLegit(came_from)) {
-      const url = new URL(`${came_from}/user/login-redirect`);
+      const url = new URL(came_from);
       url.searchParams.set('message', message);
-      url.searchParams.set('came_from', came_from);
       this.document.location.href = url.toString();
     } else {
       this.sdk.nuclia.auth.redirectToOAuth({ message });

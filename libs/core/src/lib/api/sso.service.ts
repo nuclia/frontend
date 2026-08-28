@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { SsoLoginResponse } from '../models';
+import { OAuthService } from '../auth/oauth.service';
 import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SsoService {
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    private oAuthService: OAuthService,
+  ) {}
 
   getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
     const params = new URLSearchParams();
-    params.set('came_from', window.location.origin);
+    // window.location.origin is always the auth app itself (SSO buttons only render there);
+    // use the originating product app tracked since the flow started instead.
+    params.set('came_from', this.oAuthService.getCameFrom());
 
     // Include login_challenge if present in current URL (for OAuth flows from other apps)
     const currentParams = new URLSearchParams(window.location.search);
