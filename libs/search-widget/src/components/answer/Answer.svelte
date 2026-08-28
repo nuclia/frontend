@@ -76,7 +76,7 @@
           result.paragraphs.map((paragraph) => {
             const url = result.origin?.url;
             const link = url ? `<a href="${url}">${result.title}</a>` : result.title;
-            const title = DOMPurify.sanitize(`<h3>[${paragraph.rank}] ${link}</h3>`);
+            const title = DOMPurify.sanitize(`<h3>[${paragraph.ranks?.join(',')}] ${link}</h3>`);
             return `${title}\n${markdownToHTML(paragraph.text, false)}`;
           }),
         ),
