@@ -65,7 +65,7 @@
   let isMobile = $derived(isMobileViewport(innerWidth));
   let paragraphs = $derived(result.paragraphs || []);
   let isSelectedHidden = $derived(
-    paragraphs.findIndex((paragraph) => paragraph.rank === selected) > NUM_PARAGRAPHS - 1,
+    paragraphs.findIndex((paragraph) => paragraph.ranks?.includes(selected)) > NUM_PARAGRAPHS - 1,
   );
   let showAllResults = $derived($collapseTextBlocks || $expandTextBlocks || isSelectedHidden);
   let enableAllResultsToggle = $derived(
@@ -250,12 +250,16 @@
               <div
                 class="paragraph-result-container"
                 class:with-image={$showAttachedImages && paragraph.reference}>
-                {#if isSource && paragraph.rank}
-                  <div
-                    class="number body-m"
-                    class:selected={selected === paragraph.rank}
-                    data-scroll-ref={paragraph.rank}>
-                    {paragraph.rank}
+                {#if isSource && paragraph.ranks}
+                  <div class="rank-container">
+                    {#each paragraph.ranks as rank}
+                      <div
+                        class="number body-m"
+                        class:selected={selected === rank}
+                        data-scroll-ref={rank}>
+                        {rank}
+                      </div>
+                    {/each}
                   </div>
                 {/if}
                 <ParagraphResult
