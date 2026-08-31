@@ -13598,10 +13598,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge-ts@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "deepmerge-ts@npm:5.1.0"
-  checksum: 10/0f615ccfb27b93a286abc315d7d1ec171f1befe9c511c2799ca7184c11fc6a6f29f5368d446c6885338de0d95cf6cb66a5ff4c55141a1265012730bd69408cf9
+"deepmerge-ts@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "deepmerge-ts@npm:8.0.0"
+  checksum: 10/edf443147cc9e70b956926fa16e199544c68fb703379792fc18a76fab1ecc5e8466ba9378c9ef0f968ac8d68397dac43607f39a365cdb56475d00d3b8a3b402c
   languageName: node
   linkType: hard
 
@@ -21165,7 +21165,7 @@ __metadata:
     crypto-browserify: "npm:^3.12.0"
     d3: "npm:^7.9.0"
     date-fns: "npm:^3.6.0"
-    deepmerge-ts: "npm:^5.1.0"
+    deepmerge-ts: "npm:^8.0.0"
     dompurify: "npm:^3.4.12"
     dotenv: "npm:10.0.0"
     eslint: "npm:^9.35.0"
