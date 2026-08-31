@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AssumeRole, ModelConfiguration, ModelConfigurationCreation } from '@nuclia/core';
 import { combineLatest, defer, filter, forkJoin, map, of, shareReplay, startWith, switchMap, take } from 'rxjs';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
-import { UserKeysComponent, UserKeysForm } from '../../../ai-models';
+import { isGeminiPriorityModel, UserKeysComponent, UserKeysForm } from '../../../ai-models';
 
 @Component({
   imports: [
@@ -95,10 +95,19 @@ export class CreateConfigComponent implements OnInit {
   isBedrockIntegrationEnabled = this.features.unstable.bedrockIntegration;
 
   zoneOptions = this.zones.map((zone) => new OptionModel({ id: zone.id, value: zone.slug, label: zone.title || '' }));
-  generativeModelOptions = this.schema.pipe(
-    map((schema) =>
+  generativeModelOptions = combineLatest([
+    this.schema,
+    defer(() =>
+      this.configForm.controls.default_model_id.valueChanges.pipe(
+        startWith(this.configForm.controls.default_model_id.value),
+      ),
+    ),
+  ]).pipe(
+    map(([schema, currentValue]) =>
       (schema['generative_model']?.options || [])
         .filter((option) => !option.value.includes('/')) // Filter out model configurations
+        // Priority models are only selectable via the toggle, but keep the currently selected one visible
+        .filter((option) => !isGeminiPriorityModel(option.value) || option.value === currentValue)
         .map(
           (option) =>
             new OptionModel({ id: option.value, value: option.value, label: option.name, help: option.value }),
@@ -162,6 +171,11 @@ export class CreateConfigComponent implements OnInit {
         });
       });
     }
+  }
+
+  onPriorityModelChange(value: string) {
+    this.configForm.controls.default_model_id.setValue(value);
+    this.configForm.markAsDirty();
   }
 
   save() {
