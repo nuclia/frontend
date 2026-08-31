@@ -1,15 +1,15 @@
-@if (learningConfigurations; as learningConfig) {
+@if (learningConfigurations(); as learningConfig) {
   <div class="form-container">
-    @if (generativeModel?.user_key) {
-      @if (userKeys) {
+    @if (generativeModel()?.user_key) {
+      @if (userKeys(); as userKeys) {
         <div class="separator"></div>
-        @if (modelsRequiringUserKey.includes(generativeModel?.value || '')) {
+        @if (modelsRequiringUserKey.includes(generativeModel()?.value || '')) {
           <div class="title-s">
             {{
               'kb.ai-models.answer-generation.select-llm.own-key.title'
                 | translate
                   : {
-                      provider: keyProviders[generativeModel?.user_key || ''] || generativeModel?.user_key
+                      provider: keyProviders[generativeModel()?.user_key || ''] || generativeModel()?.user_key,
                     }
             }}
           </div>
@@ -22,14 +22,34 @@
               'kb.ai-models.answer-generation.select-llm.own-key.label'
                 | translate
                   : {
-                      provider: keyProviders[generativeModel?.user_key || ''] || generativeModel?.user_key
+                      provider: keyProviders[generativeModel()?.user_key || ''] || generativeModel()?.user_key,
                     }
             }}
           </pa-toggle>
         }
         @if (hasOwnKey) {
+          @if (showPriorityToggle() && hasPriorityVariant()) {
+            <pa-toggle
+              labelOnRight
+              [value]="isPriorityModel()"
+              [disabled]="editMode()"
+              [help]="
+                (editMode()
+                  ? 'kb.ai-models.answer-generation.select-llm.own-key.priority-help-disabled'
+                  : 'kb.ai-models.answer-generation.select-llm.own-key.priority-help'
+                ) | translate
+              "
+              (valueChange)="togglePriority($event)">
+              {{ 'kb.ai-models.answer-generation.select-llm.own-key.priority-label' | translate }}
+            </pa-toggle>
+          }
+          @if (isPriorityModel() && !editMode()) {
+            <nsi-info-card class="priority-info">
+              {{ 'kb.ai-models.answer-generation.select-llm.own-key.priority-info' | translate }}
+            </nsi-info-card>
+          }
           <div
-            class="form-container"
+            class="keys-container form-container"
             [formGroup]="userKeysGroup">
             @for (field of userKeysPropertiesEntries; track field.key) {
               @if (field.value.isSubForm) {

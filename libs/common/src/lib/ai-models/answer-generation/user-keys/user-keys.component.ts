@@ -1,9 +1,10 @@
-
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   EventEmitter,
-  Input,
+  input,
   OnChanges,
   OnDestroy,
   Output,
@@ -21,9 +22,9 @@ import {
   type LearningConfigurationProperty,
   type LearningConfigurations,
 } from '@nuclia/core';
-import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { Subject, takeUntil } from 'rxjs';
-import { keyProviders } from '../../ai-models.utils';
+import { isGeminiPriorityModel, keyProviders, stripGeminiPrioritySuffix } from '../../ai-models.utils';
 
 export type UserKeysForm = FormGroup<{
   enabled: FormControl<boolean>;
@@ -47,8 +48,9 @@ interface UserKeysProperties {
     ReactiveFormsModule,
     TranslateModule,
     UnauthorizedFeatureDirective,
-    ExpandableTextareaComponent
-],
+    ExpandableTextareaComponent,
+    InfoCardComponent,
+  ],
   templateUrl: './user-keys.component.html',
   styleUrls: ['./user-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,9 +60,15 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   modelsRequiringUserKey = ['huggingface'];
   ready = false;
 
-  @Input() learningConfigurations?: LearningConfigurations;
-  @Input() generativeModel?: LearningConfigurationOption;
+  learningConfigurations = input<LearningConfigurations>();
+  generativeModel = input<LearningConfigurationOption>();
+  // Priority (Pay-Go) toggle is only offered on the account-level model configuration page.
+  showPriorityToggle = input<boolean>(false);
+  // The backend doesn't support changing the model on an existing config, so disable the priority toggle when editing.
+  editMode = input<boolean>(false);
   @Output() formReady = new EventEmitter<UserKeysForm>();
+  // Emits the new generative_model value to select when Priority is toggled.
+  @Output() priorityModelChange = new EventEmitter<string>();
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['learningConfigurations'] || changes['generativeModel']) {
@@ -85,22 +93,40 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   get userKeysGroup() {
     return this.form.controls.user_keys;
   }
-  get userKeys() {
-    return this.learningConfigurations && this.generativeModel?.user_key
-      ? this.learningConfigurations['user_keys'].schemas?.[this.generativeModel.user_key]
+  userKeys = computed(() => {
+    const generativeModel = this.generativeModel();
+    return generativeModel?.user_key
+      ? this.learningConfigurations()?.['user_keys'].schemas?.[generativeModel.user_key]
       : undefined;
-  }
-  get userKeysProperties(): UserKeysProperties {
-    return Object.entries(this.userKeys?.properties || {}).reduce((acc, [key, prop]) => {
-      if (this.userKeys) {
-        acc[key] = this.getUserKeysProperty(this.userKeys, prop);
-      }
+  });
+  userKeysProperties = computed<UserKeysProperties>(() => {
+    const userKeys = this.userKeys();
+    return Object.entries(userKeys?.properties || {}).reduce((acc, [key, prop]) => {
+      // Priority models don't support a plain Gemini API key.
+      if (this.isPriorityModel() && key === 'gemini_key') return acc;
+      if (userKeys) acc[key] = this.getUserKeysProperty(userKeys, prop);
       return acc;
     }, {} as UserKeysProperties);
+  });
+  isPriorityModel = computed(() => isGeminiPriorityModel(this.generativeModel()?.value));
+  baseModelValue = computed(() => stripGeminiPrioritySuffix(this.generativeModel()?.value));
+  priorityModelValue = computed(() => `${this.baseModelValue()}-priority`);
+  // Priority only applies to Gemini models used with the user's own key.
+  hasPriorityVariant = computed(
+    () =>
+      this.generativeModel()?.provider === 'google' &&
+      !!(this.learningConfigurations()?.['generative_model']?.options || []).find(
+        (option) => option.value === this.priorityModelValue(),
+      ),
+  );
+
+  togglePriority(enabled: boolean) {
+    this.form.markAsDirty();
+    this.priorityModelChange.emit(enabled ? this.priorityModelValue() : this.baseModelValue() || '');
   }
 
   get userKeysPropertiesEntries() {
-    return Object.entries(this.userKeysProperties).map(([key, value]) => ({
+    return Object.entries(this.userKeysProperties()).map(([key, value]) => ({
       key,
       value,
     }));
@@ -113,6 +139,12 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
     this.userKeysToggle.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.updateValidators();
     });
+
+    effect(() => {
+      const shouldDisable = this.editMode() && this.isPriorityModel();
+      if (shouldDisable) this.userKeysToggle.disable({ emitEvent: false });
+      else this.userKeysToggle.enable({ emitEvent: false });
+    });
   }
 
   ngOnDestroy() {
@@ -122,25 +154,40 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
 
   onOwnKeyToggle() {
     this.form.markAsDirty();
+    // Priority only applies when using your own key, so revert to the base model when it's disabled.
+    if (!this.hasOwnKey && this.isPriorityModel()) {
+      this.priorityModelChange.emit(this.baseModelValue() || '');
+    }
   }
 
+  // Distinguishes a Priority toggle (keep field values) from a genuine model switch (reset them).
+  private previousModelValue?: string;
+
   updateForm() {
-    if (!this.learningConfigurations || !this.generativeModel) {
-      return;
-    }
-    if (this.generativeModel.user_key) {
+    const learningConfigurations = this.learningConfigurations();
+    const generativeModel = this.generativeModel();
+    if (!learningConfigurations || !generativeModel) return;
+
+    const isPriorityToggleOnly =
+      !!this.previousModelValue &&
+      stripGeminiPrioritySuffix(this.previousModelValue) === stripGeminiPrioritySuffix(generativeModel.value);
+    this.previousModelValue = generativeModel.value;
+
+    if (generativeModel.user_key) {
       // add user_keys controls corresponding to generative model if any
-      const userKeysConfig = this.learningConfigurations['user_keys'].schemas?.[this.generativeModel.user_key];
+      const userKeysConfig = learningConfigurations['user_keys'].schemas?.[generativeModel.user_key];
       const newUserKeys = Object.keys(userKeysConfig?.properties || {});
-      Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
-        if (newUserKeys.includes(oldKey)) {
-          // clean up value from previous fields
-          this.userKeysGroup.get(oldKey)?.patchValue('');
-        } else {
-          // remove unused control
-          this.userKeysGroup.removeControl(oldKey);
-        }
-      });
+      if (!isPriorityToggleOnly) {
+        Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
+          if (newUserKeys.includes(oldKey)) {
+            // clean up value from previous fields
+            this.userKeysGroup.get(oldKey)?.patchValue('');
+          } else {
+            // remove unused control
+            this.userKeysGroup.removeControl(oldKey);
+          }
+        });
+      }
       newUserKeys.forEach((key) => {
         if (!this.userKeysGroup.get(key)) {
           const subSchema = userKeysConfig && getSubSchema(userKeysConfig, userKeysConfig?.properties?.[key]);
@@ -167,8 +214,20 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
         }
       });
       this.updateValidators();
+      // Priority models require Vertex AI credentials, not a plain Gemini API key.
+      const geminiKeyControl = this.userKeysGroup.get('gemini_key');
+      if (geminiKeyControl) {
+        if (this.isPriorityModel()) {
+          geminiKeyControl.patchValue('');
+          geminiKeyControl.disable();
+        } else {
+          geminiKeyControl.enable();
+        }
+      }
     }
-    this.userKeysToggle.patchValue(this.modelsRequiringUserKey.includes(this.generativeModel?.value || ''));
+    if (!isPriorityToggleOnly) {
+      this.userKeysToggle.patchValue(this.modelsRequiringUserKey.includes(generativeModel.value || ''));
+    }
     if (!this.ready) {
       this.ready = true;
       this.formReady.emit(this.form);
@@ -176,11 +235,11 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   }
 
   updateValidators() {
-    if (!this.learningConfigurations || !this.generativeModel) {
-      return;
-    }
-    const required =
-      this.learningConfigurations['user_keys'].schemas?.[this.generativeModel.user_key || '']?.required || [];
+    const learningConfigurations = this.learningConfigurations();
+    const generativeModel = this.generativeModel();
+    if (!learningConfigurations || !generativeModel) return;
+
+    const required = learningConfigurations['user_keys'].schemas?.[generativeModel.user_key || '']?.required || [];
     Object.keys(this.userKeysGroup.controls).forEach((key) => {
       this.userKeysGroup.get(key)?.setValidators(this.hasOwnKey && required.includes(key) ? [Validators.required] : []);
       this.userKeysGroup.get(key)?.markAsPristine();

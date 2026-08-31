@@ -4,3 +4,13 @@
   padding-top: rhythm(2);
   margin-left: rhythm(2);
 }
+
+.priority-info {
+  margin: rhythm(0.5) 0 rhythm(0.5);
+}
+
+.keys-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: rhythm(2);
+}

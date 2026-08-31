@@ -25,6 +25,7 @@ import {
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { map, shareReplay } from 'rxjs';
+import { isGeminiPriorityModel } from '../../ai-models.utils';
 
 @Component({
   selector: 'stf-model-selector',
@@ -91,8 +92,10 @@ export class ModelSelectorComponent implements ControlValueAccessor {
         models: Object.fromEntries(
           Object.entries(provider.models).filter(
             ([key, model]) =>
-              (providerKey !== 'default' && allowedModels?.includes(key)) ||
-              (providerKey === 'default' && allowedModels?.includes(model.name)),
+              ((providerKey !== 'default' && allowedModels?.includes(key)) ||
+                (providerKey === 'default' && allowedModels?.includes(model.name))) &&
+              // Priority models are only selectable via the toggle in the user keys form.
+              (!isGeminiPriorityModel(key) || key === this.selectedModel()),
           ),
         ),
       },

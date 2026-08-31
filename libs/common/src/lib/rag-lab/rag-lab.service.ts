@@ -16,6 +16,7 @@ import {
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import { SearchWidgetService } from '../search-widget';
+import { isGeminiPriorityModel } from '../ai-models';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -91,7 +92,10 @@ export class RagLabService {
                   providerKey === 'default' ? [value.name, { ...value, name: key }] : [key, value],
                 )
                 .map((value) => value as [string, ModelInfo])
-                .filter(([key]) => allowedModels.has(key) && key !== 'generative-multilingual-2023'),
+                .filter(
+                  ([key]) =>
+                    allowedModels.has(key) && key !== 'generative-multilingual-2023' && !isGeminiPriorityModel(key),
+                ),
             ),
           }))
           .filter((provider) => Object.keys(provider.models || {}).length > 0);
