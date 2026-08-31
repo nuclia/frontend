@@ -60,7 +60,10 @@
           <stf-user-keys
             [generativeModel]="generativeModel"
             [learningConfigurations]="schema"
-            (formReady)="initUserKeys($event)"></stf-user-keys>
+            [showPriorityToggle]="true"
+            [editMode]="!createMode"
+            (formReady)="initUserKeys($event)"
+            (priorityModelChange)="onPriorityModelChange($event)"></stf-user-keys>
         }
       }
 
