@@ -112,12 +112,25 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
     this.route.params.pipe(filter((params) => !!params['id'])).subscribe((params) => {
       workflowId.set(params['id']);
-      // Remember this as the last workflow visited for this agent, so the next time the
-      // user enters the agent they land back here instead of on the workflows list.
-      this.sdk.currentArag.pipe(take(1)).subscribe((arag) => {
-        this.workflowsService.setLastWorkflowId(arag.slug, params['id']);
-      });
     });
+
+    toObservable(workflowId)
+      .pipe(
+        switchMap((workflowId) =>
+          this.sdk.currentArag.pipe(
+            take(1),
+            map((arag) => ({ workflowId, arag })),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(({ workflowId, arag }) => {
+        // Remember this as the last workflow visited for this agent, so the next time the
+        // user enters the agent they land back here instead of on the workflows list.
+        if (workflowId) {
+          this.workflowsService.setLastWorkflowId(arag.slug, workflowId || '');
+        }
+      });
   }
 
   ngAfterViewInit(): void {

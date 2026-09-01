@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { shareReplay, startWith, Subject, switchMap, take, tap } from 'rxjs';
+import { catchError, of, ReplaySubject, startWith, Subject, switchMap, take, tap } from 'rxjs';
 import { Workflow } from '@nuclia/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
@@ -14,13 +14,25 @@ export class WorkflowsService {
   private localStorage = inject(LOCAL_STORAGE);
 
   private triggerUpdate = new Subject<void>();
+  private _workflows = new ReplaySubject<Workflow[]>(1);
+  private _loadingWorkflows = new ReplaySubject<boolean>(1);
 
-  workflows = this.triggerUpdate.pipe(
-    startWith(true),
-    switchMap(() => this.sdk.currentArag),
-    switchMap((arag) => arag.getWorkflows()),
-    shareReplay(1),
-  );
+  workflows = this._workflows.asObservable();
+  loadingWorkflows = this._loadingWorkflows.asObservable();
+
+  constructor() {
+    this.triggerUpdate
+      .pipe(
+        startWith(true),
+        switchMap(() => this.sdk.currentArag),
+        tap(() => this._loadingWorkflows.next(true)),
+        switchMap((arag) => arag.getWorkflows().pipe(catchError(() => of([])))),
+      )
+      .subscribe((workflows) => {
+        this._workflows.next(workflows);
+        this._loadingWorkflows.next(false);
+      });
+  }
 
   update() {
     this.triggerUpdate.next();
