@@ -31,6 +31,7 @@ describe('AccountDetailsComponent', () => {
         MockProvider(ManagerStore, {
           canSeeUsers: of(true),
           canAccessKBs: of(true),
+          kbList: of([]),
         }),
       ],
     }).compileComponents();

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountService } from '../account.service';
 import { ActivatedRoute } from '@angular/router';
-import { filter, Subject, switchMap } from 'rxjs';
+import { filter, map, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ManagerStore } from '../../manager.store';
 import { BackendConfigurationService, FeaturesService } from '@flaps/core';
@@ -18,7 +18,8 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   canSeeUsers = this.store.canSeeUsers;
   canAccessKBs = this.store.canAccessKBs;
   account = this.store.accountDetails;
-  kbList = this.store.kbList;
+  knowledgeBoxList = this.store.kbList.pipe(map((kbs) => kbs.filter((kb) => kb.kbMode === 'kb')));
+  agentList = this.store.kbList.pipe(map((kbs) => kbs.filter((kb) => kb.kbMode !== 'kb')));
   currentState = this.store.currentState;
   noStripe = this.backendConfig.noStripe();
   isTrial = this.features.isTrial;

@@ -18,7 +18,7 @@ import {
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { AccountListComponent } from './account-list/account-list.component';
 import { ConfigurationComponent } from './account-details/configuration/configuration.component';
-import { KnowledgeBoxesComponent } from './account-details/knowledge-boxes/knowledge-boxes.component';
+import { ContainersComponent } from './account-details/containers/containers.component';
 import { LimitsComponent } from './account-details/limits/limits.component';
 import { UsersComponent } from './account-details/users/users.component';
 import { KbDetailsComponent } from './account-details/kb-details/kb-details.component';
@@ -65,7 +65,13 @@ const ROUTES: Routes = [
           },
           {
             path: 'kbs',
-            component: KnowledgeBoxesComponent,
+            component: ContainersComponent,
+            data: { mode: 'kb' },
+          },
+          {
+            path: 'agents',
+            component: ContainersComponent,
+            data: { mode: 'agent' },
           },
           {
             path: 'zone/:zoneId/kb/:kbId',
@@ -143,7 +149,7 @@ const ROUTES: Routes = [
     ConfigurationComponent,
     LimitsComponent,
     UsersComponent,
-    KnowledgeBoxesComponent,
+    ContainersComponent,
     KbDetailsComponent,
     BlockedFeaturesComponent,
     FormFooterComponent,
