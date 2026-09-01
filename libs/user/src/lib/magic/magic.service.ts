@@ -50,6 +50,14 @@ export class MagicService {
       case 'goaccount':
         if (action.needs_initial_setpassword === false && this.cameFrom) {
           location.href = `${this.cameFrom}/select`;
+        } else if (action.needs_initial_setpassword === true && this.cameFrom) {
+          // Modern invite flow: user has no session token yet. Go directly to set-password
+          // in the target app so SetPasswordComponent starts the OAuth flow with
+          // `initial_setpassword: true` in the state — creating a valid login_challenge
+          // that the backend can embed in the setup email.
+          // Navigating to the authGuard-protected /setup/invite would cause a redirect
+          // loop for unauthenticated users, losing the initial_setpassword context.
+          location.href = `${this.cameFrom}/user/set-password`;
         } else {
           this.router.navigate(['/setup/invite'], {
             queryParams: { account: action.account },
