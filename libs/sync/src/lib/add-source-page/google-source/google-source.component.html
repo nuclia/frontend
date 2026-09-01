@@ -1,0 +1,20 @@
+<div
+  class="extra-form"
+  [formGroup]="form">
+  <nsi-expandable-textarea
+    formControlName="exclude_domains"
+    [rows]="4"
+    modalTitle="sync.add-source-page.google.exclude-domains"
+    help="sync.add-source-page.google.exclude-domains-help">
+    {{ 'sync.add-source-page.google.exclude-domains' | translate }}
+  </nsi-expandable-textarea>
+  <pa-select
+    formControlName="time_range"
+    [label]="'sync.add-source-page.google.time-range.label' | translate">
+    <pa-option value="none">{{ 'sync.add-source-page.google.time-range.none' | translate }}</pa-option>
+    <pa-option value="past_day">{{ 'sync.add-source-page.google.time-range.past-day' | translate }}</pa-option>
+    <pa-option value="past_week">{{ 'sync.add-source-page.google.time-range.past-week' | translate }}</pa-option>
+    <pa-option value="past_month">{{ 'sync.add-source-page.google.time-range.past-month' | translate }}</pa-option>
+    <pa-option value="past_year">{{ 'sync.add-source-page.google.time-range.past-year' | translate }}</pa-option>
+  </pa-select>
+</div>
