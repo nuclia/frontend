@@ -1,7 +1,7 @@
-<h3>Knowledge Boxes & Agents</h3>
+<h3>{{ title }}</h3>
 <pa-table
   border
-  columns="2fr repeat(2, 1fr) 96px 96px 120px 1fr 80px">
+  columns="2fr repeat(2, 1fr) 96px 120px 1fr 80px">
   <pa-table-header>
     <pa-table-cell header>
       <div class="id-and-lock">
@@ -11,47 +11,41 @@
     </pa-table-cell>
     <pa-table-cell header>Slug</pa-table-cell>
     <pa-table-cell header>Title</pa-table-cell>
-    <pa-table-cell header>Type</pa-table-cell>
     <pa-table-cell header>Zone</pa-table-cell>
     <pa-table-cell header>Resources</pa-table-cell>
     <pa-table-cell header>Content</pa-table-cell>
     <pa-table-cell header>Activity</pa-table-cell>
   </pa-table-header>
 
-  @for (kb of kbList | async; track kb.id) {
+  @for (container of containerList | async; track container.id) {
     <pa-table-row
       clickable
-      [routerLink]="(canAccessKBs | async) ? '../zone/' + kb.zone.id + '/kb/' + kb.id : undefined">
+      [routerLink]="(canAccessKBs | async) ? '../zone/' + container.zone.id + '/kb/' + container.id : undefined">
       <pa-table-cell>
         <div class="id-and-lock">
-          @if (kb.private) {
+          @if (container.private) {
             <pa-icon
               name="lock"
               size="small"></pa-icon>
           } @else {
             <div class="icon-placeholder"></div>
           }
-          <small>{{ kb.id }}</small>
+          <small>{{ container.id }}</small>
         </div>
       </pa-table-cell>
       <pa-table-cell>
-        <small>{{ kb.slug }}</small>
+        <small>{{ container.slug }}</small>
       </pa-table-cell>
       <pa-table-cell>
-        <small>{{ kb.title }}</small>
+        <small>{{ container.title }}</small>
       </pa-table-cell>
       <pa-table-cell>
-        <small>
-          {{ kb.kbMode === 'kb' ? 'Knowledge Box' : 'Agent' }}
-        </small>
-      </pa-table-cell>
-      <pa-table-cell>
-        <small>{{ kb.zone.title }}</small>
+        <small>{{ container.zone.title }}</small>
       </pa-table-cell>
       <pa-table-cell>
         @if (counters | async; as counts) {
           <div class="body-s flex-column">
-            @if (counts[kb.id]; as count) {
+            @if (counts[container.id]; as count) {
               <div class="space-between">
                 <span>Total:</span>
                 <strong>{{ count.resources.total | number: '1.0-0' }}</strong>
@@ -73,7 +67,7 @@
       <pa-table-cell>
         @if (counters | async; as counts) {
           <div class="body-s flex-column">
-            @if (counts[kb.id]; as count) {
+            @if (counts[container.id]; as count) {
               <div class="space-between">
                 <span>Paragraphs:</span>
                 <strong>{{ count.paragraphs | number: '1.0-0' }}</strong>
@@ -97,13 +91,13 @@
       <pa-table-cell center>
         <div class="flex-column body-s">
           <a
-            [href]="kb.activity.redash"
+            [href]="container.activity.redash"
             target="_blank"
             rel="noopener noreferrer">
             <small>Redash</small>
           </a>
           <a
-            [href]="kb.activity.grafana"
+            [href]="container.activity.grafana"
             target="_blank"
             rel="noopener noreferrer">
             <small>Grafana</small>
