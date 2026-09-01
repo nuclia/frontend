@@ -73,19 +73,38 @@
           <li
             routerLink="kbs"
             routerLinkActive="active">
-            Knowledge Boxes & Agents
+            Knowledge Boxes
           </li>
-          @for (kb of kbList | async; track kb.id) {
+          @for (kb of knowledgeBoxList | async; track kb.id) {
             <li
               class="child-route"
               [routerLink]="(canAccessKBs | async) ? 'zone/' + kb.zone.id + '/kb/' + kb.id : undefined"
               routerLinkActive="active">
               <pa-icon
-                [name]="kb.kbMode === 'kb' ? 'knowledge-box' : 'workflows'"
+                name="knowledge-box"
                 size="small"></pa-icon>
               <div>
                 {{ kb.slug }}
                 <small class="zone-name">({{ kb.zone.title }})</small>
+              </div>
+            </li>
+          }
+          <li
+            routerLink="agents"
+            routerLinkActive="active">
+            Agents
+          </li>
+          @for (agent of agentList | async; track agent.id) {
+            <li
+              class="child-route"
+              [routerLink]="(canAccessKBs | async) ? 'zone/' + agent.zone.id + '/kb/' + agent.id : undefined"
+              routerLinkActive="active">
+              <pa-icon
+                name="workflows"
+                size="small"></pa-icon>
+              <div>
+                {{ agent.slug }}
+                <small class="zone-name">({{ agent.zone.title }})</small>
               </div>
             </li>
           }
