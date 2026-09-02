@@ -7,6 +7,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
 import { UserContainerComponent } from '../user-container';
 import { TranslateService } from '@ngx-translate/core';
+import { getLoginErrorMessageKey } from '../login-error.util';
 
 @Component({
   selector: 'stf-user-callback',
@@ -151,25 +152,20 @@ export class CallbackComponent implements OnInit {
           }
         },
         error: (error) => {
-          if (error.status === 403 && error.body?.detail === 'user_not_registered') {
-            this.message = this.translate.instant('login.error.user_not_registered', { provider: this.getProvider() });
-          } else if (error.body?.detail === 'login_challenge_expired_or_invalid') {
+          const code = error.body?.error_code || error.body?.detail;
+          if (code === 'login_challenge_expired_or_invalid') {
             // The login_challenge outlived by the time spent on the provider's own login/MFA
             // screens. Restart the OAuth flow with fresh state instead of dead-ending on signup.
             this.toaster.error('login.error.session_expired');
             this.restartOAuthFromOriginatingApp('login.error.session_expired', this.decodeCameFrom(state));
+          } else if (error.message === 'Invalid state') {
+            this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+            this.message = this.translate.instant('login.error.oops');
           } else {
-            let errorCode = 'oops';
-            if (error.status === 412) {
-              errorCode = 'no_personal_email';
-            } else if (error.message === 'Invalid state') {
-              errorCode = 'invalid_configuration';
-              this.toaster.error('Authentication configuration error. Please contact support if this persists.');
-            }
-
-            this.router.navigate(['/user/signup'], {
-              relativeTo: this.route,
-              queryParams: { error: errorCode },
+            // /user/signup doesn't read an `error` query param, so render inline instead of redirecting there.
+            const fallback = error.status === 412 ? 'login.error.no_personal_email' : 'login.error.oops';
+            this.message = this.translate.instant(getLoginErrorMessageKey(code, fallback), {
+              provider: this.getProvider(),
             });
           }
         },

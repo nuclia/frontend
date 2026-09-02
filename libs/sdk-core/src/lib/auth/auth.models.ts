@@ -45,4 +45,19 @@ export interface MagicAction {
   needs_initial_setpassword?: boolean;
 }
 
-export type MagicActionError = 'local_user_already_exists' | 'user_registered_as_external_user';
+// Stable machine-readable codes returned by idp/idp_regional as `error_code` on login,
+// magic-link/invite and SSO callback failures (see NucliaHTTPException on the backend).
+export type LoginErrorCode =
+  | 'invite_not_found'
+  | 'magic_token_expired'
+  | 'local_user_already_exists'
+  | 'user_registered_as_external_user'
+  | 'login_challenge_missing'
+  | 'login_challenge_expired_or_invalid'
+  | 'login_accept_failed'
+  | 'user_not_registered'
+  | 'oauth_token_exchange_failed'
+  | 'oauth_missing_email'
+  | 'oauth_missing_identity'
+  | 'tenant_not_authorized'
+  | 'domain_not_allowed';

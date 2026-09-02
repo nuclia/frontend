@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
-import { MagicActionError } from '@nuclia/core';
+import { getLoginErrorMessageKey } from '../login-error.util';
 
 @Component({
   selector: 'stf-magic',
@@ -46,15 +46,14 @@ export class MagicComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           if (error?.tokenError) {
-            const cause = error.tokenError.detail as MagicActionError | 'login_challenge_expired_or_invalid';
-            let message = 'login.token_expired';
-
-            if (cause === 'login_challenge_expired_or_invalid') message = 'login.account_ready_please_login';
-            if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
-              message = `login.${cause}`;
+            const code = error.tokenError.error_code || error.tokenError.detail;
+            if (code === 'login_challenge_expired_or_invalid') {
+              // Account/password are already set, only the login_challenge is stale, we need user to login again;
+              this.login('login.account_ready_please_login');
+            } else {
+              this.error = getLoginErrorMessageKey(code, 'login.token_expired');
+              this.cdr.markForCheck();
             }
-
-            this.login(message);
           } else {
             this.error = 'onboarding.failed';
             this.cdr.markForCheck();
