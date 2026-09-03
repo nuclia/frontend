@@ -8,6 +8,14 @@
         (click)="toggleMainNav()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.toggle-navbar' | translate }}
       </pa-button>
+      <pa-button
+        icon="chevrons-left"
+        aspect="basic"
+        size="small"
+        [paTooltip]="'retrieval-agents.workflow.toolbar-buttons.back-to-workflows' | translate"
+        (click)="backToWorkflows()">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.back-to-workflows' | translate }}
+      </pa-button>
       <div>
         <nsi-dropdown-button
           aspect="basic"

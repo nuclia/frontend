@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   ModalConfig,
   PaButtonModule,
@@ -14,8 +14,8 @@ import { filter, map, switchMap, take } from 'rxjs';
 import { WorkflowModalComponent } from './workflow-modal';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WorkflowsService } from './workflows.service';
-import { SDKService, ZoneService } from '@flaps/core';
 import { ToolParametersModalComponent } from './tool-parameters-modal';
+import { McpEndpointModalComponent } from './mcp-endpoint-modal';
 
 @Component({
   imports: [
@@ -38,25 +38,17 @@ export class WorkflowsListComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
-  private sdk = inject(SDKService);
-  private zoneService = inject(ZoneService);
 
   workflows = this.workflowsService.workflows.pipe(
     map((workflows) => [...workflows].sort((a, b) => a.name.localeCompare(b.name))),
   );
 
-  endpoint = this.sdk.currentArag.pipe(
-    switchMap((arag) =>
-      this.zoneService
-        .buildZoneUrl(arag.zone, this.sdk.nuclia.options.backend, 'dp')
-        .pipe(map((baseUrl) => `${baseUrl}/v1${arag.path}/session/ephemeral/mcp`)),
-    ),
-  );
-
-  copied = signal(false);
-
   goToWorkflow(workflow: Workflow) {
     this.router.navigate([workflow.id], { relativeTo: this.route });
+  }
+
+  openMcpEndpoint() {
+    this.modalService.openModal(McpEndpointModalComponent);
   }
 
   add() {
@@ -68,9 +60,10 @@ export class WorkflowsListComponent {
             this.modalService.openModal(WorkflowModalComponent, new ModalConfig({ data: { workflows } })).onClose,
         ),
         filter((workflow) => !!workflow),
-        switchMap((workflow) => this.workflowsService.createWorkflow(workflow)),
+        switchMap((workflow) => this.workflowsService.createWorkflow(workflow).pipe(map(() => workflow))),
       )
       .subscribe({
+        next: (workflow) => this.goToWorkflow(workflow),
         error: () => {
           this.toaster.error('retrieval-agents.workflows-list.errors.creation');
         },
@@ -126,13 +119,5 @@ export class WorkflowsListComponent {
           this.toaster.error('retrieval-agents.workflows-list.errors.deletion');
         },
       });
-  }
-
-  copyEndpoint() {
-    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
-      navigator.clipboard.writeText(endpoint);
-      this.copied.set(true);
-      setTimeout(() => this.copied.set(false), 1000);
-    });
   }
 }
