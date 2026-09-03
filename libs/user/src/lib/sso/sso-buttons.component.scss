@@ -4,6 +4,7 @@
   margin-top: rhythm(3);
   .login_separator {
     align-items: center;
+    color: $color-neutral-light;
     display: flex;
     margin-bottom: rhythm(4);
     span {
@@ -11,7 +12,7 @@
     }
     &::before,
     &::after {
-      background-color: $color-neutral-regular;
+      background-color: $color-neutral-lighter;
       content: '';
       flex: 1 1 auto;
       height: 1px;
@@ -22,5 +23,15 @@
     display: flex;
     flex-direction: column;
     gap: rhythm(1);
+  }
+
+  &.login_social--separator-after {
+    .login_separator {
+      margin: rhythm(4) 0;
+    }
+
+    .sso-container {
+      gap: rhythm(1.5);
+    }
   }
 }

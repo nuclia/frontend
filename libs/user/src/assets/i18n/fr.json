@@ -45,6 +45,7 @@
 	"consent.scope.offline_access": "Maintenir l'accès lorsque vous n'utilisez pas activement l'application",
 	"consent.scope.openid": "Confirmer votre identité",
 	"login.subtitle": "Fournir les bonnes réponses à partir de vos données internes.",
+	"login.title": "Se connecter",
 	"login.token_expired": "Le jeton a expiré",
 	"login.use-sso": "Utiliser l'authentification unique",
 	"onboarding.account-workflow.classic": "Avancé",

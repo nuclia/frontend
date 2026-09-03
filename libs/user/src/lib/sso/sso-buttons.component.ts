@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { booleanAttribute, Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SsoButtonComponent } from './sso-button.component';
 
@@ -8,4 +8,6 @@ import { SsoButtonComponent } from './sso-button.component';
   styleUrls: ['./sso-buttons.component.scss'],
   imports: [TranslateModule, SsoButtonComponent],
 })
-export class SsoButtonsComponent {}
+export class SsoButtonsComponent {
+  @Input({ transform: booleanAttribute }) separatorAfter = false;
+}

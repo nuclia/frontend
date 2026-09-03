@@ -11,6 +11,8 @@ import { BackendConfigurationService } from '@flaps/core';
 })
 export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;
+  @Input({ transform: booleanAttribute }) centered = false;
+  @Input() logoOverride?: string;
   private backendConfig = inject(BackendConfigurationService);
   logoPath = this.backendConfig.getLogoPath();
   brandName = this.backendConfig.getBrandName();

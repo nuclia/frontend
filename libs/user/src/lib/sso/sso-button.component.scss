@@ -6,8 +6,9 @@
 
 .sso-button {
   align-items: center;
-  background: $color-neutral-lightest;
-  border: none;
+  background: $color-light-stronger;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-default;
   display: flex;
   flex: 1 0 auto;
   font-weight: $font-weight-semi-bold;
@@ -16,17 +17,26 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  transition: background $transition-hint;
+  transition:
+    background $transition-hint,
+    border-color $transition-hint;
 
   &:not(:disabled) {
     cursor: pointer;
 
     &:hover {
-      background: $color-neutral-lighter;
+      background: $color-neutral-lightest;
+      border-color: $color-neutral-light;
     }
 
     &:active {
-      background: $color-neutral-light;
+      background: $color-neutral-lighter;
+      border-color: $color-neutral-regular;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary-regular;
+      outline-offset: 2px;
     }
   }
 }

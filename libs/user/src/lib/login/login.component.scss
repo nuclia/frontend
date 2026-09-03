@@ -1,12 +1,84 @@
 @use 'apps/dashboard/src/variables' as *;
 @use '../user-layout';
 
+.login_title {
+  margin-bottom: rhythm(4);
+  margin-top: 0;
+  text-align: center;
+}
+
 .login_form {
-  padding: rhythm(2) 0 0;
+  padding: 0;
+
+  ::ng-deep {
+    $height-login-field: rhythm(5);
+    $padding-login-field-top: calc(#{rhythm(1)} - 1px);
+
+    .pa-field-control:not(textarea):not(.pa-select-with-help) {
+      height: $height-login-field;
+    }
+
+    .pa-field-control {
+      padding-top: $padding-login-field-top;
+      padding-bottom: $padding-login-field-top;
+    }
+
+    .pa-field-container .pa-field-label {
+      top: calc(#{rhythm(1)} + 1px);
+    }
+
+    .pa-field-icon {
+      top: $padding-login-field-top;
+    }
+
+    .pa-field-control {
+      &.pa-field-control-filled,
+      &.cdk-text-field-autofilled,
+      &:not(:disabled):not(:read-only):focus,
+      &:not(:disabled):not(:read-only):active {
+        & ~ .pa-field-label {
+          transform: scale(0.8) translateY(-#{rhythm(3)}) translateX(-#{rhythm(0.5)});
+        }
+      }
+    }
+
+    .pa-field-container {
+      &:not(.pa-disabled):not(.pa-readonly):not(.pa-field-error) {
+        border-color: $color-neutral-lighter;
+
+        &:hover {
+          border-color: $color-neutral-light;
+        }
+
+        &:focus,
+        &:active,
+        &.pa-focus {
+          border-color: $color-primary-regular;
+        }
+
+        .pa-field-label {
+          color: $color-neutral-light;
+        }
+
+        &.pa-focus .pa-field-label {
+          color: $color-primary-regular;
+        }
+
+        .pa-field-control::placeholder {
+          color: $color-neutral-light;
+        }
+      }
+    }
+  }
 }
 
 .login_field {
   margin-bottom: rhythm(2);
+}
+
+.login_form .login_recover {
+  margin-top: -#{rhythm(1)};
+  text-align: right;
 }
 
 .login_alert,
@@ -39,6 +111,21 @@
 
 .login_policy {
   color: $color-neutral-regular;
+  margin-top: rhythm(4);
+  text-align: center;
+
+  ::ng-deep a {
+    color: $color-dark-stronger;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary-regular;
+      outline-offset: 2px;
+    }
+  }
 }
 
 .login_submit,
@@ -56,7 +143,7 @@
 }
 
 .login_signup {
-  margin-top: rhythm(6);
+  margin-top: rhythm(3);
 }
 
 .login_sso {

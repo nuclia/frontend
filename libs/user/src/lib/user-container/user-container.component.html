@@ -1,15 +1,21 @@
 <div class="container">
+  @if (centered) {
+    <div class="background-layer user-background"></div>
+  }
   <div
     class="user-container"
-    [class.left-aligned]="alignLeft">
+    [class.left-aligned]="alignLeft"
+    [class.centered]="centered">
+    <div class="logo">
+      <img
+        [src]="logoOverride || logoPath"
+        [alt]="brandName" />
+    </div>
     <div class="inner-container">
-      <div class="logo">
-        <img
-          [src]="logoPath"
-          [alt]="brandName" />
-      </div>
       <ng-content></ng-content>
     </div>
   </div>
-  <div class="hero-img user-background"></div>
+  @if (!centered) {
+    <div class="hero-img user-background"></div>
+  }
 </div>

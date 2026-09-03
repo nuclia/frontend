@@ -1,8 +1,8 @@
-<nus-user-container>
+<nus-user-container
+  centered
+  logoOverride="assets/logos/progress-data-platform-alternate.svg">
   <div class="main-container">
-    <header>
-      <p class="body-m">{{ 'login.subtitle' | translate }}</p>
-    </header>
+    <h1 class="login_title title-l">{{ 'login.title' | translate }}</h1>
     @if (message() || error) {
       <div
         class="login_alert title-xxs"
@@ -10,6 +10,9 @@
         data-cy="login-error">
         {{ message() || error || '' | translate }}
       </div>
+    }
+    @if (config.getSocialLogin()) {
+      <stf-sso-buttons separatorAfter></stf-sso-buttons>
     }
     <div class="login_form">
       <form
@@ -55,8 +58,13 @@
           type="hidden"
           name="login_challenge"
           [value]="loginChallenge" />
-        <div class="login_policy body-xs">
-          <span [innerHTML]="'user.consent' | translate"></span>
+        <div class="login_recover body-s">
+          <a
+            routerLink="../recover"
+            queryParamsHandling="preserve"
+            class="accent-link">
+            {{ 'login.recover' | translate }}
+          </a>
         </div>
         <div class="login_submit">
           <pa-button
@@ -69,20 +77,7 @@
         </div>
       </form>
     </div>
-    <div class="login_recover body-s">
-      <span>{{ 'login.recover_help' | translate }}</span>
-      <a
-        routerLink="../recover"
-        queryParamsHandling="preserve"
-        class="accent-link">
-        {{ 'login.recover' | translate }}
-      </a>
-    </div>
-    @if (config.getSocialLogin()) {
-      <stf-sso-buttons></stf-sso-buttons>
-    }
-
-    <div class="login_signup">
+    <div class="login_signup body-s">
       <span>{{ 'login.have_account' | translate }}</span>
       <a
         [href]="signUpUrl"
@@ -90,6 +85,9 @@
         data-cy="create-account">
         {{ 'login.create_one' | translate }}
       </a>
+    </div>
+    <div class="login_policy body-xs">
+      <span [innerHTML]="'user.consent' | translate"></span>
     </div>
   </div>
 </nus-user-container>

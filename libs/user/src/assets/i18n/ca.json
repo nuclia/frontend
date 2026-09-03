@@ -45,6 +45,7 @@
 	"consent.scope.offline_access": "Mantenir l'accés quan no esteu utilitzant activament l'aplicació",
 	"consent.scope.openid": "Confirmar la vostra identitat",
 	"login.subtitle": "Oferint les respostes adequades a partir de les vostres dades internes.",
+	"login.title": "Accedir",
 	"login.token_expired": "El testimoni ha caducat",
 	"login.use-sso": "Utilitzeu l'inici de sessió únic",
 	"onboarding.account-workflow.classic": "Avançat",

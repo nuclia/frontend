@@ -28,6 +28,42 @@
     &:not(.left-aligned) {
       justify-content: center;
     }
+
+    &.centered {
+      align-items: center;
+      background: none;
+      flex-direction: column;
+      justify-content: center;
+      margin-right: auto;
+      padding: rhythm(4) rhythm(8) rhythm(4) rhythm(20);
+      position: relative;
+      width: fit-content;
+      z-index: $z-index-default;
+
+      .logo {
+        padding-bottom: rhythm(3);
+
+        img {
+          width: rhythm(26) * 1.25;
+        }
+      }
+
+      .inner-container {
+        background: $color-light-stronger;
+        border-radius: $border-radius-card;
+        box-shadow: $shadow-default;
+        max-width: 100%;
+        padding: rhythm(3) rhythm(6) rhythm(4);
+        width: auto;
+      }
+    }
+  }
+  .background-layer {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
   }
   .hero-img {
     width: 50%;
@@ -40,6 +76,11 @@
   .container {
     .user-container {
       width: 100%;
+    }
+    .user-container.centered {
+      padding-left: rhythm(4);
+      padding-right: rhythm(4);
+      width: fit-content;
     }
     .hero-img {
       display: none;
