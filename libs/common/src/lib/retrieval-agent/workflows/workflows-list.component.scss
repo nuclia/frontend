@@ -18,6 +18,12 @@
     justify-content: space-between;
   }
 
+  .page-title-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
   .section {
     max-width: $width-large-screen;
   }
@@ -25,19 +31,5 @@
   .section-title {
     color: $color-neutral-regular;
     margin-bottom: rhythm(0.5);
-  }
-
-  .endpoint {
-    align-items: center;
-    background-color: $color-neutral-lightest;
-    border: 1px solid $color-neutral-light;
-    border-radius: rhythm(0.5);
-    display: flex;
-    gap: rhythm(0.5);
-
-    pre {
-      margin-bottom: 0;
-      white-space: normal;
-    }
   }
 }

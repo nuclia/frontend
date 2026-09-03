@@ -10,4 +10,8 @@ export class DashboardLayoutService {
   toggleNav() {
     this._collapsedNav.set(!this._collapsedNav());
   }
+
+  expandNav() {
+    this._collapsedNav.set(false);
+  }
 }

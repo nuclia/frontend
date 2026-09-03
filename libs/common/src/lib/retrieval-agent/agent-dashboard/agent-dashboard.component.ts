@@ -11,7 +11,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalConfig, PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { auditTime, combineLatest, filter, fromEvent, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { DashboardLayoutService } from '../../base';
@@ -53,6 +59,7 @@ const OVERFLOW_SIDEBARS: SidebarType[] = ['rules', 'import', 'export'];
     PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
+    PaTooltipModule,
     TranslateModule,
     WorkflowRootComponent,
   ],
@@ -106,6 +113,24 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
     this.route.params.pipe(filter((params) => !!params['id'])).subscribe((params) => {
       workflowId.set(params['id']);
     });
+
+    toObservable(workflowId)
+      .pipe(
+        switchMap((workflowId) =>
+          this.sdk.currentArag.pipe(
+            take(1),
+            map((arag) => ({ workflowId, arag })),
+          ),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(({ workflowId, arag }) => {
+        // Remember this as the last workflow visited for this agent, so the next time the
+        // user enters the agent they land back here instead of on the workflows list.
+        if (workflowId) {
+          this.workflowsService.setLastWorkflowId(arag.slug, workflowId || '');
+        }
+      });
   }
 
   ngAfterViewInit(): void {
@@ -132,6 +157,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.workflowService.cleanWorkflow();
+    // Collapsing the nav is only actionable from within the canvas toolbar (no other
+    // page exposes a way to re-expand it), so restore it whenever the canvas is left,
+    // regardless of exit path (back button, browser back/forward, deep link, etc.).
+    this.layoutService.expandNav();
   }
 
   setRoot(root: WorkflowRoot) {
@@ -176,6 +205,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   goToSessions() {
     this.router.navigate([`${this.aragUrl()}/sessions`]);
+  }
+
+  backToWorkflows() {
+    this.router.navigate([`${this.aragUrl()}/workflows`]);
   }
 
   addWorkflow() {

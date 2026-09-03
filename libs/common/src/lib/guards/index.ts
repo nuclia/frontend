@@ -1,4 +1,5 @@
 export * from './permission.guard';
+export * from './redirect-to-workflow.guard';
 export * from './root.guard';
 export * from './select-account.guard';
 export * from './select-kb.guard';
