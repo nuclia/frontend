@@ -39,4 +39,9 @@
       outline-offset: 2px;
     }
   }
+
+  &--compact {
+    gap: 0;
+    padding: 0 rhythm(1);
+  }
 }

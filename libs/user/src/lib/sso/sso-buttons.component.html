@@ -6,10 +6,18 @@
       <span>{{ 'generic.or' | translate }}</span>
     </div>
   }
-  <div class="sso-container">
-    <stf-sso-button provider="microsoft"></stf-sso-button>
-    <stf-sso-button provider="github"></stf-sso-button>
-    <stf-sso-button provider="google"></stf-sso-button>
+  <div
+    class="sso-container"
+    [class.sso-container--compact]="compact">
+    <stf-sso-button
+      provider="microsoft"
+      [compact]="compact"></stf-sso-button>
+    <stf-sso-button
+      provider="github"
+      [compact]="compact"></stf-sso-button>
+    <stf-sso-button
+      provider="google"
+      [compact]="compact"></stf-sso-button>
   </div>
   @if (separatorAfter) {
     <div class="login_separator body-s">

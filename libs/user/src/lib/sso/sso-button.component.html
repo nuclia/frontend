@@ -1,6 +1,13 @@
+@let label = labelKey | translate: { provider: providerName };
+
 <button
   class="sso-button"
+  [class.sso-button--compact]="compact"
+  [attr.aria-label]="compact ? label : null"
+  [paTooltip]="compact ? label : ''"
   (click)="onClick()">
   <pa-icon [path]="icon"></pa-icon>
-  {{ (signup ? 'signup.sign-up-with' : 'login.continue_with') | translate: { provider: providerName } }}
+  @if (!compact) {
+    {{ label }}
+  }
 </button>

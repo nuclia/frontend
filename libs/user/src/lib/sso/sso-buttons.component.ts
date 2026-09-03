@@ -10,4 +10,5 @@ import { SsoButtonComponent } from './sso-button.component';
 })
 export class SsoButtonsComponent {
   @Input({ transform: booleanAttribute }) separatorAfter = false;
+  @Input({ transform: booleanAttribute }) compact = false;
 }

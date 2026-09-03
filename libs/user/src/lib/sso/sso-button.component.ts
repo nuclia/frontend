@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
 import { AnalyticsService, SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 type Provider = 'google' | 'github' | 'microsoft';
 
@@ -12,7 +12,7 @@ type Provider = 'google' | 'github' | 'microsoft';
   templateUrl: './sso-button.component.html',
   styleUrls: ['./sso-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [PaIconModule, TranslateModule],
+  imports: [PaIconModule, PaTooltipModule, TranslateModule],
 })
 export class SsoButtonComponent {
   @Input()
@@ -31,6 +31,8 @@ export class SsoButtonComponent {
     return this._signup;
   }
 
+  @Input({ transform: booleanAttribute }) compact = false;
+
   get capitalizedProvider() {
     return this.provider.slice(0, 1).toUpperCase() + this.provider.slice(1);
   }
@@ -41,6 +43,10 @@ export class SsoButtonComponent {
     } else {
       return this.capitalizedProvider;
     }
+  }
+
+  get labelKey() {
+    return this.signup ? 'signup.sign-up-with' : 'login.continue_with';
   }
 
   get icon() {
