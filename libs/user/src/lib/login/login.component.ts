@@ -144,6 +144,7 @@ export class LoginComponent {
   }
 
   private remoteLogin() {
-    location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
+    // Use the current origin, not a hardcoded one, so this works for any app/port.
+    location.href = `${this.config.getAPIOrigin()}/redirect?redirect=${window.location.origin}`;
   }
 }
