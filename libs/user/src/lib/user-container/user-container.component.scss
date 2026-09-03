@@ -1,5 +1,11 @@
 @use 'apps/dashboard/src/variables' as *;
 
+// The background artwork starts just under half way across the image, and
+// `cover` anchors it right, so on landscape viewports that edge sits at a
+// fixed fraction of the viewport width. Centring the card inside this band
+// keeps it clear of the illustration at any width, without a breakpoint jump.
+$width-illustration-gap: 49.5%;
+
 .container {
   height: 100%;
   position: relative;
@@ -33,11 +39,16 @@
       align-items: center;
       background: none;
       flex-direction: column;
+      // `safe` keeps the whole card reachable when the viewport is shorter
+      // than the content, instead of centring clipping the top out of the
+      // scroll area. The plain value is the fallback for browsers without it.
       justify-content: center;
-      margin-right: auto;
-      padding: rhythm(4) rhythm(8) rhythm(4) rhythm(20);
+      justify-content: safe center;
+      // The card keeps its natural width: the band gives way instead.
+      min-width: fit-content;
+      padding: rhythm(4) rhythm(4) rhythm(4) rhythm(10);
       position: relative;
-      width: fit-content;
+      width: $width-illustration-gap;
       z-index: $z-index-default;
 
       .logo {
@@ -53,7 +64,7 @@
         border-radius: $border-radius-card;
         box-shadow: $shadow-default;
         max-width: 100%;
-        padding: rhythm(3) rhythm(6) rhythm(4);
+        padding: rhythm(3) rhythm(4) rhythm(4);
         width: auto;
       }
     }
@@ -74,13 +85,8 @@
 
 @media (max-width: $size-viewport-large-max) {
   .container {
-    .user-container {
+    .user-container:not(.centered) {
       width: 100%;
-    }
-    .user-container.centered {
-      padding-left: rhythm(4);
-      padding-right: rhythm(4);
-      width: fit-content;
     }
     .hero-img {
       display: none;
@@ -88,34 +94,44 @@
   }
 }
 
+// Only once the band can no longer hold the card does it take the full width.
+// The card itself keeps its natural width and simply centres.
+@media (max-width: $size-viewport-medium-max) {
+  .container .user-container.centered {
+    min-width: 0;
+    padding-left: rhythm(4);
+    width: 100%;
+  }
+}
+
 @media (max-height: $height-viewport-medium-max) {
-  .container .user-container {
+  .container .user-container:not(.centered) {
     padding-top: rhythm(8);
   }
 }
 
 @media (max-height: $height-viewport-small-max) {
-  .container .user-container {
+  .container .user-container:not(.centered) {
     padding-top: rhythm(3);
 
     .logo {
       padding-bottom: 0;
     }
-  }
 
-  ::ng-deep .main-container {
-    header,
-    .login_separator {
-      display: none !important;
-    }
+    ::ng-deep .main-container {
+      header,
+      .login_separator {
+        display: none !important;
+      }
 
-    .login_social,
-    .login_recover {
-      margin-top: rhythm(2) !important;
-    }
+      .login_social,
+      .login_recover {
+        margin-top: rhythm(2) !important;
+      }
 
-    .login_signup {
-      margin-top: rhythm(2);
+      .login_signup {
+        margin-top: rhythm(2);
+      }
     }
   }
 }
