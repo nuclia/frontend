@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { BackendConfigurationService, OAuthService } from '@flaps/core';
+import { BackendConfigurationService, getSafeRedirectOrigin, OAuthService } from '@flaps/core';
 
 /**
  * Catch-all guard for the `**` wildcard route. Instead of showing a dead-end 404 page,
@@ -22,7 +22,7 @@ export const fallbackRedirectGuard = () => {
   const oauthService = inject(OAuthService);
   const config = inject(BackendConfigurationService);
   const cameFrom = oauthService.getCameFrom();
-  const safeOrigin = getSafeOrigin(cameFrom, config.getAPIOrigin());
+  const safeOrigin = getSafeRedirectOrigin(cameFrom, config.getAPIOrigin());
   if (!safeOrigin) {
     // cameFrom failed validation — show the 404 page rather than guessing a redirect target
     return true;
@@ -33,26 +33,3 @@ export const fallbackRedirectGuard = () => {
   window.location.href = redirectUrl.toString();
   return false;
 };
-
-/**
- * Returns the validated origin if `url` is a safe redirect target, otherwise null.
- * Safe means: https (or http://localhost), and shares the same main domain as the backend.
- */
-function getSafeOrigin(url: string, apiOrigin: string): string | null {
-  try {
-    const parsed = new URL(url);
-    const isHttps = parsed.protocol === 'https:';
-    const isLocalhost = parsed.protocol === 'http:' && parsed.hostname === 'localhost';
-    if (!isHttps && !isLocalhost) {
-      return null;
-    }
-    const backendMainDomain = apiOrigin.split('/')[2]?.split('.').slice(1).join('.');
-    const urlMainDomain = parsed.hostname.split('.').slice(1).join('.');
-    if (!backendMainDomain || urlMainDomain !== backendMainDomain) {
-      return null;
-    }
-    return `${parsed.protocol}//${parsed.host}`;
-  } catch {
-    return null;
-  }
-}

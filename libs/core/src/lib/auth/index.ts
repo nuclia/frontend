@@ -4,4 +4,5 @@ export * from './auth.service';
 export * from './jwt';
 export * from './login.service';
 export * from './oauth.service';
+export * from './safe-redirect';
 export * from './saml.service';

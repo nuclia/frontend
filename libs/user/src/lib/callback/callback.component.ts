@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
 
-import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { BackendConfigurationService, isSafeRedirect, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -191,9 +191,6 @@ export class CallbackComponent implements OnInit {
   }
 
   private isCameFromLegit(url: string): boolean {
-    const backend = this.config.getAPIOrigin();
-    const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
-    const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
-    return urlMainDomain === backendMainDomain;
+    return isSafeRedirect(url, this.config.getAPIOrigin());
   }
 }
