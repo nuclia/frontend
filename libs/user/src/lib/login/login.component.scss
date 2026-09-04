@@ -9,67 +9,6 @@
 
 .login_form {
   padding: 0;
-
-  ::ng-deep {
-    $height-login-field: rhythm(5);
-    $padding-login-field-top: calc(#{rhythm(1)} - 1px);
-
-    .pa-field-control:not(textarea):not(.pa-select-with-help) {
-      height: $height-login-field;
-    }
-
-    .pa-field-control {
-      padding-top: $padding-login-field-top;
-      padding-bottom: $padding-login-field-top;
-    }
-
-    .pa-field-container .pa-field-label {
-      top: calc(#{rhythm(1)} + 1px);
-    }
-
-    .pa-field-icon {
-      top: $padding-login-field-top;
-    }
-
-    .pa-field-control {
-      &.pa-field-control-filled,
-      &.cdk-text-field-autofilled,
-      &:not(:disabled):not(:read-only):focus,
-      &:not(:disabled):not(:read-only):active {
-        & ~ .pa-field-label {
-          transform: scale(0.8) translateY(-#{rhythm(3)}) translateX(-#{rhythm(0.5)});
-        }
-      }
-    }
-
-    .pa-field-container {
-      &:not(.pa-disabled):not(.pa-readonly):not(.pa-field-error) {
-        border-color: $color-neutral-lighter;
-
-        &:hover {
-          border-color: $color-neutral-light;
-        }
-
-        &:focus,
-        &:active,
-        &.pa-focus {
-          border-color: $color-primary-regular;
-        }
-
-        .pa-field-label {
-          color: $color-neutral-light;
-        }
-
-        &.pa-focus .pa-field-label {
-          color: $color-primary-regular;
-        }
-
-        .pa-field-control::placeholder {
-          color: $color-neutral-light;
-        }
-      }
-    }
-  }
 }
 
 .login_field {
