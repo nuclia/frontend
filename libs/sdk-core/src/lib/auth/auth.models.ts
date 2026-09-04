@@ -50,6 +50,7 @@ export interface MagicAction {
 export type LoginErrorCode =
   | 'invite_not_found'
   | 'magic_token_expired'
+  | 'magic_token_already_used'
   | 'local_user_already_exists'
   | 'user_registered_as_external_user'
   | 'login_challenge_missing'

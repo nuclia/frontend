@@ -1,10 +1,18 @@
 import { LoginErrorCode } from '@nuclia/core';
 
+/** True when `url`'s registrable domain matches the backend API's, so it's safe to redirect to. */
+export function isCameFromLegit(url: string, backendOrigin: string): boolean {
+  const backendMainDomain = backendOrigin.split('/')[2].split('.').slice(1).join('.');
+  const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
+  return urlMainDomain === backendMainDomain;
+}
+
 // `login_challenge_expired_or_invalid` is intentionally excluded: its meaning (and message)
 // depends on the caller (magic-link "account ready, please log in again" vs SSO "session expired").
 const LOGIN_ERROR_MESSAGE_KEYS: Partial<Record<LoginErrorCode, string>> = {
   invite_not_found: 'login.error.invite_not_found',
   magic_token_expired: 'login.error.magic_token_expired',
+  magic_token_already_used: 'login.error.magic_token_already_used',
   local_user_already_exists: 'login.local_user_already_exists',
   user_registered_as_external_user: 'login.user_registered_as_external_user',
   login_challenge_missing: 'login.error.login_challenge_missing',

@@ -29,6 +29,7 @@
 	"login.error.login_accept_failed": "Nous n'avons pas pu finaliser votre connexion. Retournez à votre application et réessayez.",
 	"login.error.login_challenge_missing": "Une erreur s'est produite lors du démarrage de votre session. Retournez à votre application et réessayez.",
 	"login.error.magic_token_expired": "Ce lien a expiré. Retournez à votre application pour en demander un nouveau.",
+	"login.error.magic_token_already_used": "Ce lien a déjà été utilisé. Retournez à votre application et connectez-vous.",
 	"login.error.oauth_missing_email": "Nous n'avons pas pu récupérer d'adresse e-mail depuis {{provider}}. Assurez-vous que votre compte dispose d'un e-mail public et réessayez.",
 	"login.error.oauth_missing_identity": "Nous n'avons pas pu vérifier votre identité avec {{provider}}. Veuillez réessayer.",
 	"login.error.oauth_token_exchange_failed": "Nous n'avons pas pu vérifier votre connexion avec {{provider}}. Veuillez réessayer.",

@@ -29,6 +29,7 @@
 	"login.error.login_accept_failed": "No hem pogut completar el teu inici de sessió. Torna a la teva aplicació i torna-ho a provar.",
 	"login.error.login_challenge_missing": "S'ha produït un error en iniciar la teva sessió. Torna a la teva aplicació i torna-ho a provar.",
 	"login.error.magic_token_expired": "Aquest enllaç ha caducat. Torna a la teva aplicació per sol·licitar-ne un de nou.",
+	"login.error.magic_token_already_used": "Aquest enllaç ja s'ha fet servir. Torna a la teva aplicació i inicia sessió.",
 	"login.error.oauth_missing_email": "No hem pogut obtenir una adreça de correu de {{provider}}. Assegura't que el teu compte tingui un correu públic i torna-ho a provar.",
 	"login.error.oauth_missing_identity": "No hem pogut verificar la teva identitat amb {{provider}}. Torna-ho a provar.",
 	"login.error.oauth_token_exchange_failed": "No hem pogut verificar el teu inici de sessió amb {{provider}}. Torna-ho a provar.",

@@ -29,6 +29,7 @@
 	"login.error.login_accept_failed": "No pudimos completar tu inicio de sesión. Vuelve a tu aplicación e inténtalo de nuevo.",
 	"login.error.login_challenge_missing": "Se produjo un error al iniciar tu sesión. Vuelve a tu aplicación e inténtalo de nuevo.",
 	"login.error.magic_token_expired": "Este enlace ha caducado. Vuelve a tu aplicación para solicitar uno nuevo.",
+	"login.error.magic_token_already_used": "Este enlace ya se ha utilizado. Vuelve a tu aplicación e inicia sesión.",
 	"login.error.oauth_missing_email": "No pudimos obtener una dirección de correo de {{provider}}. Asegúrate de que tu cuenta tenga un correo público e inténtalo de nuevo.",
 	"login.error.oauth_missing_identity": "No pudimos verificar tu identidad con {{provider}}. Inténtalo de nuevo.",
 	"login.error.oauth_token_exchange_failed": "No pudimos verificar tu inicio de sesión con {{provider}}. Inténtalo de nuevo.",

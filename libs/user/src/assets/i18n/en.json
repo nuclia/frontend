@@ -29,6 +29,7 @@
 	"login.error.login_accept_failed": "We couldn't complete your sign-in. Please go back to your app and try again.",
 	"login.error.login_challenge_missing": "Something went wrong starting your session. Please go back to your app and try again.",
 	"login.error.magic_token_expired": "This link has expired. Go back to your app to request a new one.",
+	"login.error.magic_token_already_used": "This link has already been used. Go back to your app and log in.",
 	"login.error.oauth_missing_email": "We couldn't retrieve an email address from {{provider}}. Please make sure your account has a public email and try again.",
 	"login.error.oauth_missing_identity": "We couldn't verify your identity with {{provider}}. Please try again.",
 	"login.error.oauth_token_exchange_failed": "We couldn't verify your login with {{provider}}. Please try again.",

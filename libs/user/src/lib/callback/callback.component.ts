@@ -7,7 +7,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
 import { UserContainerComponent } from '../user-container';
 import { TranslateService } from '@ngx-translate/core';
-import { getLoginErrorMessageKey } from '../login-error.util';
+import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
 
 @Component({
   selector: 'stf-user-callback',
@@ -68,7 +68,11 @@ export class CallbackComponent implements OnInit {
         next: (res) => {
           if (res.success) {
             const successCameFrom = res.state.came_from;
-            if (successCameFrom && successCameFrom !== window.location.origin && this.isCameFromLegit(successCameFrom)) {
+            if (
+              successCameFrom &&
+              successCameFrom !== window.location.origin &&
+              isCameFromLegit(successCameFrom, this.config.getAPIOrigin())
+            ) {
               window.location.href = successCameFrom;
             } else {
               this.router.navigate(['/']);
@@ -187,18 +191,11 @@ export class CallbackComponent implements OnInit {
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
     const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
-    if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
+    if (came_from && came_from !== window.location.origin && isCameFromLegit(came_from, this.config.getAPIOrigin())) {
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
       this.router.navigate(['/']);
     }
-  }
-
-  private isCameFromLegit(url: string): boolean {
-    const backend = this.config.getAPIOrigin();
-    const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
-    const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
-    return urlMainDomain === backendMainDomain;
   }
 
   private decodeCameFrom(state: string): string | undefined {
@@ -213,7 +210,7 @@ export class CallbackComponent implements OnInit {
   // the originating app (came_from) itself. Land on its root instead of a specific route
   // (e.g. /user/login-redirect) so we don't assume a route convention product teams may not share.
   private restartOAuthFromOriginatingApp(message: string, came_from?: string): void {
-    if (came_from && this.isCameFromLegit(came_from)) {
+    if (came_from && isCameFromLegit(came_from, this.config.getAPIOrigin())) {
       const url = new URL(came_from);
       url.searchParams.set('message', message);
       this.document.location.href = url.toString();

@@ -5,6 +5,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { CallbackComponent } from './callback.component';
 import { TranslateService } from '@ngx-translate/core';
+import { isCameFromLegit } from '../login-error.util';
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -344,7 +345,7 @@ describe('CallbackComponent', () => {
   it('should validate came_from domains correctly', async () => {
     await createComponent();
 
-    expect((component as any).isCameFromLegit('https://app.progress.cloud/path')).toBe(true);
-    expect((component as any).isCameFromLegit('https://evil.example.com/path')).toBe(false);
+    expect(isCameFromLegit('https://app.progress.cloud/path', config.getAPIOrigin())).toBe(true);
+    expect(isCameFromLegit('https://evil.example.com/path', config.getAPIOrigin())).toBe(false);
   });
 });
