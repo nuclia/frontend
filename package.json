@@ -9,6 +9,7 @@
     "nx": "nx",
     "start": "ng serve",
     "start:dashboard": "nx serve dashboard",
+    "start:admin": "nx serve admin",
     "build": "ng build",
     "test": "nx run-many --all --target=test",
     "test:search-lib": "vitest -r=libs/search-widget",

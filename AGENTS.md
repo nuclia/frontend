@@ -86,6 +86,14 @@ Test files are co-located alongside source as `*.spec.ts`.
 - **New components:** standalone by default; NgModules kept only for legacy compatibility.
 - **State files:** `*.state.ts` = Angular signal store. Older services use RxJS `BehaviorSubject`.
 
+### Code comments
+
+- **Write as few comments as possible.** Only comment code that genuinely needs clarification —
+  a non-obvious workaround, a security/business-rule constraint, or a "why" that isn't clear from
+  the code itself. Never restate what the code already says.
+- Don't comment routine or self-explanatory code (getters, straightforward conditionals, obvious
+  navigation/assignment). If a reviewer wouldn't ask "why is this here?", skip the comment.
+
 ### SCSS / Design tokens
 
 - Import Sistema tokens in app global styles: `@use '@nuclia/sistema/styles/overrides'`.
