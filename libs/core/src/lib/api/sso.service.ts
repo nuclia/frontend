@@ -1,26 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { SsoLoginResponse } from '../models';
+import { OAuthService } from '../auth/oauth.service';
 import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SsoService {
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    private oAuthService: OAuthService,
+  ) {}
 
-  getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
-    const params = new URLSearchParams();
-    params.set('came_from', window.location.origin);
+  getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): Observable<string> {
+    const loginChallenge = new URLSearchParams(window.location.search).get('login_challenge');
+    const buildUrl = (cameFrom: string) => {
+      const params = new URLSearchParams();
+      params.set('came_from', cameFrom);
+      if (loginChallenge) {
+        params.set('login_challenge', loginChallenge);
+      }
+      return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
+    };
 
-    // Include login_challenge if present in current URL (for OAuth flows from other apps)
-    const currentParams = new URLSearchParams(window.location.search);
-    const loginChallenge = currentParams.get('login_challenge');
-    if (loginChallenge) {
-      params.set('login_challenge', loginChallenge);
+    if (!loginChallenge) {
+      return of(buildUrl(this.oAuthService.getCameFrom()));
     }
 
-    return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
+    // The login_challenge is still fresh here (we're only starting the SSO hop), so
+    // introspecting it via the backend is the one reliable source of came_from —
+    // no dependency on localStorage state or a hardcoded default app.
+    return this.oAuthService.getLoginData(loginChallenge, null).pipe(
+      map((data) => buildUrl(data.came_from || this.oAuthService.getCameFrom())),
+      catchError(() => of(buildUrl(this.oAuthService.getCameFrom()))),
+    );
   }
 
   login(code: string, state: string): Observable<SsoLoginResponse> {

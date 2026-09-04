@@ -105,7 +105,14 @@ jobs:
       - name: Install project dependencies
         run: |-
           yarn install --immutable
-          yarn missdev
+          for i in 1 2 3; do
+            yarn missdev
+            [ -f libs/pastanaga-angular/package.json ] && break
+            echo "pastanaga-angular checkout missing, retrying ($i)..."
+            rm -rf libs/pastanaga-angular
+            sleep 5
+          done
+          [ -f libs/pastanaga-angular/package.json ] || { echo "::error::pastanaga-angular failed to check out after retries"; exit 1; }
 
       - name: Unit tests
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget,platform

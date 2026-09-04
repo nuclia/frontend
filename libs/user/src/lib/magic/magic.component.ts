@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { BackendConfigurationService } from '@flaps/core';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
-import { MagicActionError } from '@nuclia/core';
+import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
 
 @Component({
   selector: 'stf-magic',
@@ -18,6 +19,7 @@ export class MagicComponent implements OnInit, OnDestroy {
     private magicService: MagicService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
+    private config: BackendConfigurationService,
   ) {}
 
   ngOnInit() {
@@ -46,14 +48,17 @@ export class MagicComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           if (error?.tokenError) {
-            const cause = error.tokenError.detail as MagicActionError | 'login_challenge_expired_or_invalid';
-            let message = 'login.token_expired';
-
-            if (cause === 'login_challenge_expired_or_invalid') message = 'login.account_ready_please_login';
-            if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
-              message = `login.${cause}`;
+            const code = error.tokenError.error_code || error.tokenError.detail;
+            // The backend recovers came_from for tokens that are expired/used/invite-cancelled but
+            // still resolvable, so we can restart fresh at the originating app just like a stale
+            // login_challenge, instead of dead-ending here.
+            if (error.tokenError.came_from) {
+              this.readyCameFrom = error.tokenError.came_from;
             }
-
+            const message =
+              code === 'login_challenge_expired_or_invalid'
+                ? 'login.account_ready_please_login'
+                : getLoginErrorMessageKey(code, 'login.token_expired');
             this.login(message);
           } else {
             this.error = 'onboarding.failed';
@@ -65,7 +70,7 @@ export class MagicComponent implements OnInit, OnDestroy {
 
   private login(message: string) {
     // The auth app has no real OAuth client_id of its own; the flow must be (re)started from the originating app (came_from)
-    if (this.readyCameFrom) {
+    if (this.readyCameFrom && isCameFromLegit(this.readyCameFrom, this.config.getAPIOrigin())) {
       // Strip down to the origin in case the backend ever sends came_from with a path/query.
       const url = new URL(new URL(this.readyCameFrom).origin);
       url.searchParams.set('message', message);
