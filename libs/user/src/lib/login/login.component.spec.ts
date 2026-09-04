@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData, FeaturesService } from '@flaps/core';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
 import { PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -24,6 +25,7 @@ describe('LoginComponent', () => {
   };
   let reCaptchaV3Service: { execute: jest.Mock };
   let samlService: { checkDomain: jest.Mock; ssoUrl: jest.Mock };
+  let translate: { stream: jest.Mock };
   const featuresService = { unstable: { progressComSignup: of(false) } };
 
   let routeData$: BehaviorSubject<{ loginData: OAuthLoginData }>;
@@ -52,6 +54,7 @@ describe('LoginComponent', () => {
         { provide: BackendConfigurationService, useValue: config },
         { provide: SAMLService, useValue: samlService },
         { provide: FeaturesService, useValue: featuresService },
+        { provide: TranslateService, useValue: translate },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -88,6 +91,9 @@ describe('LoginComponent', () => {
       checkDomain: jest.fn(() => of({ account_id: 'acc-1' })),
       ssoUrl: jest.fn((accountId: string, challenge?: string) => `https://sso.local/${accountId}?c=${challenge || ''}`),
     };
+    translate = {
+      stream: jest.fn(() => of('Accept the <a href="https://terms.local" target="_blank">Terms</a>.')),
+    };
 
     routeData$ = new BehaviorSubject<{ loginData: OAuthLoginData }>({
       loginData: { needs_initial_setpassword: false } as OAuthLoginData,
@@ -106,6 +112,14 @@ describe('LoginComponent', () => {
   it('should build signUpUrl from cameFrom', async () => {
     await buildComponent();
     expect(component.signUpUrl).toBe('http://app.local/user/signup');
+  });
+
+  it('should strip link targets from the consent copy but keep the anchors', async () => {
+    await buildComponent();
+    const consent = await firstValueFrom(component.consentHtml);
+
+    expect(consent).toBe('Accept the <a target="_blank">Terms</a>.');
+    expect(consent).not.toContain('href');
   });
 
   it('should navigate to recover page when initial password is required', async () => {

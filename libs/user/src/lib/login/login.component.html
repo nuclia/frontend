@@ -81,15 +81,19 @@
     </div>
     <div class="login_signup body-s">
       <span>{{ 'login.have_account' | translate }}</span>
+      <!-- TODO: restore [href]="signUpUrl" once the shared login has a
+           product-neutral signup destination. It currently points at an
+           Agentic RAG specific page, so the link is left inert. -->
       <a
-        [href]="signUpUrl"
         class="accent-link"
         data-cy="create-account">
         {{ 'login.create_one' | translate }}
       </a>
     </div>
+    <!-- TODO: see `consentHtml` — the anchors are kept but their targets
+         stripped until the shared login has its own terms and privacy links. -->
     <div class="login_policy body-xs">
-      <span [innerHTML]="'user.consent' | translate"></span>
+      <span [innerHTML]="consentHtml | async"></span>
     </div>
   </div>
 </nus-user-container>

@@ -128,6 +128,17 @@
   }
 }
 
+// TODO: remove together with the inert sign-up link. Pastanaga's reboot resets
+// `color` on anchors that have no href, which would otherwise drop the accent
+// colour while this link is waiting for a real target.
+.login_signup a.accent-link:not([href]) {
+  color: $color-text-link-accent;
+
+  &:hover {
+    color: $color-text-link-accent-hover;
+  }
+}
+
 .login_submit,
 .login_recover,
 .login_signup {

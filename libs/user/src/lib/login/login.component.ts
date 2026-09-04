@@ -6,6 +6,7 @@ import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 
 @Component({
@@ -54,6 +55,17 @@ export class LoginComponent {
   isLoggingIn = false;
   signUpUrl = '';
 
+  /**
+   * TODO: remove this and bind `'user.consent' | translate` directly once the
+   * shared login has its own terms and privacy links. The `user.consent` copy
+   * is shared with onboarding and links to Agentic RAG pages, so the anchors
+   * are stripped of their targets here rather than in the translations, which
+   * would change the links for onboarding too.
+   */
+  consentHtml = this.translate
+    .stream('user.consent')
+    .pipe(map((consent: string) => consent.replace(/\s+href="[^"]*"/g, '')));
+
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
     switchMap((email) => {
@@ -74,6 +86,7 @@ export class LoginComponent {
     public config: BackendConfigurationService,
     private samlService: SAMLService,
     private featuresService: FeaturesService,
+    private translate: TranslateService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
