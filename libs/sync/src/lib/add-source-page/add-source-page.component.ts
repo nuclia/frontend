@@ -11,16 +11,20 @@ import { SourcesService } from '../logic/sources.service';
 import { NucliadbSourceComponent } from './nucliadb-source/nucliadb-source.component';
 import { SyncSourceComponent } from './sync-source/sync-source.component';
 import { McpSourceComponent } from './mcp-source/mcp-source.component';
+import { PerplexitySourceComponent } from './perplexity-source/perplexity-source.component';
+import { GoogleSourceComponent } from './google-source/google-source.component';
 
 @Component({
   imports: [
     CommonModule,
     BackButtonComponent,
+    GoogleSourceComponent,
     NucliadbSourceComponent,
     McpSourceComponent,
     PaButtonModule,
     PaIconModule,
     PaTextFieldModule,
+    PerplexitySourceComponent,
     ReactiveFormsModule,
     StickyFooterComponent,
     SyncSourceComponent,
