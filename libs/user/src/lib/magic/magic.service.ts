@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, SDKService } from '@flaps/core';
 import { MagicAction } from '@nuclia/core';
-import { catchError, from, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -94,25 +94,8 @@ export class MagicService {
   validateToken(token: string, zone?: string) {
     return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
-        // error is the raw fetch Response; parse its JSON body so callers can read `.detail`.
-        // eslint-disable-next-line no-console
-        console.error('[magic] validateToken error', {
-          error,
-          isResponse: error instanceof Response,
-          status: error instanceof Response ? error.status : undefined,
-          bodyUsed: error instanceof Response ? error.bodyUsed : undefined,
-        });
-        return from(error instanceof Response ? error.json().catch((jsonErr) => {
-          // eslint-disable-next-line no-console
-          console.error('[magic] validateToken failed to parse error body', jsonErr);
-          return {};
-        }) : Promise.resolve({})).pipe(
-          switchMap((body) => {
-            // eslint-disable-next-line no-console
-            console.error('[magic] validateToken parsed error body', body);
-            throw Object.assign(new Error('Token validation error'), { tokenError: body });
-          }),
-        );
+        // error is `{ status, body }`, with body already parsed by the SDK's fetch() helper.
+        throw Object.assign(new Error('Token validation error'), { tokenError: error?.body || {} });
       }),
     );
   }

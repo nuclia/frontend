@@ -45,8 +45,6 @@ export class MagicComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          // eslint-disable-next-line no-console
-          console.error('[magic] ngOnInit pipeline error', { error, tokenError: error?.tokenError });
           if (error?.tokenError) {
             const code = error.tokenError.error_code || error.tokenError.detail;
             // The backend recovers came_from for tokens that are expired/used/invite-cancelled but
@@ -59,8 +57,6 @@ export class MagicComponent implements OnInit, OnDestroy {
               code === 'login_challenge_expired_or_invalid'
                 ? 'login.account_ready_please_login'
                 : getLoginErrorMessageKey(code, 'login.token_expired');
-            // eslint-disable-next-line no-console
-            console.error('[magic] resolved error code/message', { code, message, readyCameFrom: this.readyCameFrom });
             this.login(message);
           } else {
             this.error = 'onboarding.failed';
@@ -71,8 +67,6 @@ export class MagicComponent implements OnInit, OnDestroy {
   }
 
   private login(message: string) {
-    // eslint-disable-next-line no-console
-    console.error('[magic] login()', { message, readyCameFrom: this.readyCameFrom });
     // The auth app has no real OAuth client_id of its own; the flow must be (re)started from the originating app (came_from)
     // readyCameFrom always comes from the backend's own response body (sanitized server-side via
     // sanitize_came_from at token-creation time), so it's trusted as-is here, unlike
