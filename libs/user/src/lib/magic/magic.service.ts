@@ -95,8 +95,21 @@ export class MagicService {
     return this.sdk.nuclia.auth.validateMagicToken(token, zone).pipe(
       catchError((error) => {
         // error is the raw fetch Response; parse its JSON body so callers can read `.detail`.
-        return from(error instanceof Response ? error.json().catch(() => ({})) : Promise.resolve({})).pipe(
+        // eslint-disable-next-line no-console
+        console.error('[magic] validateToken error', {
+          error,
+          isResponse: error instanceof Response,
+          status: error instanceof Response ? error.status : undefined,
+          bodyUsed: error instanceof Response ? error.bodyUsed : undefined,
+        });
+        return from(error instanceof Response ? error.json().catch((jsonErr) => {
+          // eslint-disable-next-line no-console
+          console.error('[magic] validateToken failed to parse error body', jsonErr);
+          return {};
+        }) : Promise.resolve({})).pipe(
           switchMap((body) => {
+            // eslint-disable-next-line no-console
+            console.error('[magic] validateToken parsed error body', body);
             throw Object.assign(new Error('Token validation error'), { tokenError: body });
           }),
         );
