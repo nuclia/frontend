@@ -10,7 +10,14 @@ import {
 } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
-import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  PendoService,
+  SDKService,
+  STFSplashScreenService,
+  STFUtils,
+  UserService,
+} from '@flaps/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -34,6 +41,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
+    private pendo: PendoService,
   ) {
     this.initTranslate();
     this.user.userPrefs.subscribe((prefs) => {
@@ -43,6 +51,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.sdk.nuclia.auth.redirectToOAuth();
       this.sdk.cleanAccount();
     });
+    this.pendo.init();
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }

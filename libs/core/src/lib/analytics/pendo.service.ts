@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { combineLatest, distinctUntilChanged, filter, map, merge, startWith } from 'rxjs';
 import { Account } from '@nuclia/core';
-import { SDKService, UserService } from '@flaps/core';
+import { SDKService, UserService } from '../api';
 
 type PendoRole = 'owner' | 'contributor' | 'reader';
 
@@ -34,9 +34,10 @@ declare global {
 }
 
 /**
- * Feeds visitor/account metadata to Pendo (see apps/dashboard/src/index.html for the loader script).
- * Dashboard-prod-only by construction: on other environments the loader's key is a placeholder,
- * pendo.js 404s, and the calls below just queue harmlessly.
+ * Feeds visitor/account metadata to Pendo (see each app's index.html for the loader script, e.g.
+ * apps/dashboard/src/index.html or apps/admin/src/index.html).
+ * Prod-only by construction: on other environments the loader's key is a placeholder, pendo.js
+ * 404s, and the calls below just queue harmlessly.
  */
 @Injectable({
   providedIn: 'root',
