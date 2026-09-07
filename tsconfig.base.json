@@ -34,9 +34,7 @@
       "@nuclia/sync": ["libs/sync/src/index.ts"],
       "@nuclia/user": ["libs/user/src/index.ts"],
       "@nuclia/widget": ["libs/search-widget/src/index.ts"],
-      "libs": ["libs/src/index.ts"],
-      "rao-widget": ["libs/rao-widget/src/index.ts"],
-      "rao-widget/*": ["libs/rao-widget/src/*"]
+      "libs": ["libs/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
