@@ -56,7 +56,7 @@ export class MagicComponent implements OnInit, OnDestroy {
             const message =
               code === 'login_challenge_expired_or_invalid'
                 ? 'login.account_ready_please_login'
-                : getLoginErrorMessageKey(code, 'login.token_expired');
+                : getLoginErrorMessageKey(code, 'login.token_expired', !!this.readyCameFrom);
             this.login(message);
           } else {
             this.error = 'onboarding.failed';

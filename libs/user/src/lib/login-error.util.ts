@@ -25,7 +25,32 @@ const LOGIN_ERROR_MESSAGE_KEYS: Partial<Record<LoginErrorCode, string>> = {
   domain_not_allowed: 'login.error.domain_not_allowed',
 };
 
-/** Maps a backend `error_code` (or, for older deployments, the raw `detail` string) to an i18n key. */
-export function getLoginErrorMessageKey(code: string | undefined | null, fallback: string): string {
-  return (code && LOGIN_ERROR_MESSAGE_KEYS[code as LoginErrorCode]) || fallback;
+// Variants for when the user has already been redirected back to a valid came_from: telling them
+// to "go back to your app" would be confusing since they're already there.
+const LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART: Partial<Record<LoginErrorCode, string>> = {
+  invite_not_found: 'login.error.invite_not_found_restarted',
+  magic_token_expired: 'login.error.magic_token_expired_restarted',
+  magic_token_already_used: 'login.error.magic_token_already_used_restarted',
+  login_challenge_missing: 'login.error.login_challenge_missing_restarted',
+  login_accept_failed: 'login.error.login_accept_failed_restarted',
+};
+
+/** Maps a backend `error_code` (or, for older deployments, the raw `detail` string) to an i18n key.
+ * Pass `hasCameFrom: true` when the message will be shown after already redirecting the user back
+ * to their app, so "go back to your app"-style copy is swapped for a variant that fits that context. */
+export function getLoginErrorMessageKey(
+  code: string | undefined | null,
+  fallback: string,
+  hasCameFrom = false,
+): string {
+  if (!code) {
+    return fallback;
+  }
+  if (hasCameFrom) {
+    const restartedKey = LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART[code as LoginErrorCode];
+    if (restartedKey) {
+      return restartedKey;
+    }
+  }
+  return LOGIN_ERROR_MESSAGE_KEYS[code as LoginErrorCode] || fallback;
 }
