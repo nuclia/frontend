@@ -25,7 +25,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }),
   );
   inArag = this.navigationService.inArag();
-  inAccount: Observable<boolean> = this.navigationService.inAccount.pipe(takeUntil(this.unsubscribeAll));
+  inAdminApp = this.navigationService.inAdminApp;
   inDashboard = this.navigationService.inDashboard;
   inRaoApp = this.navigationService.inRaoApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(

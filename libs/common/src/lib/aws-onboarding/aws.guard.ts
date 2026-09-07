@@ -29,19 +29,21 @@ export const awsGuard: CanActivateFn = (route, state) => {
             }
           } else {
             sdk.nuclia.auth.authenticate(result);
-            return sdk.nuclia.db
-              .getAccounts()
-              .pipe(
-                switchMap((accounts) => {
-                  if (accounts.length === 0) {
-                    return of(true);
-                  } else if (accounts.length === 1) {
-                    return router.navigate([navigation.getAccountManageUrl(accounts[0].slug)]);
-                  } else {
-                    return router.navigate([navigation.getAccountSelectUrl()]);
-                  }
-                }),
-              );
+            return sdk.nuclia.db.getAccounts().pipe(
+              switchMap((accounts) => {
+                if (accounts.length === 0) {
+                  return of(true);
+                } else if (accounts.length === 1) {
+                  return of(
+                    navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accounts[0].slug), {
+                      withFromApp: true,
+                    }),
+                  );
+                } else {
+                  return router.navigate([navigation.getAccountSelectUrl()]);
+                }
+              }),
+            );
           }
         }),
       );

@@ -15,7 +15,9 @@
       </div>
     }
 
-    <app-kb-switch></app-kb-switch>
+    @if (!inAdminApp) {
+      <app-kb-switch></app-kb-switch>
+    }
 
     @if (!standalone) {
       <stf-plan-status></stf-plan-status>

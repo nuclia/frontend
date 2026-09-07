@@ -29,16 +29,17 @@ export class DashboardLayoutComponent {
     map(([showLimit, showProgress]) => showLimit || showProgress),
   );
   collapsedNav = this.layoutService.collapsedNav;
-  // The sidebar is hidden when in simple mode (ContextBox/cowork) outside an ARAG space,
-  // OR when anywhere under /manage (all account-management routes are full-width).
-  // IN_ACCOUNT_MANAGEMENT regex matches ALL /manage/* paths, so no manage route has a sidebar.
-  noNavBar = combineLatest([
-    this.navigationService.simpleMode,
-    this.navigationService.inArag(),
-    this.navigationService.inAccount,
-  ]).pipe(map(([simple, inArag, inHome]) => (simple && !inArag) || inHome));
+  // Hidden in simple mode outside ARAG, or anywhere under /manage (account-management routes
+  // are full-width).
+  noNavBar = combineLatest([this.navigationService.simpleMode, this.navigationService.inArag()]).pipe(
+    map(([simple, inArag]) => (simple && !inArag) || this.navigationService.inAdminApp),
+  );
 
   constructor() {
+    // EULA gating is skipped in `admin` — forcing PDP Studio users through it is unresolved.
+    if (this.navigationService.inAdminApp) {
+      return;
+    }
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.can_manage_account && !account.eula_accepted) {
         this.modalService.openModal(EulaModalComponent, { dismissable: false });

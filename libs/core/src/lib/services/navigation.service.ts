@@ -1,7 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, UrlTree } from '@angular/router';
+import { WINDOW } from '@ng-web-apis/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import {
+  AccountEntryContextService,
+  AccountEntryOriginClient,
+  AuthService,
+  SDKService,
+  standaloneSimpleAccount,
+  StaticEnvironmentConfiguration,
+} from '@flaps/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -15,24 +23,38 @@ import {
   of,
   take,
 } from 'rxjs';
+import { isAbsoluteUrl } from '../utils';
+import { BackendConfigurationService } from '../config/backend-config.service';
 
 const IN_ARAG = /at\/[^/]+\/[^/]+\/arag/;
-const IN_ACCOUNT_MANAGEMENT = /\/at\/[^/]+\/manage/;
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
+  inAdminApp = this.environment.client === 'admin';
   inRaoApp = this.environment.client === 'rao';
   inDashboard = this.environment.client === 'dashboard';
+
   simpleMode = new BehaviorSubject(false);
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private sdk: SDKService,
+    private entryContext: AccountEntryContextService,
+    private backendConfig: BackendConfigurationService,
+    @Inject(WINDOW) private window: Window,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
+
+  fromApp(app: AccountEntryOriginClient): boolean {
+    return this.resolvedFromApp === app;
+  }
+
+  private readonly resolvedFromApp: AccountEntryOriginClient = this.inAdminApp
+    ? this.entryContext.get()?.originClient || 'dashboard'
+    : (this.environment.client as AccountEntryOriginClient);
 
   homeUrl: Observable<string> = combineLatest([
     this.sdk.currentAccount,
@@ -41,7 +63,7 @@ export class NavigationService {
     this.simpleMode,
   ]).pipe(
     map(([account, kb, arag, simpleMode]) => {
-      if (account && this.inAccountManagement(location.pathname)) {
+      if (account && this.inAdminApp) {
         return this.getAccountManageUrl(account.slug);
       } else if (account && arag) {
         return this.getRetrievalAgentUrl(account.slug, arag.slug);
@@ -64,17 +86,6 @@ export class NavigationService {
     }),
   );
 
-  inAccount: Observable<boolean> = merge(
-    defer(() => of(this.inAccountManagement(location.pathname))),
-    this.router.events.pipe(
-      filter((event) => event instanceof NavigationEnd),
-      map((event) => this.inAccountManagement((event as NavigationEnd).url)),
-    ),
-  ).pipe(distinctUntilChanged());
-
-  inAccountManagement(path: string): boolean {
-    return IN_ACCOUNT_MANAGEMENT.test(path);
-  }
   inAragSpace(path: string): boolean {
     return IN_ARAG.test(path);
   }
@@ -115,7 +126,10 @@ export class NavigationService {
   }
 
   getRetrievalAgentUrl(accountSlug: string, agentSlug: string): string {
-    return `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/arag/${agentSlug}`;
+    const path = `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/arag/${agentSlug}`;
+    // ARAGs are a `rao` concept — once `admin` hosts this link (no ARAG pages of its own),
+    // point at `rao`'s own origin regardless of which app the user entered `admin` from.
+    return this.inAdminApp ? `${this.sdk.getOriginForApp('rao')}${path}` : path;
   }
 
   getPlatformUrl(accountSlug: string): string {
@@ -131,9 +145,12 @@ export class NavigationService {
   }
 
   getKbUrl(accountSlug: string, kbSlug: string): string {
-    return this.sdk.nuclia.options.standalone
+    const path = this.sdk.nuclia.options.standalone
       ? `/at/${accountSlug}/${kbSlug}`
       : `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
+    // KBs are a `dashboard`/`rag` concept — once `admin` hosts this link (no KB pages of its
+    // own), point at `rag`'s own origin regardless of which app the user entered `admin` from.
+    return this.inAdminApp ? `${this.sdk.getOriginForApp('rag')}${path}` : path;
   }
 
   getResourceListUrl(): Observable<string> {
@@ -151,11 +168,53 @@ export class NavigationService {
   }
 
   getKbSelectUrl(accountSlug: string) {
-    return `/select/${accountSlug}`;
+    const path = `/select/${accountSlug}`;
+    // In `admin` this is a no-op stub — point to `rag`'s own origin for a real KB picker.
+    return this.inAdminApp ? `${this.sdk.getOriginForApp('rag')}${path}` : path;
   }
 
   getAccountManageUrl(accountSlug: string): string {
-    return `${this.getAccountUrl(accountSlug)}/manage`;
+    // `admin` mounts `AccountModule` directly at `/at/:account` — no `/manage` segment needed.
+    if (this.inAdminApp) return this.getAccountUrl(accountSlug);
+
+    // backendConfig.getAdminOrigin() is for local testing only
+    const adminOrigin = this.backendConfig.getAdminOrigin() || this.sdk.getOriginForApp('admin');
+    return `${adminOrigin}${this.getAccountUrl(accountSlug)}`;
+  }
+
+  /** Navigates to `url`, which may be same-origin (internal route) or cross-origin (a real
+   *  `admin` deployment) — absolute URLs get a real navigation; anything else goes through the
+   *  Angular router. Pass `withFromApp: true` only when `url` may point back into `admin`, so it
+   *  can capture entry context from the appended `from`/`app` query params. */
+  navigateExternal(url: string, config?: { queryParams?: Record<string, string>; withFromApp?: boolean }): void {
+    const { queryParams, withFromApp } = config || {};
+    if (isAbsoluteUrl(url)) {
+      const target = new URL(url);
+      Object.entries(queryParams || {}).forEach(([key, value]) => target.searchParams.set(key, value));
+      if (withFromApp) {
+        target.searchParams.set('from', this.window.location.href);
+        target.searchParams.set('app', this.environment.client);
+      }
+      this.window.location.href = target.toString();
+    } else if (queryParams) {
+      this.router.navigate([url], { queryParams });
+    } else {
+      this.router.navigateByUrl(url);
+    }
+  }
+
+  /** `CanActivate` equivalent of `navigateExternal()` — cross-origin `url` triggers the
+   *  redirect and blocks activation; same-origin returns a `UrlTree` as usual. */
+  resolveGuardRedirect(
+    url: string,
+    config?: { queryParams?: Record<string, string>; withFromApp?: boolean },
+  ): UrlTree | boolean {
+    if (isAbsoluteUrl(url)) {
+      this.navigateExternal(url, config);
+      return false;
+    }
+    const { queryParams } = config || {};
+    return queryParams ? this.router.createUrlTree([url], { queryParams }) : this.router.createUrlTree([url]);
   }
 
   getKbManageUrl(accountSlug: string, kbSlug: string): string {
@@ -163,10 +222,10 @@ export class NavigationService {
   }
 
   getKbCreationUrl(accountSlug: string): string {
-    return `${this.getAccountUrl(accountSlug)}/manage/kbs/create`;
+    return `${this.getAccountManageUrl(accountSlug)}/kbs/create`;
   }
   getAragCreationUrl(accountSlug: string): string {
-    return `${this.getAccountUrl(accountSlug)}/manage/arag`;
+    return `${this.getAccountManageUrl(accountSlug)}/arag`;
   }
 
   getKbUsersUrl(accountSlug: string, kbSlug: string): string {

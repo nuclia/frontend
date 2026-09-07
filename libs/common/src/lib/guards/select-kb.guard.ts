@@ -40,7 +40,11 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
               ? of(true)
               : sdk.currentAccount.pipe(
                   map((account) =>
-                    account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
+                    account.can_manage_account
+                      ? navigation.resolveGuardRedirect(navigation.getAccountManageUrl(accountSlug), {
+                          withFromApp: true,
+                        })
+                      : true,
                   ),
                 );
           } else if (

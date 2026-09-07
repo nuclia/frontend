@@ -1,5 +1,4 @@
 export {
-  AccountModule,
   EntitiesModule,
   KbSettingsModule,
   MetricsModule,
