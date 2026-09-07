@@ -1,9 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { BackendConfigurationService } from '@flaps/core';
 import { MagicService } from './magic.service';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
-import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
+import { getLoginErrorMessageKey } from '../login-error.util';
 
 @Component({
   selector: 'stf-magic',
@@ -19,7 +18,6 @@ export class MagicComponent implements OnInit, OnDestroy {
     private magicService: MagicService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private config: BackendConfigurationService,
   ) {}
 
   ngOnInit() {
@@ -70,7 +68,10 @@ export class MagicComponent implements OnInit, OnDestroy {
 
   private login(message: string) {
     // The auth app has no real OAuth client_id of its own; the flow must be (re)started from the originating app (came_from)
-    if (this.readyCameFrom && isCameFromLegit(this.readyCameFrom, this.config.getAPIOrigin())) {
+    // readyCameFrom always comes from the backend's own response body (sanitized server-side via
+    // sanitize_came_from at token-creation time), so it's trusted as-is here, unlike
+    // callback.component.ts's came_from which is decoded from a client-supplied OAuth state param.
+    if (this.readyCameFrom) {
       // Strip down to the origin in case the backend ever sends came_from with a path/query.
       const url = new URL(new URL(this.readyCameFrom).origin);
       url.searchParams.set('message', message);
