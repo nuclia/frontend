@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
-import { BackendConfigurationService } from '@flaps/core';
+import { OAuthService } from '@flaps/core';
 
 @Component({
   selector: 'nus-user-container',
@@ -11,7 +11,7 @@ import { BackendConfigurationService } from '@flaps/core';
 })
 export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;
-  private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
-  brandName = this.backendConfig.getBrandName();
+  private oAuthService = inject(OAuthService);
+  logoPath = this.oAuthService.cameFromLogo;
+  brandName = this.oAuthService.cameFromBrandName;
 }

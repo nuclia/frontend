@@ -1,7 +1,7 @@
 import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, distinctUntilChanged, map, of, switchMap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
 import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
@@ -56,7 +56,6 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
   isLoggingIn = false;
-  signUpUrl = '';
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
     distinctUntilChanged(),
@@ -68,6 +67,22 @@ export class LoginComponent {
         : of(undefined);
     }),
     map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
+  );
+  isPDP = this.oAuthService.isPDP;
+  brandName = this.oAuthService.cameFromBrandName;
+
+  signUpUrl = combineLatest([
+    this.featuresService.unstable.progressComSignup,
+    this.oAuthService.cameFromSignup,
+    this.route.queryParams,
+  ]).pipe(
+    map(([hasProgressComSignup, cameFromSignup, queryParams]) => {
+      if (hasProgressComSignup) {
+        return cameFromSignup;
+      } else {
+        return `${queryParams['came_from'] || this.oAuthService.getCameFrom()}/user/signup`;
+      }
+    }),
   );
 
   constructor(
@@ -82,14 +97,6 @@ export class LoginComponent {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
-    const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
-    this.featuresService.unstable.progressComSignup.subscribe((hasProgressComSignup) => {
-      if (hasProgressComSignup) {
-        this.signUpUrl = 'https://www.progress.com/agentic-rag/free-trial-sign-up';
-      } else {
-        this.signUpUrl = `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
-      }
-    });
     this.route.data.subscribe((data) => {
       if (data['loginData']?.['needs_initial_setpassword']) {
         this.router.navigate(['/user/recover'], {
