@@ -76,11 +76,12 @@ export class LoginComponent {
     this.oAuthService.cameFromSignup,
     this.route.queryParams,
   ]).pipe(
-    map(([hasProgressComSignup, cameFromSignup, queryParams]) => {
+    map(([hasProgressComSignup, cameFromSignup]) => {
       if (hasProgressComSignup) {
         return cameFromSignup;
       } else {
-        return `${queryParams['came_from'] || this.oAuthService.getCameFrom()}/user/signup`;
+        const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
+        return `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
       }
     }),
   );
