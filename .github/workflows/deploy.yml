@@ -31,7 +31,6 @@ jobs:
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
-      deploy-rao-widget: ${{ steps.check-deploy.outputs.deploy-rao-widget }}
       deploy-sdk: ${{ steps.check-deploy.outputs.deploy-sdk }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-rao: ${{ steps.check-deploy.outputs.deploy-rao }}
@@ -113,11 +112,11 @@ jobs:
           [ -f libs/pastanaga-angular/package.json ] || { echo "::error::pastanaga-angular failed to check out after retries"; exit 1; }
 
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,rao-widget
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo
 
       - name: Build affected apps
         run: |-
-          npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,rao-widget
+          npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo
 
           # Check if there's any app that should be built because of chart or nginx changes and mark it to be built. 
           # Unless it's already build by "npx nx affected" command
@@ -158,7 +157,6 @@ jobs:
         id: check-deploy
         run: |-
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
-          (test -d dist/rao-widget && echo "deploy-rao-widget=yes" >> $GITHUB_OUTPUT) || echo "RAO Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/rao && echo "deploy-rao=yes" >> $GITHUB_OUTPUT) || echo "RAO app unchanged"
           (test -d dist/apps/auth && echo "deploy-auth=yes" >> $GITHUB_OUTPUT) || echo "auth app unchanged"
@@ -181,18 +179,6 @@ jobs:
           aws s3 cp dist/libs/search-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
           aws s3 cp libs/search-widget/public/ s3://$S3_CDN_STORAGE/ --recursive
 
-      - name: Publish RAO widget to GCS
-        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes' && github.ref == 'refs/heads/dev'
-        run: |-
-          find dist/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
-          gsutil copy dist/rao-widget/*.umd.js gs://$CDN_STORAGE
-
-      - name: Publish widget to S3
-        if: steps.check-deploy.outputs.deploy-rao-widget == 'yes' && github.ref == 'refs/heads/main'
-        run: |-
-          find dist/rao-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
-          aws s3 cp dist/rao-widget/ s3://$S3_CDN_STORAGE/ --recursive --exclude "*" --include "*.umd.js"
-
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         env:
@@ -214,7 +200,7 @@ jobs:
           aws s3 cp dist/sdk-core/umd/index.js s3://$S3_CDN_STORAGE/nuclia-sdk.umd.js
 
       - name: Invalidate CDN cache stage
-        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-rao-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/dev' }}
+        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/dev' }}
         env:
           GCP_PROJECT: ${{ secrets.GCP_DEV_PROJECT_ID }}
           URL_MAP_NAME: ${{ secrets.CDN_URL_MAP_NAME_DEV }}
