@@ -73,6 +73,8 @@ For using your own API keys with cloud providers:
 | Gemini                    | `rag/advanced/connect-gemini-keys.md`                |
 | Anthropic                 | `rag/advanced/bring-your-own-anthropic-acct.md`      |
 
+AWS Bedrock BYOL currently documents the Australia (Sydney) region as `ap-southeast-2-1`. The external-ID value is supplied by the dashboard and should be copied exactly; do not prepend a fixed prefix. For restricted policies, find the required inference-profile ARN in the Bedrock UI by model name and region.
+
 ---
 
 ## Embedding / Semantic Models

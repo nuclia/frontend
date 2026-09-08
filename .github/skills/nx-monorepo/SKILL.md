@@ -32,7 +32,6 @@ Use these exact names in `nx <target> <project>` commands.
 | `nucliadb-admin`     | app  | Angular 21      | `apps/nucliadb-admin/`     |
 | `sistema-demo`       | app  | Angular 21      | `apps/sistema-demo/`       |
 | `search-widget-demo` | app  | Svelte 5 + Vite | `apps/search-widget-demo/` |
-| `rao-demo`           | app  | React 19 + Vite | `apps/rao-demo/`           |
 | `sdk-core`           | lib  | TypeScript      | `libs/sdk-core/`           |
 | `core`               | lib  | Angular         | `libs/core/`               |
 | `common`             | lib  | Angular         | `libs/common/`             |
@@ -40,7 +39,6 @@ Use these exact names in `nx <target> <project>` commands.
 | `user`               | lib  | Angular         | `libs/user/`               |
 | `sync`               | lib  | Angular         | `libs/sync/`               |
 | `search-widget`      | lib  | Svelte 5        | `libs/search-widget/`      |
-| `rao-widget`         | lib  | React 19        | `libs/rao-widget/`         |
 | `pastanaga-angular`  | lib  | Angular         | `libs/pastanaga-angular/`  |
 | `chrome-ext`         | lib  | Plain JS        | `libs/chrome-ext/`         |
 
@@ -151,7 +149,7 @@ nx g @nx/angular:application <name> --directory=apps/<name>
 
 - Defaults: `style: scss`, `linter: eslint`, `unitTestRunner: jest`, `e2eTestRunner: none`.
 
-### React / Vite (rao-widget, rao-demo)
+### React / Vite
 
 ```bash
 # Library
@@ -221,7 +219,7 @@ used in this workspace.
 }
 ```
 
-Vite-based projects (search-widget-demo, rao-demo, rao-widget) rely on the `@nx/vite/plugin`
+Vite-based projects (search-widget-demo) rely on the `@nx/vite/plugin`
 inferred targets — they typically don't declare build/test manually in project.json.
 
 ### targetDefaults (nx.json)

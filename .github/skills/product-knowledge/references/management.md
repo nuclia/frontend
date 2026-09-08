@@ -24,8 +24,8 @@ A **Knowledge Box** is the primary data container in Agentic RAG. KBs are isolat
 | Role        | Permissions                               |
 | ----------- | ----------------------------------------- |
 | **Manager** | Full KB control: content, users, settings |
-| **Writer**  | Add/modify content                        |
-| **Reader**  | Read-only search access                   |
+| **Writer**  | Add/modify all content                    |
+| **Reader**  | Read-only access to all content           |
 
 ### API key types (also cumulative)
 
@@ -52,6 +52,8 @@ A **Knowledge Box** is the primary data container in Agentic RAG. KBs are isolat
 - All endpoints require `X-NUCLIA-SERVICEACCOUNT` header.
 - No granular content-level ACL within a KB — all authorized users see all content.
 - Use `security.access_groups` on resources for **filtering** (not enforcement — intersection semantics).
+
+When content is synchronized from a third-party service such as Sitefinity, SharePoint, ShareFile, or Dropbox, the source system's access rights are not reproduced in the KB. A Reader or higher-level KB user can therefore access all synchronized content. Treat a KB as a technical service for developers and administrators, not as an end-user access-control boundary.
 
 ### Using the widget on a private KB
 

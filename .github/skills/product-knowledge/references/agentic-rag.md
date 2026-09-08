@@ -93,3 +93,12 @@ A Retrieval Agent can be deployed in three ways:
 - Retrieval Agent = multi-source, dynamic routing, conditional logic, multi-step.
 - Retrieval Agents are configured at the **account level**, not per-KB.
 - The Retrieval Agent `Validation` postprocess step uses REMi automatically.
+
+## Agentic retrieval in search configurations
+
+Agentic retrieval is also available as a mode when creating a search configuration. It uses a Smart Agent to plan and iterate over intermediate retrieval steps, which is useful for questions that require synthesis across multiple documents. The planning modes are:
+
+- **Reactive**: decides the next step from the information already retrieved; faster.
+- **Plan & execute**: plans all steps before execution; slower but generally better for complex questions.
+
+The Knowledge Box can be exposed as one or more sources. When the same KB is used for different subsets of content, create separate sources with explicit descriptions and appropriate filters so the Smart Agent can choose between them. External sources currently include Google Gemini, Perplexity, and MCP servers. The configuration can be selected on `/ask` with its `agentic_config_id` parameter.

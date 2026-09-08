@@ -19,12 +19,10 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 | -------------------- | --------------- | ------------------------------------------------------------- |
 | `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth    |
 | `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                 |
-| `platform`           | Angular 21      | Progress Cloud branded platform (account mgmt, `platform` UX) |
 | `rao`                | Angular 21      | RAO white-label (agents only, no KB management)               |
 | `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                 |
 | `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                      |
 | `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                    |
-| `rao-demo`           | React 19 + Vite | Local dev sandbox for `libs/rao-widget`                       |
 | `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                       |
 
 ### Libraries
@@ -35,10 +33,9 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 | `@flaps/core`                      | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags                                                            |
 | `@flaps/common`                    | `common`            | Angular    | Shared feature modules used by dashboard + rao                                                                     |
 | `@nuclia/sistema`                  | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                                               |
-| `@nuclia/user`                     | `user`              | Angular    | Auth/identity flows for `apps/auth` + `apps/platform` (mixed selector prefixes; onboarding now in `@flaps/common`) |
+| `@nuclia/user`                     | `user`              | Angular    | Auth/identity flows for `apps/auth` (mixed selector prefixes; onboarding now in `@flaps/common`) |
 | `@nuclia/sync`                     | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                                                |
 | `@nuclia/widget`                   | `search-widget`     | Svelte 5   | Embeddable search/chat web components                                                                              |
-| `rao-widget`                       | `rao-widget`        | React 19   | Embeddable ARAG chat web component                                                                                 |
 | `@guillotinaweb/pastanaga-angular` | `pastanaga-angular` | Angular    | Base component library (prefix `pa-`)                                                                              |
 | `@nuclia/chrome-ext`               | `chrome-ext`        | Plain JS   | Chrome extension (no Angular/React)                                                                                |
 
@@ -52,14 +49,12 @@ All aliases are declared in `tsconfig.base.json`. Internal consumers **never** i
 # Angular apps
 nx serve auth
 nx serve dashboard
-nx serve platform
 nx serve rao
 nx serve manager-v2
 nx serve nucliadb-admin
 nx serve sistema-demo
 
 # Vite apps
-nx serve rao-demo          # React, port 4201
 nx serve search-widget-demo  # Svelte, port 5173
 
 # Libs / tools
@@ -76,8 +71,6 @@ nx build search-widget     # tools/build-widgets.sh (3 Vite passes)
 | ------------------------------------- | ------------------------------- | ------------------------------------------------------------------------- |
 | Angular apps & libs                   | Jest 30 (`jest-preset-angular`) | `nx test <name>`                                                          |
 | `search-widget`, `search-widget-demo` | Vitest 4                        | `nx test <name>`                                                          |
-| `rao-widget`                          | Vitest 4                        | `nx vite:test rao-widget` (the `test` target is an intentional `nx:noop`) |
-| `rao-demo`                            | —                               | no test target configured                                                 |
 
 Test files are co-located alongside source as `*.spec.ts`.  
 `libs/common` and `libs/core` have **no `lint` target** — linting runs as part of the app build.

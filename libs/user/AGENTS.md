@@ -13,7 +13,7 @@ Handles: email/password login+signup, password recovery+reset, magic-link, SSO (
 
 > **Onboarding and profile moved out.** The multi-step onboarding wizard and the authenticated profile editor used to live here but were relocated to `libs/common/src/lib/onboarding` and `libs/common/src/lib/profile`. Apps now import `OnboardingComponent` / `ProfileComponent` from `@flaps/common`, not `@nuclia/user`. There is also no `LogoutComponent` in this lib (or anywhere in the workspace) anymore.
 
-**Used by:** `apps/auth`, `apps/dashboard`, `apps/rao`, `apps/manager-v2`, `apps/platform`  
+**Used by:** `apps/auth`, `apps/dashboard`, `apps/rao`, `apps/manager-v2`
 **Path alias:** `@nuclia/user` → `libs/user/src/index.ts`  
 **Component prefix:** `nus` · **Nx project:** `user` · **Run:** `nx test user`
 
@@ -113,7 +113,7 @@ export class LazyUserModule {}
 
 `apps/auth` also imports several standalone components (`RedirectComponent`, `FarewellComponent`, `FeedbackComponent`, `InviteComponent`) directly in its own `app-routing.module.ts` — they are not part of `authRoutes`.
 
-### Pattern B — Direct component imports (`apps/dashboard`, `apps/rao`, `apps/platform`, `apps/manager-v2`)
+### Pattern B — Direct component imports (`apps/dashboard`, `apps/rao`, `apps/manager-v2`)
 
 These apps do **not** load `AuthUserModule`/`authRoutes` at all. They import individual standalone components from `@nuclia/user` (e.g. `CallbackComponent`, `AppLoginComponent`, `RedirectComponent`, `FarewellComponent`/`FeedbackComponent`, `SetPasswordComponent`, `TestingAppSignupComponent`, `TemporaryContextBoxSignupComponent`) and declare their own routes for them (typically under a `user/*` prefix each app defines itself). `apps/manager-v2` only needs `AppLoginComponent` + `CallbackComponent`.
 
