@@ -55,7 +55,7 @@ Check if Yarn is installed by running: `yarn --version`.
 
 #### Note
 
-In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder. To use them directly you can add `node_modules/.bin` folder to your command line path.
+In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder.
 You can also install `nx` globally:
 
 ```
@@ -265,16 +265,12 @@ When merging a PR, if it impacts the manager app, it is built and our `deploy_ma
 
 That's how the manager is deployed to **stage**.
 
-You can see the deployment on [Stage ArgoCD](http://stashify.argocd.nuclia.com/applications/argocd/manager?view=tree&conditions=false&resource=).
-
 ### Promoting to production
 
-Once the app is deployed on stage, you can promote it to production by going to https://github.com/nuclia/stage/actions/workflows/promote-to-production.yaml and clicking on "Run workflow".
-Then, choose `app` or `manager` component in the list (keep the default values for the rest) and click on "Run workflow".
+Once the app is deployed on stage, you can promote it to production by going to https://github.com/nuclia/core-apps/actions/workflows/promote-to-global-production.yaml and clicking on "Run workflow".
+Then, choose `auth`, `app`, `docs`, or `manager` component in the list (keep the default values for the rest) and click on "Run workflow".
 
-It triggers the prod promotion, and it can be monitored on [http://europe1.argocd.nuclia.com/applications/app?resource=](http://europe1.argocd.nuclia.com/applications/app?resource=) or [http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=](http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=).
-
-To deploy the widget, use [https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml](https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml).
+To deploy the widget, use [https://github.com/nuclia/core-apps/actions/workflows/cdn-sync.yaml](https://github.com/nuclia/core-apps/actions/workflows/cdn-sync.yaml).
 
 ### About ArgoCD
 
