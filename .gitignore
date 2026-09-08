@@ -43,7 +43,6 @@ apps/manager-v2/src/environments_config/local-prod/*.json
 apps/**/local-dev/*.json
 
 # IDE - VSCode
-.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
