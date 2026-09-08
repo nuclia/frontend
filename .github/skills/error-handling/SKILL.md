@@ -4,7 +4,7 @@ description: >
   Error handling patterns for the Nuclia frontend monorepo — covering IErrorResponse
   discrimination, SisToastService usage, catchError categories (rethrow / convert / swallow),
   the retry429Config and uploadRetryConfig helpers, the AuthInterceptor contract, error state
-  in Svelte search-widget stores, and error handling in the React rao-widget. Activate this
+  in Svelte search-widget stores. Activate this
   skill ANY TIME a task involves catchError, handling SDK responses, showing error toasts,
   writing error callbacks in subscriptions, defining retry logic, or surfacing errors in the UI.
   Do not wait to be asked about "error handling" specifically — if a service is calling the SDK
@@ -243,24 +243,6 @@ Widget-level errors (e.g., API auth failures) bubble up via `nuclia.events` as `
 events. The parent app can subscribe: `getApiErrors()` in `AragWidget.svelte`.
 
 ---
-
-## rao-widget (React 19) — Error Pattern
-
-```ts
-// In RaoProvider.tsx
-function handleChatError(error: ChatError) {
-  const detail = error.answer?.exception?.detail ?? error.cause?.message ?? error.message;
-  finalizeAssistantMessage('Error', detail); // appends an error turn to the chat
-}
-
-// WebSocket errors:
-const handleError = (event: Event) => {
-  dispatchError({ type: 'websocket', message: 'Chat websocket emitted an error event.', cause: event });
-};
-```
-
-Typed `ChatError` objects are dispatched, never thrown. `dispatchError` feeds a React context
-that renders an inline error state in the conversation.
 
 ---
 

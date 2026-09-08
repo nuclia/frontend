@@ -216,16 +216,6 @@ Keys in `widget.babel` follow the same flat dot-notation as Angular libs. Use Ba
 
 ---
 
-## rao-widget (React 19)
-
-The `rao-widget` does not have a dedicated i18n system. User-visible strings are either:
-
-- Hardcoded English (acceptable for the widget's narrow use case)
-- Delegated to the consuming app via props
-
-If internationalising rao-widget strings, follow the `search-widget` pattern (custom store +
-JSON files) rather than pulling in ngx-translate.
-
 ---
 
 ## Common Mistakes

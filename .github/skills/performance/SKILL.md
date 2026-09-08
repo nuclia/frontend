@@ -272,7 +272,7 @@ Use this when reviewing any component or service:
 
 ---
 
-## search-widget (Svelte 5) and rao-widget (React 19)
+## search-widget (Svelte 5)
 
 Performance in the widgets differs from the Angular apps:
 
@@ -284,9 +284,5 @@ Performance in the widgets differs from the Angular apps:
 - Heavy search results are filtered and sorted in RxJS streams inside `api.ts` before
   entering the store — keep expensive transforms in the RxJS layer, not in Svelte `$derived`.
 
-**rao-widget (React 19):**
 
-- Use `useMemo` for expensive derived values in components.
-- `useCallback` for event handlers passed to child components.
-- The WebSocket connection in `chat.ts` is held at the provider level — do not reconnect
-  on every render; gate reconnects on URL/token changes only.
+

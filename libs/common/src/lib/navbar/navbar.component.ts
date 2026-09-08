@@ -28,7 +28,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   inAccount: Observable<boolean> = this.navigationService.inAccount.pipe(takeUntil(this.unsubscribeAll));
   inDashboard = this.navigationService.inDashboard;
   inRaoApp = this.navigationService.inRaoApp;
-  inPlatformApp = this.navigationService.inPlatformApp;
   inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(

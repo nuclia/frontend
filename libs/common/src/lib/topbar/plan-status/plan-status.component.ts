@@ -50,7 +50,7 @@ export class PlanStatusComponent {
 
   vm$ = combineLatest([this.features.isTrial, this.sdk.currentAccount, this.features.isAccountManager]).pipe(
     switchMap(([isTrial, account, isAccountManager]) => {
-      if (this.navigation.inPlatformApp || !isAccountManager) {
+      if (!isAccountManager) {
         return of(null);
       }
       const daysLeft =

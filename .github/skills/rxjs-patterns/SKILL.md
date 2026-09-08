@@ -11,7 +11,7 @@ description: >
   Subject, adds a subscription in a service or component, uses catchError/switchMap/forkJoin,
   or asks "which operator should I use here?", this skill applies. Also use when debugging
   streams that never emit, emit multiple times unexpectedly, or cause memory leaks. This skill
-  covers Angular libs and apps only; it does not cover search-widget (Svelte) or rao-widget (React).
+  covers Angular libs and apps only; it does not cover search-widget (Svelte).
 ---
 
 # RxJS Patterns — Nuclia Frontend Monorepo

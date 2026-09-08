@@ -1204,7 +1204,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-08-17T10:16:55.592360'
+          default: '2026-08-27T13:51:28.609922'
           title: To
       responses:
         '200':
@@ -2316,7 +2316,7 @@ paths:
           - type: string
             format: date-time
           - type: 'null'
-          default: '2026-08-17T10:16:55.598660'
+          default: '2026-08-27T13:51:28.615043'
           title: To
       responses:
         '200':
@@ -2397,11 +2397,11 @@ x-metadata:
     commit: ba1fdde791099614482d40f5eba1e8438ad116aa
     last_updated: '2026-08-21T15:20:36.049961+00:00'
   idp_regional:
-    commit: 8c4c24d8abd6c60d235b0b53254e8338540b9139
-    last_updated: '2026-08-18T09:31:16.286392'
+    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
+    last_updated: '2026-08-27T13:55:22.507745'
   events:
-    commit: c1766f329d3db0a87c06afa575f0dfcd66dfb12c
-    last_updated: '2026-08-17T10:16:55.908143'
+    commit: 2e48d3381b6b049deb3d84c2c238566581abc276
+    last_updated: '2026-08-27T13:51:28.846282'
 components:
   schemas:
     AWSS3AssumeRoleCredentials:
@@ -4242,13 +4242,13 @@ components:
             const: all
           title: Show
           default:
-          - answer
-          - rephrased_question
           - question
-          - rag_strategies_names
-          - date
-          - id
+          - rephrased_question
           - resources_count
+          - rag_strategies_names
+          - id
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
       additionalProperties: false
@@ -4308,12 +4308,12 @@ components:
             const: all
           title: Show
           default:
-          - date
-          - answer
-          - rephrased_question
           - question
+          - rephrased_question
           - id
           - rag_strategies_names
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
       additionalProperties: false
@@ -4352,8 +4352,8 @@ components:
             const: all
           title: Show
           default:
-          - date
           - id
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersCommon'
       additionalProperties: false
@@ -4402,9 +4402,9 @@ components:
             const: all
           title: Show
           default:
-          - date
-          - question
           - id
+          - question
+          - date
           - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'
@@ -4645,13 +4645,13 @@ components:
             const: all
           title: Show
           default:
-          - answer
-          - rephrased_question
           - question
-          - rag_strategies_names
-          - date
-          - id
+          - rephrased_question
           - resources_count
+          - rag_strategies_names
+          - id
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersAsk'
         email_address:
@@ -4717,12 +4717,12 @@ components:
             const: all
           title: Show
           default:
-          - date
-          - answer
-          - rephrased_question
           - question
+          - rephrased_question
           - id
           - rag_strategies_names
+          - answer
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersChat'
         email_address:
@@ -4767,8 +4767,8 @@ components:
             const: all
           title: Show
           default:
-          - date
           - id
+          - date
         filters:
           $ref: '#/components/schemas/QueryFiltersCommon'
         email_address:
@@ -4823,9 +4823,9 @@ components:
             const: all
           title: Show
           default:
-          - date
-          - question
           - id
+          - question
+          - date
           - resources_count
         filters:
           $ref: '#/components/schemas/QueryFiltersSearch'

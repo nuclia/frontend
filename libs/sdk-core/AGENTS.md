@@ -203,9 +203,8 @@ import { AccountBlockingState, KBRoles } from '@nuclia/core';
 | ---------------------------- | ------------------------------------------- |
 | `apps/dashboard`             | Full account + KB management, search        |
 | `apps/manager-v2`            | Account admin, model management             |
-| `apps/rao` / `apps/rao-demo` | KB search, ask, find                        |
+| `apps/rao` | KB search, ask, find                        |
 | `libs/search-widget`         | `KnowledgeBox.ask()`, `find()`, `suggest()` |
-| `libs/rao-widget`            | `RetrievalAgent.interact()`                 |
 | `libs/core` (Angular)        | `SDKService` wraps the `Nuclia` instance    |
 
 ---

@@ -1,9 +1,0 @@
-@use 'apps/platform/src/variables';
-
-aside#pa-toasts-block {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 100;
-  align-content: center;
-}

@@ -24,7 +24,6 @@ const IN_ACCOUNT_MANAGEMENT = /\/at\/[^/]+\/manage/;
 })
 export class NavigationService {
   inRaoApp = this.environment.client === 'rao';
-  inPlatformApp = this.environment.client === 'platform';
   inDashboard = this.environment.client === 'dashboard';
   simpleMode = new BehaviorSubject(false);
 

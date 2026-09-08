@@ -31,7 +31,6 @@ export class TopbarComponent {
 
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
-  inPlatformApp = this.navigationService.inPlatformApp;
   inDashboard = this.navigationService.inDashboard;
   inArag = this.navigationService.inArag();
   standalone = this.standaloneService.standalone;

@@ -137,7 +137,7 @@ Most guards live in `libs/common/src/lib/guards/`; `authGuard` and `redirectToSi
 | `aragOwnerGuard`               | ARAG owner required                                                                                                                                                                                             |
 | `selectAccountGuard`           | Redirects if account already selected                                                                                                                                                                           |
 | `agentFeatureEnabledGuard`     | Checks `FeaturesService.unstable.retrievalAgents`                                                                                                                                                               |
-| `redirectToSignUp` (in `core`) | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in platform + rao after signup migrated away from the monorepo. |
+| `redirectToSignUp` (in `core`) | `CanActivateFn` — sets `location.href` to `https://www.progress.com/agentic-rag/free-trial-sign-up` and returns `false`. Used on `/user/signup` in rao after signup migrated away from the monorepo. |
 
 ---
 
