@@ -51,7 +51,7 @@ import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '@flaps/common';
 const groups = {
   processing: ['sentence', 'extract_tables', 'vllm_extraction', 'token', 'relations'],
   summarization: ['summarize'],
-  answers: ['question_answer', 'rephrase', 'rerank'],
+  answers: ['question_answer', 'rephrase', 'rerank', 'internet_search'],
   suggestions: ['suggestions'],
   searches: ['searches'],
 };
@@ -159,7 +159,9 @@ export class NucliaTokensComponent implements OnDestroy {
               models.find((model) => model.value === detail.identifier.model)?.name ||
               detail.identifier.model ||
               undefined,
-            totalRequests: Object.values(detail.requests).reduce((acc: number, curr) => acc + (curr || 0), 0),
+            totalRequests:
+              (detail.raw_usage.external_requests || 0) +
+              Object.values(detail.requests).reduce((acc: number, curr) => acc + (curr || 0), 0),
             average: 0,
             help: this.translate.instant(helpTextKey) === helpTextKey ? undefined : this.translate.instant(helpTextKey),
           };
