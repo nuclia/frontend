@@ -149,22 +149,6 @@ nx g @nx/angular:application <name> --directory=apps/<name>
 
 - Defaults: `style: scss`, `linter: eslint`, `unitTestRunner: jest`, `e2eTestRunner: none`.
 
-### React / Vite
-
-```bash
-# Library
-nx g @nx/react:library <name> --directory=libs/<name> --unitTestRunner=vitest --bundler=vite
-
-# Application
-nx g @nx/react:application <name> --directory=apps/<name> --bundler=vite
-```
-
-React generator defaults: `style: css`, `linter: eslint`, `unitTestRunner: vitest`.
-
-For deeper generator examples → see `references/generators.md`.
-
----
-
 ## project.json — Targets & Executors
 
 Each project's `project.json` declares targets. Below are the canonical executor patterns

@@ -30,20 +30,6 @@ From `nx.json` — these apply to every `nx g` invocation automatically:
   "e2eTestRunner": "none"
 }
 
-// React library
-"@nx/react:library": {
-  "style": "css",
-  "linter": "eslint",
-  "unitTestRunner": "vitest"
-}
-
-// React application
-"@nx/react:application": {
-  "babel": true,
-  "style": "css",
-  "linter": "eslint",
-  "unitTestRunner": "vitest"
-}
 ```
 
 ---
@@ -151,34 +137,6 @@ nx g @nx/angular:application <name> \
    `project.json` — copy the pattern from `apps/dashboard/project.json`
 3. Asset globs for lib i18n files (see dashboard's `assets` array in `project.json`)
 4. `apps/<name>/AGENTS.md`
-
----
-
-## New React / Vite Library (rao-widget pattern)
-
-```bash
-nx g @nx/react:library <name> \
-  --directory=libs/<name> \
-  --importPath=<name> \
-  --unitTestRunner=vitest \
-  --bundler=vite
-```
-
-Verify `vite.config.ts` is generated. Inferred targets (`build`, `test`) come from
-`@nx/vite/plugin` in `nx.json` — no manual project.json targets needed.
-
----
-
-## New React / Vite Application
-
-```bash
-nx g @nx/react:application <name> \
-  --directory=apps/<name> \
-  --bundler=vite \
-  --unitTestRunner=vitest
-```
-
-The serve target uses `nx:run-commands` with a direct `vite` call (see `rao-demo` pattern).
 
 ---
 

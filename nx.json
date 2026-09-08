@@ -68,22 +68,6 @@
     },
     "@schematics/angular:resolver": {
       "typeSeparator": "."
-    },
-    "@nx/react": {
-      "library": {
-        "style": "css",
-        "linter": "eslint",
-        "unitTestRunner": "vitest"
-      },
-      "application": {
-        "babel": true,
-        "style": "css",
-        "linter": "eslint",
-        "bundler": "vite"
-      },
-      "component": {
-        "style": "css"
-      }
     }
   },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
@@ -134,17 +118,6 @@
   },
   "parallel": 1,
   "plugins": [
-    {
-      "plugin": "@nx/react/router-plugin",
-      "options": {
-        "buildTargetName": "build",
-        "devTargetName": "dev",
-        "startTargetName": "start",
-        "watchDepsTargetName": "watch-deps",
-        "buildDepsTargetName": "build-deps",
-        "typecheckTargetName": "typecheck"
-      }
-    },
     {
       "plugin": "@nx/vite/plugin",
       "options": {
