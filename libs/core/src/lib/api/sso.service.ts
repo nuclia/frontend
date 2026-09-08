@@ -16,26 +16,23 @@ export class SsoService {
 
   getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): Observable<string> {
     const loginChallenge = new URLSearchParams(window.location.search).get('login_challenge');
-    const buildUrl = (cameFrom: string) => {
-      const params = new URLSearchParams();
-      params.set('came_from', cameFrom);
-      if (loginChallenge) {
-        params.set('login_challenge', loginChallenge);
-      }
-      return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
-    };
 
-    if (!loginChallenge) {
-      return of(buildUrl(this.oAuthService.getCameFrom()));
-    }
+    if (!loginChallenge) return of(this.buildSsoUrl(provider, this.oAuthService.getCameFrom()));
 
     // The login_challenge is still fresh here (we're only starting the SSO hop), so
     // introspecting it via the backend is the one reliable source of came_from —
     // no dependency on localStorage state or a hardcoded default app.
     return this.oAuthService.getLoginData(loginChallenge, null).pipe(
-      map((data) => buildUrl(data.came_from || this.oAuthService.getCameFrom())),
-      catchError(() => of(buildUrl(this.oAuthService.getCameFrom()))),
+      map((data) => this.buildSsoUrl(provider, data.came_from || this.oAuthService.getCameFrom(), loginChallenge)),
+      catchError(() => of(this.buildSsoUrl(provider, this.oAuthService.getCameFrom(), loginChallenge))),
     );
+  }
+
+  private buildSsoUrl(provider: 'google' | 'github' | 'microsoft', cameFrom: string, loginChallenge?: string): string {
+    const params = new URLSearchParams();
+    params.set('came_from', cameFrom);
+    if (loginChallenge) params.set('login_challenge', loginChallenge);
+    return `${this.sdk.nuclia.auth.getAuthUrl()}/${provider}/authorize?${params.toString()}`;
   }
 
   login(code: string, state: string): Observable<SsoLoginResponse> {

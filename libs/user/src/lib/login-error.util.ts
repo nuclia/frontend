@@ -1,5 +1,3 @@
-import { LoginErrorCode } from '@nuclia/core';
-
 /** True when `url`'s registrable domain matches the backend API's, so it's safe to redirect to. */
 export function isCameFromLegit(url: string, backendOrigin: string): boolean {
   const backendMainDomain = backendOrigin.split('/')[2].split('.').slice(1).join('.');
@@ -9,7 +7,7 @@ export function isCameFromLegit(url: string, backendOrigin: string): boolean {
 
 // `login_challenge_expired_or_invalid` is intentionally excluded: its meaning (and message)
 // depends on the caller (magic-link "account ready, please log in again" vs SSO "session expired").
-const LOGIN_ERROR_MESSAGE_KEYS: Partial<Record<LoginErrorCode, string>> = {
+const LOGIN_ERROR_MESSAGE_KEYS = {
   invite_not_found: 'login.error.invite_not_found',
   magic_token_expired: 'login.error.magic_token_expired',
   magic_token_already_used: 'login.error.magic_token_already_used',
@@ -25,6 +23,8 @@ const LOGIN_ERROR_MESSAGE_KEYS: Partial<Record<LoginErrorCode, string>> = {
   domain_not_allowed: 'login.error.domain_not_allowed',
 };
 
+type LoginErrorCode = keyof typeof LOGIN_ERROR_MESSAGE_KEYS;
+
 // Variants for when the user has already been redirected back to a valid came_from: telling them
 // to "go back to your app" would be confusing since they're already there.
 const LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART: Partial<Record<LoginErrorCode, string>> = {
@@ -39,18 +39,16 @@ const LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART: Partial<Record<LoginErrorCode, str
  * Pass `hasCameFrom: true` when the message will be shown after already redirecting the user back
  * to their app, so "go back to your app"-style copy is swapped for a variant that fits that context. */
 export function getLoginErrorMessageKey(
-  code: string | undefined | null,
+  code: LoginErrorCode | undefined | null,
   fallback: string,
   hasCameFrom = false,
 ): string {
-  if (!code) {
-    return fallback;
-  }
+  if (!code) return fallback;
+
   if (hasCameFrom) {
-    const restartedKey = LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART[code as LoginErrorCode];
-    if (restartedKey) {
-      return restartedKey;
-    }
+    const restartedKey = LOGIN_ERROR_MESSAGE_KEYS_AFTER_RESTART[code];
+    if (restartedKey) return restartedKey;
   }
-  return LOGIN_ERROR_MESSAGE_KEYS[code as LoginErrorCode] || fallback;
+
+  return LOGIN_ERROR_MESSAGE_KEYS[code] || fallback;
 }
