@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
-import { AccountModule, BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
+import { BaseModule, EntitiesModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
 import { AppComponent } from './app.component';
 
 // Load locales
@@ -46,7 +46,6 @@ const appModules = [
   AppRoutingModule,
   FarewellModule,
   SelectAccountKbModule,
-  AccountModule,
   EntitiesModule,
   LabelSetsModule,
   UploadModule,
