@@ -15,29 +15,30 @@ tools/          # Build scripts (build-widgets.sh, build-sdk-docs.sh)
 
 ### Apps
 
-| Project              | Stack           | Purpose                                                       |
-| -------------------- | --------------- | ------------------------------------------------------------- |
-| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth    |
-| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                 |
-| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)               |
-| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                 |
-| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                      |
-| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                    |
-| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                       |
+| Project              | Stack           | Purpose                                                                                                                                                           |
+| -------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`               | Angular 21      | Dedicated auth app — login, signup, magic link, SSO, OAuth                                                                                                        |
+| `dashboard`          | Angular 21      | Primary ARAG platform UI (KBs, agents, usage)                                                                                                                     |
+| `rao`                | Angular 21      | RAO white-label (agents only, no KB management)                                                                                                                   |
+| `admin`              | Angular 21      | Standalone account-management app (billing, members, API keys, `/at/:account/**`) — extracted out of `dashboard`; reused by `rao` and future white-label surfaces |
+| `manager-v2`         | Angular 21      | Internal back-office (accounts, users, zones)                                                                                                                     |
+| `nucliadb-admin`     | Angular 21      | Standalone NucliaDB admin (hash routing)                                                                                                                          |
+| `search-widget-demo` | Svelte 5 + Vite | Local dev sandbox for `libs/search-widget`                                                                                                                        |
+| `sistema-demo`       | Angular 21      | Interactive showcase for `libs/sistema`                                                                                                                           |
 
 ### Libraries
 
-| Path alias                         | Nx name             | Stack      | Role                                                                                                               |
-| ---------------------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| `@nuclia/core`                     | `sdk-core`          | TypeScript | Nuclia JS/TS SDK — all REST/WS API calls                                                                           |
-| `@flaps/core`                      | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags                                                            |
-| `@flaps/common`                    | `common`            | Angular    | Shared feature modules used by dashboard + rao                                                                     |
-| `@nuclia/sistema`                  | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                                               |
+| Path alias                         | Nx name             | Stack      | Role                                                                                             |
+| ---------------------------------- | ------------------- | ---------- | ------------------------------------------------------------------------------------------------ |
+| `@nuclia/core`                     | `sdk-core`          | TypeScript | Nuclia JS/TS SDK — all REST/WS API calls                                                         |
+| `@flaps/core`                      | `core`              | Angular    | App bootstrap, SDK wrapper, guards, auth, feature flags, analytics                               |
+| `@flaps/common`                    | `common`            | Angular    | Shared feature modules used by dashboard, rao + admin                                            |
+| `@nuclia/sistema`                  | `sistema`           | Angular    | Nuclia design system (prefix `nsi-`)                                                             |
 | `@nuclia/user`                     | `user`              | Angular    | Auth/identity flows for `apps/auth` (mixed selector prefixes; onboarding now in `@flaps/common`) |
-| `@nuclia/sync`                     | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                                                |
-| `@nuclia/widget`                   | `search-widget`     | Svelte 5   | Embeddable search/chat web components                                                                              |
-| `@guillotinaweb/pastanaga-angular` | `pastanaga-angular` | Angular    | Base component library (prefix `pa-`)                                                                              |
-| `@nuclia/chrome-ext`               | `chrome-ext`        | Plain JS   | Chrome extension (no Angular/React)                                                                                |
+| `@nuclia/sync`                     | `sync`              | Angular    | Data source sync UI (prefix `nsy-`)                                                              |
+| `@nuclia/widget`                   | `search-widget`     | Svelte 5   | Embeddable search/chat web components                                                            |
+| `@guillotinaweb/pastanaga-angular` | `pastanaga-angular` | Angular    | Base component library (prefix `pa-`)                                                            |
+| `@nuclia/chrome-ext`               | `chrome-ext`        | Plain JS   | Chrome extension (no Angular/React)                                                              |
 
 All aliases are declared in `tsconfig.base.json`. Internal consumers **never** import built artifacts — they compile directly against source via these aliases.
 
@@ -50,6 +51,7 @@ All aliases are declared in `tsconfig.base.json`. Internal consumers **never** i
 nx serve auth
 nx serve dashboard
 nx serve rao
+nx serve admin
 nx serve manager-v2
 nx serve nucliadb-admin
 nx serve sistema-demo
@@ -67,10 +69,10 @@ nx build search-widget     # tools/build-widgets.sh (3 Vite passes)
 
 ## Testing
 
-| Project type                          | Runner                          | Command pattern                                                           |
-| ------------------------------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Angular apps & libs                   | Jest 30 (`jest-preset-angular`) | `nx test <name>`                                                          |
-| `search-widget`, `search-widget-demo` | Vitest 4                        | `nx test <name>`                                                          |
+| Project type                          | Runner                          | Command pattern  |
+| ------------------------------------- | ------------------------------- | ---------------- |
+| Angular apps & libs                   | Jest 30 (`jest-preset-angular`) | `nx test <name>` |
+| `search-widget`, `search-widget-demo` | Vitest 4                        | `nx test <name>` |
 
 Test files are co-located alongside source as `*.spec.ts`.  
 `libs/common` and `libs/core` have **no `lint` target** — linting runs as part of the app build.

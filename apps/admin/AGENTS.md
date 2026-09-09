@@ -1,8 +1,8 @@
 # AGENTS.md — `admin` app
 
-Angular 21 app that hosts all account-management pages (`/at/:account/**`), extracted out of
-`dashboard` into their own standalone app/subdomain — mirroring how `apps/auth` was previously
-split out of the main dashboard flow.
+Angular 21 app that hosts all account-management pages (`/at/:account/**`) as their own
+standalone app/subdomain, separate from `dashboard` — the same pattern `apps/auth` uses for
+login/signup.
 
 Nx project name: **admin**. Selector prefix: **app-**.
 
@@ -98,10 +98,10 @@ apps/admin/src/
 
 Runtime config is loaded from `assets/deployment/app-config.json` at bootstrap (not baked in).
 All configs (`local-dev`/`local-stage`/`local-prod`/`production`) set `remoteLogin: true` and
-have their own registered `oauth.client_id` (`dev_admin_app`/`stage_admin_app`/`prod_admin_app`
-locally, `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID` in `production`) — `admin` does real Hydra OAuth like
-`dashboard`/`rao`/`platform`, with `remoteLogin` kept as a faster local-testing shortcut (see
-Gotchas below).
+have their own registered `oauth.client_id` (a distinct UUID per environment, e.g.
+`2a814d08-91de-4b36-89aa-0c19749cd5e1` for `local-dev`; `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID` in
+`production`) — `admin` does real Hydra OAuth like `dashboard`/`rao`/`platform`, with
+`remoteLogin` kept as a faster local-testing shortcut (see Gotchas below).
 
 ---
 
@@ -117,9 +117,10 @@ Gotchas below).
   sees a JWT, and the user gets bounced to `/user/login-redirect` → a real OAuth attempt. Fixed by
   porting the same `remoteLogin()` method (gated by `config.useRemoteLogin()`) into
   `apps/admin/src/app/app.component.ts`.
-- **`admin` now has its own Hydra `oauth.client_id`**, one per environment (`local-dev`,
-  `local-stage`, `local-prod`, `production` via `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID`). This means
-  a cold/direct visit (no token in the URL) also works: `authGuard` → `/user/login-redirect` →
+- **`admin` now has its own Hydra `oauth.client_id`**, a distinct UUID registered in Hydra per
+  environment (`local-dev`, `local-stage`, `local-prod`, `production` via
+  `STF_DOCKER_CONFIG_OAUTH_CLIENT_ID`). This means a cold/direct visit (no token in the URL) also
+  works: `authGuard` → `/user/login-redirect` →
   `AppLoginComponent` → `redirectToOAuth()` succeeds instead of throwing. `remoteLogin: true` is
   kept alongside it everywhere — it's what makes manually visiting the `auth` app's `/redirect?
 redirect=http://localhost:PORT` page (after already being logged in there) bounce back with a
@@ -128,9 +129,10 @@ redirect=http://localhost:PORT` page (after already being logged in there) bounc
   non-dismissable EULA modal for account managers; that's disabled when `navigation.inAdminApp`
   is true (whether PDP Studio end-users should be forced through Nuclia's own EULA is an
   unresolved legal/product question, deliberately not defaulted to "on").
-- **Still pending (not part of this scaffold):** none — the entry-context capture/consumption
-  mechanism (§6/§7) and the full cross-app navigation conversion (§8) are both implemented:
-  `AccountEntryContextService`, `captureEntryContextGuard`, `NavigationService.effectiveClient`,
+- **Nothing left pending from the scaffold.** The entry-context capture/consumption mechanism
+  and the full cross-app navigation conversion are both implemented:
+  `AccountEntryContextService`, `captureEntryContextGuard`, `NavigationService.fromApp()`
+  (there is no `effectiveClient` property — the private `resolvedFromApp` field backs `fromApp()`),
   `navigateExternal()`/`resolveGuardRedirect()`, the `backLink`/`nsi-back-button` external-href
   fixes, and every KB/ARAG "table inside a page" reverse-direction link (`kb-list`, `arag-list`,
   `account-home`, `account-consumption`, `account-users`, `invite-collaborators-modal`,

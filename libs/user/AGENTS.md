@@ -11,7 +11,7 @@ Exposes:
 
 Handles: email/password login+signup, password recovery+reset, magic-link, SSO (Google/GitHub/Microsoft), SAML, OAuth 2.0, invite acceptance, farewell/feedback, Chrome Extension and AWS Marketplace redirect.
 
-> **Onboarding and profile moved out.** The multi-step onboarding wizard and the authenticated profile editor used to live here but were relocated to `libs/common/src/lib/onboarding` and `libs/common/src/lib/profile`. Apps now import `OnboardingComponent` / `ProfileComponent` from `@flaps/common`, not `@nuclia/user`. There is also no `LogoutComponent` in this lib (or anywhere in the workspace) anymore.
+> **No onboarding, profile, or logout components here.** The multi-step onboarding wizard and the authenticated profile editor live in `libs/common/src/lib/onboarding` and `libs/common/src/lib/profile` — apps import `OnboardingComponent` / `ProfileComponent` from `@flaps/common`, not `@nuclia/user`. There is no `LogoutComponent` anywhere in the workspace.
 
 **Used by:** `apps/auth`, `apps/dashboard`, `apps/rao`, `apps/manager-v2`
 **Path alias:** `@nuclia/user` → `libs/user/src/index.ts`  
@@ -134,4 +134,4 @@ These apps do **not** load `AuthUserModule`/`authRoutes` at all. They import ind
    - **Restarting OAuth after a stale `login_challenge`** — the `auth` app has no OAuth `client_id` of its own, so on `login_challenge_expired_or_invalid` (or the `account_ready_please_login` magic action) `MagicComponent` does **not** call `redirectToOAuth()` directly; it redirects the browser to the origin of the request's `came_from` URL (with a `message` query param) so the _originating_ app restarts the OAuth flow. If `came_from` is missing, it shows `login.error.missing_came_from` instead of redirecting.
 7. **Redirect validation** — `RedirectComponent` validates `redirect` query param against `AUTHORIZED_REDIRECTS` and `AUTHORIZED_REDIRECTS_REGEX`. Update both constants when adding new redirect targets.
 8. **Strong password validator** — `StrongPassword`: ≥8 chars, uppercase, lowercase, digit, special char from `! @ # $ % ^ & * . _ ( ) + = -`. `SamePassword(field)`: cross-field mismatch.
-9. **Dead-code fields to be aware of** — `SignupComponent.signup_token` (declared, never assigned or read) and `SignupComponent.isGitHubEnabled` (`features.unstable.githubSignin`, computed but never read in the template) no longer drive any UI behavior in this lib. The GitHub-gating and signup-token-prefill behavior they once implemented is gone. Don't assume either still does anything — verify in source before relying on them.
+9. **Dead-code fields to be aware of** — `SignupComponent.signup_token` (declared, never assigned or read) and `SignupComponent.isGitHubEnabled` (`features.unstable.githubSignin`, computed but never read in the template) don't drive any UI behavior. Don't assume either does anything — verify in source before relying on them.
