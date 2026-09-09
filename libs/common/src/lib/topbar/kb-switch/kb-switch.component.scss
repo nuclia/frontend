@@ -4,6 +4,16 @@
   display: block;
   min-width: 0;
 
+  .kb-context-label {
+    display: block;
+    font-size: font-size(s);
+    font-weight: $font-weight-regular;
+    overflow: hidden;
+    padding: rhythm(0.5) rhythm(1);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .title-wrapper {
     align-items: center;
     display: flex;

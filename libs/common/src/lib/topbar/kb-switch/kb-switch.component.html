@@ -1,13 +1,20 @@
-@if (showKbSelector | async) {
-  @let current = kb$ | async;
-  <nsi-dropdown-button
-    size="small"
-    aspect="basic"
-    freeWidth
-    openOnFocus
-    [popupRef]="kbSwitch">
-    {{ current?.title }}
-  </nsi-dropdown-button>
+@if (kb$ | async; as current) {
+  @if (showKbSelector | async) {
+    <nsi-dropdown-button
+      size="small"
+      aspect="basic"
+      freeWidth
+      openOnFocus
+      [popupRef]="kbSwitch">
+      {{ current.title }}
+    </nsi-dropdown-button>
+  } @else {
+    <span
+      class="kb-context-label"
+      [paTooltip]="current.title">
+      {{ current.title }}
+    </span>
+  }
 }
 
 <pa-dropdown #kbSwitch>

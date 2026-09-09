@@ -44,14 +44,14 @@
   }
 
   // Context switcher sits beside the wordmark, separated by a slash. Punctuation
-  // rather than an icon, so no glyph asset is needed. The switcher hides itself when
-  // the user only has one KB/agent, so the slash is bound to the button's presence.
+  // rather than an icon, so no glyph asset is needed. With one KB/agent the context
+  // remains as a static label, so the slash follows either the label or the picker.
   app-kb-switch {
     align-items: center;
     display: flex;
     min-width: 0;
 
-    &:has(nsi-dropdown-button)::before {
+    &:has(nsi-dropdown-button, .kb-context-label)::before {
       color: $color-neutral-light;
       content: '/';
       flex-shrink: 0;
