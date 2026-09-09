@@ -15,6 +15,8 @@
 - [NucliaDB admin](#nucliadb-admin)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
+- [Linters](#linters)
+- [AI](#ai)
 
 ---
 
@@ -198,6 +200,20 @@ http {
 sudo nginx -p $(pwd) -c nginx.conf -g 'daemon off;'
 ```
 
+## Admin app
+
+In `apps/admin/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration to use the stage server. <sub>Ask a supervisor to get a proper configuration.</sub>
+
+Then you can run the admin app locally and use the credential created previously to log in:
+
+```
+nx serve admin
+```
+
+The admin app runs locally on port 4300, so you can run both the **admin app** and the **dashboard app** at the same time.
+
+To make the locally-running dashboard app route account-management pages to your local admin app, add `"adminOrigin": "http://localhost:4300"` inside the `"backend"` object of `apps/dashboard/src/environments_config/local-stage/app-config.json`.
+
 ## SDK
 
 [Documentation](https://docs.nuclia.dev/docs/develop/js-sdk/)
@@ -298,6 +314,55 @@ https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.min.js
 https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/build/pdf.worker.js\n
 https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/web/pdf_viewer.css
 https://cdn.dashjs.org/v4.7.1/dash.all.min.js
+
+## Linters
+
+We use **Prettier**, **ESLint**, and **SonarQube** to keep the codebase consistent and catch issues early.
+
+### Pre-commit hook
+
+A **Husky** pre-commit hook (`.husky/pre-commit`) runs automatically on every commit, in order:
+
+1. `lint-staged` formats staged files with Prettier.
+2. `nx affected --target=lint --uncommitted` runs ESLint on the projects affected by your uncommitted changes.
+3. `nx affected --target=test --uncommitted` runs unit tests for those same affected projects.
+
+The commit is blocked if any step fails, so problems are caught locally instead of in CI/review.
+
+### SonarQube
+
+SonarQube runs automatically in CI (see `.github/workflows/sonarqube.yml`) on every PR to `main`, so you don't need local access just to get a scan on your changes. Project configuration, including justified rule exclusions, lives in `sonar-project.properties` at the repo root.
+
+Local access to the SonarQube dashboard (e.g. to browse existing issues) requires the **company VPN**. To get set up:
+
+1. Ask IT support to create you a SonarQube user account.
+2. Ask your supervisor to add that user to the `nuclia-frontend` project.
+3. Log in and generate a personal access token.
+4. Use the token to connect to [https://sonar.progress.com](https://sonar.progress.com).
+
+## AI
+
+This repo ships AI tooling on top of GitHub Copilot: a set of **skills** and **agents** encoding
+the conventions we use in this project. They live under `.github/` (`.github/skills/` and
+`.github/agents/`), so any Copilot client picking up this repo can use them automatically.
+
+If you're using an AI coding assistant here, these help it write code that's closer to our
+conventions and spend less time re-discovering the codebase on its own. As part of this, every
+app and every big lib has its own `AGENTS.md` describing its structure, conventions, and gotchas —
+check the relevant one before working in a sub-project.
+
+### Keeping AGENTS.md up to date
+
+`AGENTS.md` files can drift from the code over time. The **`knowledge-keeper`** agent
+(`.github/agents/knowledge-keeper.md`) syncs them against the latest state of the code. Run it
+after landing a big feature, or every once in a while as general maintenance.
+
+It also keeps the **`product-knowledge`** skill (`.github/skills/product-knowledge/`) — our
+cached copy of the platform API docs used by AI clients — in sync. For that part, it needs the
+[`nuclia/docs`](https://github.com/nuclia/docs) repo checked out locally as a sibling folder of
+this repo (i.e. `../docs` relative to this project).
+
+Knowledge sync is manual for now: trigger it by typing `sync knowledge` in your Copilot client.
 
 ## License
 
