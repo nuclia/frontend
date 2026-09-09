@@ -41,6 +41,7 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
+  redirectToAdminGuard,
   redirectToWorkflowGuard,
   WorkflowsListComponent,
   WorkflowsComponent,
@@ -86,7 +87,7 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            loadChildren: () => import('./app-routing.lazy').then((m) => m.AccountModule),
+            children: [{ path: '**', canActivate: [redirectToAdminGuard], component: EmptyComponent }],
           },
           {
             path: `:zone/:kb`,

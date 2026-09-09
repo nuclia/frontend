@@ -37,6 +37,7 @@ import {
   KnowledgeBoxUsersComponent,
   ProfileComponent,
   OnboardingComponent,
+  redirectToAdminGuard,
   WorkflowsListComponent,
   WorkflowsComponent,
 } from '@flaps/common';
@@ -76,9 +77,7 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            loadChildren: () =>
-              // eslint-disable-next-line @nx/enforce-module-boundaries
-              import('../../../../libs/common/src/lib/account/account.module').then((m) => m.AccountModule),
+            children: [{ path: '**', canActivate: [redirectToAdminGuard], component: EmptyComponent }],
           },
           {
             path: ':zone/arag/:agent',

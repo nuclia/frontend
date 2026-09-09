@@ -11,6 +11,7 @@ env:
   MANAGER_IMAGE_NAME: manager
   RAO_IMAGE_NAME: rao
   AUTH_IMAGE_NAME: auth
+  ADMIN_IMAGE_NAME: admin
   CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
   S3_CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.S3_CDN_STORAGE || secrets.S3_CDN_STORAGE_DEV }}
@@ -35,6 +36,7 @@ jobs:
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-rao: ${{ steps.check-deploy.outputs.deploy-rao }}
       deploy-auth: ${{ steps.check-deploy.outputs.deploy-auth }}
+      deploy-admin: ${{ steps.check-deploy.outputs.deploy-admin }}
       deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
@@ -118,11 +120,13 @@ jobs:
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/rao/' && ! test -d dist/apps/rao && APPS_TO_BUILD="$APPS_TO_BUILD rao"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/auth/' && ! test -d dist/apps/auth && APPS_TO_BUILD="$APPS_TO_BUILD auth"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/manager/' && ! test -d dist/apps/manager-v2 && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^charts/admin/' && ! test -d dist/apps/admin && APPS_TO_BUILD="$APPS_TO_BUILD admin"
           # nginx conf changes require Docker rebuild — always rebuild the affected app (nginx is not tracked by nx affected)
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/app.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/rao.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD rao"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/auth.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD auth"
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/manager.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD manager-v2"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^nginx/admin.default.conf' && APPS_TO_BUILD="$APPS_TO_BUILD admin"
           # mrs.developer.json changes affect dashboard dependencies — rebuild dashboard if not already built
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^mrs\.developer\.json' && ! test -d dist/apps/dashboard && APPS_TO_BUILD="$APPS_TO_BUILD dashboard"
 
@@ -153,6 +157,7 @@ jobs:
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/rao && echo "deploy-rao=yes" >> $GITHUB_OUTPUT) || echo "RAO app unchanged"
           (test -d dist/apps/auth && echo "deploy-auth=yes" >> $GITHUB_OUTPUT) || echo "auth app unchanged"
+          (test -d dist/apps/admin && echo "deploy-admin=yes" >> $GITHUB_OUTPUT) || echo "Admin app unchanged"
           (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
@@ -307,6 +312,24 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
           skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' }}
+          push: true
+          tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+
+      - name: Push admin image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
+        if: steps.check-deploy.outputs.deploy-admin == 'yes'
+        with:
+          build-arg: |
+            appId=admin
+            appFolder=admin
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.ADMIN_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' || steps.check-deploy.outputs.deploy-app == 'yes' || steps.check-deploy.outputs.deploy-rao == 'yes' || steps.check-deploy.outputs.deploy-auth == 'yes' }}
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
@@ -659,16 +682,99 @@ jobs:
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
+  deploy-admin:
+    name: Deploy admin
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.deploy-admin == 'yes'
+    permissions:
+      id-token: write # required by google-github-actions/auth (OIDC)
+      contents: read # required by actions/checkout
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "admin",
+              "chart-version": "${{ steps.chart-version-admin.outputs.chart-version }}",
+              "component-type": "global"
+            }
+          ]
+        }
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
+          token_format: access_token
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Calculate short sha
+        run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+          repositories: tooling
+          permission-contents: read
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
+
+      - name: Get chart version
+        id: chart-version-admin
+        run: |
+          VERSION=`cat apps/admin/VERSION`
+          echo "chart-version=$VERSION-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.ADMIN_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-admin.outputs.chart-version }}
+          image-name: ${{ env.ADMIN_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: './charts/${{ env.ADMIN_IMAGE_NAME }}'
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
+
   send-to-promotion:
     runs-on: ubuntu-latest
-    needs: [deploy-manager, deploy-app, deploy-rao, deploy-auth]
+    needs: [deploy-manager, deploy-app, deploy-rao, deploy-auth, deploy-admin]
     permissions: {} # no GITHUB_TOKEN scopes needed; dispatch uses a scoped GitHub App token
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
         needs.deploy-app.result != 'skipped' ||
         needs.deploy-auth.result != 'skipped' ||
-        needs.deploy-rao.result != 'skipped' )
+        needs.deploy-rao.result != 'skipped' ||
+        needs.deploy-admin.result != 'skipped' )
     steps:
       - name: Generate a token
         id: app-token
@@ -693,6 +799,7 @@ jobs:
           NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-manager.outputs.json-summary }}
           NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-app.outputs.json-summary }}
           NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-auth.outputs.json-summary }}
+          NEEDS_DEPLOY_ADMIN_OUTPUTS_JSON_SUMMARY: ${{ needs.deploy-admin.outputs.json-summary }}
         run: |
           MERGED_JSON=$(jq -cs \
             --arg environment "$ENVIRONMENT" \
@@ -727,7 +834,8 @@ jobs:
             <(echo "${NEEDS_DEPLOY_RAO_OUTPUTS_JSON_SUMMARY}") \
             <(echo "${NEEDS_DEPLOY_MANAGER_OUTPUTS_JSON_SUMMARY}") \
             <(echo "${NEEDS_DEPLOY_APP_OUTPUTS_JSON_SUMMARY}") \
-            <(echo "${NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY}")
+            <(echo "${NEEDS_DEPLOY_AUTH_OUTPUTS_JSON_SUMMARY}") \
+            <(echo "${NEEDS_DEPLOY_ADMIN_OUTPUTS_JSON_SUMMARY}")
           )
 
           echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV

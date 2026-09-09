@@ -28,6 +28,11 @@ export class BackendConfigurationService {
     return this.config.backend.apiOrigin || '';
   }
 
+  /** Local-dev-only override — see `EnvironmentConfiguration.backend.adminOrigin`. */
+  getAdminOrigin(): string | undefined {
+    return this.config.backend.adminOrigin;
+  }
+
   getOAuthSettings() {
     return this.config.oauth;
   }

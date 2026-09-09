@@ -1,0 +1,235 @@
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  QueryList,
+  OnDestroy,
+  ViewChildren,
+  Input,
+  Output,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SDKService } from '@flaps/core';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  delay,
+  filter,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
+import {
+  IKnowledgeBoxItem,
+  KnowledgeBox,
+  LearningConfigurations,
+  NUAClient,
+  NucliaTokensDetails,
+  UsagePoint,
+} from '@nuclia/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
+  PaExpanderModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaPopupModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { InfoCardComponent, NsiSkeletonComponent } from '@nuclia/sistema';
+import { MetricsService, NUCLIA_TOKENS_BILLED_METRIC } from '@flaps/common';
+
+const groups = {
+  processing: ['sentence', 'extract_tables', 'vllm_extraction', 'token', 'relations'],
+  summarization: ['summarize'],
+  answers: ['question_answer', 'rephrase', 'rerank'],
+  suggestions: ['suggestions'],
+  searches: ['searches'],
+};
+
+interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
+  total: number;
+  counters: { [key: string]: number };
+  modelName?: string;
+  totalRequests: number;
+  average: number;
+  help?: string;
+}
+
+@Component({
+  selector: 'app-nuclia-tokens',
+  templateUrl: './nuclia-tokens.component.html',
+  styleUrls: ['./nuclia-tokens.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AccordionComponent,
+    AccordionBodyDirective,
+    AccordionItemComponent,
+    CommonModule,
+    InfoCardComponent,
+    NsiSkeletonComponent,
+    PaExpanderModule,
+    PaIconModule,
+    PaTableModule,
+    PaTextFieldModule,
+    PaPopupModule,
+    TranslateModule,
+  ],
+})
+export class NucliaTokensComponent implements OnDestroy {
+  private unsubscribeAll = new Subject<void>();
+
+  @Input() set usage(value: { [key: string]: UsagePoint[] } | undefined) {
+    // Can be partial or undefined while loading; loading$ checks the selected item's key specifically.
+    this.usageSubject.next(value);
+  }
+
+  @Input() selectedPeriod: { start: Date; end: Date } | null = null;
+  @Input() nuaKeys: NUAClient[] = [];
+  @Input({ transform: booleanAttribute }) showTotal = true;
+  @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
+
+  @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
+
+  digitsInfo = '1.0-0';
+  private kbsInput$ = new BehaviorSubject<IKnowledgeBoxItem[] | undefined>(undefined);
+  // Uses parent-supplied `kbs` if provided, else falls back to `sdk.kbList` for pages that don't pass it.
+  @Input() set kbs(value: IKnowledgeBoxItem[] | undefined) {
+    this.kbsInput$.next(value);
+  }
+  kbList: Observable<IKnowledgeBoxItem[]> = this.kbsInput$.pipe(
+    switchMap((inputKbs) => (inputKbs !== undefined ? of(inputKbs) : this.sdk.kbList)),
+  );
+  selectedItem = new BehaviorSubject<string>('account');
+  usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] } | undefined>(1);
+  loading$ = combineLatest([this.selectedItem, this.usageSubject]).pipe(map(([item, usage]) => !usage?.[item]));
+  isSubscribedToStripe = this.metrics.isSubscribedToStripe;
+  periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
+    map(([isSubscribed, period]) =>
+      isSubscribed ? this.metrics.getLastStripePeriods(period, 12) : this.metrics.getLastMonths(12),
+    ),
+  );
+
+  schema = this.sdk.currentAccount.pipe(
+    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id, false)),
+    switchMap((kbs) => {
+      if (kbs.length === 0) {
+        return of({} as LearningConfigurations);
+      }
+      const kb = new KnowledgeBox(this.sdk.nuclia, '', kbs[0]);
+      this.sdk.nuclia.options.zone = kb.zone;
+      return kb.getLearningSchema().pipe(catchError(() => of({} as LearningConfigurations)));
+    }),
+    shareReplay(1),
+  );
+
+  details: Observable<NucliaTokensDetailsEnhanced[]> = combineLatest([
+    this.selectedItem,
+    this.usageSubject,
+    this.schema,
+  ]).pipe(
+    filter(([item, usage]) => !!usage?.[item]),
+    map(([item, usage, schema]) => {
+      const details = (usage?.[item]?.[0]?.metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
+        []) as NucliaTokensDetails[];
+      const models = schema['generative_model']?.options || [];
+      return details
+        .map((detail) => {
+          const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
+          const enhancedDetail = {
+            ...detail,
+            total: Object.values(detail.nuclia_tokens_billed).reduce(
+              (acc: number, curr) => (acc || 0) + (curr || 0),
+              0,
+            ),
+            counters: Object.entries(detail.nuclia_tokens_billed)
+              .filter(([, value]) => value !== null && value !== 0)
+              .map((data) => data as [string, number])
+              .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as { [key: string]: number }),
+            modelName:
+              models.find((model) => model.value === detail.identifier.model)?.name ||
+              detail.identifier.model ||
+              undefined,
+            totalRequests: Object.values(detail.requests).reduce((acc: number, curr) => acc + (curr || 0), 0),
+            average: 0,
+            help: this.translate.instant(helpTextKey) === helpTextKey ? undefined : this.translate.instant(helpTextKey),
+          };
+          if (enhancedDetail.totalRequests > 0) {
+            enhancedDetail.average = enhancedDetail.total / enhancedDetail.totalRequests;
+          }
+          return enhancedDetail;
+        })
+        .filter((detail) => detail.total > 0); // Hide details with 0 tokens
+    }),
+  );
+
+  visibleGroups = this.details.pipe(
+    map((details) => {
+      const raoDetails = details.filter((detail) => detail.identifier.service === 'rao');
+      const nonRaoDetails = details.filter((detail) => detail.identifier.service !== 'rao');
+      const types = Object.values(groups).reduce((acc, curr) => acc.concat(curr), []);
+      const otherDetails = nonRaoDetails.filter((detail) => !types.includes(detail.identifier.type));
+      return [
+        {
+          title: 'rao',
+          details: raoDetails,
+          total: raoDetails.reduce((acc, curr) => acc + curr.total, 0),
+        },
+      ]
+        .concat(
+          Object.entries(groups).map(([key, types]) => {
+            const groupDetails = types.reduce(
+              (acc, type) => acc.concat(nonRaoDetails.filter((detail) => detail.identifier.type === type)),
+              [] as NucliaTokensDetailsEnhanced[],
+            );
+            return {
+              title: key,
+              details: groupDetails,
+              total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
+            };
+          }),
+        )
+        .concat([
+          {
+            title: 'other',
+            details: otherDetails,
+            total: otherDetails.reduce((acc, curr) => acc + curr.total, 0),
+          },
+        ])
+        .filter((group) => group.details.length > 0);
+    }),
+  );
+
+  totalTokens = this.usageSubject.pipe(
+    map(
+      (usage) =>
+        usage?.['account']?.[0]?.metrics.find((metric) => metric.name === NUCLIA_TOKENS_BILLED_METRIC)?.value || 0,
+    ),
+  );
+
+  constructor(
+    private sdk: SDKService,
+    private metrics: MetricsService,
+    private translate: TranslateService,
+  ) {
+    this.visibleGroups.pipe(takeUntil(this.unsubscribeAll), delay(10)).subscribe(() => {
+      this.accordionItems?.forEach((item) => {
+        item.updateContentHeight();
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+}

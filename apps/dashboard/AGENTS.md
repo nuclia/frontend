@@ -42,7 +42,9 @@ apps/dashboard/src/app/
 /redirect                  → RedirectComponent
 
 /at/:account  [setAccountGuard]           ← also sets NavigationService.simpleMode = (account.workflow === 'cowork')
-  /manage                  → AccountModule (lazy) — billing, users, ARAGs list
+  /manage                  → [redirectToAdminGuard] EmptyComponent — never renders; guard does a real
+                               (cross-origin) redirect to the standalone `admin` app's account-management
+                               pages (billing, users, ARAGs list), preserving the sub-path and query params
   /:zone/:kb  [setKbGuard]
     /                      [simpleModeGuard] → KnowledgeBoxHomeComponent (redirects to ./simple when simpleMode is true)
     /simple                → SimplePageModule (lazy) → SimplePageComponent
@@ -138,21 +140,22 @@ apps/dashboard/src/app/
 
 ## Guards Summary
 
-| Guard                    | Purpose                                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- |
-| `authGuard`              | Requires authenticated user (`JWT_KEY` in localStorage)                                                   |
-| `rootGuard`              | Redirects to first account/KB or login                                                                    |
-| `setAccountGuard`        | Sets active account in SDK; also sets `NavigationService.simpleMode` from `account.workflow === 'cowork'` |
-| `setKbGuard`             | Sets active KB in SDK                                                                                     |
-| `setAgentGuard`          | Sets active ARAG in SDK                                                                                   |
-| `selectAccountGuard`     | Ensures account selection flow                                                                            |
-| `selectKbGuard`          | Ensures KB selection flow                                                                                 |
-| `knowledgeBoxOwnerGuard` | KB owner/admin required                                                                                   |
-| `aragOwnerGuard`         | ARAG owner/admin required                                                                                 |
-| `awsGuard`               | AWS Marketplace onboarding                                                                                |
-| `redirectToSignUp`       | On `/user/signup`: always redirects to the external marketing sign-up page and blocks activation          |
-| `inviteInProgressGuard`  | `canDeactivate` on `/users`: confirms navigation away while a multi-user invite is in progress            |
-| `simpleModeGuard`        | On KB home (`/`): redirects to `/simple` when `NavigationService.simpleMode` is true                      |
+| Guard                    | Purpose                                                                                                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authGuard`              | Requires authenticated user (`JWT_KEY` in localStorage)                                                                                                               |
+| `rootGuard`              | Redirects to first account/KB or login                                                                                                                                |
+| `setAccountGuard`        | Sets active account in SDK; also sets `NavigationService.simpleMode` from `account.workflow === 'cowork'`                                                             |
+| `setKbGuard`             | Sets active KB in SDK                                                                                                                                                 |
+| `setAgentGuard`          | Sets active ARAG in SDK                                                                                                                                               |
+| `selectAccountGuard`     | Ensures account selection flow                                                                                                                                        |
+| `selectKbGuard`          | Ensures KB selection flow                                                                                                                                             |
+| `knowledgeBoxOwnerGuard` | KB owner/admin required                                                                                                                                               |
+| `aragOwnerGuard`         | ARAG owner/admin required                                                                                                                                             |
+| `awsGuard`               | AWS Marketplace onboarding                                                                                                                                            |
+| `redirectToAdminGuard`   | On `/manage`: redirects (same-origin route or cross-origin, via `NavigationService.resolveGuardRedirect()`) to the standalone `admin` app's account-management pages. |
+| `redirectToSignUp`       | On `/user/signup`: always redirects to the external marketing sign-up page and blocks activation                                                                      |
+| `inviteInProgressGuard`  | `canDeactivate` on `/users`: confirms navigation away while a multi-user invite is in progress                                                                        |
+| `simpleModeGuard`        | On KB home (`/`): redirects to `/simple` when `NavigationService.simpleMode` is true                                                                                  |
 
 ---
 
@@ -189,9 +192,9 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 3. **Shared ARAG code** — `AgentDashboardComponent` + all workflow code in `libs/common`. Dashboard-specific code: `app/` directory only.
 4. **Module-based** — app uses NgModules; imported lib components may be standalone.
 5. **UI ↔ API models** — `*AgentToUi()` (API → UI) and `*UiToCreation()` (UI → API) in `workflow.models.ts`.
-6. **Lazy modules** — `AccountModule`, `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `ResourcesModule`, `TASK_AUTOMATION_ROUTES`, `UploadModule`, `WIDGETS_ROUTES`, `SimplePageModule`, `LabelSetsModule` — all re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module).
+6. **Lazy modules** — `EntitiesModule`, `KbSettingsModule`, `MetricsModule` (+ `ActivityModule` inside it), `ResourcesModule`, `TASK_AUTOMATION_ROUTES`, `UploadModule`, `WIDGETS_ROUTES`, `SimplePageModule`, `LabelSetsModule` — all re-exported from `app-routing.lazy.ts` and dynamically imported from `app-routing.module.ts`. `/user/*` routes are **not** lazy — their components are imported directly into `app-routing.module.ts` (no wrapper module). Account management (`/manage`) is not a lazy module here — there is no `AccountModule` in this app; `redirectToAdminGuard` sends users to the standalone `admin` app instead.
 7. **`/metrics` always loads `MetricsModule`** — the legacy REMI-only page and the `metricsDisabledGuard`/`metricsEnabledGuard` split were removed. `MetricsModule` is always loaded when the `/metrics` route is activated.
-8. **Activity logs moved to `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no longer a standalone `/activity` route on the KB.
+8. **Activity logs live at `/metrics/detailed`** — `ActivityModule` (`libs/common/src/lib/metrics/activity/`) is lazy-loaded inside `MetricsModule` at the `detailed` child route. There is no standalone `/activity` route on the KB.
 9. **`/user/callbacks/saml` is temporary** — added for IDP-initiated SAML clients whose `RelayState` points here. Remove once those clients are updated to use the auth app's URL.
 10. **`/simple` "Context Box" UI** — `SimplePageModule` is lazy-loaded; `SimplePageComponent` inspects the user role and routes to `ReaderExperienceComponent` (reader: search-only) or `SimpleKBComponent` (admin/contrib: upload + search). Gated by `account.workflow === 'cowork'`, not a feature flag — see `setAccountGuard`. `SimplePageComponent` also blocks the page with a non-dismissable `TrialExpiredModalComponent` when the account's trial has expired.
 11. **Context Box uploads keyed by batch, not global state** — `SimpleKBService.uploadStatus` is a map of `{ [uploadIndex]: UploadStatus }` (one entry per `uploadFiles()` call), not a single status object. This is what makes concurrent/simultaneous upload batches possible (#2996) without one batch's progress overwriting another's; `cleanUploads()` prunes completed entries on each new upload to avoid unbounded growth. `visibleUploads` flattens all batches' files for display.
@@ -200,4 +203,5 @@ Config: `src/environments_config/{local-stage,local-prod,production}/app-config.
 14. **`/user/set-password`** — `SetPasswordComponent` is a dedicated route for setting a password after being invited or after signup. Distinct from `/user/reset` (which uses a magic token from an email link).
 15. **KB routes guarded by `knowledgeBoxOwnerGuard`** — `/manage`, `/ai-models`, `/widgets`, `/users`, `/keys` under `/:zone/:kb` all require `knowledgeBoxOwnerGuard` (KB owner/admin). ARAG equivalents use `aragOwnerGuard`. `/users` also has `canDeactivate: [inviteInProgressGuard]` on both.
 16. **`/prompt-lab` redirect** — permanently redirects to `/rag-lab`. Old bookmarks continue to work.
-17. **ARAG `/sources` route** — previously named `/drivers`, renamed to `/sources`. `DriversPageComponent` (name unchanged) renders data sources.
+17. **ARAG `/sources` route** — rendered by `DriversPageComponent`; note the component name doesn't match the route.
+18. **Account management lives in `apps/admin`, not here.** `/at/:account/manage/**` hits `redirectToAdminGuard`, which builds the equivalent URL on the `admin` app's own origin (via `NavigationService.getAccountManageUrl()`/`resolveGuardRedirect()`) and does a real cross-origin navigation, appending `from`/`app` query params so `admin` can offer a "back to workspace" link. Any in-app link pointing at account-management pages (billing, invite-collaborators, KB/ARAG "table inside a page" links, etc.) must go through `NavigationService.navigateExternal()`/`getAccountManageUrl()` instead of the Angular router — see `libs/core/AGENTS.md`.

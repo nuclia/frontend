@@ -243,7 +243,7 @@ Auth: `Authorization: Bearer <NUA-KEY>`. Supports chat completions, models list,
 
 This skill was last updated from:
 
-- **Docs repo:** `../docs` at commit `a735448`
+- **Docs repo:** `../docs` at commit `c321f53`
 - **API specs:** Downloaded `2026-09-08` — ETags and versions stored in `meta.json`
 
 ### Detecting stale docs
@@ -252,7 +252,7 @@ The docs repo is expected at `../docs` (sibling directory). **If it does not exi
 
 ```bash
 if [ -d "../docs" ]; then
-  cd ../docs && git fetch && git log a735448..origin/main --oneline
+  cd ../docs && git fetch && git log c321f53..origin/main --oneline
 else
   echo "docs repo not found at ../docs — skipping"
 fi

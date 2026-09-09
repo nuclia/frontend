@@ -1,8 +1,20 @@
-<a
-  [routerLink]="link || ''"
-  class="title-xs">
+<ng-template #icon>
   <pa-icon
     name="chevron-left"
     size="small"></pa-icon>
   <ng-content></ng-content>
-</a>
+</ng-template>
+
+@if (isExternalLink()) {
+  <a
+    [href]="link()"
+    class="title-xs">
+    <ng-container *ngTemplateOutlet="icon"></ng-container>
+  </a>
+} @else {
+  <a
+    [routerLink]="link() || ''"
+    class="title-xs">
+    <ng-container *ngTemplateOutlet="icon"></ng-container>
+  </a>
+}

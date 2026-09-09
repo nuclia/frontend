@@ -18,13 +18,13 @@ import {
   STFUtils,
   UserService,
   FeaturesService,
+  PendoService,
 } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent } from '@flaps/common';
-import { PendoService } from './pendo.service';
 
 // Warning: this key name is declared in both dashboard app.component and in @nuclia/sync
 // to avoid making a dependency

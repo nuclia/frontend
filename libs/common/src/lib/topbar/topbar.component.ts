@@ -9,13 +9,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  AccountEntryContextService,
   BackendConfigurationService,
   NavigationService,
   NotificationService,
   SDKService,
   UserService,
 } from '@flaps/core';
-import { combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -32,6 +33,7 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
   inDashboard = this.navigationService.inDashboard;
+  inAdminApp = this.navigationService.inAdminApp;
   inArag = this.navigationService.inArag();
   standalone = this.standaloneService.standalone;
   errorMessage = this.standaloneService.errorMessage;
@@ -39,6 +41,7 @@ export class TopbarComponent {
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
+  private entryContext = inject(AccountEntryContextService);
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
   isCowork = this.sdk.currentAccount.pipe(
@@ -67,32 +70,8 @@ export class TopbarComponent {
   ) {}
 
   goToHome(): void {
-    // When in account management use the same logic as the "Back to homepage"
-    // button in AccountSettingsComponent: resolve from currentKb (startWith null
-    // so we always get one emission even if no KB is in context).
-    if (this.navigationService.inAccountManagement(location.pathname)) {
-      this.sdk.currentAccount
-        .pipe(
-          take(1),
-          switchMap((account) => {
-            if (!this.sdk.isKbLoaded) {
-              return of(this.navigationService.getKbSelectUrl(account.slug));
-            }
-            // currentKb and aragList are both in ReplaySubjects already — isArag emits synchronously
-            return combineLatest([this.sdk.currentKb, this.sdk.isArag]).pipe(
-              take(1),
-              map(([kb, isArag]) =>
-                isArag
-                  ? this.navigationService.getRetrievalAgentUrl(account.slug, kb.slug as string)
-                  : this.navigationService.getKbUrl(
-                      account.slug,
-                      (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string,
-                    ),
-              ),
-            );
-          }),
-        )
-        .subscribe((url) => this.router.navigate([url]));
+    if (this.navigationService.inAdminApp) {
+      this.navigationService.navigateExternal(this.entryContext.getReturnUrl());
       return;
     }
 

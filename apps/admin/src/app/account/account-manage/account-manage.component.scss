@@ -1,0 +1,52 @@
+@use 'apps/dashboard/src/variables' as *;
+@use 'libs/common/src/lib/account/account';
+
+.page-subtitle {
+  margin-bottom: rhythm(2);
+}
+.section {
+  border-bottom: 1px solid $color-neutral-light;
+  padding: rhythm(7) 0;
+  &:first-child {
+    padding-top: 0;
+  }
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.section-container {
+  max-width: rhythm(80);
+}
+
+.section-container form,
+.section-container .field-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}
+
+.account-form-cta {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+}
+
+.zone-select {
+  min-width: rhythm(40);
+}
+
+.dangerous-zone {
+  background-color: $color-secondary-lightest;
+  padding: rhythm(3) rhythm(4);
+  h3 {
+    margin-bottom: rhythm(1);
+  }
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  pa-button {
+    margin-top: rhythm(3);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "version": "local-prod",
+  "production": false,
+  "remoteLogin": true,
+  "backend": {
+    "app": "admin",
+    "apiOrigin": "https://accounts.progress.cloud",
+    "cdn": "https://cdn.rag.progress.cloud"
+  },
+  "oauth": {
+    "client_id": "6182d712-0307-4774-bb7a-ee567e85e367"
+  }
+}

@@ -14,7 +14,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from '@nuclia/user';
 import {
-  AccountModule,
   BaseModule,
   ChatAdviceBubbleComponent,
   EntitiesModule,
@@ -55,7 +54,6 @@ const appModules = [
   AppRoutingModule,
   FarewellModule,
   SelectAccountKbModule,
-  AccountModule,
   KnowledgeBoxModule,
   EntitiesModule,
   LabelSetsModule,

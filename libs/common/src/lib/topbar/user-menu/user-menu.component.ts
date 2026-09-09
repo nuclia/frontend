@@ -335,7 +335,9 @@ export class UserMenuComponent implements OnInit {
   private go(path: string): void {
     this.menuClose.emit();
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/${path}`]);
+      this.navigation.navigateExternal(`${this.navigation.getAccountManageUrl(account.slug)}/${path}`, {
+        withFromApp: true,
+      });
     });
   }
 
@@ -344,7 +346,9 @@ export class UserMenuComponent implements OnInit {
     this.menuClose.emit();
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.can_manage_account) {
-        this.router.navigate([`${this.navigation.getAccountManageUrl(account.slug)}/home/preferences`]);
+        this.navigation.navigateExternal(`${this.navigation.getAccountManageUrl(account.slug)}/home/preferences`, {
+          withFromApp: true,
+        });
       } else {
         this.router.navigate(['/user/profile']);
       }
