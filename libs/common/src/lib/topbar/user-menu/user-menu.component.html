@@ -3,16 +3,17 @@
   class="user-menu-trigger"
   paFocusable
   openOnFocus
-  [attr.aria-label]="'generic.user_menu' | translate"
+  [attr.aria-label]="menuAriaLabel$ | async"
   [paPopup]="userMenu">
   <span class="avatar-wrapper">
     <pa-avatar
       size="small"
       [avatar]="avatar" />
-    <nsi-badge
-      icon="gear"
-      kind="success"
-      [paTooltip]="'user-menu.account-settings' | translate"></nsi-badge>
+    @if (hasUnread$ | async) {
+      <span
+        class="unread-dot"
+        aria-hidden="true"></span>
+    }
   </span>
 </button>
 
@@ -22,7 +23,9 @@
       @if (section.prependSeparator) {
         <pa-separator></pa-separator>
       }
-      @if (section.header) {
+      @if (section.headerText$) {
+        <pa-option-header class="account-name">{{ section.headerText$ | async }}</pa-option-header>
+      } @else if (section.header) {
         <pa-option-header>{{ section.header | translate }}</pa-option-header>
       }
       @for (item of section.items; track item.label) {
@@ -40,7 +43,12 @@
               [icon]="item.icon"
               [attr.data-cy]="item.dataCy ?? null"
               (click)="item.action()">
-              {{ item.label | translate }}
+              <span class="option-content">
+                <span>{{ item.label | translate }}</span>
+                @if (item.count$ | async; as count) {
+                  <span class="option-count">{{ count <= 9 ? count : '9+' }}</span>
+                }
+              </span>
             </pa-option>
           }
         }

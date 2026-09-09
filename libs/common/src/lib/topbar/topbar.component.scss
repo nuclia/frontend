@@ -14,11 +14,21 @@
   width: 100%;
   z-index: var(--app-zindex-topbar);
 
+  .topbar-context {
+    align-items: center;
+    display: flex;
+    // Matches the slash's right-hand spacing: its own margin plus the quiet button's
+    // left padding, so the slash sits optically centred between logo and picker.
+    gap: rhythm(2);
+    min-width: 0;
+  }
+
   .topbar-logo {
     @include reset-button();
     align-items: center;
     cursor: pointer;
     display: flex;
+    flex-shrink: 0;
     gap: rhythm(1);
 
     .topbar-logo-expanded {
@@ -29,6 +39,37 @@
       // this was based on Material. TODO: review breakpoints using pastanaga-angular variables
       @media screen and (max-width: 959px) {
         display: none;
+      }
+    }
+  }
+
+  // Context switcher sits beside the wordmark, separated by a slash. Punctuation
+  // rather than an icon, so no glyph asset is needed. The switcher hides itself when
+  // the user only has one KB/agent, so the slash is bound to the button's presence.
+  app-kb-switch {
+    align-items: center;
+    display: flex;
+    min-width: 0;
+
+    &:has(nsi-dropdown-button)::before {
+      color: $color-neutral-light;
+      content: '/';
+      flex-shrink: 0;
+      margin-right: rhythm(1);
+    }
+
+    // Sistema redefines the `basic` button aspect as outlined (1px neutral border),
+    // and the shared dropdown button is sized for form contexts. In the topbar this is
+    // a quiet context label, so the chrome is dropped and it sizes to content. The
+    // hover background is kept as the only affordance.
+    ::ng-deep .nsi-dropdown-button .pa-button {
+      border: none;
+      font-weight: $font-weight-regular;
+      min-width: 0;
+      padding: rhythm(0.5) rhythm(1);
+
+      .pa-button-label {
+        font-weight: $font-weight-regular;
       }
     }
   }

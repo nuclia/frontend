@@ -1,22 +1,13 @@
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   AccountEntryContextService,
   BackendConfigurationService,
   NavigationService,
-  NotificationService,
   SDKService,
   UserService,
 } from '@flaps/core';
-import { map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { map, of, shareReplay, switchMap, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
 @Component({
@@ -27,24 +18,18 @@ import { StandaloneService } from '../services/standalone.service';
   standalone: false,
 })
 export class TopbarComponent {
-  @Input({ transform: booleanAttribute }) isNotificationPanelOpen = false;
-  @Output() toggleNotificationPanel = new EventEmitter<void>();
+  @Output() openNotificationPanel = new EventEmitter<void>();
 
   userInfo = this.userService.userInfo;
-  account = this.sdk.currentAccount;
-  inDashboard = this.navigationService.inDashboard;
-  inAdminApp = this.navigationService.inAdminApp;
-  inArag = this.navigationService.inArag();
-  standalone = this.standaloneService.standalone;
-  errorMessage = this.standaloneService.errorMessage;
 
-  notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
+  inAdminApp = this.navigationService.inAdminApp;
+  standalone = this.standaloneService.standalone;
 
   private backendConfig = inject(BackendConfigurationService);
   private entryContext = inject(AccountEntryContextService);
   brandName = this.backendConfig.getBrandName();
   simpleMode = this.navigationService.simpleMode;
-  isCowork = this.sdk.currentAccount.pipe(
+  private isCowork = this.sdk.currentAccount.pipe(
     map((account) => account.workflow === 'cowork'),
     shareReplay(1),
   );
@@ -66,7 +51,6 @@ export class TopbarComponent {
     private navigationService: NavigationService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
-    private notificationService: NotificationService,
   ) {}
 
   goToHome(): void {

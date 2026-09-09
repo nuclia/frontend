@@ -1,37 +1,29 @@
 <div class="topbar">
-  <button
-    class="topbar-logo"
-    (click)="goToHome()">
-    <img
-      class="topbar-logo-expanded"
-      [src]="logoPath | async"
-      [alt]="!standalone ? brandName : 'NucliaDB'" />
-  </button>
-
-  <div class="topbar-actions">
-    @if (((userInfo | async)?.accounts?.length || 0) > 1) {
-      <div class="topbar-account">
-        <strong>{{ (account | async)?.title }}</strong>
-      </div>
-    }
+  <div class="topbar-context">
+    <button
+      type="button"
+      class="topbar-logo"
+      (click)="goToHome()">
+      <img
+        class="topbar-logo-expanded"
+        [src]="logoPath | async"
+        [alt]="!standalone ? brandName : 'NucliaDB'" />
+    </button>
 
     @if (!inAdminApp) {
       <app-kb-switch></app-kb-switch>
     }
 
-    @if (!standalone) {
-      <stf-plan-status></stf-plan-status>
-      @if (!(simpleMode | async)) {
-        <stf-notification-button
-          [count]="notificationsCount | async"
-          [active]="isNotificationPanelOpen"
-          (click)="toggleNotificationPanel.emit()"></stf-notification-button>
+    <div class="topbar-actions">
+      @if (!standalone) {
+        <stf-plan-status></stf-plan-status>
+        <app-user-menu
+          data-cy="user-menu"
+          [userInfo]="userInfo | async"
+          (openNotifications)="openNotificationPanel.emit()" />
+      } @else {
+        <app-standalone-menu data-cy="standalone-menu" />
       }
-      <app-user-menu
-        data-cy="user-menu"
-        [userInfo]="userInfo | async" />
-    } @else {
-      <app-standalone-menu data-cy="standalone-menu" />
-    }
+    </div>
   </div>
 </div>

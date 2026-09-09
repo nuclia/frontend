@@ -11,7 +11,6 @@ import { PaDropdownModule, PaIconModule, PaPopupModule, PaTooltipModule } from '
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UserMenuComponent } from './user-menu';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
-import { NotificationButtonComponent } from '@flaps/core';
 import { PlanStatusComponent } from './plan-status/plan-status.component';
 
 @NgModule({
@@ -28,7 +27,6 @@ import { PlanStatusComponent } from './plan-status/plan-status.component';
     RouterModule,
     UserMenuComponent,
     StandaloneMenuComponent,
-    NotificationButtonComponent,
     PlanStatusComponent,
   ],
   exports: [TopbarComponent],

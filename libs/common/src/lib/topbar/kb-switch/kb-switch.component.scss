@@ -2,11 +2,7 @@
 
 :host {
   display: block;
-  min-width: rhythm(24);
-
-  pa-option.demo-kb {
-    color: $color-neutral-regular;
-  }
+  min-width: 0;
 
   .title-wrapper {
     align-items: center;
