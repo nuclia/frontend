@@ -682,7 +682,7 @@ jobs:
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
-   deploy-admin:
+  deploy-admin:
     name: Deploy admin
     runs-on: ubuntu-latest
     needs: build
