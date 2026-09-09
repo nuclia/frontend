@@ -57,10 +57,13 @@ export class MagicService {
         }
         break;
       case 'redict_to_kb':
-        // needs_initial_setpassword property is not avaiable, so we don't know if it's a new user or not
-        this.router.navigate(['/setup/invite'], {
-          queryParams: { account: action.account, kb: action.kb },
-        });
+        if (action.needs_initial_setpassword === false && this.cameFrom) {
+          location.href = `${this.cameFrom}/select`;
+        } else {
+          this.router.navigate(['/setup/invite'], {
+            queryParams: { account: action.account, kb: action.kb },
+          });
+        }
         break;
       case 'goselectaccount':
         this.router.navigate(['/select']);
