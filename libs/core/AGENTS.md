@@ -42,7 +42,7 @@ libs/core/src/lib/
 │   ├── saml.service.ts             # SAML/SSO token exchange
 │   ├── account-verification.service.ts  # Force-reauth support; reads last_verified_at from JWT
 │   └── account-entry-context.service.ts # AccountEntryContextService — captures `from`/`app` query
-│                                           params into localStorage (`ACCOUNT_APP_ENTRY_CONTEXT`) when
+│                                           params into localStorage (`ENTRY_CONTEXT`) when
 │                                           entering `apps/admin`, so it can navigate back to whichever
 │                                           app (`rao`/`platform`/`dashboard`) the user came from
 ├── config/

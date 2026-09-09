@@ -3,7 +3,7 @@ import { BackendConfigurationService } from '../config';
 import { SDKService } from '../api';
 import { getSafeRedirectOrigin } from '../utils';
 
-export const ACCOUNT_ENTRY_CONTEXT_KEY = 'ACCOUNT_APP_ENTRY_CONTEXT';
+export const ACCOUNT_ENTRY_CONTEXT_KEY = 'ENTRY_CONTEXT';
 
 const KNOWN_ORIGIN_CLIENTS = ['rao', 'platform', 'dashboard'] as const;
 export type AccountEntryOriginClient = (typeof KNOWN_ORIGIN_CLIENTS)[number];
