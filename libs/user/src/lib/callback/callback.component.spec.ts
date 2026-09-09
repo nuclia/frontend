@@ -5,6 +5,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { CallbackComponent } from './callback.component';
 import { TranslateService } from '@ngx-translate/core';
+import { isCameFromLegit } from '../login-error.util';
 
 describe('CallbackComponent', () => {
   let component: CallbackComponent;
@@ -264,20 +265,19 @@ describe('CallbackComponent', () => {
     });
   });
 
-  it('should map sso login error status 412 to no_personal_email', async () => {
+  it('should map sso login error status 412 to no_personal_email inline', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 412 })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'no_personal_email' },
-    });
+    expect(translate.instant).toHaveBeenCalledWith('login.error.no_personal_email', { provider: undefined });
+    expect(component.message).toBe('login.error.no_personal_email');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should map invalid state error to invalid_configuration and show toast', async () => {
+  it('should map invalid state error to a toast and inline oops message', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ message: 'Invalid state' })));
     await createComponent();
@@ -287,33 +287,41 @@ describe('CallbackComponent', () => {
     expect(toaster.error).toHaveBeenCalledWith(
       'Authentication configuration error. Please contact support if this persists.',
     );
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'invalid_configuration' },
-    });
+    expect(component.message).toBe('login.error.oops');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should map unknown sso login errors to oops', async () => {
+  it('should map unknown sso login errors to an inline oops message', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 500 })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/user/signup'], {
-      relativeTo: route,
-      queryParams: { error: 'oops' },
-    });
+    expect(component.message).toBe('login.error.oops');
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should display a message in ssoLogin when detail is user_not_registered', async () => {
+  it('should display a message in ssoLogin when error_code is user_not_registered', async () => {
+    snapshotQueryParams = { code: 'code-1', state: 'state-1' };
+    ssoService.login.mockReturnValue(
+      throwError(() => ({ status: 403, body: { error_code: 'user_not_registered', detail: 'No account is registered with this email.' } })),
+    );
+    await createComponent();
+
+    component.ssoLogin();
+
+    expect(component.message).toBe('login.error.user_not_registered');
+  });
+
+  it('should fall back to the legacy detail string when error_code is absent', async () => {
     snapshotQueryParams = { code: 'code-1', state: 'state-1' };
     ssoService.login.mockReturnValue(throwError(() => ({ status: 403, body: { detail: 'user_not_registered' } })));
     await createComponent();
 
     component.ssoLogin();
 
-    expect(component.message).not.toBeUndefined();
+    expect(component.message).toBe('login.error.user_not_registered');
   });
 
   it('should do nothing in ssoLogin when code or state are missing', async () => {
@@ -337,7 +345,7 @@ describe('CallbackComponent', () => {
   it('should validate came_from domains correctly', async () => {
     await createComponent();
 
-    expect((component as any).isCameFromLegit('https://app.progress.cloud/path')).toBe(true);
-    expect((component as any).isCameFromLegit('https://evil.example.com/path')).toBe(false);
+    expect(isCameFromLegit('https://app.progress.cloud/path', config.getAPIOrigin())).toBe(true);
+    expect(isCameFromLegit('https://evil.example.com/path', config.getAPIOrigin())).toBe(false);
   });
 });

@@ -465,7 +465,13 @@ export class Authentication implements IAuthentication {
     }).pipe(
       switchMap((response) => {
         if (!response.ok) {
-          return throwError(() => response);
+          // Read the body now, while the response is still live: fromFetch aborts the
+          // underlying request as soon as this observable is torn down (which happens as
+          // part of error propagation), so a `.json()` read deferred to a downstream
+          // catchError would race the abort and fail with "The user aborted a request".
+          return from(response.json().catch(() => ({}))).pipe(
+            switchMap((responseBody) => throwError(() => ({ status: response.status, body: responseBody }))),
+          );
         }
         return from(response.clone().json());
       }),

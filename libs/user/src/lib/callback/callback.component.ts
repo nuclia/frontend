@@ -7,6 +7,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { take } from 'rxjs';
 import { UserContainerComponent } from '../user-container';
 import { TranslateService } from '@ngx-translate/core';
+import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
 
 @Component({
   selector: 'stf-user-callback',
@@ -60,23 +61,30 @@ export class CallbackComponent implements OnInit {
     ) {
       this.ssoLogin();
     } else if (queryParams['code'] && queryParams['state']) {
+      // The raw returned state is still decodable even when it fails the localStorage
+      // oauth_state check below (the mismatch is against what we expected, not the payload itself).
+      const came_from = this.decodeCameFrom(queryParams['state']);
       this.sdk.nuclia.auth.processAuthorizationResponse(queryParams['code'], queryParams['state']).subscribe({
         next: (res) => {
           if (res.success) {
-            const came_from = res.state.came_from;
-            if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
-              window.location.href = came_from;
+            const successCameFrom = res.state.came_from;
+            if (
+              successCameFrom &&
+              successCameFrom !== window.location.origin &&
+              isCameFromLegit(successCameFrom, this.config.getAPIOrigin())
+            ) {
+              window.location.href = successCameFrom;
             } else {
               this.router.navigate(['/']);
             }
           } else {
             this.toaster.error('login.error.device_mismatch');
-            this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
+            this.restartOAuthFromOriginatingApp('login.error.device_mismatch', came_from);
           }
         },
         error: () => {
           this.toaster.error('login.error.device_mismatch');
-          this.sdk.nuclia.auth.redirectToOAuth({ message: 'login.error.device_mismatch' });
+          this.restartOAuthFromOriginatingApp('login.error.device_mismatch', came_from);
         },
       });
     } else {
@@ -148,20 +156,20 @@ export class CallbackComponent implements OnInit {
           }
         },
         error: (error) => {
-          if (error.status === 403 && error.body?.detail === 'user_not_registered') {
-            this.message = this.translate.instant('login.error.user_not_registered', { provider: this.getProvider() });
+          const code = error.body?.error_code || error.body?.detail;
+          if (code === 'login_challenge_expired_or_invalid') {
+            // The login_challenge outlived by the time spent on the provider's own login/MFA
+            // screens. Restart the OAuth flow with fresh state instead of dead-ending on signup.
+            this.toaster.error('login.error.session_expired');
+            this.restartOAuthFromOriginatingApp('login.error.session_expired', this.decodeCameFrom(state));
+          } else if (error.message === 'Invalid state') {
+            this.toaster.error('Authentication configuration error. Please contact support if this persists.');
+            this.message = this.translate.instant('login.error.oops');
           } else {
-            let errorCode = 'oops';
-            if (error.status === 412) {
-              errorCode = 'no_personal_email';
-            } else if (error.message === 'Invalid state') {
-              errorCode = 'invalid_configuration';
-              this.toaster.error('Authentication configuration error. Please contact support if this persists.');
-            }
-
-            this.router.navigate(['/user/signup'], {
-              relativeTo: this.route,
-              queryParams: { error: errorCode },
+            // /user/signup doesn't read an `error` query param, so render inline instead of redirecting there.
+            const fallback = error.status === 412 ? 'login.error.no_personal_email' : 'login.error.oops';
+            this.message = this.translate.instant(getLoginErrorMessageKey(code, fallback), {
+              provider: this.getProvider(),
             });
           }
         },
@@ -183,17 +191,31 @@ export class CallbackComponent implements OnInit {
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
     const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
-    if (came_from && came_from !== window.location.origin && this.isCameFromLegit(came_from)) {
+    if (came_from && came_from !== window.location.origin && isCameFromLegit(came_from, this.config.getAPIOrigin())) {
       window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
       this.router.navigate(['/']);
     }
   }
 
-  private isCameFromLegit(url: string): boolean {
-    const backend = this.config.getAPIOrigin();
-    const backendMainDomain = backend.split('/')[2].split('.').slice(1).join('.');
-    const urlMainDomain = url.split('/')[2].split('.').slice(1).join('.');
-    return urlMainDomain === backendMainDomain;
+  private decodeCameFrom(state: string): string | undefined {
+    try {
+      return this.ssoService.decodeState(state)['came_from'];
+    } catch {
+      return undefined;
+    }
+  }
+
+  // The auth app has no real OAuth client_id of its own; the flow must be (re)started from
+  // the originating app (came_from) itself. Land on its root instead of a specific route
+  // (e.g. /user/login-redirect) so we don't assume a route convention product teams may not share.
+  private restartOAuthFromOriginatingApp(message: string, came_from?: string): void {
+    if (came_from && isCameFromLegit(came_from, this.config.getAPIOrigin())) {
+      const url = new URL(came_from);
+      url.searchParams.set('message', message);
+      this.document.location.href = url.toString();
+    } else {
+      this.sdk.nuclia.auth.redirectToOAuth({ message });
+    }
   }
 }

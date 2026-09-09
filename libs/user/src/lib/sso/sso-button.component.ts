@@ -61,6 +61,8 @@ export class SsoButtonComponent {
     if (this._signup) {
       this.analytics.logTrialSignup();
     }
-    this.window.location.href = this.ssoService.getSsoLoginUrl(this.provider);
+    this.ssoService.getSsoLoginUrl(this.provider).subscribe((url) => {
+      this.window.location.href = url;
+    });
   }
 }
