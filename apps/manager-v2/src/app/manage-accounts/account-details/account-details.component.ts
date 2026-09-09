@@ -17,9 +17,11 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
 
   canSeeUsers = this.store.canSeeUsers;
   canAccessKBs = this.store.canAccessKBs;
+  canAccessProjects = this.store.canAccessProjects;
   account = this.store.accountDetails;
   knowledgeBoxList = this.store.kbList.pipe(map((kbs) => kbs.filter((kb) => kb.kbMode === 'kb')));
   agentList = this.store.kbList.pipe(map((kbs) => kbs.filter((kb) => kb.kbMode !== 'kb')));
+  projectList = this.store.projectList;
   currentState = this.store.currentState;
   noStripe = this.backendConfig.noStripe();
   isTrial = this.features.isTrial;

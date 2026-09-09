@@ -36,6 +36,8 @@ import { AddAccountComponent } from './add-account/add-account.component';
 import { ModelsComponent } from './account-details/models/models.component';
 import { ModelDetailsComponent } from './account-details/models/model-details/model-details.component';
 import { AddModelComponent } from './account-details/models/add-model/add-model.component';
+import { ProjectDetailsComponent } from './account-details/projects/project-details.component';
+import { ProjectListComponent } from './account-details/projects/project-list.component';
 
 const ROUTES: Routes = [
   {
@@ -76,6 +78,14 @@ const ROUTES: Routes = [
           {
             path: 'zone/:zoneId/kb/:kbId',
             component: KbDetailsComponent,
+          },
+          {
+            path: 'projects',
+            component: ProjectListComponent,
+          },
+          {
+            path: 'zone/:zoneId/project/:projectId',
+            component: ProjectDetailsComponent,
           },
           {
             path: 'limits',
@@ -151,6 +161,8 @@ const ROUTES: Routes = [
     UsersComponent,
     ContainersComponent,
     KbDetailsComponent,
+    ProjectDetailsComponent,
+    ProjectListComponent,
     BlockedFeaturesComponent,
     FormFooterComponent,
     FeatureNamePipe,
