@@ -139,6 +139,7 @@ export interface CommonMetricDetails {
     output: number | null;
     image: number | null;
     storage: number | null;
+    external_requests: number | null;
   };
 }
 
@@ -162,6 +163,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     output: number | null;
     image: number | null;
     storage: number | null;
+    external_requests: number | null;
   };
   nuclia_tokens_billed: {
     search: number | null;
@@ -169,6 +171,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     output: number | null;
     image: number | null;
     storage: number | null;
+    external_requests: number | null;
   };
   requests: {
     api: number | null;
