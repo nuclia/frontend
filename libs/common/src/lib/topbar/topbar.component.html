@@ -13,17 +13,17 @@
     @if (!inAdminApp) {
       <app-kb-switch></app-kb-switch>
     }
+  </div>
 
-    <div class="topbar-actions">
-      @if (!standalone) {
-        <stf-plan-status></stf-plan-status>
-        <app-user-menu
-          data-cy="user-menu"
-          [userInfo]="userInfo | async"
-          (openNotifications)="openNotificationPanel.emit()" />
-      } @else {
-        <app-standalone-menu data-cy="standalone-menu" />
-      }
-    </div>
+  <div class="topbar-actions">
+    @if (!standalone) {
+      <stf-plan-status></stf-plan-status>
+      <app-user-menu
+        data-cy="user-menu"
+        [userInfo]="userInfo | async"
+        (openNotifications)="openNotificationPanel.emit()" />
+    } @else {
+      <app-standalone-menu data-cy="standalone-menu" />
+    }
   </div>
 </div>

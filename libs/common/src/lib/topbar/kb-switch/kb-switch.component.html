@@ -8,7 +8,7 @@
       [popupRef]="kbSwitch">
       {{ current.title }}
     </nsi-dropdown-button>
-  } @else {
+  } @else if (!(isCowork | async)) {
     <span
       class="kb-context-label"
       [paTooltip]="current.title">
