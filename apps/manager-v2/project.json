@@ -15,6 +15,7 @@
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/manager-v2",
         "subresourceIntegrity": true,
@@ -231,11 +232,12 @@
             }
           ]
         }
-      },
-      "defaultConfiguration": "production"
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "defaultConfiguration": "local-stage",
+      "continuous": true,
       "configurations": {
         "production": {
           "buildTarget": "manager-v2:build:production"
@@ -249,9 +251,7 @@
         "local-dev": {
           "buildTarget": "manager-v2:build:local-dev"
         }
-      },
-      "defaultConfiguration": "local-stage",
-      "continuous": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -264,11 +264,14 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/manager-v2/jest.config.ts",
-        "tsConfig": "apps/manager-v2/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     }
   }
