@@ -14,6 +14,8 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/auth",
         "subresourceIntegrity": true,
@@ -220,12 +222,12 @@
             }
           ]
         }
-      },
-      "defaultConfiguration": "production",
-      "outputs": ["{options.outputPath}"]
+      }
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "defaultConfiguration": "local-stage",
+      "continuous": true,
       "options": {
         "buildTarget": "auth:build"
       },
@@ -239,9 +241,7 @@
         "local-dev": {
           "buildTarget": "auth:build:local-dev"
         }
-      },
-      "defaultConfiguration": "local-stage",
-      "continuous": true
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -250,11 +250,14 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/auth"],
       "options": {
-        "jestConfig": "apps/auth/jest.config.js",
-        "tsConfig": "apps/auth/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     },
     "lint": {
