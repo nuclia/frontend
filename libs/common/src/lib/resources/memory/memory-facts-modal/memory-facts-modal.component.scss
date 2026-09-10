@@ -1,0 +1,95 @@
+@use 'apps/dashboard/src/variables' as *;
+
+// pa-modal-advanced shell sizing, same rules as memory-transcript-modal.component.scss.
+:host ::ng-deep pa-modal-advanced.memory-modal .pa-modal.pa-modal-advanced {
+  @media (min-width: 900px) {
+    width: min(1100px, 95vw);
+  }
+}
+
+.modal-content {
+  width: min(100%, 90vw);
+  max-height: 78vh;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  padding: rhythm(1.5) 0 rhythm(3);
+}
+
+.facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+// Fact-card expander styles, same rules as memory.component.scss.
+.fact-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.details-expander {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  overflow: hidden;
+
+  ::ng-deep .pa-expander-header:hover {
+    background: $color-neutral-lightest;
+  }
+
+  ::ng-deep .pa-expander-title {
+    color: $color-dark-stronger;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    padding: rhythm(0.5) 0;
+  }
+
+  ::ng-deep .pa-expander:not(.pa-expander-card) > .pa-expander-header .pa-expander-title {
+    line-height: 1.5;
+    padding: rhythm(1) rhythm(1) rhythm(1) 0;
+  }
+}
+
+.fact-header-date {
+  color: $color-neutral-regular;
+  font-weight: $font-weight-regular;
+
+  &::after {
+    content: ' ·';
+    margin-right: rhythm(0.5);
+  }
+}
+
+.fact-header-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.fact-body {
+  padding: rhythm(2) rhythm(2) rhythm(2) rhythm(3);
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.source-entry {
+  display: flex;
+  flex-direction: column;
+}
+
+.source-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  margin: 0;
+}
+
+.source-meta {
+  color: $color-neutral-regular;
+}

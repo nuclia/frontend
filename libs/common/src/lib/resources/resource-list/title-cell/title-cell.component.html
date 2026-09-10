@@ -14,10 +14,12 @@
             {{ row.resource.title }}
           </a>
         </div>
-        <!-- TODO: only render this badge once the backend exposes a way to detect memory resources
-        @if (false) {
+        <!-- TODO: relies on `data.conversations` from ResourceProperties.VALUES being always
+        fetched in the resource list as a temporary workaround (see resource-list.model.ts).
+        Replace with a proper backend-exposed memory-resource flag once available. -->
+        @if (isMemoryResource(row.resource)) {
           <nsi-badge kind="neutral">{{ 'resource.tag.memory' | translate }}</nsi-badge>
-        } -->
+        }
       </div>
       @if (row.description) {
         <small

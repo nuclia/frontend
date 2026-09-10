@@ -13,6 +13,13 @@
   gap: rhythm(1);
 }
 
+.memory-top-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  padding: 0 rhythm(1);
+}
+
 .memory-filters {
   overflow-x: auto;
   overflow-y: hidden;
@@ -44,13 +51,6 @@
   gap: rhythm(1);
 }
 
-.facts-list-title {
-  color: $color-neutral-regular;
-  max-width: rhythm(120);
-  padding: 0 rhythm(1);
-  width: 100%;
-}
-
 .facts-list {
   display: flex;
   flex-direction: column;
@@ -68,21 +68,96 @@
   color: $color-neutral-regular;
 }
 
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(120);
+  padding: 0 rhythm(1);
+  width: 100%;
+}
+
+.session-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-header-main {
+  align-items: center;
+  display: inline-flex;
+  gap: rhythm(0.75);
+}
+
+.session-header-name {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+}
+
+.session-header-count {
+  color: $color-neutral-regular;
+
+  &::before {
+    content: '· ';
+  }
+}
+
+.view-facts-link {
+  background: transparent;
+  border: 0;
+  color: $color-primary-regular;
+  cursor: pointer;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    color: $color-primary-strong;
+    text-decoration: underline;
+  }
+}
+
+.session-body {
+  padding: rhythm(2) rhythm(2) rhythm(2) rhythm(3);
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.entry-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry-meta {
+  color: $color-neutral-regular;
+}
+
+.entry-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+// Fact-card expander styles: date + fact text header, expandable body listing the fact's
+// related entries. Same rules are duplicated in memory-facts-modal.component.scss, where the
+// fact card is rendered again inside the per-session facts modal.
 .fact-item {
   display: flex;
   flex-direction: column;
 }
 
-// Expander card styling — only layout and colour overrides; no button hacks
 .details-expander {
   border: 1px solid $color-neutral-lighter;
   border-radius: rhythm(0.5);
   overflow: hidden;
 
-  ::ng-deep .pa-expander-header {
-    &:hover {
-      background: $color-neutral-lightest;
-    }
+  ::ng-deep .pa-expander-header:hover {
+    background: $color-neutral-lightest;
   }
 
   ::ng-deep .pa-expander-title {
@@ -118,7 +193,6 @@
   white-space: normal;
 }
 
-// Body content
 .fact-body {
   padding: rhythm(2) rhythm(2) rhythm(2) rhythm(3);
 }
@@ -132,7 +206,12 @@
 .source-entry {
   display: flex;
   flex-direction: column;
-  gap: rhythm(0.5);
+}
+
+.source-text {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-regular;
+  margin: 0;
 }
 
 .source-link {
@@ -163,8 +242,6 @@
   display: inline-flex;
 }
 
-.source-text {
-  color: $color-dark-stronger;
-  font-weight: $font-weight-regular;
-  margin: 0;
+::ng-deep.pa-expander-header-extra {
+  margin-right: rhythm(1);
 }

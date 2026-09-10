@@ -7,8 +7,9 @@ import { DatePickerComponent, ModalConfig } from '@guillotinaweb/pastanaga-angul
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { catchError, delay, filter, forkJoin, of, switchMap, take } from 'rxjs';
 import { EditResourceService } from '../edit-resource';
+import { MemoryFactsModalComponent } from './memory-facts-modal/memory-facts-modal.component';
 import { MemoryTranscriptModalComponent } from './memory-transcript-modal/memory-transcript-modal.component';
-import { MemoryEntry, MemoryFact } from './memory.model';
+import { MemoryEntry, MemoryFact, MemorySessionInfo } from './memory.model';
 import { MemoryService } from './memory.service';
 
 @Component({
@@ -31,19 +32,60 @@ export class MemoryComponent implements OnInit {
   protected factDateControl = new FormControl<string | null>(null);
   protected searchControl = new FormControl<string | null>(null);
   private expandedFactIds = new Set<string>();
+  private expandedSessionIds = new Set<string>();
+
+  // Sessions load shallowly and render instantly, so it's the default tab; Facts needs every
+  // session's facts fetched first, so we only trigger that load when the user switches to it.
+  protected selectedTab: 'sessions' | 'facts' = 'sessions';
 
   // pa-date-picker's own inputControl must be reset directly; its valueChanges pipe filters out null.
   @ViewChild(DatePickerComponent) private datePicker?: DatePickerComponent;
 
   ngOnInit() {
     this.editResource.setCurrentView('memory');
-    this.service.loadAllFacts().subscribe();
     this.factDateControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((dateIso) => this.service.setDateFilter(dateIso || null));
     this.searchControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((term) => this.service.setSearchTerm(term || ''));
+  }
+
+  protected selectTab(tab: 'sessions' | 'facts') {
+    this.selectedTab = tab;
+    if (tab === 'facts') {
+      // Cheap to call repeatedly: it only fetches sessions whose facts aren't already cached.
+      this.service.loadAllFacts().subscribe();
+    }
+  }
+
+  protected toggleSession(session: MemorySessionInfo) {
+    if (this.isSessionExpanded(session.fieldId)) {
+      this.expandedSessionIds.delete(session.fieldId);
+    } else {
+      this.expandedSessionIds.add(session.fieldId);
+      this.service.loadSessionEntries(session.fieldId).subscribe();
+    }
+  }
+
+  protected isSessionExpanded(sessionFieldId: string): boolean {
+    return this.expandedSessionIds.has(sessionFieldId);
+  }
+
+  protected openSessionFacts(session: MemorySessionInfo) {
+    forkJoin([this.service.loadSessionFacts(session), this.service.loadSessionEntries(session.fieldId)]).subscribe(
+      ([facts, entries]) =>
+        this.modal.openModal(
+          MemoryFactsModalComponent,
+          new ModalConfig({
+            data: {
+              sessionLabel: this.sessionDisplayName(session.fieldId),
+              facts,
+              entries,
+            },
+          }),
+        ),
+    );
   }
 
   protected toggleFact(fact: MemoryFact) {

@@ -122,11 +122,11 @@ export function getSearchOptions(params: ResourceListParams, uid?: string, slug?
       range_creation_end: end ? getDateFromFilter(end) : undefined,
       hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
       filters,
-      show: [
-        ResourceProperties.BASIC,
-        ResourceProperties.ERRORS,
-        ...(params.includeKeyValue ? [ResourceProperties.VALUES] : []),
-      ],
+      // TODO: VALUES is always requested (regardless of `includeKeyValue`) only so the resource
+      // list can detect memory resources client-side (via their `conversations` field ids).
+      // Remove this once the backend exposes memory-resource detection as a proper resource type/flag,
+      // and go back to only requesting VALUES when `includeKeyValue` is true.
+      show: [ResourceProperties.BASIC, ResourceProperties.ERRORS, ResourceProperties.VALUES],
     };
   }
 }
