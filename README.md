@@ -9,7 +9,6 @@
 - [Installation](#installation)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
-- [RAO Widget](#rao-widget)
 - [Auth app](#auth-app)
 - [Admin app](#admin-app)
 - [SDK](#sdk)
