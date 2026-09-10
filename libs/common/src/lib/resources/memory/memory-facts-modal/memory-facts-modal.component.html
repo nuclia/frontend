@@ -1,0 +1,46 @@
+<pa-modal-advanced
+  fitContentHeight
+  class="memory-modal">
+  <pa-modal-title>
+    {{ 'resource.memory.facts-modal.title' | translate: { session: data?.['sessionLabel'] } }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div class="modal-content">
+      @if (facts.length === 0) {
+        <p class="body-s">{{ 'resource.memory.facts-modal.empty' | translate }}</p>
+      }
+      <div class="facts-list">
+        @for (fact of facts; track fact.id) {
+          <article class="fact-item">
+            <pa-expander
+              class="details-expander"
+              emitOnly
+              [class.expanded]="isFactExpanded(fact.id)"
+              [expanded]="isFactExpanded(fact.id)"
+              (toggleExpander)="toggleFact(fact)">
+              <pa-expander-header>
+                <span class="fact-header-date title-xs">{{ fact.timestamp | date: 'shortDate' }}</span>
+                <span class="fact-header-text title-xs">{{ fact.content.text }}</span>
+              </pa-expander-header>
+              <pa-expander-body>
+                <div class="fact-body">
+                  <div class="related-list">
+                    @for (entry of relatedEntriesOf(fact); track entry.id) {
+                      <div class="source-entry">
+                        <span class="source-meta title-xs">{{ entry.timestamp | date: 'medium' }}</span>
+                        <p class="title-xs source-text">{{ entry.content.text }}</p>
+                      </div>
+                    }
+                    @if (relatedEntriesOf(fact).length === 0) {
+                      <p class="body-s">{{ 'resource.memory.facts.no-related-entries' | translate }}</p>
+                    }
+                  </div>
+                </div>
+              </pa-expander-body>
+            </pa-expander>
+          </article>
+        }
+      </div>
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>

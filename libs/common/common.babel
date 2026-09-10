@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="5.6.0" version="1.3">
+<babeledit_project be_version="5.5.1" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -38849,6 +38849,57 @@
 											</concept_node>
 										</children>
 									</folder_node>
+									<folder_node>
+										<name>facts-modal</name>
+										<children>
+											<concept_node>
+												<name>empty</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>title</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+										</children>
+									</folder_node>
 									<concept_node>
 										<name>loading-progress</name>
 										<description/>
@@ -38896,10 +38947,130 @@
 										</translations>
 									</concept_node>
 									<folder_node>
+										<name>sessions</name>
+										<children>
+											<concept_node>
+												<name>empty</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>empty-entries</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>entry-count</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>view-facts</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+										</children>
+									</folder_node>
+									<folder_node>
 										<name>tabs</name>
 										<children>
 											<concept_node>
 												<name>facts</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>sessions</name>
 												<description/>
 												<comment/>
 												<translations>
