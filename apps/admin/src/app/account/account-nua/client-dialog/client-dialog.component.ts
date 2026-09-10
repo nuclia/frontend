@@ -9,6 +9,7 @@ import { ModalRef, OptionModel } from '@guillotinaweb/pastanaga-angular';
 export interface ClientDialogData {
   client?: NUAClient;
 }
+const DEFAULT_TOKENS_LIMIT = 50_000;
 
 @Component({
   templateUrl: './client-dialog.component.html',
@@ -97,6 +98,12 @@ export class ClientDialogComponent implements OnInit {
       this.email.subscribe((email) => {
         this.clientForm.get('contact')?.patchValue(email);
         this.cdr.markForCheck();
+      });
+      this.hasSubscription.pipe(take(1)).subscribe((hasSubscription) => {
+        if (hasSubscription) {
+          this.clientForm.patchValue({ has_limit: true, tokens_limit: DEFAULT_TOKENS_LIMIT });
+          this.cdr.markForCheck();
+        }
       });
     }
 
