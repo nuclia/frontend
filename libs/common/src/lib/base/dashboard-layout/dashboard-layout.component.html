@@ -26,7 +26,9 @@
       id="dashboard-main"
       tabindex="-1"
       [class.with-status-bar]="showStatusBar | async">
-      <router-outlet></router-outlet>
+      <div class="dashboard-main-content">
+        <router-outlet></router-outlet>
+      </div>
     </main>
   </div>
 </div>
