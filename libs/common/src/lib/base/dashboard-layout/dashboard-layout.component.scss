@@ -38,6 +38,19 @@ $height-status-bar: rhythm(9);
       &.with-status-bar {
         --app-topbar-height: #{$height-top-bar + $height-status-bar};
       }
+
+      // Cap content width so pages don't stretch edge-to-edge on ultra-wide monitors.
+      // Below this width the cap has no visible effect, so no media query is needed.
+      // Applied to this static wrapper div (not `main`, which must stay full-width so its
+      // scrollbar sits at the real viewport/browser edge) and not via a `main > *` selector,
+      // since Angular's ViewEncapsulation scopes selectors with a per-component attribute
+      // that content projected through <router-outlet> doesn't carry — a `> *` selector
+      // would silently match nothing there.
+      .dashboard-main-content {
+        max-width: $size-viewport-xlarge-min;
+        margin-left: auto;
+        margin-right: auto;
+      }
     }
   }
 }

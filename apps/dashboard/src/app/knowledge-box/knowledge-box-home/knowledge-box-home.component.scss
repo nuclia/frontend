@@ -8,6 +8,13 @@
   grid-template-rows: min-content;
   grid-template-columns: 1fr 1fr;
   gap: var(--gap-size);
+  // `.page-spacing` sets a `min-height` so the page fills the viewport, but this grid's
+  // `auto`-sized rows default to `align-content: stretch`, which distributes any leftover
+  // vertical space (page shorter than viewport) into those rows instead of leaving it as
+  // trailing whitespace. That inflates rows/cards well past their content (worse the more
+  // the viewport is zoomed out, since 100vh grows in CSS px while content doesn't).
+  // Pin rows to their natural content size and let extra space fall below the last row.
+  align-content: start;
 
   .fullwidth-container {
     grid-column: span 2;
@@ -47,7 +54,6 @@
   .kb-summary-card {
     background-color: $color-light-stronger;
     gap: calc(#{rhythm(2)} * 0.7);
-    height: 100%;
 
     .kb-summary-card__header {
       align-items: center;
