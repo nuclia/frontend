@@ -2,7 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, OAuthService, SAMLService, OAuthLoginData, FeaturesService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  OAuthService,
+  SAMLService,
+  OAuthLoginData,
+  FeaturesService,
+  BrandService,
+} from '@flaps/core';
 import { MockModule } from 'ng-mocks';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
 import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
@@ -15,7 +22,8 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   let router: { navigate: jest.Mock };
-  let oAuthService: { getCameFrom: jest.Mock; loginUrl: jest.Mock; cameFromSignup: Observable<string> };
+  let oAuthService: { getCameFrom: jest.Mock; loginUrl: jest.Mock };
+  let brandService: { signUpUrl: Observable<string> };
   let config: {
     useRemoteLogin: jest.Mock;
     getRecaptchaKey: jest.Mock;
@@ -52,6 +60,7 @@ describe('LoginComponent', () => {
         { provide: BackendConfigurationService, useValue: config },
         { provide: SAMLService, useValue: samlService },
         { provide: FeaturesService, useValue: featuresService },
+        { provide: BrandService, useValue: brandService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -74,7 +83,9 @@ describe('LoginComponent', () => {
     oAuthService = {
       getCameFrom: jest.fn(() => 'http://app.local'),
       loginUrl: jest.fn(() => 'http://oauth.here/login'),
-      cameFromSignup: of('http://oauth.here/sign-up'),
+    };
+    brandService = {
+      signUpUrl: of('http://oauth.here/sign-up'),
     };
     config = {
       useRemoteLogin: jest.fn(() => false),

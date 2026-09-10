@@ -3,7 +3,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, combineLatest, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, FeaturesService, OAuthLoginData, OAuthService, SAMLService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  BrandService,
+  FeaturesService,
+  OAuthLoginData,
+  OAuthService,
+  SAMLService,
+} from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 import { ReCaptchaV3Service } from 'ng-recaptcha-2';
@@ -68,17 +75,17 @@ export class LoginComponent {
     }),
     map((result) => (result ? this.samlService.ssoUrl(result.account_id, this.loginChallenge) : undefined)),
   );
-  isPDP = this.oAuthService.isPDP;
-  brandName = this.oAuthService.cameFromBrandName;
+  isPDP = this.brandService.isPDP;
+  brandName = this.brandService.brandName;
 
   signUpUrl = combineLatest([
     this.featuresService.unstable.progressComSignup,
-    this.oAuthService.cameFromSignup,
+    this.brandService.signUpUrl,
     this.route.queryParams,
   ]).pipe(
-    map(([hasProgressComSignup, cameFromSignup]) => {
+    map(([hasProgressComSignup, signUpUrl]) => {
       if (hasProgressComSignup) {
-        return cameFromSignup;
+        return signUpUrl;
       } else {
         const loginData: OAuthLoginData | null = this.route.snapshot.data['loginData'];
         return `${loginData?.came_from || this.oAuthService.getCameFrom()}/user/signup`;
@@ -94,6 +101,7 @@ export class LoginComponent {
     public config: BackendConfigurationService,
     private samlService: SAMLService,
     private featuresService: FeaturesService,
+    private brandService: BrandService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();

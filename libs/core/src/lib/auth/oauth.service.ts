@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { OAuthConsentData, OAuthLoginData } from '../models';
 import { SDKService } from '../api';
-import { BackendConfigurationService } from '../config';
 
 export type OAuthErrors =
   | 'login_error'
@@ -17,24 +16,9 @@ const CAME_FROM_KEY = 'SIGNUP_CAME_FROM';
 })
 export class OAuthService {
   private sdk = inject(SDKService);
-  private backendConfig = inject(BackendConfigurationService);
 
-  private cameFrom = new BehaviorSubject<string | undefined>(undefined);
-
-  isPDP = this.cameFrom.pipe(map((cameFrom) => cameFrom?.includes('https://platform')));
-  cameFromLogo = this.isPDP.pipe(
-    map((isPDP) =>
-      isPDP
-        ? `${this.backendConfig.getAssetsPath()}/logos/logo-pdp.svg?version=${this.backendConfig.getVersion()}`
-        : this.backendConfig.getLogoPath(),
-    ),
-  );
-  cameFromBrandName = this.isPDP.pipe(
-    map((isPDP) => (isPDP ? 'Progress Data Platform' : this.backendConfig.getBrandName())),
-  );
-  cameFromSignup = this.isPDP.pipe(
-    map((isPDP) => (isPDP ? 'https://progress.com' : 'https://www.progress.com/agentic-rag/free-trial-sign-up')),
-  );
+  private _cameFrom = new BehaviorSubject<string | undefined>(undefined);
+  cameFrom = this._cameFrom.asObservable();
 
   loginUrl() {
     return `${this.sdk.nuclia.auth.getAuthUrl()}/oauth/login`;
@@ -57,11 +41,11 @@ export class OAuthService {
   }
 
   getCameFrom() {
-    return this.cameFrom.value || localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginForApp('rag');
+    return this._cameFrom.value || localStorage.getItem(CAME_FROM_KEY) || this.sdk.getOriginForApp('rag');
   }
 
   setCameFrom(cameFrom: string) {
-    this.cameFrom.next(cameFrom);
+    this._cameFrom.next(cameFrom);
     localStorage.setItem(CAME_FROM_KEY, cameFrom);
   }
 }

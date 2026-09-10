@@ -10,7 +10,7 @@ import {
 import { NavigationStart, Router, Scroll } from '@angular/router';
 import { filter, Observable, of, Subject } from 'rxjs';
 import {
-  BackendConfigurationService,
+  BrandService,
   standaloneSimpleAccount,
   StaticEnvironmentConfiguration,
   SelectAccountKbService,
@@ -34,9 +34,9 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   );
   selectKb = false;
   unsubscribeAll = new Subject<void>();
-  private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
-  brandName = this.backendConfig.getBrandName();
+  private brandService = inject(BrandService);
+  logoPath = this.brandService.logoPath;
+  brandName = this.brandService.brandName;
 
   standalone = this.environment.standalone;
 
