@@ -22,13 +22,31 @@
     border-radius: 50%;
     padding: rhythm(0.5);
 
-    nsi-badge {
+    // Ring matches the surrounding surface so the dot stays legible against both
+    // the avatar fill and the topbar background in either theme.
+    .unread-dot {
       position: absolute;
-      bottom: -2px;
-      right: -4px;
-      cursor: pointer;
-      gap: 0;
-      text-transform: unset;
+      bottom: 0;
+      right: 0;
+      height: rhythm(1.5);
+      width: rhythm(1.5);
+      border-radius: 50%;
+      background-color: $color-primary-regular;
+      box-shadow: 0 0 0 2px $color-light-stronger;
+    }
+  }
+
+  .option-content {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: space-between;
+    width: 100%;
+
+    .option-count {
+      color: $color-neutral-regular;
+      flex-shrink: 0;
+      font-size: font-size(s);
     }
   }
 
@@ -48,5 +66,11 @@
 
   ::ng-deep pa-dropdown .pa-popup-wrapper {
     max-height: calc(100vh - 120px);
+  }
+
+  // The account name is an identity label, not a generic section heading, so it
+  // takes the primary brand colour rather than the muted section-header grey.
+  ::ng-deep pa-option-header.account-name .pa-option-header {
+    color: $color-primary-regular;
   }
 }

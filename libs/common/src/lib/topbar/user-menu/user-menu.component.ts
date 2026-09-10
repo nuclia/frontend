@@ -7,6 +7,7 @@ import {
   BillingService,
   FeaturesService,
   NavigationService,
+  NotificationService,
   SDKService,
 } from '@flaps/core';
 import {
@@ -14,14 +15,12 @@ import {
   PaAvatarModule,
   PaDropdownModule,
   PaFocusableModule,
-  PaIconModule,
   PaPopupModule,
-  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Welcome } from '@nuclia/core';
-import { SisModalService, BadgeComponent } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, map, Observable, shareReplay, take } from 'rxjs';
+import { SisModalService } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { AccountDeleteComponent } from '../../account/account-manage/account-delete/account-delete.component';
 
 interface MenuItem {
@@ -29,12 +28,14 @@ interface MenuItem {
   icon: string;
   action: () => void;
   visible$?: Observable<boolean>;
+  count$?: Observable<number>;
   dataCy?: string;
   destructive?: boolean;
 }
 
 interface MenuSection {
   header?: string;
+  headerText$?: Observable<string>;
   items: MenuItem[];
   visible$?: Observable<boolean>;
   prependSeparator?: boolean;
@@ -43,17 +44,7 @@ interface MenuSection {
 
 @Component({
   selector: 'app-user-menu',
-  imports: [
-    CommonModule,
-    TranslateModule,
-    PaIconModule,
-    PaAvatarModule,
-    PaDropdownModule,
-    PaFocusableModule,
-    PaPopupModule,
-    PaTooltipModule,
-    BadgeComponent,
-  ],
+  imports: [CommonModule, TranslateModule, PaAvatarModule, PaDropdownModule, PaFocusableModule, PaPopupModule],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,6 +58,8 @@ export class UserMenuComponent implements OnInit {
   private readonly accountVerification = inject(AccountVerificationService);
   private readonly modalService = inject(SisModalService);
   private readonly billing = inject(BillingService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly translate = inject(TranslateService);
 
   @Input() set userInfo(userInfo: Welcome | undefined | null) {
     if (userInfo) {
@@ -82,9 +75,31 @@ export class UserMenuComponent implements OnInit {
   }
 
   @Output() menuClose = new EventEmitter<void>();
+  @Output() openNotifications = new EventEmitter<void>();
 
   avatar: AvatarModel = {};
   accounts: string[] = [];
+
+  readonly accountTitle$ = this.sdk.currentAccount.pipe(
+    map((account) => account.title),
+    shareReplay(1),
+  );
+
+  readonly unreadCount$ = this.notificationService.unreadNotificationsCount;
+  readonly hasUnread$ = this.unreadCount$.pipe(
+    map((count) => count > 0),
+    shareReplay(1),
+  );
+
+  // The unread dot is aria-hidden, so the count has to reach assistive tech via the
+  // trigger's own label.
+  readonly menuAriaLabel$ = this.unreadCount$.pipe(
+    switchMap((count) =>
+      count > 0
+        ? this.translate.get('generic.user_menu_with_notifications', { count })
+        : this.translate.get('generic.user_menu'),
+    ),
+  );
 
   private readonly standalone = this.sdk.nuclia.options.standalone;
   private readonly noStripe = this.backendConfig.noStripe();
@@ -133,10 +148,19 @@ export class UserMenuComponent implements OnInit {
 
   readonly sections: MenuSection[] = [
     // ── Account ────────────────────────────────────────────────────────────
+    // The header shows the current account name and is always rendered so every
+    // user can tell which account they are in; the items below stay gated.
     {
-      header: 'user-menu.section.account',
-      visible$: this.showAccountGroup,
+      headerText$: this.accountTitle$,
       items: [
+        {
+          label: 'notification.panel.title',
+          icon: 'bell',
+          dataCy: 'open-notifications',
+          action: () => this.showNotifications(),
+          count$: this.unreadCount$,
+          visible$: this.simpleMode.pipe(map((simple) => !simple)),
+        },
         {
           label: 'account.consumption',
           icon: 'chart',
@@ -330,6 +354,11 @@ export class UserMenuComponent implements OnInit {
       this.accountVerification.clearPendingDelete();
       this.modalService.openModal(AccountDeleteComponent);
     }
+  }
+
+  private showNotifications(): void {
+    this.menuClose.emit();
+    this.openNotifications.emit();
   }
 
   private go(path: string): void {

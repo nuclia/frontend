@@ -1,15 +1,16 @@
 <div class="kb-header-row">
   <div class="kb-header-title-block">
     <h2 class="kb-header-title">{{ kbName() }}</h2>
-    @if (storageSummary(); as storage) {
-      <pa-button
-        class="storage-summary-button"
-        icon="info"
-        aspect="basic"
-        size="small"
-        [paTooltip]="'dashboard-home.kb-storage.title' | translate"
-        [paPopup]="storageSummaryDropdown"></pa-button>
-      <pa-dropdown #storageSummaryDropdown>
+    <pa-button
+      class="storage-summary-button"
+      icon="info"
+      aspect="basic"
+      size="small"
+      [disabled]="!storageSummary()"
+      [paTooltip]="'dashboard-home.kb-storage.title' | translate"
+      [paPopup]="storageSummaryDropdown"></pa-button>
+    <pa-dropdown #storageSummaryDropdown>
+      @if (storageSummary(); as storage) {
         @if (storage.resources === 0) {
           <pa-option [readonly]="true">{{ 'home.empty.storage' | translate }}</pa-option>
         } @else {
@@ -66,8 +67,8 @@
             </pa-option>
           }
         }
-      </pa-dropdown>
-    }
+      }
+    </pa-dropdown>
   </div>
   <div class="kb-header-actions">
     <pa-button
