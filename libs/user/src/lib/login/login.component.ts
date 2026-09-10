@@ -25,7 +25,11 @@ export class LoginComponent {
   message = signal<string | null>(null);
   error: string | null = null;
 
-  isPositiveMessage = computed(() => this.message() === 'login.account_ready_please_login');
+  private static readonly POSITIVE_MESSAGES = new Set([
+    'login.account_ready_please_login',
+    'login.invite_accepted_please_login',
+  ]);
+  isPositiveMessage = computed(() => LoginComponent.POSITIVE_MESSAGES.has(this.message() || ''));
 
   loginValidationMessages = {
     email: {

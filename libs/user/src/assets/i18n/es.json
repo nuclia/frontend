@@ -10,6 +10,7 @@
 	"login.access_request": "quiere acceder a tu cuenta de Agentic RAG y poder: ",
 	"login.account_already_exists": "Ya existe una cuenta con este correo electrónico. Inicia sesión.",
 	"login.account_ready_please_login": "Tu cuenta está lista, por favor inicia sesión.",
+	"login.invite_accepted_please_login": "Invitación aceptada — inicia sesión para continuar.",
 	"login.check_email.check_spams": "o revisa tu carpeta de spam.",
 	"login.check_email.details": "Haga clic en el enlace de activación que le acabamos de enviar a <strong>{{ email }}</strong>.",
 	"login.check_email.email_sent": "Te hemos enviado un mail! :)",
