@@ -1,0 +1,10 @@
+@use 'apps/manager-v2/src/variables' as *;
+
+.input-with-copy {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-input {
+    width: 100%;
+  }
+}

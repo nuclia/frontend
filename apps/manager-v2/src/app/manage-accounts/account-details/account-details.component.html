@@ -70,6 +70,29 @@
             routerLinkActive="active">
             Configuration
           </li>
+          @if (((projectList | async) || []).length > 0) {
+            <li
+              routerLink="projects"
+              routerLinkActive="active">
+              Projects
+            </li>
+          }
+          @for (project of projectList | async; track project.project_id) {
+            <li
+              class="child-route"
+              [routerLink]="
+                (canAccessProjects | async) ? 'zone/' + project.zone.id + '/project/' + project.project_id : undefined
+              "
+              routerLinkActive="active">
+              <pa-icon
+                name="account"
+                size="small"></pa-icon>
+              <div>
+                {{ project.name }}
+                <small class="zone-name">({{ project.zone.title }})</small>
+              </div>
+            </li>
+          }
           <li
             routerLink="kbs"
             routerLinkActive="active">

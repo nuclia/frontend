@@ -1,0 +1,54 @@
+@if (project | async; as project) {
+  <h3>
+    {{ project.name }}
+  </h3>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()">
+    <div class="input-with-copy">
+      <pa-input
+        readonly
+        [value]="project.project_id">
+        Id
+      </pa-input>
+      <div>
+        <pa-button
+          size="small"
+          aspect="basic"
+          [icon]="copied ? 'check' : 'copy'"
+          (click)="copy()">
+          Copy
+        </pa-button>
+      </div>
+    </div>
+    <pa-input
+      [value]="project.zone.title"
+      readonly>
+      Zone
+    </pa-input>
+    <pa-input
+      [value]="project.created_datetime"
+      readonly>
+      Created
+    </pa-input>
+    <pa-input
+      [value]="project.updated_datetime"
+      readonly>
+      Updated
+    </pa-input>
+    <pa-input
+      formControlName="name"
+      [readonly]="!(canEdit | async)">
+      Name
+    </pa-input>
+    <pa-textarea
+      formControlName="description"
+      rows="4"
+      [readonly]="!(canEdit | async)">
+      Description
+    </pa-textarea>
+    <nma-form-footer
+      [disabled]="form.pristine || form.invalid || isSaving"
+      (footerCancel)="reset()"></nma-form-footer>
+  </form>
+}
