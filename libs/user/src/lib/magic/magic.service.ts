@@ -49,7 +49,7 @@ export class MagicService {
         break;
       case 'goaccount':
         if (action.needs_initial_setpassword === false && this.cameFrom) {
-          location.href = `${this.cameFrom}/select`;
+          this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
         } else {
           this.router.navigate(['/setup/invite'], {
             queryParams: { account: action.account },
@@ -58,7 +58,7 @@ export class MagicService {
         break;
       case 'redict_to_kb':
         if (action.needs_initial_setpassword === false && this.cameFrom) {
-          location.href = `${this.cameFrom}/select`;
+          this.goToCameFromWithMessage('/select', 'login.invite_accepted_please_login');
         } else {
           this.router.navigate(['/setup/invite'], {
             queryParams: { account: action.account, kb: action.kb },
@@ -86,6 +86,14 @@ export class MagicService {
         this.readyToLogin = true;
         break;
     }
+  }
+
+  private goToCameFromWithMessage(path: string, message: string) {
+    // The invited user has no session yet, so cameFrom's own auth guard will bounce them into
+    // login; forward `message` so it survives that redirect and shows up on the login screen.
+    const url = new URL(`${this.cameFrom}${path}`);
+    url.searchParams.set('message', message);
+    location.href = url.toString();
   }
 
   joinKb(action: MagicAction) {
