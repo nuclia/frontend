@@ -540,15 +540,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/common@npm:21.2.17":
-  version: 21.2.17
-  resolution: "@angular/common@npm:21.2.17::__archiveUrl=https%3A%2F%2Fpkg.harness.io%2Fpkg%2Fct8onj8YTdaXtKaFsYCRLg%2Forg-nuclia-npm%2Fnpm%2F%40angular%2Fcommon%2F-%2F21.2.17%2F%40angular%2Fcommon-21.2.17.tgz"
+"@angular/common@npm:21.2.20":
+  version: 21.2.20
+  resolution: "@angular/common@npm:21.2.20"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 21.2.17
+    "@angular/core": 21.2.20
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/ca477ef4fecb3c841b4003dd6f58ccda3cff95cb80e4b97ddf9f0cccae7c54225d0ecb4d952b8bfcbb4be52f3380ca2d2197792bee7b18250a603ba54c511bbb
+  checksum: 10/d364bd4e103a88d3c2cd28a76cdea05e7bda4704edac9c1c8008452aab8ff806cee41ec9ba7b560734792159e342126dc6b1e6226fa00aa123d47957a3d8faad
   languageName: node
   linkType: hard
 
@@ -20144,7 +20144,7 @@ __metadata:
     "@angular/animations": "npm:21.2.15"
     "@angular/cdk": "npm:21.1.1"
     "@angular/cli": "npm:21.1.1"
-    "@angular/common": "npm:21.2.17"
+    "@angular/common": "npm:21.2.20"
     "@angular/compiler": "npm:21.2.17"
     "@angular/compiler-cli": "npm:21.2.15"
     "@angular/core": "npm:21.2.15"
