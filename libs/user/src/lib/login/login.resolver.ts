@@ -20,6 +20,9 @@ export const loginResolver: ResolveFn<OAuthLoginData | null> = (
 
   return oAuthService.getLoginData(loginChallenge, userHint).pipe(
     tap((data) => {
+      if (data.came_from) {
+        oAuthService.setCameFrom(data.came_from);
+      }
       if (data.email && data.needs_signup) {
         authService.setSignUpEmail(data.email);
         router.navigate(['/user/signup'], { queryParams: { login_challenge: loginChallenge } });

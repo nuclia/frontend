@@ -1,6 +1,6 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BackendConfigurationService, OAuthConsentData, OAuthService } from '@flaps/core';
+import { BrandService, OAuthConsentData, OAuthService } from '@flaps/core';
 
 const INVISIBLE_SCOPES = ['offline'];
 
@@ -14,9 +14,8 @@ export class ConsentComponent implements OnInit {
   consentChallenge: string | null = null;
   consentData: OAuthConsentData | undefined;
   error: string | null = null;
-  private backendConfig = inject(BackendConfigurationService);
-  logoPath = this.backendConfig.getLogoPath();
-  brandName = this.backendConfig.getBrandName();
+  logoPath = this.brandService.logoPath;
+  brandName = this.brandService.brandName;
 
   @ViewChild('form') form: ElementRef | undefined;
   @ViewChild('rejectForm') rejectForm: ElementRef | undefined;
@@ -24,6 +23,7 @@ export class ConsentComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private oAuthService: OAuthService,
+    private brandService: BrandService,
   ) {}
 
   ngOnInit(): void {
@@ -33,10 +33,10 @@ export class ConsentComponent implements OnInit {
       return;
     }
     this.consentChallenge = params.get('consent_challenge');
-    
+
     // Get data from resolver - resolver handles skip_consent auto-submit before component loads
     this.consentData = this.route.snapshot.data['consentData'];
-    
+
     if (!this.consentData && !this.consentChallenge) {
       this.error = 'login.error.unknown_consent_challenge';
     }

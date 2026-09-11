@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
-import { BackendConfigurationService, OAuthService } from '@flaps/core';
+import { BackendConfigurationService, BrandService, OAuthService } from '@flaps/core';
 import { PaAvatarModule, PaButtonModule, PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
 import { ConsentComponent } from './consent.component';
+import { of } from 'rxjs';
 
 describe('ConsentComponent', () => {
   let component: ConsentComponent;
@@ -37,8 +38,13 @@ describe('ConsentComponent', () => {
             getSocialLogin: () => {
               /* empty */
             },
-            getLogoPath: () => 'logo.svg',
-            getBrandName: () => 'Agentic RAG',
+          },
+        },
+        {
+          provide: BrandService,
+          useValue: {
+            logoPath: of('logo.svg'),
+            brandName: of('Agentic RAG'),
           },
         },
       ],

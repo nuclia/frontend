@@ -3,8 +3,8 @@
     <div class="page-not-found-content">
       <div class="logo">
         <img
-          [src]="logoPath"
-          [alt]="brandName" />
+          [src]="logoPath | async"
+          [alt]="brandName | async" />
       </div>
 
       <div class="message">
