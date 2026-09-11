@@ -577,12 +577,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:21.2.17":
-  version: 21.2.17
-  resolution: "@angular/compiler@npm:21.2.17::__archiveUrl=https%3A%2F%2Fpkg.harness.io%2Fpkg%2Fct8onj8YTdaXtKaFsYCRLg%2Forg-nuclia-npm%2Fnpm%2F%40angular%2Fcompiler%2F-%2F21.2.17%2F%40angular%2Fcompiler-21.2.17.tgz"
+"@angular/compiler@npm:21.2.20":
+  version: 21.2.20
+  resolution: "@angular/compiler@npm:21.2.20"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/6a458b9ebb1b59e85d99546eac1f1b5081a36a190667b5f18497ca2086a87693edb6650505d40e0d1bab8525e87f4969604486c716d909a3526e61d3808f48dd
+  checksum: 10/5eecc7a954a2d83dc283f67a59433f6b3e39c76b3fca707946bf78e7c01218b58c7c7e8c711c1aad4efcd693049effdfdcbe3f9dd090ff18bace6cab144f1c16
   languageName: node
   linkType: hard
 
@@ -20145,7 +20145,7 @@ __metadata:
     "@angular/cdk": "npm:21.1.1"
     "@angular/cli": "npm:21.1.1"
     "@angular/common": "npm:21.2.17"
-    "@angular/compiler": "npm:21.2.17"
+    "@angular/compiler": "npm:21.2.20"
     "@angular/compiler-cli": "npm:21.2.15"
     "@angular/core": "npm:21.2.15"
     "@angular/forms": "npm:21.2.15"
