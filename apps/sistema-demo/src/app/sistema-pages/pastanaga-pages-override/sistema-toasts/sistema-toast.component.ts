@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ToastType } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './sistema-toast.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class SistemaToastComponent {

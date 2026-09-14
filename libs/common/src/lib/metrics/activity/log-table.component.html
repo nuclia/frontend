@@ -13,7 +13,7 @@
           (selectOption)="selectHeader(header, $event)"
           dontCloseOnSelect>
           <pa-checkbox
-            [value]="(displayedHeaders | async)?.includes(header)"
+            [value]="$safeNavigationMigration((displayedHeaders | async)?.includes(header))"
             (change)="this.toggleHeader(header)">
             {{ header }}
           </pa-checkbox>

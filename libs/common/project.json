@@ -13,11 +13,14 @@
   },
   "targets": {
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/common"],
       "options": {
-        "jestConfig": "libs/common/jest.config.js",
-        "tsConfig": "libs/common/tsconfig.spec.json"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
     },
     "lint": {

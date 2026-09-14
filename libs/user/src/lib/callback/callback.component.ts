@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, DOCUMENT } from '@angular/core';
+import { Component, Inject, OnInit, DOCUMENT, ChangeDetectionStrategy } from '@angular/core';
 
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +13,7 @@ import { getLoginErrorMessageKey, isCameFromLegit } from '../login-error.util';
   selector: 'stf-user-callback',
   templateUrl: './callback.component.html',
   styleUrls: ['../_user-layout.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [UserContainerComponent],
 })
 export class CallbackComponent implements OnInit {

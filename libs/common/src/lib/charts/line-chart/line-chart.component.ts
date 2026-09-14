@@ -6,6 +6,7 @@ import {
   numberAttribute,
   OnDestroy,
   ViewEncapsulation,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import * as d3 from 'd3';
 import { createYAxis, drawThreshold, TickOptions } from '../chart-utils';
@@ -19,6 +20,7 @@ const NUM_TICKS = 7;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class LineChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {

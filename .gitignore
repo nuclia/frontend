@@ -85,3 +85,5 @@ vitest.config.*.timestamp*
 .playwright-mcp
 .claude/worktrees
 .claude/settings.local.json
+
+.nx/migrate-runs

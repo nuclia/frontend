@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, HostBinding, Input, input } from '@angular/core';
+import { booleanAttribute, Component, computed, HostBinding, Input, input, ChangeDetectionStrategy } from '@angular/core';
 import { NodeState } from '../../workflow.models';
 
 let count = 0;
@@ -23,6 +23,7 @@ const defaultSize = 116;
       </g>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       position: absolute;

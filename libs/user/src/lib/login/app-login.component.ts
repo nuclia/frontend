@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 
@@ -6,6 +6,7 @@ import { SDKService } from '@flaps/core';
 // It avoids injecting the sdkservice in the route guard, as the config might not be loaded
 // at the time the guard is executed
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '',
 })
 export class AppLoginComponent implements OnInit {

@@ -47,9 +47,9 @@
 
         @if (selectedTab === 'content') {
           @let extractId = extractConfigId | async;
-          @let extractName = (extractConfig | async)?.name;
+          @let extractName = $safeNavigationMigration((extractConfig | async)?.name);
           @let splitId = splitConfigId | async;
-          @let splitName = (splitConfig | async)?.name;
+          @let splitName = $safeNavigationMigration((splitConfig | async)?.name);
           @if (extractId || splitId) {
             <nsi-info-card>
               <div class="body-s">
@@ -190,7 +190,7 @@
                 <div class="labels-container">
                   <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
                   @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
-                    <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
+                    <pa-chip [backgroundColor]="$safeNavigationMigration(((labelSets | async) || {})[label.labelset]?.color)">
                       {{ label.label }}
                     </pa-chip>
                   }

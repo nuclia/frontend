@@ -1,5 +1,5 @@
+import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -9,9 +9,10 @@ import {
   signal,
   ViewChildren,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -24,23 +25,7 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, map, take, takeUntil } from 'rxjs/operators';
-import {
-  DatedRangeChartData,
-  GroupedBarChartComponent,
-  GroupedBarChartData,
-  RangeChartComponent,
-  RangeChartData,
-  RangeEvolutionChartComponent,
-  EvolutionSeriesData,
-  MultiSeriesEvolutionChartComponent,
-} from '../../charts';
-import { RemiMetricsService } from '../remi-metrics.service';
-import { REMI_SCORE_GUIDE, getRemiScoreDisplay } from '../remi-metrics.config';
-import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   RemiQueryCriteria,
   RemiQueryResponse,
@@ -49,15 +34,28 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
+import { InfoCardComponent, NsiSkeletonComponent, SisModalService, SisProgressModule } from '@nuclia/sistema';
+import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
+import { catchError, map, take, takeUntil } from 'rxjs/operators';
+import {
+  DatedRangeChartData,
+  EvolutionSeriesData,
+  GroupedBarChartComponent,
+  GroupedBarChartData,
+  MultiSeriesEvolutionChartComponent,
+  RangeChartComponent,
+  RangeChartData,
+} from '../../charts';
+import { PreviewService } from '../../resources';
 import { DateAfter } from '../../validators';
-import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
+import { formatDateToYearMonth, formatMonth, getMonthsSinceDate } from '../metrics-utils';
 import { openRagAdviceModal } from '../rag-advice/rag-advice.component';
 import { AdviceInput } from '../rag-advice/rag-advice.service';
-import { PreviewService } from '../../resources';
-import { SafeHtml } from '@angular/platform-browser';
-import { RemiScoreDisplayComponent } from '../remi-score-display';
-import { formatMonth, formatDateToYearMonth, getMonthsSinceDate } from '../metrics-utils';
+import { getRemiScoreDisplay, REMI_SCORE_GUIDE } from '../remi-metrics.config';
 import { RemiPeriods, RemiScoreStatus } from '../remi-metrics.model';
+import { RemiMetricsService } from '../remi-metrics.service';
+import { RemiScoreDisplayComponent } from '../remi-score-display';
+import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
 
 /** Shared color palette for the 3 REMI metrics — keep in sync with the evolution chart. */
 const METRIC_COLORS: Record<string, string> = {
@@ -87,7 +85,6 @@ interface RemiHealthSummary {
     TranslateModule,
     PaTextFieldModule,
     RangeChartComponent,
-    RangeEvolutionChartComponent,
     MultiSeriesEvolutionChartComponent,
     AccordionComponent,
     AccordionItemComponent,

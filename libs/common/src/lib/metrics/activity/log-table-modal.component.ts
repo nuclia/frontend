@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
       <pa-modal-title>{{ modal.config.data?.title }}</pa-modal-title>
       <pa-modal-content>
         @if (modal.config.data?.json) {
-          <pre>{{ modal.config.data?.value | json }}</pre>
+          <pre>{{ $safeNavigationMigration(modal.config.data?.value) | json }}</pre>
         } @else {
           <p>{{ modal.config.data?.value }}</p>
         }

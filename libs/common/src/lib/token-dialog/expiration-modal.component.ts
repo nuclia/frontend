@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaDatePickerModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { DateAfter, DateBefore } from '../validators';
     ReactiveFormsModule,
   ],
   templateUrl: './expiration-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './expiration-modal.component.scss',
 })
 export class ExpirationModalComponent {

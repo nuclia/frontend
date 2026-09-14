@@ -95,7 +95,7 @@
       }
     },
     "@nx/eslint:lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc"],
+      "inputs": ["default", "^default", "{workspaceRoot}/.eslintrc", "{workspaceRoot}/tools/eslint-rules/**/*"],
       "cache": true
     }
   },
@@ -142,7 +142,14 @@
       "options": {
         "testTargetName": "vite:test"
       }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
     }
   ],
-  "analytics": false
+  "analytics": false,
+  "neverConnectToCloud": true
 }

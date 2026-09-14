@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JSONSchema4 } from 'json-schema';
 import { DriverFieldConfig } from '../driver-field-config.service';
@@ -28,6 +28,7 @@ import { DriverExpandableTextareaComponent } from '../driver-expandable-textarea
     </div>
   `,
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, PaTextFieldModule],
 })
 export class KbSelectComponent {
@@ -72,6 +73,7 @@ export class KbSelectComponent {
     `,
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [ReactiveFormsModule, PaTextFieldModule],
 })
 export class KeyValueFieldComponent {
@@ -85,6 +87,7 @@ export class KeyValueFieldComponent {
   selector: 'app-driver-field-renderer',
   templateUrl: './driver-field-renderer.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     ReactiveFormsModule,
     PaTextFieldModule,

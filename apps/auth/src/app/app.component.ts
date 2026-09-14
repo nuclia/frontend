@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
   ViewContainerRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {

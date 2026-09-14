@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, Input, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, FormArray, FormControl, FormsModule } from '@angular/forms';
 import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ import { DriversService } from '../../../../../../drivers/drivers.service';
   templateUrl: './driver-select.component.html',
   styleUrls: ['./driver-select.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     InfoCardComponent,
     PaButtonModule,
