@@ -90,4 +90,72 @@ describe('MemoryService', () => {
     expect(result).toEqual([]);
     expect(service.isSessionEntriesLoading(sessionFieldId)).toBe(false);
   });
+
+  describe('session facts caching (shared between the Sessions and Facts tabs)', () => {
+    const sessionFieldId2 = `${MEMORY_SESSION_FIELD_PREFIX}s2`;
+
+    function fakeFactMessage(text: string, ident = 'f1'): Message {
+      return { ident, content: { text: JSON.stringify({ text }) }, timestamp: '2024-05-01T10:00:00.000Z' };
+    }
+
+    function setupTwoSessions(getFieldReturn: () => ReturnType<jest.Mock>) {
+      getFieldSpy = jest.fn(getFieldReturn);
+      const fakeResource = {
+        data: { conversations: { [sessionFieldId]: {}, [sessionFieldId2]: {} } },
+        getField: getFieldSpy,
+      } as unknown as Resource;
+      resourceSubject = new BehaviorSubject<Resource | null>(fakeResource);
+
+      TestBed.configureTestingModule({
+        providers: [
+          MemoryService,
+          { provide: EditResourceService, useValue: { resource: resourceSubject.asObservable() } },
+        ],
+      });
+      service = TestBed.inject(MemoryService);
+    }
+
+    it('should share one in-flight request when the same session facts are requested twice before the first resolves', () => {
+      const fieldSubject = new Subject<{ value: { messages: Message[] } }>();
+      setupTwoSessions(() => fieldSubject);
+      const session = service.sessionInfos()[0];
+
+      const results: unknown[] = [];
+      service.loadSessionFacts(session).subscribe((facts) => results.push(facts));
+      service.loadSessionFacts(session).subscribe((facts) => results.push(facts));
+
+      expect(getFieldSpy).toHaveBeenCalledTimes(1);
+
+      fieldSubject.next({ value: { messages: [fakeFactMessage('some fact')] } });
+      fieldSubject.complete();
+
+      expect(results).toHaveLength(2);
+      expect(results[0]).toEqual(results[1]);
+    });
+
+    it('should serve cached facts without re-fetching once a session has loaded successfully', () => {
+      setupTwoSessions(() => of({ value: { messages: [fakeFactMessage('cached fact')] } }));
+      const session = service.sessionInfos()[0];
+
+      service.loadSessionFacts(session).subscribe();
+      expect(getFieldSpy).toHaveBeenCalledTimes(1);
+
+      service.loadSessionFacts(session).subscribe();
+      expect(getFieldSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('loadAllFacts should skip sessions already cached via loadSessionFacts and only fetch the remaining ones', () => {
+      setupTwoSessions(() => of({ value: { messages: [fakeFactMessage('a fact')] } }));
+      const [session1] = service.sessionInfos();
+
+      // Simulate the Sessions tab having already loaded session1's facts via its own "view facts" button.
+      service.loadSessionFacts(session1).subscribe();
+      expect(getFieldSpy).toHaveBeenCalledTimes(1);
+
+      // Facts tab activation should only fetch the remaining session now.
+      service.loadAllFacts().subscribe();
+      expect(getFieldSpy).toHaveBeenCalledTimes(2);
+      expect(service.facts()).toHaveLength(2);
+    });
+  });
 });

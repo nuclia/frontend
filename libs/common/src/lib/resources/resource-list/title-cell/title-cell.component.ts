@@ -4,6 +4,7 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { BadgeComponent, SisIconsModule } from '@nuclia/sistema';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { isMemoryResource } from '../../memory/memory.helpers';
 import { ResourceWithLabels } from '../resource-list.model';
 
 @Component({
@@ -15,6 +16,9 @@ import { ResourceWithLabels } from '../resource-list.model';
 })
 export class TitleCellComponent {
   @Input() row?: ResourceWithLabels;
+
+  // Pure function reference, callable directly from the template.
+  protected isMemoryResource = isMemoryResource;
 
   onClickLink($event: MouseEvent) {
     $event.stopPropagation();

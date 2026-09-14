@@ -1,11 +1,11 @@
 <pa-modal-advanced
   fitContentHeight
-  class="memory-transcript-modal">
+  class="memory-modal">
   <pa-modal-title>
     {{ 'resource.memory.transcript.title' | translate: { session: data?.['sessionLabel'] } }}
   </pa-modal-title>
   <pa-modal-content>
-    <div class="transcript-content">
+    <div class="modal-content">
       @if ((data?.['entries'] || []).length === 0) {
         <p class="body-s">{{ 'resource.memory.transcript.empty' | translate }}</p>
       }

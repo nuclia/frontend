@@ -30,7 +30,10 @@ export class MemoryService {
   private editResource = inject(EditResourceService);
   private resourceSignal = toSignal(this.editResource.resource, { initialValue: null });
 
-  private _facts = signal<MemoryFact[]>([]);
+  private _sessionFacts = signal<Record<string, MemoryFact[]>>({});
+  private _sessionFactsLoading = signal<Record<string, boolean>>({});
+  // In-flight request per session, so overlapping `loadSessionFacts` calls share one HTTP request instead of duplicating it.
+  private _inFlightSessionFacts: Record<string, Observable<MemoryFact[]>> = {};
   private _loading = signal(false);
   private _loadedSessionCount = signal(0);
   private _sessionEntries = signal<Record<string, MemoryEntry[]>>({});
@@ -51,8 +54,11 @@ export class MemoryService {
   /** True as soon as the resource has at least one memory session field (no extra fetch needed). */
   isMemoryResource = computed(() => this.sessionInfos().length > 0);
   totalSessionCount = computed(() => this.sessionInfos().length);
+  /** Flat list of every fact loaded so far, across sessions — whether loaded via `loadAllFacts()`
+   * (Facts tab) or `loadSessionFacts()` (Sessions tab "view facts"). Both share the same cache. */
+  facts = computed<MemoryFact[]>(() => Object.values(this._sessionFacts()).flat());
   /** Whether any facts exist at all across the topic, regardless of the active search/date filter. */
-  hasAnyFacts = computed(() => this._facts().length > 0);
+  hasAnyFacts = computed(() => this.facts().length > 0);
 
   loading = this._loading.asReadonly();
   loadedSessionCount = this._loadedSessionCount.asReadonly();
@@ -60,13 +66,15 @@ export class MemoryService {
   dateFilter = this._dateFilter.asReadonly();
   /** Cache of loaded session entries, keyed by session field id. Read reactively from templates. */
   sessionEntries = this._sessionEntries.asReadonly();
+  /** Cache of loaded session facts, keyed by session field id. Read reactively from templates. */
+  sessionFacts = this._sessionFacts.asReadonly();
 
   /** Facts across all sessions in the topic, filtered by search/date and sorted most-recent-first. */
   filteredFacts = computed<MemoryFact[]>(() => {
     const term = this._searchTerm().trim().toLowerCase();
     const date = this._dateFilter();
     const selectedDateKey = date ? formatDate(date, 'yyyy-MM-dd', 'en-US') : null;
-    return this._facts()
+    return this.facts()
       .filter((fact) => {
         if (
           selectedDateKey &&
@@ -88,9 +96,10 @@ export class MemoryService {
   }
 
   /**
-   * Loads every session's facts field before showing the full, filterable list.
-   * Waits for `editResource.resource` (not the not-yet-ready `resourceSignal()`) since the
-   * resource can still be `null` when the memory tab is opened directly on page load.
+   * Loads every session's facts that aren't already cached (from a prior `loadAllFacts()` run or
+   * from an individual `loadSessionFacts()` call in the Sessions tab) before showing the full,
+   * filterable list. Waits for `editResource.resource` (not the not-yet-ready `resourceSignal()`)
+   * since the resource can still be `null` when the Facts tab is opened right on page load.
    */
   loadAllFacts(): Observable<void> {
     return this.editResource.resource.pipe(
@@ -98,22 +107,16 @@ export class MemoryService {
       take(1),
       switchMap((resource) => {
         const sessions = getMemorySessionInfos(resource);
-        if (sessions.length === 0) {
-          this._facts.set([]);
+        const pending = sessions.filter((session) => !(session.fieldId in this._sessionFacts()));
+        this._loadedSessionCount.set(sessions.length - pending.length);
+        if (pending.length === 0) {
           return of(undefined);
         }
         this._loading.set(true);
-        this._loadedSessionCount.set(0);
-        this._facts.set([]);
-        return from(sessions).pipe(
+        return from(pending).pipe(
           mergeMap(
             (session) =>
-              this.loadFactsForSession(resource, session).pipe(
-                tap((facts) => {
-                  this._facts.update((list) => list.concat(facts));
-                  this._loadedSessionCount.update((n) => n + 1);
-                }),
-              ),
+              this.loadSessionFacts(session, resource).pipe(tap(() => this._loadedSessionCount.update((n) => n + 1))),
             MEMORY_LOAD_CONCURRENCY,
           ),
           toArray(),
@@ -126,6 +129,10 @@ export class MemoryService {
 
   isSessionEntriesLoading(sessionFieldId: string): boolean {
     return !!this._sessionEntriesLoading()[sessionFieldId];
+  }
+
+  isSessionFactsLoading(sessionFieldId: string): boolean {
+    return !!this._sessionFactsLoading()[sessionFieldId];
   }
 
   loadSessionEntries(sessionFieldId: string): Observable<MemoryEntry[]> {
@@ -152,6 +159,36 @@ export class MemoryService {
     );
 
     this._inFlightSessionEntries[sessionFieldId] = request$;
+    return request$;
+  }
+
+  /**
+   * Loads (and caches) the facts for a single session, keyed by the session's own field id.
+   * Used both by the Sessions tab ("view facts" on one session) and internally by
+   * `loadAllFacts()` — the cache is shared, so whichever loads a session's facts first, the
+   * other reuses them instead of re-fetching. `resourceOverride` lets `loadAllFacts()` thread
+   * through the resource it already resolved, rather than relying on `resourceSignal()`.
+   */
+  loadSessionFacts(session: MemorySessionInfo, resourceOverride?: Resource): Observable<MemoryFact[]> {
+    const cached = this._sessionFacts()[session.fieldId];
+    if (cached) return of(cached);
+    const inFlight = this._inFlightSessionFacts[session.fieldId];
+    if (inFlight) return inFlight;
+
+    const resource = resourceOverride ?? this.resourceSignal();
+    if (!resource) return of([]);
+
+    this._sessionFactsLoading.update((map) => ({ ...map, [session.fieldId]: true }));
+    const request$ = this.loadFactsForSession(resource, session).pipe(
+      tap((facts) => this._sessionFacts.update((map) => ({ ...map, [session.fieldId]: facts }))),
+      tap(() => {
+        this._sessionFactsLoading.update((map) => ({ ...map, [session.fieldId]: false }));
+        delete this._inFlightSessionFacts[session.fieldId];
+      }),
+      shareReplay(1),
+    );
+
+    this._inFlightSessionFacts[session.fieldId] = request$;
     return request$;
   }
 
