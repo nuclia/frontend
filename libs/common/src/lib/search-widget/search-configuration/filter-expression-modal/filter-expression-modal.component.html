@@ -10,30 +10,32 @@
       @if (help) {
         <nsi-info-card>{{ help | translate }}</nsi-info-card>
       }
-      <pa-accordion>
-        <pa-accordion-item
-          id="field"
-          [itemTitle]="'search.configuration.filter-expression-modal.field-filters' | translate"
-          [expanded]="true">
-          <pa-accordion-item-body>
-            @if (filterExpression.field) {
-              <ng-container
-                [ngTemplateOutlet]="filterItem"
-                [ngTemplateOutletContext]="{ filter: filterExpression.field, target: 'field' }" />
-            } @else {
-              <div>
-                <pa-button
-                  aspect="basic"
-                  icon="circle-plus"
-                  iconAndText
-                  (click)="add('field')">
-                  {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
-                </pa-button>
-              </div>
-            }
-          </pa-accordion-item-body>
-        </pa-accordion-item>
-      </pa-accordion>
+      @if (!onlyParagraphs) {
+        <pa-accordion>
+          <pa-accordion-item
+            id="field"
+            [itemTitle]="'search.configuration.filter-expression-modal.field-filters' | translate"
+            [expanded]="true">
+            <pa-accordion-item-body>
+              @if (filterExpression.field) {
+                <ng-container
+                  [ngTemplateOutlet]="filterItem"
+                  [ngTemplateOutletContext]="{ filter: filterExpression.field, target: 'field' }" />
+              } @else {
+                <div>
+                  <pa-button
+                    aspect="basic"
+                    icon="circle-plus"
+                    iconAndText
+                    (click)="add('field')">
+                    {{ 'search.configuration.filter-expression-modal.add-filter' | translate }}
+                  </pa-button>
+                </div>
+              }
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
+      }
       @if (!dataAugmentation) {
         @if (showFilterLogic) {
           <ng-container *ngTemplateOutlet="filterLogic"></ng-container>
@@ -42,7 +44,7 @@
           <pa-accordion-item
             id="paragraph"
             [itemTitle]="'search.configuration.filter-expression-modal.paragraph-filters' | translate"
-            [expanded]="filterExpression.paragraph">
+            [expanded]="filterExpression.paragraph || onlyParagraphs">
             <pa-accordion-item-body>
               @if (filterExpression.paragraph) {
                 <ng-container
@@ -64,7 +66,7 @@
           </pa-accordion-item>
         </pa-accordion>
       }
-      @if (((hasKvSchemas | async) || filterExpression.key_value) && !dataAugmentation) {
+      @if (((hasKvSchemas | async) || filterExpression.key_value) && !dataAugmentation && !onlyParagraphs) {
         @if (showFilterLogic) {
           <ng-container *ngTemplateOutlet="filterLogic"></ng-container>
         }

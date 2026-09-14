@@ -81,6 +81,7 @@ export type KeyValueFilterExpressionWithProps =
 export class FilterExpressionModalComponent {
   filterExpression: FilterExpression = {};
   dataAugmentation = false;
+  onlyParagraphs = false;
   useKbData = true;
   help?: string;
   hasKvSchemas = this.kvSchemasService.schemas$.pipe(filter((schemas) => schemas.length > 0));
@@ -89,7 +90,13 @@ export class FilterExpressionModalComponent {
 
   constructor(
     public modal: ModalRef<
-      { filterExpression: string; dataAugmentation?: boolean; useKbData?: boolean; help?: string },
+      {
+        filterExpression: string;
+        dataAugmentation?: boolean;
+        onlyParagraphs?: boolean;
+        useKbData?: boolean;
+        help?: string;
+      },
       string
     >,
     private modalService: SisModalService,
@@ -105,6 +112,7 @@ export class FilterExpressionModalComponent {
       // Invalid filter expression
     }
     this.dataAugmentation = !!this.modal.config.data?.dataAugmentation;
+    this.onlyParagraphs = !!this.modal.config.data?.onlyParagraphs;
     this.useKbData = this.modal.config.data?.useKbData ?? true;
     this.help = this.modal.config.data?.help;
   }

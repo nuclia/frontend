@@ -53,8 +53,32 @@
               </pa-popover>
             </div>
             <pa-toggle formControlName="multiple">
-              {{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}
+              @if (type === 'resources') {
+                {{ 'tasks-automation.form.labels-selection.multiple-labels.resources' | translate }}
+              } @else {
+                {{ 'tasks-automation.form.labels-selection.multiple-labels.text-blocks' | translate }}
+              }
             </pa-toggle>
+            @if (type === 'text-blocks') {
+              <pa-toggle formControlName="useFilters">
+                {{ 'tasks-automation.form.labels-selection.use-filters' | translate }}
+              </pa-toggle>
+              @if (operation.controls.useFilters.value) {
+                <nsi-expandable-textarea
+                  formControlName="paragraph_filter_expression_json"
+                  modalTitle="tasks-automation.form.filter.filter-expression.title"
+                  rows="4">
+                  {{ 'tasks-automation.form.filter.filter-expression.title' | translate }}
+                </nsi-expandable-textarea>
+                <div class="align-right">
+                  <pa-button
+                    aspect="basic"
+                    (click)="openFilterExpression(index)">
+                    {{ 'tasks-automation.form.filter.filter-expression.use-assistant' | translate }}
+                  </pa-button>
+                </div>
+              }
+            }
           } @else {
             <pa-button
               class="full-width"
